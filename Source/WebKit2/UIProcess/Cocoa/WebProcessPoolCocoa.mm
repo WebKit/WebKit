@@ -159,6 +159,17 @@ String WebProcessPool::cookieStorageDirectory() const
 }
 #endif
 
+void WebProcessPool::platformResolvePathsForSandboxExtensions()
+{
+    m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension([[NSBundle mainBundle] resourcePath]);
+
+#if PLATFORM(IOS)
+    m_resolvedPaths.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(cookieStorageDirectory());
+    m_resolvedPaths.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(webContentCachesDirectory());
+    m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(containerTemporaryDirectory());
+#endif
+}
+
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.presenterApplicationPid = getpid();
@@ -186,10 +197,21 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #endif
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
-    parameters.uiProcessBundleResourcePath = [[NSBundle mainBundle] resourcePath];
-    SandboxExtension::createHandle(parameters.uiProcessBundleResourcePath, SandboxExtension::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
+    parameters.uiProcessBundleResourcePath = m_resolvedPaths.uiProcessBundleResourcePath;
+    SandboxExtension::createHandleWithoutResolvingPath(parameters.uiProcessBundleResourcePath, SandboxExtension::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
+
+#if PLATFORM(IOS)
+    if (!m_resolvedPaths.cookieStorageDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.cookieStorageDirectory, SandboxExtension::ReadWrite, parameters.cookieStorageDirectoryExtensionHandle);
+
+    if (!m_resolvedPaths.containerCachesDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerCachesDirectory, SandboxExtension::ReadWrite, parameters.containerCachesDirectoryExtensionHandle);
+
+    if (!m_resolvedPaths.containerTemporaryDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerTemporaryDirectory, SandboxExtension::ReadWrite, parameters.containerTemporaryDirectoryExtensionHandle);
+#endif
 
     parameters.fontWhitelist = m_fontWhitelist;
 
@@ -437,11 +459,7 @@ bool WebProcessPool::isNetworkCacheEnabled()
 
 String WebProcessPool::platformDefaultIconDatabasePath() const
 {
-    // FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
-    NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
-    if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
-        databasesDirectory = @"~/Library/Icons/WebpageIcons.db";
-    return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
+    return "";
 }
 
 bool WebProcessPool::omitPDFSupport()

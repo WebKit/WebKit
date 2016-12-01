@@ -91,9 +91,10 @@ public:
     };
     
     static RefPtr<SandboxExtension> create(const Handle&);
-    static bool createHandle(const String& path, Type type, Handle&);
+    static bool createHandle(const String& path, Type, Handle&);
+    static bool createHandleWithoutResolvingPath(const String& path, Type, Handle&);
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
-    static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
+    static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
     ~SandboxExtension();
 
@@ -127,6 +128,7 @@ inline void SandboxExtension::HandleArray::encode(IPC::Encoder&) const { }
 inline bool SandboxExtension::HandleArray::decode(IPC::Decoder&, HandleArray&) { return true; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return nullptr; }
 inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
+inline bool SandboxExtension::createHandleWithoutResolvingPath(const String&, Type, Handle&) { return true; }
 inline bool SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { return true; }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
 inline bool SandboxExtension::createHandleForGenericExtension(const String& /*extensionClass*/, Handle&) { return true; }
@@ -136,8 +138,12 @@ inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
 inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }
 inline String stringByResolvingSymlinksInPath(const String& path) { return path; }
+inline String resolvePathForSandboxExtension(const String& path) { return path; }
+inline String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path) { return path; }
 #else
 String stringByResolvingSymlinksInPath(const String& path);
+String resolvePathForSandboxExtension(const String& path);
+String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path);
 #endif
 
 } // namespace WebKit

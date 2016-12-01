@@ -444,6 +444,9 @@ private:
 
     void setAnyPageGroupMightHavePrivateBrowsingEnabled(bool);
 
+    void resolvePathsForSandboxExtensions();
+    void platformResolvePathsForSandboxExtensions();
+
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;
@@ -574,6 +577,22 @@ private:
 #if PLATFORM(COCOA)
     bool m_cookieStoragePartitioningEnabled { false };
 #endif
+
+    struct Paths {
+        String injectedBundlePath;
+        String applicationCacheDirectory;
+        String webSQLDatabaseDirectory;
+        String mediaCacheDirectory;
+        String mediaKeyStorageDirectory;
+        String uiProcessBundleResourcePath;
+
+#if PLATFORM(IOS)
+        String cookieStorageDirectory;
+        String containerCachesDirectory;
+        String containerTemporaryDirectory;
+#endif
+    };
+    Paths m_resolvedPaths;
 };
 
 template<typename T>

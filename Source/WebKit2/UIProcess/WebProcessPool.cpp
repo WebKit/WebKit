@@ -202,6 +202,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     addLanguageChangeObserver(this, languageChanged);
 
+    resolvePathsForSandboxExtensions();
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WebCore::initializeLogChannelsIfNecessary();
     WebKit::initializeLogChannelsIfNecessary();
@@ -527,6 +529,17 @@ void WebProcessPool::processDidCachePage(WebProcessProxy* process)
     m_processWithPageCache = process;
 }
 
+void WebProcessPool::resolvePathsForSandboxExtensions()
+{
+    m_resolvedPaths.injectedBundlePath = resolvePathForSandboxExtension(injectedBundlePath());
+    m_resolvedPaths.applicationCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->applicationCacheDirectory());
+    m_resolvedPaths.webSQLDatabaseDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->webSQLDatabaseDirectory());
+    m_resolvedPaths.mediaCacheDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaCacheDirectory());
+    m_resolvedPaths.mediaKeyStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->mediaKeysStorageDirectory());
+
+    platformResolvePathsForSandboxExtensions();
+}
+
 WebProcessProxy& WebProcessPool::createNewWebProcess()
 {
     ensureNetworkProcess();
@@ -537,41 +550,27 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
     parameters.urlParserEnabled = URLParser::enabled();
     
-    parameters.injectedBundlePath = injectedBundlePath();
+    parameters.injectedBundlePath = m_resolvedPaths.injectedBundlePath;
     if (!parameters.injectedBundlePath.isEmpty())
-        SandboxExtension::createHandle(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);
 
-    parameters.applicationCacheDirectory = m_configuration->applicationCacheDirectory();
+    parameters.applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
+    if (!parameters.applicationCacheDirectory.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.applicationCacheDirectory, SandboxExtension::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
+
     parameters.applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName();
 
-    if (!parameters.applicationCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.applicationCacheDirectory, parameters.applicationCacheDirectoryExtensionHandle);
-
-    parameters.webSQLDatabaseDirectory = m_configuration->webSQLDatabaseDirectory();
+    parameters.webSQLDatabaseDirectory = m_resolvedPaths.webSQLDatabaseDirectory;
     if (!parameters.webSQLDatabaseDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.webSQLDatabaseDirectory, parameters.webSQLDatabaseDirectoryExtensionHandle);
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.webSQLDatabaseDirectory, SandboxExtension::ReadWrite, parameters.webSQLDatabaseDirectoryExtensionHandle);
 
-    parameters.mediaCacheDirectory = m_configuration->mediaCacheDirectory();
+    parameters.mediaCacheDirectory = m_resolvedPaths.mediaCacheDirectory;
     if (!parameters.mediaCacheDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.mediaCacheDirectory, parameters.mediaCacheDirectoryExtensionHandle);
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaCacheDirectory, SandboxExtension::ReadWrite, parameters.mediaCacheDirectoryExtensionHandle);
 
-#if PLATFORM(IOS)
-    String cookieStorageDirectory = this->cookieStorageDirectory();
-    if (!cookieStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory, parameters.cookieStorageDirectoryExtensionHandle);
-
-    String containerCachesDirectory = this->webContentCachesDirectory();
-    if (!containerCachesDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory, parameters.containerCachesDirectoryExtensionHandle);
-
-    String containerTemporaryDirectory = this->containerTemporaryDirectory();
-    if (!containerTemporaryDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(containerTemporaryDirectory, parameters.containerTemporaryDirectoryExtensionHandle);
-#endif
-
-    parameters.mediaKeyStorageDirectory = m_configuration->mediaKeysStorageDirectory();
+    parameters.mediaKeyStorageDirectory = m_resolvedPaths.mediaKeyStorageDirectory;
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
-        SandboxExtension::createHandleForReadWriteDirectory(parameters.mediaKeyStorageDirectory, parameters.mediaKeyStorageDirectoryExtensionHandle);
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
     parameters.shouldUseTestingNetworkSession = m_shouldUseTestingNetworkSession;
 
@@ -594,8 +593,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
 
-    // FIXME: This leaves UI process and WebProcess disagreeing about the state if the client hasn't set the path.
-    // iconDatabasePath is non-empty by default, but m_iconDatabase isn't enabled in UI process unless setDatabasePath is called explicitly.
     parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
     parameters.terminationTimeout = 0;

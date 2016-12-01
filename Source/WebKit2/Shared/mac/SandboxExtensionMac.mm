@@ -215,19 +215,37 @@ String stringByResolvingSymlinksInPath(const String& path)
     return String::fromUTF8(resolveSymlinksInPath(path.utf8()));
 }
 
-bool SandboxExtension::createHandle(const String& path, Type type, Handle& handle)
+String resolveAndCreateReadWriteDirectoryForSandboxExtension(const String& path)
 {
-    ASSERT(!handle.m_sandboxExtension);
+    NSError *error = nil;
+    NSString *nsPath = path;
 
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
+        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+        return { };
+    }
+
+    return resolvePathForSandboxExtension(path);
+}
+
+String resolvePathForSandboxExtension(const String& path)
+{
     // FIXME: Do we need both resolveSymlinksInPath() and -stringByStandardizingPath?
     CString fileSystemPath = fileSystemRepresentation([(NSString *)path stringByStandardizingPath]);
     if (fileSystemPath.isNull()) {
         LOG_ERROR("Could not create a valid file system representation for the string '%s' of length %lu", fileSystemPath.data(), fileSystemPath.length());
-        return false;
+        return { };
     }
 
     CString standardizedPath = resolveSymlinksInPath(fileSystemPath);
-    handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
+    return String::fromUTF8(standardizedPath);
+}
+
+bool SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type type, Handle& handle)
+{
+    ASSERT(!handle.m_sandboxExtension);
+
+    handle.m_sandboxExtension = WKSandboxExtensionCreate(path.utf8().data(), wkSandboxExtensionType(type));
     if (!handle.m_sandboxExtension) {
         LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
         return false;
@@ -235,17 +253,20 @@ bool SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     return true;
 }
 
+bool SandboxExtension::createHandle(const String& path, Type type, Handle& handle)
+{
+    ASSERT(!handle.m_sandboxExtension);
+
+    return createHandleWithoutResolvingPath(resolvePathForSandboxExtension(path), type, handle);
+}
+
 bool SandboxExtension::createHandleForReadWriteDirectory(const String& path, SandboxExtension::Handle& handle)
 {
-    NSError *error = nil;
-    NSString *nsPath = path;
-
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:nsPath withIntermediateDirectories:YES attributes:nil error:&error]) {
-        NSLog(@"could not create \"%@\", error %@", nsPath, error);
+    String resolvedPath = resolveAndCreateReadWriteDirectoryForSandboxExtension(path);
+    if (resolvedPath.isNull())
         return false;
-    }
 
-    return SandboxExtension::createHandle(path, SandboxExtension::ReadWrite, handle);
+    return SandboxExtension::createHandleWithoutResolvingPath(resolvedPath, SandboxExtension::ReadWrite, handle);
 }
 
 String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle& handle)

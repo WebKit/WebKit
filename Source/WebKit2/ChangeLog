@@ -1,3 +1,57 @@
+2016-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        Every WKWebView initialization spends a few milliseconds hitting the disk
+        https://bugs.webkit.org/show_bug.cgi?id=165268
+        <rdar://problem/29010113>
+
+        Reviewed by Brady Eidson.
+
+        Every WKWebView init currently involves doing directory creation and
+        symlink resolution for a number of paths (to create sandbox extensions
+        for all of our storage directories), which means touching the disk a
+        lot during init. All of these paths are immutable per-WebProcessPool,
+        so, instead, cache them on WebProcessPool and create sandbox extensions
+        from the already-resolved paths. This is a sizable (~4x) speedup when
+        initializing subsequent web views.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        Add createHandleWithoutResolvingPath, which makes a sandbox extension
+        handle without doing symlink resolution.
+
+        (WebKit::resolvePathForSandboxExtension):
+        (WebKit::resolveAndCreateReadWriteDirectoryForSandboxExtension):
+        Add two functions that do the same resolution that SandboxExtension::createHandle
+        and ::createHandleForReadWriteDirectory do, but just return the paths,
+        for later use with createHandleWithoutResolvingPath.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::resolveAndCreateReadWriteDirectoryForSandboxExtension):
+        (WebKit::resolvePathForSandboxExtension):
+        (WebKit::SandboxExtension::createHandleWithoutResolvingPath):
+        (WebKit::SandboxExtension::createHandle):
+        (WebKit::SandboxExtension::createHandleForReadWriteDirectory):
+        Implement the aforementioned functions, and reimplement the existing
+        createHandle{ForReadWriteDirectory} functions in terms of them.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath):
+        Stop wasting time generating and resolving a platform default icon
+        database path, since we don't actually use it for anything anymore except
+        to determine whether the icon database is enabled, and we only want to
+        enable it if the client has provided a path.
+
+        (WebKit::WebProcessPool::platformResolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer):
+        (WebKit::WebProcessPool::resolvePathsForSandboxExtensions):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * UIProcess/WebProcessPool.h:
+        Resolve paths in resolvePathsForSandboxExtensions, and use the resolved
+        paths along with createHandleWithoutResolvingPath in order to effectively
+        cache the resolution operation.
+
 2016-12-01  Antti Koivisto  <antti@apple.com>
 
         Revert r208931
