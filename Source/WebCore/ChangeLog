@@ -1,3 +1,48 @@
+2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::unwrapKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164747
+        <rdar://problem/29258198>
+
+        Reviewed by Brent Fulgham.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::unwrapKey method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-unwrapKey.
+           It also refers to the latest Editor's Draft to a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-unwrapKey.
+        2. It implements unwrapKey operations of the following algorithms: AES-KW.
+
+        Tests: crypto/subtle/aes-cbc-import-key-unwrap-jwk-rsa-key-private.html
+               crypto/subtle/aes-cbc-import-key-uwrap-jwk-rsa-key-public.html
+               crypto/subtle/aes-kw-generate-key-wrap-key-unwrap-key.html
+               crypto/subtle/aes-kw-import-key-unwrap-raw-key.html
+               crypto/subtle/rsa-oaep-import-key-unwrap-jwk-oct-key.html
+               crypto/subtle/unwrapKey-malformed-parameters.html
+               crypto/workers/subtle/aes-cbc-import-key-unwrap-key.html
+               crypto/workers/subtle/aes-kw-import-key-unwrap-key.html
+               crypto/workers/subtle/rsa-oaep-import-key-unwrap-key.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::jsSubtleCryptoFunctionWrapKeyPromise):
+        Add some comments.
+        (WebCore::jsSubtleCryptoFunctionUnwrapKeyPromise):
+        (WebCore::JSSubtleCrypto::unwrapKey):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::unwrapKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::unwrapKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/gnutls/CryptoAlgorithmAES_KWGnuTLS.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::platformUnwrapKey):
+        * crypto/mac/CryptoAlgorithmAES_KWMac.cpp:
+        (WebCore::unwrapKeyAES_KW):
+        (WebCore::CryptoAlgorithmAES_KW::platformUnwrapKey):
+        (WebCore::CryptoAlgorithmAES_KW::platformDecrypt):
+
 2016-12-01  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix font-variant parsing

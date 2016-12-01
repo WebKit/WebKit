@@ -1,3 +1,33 @@
+2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::unwrapKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=164747
+        <rdar://problem/29258198>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/aes-cbc-import-key-unwrap-jwk-rsa-key-private-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-unwrap-jwk-rsa-key-private.html: Added.
+        * crypto/subtle/aes-cbc-import-key-uwrap-jwk-rsa-key-public-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-uwrap-jwk-rsa-key-public.html: Added.
+        * crypto/subtle/aes-kw-generate-key-wrap-key-unwrap-key-expected.txt: Added.
+        * crypto/subtle/aes-kw-generate-key-wrap-key-unwrap-key.html: Added.
+        * crypto/subtle/aes-kw-import-key-unwrap-raw-key-expected.txt: Added.
+        * crypto/subtle/aes-kw-import-key-unwrap-raw-key.html: Added.
+        * crypto/subtle/rsa-oaep-import-key-unwrap-jwk-oct-key-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-key-unwrap-jwk-oct-key.html: Added.
+        * crypto/subtle/unwrapKey-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/unwrapKey-malformed-parameters.html: Added.
+        * crypto/workers/subtle/aes-cbc-import-key-unwrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-cbc-import-key-unwrap-key.html: Added.
+        * crypto/workers/subtle/aes-kw-import-key-unwrap-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-kw-import-key-unwrap-key.html: Added.
+        * crypto/workers/subtle/resources/aes-cbc-import-key-unwrap-key.js: Added.
+        * crypto/workers/subtle/resources/aes-kw-import-key-unwrap-key.js: Added.
+        * crypto/workers/subtle/resources/rsa-oaep-import-key-unwrap-key.js: Added.
+        * crypto/workers/subtle/rsa-oaep-import-key-unwrap-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-oaep-import-key-unwrap-key.html: Added.
+
 2016-12-01  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix font-variant parsing

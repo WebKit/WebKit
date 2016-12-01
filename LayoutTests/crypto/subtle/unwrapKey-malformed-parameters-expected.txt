@@ -1,0 +1,22 @@
+Test UnwrapKey operation with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.unwrapKey() rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey(1) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey(1, 2) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey(1, 2, 3) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey(1, 2, 3, 4) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey(1, 2, 3, 4, 5) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey(1, 2, 3, 4, 5, 6) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, "HMAC", "AES-CBC", extractable, ["encrypt", "decrypt"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, aesCbcParams, "AES-CBC", extractable, ["encrypt", "decrypt"]) rejected promise  with InvalidAccessError (DOM Exception 15): Unwrapping CryptoKey doesn't match unwrap AlgorithmIdentifier.
+PASS crypto.subtle.unwrapKey("jwk", wrappedRawKey, unwrappingKey, "AES-KW", "AES-CBC", extractable, ["encrypt", "decrypt"]) rejected promise  with DataError (DOM Exception 30): WrappedKey cannot be converted to a JSON object.
+PASS crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, "AES-KW", "AES-CBC", extractable, [ ]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.unwrapKey("jwk", wrappedJwkKey, unwrappingKey, aesCbcParams, {name: "RSA-OAEP", hash: "SHA-1"}, extractable, [ ]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.unwrapKey("raw", wrappedRawKey, unwrappingKey, "AES-KW", "AES-CBC", extractable, ["encrypt", "decrypt"]) rejected promise  with InvalidAccessError (DOM Exception 15): Unwrapping CryptoKey doesn't support unwrapKey operation.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
