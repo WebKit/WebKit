@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test deriveKey operation with malformed parameters");
+
+// Not enough arguments.
+shouldReject('crypto.subtle.deriveKey()');
+shouldReject('crypto.subtle.deriveKey(1)');
+shouldReject('crypto.subtle.deriveKey(1, 2)');
+shouldReject('crypto.subtle.deriveKey(1, 2, 3)');
+shouldReject('crypto.subtle.deriveKey(1, 2, 3, 4)');
+// Not support.
+shouldReject('crypto.subtle.deriveKey("ECDH", 2, 3, 4, 5)');
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

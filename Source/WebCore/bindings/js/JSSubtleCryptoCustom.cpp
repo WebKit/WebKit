@@ -58,6 +58,7 @@ enum class Operations {
     Sign,
     Verify,
     Digest,
+    DeriveKey,
     GenerateKey,
     ImportKey,
     WrapKey,
@@ -147,6 +148,9 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 return nullptr;
             }
             break;
+        case Operations::DeriveKey:
+            setDOMException(&state, NOT_SUPPORTED_ERR);
+            return nullptr;
         case Operations::GenerateKey:
             switch (*identifier) {
             case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5: {
@@ -677,6 +681,23 @@ static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPr
     algorithm->digest(WTFMove(data), WTFMove(callback), WTFMove(exceptionCallback), *scriptExecutionContextFromExecState(&state), subtle->wrapped().workQueue());
 }
 
+static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
+{
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(state.argumentCount() < 5)) {
+        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        return;
+    }
+
+    auto params = normalizeCryptoAlgorithmParameters(state, state.uncheckedArgument(0), Operations::DeriveKey);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    // We should always return a NOT_SUPPORTED_ERR since we currently don't support any algorithms that has deriveKey operation.
+    ASSERT_NOT_REACHED();
+}
+
 static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<DeferredPromise>&& promise)
 {
     VM& vm = state.vm();
@@ -945,6 +966,11 @@ JSValue JSSubtleCrypto::verify(ExecState& state)
 JSValue JSSubtleCrypto::digest(ExecState& state)
 {
     return callPromiseFunction<jsSubtleCryptoFunctionDigestPromise, PromiseExecutionScope::WindowOrWorker>(state);
+}
+
+JSValue JSSubtleCrypto::deriveKey(ExecState& state)
+{
+    return callPromiseFunction<jsSubtleCryptoFunctionDeriveKeyPromise, PromiseExecutionScope::WindowOrWorker>(state);
 }
 
 JSValue JSSubtleCrypto::generateKey(ExecState& state)

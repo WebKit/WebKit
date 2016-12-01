@@ -1,0 +1,15 @@
+Test deriveKey operation with malformed parameters
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.deriveKey() rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1, 2) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1, 2, 3) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey(1, 2, 3, 4) rejected promise  with TypeError: Not enough arguments.
+PASS crypto.subtle.deriveKey("ECDH", 2, 3, 4, 5) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

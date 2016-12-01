@@ -1,3 +1,22 @@
+2016-11-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SubtleCrypto::deriveKey always return NOT_SUPPORTED_ERR for now
+        https://bugs.webkit.org/show_bug.cgi?id=164744
+        <rdar://problem/29258083>
+
+        Reviewed by Darin Adler.
+
+        Since we don't support any cryptography algorithms that has deriveKey operations,
+        SubtleCrypto::deriveKey will always return NOT_SUPPORTED_ERR for now.
+
+        Test: crypto/subtle/deriveKey-malformed-parameters.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::jsSubtleCryptoFunctionDeriveKeyPromise):
+        (WebCore::JSSubtleCrypto::deriveKey):
+        * crypto/SubtleCrypto.idl:
+
 2016-11-26  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::digest to match the latest spec
