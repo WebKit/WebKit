@@ -1,3 +1,16 @@
+2016-11-30  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB: When doing puts, don't "updateAllIndexesForAddRecord" if there are no indexes.
+        https://bugs.webkit.org/show_bug.cgi?id=165215
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No observable behavior change).
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord): Don't "updateAllIndexesForAddRecord" if there are no indexes.
+          Avoiding this saved us some IDBKey serialization and Javascript object manipulation.
+
 2016-11-30  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] LayoutNode: only mark properties as dirty if different than current value
