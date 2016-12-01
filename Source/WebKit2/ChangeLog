@@ -1,3 +1,54 @@
+2016-12-01  Antti Koivisto  <antti@apple.com>
+
+        Revert r208931
+        https://bugs.webkit.org/show_bug.cgi?id=164924
+
+        PLT regression.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::makeCacheKey):
+        (WebKit::NetworkCache::Cache::makeCacheKey): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::BlobStorage):
+        (WebKit::NetworkCache::BlobStorage::add):
+        (WebKit::NetworkCache::BlobStorage::get):
+        * NetworkProcess/cache/NetworkCacheBlobStorage.h:
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::computeSHA1):
+        (WebKit::NetworkCache::makeSalt): Deleted.
+        (WebKit::NetworkCache::readOrMakeSalt): Deleted.
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::noPartitionString):
+        (WebKit::NetworkCache::Key::Key):
+        (WebKit::NetworkCache::Key::hasPartition):
+        (WebKit::NetworkCache::Key::computeHash):
+        (WebKit::NetworkCache::Key::hashAsString):
+        (WebKit::NetworkCache::Key::computePartitionHash): Deleted.
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        (WebKit::NetworkCache::Key::hash):
+        (WebKit::NetworkCache::Key::partitionHash): Deleted.
+        (WebKit::NetworkCache::Key::hashAsString): Deleted.
+        (WebKit::NetworkCache::Key::partitionHashAsString): Deleted.
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::makeSubresourcesKey):
+        (WebKit::NetworkCache::constructRevalidationRequest):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::saveToDiskIfReady):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveSubresourcesEntry):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::open):
+        (WebKit::NetworkCache::traverseRecordsFiles):
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::recordDirectoryPathForKey):
+        (WebKit::NetworkCache::decodeRecordHeader):
+        (WebKit::NetworkCache::Storage::readRecord):
+        (WebKit::NetworkCache::Storage::encodeRecord):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::makeSaltFilePath): Deleted.
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::salt): Deleted.
+
 2016-11-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for File and Blob constructors
