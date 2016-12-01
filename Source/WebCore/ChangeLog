@@ -1,3 +1,21 @@
+2016-11-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused parameter of InspectorInstrumentation::didFinishXHRLoading
+        https://bugs.webkit.org/show_bug.cgi?id=165233
+
+        Reviewed by Brian Burg.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didFinishXHRLoadingImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didFinishXHRLoading):
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didFinishXHRLoading):
+        * inspector/InspectorNetworkAgent.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        Remove unused ThreadableLoaderClient parameter.
+
 2016-11-30  Brady Eidson  <beidson@apple.com>
 
         IndexedDB: When doing puts, don't "updateAllIndexesForAddRecord" if there are no indexes.
