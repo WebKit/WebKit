@@ -54,14 +54,14 @@ JSValue JSSetIterator::createPair(CallFrame* callFrame, JSValue key, JSValue val
     MarkedArgumentBuffer args;
     args.append(key);
     args.append(value);
-    JSGlobalObject* globalObject = callFrame->callee()->globalObject();
+    JSGlobalObject* globalObject = callFrame->jsCallee()->globalObject();
     return constructArray(callFrame, 0, globalObject, args);
 }
 
 JSSetIterator* JSSetIterator::clone(ExecState* exec)
 {
     VM& vm = exec->vm();
-    auto clone = JSSetIterator::create(vm, exec->callee()->globalObject()->setIteratorStructure(), m_set.get(), m_kind);
+    auto clone = JSSetIterator::create(vm, exec->jsCallee()->globalObject()->setIteratorStructure(), m_set.get(), m_kind);
     clone->setIterator(vm, m_iter.get());
     return clone;
 }

@@ -53,13 +53,13 @@ void GeneratorFunctionConstructor::finishCreation(VM& vm, GeneratorFunctionProto
 static EncodedJSValue JSC_HOST_CALL callGeneratorFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args, FunctionConstructionMode::Generator));
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Generator));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructGeneratorFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args, FunctionConstructionMode::Generator, exec->newTarget()));
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Generator, exec->newTarget()));
 }
 
 CallType GeneratorFunctionConstructor::getCallData(JSCell*, CallData& callData)

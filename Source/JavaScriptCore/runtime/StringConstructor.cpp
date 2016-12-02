@@ -120,7 +120,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCodePoint(ExecState* exec)
 
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
 {
-    JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
+    JSGlobalObject* globalObject = asInternalFunction(exec->jsCallee())->globalObject();
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 

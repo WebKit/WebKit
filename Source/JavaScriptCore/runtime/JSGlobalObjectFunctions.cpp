@@ -679,7 +679,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
             return JSValue::encode(parsedObject);        
     }
 
-    JSGlobalObject* calleeGlobalObject = exec->callee()->globalObject();
+    JSGlobalObject* calleeGlobalObject = exec->jsCallee()->globalObject();
     EvalExecutable* eval = IndirectEvalExecutable::create(exec, makeSource(s), false, DerivedContextType::None, false, EvalContextType::None);
     if (!eval)
         return JSValue::encode(jsUndefined());

@@ -110,7 +110,7 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 // ES 19.1.1.1 Object([value])
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSValue newTarget)
 {
-    ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(exec->callee());
+    ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(exec->jsCallee());
     JSGlobalObject* globalObject = objectConstructor->globalObject();
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

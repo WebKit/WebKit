@@ -5852,7 +5852,7 @@ sub GenerateConstructorDefinition
             push(@$outputArray, "    VM& vm = state->vm();\n");
             push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
             push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
-            push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->callee());\n");
+            push(@$outputArray, "    auto* castedThis = jsCast<${constructorClassName}*>(state->jsCallee());\n");
             push(@$outputArray, "    ASSERT(castedThis);\n");
 
             my @constructorArgList;

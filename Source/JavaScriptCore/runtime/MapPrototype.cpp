@@ -158,7 +158,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncValues(CallFrame* callFrame)
     JSMap* thisObj = jsDynamicCast<JSMap*>(callFrame->thisValue());
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Map value iterator for a non-Map object.")));
-    return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateValue));
+    return JSValue::encode(JSMapIterator::create(vm, callFrame->jsCallee()->globalObject()->mapIteratorStructure(), thisObj, IterateValue));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncEntries(CallFrame* callFrame)
@@ -169,7 +169,7 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncEntries(CallFrame* callFrame)
     JSMap* thisObj = jsDynamicCast<JSMap*>(callFrame->thisValue());
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Map entry iterator for a non-Map object.")));
-    return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKeyValue));
+    return JSValue::encode(JSMapIterator::create(vm, callFrame->jsCallee()->globalObject()->mapIteratorStructure(), thisObj, IterateKeyValue));
 }
 
 EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(CallFrame* callFrame)
@@ -180,14 +180,14 @@ EncodedJSValue JSC_HOST_CALL mapProtoFuncKeys(CallFrame* callFrame)
     JSMap* thisObj = jsDynamicCast<JSMap*>(callFrame->thisValue());
     if (!thisObj)
         return JSValue::encode(throwTypeError(callFrame, scope, ASCIILiteral("Cannot create a Map key iterator for a non-Map object.")));
-    return JSValue::encode(JSMapIterator::create(vm, callFrame->callee()->globalObject()->mapIteratorStructure(), thisObj, IterateKey));
+    return JSValue::encode(JSMapIterator::create(vm, callFrame->jsCallee()->globalObject()->mapIteratorStructure(), thisObj, IterateKey));
 }
 
 EncodedJSValue JSC_HOST_CALL privateFuncMapIterator(ExecState* exec)
 {
     ASSERT(jsDynamicCast<JSMap*>(exec->uncheckedArgument(0)));
     JSMap* map = jsCast<JSMap*>(exec->uncheckedArgument(0));
-    return JSValue::encode(JSMapIterator::create(exec->vm(), exec->callee()->globalObject()->mapIteratorStructure(), map, IterateKeyValue));
+    return JSValue::encode(JSMapIterator::create(exec->vm(), exec->jsCallee()->globalObject()->mapIteratorStructure(), map, IterateKeyValue));
 }
 
 EncodedJSValue JSC_HOST_CALL privateFuncMapIteratorNext(ExecState* exec)

@@ -60,7 +60,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-    JSHTMLAllCollection* jsCollection = jsCast<JSHTMLAllCollection*>(exec->callee());
+    JSHTMLAllCollection* jsCollection = jsCast<JSHTMLAllCollection*>(exec->jsCallee());
     HTMLAllCollection& collection = jsCollection->wrapped();
 
     // Also, do we need the TypeError test here ?

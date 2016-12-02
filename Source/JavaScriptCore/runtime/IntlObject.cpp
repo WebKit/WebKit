@@ -534,7 +534,7 @@ Vector<String> canonicalizeLocaleList(ExecState& state, JSValue locales)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = state.callee()->globalObject();
+    JSGlobalObject* globalObject = state.jsCallee()->globalObject();
     Vector<String> seen;
 
     // 1. If locales is undefined, then a. Return a new empty List.
@@ -655,7 +655,7 @@ String defaultLocale(ExecState& state)
     // WebCore's global objects will have their own ideas of how to determine the language. It may
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
     // same thing as platformUserPreferredLanguages()[0].
-    if (auto defaultLanguage = state.callee()->globalObject()->globalObjectMethodTable()->defaultLanguage) {
+    if (auto defaultLanguage = state.jsCallee()->globalObject()->globalObjectMethodTable()->defaultLanguage) {
         String locale = defaultLanguage();
         if (!locale.isEmpty())
             return canonicalizeLanguageTag(locale);
@@ -886,7 +886,7 @@ static JSArray* lookupSupportedLocales(ExecState& state, const HashSet<String>& 
     size_t len = requestedLocales.size();
 
     // 3. Let subset be an empty List.
-    JSGlobalObject* globalObject = state.callee()->globalObject();
+    JSGlobalObject* globalObject = state.jsCallee()->globalObject();
     JSArray* subset = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
     if (!subset) {
         throwOutOfMemoryError(&state, scope);
@@ -1030,7 +1030,7 @@ EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 2. Return CreateArrayFromList(ll).
-    JSGlobalObject* globalObject = state->callee()->globalObject();
+    JSGlobalObject* globalObject = state->jsCallee()->globalObject();
     JSArray* localeArray = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), localeList.size());
     if (!localeArray) {
         throwOutOfMemoryError(state, scope);

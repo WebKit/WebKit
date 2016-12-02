@@ -36,7 +36,7 @@ const ClassInfo JSBoundFunction::s_info = { "Function", &Base::s_info, 0, CREATE
 
 EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
 
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
 
     JSArray* boundArgs = boundFunction->boundArgs();
 
@@ -77,7 +77,7 @@ EncodedJSValue JSC_HOST_CALL boundFunctionCall(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
 
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < exec->argumentCount(); ++i)
@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionConstruct(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL boundFunctionConstruct(ExecState* exec)
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->callee());
+    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(exec->jsCallee());
 
     JSArray* boundArgs = boundFunction->boundArgs();
 

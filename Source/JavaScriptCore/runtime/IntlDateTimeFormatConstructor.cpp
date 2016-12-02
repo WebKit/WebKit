@@ -90,7 +90,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlDateTimeFormat(ExecState* state
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let dateTimeFormat be OrdinaryCreateFromConstructor(newTarget, %DateTimeFormatPrototype%).
     // 3. ReturnIfAbrupt(dateTimeFormat).
-    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlDateTimeFormatConstructor*>(state->callee())->dateTimeFormatStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlDateTimeFormatConstructor*>(state->jsCallee())->dateTimeFormatStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     IntlDateTimeFormat* dateTimeFormat = IntlDateTimeFormat::create(vm, structure);
     ASSERT(dateTimeFormat);
@@ -107,7 +107,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlDateTimeFormat(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
-    IntlDateTimeFormatConstructor* callee = jsCast<IntlDateTimeFormatConstructor*>(state->callee());
+    IntlDateTimeFormatConstructor* callee = jsCast<IntlDateTimeFormatConstructor*>(state->jsCallee());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
@@ -142,7 +142,7 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatConstructorFuncSupportedLocalesOf
     // 12.2.2 Intl.DateTimeFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %DateTimeFormat%.[[availableLocales]].
-    JSGlobalObject* globalObject = state->callee()->globalObject();
+    JSGlobalObject* globalObject = state->jsCallee()->globalObject();
     const HashSet<String> availableLocales = globalObject->intlDateTimeFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).

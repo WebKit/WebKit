@@ -70,7 +70,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors1(ExecState* s
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -85,7 +85,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors2(ExecState* s
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -100,7 +100,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors3(ExecState* s
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -115,7 +115,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors4(ExecState* s
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -130,7 +130,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     auto longArgs = convertVariadicArguments<IDLLong>(*state, 0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

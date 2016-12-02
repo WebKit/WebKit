@@ -220,7 +220,7 @@ EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    InternalFunction* function = asInternalFunction(exec->callee());
+    InternalFunction* function = asInternalFunction(exec->jsCallee());
     Structure* parentStructure = function->globalObject()->typedArrayStructure(ViewClass::TypedArrayStorageType);
     Structure* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), parentStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

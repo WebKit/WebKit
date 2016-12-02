@@ -90,7 +90,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlCollator(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let collator be OrdinaryCreateFromConstructor(newTarget, %CollatorPrototype%).
     // 3. ReturnIfAbrupt(collator).
-    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlCollatorConstructor*>(state->callee())->collatorStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlCollatorConstructor*>(state->jsCallee())->collatorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     IntlCollator* collator = IntlCollator::create(vm, structure);
     ASSERT(collator);
@@ -108,7 +108,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlCollator(ExecState* state)
     // NewTarget is always undefined when called as a function.
 
     VM& vm = state->vm();
-    IntlCollatorConstructor* callee = jsCast<IntlCollatorConstructor*>(state->callee());
+    IntlCollatorConstructor* callee = jsCast<IntlCollatorConstructor*>(state->jsCallee());
 
     // FIXME: Collator does not get the workaround for ECMA-402 1.0 compatibility.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
@@ -148,7 +148,7 @@ EncodedJSValue JSC_HOST_CALL IntlCollatorConstructorFuncSupportedLocalesOf(ExecS
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 3. Return SupportedLocales(%Collator%.[[availableLocales]], requestedLocales, options).
-    JSGlobalObject* globalObject = state->callee()->globalObject();
+    JSGlobalObject* globalObject = state->jsCallee()->globalObject();
     scope.release();
     return JSValue::encode(supportedLocales(*state, globalObject->intlCollatorAvailableLocales(), requestedLocales, state->argument(1)));
 }

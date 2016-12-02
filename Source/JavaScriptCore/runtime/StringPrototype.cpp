@@ -2031,7 +2031,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
         return throwVMTypeError(exec, scope);
     JSString* string = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSStringIterator::create(exec, exec->callee()->globalObject()->stringIteratorStructure(), string));
+    return JSValue::encode(JSStringIterator::create(exec, exec->jsCallee()->globalObject()->stringIteratorStructure(), string));
 }
 
 static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLength, UNormalizationMode form)

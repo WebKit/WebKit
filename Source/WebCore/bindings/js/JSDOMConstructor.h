@@ -262,7 +262,7 @@ typename std::enable_if<JSDOMObjectInspector<JSClass>::isComplexWrapper, JSC::JS
 template<typename JSClass> inline JSC::EncodedJSValue JSC_HOST_CALL JSBuiltinConstructor<JSClass>::construct(JSC::ExecState* state)
 {
     ASSERT(state);
-    auto* castedThis = JSC::jsCast<JSBuiltinConstructor*>(state->callee());
+    auto* castedThis = JSC::jsCast<JSBuiltinConstructor*>(state->jsCallee());
     return castedThis->callConstructor(*state, createJSObject(*castedThis));
 }
 

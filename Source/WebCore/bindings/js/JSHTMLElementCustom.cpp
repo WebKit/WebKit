@@ -45,7 +45,7 @@ EncodedJSValue JSC_HOST_CALL constructJSHTMLElement(ExecState& exec)
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
+    auto* jsConstructor = jsCast<DOMConstructorObject*>(exec.jsCallee());
     ASSERT(jsConstructor);
 
     auto* context = jsConstructor->scriptExecutionContext();

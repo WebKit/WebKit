@@ -53,7 +53,7 @@ struct ArityCheckData {
 
 ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind kind)
 {
-    JSFunction* callee = jsCast<JSFunction*>(exec->callee());
+    JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = callee->jsExecutable()->codeBlockFor(kind);
     int argumentCountIncludingThis = exec->argumentCountIncludingThis();

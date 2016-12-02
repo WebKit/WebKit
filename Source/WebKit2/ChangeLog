@@ -1,3 +1,16 @@
+2016-12-01  Saam Barati  <sbarati@apple.com>
+
+        Rename CallFrame::callee() to CallFrame::jsCallee()
+        https://bugs.webkit.org/show_bug.cgi?id=165293
+
+        Reviewed by Keith Miller.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp:
+        (WebKit::callMethod):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::callNPJSObject):
+        (WebKit::constructWithConstructor):
+
 2016-12-01  Chris Dumez  <cdumez@apple.com>
 
         [iOS][WK2] Tapping an element generates a 'click' event that has 0 as timeStamp

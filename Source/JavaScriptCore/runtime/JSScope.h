@@ -146,7 +146,7 @@ inline JSScope* Register::scope() const
 
 inline JSGlobalObject* ExecState::lexicalGlobalObject() const
 {
-    return callee()->globalObject();
+    return jsCallee()->globalObject();
 }
 
 inline size_t JSScope::offsetOfNext()

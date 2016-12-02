@@ -62,7 +62,7 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSNPMethod* jsNPMethod = jsCast<JSNPMethod*>(exec->callee());
+    JSNPMethod* jsNPMethod = jsCast<JSNPMethod*>(exec->jsCallee());
 
     JSValue thisValue = exec->thisValue();
 

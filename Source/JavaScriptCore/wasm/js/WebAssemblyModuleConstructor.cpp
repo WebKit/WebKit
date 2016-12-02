@@ -77,7 +77,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
         return JSValue::encode(throwException(state, scope, createWebAssemblyCompileError(state, plan.errorMessage())));
 
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
-    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->callee())->globalObject()->WebAssemblyModuleStructure());
+    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->jsCallee())->globalObject()->WebAssemblyModuleStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // The export symbol table is the same for all Instances of a Module.

@@ -43,34 +43,34 @@ namespace JSC {
 
 const ClassInfo WebAssemblyFunction::s_info = { "WebAssemblyFunction", &Base::s_info, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunction) };
 
-static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
 {
-    auto& vm = state->vm();
+    auto& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    WebAssemblyFunction* callee = jsDynamicCast<WebAssemblyFunction*>(state->callee());
+    WebAssemblyFunction* callee = jsDynamicCast<WebAssemblyFunction*>(exec->jsCallee());
     if (!callee)
-        return JSValue::encode(throwException(state, scope, createTypeError(state, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(state->callee()))));
+        return JSValue::encode(throwException(exec, scope, createTypeError(exec, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(exec->jsCallee()))));
     const CallableWebAssemblyFunction& callable = callee->webAssemblyFunctionCell()->function();
     const B3::Compilation* jsEntryPoint = callable.jsEntryPoint;
     const Wasm::Signature* signature = callable.signature;
 
     // FIXME is this the right behavior? https://bugs.webkit.org/show_bug.cgi?id=164876
-    if (state->argumentCount() != signature->arguments.size())
-        return JSValue::encode(throwException(state, scope, createNotEnoughArgumentsError(state, defaultSourceAppender)));
+    if (exec->argumentCount() != signature->arguments.size())
+        return JSValue::encode(throwException(exec, scope, createNotEnoughArgumentsError(exec, defaultSourceAppender)));
 
     // FIXME is this boxing correct? https://bugs.webkit.org/show_bug.cgi?id=164876
     Vector<JSValue> boxedArgs;
-    for (unsigned argIndex = 0; argIndex < state->argumentCount(); ++argIndex) {
-        JSValue arg = state->uncheckedArgument(argIndex);
+    for (unsigned argIndex = 0; argIndex < exec->argumentCount(); ++argIndex) {
+        JSValue arg = exec->uncheckedArgument(argIndex);
         switch (signature->arguments[argIndex]) {
         case Wasm::I32:
-            arg = JSValue::decode(arg.toInt32(state));
+            arg = JSValue::decode(arg.toInt32(exec));
             break;
         case Wasm::F32:
-            arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(state)));
+            arg = JSValue::decode(bitwise_cast<uint32_t>(arg.toFloat(exec)));
             break;
         case Wasm::F64:
-            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(state)));
+            arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(exec)));
             break;
         case Wasm::Void:
         case Wasm::I64:

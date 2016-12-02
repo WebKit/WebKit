@@ -281,7 +281,7 @@ void ShadowChicken::update(VM&, ExecState* exec)
                 return StackVisitor::Done;
             }
 
-            bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->callee(), callFrame->callerFrame());
+            bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->jsCallee(), callFrame->callerFrame());
             bool isTailDeleted = false;
             JSScope* scope = nullptr;
             CodeBlock* codeBlock = callFrame->codeBlock();

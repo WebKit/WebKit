@@ -393,7 +393,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     --it;
     dataLogF("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
     --it;
-    dataLogF("[Callee]                   | %10p | %p \n", it, callFrame->callee());
+    dataLogF("[Callee]                   | %10p | %p \n", it, callFrame->jsCallee());
     --it;
     // FIXME: Remove the next decrement when the ScopeChain slot is removed from the call header
     --it;
@@ -593,7 +593,7 @@ ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         SuspendExceptionScope scope(&vm);
-        if (jsDynamicCast<JSFunction*>(callFrame->callee()))
+        if (jsDynamicCast<JSFunction*>(callFrame->jsCallee()))
             debugger->unwindEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);

@@ -59,7 +59,7 @@ void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, i
 
 static EncodedJSValue JSC_HOST_CALL runStdFunction(ExecState* state)
 {
-    JSNativeStdFunction* function = jsCast<JSNativeStdFunction*>(state->callee());
+    JSNativeStdFunction* function = jsCast<JSNativeStdFunction*>(state->jsCallee());
     ASSERT(function);
     return function->nativeStdFunctionCell()->function()(state);
 }

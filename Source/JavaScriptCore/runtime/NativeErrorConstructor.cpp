@@ -66,7 +66,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithNativeErrorConstructor(Ex
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = exec->argument(0);
-    Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<NativeErrorConstructor*>(exec->callee())->errorStructure());
+    Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<NativeErrorConstructor*>(exec->jsCallee())->errorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(errorStructure);
     scope.release();
@@ -82,7 +82,7 @@ ConstructType NativeErrorConstructor::getConstructData(JSCell*, ConstructData& c
 EncodedJSValue JSC_HOST_CALL Interpreter::callNativeErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argument(0);
-    Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
+    Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->jsCallee())->errorStructure();
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }
 

@@ -70,7 +70,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     auto sequenceOfStrings = state->argument(0).isUndefined() ? Converter<IDLSequence<IDLDOMString>>::ReturnType{ } : convert<IDLSequence<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -83,7 +83,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence2(
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestOverloadedConstructorsWithSequenceConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));

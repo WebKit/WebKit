@@ -146,7 +146,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     m_frame.m_CallerVMEntryFrame = m_frame.m_VMEntryFrame;
     m_frame.m_callerFrame = callFrame->callerFrame(m_frame.m_CallerVMEntryFrame);
     m_frame.m_callerIsVMEntryFrame = m_frame.m_CallerVMEntryFrame != m_frame.m_VMEntryFrame;
-    m_frame.m_callee = callFrame->callee();
+    m_frame.m_callee = callFrame->jsCallee();
     m_frame.m_codeBlock = callFrame->codeBlock();
     m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
         : codeOrigin ? codeOrigin->bytecodeIndex

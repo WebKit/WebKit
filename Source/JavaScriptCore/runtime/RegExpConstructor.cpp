@@ -309,7 +309,7 @@ EncodedJSValue JSC_HOST_CALL esSpecRegExpCreate(ExecState* exec)
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->callee())->globalObject(), args, exec->callee(), exec->newTarget()));
+    return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, exec->jsCallee(), exec->newTarget()));
 }
 
 ConstructType RegExpConstructor::getConstructData(JSCell*, ConstructData& constructData)
@@ -321,7 +321,7 @@ ConstructType RegExpConstructor::getConstructData(JSCell*, ConstructData& constr
 static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->callee())->globalObject(), args, exec->callee()));
+    return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, exec->jsCallee()));
 }
 
 CallType RegExpConstructor::getCallData(JSCell*, CallData& callData)

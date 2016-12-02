@@ -57,7 +57,7 @@ void ProxyRevoke::finishCreation(VM& vm, const char* name, ProxyObject* proxy)
 
 static EncodedJSValue JSC_HOST_CALL performProxyRevoke(ExecState* exec)
 {
-    ProxyRevoke* proxyRevoke = jsCast<ProxyRevoke*>(exec->callee());
+    ProxyRevoke* proxyRevoke = jsCast<ProxyRevoke*>(exec->jsCallee());
     JSValue proxyValue = proxyRevoke->proxy();
     if (proxyValue.isNull())
         return JSValue::encode(jsUndefined());

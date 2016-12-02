@@ -134,7 +134,7 @@ bool pluginElementCustomPut(ExecState* exec, PropertyName propertyName, JSValue 
 
 static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
 {
-    JSHTMLElement* element = jsCast<JSHTMLElement*>(exec->callee());
+    JSHTMLElement* element = jsCast<JSHTMLElement*>(exec->jsCallee());
 
     // Get the plug-in script object.
     JSObject* scriptObject = pluginScriptObject(exec, element);

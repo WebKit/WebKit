@@ -437,7 +437,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
 
     // 11. Let localeData be the value of %DateTimeFormat%.[[localeData]].
     // 12. Let r be ResolveLocale( %DateTimeFormat%.[[availableLocales]], requestedLocales, opt, %DateTimeFormat%.[[relevantExtensionKeys]], localeData).
-    const HashSet<String> availableLocales = exec.callee()->globalObject()->intlDateTimeFormatAvailableLocales();
+    const HashSet<String> availableLocales = exec.jsCallee()->globalObject()->intlDateTimeFormatAvailableLocales();
     HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
 
     // 13. Set dateTimeFormat.[[locale]] to the value of r.[[locale]].

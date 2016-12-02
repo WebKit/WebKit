@@ -426,7 +426,7 @@ EncodedJSValue JSCallbackObject<Parent>::construct(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* constructor = exec->callee();
+    JSObject* constructor = exec->jsCallee();
     JSContextRef execRef = toRef(exec);
     JSObjectRef constructorRef = toRef(constructor);
     
@@ -500,7 +500,7 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSContextRef execRef = toRef(exec);
-    JSObjectRef functionRef = toRef(exec->callee());
+    JSObjectRef functionRef = toRef(exec->jsCallee());
     JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->thisValue().toThis(exec, NotStrictMode)));
     
     for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {

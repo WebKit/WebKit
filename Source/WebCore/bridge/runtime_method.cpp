@@ -81,7 +81,7 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->callee());
+    RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->jsCallee());
 
     if (!method->method())
         return JSValue::encode(jsUndefined());

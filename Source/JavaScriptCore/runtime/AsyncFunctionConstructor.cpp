@@ -53,13 +53,13 @@ void AsyncFunctionConstructor::finishCreation(VM& vm, AsyncFunctionPrototype* pr
 static EncodedJSValue JSC_HOST_CALL callAsyncFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args, FunctionConstructionMode::Async));
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Async));
 }
 
 static EncodedJSValue JSC_HOST_CALL constructAsyncFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args, FunctionConstructionMode::Async));
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->jsCallee())->globalObject(), args, FunctionConstructionMode::Async));
 }
 
 CallType AsyncFunctionConstructor::getCallData(JSCell*, CallData& callData)

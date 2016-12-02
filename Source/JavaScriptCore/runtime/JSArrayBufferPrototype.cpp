@@ -40,7 +40,7 @@ static EncodedJSValue JSC_HOST_CALL arrayBufferProtoFuncSlice(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* callee = jsCast<JSFunction*>(exec->callee());
+    JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     
     JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(exec->thisValue());
     if (!thisObject)

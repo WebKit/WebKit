@@ -96,7 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructPromise(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSGlobalObject* globalObject = exec->callee()->globalObject();
+    JSGlobalObject* globalObject = exec->jsCallee()->globalObject();
 
     JSValue newTarget = exec->newTarget();
     if (newTarget.isUndefined())

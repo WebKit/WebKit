@@ -86,7 +86,7 @@ static EncodedJSValue JSC_HOST_CALL constructArrayBuffer(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSArrayBufferConstructor* constructor =
-        jsCast<JSArrayBufferConstructor*>(exec->callee());
+        jsCast<JSArrayBufferConstructor*>(exec->jsCallee());
     
     unsigned length;
     if (exec->argumentCount()) {

@@ -55,7 +55,7 @@ static const HashTableValue JSFloat64ArrayConstructorTableValues[] =
 static const HashTable JSFloat64ArrayConstructorTable = { 1, 0, JSFloat64ArrayConstructorTableValues, 0 };
 EncodedJSValue JSC_HOST_CALL JSFloat64ArrayConstructor::constructJSFloat64Array(ExecState* exec)
 {
-    JSFloat64ArrayConstructor* jsConstructor = jsCast<JSFloat64ArrayConstructor*>(exec->callee());
+    JSFloat64ArrayConstructor* jsConstructor = jsCast<JSFloat64ArrayConstructor*>(exec->jsCallee());
     RefPtr<Float64Array> array = constructArrayBufferView<Float64Array, double>(exec);
     if (!array.get())
         // Exception has already been thrown.

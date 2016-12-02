@@ -49,9 +49,9 @@ EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& state)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(jsCast<DOMConstructorObject*>(state.callee()));
-    ASSERT(jsCast<DOMConstructorObject*>(state.callee())->globalObject());
-    auto& globalObject = *jsCast<DOMConstructorObject*>(state.callee())->globalObject();
+    ASSERT(jsCast<DOMConstructorObject*>(state.jsCallee()));
+    ASSERT(jsCast<DOMConstructorObject*>(state.jsCallee())->globalObject());
+    auto& globalObject = *jsCast<DOMConstructorObject*>(state.jsCallee())->globalObject();
 
     if (!state.argumentCount())
         return throwVMError(&state, scope, createNotEnoughArgumentsError(&state));

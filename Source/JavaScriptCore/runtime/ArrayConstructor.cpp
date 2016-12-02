@@ -84,7 +84,7 @@ JSValue constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* pro
 
 static inline JSValue constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args, JSValue newTarget)
 {
-    JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
+    JSGlobalObject* globalObject = asInternalFunction(exec->jsCallee())->globalObject();
 
     // a single numeric argument denotes the array size (!)
     if (args.size() == 1)

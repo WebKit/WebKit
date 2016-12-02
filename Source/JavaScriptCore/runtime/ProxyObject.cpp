@@ -499,7 +499,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
         throwStackOverflowError(exec, scope);
         return encodedJSValue();
     }
-    ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
+    ProxyObject* proxy = jsCast<ProxyObject*>(exec->jsCallee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
         return throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));
@@ -549,7 +549,7 @@ static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
         throwStackOverflowError(exec, scope);
         return encodedJSValue();
     }
-    ProxyObject* proxy = jsCast<ProxyObject*>(exec->callee());
+    ProxyObject* proxy = jsCast<ProxyObject*>(exec->jsCallee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
         return throwVMTypeError(exec, scope, ASCIILiteral(s_proxyAlreadyRevokedErrorMessage));

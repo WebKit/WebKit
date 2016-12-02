@@ -82,7 +82,7 @@ ScopedArguments* ScopedArguments::createByCopying(ExecState* exec, ScopedArgumen
     return createByCopyingFrom(
         exec->vm(), exec->lexicalGlobalObject()->scopedArgumentsStructure(),
         exec->registers() + CallFrame::argumentOffset(0), exec->argumentCount(),
-        jsCast<JSFunction*>(exec->callee()), table, scope);
+        jsCast<JSFunction*>(exec->jsCallee()), table, scope);
 }
 
 ScopedArguments* ScopedArguments::createByCopyingFrom(VM& vm, Structure* structure, Register* argumentsStart, unsigned totalLength, JSFunction* callee, ScopedArgumentsTable* table, JSLexicalEnvironment* scope)

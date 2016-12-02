@@ -90,7 +90,7 @@ static EncodedJSValue JSC_HOST_CALL constructIntlNumberFormat(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // 2. Let numberFormat be OrdinaryCreateFromConstructor(newTarget, %NumberFormatPrototype%).
     // 3. ReturnIfAbrupt(numberFormat).
-    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlNumberFormatConstructor*>(state->callee())->numberFormatStructure());
+    Structure* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), jsCast<IntlNumberFormatConstructor*>(state->jsCallee())->numberFormatStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     IntlNumberFormat* numberFormat = IntlNumberFormat::create(vm, structure);
     ASSERT(numberFormat);
@@ -107,7 +107,7 @@ static EncodedJSValue JSC_HOST_CALL callIntlNumberFormat(ExecState* state)
     // 1. If NewTarget is undefined, let newTarget be the active function object, else let newTarget be NewTarget.
     // NewTarget is always undefined when called as a function.
 
-    IntlNumberFormatConstructor* callee = jsCast<IntlNumberFormatConstructor*>(state->callee());
+    IntlNumberFormatConstructor* callee = jsCast<IntlNumberFormatConstructor*>(state->jsCallee());
 
     // FIXME: Workaround to provide compatibility with ECMA-402 1.0 call/apply patterns.
     // https://bugs.webkit.org/show_bug.cgi?id=153679
@@ -142,7 +142,7 @@ EncodedJSValue JSC_HOST_CALL IntlNumberFormatConstructorFuncSupportedLocalesOf(E
     // 11.2.2 Intl.NumberFormat.supportedLocalesOf(locales [, options]) (ECMA-402 2.0)
 
     // 1. Let availableLocales be %NumberFormat%.[[availableLocales]].
-    JSGlobalObject* globalObject = state->callee()->globalObject();
+    JSGlobalObject* globalObject = state->jsCallee()->globalObject();
     const HashSet<String> availableLocales = globalObject->intlNumberFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).

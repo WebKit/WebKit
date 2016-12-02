@@ -49,7 +49,7 @@ template<> EncodedJSValue JSImageConstructor::construct(ExecState* state)
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(state->callee());
+    JSImageConstructor* jsConstructor = jsCast<JSImageConstructor*>(state->jsCallee());
     Document* document = jsConstructor->document();
     if (!document)
         return throwVMError(state, scope, createReferenceError(state, "Image constructor associated document is unavailable"));

@@ -1,3 +1,59 @@
+2016-12-01  Saam Barati  <sbarati@apple.com>
+
+        Rename CallFrame::callee() to CallFrame::jsCallee()
+        https://bugs.webkit.org/show_bug.cgi?id=165293
+
+        Reviewed by Keith Miller.
+
+        * bindings/js/JSDOMConstructor.h:
+        (WebCore::JSBuiltinConstructor<JSClass>::construct):
+        * bindings/js/JSDataCueCustom.cpp:
+        (WebCore::constructJSDataCue):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::construct):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::constructJSMutationObserver):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::callPlugin):
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::constructJSWorker):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64ArrayConstructor::constructJSFloat64Array):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::construct):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorNamedConstructor::construct):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::construct):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::construct):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors1):
+        (WebCore::constructJSTestOverloadedConstructors2):
+        (WebCore::constructJSTestOverloadedConstructors3):
+        (WebCore::constructJSTestOverloadedConstructors4):
+        (WebCore::constructJSTestOverloadedConstructors5):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence1):
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence2):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::construct):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/runtime_method.cpp:
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::callRuntimeObject):
+        (JSC::Bindings::callRuntimeConstructor):
+
 2016-12-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Fade controls in when entering and exiting fullscreen

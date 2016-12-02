@@ -122,7 +122,7 @@ public:
     {
         VM& vm = exec->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        throwTypeError(exec, scope, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+        throwTypeError(exec, scope, static_cast<StrictModeTypeErrorFunction*>(exec->jsCallee())->m_message);
         return JSValue::encode(jsNull());
     }
 
@@ -136,7 +136,7 @@ public:
     {
         VM& vm = exec->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        throwTypeError(exec, scope, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+        throwTypeError(exec, scope, static_cast<StrictModeTypeErrorFunction*>(exec->jsCallee())->m_message);
         return JSValue::encode(jsNull());
     }
 

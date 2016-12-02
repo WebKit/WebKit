@@ -99,10 +99,10 @@ Structure* InternalFunction::createSubclassStructure(ExecState* exec, JSValue ne
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     // We allow newTarget == JSValue() because the API needs to be able to create classes without having a real JS frame.
-    // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == exec->callee()
+    // Since we don't allow subclassing in the API we just treat newTarget == JSValue() as newTarget == exec->jsCallee()
     ASSERT(!newTarget || newTarget.isConstructor());
 
-    if (newTarget && newTarget != exec->callee()) {
+    if (newTarget && newTarget != exec->jsCallee()) {
         // newTarget may be an InternalFunction if we were called from Reflect.construct.
         JSFunction* targetFunction = jsDynamicCast<JSFunction*>(newTarget);
 

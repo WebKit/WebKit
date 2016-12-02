@@ -177,7 +177,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructDate(exec, asInternalFunction(exec->callee())->globalObject(), exec->newTarget(), args));
+    return JSValue::encode(constructDate(exec, asInternalFunction(exec->jsCallee())->globalObject(), exec->newTarget(), args));
 }
 
 ConstructType DateConstructor::getConstructData(JSCell*, ConstructData& constructData)

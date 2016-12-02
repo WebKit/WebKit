@@ -57,7 +57,7 @@ static EncodedJSValue JSC_HOST_CALL constructWeakMap(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
+    JSGlobalObject* globalObject = asInternalFunction(exec->jsCallee())->globalObject();
     Structure* weakMapStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->weakMapStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSWeakMap* weakMap = JSWeakMap::create(exec, weakMapStructure);

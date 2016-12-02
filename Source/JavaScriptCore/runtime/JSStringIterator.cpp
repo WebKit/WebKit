@@ -53,7 +53,7 @@ JSStringIterator* JSStringIterator::clone(ExecState* exec)
     JSValue iteratedString = getDirect(vm, vm.propertyNames->builtinNames().iteratedStringPrivateName());
     JSValue nextIndex = getDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName());
 
-    auto clone = JSStringIterator::create(exec, exec->callee()->globalObject()->stringIteratorStructure(), asString(iteratedString));
+    auto clone = JSStringIterator::create(exec, exec->jsCallee()->globalObject()->stringIteratorStructure(), asString(iteratedString));
     clone->putDirect(vm, vm.propertyNames->builtinNames().stringIteratorNextIndexPrivateName(), nextIndex);
     return clone;
 }

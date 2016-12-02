@@ -52,7 +52,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
     VM& vm = exec.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    DOMConstructorObject* castedThis = jsCast<DOMConstructorObject*>(exec.callee());
+    DOMConstructorObject* castedThis = jsCast<DOMConstructorObject*>(exec.jsCallee());
     ASSERT(castedThis);
     if (exec.argumentCount() < 3)
         return throwVMError(&exec, scope, createNotEnoughArgumentsError(&exec));

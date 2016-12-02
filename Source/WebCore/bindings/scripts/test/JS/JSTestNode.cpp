@@ -84,7 +84,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestNodeConstructor::construct(ExecSta
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* castedThis = jsCast<JSTestNodeConstructor*>(state->callee());
+    auto* castedThis = jsCast<JSTestNodeConstructor*>(state->jsCallee());
     ASSERT(castedThis);
     auto object = TestNode::create();
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));

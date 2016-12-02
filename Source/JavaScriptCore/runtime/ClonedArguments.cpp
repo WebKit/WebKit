@@ -94,7 +94,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
     if (inlineCallFrame)
         callee = jsCast<JSFunction*>(inlineCallFrame->calleeRecovery.recover(targetFrame));
     else
-        callee = jsCast<JSFunction*>(targetFrame->callee());
+        callee = jsCast<JSFunction*>(targetFrame->jsCallee());
 
     ClonedArguments* result = nullptr;
     

@@ -190,7 +190,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
 
     // 11. Let localeData be %NumberFormat%.[[localeData]].
     // 12. Let r be ResolveLocale(%NumberFormat%.[[availableLocales]], requestedLocales, opt, %NumberFormat%.[[relevantExtensionKeys]], localeData).
-    auto& availableLocales = state.callee()->globalObject()->intlNumberFormatAvailableLocales();
+    auto& availableLocales = state.jsCallee()->globalObject()->intlNumberFormatAvailableLocales();
     auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
 
     // 13. Set numberFormat.[[locale]] to the value of r.[[locale]].

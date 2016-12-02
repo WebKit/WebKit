@@ -1,3 +1,184 @@
+2016-12-01  Saam Barati  <sbarati@apple.com>
+
+        Rename CallFrame::callee() to CallFrame::jsCallee()
+        https://bugs.webkit.org/show_bug.cgi?id=165293
+
+        Reviewed by Keith Miller.
+
+        Wasm will soon have its own Callee that doesn't derive
+        from JSObject, but derives from JSCell. I want to introduce
+        a new function like:
+        ```
+        CalleeBase* CallFrame::callee()
+        ```
+        
+        once we have a Wasm callee. It only makes sense to name that
+        function callee() and rename the current one turn to:
+        ```
+        JSObject* CallFrame::jsCallee()
+        ```
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        (JSC::APICallbackFunction::construct):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::construct):
+        (JSC::JSCallbackObject<Parent>::call):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::scope):
+        (JSC::DebuggerCallFrame::type):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::friendlyFunctionName):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::jsCallee):
+        (JSC::ExecState::callee): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::notifyDebuggerOfUnwinding):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readNonInlinedFrame):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::callAsyncFunctionConstructor):
+        (JSC::constructAsyncFunctionConstructor):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructWithBooleanConstructor):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructWithDateConstructor):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::createByCopying):
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::constructThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::callThrowTypeError):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithErrorConstructor):
+        (JSC::Interpreter::callErrorConstructor):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructWithFunctionConstructor):
+        (JSC::callFunctionConstructor):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::callGeneratorFunctionConstructor):
+        (JSC::constructGeneratorFunctionConstructor):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createSubclassStructure):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::constructIntlCollator):
+        (JSC::callIntlCollator):
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::constructIntlDateTimeFormat):
+        (JSC::callIntlDateTimeFormat):
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::constructIntlNumberFormat):
+        (JSC::callIntlNumberFormat):
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf):
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        (JSC::defaultLocale):
+        (JSC::lookupSupportedLocales):
+        (JSC::intlObjectFuncGetCanonicalLocales):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::constructArrayBuffer):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::arrayBufferProtoFuncSlice):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        (JSC::boundFunctionCall):
+        (JSC::boundThisNoArgsFunctionConstruct):
+        (JSC::boundFunctionConstruct):
+        * runtime/JSCellInlines.h:
+        (JSC::ExecState::vm):
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::customGetterSetterFunctionCall):
+        * runtime/JSFunction.cpp:
+        (JSC::callHostFunctionAsConstructor):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncSlice):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSInternalPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::createPair):
+        (JSC::JSMapIterator::clone):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::runStdFunction):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::clone):
+        * runtime/JSScope.h:
+        (JSC::ExecState::lexicalGlobalObject):
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::createPair):
+        (JSC::JSSetIterator::clone):
+        * runtime/JSStringIterator.cpp:
+        (JSC::JSStringIterator::clone):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/MapPrototype.cpp:
+        (JSC::mapProtoFuncValues):
+        (JSC::mapProtoFuncEntries):
+        (JSC::mapProtoFuncKeys):
+        (JSC::privateFuncMapIterator):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithNativeErrorConstructor):
+        (JSC::Interpreter::callNativeErrorConstructor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyCall):
+        (JSC::performProxyConstruct):
+        * runtime/ProxyRevoke.cpp:
+        (JSC::performProxyRevoke):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructWithRegExpConstructor):
+        (JSC::callRegExpConstructor):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::createByCopying):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/SetPrototype.cpp:
+        (JSC::setProtoFuncValues):
+        (JSC::setProtoFuncEntries):
+        (JSC::privateFuncSetIterator):
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIterator):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::constructWeakMap):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::constructWeakSet):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):
+
 2016-12-01  Brian Burg  <bburg@apple.com>
 
         Web Inspector: generated code should use a framework-style import for *ProtocolArrayConversions.h
