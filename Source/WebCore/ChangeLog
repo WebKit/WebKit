@@ -1,3 +1,15 @@
+2016-12-01  Brent Fulgham  <bfulgham@apple.com>
+
+        Rare crash when preparing to print
+        https://bugs.webkit.org/show_bug.cgi?id=165280
+        <rdar://problem/28240254>
+
+        Reviewed by Dean Jackson.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting): Only manipulate the FrameView if it is non-null.
+        (WebCore::Frame::documentAtPoint): Drive-by fix to change a 0 return to nullptr.
+
 2016-12-01  Simon Fraser  <simon.fraser@apple.com>
 
         Put an obvious debug border on layers with backdrop filters
