@@ -1,3 +1,37 @@
+2016-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [Mac][WK1] Implement new HTML interactive form validation user interface
+        https://bugs.webkit.org/show_bug.cgi?id=164483
+
+        Reviewed by Simon Fraser.
+
+        Implement new HTML interactive form validation user interface on Mac
+        WK1 and enable it by default.
+
+        * WebCoreSupport/WebValidationMessageClient.h: Added.
+        * WebCoreSupport/WebValidationMessageClient.mm: Added.
+        (WebValidationMessageClient::WebValidationMessageClient):
+        (WebValidationMessageClient::~WebValidationMessageClient):
+        (WebValidationMessageClient::showValidationMessage):
+        (WebValidationMessageClient::hideValidationMessage):
+        (WebValidationMessageClient::isValidationMessageVisible):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _willStartScrollingOrZooming]):
+        (-[WebView _contentsOfUserInterfaceItem:]):
+        (-[WebView _scaleWebView:atOrigin:]):
+        (-[WebView _didScrollDocumentInFrameView:]):
+        (-[WebView _setZoomMultiplier:isTextOnly:]):
+        (-[WebView showFormValidationMessage:withAnchorRect:]):
+        (-[WebView hideFormValidationMessage]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+        * WebView/WebViewInternal.h:
+        * WebView/WebViewPrivate.h:
+
 2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a runtime flag for SubtleCrypto

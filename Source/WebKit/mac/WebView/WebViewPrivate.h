@@ -486,6 +486,8 @@ Could be worth adding to the API.
 // SPI for DumpRenderTree
 - (void)_updateActiveState;
 
+- (void)_didScrollDocumentInFrameView:(WebFrameView *)frameView;
+
 /*!
     @method _registerViewClass:representationClass:forURLScheme:
     @discussion Register classes that implement WebDocumentView and WebDocumentRepresentation respectively.
@@ -742,6 +744,7 @@ Could be worth adding to the API.
 - (void)setInteractiveFormValidationEnabled:(BOOL)enabled;
 - (int)validationMessageTimerMagnification;
 - (void)setValidationMessageTimerMagnification:(int)newValue;
+- (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 // Returns YES if NSView -displayRectIgnoringOpacity:inContext: will produce a faithful representation of the content.
 - (BOOL)_isSoftwareRenderable;

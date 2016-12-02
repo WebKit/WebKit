@@ -1689,7 +1689,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         [_private->completionController endRevertingChange:NO moveLeft:NO];
 #endif
         
-        [[webView _UIDelegateForwarder] webView:webView didScrollDocumentInFrameView:[self _frameView]];
+        [webView _didScrollDocumentInFrameView:[self _frameView]];
     }
     _private->lastScrollPosition = origin;
 }

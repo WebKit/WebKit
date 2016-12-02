@@ -300,4 +300,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_dismissTextTouchBarPopoverItemWithIdentifier:(NSString *)identifier;
 - (NSCandidateListTouchBarItem *)candidateList;
 
+- (void)showFormValidationMessage:(NSString *)message withAnchorRect:(NSRect)anchorRect;
+- (void)hideFormValidationMessage;
+
 @end

@@ -93,6 +93,17 @@ fast/mediastream
 http/tests/media/media-stream
 http/tests/ssl/media-stream
 
+# These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
+fast/forms/validation-message-on-listbox.html
+fast/forms/validation-message-on-menulist.html
+fast/forms/validation-message-on-radio.html
+fast/forms/validation-message-on-checkbox.html
+fast/forms/validation-message-on-range.html
+fast/forms/validation-message-clone.html
+fast/forms/validation-message-in-relative-body.html
+fast/forms/validation-message-appearance.html
+fast/forms/validation-message-on-textarea.html
+
 # Disable snapshotting tests on WK1 only
 plugins/snapshotting
 
@@ -242,10 +253,6 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 
 # rdar://problem/26478296
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
-
-# We do not support the new HTML validation UI on WebKit1 yet (rdar://problem/28944652).
-fast/forms/validation-custom-message.html [ Skip ]
-fast/forms/validation-messages.html [ Skip ]
 
 [ Yosemite ] http/tests/media/hls/video-controller-getStartDate.html [ Pass Timeout ]
 

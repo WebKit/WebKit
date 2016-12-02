@@ -1,3 +1,14 @@
+2016-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [Mac][WK1] Implement new HTML interactive form validation user interface
+        https://bugs.webkit.org/show_bug.cgi?id=164483
+
+        Reviewed by Simon Fraser.
+
+        Unskip tests for HTML form validation that are now passing on Mac WK1.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html as flaky on mac-wk1.

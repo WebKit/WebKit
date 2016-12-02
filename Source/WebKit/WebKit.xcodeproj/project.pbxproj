@@ -122,6 +122,8 @@
 		3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3ABB3C791309C3B500E93D94 /* WebStorageTrackerClient.mm */; };
 		3AE15D5012DBDED4009323C8 /* WebStorageManagerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */; };
 		44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 44BB8B131241A022001E3A22 /* WebArchiveInternal.h */; };
+		4618DFF81DEF760A0033C3AA /* WebValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */; };
+		4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */; };
@@ -942,6 +944,8 @@
 		3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebStorageManagerInternal.h; sourceTree = "<group>"; };
 		449098B90F8F82DF0076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		44BB8B131241A022001E3A22 /* WebArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveInternal.h; sourceTree = "<group>"; };
+		4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
+		4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebValidationMessageClient.mm; sourceTree = "<group>"; };
 		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
 		4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClient.mm; sourceTree = "<group>"; };
 		511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseManager.mm; sourceTree = "<group>"; };
@@ -2633,6 +2637,8 @@
 				93EB178C09F88D460091F8FF /* WebSystemInterface.mm */,
 				070F549917F1E42B00169E04 /* WebUserMediaClient.h */,
 				070F549A17F1E42B00169E04 /* WebUserMediaClient.mm */,
+				4618DFF61DEF760A0033C3AA /* WebValidationMessageClient.h */,
+				4618DFF71DEF760A0033C3AA /* WebValidationMessageClient.mm */,
 				1430C12A1B2C5DF700DEA01D /* WebViewGroup.cpp */,
 				1430C12B1B2C5DF700DEA01D /* WebViewGroup.h */,
 				1AC7176D1A26568A002E3115 /* WebVisitedLinkStore.h */,
@@ -3166,6 +3172,7 @@
 				E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */,
 				939810890824BF01008DF038 /* WebResourcePrivate.h in Headers */,
 				7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */,
+				4618DFF81DEF760A0033C3AA /* WebValidationMessageClient.h in Headers */,
 				C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */,
 				C0B1F7E810AC8E3100C925D9 /* WebScriptWorld.h in Headers */,
 				C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */,
@@ -3427,6 +3434,7 @@
 				93D4368C1D57ABEE00AB85EA /* DOMDocument.mm in Sources */,
 				93D4368E1D57ABEE00AB85EA /* DOMDocumentFragment.mm in Sources */,
 				93D436941D57ABEE00AB85EA /* DOMDocumentType.mm in Sources */,
+				4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */,
 				93D436971D57ABEE00AB85EA /* DOMDOMImplementation.mm in Sources */,
 				93D4369A1D57ABEE00AB85EA /* DOMDOMTokenList.mm in Sources */,
 				93D4369D1D57ABEE00AB85EA /* DOMElement.mm in Sources */,

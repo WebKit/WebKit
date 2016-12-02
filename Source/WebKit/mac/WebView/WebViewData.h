@@ -48,6 +48,7 @@ class AlternativeTextUIController;
 class HistoryItem;
 class Page;
 class TextIndicatorWindow;
+class ValidationBubble;
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 class WebPlaybackSessionInterfaceMac;
 class WebPlaybackSessionModelMediaElement;
@@ -204,6 +205,8 @@ private:
     RetainPtr<WebWindowVisibilityObserver> windowVisibilityObserver;
     RetainPtr<NSEvent> pressureEvent;
 #endif // PLATFORM(MAC)
+
+    std::unique_ptr<WebCore::ValidationBubble> formValidationBubble;
 
     BOOL shouldMaintainInactiveSelection;
 

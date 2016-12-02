@@ -37,6 +37,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/TextIndicatorWindow.h>
+#import <WebCore/ValidationBubble.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -143,7 +144,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     zoomMultiplier = 1;
     zoomsTextOnly = NO;
 
-    interactiveFormValidationEnabled = NO;
+    interactiveFormValidationEnabled = YES;
     // The default value should be synchronized with WebCore/page/Settings.cpp.
     validationMessageTimerMagnification = 50;
 

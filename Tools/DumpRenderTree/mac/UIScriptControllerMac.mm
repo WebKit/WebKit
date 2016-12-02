@@ -28,6 +28,9 @@
 
 #import "DumpRenderTree.h"
 #import "UIScriptContext.h"
+#import <JavaScriptCore/JSContext.h>
+#import <JavaScriptCore/JSStringRefCF.h>
+#import <JavaScriptCore/JSValue.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -75,7 +78,15 @@ void UIScriptController::simulateAccessibilitySettingsChangeNotification(JSValue
 
 JSObjectRef UIScriptController::contentsOfUserInterfaceItem(JSStringRef interfaceItem) const
 {
+#if JSC_OBJC_API_ENABLED
+    WebView *webView = [mainFrame webView];
+    RetainPtr<CFStringRef> interfaceItemCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, interfaceItem));
+    NSDictionary *contentDictionary = [webView _contentsOfUserInterfaceItem:(NSString *)interfaceItemCF.get()];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:contentDictionary inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+#else
+    UNUSED_PARAM(interfaceItem);
     return nullptr;
+#endif
 }
 
 }
