@@ -78,33 +78,16 @@
 (if (not (defined? 'os-version))
     (define os-version (param "_OS_VERSION")))
 
-;; Graphics
-(if (defined? 'system-graphics)
-    (system-graphics)
-    (begin
-        (shared-preferences-read
-            "com.apple.opengl"
-            "com.nvidia.OpenGL")
-        (allow mach-lookup (global-name "com.apple.cvmsServ"))
-        (allow iokit-open
-            (iokit-connection "IOAccelerator")
-            (iokit-user-client-class "IOAccelerationUserClient")
-            (iokit-user-client-class "IOSurfaceRootUserClient")
-            (iokit-user-client-class "IOSurfaceSendRight")
-            (iokit-user-client-class "IOFramebufferSharedUserClient")
-            (iokit-user-client-class "AppleSNBFBUserClient")
-            (iokit-user-client-class "AGPMClient")
-            (iokit-user-client-class "AppleGraphicsControlClient")
-            (iokit-user-client-class "AppleGraphicsPolicyClient"))))
+(system-graphics)
 
 ;; Read-only preferences
 (shared-preferences-read
     ".GlobalPreferences"
+    "com.apple.ATS"
     "com.apple.Bluetooth"
     "com.apple.CoreGraphics"
-    "com.apple.QuickTime"
     "com.apple.HIToolbox"
-    "com.apple.ATS"
+    "com.apple.QuickTime"
     "com.apple.driver.AppleBluetoothMultitouch.mouse"
     "com.apple.driver.AppleBluetoothMultitouch.trackpad"
     "com.apple.driver.AppleHIDMouse"
@@ -250,21 +233,7 @@
 (if (defined? 'mach-register)
     (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
-;; Networking
-(if (defined? 'system-network)
-    (system-network)
-    (begin
-      (allow file-read* (literal "/Library/Preferences/com.apple.networkd.plist"))
-      (allow mach-lookup
-             (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
-             (global-name "com.apple.networkd"))
-      (allow network-outbound
-             (control-name "com.apple.netsrc")
-             (control-name "com.apple.network.statistics"))
-      (allow system-socket
-             (require-all (socket-domain AF_SYSTEM)
-                          (socket-protocol 2)) ; SYSPROTO_CONTROL
-             (socket-domain AF_ROUTE))))
+(system-network)
 
 (allow network-outbound
     ;; Local mDNSResponder for DNS, arbitrary outbound TCP and UDP

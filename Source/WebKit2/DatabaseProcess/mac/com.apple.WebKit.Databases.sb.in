@@ -37,12 +37,21 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+;; IOKit user clients
+(allow iokit-open
+    (iokit-user-client-class "RootDomainUserClient"))
+
 ;; Security framework
 (allow mach-lookup
        (global-name "com.apple.SecurityServer"))
+(allow user-preference-read
+    (preference-domain
+        "com.apple.security"
+        "com.apple.security.revocation"))
 (allow file-read*
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures")
+       ; The following are needed until <rdar://problem/11134688> is resolved.
        (literal "/Library/Preferences/com.apple.security.plist")
        (literal "/Library/Preferences/com.apple.security.revocation.plist")
        (home-literal "/Library/Preferences/com.apple.security.plist")
@@ -55,15 +64,13 @@
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
 ;; Read-only preferences and data
+(allow user-preference-read
+    (preference-domain
+        "kCFPreferencesAnyApplication"))
 (allow file-read*
     ;; Basic system paths
     (subpath "/Library/Frameworks")
     (subpath "/Library/Managed Preferences")
-
-    ;; System and user preferences
-    (literal "/Library/Preferences/.GlobalPreferences.plist")
-    (home-literal "/Library/Preferences/.GlobalPreferences.plist")
-    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\.")
 
     ;; On-disk WebKit2 framework location, to account for debug installations
     ;; outside of /System/Library/Frameworks

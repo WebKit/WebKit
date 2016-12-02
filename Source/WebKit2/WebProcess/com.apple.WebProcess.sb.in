@@ -56,26 +56,6 @@
        (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
 
        ;; System and user preferences
-       (literal "/Library/Preferences/.GlobalPreferences.plist")
-       (home-literal "/Library/Preferences/.GlobalPreferences.plist")
-       (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\.")
-       (home-regex #"/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
-       (home-regex #"/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
-       (home-literal "/Library/Preferences/com.apple.ATS.plist")
-       (home-literal "/Library/Preferences/com.apple.CoreGraphics.plist")
-       (home-literal "/Library/Preferences/com.apple.DownloadAssessment.plist")
-       (home-literal "/Library/Preferences/com.apple.HIToolbox.plist")
-       (home-literal "/Library/Preferences/com.apple.LaunchServices.plist")
-       (home-literal "/Library/Preferences/com.apple.MultitouchSupport.plist") ;; FIXME: Remove when <rdar://problem/13011633> is fixed.
-       (home-literal "/Library/Preferences/com.apple.QTKit.plist")
-       (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
-       (home-literal "/Library/Preferences/com.apple.avfoundation.plist")
-       (home-literal "/Library/Preferences/com.apple.coremedia.plist")
-       (home-literal "/Library/Preferences/com.apple.speech.voice.prefs.plist")
-       (home-literal "/Library/Preferences/com.apple.systemsound.plist")
-       (home-literal "/Library/Preferences/com.apple.universalaccess.plist")
-       (home-literal "/Library/Preferences/com.apple.lookup.shared.plist")
-       (home-regex #"/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
        (home-literal "/.CFUserTextEncoding")
 
        ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
@@ -91,6 +71,38 @@
        (subpath "/Library/QuickTime")
 
        (home-subpath "/Library/Dictionaries"))
+
+;; Preferences support
+(allow user-preference-read
+    (preference-domain
+        "kCFPreferencesAnyApplication"
+        "com.apple.ATS"
+        "com.apple.CoreGraphics"
+        "com.apple.DownloadAssessment"
+        "com.apple.HIToolbox"
+        "com.apple.LaunchServices"
+        "com.apple.MultitouchSupport" ;; FIXME: Remove when <rdar://problem/13011633> is fixed.
+        "com.apple.QTKit"
+        "com.apple.ServicesMenu.Services" ;; Needed for NSAttributedString <rdar://problem/10844321>
+        "com.apple.WebFoundation"
+        "com.apple.avfoundation"
+        "com.apple.coremedia"
+        "com.apple.crypto"
+        "com.apple.driver.AppleBluetoothMultitouch.mouse"
+        "com.apple.driver.AppleBluetoothMultitouch.trackpad"
+        "com.apple.driver.AppleHIDMouse"
+        "com.apple.lookup.shared"
+        "com.apple.mediaaccessibility"
+        "com.apple.networkConnect"
+        "com.apple.security"
+        "com.apple.security.common"
+        "com.apple.security.revocation"
+        "com.apple.speech.voice.prefs"
+        "com.apple.systemsound"
+        "com.apple.universalaccess"
+        "edu.mit.Kerberos"
+        "pbs" ;; Needed for NSAttributedString <rdar://problem/10844321>
+))
 
 ;; On-disk WebKit2 framework location, to account for debug installations outside of /System/Library/Frameworks,
 ;; and to allow issuing extensions.
@@ -121,8 +133,8 @@
     (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 ;; MediaAccessibility
-(allow file-read* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.plist"))
-(allow file-read* file-write* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.public.plist"))
+(allow user-preference-read user-preference-write
+    (preference-domain "com.apple.mediaaccessibility.public"))
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
@@ -170,6 +182,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
        (global-name "com.apple.FontServer")
 #endif
+       (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.SystemConfiguration.PPPController")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
@@ -177,32 +190,31 @@
        (global-name "com.apple.audio.audiohald")
        (global-name "com.apple.audio.coreaudiod")
        (global-name "com.apple.awdd")
+       (global-name "com.apple.cfnetwork.AuthBrokerAgent")
        (global-name "com.apple.cookied")
+       (global-name "com.apple.coreservices.launchservicesd")
        (global-name "com.apple.dock.server")
        (global-name "com.apple.fonts")
+       (global-name "com.apple.iconservices")
+       (global-name "com.apple.iconservices.store")
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+       (global-name "com.apple.mediaremoted.xpc")
+#endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+       (global-name "com.apple.nesessionmanager.flow-divert-token")
+#endif
+       (global-name "com.apple.speech.speechsynthesisd")
+       (global-name "com.apple.speech.synthesis.console")
        (global-name "com.apple.system.opendirectoryd.api")
        (global-name "com.apple.tccd")
        (global-name "com.apple.tccd.system")
        (global-name "com.apple.window_proxies")
        (global-name "com.apple.windowserver.active")
-       (global-name "com.apple.cfnetwork.AuthBrokerAgent")
-       (global-name "com.apple.PowerManagement.control")
-       (global-name "com.apple.speech.speechsynthesisd")
-       (global-name "com.apple.speech.synthesis.console")
-       (global-name "com.apple.coreservices.launchservicesd")
-       (global-name "com.apple.iconservices")
-       (global-name "com.apple.iconservices.store")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-       (global-name "com.apple.nesessionmanager.flow-divert-token")
-#endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-       (global-name "com.apple.mediaremoted.xpc")
-#endif
 )
 
 ;; Security framework
 (allow mach-lookup
-       (global-name "com.apple.ctkd.token-client") 
+       (global-name "com.apple.ctkd.token-client")
        (global-name "com.apple.ocspd")
        (global-name "com.apple.securityd.xpc") 
        (global-name "com.apple.CoreAuthentication.agent.libxpc")
@@ -220,7 +232,7 @@
 #endif
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures")
-       (literal "/Library/Preferences/com.apple.crypto.plist")
+       ; The following are needed until <rdar://problem/11134688> is resolved.
        (literal "/Library/Preferences/com.apple.security.plist")
        (literal "/Library/Preferences/com.apple.security.common.plist")
        (literal "/Library/Preferences/com.apple.security.revocation.plist")
@@ -251,10 +263,6 @@
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
 
-;; Needed for NSAttributedString, <rdar://problem/10844321>.
-(allow file-read*
-       (home-literal "/Library/Preferences/pbs.plist")
-       (home-literal "/Library/Preferences/com.apple.ServicesMenu.Services.plist"))
 (allow mach-lookup
        (global-name "com.apple.pbs.fetch_services"))
 
@@ -266,13 +274,12 @@
        (global-name "com.apple.system.notification_center"))
 (allow network-outbound
        (remote udp))
+(allow user-preference-read
+    (preference-domain
+        "com.apple.Kerberos"
+        "com.apple.GSS"))
+
 (allow file-read*
-        (home-subpath "/Library/Preferences/com.apple.Kerberos.plist")
-        (home-subpath "/Library/Preferences/com.apple.GSS.plist")
-        (home-subpath "/Library/Preferences/edu.mit.Kerberos")
-        (literal "/Library/Preferences/com.apple.Kerberos.plist")
-        (literal "/Library/Preferences/com.apple.GSS.plist")
-        (literal "/Library/Preferences/edu.mit.Kerberos")
         (literal "/private/etc/krb5.conf")
         (literal "/private/etc/services")
         (literal "/private/etc/host")
@@ -293,9 +300,10 @@
 ;; Deny access needed for unnecessary NSApplication initialization.
 ;; FIXME: This can be removed once <rdar://problem/13011633> is fixed.
 (deny file-read* (with no-log)
-       (home-literal "/Library/Preferences/com.apple.speech.recognition.AppleSpeechRecognition.prefs.plist")
        (subpath "/Library/InputManagers")
        (home-subpath "/Library/InputManagers"))
+(deny user-preference-read (with no-log)
+    (preference-domain "com.apple.speech.recognition.AppleSpeechRecognition.prefs"))
 (deny mach-lookup (with no-log)
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")

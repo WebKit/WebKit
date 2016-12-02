@@ -38,6 +38,12 @@
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
 ;; Read-only preferences and data
+(allow user-preference-read
+    (preference-domain
+        "kCFPreferencesAnyApplication"
+        "com.apple.DownloadAssessment"
+        "com.apple.WebFoundation"
+        "com.apple.networkConnect"))
 (allow file-read*
     ;; Basic system paths
     (subpath "/Library/Frameworks")
@@ -46,13 +52,7 @@
     (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains")
 
     ;; System and user preferences
-    (literal "/Library/Preferences/.GlobalPreferences.plist")
     (regex #"^/Library/Managed Preferences/[^/]+/com\.apple\.networkConnect\.plist$")
-    (home-literal "/Library/Preferences/.GlobalPreferences.plist")
-    (home-regex #"/Library/Preferences/ByHost/\.GlobalPreferences\.")
-    (home-regex #"/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
-    (home-literal "/Library/Preferences/com.apple.DownloadAssessment.plist")
-    (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
 
     ;; On-disk WebKit2 framework location, to account for debug installations
     ;; outside of /System/Library/Frameworks
@@ -115,13 +115,21 @@
 
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 
+(allow user-preference-read
+    (preference-domain
+        "com.apple.crypto"
+        "com.apple.security"
+        "com.apple.security.common"
+        "com.apple.security.revocation"))
+
 (allow file-read*
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
        (subpath "/Library/Keychains")
 #endif
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures")
-       (literal "/Library/Preferences/com.apple.crypto.plist")
+
+       ; The following are needed until <rdar://problem/11134688> is resolved.
        (literal "/Library/Preferences/com.apple.security.plist")
        (literal "/Library/Preferences/com.apple.security.common.plist")
        (literal "/Library/Preferences/com.apple.security.revocation.plist")
@@ -146,13 +154,12 @@
     (global-name "com.apple.system.notification_center"))
 (allow network-outbound
     (remote udp))
+(allow user-preference-read
+    (preference-domain
+        "com.apple.GSS"
+        "com.apple.Kerberos"
+        "edu.mit.Kerberos"))
 (allow file-read*
-    (home-subpath "/Library/Preferences/com.apple.Kerberos.plist")
-    (home-subpath "/Library/Preferences/com.apple.GSS.plist")
-    (home-subpath "/Library/Preferences/edu.mit.Kerberos")
-    (literal "/Library/Preferences/com.apple.Kerberos.plist")
-    (literal "/Library/Preferences/com.apple.GSS.plist")
-    (literal "/Library/Preferences/edu.mit.Kerberos")
     (literal "/private/etc/krb5.conf")
     (literal "/private/etc/services")
     (literal "/private/etc/host")
