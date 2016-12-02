@@ -34,6 +34,7 @@
 #include "HTTPParsers.h"
 
 #include "HTTPHeaderNames.h"
+#include "Language.h"
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -123,6 +124,36 @@ bool isValidHTTPHeaderValue(const String& value)
         if (c == 0x7F || c > 0xFF || (c < 0x20 && c != '\t'))
             return false;
     }
+    return true;
+}
+
+// See RFC 7231, Section 5.3.2
+bool isValidAcceptHeaderValue(const String& value)
+{
+    for (unsigned i = 0; i < value.length(); ++i) {
+        UChar c = value[i];
+        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == '.' || c == '/' || c == ';' || c == '=')
+            continue;
+        return false;
+    }
+    
+    return true;
+}
+
+// See RFC 7231, Section 5.3.5 and 3.1.3.2
+bool isValidLanguageHeaderValue(const String& value)
+{
+    for (unsigned i = 0; i < value.length(); ++i) {
+        UChar c = value[i];
+        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == '-' || c == '.' || c == ';' || c == '=')
+            continue;
+        return false;
+    }
+    
+    // FIXME: Validate further by splitting into language tags and optional quality
+    // values (q=) and then check each language tag.
+    // Language tags https://tools.ietf.org/html/rfc7231#section-3.1.3.1
+    // Language tag syntax https://tools.ietf.org/html/bcp47#section-2.1
     return true;
 }
 
@@ -732,7 +763,7 @@ void parseAccessControlExposeHeadersAllowList(const String& headerValue, HTTPHea
     }
 }
 
-// Implememtnation of https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name
+// Implementation of https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name
 bool isForbiddenHeaderName(const String& name)
 {
     HTTPHeaderName headerName;
@@ -776,18 +807,7 @@ bool isSimpleHeader(const String& name, const String& value)
     HTTPHeaderName headerName;
     if (!findHTTPHeaderName(name, headerName))
         return false;
-    switch (headerName) {
-    case HTTPHeaderName::Accept:
-    case HTTPHeaderName::AcceptLanguage:
-    case HTTPHeaderName::ContentLanguage:
-        return true;
-    case HTTPHeaderName::ContentType: {
-        String mimeType = extractMIMETypeFromMediaType(value);
-        return equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain");
-    }
-    default:
-        return false;
-    }
+    return isCrossOriginSafeRequestHeader(headerName, value);
 }
 
 bool isCrossOriginSafeHeader(HTTPHeaderName name, const HTTPHeaderSet& accessControlExposeHeaderSet)
@@ -824,10 +844,12 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 {
     switch (name) {
     case HTTPHeaderName::Accept:
+        return isValidAcceptHeaderValue(value);
     case HTTPHeaderName::AcceptLanguage:
     case HTTPHeaderName::ContentLanguage:
-        return true;
+        return isValidLanguageHeaderValue(value);
     case HTTPHeaderName::ContentType: {
+        // Preflight is required for MIME types that can not be sent via form submission.
         String mimeType = extractMIMETypeFromMediaType(value);
         return equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain");
     }

@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept-Language is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Content-Language is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Content-Language is not allowed by Access-Control-Allow-Headers.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/cors-preflight-safelisted-headers-responder.php. Request header field Accept is not allowed by Access-Control-Allow-Headers.
+PASS Accept header with normal value SHOULD NOT cause a preflight
+PASS Accept header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight
+PASS Accept-Language header with normal value SHOULD NOT cause a preflight
+PASS Accept-Language header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight
+PASS Content-Language header with normal value SHOULD NOT cause a preflight
+PASS Content-Language header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight
+PASS Accept header with abnormal value SHOULD cause a preflight
+PASS Accept-Language header with abnormal value SHOULD cause a preflight
+PASS Content-Language header with abnormal value SHOULD cause a preflight
+PASS Accept header with normal value, Accept-Language header with normal value, and Content-Language header with abnormal value SHOULD cause a preflight
+PASS Accept header with normal value and then another Accept header with abnormal value SHOULD cause a preflight
+PASS Accept header with abnormal value and explicitly allowed headers SHOULD be allowed
+PASS Content-Language header with abnormal value and explicitly allowed headers SHOULD be allowed
+PASS Accept header with normal value, Accept-Language header with normal value, Content-Language header with abnormal value, and explicitly allowed headers SHOULD be allowed
+PASS Accept header with normal value, then another Accept header with abnormal value, and explicitly allowed headers SHOULD be allowed
+
