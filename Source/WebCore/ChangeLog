@@ -1,3 +1,15 @@
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix :any/:host to allow pseudo-elements. Support -webkit-border-radius.
+        https://bugs.webkit.org/show_bug.cgi?id=165323
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2016-12-02  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Tapping on an HTML validation bubble should dismiss it

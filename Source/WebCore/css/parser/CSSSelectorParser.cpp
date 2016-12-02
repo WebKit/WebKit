@@ -628,7 +628,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         }
         case CSSSelector::PseudoClassAny:
         case CSSSelector::PseudoClassHost: {
-            DisallowPseudoElementsScope scope(this);
             std::unique_ptr<CSSSelectorList> selectorList = std::unique_ptr<CSSSelectorList>(new CSSSelectorList());
             *selectorList = consumeCompoundSelectorList(block);
             if (!selectorList->componentCount() || !block.atEnd())

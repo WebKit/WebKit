@@ -5316,7 +5316,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeShorthandGreedily(columnRuleShorthand(), important);
     case CSSPropertyListStyle:
         return consumeShorthandGreedily(listStyleShorthand(), important);
-    case CSSPropertyBorderRadius: {
+    case CSSPropertyBorderRadius:
+    case CSSPropertyWebkitBorderRadius: {
         RefPtr<CSSPrimitiveValue> horizontalRadii[4];
         RefPtr<CSSPrimitiveValue> verticalRadii[4];
         if (!consumeRadii(horizontalRadii, verticalRadii, m_range, m_context.mode, property == CSSPropertyWebkitBorderRadius))
