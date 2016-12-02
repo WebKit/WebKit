@@ -1,3 +1,16 @@
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Require whitespace following condition tokens in media queries
+        https://bugs.webkit.org/show_bug.cgi?id=165314
+
+        Reviewed by Dean Jackson.
+
+        This test is invalid according to the media queries spec, which states that whitespace is
+        required following "and"/"or" tokens.
+
+        * fast/css/media-rule-no-whitespace-expected.txt: Removed.
+        * fast/css/media-rule-no-whitespace.html: Removed.
+
 2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/pip-support/pip-support-click.html as flaky on Sierra.
