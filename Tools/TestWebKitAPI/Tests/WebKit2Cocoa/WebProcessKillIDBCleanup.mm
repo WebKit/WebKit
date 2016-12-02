@@ -32,6 +32,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/Deque.h>
@@ -83,9 +84,6 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
     RetainPtr<NSString> string4 = (NSString *)[getNextMessage() body];
 
-    // Kill that web process
-    webView = nil;
-
     // Make a new web view with a new web process to finish the test
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
@@ -93,6 +91,10 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
     [webView2 loadRequest:request];
 
     RetainPtr<NSString> string5 = (NSString *)[getNextMessage() body];
+
+    // Kill the first web process to unblock the second web processes transaction from starting.
+    [webView _killWebContentProcessAndResetState];
+
     RetainPtr<NSString> string6 = (NSString *)[getNextMessage() body];
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
