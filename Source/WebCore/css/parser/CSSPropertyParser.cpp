@@ -2036,6 +2036,14 @@ static RefPtr<CSSValue> consumeFlexBasis(CSSParserTokenRange& range, CSSParserMo
     return consumeLengthOrPercent(range, cssParserMode, ValueRangeNonNegative);
 }
 
+static RefPtr<CSSValue> consumeKerning(CSSParserTokenRange& range, CSSParserMode mode)
+{
+    RefPtr<CSSValue> result = consumeIdent<CSSValueAuto, CSSValueNormal>(range);
+    if (result)
+        return result;
+    return consumeLength(range, mode, ValueRangeAll, UnitlessQuirk::Allow);
+}
+
 static RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange& range)
 {
     CSSValueID id = range.peek().id();
@@ -3864,6 +3872,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeNumber(m_range, ValueRangeAll);
     case CSSPropertyBaselineShift:
         return consumeBaselineShift(m_range);
+    case CSSPropertyKerning:
+        return consumeKerning(m_range, m_context.mode);
     case CSSPropertyStrokeMiterlimit:
         return consumeNumber(m_range, ValueRangeNonNegative);
     case CSSPropertyStrokeWidth:
