@@ -1,3 +1,31 @@
+2016-12-02  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB.IndexedDBMultiProcess and IndexedDB.WebProcessKillIDBCleanup sometimes timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=160780 and https://bugs.webkit.org/show_bug.cgi?id=161001
+
+        Reviewed by Alexey Proskuryakov.
+
+        These tests had "run-loop races."
+        
+        The test spins the runloop waiting for one message.
+        Two messages might come in from the WebProcess in short succession, and both be delivered to the
+        UIProcess in the same spin of the runloop.
+
+        Therefore by the time the test stops spinning the runloop, notified that a message was received,
+        the first message has been overwritten by the second.
+
+        These tests are fixed by queueing the incoming messages instead of just storing one.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IndexedDBMultiProcess.mm:
+        (-[IndexedDBMPMessageHandler userContentController:didReceiveScriptMessage:]):
+        (getNextMessage):
+        (TEST):
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebProcessKillIDBCleanup.mm:
+        (-[IndexedDBWebProcessKillMessageHandler userContentController:didReceiveScriptMessage:]):
+        (getNextMessage):
+        (TEST):
+
 2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a runtime flag for SubtleCrypto

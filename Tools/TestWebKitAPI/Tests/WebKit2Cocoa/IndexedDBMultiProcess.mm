@@ -33,12 +33,13 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
+#import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
 static bool receivedScriptMessage;
-static RetainPtr<WKScriptMessage> lastScriptMessage;
+static Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 
 @interface IndexedDBMPMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -48,10 +49,20 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     receivedScriptMessage = true;
-    lastScriptMessage = message;
+    scriptMessages.append(message);
 }
 
 @end
+
+static WKScriptMessage *getNextMessage()
+{
+    if (scriptMessages.isEmpty()) {
+        receivedScriptMessage = false;
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
+    }
+
+    return [[scriptMessages.takeFirst() retain] autorelease];
+}
 
 TEST(IndexedDB, IndexedDBMultiProcess)
 {
@@ -66,17 +77,9 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBMultiProcess-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string1 = (NSString *)[lastScriptMessage body];
-
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
-
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string1 = (NSString *)[getNextMessage() body];
+    RetainPtr<NSString> string2 = (NSString *)[getNextMessage() body];
+    RetainPtr<NSString> string3 = (NSString *)[getNextMessage() body];
 
     // Make a new web view with a new web process to continue the test
     RetainPtr<WKWebView> webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -84,18 +87,14 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBMultiProcess-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView2 loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string4 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string4 = (NSString *)[getNextMessage() body];
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
     EXPECT_WK_STREQ(@"Transaction complete", string2.get());
     EXPECT_WK_STREQ(@"Open success", string3.get());
     EXPECT_WK_STREQ(@"Value of foo: bar", string4.get());
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string5 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string5 = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Get loops started", string5.get());
 
     // Make a new web view with a new web process to continue the test
@@ -103,17 +102,13 @@ TEST(IndexedDB, IndexedDBMultiProcess)
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBMultiProcess-3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView3 loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string6 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string6 = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Blocked!", string6.get());
 
     // Kill the blocking web process
     webView2 = nil;
 
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-    receivedScriptMessage = false;
-    RetainPtr<NSString> string7 = (NSString *)[lastScriptMessage body];
+    RetainPtr<NSString> string7 = (NSString *)[getNextMessage() body];
     EXPECT_WK_STREQ(@"Deleted!", string7.get());
 }
 
