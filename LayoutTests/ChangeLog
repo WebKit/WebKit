@@ -1,5 +1,14 @@
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Make sure the z-component of transform-origin can be implicit
+        https://bugs.webkit.org/show_bug.cgi?id=165326
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations:
+
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix invalid test font specification
         https://bugs.webkit.org/show_bug.cgi?id=165324
 
