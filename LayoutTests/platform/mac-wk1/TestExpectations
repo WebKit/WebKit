@@ -275,6 +275,7 @@ webkit.org/b/162507 http/tests/media/hls/hls-video-resize.html [ Pass Failure ]
 webkit.org/b/161360 [ Release ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin.html [ Pass Failure ]
 
 webkit.org/b/163598 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html [ Pass Failure ]
+webkit.org/b/165318 media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Pass Timeout ]
 webkit.org/b/165258 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Failure ]
 webkit.org/b/165262 media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html [ Failure ]
 
