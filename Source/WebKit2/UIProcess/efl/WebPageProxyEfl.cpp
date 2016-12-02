@@ -83,6 +83,7 @@ void WebPageProxy::setThemePath(const String& themePath)
     process().send(Messages::WebPage::SetThemePath(themePath), m_pageID);
 }
 
+#if PLUGIN_ARCHITECTURE(X11)
 void WebPageProxy::createPluginContainer(uint64_t&)
 {
     notImplemented();
@@ -102,6 +103,7 @@ void WebPageProxy::handleInputMethodKeydown(bool& handled)
 {
     handled = m_keyEventQueue.first().isFiltered();
 }
+#endif
 
 void WebPageProxy::confirmComposition(const String& compositionString)
 {

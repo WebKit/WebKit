@@ -1,3 +1,20 @@
+2016-12-02  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Fix build break when disabling some features.
+        https://bugs.webkit.org/show_bug.cgi?id=165254
+
+        The EFL port was broken if SPELLCHECK was disabled or
+        PLUGIN_ARCHITECTURE is not x11.
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::checkSpellingOfString):
+        Fix UNUSED_PARAM() usage if SPELLCHECK is disabled.
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        Isolate methods within #if PLUGIN_ARCHITECTURE(X11).
+
 2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a runtime flag for SubtleCrypto

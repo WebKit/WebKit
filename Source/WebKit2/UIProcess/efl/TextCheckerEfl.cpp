@@ -198,7 +198,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(text);
-    UNUSED_PARAM(length);
+    UNUSED_PARAM(insertionPoint);
     UNUSED_PARAM(checkingTypes);
 #endif
     return paragraphCheckingResult;
@@ -212,7 +212,6 @@ void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, StringView tex
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(text);
-    UNUSED_PARAM(length);
     UNUSED_PARAM(misspellingLocation);
     UNUSED_PARAM(misspellingLength);
 #endif

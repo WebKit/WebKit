@@ -98,6 +98,8 @@ static void scanTestDictionariesDirectoryIfNecessary(HashMap<AtomicString, Vecto
     scanDirectoryForDicionaries(dictionariesPath.get(), availableLocales);
 #elif defined(TEST_HYPHENATAION_PATH)
     scanDirectoryForDicionaries(TEST_HYPHENATAION_PATH, availableLocales);
+#else
+    UNUSED_PARAM(availableLocales);
 #endif
 }
 #endif

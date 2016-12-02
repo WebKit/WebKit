@@ -1,3 +1,30 @@
+2016-12-02  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Fix build break when disabling some features.
+        https://bugs.webkit.org/show_bug.cgi?id=165254
+
+        Reviewed by Michael Catanzaro.
+
+        If we disable SVG_FONTS or XSLT, then
+        WebCore::CachedResource::isCORSSameOrigin() would have assertions
+        on non-existent members. These should be isolated within "#if" as
+        the other places.
+
+        If we're in DEVELOPER_MODE but did not provide
+        TEST_HYPHENATAION_PATH, then we must mark UNUSED_PARAM() if we're
+        not on GTK port (ie: EFL).
+
+        No new tests as this is a build fix.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::isCORSSameOrigin):
+         - missing #if ENABLED(SVG_FONTS)
+         - missing #if ENABLED(XSLT)
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::scanTestDictionariesDirectoryIfNecessary):
+         - missing UNUSED_PARAM()
+
+
 2016-12-02  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Use an OpenGL < 3.0 compliant way to request the OpenGL version
