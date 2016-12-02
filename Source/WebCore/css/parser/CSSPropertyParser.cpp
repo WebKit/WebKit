@@ -208,10 +208,10 @@ CSSPropertyID cssPropertyID(StringView string)
     
 using namespace CSSPropertyParserHelpers;
 
-CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range,
-    const CSSParserContext& context, Vector<CSSProperty, 256>* parsedProperties)
+CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSSParserContext& context, StyleSheetContents* styleSheetContents, Vector<CSSProperty, 256>* parsedProperties)
     : m_range(range)
     , m_context(context)
+    , m_styleSheetContents(styleSheetContents)
     , m_parsedProperties(parsedProperties)
 {
     m_range.consumeWhitespace();
@@ -242,13 +242,11 @@ void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<
         addProperty(longhands[i], property, value.copyRef(), important);
 }
     
-bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important,
-    const CSSParserTokenRange& range, const CSSParserContext& context,
-    ParsedPropertyVector& parsedProperties, StyleRule::Type ruleType)
+bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, StyleSheetContents* styleSheetContents, ParsedPropertyVector& parsedProperties, StyleRule::Type ruleType)
 {
     int parsedPropertiesSize = parsedProperties.size();
 
-    CSSPropertyParser parser(range, context, &parsedProperties);
+    CSSPropertyParser parser(range, context, styleSheetContents, &parsedProperties);
     bool parseSuccess;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -267,9 +265,9 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important,
     return parseSuccess;
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, const CSSParserTokenRange& range, const CSSParserContext& context, StyleSheetContents* styleSheetContents)
 {
-    CSSPropertyParser parser(range, context, nullptr);
+    CSSPropertyParser parser(range, context, styleSheetContents, nullptr);
     RefPtr<CSSValue> value = parser.parseSingleValue(property);
     if (!value || !parser.m_range.atEnd())
         return nullptr;
@@ -3597,7 +3595,7 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(property, m_range.peek().id(), m_context.mode))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(property, m_range.peek().id(), m_context.mode, m_styleSheetContents))
             return nullptr;
         return consumeIdent(m_range);
     }
@@ -4135,7 +4133,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
     case CSSPropertyFontStretch:
     case CSSPropertyFontStyle: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(propId, id, m_context.mode))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(propId, id, m_context.mode, m_styleSheetContents))
             return false;
         parsedValue = CSSValuePool::singleton().createIdentifierValue(id);
         break;
@@ -4219,7 +4217,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     // FIXME-NEWPARSER: Implement. RefPtr<CSSPrimitiveValue> fontStretch;
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
-        if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode)) {
+        if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode, m_styleSheetContents)) {
             fontStyle = consumeIdent(m_range);
             continue;
         }
@@ -4236,7 +4234,7 @@ bool CSSPropertyParser::consumeFont(bool important)
                 continue;
         }
         /* FIXME-NEWPARSER: Implement
-         if (!fontStretch && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStretch, id, m_context.mode))
+         if (!fontStretch && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStretch, id, m_context.mode, m_styleSheetContents))
             fontStretch = consumeIdent(m_range);
         else*/
         break;
@@ -5226,7 +5224,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     switch (property) {
     case CSSPropertyWebkitMarginCollapse: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginBeforeCollapse, id, m_context.mode))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginBeforeCollapse, id, m_context.mode, m_styleSheetContents))
             return false;
         addProperty(CSSPropertyWebkitMarginBeforeCollapse, CSSPropertyWebkitMarginCollapse, CSSValuePool::singleton().createIdentifierValue(id), important);
         if (m_range.atEnd()) {
@@ -5234,14 +5232,14 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
             return true;
         }
         id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginAfterCollapse, id, m_context.mode))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginAfterCollapse, id, m_context.mode, m_styleSheetContents))
             return false;
         addProperty(CSSPropertyWebkitMarginAfterCollapse, CSSPropertyWebkitMarginCollapse, CSSValuePool::singleton().createIdentifierValue(id), important);
         return true;
     }
     case CSSPropertyOverflow: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, id, m_context.mode))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, id, m_context.mode, m_styleSheetContents))
             return false;
         if (!m_range.atEnd())
             return false;

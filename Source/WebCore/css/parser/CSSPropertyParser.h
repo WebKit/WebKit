@@ -31,7 +31,8 @@ namespace WebCore {
 class CSSProperty;
 class CSSValue;
 class StylePropertyShorthand;
-
+class StyleSheetContents;
+    
 // Inputs: PropertyID, isImportant bool, CSSParserTokenRange.
 // Outputs: Vector of CSSProperties
 
@@ -39,15 +40,14 @@ class CSSPropertyParser {
     WTF_MAKE_NONCOPYABLE(CSSPropertyParser);
 public:
     static bool parseValue(CSSPropertyID, bool important,
-        const CSSParserTokenRange&, const CSSParserContext&,
+        const CSSParserTokenRange&, const CSSParserContext&, StyleSheetContents*,
         Vector<CSSProperty, 256>&, StyleRule::Type);
 
     // Parses a non-shorthand CSS property
-    static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const CSSParserTokenRange&, const CSSParserContext&);
+    static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const CSSParserTokenRange&, const CSSParserContext&, StyleSheetContents*);
 
 private:
-    CSSPropertyParser(const CSSParserTokenRange&, const CSSParserContext&,
-        Vector<CSSProperty, 256>*);
+    CSSPropertyParser(const CSSParserTokenRange&, const CSSParserContext&, StyleSheetContents*, Vector<CSSProperty, 256>*);
 
     // FIXME: Rename once the CSSParserValue-based parseValue is removed
     bool parseValueStart(CSSPropertyID, bool important);
@@ -100,6 +100,8 @@ private:
     // Inputs:
     CSSParserTokenRange m_range;
     const CSSParserContext& m_context;
+    StyleSheetContents* m_styleSheetContents;
+
     // Outputs:
     Vector<CSSProperty, 256>* m_parsedProperties;
 };

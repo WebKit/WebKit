@@ -1,3 +1,38 @@
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Need to set edit flags properly when user-modify/select are used.
+        https://bugs.webkit.org/show_bug.cgi?id=165334
+
+        Reviewed by Dean Jackson.
+
+        The old parser calls parserSetUsesStyleBasedEditability on
+        StyleSheetContents* from inside isValidKeywordPropertyAndValue. This
+        is pretty lame, but we have to do the same in order to pass editing
+        layout tests.
+
+        All of the functions below have been patched with the sole purpose of
+        propagating StyleSheetContents* through to isValidKeywordPropertyAndValue
+        in the new parser.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::parseKeywordValue):
+        (WebCore::CSSParserFastPaths::maybeParseValue):
+        * css/parser/CSSParserFastPaths.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeDeclarationValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::CSSPropertyParser):
+        (WebCore::CSSPropertyParser::parseValue):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+        (WebCore::CSSPropertyParser::consumeFont):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * css/parser/CSSPropertyParser.h:
+
 2016-12-02  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r208802): TouchBar pause button doesn't work

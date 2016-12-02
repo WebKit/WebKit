@@ -799,7 +799,7 @@ void CSSParserImpl::consumeVariableValue(CSSParserTokenRange range, const Atomic
 
 void CSSParserImpl::consumeDeclarationValue(CSSParserTokenRange range, CSSPropertyID propertyID, bool important, StyleRule::Type ruleType)
 {
-    CSSPropertyParser::parseValue(propertyID, important, range, m_context, m_parsedProperties, ruleType);
+    CSSPropertyParser::parseValue(propertyID, important, range, m_context, m_styleSheet.get(), m_parsedProperties, ruleType);
 }
 
 std::unique_ptr<Vector<double>> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
