@@ -1,5 +1,15 @@
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Support the -webkit-letterpress value for text-decoration
+        https://bugs.webkit.org/show_bug.cgi?id=165313
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTextDecorationLine):
+
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix the color-gamut media query evaluator
         https://bugs.webkit.org/show_bug.cgi?id=165309
 

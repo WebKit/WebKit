@@ -1614,7 +1614,11 @@ static RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange& range)
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     while (true) {
+#if ENABLE(LETTERPRESS)
+        RefPtr<CSSPrimitiveValue> ident = consumeIdent<CSSValueBlink, CSSValueUnderline, CSSValueOverline, CSSValueLineThrough, CSSValueWebkitLetterpress>(range);
+#else
         RefPtr<CSSPrimitiveValue> ident = consumeIdent<CSSValueBlink, CSSValueUnderline, CSSValueOverline, CSSValueLineThrough>(range);
+#endif
         if (!ident)
             break;
         if (list->hasValue(ident.get()))
