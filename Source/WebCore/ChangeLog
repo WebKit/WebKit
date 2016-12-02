@@ -1,3 +1,28 @@
+2016-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: flowThread->regionInRange(region, startRegion, endRegion) in WebCore::RenderBox::borderBoxRectInRegion
+        https://bugs.webkit.org/show_bug.cgi?id=152113
+        <rdar://problem/27720221>
+
+        Reviewed by David Hyatt.
+
+        In a nested column context, do not process a spanner if it belongs to an inner column.
+
+        While populating a flow, we search for possible spanners and construct multicolumnsets accordingly.
+        However due to the top-down nature of populating flows, a descendant spanner could belong to an inner
+        flow which hasn't been populated yet.
+        This patch checks if a potential spanner has an ancestor (which is also a descendant
+        of the flow that we are populating -> nested) that will eventually create a flow context. 
+
+        Test: fast/multicol/assert-with-nested-columns-and-spanner.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeColumnCountAndWidth):
+        (WebCore::RenderBlockFlow::willCreateColumns):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::isValidColumnSpanner):
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure the z-component of transform-origin can be implicit

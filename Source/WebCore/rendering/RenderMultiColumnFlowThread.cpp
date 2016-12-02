@@ -240,31 +240,41 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlowThread& flowThread, 
 {
     // We assume that we're inside the flow thread. This function is not to be called otherwise.
     ASSERT(descendant.isDescendantOf(&flowThread));
-
     // First make sure that the renderer itself has the right properties for becoming a spanner.
-    auto& style = descendant.style();
-    if (style.columnSpan() != ColumnSpanAll || !is<RenderBox>(descendant) || descendant.isFloatingOrOutOfFlowPositioned())
+    if (!is<RenderBox>(descendant))
         return false;
 
-    RenderElement* container = descendant.parent();
-    if (!is<RenderBlockFlow>(*container) || container->childrenInline()) {
+    auto& descendantBox = downcast<RenderBox>(descendant);
+    if (descendantBox.isFloatingOrOutOfFlowPositioned())
+        return false;
+
+    if (descendantBox.style().columnSpan() != ColumnSpanAll)
+        return false;
+
+    auto* parent = descendantBox.parent();
+    if (!is<RenderBlockFlow>(*parent) || parent->childrenInline()) {
         // Needs to be block-level.
         return false;
     }
     
     // We need to have the flow thread as the containing block. A spanner cannot break out of the flow thread.
-    RenderFlowThread* enclosingFlowThread = descendant.flowThreadContainingBlock();
+    auto* enclosingFlowThread = descendantBox.flowThreadContainingBlock();
     if (enclosingFlowThread != &flowThread)
         return false;
 
     // This looks like a spanner, but if we're inside something unbreakable, it's not to be treated as one.
-    for (auto* ancestor = downcast<RenderBox>(descendant).containingBlock(); ancestor && !is<RenderView>(*ancestor); ancestor = ancestor->containingBlock()) {
-        if (ancestor->isRenderFlowThread()) {
+    for (auto* ancestor = descendantBox.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
+        if (is<RenderView>(*ancestor))
+            return false;
+        if (is<RenderFlowThread>(*ancestor)) {
             // Don't allow any intervening non-multicol fragmentation contexts. The spec doesn't say
             // anything about disallowing this, but it's just going to be too complicated to
             // implement (not to mention specify behavior).
             return ancestor == &flowThread;
         }
+        // This ancestor (descendent of the flowThread) will create columns later. The spanner belongs to it.
+        if (is<RenderBlockFlow>(*ancestor) && downcast<RenderBlockFlow>(*ancestor).willCreateColumns())
+            return false;
         ASSERT(ancestor->style().columnSpan() != ColumnSpanAll || !isValidColumnSpanner(flowThread, *ancestor));
         if (ancestor->isUnsplittableForPagination())
             return false;

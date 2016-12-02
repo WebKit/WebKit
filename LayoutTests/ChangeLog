@@ -1,3 +1,14 @@
+2016-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: flowThread->regionInRange(region, startRegion, endRegion) in WebCore::RenderBox::borderBoxRectInRegion
+        https://bugs.webkit.org/show_bug.cgi?id=152113
+        <rdar://problem/27720221>
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/assert-with-nested-columns-and-spanner-expected.txt: Added.
+        * fast/multicol/assert-with-nested-columns-and-spanner.html: Added.
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure the z-component of transform-origin can be implicit

@@ -398,7 +398,7 @@ LayoutUnit RenderBlockFlow::columnGap() const
 }
 
 void RenderBlockFlow::computeColumnCountAndWidth()
-{   
+{
     // Calculate our column width and column count.
     // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
     unsigned desiredColumnCount = 1;
@@ -426,6 +426,30 @@ void RenderBlockFlow::computeColumnCountAndWidth()
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     }
     setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
+}
+
+bool RenderBlockFlow::willCreateColumns()
+{
+    if (!firstChild())
+        return false;
+
+    if (!style().specifiesColumns())
+        return false;
+
+    // column-axis initiates MultiColumnFlowThread.
+    if (!style().hasInlineColumnAxis())
+        return true;
+
+    // Non-auto column-width always initiates MultiColumnFlowThread.
+    if (!style().hasAutoColumnWidth())
+        return true;
+
+    // column-count > 1 always initiates MultiColumnFlowThread.
+    if (!style().hasAutoColumnCount())
+        return style().columnCount() > 1;
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)

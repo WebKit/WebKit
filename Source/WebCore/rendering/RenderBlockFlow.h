@@ -282,6 +282,7 @@ public:
 
     RenderMultiColumnFlowThread* multiColumnFlowThread() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlowThread : nullptr; }
     void setMultiColumnFlowThread(RenderMultiColumnFlowThread*);
+    bool willCreateColumns();
     
     bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox&) const;
