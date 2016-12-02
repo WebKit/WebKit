@@ -1,0 +1,58 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/CC+Subtitles.mov" style="width: 640px; height: 360px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Clicking on a track in the tracks panel.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    media.pause();
+
+    shouldBeFalse("media.audioTracks[1].enabled");
+    debug("");
+
+    media.audioTracks.addEventListener("change", audioTracksDidChange);
+    window.requestAnimationFrame(() => {
+        clickOnTracksButton();
+        window.requestAnimationFrame(clickOnSecondAudioTrack);
+    });
+});
+
+function clickOnTracksButton()
+{
+    debug("Clicking on the tracks button");
+    const bounds = shadowRoot.lastChild.querySelector("button.tracks").getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function clickOnSecondAudioTrack()
+{
+    debug("Clicking on second audio track in tracks panel");
+    const secondAudioTrack = shadowRoot.lastChild.querySelectorAll("li")[1];
+    const bounds = secondAudioTrack.getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function audioTracksDidChange()
+{
+    debug("Obtained change event on media audio tracks");
+    shouldBeTrue("media.audioTracks[1].enabled");
+
+    debug("");
+    media.remove();
+    finishJSTest();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,46 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/CC+Subtitles.mov" style="width: 640px; height: 360px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Showing and populating the tracks panel.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    media.pause();
+    window.requestAnimationFrame(() => {
+        clickOnTracksButton();
+        window.requestAnimationFrame(() => {
+            listContentsOfTracksPanel();
+            media.remove();
+            finishJSTest();
+        });
+    });
+});
+
+function clickOnTracksButton()
+{
+    const bounds = shadowRoot.lastChild.querySelector("button.tracks").getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function listContentsOfTracksPanel()
+{
+    for (let section of shadowRoot.lastChild.querySelectorAll(".tracks-panel-section")) {
+        debug(section.querySelector("h3").textContent);
+        for (let item of section.querySelectorAll("li"))
+            debug("  " + item.textContent);
+        debug("");
+    }
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,3 +1,19 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Show and populate the tracks panel
+        https://bugs.webkit.org/show_bug.cgi?id=165284
+
+        Reviewed by Dean Jackson.
+
+        Add two new tests to check that we correctly show, populate and interact with the tracks panel.
+
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel-expected.txt: Added.
+        * media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
         Removing Release-only flag from flaky test http/tests/cache/disk-cache/disk-cache-request-max-stale.html

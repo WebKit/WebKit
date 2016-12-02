@@ -118,6 +118,12 @@ class MacOSInlineMediaControls extends MacOSMediaControls
         this._volumeSliderContainer.x = this._rightContainer.x + this.muteButton.x;
     }
 
+    showTracksPanel()
+    {
+        super.showTracksPanel();
+        this.tracksPanel.rightX = this._rightContainer.width - this.tracksButton.x - this.tracksButton.width;
+    }
+
     // Protected
 
     handleEvent(event)

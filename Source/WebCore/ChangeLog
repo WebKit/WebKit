@@ -1,3 +1,52 @@
+2016-12-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Show and populate the tracks panel
+        https://bugs.webkit.org/show_bug.cgi?id=165284
+
+        Reviewed by Dean Jackson.
+
+        We added a TracksPanel in https://bugs.webkit.org/show_bug.cgi?id=165239 which allows to
+        show a list of media tracks and text tracks to choose from. We now show this panel when
+        clicking on the tracks button in the controls bar and populate its content with the
+        list of audio and text tracks for the media element. As an item is picked from the tracks
+        panel, we toggle the represented track's enabled state and dismiss the panel.
+
+        We also pick up the text track container display mostly unchanged from current media controls.
+
+        Tests: media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html
+               media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html
+
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.showTracksPanel):
+        * Modules/modern-media-controls/controls/text-tracks.css: Added.
+        (video::-webkit-media-text-track-container):
+        (video::cue):
+        (video::-webkit-media-text-track-display):
+        (video::-webkit-media-text-track-display-backdrop):
+        (video::cue(:future)):
+        (video::-webkit-media-text-track-container b):
+        (video::-webkit-media-text-track-container u):
+        (video::-webkit-media-text-track-container i):
+        (video::-webkit-media-text-track-container .hidden):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport):
+        (TracksSupport.prototype.destroy):
+        (TracksSupport.prototype.buttonWasClicked):
+        (TracksSupport.prototype.tracksPanelNumberOfSections):
+        (TracksSupport.prototype.tracksPanelTitleForSection):
+        (TracksSupport.prototype.tracksPanelNumberOfTracksInSection):
+        (TracksSupport.prototype.tracksPanelTitleForTrackInSection):
+        (TracksSupport.prototype.tracksPanelIsTrackInSectionSelected):
+        (TracksSupport.prototype.tracksPanelSelectionDidChange):
+        (TracksSupport.prototype.syncControl):
+        (TracksSupport.prototype._textTracks):
+        (TracksSupport.prototype._audioTracks):
+        (TracksSupport.prototype._canPickAudioTracks):
+        (TracksSupport.prototype._canPickTextTracks):
+        (TracksSupport.prototype._sortedTrackList):
+
 2016-12-01  Brent Fulgham  <bfulgham@apple.com>
 
         Rare crash when preparing to print

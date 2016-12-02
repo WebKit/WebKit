@@ -33,9 +33,12 @@ class TracksSupport extends MediaControllerSupport
         if (!this.control)
             return;
 
+        this.mediaController.controls.tracksPanel.dataSource = this;
+        this.mediaController.controls.tracksPanel.uiDelegate = this;
+
         const media = mediaController.media;
         for (let tracks of [media.audioTracks, media.textTracks]) {
-            for (let eventType of ["addtrack", "removetrack"])
+            for (let eventType of ["addtrack", "change", "removetrack"])
                 tracks.addEventListener(eventType, this);
         }
     }
@@ -48,7 +51,7 @@ class TracksSupport extends MediaControllerSupport
 
         const media = this.mediaController.media;
         for (let tracks of [media.audioTracks, media.textTracks]) {
-            for (let eventType of ["addtrack", "removetrack"])
+            for (let eventType of ["addtrack", "change", "removetrack"])
                 tracks.removeEventListener(eventType, this);
         }
     }
@@ -67,18 +70,100 @@ class TracksSupport extends MediaControllerSupport
 
     buttonWasClicked(control)
     {
-        // FIXME: Show tracks menu.
+        this.mediaController.controls.showTracksPanel();
+    }
+
+    tracksPanelNumberOfSections()
+    {
+        let numberOfSections = 0;
+        if (this._canPickAudioTracks())
+            numberOfSections++;
+        if (this._canPickTextTracks())
+            numberOfSections++;
+        return numberOfSections;
+    }
+
+    tracksPanelTitleForSection(sectionIndex)
+    {
+        if (sectionIndex == 0 && this._canPickAudioTracks())
+            return UIString("Audio");
+        return UIString("Subtitles");
+    }
+
+    tracksPanelNumberOfTracksInSection(sectionIndex)
+    {
+        if (sectionIndex == 0 && this._canPickAudioTracks())
+            return this._audioTracks().length;
+        return this._textTracks().length;
+    }
+
+    tracksPanelTitleForTrackInSection(trackIndex, sectionIndex)
+    {
+        let track;
+        if (sectionIndex == 0 && this._canPickAudioTracks())
+            track = this._audioTracks()[trackIndex];
+        else
+            track = this._textTracks()[trackIndex];
+
+        if (this.mediaController.host)
+            return this.mediaController.host.displayNameForTrack(track);
+        return track.label;
+    }
+
+    tracksPanelIsTrackInSectionSelected(trackIndex, sectionIndex)
+    {
+        if (sectionIndex == 0 && this._canPickAudioTracks())
+            return this._audioTracks()[trackIndex].enabled;
+        return this._textTracks()[trackIndex].mode !== "disabled";
+    }
+
+    tracksPanelSelectionDidChange(trackIndex, sectionIndex)
+    {
+        if (sectionIndex == 0 && this._canPickAudioTracks()) {
+            let track = this._audioTracks()[trackIndex];
+            track.enabled = !track.enabled;
+        } else {
+            let track = this._textTracks()[trackIndex];
+            track.mode = track.mode === "disabled" ? "showing" : "disabled";
+        }
+
+        this.mediaController.controls.hideTracksPanel();
     }
 
     syncControl()
     {
-        const media = this.mediaController.media;
-        const host = this.mediaController.host;
+        this.control.enabled = this._canPickAudioTracks() || this._canPickTextTracks();
+    }
 
-        const textTracks = host ? host.sortedTrackListForMenu(media.textTracks) : media.textTracks;
-        const audioTracks = host ? host.sortedTrackListForMenu(media.audioTracks) : media.audioTracks;
+    // Private
 
-        this.control.enabled = (textTracks && textTracks.length > 0) || (audioTracks && audioTracks.length > 1);
+    _textTracks()
+    {
+        return this._sortedTrackList(this.mediaController.media.textTracks);
+    }
+
+    _audioTracks()
+    {
+        return this._sortedTrackList(this.mediaController.media.audioTracks);
+    }
+
+    _canPickAudioTracks()
+    {
+        const audioTracks = this._audioTracks();
+        return audioTracks && audioTracks.length > 1;
+    }
+
+    _canPickTextTracks()
+    {
+        const textTracks = this._textTracks();
+        return textTracks && textTracks.length > 0;
+    }
+
+    _sortedTrackList(tracks)
+    {
+        if (this.mediaController.host)
+            return this.mediaController.host.sortedTrackListForMenu(tracks);
+        return tracks;
     }
 
 }

@@ -32,8 +32,10 @@ class MediaController
         this.media = media;
         this.host = host;
 
-        if (host)
+        if (host) {
             media.addEventListener("webkitpresentationmodechanged", this);
+            shadowRoot.appendChild(host.textTrackContainer);
+        }
 
         this._updateControlsIfNeeded();
 
