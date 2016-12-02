@@ -2751,6 +2751,7 @@ media/modern-media-controls/audio [ Skip ]
 # Mac-specific tests for fullscreen.
 media/modern-media-controls/media-controller/media-controller-fullscreen-change.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html  [ Skip ]
+media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Skip ]
 
 # These tests are all Mac-specific, we never show the tracks menu on iOS
 media/modern-media-controls/tracks-panel

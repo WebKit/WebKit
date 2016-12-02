@@ -100,11 +100,10 @@ class MediaController
 
         this.controls = new ControlsClass;
 
-        if (previousControls) {
-            this.shadowRoot.replaceChild(this.controls.element, previousControls.element);
+        if (previousControls)
             this.controls.usesLTRUserInterfaceLayoutDirection = previousControls.usesLTRUserInterfaceLayoutDirection;
-        } else
-            this.shadowRoot.appendChild(this.controls.element);        
+
+        this.controls.presentInElement(this.shadowRoot, !!previousControls);
 
         this._updateControlsSize();
 

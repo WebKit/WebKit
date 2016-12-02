@@ -39,3 +39,13 @@
 .media-controls > .controls-bar {
     position: absolute;
 }
+
+.media-controls.fade-in {
+    animation-name: fade-in;
+    animation-duration: 350ms;
+}
+
+@keyframes fade-in {
+    from { opacity: 0 }
+    to   { opacity: 1 }
+}

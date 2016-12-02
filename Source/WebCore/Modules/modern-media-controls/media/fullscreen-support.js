@@ -60,6 +60,8 @@ class FullscreenSupport extends MediaControllerSupport
 
     buttonWasClicked(control)
     {
+        this.mediaController.controls.element.remove();
+
         const media = this.mediaController.media;
         if (media.webkitDisplayingFullscreen)
             media.webkitExitFullscreen();
