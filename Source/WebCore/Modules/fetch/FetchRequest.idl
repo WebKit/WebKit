@@ -30,14 +30,29 @@ enum RequestType { "", "audio", "font", "image", "script", "style", "track", "vi
 enum RequestDestination { "", "document", "sharedworker", "subresource", "unknown", "worker" };
 enum RequestMode { "navigate", "same-origin", "no-cors", "cors" };
 enum RequestCredentials { "omit", "same-origin", "include" };
-enum RequestCache { "default", "no-store", "reload", "no-cache", "force-cache" };
+enum RequestCache { "default", "no-store", "reload", "no-cache", "force-cache", "only-if-cached" };
 enum RequestRedirect { "follow", "error", "manual" };
 enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin", "origin-when-cross-origin", "unsafe-url" };
+
+dictionary RequestInit {
+    ByteString method;
+    // FIXME: Should add: HeadersInit headers;
+    // FIXME: Should add: BodyInit? body;
+    USVString referrer;
+    ReferrerPolicy referrerPolicy;
+    RequestMode mode;
+    RequestCredentials credentials;
+    RequestCache cache;
+    RequestRedirect redirect;
+    DOMString integrity;
+    // FIXME: Should add: boolean keepalive;
+    any window; // can only be set to null
+};
 
 [
     ActiveDOMObject,
     Conditional=FETCH_API,
-    Constructor(any input, optional Dictionary init),
+    Constructor(any input, optional RequestInit init),
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     InterfaceName=Request,
@@ -45,13 +60,13 @@ enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin"
     PrivateIdentifier,
     PublicIdentifier,
 ] interface FetchRequest {
-    readonly attribute DOMString method;
+    readonly attribute ByteString method;
     readonly attribute DOMString url;
     readonly attribute FetchHeaders headers;
 
     readonly attribute RequestType type;
     readonly attribute RequestDestination destination;
-    readonly attribute DOMString referrer;
+    readonly attribute USVString referrer;
     readonly attribute ReferrerPolicy referrerPolicy;
     readonly attribute RequestMode mode;
     readonly attribute RequestCredentials credentials;
@@ -61,8 +76,8 @@ enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin"
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();
 
-    [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(FetchRequest input, Dictionary init);
-    [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(DOMString input, Dictionary init);
+    [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(FetchRequest input, RequestInit init);
+    [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(DOMString input, RequestInit init);
     [CallWith=ScriptState, MayThrowException, PrivateIdentifier] void setBody(any body, FetchRequest? request);
 };
 

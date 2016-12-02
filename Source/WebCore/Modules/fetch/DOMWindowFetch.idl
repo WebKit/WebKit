@@ -30,7 +30,6 @@
     Conditional=FETCH_API,
     EnabledAtRuntime=FetchAPI,
 ] partial interface DOMWindow {
-    [JSBuiltin] Promise<Response> fetch(any input, optional Dictionary init);
-
+    [JSBuiltin] Promise<Response> fetch(any input, optional RequestInit init);
     [PrivateIdentifier, ImplementedAs=fetch] Promise<Response> fetchRequest(FetchRequest request);
 };
