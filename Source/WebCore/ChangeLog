@@ -1,3 +1,18 @@
+2016-12-02  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Use an OpenGL < 3.0 compliant way to request the OpenGL version
+        https://bugs.webkit.org/show_bug.cgi?id=165253
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use glGetString(GL_VERSION) to get the OpenGL version, as glGetIntegerv with GL_MAJOR_VERSION
+        and GL_MINOR_VERSION is only supported from 3.0 on.
+
+        Covered by existent tests.
+
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::version):
+
 2016-12-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo build after r208997
