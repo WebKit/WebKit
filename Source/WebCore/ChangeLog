@@ -1,3 +1,13 @@
+2016-12-01  Brian Burg  <bburg@apple.com>
+
+        Fix the Windows Release build after r209198
+        https://bugs.webkit.org/show_bug.cgi?id=165285
+
+        Unreviewed build fix.
+
+        * Modules/webdriver/NavigatorWebDriver.cpp:
+        Brute force include all the inlines to work around a JSC issue.
+
 2016-12-01  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Only allow a single font-family in @font-face
