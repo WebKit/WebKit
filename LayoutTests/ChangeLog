@@ -1,5 +1,14 @@
 2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/modern-media-controls/scrubber-support/scrubber-support-click.html as a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=165327
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking http/tests/inspector/network/xhr-request-data-encoded-correctly.html as a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=164033
 

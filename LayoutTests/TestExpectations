@@ -978,7 +978,7 @@ webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass
 # Temporary failure until we start using ANGLE as a WebGL backend
 webkit.org/b/163924 fast/canvas/webgl/bufferData-offset-length.html [ Pass Failure ]
 
-webkit.org/b/164158 media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Pass Timeout ]
+webkit.org/b/165327 media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Pass Failure ]
 webkit.org/b/164226 media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
 webkit.org/b/164229 media/modern-media-controls/volume-support/volume-support-click.html [ Pass Timeout ]
 
