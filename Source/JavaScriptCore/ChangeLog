@@ -1,3 +1,24 @@
+2016-12-01  Brian Burg  <bburg@apple.com>
+
+        Remote Inspector: fix weird typo in generated ObjC protocol type initializer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=165295
+        <rdar://problem/29427778>
+
+        Reviewed by Joseph Pecoraro.
+
+        Remove a stray semicolon appended after custom initializer signatures.
+        This is a syntax error when building with less lenient compiler warnings.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_required_members):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+
 2016-12-01  Saam Barati  <sbarati@apple.com>
 
         Rename CallFrame::callee() to CallFrame::jsCallee()

@@ -147,7 +147,7 @@ class ObjCProtocolTypesImplementationGenerator(ObjCGenerator):
             pairs.append('%s:(%s)%s' % (var_name, objc_type, var_name))
         pairs[0] = ucfirst(pairs[0])
         lines = []
-        lines.append('- (instancetype)initWith%s;' % ' '.join(pairs))
+        lines.append('- (instancetype)initWith%s' % ' '.join(pairs))
         lines.append('{')
         lines.append('    if (!(self = [super init]))')
         lines.append('        return nil;')

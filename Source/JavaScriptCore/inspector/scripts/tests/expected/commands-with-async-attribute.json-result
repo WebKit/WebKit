@@ -1715,7 +1715,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithMessage:(NSString *)message code:(int)code;
+- (instancetype)initWithMessage:(NSString *)message code:(int)code
 {
     if (!(self = [super init]))
         return nil;

@@ -1473,7 +1473,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithMessage:(NSString *)message code:(int)code;
+- (instancetype)initWithMessage:(NSString *)message code:(int)code
 {
     if (!(self = [super init]))
         return nil;
@@ -1650,7 +1650,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error errorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList;
+- (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error errorList:(NSArray/*<TestProtocolDatabaseError>*/ *)errorList
 {
     if (!(self = [super init]))
         return nil;
@@ -1779,7 +1779,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithInteger:(NSString *)integer array:(NSString *)array string:(NSString *)string value:(NSString *)value object:(NSString *)object;
+- (instancetype)initWithInteger:(NSString *)integer array:(NSString *)array string:(NSString *)string value:(NSString *)value object:(NSString *)object
 {
     if (!(self = [super init]))
         return nil;
@@ -1906,7 +1906,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error;
+- (instancetype)initWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload error:(TestProtocolDatabaseError *)error
 {
     if (!(self = [super init]))
         return nil;

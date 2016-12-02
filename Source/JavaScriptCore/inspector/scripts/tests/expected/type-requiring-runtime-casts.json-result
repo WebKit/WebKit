@@ -1453,7 +1453,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithString:(NSString *)string number:(int)number animals:(TestProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(TestProtocolTestRecursiveObject1 *)tree;
+- (instancetype)initWithString:(NSString *)string number:(int)number animals:(TestProtocolTestCastedAnimals)animals identifier:(int)identifier tree:(TestProtocolTestRecursiveObject1 *)tree
 {
     if (!(self = [super init]))
         return nil;

@@ -1047,7 +1047,7 @@ using namespace Inspector;
     return self;
 }
 
-- (instancetype)initWithType:(TestProtocolRuntimeKeyPathType)type;
+- (instancetype)initWithType:(TestProtocolRuntimeKeyPathType)type
 {
     if (!(self = [super init]))
         return nil;
