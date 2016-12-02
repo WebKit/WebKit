@@ -1,3 +1,17 @@
+2016-12-02  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant LayoutUnit conversions.
+        https://bugs.webkit.org/show_bug.cgi?id=165338
+
+        Reviewed by Simon Fraser.
+
+        RenderBlockFlow::computeColumnCountAndWidth has some redundant LayoutUnti <-> unsigned conversions.
+
+        No change in functionality.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeColumnCountAndWidth):
+
 2016-12-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add rewind and fast-forward support
