@@ -1009,6 +1009,7 @@ webkit.org/b/165195 fast/css/variables/custom-property-dynamic-update.html [ Pas
 webkit.org/b/165195 fast/events/mouse-cursor.html [ Pass Failure ]
 webkit.org/b/165195 fast/forms/basic-selects.html [ Pass Failure ]
 webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass Failure ]
+webkit.org/b/165195 fast/inspector-support/style.html [ Pass Failure ]
 
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.

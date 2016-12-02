@@ -1,5 +1,16 @@
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Make sure margin and font set the implicit flag properly
+        https://bugs.webkit.org/show_bug.cgi?id=165306
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeFont):
+        (WebCore::CSSPropertyParser::consume4Values):
+
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Make sure the templatized consumeIdent uses CSSValuePool
         https://bugs.webkit.org/show_bug.cgi?id=165302
 

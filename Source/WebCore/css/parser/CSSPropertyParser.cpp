@@ -4233,17 +4233,17 @@ bool CSSPropertyParser::consumeFont(bool important)
     if (m_range.atEnd())
         return false;
 
-    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontStyle);
+    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontVariantCaps);
 /*  
     // FIXME-NEWPARSER: What do we do with these? They aren't part of our fontShorthand().
-    addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-    addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
+    addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
 */
     
-    addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontWeight);
     /* FIXME-NEWPARSER: Implement.
-    addProperty(CSSPropertyFontStretch, CSSPropertyFont, fontStretch ? fontStretch.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyFontStretch, CSSPropertyFont, fontStretch ? fontStretch.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontStretch);
     */
 
     // Now a font size _must_ come.
@@ -4259,7 +4259,7 @@ bool CSSPropertyParser::consumeFont(bool important)
             return false;
         addProperty(CSSPropertyLineHeight, CSSPropertyFont, lineHeight.releaseNonNull(), important);
     } else {
-        addProperty(CSSPropertyLineHeight, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+        addProperty(CSSPropertyLineHeight, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
     }
 
     // Font family must come now.
@@ -4633,6 +4633,10 @@ bool CSSPropertyParser::consume4Values(const StylePropertyShorthand& shorthand, 
             left = parseSingleValue(longhands[3], shorthand.id());
     }
 
+    bool rightImplicit = !right;
+    bool bottomImplicit = !bottom;
+    bool leftImplicit = !left;
+
     if (!right)
         right = top;
     if (!bottom)
@@ -4641,9 +4645,9 @@ bool CSSPropertyParser::consume4Values(const StylePropertyShorthand& shorthand, 
         left = right;
 
     addProperty(longhands[0], shorthand.id(), top.releaseNonNull(), important);
-    addProperty(longhands[1], shorthand.id(), right.releaseNonNull(), important);
-    addProperty(longhands[2], shorthand.id(), bottom.releaseNonNull(), important);
-    addProperty(longhands[3], shorthand.id(), left.releaseNonNull(), important);
+    addProperty(longhands[1], shorthand.id(), right.releaseNonNull(), important, rightImplicit);
+    addProperty(longhands[2], shorthand.id(), bottom.releaseNonNull(), important, bottomImplicit);
+    addProperty(longhands[3], shorthand.id(), left.releaseNonNull(), important, leftImplicit);
 
     return m_range.atEnd();
 }
