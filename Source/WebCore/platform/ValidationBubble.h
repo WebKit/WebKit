@@ -37,6 +37,7 @@
 OBJC_CLASS NSPopover;
 #elif PLATFORM(IOS)
 OBJC_CLASS UIViewController;
+OBJC_CLASS WebValidationBubbleTapRecognizer;
 #endif
 
 #if PLATFORM(MAC)
@@ -72,6 +73,7 @@ private:
     RetainPtr<NSPopover> m_popover;
 #elif PLATFORM(IOS)
     RetainPtr<UIViewController> m_popoverController;
+    RetainPtr<WebValidationBubbleTapRecognizer> m_tapRecognizer;
     UIViewController *m_presentingViewController;
 #endif
 };

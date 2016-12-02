@@ -1,3 +1,25 @@
+2016-12-02  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Tapping on an HTML validation bubble should dismiss it
+        https://bugs.webkit.org/show_bug.cgi?id=165122
+        <rdar://problem/29429372>
+
+        Reviewed by Simon Fraser.
+
+        Tapping on an HTML validation bubble should dismiss it. Previously it did
+        nothing.
+
+        No new tests, I tried writing one but the validation popover does not
+        show in the simulator, only on device. I believe at least one reason is that
+        _presentingViewControllerForWebView() is required and is currently not
+        implemented by WKTR. I'll look into this issue separately.
+
+        * platform/ValidationBubble.h:
+        * platform/ios/ValidationBubbleIOS.mm:
+        (-[WebValidationBubbleTapRecognizer initWithPopoverController:withPopoverView:]):
+        (-[WebValidationBubbleTapRecognizer dismissPopover]):
+        (WebCore::ValidationBubble::ValidationBubble):
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Add support for the SVG 'kerning' property

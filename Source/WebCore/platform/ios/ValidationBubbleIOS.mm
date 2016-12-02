@@ -30,13 +30,49 @@
 
 #import "SoftLinking.h"
 #import "UIKitSPI.h"
+#import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_FRAMEWORK(UIKit);
 SOFT_LINK_CLASS(UIKit, UILabel);
 SOFT_LINK_CLASS(UIKit, UIPopoverPresentationController);
+SOFT_LINK_CLASS(UIKit, UITapGestureRecognizer);
 SOFT_LINK_CLASS(UIKit, UIView);
 SOFT_LINK_CLASS(UIKit, UIViewController);
+
+@interface WebValidationBubbleTapRecognizer : NSObject
+@end
+
+@implementation WebValidationBubbleTapRecognizer {
+    RetainPtr<UIViewController> _popoverController;
+    RetainPtr<UITapGestureRecognizer> _tapGestureRecognizer;
+}
+
+- (WebValidationBubbleTapRecognizer *)initWithPopoverController:(UIViewController *)popoverController
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _popoverController = popoverController;
+    _tapGestureRecognizer = adoptNS([[getUITapGestureRecognizerClass() alloc] initWithTarget:self action:@selector(dismissPopover)]);
+    [[_popoverController view] addGestureRecognizer:_tapGestureRecognizer.get()];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    [[_popoverController view] removeGestureRecognizer:_tapGestureRecognizer.get()];
+    [super dealloc];
+}
+
+- (void)dismissPopover
+{
+    [_popoverController dismissViewControllerAnimated:NO completion:nil];
+}
+
+@end
 
 namespace WebCore {
 
@@ -53,6 +89,7 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message)
 
     RetainPtr<UIView> popoverView = adoptNS([[getUIViewClass() alloc] initWithFrame:CGRectZero]);
     [m_popoverController setView:popoverView.get()];
+    m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 
     RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
     [label setText:message];
