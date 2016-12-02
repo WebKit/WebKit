@@ -25,15 +25,15 @@
 
 [
     Conditional=MEDIA_SESSION,
-    CustomConstructor(optional MediaSessionKind kind = "content"),
     ConstructorCallWith=ScriptExecutionContext,
-    ImplementationLacksVTable,
+    CustomConstructor(optional MediaSessionKind kind = "content"),
     ExportMacro=WEBCORE_EXPORT,
+    ImplementationLacksVTable,
 ] interface MediaSession {
     readonly attribute MediaSessionKind kind;
     readonly attribute MediaRemoteControls? controls;
 
-    void setMetadata(Dictionary metadata);
+    void setMetadata(MediaMetadata? metadata);
 
     void deactivate();
 };
@@ -43,4 +43,11 @@ enum MediaSessionKind {
     "transient",
     "transient-solo",
     "ambient"
+};
+
+dictionary MediaMetadata {
+    DOMString title;
+    DOMString artist;
+    DOMString album;
+    USVString artwork;
 };

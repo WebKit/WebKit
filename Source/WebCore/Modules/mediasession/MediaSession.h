@@ -29,10 +29,10 @@
 
 #include "MediaRemoteControls.h"
 #include "MediaSessionMetadata.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-class Dictionary;
 class Document;
 class HTMLMediaElement;
 
@@ -40,6 +40,13 @@ class MediaSession final : public RefCounted<MediaSession> {
 public:
     enum class Kind { Content, Transient, TransientSolo, Ambient };
     enum class State { Idle, Active, Interrupted };
+
+    struct Metadata {
+        String title;
+        String artist;
+        String album;
+        String artwork;
+    };
 
     static Ref<MediaSession> create(Document& document, Kind kind)
     {
@@ -54,7 +61,7 @@ public:
     WEBCORE_EXPORT State currentState() const { return m_currentState; }
     bool hasActiveMediaElements() const;
 
-    void setMetadata(const Dictionary&);
+    void setMetadata(const std::optional<Metadata>&);
 
     void deactivate();
 
@@ -76,7 +83,7 @@ public:
 private:
     friend class HTMLMediaElement;
 
-    MediaSession(Document&, const String&);
+    MediaSession(Document&, Kind);
 
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);

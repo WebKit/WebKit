@@ -1,3 +1,26 @@
+2016-12-02  Darin Adler  <darin@apple.com>
+
+        Remove use of WebCore::Dictionary in MediaSession
+        https://bugs.webkit.org/show_bug.cgi?id=165296
+
+        Reviewed by Chris Dumez.
+
+        I am not exactly sure of the status of this code. When I enabled it to test my
+        changes it did not compile until I fixed some things, and it's far out of date
+        of the latest draft of the Media Session Standard. But despite that I updated it.
+
+        * DerivedSources.make: Removed a line that was breaking the build for some
+        configurations, perhaps only for programmers from Apple, after r209198.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession): Fixed so it compiles.
+        (WebCore::MediaSession::setMetadata): Changed argument to use a struct rather
+        htan a WebCore::Dictionary.
+        * Modules/mediasession/MediaSession.h: Added a Metadata struct, and used it.
+        Also fixed the arguments to the constructor.
+        * Modules/mediasession/MediaSession.idl: Added MediaMetadata and used it instead
+        of Dictionary.
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure margin and font set the implicit flag properly
