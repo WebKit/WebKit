@@ -26,6 +26,11 @@
 #include "GLContextEGL.h"
 #endif
 
+#if USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#include <GLES3/gl3.h>
+#endif
+
 #if USE(GLX)
 #include "GLContextGLX.h"
 #endif

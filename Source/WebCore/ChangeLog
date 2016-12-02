@@ -1,3 +1,15 @@
+2016-12-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r208997
+        https://bugs.webkit.org/show_bug.cgi?id=165283
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/GLContext.cpp:
+        glGetIntegerv is defined in gl2.h.
+        GL_MAJOR_VERSION is defined in gl3.h.
+        These are not included in the WinCairo build.
+
 2016-11-30  Darin Adler  <darin@apple.com>
 
         Stop using WebCore::Dictionary in bindings for Fetch
