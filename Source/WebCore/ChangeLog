@@ -1,3 +1,14 @@
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix the color-gamut media query evaluator
+        https://bugs.webkit.org/show_bug.cgi?id=165309
+
+        Reviewed by Zalan Bujtas).
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::colorGamutEvaluate):
+        Unknown values should result in a failed match, not a successful match.
+
 2016-12-02  Darin Adler  <darin@apple.com>
 
         Remove use of WebCore::Dictionary in MediaSession

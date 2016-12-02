@@ -265,7 +265,7 @@ static bool colorGamutEvaluate(CSSValue* value, const CSSToLengthConversionData&
         // FIXME: At some point we should start detecting displays that support more colors.
         return false;
     default:
-        return true;
+        return false; // Any unknown value should not be considered a match.
     }
 }
 
