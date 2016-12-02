@@ -1472,3 +1472,5 @@ webkit.org/b/164598 media/modern-media-controls/ios-inline-media-controls/ios-in
 webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
 webkit.org/b/161650 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
+
+webkit.org/b/164033 http/tests/inspector/network/xhr-request-data-encoded-correctly.html [ Pass Timeout ]
