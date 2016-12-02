@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the rewind button in fullscreen.");
+
+const media = document.querySelector("video");
+const button = document.body.appendChild(document.createElement("button"));
+let shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("webkitfullscreenchange", function() {
+    if (media.webkitDisplayingFullscreen) {
+        window.requestAnimationFrame(() => {
+            debug("Media entered fullscreen");
+            debug("Setting media.currentTime to 5s");
+            media.currentTime = 5;
+            shouldBe("media.currentTime", "5");
+            shouldBeTrue("media.paused");
+
+            const forwardButtonElement = shadowRoot.lastChild.querySelector("button.rewind");
+            forwardButtonElement.dispatchEvent(new MouseEvent("mousedown"));
+
+            setTimeout(() => {
+                debug("");
+                debug("Media was rewinded for 1 second");
+                forwardButtonElement.dispatchEvent(new MouseEvent("mouseup"));
+
+                shouldBeTrue("media.currentTime < 4");
+                shouldBeTrue("media.paused");
+
+                debug("");
+                media.remove();
+                button.remove();
+                finishJSTest();
+            }, 1000);
+        });
+    }
+});
+
+media.addEventListener("loadedmetadata", () => {
+    if (!("eventSender" in window)) {
+        debug("This test is designed to run in DRT");
+        return;
+    }
+
+    // Click a button so we may enter fullscreen.
+    button.addEventListener("click", event => {
+        try {
+            media.webkitEnterFullscreen();
+        } catch(e) {
+            debug("Toggling fullscreen failed");
+            finishJSTest();
+        }
+    });
+
+    eventSender.mouseMoveTo(button.offsetLeft + 1, button.offsetTop + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

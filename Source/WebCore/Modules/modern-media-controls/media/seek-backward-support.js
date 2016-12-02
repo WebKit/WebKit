@@ -23,16 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class ForwardButton extends SeekButton
+class SeekBackwardSupport extends SeekSupport
 {
 
-    constructor(layoutDelegate)
+    get control()
     {
-        super({
-            cssClassName: "forward",
-            iconName: Icons.Forward,
-            layoutDelegate
-        });
+        return this.mediaController.controls.rewindButton;
+    }
+
+    get multiplier()
+    {
+        return -1;
     }
 
 }

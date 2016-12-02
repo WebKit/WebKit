@@ -1,3 +1,54 @@
+2016-12-02  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Add rewind and fast-forward support
+        https://bugs.webkit.org/show_bug.cgi?id=165294
+
+        Reviewed by Dean Jackson.
+
+        We implement support for rewinding and fast-forwarding the media by pressing dedicated
+        buttons in fullscreen on macOS. We introduce a new SeekButton class that the existing
+        RewindButton and ForwardButton classes now extend and which provides handling of
+        "mousedown" and "mouseup" events to indicate that a button is being pressed to the
+        UI delegate.
+
+        We also introduce a new SeekSupport class from which SeekBackwardSupport and
+        SeekForwardSupport inherit to integrate with those controls and update the media
+        time.
+
+        Tests: media/modern-media-controls/layout-node/layout-node-parent-of-type.html
+               media/modern-media-controls/seek-backward-support/seek-backward-support.html
+               media/modern-media-controls/seek-forward-support/seek-forward-support.html
+
+        * Modules/modern-media-controls/controls/forward-button.js:
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (LayoutNode.prototype.parentOfType):
+        * Modules/modern-media-controls/controls/rewind-button.js:
+        * Modules/modern-media-controls/controls/seek-button.js: Added.
+        (SeekButton):
+        (SeekButton.prototype.handleEvent):
+        (SeekButton.prototype._didStartPressing):
+        (SeekButton.prototype._didStopPressing):
+        (SeekButton.prototype._notifyDelegateOfPressingState):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+        * Modules/modern-media-controls/media/seek-backward-support.js: Added.
+        (SeekBackwardSupport.prototype.get control):
+        (SeekBackwardSupport.prototype.get multiplier):
+        (SeekBackwardSupport):
+        * Modules/modern-media-controls/media/seek-forward-support.js: Added.
+        (SeekForwardSupport.prototype.get control):
+        (SeekForwardSupport.prototype.get multiplier):
+        (SeekForwardSupport):
+        * Modules/modern-media-controls/media/seek-support.js: Added.
+        (SeekSupport.prototype.get multiplier):
+        (SeekSupport.prototype.buttonPressedStateDidChange):
+        (SeekSupport.prototype._startSeeking):
+        (SeekSupport.prototype._stopSeeking):
+        (SeekSupport.prototype._seek):
+        (SeekSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Need to set edit flags properly when user-modify/select are used.

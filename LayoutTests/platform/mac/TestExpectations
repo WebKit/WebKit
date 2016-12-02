@@ -1455,7 +1455,9 @@ webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/sc
 [ Yosemite ] media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html [ Skip ]
 [ Yosemite ] media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html [ Skip ]
 [ Yosemite ] media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html
+[ Yosemite ] media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Skip ]
+[ Yosemite ] media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Skip ]
+[ Yosemite ] media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Skip ]
 
 webkit.org/b/164616 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Failure ]
 webkit.org/b/164323 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Failure ]

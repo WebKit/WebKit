@@ -133,6 +133,16 @@ class LayoutNode
             this.addChild(child);
     }
 
+    parentOfType(type)
+    {
+        let node = this;
+        while (node = node._parent) {
+            if (node instanceof type)
+                return node;
+        }
+        return null;
+    }
+
     addChild(child, index)
     {
         child.remove();

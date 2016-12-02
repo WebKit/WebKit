@@ -23,16 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class ForwardButton extends SeekButton
+class SeekButton extends IconButton
 {
 
-    constructor(layoutDelegate)
+    constructor(options)
     {
-        super({
-            cssClassName: "forward",
-            iconName: Icons.Forward,
-            layoutDelegate
-        });
+        super(options);
+
+        this.element.addEventListener("mousedown", this);
+    }
+
+    // Protected
+
+    handleEvent(event)
+    {
+        if (event.type === "mousedown" && event.currentTarget === this.element)
+            this._didStartPressing();
+        else if (event.type === "mouseup")
+            this._didStopPressing();
+        else
+            super.handleEvent(event);
+    }
+
+    // Private
+
+    _didStartPressing()
+    {
+        const mediaControls = this.parentOfType(MediaControls);
+        if (!mediaControls)
+            return;
+            
+        this._mouseupTarget = mediaControls.element;
+        this._mouseupTarget.addEventListener("mouseup", this, true);
+        this._notifyDelegateOfPressingState(true);
+    }
+
+    _didStopPressing()
+    {
+        this._mouseupTarget.removeEventListener("mouseup", this, true);
+        this._notifyDelegateOfPressingState(false);
+    }
+
+    _notifyDelegateOfPressingState(isPressed)
+    {
+        if (this._enabled && this.uiDelegate && typeof this.uiDelegate.buttonPressedStateDidChange === "function")
+            this.uiDelegate.buttonPressedStateDidChange(this, isPressed);
     }
 
 }

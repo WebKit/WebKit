@@ -10103,6 +10103,10 @@
 		7177E2481DB80D2F00919A0B /* start-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "start-support.js"; sourceTree = "<group>"; };
 		717F90571DC40ED60006F520 /* volume-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-support.js"; sourceTree = "<group>"; };
 		717F90581DC4BB600006F520 /* airplay-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "airplay-support.js"; sourceTree = "<group>"; };
+		718675431DF101AD0033D7F3 /* seek-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "seek-button.js"; sourceTree = "<group>"; };
+		718675441DF101C60033D7F3 /* seek-backward-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "seek-backward-support.js"; sourceTree = "<group>"; };
+		718675451DF101C60033D7F3 /* seek-forward-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "seek-forward-support.js"; sourceTree = "<group>"; };
+		718675461DF101C60033D7F3 /* seek-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "seek-support.js"; sourceTree = "<group>"; };
 		718C7F561DD385C500B733C8 /* status-label.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = "status-label.css"; sourceTree = "<group>"; };
 		718C7F571DD385C500B733C8 /* status-label.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "status-label.js"; sourceTree = "<group>"; };
 		71A1B6071DEE5A820073BCFB /* English */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = English; path = "English.lproj/modern-media-controls-localized-strings.js"; sourceTree = SOURCE_ROOT; };
@@ -18120,6 +18124,7 @@
 				716FA0F31DB26591007323CC /* scheduler.js */,
 				716FA0F41DB26591007323CC /* scrubber.css */,
 				716FA0F51DB26591007323CC /* scrubber.js */,
+				718675431DF101AD0033D7F3 /* seek-button.js */,
 				716FA0F61DB26591007323CC /* skip-back-button.js */,
 				716FA0F71DB26591007323CC /* slider.css */,
 				716FA0F81DB26591007323CC /* slider.js */,
@@ -18153,6 +18158,9 @@
 				71004B9D1DC1398800A52A38 /* playback-support.js */,
 				71004B9B1DC1109300A52A38 /* remaining-time-support.js */,
 				7157E3D11DC1EE4B0094550E /* scrubbing-support.js */,
+				718675441DF101C60033D7F3 /* seek-backward-support.js */,
+				718675451DF101C60033D7F3 /* seek-forward-support.js */,
+				718675461DF101C60033D7F3 /* seek-support.js */,
 				71D2554F1DB900020004D76B /* skip-back-support.js */,
 				7177E2481DB80D2F00919A0B /* start-support.js */,
 				71B0460A1DD3C2EE00EE19CF /* status-support.js */,

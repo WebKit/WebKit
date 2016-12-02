@@ -23,16 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class ForwardButton extends SeekButton
+class SeekSupport extends MediaControllerSupport
 {
 
-    constructor(layoutDelegate)
+    // Protected
+
+    get multiplier()
     {
-        super({
-            cssClassName: "forward",
-            iconName: Icons.Forward,
-            layoutDelegate
-        });
+        // Implemented by subclasses.
+    }
+
+    buttonPressedStateDidChange(control, isPressed)
+    {
+        if (isPressed)
+            this._startSeeking();
+        else
+            this._stopSeeking();
+    }
+
+    // Private
+
+    _startSeeking()
+    {
+        const media = this.mediaController.media;
+        const isPaused = media.paused;
+        if (isPaused)
+            media.play();
+
+        this._wasPausedWhenSeekingStarted = isPaused;
+        this._interval = window.setInterval(this._seek.bind(this), SeekSupport.SeekDelay);
+        this._seek();
+    }
+
+    _stopSeeking()
+    {
+        const media = this.mediaController.media;
+        media.playbackRate = media.defaultPlaybackRate;
+        if (this._wasPausedWhenSeekingStarted)
+            media.pause();
+        if (this._interval)
+            window.clearInterval(this._interval);
+    }
+
+    _seek()
+    {
+        const media = this.mediaController.media;
+        media.playbackRate = Math.min(SeekSupport.MaximumSeekRate, Math.abs(media.playbackRate * 2)) * this.multiplier;
     }
 
 }
+
+SeekSupport.MaximumSeekRate = 8;
+SeekSupport.SeekDelay = 1500;
