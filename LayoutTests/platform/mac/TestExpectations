@@ -1476,3 +1476,7 @@ webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 webkit.org/b/161650 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
 
 webkit.org/b/164033 http/tests/inspector/network/xhr-request-data-encoded-correctly.html [ Pass Timeout ]
+
+webkit.org/b/165222 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-multientry.htm [ Pass Failure ]
+webkit.org/b/165222 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-rename-abort.html [ Pass Failure ]
+webkit.org/b/165222 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex-rename-errors.html [ Pass Failure ]

@@ -1,3 +1,12 @@
+2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking three imported/w3c/web-platform-tests/IndexedDB/idbindex-* tests as flaky on macOS debug.
+        https://bugs.webkit.org/show_bug.cgi?id=165222
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-12-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add rewind and fast-forward support
