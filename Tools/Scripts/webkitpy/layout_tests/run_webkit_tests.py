@@ -296,8 +296,6 @@ def parse_args(args):
     option_group_definitions.append(("iOS Simulator Options", [
         optparse.make_option('--runtime', help='iOS Simulator runtime identifier (default: latest runtime)'),
         optparse.make_option('--device-type', help='iOS Simulator device type identifier (default: i386 -> iPhone 5, x86_64 -> iPhone 5s)'),
-        optparse.make_option('--dedicated-simulators', action="store_true", default=False,
-            help="If set, dedicated iOS simulators will always be created.  If not set, the script will attempt to use any currently running simulator."),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [

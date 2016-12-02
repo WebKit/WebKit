@@ -529,14 +529,6 @@ class Simulator(object):
                 return device
         return None
 
-    def current_device(self):
-        # FIXME: Find the simulator device that was booted by Simulator.app. For now, pick some booted simulator device, which
-        # may have been booted using the simctl command line tool.
-        for device in self.devices:
-            if device.state == Simulator.DeviceState.BOOTED:
-                return device
-        return None
-
     # FIXME: We should find an existing device with respect to its name, device type and runtime.
     def device(self, name=None, runtime=None, should_ignore_unavailable_devices=False):
         """
