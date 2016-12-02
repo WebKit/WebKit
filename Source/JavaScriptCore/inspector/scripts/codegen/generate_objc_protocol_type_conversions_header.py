@@ -30,7 +30,7 @@ import string
 from string import Template
 
 from generator import Generator
-from models import EnumType
+from models import EnumType, Frameworks
 from objc_generator import ObjCGenerator
 from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -56,7 +56,7 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
     def generate_output(self):
         headers = [
             '"%s.h"' % self.protocol_name(),
-            '"%sArrayConversions.h"' % ObjCGenerator.OBJC_STATIC_PREFIX,
+            Generator.string_for_file_include('%sArrayConversions.h' % ObjCGenerator.OBJC_STATIC_PREFIX, Frameworks.WebInspector, self.model().framework),
         ]
         headers.sort()
 
