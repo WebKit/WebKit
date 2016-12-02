@@ -757,6 +757,16 @@ public:
         m_assembler.xorpd_rr(src, dst);
     }
 
+    void nearestIntDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundsd_rr(src, dst, X86Assembler::RoundingType::ToNearestWithTiesToEven);
+    }
+
+    void nearestIntFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundss_rr(src, dst, X86Assembler::RoundingType::ToNearestWithTiesToEven);
+    }
+
     void ceilDouble(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.roundsd_rr(src, dst, X86Assembler::RoundingType::TowardInfiniti);
