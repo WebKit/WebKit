@@ -96,7 +96,6 @@ NamedConstructor=*
 NewImpurePropertyFiresWatchpoints
 NewObject
 NoInterfaceObject
-Nondeterministic
 NotEnumerable
 OverrideBuiltins
 PassContext

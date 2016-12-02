@@ -1,3 +1,25 @@
+2016-12-02  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove support for the 'Nondeterministic' extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=165307
+
+        Reviewed by Chris Dumez.
+
+        We are not currently using the WebReplay functionality that the Nondeterministic
+        extended attribute is intended to aide. If we come back to WebReplay in the future,
+        we can bring it back.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateImplementationFunctionCall):
+        (GetNativeTypeForMemoization): Deleted.
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestNondeterministic.h: Removed.
+        * bindings/scripts/test/TestNondeterministic.idl: Removed.
+        * page/Navigator.idl:
+        * page/Screen.idl:
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support the -webkit-letterpress value for text-decoration

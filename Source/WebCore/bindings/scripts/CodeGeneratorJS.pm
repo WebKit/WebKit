@@ -3325,34 +3325,6 @@ sub GenerateImplementation
                 push(@implContent, "        return jsUndefined();\n");
             }
 
-            if ($attribute->extendedAttributes->{Nondeterministic}) {
-                AddToImplIncludes("MemoizedDOMResult.h", "WEB_REPLAY");
-                AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
-                AddToImplIncludes("<wtf/NeverDestroyed.h>", "WEB_REPLAY");
-
-                push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
-                push(@implContent, "    auto& cursor = state.lexicalGlobalObject()->inputCursor();\n");
-
-                my $nativeType = GetNativeType($interface, $type);
-                my $memoizedType = GetNativeTypeForMemoization($interface, $type);
-                push(@implContent, "    static NeverDestroyed<const AtomicString> bindingName(\"$interfaceName.$name\", AtomicString::ConstructFromLiteral);\n");
-                push(@implContent, "    if (cursor.isCapturing()) {\n");
-                push(@implContent, "        $memoizedType memoizedResult = thisObject.wrapped().$implGetterFunctionName();\n");
-                push(@implContent, "        cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, 0);\n");
-                push(@implContent, "        return " . NativeToJSValueUsingReferences($attribute, 0, $interface, "memoizedResult", "thisObject") . ";\n");
-                push(@implContent, "    }\n");
-                push(@implContent, "\n");
-                push(@implContent, "    if (cursor.isReplaying()) {\n");
-                push(@implContent, "        $memoizedType memoizedResult;\n");
-                push(@implContent, "        MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();\n");
-                push(@implContent, "        if (input && input->convertTo<$memoizedType>(memoizedResult)) {\n");
-                # FIXME: the generated code should report an error if an input cannot be fetched or converted.
-                push(@implContent, "            return " . NativeToJSValueUsingReferences($attribute, 0, $interface, "memoizedResult", "thisObject") . ";\n");
-                push(@implContent, "        }\n");
-                push(@implContent, "    }\n");
-                push(@implContent, "#endif\n");
-            } # attribute Nondeterministic
-
             if (HasCustomGetter($attribute->extendedAttributes)) {
                 push(@implContent, "    return thisObject.$implGetterFunctionName(state);\n");
             } elsif ($type->name eq "EventHandler") {
@@ -4868,49 +4840,11 @@ sub GenerateImplementationFunctionCall()
 {
     my ($function, $functionString, $indent, $interface) = @_;
 
-    my $nondeterministic = $function->extendedAttributes->{Nondeterministic};
-
     if ($function->type->name eq "void" || IsReturningPromise($function)) {
-        if ($nondeterministic) {
-            AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
-            push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
-            push(@implContent, $indent . "InputCursor& cursor = state->lexicalGlobalObject()->inputCursor();\n");
-            push(@implContent, $indent . "if (!cursor.isReplaying())\n");
-            push(@implContent, $indent . "    $functionString;\n");
-            push(@implContent, "#else\n");
-            push(@implContent, $indent . "$functionString;\n");
-            push(@implContent, "#endif\n");
-        } else {
-            push(@implContent, $indent . "$functionString;\n");
-        }
+        push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
         my $thisObject = $function->isStatic ? 0 : "castedThis";
-        if ($nondeterministic) {
-            AddToImplIncludes("MemoizedDOMResult.h", "WEB_REPLAY");
-            AddToImplIncludes("<replay/InputCursor.h>", "WEB_REPLAY");
-            AddToImplIncludes("<wtf/NeverDestroyed.h>", "WEB_REPLAY");
-
-            my $nativeType = GetNativeType($interface, $function->type);
-            my $memoizedType = GetNativeTypeForMemoization($interface, $function->type);
-            my $bindingName = $interface->type->name . "." . $function->name;
-            push(@implContent, "#if ENABLE(WEB_REPLAY)\n");
-            push(@implContent, $indent . "auto& cursor = state->lexicalGlobalObject()->inputCursor();\n");
-            push(@implContent, $indent . "static NeverDestroyed<const AtomicString> bindingName(\"$bindingName\", AtomicString::ConstructFromLiteral);\n");
-            push(@implContent, $indent . "if (cursor.isCapturing()) {\n");
-            push(@implContent, $indent . "    $nativeType memoizedResult = $functionString;\n");
-            push(@implContent, $indent . "    cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, 0);\n");
-            push(@implContent, $indent . "    return JSValue::encode(" . NativeToJSValueUsingPointers($function, 1, $interface, "memoizedResult", $thisObject) . ");\n");
-            push(@implContent, $indent . "}\n");
-            push(@implContent, $indent . "if (cursor.isReplaying()) {\n");
-            push(@implContent, $indent . "    auto* input = cursor.fetchInput<MemoizedDOMResultBase>();\n");
-            push(@implContent, $indent . "    $memoizedType memoizedResult;\n");
-            # FIXME: the generated code should report an error if an input cannot be fetched or converted.
-            push(@implContent, $indent . "    if (input && input->convertTo<$memoizedType>(memoizedResult))\n");
-            push(@implContent, $indent . "        return JSValue::encode(" . NativeToJSValueUsingPointers($function, 1, $interface, "memoizedResult", $thisObject) . ");\n");
-            push(@implContent, $indent . "}\n");
-            push(@implContent, "#endif\n");
-        }
         push(@implContent, $indent . "return JSValue::encode(" . NativeToJSValueUsingPointers($function, 1, $interface, $functionString, $thisObject) . ");\n");
     }
 }
@@ -5199,13 +5133,6 @@ sub GetNativeTypeForCallbacks
 
     return "RefPtr<SerializedScriptValue>&&" if $type->name eq "SerializedScriptValue";
     return "const String&" if $codeGenerator->IsStringType($type);
-    return GetNativeType($interface, $type);
-}
-
-sub GetNativeTypeForMemoization
-{
-    my ($interface, $type) = @_;
-
     return GetNativeType($interface, $type);
 }
 

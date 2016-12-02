@@ -22,8 +22,8 @@
 ] interface Navigator {
     readonly attribute DOMPluginArray plugins;
     readonly attribute DOMMimeTypeArray mimeTypes;
-    [Nondeterministic] readonly attribute boolean cookieEnabled;
-    [Nondeterministic] boolean javaEnabled();
+    readonly attribute boolean cookieEnabled;
+    boolean javaEnabled();
 
     // FIXME: Convert this #if'def to an IDL conditional attribute.
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
