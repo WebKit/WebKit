@@ -93,7 +93,7 @@ class Results {
         this.firstIteration.add(times[0]);
         let steadyTimes = times.slice(1);
         this.averageWorstCase.add(averageAbovePercentile(steadyTimes, 98));
-        this.steadyState.add(steadyTimes.reduce((previous, current) => previous + current));
+        this.steadyState.add(steadyTimes.reduce((previous, current) => previous + current) / steadyTimes.length);
         this.reportDone();
     }
     

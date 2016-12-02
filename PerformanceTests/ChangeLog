@@ -1,3 +1,16 @@
+2016-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        ES6SampleBench should report an average for Steady State so that all of the numbers are comparable
+        https://bugs.webkit.org/show_bug.cgi?id=165325
+
+        Reviewed by Saam Barati.
+
+        This makes all of the numbers that ES6SampleBench reports comparable to each other: they all speak of the time
+        it took to run an iteration of something.
+
+        * ES6SampleBench/results.js:
+        (Results.prototype.reportResult):
+
 2016-11-18  Jer Noble  <jer.noble@apple.com>
 
         Add some performance tests for various aspects of media loading and playback.
