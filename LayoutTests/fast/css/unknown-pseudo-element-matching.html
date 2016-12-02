@@ -75,17 +75,12 @@ function runTest()
     runSelectorTest(MATCH, '::-webkit-slider-thumb');
     runSelectorTest(MATCH, '*::-webkit-slider-thumb');
     runSelectorTest(NO_MATCH, '::-webkit-slider-thumb', WITH_NAMESPACES);
-    runSelectorTest(MATCH, '*|::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, '*|*::-webkit-slider-thumb', WITH_NAMESPACES);
-    runSelectorTest(MATCH, 'html|::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, 'html|*::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, '#foo::-webkit-slider-thumb');
     runSelectorTest(MATCH, '.bar::-webkit-slider-thumb');
     runSelectorTest(NO_MATCH, '#foo::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(NO_MATCH, '.bar::-webkit-slider-thumb', WITH_NAMESPACES);
-    runSelectorTest(MATCH, 'html|#foo::-webkit-slider-thumb', WITH_NAMESPACES);
-    runSelectorTest(MATCH, 'html|.bar::-webkit-slider-thumb', WITH_NAMESPACES);
-    runSelectorTest(MATCH, '*|#foo::-webkit-slider-thumb', WITH_NAMESPACES);
     runSelectorTest(MATCH, 'input::-webkit-slider-thumb');
     runSelectorTest(MATCH, 'input#foo::-webkit-slider-thumb');
     runSelectorTest(MATCH, 'input.bar::-webkit-slider-thumb');

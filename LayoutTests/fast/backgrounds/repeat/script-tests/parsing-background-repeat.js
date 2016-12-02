@@ -27,8 +27,8 @@ shouldBe('test("background: purple url(resources/gradient.gif) repeat-x top left
 shouldBe('test("background: purple url(resources/gradient.gif) repeat-y 50% 50%")', '"repeat-y"');
 shouldBe('test("background: purple url(resources/gradient.gif) repeat center")', '"repeat"');
 shouldBe('test("background: purple url(resources/gradient.gif) no-repeat 12px")', '"no-repeat"');
-shouldBe('test("background: purple url(resources/gradient.gif) round left 50")', '"round"');
-shouldBe('test("background: purple url(resources/gradient.gif) space 25 25")', '"space"');
+shouldBe('test("background: purple url(resources/gradient.gif) round left 50px")', '"round"');
+shouldBe('test("background: purple url(resources/gradient.gif) space 25px 25px")', '"space"');
 
 shouldBe('test("background-repeat: 45;")', '""');
 shouldBe('test("background-repeat: coconut;")', '""');

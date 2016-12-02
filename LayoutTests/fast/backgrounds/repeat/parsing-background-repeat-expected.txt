@@ -17,8 +17,8 @@ PASS test("background: purple url(resources/gradient.gif) repeat-x top left") is
 PASS test("background: purple url(resources/gradient.gif) repeat-y 50% 50%") is "repeat-y"
 PASS test("background: purple url(resources/gradient.gif) repeat center") is "repeat"
 PASS test("background: purple url(resources/gradient.gif) no-repeat 12px") is "no-repeat"
-PASS test("background: purple url(resources/gradient.gif) round left 50") is "round"
-PASS test("background: purple url(resources/gradient.gif) space 25 25") is "space"
+PASS test("background: purple url(resources/gradient.gif) round left 50px") is "round"
+PASS test("background: purple url(resources/gradient.gif) space 25px 25px") is "space"
 PASS test("background-repeat: 45;") is ""
 PASS test("background-repeat: coconut;") is ""
 PASS successfullyParsed is true

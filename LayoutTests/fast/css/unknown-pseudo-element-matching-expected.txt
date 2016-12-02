@@ -4,17 +4,12 @@ Basic selector tests:
 ::-webkit-slider-thumb should match: PASS
 *::-webkit-slider-thumb should match: PASS
 ::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
-*|::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
 *|*::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
-html|::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
 html|*::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
 #foo::-webkit-slider-thumb should match: PASS
 .bar::-webkit-slider-thumb should match: PASS
 #foo::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
 .bar::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
-html|#foo::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
-html|.bar::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
-*|#foo::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
 input::-webkit-slider-thumb should match: PASS
 input#foo::-webkit-slider-thumb should match: PASS
 input.bar::-webkit-slider-thumb should match: PASS
