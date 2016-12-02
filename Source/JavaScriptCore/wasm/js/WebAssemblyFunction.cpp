@@ -63,6 +63,10 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     for (unsigned argIndex = 0; argIndex < exec->argumentCount(); ++argIndex) {
         JSValue arg = exec->uncheckedArgument(argIndex);
         switch (signature->arguments[argIndex]) {
+        case Wasm::Void:
+        case Wasm::I64:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
@@ -72,11 +76,6 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         case Wasm::F64:
             arg = JSValue::decode(bitwise_cast<uint64_t>(arg.toNumber(exec)));
             break;
-        case Wasm::Void:
-        case Wasm::I64:
-        case Wasm::Func:
-        case Wasm::Anyfunc:
-            RELEASE_ASSERT_NOT_REACHED();
         }
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(arg);
@@ -100,20 +99,17 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     switch (signature->returnType) {
     case Wasm::Void:
         return JSValue::encode(jsUndefined());
+    case Wasm::I64:
+        RELEASE_ASSERT_NOT_REACHED();
     case Wasm::I32:
         return JSValue::encode(JSValue(static_cast<int32_t>(rawResult)));
     case Wasm::F32:
         return JSValue::encode(JSValue(bitwise_cast<float>(static_cast<int32_t>(rawResult))));
     case Wasm::F64:
         return JSValue::encode(JSValue(bitwise_cast<double>(rawResult)));
-    case Wasm::I64:
-    case Wasm::Func:
-    case Wasm::Anyfunc:
-        break;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-    return EncodedJSValue();
 }
 
 WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, JSWebAssemblyInstance* instance, CallableWebAssemblyFunction&& callable)

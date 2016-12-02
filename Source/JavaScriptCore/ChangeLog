@@ -1,3 +1,44 @@
+2016-12-02  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: revert patch causing odd breakage
+        https://bugs.webkit.org/show_bug.cgi?id=165308
+
+        Unreviewed.
+
+        Bug #164724 seems to cause build issues which I haven't tracked down yet. WasmOps.h can't be found:
+        ./Source/JavaScriptCore/wasm/WasmFormat.h:34:10: fatal error: 'WasmOps.h' file not found
+
+        It's weird since the file is auto-generated and has been for a while. #164724 merely includes it in WasmFormat.h.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::zeroForType):
+        (JSC::Wasm::B3IRGenerator::addConstant):
+        (JSC::Wasm::createJSWrapper):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::marshallArgument):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::toString):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::toB3Type):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+        (JSC::Wasm::ModuleParser::parseType):
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::parseResultType):
+        * wasm/generateWasm.py:
+        (Wasm.__init__):
+        * wasm/generateWasmOpsHeader.py:
+        (cppMacro):
+        (opcodeMacroizer):
+        (typeMacroizer): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/wasm.json:
+
 2016-12-01  Brian Burg  <bburg@apple.com>
 
         Remote Inspector: fix weird typo in generated ObjC protocol type initializer implementations
@@ -379,43 +420,6 @@
         * runtime/ProgramExecutable.cpp:
         (JSC::ProgramExecutable::initializeGlobalProperties):
         * runtime/ProgramExecutable.h:
-
-2016-11-30  JF Bastien  <jfbastien@apple.com>
-
-        WebAssembly: update binary format to 0xD version
-        https://bugs.webkit.org/show_bug.cgi?id=164724
-
-        Reviewed by Saam Barati.
-
-        As described in the following PR: https://github.com/WebAssembly/design/pull/836
-
-        * wasm/WasmB3IRGenerator.cpp:
-        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
-        (JSC::Wasm::B3IRGenerator::zeroForType):
-        (JSC::Wasm::B3IRGenerator::addConstant):
-        (JSC::Wasm::createJSWrapper):
-        * wasm/WasmCallingConvention.h:
-        (JSC::Wasm::CallingConvention::marshallArgument):
-        * wasm/WasmFormat.cpp:
-        (JSC::Wasm::toString): Deleted.
-        * wasm/WasmFormat.h:
-        (JSC::Wasm::isValueType):
-        (JSC::Wasm::toB3Type): Deleted.
-        * wasm/WasmFunctionParser.h:
-        (JSC::Wasm::FunctionParser<Context>::parseExpression):
-        * wasm/WasmModuleParser.cpp:
-        (JSC::Wasm::ModuleParser::parse):
-        (JSC::Wasm::ModuleParser::parseType):
-        * wasm/WasmModuleParser.h:
-        * wasm/WasmParser.h:
-        (JSC::Wasm::Parser::parseResultType):
-        * wasm/generateWasm.py:
-        (Wasm.__init__):
-        * wasm/generateWasmOpsHeader.py:
-        (cppMacro):
-        (typeMacroizer):
-        (opcodeMacroizer):
-        * wasm/wasm.json:
 
 2016-11-30  Darin Adler  <darin@apple.com>
 

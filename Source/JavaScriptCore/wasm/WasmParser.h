@@ -169,10 +169,10 @@ ALWAYS_INLINE bool Parser::parseVarUInt1(uint8_t& result)
 
 ALWAYS_INLINE bool Parser::parseResultType(Type& result)
 {
-    int8_t value;
-    if (!parseInt7(value))
+    uint8_t value;
+    if (!parseUInt7(value))
         return false;
-    if (!isValidType(value))
+    if (value > static_cast<uint8_t>(Type::LastValueType))
         return false;
     result = static_cast<Type>(value);
     return true;

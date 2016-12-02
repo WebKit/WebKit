@@ -31,10 +31,35 @@
 
 #include "WasmMemory.h"
 
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif // COMPILER(GCC) && ASSERT_DISABLED
+
 namespace JSC { namespace Wasm {
+
+const char* toString(Type type)
+{
+    switch (type) {
+    case Void:
+        return "void";
+    case I32:
+        return "i32";
+    case I64:
+        return "i64";
+    case F32:
+        return "f32";
+    case F64:
+        return "f64";
+    }
+}
 
 ModuleInformation::~ModuleInformation() { }
 
 } } // namespace JSC::Wasm
+
+#if COMPILER(GCC) && ASSERT_DISABLED
+#pragma GCC diagnostic pop
+#endif // COMPILER(GCC) && ASSERT_DISABLED
 
 #endif // ENABLE(WEBASSEMBLY)

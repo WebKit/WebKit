@@ -186,7 +186,7 @@ private:
     Vector<UnlinkedCall>& m_unlinkedCalls;
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
-    Value* m_zeroValues[numTypes];
+    Value* m_zeroValues[Type::LastValueType];
 };
 
 B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<UnlinkedCall>& unlinkedCalls)
@@ -196,19 +196,8 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<Unlink
 {
     m_currentBlock = m_proc.addBlock();
 
-    for (unsigned i = 0; i < numTypes; ++i) {
-        switch (B3::Type b3Type = toB3Type(linearizedToType(i))) {
-        case B3::Int32:
-        case B3::Int64:
-        case B3::Float:
-        case B3::Double:
-            m_zeroValues[i] = m_currentBlock->appendIntConstant(m_proc, Origin(), b3Type, 0);
-            break;
-        case B3::Void:
-            m_zeroValues[i] = nullptr;
-            break;
-        }
-    }
+    for (unsigned i = 0; i < Type::LastValueType; ++i)
+        m_zeroValues[i] = m_currentBlock->appendIntConstant(m_proc, Origin(), toB3Type(static_cast<Type>(i + 1)), 0);
 
     if (m_memory) {
         m_memoryBaseGPR = m_memory->pinnedRegisters().baseMemoryPointer;
@@ -229,9 +218,7 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<Unlink
 Value* B3IRGenerator::zeroForType(Type type)
 {
     ASSERT(type != Void);
-    Value* zeroValue = m_zeroValues[linearizeType(type)];
-    ASSERT(zeroValue);
-    return zeroValue;
+    return m_zeroValues[type - 1];
 }
 
 bool B3IRGenerator::addLocal(Type type, uint32_t count)
@@ -454,21 +441,18 @@ bool B3IRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, 
 B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t value)
 {
     switch (type) {
-    case Wasm::I32:
+    case Int32:
         return m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), static_cast<int32_t>(value));
-    case Wasm::I64:
+    case Int64:
         return m_currentBlock->appendNew<Const64Value>(m_proc, Origin(), value);
-    case Wasm::F32:
+    case Float:
         return m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), bitwise_cast<float>(static_cast<int32_t>(value)));
-    case Wasm::F64:
+    case Double:
         return m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), bitwise_cast<double>(value));
-    case Wasm::Void:
-    case Wasm::Func:
-    case Wasm::Anyfunc:
-        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 B3IRGenerator::ControlData B3IRGenerator::addBlock(Type signature)
@@ -717,20 +701,17 @@ static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* sig
 
     // Return the result, if needed.
     switch (signature->returnType) {
-    case Wasm::Void:
+    case Void:
         block->appendNewControlValue(proc, B3::Return, Origin());
         break;
-    case Wasm::F32:
-    case Wasm::F64:
+    case F32:
+    case F64:
         result = block->appendNew<Value>(proc, BitwiseCast, Origin(), result);
         FALLTHROUGH;
-    case Wasm::I32:
-    case Wasm::I64:
+    case I32:
+    case I64:
         block->appendNewControlValue(proc, B3::Return, Origin(), result);
         break;
-    case Wasm::Func:
-    case Wasm::Anyfunc:
-        RELEASE_ASSERT_NOT_REACHED();
     }
 
     return std::make_unique<Compilation>(vm, proc);

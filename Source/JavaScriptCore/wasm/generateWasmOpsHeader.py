@@ -35,34 +35,20 @@ if len(args) != 3:
     parser.error(parser.usage)
 
 wasm = Wasm(args[0], args[1])
-types = wasm.types
 opcodes = wasm.opcodes
 wasmOpsHFile = open(args[2], "w")
 
 
-def cppMacro(wasmOpcode, value, b3, inc):
-    return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3 + ", " + str(inc) + ")"
-
-
-def typeMacroizer():
-    inc = 0
-    for ty in wasm.types:
-        yield cppMacro(ty, wasm.types[ty]["value"], wasm.types[ty]["b3type"], inc)
-        inc += 1
-
-type_definitions = ["#define FOR_EACH_WASM_TYPE(macro)"]
-type_definitions.extend([t for t in typeMacroizer()])
-type_definitions = "".join(type_definitions)
+def cppMacro(wasmOpcode, value, b3Opcode):
+    return " \\\n    macro(" + wasm.toCpp(wasmOpcode) + ", " + hex(int(value)) + ", " + b3Opcode + ")"
 
 
 def opcodeMacroizer(filter):
-    inc = 0
     for op in wasm.opcodeIterator(filter):
         b3op = "Oops"
         if isSimple(op["opcode"]):
             b3op = op["opcode"]["b3op"]
-        yield cppMacro(op["name"], op["opcode"]["value"], b3op, inc)
-        inc += 1
+        yield cppMacro(op["name"], op["opcode"]["value"], b3op)
 
 defines = ["#define FOR_EACH_WASM_SPECIAL_OP(macro)"]
 defines.extend([op for op in opcodeMacroizer(lambda op: op["category"] == "special" or op["category"] == "call")])
@@ -115,75 +101,6 @@ contents = wasm.header + """
 
 namespace JSC { namespace Wasm {
 
-static constexpr unsigned expectedVersionNumber = """ + wasm.expectedVersionNumber + """;
-
-static constexpr unsigned numTypes = """ + str(len(types)) + """;
-
-""" + type_definitions + """
-#define CREATE_ENUM_VALUE(name, id, b3type, inc) name = id,
-enum Type : int8_t {
-    FOR_EACH_WASM_TYPE(CREATE_ENUM_VALUE)
-};
-#undef CREATE_ENUM_VALUE
-
-#define CREATE_CASE(name, id, b3type, inc) case id: return true;
-template <typename Int>
-inline bool isValidType(Int i)
-{
-    switch (i) {
-    default: return false;
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
-}
-#undef CREATE_CASE
-
-#define CREATE_CASE(name, id, b3type, inc) case name: return b3type;
-inline B3::Type toB3Type(Type type)
-{
-    switch (type) {
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return B3::Void;
-}
-#undef CREATE_CASE
-
-#define CREATE_CASE(name, id, b3type, inc) case name: return "name";
-inline const char* toString(Type type)
-{
-    switch (type) {
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-}
-#undef CREATE_CASE
-
-#define CREATE_CASE(name, id, b3type, inc) case id: return inc;
-inline int linearizeType(Type type)
-{
-    switch (type) {
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return 0;
-}
-#undef CREATE_CASE
-
-#define CREATE_CASE(name, id, b3type, inc) case inc: return name;
-inline Type linearizedToType(int i)
-{
-    switch (i) {
-    FOR_EACH_WASM_TYPE(CREATE_CASE)
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return Void;
-}
-#undef CREATE_CASE
-
-
 """ + defines + """
 #define FOR_EACH_WASM_OP(macro) \\
     FOR_EACH_WASM_SPECIAL_OP(macro) \\
@@ -193,7 +110,7 @@ inline Type linearizedToType(int i)
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro)
 
-#define CREATE_ENUM_VALUE(name, id, b3op, inc) name = id,
+#define CREATE_ENUM_VALUE(name, id, b3op) name = id,
 
 enum OpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
@@ -228,7 +145,7 @@ enum class StoreOpType : uint8_t {
 inline bool isControlOp(OpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op, inc) case OpType::name:
+#define CREATE_CASE(name, id, b3op) case OpType::name:
     FOR_EACH_WASM_CONTROL_FLOW_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
@@ -241,7 +158,7 @@ inline bool isControlOp(OpType op)
 inline bool isSimple(UnaryOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op, inc) case UnaryOpType::name:
+#define CREATE_CASE(name, id, b3op) case UnaryOpType::name:
     FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
@@ -254,7 +171,7 @@ inline bool isSimple(UnaryOpType op)
 inline bool isSimple(BinaryOpType op)
 {
     switch (op) {
-#define CREATE_CASE(name, id, b3op, inc) case BinaryOpType::name:
+#define CREATE_CASE(name, id, b3op) case BinaryOpType::name:
     FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE

@@ -33,14 +33,10 @@ const _mapValues = from => {
 };
 
 export const description = utilities.json("wasm.json");
-export const type = Object.keys(description.type);
-const _typeSet = new Set(type);
-export const isValidType = v => _typeSet.has(v);
-export const typeValue = _mapValues(description.type);
-const _valueTypeSet = new Set(description.value_type);
+export const valueType = Object.keys(description.value_type);
+const _valueTypeSet = new Set(valueType);
 export const isValidValueType = v => _valueTypeSet.has(v);
-const _blockTypeSet = new Set(description.block_type);
-export const isValidBlockType = v => _blockTypeSet.has(v);
+export const valueTypeValue = _mapValues(description.value_type);
 export const externalKindValue = _mapValues(description.external_kind);
 export const sections = Object.keys(description.section);
 export const sectionEncodingType = description.section[sections[0]].type;

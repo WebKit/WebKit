@@ -1,7 +1,7 @@
 import * as assert from '../assert.js';
 import * as utilities from '../utilities.js';
 
-const version = 0x0D;
+const version = 0xC;
 const emptyModuleArray = Uint8Array.of(0x0, 0x61, 0x73, 0x6d, version, 0x00, 0x00, 0x00);
 const invalidConstructorInputs = [undefined, null, "", 1, {}, []];
 const invalidInstanceImports = [null, "", 1];

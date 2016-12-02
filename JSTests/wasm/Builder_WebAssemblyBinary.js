@@ -33,15 +33,16 @@ const emitters = {
     Type: (section, bin) => {
         put(bin, "varuint32", section.data.length);
         for (const entry of section.data) {
-            put(bin, "varint7", WASM.typeValue["func"]);
+            const funcTypeConstructor = -0x20; // FIXME Move this to wasm.json.
+            put(bin, "varint7", funcTypeConstructor);
             put(bin, "varuint32", entry.params.length);
             for (const param of entry.params)
-                put(bin, "varint7", WASM.typeValue[param]);
+                put(bin, "uint8", WASM.valueTypeValue[param]);
             if (entry.ret === "void")
                 put(bin, "varuint1", 0);
             else {
                 put(bin, "varuint1", 1);
-                put(bin, "varint7", WASM.typeValue[entry.ret]);
+                put(bin, "uint8", WASM.valueTypeValue[entry.ret]);
             }
         }
     },
@@ -106,7 +107,7 @@ const emitters = {
             put(funcBin, "varuint32", localCount);
             for (let i = func.parameterCount; i < func.locals.length; ++i) {
                 put(funcBin, "varuint32", 1);
-                put(funcBin, "varint7", WASM.typeValue[func.locals[i]]);
+                put(funcBin, "uint8", WASM.valueTypeValue[func.locals[i]]);
             }
 
             for (const op of func.code) {
