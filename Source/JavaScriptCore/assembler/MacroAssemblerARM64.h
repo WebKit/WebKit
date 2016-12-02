@@ -1542,12 +1542,12 @@ public:
 
     void nearestIntDouble(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.frinta<64>(dest, src);
+        m_assembler.frintn<64>(dest, src);
     }
 
     void nearestIntFloat(FPRegisterID src, FPRegisterID dest)
     {
-        m_assembler.frinta<32>(dest, src);
+        m_assembler.frintn<32>(dest, src);
     }
 
     void ceilDouble(FPRegisterID src, FPRegisterID dest)
