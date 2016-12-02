@@ -1,5 +1,14 @@
 2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Removing Release-only flag from flaky test http/tests/cache/disk-cache/disk-cache-request-max-stale.html
+        https://bugs.webkit.org/show_bug.cgi?id=159840
+
+        Unreviewed test gardening..
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2016-12-01  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html as a flaky timeout.
         https://bugs.webkit.org/show_bug.cgi?id=165290
 
