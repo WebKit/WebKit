@@ -1,3 +1,61 @@
+2016-12-01  Geoffrey Garen  <ggaren@apple.com>
+
+        SourceCodeKey should use unlinked source code
+        https://bugs.webkit.org/show_bug.cgi?id=165286
+
+        Reviewed by Saam Barati.
+
+        This patch splits out UnlinkedSourceCode from SourceCode, and deploys
+        UnlinkedSourceCode in SourceCodeKey.
+
+        It's misleading to store SourceCode in SourceCodeKey because SourceCode
+        has an absolute location whereas unlinked cached code has no location.
+
+        I plan to deploy UnlinkedSourceCode in more places, to indicate code
+        that has no absolute location.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * parser/SourceCode.cpp:
+        (JSC::UnlinkedSourceCode::toUTF8):
+        (JSC::SourceCode::toUTF8): Deleted.
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::startColumn):
+        (JSC::SourceCode::isHashTableDeletedValue): Deleted.
+        (JSC::SourceCode::hash): Deleted.
+        (JSC::SourceCode::view): Deleted.
+        (JSC::SourceCode::providerID): Deleted.
+        (JSC::SourceCode::isNull): Deleted.
+        (JSC::SourceCode::provider): Deleted.
+        (JSC::SourceCode::startOffset): Deleted.
+        (JSC::SourceCode::endOffset): Deleted.
+        (JSC::SourceCode::length): Deleted. Move a bunch of stuff in to a new
+        base class, UnlinkedSourceCode.
+
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::SourceCodeKey): Use UnlinkedSourceCode since code
+        in the cache has no location.
+
+        * parser/UnlinkedSourceCode.h: Copied from Source/JavaScriptCore/parser/SourceCode.h.
+        (JSC::UnlinkedSourceCode::UnlinkedSourceCode):
+        (JSC::UnlinkedSourceCode::provider):
+        (JSC::SourceCode::SourceCode): Deleted.
+        (JSC::SourceCode::isHashTableDeletedValue): Deleted.
+        (JSC::SourceCode::hash): Deleted.
+        (JSC::SourceCode::view): Deleted.
+        (JSC::SourceCode::providerID): Deleted.
+        (JSC::SourceCode::isNull): Deleted.
+        (JSC::SourceCode::provider): Deleted.
+        (JSC::SourceCode::firstLine): Deleted.
+        (JSC::SourceCode::startColumn): Deleted.
+        (JSC::SourceCode::startOffset): Deleted.
+        (JSC::SourceCode::endOffset): Deleted.
+        (JSC::SourceCode::length): Deleted.
+        (JSC::makeSource): Deleted.
+        (JSC::SourceCode::subExpression): Deleted.
+
+        * runtime/CodeCache.h: Use UnlinkedSourceCode in the cache.
+
 2016-12-01  Keith Miller  <keith_miller@apple.com>
 
         Add wasm int to floating point opcodes

@@ -30,7 +30,6 @@
 #include "JSCInlines.h"
 #include "Parser.h"
 #include "ParserModes.h"
-#include "SourceCode.h"
 #include "SourceCodeKey.h"
 #include "Strong.h"
 #include "StrongInlines.h"
@@ -38,6 +37,7 @@
 #include "UnlinkedEvalCodeBlock.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
+#include "UnlinkedSourceCode.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>

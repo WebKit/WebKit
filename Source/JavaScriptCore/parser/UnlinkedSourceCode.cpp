@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "SourceCode.h"
+#include "UnlinkedSourceCode.h"
 
 #include "JSCInlines.h"
 #include <wtf/text/CString.h>
 
 namespace JSC {
 
-CString SourceCode::toUTF8() const
+CString UnlinkedSourceCode::toUTF8() const
 {
     if (!m_provider)
         return CString("", 0);

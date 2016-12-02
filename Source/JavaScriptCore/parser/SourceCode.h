@@ -28,92 +28,55 @@
 
 #pragma once
 
-#include "SourceProvider.h"
-#include <wtf/RefPtr.h>
+#include "UnlinkedSourceCode.h"
 
 namespace JSC {
 
-    class SourceCode {
+    class SourceCode : public UnlinkedSourceCode {
     public:
         SourceCode()
-            : m_provider(0)
-            , m_startChar(0)
-            , m_endChar(0)
+            : UnlinkedSourceCode()
             , m_firstLine(0)
             , m_startColumn(0)
         {
         }
 
-        SourceCode(WTF::HashTableDeletedValueType)
-            : m_provider(WTF::HashTableDeletedValue)
-        {
-        }
-
         SourceCode(PassRefPtr<SourceProvider> provider)
-            : m_provider(provider)
-            , m_startChar(0)
-            , m_endChar(m_provider->source().length())
+            : UnlinkedSourceCode(provider)
             , m_firstLine(1)
             , m_startColumn(1)
         {
         }
 
         SourceCode(PassRefPtr<SourceProvider> provider, int firstLine, int startColumn)
-            : m_provider(provider)
-            , m_startChar(0)
-            , m_endChar(m_provider->source().length())
+            : UnlinkedSourceCode(provider)
             , m_firstLine(std::max(firstLine, 1))
             , m_startColumn(std::max(startColumn, 1))
         {
         }
 
-        SourceCode(PassRefPtr<SourceProvider> provider, int start, int end, int firstLine, int startColumn)
-            : m_provider(provider)
-            , m_startChar(start)
-            , m_endChar(end)
+        SourceCode(PassRefPtr<SourceProvider> provider, int startOffset, int endOffset, int firstLine, int startColumn)
+            : UnlinkedSourceCode(provider, startOffset, endOffset)
             , m_firstLine(std::max(firstLine, 1))
             , m_startColumn(std::max(startColumn, 1))
         {
         }
 
-        bool isHashTableDeletedValue() const { return m_provider.isHashTableDeletedValue(); }
+        int firstLine() const { return m_firstLine; }
+        int startColumn() const { return m_startColumn; }
 
-        unsigned hash() const
-        {
-            ASSERT(m_provider);
-            return m_provider->hash();
-        }
-
-        StringView view() const
-        {
-            if (!m_provider)
-                return StringView();
-            return m_provider->getRange(m_startChar, m_endChar);
-        }
-        
-        CString toUTF8() const;
-        
         intptr_t providerID() const
         {
             if (!m_provider)
                 return SourceProvider::nullID;
             return m_provider->asID();
         }
-        
-        bool isNull() const { return !m_provider; }
+
         SourceProvider* provider() const { return m_provider.get(); }
-        int firstLine() const { return m_firstLine; }
-        int startColumn() const { return m_startColumn; }
-        int startOffset() const { return m_startChar; }
-        int endOffset() const { return m_endChar; }
-        int length() const { return m_endChar - m_startChar; }
-        
+
         SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn);
 
     private:
-        RefPtr<SourceProvider> m_provider;
-        int m_startChar;
-        int m_endChar;
         int m_firstLine;
         int m_startColumn;
     };

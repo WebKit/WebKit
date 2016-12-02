@@ -623,9 +623,9 @@ set(JavaScriptCore_SOURCES
     parser/NodesAnalyzeModule.cpp
     parser/Parser.cpp
     parser/ParserArena.cpp
-    parser/SourceCode.cpp
     parser/SourceProvider.cpp
     parser/SourceProviderCache.cpp
+    parser/UnlinkedSourceCode.cpp
     parser/VariableEnvironment.cpp
 
     profiler/ProfilerBytecode.cpp

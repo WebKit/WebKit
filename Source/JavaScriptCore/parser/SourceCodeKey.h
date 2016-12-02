@@ -27,7 +27,7 @@
 #pragma once
 
 #include "ParserModes.h"
-#include "SourceCode.h"
+#include "UnlinkedSourceCode.h"
 #include <wtf/HashTraits.h>
 
 namespace JSC {
@@ -76,7 +76,7 @@ public:
     }
 
     SourceCodeKey(
-        const SourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, 
+        const UnlinkedSourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, 
         JSParserScriptMode scriptMode, DerivedContextType derivedContextType, EvalContextType evalContextType, bool isArrowFunctionContext,
         DebuggerMode debuggerMode, TypeProfilerEnabled typeProfilerEnabled, ControlFlowProfilerEnabled controlFlowProfilerEnabled)
             : m_sourceCode(sourceCode)
@@ -124,7 +124,7 @@ public:
     };
 
 private:
-    SourceCode m_sourceCode;
+    UnlinkedSourceCode m_sourceCode;
     String m_name;
     SourceCodeFlags m_flags;
     unsigned m_hash;
