@@ -663,8 +663,7 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
             return nullptr;
         
         auto id = range.peek().id();
-        range.consumeIncludingWhitespace();
-
+        
         switch (id) {
         case CSSValueJis78:
             variant = FontVariantEastAsianVariant::Jis78;
@@ -696,6 +695,8 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
         default:
             return nullptr;
         }
+        
+        range.consumeIncludingWhitespace();
     }
         
     switch (variant) {
@@ -4292,6 +4293,24 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     FontVariantLigaturesParser ligaturesParser;
     FontVariantNumericParser numericParser;
     do {
+        if (!capsValue) {
+            capsValue = consumeFontVariantCaps(m_range);
+            if (capsValue)
+                continue;
+        }
+        
+        if (!positionValue) {
+            positionValue = consumeFontVariantPosition(m_range);
+            if (positionValue)
+                continue;
+        }
+
+        if (!alternatesValue) {
+            alternatesValue = consumeFontVariantAlternates(m_range);
+            if (alternatesValue)
+                continue;
+        }
+
         FontVariantLigaturesParser::ParseResult ligaturesParseResult = ligaturesParser.consumeLigature(m_range);
         FontVariantNumericParser::ParseResult numericParseResult = numericParser.consumeNumeric(m_range);
         if (ligaturesParseResult == FontVariantLigaturesParser::ParseResult::ConsumedValue
@@ -4305,27 +4324,9 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         if (!eastAsianValue) {
             eastAsianValue = consumeFontVariantEastAsian(m_range);
             if (eastAsianValue)
-                continue;
+            continue;
         }
-        
-        if (!capsValue) {
-            capsValue = consumeFontVariantCaps(m_range);
-            if (capsValue)
-                continue;
-        }
-        
-        if (!alternatesValue) {
-            alternatesValue = consumeFontVariantAlternates(m_range);
-            if (alternatesValue)
-                continue;
-        }
-        
-        if (!positionValue) {
-            positionValue = consumeFontVariantPosition(m_range);
-            if (positionValue)
-                continue;
-        }
-        
+
         // Saw some value that didn't match anything else.
         return false;
 

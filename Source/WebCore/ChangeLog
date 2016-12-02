@@ -1,5 +1,18 @@
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fix font-variant parsing 
+        https://bugs.webkit.org/show_bug.cgi?id=165301
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontVariantEastAsian):
+        (WebCore::CSSPropertyParser::consumeFontVariantShorthand):
+        Fix a bug with font-variant-east-asian parsing where the id
+        was getting improperly consumed even when it didn't match.
+
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix animation property parsing
         https://bugs.webkit.org/show_bug.cgi?id=165305
 
