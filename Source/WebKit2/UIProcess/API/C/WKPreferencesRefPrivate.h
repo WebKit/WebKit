@@ -450,6 +450,10 @@ WK_EXPORT bool WKPreferencesGetES6ModulesEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef);
 
+// Defaults to true
+WK_EXPORT void WKPreferencesSetSubtleCryptoEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetSubtleCryptoEnabled(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

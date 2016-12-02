@@ -129,6 +129,7 @@ public:
     void setAllowsAnySSLCertificate(bool);
     void setES6ModulesEnabled(bool);
     void setEncryptedMediaAPIEnabled(bool);
+    void setSubtleCryptoEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();

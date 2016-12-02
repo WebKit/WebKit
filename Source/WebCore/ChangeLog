@@ -1,3 +1,15 @@
+2016-12-01  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a runtime flag for SubtleCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=164982
+
+        Reviewed by Brent Fulgham.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setSubtleCryptoEnabled):
+        (WebCore::RuntimeEnabledFeatures::subtleCryptoEnabled):
+        * page/Crypto.idl:
+
 2016-12-01  Saam Barati  <sbarati@apple.com>
 
         Rename CallFrame::callee() to CallFrame::jsCallee()

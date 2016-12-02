@@ -335,6 +335,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     m_testRunner->setTabKeyCyclesThroughElements(true);
     m_testRunner->clearTestRunnerCallbacks();
 
+    m_testRunner->setSubtleCryptoEnabled(true);
+
     if (m_timeout > 0)
         m_testRunner->setCustomTimeout(m_timeout);
 

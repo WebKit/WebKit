@@ -160,6 +160,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)isSpatialNavigationEnabled;
 - (void)setSpatialNavigationEnabled:(BOOL)flag;
 
+- (void)setSubtleCryptoEnabled:(BOOL)flag;
+- (BOOL)subtleCryptoEnabled;
+
 #if !TARGET_OS_IPHONE
 // zero means do AutoScale
 - (float)PDFScaleFactor;

@@ -630,6 +630,9 @@ public:
 #endif
         [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,
+#if ENABLE(SUBTLE_CRYPTO)
+        [NSNumber numberWithBool:YES], WebKitSubtleCryptoEnabledPreferenceKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS)
@@ -2679,6 +2682,17 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setStringValue:directory forKey:WebKitMediaKeysStorageDirectoryKey];
 }
+
+- (BOOL)subtleCryptoEnabled
+{
+    return [self _boolValueForKey:WebKitSubtleCryptoEnabledPreferenceKey];
+}
+
+- (void)setSubtleCryptoEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitSubtleCryptoEnabledPreferenceKey];
+}
+
 
 - (void)setMetaRefreshEnabled:(BOOL)enabled
 {
