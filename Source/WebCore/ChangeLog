@@ -1,3 +1,19 @@
+2016-12-02  Beth Dakin  <bdakin@apple.com>
+
+        REGRESSION (r208802): TouchBar pause button doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=165333
+        -and corresponding-
+        rdar://problem/29487187
+
+        Reviewed by Wenson Hsieh.
+
+        The previous code got this right by using self.playing. _playing was totally un-
+        used, so this patch just removes it.
+
+        * platform/mac/WebPlaybackControlsManager.h:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager setPlaying:]):
+
 2016-12-02  John Wilander  <wilander@apple.com>
 
         Require preflight for non-standard CORS-safelisted request headers Accept, Accept-Language, and Content-Language

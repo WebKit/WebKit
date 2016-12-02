@@ -237,7 +237,7 @@ static RetainPtr<NSMutableArray> mediaSelectionOptions(const Vector<String>& opt
     if (!_webPlaybackSessionInterfaceMac || !_webPlaybackSessionInterfaceMac->webPlaybackSessionModel())
         return;
 
-    BOOL isCurrentlyPlaying = _playing;
+    BOOL isCurrentlyPlaying = self.playing;
     if (!isCurrentlyPlaying && playing)
         _webPlaybackSessionInterfaceMac->webPlaybackSessionModel()->play();
     else if (isCurrentlyPlaying && !playing)

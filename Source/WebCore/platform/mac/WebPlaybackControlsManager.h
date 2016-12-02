@@ -51,7 +51,6 @@ WEBCORE_EXPORT
     RetainPtr<NSArray<AVFunctionBarMediaSelectionOption *>> _legibleFunctionBarMediaSelectionOptions;
     RetainPtr<AVFunctionBarMediaSelectionOption> _currentLegibleFunctionBarMediaSelectionOption;
     float _rate;
-    BOOL _playing;
     BOOL _canTogglePlayback;
 
 @private
