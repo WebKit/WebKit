@@ -1,5 +1,19 @@
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fix invalid gradients test
+        https://bugs.webkit.org/show_bug.cgi?id=165310
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/gradients/generated-gradients.html:
+        The content property here is using invalid syntax. It's supposed to be
+        space-separated, not comma-separated. The old parser was finding the first
+        value and then bailing when it saw the comma, but not rejecting. The new parser
+        properly rejected. To keep the test working, just drop all the extra invalid
+        gradients and keep the first one.
+
+2016-12-02  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Make sure margin and font set the implicit flag properly
         https://bugs.webkit.org/show_bug.cgi?id=165306
 
