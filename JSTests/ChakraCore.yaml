@@ -2050,7 +2050,8 @@
 - path: ChakraCore/test/fieldopts/objtypespec-newobj.2.js
   cmd: runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline", []
 - path: ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.1.js
-  cmd: runChakra :baseline, "NoException", "objtypespec-newobj-invalidation.1.baseline", []
+  # FIXME: Re-enable once flakiness is resolved (https://bugs.webkit.org/show_bug.cgi?id=162567)
+  cmd: runChakra :skip, "NoException", "objtypespec-newobj-invalidation.1.baseline", []
 - path: ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.2.js
   # Different behavior when run on 32 bit JSC.
   cmd: runChakra :skip, "NoException", "objtypespec-newobj-invalidation.2.baseline", []
