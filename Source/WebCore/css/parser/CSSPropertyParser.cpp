@@ -1505,19 +1505,36 @@ static bool isValidAnimationPropertyList(CSSPropertyID property, const CSSValueL
     return true;
 }
 
-static RefPtr<CSSValueList> consumeAnimationPropertyList(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSValue> consumeAnimationPropertyList(CSSPropertyID property, CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    RefPtr<CSSValueList> list;
+    RefPtr<CSSValue> singleton;
     do {
-        RefPtr<CSSValue> value = consumeAnimationValue(property, range, context);
-        if (!value)
+        RefPtr<CSSValue> currentValue = consumeAnimationValue(property, range, context);
+        if (!currentValue)
             return nullptr;
-        list->append(value.releaseNonNull());
+        
+        if (singleton && !list) {
+            list = CSSValueList::createCommaSeparated();
+            list->append(singleton.releaseNonNull());
+        }
+        
+        if (list)
+            list->append(currentValue.releaseNonNull());
+        else
+            singleton = WTFMove(currentValue);
+        
     } while (consumeCommaIncludingWhitespace(range));
-    if (!isValidAnimationPropertyList(property, *list))
-        return nullptr;
-    ASSERT(list->length());
-    return list;
+
+    if (list) {
+        if (!isValidAnimationPropertyList(property, *list))
+            return nullptr;
+    
+        ASSERT(list->length());
+        return list;
+    }
+    
+    return singleton;
 }
 
 bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& shorthand, bool important)
