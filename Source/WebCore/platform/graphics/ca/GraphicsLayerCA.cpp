@@ -787,7 +787,7 @@ bool GraphicsLayerCA::setBackdropFilters(const FilterOperations& filterOperation
         clearBackdropFilters();
     }
 
-    noteLayerPropertyChanged(BackdropFiltersChanged);
+    noteLayerPropertyChanged(BackdropFiltersChanged | DebugIndicatorsChanged);
     return canCompositeFilters;
 }
 

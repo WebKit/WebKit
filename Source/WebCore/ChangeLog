@@ -1,3 +1,21 @@
+2016-12-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Put an obvious debug border on layers with backdrop filters
+        https://bugs.webkit.org/show_bug.cgi?id=165291
+
+        Reviewed by Tim Horton.
+
+        Put a wide magenta border on layers with backdrop filters, to highlight their performance impact.
+        
+        Change the "contents layer" color (used by WebGL, video etc) to blue.
+        
+        Make the clipping layer border slightly narrower.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::getDebugBorderInfo):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setBackdropFilters):
+
 2016-12-01  Brian Burg  <bburg@apple.com>
 
         Fix the Windows Release build after r209198
