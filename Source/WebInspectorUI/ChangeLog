@@ -1,3 +1,17 @@
+2016-12-02  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r192344): Web Inspector: Turning off Code Coverage or Type Profiler logs an error
+        https://bugs.webkit.org/show_bug.cgi?id=164804
+        <rdar://problem/29278028>
+
+        Reviewed by Matt Baker.
+
+        BasicBlockAnnotator and TypeTokenAnnotator were instanciated for a resource in an inactive Debugger tab.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype.showDefaultContentViewForTreeElement):
+        Don't show any content view if we are not in a selected tab.
+
 2016-12-01  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Show async stack traces for workers
