@@ -1003,6 +1003,7 @@ webkit.org/b/165195 css3/scroll-snap/scroll-snap-position-values.html [ Pass Fai
 webkit.org/b/165195 css3/scroll-snap/scroll-snap-position-values.html [ Pass Failure ]
 webkit.org/b/165195 editing/execCommand/insert-list-with-noneditable-content.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/object-position/parsing-object-position.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/large-value-csstext.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-number-types.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-wrap.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/transform-origin-parsing.html [ Pass Failure ]
