@@ -1,3 +1,28 @@
+2016-12-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] Add a WebView private configuration for changing the WebContent update frequency
+        https://bugs.webkit.org/show_bug.cgi?id=165289
+        <rdar://problem/29472577>
+
+        Reviewed by Tim Horton.
+        
+        Expose a preference which allows us to control the fps of web content updates.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::contentUpdateFrequency):
+        (API::PageConfiguration::setContentUpdateFrequency):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _contentUpdateFrequency]):
+        (-[WKWebViewConfiguration _setContentUpdateFrequency:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (-[WKOneShotDisplayLinkHandler initWithDrawingAreaProxy:]):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::contentUpdateFrequency):
+
 2016-12-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting

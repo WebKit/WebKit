@@ -53,6 +53,8 @@ public:
     uint64_t lastCommittedLayerTreeTransactionID() const { return m_transactionIDForPendingCACommit; }
 
     void didRefreshDisplay();
+    
+    uint32_t contentUpdateFrequency() const;
 
 private:
     void sizeDidChange() override;
