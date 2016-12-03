@@ -4,12 +4,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Checking initial size
-PASS mediaController.controls.width is 320
-PASS mediaController.controls.height is 240
+PASS mediaControls.style.width is "320px"
+PASS mediaControls.style.height is "240px"
 
 Resizing to 400x300
-PASS mediaController.controls.width is 400
-PASS mediaController.controls.height is 300
+
+Shadow root received a resize event
+PASS mediaControls.style.width is "400px"
+PASS mediaControls.style.height is "300px"
 
 PASS successfullyParsed is true
 

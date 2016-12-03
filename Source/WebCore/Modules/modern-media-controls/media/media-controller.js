@@ -39,7 +39,7 @@ class MediaController
 
         this._updateControlsIfNeeded();
 
-        media.addEventListener("resize", this);
+        shadowRoot.addEventListener("resize", this);
 
         media.addEventListener("webkitfullscreenchange", this);
     }
@@ -66,20 +66,14 @@ class MediaController
 
     handleEvent(event)
     {
-        if (event.currentTarget !== this.media)
-            return;
-
-        switch (event.type) {
-        case "resize":
+        if (event.type === "resize" && event.currentTarget === this.shadowRoot)
             this._updateControlsSize();
-            break;
-        case "webkitfullscreenchange":
+        else if (event.currentTarget !== this.media)
+            return;
+        else if (event.type === "webkitfullscreenchange")
             this._updateControlsIfNeeded();
-            break;
-        case "webkitpresentationmodechanged":
+        else if (event.type === "webkitpresentationmodechanged")
             this._returnMediaLayerToInlineIfNeeded();
-            break;
-        }
     }
 
     // Private

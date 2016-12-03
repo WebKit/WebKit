@@ -2758,6 +2758,9 @@ media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Ski
 # These tests are all Mac-specific, we never show the tracks menu on iOS
 media/modern-media-controls/tracks-panel
 
+# We don't enable media controls on iOS yet and this test requires them
+webkit.org/b/165353 media/modern-media-controls/media-controller/media-controller-resize.html [ Skip ]
+
 webkit.org/b/164594 http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Timeout ]
 
 webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]

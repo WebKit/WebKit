@@ -971,8 +971,6 @@ webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-ima
 imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ ImageOnlyFailure ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
 
-webkit.org/b/163636 media/modern-media-controls/media-controller/media-controller-resize.html [ Pass Failure Timeout ]
-
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]
 
 # Temporary failure until we start using ANGLE as a WebGL backend

@@ -1,3 +1,18 @@
+2016-12-02  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Update the media controls size as the media element is resized
+        https://bugs.webkit.org/show_bug.cgi?id=165346
+
+        Reviewed by Dean Jackson.
+
+        The "resize" event dispatched by HTMLMediaElement indicates a change in the media's
+        intrinsic size, while the "resize" event dispatched by the HTMLMediaElement's ShadowRoot
+        indicates that the layout size of the media element has changed. We now use the latter.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.handleEvent):
+
 2016-12-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting

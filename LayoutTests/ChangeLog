@@ -1,3 +1,18 @@
+2016-12-02  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Update the media controls size as the media element is resized
+        https://bugs.webkit.org/show_bug.cgi?id=165346
+
+        Reviewed by Dean Jackson.
+
+        Write an accurate test to check for media controls updating their size to match the
+        media's layout size and no longer mark that test as flaky.
+
+        * TestExpectations:
+        * media/modern-media-controls/media-controller/media-controller-resize-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/dom/Window/window-resize-contents.html as flaky on mac-wk2.
