@@ -746,7 +746,7 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
 template<>
 bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result)
 {
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
     patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
