@@ -31,6 +31,7 @@
 #include "B3Type.h"
 #include "CodeLocation.h"
 #include "Identifier.h"
+#include "WasmOps.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -38,33 +39,6 @@ namespace JSC {
 class JSFunction;
 
 namespace Wasm {
-
-enum Type : uint8_t {
-    Void,
-    I32,
-    I64,
-    F32,
-    F64,
-    LastValueType = F64,
-};
-
-static_assert(I32 == 1, "Wasm needs I32 to have the value 1");
-static_assert(I64 == 2, "Wasm needs I64 to have the value 2");
-static_assert(F32 == 3, "Wasm needs F32 to have the value 3");
-static_assert(F64 == 4, "Wasm needs F64 to have the value 4");
-
-inline B3::Type toB3Type(Type type)
-{
-    switch (type) {
-    case I32: return B3::Int32;
-    case I64: return B3::Int64;
-    case F32: return B3::Float;
-    case F64: return B3::Double;
-    case Void: return B3::Void;
-    default: break;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
 
 inline bool isValueType(Type type)
 {
@@ -79,11 +53,10 @@ inline bool isValueType(Type type)
     }
     return false;
 }
-
-const char* toString(Type);
     
 struct External {
     enum Kind : uint8_t {
+        // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
         Function = 0,
         Table = 1,
         Memory = 2,

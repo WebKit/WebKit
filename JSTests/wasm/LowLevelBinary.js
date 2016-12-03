@@ -159,8 +159,10 @@ export default class LowLevelBinary {
             throw new RangeError(`Invalid varuint7 ${v} range is [${varuint32Min}, ${varuint7Max}]`);
         this.varuint32(v);
     }
-    inline_signature_type(v) {
-        this.varint7(WASM.valueTypeValue[v]);
+    block_type(v) {
+        if (!WASM.isValidBlockType(v))
+            throw new Error(`Invalid block type ${v}`);
+        this.varint7(WASM.typeValue[v]);
     }
     string(str) {
         let patch = this.newPatchable("varuint32");

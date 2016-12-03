@@ -76,7 +76,7 @@ private:
         case B3::Float:
         case B3::Double:
             return marshallArgumentImpl(m_fprArgs, type, fpArgumentCount, stackOffset);
-        case Void:
+        case B3::Void:
             break;
         }
         RELEASE_ASSERT_NOT_REACHED();

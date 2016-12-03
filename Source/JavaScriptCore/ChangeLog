@@ -1,3 +1,43 @@
+2016-12-03  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: update binary format to 0xD version
+        https://bugs.webkit.org/show_bug.cgi?id=165345
+
+        Reviewed by Keith Miller.
+
+        As described in the following PR: https://github.com/WebAssembly/design/pull/836
+        Originally committed in r209175, reverted in r209242, and fixed in r209284.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::zeroForType):
+        (JSC::Wasm::B3IRGenerator::addConstant):
+        (JSC::Wasm::createJSWrapper):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::marshallArgument):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::toString): Deleted.
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValueType):
+        (JSC::Wasm::toB3Type): Deleted.
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+        (JSC::Wasm::ModuleParser::parseType):
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::parseResultType):
+        * wasm/generateWasm.py:
+        (Wasm.__init__):
+        * wasm/generateWasmOpsHeader.py:
+        (cppMacro):
+        (typeMacroizer):
+        (opcodeMacroizer):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/wasm.json:
+
 2016-12-02  Keith Miller  <keith_miller@apple.com>
 
         Add Wasm copysign

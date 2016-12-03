@@ -1,3 +1,29 @@
+2016-12-03  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: update binary format to 0xD version
+        https://bugs.webkit.org/show_bug.cgi?id=165345
+
+        Reviewed by Keith Miller.
+
+        As described in the following PR: https://github.com/WebAssembly/design/pull/836
+        Originally committed in r209175, reverted in r209242, and fixed in r209284.
+
+        * wasm/Builder.js:
+        (const._normalizeFunctionSignature):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Type):
+        (const.emitters.Code):
+        * wasm/LowLevelBinary.js:
+        (export.default.LowLevelBinary.prototype.block_type):
+        (export.default.LowLevelBinary.prototype.inline_signature_type): Deleted.
+        * wasm/WASM.js:
+        * wasm/js-api/test_basic_api.js:
+        * wasm/self-test/test_BuilderWebAssembly.js:
+        (EmptyModule):
+        (CustomSection):
+        * wasm/self-test/test_WASM.js:
+        * wasm/wasm.json:
+
 2016-12-02  Keith Miller  <keith_miller@apple.com>
 
         Add Wasm copysign
