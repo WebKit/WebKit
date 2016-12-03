@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .container {
+            position: fixed;
+            top: 20px;
+            left: 10px;
+            width: 200px;
+            height: 100px;
+            background-color: silver;
+        }
+        #box {
+            width: 20px;
+            height: 10px;
+            margin: 12px;
+            background-color: blue;
+        }
+        
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("Tests localToAbsolute coordinate conversion for an element inside position:fixed after zoom.");
+
+        window.jsTestIsAsync = true;
+
+        var clientRect;
+        function doAfterZooming()
+        {
+            window.scrollTo(0, 140);
+
+            shouldBe('internals.pageScaleFactor()', '2');
+            
+            var box = document.getElementById('box');
+            clientRect = box.getBoundingClientRect();
+            
+            shouldBe('JSON.stringify(clientRect)', 'JSON.stringify({top: 9.515625, right: 42, bottom: 19.515625, left: 22, width: 20, height: 10})');
+            
+            finishJSTest();
+        }
+        
+        function getUIScript()
+        {
+            return `(function() {
+                uiController.zoomToScale(2, function() {
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (window.testRunner) {
+                testRunner.runUIScript(getUIScript(), function(zoomScale) {
+                    doAfterZooming();
+                })
+            } else
+                window.setTimeout(doAfterZooming, 1000);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div id="box"></div>
+    </div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

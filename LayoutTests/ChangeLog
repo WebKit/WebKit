@@ -1,3 +1,19 @@
+2016-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        localToAbsolute() does incorrect conversion for elements inside position:fixed with zooming
+        https://bugs.webkit.org/show_bug.cgi?id=165244
+
+        Reviewed by Zalan Bujtas.
+        
+        Test getBoundingClientRect() (which internally calls localToAbsolute())
+        for an element inside position:fixed after zooming.
+
+        * fast/visual-viewport/zoomed-fixed-expected.txt: Rebaseline
+        * fast/zooming/client-rect-in-fixed-zoomed-expected.txt: Added.
+        * fast/zooming/client-rect-in-fixed-zoomed.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip new test on iOS; test requires window.scrollTo to be synchronous.
+
+
 2016-12-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Update the media controls size as the media element is resized

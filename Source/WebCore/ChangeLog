@@ -1,3 +1,38 @@
+2016-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        localToAbsolute() does incorrect conversion for elements inside position:fixed with zooming
+        https://bugs.webkit.org/show_bug.cgi?id=165244
+
+        Reviewed by Zalan Bujtas.
+        
+        RenderView::mapLocalToContainer() and RenderView::mapAbsoluteToLocalPoint() handle the coordinate
+        mapping through the RenderView's transform (when zoomed), and apply the scroll offset for position:fixed
+        elements.
+        
+        They did this in the wrong order; "local to absolute" applied the zoom scale, and then adjusted for the scroll position,
+        and "absolute to local" applied the scroll position and then the transform.
+        
+        However that scroll position adjustment should be in unzoomed coordinates, since it's accounting for the
+        layout adjustment that position:fixed receives (which actually occurs via the localToAbsolute() call
+        in RenderLayer's accumulateOffsetTowardsAncestor()). "local to absolute" should therefore apply the scroll
+        adjustment first before the transform, and "absolute to local" the reverse.
+        
+        In both visual viewport mode, and legacy drifty fixed mode FrameView::scrollPositionForFixedPosition()
+        returns a scroll offset that is unaffected by zoom, which is correct and confirms this change.
+        
+        [Confusingly, ScrollView scroll positions _are_ affected by zoom, as the entire document gets bigger.]
+        
+        RenderGeometryMap::mapToContainer(), which is an optimization on top of RenderView::mapLocalToContainer(),
+        gets a similar fix.
+        
+        Test: fast/zooming/client-rect-in-fixed-zoomed.html
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::mapAbsoluteToLocalPoint):
+
 2016-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Put names on layers in release builds

@@ -2764,3 +2764,6 @@ webkit.org/b/165353 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/164594 http/tests/cache/disk-cache/disk-cache-request-headers.html [ Pass Timeout ]
 
 webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]
+
+# Test relies on window.scrollTo
+fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]

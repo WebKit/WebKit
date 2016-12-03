@@ -81,13 +81,13 @@ void RenderGeometryMap::mapToContainer(TransformState& transformState, const Ren
             inFixed = true;
 
         if (!i) {
-            // A null container indicates mapping through the RenderView, so including its transform (the page scale).
-            if (!container && currentStep.m_transform)
-                transformState.applyTransform(*currentStep.m_transform.get());
-
             // The root gets special treatment for fixed position
             if (inFixed)
                 transformState.move(currentStep.m_offset.width(), currentStep.m_offset.height());
+
+            // A null container indicates mapping through the RenderView, so including its transform (the page scale).
+            if (!container && currentStep.m_transform)
+                transformState.applyTransform(*currentStep.m_transform.get());
         } else {
             TransformState::TransformAccumulation accumulate = currentStep.m_accumulatingTransform ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
             if (currentStep.m_transform)

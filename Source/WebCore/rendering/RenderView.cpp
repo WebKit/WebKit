@@ -437,14 +437,14 @@ void RenderView::mapLocalToContainer(const RenderLayerModelObject* repaintContai
     ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
     ASSERT_UNUSED(wasFixed, !wasFixed || *wasFixed == (mode & IsFixed));
 
+    if (mode & IsFixed)
+        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
+
     if (!repaintContainer && mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
         getTransformFromContainer(nullptr, LayoutSize(), t);
         transformState.applyTransform(t);
     }
-    
-    if (mode & IsFixed)
-        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
 }
 
 const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -467,14 +467,14 @@ const RenderObject* RenderView::pushMappingToContainer(const RenderLayerModelObj
 
 void RenderView::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, TransformState& transformState) const
 {
-    if (mode & IsFixed)
-        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
-
     if (mode & UseTransforms && shouldUseTransformFromContainer(nullptr)) {
         TransformationMatrix t;
         getTransformFromContainer(nullptr, LayoutSize(), t);
         transformState.applyTransform(t);
     }
+
+    if (mode & IsFixed)
+        transformState.move(toLayoutSize(frameView().scrollPositionRespectingCustomFixedPosition()));
 }
 
 bool RenderView::requiresColumns(int) const
