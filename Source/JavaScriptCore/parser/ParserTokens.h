@@ -34,9 +34,17 @@ namespace JSC {
 class Identifier;
 
 enum {
-    UnaryOpTokenFlag = 64,
-    KeywordTokenFlag = 128,
-    BinaryOpTokenPrecedenceShift = 8,
+    // Token Bitfield: 0b000000000RTEIIIIIIIIPPPPKUXXXXXX
+    // R = right-associative bit
+    // T = unterminated error flag
+    // E = error flag
+    // I = binary operator allows 'in'
+    // P = binary operator precedence
+    // K = keyword flag
+    // U = unary operator flag
+    UnaryOpTokenFlag = 128,
+    KeywordTokenFlag = 256,
+    BinaryOpTokenPrecedenceShift = 9,
     BinaryOpTokenAllowsInPrecedenceAdditionalShift = 4,
     BinaryOpTokenPrecedenceMask = 15 << BinaryOpTokenPrecedenceShift,
     ErrorTokenFlag = 1 << (BinaryOpTokenAllowsInPrecedenceAdditionalShift + BinaryOpTokenPrecedenceShift + 7),
@@ -82,6 +90,7 @@ enum JSTokenType {
     SUPER,
 
     // Contextual keywords
+    
     LET,
     YIELD,
     AWAIT,

@@ -1,3 +1,16 @@
+2016-12-02  Caitlin Potter  <caitp@igalia.com>
+
+[JSC] add additional bit to JSTokenType bitfield
+        https://bugs.webkit.org/show_bug.cgi?id=165091
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid overflow which causes keyword tokens to be treated as unary
+        tokens now that "async" is tokenized as a keyword, by granting an
+        additional 64 bits to be occupied by token IDs.
+
+        * parser/ParserTokens.h:
+
 2016-12-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting
