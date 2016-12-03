@@ -1,3 +1,12 @@
+2016-12-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking fast/dom/Window/window-resize-contents.html as flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=165352
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-12-02  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Turn off more tests until new parser is on
