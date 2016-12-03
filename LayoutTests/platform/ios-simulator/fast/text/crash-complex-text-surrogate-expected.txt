@@ -54,7 +54,7 @@ layer at (0,0) size 800x664
         text run at (0,564) width 361: "'document.querySelector(\"plaintext:first-"
         text run at (0,578) width 62: "of-type"
         text run at (0,592) width 9: "~"
-        text run at (0,606) width 62: "*|:out-"
+        text run at (0,606) width 71: "*|*:out-"
         text run at (0,620) width 27: "of-"
         text run at (0,634) width 194: "range\").insertBefore')"
       RenderBR {BR} at (0,0) size 0x0
