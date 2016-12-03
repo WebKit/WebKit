@@ -156,7 +156,7 @@ inline bool operator!=(const VisibleSelection& a, const VisibleSelection& b)
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
-// Outside the WebCore namespace for ease of invocation from gdb.
+// Outside the WebCore namespace for ease of invocation from the debugger.
 void showTree(const WebCore::VisibleSelection&);
 void showTree(const WebCore::VisibleSelection*);
 #endif

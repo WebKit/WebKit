@@ -183,6 +183,6 @@ inline bool documentOrderComparator(const Node* a, const Node* b)
 } // namespace
 
 #if ENABLE(TREE_DEBUGGING)
-// Outside the WebCore namespace for ease of invocation from gdb.
+// Outside the WebCore namespace for ease of invocation from the debugger.
 void showTree(const WebCore::Range*);
 #endif

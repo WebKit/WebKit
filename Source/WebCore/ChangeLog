@@ -1,3 +1,67 @@
+2016-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Put names on layers in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=165347
+
+        Reviewed by Tim Horton.
+
+        Put names on GraphicsLayers (and therefore CALayers) in release builds. Release names
+        are a simpler, truncated version of debug names, with <tagname> id class names.
+
+        Non-primary layer names converted to lowercase and "layer" removed.
+
+        Fix comments that refer to gdb.
+
+        Use ENABLE(TREE_DEBUGGING) in more places.
+
+        * dom/Node.h:
+        * dom/Position.h:
+        * dom/Range.h:
+        * editing/FrameSelection.h:
+        * editing/VisiblePosition.h:
+        * editing/VisibleSelection.h:
+        * history/HistoryItem.h:
+        * page/FrameTree.h:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setName):
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::updateNames):
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateClippingStrategy):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::changeLayerTypeTo):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileGridContainerLayerName):
+        (WebCore::TileController::zoomedOutTileGridContainerLayerName):
+        (WebCore::TileController::createTileLayer):
+        * rendering/CounterNode.h:
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderCounter.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::name):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateAncestorClippingLayer):
+        (WebCore::RenderLayerBacking::updateDescendantClippingLayer):
+        (WebCore::RenderLayerBacking::updateForegroundLayer):
+        (WebCore::RenderLayerBacking::updateBackgroundLayer):
+        (WebCore::RenderLayerBacking::updateMaskingLayer):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy):
+        (WebCore::RenderLayerBacking::updateScrollingLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateLayerForTopOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForBottomOverhangArea):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        * rendering/RenderObject.h:
+
 2016-12-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Update the media controls size as the media element is resized

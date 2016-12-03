@@ -781,7 +781,7 @@ inline void Node::setHasValidStyle()
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
-// Outside the WebCore namespace for ease of invocation from gdb.
+// Outside the WebCore namespace for ease of invocation from the debugger.
 void showTree(const WebCore::Node*);
 void showNodePath(const WebCore::Node*);
 #endif

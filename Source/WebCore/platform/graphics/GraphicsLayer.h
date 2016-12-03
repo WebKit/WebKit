@@ -680,7 +680,7 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
 SPECIALIZE_TYPE_TRAITS_END()
 
 #if ENABLE(TREE_DEBUGGING)
-// Outside the WebCore namespace for ease of invocation from gdb.
+// Outside the WebCore namespace for ease of invocation from the debugger.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif
 

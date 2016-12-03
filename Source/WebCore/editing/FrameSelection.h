@@ -379,7 +379,7 @@ inline void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextSt
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
-// Outside the WebCore namespace for ease of invocation from gdb.
+// Outside the WebCore namespace for ease of invocation from the debugger.
 void showTree(const WebCore::FrameSelection&);
 void showTree(const WebCore::FrameSelection*);
 #endif

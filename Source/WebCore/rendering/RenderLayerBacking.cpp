@@ -169,11 +169,8 @@ std::unique_ptr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const Str
 
     std::unique_ptr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, *this, layerType);
 
-#if ENABLE(TREE_DEBUGGING)
     graphicsLayer->setName(name);
-#else
-    UNUSED_PARAM(name);
-#endif
+
 #if PLATFORM(COCOA) && USE(CA)
     graphicsLayer->setAcceleratesDrawing(compositor().acceleratedDrawingEnabled());
     graphicsLayer->setUsesDisplayListDrawing(compositor().displayListDrawingEnabled());
@@ -299,15 +296,16 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
 
 void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
-    String layerName;
-#if ENABLE(TREE_DEBUGGING)
-    layerName = m_owningLayer.name();
-#endif
-    
+    String layerName = m_owningLayer.name();
+    const unsigned maxLayerNameLength = 100;
+    if (layerName.length() > maxLayerNameLength) {
+        layerName.truncate(maxLayerNameLength);
+        layerName.append("...");
+    }
     m_graphicsLayer = createGraphicsLayer(layerName, m_usingTiledCacheLayer ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
 
     if (m_usingTiledCacheLayer) {
-        m_childContainmentLayer = createGraphicsLayer("TiledBacking Flattening Layer");
+        m_childContainmentLayer = createGraphicsLayer("TiledBacking containment");
         m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
 
@@ -1328,7 +1326,7 @@ bool RenderLayerBacking::updateAncestorClippingLayer(bool needsAncestorClip)
 
     if (needsAncestorClip) {
         if (!m_ancestorClippingLayer) {
-            m_ancestorClippingLayer = createGraphicsLayer("Ancestor clipping Layer");
+            m_ancestorClippingLayer = createGraphicsLayer("ancestor clipping");
             m_ancestorClippingLayer->setMasksToBounds(true);
             layersChanged = true;
         }
@@ -1349,7 +1347,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
 
     if (needsDescendantClip) {
         if (!m_childContainmentLayer && !m_usingTiledCacheLayer) {
-            m_childContainmentLayer = createGraphicsLayer("Child clipping Layer");
+            m_childContainmentLayer = createGraphicsLayer("child clipping");
             m_childContainmentLayer->setMasksToBounds(true);
             layersChanged = true;
         }
@@ -1499,10 +1497,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
     bool layerChanged = false;
     if (needsForegroundLayer) {
         if (!m_foregroundLayer) {
-            String layerName;
-#if ENABLE(TREE_DEBUGGING)
-            layerName = m_owningLayer.name() + " (foreground)";
-#endif
+            String layerName = m_owningLayer.name() + " (foreground)";
             m_foregroundLayer = createGraphicsLayer(layerName);
             m_foregroundLayer->setDrawsContent(true);
             m_foregroundLayer->setPaintingPhase(GraphicsLayerPaintForeground);
@@ -1528,10 +1523,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     bool layerChanged = false;
     if (needsBackgroundLayer) {
         if (!m_backgroundLayer) {
-            String layerName;
-#if ENABLE(TREE_DEBUGGING)
-            layerName = m_owningLayer.name() + " (background)";
-#endif
+            String layerName = m_owningLayer.name() + " (background)";
             m_backgroundLayer = createGraphicsLayer(layerName);
             m_backgroundLayer->setDrawsContent(true);
             m_backgroundLayer->setAnchorPoint(FloatPoint3D());
@@ -1540,10 +1532,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
         }
         
         if (!m_contentsContainmentLayer) {
-            String layerName;
-#if ENABLE(TREE_DEBUGGING)
-            layerName = m_owningLayer.name() + " (contents containment)";
-#endif
+            String layerName = m_owningLayer.name() + " (contents containment)";
             m_contentsContainmentLayer = createGraphicsLayer(layerName);
             m_contentsContainmentLayer->setAppliesPageScale(true);
             m_graphicsLayer->setAppliesPageScale(false);
@@ -1598,7 +1587,7 @@ void RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         }
 
         if (!m_maskLayer) {
-            m_maskLayer = createGraphicsLayer("Mask", requiredLayerType);
+            m_maskLayer = createGraphicsLayer("mask", requiredLayerType);
             m_maskLayer->setDrawsContent(paintsContent);
             m_maskLayer->setPaintingPhase(maskPhases);
             layerChanged = true;
@@ -1630,7 +1619,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
             }
 
             if (!m_childClippingMaskLayer) {
-                m_childClippingMaskLayer = createGraphicsLayer("Child Clipping Mask Layer");
+                m_childClippingMaskLayer = createGraphicsLayer("child clipping mask");
                 m_childClippingMaskLayer->setDrawsContent(true);
                 m_childClippingMaskLayer->setPaintingPhase(GraphicsLayerPaintChildClippingMask);
                 clippingLayer()->setMaskLayer(m_childClippingMaskLayer.get());
@@ -1654,12 +1643,12 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 
     if (!m_scrollingLayer) {
         // Outer layer which corresponds with the scroll view.
-        m_scrollingLayer = createGraphicsLayer("Scrolling container", GraphicsLayer::Type::Scrolling);
+        m_scrollingLayer = createGraphicsLayer("scrolling container", GraphicsLayer::Type::Scrolling);
         m_scrollingLayer->setDrawsContent(false);
         m_scrollingLayer->setMasksToBounds(true);
 
         // Inner layer which renders the content that scrolls.
-        m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
+        m_scrollingContentsLayer = createGraphicsLayer("scrolled Contents");
         m_scrollingContentsLayer->setDrawsContent(true);
 
         GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;

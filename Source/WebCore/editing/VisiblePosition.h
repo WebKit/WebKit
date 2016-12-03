@@ -169,7 +169,7 @@ TextStream& operator<<(TextStream&, const VisiblePosition&);
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)
-// Outside the WebCore namespace for ease of invocation from gdb.
+// Outside the WebCore namespace for ease of invocation from the debugger.
 void showTree(const WebCore::VisiblePosition*);
 void showTree(const WebCore::VisiblePosition&);
 #endif

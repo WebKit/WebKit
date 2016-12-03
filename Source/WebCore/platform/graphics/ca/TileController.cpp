@@ -53,12 +53,12 @@ static const auto tileSizeUpdateDelay = std::chrono::milliseconds { 500 };
 
 String TileController::tileGridContainerLayerName()
 {
-    return ASCIILiteral("TileGrid Container Layer");
+    return ASCIILiteral("TileGrid container");
 }
 
 String TileController::zoomedOutTileGridContainerLayerName()
 {
-    return ASCIILiteral("Zoomed Out TileGrid Container Layer");
+    return ASCIILiteral("Zoomed-out TileGrid container");
 }
 
 TileController::TileController(PlatformCALayer* rootPlatformLayer)
@@ -702,9 +702,13 @@ RefPtr<PlatformCALayer> TileController::createTileLayer(const IntRect& tileRect,
     layer->setBorderWidth(m_tileDebugBorderWidth);
     layer->setEdgeAntialiasingMask(0);
     layer->setOpaque(m_tilesAreOpaque);
-#ifndef NDEBUG
-    layer->setName("Tile");
-#endif
+
+    StringBuilder nameBuilder;
+    nameBuilder.append("tile at ");
+    nameBuilder.appendNumber(tileRect.location().x());
+    nameBuilder.append(',');
+    nameBuilder.appendNumber(tileRect.location().y());
+    layer->setName(nameBuilder.toString());
 
     float temporaryScaleFactor = owningGraphicsLayer()->platformCALayerContentsScaleMultiplierForNewTiles(m_tileCacheLayer);
     m_hasTilesWithTemporaryScaleFactor |= temporaryScaleFactor != 1;

@@ -386,11 +386,11 @@ RenderLayer::~RenderLayer()
 String RenderLayer::name() const
 {
     StringBuilder name;
-    name.append(renderer().renderName());
 
     if (Element* element = renderer().element()) {
-        name.append(' ');
-        name.append(element->tagName());
+        name.append(" <");
+        name.append(element->tagName().convertToLowercaseWithoutLocale());
+        name.append('>');
 
         if (element->hasID()) {
             name.appendLiteral(" id=\'");
@@ -400,14 +400,25 @@ String RenderLayer::name() const
 
         if (element->hasClass()) {
             name.appendLiteral(" class=\'");
-            for (size_t i = 0; i < element->classNames().size(); ++i) {
+            size_t classNamesToDump = element->classNames().size();
+            const size_t maxNumClassNames = 7;
+            bool addEllipsis = false;
+            if (classNamesToDump > maxNumClassNames) {
+                classNamesToDump = maxNumClassNames;
+                addEllipsis = true;
+            }
+            
+            for (size_t i = 0; i < classNamesToDump; ++i) {
                 if (i > 0)
                     name.append(' ');
                 name.append(element->classNames()[i]);
             }
+            if (addEllipsis)
+                name.append("...");
             name.append('\'');
         }
-    }
+    } else
+        name.append(renderer().renderName());
 
     if (isReflection())
         name.appendLiteral(" (reflection)");

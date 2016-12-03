@@ -109,7 +109,7 @@ private:
 
 } // namespace WebCore
 
-#ifndef NDEBUG
-// Outside the WebCore namespace for ease of invocation from gdb.
+#if ENABLE(TREE_DEBUGGING)
+// Outside the WebCore namespace for ease of invocation from the debugger.
 WEBCORE_EXPORT void showFrameTree(const WebCore::Frame*);
 #endif
