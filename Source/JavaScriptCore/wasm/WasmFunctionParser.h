@@ -213,6 +213,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::F32ConvertUI64: return unaryCase<OpType::F32ConvertUI64>();
     case OpType::F64ConvertUI64: return unaryCase<OpType::F64ConvertUI64>();
+    case OpType::F32Nearest: return unaryCase<OpType::F32Nearest>();
+    case OpType::F64Nearest: return unaryCase<OpType::F64Nearest>();
+    case OpType::F32Trunc: return unaryCase<OpType::F32Trunc>();
+    case OpType::F64Trunc: return unaryCase<OpType::F64Trunc>();
 #define CREATE_CASE(name, id, b3op) case OpType::name: return unaryCase<OpType::name>();
     FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
