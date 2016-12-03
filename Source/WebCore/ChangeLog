@@ -1,3 +1,22 @@
+2016-12-02  Chris Dumez  <cdumez@apple.com>
+
+        HTML Interactive Form Validation popovers do not show in iOS WKWebViews
+        https://bugs.webkit.org/show_bug.cgi?id=165340
+        <rdar://problem/29489966>
+
+        Reviewed by Simon Fraser.
+
+        HTML Interactive Form Validation popovers do not show in iOS WKWebViews,
+        only in MobileSafari. To address the issue try to find an appropriate
+        UIViewController to present the popover when the client does not provide
+        a presenting view controller.
+
+        * platform/ValidationBubble.h:
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::fallbackViewController):
+        (WebCore::ValidationBubble::setAnchorRect):
+        * platform/spi/ios/UIKitSPI.h:
+
 2016-12-02  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant LayoutUnit conversions.

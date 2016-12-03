@@ -114,8 +114,21 @@ void ValidationBubble::show()
     [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:nil];
 }
 
+static UIViewController *fallbackViewController(UIView *view)
+{
+    for (UIView *currentView = view; currentView; currentView = currentView.superview) {
+        if (UIViewController *viewController = [getUIViewControllerClass() viewControllerForView:currentView])
+            return viewController;
+    }
+    NSLog(@"Failed to find a view controller to show form validation popover");
+    return nil;
+}
+
 void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController)
 {
+    if (!presentingViewController)
+        presentingViewController = fallbackViewController(m_view);
+
     UIPopoverPresentationController *presentationController = [m_popoverController popoverPresentationController];
     // This is needed to force UIKit to use a popover on iPhone as well.
     [getUIPopoverPresentationControllerClass() _setAlwaysAllowPopoverPresentations:YES];

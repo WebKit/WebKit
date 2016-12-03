@@ -60,7 +60,7 @@ public:
     const String& message() const { return m_message; }
 
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT void setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController);
+    WEBCORE_EXPORT void setAnchorRect(const IntRect& anchorRect, UIViewController* presentingViewController = nullptr);
     WEBCORE_EXPORT void show();
 #else
     WEBCORE_EXPORT void showRelativeTo(const IntRect& anchorRect);
