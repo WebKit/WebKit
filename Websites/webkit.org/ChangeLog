@@ -1,3 +1,18 @@
+2016-12-02  Dean Jackson  <dino@apple.com>
+
+        Make a public facing page to check for WebKit features
+        https://bugs.webkit.org/show_bug.cgi?id=165331
+        <rdar://problem/29488535>
+
+        Reviewed by Antoine Quint.
+
+        Add a web page to webkit.org that allows us to live
+        detect our experimental features. This is mostly for
+        internal debugging, but also provides simple examples
+        of how real content would do such detection.
+
+        * experimental-features.html: Added.
+
 2016-11-17  Keith Miller  <keith_miller@apple.com>
 
         Add rotate to Wasm

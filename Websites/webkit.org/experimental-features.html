@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Experimental features</title>
+<meta name="viewport" content="width=600">
+<style>
+body {
+    background-color: #AEBDB4;
+    margin: 0;
+    font-family: -apple-system, sans-serif;
+    font-size: 22px;
+}
+
+.content {
+    width: 480px;
+    margin: 30px auto;
+    background-color: #D2D2D2;
+    border: 1px solid black;
+    border-top-width: 5px;
+    text-align: center;
+}
+
+.content h1 {
+    font-size: 34px;
+    margin: 20px 0;
+}
+
+.content p {
+    margin: 10px 40px;
+}
+
+.content .test {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    width: 320px;
+    margin: 25px auto;
+    height: 70px;
+    padding: 0 55px;
+    background-color: #e7dd0e;
+    border: 2px solid #999309;
+    border-radius: 35px;
+    background-size: 40px 40px;
+    background-position: 15px 15px;
+    background-repeat: no-repeat;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><circle cx="22.5" cy="22.5" r="22.5" fill="#999309"/><path fill="#e7dd0e" d="M14.58,17.93a7.54,7.54,0,0,1,1.27-4,9.79,9.79,0,0,1,3.71-3.37,11.67,11.67,0,0,1,5.69-1.33,12.15,12.15,0,0,1,5.34,1.12,8.65,8.65,0,0,1,3.58,3,7.44,7.44,0,0,1,1.26,4.17,6.45,6.45,0,0,1-.72,3.11A9.51,9.51,0,0,1,33,22.95q-1,1-3.55,3.26a14.47,14.47,0,0,0-1.14,1.14,4.62,4.62,0,0,0-.64.9,4.4,4.4,0,0,0-.32.81q-.11.41-.34,1.43a2.32,2.32,0,0,1-2.48,2.17,2.54,2.54,0,0,1-1.82-.71A2.78,2.78,0,0,1,22,29.84a7.39,7.39,0,0,1,2-5.28,33,33,0,0,1,2.42-2.3q1.33-1.17,1.93-1.76a6,6,0,0,0,1-1.32,3.2,3.2,0,0,0,.41-1.58,3.68,3.68,0,0,0-1.24-2.81,4.53,4.53,0,0,0-3.2-1.15,4.43,4.43,0,0,0-3.38,1.16A9.23,9.23,0,0,0,20,18.18q-.71,2.36-2.69,2.36a2.64,2.64,0,0,1-2-.82A2.52,2.52,0,0,1,14.58,17.93ZM24.75,40.78A3.28,3.28,0,0,1,22.53,40a2.89,2.89,0,0,1-.95-2.3,3,3,0,0,1,.92-2.21,3.1,3.1,0,0,1,2.25-.9,3.06,3.06,0,0,1,3.11,3.11,2.91,2.91,0,0,1-.94,2.29A3.17,3.17,0,0,1,24.75,40.78Z" transform="translate(-2.5 -2.5)"/></svg>');
+}
+
+.content .test p {
+    margin: 0;
+    padding: 0;
+}
+
+.content .test.enabled {
+    background-color: #1fee06;
+    border-color: #00aa04;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><circle cx="22.5" cy="22.5" r="22.5" fill="#00aa04"/><polyline points="36.13 11.93 16.99 31.07 8.87 22.95" style="fill:none;stroke:#1fee06;stroke-width:7px"/></svg>');
+}
+
+.content .test.disabled {
+    background-color: #fb5207;
+    border-color: #ab3903;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><circle cx="22.5" cy="22.5" r="22.5" fill="#ab3903"/><path d="M34.57,15.43,15.43,34.57" transform="translate(-2.5 -2.5)" style="fill:none;stroke:#fb5207;stroke-width:7px"/><path d="M15.43,15.43,34.57,34.57" transform="translate(-2.5 -2.5)" style="fill:none;stroke:#fb5207;stroke-width:7px"/></svg>');
+}
+
+</style>
+<script type="module">
+window.es6modules = true;
+</script>
+<script>
+
+function testCSSGrid() {
+    return CSS.supports("display", "grid");
+}
+
+function testWebGL2() {
+    let canvas = document.createElement("canvas");
+    return canvas.getContext("webgl2");
+}
+
+function testGamepad() {
+    return navigator.getGamepads;
+}
+
+function testSpringAnimation() {
+    return CSS.supports("transition-timing-function", "spring(1 100 10 0)");
+}
+
+function testVariationFonts() {
+    return CSS.supports("font-variation-settings", '"XHGT" 0.7');
+}
+
+function testFormValidation() {
+    return "reportValidity" in HTMLInputElement.prototype;
+}
+
+function testInputEvents() {
+    return window.InputEvent;
+}
+
+function testPointerLock() {
+    return "exitPointerLock" in Document.prototype;
+}
+
+function testES6Modules() {
+    return window.es6modules;
+}
+
+window.addEventListener("load", function () {
+    Array.from(document.querySelectorAll(".test")).forEach(element => {
+        var testFunction = window[`test${element.id}`];
+        if (typeof testFunction === "function")
+            element.classList.add(testFunction() ? "enabled" : "disabled");
+    });
+}, false);
+
+  </script>
+</head>
+<body>
+    <div class="content">
+        <h1>Experimental Feature Availability</h1>
+        <p>Toggle experimental features via the Develop menu (requires reload to take effect).</p>
+        <p>These tests do not exercise actual functionality. They are just the most basic check to see if the feature claims to be available.</p>
+
+        <div class="test" id="CSSGrid"><p>CSS Grid</p></div>
+        <div class="test" id="Gamepad"><p>Gamepad API</p></div>
+        <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
+        <!-- Remove "-unknown" when WebKit can do live feature detection for pointer lock -->
+        <div class="test" id="PointerLock-unknown"><p>Mouse Pointer Lock</p></div>
+        <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
+        <div class="test" id="FormValidation"><p>HTML Form Validation</p></div>
+        <div class="test" id="InputEvents"><p>HTML Input Events</p></div>
+        <div class="test" id="SpringAnimation"><p>CSS Spring Animations</p></div>
+        <div class="test" id="ES6Modules"><p>ES6 Modules in HTML</p></div>
+    </div>
+</body>
+</html>
