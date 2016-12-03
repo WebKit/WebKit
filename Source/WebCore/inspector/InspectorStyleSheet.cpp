@@ -385,12 +385,15 @@ enum MediaListSource {
     MediaListSourceImportRule
 };
 
-static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, Vector<size_t>* lineEndings)
+static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, Vector<size_t>* lineEndings, int* endingLine = nullptr)
 {
     if (!lineEndings)
         return nullptr;
     TextPosition start = ContentSearchUtilities::textPositionFromOffset(range.start, *lineEndings);
     TextPosition end = ContentSearchUtilities::textPositionFromOffset(range.end, *lineEndings);
+
+    if (endingLine)
+        *endingLine = end.m_line.zeroBasedInt();
 
     return Inspector::Protocol::CSS::SourceRange::create()
         .setStartLine(start.m_line.zeroBasedInt())
@@ -1115,7 +1118,7 @@ Ref<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSe
     return buildObjectForSelectorHelper(selector->selectorText(), *selector, element);
 }
 
-Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule, Element* element)
+Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule, Element* element, int& endingLine)
 {
     RefPtr<CSSRuleSourceData> sourceData;
     if (ensureParsedDataReady())
@@ -1138,7 +1141,7 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
         .setText(selectorText)
         .release();
     if (sourceData)
-        result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings().get()));
+        result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings().get(), &endingLine));
     return result;
 }
 
@@ -1148,9 +1151,10 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRul
     if (!styleSheet)
         return nullptr;
 
+    int endingLine = 0;
     auto result = Inspector::Protocol::CSS::CSSRule::create()
-        .setSelectorList(buildObjectForSelectorList(rule, element))
-        .setSourceLine(rule->styleRule().sourceLine())
+        .setSelectorList(buildObjectForSelectorList(rule, element, endingLine))
+        .setSourceLine(endingLine)
         .setOrigin(m_origin)
         .setStyle(buildObjectForStyle(&rule->style()))
         .release();

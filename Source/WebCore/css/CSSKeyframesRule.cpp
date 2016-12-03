@@ -38,7 +38,7 @@
 namespace WebCore {
 
 StyleRuleKeyframes::StyleRuleKeyframes()
-    : StyleRuleBase(Keyframes, 0)
+    : StyleRuleBase(Keyframes)
 {
 }
 

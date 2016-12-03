@@ -1048,7 +1048,6 @@ selector_list:
         if ($1) {
             $$ = parser->createSelectorVector().release();
             $$->append(std::unique_ptr<CSSParserSelector>($1));
-            parser->updateLastSelectorLineAndPosition();
         }
     }
     | selector_list at_selector_end ',' maybe_space before_selector_group_item complex_selector %prec UNIMPORTANT_TOK {
@@ -1058,7 +1057,6 @@ selector_list:
         if (selectorList && selector) {
             $$ = selectorList.release();
             $$->append(WTFMove(selector));
-            parser->updateLastSelectorLineAndPosition();
         }
     }
     | selector_list error {

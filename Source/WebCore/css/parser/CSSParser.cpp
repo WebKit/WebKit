@@ -13042,7 +13042,7 @@ RefPtr<StyleRule> CSSParser::createStyleRule(Vector<std::unique_ptr<CSSParserSel
     if (selectors) {
         m_allowImportRules = false;
         m_allowNamespaceDeclarations = false;
-        rule = StyleRule::create(m_lastSelectorLineNumber, createStyleProperties());
+        rule = StyleRule::create(createStyleProperties());
         rule->parserAdoptSelectorVector(*selectors);
         processAndAddNewRuleToSourceTreeIfNeeded();
     } else
@@ -13267,11 +13267,6 @@ void CSSParser::invalidBlockHit()
 {
     if (m_styleSheet && !m_hadSyntacticallyValidCSSRule)
         m_styleSheet->setHasSyntacticallyValidCSSHeader(false);
-}
-
-void CSSParser::updateLastSelectorLineAndPosition()
-{
-    m_lastSelectorLineNumber = m_lineNumber;
 }
 
 void CSSParser::updateLastMediaLine(MediaQuerySet& media)

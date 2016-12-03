@@ -1,3 +1,67 @@
+2016-12-03  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove line numbers from StyleRule.
+        https://bugs.webkit.org/show_bug.cgi?id=165361
+
+        Reviewed by Simon Fraser.
+
+        StyleRules have a concept of a source line that is eventually passed
+        to the inspector. This was only ever used by normal rules, i.e., ones with
+        selectors, and set to 0 for all other rules. This line was set to the line number
+        at which the end of the selector text occurred.
+
+        Because Inspector already computes the start and end range for the selector
+        text, storing a source line on StyleRule ends up being redundant. This patch
+        gets rid of the source line and uses the end line of the selector text
+        instead.
+
+        * css/CSSGrammar.y.in:
+        Remove the code that updates the last seen selector line.
+
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::StyleKeyframe):
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::StyleRuleKeyframes):
+        No longer need to pass in a 0 line number.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::StyleRule):
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::splitIntoMultipleRulesWithMaximumSelectorComponentCount):
+        (WebCore::StyleRuleFontFace::StyleRuleFontFace):
+        (WebCore::StyleRuleGroup::StyleRuleGroup):
+        (WebCore::StyleRuleCharset::StyleRuleCharset):
+        (WebCore::StyleRuleNamespace::StyleRuleNamespace):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::StyleRuleBase):
+        (WebCore::StyleRuleBase::sourceLine): Deleted.
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::StyleRuleImport):
+        Remove m_sourceLine and change the create methods and constructors to not
+        require a line number.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::createStyleRule):
+        Line number no longer needed.
+
+        (WebCore::CSSParser::updateLastSelectorLineAndPosition): Deleted.
+        * css/parser/CSSParser.h:
+        Got rid of the function that tracks and updates the last seen selector line.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeStyleRule):
+        Fix the rule creation in the new parser to not pass in a 0 line number.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::buildSourceRangeObject):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        * inspector/InspectorStyleSheet.h:
+        Patch the methods that build up the selector range to return the end line
+        information for selector text so that it can be set as the source line
+        for the rule (thus eliminating the need to store the line number on the style
+        rule itself).
+
 2016-12-02  Sam Weinig  <sam@webkit.org>
 
         optional sequence values not handled correctly by binding generator

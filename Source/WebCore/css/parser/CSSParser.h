@@ -415,7 +415,6 @@ public:
 
     void invalidBlockHit();
 
-    void updateLastSelectorLineAndPosition();
     void updateLastMediaLine(MediaQuerySet&);
 
     void clearProperties();
@@ -652,7 +651,6 @@ private:
     int m_lineNumber { 0 };
     int m_tokenStartLineNumber { 0 };
     int m_tokenStartColumnNumber { 0 };
-    int m_lastSelectorLineNumber { 0 };
     int m_columnOffsetForLine { 0 };
 
     int m_sheetStartLineNumber { 0 };

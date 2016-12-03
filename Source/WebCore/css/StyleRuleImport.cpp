@@ -41,7 +41,7 @@ Ref<StyleRuleImport> StyleRuleImport::create(const String& href, Ref<MediaQueryS
 }
 
 StyleRuleImport::StyleRuleImport(const String& href, Ref<MediaQuerySet>&& media)
-    : StyleRuleBase(Import, 0)
+    : StyleRuleBase(Import)
     , m_parentStyleSheet(0)
     , m_styleSheetClient(this)
     , m_strHref(href)

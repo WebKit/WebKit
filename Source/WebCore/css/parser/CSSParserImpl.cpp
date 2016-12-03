@@ -689,8 +689,7 @@ RefPtr<StyleRule> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, C
 
     consumeDeclarationList(block, StyleRule::Style);
 
-    // FIXME-NEWPARSER: Line number is in the StyleRule constructor (gross), need to figure this out.
-    RefPtr<StyleRule> rule = StyleRule::create(0, createStyleProperties(m_parsedProperties, m_context.mode));
+    RefPtr<StyleRule> rule = StyleRule::create(createStyleProperties(m_parsedProperties, m_context.mode));
     rule->wrapperAdoptSelectorList(selectorList);
     return rule;
 }

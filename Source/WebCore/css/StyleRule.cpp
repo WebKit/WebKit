@@ -40,7 +40,7 @@
 namespace WebCore {
 
 struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
-    unsigned bitfields;
+    unsigned bitfields : 5;
 };
 
 COMPILE_ASSERT(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), StyleRuleBase_should_stay_small);
@@ -204,8 +204,8 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes();
 }
 
-StyleRule::StyleRule(int sourceLine, Ref<StyleProperties>&& properties)
-    : StyleRuleBase(Style, sourceLine)
+StyleRule::StyleRule(Ref<StyleProperties>&& properties)
+    : StyleRuleBase(Style)
     , m_properties(WTFMove(properties))
 {
 }
@@ -228,14 +228,14 @@ MutableStyleProperties& StyleRule::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-Ref<StyleRule> StyleRule::create(int sourceLine, const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties)
+Ref<StyleRule> StyleRule::create(const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectors.isEmpty());
     CSSSelector* selectorListArray = reinterpret_cast<CSSSelector*>(fastMalloc(sizeof(CSSSelector) * selectors.size()));
     for (unsigned i = 0; i < selectors.size(); ++i)
         new (NotNull, &selectorListArray[i]) CSSSelector(*selectors.at(i));
     selectorListArray[selectors.size() - 1].setLastInSelectorList();
-    auto rule = StyleRule::create(sourceLine, WTFMove(properties));
+    auto rule = StyleRule::create(WTFMove(properties));
     rule.get().parserAdoptSelectorArray(selectorListArray);
     return rule;
 }
@@ -253,7 +253,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
             componentsInThisSelector.append(component);
 
         if (componentsInThisSelector.size() + componentsSinceLastSplit.size() > maxCount && !componentsSinceLastSplit.isEmpty()) {
-            rules.append(create(sourceLine(), componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
+            rules.append(create(componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
             componentsSinceLastSplit.clear();
         }
 
@@ -261,7 +261,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     }
 
     if (!componentsSinceLastSplit.isEmpty())
-        rules.append(create(sourceLine(), componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
+        rules.append(create(componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
 
     return rules;
 }
@@ -291,7 +291,7 @@ MutableStyleProperties& StyleRulePage::mutableProperties()
 }
 
 StyleRuleFontFace::StyleRuleFontFace(Ref<StyleProperties>&& properties)
-    : StyleRuleBase(FontFace, 0)
+    : StyleRuleBase(FontFace)
     , m_properties(WTFMove(properties))
 {
 }
@@ -314,7 +314,7 @@ MutableStyleProperties& StyleRuleFontFace::mutableProperties()
 }
 
 StyleRuleGroup::StyleRuleGroup(Type type, Vector<RefPtr<StyleRuleBase>>& adoptRule)
-    : StyleRuleBase(type, 0)
+    : StyleRuleBase(type)
 {
     m_childRules.swap(adoptRule);
 }
@@ -411,7 +411,7 @@ MutableStyleProperties& StyleRuleViewport::mutableProperties()
 #endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
 StyleRuleCharset::StyleRuleCharset()
-    : StyleRuleBase(Charset, 0)
+    : StyleRuleBase(Charset)
 {
 }
 
@@ -425,7 +425,7 @@ StyleRuleCharset::~StyleRuleCharset()
 }
 
 StyleRuleNamespace::StyleRuleNamespace(AtomicString prefix, AtomicString uri)
-    : StyleRuleBase(Namespace, 0)
+    : StyleRuleBase(Namespace)
     , m_prefix(prefix)
     , m_uri(uri)
 {
