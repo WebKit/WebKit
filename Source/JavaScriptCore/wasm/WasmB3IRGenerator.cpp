@@ -783,6 +783,58 @@ bool B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expression
     return true;
 }
 
+template<>
+bool B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.roundTowardNearestIntDouble(params[1].fpr(), params[0].fpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.roundTowardNearestIntFloat(params[1].fpr(), params[0].fpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.roundTowardZeroDouble(params[1].fpr(), params[0].fpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.roundTowardZeroFloat(params[1].fpr(), params[0].fpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
 } } // namespace JSC::Wasm
 
 #include "WasmB3IRGeneratorInlines.h"

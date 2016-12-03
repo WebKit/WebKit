@@ -797,6 +797,16 @@ public:
         m_assembler.roundss_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
     }
 
+    void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundsd_rr(src, dst, X86Assembler::RoundingType::ToNearestWithTiesToEven);
+    }
+
+    void roundTowardNearestIntFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.roundss_rr(src, dst, X86Assembler::RoundingType::ToNearestWithTiesToEven);
+    }
+
     void roundTowardZeroDouble(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.roundsd_rr(src, dst, X86Assembler::RoundingType::TowardZero);

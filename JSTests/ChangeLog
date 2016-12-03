@@ -29,6 +29,16 @@
         Add Wasm floating point nearest and trunc
         https://bugs.webkit.org/show_bug.cgi?id=165339
 
+        Reviewed by Saam Barati.
+
+        * wasm/function-tests/nearest.js: Added.
+        * wasm/function-tests/trunc.js: Added.
+
+2016-12-02  Keith Miller  <keith_miller@apple.com>
+
+        Add Wasm floating point nearest and trunc
+        https://bugs.webkit.org/show_bug.cgi?id=165339
+
         Reviewed by Filip Pizlo.
 
         * wasm/function-tests/nearest.js: Added.

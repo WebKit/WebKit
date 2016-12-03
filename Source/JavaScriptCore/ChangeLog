@@ -50,6 +50,36 @@
 
 2016-12-02  Keith Miller  <keith_miller@apple.com>
 
+        Add Wasm floating point nearest and trunc
+        https://bugs.webkit.org/show_bug.cgi?id=165339
+
+        Reviewed by Saam Barati.
+
+        This patch also allows any wasm primitive type to be passed as a
+        string.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::nearestIntDouble):
+        (JSC::MacroAssemblerARM64::nearestIntFloat):
+        (JSC::MacroAssemblerARM64::truncDouble):
+        (JSC::MacroAssemblerARM64::truncFloat):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::nearestIntDouble):
+        (JSC::MacroAssemblerX86Common::nearestIntFloat):
+        * jsc.cpp:
+        (box):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<F64ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32ConvertUI64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F64Nearest>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32Nearest>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F64Trunc>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::F32Trunc>):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+
+2016-12-02  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, forgot to change instruction after renaming.
 
         * assembler/MacroAssemblerARM64.h:
