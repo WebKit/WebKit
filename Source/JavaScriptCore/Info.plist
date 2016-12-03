@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>${BUNDLE_VERSION}, Copyright 2003-2016 Apple Inc.; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 1997-2005 University of Cambridge; Copyright 1991, 2000, 2001 by Lucent Technologies.</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.${PRODUCT_NAME}</string>
+	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

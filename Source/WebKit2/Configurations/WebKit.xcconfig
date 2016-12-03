@@ -24,6 +24,7 @@
 #include "BaseTarget.xcconfig"
 
 PRODUCT_NAME = WebKit;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 INFOPLIST_FILE = Info.plist;
 
 DEFINES_MODULE=YES;

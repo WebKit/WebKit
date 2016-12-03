@@ -1,3 +1,46 @@
+2016-12-02  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting
+        https://bugs.webkit.org/show_bug.cgi?id=164492
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/TestNetscapePlugIn/mac/Info.plist: Changed CFBundleIdentifier's value from
+        com.apple.testnetscapeplugin to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * DumpRenderTree/ios/Info.plist: Changed CFBundleIdentifier's value from
+        org.webkit.DumpRenderTree to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * DumpRenderTree/mac/Configurations/DumpRenderTreeApp.xcconfig: Set
+        PRODUCT_BUNDLE_IDENTIFIER to org.webkit.DumpRenderTree.
+        * DumpRenderTree/mac/Configurations/TestNetscapePlugIn.xcconfig: Set
+        PRODUCT_BUNDLE_IDENTIFIER to com.apple.testnetscapeplugin.
+        * MiniBrowser/Configurations/MiniBrowser.xcconfig: Set PRODUCT_BUNDLE_IDENTIFIER to
+        org.webkit.$(PRODUCT_NAME:rfc1034identifier).
+        * MiniBrowser/Configurations/MiniBrowserBundle.xcconfig: Set PRODUCT_BUNDLE_IDENTIFIER to
+        com.apple.$(PRODUCT_NAME:rfc1034identifier).
+        * MiniBrowser/mac/Bundle/Info.plist: Changed CFBundleIdentifier's value from
+        com.apple.${PRODUCT_NAME:rfc1034identifier} to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * MiniBrowser/mac/Info.plist: Changed CFBundleIdentifier's value from
+        org.webkit.${PRODUCT_NAME} to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * TestWebKitAPI/Configurations/InjectedBundle.xcconfig: Set INFOPLIST_FILE to
+        InjectedBundle-Info.plist and set PRODUCT_BUNDLE_IDENTIFIER to
+        com.apple.$(PRODUCT_NAME:rfc1034identifier).
+        * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig: Set PRODUCT_BUNDLE_IDENTIFIER to
+        com.apple.$(PRODUCT_NAME:rfc1034identifier).
+        * TestWebKitAPI/InjectedBundle-Info.plist: Changed CFBundleIdentifier's value from
+        com.yourcompany.${PRODUCT_NAME:rfc1034identifier} to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * TestWebKitAPI/cocoa/WebProcessPlugIn/Info.plist: Added a CFBundleIdentifier key with the
+        value ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig: Set INFOPLIST_FILE to
+        InjectedBundle-Info.plist and set PRODUCT_BUNDLE_IDENTIFIER to
+        com.apple.WebKitTestRunner.InjectedBundle.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig: Set
+        PRODUCT_BUNDLE_IDENTIFIER to org.webkit.$(PRODUCT_NAME:rfc1034identifier).
+        * WebKitTestRunner/InjectedBundle-Info.plist: Changed CFBundleIdentifier's value from
+        com.apple.WebKitTestRunner.InjectedBundle to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * WebKitTestRunner/WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist: Changed
+        CFBundleIdentifier's value from org.webkit.${PRODUCT_NAME:rfc1034identifier} to
+        ${PRODUCT_BUNDLE_IDENTIFIER}.
+
 2016-12-02  Brady Eidson  <beidson@apple.com>
 
         Make IndexedDB.WebProcessKillIDBCleanup even more reliable.

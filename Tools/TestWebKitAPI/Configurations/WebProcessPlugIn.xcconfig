@@ -27,6 +27,7 @@
 
 INFOPLIST_FILE = cocoa/WebProcessPlugIn/Info.plist;
 PRODUCT_NAME = TestWebKitAPI;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 EXECUTABLE_SUFFIX = .bundle;
 WRAPPER_EXTENSION = wkbundle;
 OTHER_LDFLAGS = $(inherited) -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport;

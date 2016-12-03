@@ -1,3 +1,15 @@
+2016-12-02  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting
+        https://bugs.webkit.org/show_bug.cgi?id=164492
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/WebKitLegacy.xcconfig: Set PRODUCT_BUNDLE_IDENTIFIER to
+        com.apple.$(PRODUCT_NAME:rfc1034identifier).
+        * Info.plist: Changed CFBundleIdentifier's value from com.apple.${PRODUCT_NAME} to
+        ${PRODUCT_BUNDLE_IDENTIFIER}.
+
 2016-12-02  Chris Dumez  <cdumez@apple.com>
 
         Regression(r209252): HTML interactive validation should not be enabled on iOS WK1 yet

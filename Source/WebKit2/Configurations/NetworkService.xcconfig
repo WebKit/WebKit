@@ -26,6 +26,7 @@
 WK_XPC_SERVICE_IOS_ENTITLEMENTS_BASE = Network-iOS;
 
 PRODUCT_NAME = com.apple.WebKit.Networking;
+PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
 INFOPLIST_FILE[sdk=iphone*] = NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX$(WK_XPC_SERVICE_INFOPLIST_SUFFIX).plist;
 

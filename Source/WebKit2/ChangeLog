@@ -1,3 +1,32 @@
+2016-12-02  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting
+        https://bugs.webkit.org/show_bug.cgi?id=164492
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/DatabaseService.xcconfig: Set PRODUCT_BUNDLE_IDENTIFIER to
+        $(PRODUCT_NAME).
+        * Configurations/NetworkService.xcconfig: Ditto.
+        * Configurations/PluginService.32.xcconfig: Ditto.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Ditto.
+        * Configurations/WebKit.xcconfig: Set PRODUCT_BUNDLE_IDENTIFIER to
+        com.apple.$(PRODUCT_NAME:rfc1034identifier).
+        * DatabaseProcess/EntryPoint/mac/XPCService/DatabaseService/Info.plist: Changed
+        CFBundleIdentifier's value from ${PRODUCT_NAME} to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * Info.plist: Changed CFBundleIdentifier's value from com.apple.${PRODUCT_NAME} to
+        ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX-10.9-10.10.plist: Changed
+        CFBundleIdentifier's value from ${PRODUCT_NAME} to ${PRODUCT_BUNDLE_IDENTIFIER}.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist: Ditto.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist: Ditto.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist: Ditto.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist: Ditto.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX-10.9-10.10.plist: Ditto.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist: Ditto.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist: Ditto.
+
 2016-12-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Update sandbox profiles to use modern syntax and avoid duplication

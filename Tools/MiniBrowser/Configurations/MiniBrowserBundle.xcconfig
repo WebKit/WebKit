@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 PRODUCT_NAME = MiniBrowser
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier)
 GCC_PREFIX_HEADER = mac/Bundle/MiniBrowserBundle_Prefix.pch
 INFOPLIST_FILE = mac/Bundle/Info.plist
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = *

@@ -26,6 +26,7 @@
 #include "BaseTarget.xcconfig"
 
 PRODUCT_NAME = WebKitTestRunner;
+PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier);
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 

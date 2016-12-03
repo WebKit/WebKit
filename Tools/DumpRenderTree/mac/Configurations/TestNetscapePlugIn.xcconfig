@@ -24,6 +24,7 @@
 #include "BaseTarget.xcconfig"
 
 PRODUCT_NAME = TestNetscapePlugIn
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.testnetscapeplugin
 WRAPPER_EXTENSION = plugin
 INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist
 INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins"

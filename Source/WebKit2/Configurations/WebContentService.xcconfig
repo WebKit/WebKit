@@ -30,6 +30,7 @@ CODE_SIGN_ENTITLEMENTS_OSX_WITH_XPC_DOMAIN_EXTENSION_YES = Configurations/WebCon
 OTHER_CODE_SIGN_FLAGS[sdk=macosx*] = $(WK_XPC_DOMAIN_EXTENSION_CODE_SIGN_FLAGS);
 
 PRODUCT_NAME = com.apple.WebKit.WebContent;
+PRODUCT_BUNDLE_IDENTIFIER = $(PRODUCT_NAME);
 INFOPLIST_FILE[sdk=iphone*] = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist;
 INFOPLIST_FILE[sdk=macosx*] = WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX$(WK_XPC_SERVICE_INFOPLIST_SUFFIX).plist;
 

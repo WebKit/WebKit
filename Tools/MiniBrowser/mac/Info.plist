@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>MiniBrowser</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.webkit.${PRODUCT_NAME}</string>
+	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
