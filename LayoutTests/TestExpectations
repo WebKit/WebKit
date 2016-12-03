@@ -1028,6 +1028,7 @@ webkit.org/b/165195 fast/css/parsing-css-attribute-case-insensitive-value-1.html
 webkit.org/b/165195 fast/css/parsing-css-attribute-case-insensitive-value-2.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-nth-child.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-text-emphasis.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/css-selector-text.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/css-set-selector-text.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/remove-shorthand.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/transform-inline-style.html [ Pass Failure ]
