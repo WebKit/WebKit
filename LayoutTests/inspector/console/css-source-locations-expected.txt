@@ -1,9 +1,0 @@
-Tests that CSS parser warnings from inline style tags and external stylesheets are sent to the console with correct line and column information.
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"css-source-locations.html:7:20"}
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"css-source-locations.html:8:14"}
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"css-source-locations.html:9:7"}
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"css-source-locations.html:11:8"}
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"errors.css:1:7"}
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"errors.css:1:29"}
-{"source":"css","level":"warning","text":"Invalid CSS property declaration at: *","location":"errors.css:4:5"}
-

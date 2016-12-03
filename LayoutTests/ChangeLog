@@ -1,3 +1,22 @@
+2016-12-03  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove Inspector test of Bison errors
+        https://bugs.webkit.org/show_bug.cgi?id=165362
+
+        Reviewed by Simon Fraser.
+
+        The old parser logs invalid property declaration errors whenever a Bison error
+        occurs. This catches only a fraction of declaration errors,
+        since Bison accepts practically everything and leaves it up to the specific
+        parser functions to determine validity of a property.
+
+        The new parser does not have this error reporting. The old reporting will be
+        removed from CSSParser when the new parser turns on. This patch removes the
+        test of Bison errors.
+
+        * inspector/console/css-source-locations-expected.txt: Removed.
+        * inspector/console/css-source-locations.html: Removed.
+
 2016-12-02  Sam Weinig  <sam@webkit.org>
 
         optional sequence values not handled correctly by binding generator
