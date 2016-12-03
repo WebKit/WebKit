@@ -66,6 +66,9 @@
 #include "CSSVariableParser.h"
 #include "CSSVariableReferenceValue.h"
 #include "Counter.h"
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "DashboardRegion.h"
+#endif
 #include "FontFace.h"
 #include "HashTools.h"
 // FIXME-NEWPARSER: Replace Pair and Rect with actual CSSValue subclasses (CSSValuePair and CSSQuadValue).
@@ -1466,7 +1469,7 @@ static RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserT
         return consumeIdent<CSSValueNormal, CSSValueAlternate, CSSValueReverse, CSSValueAlternateReverse>(range);
     case CSSPropertyAnimationDuration:
     case CSSPropertyTransitionDuration:
-        return consumeTime(range, context.mode, ValueRangeNonNegative, UnitlessQuirk::Forbid);
+        return consumeTime(range, context.mode, ValueRangeNonNegative, UnitlessQuirk::Allow);
     case CSSPropertyAnimationFillMode:
         return consumeIdent<CSSValueNone, CSSValueForwards, CSSValueBackwards, CSSValueBoth>(range);
     case CSSPropertyAnimationIterationCount:
@@ -3592,6 +3595,98 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
     return list;
 }
     
+#if ENABLE(DASHBOARD_SUPPORT)
+
+static RefPtr<CSSValue> consumeWebkitDashboardRegion(CSSParserTokenRange& range, CSSParserMode mode)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    
+    auto firstRegion = DashboardRegion::create();
+    DashboardRegion* region = nullptr;
+    
+    bool requireCommas = false;
+    
+    while (!range.atEnd()) {
+        if (!region)
+            region = firstRegion.ptr();
+        else {
+            auto nextRegion = DashboardRegion::create();
+            region->m_next = nextRegion.copyRef();
+            region = nextRegion.ptr();
+        }
+        
+        if (range.peek().functionId() != CSSValueDashboardRegion)
+            return nullptr;
+        
+        CSSParserTokenRange rangeCopy = range;
+        CSSParserTokenRange args = consumeFunction(rangeCopy);
+        
+        // First arg is a label.
+        if (args.peek().type() != IdentToken)
+            return nullptr;
+        region->m_label = args.consumeIncludingWhitespace().value().toString();
+        
+        // Comma is optional, so don't fail if we can't consume one.
+        requireCommas = consumeCommaIncludingWhitespace(args);
+
+        // Second arg is a type.
+        if (args.peek().type() != IdentToken)
+            return nullptr;
+        region->m_geometryType = args.consumeIncludingWhitespace().value().toString();
+        if (equalLettersIgnoringASCIICase(region->m_geometryType, "circle"))
+            region->m_isCircle = true;
+        else if (equalLettersIgnoringASCIICase(region->m_geometryType, "rectangle"))
+            region->m_isRectangle = true;
+        else
+            return nullptr;
+        
+        if (args.atEnd()) {
+            // This originally used CSSValueInvalid by accident. It might be more logical to use something else.
+            RefPtr<CSSPrimitiveValue> amount = CSSValuePool::singleton().createIdentifierValue(CSSValueInvalid);
+            region->setTop(amount.copyRef());
+            region->setRight(amount.copyRef());
+            region->setBottom(amount.copyRef());
+            region->setLeft(WTFMove(amount));
+            range = rangeCopy;
+            continue;
+        }
+        
+        // Next four arguments must be offset numbers or auto.
+        for (int i = 0; i < 4; ++i) {
+            if (args.atEnd() || (requireCommas && !consumeCommaIncludingWhitespace(args)))
+                return nullptr;
+
+            if (args.atEnd())
+                return nullptr;
+            
+            RefPtr<CSSPrimitiveValue> amount;
+            if (args.peek().id() == CSSValueAuto)
+                amount = consumeIdent(args);
+            else
+                amount = consumeLength(args, mode, ValueRangeAll);
+        
+            if (!i)
+                region->setTop(WTFMove(amount));
+            else if (i == 1)
+                region->setRight(WTFMove(amount));
+            else if (i == 2)
+                region->setBottom(WTFMove(amount));
+            else
+                region->setLeft(WTFMove(amount));
+        }
+        
+        if (!args.atEnd())
+            return nullptr;
+        
+        range = rangeCopy;
+    }
+    
+    return CSSValuePool::singleton().createValue(RefPtr<DashboardRegion>(WTFMove(firstRegion)));
+}
+    
+#endif
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -4033,6 +4128,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeWebkitAspectRatio(m_range);
     case CSSPropertyWebkitTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
+#if ENABLE(DASHBOARD_SUPPORT)
+    case CSSPropertyWebkitDashboardRegion:
+        return consumeWebkitDashboardRegion(m_range, m_context.mode);
+#endif
     default:
         return nullptr;
     }

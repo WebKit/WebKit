@@ -1168,6 +1168,7 @@ repeating-radial-gradient
 -webkit-named-image
 filter
 -webkit-filter
+dashboard-region
 
 // deprecated gradients
 from

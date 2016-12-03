@@ -1,3 +1,15 @@
+2016-12-03  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support Dashboard Regions
+        https://bugs.webkit.org/show_bug.cgi?id=165357
+
+        Reviewed by Daniel Bates.
+
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitDashboardRegion):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the behavior of scroll-into-view when the target is inside position:fixed
