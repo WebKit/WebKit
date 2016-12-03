@@ -746,27 +746,7 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
 template<>
 bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result)
 {
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
-    if (isX86())
-        patchpoint->numGPScratchRegisters = 1;
-    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-#if CPU(X86_64)
-        jit.convertUInt64ToDouble(params[1].gpr(), params[0].fpr(), params.gpScratch(0));
-#else
-        jit.convertUInt64ToDouble(params[1].gpr(), params[0].fpr());
-#endif
-    });
-    patchpoint->effects = Effects::none();
-    result = patchpoint;
-    return true;
-}
-
-template<>
-bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result)
-{
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
     patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));

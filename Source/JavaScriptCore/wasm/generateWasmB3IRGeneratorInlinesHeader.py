@@ -133,13 +133,10 @@ class CodeGenerator:
 
     def generateOpcode(self):
         result = None
-        if self.token() == "i32" or self.token() == "i64":
-            type = "Int32"
-            if self.token() == "i64":
-                type = "Int64"
+        if self.token() == "i32":
             self.advance()
             self.consume("(")
-            self.code.append(generateConstCode(self.index, self.token(), type))
+            self.code.append(generateI32ConstCode(self.index, self.token()))
             result = temp(self.index)
             self.advance()
             self.consume(")")
@@ -173,8 +170,8 @@ def generateB3OpCode(index, op, params):
     return "Value* " + temp(index) + " = m_currentBlock->appendNew<Value>(m_proc, B3::" + op + ", Origin(), " + ", ".join(params) + ");"
 
 
-def generateConstCode(index, value, type):
-    return "Value* " + temp(index) + " = m_currentBlock->appendIntConstant(m_proc, Origin(), B3::" + type + ", " + value + ");"
+def generateI32ConstCode(index, value):
+    return "Value* " + temp(index) + " = m_currentBlock->appendIntConstant(m_proc, Origin(), B3::Int32, " + value + ");"
 
 
 def generateB3Code(wasmOp, source):
