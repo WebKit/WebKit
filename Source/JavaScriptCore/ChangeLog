@@ -1,5 +1,26 @@
 2016-12-02  Keith Miller  <keith_miller@apple.com>
 
+        Add Wasm copysign
+        https://bugs.webkit.org/show_bug.cgi?id=165355
+
+        Reviewed by Filip Pizlo.
+
+        This patch also makes two other important changes:
+
+        1) allows for i64 constants in the B3 generator language.
+        2) Fixes a bug with F64ConvertUI64 where the operation returned a Float instead
+           of a Double in B3.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<F64ConvertUI64>):
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        (CodeGenerator.generateOpcode):
+        (generateConstCode):
+        (generateI32ConstCode): Deleted.
+        * wasm/wasm.json:
+
+2016-12-02  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix git having a breakdown over trying to reland a rollout.
 
 2016-12-02  Keith Miller  <keith_miller@apple.com>

@@ -1,5 +1,14 @@
 2016-12-02  Keith Miller  <keith_miller@apple.com>
 
+        Add Wasm copysign
+        https://bugs.webkit.org/show_bug.cgi?id=165355
+
+        Reviewed by Filip Pizlo.
+
+        * wasm/function-tests/copysign.js: Added.
+
+2016-12-02  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix git having a breakdown over trying to reland a rollout.
 
 2016-12-02  Keith Miller  <keith_miller@apple.com>
