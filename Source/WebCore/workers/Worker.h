@@ -35,6 +35,12 @@
 #include <wtf/Optional.h>
 #include <wtf/text/AtomicStringHash.h>
 
+namespace JSC {
+class ExecState;
+class JSObject;
+class JSValue;
+}
+
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -46,7 +52,7 @@ public:
     static ExceptionOr<Ref<Worker>> create(ScriptExecutionContext&, const String& url, JSC::RuntimeFlags);
     virtual ~Worker();
 
-    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&);
+    ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     void terminate();
 

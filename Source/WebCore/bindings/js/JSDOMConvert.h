@@ -813,6 +813,25 @@ template<> struct JSConverter<IDLUSVString> {
 };
 
 // MARK: -
+// MARK: Object type
+
+template<> struct Converter<IDLObject> : DefaultConverter<IDLObject> {
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static JSC::Strong<JSC::JSObject> convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        if (!value.isObject()) {
+            exceptionThrower(state, scope);
+            return { };
+        }
+        
+        return { vm, JSC::asObject(value) };
+    }
+};
+
+// MARK: -
 // MARK: Array-like types
 
 namespace Detail {

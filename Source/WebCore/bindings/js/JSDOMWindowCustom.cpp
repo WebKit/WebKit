@@ -32,12 +32,12 @@
 #include "JSHTMLOptionElement.h"
 #include "JSIDBFactory.h"
 #include "JSImageConstructor.h"
-#include "JSMessagePortCustom.h"
 #include "JSWorker.h"
 #include "Location.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScheduledAction.h"
 #include "Settings.h"
+#include <runtime/JSCInlines.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 #include "JSWebKitNamespace.h"
@@ -487,50 +487,6 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
     });
 
     return handler.returnValue();
-}
-
-static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 2))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    Vector<RefPtr<MessagePort>> messagePorts;
-    Vector<RefPtr<JSC::ArrayBuffer>> arrayBuffers;
-
-    // This function has variable arguments and can be:
-    // Per current spec:
-    //   postMessage(message, targetOrigin)
-    //   postMessage(message, targetOrigin, {sequence of transferrables})
-    // Legacy non-standard implementations in webkit allowed:
-    //   postMessage(message, {sequence of transferrables}, targetOrigin);
-    int targetOriginArgIndex = 1;
-    if (state.argumentCount() > 2) {
-        int transferablesArgIndex = 2;
-        if (state.uncheckedArgument(2).isString()) {
-            targetOriginArgIndex = 2;
-            transferablesArgIndex = 1;
-        }
-        extractTransferables(state, state.argument(transferablesArgIndex), messagePorts, arrayBuffers);
-    }
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    auto message = SerializedScriptValue::create(state, state.uncheckedArgument(0), messagePorts, WTFMove(arrayBuffers));
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    String targetOrigin = convert<IDLNullable<IDLUSVString>>(state, state.uncheckedArgument(targetOriginArgIndex));
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    propagateException(state, scope, impl.postMessage(message.releaseNonNull(), WTFMove(messagePorts), targetOrigin, callerDOMWindow(&state)));
-
-    return jsUndefined();
-}
-
-JSValue JSDOMWindow::postMessage(ExecState& state)
-{
-    return handlePostMessage(wrapped(), state);
 }
 
 JSValue JSDOMWindow::setTimeout(ExecState& state)

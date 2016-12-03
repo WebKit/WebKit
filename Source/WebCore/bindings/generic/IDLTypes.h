@@ -34,6 +34,8 @@ namespace JSC {
 class ArrayBuffer;
 class ArrayBufferView;
 class JSValue;
+class JSObject;
+template<typename T> class Strong;
 }
 
 namespace WebCore {
@@ -94,7 +96,7 @@ struct IDLDOMString : IDLString { };
 struct IDLByteString : IDLString { };
 struct IDLUSVString : IDLString { };
 
-struct IDLObject : IDLUnsupportedType { };
+struct IDLObject : IDLType<JSC::Strong<JSC::JSObject>> { };
 
 template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using RawType = T;

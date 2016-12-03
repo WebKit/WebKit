@@ -1,3 +1,24 @@
+2016-12-02  Sam Weinig  <sam@webkit.org>
+
+        optional sequence values not handled correctly by binding generator
+        https://bugs.webkit.org/show_bug.cgi?id=142562
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/webgl/resources/typed-array-worker.js:
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/dom/Window/window-postmessage-args.html:
+        * fast/events/message-port-deleted-document.html:
+        * fast/events/message-port-deleted-frame.html:
+        * fast/events/message-port-inactive-document.html:
+        * fast/events/message-port-multi-expected.txt:
+        * fast/events/message-port.html:
+        * fast/workers/worker-context-multi-port-expected.txt:
+        * fast/workers/worker-multi-port-expected.txt:
+        * webgl/1.0.2/resources/webgl_test_files/conformance/typedarrays/resources/typed-array-worker.js:
+        * webgl/1.0.3/resources/webgl_test_files/conformance/typedarrays/resources/typed-array-worker.js:
+        Update for new exceptions and stricter enforcement of the postMessage signature. 
+
 2016-12-02  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the behavior of scroll-into-view when the target is inside position:fixed

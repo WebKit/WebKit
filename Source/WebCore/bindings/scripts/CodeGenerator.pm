@@ -597,6 +597,7 @@ sub IsRefPtrType
     return 0 if $object->IsStringType($type);
     return 0 if $type->isUnion;
     return 0 if $type->name eq "any";
+    return 0 if $type->name eq "object";
 
     return 1;
 }
@@ -862,6 +863,7 @@ sub IsBuiltinType
     return 1 if $object->IsTypedArrayType($type);
     return 1 if $type->isUnion;
     return 1 if $type->name eq "any";
+    return 1 if $type->name eq "object";
     return 1 if $type->name eq "BufferSource";
     return 1 if $type->name eq "Promise";
     return 1 if $type->name eq "XPathNSResolver";    

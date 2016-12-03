@@ -279,6 +279,7 @@ sub AddToIncludesForIDLType
     return if $codeGenerator->IsStringType($type);
     return if $codeGenerator->IsTypedArrayType($type);
     return if $type->name eq "any";
+    return if $type->name eq "object";
 
     if ($type->isUnion) {
         AddToIncludes("<wtf/Variant.h>", $includesRef, $conditional);
@@ -4970,6 +4971,7 @@ my %nativeType = (
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "XPathNSResolver" => "RefPtr<XPathNSResolver>",
     "any" => "JSC::JSValue",
+    "object" => "JSC::Strong<JSC::JSObject>",
     "boolean" => "bool",
     "byte" => "int8_t",
     "double" => "double",
@@ -5058,6 +5060,7 @@ sub GetBaseIDLType
         "DOMString" => "IDLDOMString",
         "ByteString" => "IDLByteString",
         "USVString" => "IDLUSVString",
+        "object" => "IDLObject",
         
         # Non-WebIDL extensions
         "Date" => "IDLDate",

@@ -72,6 +72,12 @@ enum {
     OperationError,
     NotAllowedError,
 
+    // Non-standard errors
+    StackOverflowError,
+
+    // Used to indicate to the bindings that a JS exception was thrown below and it should be propogated.
+    ExistingExceptionError,
+
     // WebIDL exception types, handled by the binding layer.
     // FIXME: Add GeneralError, EvalError, etc. when implemented in the bindings.
     TypeError = 105,

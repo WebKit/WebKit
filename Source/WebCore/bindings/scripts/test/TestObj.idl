@@ -233,6 +233,7 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalBoolean(optional boolean b);
     void    methodWithOptionalBooleanIsFalse(optional boolean b = false);
     void    methodWithOptionalAny(optional any a);
+    void    methodWithOptionalObject(optional object a);
     void    methodWithOptionalNullableWrapper(optional TestObj? obj);
     void    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
     void    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
@@ -272,6 +273,7 @@ enum TestConfidence { "high", "kinda-low" };
     [CachedAttribute] readonly attribute any cachedAttribute2;
     
     attribute any anyAttribute;
+    attribute object objectAttribute;
 
     // Overloads
     void    overloadedMethod(TestObj? objArg, DOMString strArg);

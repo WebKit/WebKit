@@ -33,6 +33,12 @@
 
 #include "WorkerGlobalScope.h"
 
+namespace JSC {
+class ExecState;
+class JSObject;
+class JSValue;
+}
+
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
@@ -45,7 +51,7 @@ public:
     static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& identifier, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
     virtual ~DedicatedWorkerGlobalScope();
 
-    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&&, Vector<RefPtr<MessagePort>>&&);
+    ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     DedicatedWorkerThread& thread();
 

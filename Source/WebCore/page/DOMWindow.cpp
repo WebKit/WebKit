@@ -116,6 +116,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
@@ -919,12 +920,12 @@ ExceptionOr<Storage*> DOMWindow::localStorage() const
     return m_localStorage.get();
 }
 
-ExceptionOr<void> DOMWindow::postMessage(Ref<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports, const String& targetOrigin, DOMWindow& source)
+ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& callerWindow, JSC::JSValue messageValue, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     if (!isCurrentlyDisplayedInFrame())
         return { };
 
-    Document* sourceDocument = source.document();
+    Document* sourceDocument = callerWindow.document();
 
     // Compute the target origin.  We need to do this synchronously in order
     // to generate the SYNTAX_ERR exception correctly.
@@ -940,6 +941,11 @@ ExceptionOr<void> DOMWindow::postMessage(Ref<SerializedScriptValue>&& message, V
         if (target->isUnique())
             return Exception { SYNTAX_ERR };
     }
+
+    Vector<RefPtr<MessagePort>> ports;
+    auto message = SerializedScriptValue::create(state, messageValue, WTFMove(transfer), ports);
+    if (message.hasException())
+        return message.releaseException();
 
     auto channels = MessagePort::disentanglePorts(WTFMove(ports));
     if (channels.hasException())
@@ -957,7 +963,7 @@ ExceptionOr<void> DOMWindow::postMessage(Ref<SerializedScriptValue>&& message, V
         stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture);
 
     // Schedule the message.
-    auto* timer = new PostMessageTimer(*this, WTFMove(message), sourceOrigin, source, channels.releaseReturnValue(), WTFMove(target), WTFMove(stackTrace));
+    auto* timer = new PostMessageTimer(*this, message.releaseReturnValue(), sourceOrigin, callerWindow, channels.releaseReturnValue(), WTFMove(target), WTFMove(stackTrace));
     timer->startOneShot(0);
 
     return { };

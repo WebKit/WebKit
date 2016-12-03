@@ -3,10 +3,10 @@ This test checks the various use cases around sending multiple ports through Wor
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS worker.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception InvalidStateError (DOM Exception 11): The object is in an invalid state..
-PASS worker.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception TypeError: Type error.
-PASS worker.postMessage("notAnArray", channel3.port1) threw exception TypeError: Value is not a sequence.
-PASS worker.postMessage("notASequence", [{length: 3}]) threw exception TypeError: Type error.
+PASS worker.postMessage("null port", [channel3.port1, null, channel3.port2]) threw exception TypeError: Type error.
+PASS worker.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception DataCloneError (DOM Exception 25): The object can not be cloned..
+PASS worker.postMessage("notAnArray", channel3.port1) threw exception TypeError: Type error.
+PASS worker.postMessage("notASequence", [{length: 3}]) threw exception DataCloneError (DOM Exception 25): The object can not be cloned..
 PASS event.ports is non-null and zero length when no port sent
 PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent

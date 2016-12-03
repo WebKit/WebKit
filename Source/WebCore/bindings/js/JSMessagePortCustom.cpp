@@ -27,20 +27,6 @@
 #include "config.h"
 #include "JSMessagePort.h"
 
-#include "Event.h"
-#include "ExceptionCode.h"
-#include "Frame.h"
-#include "JSDOMBinding.h"
-#include "JSDOMGlobalObject.h"
-#include "JSEvent.h"
-#include "JSEventListener.h"
-#include "JSMessagePortCustom.h"
-#include "MessagePort.h"
-#include <heap/SlotVisitorInlines.h>
-#include <runtime/Error.h>
-#include <runtime/JSArrayBuffer.h>
-#include <wtf/text/AtomicString.h>
-
 using namespace JSC;
 
 namespace WebCore {
@@ -50,55 +36,6 @@ void JSMessagePort::visitAdditionalChildren(SlotVisitor& visitor)
     // If we have a locally entangled port, we can directly mark it as reachable. Ports that are remotely entangled are marked in-use by markActiveObjectsForContext().
     if (MessagePort* port = wrapped().locallyEntangledPort())
         visitor.addOpaqueRoot(port);
-}
-
-JSC::JSValue JSMessagePort::postMessage(JSC::ExecState& state)
-{
-    return handlePostMessage(state, wrapped());
-}
-
-void extractTransferables(JSC::ExecState& state, JSC::JSValue value, Vector<RefPtr<MessagePort>>& portArray, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (value.isUndefinedOrNull()) {
-        portArray.resize(0);
-        arrayBuffers.resize(0);
-        return;
-    }
-
-    // Validation of sequence types, per WebIDL spec 4.1.13.
-    unsigned length = 0;
-    JSObject* object = toJSSequence(state, value, length);
-    RETURN_IF_EXCEPTION(scope, void());
-
-    for (unsigned i = 0 ; i < length; ++i) {
-        JSValue value = object->get(&state, i);
-        RETURN_IF_EXCEPTION(scope, void());
-
-        if (value.isUndefinedOrNull()) {
-            setDOMException(&state, INVALID_STATE_ERR);
-            return;
-        }
-
-        // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
-        if (RefPtr<MessagePort> port = JSMessagePort::toWrapped(value)) {
-            // Check for duplicate ports.
-            if (portArray.contains(port)) {
-                setDOMException(&state, INVALID_STATE_ERR);
-                return;
-            }
-            portArray.append(WTFMove(port));
-        } else {
-            if (RefPtr<ArrayBuffer> arrayBuffer = toPossiblySharedArrayBuffer(value))
-                arrayBuffers.append(WTFMove(arrayBuffer));
-            else {
-                throwTypeError(&state, scope);
-                return;
-            }
-        }
-    }
 }
 
 } // namespace WebCore

@@ -92,6 +92,16 @@ namespace WebCore {
 
 static const unsigned maximumFilterRecursion = 40000;
 
+enum class SerializationReturnCode {
+    SuccessfullyCompleted,
+    StackOverflowError,
+    InterruptedExecutionError,
+    ValidationError,
+    ExistingExceptionError,
+    DataCloneError,
+    UnspecifiedError
+};
+
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember,
     ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember,
     MapDataStartVisitEntry, MapDataEndVisitKey, MapDataEndVisitValue,
@@ -374,7 +384,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    <factorSize:uint32_t> <factor:byte{factorSize}> <crtExponentSize:uint32_t> <crtExponent:byte{crtExponentSize}> <crtCoefficientSize:uint32_t> <crtCoefficient:byte{crtCoefficientSize}>
  */
 
-typedef std::pair<JSC::JSValue, SerializationReturnCode> DeserializationResult;
+using DeserializationResult = std::pair<JSC::JSValue, SerializationReturnCode>;
 
 class CloneBase {
 protected:
@@ -389,13 +399,6 @@ protected:
         VM& vm = m_exec->vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
         return scope.exception();
-    }
-
-    void throwStackOverflow()
-    {
-        VM& vm = m_exec->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        throwException(m_exec, scope, createStackOverflowError(m_exec));
     }
 
     void fail()
@@ -731,7 +734,7 @@ private:
         write(static_cast<uint32_t>(arrayBufferView->byteLength()));
         RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->possiblySharedBuffer();
         if (!arrayBuffer) {
-            code = ValidationError;
+            code = SerializationReturnCode::ValidationError;
             return true;
         }
         JSValue bufferObj = toJS(m_exec, jsCast<JSDOMGlobalObject*>(m_exec->lexicalGlobalObject()), arrayBuffer.get());
@@ -841,12 +844,12 @@ private:
                     return true;
                 }
                 // MessagePort object could not be found in transferred message ports
-                code = ValidationError;
+                code = SerializationReturnCode::ValidationError;
                 return true;
             }
             if (ArrayBuffer* arrayBuffer = toPossiblySharedArrayBuffer(obj)) {
                 if (arrayBuffer->isNeutered()) {
-                    code = ValidationError;
+                    code = SerializationReturnCode::ValidationError;
                     return true;
                 }
                 ObjectPool::iterator index = m_transferredArrayBuffers.find(obj);
@@ -1234,7 +1237,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             case ArrayStartState: {
                 ASSERT(isArray(inValue));
                 if (inputObjectStack.size() > maximumFilterRecursion)
-                    return StackOverflowError;
+                    return SerializationReturnCode::StackOverflowError;
 
                 JSArray* inArray = asArray(inValue);
                 unsigned length = inArray->length();
@@ -1273,9 +1276,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 }
 
                 write(index);
-                SerializationReturnCode terminalCode = SuccessfullyCompleted;
+                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
                 if (dumpIfTerminal(inValue, terminalCode)) {
-                    if (terminalCode != SuccessfullyCompleted)
+                    if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                         return terminalCode;
                     indexStack.last()++;
                     goto arrayStartVisitMember;
@@ -1291,7 +1294,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
                 if (inputObjectStack.size() > maximumFilterRecursion)
-                    return StackOverflowError;
+                    return SerializationReturnCode::StackOverflowError;
                 JSObject* inObject = asObject(inValue);
                 if (!startObject(inObject))
                     break;
@@ -1300,7 +1303,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 // the input is not an Object object then we should throw
                 // a DataCloneError.
                 if (inObject->classInfo() != JSFinalObject::info())
-                    return DataCloneError;
+                    return SerializationReturnCode::DataCloneError;
                 inputObjectStack.append(inObject);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
@@ -1321,7 +1324,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 }
                 inValue = getProperty(object, properties[index]);
                 if (shouldTerminate())
-                    return ExistingExceptionError;
+                    return SerializationReturnCode::ExistingExceptionError;
 
                 if (!inValue) {
                     // Property was removed during serialisation
@@ -1331,20 +1334,20 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 write(properties[index]);
 
                 if (shouldTerminate())
-                    return ExistingExceptionError;
+                    return SerializationReturnCode::ExistingExceptionError;
 
-                SerializationReturnCode terminalCode = SuccessfullyCompleted;
+                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
                 if (!dumpIfTerminal(inValue, terminalCode)) {
                     stateStack.append(ObjectEndVisitMember);
                     goto stateUnknown;
                 }
-                if (terminalCode != SuccessfullyCompleted)
+                if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                     return terminalCode;
                 FALLTHROUGH;
             }
             case ObjectEndVisitMember: {
                 if (shouldTerminate())
-                    return ExistingExceptionError;
+                    return SerializationReturnCode::ExistingExceptionError;
 
                 indexStack.last()++;
                 goto objectStartVisitMember;
@@ -1352,7 +1355,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             mapStartState: {
                 ASSERT(inValue.isObject());
                 if (inputObjectStack.size() > maximumFilterRecursion)
-                    return StackOverflowError;
+                    return SerializationReturnCode::StackOverflowError;
                 JSMap* inMap = jsCast<JSMap*>(inValue);
                 if (!startMap(inMap))
                     break;
@@ -1396,7 +1399,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             setStartState: {
                 ASSERT(inValue.isObject());
                 if (inputObjectStack.size() > maximumFilterRecursion)
-                    return StackOverflowError;
+                    return SerializationReturnCode::StackOverflowError;
                 JSSet* inSet = jsCast<JSSet*>(inValue);
                 if (!startSet(inSet))
                     break;
@@ -1431,9 +1434,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 
             stateUnknown:
             case StateUnknown: {
-                SerializationReturnCode terminalCode = SuccessfullyCompleted;
+                auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
                 if (dumpIfTerminal(inValue, terminalCode)) {
-                    if (terminalCode != SuccessfullyCompleted)
+                    if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                         return terminalCode;
                     break;
                 }
@@ -1454,12 +1457,10 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
         stateStack.removeLast();
     }
     if (m_failed)
-        return UnspecifiedError;
+        return SerializationReturnCode::UnspecifiedError;
 
-    return SuccessfullyCompleted;
+    return SerializationReturnCode::SuccessfullyCompleted;
 }
-
-typedef Vector<JSC::ArrayBufferContents> ArrayBufferContentsArray;
 
 class CloneDeserializer : CloneBase {
 public:
@@ -1489,10 +1490,10 @@ public:
     static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject, Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContentsArray, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths)
     {
         if (!buffer.size())
-            return std::make_pair(jsNull(), UnspecifiedError);
+            return std::make_pair(jsNull(), SerializationReturnCode::UnspecifiedError);
         CloneDeserializer deserializer(exec, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths);
         if (!deserializer.isValid())
-            return std::make_pair(JSValue(), ValidationError);
+            return std::make_pair(JSValue(), SerializationReturnCode::ValidationError);
         return deserializer.deserialize();
     }
 
@@ -1568,13 +1569,6 @@ private:
     }
 
     DeserializationResult deserialize();
-
-    void throwValidationError()
-    {
-        VM& vm = m_exec->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        throwTypeError(m_exec, scope, ASCIILiteral("Unable to deserialize data."));
-    }
 
     bool isValid() const { return m_version <= CurrentVersion; }
 
@@ -2528,7 +2522,7 @@ DeserializationResult CloneDeserializer::deserialize()
         objectStartState:
         case ObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return std::make_pair(JSValue(), StackOverflowError);
+                return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
             JSObject* outObject = constructEmptyObject(m_exec, m_globalObject->objectPrototype());
             m_gcBuffer.append(outObject);
             outputObjectStack.append(outObject);
@@ -2563,7 +2557,7 @@ DeserializationResult CloneDeserializer::deserialize()
         }
         mapObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return std::make_pair(JSValue(), StackOverflowError);
+                return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
             JSMap* map = JSMap::create(m_exec, m_exec->vm(), m_globalObject->mapStructure());
             if (UNLIKELY(scope.exception()))
                 goto error;
@@ -2594,7 +2588,7 @@ DeserializationResult CloneDeserializer::deserialize()
 
         setObjectStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion)
-                return std::make_pair(JSValue(), StackOverflowError);
+                return std::make_pair(JSValue(), SerializationReturnCode::StackOverflowError);
             JSSet* set = JSSet::create(m_exec, m_exec->vm(), m_globalObject->setStructure());
             if (UNLIKELY(scope.exception()))
                 goto error;
@@ -2643,10 +2637,10 @@ DeserializationResult CloneDeserializer::deserialize()
     }
     ASSERT(outValue);
     ASSERT(!m_failed);
-    return std::make_pair(outValue, SuccessfullyCompleted);
+    return std::make_pair(outValue, SerializationReturnCode::SuccessfullyCompleted);
 error:
     fail();
-    return std::make_pair(JSValue(), ValidationError);
+    return std::make_pair(JSValue(), SerializationReturnCode::ValidationError);
 }
 
 SerializedScriptValue::~SerializedScriptValue()
@@ -2669,19 +2663,12 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vec
         m_blobURLs.append(url.isolatedCopy());
 }
 
-std::unique_ptr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
-    ExecState* exec, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers, SerializationReturnCode& code)
+static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffers(const Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers)
 {
-    for (size_t i = 0; i < arrayBuffers.size(); i++) {
-        if (arrayBuffers[i]->isNeutered()) {
-            code = ValidationError;
-            return nullptr;
-        }
-    }
+    if (arrayBuffers.isEmpty())
+        return nullptr;
 
     auto contents = std::make_unique<ArrayBufferContentsArray>(arrayBuffers.size());
-    Vector<Ref<DOMWrapperWorld>> worlds;
-    static_cast<JSVMClientData*>(exec->vm().clientData)->getAllWorlds(worlds);
 
     HashSet<JSC::ArrayBuffer*> visited;
     for (size_t arrayBufferIndex = 0; arrayBufferIndex < arrayBuffers.size(); arrayBufferIndex++) {
@@ -2690,37 +2677,111 @@ std::unique_ptr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScrip
         visited.add(arrayBuffers[arrayBufferIndex].get());
 
         bool result = arrayBuffers[arrayBufferIndex]->transferTo(contents->at(arrayBufferIndex));
-        if (!result) {
-            code = ValidationError;
-            return nullptr;
-        }
+        if (!result)
+            return Exception { TypeError };
     }
-    return contents;
+
+    return WTFMove(contents);
+}
+
+static void maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)
+{
+    auto& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (code == SerializationReturnCode::SuccessfullyCompleted)
+        return;
+    
+    switch (code) {
+    case SerializationReturnCode::StackOverflowError:
+        throwException(exec, scope, createStackOverflowError(exec));
+        break;
+    case SerializationReturnCode::ValidationError:
+        throwTypeError(exec, scope, ASCIILiteral("Unable to deserialize data."));
+        break;
+    case SerializationReturnCode::DataCloneError:
+        setDOMException(exec, DATA_CLONE_ERR);
+        break;
+    case SerializationReturnCode::ExistingExceptionError:
+    case SerializationReturnCode::UnspecifiedError:
+        break;
+        break;
+    case SerializationReturnCode::SuccessfullyCompleted:
+    case SerializationReturnCode::InterruptedExecutionError:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+static Exception exceptionForSerializationFailure(SerializationReturnCode code)
+{
+    ASSERT(code != SerializationReturnCode::SuccessfullyCompleted);
+    
+    switch (code) {
+    case SerializationReturnCode::StackOverflowError:
+        return Exception { StackOverflowError };
+    case SerializationReturnCode::ValidationError:
+        return Exception { TypeError };
+    case SerializationReturnCode::DataCloneError:
+        return Exception { DATA_CLONE_ERR };
+    case SerializationReturnCode::ExistingExceptionError:
+        return Exception { ExistingExceptionError };
+    case SerializationReturnCode::UnspecifiedError:
+        return Exception { TypeError };
+    case SerializationReturnCode::SuccessfullyCompleted:
+    case SerializationReturnCode::InterruptedExecutionError:
+        ASSERT_NOT_REACHED();
+        return Exception { TypeError };
+    }
 }
 
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState& exec, JSValue value, SerializationErrorMode throwExceptions)
 {
-    Vector<RefPtr<MessagePort>> messagePorts;
-    return SerializedScriptValue::create(exec, value, messagePorts, { }, throwExceptions);
-}
-
-RefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState& exec, JSValue value, Vector<RefPtr<MessagePort>>& messagePorts, Vector<RefPtr<JSC::ArrayBuffer>>&& arrayBuffers, SerializationErrorMode throwExceptions)
-{
     Vector<uint8_t> buffer;
     Vector<String> blobURLs;
-    SerializationReturnCode code = CloneSerializer::serialize(&exec, value, messagePorts, arrayBuffers, blobURLs, buffer);
-
-    std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray;
-    if (!arrayBuffers.isEmpty() && serializationDidCompleteSuccessfully(code))
-        arrayBufferContentsArray = transferArrayBuffers(&exec, arrayBuffers, code);
+    Vector<RefPtr<MessagePort>> dummyMessagePorts;
+    Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
+    auto code = CloneSerializer::serialize(&exec, value, dummyMessagePorts, dummyArrayBuffers, blobURLs, buffer);
 
     if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(&exec, code);
 
-    if (!serializationDidCompleteSuccessfully(code))
+    if (code != SerializationReturnCode::SuccessfullyCompleted)
         return nullptr;
 
-    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), blobURLs, WTFMove(arrayBufferContentsArray)));
+    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), blobURLs, nullptr));
+}
+
+ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(ExecState& state, JSValue value, Vector<JSC::Strong<JSC::JSObject>>&& transferList, Vector<RefPtr<MessagePort>>& messagePorts)
+{
+    Vector<RefPtr<JSC::ArrayBuffer>> arrayBuffers;
+    for (auto& transferable : transferList) {
+        if (auto arrayBuffer = toPossiblySharedArrayBuffer(transferable.get())) {
+            if (arrayBuffer->isNeutered())
+                return Exception { DATA_CLONE_ERR };
+            arrayBuffers.append(WTFMove(arrayBuffer));
+            continue;
+        }
+        if (auto port = JSMessagePort::toWrapped(transferable.get())) {
+            // FIXME: This should check if the port is detached as per https://html.spec.whatwg.org/multipage/infrastructure.html#istransferable.
+            messagePorts.append(WTFMove(port));
+            continue;
+        }
+
+        return Exception { DATA_CLONE_ERR };
+    }
+
+    Vector<uint8_t> buffer;
+    Vector<String> blobURLs;
+    auto code = CloneSerializer::serialize(&state, value, messagePorts, arrayBuffers, blobURLs, buffer);
+
+    if (code != SerializationReturnCode::SuccessfullyCompleted)
+        return exceptionForSerializationFailure(code);
+
+    auto arrayBufferContentsArray = transferArrayBuffers(arrayBuffers);
+    if (arrayBufferContentsArray.hasException())
+        return arrayBufferContentsArray.releaseException();
+
+    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), blobURLs, arrayBufferContentsArray.releaseReturnValue()));
 }
 
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(StringView string)
@@ -2797,38 +2858,6 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
 Ref<SerializedScriptValue> SerializedScriptValue::nullValue()
 {
     return adoptRef(*new SerializedScriptValue(Vector<uint8_t>()));
-}
-
-void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (code == SuccessfullyCompleted)
-        return;
-    
-    switch (code) {
-    case StackOverflowError:
-        throwException(exec, scope, createStackOverflowError(exec));
-        break;
-    case ValidationError:
-        throwTypeError(exec, scope, ASCIILiteral("Unable to deserialize data."));
-        break;
-    case DataCloneError:
-        setDOMException(exec, DATA_CLONE_ERR);
-        break;
-    case ExistingExceptionError:
-        break;
-    case UnspecifiedError:
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-bool SerializedScriptValue::serializationDidCompleteSuccessfully(SerializationReturnCode code)
-{
-    return (code == SuccessfullyCompleted);
 }
 
 uint32_t SerializedScriptValue::wireFormatVersion()

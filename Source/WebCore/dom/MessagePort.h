@@ -30,6 +30,12 @@
 #include "ExceptionOr.h"
 #include "MessagePortChannel.h"
 
+namespace JSC {
+class ExecState;
+class JSObject;
+class JSValue;
+}
+
 namespace WebCore {
 
 class Frame;
@@ -39,7 +45,7 @@ public:
     static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
     virtual ~MessagePort();
 
-    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&);
+    ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     void start();
     void close();

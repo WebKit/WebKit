@@ -38,7 +38,7 @@ function test(postMessageFun)
 {
     var channel = new MessageChannel;
 
-    window.frames[0][postMessageFun]("msg", [channel.port2], "*");
+    window.frames[0][postMessageFun]("msg", "*", [channel.port2]);
     mainPort = channel.port1;
     mainPort[postMessageFun]("ping");
     mainPort.onmessage = function(evt) {

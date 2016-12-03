@@ -1,3 +1,89 @@
+2016-12-02  Sam Weinig  <sam@webkit.org>
+
+        optional sequence values not handled correctly by binding generator
+        https://bugs.webkit.org/show_bug.cgi?id=142562
+
+        Also fixes:
+            Remove non-standard postMessage overload
+            https://bugs.webkit.org/show_bug.cgi?id=161911
+        and
+            Wrong argument order in window.postMessage
+            https://bugs.webkit.org/show_bug.cgi?id=63141
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove no longer needed files.
+
+        * bindings/generic/IDLTypes.h:
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLObject>::convert):
+        Add support for the WebIDL object type.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException):
+        Add support for throwing stack overflow errors.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage): Deleted.
+        (WebCore::JSDOMWindow::postMessage): Deleted.
+        * bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp: Removed.
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::postMessage): Deleted.
+        (WebCore::extractTransferables): Deleted.
+        * bindings/js/JSMessagePortCustom.h: Removed.
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorker::postMessage): Deleted.
+        Remove custom bindings for postMessage.
+
+        * bindings/js/SerializedScriptValue.h:
+        Switch to using enum class.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::create):
+        Add new create function that takes the transfer list, processes it, and returns
+        MessagePorts and SerializedScriptValue / exception.
+
+        (WebCore::CloneBase::throwStackOverflow): Deleted.
+        (WebCore::CloneDeserializer::throwValidationError): Deleted.
+        Remove uncalled functions.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsRefPtrType):
+        (IsBuiltinType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GetBaseIDLType):
+        Add support for the WebIDL 'object' type.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        Add tests for 'object'.
+
+        * dom/ExceptionCode.h:
+        Add two new ExceptionCodes:
+          - ExistingExceptionError, to indicate that implementation code threw a JS exception.
+          - StackOverflowError, to indicate that a stack overflow exception should be thrown.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        * dom/MessagePort.h:
+        * dom/MessagePort.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        * workers/Worker.h:
+        * workers/Worker.idl:
+        Update to call new SerializedScriptValue create function.
+
 2016-12-03  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support Dashboard Regions

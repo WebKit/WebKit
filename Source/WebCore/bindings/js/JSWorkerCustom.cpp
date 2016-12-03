@@ -31,18 +31,12 @@
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWindowCustom.h"
-#include "JSMessagePortCustom.h"
 #include "Worker.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
 
 namespace WebCore {
-
-JSC::JSValue JSWorker::postMessage(JSC::ExecState& state)
-{
-    return handlePostMessage(state, wrapped());
-}
 
 EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& state)
 {

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <bindings/ScriptValue.h>
 #include <heap/Strong.h>
 #include <runtime/ArrayBuffer.h>
@@ -42,25 +43,18 @@ namespace WebCore {
 
 class IDBValue;
 class MessagePort;
- 
-enum SerializationReturnCode {
-    SuccessfullyCompleted,
-    StackOverflowError,
-    InterruptedExecutionError,
-    ValidationError,
-    ExistingExceptionError,
-    DataCloneError,
-    UnspecifiedError
-};
-    
+class SharedBuffer;
+enum class SerializationReturnCode;
+
 enum SerializationErrorMode { NonThrowing, Throwing };
 
-class SharedBuffer;
+using ArrayBufferContentsArray = Vector<JSC::ArrayBufferContents>;
 
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
 public:
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::ExecState&, JSC::JSValue, SerializationErrorMode = Throwing);
-    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::ExecState&, JSC::JSValue, Vector<RefPtr<MessagePort>>&, Vector<RefPtr<JSC::ArrayBuffer>>&&, SerializationErrorMode = Throwing);
+
+    WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::ExecState&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&&, Vector<RefPtr<MessagePort>>&);
 
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(StringView);
     static Ref<SerializedScriptValue> adopt(Vector<uint8_t>&& buffer)
@@ -100,17 +94,11 @@ public:
     WEBCORE_EXPORT ~SerializedScriptValue();
 
 private:
-    typedef Vector<JSC::ArrayBufferContents> ArrayBufferContentsArray;
-    static void maybeThrowExceptionIfSerializationFailed(JSC::ExecState*, SerializationReturnCode);
-    static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
-    static std::unique_ptr<ArrayBufferContentsArray> transferArrayBuffers(JSC::ExecState*, Vector<RefPtr<JSC::ArrayBuffer>>&, SerializationReturnCode&);
-
     WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&);
     SerializedScriptValue(Vector<unsigned char>&&, const Vector<String>& blobURLs, std::unique_ptr<ArrayBufferContentsArray>&&);
 
     Vector<unsigned char> m_data;
     std::unique_ptr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
-
     Vector<String> m_blobURLs;
 };
 

@@ -51,8 +51,13 @@ MessagePort::~MessagePort()
         m_scriptExecutionContext->destroyedMessagePort(*this);
 }
 
-ExceptionOr<void> MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports)
+ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
+    Vector<RefPtr<MessagePort>> ports;
+    auto message = SerializedScriptValue::create(state, messageValue, WTFMove(transfer), ports);
+    if (message.hasException())
+        return message.releaseException();
+
     if (!isEntangled())
         return { };
     ASSERT(m_scriptExecutionContext);
@@ -69,7 +74,7 @@ ExceptionOr<void> MessagePort::postMessage(RefPtr<SerializedScriptValue>&& messa
             return disentangleResult.releaseException();
         channels = disentangleResult.releaseReturnValue();
     }
-    m_entangledChannel->postMessageToRemote(WTFMove(message), WTFMove(channels));
+    m_entangledChannel->postMessageToRemote(message.releaseReturnValue(), WTFMove(channels));
     return { };
 }
 

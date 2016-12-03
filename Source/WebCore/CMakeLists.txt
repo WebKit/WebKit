@@ -1129,7 +1129,6 @@ set(WebCore_SOURCES
     bindings/js/JSDOMWrapper.cpp
     bindings/js/JSDataCueCustom.cpp
     bindings/js/JSDataTransferCustom.cpp
-    bindings/js/JSDedicatedWorkerGlobalScopeCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDictionary.cpp

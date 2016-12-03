@@ -101,13 +101,18 @@ Worker::~Worker()
     m_contextProxy->workerObjectDestroyed();
 }
 
-ExceptionOr<void> Worker::postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports)
+ExceptionOr<void> Worker::postMessage(JSC::ExecState& state, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
+    Vector<RefPtr<MessagePort>> ports;
+    auto message = SerializedScriptValue::create(state, messageValue, WTFMove(transfer), ports);
+    if (message.hasException())
+        return message.releaseException();
+
     // Disentangle the port in preparation for sending it to the remote context.
     auto channels = MessagePort::disentanglePorts(WTFMove(ports));
     if (channels.hasException())
         return channels.releaseException();
-    m_contextProxy->postMessageToWorkerGlobalScope(WTFMove(message), channels.releaseReturnValue());
+    m_contextProxy->postMessageToWorkerGlobalScope(message.releaseReturnValue(), channels.releaseReturnValue());
     return { };
 }
 

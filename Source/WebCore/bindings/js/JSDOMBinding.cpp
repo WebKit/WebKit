@@ -270,7 +270,7 @@ void reportCurrentException(ExecState* exec)
 
 static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String* message = nullptr)
 {
-    if (!ec)
+    if (!ec || ec == ExistingExceptionError)
         return jsUndefined();
 
     // FIXME: Handle other WebIDL exception types.
@@ -285,6 +285,9 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
             return createRangeError(exec, ASCIILiteral("Bad value"));
         return createRangeError(exec, *message);
     }
+
+    if (ec == StackOverflowError)
+        return createStackOverflowError(exec);
 
     // FIXME: All callers to setDOMException need to pass in the right global object
     // for now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:

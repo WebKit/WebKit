@@ -63,13 +63,18 @@ EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
     return DedicatedWorkerGlobalScopeEventTargetInterfaceType;
 }
 
-ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports)
+ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::ExecState& state, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
+    Vector<RefPtr<MessagePort>> ports;
+    auto message = SerializedScriptValue::create(state, messageValue, WTFMove(transfer), ports);
+    if (message.hasException())
+        return message.releaseException();
+
     // Disentangle the port in preparation for sending it to the remote context.
     auto channels = MessagePort::disentanglePorts(WTFMove(ports));
     if (channels.hasException())
         return channels.releaseException();
-    thread().workerObjectProxy().postMessageToWorkerObject(WTFMove(message), channels.releaseReturnValue());
+    thread().workerObjectProxy().postMessageToWorkerObject(message.releaseReturnValue(), channels.releaseReturnValue());
     return { };
 }
 

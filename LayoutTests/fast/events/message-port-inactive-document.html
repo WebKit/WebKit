@@ -29,7 +29,7 @@ function test()
 {
     otherDocument = window.frames[0].document;
     var channel = new MessageChannel;
-    window.frames[0].postMessage("msg", [channel.port2], "*");
+    window.frames[0].postMessage("msg", "*", [channel.port2]);
     mainPort = channel.port1;
     mainPort.start();
 
