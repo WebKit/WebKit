@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "APIInjectedBundleEditorClient.h"
 #include "APIInjectedBundleFormClient.h"
 #include "APIInjectedBundlePageContextMenuClient.h"
 #include "APIInjectedBundlePageUIClient.h"
@@ -35,7 +36,6 @@
 #include "GeolocationPermissionRequestManager.h"
 #include "ImageOptions.h"
 #include "InjectedBundlePageDiagnosticLoggingClient.h"
-#include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePagePolicyClient.h"
@@ -322,7 +322,7 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     void setInjectedBundleContextMenuClient(std::unique_ptr<API::InjectedBundle::PageContextMenuClient>);
 #endif
-    void initializeInjectedBundleEditorClient(WKBundlePageEditorClientBase*);
+    void setInjectedBundleEditorClient(std::unique_ptr<API::InjectedBundle::EditorClient>);
     void setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::FormClient>);
     void initializeInjectedBundleLoaderClient(WKBundlePageLoaderClientBase*);
     void initializeInjectedBundlePolicyClient(WKBundlePagePolicyClientBase*);
@@ -336,7 +336,7 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     API::InjectedBundle::PageContextMenuClient& injectedBundleContextMenuClient() { return *m_contextMenuClient.get(); }
 #endif
-    InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
+    API::InjectedBundle::EditorClient& injectedBundleEditorClient() { return *m_editorClient.get(); }
     API::InjectedBundle::FormClient& injectedBundleFormClient() { return *m_formClient.get(); }
     InjectedBundlePageLoaderClient& injectedBundleLoaderClient() { return m_loaderClient; }
     InjectedBundlePagePolicyClient& injectedBundlePolicyClient() { return m_policyClient; }
@@ -1337,7 +1337,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::InjectedBundle::PageContextMenuClient> m_contextMenuClient;
 #endif
-    InjectedBundlePageEditorClient m_editorClient;
+    std::unique_ptr<API::InjectedBundle::EditorClient> m_editorClient;
     std::unique_ptr<API::InjectedBundle::FormClient> m_formClient;
     InjectedBundlePageLoaderClient m_loaderClient;
     InjectedBundlePagePolicyClient m_policyClient;

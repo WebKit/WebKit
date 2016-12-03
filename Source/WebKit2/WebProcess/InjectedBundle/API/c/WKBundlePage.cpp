@@ -33,6 +33,7 @@
 #include "APIURLRequest.h"
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
+#include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageUIClient.h"
 #include "PageBanner.h"
@@ -83,7 +84,7 @@ void WKBundlePageSetContextMenuClient(WKBundlePageRef pageRef, WKBundlePageConte
 
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClientBase* wkClient)
 {
-    toImpl(pageRef)->initializeInjectedBundleEditorClient(wkClient);
+    toImpl(pageRef)->setInjectedBundleEditorClient(wkClient ? std::make_unique<InjectedBundlePageEditorClient>(*wkClient) : std::make_unique<API::InjectedBundle::EditorClient>());
 }
 
 void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClientBase* wkClient)

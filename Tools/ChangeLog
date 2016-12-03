@@ -1,3 +1,23 @@
+2016-12-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose InjectedBundlePageEditorClient via the Objective-C bundle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=165276
+        <rdar://problem/29467040>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegate.mm: Added.
+        (-[BundleEditingDelegateRemoteObject willWriteToPasteboard:]):
+        (-[BundleEditingDelegateRemoteObject didWriteToPasteboard]):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegatePlugIn.mm: Added.
+        (-[BundleEditingDelegatePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[BundleEditingDelegatePlugIn _webProcessPlugInBrowserContextController:willWriteRangeToPasteboard:]):
+        (-[BundleEditingDelegatePlugIn _webProcessPlugInBrowserContextController:pasteboardDataForRange:]):
+        (-[BundleEditingDelegatePlugIn _webProcessPlugInBrowserContextControllerDidWriteToPasteboard:]):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegateProtocol.h: Added.
+
 2016-12-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting

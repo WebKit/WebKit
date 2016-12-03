@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,34 +27,17 @@
 
 #if WK_API_ENABLED
 
-#import <CoreGraphics/CoreGraphics.h>
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSContext.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 
-@class _WKFrameHandle;
-@class WKWebProcessPlugInHitTestResult;
-@class WKWebProcessPlugInNodeHandle;
-@class WKWebProcessPlugInRangeHandle;
-@class WKWebProcessPlugInScriptWorld;
+@class WKWebProcessPlugInFrame;
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKWebProcessPlugInFrame : NSObject
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKWebProcessPlugInRangeHandle : NSObject
 
-@property (nonatomic, readonly) NSURL *URL;
-@property (nonatomic, readonly) NSArray *childFrames;
-@property (nonatomic, readonly) BOOL containsAnyFormElements;
++ (WKWebProcessPlugInRangeHandle *)rangeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
 
-@property (nonatomic, readonly) _WKFrameHandle *handle;
-
-// Returns URLs ordered by resolution in descending order.
-// FIXME: These should be tagged nonnull.
-@property (nonatomic, readonly) NSArray<NSURL *> *appleTouchIconURLs WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-@property (nonatomic, readonly) NSArray<NSURL *> *faviconURLs WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-
-- (JSContext *)jsContextForWorld:(WKWebProcessPlugInScriptWorld *)world;
-- (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point;
-- (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world;
-- (JSValue *)jsRangeForRangeHandle:(WKWebProcessPlugInRangeHandle *)rangeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) WKWebProcessPlugInFrame *frame;
 
 @end
 

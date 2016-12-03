@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundleRangeHandle.h"
 
+#include "InjectedBundleNodeHandle.h"
 #include "ShareableBitmap.h"
 #include "WebImage.h"
 #include <JavaScriptCore/APICast.h>
@@ -94,6 +95,11 @@ InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 Range* InjectedBundleRangeHandle::coreRange() const
 {
     return m_range.get();
+}
+
+Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()
+{
+    return InjectedBundleNodeHandle::getOrCreate(m_range->ownerDocument());
 }
 
 WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() const

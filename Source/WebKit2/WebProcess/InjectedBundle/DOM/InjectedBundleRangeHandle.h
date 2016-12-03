@@ -39,6 +39,7 @@ class Range;
 
 namespace WebKit {
 
+class InjectedBundleNodeHandle;
 class InjectedBundleScriptWorld;
 class WebImage;
 
@@ -48,6 +49,8 @@ public:
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
 
     virtual ~InjectedBundleRangeHandle();
+
+    Ref<InjectedBundleNodeHandle> document();
 
     WebCore::IntRect boundingRectInWindowCoordinates() const;
     PassRefPtr<WebImage> renderedImage(SnapshotOptions);

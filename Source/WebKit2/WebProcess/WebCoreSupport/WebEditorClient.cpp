@@ -72,7 +72,7 @@ static uint64_t generateTextCheckingRequestID()
 
 bool WebEditorClient::shouldDeleteRange(Range* range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldDeleteRange(m_page, range);
+    bool result = m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, range);
     notImplemented();
     return result;
 }
@@ -115,35 +115,35 @@ int WebEditorClient::spellCheckerDocumentTag()
 
 bool WebEditorClient::shouldBeginEditing(Range* range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldBeginEditing(m_page, range);
+    bool result = m_page->injectedBundleEditorClient().shouldBeginEditing(*m_page, range);
     notImplemented();
     return result;
 }
 
 bool WebEditorClient::shouldEndEditing(Range* range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldEndEditing(m_page, range);
+    bool result = m_page->injectedBundleEditorClient().shouldEndEditing(*m_page, range);
     notImplemented();
     return result;
 }
 
 bool WebEditorClient::shouldInsertNode(Node* node, Range* rangeToReplace, EditorInsertAction action)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldInsertNode(m_page, node, rangeToReplace, action);
+    bool result = m_page->injectedBundleEditorClient().shouldInsertNode(*m_page, node, rangeToReplace, action);
     notImplemented();
     return result;
 }
 
 bool WebEditorClient::shouldInsertText(const String& text, Range* rangeToReplace, EditorInsertAction action)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldInsertText(m_page, text.impl(), rangeToReplace, action);
+    bool result = m_page->injectedBundleEditorClient().shouldInsertText(*m_page, text.impl(), rangeToReplace, action);
     notImplemented();
     return result;
 }
 
 bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity affinity, bool stillSelecting)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldChangeSelectedRange(m_page, fromRange, toRange, affinity, stillSelecting);
+    bool result = m_page->injectedBundleEditorClient().shouldChangeSelectedRange(*m_page, fromRange, toRange, affinity, stillSelecting);
     notImplemented();
     return result;
 }
@@ -151,7 +151,7 @@ bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange
 bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
 {
     Ref<MutableStyleProperties> mutableStyle(style->isMutable() ? Ref<MutableStyleProperties>(static_cast<MutableStyleProperties&>(*style)) : style->mutableCopy());
-    bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(m_page, mutableStyle->ensureCSSStyleDeclaration(), range);
+    bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(*m_page, mutableStyle->ensureCSSStyleDeclaration(), range);
     notImplemented();
     return result;
 }
@@ -171,21 +171,21 @@ void WebEditorClient::didBeginEditing()
 {
     // FIXME: What good is a notification name, if it's always the same?
     static NeverDestroyed<String> WebViewDidBeginEditingNotification(ASCIILiteral("WebViewDidBeginEditingNotification"));
-    m_page->injectedBundleEditorClient().didBeginEditing(m_page, WebViewDidBeginEditingNotification.get().impl());
+    m_page->injectedBundleEditorClient().didBeginEditing(*m_page, WebViewDidBeginEditingNotification.get().impl());
     notImplemented();
 }
 
 void WebEditorClient::respondToChangedContents()
 {
     static NeverDestroyed<String> WebViewDidChangeNotification(ASCIILiteral("WebViewDidChangeNotification"));
-    m_page->injectedBundleEditorClient().didChange(m_page, WebViewDidChangeNotification.get().impl());
+    m_page->injectedBundleEditorClient().didChange(*m_page, WebViewDidChangeNotification.get().impl());
     notImplemented();
 }
 
 void WebEditorClient::respondToChangedSelection(Frame* frame)
 {
     static NeverDestroyed<String> WebViewDidChangeSelectionNotification(ASCIILiteral("WebViewDidChangeSelectionNotification"));
-    m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.get().impl());
+    m_page->injectedBundleEditorClient().didChangeSelection(*m_page, WebViewDidChangeSelectionNotification.get().impl());
     if (!frame)
         return;
 
@@ -219,23 +219,23 @@ void WebEditorClient::canceledComposition()
 void WebEditorClient::didEndEditing()
 {
     static NeverDestroyed<String> WebViewDidEndEditingNotification(ASCIILiteral("WebViewDidEndEditingNotification"));
-    m_page->injectedBundleEditorClient().didEndEditing(m_page, WebViewDidEndEditingNotification.get().impl());
+    m_page->injectedBundleEditorClient().didEndEditing(*m_page, WebViewDidEndEditingNotification.get().impl());
     notImplemented();
 }
 
 void WebEditorClient::didWriteSelectionToPasteboard()
 {
-    m_page->injectedBundleEditorClient().didWriteToPasteboard(m_page);
+    m_page->injectedBundleEditorClient().didWriteToPasteboard(*m_page);
 }
 
 void WebEditorClient::willWriteSelectionToPasteboard(Range* range)
 {
-    m_page->injectedBundleEditorClient().willWriteToPasteboard(m_page, range);
+    m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, range);
 }
 
 void WebEditorClient::getClientPasteboardDataForRange(Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
-    m_page->injectedBundleEditorClient().getPasteboardDataForRange(m_page, range, pasteboardTypes, pasteboardData);
+    m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, range, pasteboardTypes, pasteboardData);
 }
 
 void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> step)

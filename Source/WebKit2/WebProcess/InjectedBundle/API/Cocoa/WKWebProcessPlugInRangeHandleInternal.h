@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebProcessPlugInBrowserContextController.h>
+#import "WKWebProcessPlugInRangeHandle.h"
 
 #if WK_API_ENABLED
 
-#import <WebKit/WKBase.h>
+#import "InjectedBundleRangeHandle.h"
+#import "WKObject.h"
 
-@class WKBrowsingContextHandle;
-@class _WKRemoteObjectRegistry;
-@protocol WKWebProcessPlugInEditingDelegate;
-@protocol WKWebProcessPlugInFormDelegatePrivate;
+namespace WebKit {
 
-@interface WKWebProcessPlugInBrowserContextController (WKPrivate)
+inline WKWebProcessPlugInRangeHandle *wrapper(InjectedBundleRangeHandle& rangeHandle)
+{
+    ASSERT([rangeHandle.wrapper() isKindOfClass:[WKWebProcessPlugInRangeHandle class]]);
+    return (WKWebProcessPlugInRangeHandle *)rangeHandle.wrapper();
+}
 
-@property (nonatomic, readonly) WKBundlePageRef _bundlePageRef;
+}
 
-@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
+@interface WKWebProcessPlugInRangeHandle () <WKObject>
 
-@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
-
-@property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
-@property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-@property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading;
-
-@property (nonatomic, readonly) BOOL _usesNonPersistentWebsiteDataStore;
-
-+ (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
+@property (readonly) WebKit::InjectedBundleRangeHandle& _rangeHandle;
 
 @end
 

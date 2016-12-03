@@ -33,6 +33,7 @@
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
 #import "WKWebProcessPlugInNodeHandleInternal.h"
+#import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WebProcess.h"
 #import "_WKFrameHandleInternal.h"
@@ -78,6 +79,12 @@ using namespace WebKit;
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[nodeHandle _nodeHandle], &[world _scriptWorld]);
+    return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+}
+
+- (JSValue *)jsRangeForRangeHandle:(WKWebProcessPlugInRangeHandle *)rangeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
+{
+    JSValueRef valueRef = _frame->jsWrapperForWorld(&[rangeHandle _rangeHandle], &[world _scriptWorld]);
     return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
 }
 

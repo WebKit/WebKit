@@ -91,6 +91,8 @@
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
 		33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */; };
+		374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */; };
+		374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */; };
 		375E0E171D66674400EFEC2C /* WKNSNumber.mm in Sources */ = {isa = PBXBuildFile; fileRef = 375E0E151D66674400EFEC2C /* WKNSNumber.mm */; };
 		376C8C061D6E197C007D2BB9 /* FrameHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */; };
 		378E64771632655E00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 378E64751632655D00B6C676 /* InjectedBundleFrameHitTest_Bundle.cpp */; };
@@ -858,6 +860,9 @@
 		33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadCanceledNoServerRedirectCallback_Bundle.cpp; sourceTree = "<group>"; };
 		33E79E05137B5FCE00E32D99 /* mouse-move-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-move-listener.html"; sourceTree = "<group>"; };
 		3722C8681461E03E00C45D00 /* RenderedImageFromDOMRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderedImageFromDOMRange.mm; sourceTree = "<group>"; };
+		374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleEditingDelegate.mm; sourceTree = "<group>"; };
+		374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleEditingDelegatePlugIn.mm; sourceTree = "<group>"; };
+		374B7A621DF3734C00ACCB6C /* BundleEditingDelegateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BundleEditingDelegateProtocol.h; sourceTree = "<group>"; };
 		3751AF7A169518F800764319 /* DOMNodeFromJSObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNodeFromJSObject.mm; sourceTree = "<group>"; };
 		375E0E151D66674400EFEC2C /* WKNSNumber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSNumber.mm; sourceTree = "<group>"; };
 		376C8C041D6E197C007D2BB9 /* FrameHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameHandle.cpp; sourceTree = "<group>"; };
@@ -1413,6 +1418,9 @@
 				A1DF74301C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm */,
 				2DE71AFD1D49C0BD00904094 /* AnimatedResize.mm */,
 				2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */,
+				374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */,
+				374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */,
+				374B7A621DF3734C00ACCB6C /* BundleEditingDelegateProtocol.h */,
 				A13EBBAC1B87436F00097110 /* BundleParameters.mm */,
 				A13EBBAE1B87436F00097110 /* BundleParametersPlugIn.mm */,
 				1C2B817E1C891E4200A5529F /* CancelFontSubresource.mm */,
@@ -2386,6 +2394,7 @@
 				7CEFA9661AC0B9E200B910FD /* _WKUserContentExtensionStore.mm in Sources */,
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
+				374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */,
 				5C0BF8951DD599CD00B00328 /* NavigatorLanguage.mm in Sources */,
 				A1DF74321C41B65800A2F4D0 /* AlwaysRevalidatedURLSchemes.mm in Sources */,
 				2DE71AFE1D49C0BD00904094 /* AnimatedResize.mm in Sources */,
@@ -2653,6 +2662,7 @@
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
 				7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */,
+				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				7C83E03D1D0A60D600FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */,
 			);

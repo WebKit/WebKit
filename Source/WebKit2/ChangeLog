@@ -1,3 +1,120 @@
+2016-12-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Expose InjectedBundlePageEditorClient via the Objective-C bundle SPI
+        https://bugs.webkit.org/show_bug.cgi?id=165276
+        <rdar://problem/29467040>
+
+        Reviewed by Darin Adler.
+
+        Test: TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegate.mm
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Wrap InjectedBundleRangeHandle in WKWebProcessPlugInRangeHandle.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added references to new files, making
+          WKWebProcessPlugInEditingDelegate.h and WKWebProcessPlugInRangeHandle.h private headers.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h: Added. An base class
+          based on InjectedBundlePageEditorClient.
+        (API::InjectedBundle::EditorClient::~EditorClient):
+        (API::InjectedBundle::EditorClient::shouldBeginEditing):
+        (API::InjectedBundle::EditorClient::shouldEndEditing):
+        (API::InjectedBundle::EditorClient::shouldInsertNode):
+        (API::InjectedBundle::EditorClient::shouldInsertText):
+        (API::InjectedBundle::EditorClient::shouldDeleteRange):
+        (API::InjectedBundle::EditorClient::shouldChangeSelectedRange):
+        (API::InjectedBundle::EditorClient::shouldApplyStyle):
+        (API::InjectedBundle::EditorClient::didBeginEditing):
+        (API::InjectedBundle::EditorClient::didEndEditing):
+        (API::InjectedBundle::EditorClient::didChange):
+        (API::InjectedBundle::EditorClient::didChangeSelection):
+        (API::InjectedBundle::EditorClient::willWriteToPasteboard):
+        (API::InjectedBundle::EditorClient::getPasteboardDataForRange):
+        (API::InjectedBundle::EditorClient::didWriteToPasteboard):
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h: Added. Declares
+          the new delegate protocol, currently comprising three methods corresponding to
+          willWriteToPasteboard, getPasteboardDataForRange, and didWriteToPasteboard.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame jsRangeForRangeHandle:inWorld:]): Added. Gets the JS wrapper for
+          the specified range handle.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h: Added.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm: Added.
+        (-[WKWebProcessPlugInRangeHandle dealloc]): Call the InjectedBundleRangeHandle destructor.
+        (+[WKWebProcessPlugInRangeHandle rangeHandleWithJSValue:inContext:]): Get or create an
+          InjectedBundleRangeHandle for the specified object.
+        (-[WKWebProcessPlugInRangeHandle frame]): Return the range’s owner document’s frame.
+        (-[WKWebProcessPlugInRangeHandle _rangeHandle]): Return the InjectedBundleRangeHandle.
+        (-[WKWebProcessPlugInRangeHandle _apiObject]): Ditto.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandleInternal.h: Added.
+        (WebKit::wrapper):
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetEditorClient): Updated for WebPage change.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _editingDelegate]): Added. Returns the
+          delegate.
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]): Added. Defines a
+          Client class, which derives from API::InjectedBundle::EditorClient, and invokes the
+          delegate methods. Instantiates a Client and sets it on the WebPage.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+          Declared new _editingDelegate property.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::document): Added. Returns an InjectedBundleNodeHandle
+          for the range’s owner document.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::InjectedBundlePageEditorClient): Added. Calls
+          initialize().
+        (WebKit::InjectedBundlePageEditorClient::shouldBeginEditing): Updated for type change.
+        (WebKit::InjectedBundlePageEditorClient::shouldEndEditing): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertNode): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertText): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldDeleteRange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldApplyStyle): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didBeginEditing): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didEndEditing): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didChange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didChangeSelection): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::willWriteToPasteboard): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didWriteToPasteboard): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h: Now derives from
+          API::InjectedBundle::EditorClient.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldDeleteRange): Ditto.
+        (WebKit::WebEditorClient::shouldBeginEditing): Ditto.
+        (WebKit::WebEditorClient::shouldEndEditing): Ditto.
+        (WebKit::WebEditorClient::shouldInsertNode): Ditto.
+        (WebKit::WebEditorClient::shouldInsertText): Ditto.
+        (WebKit::WebEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebKit::WebEditorClient::shouldApplyStyle): Ditto.
+        (WebKit::WebEditorClient::didBeginEditing): Ditto.
+        (WebKit::WebEditorClient::respondToChangedContents): Ditto.
+        (WebKit::WebEditorClient::respondToChangedSelection): Ditto.
+        (WebKit::WebEditorClient::didEndEditing): Ditto.
+        (WebKit::WebEditorClient::didWriteSelectionToPasteboard): Ditto.
+        (WebKit::WebEditorClient::willWriteSelectionToPasteboard): Ditto.
+        (WebKit::WebEditorClient::getClientPasteboardDataForRange): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize m_editorClient.
+        (WebKit::WebPage::setInjectedBundleEditorClient): Replaces
+          initializeInjectedBundleEditorClient and just sets m_editorClient.
+        (WebKit::WebPage::close): Resets m_editorClient.
+
+        * WebProcess/WebPage/WebPage.h: Changed m_editorClient to a unique_ptr.
+
 2016-12-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] Add a WebView private configuration for changing the WebContent update frequency

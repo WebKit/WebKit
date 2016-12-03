@@ -130,6 +130,10 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 {
     RetainPtr<NSDictionary> representations = adoptNS([[NSMutableDictionary alloc] init]);
 
+    ASSERT(content.clientTypes.size() == content.clientData.size());
+    for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
+        [representations setValue:content.clientData[i]->createNSData().get() forKey:content.clientTypes[i]];
+
     if (content.dataInWebArchiveFormat) {
         [representations setValue:(NSData *)content.dataInWebArchiveFormat->createNSData().get() forKey:WebArchivePboardType];
         // Flag for UIKit to know that this copy contains rich content. This will trigger a two-step paste.

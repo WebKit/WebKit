@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageEditorClient_h
-#define InjectedBundlePageEditorClient_h
+#pragma once
 
 #include "APIClient.h"
-#include "WKBundlePage.h"
-#include <WebCore/EditorInsertAction.h>
-#include <WebCore/SharedBuffer.h>
-#include <WebCore/TextAffinity.h>
-#include <wtf/Forward.h>
+#include "APIInjectedBundleEditorClient.h"
+#include "WKBundlePageEditorClient.h"
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageEditorClientBase> {
@@ -50,24 +46,25 @@ namespace WebKit {
 class WebFrame;
 class WebPage;
 
-class InjectedBundlePageEditorClient : public API::Client<WKBundlePageEditorClientBase> {
+class InjectedBundlePageEditorClient final : public API::Client<WKBundlePageEditorClientBase>, public API::InjectedBundle::EditorClient {
 public:
-    bool shouldBeginEditing(WebPage*, WebCore::Range*);
-    bool shouldEndEditing(WebPage*, WebCore::Range*);
-    bool shouldInsertNode(WebPage*, WebCore::Node*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction);
-    bool shouldInsertText(WebPage*, StringImpl*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction);
-    bool shouldDeleteRange(WebPage*, WebCore::Range*);
-    bool shouldChangeSelectedRange(WebPage*, WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity affinity, bool stillSelecting);
-    bool shouldApplyStyle(WebPage*, WebCore::CSSStyleDeclaration*, WebCore::Range*);
-    void didBeginEditing(WebPage*, StringImpl* notificationName);
-    void didEndEditing(WebPage*, StringImpl* notificationName);
-    void didChange(WebPage*, StringImpl* notificationName);
-    void didChangeSelection(WebPage*, StringImpl* notificationName);
-    void willWriteToPasteboard(WebPage*, WebCore::Range*);
-    void getPasteboardDataForRange(WebPage*, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData);
-    void didWriteToPasteboard(WebPage*);
+    explicit InjectedBundlePageEditorClient(const WKBundlePageEditorClientBase&);
+
+private:
+    bool shouldBeginEditing(WebPage&, WebCore::Range*) final;
+    bool shouldEndEditing(WebPage&, WebCore::Range*) final;
+    bool shouldInsertNode(WebPage&, WebCore::Node*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(WebPage&, StringImpl*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction) final;
+    bool shouldDeleteRange(WebPage&, WebCore::Range*) final;
+    bool shouldChangeSelectedRange(WebPage&, WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) final;
+    bool shouldApplyStyle(WebPage&, WebCore::CSSStyleDeclaration*, WebCore::Range*) final;
+    void didBeginEditing(WebPage&, StringImpl* notificationName) final;
+    void didEndEditing(WebPage&, StringImpl* notificationName) final;
+    void didChange(WebPage&, StringImpl* notificationName) final;
+    void didChangeSelection(WebPage&, StringImpl* notificationName) final;
+    void willWriteToPasteboard(WebPage&, WebCore::Range*) final;
+    void getPasteboardDataForRange(WebPage&, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    void didWriteToPasteboard(WebPage&) final;
 };
 
 } // namespace WebKit
-
-#endif // InjectedBundlePageEditorClient_h

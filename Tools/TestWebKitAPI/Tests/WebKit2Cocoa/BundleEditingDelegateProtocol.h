@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKWebProcessPlugInBrowserContextController.h>
+#import <WebKit/WKFoundation.h>
 
 #if WK_API_ENABLED
 
-#import <WebKit/WKBase.h>
+@protocol BundleEditingDelegateProtocol <NSObject>
 
-@class WKBrowsingContextHandle;
-@class _WKRemoteObjectRegistry;
-@protocol WKWebProcessPlugInEditingDelegate;
-@protocol WKWebProcessPlugInFormDelegatePrivate;
-
-@interface WKWebProcessPlugInBrowserContextController (WKPrivate)
-
-@property (nonatomic, readonly) WKBundlePageRef _bundlePageRef;
-
-@property (nonatomic, readonly) WKBrowsingContextHandle *handle;
-
-@property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
-
-@property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
-@property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-@property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading;
-
-@property (nonatomic, readonly) BOOL _usesNonPersistentWebsiteDataStore;
-
-+ (instancetype)lookUpBrowsingContextFromHandle:(WKBrowsingContextHandle *)handle;
+- (void)willWriteToPasteboard:(NSString *)rangeAsString;
+- (void)didWriteToPasteboard;
 
 @end
 
-#endif // WK_API_ENABLED
+#endif
