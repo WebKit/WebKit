@@ -1625,10 +1625,10 @@ Color RenderElement::selectionBackgroundColor() const
     return theme().inactiveSelectionBackgroundColor();
 }
 
-bool RenderElement::getLeadingCorner(FloatPoint& point) const
+bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (!isInline() || isReplaced()) {
-        point = localToAbsolute(FloatPoint(), UseTransforms);
+        point = localToAbsolute(FloatPoint(), UseTransforms, &insideFixed);
         return true;
     }
 
@@ -1654,7 +1654,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point) const
         ASSERT(o);
 
         if (!o->isInline() || o->isReplaced()) {
-            point = o->localToAbsolute(FloatPoint(), UseTransforms);
+            point = o->localToAbsolute(FloatPoint(), UseTransforms, &insideFixed);
             return true;
         }
 
@@ -1666,7 +1666,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point) const
                 point.move(downcast<RenderText>(*o).linesBoundingBox().x(), downcast<RenderText>(*o).topOfFirstText());
             else if (is<RenderBox>(*o))
                 point.moveBy(downcast<RenderBox>(*o).location());
-            point = o->container()->localToAbsolute(point, UseTransforms);
+            point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);
             return true;
         }
     }
@@ -1680,10 +1680,10 @@ bool RenderElement::getLeadingCorner(FloatPoint& point) const
     return false;
 }
 
-bool RenderElement::getTrailingCorner(FloatPoint& point) const
+bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (!isInline() || isReplaced()) {
-        point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), UseTransforms);
+        point = localToAbsolute(LayoutPoint(downcast<RenderBox>(*this).size()), UseTransforms, &insideFixed);
         return true;
     }
 
@@ -1714,18 +1714,20 @@ bool RenderElement::getTrailingCorner(FloatPoint& point) const
                 point.moveBy(linesBox.maxXMaxYCorner());
             } else
                 point.moveBy(downcast<RenderBox>(*o).frameRect().maxXMaxYCorner());
-            point = o->container()->localToAbsolute(point, UseTransforms);
+            point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);
             return true;
         }
     }
     return true;
 }
 
-LayoutRect RenderElement::anchorRect() const
+LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
 {
     FloatPoint leading, trailing;
-    getLeadingCorner(leading);
-    getTrailingCorner(trailing);
+    bool leadingInFixed = false;
+    bool trailingInFixed = false;
+    getLeadingCorner(leading, leadingInFixed);
+    getTrailingCorner(trailing, trailingInFixed);
 
     FloatPoint upperLeft = leading;
     FloatPoint lowerRight = trailing;
@@ -1735,6 +1737,11 @@ LayoutRect RenderElement::anchorRect() const
         upperLeft = FloatPoint(std::min(leading.x(), trailing.x()), std::min(leading.y(), trailing.y()));
         lowerRight = FloatPoint(std::max(leading.x(), trailing.x()), std::max(leading.y(), trailing.y()));
     } // Otherwise, it's not obvious what to do.
+
+    if (insideFixed) {
+        // For now, just look at the leading corner. Handling one inside fixed and one not would be tricky.
+        *insideFixed = leadingInFixed;
+    }
 
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }

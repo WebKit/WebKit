@@ -164,7 +164,7 @@ public:
     // anchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an anchor.
     // For inline renderers, this gets the logical top left of the first leaf child and the logical bottom right of the
     // last leaf child, converts them to absolute coordinates, and makes a box out of them.
-    LayoutRect anchorRect() const;
+    LayoutRect absoluteAnchorRect(bool* insideFixed = nullptr) const;
 
     bool hasFilter() const { return style().hasFilter(); }
     bool hasBackdropFilter() const
@@ -307,8 +307,8 @@ private:
 
     void newImageAnimationFrameAvailable(CachedImage&) final;
 
-    bool getLeadingCorner(FloatPoint& output) const;
-    bool getTrailingCorner(FloatPoint& output) const;
+    bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
+    bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;
 
     void clearLayoutRootIfNeeded() const;
     

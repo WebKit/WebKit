@@ -112,6 +112,7 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation())
     , m_granularity(CharacterGranularity)
     , m_caretBlinkTimer(*this, &FrameSelection::caretBlinkTimerFired)
+    , m_caretInsidePositionFixed(false)
     , m_absCaretBoundsDirty(true)
     , m_caretPaint(true)
     , m_isCaretBlinkingSuspended(false)
@@ -1577,12 +1578,14 @@ static bool isNonOrphanedCaret(const VisibleSelection& selection)
     return selection.isCaret() && !selection.start().isOrphan() && !selection.end().isOrphan();
 }
 
-IntRect FrameSelection::absoluteCaretBounds()
+IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
 {
     if (!m_frame)
         return IntRect();
     updateSelectionByUpdatingLayoutOrStyle(*m_frame);
     recomputeCaretRect();
+    if (insideFixed)
+        *insideFixed = m_caretInsidePositionFixed;
     return m_absCaretBounds;
 }
 
@@ -1624,7 +1627,9 @@ bool FrameSelection::recomputeCaretRect()
         return false;
 
     IntRect oldAbsCaretBounds = m_absCaretBounds;
-    m_absCaretBounds = absoluteBoundsForLocalCaretRect(rendererForCaretPainting(caretNode.get()), newRect);
+    bool isInsideFixed;
+    m_absCaretBounds = absoluteBoundsForLocalCaretRect(rendererForCaretPainting(caretNode.get()), newRect, &isInsideFixed);
+    m_caretInsidePositionFixed = isInsideFixed;
 
     if (m_absCaretBoundsDirty && m_selection.isCaret()) // We should be able to always assert this condition.
         ASSERT(m_absCaretBounds == m_selection.visibleStart().absoluteCaretBounds());
@@ -2300,12 +2305,12 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         return;
 
     LayoutRect rect;
-
+    bool insideFixed = false;
     switch (m_selection.selectionType()) {
     case VisibleSelection::NoSelection:
         return;
     case VisibleSelection::CaretSelection:
-        rect = absoluteCaretBounds();
+        rect = absoluteCaretBounds(&insideFixed);
         break;
     case VisibleSelection::RangeSelection:
         rect = revealExtentOption == RevealExtent ? VisiblePosition(m_selection.extent()).absoluteCaretBounds() : enclosingIntRect(selectionBounds(false));
@@ -2319,7 +2324,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
             if (!m_scrollingSuppressCount) {
                 layer->setAdjustForIOSCaretWhenScrolling(true);
-                layer->scrollRectToVisible(revealMode, rect, alignment, alignment);
+                layer->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment);
                 layer->setAdjustForIOSCaretWhenScrolling(false);
                 updateAppearance();
                 if (m_frame->page())
@@ -2330,7 +2335,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
         // FIXME: This code only handles scrolling the startContainer's layer, but
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
-        if (start.deprecatedNode()->renderer()->scrollRectToVisible(revealMode, rect, alignment, alignment))
+        if (start.deprecatedNode()->renderer()->scrollRectToVisible(revealMode, rect, insideFixed, alignment, alignment))
             updateAppearance();
 #endif
     }

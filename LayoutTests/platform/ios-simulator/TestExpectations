@@ -2767,3 +2767,5 @@ webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]
 
 # Test relies on window.scrollTo
 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
+fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ]
+fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]

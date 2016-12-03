@@ -1,3 +1,16 @@
+2016-12-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the behavior of scroll-into-view when the target is inside position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=165354
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/overflow/scroll-anchor-in-position-fixed-expected.txt: Added.
+        * fast/overflow/scroll-anchor-in-position-fixed.html: Added.
+        * fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed-expected.txt: Added.
+        * fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         localToAbsolute() does incorrect conversion for elements inside position:fixed with zooming
