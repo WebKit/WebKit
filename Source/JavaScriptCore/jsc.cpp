@@ -2510,60 +2510,33 @@ static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, 
 
 static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 {
-
     JSString* type = jsCast<JSString*>(wasmValue.get(exec, makeIdentifier(vm, "type")));
     JSValue value = wasmValue.get(exec, makeIdentifier(vm, "value"));
-
-    auto unboxString = [&] (const char* hexFormat, const char* decFormat, auto& result) {
-        if (!value.isString())
-            return false;
-
-        const char* str = toCString(jsCast<JSString*>(value)->value(exec)).data();
-        int scanResult;
-        int length = std::strlen(str);
-        if ((length > 2 && (str[0] == '0' && str[1] == 'x'))
-            || (length > 3 && (str[0] == '-' && str[1] == '0' && str[2] == 'x')))
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-#endif
-            scanResult = sscanf(str, hexFormat, &result);
-        else
-            scanResult = sscanf(str, decFormat, &result);
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
-        RELEASE_ASSERT(scanResult != EOF);
-        return true;
-    };
 
     const String& typeString = type->value(exec);
     if (typeString == "i64") {
         int64_t result;
-        if (!unboxString("%llx", "%lld", result))
-            CRASH();
+        const char* str = toCString(jsCast<JSString*>(value)->value(exec)).data();
+        int scanResult;
+        if (std::strlen(str) > 2 && str[0] == '0' && str[1] == 'x')
+            scanResult = sscanf(str, "%llx", &result);
+        else
+            scanResult = sscanf(str, "%lld", &result);
+        RELEASE_ASSERT(scanResult != EOF);
         return JSValue::decode(result);
     }
+    RELEASE_ASSERT(value.isNumber());
 
     if (typeString == "i32") {
-        int32_t result;
-        if (!unboxString("%x", "%d", result))
-            result = value.asInt32();
-        return JSValue::decode(static_cast<uint32_t>(result));
+        RELEASE_ASSERT(value.isInt32());
+        return JSValue::decode(static_cast<uint32_t>(value.asInt32()));
     }
 
-    if (typeString == "f32") {
-        float result;
-        if (!unboxString("%a", "%f", result))
-            result = value.toFloat(exec);
-        return JSValue::decode(bitwise_cast<uint32_t>(result));
-    }
+    if (typeString == "f32")
+        return JSValue::decode(bitwise_cast<uint32_t>(value.toFloat(exec)));
 
     RELEASE_ASSERT(typeString == "f64");
-    double result;
-    if (!unboxString("%la", "%lf", result))
-        result = value.asNumber();
-    return JSValue::decode(bitwise_cast<uint64_t>(result));
+    return JSValue::decode(bitwise_cast<uint64_t>(value.asNumber()));
 }
 
 static JSValue callWasmFunction(VM* vm, const B3::Compilation& code, Vector<JSValue>& boxedArgs)

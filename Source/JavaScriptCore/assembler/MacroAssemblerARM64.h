@@ -1540,16 +1540,6 @@ public:
         m_assembler.fadd<32>(dest, op1, op2);
     }
 
-    void nearestIntDouble(FPRegisterID src, FPRegisterID dest)
-    {
-        m_assembler.frintn<64>(dest, src);
-    }
-
-    void nearestIntFloat(FPRegisterID src, FPRegisterID dest)
-    {
-        m_assembler.frintn<32>(dest, src);
-    }
-
     void ceilDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.frintp<64>(dest, src);
@@ -1701,16 +1691,6 @@ public:
     void convertUInt64ToFloat(RegisterID src, FPRegisterID dest)
     {
         m_assembler.ucvtf<32, 64>(dest, src);
-    }
-
-    void truncDouble(FPRegisterID src, FPRegisterID dest)
-    {
-        m_assembler.frintz<64, 64>(dest, src);
-    }
-
-    void truncFloat(FPRegisterID src, FPRegisterID dest)
-    {
-        m_assembler.frintz<32, 32>(dest, src);
     }
 
     void divDouble(FPRegisterID src, FPRegisterID dest)

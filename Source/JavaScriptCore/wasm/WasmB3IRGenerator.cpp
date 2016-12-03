@@ -29,7 +29,6 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3BasicBlockInlines.h"
-#include "B3CCallValue.h"
 #include "B3ConstPtrValue.h"
 #include "B3FixSSA.h"
 #include "B3StackmapGenerationParams.h"
@@ -750,7 +749,7 @@ bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& re
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -770,7 +769,7 @@ bool B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expression
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -781,70 +780,6 @@ bool B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expression
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
-}
-
-template<>
-bool B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType arg, ExpressionType& result)
-{
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.nearestIntDouble(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = patchpoint;
-    return true;
-}
-
-template<>
-bool B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType arg, ExpressionType& result)
-{
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.nearestIntFloat(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = patchpoint;
-    return true;
-}
-
-template<>
-bool B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType arg, ExpressionType& result)
-{
-#if CPU(X86_64)
-    double (*truncDouble)(double) = std::nearbyint;
-    Value* truncAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), truncDouble);
-    result = m_currentBlock->appendNew<CCallValue>(m_proc, Double, Origin(), Effects::none(), truncAddress, arg);
-#else
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncDouble(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = patchpoint;
-#endif
-    return true;
-}
-
-template<>
-bool B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& result)
-{
-#if CPU(X86_64)
-    float (*roundFloat)(float) = std::trunc;
-    Value* roundAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), roundFloat);
-    result = m_currentBlock->appendNew<CCallValue>(m_proc, Float, Origin(), Effects::none(), roundAddress, arg);
-#else
-    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
-    patchpoint->append(arg, ValueRep::SomeRegister);
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-        jit.truncFloat(params[1].fpr(), params[0].fpr());
-    });
-    patchpoint->effects = Effects::none();
-    result = patchpoint;
-#endif
     return true;
 }
 
