@@ -198,7 +198,7 @@ my @features = (
       define => "ENABLE_CSS_COMPOSITING", default => isAppleWebKit(), value => \$cssCompositingSupport },
 
     { option => "css-device-adaptation", desc => "Toggle CSS Device Adaptation support",
-      define => "ENABLE_CSS_DEVICE_ADAPTATION", default => isEfl(), value => \$cssDeviceAdaptation },
+      define => "ENABLE_CSS_DEVICE_ADAPTATION", default => 0, value => \$cssDeviceAdaptation },
 
     { option => "css-grid-layout", desc => "Toggle CSS Grid Layout support",
       define => "ENABLE_CSS_GRID_LAYOUT", default => 1, value => \$cssGridLayoutSupport },

@@ -1,3 +1,11 @@
+2016-12-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Fix a build break on EFL since r209303.
+
+        Unreviewed build fix.
+
+        * Scripts/webkitperl/FeatureList.pm: Disable SS Device Adaptation temporarily.
+
 2016-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Refactor SymbolImpl layout

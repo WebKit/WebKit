@@ -2732,6 +2732,8 @@ static Exception exceptionForSerializationFailure(SerializationReturnCode code)
         ASSERT_NOT_REACHED();
         return Exception { TypeError };
     }
+    ASSERT_NOT_REACHED();
+    return Exception { TypeError };
 }
 
 RefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState& exec, JSValue value, SerializationErrorMode throwExceptions)

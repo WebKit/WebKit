@@ -1,3 +1,12 @@
+2016-12-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Fix a build break on EFL since r209303.
+
+        Unreviewed build fix.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::exceptionForSerializationFailure): Add a return in the end of function.
+
 2016-12-03  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose InjectedBundlePageEditorClient via the Objective-C bundle SPI
