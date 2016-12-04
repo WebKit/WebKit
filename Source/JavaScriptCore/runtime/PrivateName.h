@@ -32,7 +32,7 @@ namespace JSC {
 class PrivateName {
 public:
     PrivateName()
-        : m_uid(StringImpl::createNullSymbol())
+        : m_uid(SymbolImpl::createNullSymbol())
     {
     }
 
@@ -43,7 +43,7 @@ public:
 
     enum DescriptionTag { Description };
     explicit PrivateName(DescriptionTag, const String& description)
-        : m_uid(StringImpl::createSymbol(*description.impl()))
+        : m_uid(SymbolImpl::create(*description.impl()))
     {
     }
 

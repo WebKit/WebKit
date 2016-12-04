@@ -35,6 +35,10 @@ namespace WTF {
 class UniquedStringImpl : public StringImpl {
 private:
     UniquedStringImpl() = delete;
+protected:
+    UniquedStringImpl(CreateSymbolTag, const LChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
+    UniquedStringImpl(CreateSymbolTag, const UChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
+    UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { }
 };
 
 #if !ASSERT_DISABLED

@@ -1,3 +1,62 @@
+2016-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Refactor SymbolImpl layout
+        https://bugs.webkit.org/show_bug.cgi?id=165247
+
+        Reviewed by Darin Adler.
+
+        This patch moves SymbolImpl initialization from StringImpl to SymbolImpl.
+        In SymbolImpl, we create the appropriate fields. At that time, these fields
+        should be aligned to the BufferSubstring StringImpl.
+
+        And we newly create the `m_flags` in SymbolImpl. Instead of using special
+        StringImpl::null(), we store s_flagIsNullSymbol flag here. In WTF, we have
+        the invariant that StringImpl::empty() is the only atomic empty string.
+        But StringImpl::null() breaks this invariant. Using a special flag is safer
+        way to represent the null Symbol `Symbol()`.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/StdLibExtras.h:
+        (WTF::roundUpToMultipleOfImpl0):
+        (WTF::roundUpToMultipleOfImpl):
+        (WTF::roundUpToMultipleOf):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF::StringImpl::createSymbol): Deleted.
+        (WTF::StringImpl::createNullSymbol): Deleted.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::isAtomic):
+        (WTF::StringImpl::StringImpl):
+        (WTF::StringImpl::requiresCopy):
+        (WTF::StringImpl::isNullSymbol): Deleted.
+        (WTF::StringImpl::symbolAwareHash): Deleted.
+        (WTF::StringImpl::existingSymbolAwareHash): Deleted.
+        (WTF::StringImpl::null): Deleted.
+        (WTF::StringImpl::extractFoldedStringInSymbol): Deleted.
+        (WTF::StringImpl::symbolRegistry): Deleted.
+        (WTF::StringImpl::hashForSymbol): Deleted.
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::nextHashForSymbol): Deleted.
+        * wtf/text/SymbolImpl.cpp: Copied from Source/WTF/wtf/text/SymbolRegistry.cpp.
+        (WTF::SymbolImpl::nextHashForSymbol):
+        (WTF::SymbolImpl::create):
+        (WTF::SymbolImpl::createNullSymbol):
+        * wtf/text/SymbolImpl.h:
+        (WTF::SymbolImpl::hashForSymbol):
+        (WTF::SymbolImpl::symbolRegistry):
+        (WTF::SymbolImpl::isNullSymbol):
+        (WTF::SymbolImpl::extractFoldedString):
+        (WTF::SymbolImpl::SymbolImpl):
+        (WTF::StringImpl::symbolAwareHash):
+        (WTF::StringImpl::existingSymbolAwareHash):
+        * wtf/text/SymbolRegistry.cpp:
+        (WTF::SymbolRegistry::~SymbolRegistry):
+        (WTF::SymbolRegistry::symbolForKey):
+        (WTF::SymbolRegistry::keyForSymbol):
+        * wtf/text/UniquedStringImpl.h:
+        (WTF::UniquedStringImpl::UniquedStringImpl):
+
 2016-12-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introduce StringImpl::StaticStringImpl with constexpr constructor

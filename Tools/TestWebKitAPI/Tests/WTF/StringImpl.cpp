@@ -516,7 +516,7 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithEmpty)
 
 TEST(WTF, StringImplCreateNullSymbol)
 {
-    auto reference = StringImpl::createNullSymbol();
+    auto reference = SymbolImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_TRUE(reference->isNullSymbol());
     ASSERT_FALSE(reference->isAtomic());
@@ -527,7 +527,7 @@ TEST(WTF, StringImplCreateNullSymbol)
 TEST(WTF, StringImplCreateSymbol)
 {
     auto original = stringFromUTF8("original");
-    auto reference = StringImpl::createSymbol(original);
+    auto reference = SymbolImpl::create(original);
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isNullSymbol());
     ASSERT_FALSE(reference->isAtomic());
@@ -537,12 +537,11 @@ TEST(WTF, StringImplCreateSymbol)
     ASSERT_TRUE(equal(reference.ptr(), "original"));
 
     auto empty = stringFromUTF8("");
-    auto emptyReference = StringImpl::createSymbol(empty);
+    auto emptyReference = SymbolImpl::create(empty);
     ASSERT_TRUE(emptyReference->isSymbol());
     ASSERT_FALSE(emptyReference->isNullSymbol());
     ASSERT_FALSE(emptyReference->isAtomic());
     ASSERT_FALSE(empty->isSymbol());
-    ASSERT_FALSE(empty->isNullSymbol());
     ASSERT_TRUE(empty->isAtomic());
     ASSERT_EQ(empty->length(), emptyReference->length());
     ASSERT_TRUE(equal(emptyReference.ptr(), ""));
@@ -551,7 +550,7 @@ TEST(WTF, StringImplCreateSymbol)
 TEST(WTF, StringImplSymbolToAtomicString)
 {
     auto original = stringFromUTF8("original");
-    auto reference = StringImpl::createSymbol(original);
+    auto reference = SymbolImpl::create(original);
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 
@@ -564,7 +563,7 @@ TEST(WTF, StringImplSymbolToAtomicString)
 
 TEST(WTF, StringImplNullSymbolToAtomicString)
 {
-    auto reference = StringImpl::createNullSymbol();
+    auto reference = SymbolImpl::createNullSymbol();
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 
@@ -587,8 +586,6 @@ TEST(WTF, StringImplConstexprHasher)
 TEST(WTF, StringImplEmpty)
 {
     ASSERT_FALSE(StringImpl::empty()->length());
-    ASSERT_FALSE(StringImpl::null()->length());
-    ASSERT_NE(StringImpl::null(), StringImpl::empty());
 }
 
 } // namespace TestWebKitAPI

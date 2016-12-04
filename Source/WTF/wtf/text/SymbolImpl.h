@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SymbolImpl_h
-#define SymbolImpl_h
+#pragma once
 
 #include <wtf/text/UniquedStringImpl.h>
 
@@ -34,8 +33,76 @@ namespace WTF {
 // It is uniqued string impl, but is not registered in Atomic String tables, so it's not atomic.
 class SymbolImpl : public UniquedStringImpl {
 private:
-    SymbolImpl() = delete;
+    static constexpr const unsigned s_flagIsNullSymbol = 1u;
+
+public:
+    unsigned hashForSymbol() const { return m_hashForSymbol; }
+    SymbolRegistry* const& symbolRegistry() const { return m_symbolRegistry; }
+    SymbolRegistry*& symbolRegistry() { return m_symbolRegistry; }
+    bool isNullSymbol() const { return m_flags & s_flagIsNullSymbol; }
+
+    WTF_EXPORT_STRING_API static Ref<SymbolImpl> createNullSymbol();
+    WTF_EXPORT_STRING_API static Ref<SymbolImpl> create(StringImpl& rep);
+
+    Ref<StringImpl> extractFoldedString()
+    {
+        ASSERT(substringBuffer());
+        ASSERT(substringBuffer() == m_owner);
+        ASSERT(!substringBuffer()->isSymbol());
+        return createSubstringSharingImpl(*this, 0, length());
+    }
+
+private:
+    WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
+
+    friend class StringImpl;
+
+    SymbolImpl(const LChar* characters, unsigned length, Ref<StringImpl>&& base)
+        : UniquedStringImpl(CreateSymbol, characters, length)
+        , m_owner(&base.leakRef())
+        , m_hashForSymbol(nextHashForSymbol())
+    {
+        ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+    }
+
+    SymbolImpl(const UChar* characters, unsigned length, Ref<StringImpl>&& base)
+        : UniquedStringImpl(CreateSymbol, characters, length)
+        , m_owner(&base.leakRef())
+        , m_hashForSymbol(nextHashForSymbol())
+    {
+        ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+    }
+
+    SymbolImpl()
+        : UniquedStringImpl(CreateSymbol)
+        , m_owner(StringImpl::empty())
+        , m_hashForSymbol(nextHashForSymbol())
+        , m_flags(s_flagIsNullSymbol)
+    {
+        ASSERT(StringImpl::tailOffset<StringImpl*>() == OBJECT_OFFSETOF(SymbolImpl, m_owner));
+    }
+
+    // The pointer to the owner string should be immediately following after the StringImpl layout,
+    // since we would like to align the layout of SymbolImpl to the one of BufferSubstring StringImpl.
+    StringImpl* m_owner;
+    SymbolRegistry* m_symbolRegistry { nullptr };
+    unsigned m_hashForSymbol;
+    unsigned m_flags { 0 };
 };
+
+inline unsigned StringImpl::symbolAwareHash() const
+{
+    if (isSymbol())
+        return static_cast<const SymbolImpl*>(this)->hashForSymbol();
+    return hash();
+}
+
+inline unsigned StringImpl::existingSymbolAwareHash() const
+{
+    if (isSymbol())
+        return static_cast<const SymbolImpl*>(this)->hashForSymbol();
+    return existingHash();
+}
 
 #if !ASSERT_DISABLED
 // SymbolImpls created from StaticASCIILiteral will ASSERT
@@ -57,5 +124,3 @@ ValueCheck<const SymbolImpl*> {
 } // namespace WTF
 
 using WTF::SymbolImpl;
-
-#endif // SymbolImpl_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,36 @@
  */
 
 #include "config.h"
-#include "SymbolRegistry.h"
+#include "SymbolImpl.h"
 
 namespace WTF {
 
-SymbolRegistry::~SymbolRegistry()
+// In addition to the normal hash value, store specialized hash value for
+// symbolized StringImpl*. And don't use the normal hash value for symbolized
+// StringImpl* when they are treated as Identifiers. Unique nature of these
+// symbolized StringImpl* keys means that we don't need them to match any other
+// string (in fact, that's exactly the oposite of what we want!), and the
+// normal hash would lead to lots of conflicts.
+unsigned SymbolImpl::nextHashForSymbol()
 {
-    for (auto& key : m_table)
-        static_cast<SymbolImpl&>(*key.impl()).symbolRegistry() = nullptr;
+    static unsigned s_nextHashForSymbol = 0;
+    s_nextHashForSymbol += 1 << s_flagCount;
+    s_nextHashForSymbol |= 1 << 31;
+    return s_nextHashForSymbol;
 }
 
-Ref<SymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
+Ref<SymbolImpl> SymbolImpl::create(StringImpl& rep)
 {
-    auto addResult = m_table.add(SymbolRegistryKey(rep.impl()));
-    if (!addResult.isNewEntry)
-        return *static_cast<SymbolImpl*>(addResult.iterator->impl());
-
-    auto symbol = SymbolImpl::create(*rep.impl());
-    symbol->symbolRegistry() = this;
-    *addResult.iterator = SymbolRegistryKey(&symbol.get());
-    return symbol;
+    auto* ownerRep = (rep.bufferOwnership() == BufferSubstring) ? rep.substringBuffer() : &rep;
+    ASSERT(ownerRep->bufferOwnership() != BufferSubstring);
+    if (rep.is8Bit())
+        return adoptRef(*new SymbolImpl(rep.m_data8, rep.length(), *ownerRep));
+    return adoptRef(*new SymbolImpl(rep.m_data16, rep.length(), *ownerRep));
 }
 
-String SymbolRegistry::keyForSymbol(SymbolImpl& uid)
+Ref<SymbolImpl> SymbolImpl::createNullSymbol()
 {
-    ASSERT(uid.symbolRegistry() == this);
-    return uid.extractFoldedString();
+    return adoptRef(*new SymbolImpl);
 }
 
-void SymbolRegistry::remove(SymbolImpl& uid)
-{
-    ASSERT(uid.symbolRegistry() == this);
-    auto iterator = m_table.find(SymbolRegistryKey(&uid));
-    ASSERT_WITH_MESSAGE(iterator != m_table.end(), "The string being removed is registered in the string table of an other thread!");
-    m_table.remove(iterator);
-}
-
-}
+} // namespace WTF

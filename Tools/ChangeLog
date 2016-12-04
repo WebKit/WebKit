@@ -1,3 +1,13 @@
+2016-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Refactor SymbolImpl layout
+        https://bugs.webkit.org/show_bug.cgi?id=165247
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-12-03  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build after r209307.

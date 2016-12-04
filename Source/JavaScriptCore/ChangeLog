@@ -1,3 +1,15 @@
+2016-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Refactor SymbolImpl layout
+        https://bugs.webkit.org/show_bug.cgi?id=165247
+
+        Reviewed by Darin Adler.
+
+        Use SymbolImpl::{create, createNullSymbol} instead.
+
+        * runtime/PrivateName.h:
+        (JSC::PrivateName::PrivateName):
+
 2016-12-03  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: update binary format to 0xD version
