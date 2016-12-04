@@ -1,3 +1,33 @@
+2016-12-04  Keith Miller  <keith_miller@apple.com>
+
+        Add support for Wasm ctz and popcnt
+        https://bugs.webkit.org/show_bug.cgi?id=165369
+
+        Reviewed by Saam Barati.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::countTrailingZeros32):
+        (JSC::MacroAssemblerARM64::countTrailingZeros64):
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::countTrailingZeros32):
+        (JSC::MacroAssemblerX86Common::supportsBMI1):
+        (JSC::MacroAssemblerX86Common::ctzAfterBsf):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::countTrailingZeros64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::tzcnt_rr):
+        (JSC::X86Assembler::tzcntq_rr):
+        (JSC::X86Assembler::bsf_rr):
+        (JSC::X86Assembler::bsfq_rr):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Ctz>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Ctz>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32Popcnt>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64Popcnt>):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+
 2016-12-04  Saam Barati  <sbarati@apple.com>
 
         We should have a Wasm callee

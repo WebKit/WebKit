@@ -427,6 +427,20 @@ public:
         m_assembler.clz<64>(dest, src);
     }
 
+    void countTrailingZeros32(RegisterID src, RegisterID dest)
+    {
+        // Arm does not have a count trailing zeros only a count leading zeros.
+        m_assembler.rbit<32>(dest, src);
+        m_assembler.clz<32>(dest, dest);
+    }
+
+    void countTrailingZeros64(RegisterID src, RegisterID dest)
+    {
+        // Arm does not have a count trailing zeros only a count leading zeros.
+        m_assembler.rbit<64>(dest, src);
+        m_assembler.clz<64>(dest, dest);
+    }
+
     void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.lsl<32>(dest, src, shiftAmount);

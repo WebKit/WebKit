@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3BasicBlockInlines.h"
+#include "B3CCallValue.h"
 #include "B3ConstPtrValue.h"
 #include "B3FixSSA.h"
 #include "B3StackmapGenerationParams.h"
@@ -763,6 +764,54 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
 }
 
 // Custom wasm ops. These are the ones too messy to do in wasm.json.
+
+template<>
+bool B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.countTrailingZeros32(params[1].gpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType arg, ExpressionType& result)
+{
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.countTrailingZeros64(params[1].gpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType& result)
+{
+    // FIXME: This should use the popcnt instruction if SSE4 is available but we don't have code to detect SSE4 yet.
+    // see: https://bugs.webkit.org/show_bug.cgi?id=165363
+    uint32_t (*popcount)(int32_t) = [] (int32_t value) -> uint32_t { return __builtin_popcount(value); };
+    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), bitwise_cast<void*>(popcount));
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, Origin(), Effects::none(), funcAddress, arg);
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType arg, ExpressionType& result)
+{
+    // FIXME: This should use the popcnt instruction if SSE4 is available but we don't have code to detect SSE4 yet.
+    // see: https://bugs.webkit.org/show_bug.cgi?id=165363
+    uint64_t (*popcount)(int64_t) = [] (int64_t value) -> uint64_t { return __builtin_popcountll(value); };
+    Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), bitwise_cast<void*>(popcount));
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, Int64, Origin(), Effects::none(), funcAddress, arg);
+    return true;
+}
 
 template<>
 bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result)

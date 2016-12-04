@@ -288,6 +288,8 @@ private:
         OP2_3BYTE_ESCAPE_AE = 0xAE,
         OP2_IMUL_GvEv       = 0xAF,
         OP2_MOVZX_GvEb      = 0xB6,
+        OP2_BSF             = 0xBC,
+        OP2_TZCNT           = 0xBC,
         OP2_BSR             = 0xBD,
         OP2_LZCNT           = 0xBD,
         OP2_MOVSX_GvEb      = 0xBE,
@@ -1015,6 +1017,32 @@ public:
     void bsrq_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.twoByteOp64(OP2_BSR, dst, base, offset);
+    }
+#endif
+
+    void tzcnt_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_TZCNT, dst, src);
+    }
+
+#if CPU(X86_64)
+    void tzcntq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp64(OP2_TZCNT, dst, src);
+    }
+#endif
+
+    void bsf_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_BSF, dst, src);
+    }
+
+#if CPU(X86_64)
+    void bsfq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.twoByteOp64(OP2_BSF, dst, src);
     }
 #endif
 

@@ -555,6 +555,7 @@ MacroAssemblerX86Common::SSE2CheckState MacroAssemblerX86Common::s_sse2CheckStat
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_sse4_1CheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_avxCheckState = CPUIDCheckState::NotChecked;
 MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_lzcntCheckState = CPUIDCheckState::NotChecked;
+MacroAssemblerX86Common::CPUIDCheckState MacroAssemblerX86Common::s_bmi1CheckState = CPUIDCheckState::NotChecked;
 
 } // namespace JSC
 

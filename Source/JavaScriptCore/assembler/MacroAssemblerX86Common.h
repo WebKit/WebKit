@@ -313,6 +313,16 @@ public:
         clz32AfterBsr(dst);
     }
 
+    void countTrailingZeros32(RegisterID src, RegisterID dst)
+    {
+        if (supportsBMI1()) {
+            m_assembler.tzcnt_rr(src, dst);
+            return;
+        }
+        m_assembler.bsf_rr(src, dst);
+        ctzAfterBsf<32>(dst);
+    }
+
     void lshift32(RegisterID shift_amount, RegisterID dest)
     {
         if (shift_amount == X86Registers::ecx)
@@ -2845,6 +2855,39 @@ protected:
         return s_lzcntCheckState == CPUIDCheckState::Set;
     }
 
+    static bool supportsBMI1()
+    {
+        if (s_bmi1CheckState == CPUIDCheckState::NotChecked) {
+            int flags = 0;
+#if COMPILER(MSVC)
+            int cpuInfo[4];
+            __cpuid(cpuInfo, 0x80000001);
+            flags = cpuInfo[2];
+#elif COMPILER(GCC_OR_CLANG)
+            asm (
+                 "movl $0x7, %%eax;"
+                 "movl $0x0, %%ecx;"
+                 "cpuid;"
+                 "movl %%ebx, %0;"
+                 : "=g" (flags)
+                 :
+                 : "%eax", "%ebx", "%ecx", "%edx"
+                 );
+#endif // COMPILER(GCC_OR_CLANG)
+            static int BMI1FeatureBit = 1 << 3;
+            s_bmi1CheckState = (flags & BMI1FeatureBit) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        }
+        return s_bmi1CheckState == CPUIDCheckState::Set;
+    }
+
+    template<int sizeOfRegister>
+    void ctzAfterBsf(RegisterID dst)
+    {
+        Jump srcIsNonZero = m_assembler.jCC(x86Condition(NonZero));
+        move(TrustedImm32(sizeOfRegister), dst);
+        srcIsNonZero.link(this);
+    }
+
 private:
     // Only MacroAssemblerX86 should be using the following method; SSE2 is always available on
     // x86_64, and clients & subclasses of MacroAssembler should be using 'supportsFloatingPoint()'.
@@ -3015,6 +3058,7 @@ private:
     };
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_1CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_avxCheckState;
+    static CPUIDCheckState s_bmi1CheckState;
     static CPUIDCheckState s_lzcntCheckState;
 };
 

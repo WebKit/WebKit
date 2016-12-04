@@ -391,6 +391,16 @@ public:
         clz64AfterBsr(dst);
     }
 
+    void countTrailingZeros64(RegisterID src, RegisterID dst)
+    {
+        if (supportsBMI1()) {
+            m_assembler.tzcntq_rr(src, dst);
+            return;
+        }
+        m_assembler.bsfq_rr(src, dst);
+        ctzAfterBsf<64>(dst);
+    }
+
     void lshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shlq_i8r(imm.m_value, dest);
