@@ -106,7 +106,6 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     auto* globalObject = state->lexicalGlobalObject();
 
     const Wasm::ModuleInformation& moduleInformation = instance->module()->moduleInformation();
-    const Wasm::CompiledFunctions& compiledFunctions = instance->module()->compiledFunctions();
     SymbolTable* exportSymbolTable = instance->module()->exportSymbolTable();
 
     // FIXME wire up the imports. https://bugs.webkit.org/show_bug.cgi?id=165118
@@ -124,10 +123,9 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            const Wasm::FunctionCompilation* compiledFunction = compiledFunctions.at(exp.functionIndex).get();
-            const B3::Compilation* jsEntryPoint = compiledFunction->jsEntryPoint.get();
-            const Wasm::Signature* signature = moduleInformation.functions.at(exp.functionIndex).signature;
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), exp.field.string(), instance, CallableWebAssemblyFunction(jsEntryPoint, signature));
+            JSWebAssemblyCallee* wasmCallee = instance->module()->callee(exp.functionIndex);
+            Wasm::Signature* signature = moduleInformation.functions.at(exp.functionIndex).signature;
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), exp.field.string(), instance, wasmCallee, signature);
             exportedValue = function;
             break;
         }

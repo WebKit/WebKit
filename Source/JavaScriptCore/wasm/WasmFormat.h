@@ -135,6 +135,7 @@ struct UnlinkedCall {
 
 struct FunctionCompilation {
     Vector<UnlinkedCall> unlinkedCalls;
+    CodeLocationDataLabelPtr calleeMoveLocation;
     std::unique_ptr<B3::Compilation> code;
     std::unique_ptr<B3::Compilation> jsEntryPoint;
 };

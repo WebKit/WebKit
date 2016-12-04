@@ -33,30 +33,52 @@
 
 namespace JSC {
 
+class JSWebAssemblyCallee;
 class SymbolTable;
 
 class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, Wasm::CompiledFunctions&, SymbolTable*);
+    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, SymbolTable* exports, unsigned calleeCount);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
-    const Wasm::CompiledFunctions& compiledFunctions() const { return m_compiledFunctions; }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
 
+    JSWebAssemblyCallee* callee(unsigned calleeIndex)
+    {
+        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        return callees()[calleeIndex].get();
+    }
+
+    WriteBarrier<JSWebAssemblyCallee>* callees()
+    {
+        return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees());
+    }
+
 protected:
-    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, Wasm::CompiledFunctions&);
+    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, unsigned calleeCount);
     void finishCreation(VM&, SymbolTable*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
 private:
+    static size_t offsetOfCallees()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSWebAssemblyCallee>)>(sizeof(JSWebAssemblyModule));
+    }
+
+    static size_t allocationSize(unsigned numCallees)
+    {
+        return offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees;
+    }
+
     std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
-    Wasm::CompiledFunctions m_compiledFunctions;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
+    unsigned m_calleeCount;
 };
 
 } // namespace JSC

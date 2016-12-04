@@ -117,6 +117,7 @@
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
 #include "JSWebAssembly.h"
+#include "JSWebAssemblyCallee.h"
 #include "JSWithScope.h"
 #include "LazyClassStructureInlines.h"
 #include "LazyPropertyInlines.h"

@@ -905,6 +905,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmPlan.cpp
     wasm/WasmValidate.cpp
 
+    wasm/js/JSWebAssemblyCallee.cpp
     wasm/js/JSWebAssemblyCompileError.cpp
     wasm/js/JSWebAssemblyInstance.cpp
     wasm/js/JSWebAssemblyMemory.cpp
@@ -914,7 +915,6 @@ set(JavaScriptCore_SOURCES
     wasm/js/WebAssemblyCompileErrorConstructor.cpp
     wasm/js/WebAssemblyCompileErrorPrototype.cpp
     wasm/js/WebAssemblyFunction.cpp
-    wasm/js/WebAssemblyFunctionCell.cpp
     wasm/js/WebAssemblyInstanceConstructor.cpp
     wasm/js/WebAssemblyInstancePrototype.cpp
     wasm/js/WebAssemblyMemoryConstructor.cpp

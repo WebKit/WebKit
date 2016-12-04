@@ -33,7 +33,13 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
-namespace JSC { namespace Wasm {
+namespace JSC {
+
+class JSGlobalObject;
+class JSWebAssemblyCallee;
+
+namespace Wasm {
+
 class Memory;
 
 class Plan {
@@ -43,6 +49,8 @@ public:
     JS_EXPORT_PRIVATE ~Plan();
 
     JS_EXPORT_PRIVATE void run();
+
+    JS_EXPORT_PRIVATE void initializeCallees(JSGlobalObject*, std::function<void(unsigned, JSWebAssemblyCallee*)>);
 
     bool WARN_UNUSED_RETURN failed() const { return m_failed; }
     const String& errorMessage() const
@@ -70,11 +78,6 @@ public:
     {
         RELEASE_ASSERT(!failed());
         return m_compiledFunctions.at(i).get();
-    }
-    CompiledFunctions& getCompiledFunctions()
-    {
-        RELEASE_ASSERT(!failed());
-        return m_compiledFunctions;
     }
 
 private:

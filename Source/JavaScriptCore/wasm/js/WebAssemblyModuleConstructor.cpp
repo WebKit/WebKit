@@ -33,6 +33,7 @@
 #include "JSArrayBuffer.h"
 #include "JSCInlines.h"
 #include "JSTypedArrays.h"
+#include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyModule.h"
 #include "SymbolTable.h"
@@ -53,7 +54,7 @@ const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_in
 
 static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* state)
 {
-    auto& vm = state->vm();
+    VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue val = state->argument(0);
 
@@ -87,7 +88,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
         exportSymbolTable->set(NoLockingNecessary, exp.field.impl(), SymbolTableEntry(VarOffset(offset)));
     }
 
-    return JSValue::encode(JSWebAssemblyModule::create(vm, structure, plan.getModuleInformation(), plan.getCompiledFunctions(), exportSymbolTable));
+    unsigned calleeCount = plan.compiledFunctionCount();
+    JSWebAssemblyModule* result = JSWebAssemblyModule::create(vm, structure, plan.getModuleInformation(), exportSymbolTable, calleeCount);
+    plan.initializeCallees(state->jsCallee()->globalObject(), 
+        [&] (unsigned calleeIndex, JSWebAssemblyCallee* callee) {
+            result->callees()[calleeIndex].set(vm, result, callee);
+        });
+    return JSValue::encode(result);
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)

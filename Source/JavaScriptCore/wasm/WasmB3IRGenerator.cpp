@@ -129,7 +129,7 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(Memory*, Procedure&, Vector<UnlinkedCall>& unlinkedCalls);
+    B3IRGenerator(Memory*, Procedure&, FunctionCompilation*);
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
     bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -189,10 +189,10 @@ private:
     Value* m_zeroValues[numTypes];
 };
 
-B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<UnlinkedCall>& unlinkedCalls)
+B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, FunctionCompilation* compilation)
     : m_memory(memory)
     , m_proc(procedure)
-    , m_unlinkedCalls(unlinkedCalls)
+    , m_unlinkedCalls(compilation->unlinkedCalls)
 {
     m_currentBlock = m_proc.addBlock();
 
@@ -224,6 +224,8 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<Unlink
             jit.breakpoint();
         });
     }
+
+    wasmCallingConvention().setupFrameInPrologue(compilation, m_proc, Origin(), m_currentBlock);
 }
 
 Value* B3IRGenerator::zeroForType(Type type)
@@ -741,7 +743,7 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
     auto result = std::make_unique<FunctionCompilation>();
 
     Procedure procedure;
-    B3IRGenerator context(memory, procedure, result->unlinkedCalls);
+    B3IRGenerator context(memory, procedure, result.get());
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functions);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();

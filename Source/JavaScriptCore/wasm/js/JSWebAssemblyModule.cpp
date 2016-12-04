@@ -29,15 +29,19 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSWebAssemblyCallee.h"
 #include "WasmFormat.h"
 #include "WasmMemory.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
-JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, Wasm::CompiledFunctions& compiledFunctions, SymbolTable* exportSymbolTable)
+const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
+
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation,
+    SymbolTable* exportSymbolTable, unsigned calleeCount)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, moduleInformation, compiledFunctions);
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyModule(vm, structure, moduleInformation, calleeCount);
     instance->finishCreation(vm, exportSymbolTable);
     return instance;
 }
@@ -47,11 +51,12 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, Wasm::CompiledFunctions& compiledFunctions)
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>& moduleInformation, unsigned calleeCount)
     : Base(vm, structure)
     , m_moduleInformation(WTFMove(moduleInformation))
-    , m_compiledFunctions(WTFMove(compiledFunctions))
+    , m_calleeCount(calleeCount)
 {
+    memset(callees(), 0, m_calleeCount * sizeof(WriteBarrier<JSWebAssemblyCallee>));
 }
 
 void JSWebAssemblyModule::finishCreation(VM& vm, SymbolTable* exportSymbolTable)
@@ -73,9 +78,11 @@ void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_exportSymbolTable);
+    for (unsigned i = 0; i < thisObject->m_calleeCount; i++) {
+        WriteBarrier<JSWebAssemblyCallee>* callee = &thisObject->callees()[i];
+        visitor.append(callee);
+    }
 }
-
-const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
 } // namespace JSC
 

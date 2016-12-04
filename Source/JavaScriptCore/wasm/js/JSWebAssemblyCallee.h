@@ -27,53 +27,40 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSFunction.h"
-#include <wtf/Noncopyable.h>
+#include "JSCallee.h"
+#include "WasmFormat.h"
 
 namespace JSC {
 
-class JSGlobalObject;
-class JSWebAssemblyCallee;
-class WebAssemblyInstance;
-
-namespace B3 {
-class Compilation;
-}
-
-namespace Wasm {
-struct Signature;
-}
-
-class WebAssemblyFunction : public JSFunction {
+class JSWebAssemblyCallee : public JSCell {
 public:
-    typedef JSFunction Base;
+    typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    const static unsigned StructureFlags = Base::StructureFlags;
-
-    DECLARE_EXPORT_INFO;
-
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee*, Wasm::Signature*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    JSWebAssemblyCallee* webAssemblyCallee() const { return m_wasmCallee.get(); }
-    const JSWebAssemblyInstance* instance() const { return m_instance.get(); }
-    const Wasm::Signature* signature()
-    { 
-        ASSERT(m_signature);
-        return m_signature;
+    static JSWebAssemblyCallee* create(VM& vm, std::unique_ptr<Wasm::FunctionCompilation>&& compilation)
+    {
+        JSWebAssemblyCallee* callee = new (NotNull, allocateCell<JSWebAssemblyCallee>(vm.heap)) JSWebAssemblyCallee(vm);
+        callee->finishCreation(vm, WTFMove(compilation));
+        return callee;
     }
 
-protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+    }
 
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee*, Wasm::Signature*);
+    DECLARE_EXPORT_INFO;
+    static const bool needsDestruction = true;
+    static void destroy(JSCell*);
+
+    void* jsEntryPoint() { return m_jsEntryPoint->code().executableAddress(); }
 
 private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*);
+    void finishCreation(VM&, std::unique_ptr<Wasm::FunctionCompilation>&&);
+    JSWebAssemblyCallee(VM&);
 
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<JSWebAssemblyCallee> m_wasmCallee;
-    Wasm::Signature* m_signature;
+    std::unique_ptr<B3::Compilation> m_code;
+    std::unique_ptr<B3::Compilation> m_jsEntryPoint;
 };
 
 } // namespace JSC

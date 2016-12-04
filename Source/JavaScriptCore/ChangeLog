@@ -1,3 +1,80 @@
+2016-12-04  Saam Barati  <sbarati@apple.com>
+
+        We should have a Wasm callee
+        https://bugs.webkit.org/show_bug.cgi?id=165163
+
+        Reviewed by Keith Miller.
+
+        This patch adds JSWebAssemblyCallee and stores it into the
+        callee slot in the call frame as part of the prologue of a
+        wasm function. This is the first step in implementing
+        unwinding from/through wasm frames. We will use the callee
+        to identify that a machine frame belongs to wasm code.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (callWasmFunction):
+        (functionTestWasmModuleFunctions):
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/JSWebAssembly.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue):
+        * wasm/WasmFormat.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::initializeCallees):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::compiledFunction):
+        (JSC::Wasm::Plan::getCompiledFunctions): Deleted.
+        * wasm/js/JSWebAssemblyCallee.cpp: Added.
+        (JSC::JSWebAssemblyCallee::JSWebAssemblyCallee):
+        (JSC::JSWebAssemblyCallee::finishCreation):
+        (JSC::JSWebAssemblyCallee::destroy):
+        * wasm/js/JSWebAssemblyCallee.h: Added.
+        (JSC::JSWebAssemblyCallee::create):
+        (JSC::JSWebAssemblyCallee::createStructure):
+        (JSC::JSWebAssemblyCallee::jsEntryPoint):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::moduleInformation):
+        (JSC::JSWebAssemblyModule::callee):
+        (JSC::JSWebAssemblyModule::callees):
+        (JSC::JSWebAssemblyModule::offsetOfCallees):
+        (JSC::JSWebAssemblyModule::allocationSize):
+        (JSC::JSWebAssemblyModule::compiledFunctions): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::visitChildren):
+        (JSC::WebAssemblyFunction::finishCreation):
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::webAssemblyCallee):
+        (JSC::WebAssemblyFunction::instance):
+        (JSC::WebAssemblyFunction::signature):
+        (JSC::CallableWebAssemblyFunction::CallableWebAssemblyFunction): Deleted.
+        (JSC::WebAssemblyFunction::webAssemblyFunctionCell): Deleted.
+        * wasm/js/WebAssemblyFunctionCell.cpp:
+        (JSC::WebAssemblyFunctionCell::create): Deleted.
+        (JSC::WebAssemblyFunctionCell::WebAssemblyFunctionCell): Deleted.
+        (JSC::WebAssemblyFunctionCell::destroy): Deleted.
+        (JSC::WebAssemblyFunctionCell::createStructure): Deleted.
+        * wasm/js/WebAssemblyFunctionCell.h:
+        (JSC::WebAssemblyFunctionCell::function): Deleted.
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2016-12-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Assertion Failures breakpoint should respect global Breakpoints enabled setting

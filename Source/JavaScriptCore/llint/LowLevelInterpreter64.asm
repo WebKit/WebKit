@@ -183,6 +183,7 @@ macro doVMEntry(makeCall)
     move 4, t3
 
 .copyHeaderLoop:
+    # Copy the CodeBlock/Callee/ArgumentCount/|this| from protoCallFrame into the callee frame.
     subi 1, t3
     loadq [protoCallFrame, t3, 8], extraTempReg
     storeq extraTempReg, CodeBlock[sp, t3, 8]

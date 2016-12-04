@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSObject.h"
+#include "js/JSWebAssemblyCallee.h"
 #include "js/JSWebAssemblyCompileError.h"
 #include "js/JSWebAssemblyInstance.h"
 #include "js/JSWebAssemblyMemory.h"
@@ -37,7 +38,6 @@
 #include "js/WebAssemblyCompileErrorConstructor.h"
 #include "js/WebAssemblyCompileErrorPrototype.h"
 #include "js/WebAssemblyFunction.h"
-#include "js/WebAssemblyFunctionCell.h"
 #include "js/WebAssemblyInstanceConstructor.h"
 #include "js/WebAssemblyInstancePrototype.h"
 #include "js/WebAssemblyMemoryConstructor.h"

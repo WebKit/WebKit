@@ -29,6 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
+#include "JSCInlines.h"
+#include "JSGlobalObject.h"
+#include "JSWebAssemblyCallee.h"
 #include "WasmB3IRGenerator.h"
 #include "WasmCallingConvention.h"
 #include "WasmMemory.h"
@@ -108,6 +111,23 @@ void Plan::run()
     }
 
     m_failed = false;
+}
+
+void Plan::initializeCallees(JSGlobalObject* globalObject, std::function<void(unsigned, JSWebAssemblyCallee*)> callback)
+{
+    ASSERT(!failed());
+    for (unsigned i = 0; i < m_compiledFunctions.size(); i++) {
+        std::unique_ptr<FunctionCompilation>& compilation = m_compiledFunctions[i];
+        CodeLocationDataLabelPtr calleeMoveLocation = compilation->calleeMoveLocation;
+        JSWebAssemblyCallee* callee = JSWebAssemblyCallee::create(globalObject->vm(), WTFMove(compilation));
+
+        MacroAssembler::repatchPointer(calleeMoveLocation, callee);
+
+        if (verbose)
+            dataLogLn("Made Wasm callee: ", RawPointer(callee));
+
+        callback(i, callee);
+    }
 }
 
 Plan::~Plan() { }

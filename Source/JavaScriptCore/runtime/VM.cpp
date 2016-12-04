@@ -230,6 +230,7 @@ VM::VM(VMType vmType, HeapType heapType)
     functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, 0, jsNull()));
 #if ENABLE(WEBASSEMBLY)
     webAssemblyExecutableStructure.set(*this, WebAssemblyExecutable::createStructure(*this, 0, jsNull()));
+    webAssemblyCalleeStructure.set(*this, JSWebAssemblyCallee::createStructure(*this, 0, jsNull()));
 #endif
     moduleProgramExecutableStructure.set(*this, ModuleProgramExecutable::createStructure(*this, 0, jsNull()));
     regExpStructure.set(*this, RegExp::createStructure(*this, 0, jsNull()));
@@ -260,7 +261,6 @@ VM::VM(VMType vmType, HeapType heapType)
     functionCodeBlockStructure.set(*this, FunctionCodeBlock::createStructure(*this, 0, jsNull()));
 #if ENABLE(WEBASSEMBLY)
     webAssemblyCodeBlockStructure.set(*this, WebAssemblyCodeBlock::createStructure(*this, 0, jsNull()));
-    webAssemblyFunctionCellStructure.set(*this, WebAssemblyFunctionCell::createStructure(*this, 0, jsNull()));
 #endif
     hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, 0, jsNull()));
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, 0, jsNull()));

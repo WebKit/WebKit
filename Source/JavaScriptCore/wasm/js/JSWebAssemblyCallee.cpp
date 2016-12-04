@@ -23,58 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSWebAssemblyCallee.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSFunction.h"
-#include <wtf/Noncopyable.h>
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class JSGlobalObject;
-class JSWebAssemblyCallee;
-class WebAssemblyInstance;
+const ClassInfo JSWebAssemblyCallee::s_info = { "WebAssemblyCallee", nullptr, 0, CREATE_METHOD_TABLE(JSWebAssemblyCallee) };
 
-namespace B3 {
-class Compilation;
+JSWebAssemblyCallee::JSWebAssemblyCallee(VM& vm)
+    : Base(vm, vm.webAssemblyCalleeStructure.get())
+{ }
+
+void JSWebAssemblyCallee::finishCreation(VM& vm, std::unique_ptr<Wasm::FunctionCompilation>&& compilation)
+{
+    Base::finishCreation(vm);
+
+    m_code = WTFMove(compilation->code);
+    m_jsEntryPoint = WTFMove(compilation->jsEntryPoint);
 }
 
-namespace Wasm {
-struct Signature;
+void JSWebAssemblyCallee::destroy(JSCell* cell)
+{
+    JSWebAssemblyCallee* thisObject = jsCast<JSWebAssemblyCallee*>(cell);
+    thisObject->JSWebAssemblyCallee::~JSWebAssemblyCallee();
 }
-
-class WebAssemblyFunction : public JSFunction {
-public:
-    typedef JSFunction Base;
-
-    const static unsigned StructureFlags = Base::StructureFlags;
-
-    DECLARE_EXPORT_INFO;
-
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee*, Wasm::Signature*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    JSWebAssemblyCallee* webAssemblyCallee() const { return m_wasmCallee.get(); }
-    const JSWebAssemblyInstance* instance() const { return m_instance.get(); }
-    const Wasm::Signature* signature()
-    { 
-        ASSERT(m_signature);
-        return m_signature;
-    }
-
-protected:
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee*, Wasm::Signature*);
-
-private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*);
-
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<JSWebAssemblyCallee> m_wasmCallee;
-    Wasm::Signature* m_signature;
-};
 
 } // namespace JSC
 
