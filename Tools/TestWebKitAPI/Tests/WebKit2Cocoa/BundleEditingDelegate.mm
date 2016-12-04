@@ -77,7 +77,7 @@ TEST(WebKit2, WKWebProcessPlugInEditingDelegate)
     TestWebKitAPI::Util::run(&didWriteToPasteboard);
 #if PLATFORM(MAC)
     EXPECT_STREQ("hello", [[NSPasteboard generalPasteboard] stringForType:@"org.webkit.data"].UTF8String);
-#elsif PLATFORM(IOS)
+#elif PLATFORM(IOS)
     EXPECT_TRUE([[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] isEqual:[@"hello" dataUsingEncoding:NSUTF8StringEncoding]]);
 #endif
 }
