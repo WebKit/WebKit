@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/assert.js"></script>
+<script src="resources/break-on-exception-tests.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("BreakpointsDisabled");
+
+    function addTestCase(name, description, expression, breakpoint) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                let didPause = false;
+                let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                    didPause = true;
+                    InspectorTest.fail("Should not have paused.");
+                    WebInspector.debuggerManager.resume();
+                    reject();
+                });
+
+                breakpoint.disabled = false;
+                WebInspector.debuggerManager.breakpointsEnabled = false;
+
+                InspectorTest.evaluateInPage(expression, () => {
+                    InspectorTest.expectFalse(didPause, "Should not pause.")
+                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, listener);
+                    WebInspector.debuggerManager.resume();
+                    resolve();
+                });
+            }
+        });
+    }
+
+    addTestCase("AssertionsBreakpoint", "Should not pause on assertion failure.", "assertFalse()", WebInspector.debuggerManager.assertionsBreakpoint);
+    addTestCase("AllUncaughtExceptionsBreakpoint", "Should not pause on uncaught exception.", "doThrow()", WebInspector.debuggerManager.allUncaughtExceptionsBreakpoint);
+    addTestCase("AllExceptionsBreakpoint", "Should not pause on caught exception.", "testCatch()", WebInspector.debuggerManager.allExceptionsBreakpoint);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Check that special breakpoints aren't hit when breakpoints are disabled.</p>
+</body>
+</html>

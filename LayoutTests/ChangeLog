@@ -1,3 +1,16 @@
+2016-12-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Assertion Failures breakpoint should respect global Breakpoints enabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=165277
+        <rdar://problem/29467098>
+
+        Reviewed by Mark Lam.
+
+        New test for DebuggerManager.prototype.breakPointsEnabled.
+
+        * inspector/debugger/breakpoints-disabled-expected.txt: Added.
+        * inspector/debugger/breakpoints-disabled.html: Added.
+
 2016-12-03  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove Inspector test of Bison errors

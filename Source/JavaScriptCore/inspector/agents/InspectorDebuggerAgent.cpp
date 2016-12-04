@@ -248,6 +248,9 @@ RefPtr<Inspector::Protocol::Console::StackTrace> InspectorDebuggerAgent::buildAs
 
 void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
 {
+    if (!m_scriptDebugServer.breakpointsActive())
+        return;
+
     if (m_pauseOnAssertionFailures)
         breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message));
 }
