@@ -2992,9 +2992,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(ATTACHMENT_ELEMENT)
     settings.setAttachmentElementEnabled(store.getBoolValueForKey(WebPreferencesKey::attachmentElementEnabledKey()));
 #endif
-#if ENABLE(POINTER_LOCK)
-    settings.setPointerLockEnabled(store.getBoolValueForKey(WebPreferencesKey::pointerLockEnabledKey()));
-#endif
     settings.setAllowsPictureInPictureMediaPlayback(store.getBoolValueForKey(WebPreferencesKey::allowsPictureInPictureMediaPlaybackKey()));
     settings.setMediaControlsScaleWithPageZoom(store.getBoolValueForKey(WebPreferencesKey::mediaControlsScaleWithPageZoomKey()));
     settings.setMockScrollbarsEnabled(store.getBoolValueForKey(WebPreferencesKey::mockScrollbarsEnabledKey()));
@@ -3186,6 +3183,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(WEBGL2)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(store.getBoolValueForKey(WebPreferencesKey::webGL2EnabledKey()));
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    RuntimeEnabledFeatures::sharedFeatures().setPointerLockEnabled(store.getBoolValueForKey(WebPreferencesKey::pointerLockEnabledKey()));
 #endif
 
     settings.setSpringTimingFunctionEnabled(store.getBoolValueForKey(WebPreferencesKey::springTimingFunctionEnabledKey()));

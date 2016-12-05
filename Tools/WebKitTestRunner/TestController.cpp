@@ -652,6 +652,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences, options.needsSiteSpecificQuirks);
     WKPreferencesSetIntersectionObserverEnabled(preferences, options.enableIntersectionObserver);
     WKPreferencesSetModernMediaControlsEnabled(preferences, options.enableModernMediaControls);
+    WKPreferencesSetPointerLockEnabled(preferences, options.enablePointerLock);
 
     static WKStringRef defaultTextEncoding = WKStringCreateWithUTF8CString("ISO-8859-1");
     WKPreferencesSetDefaultTextEncodingName(preferences, defaultTextEncoding);
@@ -963,6 +964,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableIntersectionObserver = parseBooleanTestHeaderValue(value);
         if (key == "enableModernMediaControls")
             testOptions.enableModernMediaControls = parseBooleanTestHeaderValue(value);
+        if (key == "enablePointerLock")
+            testOptions.enablePointerLock = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

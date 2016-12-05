@@ -45,6 +45,7 @@ struct TestOptions {
     bool useCharacterSelectionGranularity { false };
     bool enableIntersectionObserver { false };
     bool enableModernMediaControls { false };
+    bool enablePointerLock { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;

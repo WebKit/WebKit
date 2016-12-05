@@ -278,7 +278,8 @@ bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
         || m_options.useMockScrollbars != options.useMockScrollbars
         || m_options.needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
         || m_options.enableIntersectionObserver != options.enableIntersectionObserver
-        || m_options.enableModernMediaControls != options.enableModernMediaControls)
+        || m_options.enableModernMediaControls != options.enableModernMediaControls
+        || m_options.enablePointerLock != options.enablePointerLock)
         return false;
 
     return true;

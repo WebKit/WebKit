@@ -1,3 +1,15 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        pointer lock needs to be feature detectable
+        https://bugs.webkit.org/show_bug.cgi?id=165426
+        <rdar://problem/29486715>
+
+        Reviewed by Antoine Quint.
+
+        We can now accurately detect pointer-lock.
+
+        * experimental-features.html:
+
 2016-12-02  Dean Jackson  <dino@apple.com>
 
         Make a public facing page to check for WebKit features

@@ -30,6 +30,7 @@
 struct TestOptions {
     bool enableIntersectionObserver { false };
     bool enableModernMediaControls { false };
+    bool enablePointerLock { false };
 
     TestOptions(NSURL *testURL);
 };

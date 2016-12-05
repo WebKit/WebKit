@@ -1,3 +1,30 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        pointer lock needs to be feature detectable
+        https://bugs.webkit.org/show_bug.cgi?id=165426
+        <rdar://problem/29486715>
+
+        Reviewed by Antoine Quint.
+
+        Annotate the public-facing API for pointer-lock, so
+        that it is hidden when not available.
+
+        Also move the Setting to a RuntimeEnabledFeature, since
+        pointer-lock is exposed from WebKit as a feature.
+
+        Tests: pointer-lock/pointerlock-interface-disabled.html
+               pointer-lock/pointerlock-interface.html
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setPointerLockEnabled):
+        (WebCore::RuntimeEnabledFeatures::pointerLockEnabled):
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::requestPointerUnlock):
+        * page/Settings.in:
+
 2016-12-05  Keith Rollin  <krollin@apple.com>
 
         Reduce number of platformMemoryUsage calls

@@ -34,6 +34,7 @@
 #include "EventNames.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "VoidCallback.h"
@@ -49,7 +50,7 @@ PointerLockController::PointerLockController(Page& page)
 
 void PointerLockController::requestPointerLock(Element* target)
 {
-    if (!m_page.settings().pointerLockEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().pointerLockEnabled())
         return;
 
     if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock) {
@@ -92,7 +93,7 @@ void PointerLockController::requestPointerUnlock()
     if (!m_element)
         return;
 
-    if (!m_page.settings().pointerLockEnabled())
+    if (!RuntimeEnabledFeatures::sharedFeatures().pointerLockEnabled())
         return;
 
     m_page.chrome().client().requestPointerUnlock();

@@ -293,4 +293,3 @@ largeImageAsyncDecodingEnabled initial=true
 animatedImageAsyncDecodingEnabled initial=true
 
 es6ModulesEnabled initial=false
-pointerLockEnabled initial=false

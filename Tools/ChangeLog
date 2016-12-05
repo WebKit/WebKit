@@ -1,3 +1,27 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        pointer lock needs to be feature detectable
+        https://bugs.webkit.org/show_bug.cgi?id=165426
+        <rdar://problem/29486715>
+
+        Reviewed by Antoine Quint.
+
+        Expose the comment line to turn on/off pointer lock.
+
+        * DumpRenderTree/TestOptions.h:
+        * DumpRenderTree/TestOptions.mm:
+        (TestOptions::TestOptions):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::viewSupportsOptions):
+
 2016-12-05  Jonathan Bedard  <jbedard@apple.com>
 
         Make it possible to use an existing simulator instance for one-off testing

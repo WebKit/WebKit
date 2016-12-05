@@ -128,7 +128,7 @@
     [CEReactions, MayThrowException] void insertAdjacentHTML(DOMString where, DOMString html);
     [MayThrowException] void insertAdjacentText(DOMString where, DOMString text);
 
-    [Conditional=POINTER_LOCK] void requestPointerLock();
+    [Conditional=POINTER_LOCK, EnabledAtRuntime=PointerLock] void requestPointerLock();
 
     // CSS Regions API
     [Conditional=CSS_REGIONS] readonly attribute DOMString webkitRegionOverset;

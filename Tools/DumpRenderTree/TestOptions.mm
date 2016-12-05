@@ -80,6 +80,8 @@ TestOptions::TestOptions(NSURL *testURL)
             this->enableIntersectionObserver = parseBooleanTestHeaderValue(value);
         else if (key == "enableModernMediaControls")
             this->enableModernMediaControls = parseBooleanTestHeaderValue(value);
+        else if (key == "enablePointerLock")
+            this->enablePointerLock = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

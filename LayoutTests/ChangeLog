@@ -1,3 +1,18 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        pointer lock needs to be feature detectable
+        https://bugs.webkit.org/show_bug.cgi?id=165426
+        <rdar://problem/29486715>
+
+        Reviewed by Antoine Quint.
+
+        Checks that the API is hidden when the feature is turned off.
+
+        * pointer-lock/pointerlock-interface-disabled-expected.txt: Added.
+        * pointer-lock/pointerlock-interface-disabled.html: Added.
+        * pointer-lock/pointerlock-interface-expected.txt: Added.
+        * pointer-lock/pointerlock-interface.html: Added.
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Skip a grid test

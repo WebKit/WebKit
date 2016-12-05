@@ -1,0 +1,32 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enablePointerLock=true ] -->
+<head>
+    <title>PointerLock interface tests.</title>
+    <link rel="help" href="https://w3c.github.io/pointerlock/">
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+test(function() {
+    assert_true('exitPointerLock' in Document.prototype);
+},'Document.prototype.exitPointerLock exists');
+
+test(function() {
+    assert_true('pointerLockElement' in Document.prototype);
+},'Document.prototype.pointerLockElement exists');
+
+test(function() {
+    assert_true('onpointerlockchange' in Document.prototype);
+},'Document.prototype.onpointerlockchange exists');
+
+test(function() {
+    assert_true('onpointerlockerror' in Document.prototype);
+},'Document.prototype.onpointerlockerror exists');
+
+test(function() {
+    assert_true('requestPointerLock' in Element.prototype);
+},'Element.prototype.requestPointerLock exists');
+</script>
+</body>
+</html>

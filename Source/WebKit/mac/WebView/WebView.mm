@@ -2650,10 +2650,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
     settings.setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
 
-#if ENABLE(POINTER_LOCK)
-    settings.setPointerLockEnabled([preferences pointerLockEnabled]);
-#endif
-
     settings.setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
     settings.setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
     settings.setDisplayListDrawingEnabled([preferences displayListDrawingEnabled]);
@@ -2845,6 +2841,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setModernMediaControlsEnabled([preferences modernMediaControlsEnabled]);
 
     RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled([preferences customElementsEnabled]);
+
+#if ENABLE(POINTER_LOCK)
+    RuntimeEnabledFeatures::sharedFeatures().setPointerLockEnabled([preferences pointerLockEnabled]);
+#endif
 
 #if ENABLE(FETCH_API)
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled([preferences fetchAPIEnabled]);

@@ -1,3 +1,21 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        pointer lock needs to be feature detectable
+        https://bugs.webkit.org/show_bug.cgi?id=165426
+        <rdar://problem/29486715>
+
+        Reviewed by Antoine Quint.
+
+        Set the RuntimeEnabledFeature as preferences
+        change.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPointerLockEnabled):
+        (WKPreferencesGetPointerLockEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-12-05  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Add some memory usage related information to sysdiagnose state dumps

@@ -832,6 +832,16 @@ bool WKPreferencesGetModernMediaControlsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->modernMediaControlsEnabled();
 }
 
+void WKPreferencesSetPointerLockEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setPointerLockEnabled(flag);
+}
+
+bool WKPreferencesGetPointerLockEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->pointerLockEnabled();
+}
+
 void WKPreferencesSetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setShowsToolTipOverTruncatedText(flag);
