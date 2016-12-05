@@ -1,3 +1,24 @@
+2016-12-05  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Add some memory usage related information to sysdiagnose state dumps
+        <https://webkit.org/b/165375>
+        <rdar://problem/29057243>
+
+        Reviewed by Darin Adler.
+
+        Add two new entries to the sysdiagnose state dumps for WebContent processes:
+        "Memory Usage Stats" and "JavaScript Object Counts".
+
+        The first category contains all the interesting stuff from task_info()
+        along with some WebCore and JavaScriptCore object/memory counters.
+
+        The second category contains a list of all the JS object types currently live
+        on the heap, along with a count.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::registerWithStateDumper): Add two new entries to the
+        state dictionary: "Memory Usage Stats" and "JavaScript Object Counts".
+
 2016-12-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed cmake buildfix after r209307.

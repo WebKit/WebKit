@@ -38,11 +38,11 @@ void PerformanceLogging::getPlatformMemoryUsageStatistics(HashMap<const char*, s
     kern_return_t err = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
     if (err != KERN_SUCCESS)
         return;
-    stats.set("internal", static_cast<size_t>(vmInfo.internal));
-    stats.set("compressed", static_cast<size_t>(vmInfo.compressed));
-    stats.set("phys_footprint", static_cast<size_t>(vmInfo.phys_footprint));
-    stats.set("resident_size", static_cast<size_t>(vmInfo.resident_size));
-    stats.set("virtual_size", static_cast<size_t>(vmInfo.virtual_size));
+    stats.add("internal", static_cast<size_t>(vmInfo.internal));
+    stats.add("compressed", static_cast<size_t>(vmInfo.compressed));
+    stats.add("phys_footprint", static_cast<size_t>(vmInfo.phys_footprint));
+    stats.add("resident_size", static_cast<size_t>(vmInfo.resident_size));
+    stats.add("virtual_size", static_cast<size_t>(vmInfo.virtual_size));
 }
 
 }

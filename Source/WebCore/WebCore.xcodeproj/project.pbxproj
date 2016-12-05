@@ -4517,7 +4517,7 @@
 		AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AD49914118F0815100BF0092 /* HTMLUnknownElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5A0C231DECACC000707054 /* PerformanceLoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD5A0C221DECA37E00707054 /* PerformanceLoggingCocoa.mm */; };
 		AD5A0C241DECACC400707054 /* PerformanceLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD5A0C211DECA10100707054 /* PerformanceLogging.cpp */; };
-		AD5A0C251DECACCC00707054 /* PerformanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5A0C201DECA0B500707054 /* PerformanceLogging.h */; };
+		AD5A0C251DECACCC00707054 /* PerformanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5A0C201DECA0B500707054 /* PerformanceLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD6E71AC1668899D00320C13 /* DocumentSharedObjectPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD6E71AA1668899D00320C13 /* DocumentSharedObjectPool.cpp */; };
 		AD6E71AD1668899D00320C13 /* DocumentSharedObjectPool.h in Headers */ = {isa = PBXBuildFile; fileRef = AD6E71AB1668899D00320C13 /* DocumentSharedObjectPool.h */; };
 		AD726FED16DA1171003A4E6D /* JSCSSStyleDeclarationCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */; settings = {ATTRIBUTES = (Private, ); }; };

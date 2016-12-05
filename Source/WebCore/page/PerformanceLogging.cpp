@@ -46,18 +46,36 @@ static const char* toString(PerformanceLogging::PointOfInterest poi)
         return "MainFrameLoadCompleted";
     }
 }
+#endif
 
-static void getMemoryUsageStatistics(HashMap<const char*, size_t>& stats)
+HashMap<const char*, size_t> PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations includeExpensive)
 {
+    HashMap<const char*, size_t> stats;
+
     auto& vm = JSDOMWindow::commonVM();
-    stats.set("javascript_gc_heap_capacity", vm.heap.capacity());
+    stats.add("javascript_gc_heap_capacity", vm.heap.capacity());
+    stats.add("javascript_gc_heap_extra_memory_size", vm.heap.extraMemorySize());
 
     auto& pageCache = PageCache::singleton();
-    stats.set("pagecache_page_count", pageCache.pageCount());
+    stats.add("pagecache_page_count", pageCache.pageCount());
 
-    stats.set("document_count", Document::allDocuments().size());
+    stats.add("document_count", Document::allDocuments().size());
+
+    if (includeExpensive == ShouldIncludeExpensiveComputations::Yes) {
+        stats.add("javascript_gc_heap_size", vm.heap.size());
+        stats.add("javascript_gc_object_count", vm.heap.objectCount());
+        stats.add("javascript_gc_protected_object_count", vm.heap.protectedObjectCount());
+        stats.add("javascript_gc_global_object_count", vm.heap.globalObjectCount());
+        stats.add("javascript_gc_protected_global_object_count", vm.heap.protectedGlobalObjectCount());
+    }
+
+    return stats;
 }
-#endif
+
+HashCountedSet<const char*> PerformanceLogging::javaScriptObjectCounts()
+{
+    return *JSDOMWindow::commonVM().heap.objectTypeCounts();
+}
 
 PerformanceLogging::PerformanceLogging(MainFrame& mainFrame)
     : m_mainFrame(mainFrame)
@@ -73,8 +91,7 @@ void PerformanceLogging::didReachPointOfInterest(PointOfInterest poi)
     if (m_mainFrame.loader().client().isEmptyFrameLoaderClient())
         return;
 
-    HashMap<const char*, size_t> stats;
-    getMemoryUsageStatistics(stats);
+    auto stats = memoryUsageStatistics(ShouldIncludeExpensiveComputations::No);
     getPlatformMemoryUsageStatistics(stats);
 
     RELEASE_LOG(PerformanceLogging, "Memory usage info dump at %s:", toString(poi));

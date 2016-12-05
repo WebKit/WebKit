@@ -1,3 +1,24 @@
+2016-12-05  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Add some memory usage related information to sysdiagnose state dumps
+        <https://webkit.org/b/165375>
+        <rdar://problem/29057243>
+
+        Reviewed by Darin Adler.
+
+        Add a flag to memoryUsageStatistics() to allow gathering of slightly more expensive information.
+        This mode is used when capturing a state dump for sysdiagnose.
+
+        The more expensive information added in this patch relates to information about live objects
+        and memory on the JavaScript heap.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/PerformanceLogging.cpp:
+        (WebCore::PerformanceLogging::memoryUsageStatistics):
+        (WebCore::PerformanceLogging::javaScriptObjectCounts):
+        (WebCore::PerformanceLogging::didReachPointOfInterest):
+        * page/PerformanceLogging.h:
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure the transform fast path uses WebKitCSSTransformValue

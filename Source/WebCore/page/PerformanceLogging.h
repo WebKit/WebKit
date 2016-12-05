@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class MainFrame;
+
+enum class ShouldIncludeExpensiveComputations { No, Yes };
 
 class PerformanceLogging {
     WTF_MAKE_FAST_ALLOCATED;
@@ -41,7 +44,11 @@ public:
         MainFrameLoadStarted,
         MainFrameLoadCompleted,
     };
+
     void didReachPointOfInterest(PointOfInterest);
+
+    WEBCORE_EXPORT static HashCountedSet<const char*> javaScriptObjectCounts();
+    WEBCORE_EXPORT static HashMap<const char*, size_t> memoryUsageStatistics(ShouldIncludeExpensiveComputations);
 
 private:
     static void getPlatformMemoryUsageStatistics(HashMap<const char*, size_t>&);
