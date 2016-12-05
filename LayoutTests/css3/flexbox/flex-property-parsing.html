@@ -137,10 +137,6 @@ flexitem.style.webkitFlex = '1.75 2 3px';
 shouldBeEqualToString('flexitem.style.webkitFlex', '1.75 2 3px');
 shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1.75 2 3px');
 
-flexitem.style.webkitFlex = '1 3px 2';
-shouldBeEqualToString('flexitem.style.webkitFlex', '1 2 3px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 2 3px');
-
 flexitem.style.webkitFlex = '3px 1 2';
 shouldBeEqualToString('flexitem.style.webkitFlex', '1 2 3px');
 shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '1 2 3px');
@@ -160,10 +156,6 @@ shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '3 1 auto');
 flexitem.style.webkitFlex = '0px 0';
 shouldBeEqualToString('flexitem.style.webkitFlex', '0 1 0px');
 shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 1 0px');
-
-flexitem.style.webkitFlex = '0 0px 0';
-shouldBeEqualToString('flexitem.style.webkitFlex', '0 0 0px');
-shouldBeEqualToString('getComputedStyle(flexitem).webkitFlex', '0 0 0px');
 
 flexitem.style.webkitFlex = 'none';
 flexitem.style.webkitFlex = '1 2 3'; // Invalid, return previous value.

@@ -1,3 +1,17 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix flex property parsing test
+        https://bugs.webkit.org/show_bug.cgi?id=165402
+
+        Reviewed by Simon Fraser.
+
+        flex-grow and flex-shrink must occur together. They cannot be before and after
+        the flex-basis. Since this test is about valid property declarations, just fix it
+        by removing the invalid ones.
+
+        * css3/flexbox/flex-property-parsing-expected.txt:
+        * css3/flexbox/flex-property-parsing.html:
+
 2016-12-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/seek-backward-support/seek-backward-support.html as flaky on mac-wk1.
