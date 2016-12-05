@@ -1,3 +1,16 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove calc column-span test
+        https://bugs.webkit.org/show_bug.cgi?id=165393
+
+        Reviewed by Zalan Bujtas.
+
+        "1" is not a legal value for column-span, let alone allowing it to support a calc that
+        resolves to 1.
+
+        * fast/css/webkit-column-span-calculated-value-expected.txt: Removed.
+        * fast/css/webkit-column-span-calculated-value.html: Removed.
+
 2016-12-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/modern-media-controls/media-controller/media-controller-resize.html as flaky on macOS.
