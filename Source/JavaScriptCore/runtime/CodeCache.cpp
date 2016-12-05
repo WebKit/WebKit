@@ -65,7 +65,7 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
         unsigned startColumn = unlinkedCodeBlock->startColumn() + source.startColumn();
         bool endColumnIsOnStartLine = !lineCount;
         unsigned endColumn = unlinkedCodeBlock->endColumn() + (endColumnIsOnStartLine ? startColumn : 1);
-        executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine(), source.firstLine() + lineCount, startColumn, endColumn);
+        executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine() + lineCount, endColumn);
         source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
         source.provider()->setSourceMappingURLDirective(unlinkedCodeBlock->sourceMappingURLDirective());
         return unlinkedCodeBlock;

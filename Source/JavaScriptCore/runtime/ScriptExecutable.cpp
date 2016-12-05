@@ -57,9 +57,7 @@ ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCod
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
     , m_evalContextType(static_cast<unsigned>(evalContextType))
     , m_overrideLineNumber(-1)
-    , m_firstLine(-1)
     , m_lastLine(-1)
-    , m_startColumn(UINT_MAX)
     , m_endColumn(UINT_MAX)
     , m_typeProfilingStartOffset(UINT_MAX)
     , m_typeProfilingEndOffset(UINT_MAX)
@@ -178,7 +176,6 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     auto throwScope = DECLARE_THROW_SCOPE(*vm);
 
     ASSERT(vm->heap.isDeferred());
-    ASSERT(startColumn() != UINT_MAX);
     ASSERT(endColumn() != UINT_MAX);
 
     if (classInfo() == EvalExecutable::info()) {
@@ -198,7 +195,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(!function);
         return ProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedProgramCodeBlock.get(), scope,
-            executable->source().provider(), executable->source().startColumn());
+            executable->source().provider(), startColumn());
     }
 
     if (classInfo() == ModuleProgramExecutable::info()) {
@@ -208,7 +205,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(!function);
         return ModuleProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope,
-            executable->source().provider(), executable->source().startColumn());
+            executable->source().provider(), startColumn());
     }
 
     RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
@@ -224,8 +221,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
             executable->parseMode());
     recordParse(
         executable->m_unlinkedExecutable->features(), 
-        executable->m_unlinkedExecutable->hasCapturedVariables(), firstLine(), 
-        lastLine(), startColumn(), endColumn()); 
+        executable->m_unlinkedExecutable->hasCapturedVariables(),
+        lastLine(), endColumn()); 
     if (!unlinkedCodeBlock) {
         exception = throwException(
             globalObject->globalExec(), throwScope,
@@ -233,12 +230,8 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         return nullptr;
     }
 
-    SourceProvider* provider = executable->source().provider();
-    unsigned sourceOffset = executable->source().startOffset();
-    unsigned startColumn = executable->source().startColumn();
-
-    return FunctionCodeBlock::create(vm,
-        executable, unlinkedCodeBlock, scope, provider, sourceOffset, startColumn);
+    return FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope, 
+        source().provider(), source().startOffset(), startColumn());
 }
 
 CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(

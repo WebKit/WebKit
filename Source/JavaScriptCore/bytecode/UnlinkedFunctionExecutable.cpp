@@ -159,7 +159,7 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& o
         }
     }
 
-    FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine, firstLine + lineCount, startColumn, endColumn, intrinsic);
+    FunctionExecutable* result = FunctionExecutable::create(vm, code, this, firstLine + lineCount, endColumn, intrinsic);
     if (overrideLineNumber)
         result->setOverrideLineNumber(*overrideLineNumber);
 

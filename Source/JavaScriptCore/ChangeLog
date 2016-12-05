@@ -1,3 +1,32 @@
+2016-12-05  Geoffrey Garen  <ggaren@apple.com>
+
+        ScriptExecutable should not contain a copy of firstLine and startColumn
+        https://bugs.webkit.org/show_bug.cgi?id=165415
+
+        Reviewed by Keith Miller.
+
+        We already have this data in SourceCode.
+
+        It's super confusing to have two copies of this data, where one is
+        allowed to mutate. In reality, your line and column number never change.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        * runtime/CodeCache.h:
+        (JSC::generateUnlinkedCodeBlock):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/FunctionExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::firstLine):
+        (JSC::ScriptExecutable::startColumn):
+        (JSC::ScriptExecutable::recordParse):
+
 2016-12-05  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] report unexpected token when "async" is followed by identifier 

@@ -38,9 +38,9 @@ public:
 
     static FunctionExecutable* create(
         VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, 
-        unsigned firstLine, unsigned lastLine, unsigned startColumn, unsigned endColumn, Intrinsic intrinsic)
+        unsigned lastLine, unsigned endColumn, Intrinsic intrinsic)
     {
-        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, firstLine, lastLine, startColumn, endColumn, intrinsic);
+        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, lastLine, endColumn, intrinsic);
         executable->finishCreation(vm);
         return executable;
     }
@@ -172,8 +172,8 @@ public:
 private:
     friend class ExecutableBase;
     FunctionExecutable(
-        VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, 
-        unsigned lastLine, unsigned startColumn, unsigned endColumn, Intrinsic);
+        VM&, const SourceCode&, UnlinkedFunctionExecutable*,
+        unsigned lastLine, unsigned endColumn, Intrinsic);
     
     void finishCreation(VM&);
 

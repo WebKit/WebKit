@@ -41,12 +41,12 @@ public:
     const SourceCode& source() const { return m_source; }
     intptr_t sourceID() const { return m_source.providerID(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
-    int firstLine() const { return m_firstLine; }
+    int firstLine() const { return m_source.firstLine(); }
     void setOverrideLineNumber(int overrideLineNumber) { m_overrideLineNumber = overrideLineNumber; }
     bool hasOverrideLineNumber() const { return m_overrideLineNumber != -1; }
     int overrideLineNumber() const { return m_overrideLineNumber; }
     int lastLine() const { return m_lastLine; }
-    unsigned startColumn() const { return m_startColumn; }
+    unsigned startColumn() const { return m_source.startColumn(); }
     unsigned endColumn() const { return m_endColumn; }
     unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
@@ -79,14 +79,11 @@ public:
         
     DECLARE_EXPORT_INFO;
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine, unsigned startColumn, unsigned endColumn)
+    void recordParse(CodeFeatures features, bool hasCapturedVariables, int lastLine, unsigned endColumn)
     {
         m_features = features;
         m_hasCapturedVariables = hasCapturedVariables;
-        m_firstLine = firstLine;
         m_lastLine = lastLine;
-        ASSERT(startColumn != UINT_MAX);
-        m_startColumn = startColumn;
         ASSERT(endColumn != UINT_MAX);
         m_endColumn = endColumn;
     }
@@ -135,9 +132,7 @@ protected:
     unsigned m_evalContextType : 2; // EvalContextType
 
     int m_overrideLineNumber;
-    int m_firstLine;
     int m_lastLine;
-    unsigned m_startColumn;
     unsigned m_endColumn;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
