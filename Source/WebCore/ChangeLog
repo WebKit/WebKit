@@ -1,5 +1,17 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Support the 'alphabetic' keyword for text-underline-position
+        https://bugs.webkit.org/show_bug.cgi?id=165387
+
+        Reviewed by Simon Fraser.
+
+        Fixes fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix assert when unknown properties are encountered.
         https://bugs.webkit.org/show_bug.cgi?id=165385
 

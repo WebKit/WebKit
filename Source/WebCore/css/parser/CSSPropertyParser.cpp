@@ -4009,8 +4009,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyOrder:
         return consumeInteger(m_range);
     case CSSPropertyWebkitTextUnderlinePosition:
-        // auto | [ under || [ left | right ] ], but we only support auto | under for now
-        return consumeIdent<CSSValueAuto, CSSValueUnder>(m_range);
+        // auto | alphabetic | [ under || [ left | right ] ], but we only support auto | alphabetic | under for now
+        return consumeIdent<CSSValueAuto, CSSValueUnder, CSSValueAlphabetic>(m_range);
     case CSSPropertyVerticalAlign:
         return consumeVerticalAlign(m_range, m_context.mode);
     case CSSPropertyShapeOutside:
