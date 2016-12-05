@@ -59,6 +59,7 @@ Animation::Animation()
 Animation::Animation(const Animation& o)
     : RefCounted<Animation>()
     , m_name(o.m_name)
+    , m_nameStyleScopeOrdinal(o.m_nameStyleScopeOrdinal)
     , m_property(o.m_property)
     , m_mode(o.m_mode)
     , m_iterationCount(o.m_iterationCount)
@@ -90,6 +91,7 @@ Animation::Animation(const Animation& o)
 Animation& Animation::operator=(const Animation& o)
 {
     m_name = o.m_name;
+    m_nameStyleScopeOrdinal = o.m_nameStyleScopeOrdinal;
     m_property = o.m_property;
     m_mode = o.m_mode;
     m_iterationCount = o.m_iterationCount;
@@ -130,6 +132,7 @@ Animation::~Animation()
 bool Animation::animationsMatch(const Animation& other, bool matchPlayStates) const
 {
     bool result = m_name == other.m_name
+        && m_nameStyleScopeOrdinal == other.m_nameStyleScopeOrdinal
         && m_property == other.m_property
         && m_mode == other.m_mode
         && m_iterationCount == other.m_iterationCount

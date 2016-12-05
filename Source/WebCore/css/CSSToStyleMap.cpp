@@ -412,7 +412,7 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
     if (primitiveValue.valueID() == CSSValueNone)
         layer.setIsNoneAnimation(true);
     else
-        layer.setName(primitiveValue.stringValue());
+        layer.setName(primitiveValue.stringValue(), m_resolver->state().styleScopeOrdinal());
 }
 
 void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)

@@ -40,7 +40,7 @@ class SelectorFilter;
 struct MatchedRule {
     const RuleData* ruleData;
     unsigned specificity;   
-    int treeContextOrdinal;
+    Style::ScopeOrdinal styleScopeOrdinal;
 };
 
 class ElementRuleCollector {
@@ -75,9 +75,9 @@ private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);
-    void matchAuthorShadowPseudoElementRules(const MatchRequest&, StyleResolver::RuleRange&);
-    void matchHostPseudoClassRules(MatchRequest&, StyleResolver::RuleRange&);
-    void matchSlottedPseudoElementRules(MatchRequest&, StyleResolver::RuleRange&);
+    void matchAuthorShadowPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
+    void matchHostPseudoClassRules(bool includeEmptyRules, StyleResolver::RuleRange&);
+    void matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange&);
 
     void collectMatchingShadowPseudoElementRules(const MatchRequest&, StyleResolver::RuleRange&);
     std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
@@ -90,7 +90,7 @@ private:
     void sortMatchedRules();
     void sortAndTransferMatchedRules();
 
-    void addMatchedRule(const RuleData&, unsigned specificity, int treeContextOrdinal, StyleResolver::RuleRange&);
+    void addMatchedRule(const RuleData&, unsigned specificity, Style::ScopeOrdinal, StyleResolver::RuleRange&);
 
     const Element& m_element;
     const RuleSet& m_authorStyle;

@@ -32,6 +32,7 @@
 #include "RuleSet.h"
 #include "SelectorChecker.h"
 #include "StylePendingResources.h"
+#include "StyleScope.h"
 #include <bitset>
 #include <memory>
 #include <wtf/HashMap.h>
@@ -250,7 +251,7 @@ public:
         RefPtr<StyleProperties> properties;
         uint16_t linkMatchType;
         uint16_t whitelistType;
-        int treeContextOrdinal;
+        Style::ScopeOrdinal styleScopeOrdinal;
     };
 
     struct MatchResult {
@@ -261,7 +262,7 @@ public:
 
         const Vector<MatchedProperties, 64>& matchedProperties() const { return m_matchedProperties; }
 
-        void addMatchedProperties(const StyleProperties&, StyleRule* = nullptr, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone, int treeContextOrdinal = 0);
+        void addMatchedProperties(const StyleProperties&, StyleRule* = nullptr, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone, Style::ScopeOrdinal = Style::ScopeOrdinal::Element);
     private:
         Vector<MatchedProperties, 64> m_matchedProperties;
     };
@@ -276,6 +277,7 @@ public:
 
             CSSPropertyID id;
             CascadeLevel level;
+            Style::ScopeOrdinal styleScopeOrdinal;
             CSSValue* cssValue[3];
         };
 
@@ -285,9 +287,6 @@ public:
         void addNormalMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
         void addImportantMatches(const MatchResult&, int startIndex, int endIndex, bool inheritedOnly = false);
 
-        void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
-        void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
-
         void applyDeferredProperties(StyleResolver&, const MatchResult*);
 
         HashMap<AtomicString, Property>& customProperties() { return m_customProperties; }
@@ -296,8 +295,9 @@ public:
         
     private:
         void addMatch(const MatchResult&, unsigned index, bool isImportant, bool inheritedOnly);
-        void addStyleProperties(const StyleProperties&, bool isImportant, bool inheritedOnly, PropertyWhitelistType, unsigned linkMatchType, CascadeLevel);
-        static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel);
+        void set(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
+        void setDeferred(CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
+        static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, unsigned linkMatchType, CascadeLevel, Style::ScopeOrdinal);
 
         Property m_properties[numCSSProperties + 2];
         std::bitset<numCSSProperties + 2> m_propertyIsPresent;
@@ -404,7 +404,9 @@ public:
 
         CascadeLevel cascadeLevel() const { return m_cascadeLevel; }
         void setCascadeLevel(CascadeLevel level) { m_cascadeLevel = level; }
-        
+        Style::ScopeOrdinal styleScopeOrdinal() const { return m_styleScopeOrdinal; }
+        void setStyleScopeOrdinal(Style::ScopeOrdinal styleScopeOrdinal) { m_styleScopeOrdinal = styleScopeOrdinal; }
+
         CascadedProperties* authorRollback() const { return m_authorRollback.get(); }
         CascadedProperties* userRollback() const { return m_userRollback.get(); }
         
@@ -439,6 +441,7 @@ public:
         CSSToLengthConversionData m_cssToLengthConversionData;
         
         CascadeLevel m_cascadeLevel { UserAgentLevel };
+        Style::ScopeOrdinal m_styleScopeOrdinal { Style::ScopeOrdinal::Element };
         std::unique_ptr<CascadedProperties> m_authorRollback;
         std::unique_ptr<CascadedProperties> m_userRollback;
 

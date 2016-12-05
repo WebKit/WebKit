@@ -187,18 +187,17 @@ inline void StyleResolver::State::clear()
     m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
-void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType, int treeContextOrdinal)
+void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType, Style::ScopeOrdinal styleScopeOrdinal)
 {
     m_matchedProperties.grow(m_matchedProperties.size() + 1);
     StyleResolver::MatchedProperties& newProperties = m_matchedProperties.last();
     newProperties.properties = const_cast<StyleProperties*>(&properties);
     newProperties.linkMatchType = linkMatchType;
     newProperties.whitelistType = propertyWhitelistType;
-    newProperties.treeContextOrdinal = treeContextOrdinal;
+    newProperties.styleScopeOrdinal = styleScopeOrdinal;
     matchedRules.append(rule);
 
-    // Ordinal is relative to the currently matched element
-    if (treeContextOrdinal)
+    if (styleScopeOrdinal != Style::ScopeOrdinal::Element)
         isCacheable = false;
 
     if (isCacheable) {
@@ -2060,11 +2059,12 @@ inline StyleResolver::CascadedProperties::Property StyleResolver::CascadedProper
     return m_customProperties.get(name);
 }
 
-void StyleResolver::CascadedProperties::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel)
+void StyleResolver::CascadedProperties::setPropertyInternal(Property& property, CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, Style::ScopeOrdinal styleScopeOrdinal)
 {
     ASSERT(linkMatchType <= SelectorChecker::MatchAll);
     property.id = id;
     property.level = cascadeLevel;
+    property.styleScopeOrdinal = styleScopeOrdinal;
     if (linkMatchType == SelectorChecker::MatchAll) {
         property.cssValue[0] = &cssValue;
         property.cssValue[SelectorChecker::MatchLink] = &cssValue;
@@ -2073,7 +2073,7 @@ void StyleResolver::CascadedProperties::setPropertyInternal(Property& property, 
         property.cssValue[linkMatchType] = &cssValue;
 }
 
-void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel)
+void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, Style::ScopeOrdinal styleScopeOrdinal)
 {
     if (CSSProperty::isDirectionAwareProperty(id))
         id = CSSProperty::resolveDirectionAwareProperty(id, m_direction, m_writingMode);
@@ -2090,11 +2090,11 @@ void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue
             Property property;
             property.id = id;
             memset(property.cssValue, 0, sizeof(property.cssValue));
-            setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel);
+            setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
             customProperties().set(customValue.name(), property);
         } else {
             Property property = customProperties().get(customValue.name());
-            setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel);
+            setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
             customProperties().set(customValue.name(), property);
         }
         return;
@@ -2103,24 +2103,39 @@ void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue
     if (!m_propertyIsPresent[id])
         memset(property.cssValue, 0, sizeof(property.cssValue));
     m_propertyIsPresent.set(id);
-    setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel);
+    setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
 }
 
-void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel)
+void StyleResolver::CascadedProperties::setDeferred(CSSPropertyID id, CSSValue& cssValue, unsigned linkMatchType, CascadeLevel cascadeLevel, Style::ScopeOrdinal styleScopeOrdinal)
 {
     ASSERT(!CSSProperty::isDirectionAwareProperty(id));
     ASSERT(shouldApplyPropertyInParseOrder(id));
 
     Property property;
     memset(property.cssValue, 0, sizeof(property.cssValue));
-    setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel);
+    setPropertyInternal(property, id, cssValue, linkMatchType, cascadeLevel, styleScopeOrdinal);
     m_deferredProperties.append(property);
 }
 
-void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties& properties, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType, unsigned linkMatchType, CascadeLevel cascadeLevel)
+static CascadeLevel cascadeLevelForIndex(const StyleResolver::MatchResult& matchResult, int index)
 {
-    for (unsigned i = 0, count = properties.propertyCount(); i < count; ++i) {
-        auto current = properties.propertyAt(i);
+    if (index >= matchResult.ranges.firstUARule && index <= matchResult.ranges.lastUARule)
+        return UserAgentLevel;
+    if (index >= matchResult.ranges.firstUserRule && index <= matchResult.ranges.lastUserRule)
+        return UserLevel;
+    return AuthorLevel;
+}
+
+void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult, unsigned index, bool isImportant, bool inheritedOnly)
+{
+    auto& matchedProperties = matchResult.matchedProperties()[index];
+    auto& styleProperties = *matchedProperties.properties;
+
+    auto propertyWhitelistType = static_cast<PropertyWhitelistType>(matchedProperties.whitelistType);
+    auto cascadeLevel = cascadeLevelForIndex(matchResult, index);
+
+    for (unsigned i = 0, count = styleProperties.propertyCount(); i < count; ++i) {
+        auto current = styleProperties.propertyAt(i);
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {
@@ -2139,29 +2154,10 @@ void StyleResolver::CascadedProperties::addStyleProperties(const StyleProperties
 #endif
 
         if (shouldApplyPropertyInParseOrder(propertyID))
-            setDeferred(propertyID, *current.value(), linkMatchType, cascadeLevel);
+            setDeferred(propertyID, *current.value(), matchedProperties.linkMatchType, cascadeLevel, matchedProperties.styleScopeOrdinal);
         else
-            set(propertyID, *current.value(), linkMatchType, cascadeLevel);
+            set(propertyID, *current.value(), matchedProperties.linkMatchType, cascadeLevel, matchedProperties.styleScopeOrdinal);
     }
-}
-
-static CascadeLevel cascadeLevelForIndex(const StyleResolver::MatchResult& matchResult, int index)
-{
-    if (index >= matchResult.ranges.firstUARule && index <= matchResult.ranges.lastUARule)
-        return UserAgentLevel;
-    if (index >= matchResult.ranges.firstUserRule && index <= matchResult.ranges.lastUserRule)
-        return UserLevel;
-    return AuthorLevel;
-}
-
-void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult, unsigned index, bool isImportant, bool inheritedOnly)
-{
-    const MatchedProperties& matchedProperties = matchResult.matchedProperties()[index];
-
-    auto propertyWhitelistType = static_cast<PropertyWhitelistType>(matchedProperties.whitelistType);
-    auto cascadeLevel = cascadeLevelForIndex(matchResult, index);
-
-    addStyleProperties(*matchedProperties.properties, isImportant, inheritedOnly, propertyWhitelistType, matchedProperties.linkMatchType, cascadeLevel);
 }
 
 void StyleResolver::CascadedProperties::addNormalMatches(const MatchResult& matchResult, int startIndex, int endIndex, bool inheritedOnly)
@@ -2189,7 +2185,7 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
 
     struct IndexAndOrdinal {
         int index;
-        int ordinal;
+        Style::ScopeOrdinal ordinal;
     };
     Vector<IndexAndOrdinal> shadowTreeMatches;
 
@@ -2199,8 +2195,8 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
         if (!hasImportantProperties(*matchedProperties.properties))
             continue;
 
-        if (matchedProperties.treeContextOrdinal) {
-            shadowTreeMatches.append({ i, matchedProperties.treeContextOrdinal });
+        if (matchedProperties.styleScopeOrdinal != Style::ScopeOrdinal::Element) {
+            shadowTreeMatches.append({ i, matchedProperties.styleScopeOrdinal });
             continue;
         }
 
@@ -2230,6 +2226,7 @@ void StyleResolver::CascadedProperties::Property::apply(StyleResolver& resolver,
 {
     State& state = resolver.state();
     state.setCascadeLevel(level);
+    state.setStyleScopeOrdinal(styleScopeOrdinal);
 
     if (cssValue[SelectorChecker::MatchDefault]) {
         state.setApplyPropertyToRegularStyle(true);

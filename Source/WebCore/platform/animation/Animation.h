@@ -32,6 +32,7 @@
 #endif
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
+#include "StyleScope.h"
 #include "TimingFunction.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -135,6 +136,7 @@ public:
     enum { IterationCountInfinite = -1 };
     double iterationCount() const { return m_iterationCount; }
     const String& name() const { return m_name; }
+    Style::ScopeOrdinal nameStyleScopeOrdinal() const { return m_nameStyleScopeOrdinal; }
     EAnimPlayState playState() const { return static_cast<EAnimPlayState>(m_playState); }
     CSSPropertyID property() const { return m_property; }
     PassRefPtr<TimingFunction> timingFunction() const { return m_timingFunction; }
@@ -148,7 +150,12 @@ public:
     void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
     void setFillMode(unsigned f) { m_fillMode = f; m_fillModeSet = true; }
     void setIterationCount(double c) { m_iterationCount = c; m_iterationCountSet = true; }
-    void setName(const String& n) { m_name = n; m_nameSet = true; }
+    void setName(const String& name, Style::ScopeOrdinal scope = Style::ScopeOrdinal::Element)
+    {
+        m_name = name;
+        m_nameStyleScopeOrdinal = scope;
+        m_nameSet = true;
+    }
     void setPlayState(EAnimPlayState d) { m_playState = d; m_playStateSet = true; }
     void setProperty(CSSPropertyID t) { m_property = t; m_propertySet = true; }
     void setTimingFunction(PassRefPtr<TimingFunction> f) { m_timingFunction = f; m_timingFunctionSet = true; }
@@ -176,6 +183,7 @@ private:
     Animation(const Animation& o);
     
     String m_name;
+    Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
     CSSPropertyID m_property;
     AnimationMode m_mode;
     double m_iterationCount;

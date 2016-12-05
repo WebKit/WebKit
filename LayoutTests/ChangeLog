@@ -1,3 +1,14 @@
+2016-12-05  Antti Koivisto  <antti@apple.com>
+
+        keyframes do not work when defined inside a style in a shadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=164608
+        <rdar://problem/29210251>
+
+        Reviewed by Darin Adler.
+
+        * fast/shadow-dom/shadow-host-animation-expected.html: Added.
+        * fast/shadow-dom/shadow-host-animation.html: Added.
+
 2016-12-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip three media/modern-media-controls tests.

@@ -34,6 +34,7 @@
 #include "ExtensionStyleSheets.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
+#include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
@@ -124,6 +125,35 @@ Scope& Scope::forNode(Node& node)
     if (shadowRoot)
         return shadowRoot->styleScope();
     return node.document().styleScope();
+}
+
+Scope* Scope::forOrdinal(Element& element, ScopeOrdinal ordinal)
+{
+    switch (ordinal) {
+    case ScopeOrdinal::Element:
+        return &forNode(element);
+    case ScopeOrdinal::ContainingHost: {
+        auto* containingShadowRoot = element.containingShadowRoot();
+        if (!containingShadowRoot)
+            return nullptr;
+        return &forNode(*containingShadowRoot->host());
+    }
+    case ScopeOrdinal::Shadow: {
+        auto* shadowRoot = element.shadowRoot();
+        if (!shadowRoot)
+            return nullptr;
+        return &shadowRoot->styleScope();
+    }
+    default: {
+        ASSERT(ordinal >= ScopeOrdinal::FirstSlot);
+        auto slotIndex = ScopeOrdinal::FirstSlot;
+        for (auto* slot = element.assignedSlot(); slot; slot = slot->assignedSlot(), ++slotIndex) {
+            if (slotIndex == ordinal)
+                return &forNode(*slot);
+        }
+        return nullptr;
+    }
+    }
 }
 
 void Scope::setPreferredStylesheetSetName(const String& name)

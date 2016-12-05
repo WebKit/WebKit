@@ -1,3 +1,85 @@
+2016-12-05  Antti Koivisto  <antti@apple.com>
+
+        keyframes do not work when defined inside a style in a shadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=164608
+        <rdar://problem/29210251>
+
+        Reviewed by Darin Adler.
+
+        With :host and ::slotted rules a keyframe animation affecting an element can be
+        defined in a style scope different from the element's own scope. Style resolver
+        loses the scope information when building the RenderStyle so there is no way
+        to find out the correct scope.
+
+        Fix by passing style scope through to style builder and including a scope association
+        with the animation name. Find the correct scope when resolving keyframes.
+
+        Test: fast/shadow-dom/shadow-host-animation.html
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationName):
+
+            Include scope with the name.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::MatchRequest::MatchRequest):
+        (WebCore::ElementRuleCollector::addMatchedRule):
+        (WebCore::ElementRuleCollector::sortAndTransferMatchedRules):
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+
+            Replace treeContextOrdinal int with Style::ScopeOrdinal enum carrying the same information.
+            Simplify the code removing unnecessary use of MatchRequest struct.
+
+        (WebCore::compareRules):
+        * css/ElementRuleCollector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties):
+        (WebCore::StyleResolver::CascadedProperties::setPropertyInternal):
+        (WebCore::StyleResolver::CascadedProperties::set):
+        (WebCore::StyleResolver::CascadedProperties::setDeferred):
+
+            Pass styleScopeOrdinal through the cascade mechanism
+
+        (WebCore::cascadeLevelForIndex):
+        (WebCore::StyleResolver::CascadedProperties::addMatch):
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches):
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+
+            Set styleScopeOrdinal in State when applying style.
+
+        (WebCore::StyleResolver::CascadedProperties::addStyleProperties): Deleted.
+
+            Move the code to the only caller.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::styleScopeOrdinal):
+        (WebCore::StyleResolver::State::setStyleScopeOrdinal):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::resolveKeyframeStyles):
+
+            Find the correct scope for resolving keyframes based on the scope ordinal.
+
+        * platform/animation/Animation.cpp:
+        * platform/animation/Animation.h:
+
+            Add m_nameStyleScopeOrdinal that tells the scope where the name is defined.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::forOrdinal):
+
+            Find the scope for ordinal.
+
+        * style/StyleScope.h:
+
+            Define ScopeOrdinal types.
+
+        (WebCore::Style::operator++):
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support glyph-orientation-horizontal and glyph-orientation-vertical
