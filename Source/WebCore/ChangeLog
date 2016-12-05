@@ -1,5 +1,15 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Don't use CSS_PARSER_INTEGER unit for resolved integer calcs.
+        https://bugs.webkit.org/show_bug.cgi?id=165379
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeNumber):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Add parseValue support to new parser. Use new parser for UA sheet too if useNewParser is set.
         https://bugs.webkit.org/show_bug.cgi?id=165376
 

@@ -100,8 +100,7 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-        CSSPrimitiveValue::UnitTypes unitType = m_calcValue->isInt() ? CSSPrimitiveValue::UnitTypes::CSS_PARSER_INTEGER : CSSPrimitiveValue::UnitTypes::CSS_NUMBER;
-        return CSSValuePool::singleton().createValue(m_calcValue->doubleValue(), unitType);
+        return CSSValuePool::singleton().createValue(m_calcValue->doubleValue(), CSSPrimitiveValue::UnitTypes::CSS_NUMBER);
     }
 
     bool consumeNumberRaw(double& result)
