@@ -43,6 +43,7 @@
 #include "StyleColor.h"
 #include "StylePropertyShorthand.h"
 #include "StyleSheetContents.h"
+#include "WebKitCSSTransformValue.h"
 
 namespace WebCore {
 
@@ -1059,7 +1060,7 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String
 }
 
 template <typename CharType>
-static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSFunctionValue* transformValue)
+static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsigned expectedCount, WebKitCSSTransformValue* transformValue)
 {
     while (expectedCount) {
         size_t delimiter = WTF::find(pos, end - pos, expectedCount == 1 ? ')' : ',');
@@ -1080,7 +1081,7 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
 }
 
 template <typename CharType>
-static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSFunctionValue* transformValue)
+static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, WebKitCSSTransformValue* transformValue)
 {
     while (expectedCount) {
         size_t delimiter = WTF::find(pos, end - pos, expectedCount == 1 ? ')' : ',');
@@ -1100,8 +1101,9 @@ static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigne
 
 static const int kShortestValidTransformStringLength = 12;
 
+// FIXME-NEWPARSER: Should use CSSFunctionValue and ditch WebkitCSSTransformValue.
 template <typename CharType>
-static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharType* end)
+static RefPtr<WebKitCSSTransformValue> parseSimpleTransformValue(CharType*& pos, CharType* end)
 {
     if (end - pos < kShortestValidTransformStringLength)
         return nullptr;
@@ -1117,29 +1119,29 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
         && toASCIILower(pos[8]) == 'e';
 
     if (isTranslate) {
-        CSSValueID transformType;
+        WebKitCSSTransformValue::TransformOperationType transformType;
         unsigned expectedArgumentCount = 1;
         unsigned argumentStart = 11;
         CharType c9 = toASCIILower(pos[9]);
         if (c9 == 'x' && pos[10] == '(') {
-            transformType = CSSValueTranslatex;
+            transformType = WebKitCSSTransformValue::TranslateXTransformOperation;
         } else if (c9 == 'y' && pos[10] == '(') {
-            transformType = CSSValueTranslatey;
+            transformType = WebKitCSSTransformValue::TranslateYTransformOperation;
         } else if (c9 == 'z' && pos[10] == '(') {
-            transformType = CSSValueTranslatez;
+            transformType = WebKitCSSTransformValue::TranslateZTransformOperation;
         } else if (c9 == '(') {
-            transformType = CSSValueTranslate;
+            transformType = WebKitCSSTransformValue::TranslateTransformOperation;
             expectedArgumentCount = 2;
             argumentStart = 10;
         } else if (c9 == '3' && toASCIILower(pos[10]) == 'd' && pos[11] == '(') {
-            transformType = CSSValueTranslate3d;
+            transformType = WebKitCSSTransformValue::Translate3DTransformOperation;
             expectedArgumentCount = 3;
             argumentStart = 12;
         } else {
             return nullptr;
         }
         pos += argumentStart;
-        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(transformType);
+        RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(transformType);
         if (!parseTransformTranslateArguments(pos, end, expectedArgumentCount, transformValue.get()))
             return nullptr;
         return transformValue;
@@ -1157,7 +1159,7 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
 
     if (isMatrix3d) {
         pos += 9;
-        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(CSSValueMatrix3d);
+        RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(WebKitCSSTransformValue::Matrix3DTransformOperation);
         if (!parseTransformNumberArguments(pos, end, 16, transformValue.get()))
             return nullptr;
         return transformValue;
@@ -1174,7 +1176,7 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
 
     if (isScale3d) {
         pos += 8;
-        RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(CSSValueScale3d);
+        RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(WebKitCSSTransformValue::Scale3DTransformOperation);
         if (!parseTransformNumberArguments(pos, end, 3, transformValue.get()))
             return nullptr;
         return transformValue;
@@ -1243,7 +1245,7 @@ static RefPtr<CSSValueList> parseSimpleTransformList(const CharType* chars, unsi
             ++pos;
         if (pos >= end)
             break;
-        RefPtr<CSSFunctionValue> transformValue = parseSimpleTransformValue(pos, end);
+        RefPtr<WebKitCSSTransformValue> transformValue = parseSimpleTransformValue(pos, end);
         if (!transformValue)
             return nullptr;
         if (!transformList)

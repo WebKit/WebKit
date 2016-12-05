@@ -1,5 +1,18 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Make sure the transform fast path uses WebKitCSSTransformValue
+        https://bugs.webkit.org/show_bug.cgi?id=165399
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseTransformTranslateArguments):
+        (WebCore::parseTransformNumberArguments):
+        (WebCore::parseSimpleTransformValue):
+        (WebCore::parseSimpleTransformList):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix calc() with -webkit-line-clamp
         https://bugs.webkit.org/show_bug.cgi?id=165398
 
