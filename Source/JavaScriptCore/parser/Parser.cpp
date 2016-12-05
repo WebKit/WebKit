@@ -4476,7 +4476,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             if (matchSpecIdentifier()) {
                 // AsyncArrowFunction
                 forceClassifyExpressionError(ErrorIndicatesAsyncArrowFunction);
-                return 0;
+                failDueToUnexpectedToken();
             }
             baseIsAsyncKeyword = true;
         }

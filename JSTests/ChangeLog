@@ -1,3 +1,12 @@
+2016-12-05  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] report unexpected token when "async" is followed by identifier 
+        https://bugs.webkit.org/show_bug.cgi?id=165091
+
+        Reviewed by Mark Lam.
+
+        * stress/bug-165091.js:
+
 2016-12-05  Keith Miller  <keith_miller@apple.com>
 
         Add Wasm i64 to i32 conversion.

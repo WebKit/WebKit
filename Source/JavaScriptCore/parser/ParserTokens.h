@@ -34,7 +34,7 @@ namespace JSC {
 class Identifier;
 
 enum {
-    // Token Bitfield: 0b000000000RTEIIIIIIIIPPPPKUXXXXXX
+    // Token Bitfield: 0b000000000RTE000IIIIPPPPKUXXXXXXX
     // R = right-associative bit
     // T = unterminated error flag
     // E = error flag

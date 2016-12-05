@@ -1,3 +1,18 @@
+2016-12-05  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] report unexpected token when "async" is followed by identifier 
+        https://bugs.webkit.org/show_bug.cgi?id=165091
+
+        Reviewed by Mark Lam.
+
+        Report a SyntaxError, in order to report correct error in contexts
+        an async ArrowFunction cannot occur. Also corrects errors in comment
+        describing JSTokenType bitfield, which was added in r209293.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/ParserTokens.h:
+
 2016-12-05  Keith Miller  <keith_miller@apple.com>
 
         Add Wasm i64 to i32 conversion.

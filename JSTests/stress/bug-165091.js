@@ -10,4 +10,5 @@ function shouldThrowSyntaxError(str, message) {
     }
 }
 
-shouldThrowSyntaxError("0/-async J", "SyntaxError: Cannot parse member expression.")
+shouldThrowSyntaxError("0/-async J", "Unexpected identifier 'J'")
+
