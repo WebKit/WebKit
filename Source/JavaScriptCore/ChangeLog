@@ -1,5 +1,22 @@
 2016-12-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Renamed source => parentSource
+        https://bugs.webkit.org/show_bug.cgi?id=165419
+
+        Reviewed by Saam Barati.
+
+        This should help clarify that a FunctionExecutable holds the source
+        code to its *parent* scope, and not its own SourceCode.
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+
+2016-12-05  Geoffrey Garen  <ggaren@apple.com>
+
         ScriptExecutable should not contain a copy of firstLine and startColumn
         https://bugs.webkit.org/show_bug.cgi?id=165415
 
