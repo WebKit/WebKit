@@ -51,13 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#ifndef NSTouchBarWillEnterCustomization
 #define NSTouchBarWillEnterCustomization @"NSTouchBarWillEnterCustomization"
-#endif
-
-#ifndef NSTouchBarWillExitCustomization
 #define NSTouchBarWillExitCustomization @"NSTouchBarWillExitCustomization"
-#endif
 
 NS_ASSUME_NONNULL_END
 
