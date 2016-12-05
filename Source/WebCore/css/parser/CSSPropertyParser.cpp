@@ -1968,6 +1968,17 @@ static RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange& range, CSSParser
     return consumeColor(range, cssParserMode);
 }
 
+static RefPtr<CSSValue> consumeGlyphOrientation(CSSParserTokenRange& range, CSSParserMode mode, CSSPropertyID property)
+{
+    if (range.peek().id() == CSSValueAuto) {
+        if (property == CSSPropertyGlyphOrientationVertical)
+            return consumeIdent(range);
+        return nullptr;
+    }
+    
+    return consumeAngle(range, mode, UnitlessQuirk::Allow);
+}
+
 static RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNormal)
@@ -3505,7 +3516,7 @@ static RefPtr<CSSValue> consumeWebkitMarqueeIncrement(CSSParserTokenRange& range
 {
     if (range.peek().type() == IdentToken)
         return consumeIdent<CSSValueSmall, CSSValueMedium, CSSValueLarge>(range);
-    return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
+    return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow);
 }
 
 static RefPtr<CSSValue> consumeWebkitMarqueeRepetition(CSSParserTokenRange& range)
@@ -3937,6 +3948,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyFill:
     case CSSPropertyStroke:
         return consumePaintStroke(m_range, m_context.mode);
+    case CSSPropertyGlyphOrientationVertical:
+    case CSSPropertyGlyphOrientationHorizontal:
+        return consumeGlyphOrientation(m_range, m_context.mode, property);
     case CSSPropertyPaintOrder:
         return consumePaintOrder(m_range);
     case CSSPropertyMarkerStart:

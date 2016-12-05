@@ -1,3 +1,23 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support glyph-orientation-horizontal and glyph-orientation-vertical
+        https://bugs.webkit.org/show_bug.cgi?id=165414
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeGlyphOrientation):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        Add support for the glyph-orientation-horizontal and glyph-orientation-vertical
+        properties. They take an angle and allow unitless values.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        Fix a bug in the handling of unitless values for angles. Make sure to
+        actually pass in the value instead of always doing 0. Blink does not
+        accept unitless values for angles at all, so this is another difference
+        to investigate for SVG in the future.
+
 2016-12-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209299.

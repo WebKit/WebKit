@@ -287,8 +287,7 @@ RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode
         }
     }
     if (token.type() == NumberToken && shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless)) {
-        range.consumeIncludingWhitespace();
-        return CSSValuePool::singleton().createValue(0, CSSPrimitiveValue::UnitTypes::CSS_DEG);
+        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitTypes::CSS_DEG);
     }
 
     CalcParser calcParser(range, ValueRangeAll);
