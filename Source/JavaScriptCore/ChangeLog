@@ -1,3 +1,14 @@
+2016-12-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Moved start and end column linking into helper functions
+        https://bugs.webkit.org/show_bug.cgi?id=165422
+
+        Reviewed by Sam Weinig.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecode/UnlinkedFunctionExecutable.h:
+
 2016-12-05  Mark Lam  <mark.lam@apple.com>
 
         Fix JSC files so that we can build a release build with NDEBUG #undef'ed.

@@ -88,6 +88,9 @@ public:
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
 
+    unsigned lineCount() const { return m_lineCount; }
+    unsigned linkedStartColumn(unsigned parentStartColumn) const { return m_unlinkedBodyStartColumn + (!m_firstLineOffset ? parentStartColumn : 1); }
+    unsigned linkedEndColumn(unsigned startColumn) const { return m_lineCount ? m_unlinkedBodyEndColumn : startColumn + m_unlinkedBodyEndColumn; }
     unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
     unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
     unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }

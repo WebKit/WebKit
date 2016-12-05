@@ -138,11 +138,8 @@ FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& p
     unsigned startOffset = parentSource.startOffset() + m_startOffset;
     unsigned lineCount = m_lineCount;
 
-    // Adjust to one-based indexing.
-    bool startColumnIsOnFirstSourceLine = !m_firstLineOffset;
-    unsigned startColumn = m_unlinkedBodyStartColumn + (startColumnIsOnFirstSourceLine ? parentSource.startColumn() : 1);
-    bool endColumnIsOnStartLine = !lineCount;
-    unsigned endColumn = m_unlinkedBodyEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
+    unsigned startColumn = linkedStartColumn(parentSource.startColumn());
+    unsigned endColumn = linkedEndColumn(startColumn);
 
     SourceCode source(parentSource.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);
     FunctionOverrides::OverrideInfo overrideInfo;
