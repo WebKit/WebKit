@@ -1,3 +1,12 @@
+2016-12-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/modern-media-controls/seek-backward-support/seek-backward-support.html as flaky on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=165386
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove calc column-span test
