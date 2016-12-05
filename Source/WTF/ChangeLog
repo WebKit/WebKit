@@ -1,3 +1,21 @@
+2016-12-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r208985): SafariForWebKitDevelopment Symbol Not Found looking for method with WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=165351
+
+        Reviewed by Yusuke Suzuki.
+
+        Include a slimmed down version of WTF::Optional which older versions
+        of Safari still depend on for a JavaScriptCore exported symbol.
+        To prevent misuse name it WTF::DeprecatedOptional and use it only in
+        the one instance it is needed.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/DeprecatedOptional.h: Added.
+        (WTF::Optional::operator bool):
+        (WTF::Optional::value):
+        (WTF::Optional::asPtr):
+
 2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Add __STDC_FORMAT_MACROS before inttypes.h is included

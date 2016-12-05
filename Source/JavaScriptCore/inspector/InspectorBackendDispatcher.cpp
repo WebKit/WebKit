@@ -265,6 +265,16 @@ void BackendDispatcher::reportProtocolError(std::optional<long> relatedRequestId
     m_protocolErrors.append(std::tuple<CommonErrorCode, String>(errorCode, errorMessage));
 }
 
+#if PLATFORM(MAC)
+void BackendDispatcher::reportProtocolError(WTF::DeprecatedOptional<long> relatedRequestId, CommonErrorCode errorCode, const String& errorMessage)
+{
+    if (relatedRequestId)
+        reportProtocolError(relatedRequestId.value(), errorCode, errorMessage);
+    else
+        reportProtocolError(std::nullopt, errorCode, errorMessage);
+}
+#endif
+
 template<typename T>
 T BackendDispatcher::getPropertyValue(InspectorObject* object, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(InspectorValue&, T&)> asMethod, const char* typeName)
 {

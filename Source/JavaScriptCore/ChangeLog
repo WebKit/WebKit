@@ -1,3 +1,21 @@
+2016-12-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r208985): SafariForWebKitDevelopment Symbol Not Found looking for method with WTF::Optional
+        https://bugs.webkit.org/show_bug.cgi?id=165351
+
+        Reviewed by Yusuke Suzuki.
+
+        Some versions of Safari expect:
+
+            Inspector::BackendDispatcher::reportProtocolError(WTF::Optional<long>, Inspector::BackendDispatcher::CommonErrorCode, WTF::String const&)
+        
+        Which we had updated to use std::optional. Expose a version with the original
+        Symbol for these Safaris. This stub will just call through to the new version.
+
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::reportProtocolError):
+        * inspector/InspectorBackendDispatcher.h:
+
 2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Add __STDC_FORMAT_MACROS before inttypes.h is included

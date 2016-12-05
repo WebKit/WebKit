@@ -161,6 +161,7 @@
 		9BD8F40B176C2B470002D865 /* AtomicStringTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8F40A176C2AD80002D865 /* AtomicStringTable.h */; };
 		A5098B001C169E0700087797 /* SandboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A5098AFF1C169E0700087797 /* SandboxSPI.h */; };
 		A5098B021C16A4F900087797 /* SecuritySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A5098B011C16A4F900087797 /* SecuritySPI.h */; };
+		A561F3101DF2642100FF675D /* DeprecatedOptional.h in Headers */ = {isa = PBXBuildFile; fileRef = A561F30F1DF2642100FF675D /* DeprecatedOptional.h */; };
 		A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F2182433A900A82E69 /* StringMac.mm */; };
 		A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F41824348000A82E69 /* StringImplMac.mm */; };
 		A5BA15FA182435A600A82E69 /* AtomicStringImplCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5BA15F7182435A600A82E69 /* AtomicStringImplCF.cpp */; };
@@ -528,6 +529,7 @@
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
 		A5098AFF1C169E0700087797 /* SandboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxSPI.h; sourceTree = "<group>"; };
 		A5098B011C16A4F900087797 /* SecuritySPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecuritySPI.h; sourceTree = "<group>"; };
+		A561F30F1DF2642100FF675D /* DeprecatedOptional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedOptional.h; sourceTree = "<group>"; };
 		A5BA15F2182433A900A82E69 /* StringMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StringMac.mm; path = mac/StringMac.mm; sourceTree = "<group>"; };
 		A5BA15F41824348000A82E69 /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StringImplMac.mm; path = mac/StringImplMac.mm; sourceTree = "<group>"; };
 		A5BA15F7182435A600A82E69 /* AtomicStringImplCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AtomicStringImplCF.cpp; path = cf/AtomicStringImplCF.cpp; sourceTree = "<group>"; };
@@ -914,6 +916,7 @@
 				A8A4727B151A825A004123FF /* DecimalNumber.cpp */,
 				A8A4727C151A825A004123FF /* DecimalNumber.h */,
 				0F2B66A417B6B4F700A7AE3F /* DeferrableRefCounted.h */,
+				A561F30F1DF2642100FF675D /* DeprecatedOptional.h */,
 				A8A4727E151A825A004123FF /* Deque.h */,
 				A8A4727F151A825A004123FF /* DisallowCType.h */,
 				0F4570421BE5B58F0062A629 /* Dominators.h */,
@@ -1431,6 +1434,7 @@
 				A8A47417151A825B004123FF /* RedBlackTree.h in Headers */,
 				26299B6E17A9E5B800ADEBE5 /* Ref.h in Headers */,
 				A8A47418151A825B004123FF /* RefCounted.h in Headers */,
+				A561F3101DF2642100FF675D /* DeprecatedOptional.h in Headers */,
 				A8A47419151A825B004123FF /* RefCountedArray.h in Headers */,
 				A8A4741B151A825B004123FF /* RefCountedLeakCounter.h in Headers */,
 				86F46F611A2840EE00CCBF22 /* RefCounter.h in Headers */,

@@ -28,6 +28,7 @@
 
 #include "InspectorFrontendRouter.h"
 #include "InspectorProtocolTypes.h"
+#include <wtf/DeprecatedOptional.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -103,6 +104,11 @@ public:
 
 private:
     BackendDispatcher(Ref<FrontendRouter>&&);
+
+#if PLATFORM(MAC)
+    // This is necessary for some versions of Safari. Remove it when those versions of Safari are no longer supported.
+    void reportProtocolError(WTF::DeprecatedOptional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
+#endif
 
     Ref<FrontendRouter> m_frontendRouter;
     HashMap<String, SupplementalBackendDispatcher*> m_dispatchers;
