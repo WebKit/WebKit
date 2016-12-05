@@ -1,3 +1,20 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix rx and ry parsing
+        https://bugs.webkit.org/show_bug.cgi?id=165383
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        rx and ry can be negative in the slow path, so make sure they can be negative in the
+        fast path too.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeRxOrRy):
+        Disallow auto as a value since we are not equipped to handle it, and it's not clear if it's
+        even valid.
+
 2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Add __STDC_FORMAT_MACROS before inttypes.h is included
