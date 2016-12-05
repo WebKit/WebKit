@@ -90,7 +90,8 @@ public:
 
     unsigned lineCount() const { return m_lineCount; }
     unsigned linkedStartColumn(unsigned parentStartColumn) const { return m_unlinkedBodyStartColumn + (!m_firstLineOffset ? parentStartColumn : 1); }
-    unsigned linkedEndColumn(unsigned startColumn) const { return m_lineCount ? m_unlinkedBodyEndColumn : startColumn + m_unlinkedBodyEndColumn; }
+    unsigned linkedEndColumn(unsigned startColumn) const { return m_unlinkedBodyEndColumn + (!m_lineCount ? startColumn : 1); }
+
     unsigned unlinkedFunctionNameStart() const { return m_unlinkedFunctionNameStart; }
     unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
     unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }

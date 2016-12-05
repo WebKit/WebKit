@@ -1,5 +1,14 @@
 2016-12-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Fixed a bug in my last patch.
+
+        Unreviewed.
+
+        * bytecode/UnlinkedFunctionExecutable.h: Restore the conversion to
+        one-based counting.
+
+2016-12-05  Geoffrey Garen  <ggaren@apple.com>
+
         Moved start and end column linking into helper functions
         https://bugs.webkit.org/show_bug.cgi?id=165422
 
