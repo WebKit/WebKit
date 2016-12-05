@@ -1,5 +1,15 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Properly fail on bad values for -webkit-clip-path
+        https://bugs.webkit.org/show_bug.cgi?id=165382
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeBasicShapeOrBox):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] The page-break-* properties are only keyword props for old parser.
         https://bugs.webkit.org/show_bug.cgi?id=165381
 

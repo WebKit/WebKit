@@ -2521,7 +2521,7 @@ static RefPtr<CSSValue> consumeBasicShapeOrBox(CSSParserTokenRange& range, const
         list->append(componentValue.releaseNonNull());
     }
     
-    if (!range.atEnd())
+    if (!range.atEnd() || !list->length())
         return nullptr;
     
     return list;
