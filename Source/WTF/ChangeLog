@@ -1,3 +1,22 @@
+2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Add __STDC_FORMAT_MACROS before inttypes.h is included
+        https://bugs.webkit.org/show_bug.cgi?id=165374
+
+        We need formatting macros like PRIu64 to be available in all places where
+        inttypes.h header is used. All these usages get inttypes.h definitions
+        via wtf/Assertions.h header, except SQLiteFileSystem.cpp where formatting
+        macros are not used anymore since r185129.
+
+        This patch fixes multiple build errors with MinGW and reduces number of
+        independent __STDC_FORMAT_MACROS uses in the code base.
+
+        Reviewed by Darin Adler.
+
+        * wtf/Assertions.h: Define __STDC_FORMAT_MACROS.
+        * wtf/StdLibExtras.h: Remove definition of PRId64 for Windows, as we
+        have __STDC_FORMAT_MACROS defined now.
+
 2016-12-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Refactor SymbolImpl layout

@@ -1,3 +1,23 @@
+2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Add __STDC_FORMAT_MACROS before inttypes.h is included
+        https://bugs.webkit.org/show_bug.cgi?id=165374
+
+        We need formatting macros like PRIu64 to be available in all places where
+        inttypes.h header is used. All these usages get inttypes.h definitions
+        via wtf/Assertions.h header, except SQLiteFileSystem.cpp where formatting
+        macros are not used anymore since r185129.
+
+        This patch fixes multiple build errors with MinGW and reduces number of
+        independent __STDC_FORMAT_MACROS uses in the code base.
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * platform/sql/SQLiteFileSystem.cpp: Removed unused inttypes.h
+        inclusion.
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Properly fail on bad values for -webkit-clip-path

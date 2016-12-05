@@ -1,3 +1,22 @@
+2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Add __STDC_FORMAT_MACROS before inttypes.h is included
+        https://bugs.webkit.org/show_bug.cgi?id=165374
+
+        We need formatting macros like PRIu64 to be available in all places where
+        inttypes.h header is used. All these usages get inttypes.h definitions
+        via wtf/Assertions.h header, except SQLiteFileSystem.cpp where formatting
+        macros are not used anymore since r185129.
+
+        This patch fixes multiple build errors with MinGW and reduces number of
+        independent __STDC_FORMAT_MACROS uses in the code base.
+
+        Reviewed by Darin Adler.
+
+        * disassembler/ARM64/A64DOpcode.cpp: Removed __STDC_FORMAT_MACROS
+        because it is obtained via Assertions.h now
+        * disassembler/ARM64Disassembler.cpp: Ditto.
+
 2016-12-04  Keith Miller  <keith_miller@apple.com>
 
         Add support for Wasm ctz and popcnt

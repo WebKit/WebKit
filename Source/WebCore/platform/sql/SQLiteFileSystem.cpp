@@ -28,14 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define __STDC_FORMAT_MACROS
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
 #include "FileSystem.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
-#include <inttypes.h>
 #include <sqlite3.h>
 
 #if PLATFORM(IOS)
