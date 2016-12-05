@@ -44,21 +44,18 @@ WebInspector.Platform = {
         WebInspector.Platform.version.base = 10;
         WebInspector.Platform.version.release = parseInt(osVersionMatch[2]);
         switch (osVersionMatch[2]) {
-            case "11":
-                WebInspector.Platform.version.name = "el-capitan";
-                break;
-            case "10":
-                WebInspector.Platform.version.name = "yosemite";
-                break;
-            case "9":
-                WebInspector.Platform.version.name = "mavericks";
-                break;
-            case "8":
-                WebInspector.Platform.version.name = "mountain-lion";
-                break;
-            default:
-                WebInspector.Platform.version.name = "unknown-mac";
-                break;
+        case "12":
+            WebInspector.Platform.version.name = "sierra";
+            break;
+        case "11":
+            WebInspector.Platform.version.name = "el-capitan";
+            break;
+        case "10":
+            WebInspector.Platform.version.name = "yosemite";
+            break;
+        default:
+            WebInspector.Platform.version.name = "unknown-mac";
+            break;
         }
     }
 })();

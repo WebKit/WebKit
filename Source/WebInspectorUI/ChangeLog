@@ -1,3 +1,33 @@
+2016-12-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove legacy styles
+        https://bugs.webkit.org/show_bug.cgi?id=165389
+
+        Reviewed by Matt Baker.
+
+        Remove styles for platforms we don't build on anymore (Mavericks
+        and Mountain Lion). There are also no "unknown-mac" styles to
+        upgrade to a named platform.
+
+        * UserInterface/Base/Platform.js:
+        Add sierra and remove older unsupported platforms.
+
+        * UserInterface/Views/Main.css:
+        (body):
+        (body:not(.mavericks)): Deleted.
+        * UserInterface/Views/TabBar.css:
+        (body.mavericks .tab-bar > .item:not(.disabled).selected): Deleted.
+        * UserInterface/Views/Toolbar.css:
+        (body .toolbar):
+        (body.window-inactive .toolbar):
+        (body.mac-platform:not(.docked) .toolbar):
+        (body.mac-platform:not(.docked)):
+        (body:not(.mavericks) .toolbar,): Deleted.
+        (body.window-inactive:not(.mavericks) .toolbar): Deleted.
+        (body.mac-platform:not(.docked, .mavericks) .toolbar): Deleted.
+        (body.mac-platform:not(.docked, .mavericks)): Deleted.
+        Remove mavericks specific styles.
+
 2016-12-02  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Adopt the PRODUCT_BUNDLE_IDENTIFIER build setting

@@ -115,10 +115,6 @@ body.window-inactive .tab-bar > .top-border {
     background-size: 100% 100%;
 }
 
-body.mavericks .tab-bar > .item:not(.disabled).selected {
-    border-top-color: hsl(0, 0%, 68%);
-}
-
 .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover {
     background-position: 0 100%;
     border-top-color: hsl(0, 0%, 59%);

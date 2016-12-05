@@ -48,9 +48,7 @@ body {
     cursor: default;
 
     -webkit-font-smoothing: subpixel-antialiased;
-}
 
-body:not(.mavericks) {
     background-color: white;
 }
 
