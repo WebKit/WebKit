@@ -1,3 +1,15 @@
+2016-12-05  Beth Dakin  <bdakin@apple.com>
+
+        STP 19 fails to launch on 16B255
+        https://bugs.webkit.org/show_bug.cgi?id=165388
+        -and corresponding-
+        rdar://problem/29514476
+
+        Reviewed by Tim Horton.
+
+        Speculative fix.
+        * platform/spi/cocoa/NSTouchBarSPI.h:
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support the 'alphabetic' keyword for text-underline-position
