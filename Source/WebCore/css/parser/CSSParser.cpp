@@ -1177,17 +1177,20 @@ static bool isUniversalKeyword(const String& string)
 static bool isKeywordPropertyID(CSSPropertyID propertyID)
 {
     switch (propertyID) {
-        case CSSPropertyWebkitColumnBreakAfter:
-        case CSSPropertyWebkitColumnBreakBefore:
-        case CSSPropertyWebkitColumnBreakInside:
+    case CSSPropertyPageBreakAfter:
+    case CSSPropertyPageBreakBefore:
+    case CSSPropertyPageBreakInside:
+    case CSSPropertyWebkitColumnBreakAfter:
+    case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitColumnBreakInside:
 #if ENABLE(CSS_REGIONS)
-        case CSSPropertyWebkitRegionBreakAfter:
-        case CSSPropertyWebkitRegionBreakBefore:
-        case CSSPropertyWebkitRegionBreakInside:
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
+    case CSSPropertyWebkitRegionBreakInside:
 #endif
-            return true;
-        default:
-            break;
+        return true;
+    default:
+        break;
     }
     
     return CSSParserFastPaths::isKeywordPropertyID(propertyID);

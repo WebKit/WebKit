@@ -1,5 +1,17 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] The page-break-* properties are only keyword props for old parser.
+        https://bugs.webkit.org/show_bug.cgi?id=165381
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::isKeywordPropertyID):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Don't use CSS_PARSER_INTEGER unit for resolved integer calcs.
         https://bugs.webkit.org/show_bug.cgi?id=165379
 
