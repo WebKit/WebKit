@@ -1044,6 +1044,11 @@ webkit.org/b/165195 fast/selectors/querySelector-pseudo-element-inside-functiona
 webkit.org/b/165195 fast/shapes/parsing/parsing-shape-image-threshold.html [ Pass Failure ]
 webkit.org/b/165195 fast/shapes/shape-outside-floats/shape-outside-animation.html [ Pass Failure ]
 webkit.org/b/165195 svg/webarchive/svg-cursor-subresources.svg [ Pass Failure ]
+webkit.org/b/165195 fast/backgrounds/background-shorthand-after-set-backgroundSize.html [ Pass Failure ]
+webkit.org/b/165195 fast/backgrounds/background-position-parsing-2.html [ Pass Failure ]
+webkit.org/b/165195 fast/backgrounds/background-shorthand-with-backgroundSize-style.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/variables/custom-property-dynamic-update.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or

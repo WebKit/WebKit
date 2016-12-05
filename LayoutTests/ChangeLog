@@ -1,5 +1,14 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Avoid a few more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165404
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix flex property parsing test
         https://bugs.webkit.org/show_bug.cgi?id=165402
 
