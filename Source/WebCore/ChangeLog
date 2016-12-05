@@ -1,3 +1,57 @@
+2016-12-04  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Eliminate in-place lowercasing in the parser.
+        https://bugs.webkit.org/show_bug.cgi?id=165368
+
+        Reviewed by Darin Adler.
+
+        Replace the in-place lowercasing that the parser does with new
+        mechanisms. In-place lowercasing ruins serialization and doesn't
+        work on CSS parsed from static strings. It also has the side effect
+        of mutating strings passed in from JavaScript like for querySelectorAll.
+
+        For class/id selectors, we now check if the string is lowercase or not.
+        If it contains uppercase ASCII characters, then we allocate the RareData
+        for the selector. RareData now has two fields instead of one for the value,
+        a matching value (all lowercase in quirks mode), and a serializing value (the
+        original string). Because this is done at the CSSSelector level, the old
+        parser has been patched as well for these cases.
+
+        In addition, in-place lowercasing was done for pseudo-elements, for
+        media query features, and for attr(). In all of these cases we do
+        lowercase converting by first checking if it's needed. Serialization will
+        not retain the original string in these cases, so we may want to revisit
+        these cases in the future and apply a solution similar to what we did for
+        selectors.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::createRareData):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::RareData::RareData):
+        (WebCore::CSSSelector::RareData::~RareData):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::RareData::create):
+        (WebCore::CSSSelector::setValue):
+        (WebCore::CSSSelector::value):
+        (WebCore::CSSSelector::serializingValue):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExpression::MediaQueryExpression):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::convertToASCIILowercaseInPlace): Deleted.
+        (WebCore::CSSParserToken::convertToASCIILowercaseInPlace): Deleted.
+        * css/parser/CSSParserToken.h:
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeAttr):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeId):
+        (WebCore::CSSSelectorParser::consumeClass):
+        (WebCore::CSSSelectorParser::consumePseudo):
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::readFeature):
+
 2016-12-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Fix a build break on EFL since r209303.

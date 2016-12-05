@@ -289,7 +289,7 @@ MediaQueryExpression::MediaQueryExpression(const AtomicString& mediaFeature, CSS
 }
 
 MediaQueryExpression::MediaQueryExpression(const String& feature, const Vector<CSSParserToken, 4>& tokenList)
-    : m_mediaFeature(feature)
+    : m_mediaFeature(feature.convertToASCIILowercase())
     , m_isValid(false)
 {
     // Create value for media query expression that must have 1 or more values.

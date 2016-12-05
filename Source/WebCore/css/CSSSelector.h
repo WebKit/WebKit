@@ -233,6 +233,7 @@ namespace WebCore {
         const AtomicString& tagLowercaseLocalName() const;
 
         const AtomicString& value() const;
+        const AtomicString& serializingValue() const;
         const QualifiedName& attribute() const;
         const AtomicString& attributeCanonicalLocalName() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
@@ -240,7 +241,7 @@ namespace WebCore {
         const Vector<AtomicString>* langArgumentList() const { return m_hasRareData ? m_data.m_rareData->m_langArgumentList.get() : nullptr; }
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
 
-        void setValue(const AtomicString&);
+        void setValue(const AtomicString&, bool matchLowerCase = false);
         
         // FIXME-NEWPARSER: These two methods can go away once the old parser is gone.
         void setAttribute(const QualifiedName&, bool);
@@ -348,13 +349,18 @@ namespace WebCore {
         CSSSelector& operator=(const CSSSelector&);
 
         struct RareData : public RefCounted<RareData> {
-            static Ref<RareData> create(PassRefPtr<AtomicStringImpl> value) { return adoptRef(*new RareData(value)); }
+            static Ref<RareData> create(AtomicString&& value) { return adoptRef(*new RareData(WTFMove(value))); }
             ~RareData();
 
             bool parseNth();
             bool matchNth(int count);
 
-            AtomicStringImpl* m_value; // Plain pointer to keep things uniform with the union.
+            // For quirks mode, class and id are case-insensitive. In the case where uppercase
+            // letters are used in quirks mode, |m_matchingValue| holds the lowercase class/id
+            // and |m_serializingValue| holds the original string.
+            AtomicString m_matchingValue;
+            AtomicString m_serializingValue;
+            
             int m_a; // Used for :nth-*
             int m_b; // Used for :nth-*
             QualifiedName m_attribute; // used for attribute selector
@@ -364,7 +370,7 @@ namespace WebCore {
             std::unique_ptr<CSSSelectorList> m_selectorList; // Used for :matches() and :not().
         
         private:
-            RareData(PassRefPtr<AtomicStringImpl> value);
+            RareData(AtomicString&& value);
         };
         void createRareData();
 
@@ -459,21 +465,24 @@ inline bool CSSSelector::isAttributeSelector() const
         || match() == CSSSelector::End;
 }
 
-inline void CSSSelector::setValue(const AtomicString& value)
+inline void CSSSelector::setValue(const AtomicString& value, bool matchLowerCase)
 {
     ASSERT(match() != Tag);
+    AtomicString matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
+    if (!m_hasRareData && matchingValue != value)
+        createRareData();
+    
     // Need to do ref counting manually for the union.
-    if (m_hasRareData) {
-        if (m_data.m_rareData->m_value)
-            m_data.m_rareData->m_value->deref();
-        m_data.m_rareData->m_value = value.impl();
-        m_data.m_rareData->m_value->ref();
+    if (!m_hasRareData) {
+        if (m_data.m_value)
+            m_data.m_value->deref();
+        m_data.m_value = value.impl();
+        m_data.m_value->ref();
         return;
     }
-    if (m_data.m_value)
-        m_data.m_value->deref();
-    m_data.m_value = value.impl();
-    m_data.m_value->ref();
+
+    m_data.m_rareData->m_matchingValue = WTFMove(matchingValue);
+    m_data.m_rareData->m_serializingValue = value;
 }
 
 inline CSSSelector::CSSSelector()
@@ -567,9 +576,21 @@ inline const AtomicString& CSSSelector::tagLowercaseLocalName() const
 inline const AtomicString& CSSSelector::value() const
 {
     ASSERT(match() != Tag);
+    if (m_hasRareData)
+        return m_data.m_rareData->m_matchingValue;
+
     // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
-    // FIXME: Perhaps call sites could be changed to accept AtomicStringImpl?
-    return *reinterpret_cast<const AtomicString*>(m_hasRareData ? &m_data.m_rareData->m_value : &m_data.m_value);
+    return *reinterpret_cast<const AtomicString*>(&m_data.m_value);
+}
+
+inline const AtomicString& CSSSelector::serializingValue() const
+{
+    ASSERT(match() != Tag);
+    if (m_hasRareData)
+        return m_data.m_rareData->m_serializingValue;
+    
+    // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
+    return *reinterpret_cast<const AtomicString*>(&m_data.m_value);
 }
 
 inline void CSSSelector::setAttributeValueMatchingIsCaseInsensitive(bool isCaseInsensitive)

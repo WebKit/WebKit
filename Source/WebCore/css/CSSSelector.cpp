@@ -84,7 +84,8 @@ void CSSSelector::createRareData()
     if (m_hasRareData)
         return;
     // Move the value to the rare data stucture.
-    m_data.m_rareData = &RareData::create(adoptRef(m_data.m_value)).leakRef();
+    AtomicString value { adoptRef(m_data.m_value) };
+    m_data.m_rareData = &RareData::create(WTFMove(value)).leakRef();
     m_hasRareData = true;
 }
 
@@ -406,10 +407,10 @@ String CSSSelector::selectorText(const String& rightSide) const
     while (true) {
         if (cs->match() == CSSSelector::Id) {
             str.append('#');
-            serializeIdentifier(cs->value(), str);
+            serializeIdentifier(cs->serializingValue(), str);
         } else if (cs->match() == CSSSelector::Class) {
             str.append('.');
-            serializeIdentifier(cs->value(), str);
+            serializeIdentifier(cs->serializingValue(), str);
         } else if (cs->match() == CSSSelector::PseudoClass) {
             switch (cs->pseudoClassType()) {
 #if ENABLE(FULLSCREEN_API)
@@ -659,7 +660,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             default:
                 str.appendLiteral("::");
-                str.append(cs->value());
+                str.append(cs->serializingValue());
             }
         } else if (cs->isAttributeSelector()) {
             str.append('[');
@@ -696,7 +697,7 @@ String CSSSelector::selectorText(const String& rightSide) const
                     break;
             }
             if (cs->match() != CSSSelector::Set) {
-                serializeString(cs->value(), str);
+                serializeString(cs->serializingValue(), str);
                 if (cs->attributeValueMatchingIsCaseInsensitive())
                     str.appendLiteral(" i]");
                 else
@@ -820,8 +821,9 @@ int CSSSelector::nthB() const
     return m_data.m_rareData->m_b;
 }
 
-CSSSelector::RareData::RareData(PassRefPtr<AtomicStringImpl> value)
-    : m_value(value.leakRef())
+CSSSelector::RareData::RareData(AtomicString&& value)
+    : m_matchingValue(value)
+    , m_serializingValue(value)
     , m_a(0)
     , m_b(0)
     , m_attribute(anyQName())
@@ -831,8 +833,6 @@ CSSSelector::RareData::RareData(PassRefPtr<AtomicStringImpl> value)
 
 CSSSelector::RareData::~RareData()
 {
-    if (m_value)
-        m_value->deref();
 }
 
 // a helper function for parsing nth-arguments

@@ -389,10 +389,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeId(CSSParserTokenRa
     // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
     // to be compatible for now.
     CSSParserToken token = range.consume();
-    if (m_context.mode == HTMLQuirksMode)
-        token.convertToASCIILowercaseInPlace();
-    selector->setValue(token.value().toAtomicString());
-
+    selector->setValue(token.value().toAtomicString(), m_context.mode == HTMLQuirksMode);
     return selector;
 }
 
@@ -409,9 +406,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeClass(CSSParserToke
     // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
     // to be compatible for now.
     CSSParserToken token = range.consume();
-    if (m_context.mode == HTMLQuirksMode)
-        token.convertToASCIILowercaseInPlace();
-    selector->setValue(token.value().toAtomicString());
+    selector->setValue(token.value().toAtomicString(), m_context.mode == HTMLQuirksMode);
 
     return selector;
 }
@@ -512,19 +507,17 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     std::unique_ptr<CSSParserSelector> selector;
     
-    // FIXME-NEWPARSER: Would like to eliminate this.
-    const_cast<CSSParserToken&>(token).convertToASCIILowercaseInPlace();
-    
-    StringView value = token.value();
+    auto lowercasedValue = token.value().toString().convertToASCIILowercase();
+    auto value = StringView { lowercasedValue };
     
     // FIXME-NEWPARSER: We can't change the pseudoclass/element maps that the old parser
     // uses without breaking it; this hack allows function selectors to work. When the new
     // parser turns on, we can patch the map and remove this code.
     String newValue;
     if (token.type() == FunctionToken && colons == 1) {
-        String tokenString = value.toString();
-        if (!tokenString.startsWithIgnoringASCIICase("host")) {
-            newValue = value.toString() + "(";
+        auto tokenString = value.toString();
+        if (!value.startsWithIgnoringASCIICase(StringView { "host" })) {
+            newValue = makeString(value, '(');
             value = newValue;
         }
     }

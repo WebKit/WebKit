@@ -121,8 +121,6 @@ public:
         return StringView(static_cast<const UChar*>(m_valueDataCharRaw), m_valueLength);
     }
 
-    void convertToASCIILowercaseInPlace();
-
     UChar delimiter() const;
     NumericSign numericSign() const;
     NumericValueType numericValueType() const;

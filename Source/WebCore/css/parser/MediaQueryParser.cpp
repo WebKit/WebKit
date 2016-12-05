@@ -166,8 +166,6 @@ void MediaQueryParser::readFeatureStart(CSSParserTokenType type, const CSSParser
 void MediaQueryParser::readFeature(CSSParserTokenType type, const CSSParserToken& token)
 {
     if (type == IdentToken) {
-        // FIXME-NEWPARSER: Find a way to avoid this.
-        const_cast<CSSParserToken&>(token).convertToASCIILowercaseInPlace();
         m_mediaQueryData.setMediaFeature(token.value().toString());
         m_state = ReadFeatureColon;
     } else

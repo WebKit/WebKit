@@ -1,3 +1,12 @@
+2016-12-04  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Eliminate in-place lowercasing in the parser.
+        https://bugs.webkit.org/show_bug.cgi?id=165368
+
+        Reviewed by Darin Adler.
+
+        * fast/media/mq-pointer-expected.txt:
+
 2016-12-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Assertion Failures breakpoint should respect global Breakpoints enabled setting

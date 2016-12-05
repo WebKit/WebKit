@@ -218,7 +218,7 @@ public:
 
     std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
 
-    void setValue(const AtomicString& value) { m_selector->setValue(value); }
+    void setValue(const AtomicString& value, bool matchLowerCase = false) { m_selector->setValue(value, matchLowerCase); }
     
     // FIXME-NEWPARSER: These two methods can go away once old parser is gone.
     void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }

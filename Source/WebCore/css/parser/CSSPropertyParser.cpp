@@ -2122,10 +2122,10 @@ static RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, CSSParserContext c
         return nullptr;
     
     CSSParserToken token = args.consumeIncludingWhitespace();
+    auto attrName = token.value().toAtomicString();
     if (context.isHTMLDocument)
-        token.convertToASCIILowercaseInPlace();
+        attrName = attrName.convertToASCIILowercase();
 
-    String attrName = token.value().toString();
     if (!args.atEnd())
         return nullptr;
 
