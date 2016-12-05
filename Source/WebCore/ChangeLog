@@ -1,3 +1,17 @@
+2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed MediaPlayerPrivateTaskTimer
+        https://bugs.webkit.org/show_bug.cgi?id=165373
+
+        Reviewed by Sam Weinig.
+
+        It is not used anywhere since QTSDK removal in r165476.
+
+        No new tests needed.
+
+        * platform/graphics/win/MediaPlayerPrivateTaskTimer.cpp: Removed.
+        * platform/graphics/win/MediaPlayerPrivateTaskTimer.h: Removed.
+
 2016-12-04  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Eliminate in-place lowercasing in the parser.
