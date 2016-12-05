@@ -1,5 +1,17 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Avoid more invalid tests
+        https://bugs.webkit.org/show_bug.cgi?id=165424
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        Avoid the aspect-ratio test, since it thinks whitespace should not be allowed, even though
+        it should be. Avoid a couple of grid tests that assume the grid breadth can't be 0fr, even
+        though it can be. Non-negative means < 0, not <= 0 like the old parser assumes.
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix invalid column-span test
         https://bugs.webkit.org/show_bug.cgi?id=165420
 

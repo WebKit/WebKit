@@ -1053,6 +1053,10 @@ webkit.org/b/165195 transitions/transitions-parsing.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/flex-shrink-calculated-value.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/webkit-line-clamp-calculated-value.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/z-index-calculated-value.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/aspect-ratio-parsing-tests.html [ Pass Failure ]
+webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Failure ]
+webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
+webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
