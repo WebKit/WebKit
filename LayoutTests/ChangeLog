@@ -1,3 +1,12 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Avoid more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165417
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+
 2016-12-05  Antti Koivisto  <antti@apple.com>
 
         keyframes do not work when defined inside a style in a shadowRoot

@@ -1017,7 +1017,7 @@ webkit.org/b/165195 fast/inspector-support/style.html [ Pass Failure ]
 webkit.org/b/165195 css3/font-variant-parsing.html [ Pass Failure ]
 webkit.org/b/165195 css3/supports-cssom.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/attr-parsing.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Skip ]
 webkit.org/b/165195 fast/css/font-property-priority.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font_property_normal.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/image-set-unprefixed.html [ Pass Failure ]
@@ -1048,7 +1048,11 @@ webkit.org/b/165195 fast/backgrounds/background-shorthand-after-set-backgroundSi
 webkit.org/b/165195 fast/backgrounds/background-position-parsing-2.html [ Pass Failure ]
 webkit.org/b/165195 fast/backgrounds/background-shorthand-with-backgroundSize-style.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/variables/custom-property-dynamic-update.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/variables/custom-property-dynamic-update.html [ Skip ]
+webkit.org/b/165195 transitions/transitions-parsing.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/flex-shrink-calculated-value.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/webkit-line-clamp-calculated-value.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/z-index-calculated-value.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
