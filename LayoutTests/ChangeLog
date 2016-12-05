@@ -1,5 +1,20 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fix column tests with illegal syntax
+        https://bugs.webkit.org/show_bug.cgi?id=165411
+
+        Reviewed by Zalan Bujtas.
+
+        Patch column-span layout tests that use invalid syntax
+        to use the spec-compliant syntax instead (none instead of 1).
+
+        * fast/multicol/newmulticol/remove-spanner4.html:
+        * fast/multicol/newmulticol/remove-spanner5.html:
+        * fast/multicol/newmulticol/remove-spanner6.html:
+        * fast/multicol/span/span-as-immediate-child-property-removal.html:
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Avoid a few more tests
         https://bugs.webkit.org/show_bug.cgi?id=165404
 
