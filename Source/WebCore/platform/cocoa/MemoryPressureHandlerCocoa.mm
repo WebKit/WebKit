@@ -188,11 +188,6 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    // Flush free memory back to the OS before every measurement.
-    // Note that this code only runs when detailed pressure relief logging is enabled.
-    WTF::releaseFastMallocFreeMemory();
-    malloc_zone_pressure_relief(nullptr, 0);
-
     task_vm_info_data_t vmInfo;
     mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
     kern_return_t err = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);

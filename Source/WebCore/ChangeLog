@@ -1,3 +1,20 @@
+2016-12-05  Keith Rollin  <krollin@apple.com>
+
+        Reduce number of platformMemoryUsage calls
+        https://bugs.webkit.org/show_bug.cgi?id=164375
+
+        Reviewed by Darin Adler.
+
+        Removed the calls to WTF::releaseFastMallocFreeMemory (it's already
+        called elsewhere in the free-all-memory pipeline) and
+        malloc_zone_pressure_relief (it should be called by the OS on its own
+        terms).
+
+        No new tests -- no new or changed features.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Leave the Animation type alone when the property is invalid
