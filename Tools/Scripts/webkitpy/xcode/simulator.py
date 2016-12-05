@@ -400,6 +400,8 @@ class Simulator(object):
         Refresh runtime and device type information from ``simctl list``.
         """
         lines = self._host.platform.xcode_simctl_list()
+        if not lines:
+            return
         device_types_header = next(lines)
         if device_types_header != '== Device Types ==':
             raise RuntimeError('Expected == Device Types == header but got: "{}"'.format(device_types_header))
@@ -526,6 +528,14 @@ class Simulator(object):
         """
         for device in self.devices:
             if device.udid == udid:
+                return device
+        return None
+
+    def current_device(self):
+        # FIXME: Find the simulator device that was booted by Simulator.app. For now, pick some booted simulator device, which
+        # may have been booted using the simctl command line tool.
+        for device in self.devices:
+            if device.state == Simulator.DeviceState.BOOTED:
                 return device
         return None
 
