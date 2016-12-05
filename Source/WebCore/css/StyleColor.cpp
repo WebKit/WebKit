@@ -50,7 +50,7 @@ bool StyleColor::isColorKeyword(CSSValueID id)
 {
     return (id >= CSSValueAlpha && id <= CSSValueWebkitText)
         || (id >= CSSValueAliceblue && id <= CSSValueYellowgreen)
-        || id == CSSValueMenu;
+        || id == CSSValueMenu || isSystemColor(id);
 }
 
 bool StyleColor::isSystemColor(CSSValueID id)

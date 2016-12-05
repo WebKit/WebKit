@@ -1,3 +1,44 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add parseValue support to new parser. Use new parser for UA sheet too if useNewParser is set.
+        https://bugs.webkit.org/show_bug.cgi?id=165376
+
+        Reviewed by Zalan Bujtas.
+
+        * css/StyleColor.cpp:
+        (WebCore::StyleColor::isColorKeyword):
+        Include system colors when using the fast parseValue path.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::setupParser):
+        Add an assert to catch any code path using the old parser when the new parser flag is set.
+
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseKeyframeRule):
+        (WebCore::CSSParser::parseSupportsCondition):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseSelector):
+        (WebCore::CSSParser::parseDeclaration):
+        Patched to use the new parser in UASheetMode as well as other modes when the new parser flag
+        is set. parseValue is patched to use the new parser's fast paths and to call into CSSParserImpl's
+        parseValue.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        Support CSSPropertyShapeMargin in the fast path since the old parser did in its fast path.
+
+        (WebCore::parseSimpleLengthValue):
+        Don't ever return unitless numbers. If we accept a unitless number, convert the unit to PX still.
+
+        (WebCore::CSSParserFastPaths::parseColor):
+        Use the CSSValuePool when creating colors on the fast path.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseValue):
+        * css/parser/CSSParserImpl.h:
+        Change the return type to be compatible with the old parser's ParseResult flag.
+
 2016-12-05  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed MediaPlayerPrivateTaskTimer

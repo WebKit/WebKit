@@ -312,6 +312,8 @@ void CSSParserString::convertToASCIILowercaseInPlace()
 
 void CSSParser::setupParser(const char* prefix, unsigned prefixLength, StringView string, const char* suffix, unsigned suffixLength)
 {
+    ASSERT(!m_context.useNewParser);
+
     m_parsedTextPrefixLength = prefixLength;
     unsigned stringLength = string.length();
     unsigned length = stringLength + m_parsedTextPrefixLength + suffixLength + 1;
@@ -368,7 +370,7 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, cons
     // FIXME-NEWPARSER: It's easier for testing to let the entire UA sheet parse with the old
     // parser. That way we can still have the default styles look correct while we add in support for
     // properties.
-    if (m_context.useNewParser && m_context.mode != UASheetMode)
+    if (m_context.useNewParser)
         return CSSParserImpl::parseStyleSheet(string, m_context, sheet);
     
     setStyleSheet(sheet);
@@ -400,7 +402,7 @@ void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleShe
 
 RefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetContents* sheet, const String& string)
 {
-    if (m_context.useNewParser && m_context.mode != UASheetMode)
+    if (m_context.useNewParser)
         return CSSParserImpl::parseRule(string, m_context, sheet, CSSParserImpl::AllowImportRules);
     setStyleSheet(sheet);
     m_allowNamespaceDeclarations = false;
@@ -411,7 +413,7 @@ RefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetContents* sheet, const Stri
 
 RefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet, const String& string)
 {
-    if (m_context.useNewParser && m_context.mode != UASheetMode) {
+    if (m_context.useNewParser) {
         RefPtr<StyleRuleBase> keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::KeyframeRules);
         return downcast<StyleKeyframe>(keyframe.get());
     }
@@ -424,10 +426,10 @@ RefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet, co
 
 bool CSSParser::parseSupportsCondition(const String& condition)
 {
-    if (m_context.useNewParser && m_context.mode != UASheetMode) {
+    if (m_context.useNewParser) {
         CSSTokenizer::Scope scope(condition);
         CSSParserTokenRange range = scope.tokenRange();
-        CSSParserImpl parser(strictCSSParserContext());
+        CSSParserImpl parser(m_context);
         return CSSSupportsParser::supportsCondition(range, parser) == CSSSupportsParser::Supported;
     }
 
@@ -1334,21 +1336,28 @@ RefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context, StyleSheetContents* contextStyleSheet)
 {
     ASSERT(!string.isEmpty());
-    CSSParser::ParseResult result = parseSimpleLengthValue(declaration, propertyID, string, important, context.mode);
-    if (result != ParseResult::Error)
-        return result;
+    if (context.useNewParser) {
+        RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode, contextStyleSheet);
+        if (value)
+            return declaration.addParsedProperty(CSSProperty(propertyID, WTFMove(value), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
+    } else {
+        // FIXME-NEWPARSER: Remove all this code when the old parser goes away.
+        CSSParser::ParseResult result = parseSimpleLengthValue(declaration, propertyID, string, important, context.mode);
+        if (result != ParseResult::Error)
+            return result;
 
-    result = parseColorValue(declaration, propertyID, string, important,  context.mode);
-    if (result != ParseResult::Error)
-        return result;
+        result = parseColorValue(declaration, propertyID, string, important,  context.mode);
+        if (result != ParseResult::Error)
+            return result;
 
-    result = parseKeywordValue(declaration, propertyID, string, important, context, contextStyleSheet);
-    if (result != ParseResult::Error)
-        return result;
+        result = parseKeywordValue(declaration, propertyID, string, important, context, contextStyleSheet);
+        if (result != ParseResult::Error)
+            return result;
 
-    result = parseTranslateTransformValue(declaration, propertyID, string, important);
-    if (result != ParseResult::Error)
-        return result;
+        result = parseTranslateTransformValue(declaration, propertyID, string, important);
+        if (result != ParseResult::Error)
+            return result;
+    }
 
     CSSParser parser(context);
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
@@ -1363,6 +1372,9 @@ CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStylePropertie
 
 CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, StyleSheetContents* contextStyleSheet)
 {
+    if (m_context.useNewParser)
+        return CSSParserImpl::parseValue(&declaration, propertyID, string, important, m_context);
+
     setStyleSheet(contextStyleSheet);
 
     setupParser("@-webkit-value{", string, "} ");
@@ -1436,7 +1448,7 @@ Color CSSParser::parseSystemColor(const String& string, Document* document)
 
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
-    if (m_context.useNewParser && m_context.mode != UASheetMode) {
+    if (m_context.useNewParser) {
         CSSTokenizer::Scope scope(string);
         selectorList = CSSSelectorParser::parseSelector(scope.tokenRange(), m_context, nullptr);
         return;
@@ -1480,7 +1492,7 @@ Ref<ImmutableStyleProperties> CSSParser::parseDeclarationDeprecated(const String
 
 bool CSSParser::parseDeclaration(MutableStyleProperties& declaration, const String& string, RefPtr<CSSRuleSourceData>&& ruleSourceData, StyleSheetContents* contextStyleSheet)
 {
-    if (m_context.useNewParser && m_context.mode != UASheetMode)
+    if (m_context.useNewParser)
         return CSSParserImpl::parseDeclarationList(&declaration, string, m_context);
 
     // Length of the "@-webkit-decls{" prefix.

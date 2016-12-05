@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "CSSParser.h"
 #include "CSSParserMode.h"
 #include "CSSParserTokenRange.h"
 #include "CSSProperty.h"
@@ -61,7 +62,7 @@ class StyleSheetContents;
 class ImmutableStyleProperties;
 class Element;
 class MutableStyleProperties;
-
+    
 class CSSParserImpl {
     WTF_MAKE_NONCOPYABLE(CSSParserImpl);
 public:
@@ -82,7 +83,7 @@ public:
         NoRules, // For parsing at-rules inside declaration lists
     };
 
-    static bool parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, const CSSParserContext&);
+    static CSSParser::ParseResult parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, const CSSParserContext&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType);

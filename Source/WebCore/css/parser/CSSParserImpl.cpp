@@ -62,7 +62,7 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, StyleSheetContents
 {
 }
 
-bool CSSParserImpl::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
+CSSParser::ParseResult CSSParserImpl::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
 {
     CSSParserImpl parser(context);
     StyleRule::Type ruleType = StyleRule::Style;
@@ -73,8 +73,8 @@ bool CSSParserImpl::parseValue(MutableStyleProperties* declaration, CSSPropertyI
     CSSTokenizer::Scope scope(string);
     parser.consumeDeclarationValue(scope.tokenRange(), propertyID, important, ruleType);
     if (parser.m_parsedProperties.isEmpty())
-        return false;
-    return declaration->addParsedProperties(parser.m_parsedProperties);
+        return CSSParser::ParseResult::Error;
+    return declaration->addParsedProperties(parser.m_parsedProperties) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 }
 
 static inline void filterProperties(bool important, const ParsedPropertyVector& input, ParsedPropertyVector& output, size_t& unusedEntries, std::bitset<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenCustomProperties)
