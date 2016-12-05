@@ -1066,6 +1066,8 @@ webkit.org/b/165195 fast/selectors/invalid-functional-pseudo-class.html [ Pass F
 webkit.org/b/165195 fast/selectors/nth-child-bounds.html [ Pass Failure ]
 webkit.org/b/165195 fast/selectors/nth-last-child-bounds.html [ Pass Failure ]
 webkit.org/b/165195 fast/text/text-combine-crash.html [ Pass Failure ]
+webkit.org/b/165195 fast/css-grid-layout/grid-template-shorthand-get-set.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/font-shorthand-from-longhands.html [ Pass Failure ]
 
 # The following tests should probably just be removed, since they will never pass. Do this once
 # the new CSS Parser turns on.
