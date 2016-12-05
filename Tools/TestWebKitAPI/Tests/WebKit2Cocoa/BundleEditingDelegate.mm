@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED
 
+#if PLATFORM(MAC) // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165384 REGRESSION: [ios-simulator] API test WebKit2.WKWebProcessPlugInEditingDelegate crashing
+
 #import "BundleEditingDelegateProtocol.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -81,5 +83,7 @@ TEST(WebKit2, WKWebProcessPlugInEditingDelegate)
     EXPECT_TRUE([[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] isEqual:[@"hello" dataUsingEncoding:NSUTF8StringEncoding]]);
 #endif
 }
+
+#endif
 
 #endif

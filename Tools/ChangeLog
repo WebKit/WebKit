@@ -1,3 +1,9 @@
+2016-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Disable a crashing test on iOS.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/BundleEditingDelegate.mm:
+
 2016-12-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Fix a build break on EFL since r209303.
