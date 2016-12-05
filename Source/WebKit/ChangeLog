@@ -1,3 +1,9 @@
+2016-12-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed cmake buildfix after r209252.
+
+        * PlatformMac.cmake:
+
 2016-12-02  Chris Dumez  <cdumez@apple.com>
 
         [Mac][WK1] Implement new HTML interactive form validation user interface

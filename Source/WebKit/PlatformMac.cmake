@@ -312,6 +312,7 @@ list(APPEND WebKit_SOURCES
     mac/WebCoreSupport/WebSelectionServiceController.mm
     mac/WebCoreSupport/WebSystemInterface.mm
     mac/WebCoreSupport/WebUserMediaClient.mm
+    mac/WebCoreSupport/WebValidationMessageClient.mm
     mac/WebCoreSupport/WebVisitedLinkStore.mm
 
     mac/WebInspector/WebInspector.mm
