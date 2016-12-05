@@ -1,3 +1,9 @@
+2016-12-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed cmake buildfix after r209307.
+
+        * PlatformMac.cmake:
+
 2016-12-03  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Expose InjectedBundlePageEditorClient via the Objective-C bundle SPI

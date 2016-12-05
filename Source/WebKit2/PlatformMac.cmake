@@ -302,6 +302,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.mm
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm
 
     WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm
