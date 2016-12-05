@@ -28,6 +28,7 @@
 
 #include "EvalCodeBlock.h"
 #include "HeapCellInlines.h"
+#include "HeapInlines.h"
 #include "JSCJSValueInlines.h"
 #include "SlotVisitorInlines.h"
 

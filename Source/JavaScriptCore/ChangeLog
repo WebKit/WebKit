@@ -1,3 +1,19 @@
+2016-12-05  Mark Lam  <mark.lam@apple.com>
+
+        Fix JSC files so that we can build a release build with NDEBUG #undef'ed.
+        https://bugs.webkit.org/show_bug.cgi?id=165409
+
+        Reviewed by Keith Miller.
+
+        This allows us to run a release build with DEBUG ASSERTs enabled.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        * bytecode/UnlinkedEvalCodeBlock.cpp:
+        * bytecode/UnlinkedFunctionCodeBlock.cpp:
+        * bytecode/UnlinkedModuleProgramCodeBlock.cpp:
+        * bytecode/UnlinkedProgramCodeBlock.cpp:
+        * runtime/EvalExecutable.cpp:
+
 2016-12-05  Geoffrey Garen  <ggaren@apple.com>
 
         Renamed source => parentSource

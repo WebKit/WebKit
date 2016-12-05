@@ -26,6 +26,9 @@
 #include "config.h"
 #include "UnlinkedProgramCodeBlock.h"
 
+#include "HeapInlines.h"
+#include "JSCellInlines.h"
+
 namespace JSC {
 
 const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock", &Base::s_info, 0, CREATE_METHOD_TABLE(UnlinkedProgramCodeBlock) };
