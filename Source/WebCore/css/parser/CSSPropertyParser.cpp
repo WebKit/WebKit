@@ -1204,8 +1204,6 @@ static RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange& range)
 
 static RefPtr<CSSPrimitiveValue> consumeLineClamp(CSSParserTokenRange& range)
 {
-    if (range.peek().type() != PercentageToken && range.peek().type() != NumberToken)
-        return nullptr;
     RefPtr<CSSPrimitiveValue> clampValue = consumePercent(range, ValueRangeNonNegative);
     if (clampValue)
         return clampValue;

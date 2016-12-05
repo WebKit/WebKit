@@ -1,5 +1,18 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fix calc() with -webkit-line-clamp
+        https://bugs.webkit.org/show_bug.cgi?id=165398
+
+        Reviewed by Zalan Bujtas.
+
+        Remove the aggressive token type checking up front, since it was causing calc() to not
+        be allowed.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeLineClamp):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Support -webkit-text-decoration
         https://bugs.webkit.org/show_bug.cgi?id=165391
 
