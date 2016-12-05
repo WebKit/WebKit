@@ -1290,14 +1290,14 @@ LayoutRect localCaretRectInRendererForRect(LayoutRect& localRect, Node* node, Re
     return localRect;
 }
 
-IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect& rect, bool* insideFixed)
+IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect& rect)
 {
     if (!rendererForCaretPainting || rect.isEmpty())
         return IntRect();
 
     LayoutRect localRect(rect);
     rendererForCaretPainting->flipForWritingMode(localRect);
-    return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect), UseTransforms, insideFixed).enclosingBoundingBox();
+    return rendererForCaretPainting->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
 } // namespace WebCore

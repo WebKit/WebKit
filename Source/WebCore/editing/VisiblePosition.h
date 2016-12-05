@@ -95,7 +95,7 @@ public:
     // Rect is local to the returned renderer
     WEBCORE_EXPORT LayoutRect localCaretRect(RenderObject*&) const;
     // Bounds of (possibly transformed) caret in absolute coords
-    WEBCORE_EXPORT IntRect absoluteCaretBounds(bool* insideFixed = nullptr) const;
+    WEBCORE_EXPORT IntRect absoluteCaretBounds() const;
     // Abs x/y position of the caret ignoring transforms.
     // FIXME: navigation with transforms should be smarter.
     WEBCORE_EXPORT int lineDirectionPointForBlockDirectionNavigation() const;

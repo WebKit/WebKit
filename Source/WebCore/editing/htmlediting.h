@@ -200,7 +200,7 @@ const String& nonBreakingSpaceString();
 RenderBlock* rendererForCaretPainting(Node*);
 LayoutRect localCaretRectInRendererForCaretPainting(const VisiblePosition&, RenderBlock*&);
 LayoutRect localCaretRectInRendererForRect(LayoutRect&, Node*, RenderObject*, RenderBlock*&);
-IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect&, bool* insideFixed = nullptr);
+IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect&);
 
 // -------------------------------------------------------------------------
 
