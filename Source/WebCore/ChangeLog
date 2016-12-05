@@ -1,5 +1,15 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fix assert when unknown properties are encountered.
+        https://bugs.webkit.org/show_bug.cgi?id=165385
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix rx and ry parsing
         https://bugs.webkit.org/show_bug.cgi?id=165383
 
