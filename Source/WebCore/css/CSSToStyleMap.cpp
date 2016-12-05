@@ -447,10 +447,9 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
     } else if (primitiveValue.valueID() == CSSValueNone) {
         animation.setAnimationMode(Animation::AnimateNone);
         animation.setProperty(CSSPropertyInvalid);
-    } else {
+    } else if (primitiveValue.propertyID() != CSSPropertyInvalid) {
         animation.setAnimationMode(Animation::AnimateSingleProperty);
-        if (primitiveValue.propertyID() != CSSPropertyInvalid)
-            animation.setProperty(primitiveValue.propertyID());
+        animation.setProperty(primitiveValue.propertyID());
     }
 }
 

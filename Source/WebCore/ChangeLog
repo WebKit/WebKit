@@ -1,3 +1,13 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Leave the Animation type alone when the property is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=165418
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationProperty):
+
 2016-12-05  Antti Koivisto  <antti@apple.com>
 
         keyframes do not work when defined inside a style in a shadowRoot
