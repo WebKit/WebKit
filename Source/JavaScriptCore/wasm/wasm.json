@@ -192,7 +192,7 @@
         "i32.trunc_s/f64":     { "category": "conversion", "value": 170, "return": ["i32"],      "parameter": ["f64"],                  "immediate": []                         },
         "i32.trunc_u/f32":     { "category": "conversion", "value": 169, "return": ["i32"],      "parameter": ["f32"],                  "immediate": []                         },
         "i32.trunc_u/f64":     { "category": "conversion", "value": 171, "return": ["i32"],      "parameter": ["f64"],                  "immediate": []                         },
-        "i32.wrap/i64":        { "category": "conversion", "value": 167, "return": ["i32"],      "parameter": ["i64"],                  "immediate": []                         },
+        "i32.wrap/i64":        { "category": "conversion", "value": 167, "return": ["i32"],      "parameter": ["i64"],                  "immediate": [], "b3op": "Trunc"        },
         "i64.trunc_s/f32":     { "category": "conversion", "value": 174, "return": ["i64"],      "parameter": ["f32"],                  "immediate": []                         },
         "i64.trunc_s/f64":     { "category": "conversion", "value": 176, "return": ["i64"],      "parameter": ["f64"],                  "immediate": []                         },
         "i64.trunc_u/f32":     { "category": "conversion", "value": 175, "return": ["i64"],      "parameter": ["f32"],                  "immediate": []                         },

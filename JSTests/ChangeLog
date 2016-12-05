@@ -1,3 +1,14 @@
+2016-12-05  Keith Miller  <keith_miller@apple.com>
+
+        Add Wasm i64 to i32 conversion.
+        https://bugs.webkit.org/show_bug.cgi?id=165378
+
+        Reviewed by Filip Pizlo.
+
+        It turns out the wrap operation is just B3's Trunc.
+
+        * wasm/wasm.json:
+
 2016-12-04  Keith Miller  <keith_miller@apple.com>
 
         Add support for Wasm ctz and popcnt
