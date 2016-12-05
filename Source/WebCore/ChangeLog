@@ -1,3 +1,13 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support -webkit-text-decoration
+        https://bugs.webkit.org/show_bug.cgi?id=165391
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseShorthand):
+
 2016-12-05  Beth Dakin  <bdakin@apple.com>
 
         STP 19 fails to launch on 16B255

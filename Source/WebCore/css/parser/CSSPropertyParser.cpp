@@ -5376,6 +5376,9 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyTransition:
         return consumeAnimationShorthand(transitionShorthandForParsing(), important);
     case CSSPropertyTextDecoration:
+    case CSSPropertyWebkitTextDecoration:
+        // FIXME-NEWPARSER: We need to unprefix -line/-style/-color ASAP and get rid
+        // of -webkit-text-decoration completely.
         return consumeShorthandGreedily(webkitTextDecorationShorthand(), important);
     case CSSPropertyMargin:
         return consume4Values(marginShorthand(), important);
