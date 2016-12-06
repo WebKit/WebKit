@@ -3610,6 +3610,9 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 
 static RefPtr<CSSValue> consumeWebkitDashboardRegion(CSSParserTokenRange& range, CSSParserMode mode)
 {
+    if (range.atEnd())
+        return nullptr;
+    
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
     
@@ -3632,7 +3635,9 @@ static RefPtr<CSSValue> consumeWebkitDashboardRegion(CSSParserTokenRange& range,
         
         CSSParserTokenRange rangeCopy = range;
         CSSParserTokenRange args = consumeFunction(rangeCopy);
-        
+        if (rangeCopy.end() == args.end())
+            return nullptr; // No ) was found. Be strict about this, since tests are.
+
         // First arg is a label.
         if (args.peek().type() != IdentToken)
             return nullptr;

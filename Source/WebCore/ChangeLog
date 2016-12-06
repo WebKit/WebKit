@@ -1,5 +1,16 @@
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Fix dashboard region parsing
+        https://bugs.webkit.org/show_bug.cgi?id=165456
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitDashboardRegion):
+        Make sure to reject whitespace by itself as well as unclosed dashboard-region functions.
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Properly reject large numeric values
         https://bugs.webkit.org/show_bug.cgi?id=165455
 
