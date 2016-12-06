@@ -87,7 +87,7 @@ public:
             m_elementPositionInPartitionedNodes[i] = i;
             m_elementToSetMap[i] = 0;
         }
-        m_sets.append(SetDescriptor({ 0, size, 0 }));
+        m_sets.uncheckedAppend(SetDescriptor { 0, size, 0 });
     }
 
     void reserveUninitializedCapacity(unsigned elementCount)

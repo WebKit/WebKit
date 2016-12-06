@@ -86,7 +86,7 @@ static inline Vector<LayoutUnit> convertToLayoutUnits(const Vector<float>& snapO
     Vector<LayoutUnit> snapOffsets;
     snapOffsets.reserveInitialCapacity(snapOffsetsAsFloat.size());
     for (auto offset : snapOffsetsAsFloat)
-        snapOffsets.append(offset);
+        snapOffsets.uncheckedAppend(offset);
 
     return snapOffsets;
 }

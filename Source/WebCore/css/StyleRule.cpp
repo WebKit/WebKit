@@ -323,8 +323,8 @@ StyleRuleGroup::StyleRuleGroup(const StyleRuleGroup& o)
     : StyleRuleBase(o)
 {
     m_childRules.reserveInitialCapacity(o.m_childRules.size());
-    for (unsigned i = 0, size = o.m_childRules.size(); i < size; ++i)
-        m_childRules.uncheckedAppend(o.m_childRules[i]->copy());
+    for (auto& childRule : o.m_childRules)
+        m_childRules.uncheckedAppend(childRule->copy());
 }
 
 void StyleRuleGroup::wrapperInsertRule(unsigned index, Ref<StyleRuleBase>&& rule)

@@ -211,7 +211,7 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     size_t size = newInfo->formData->elements().size();
     newInfo->remainingElements.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
-        newInfo->remainingElements.append(newInfo->formData->elements()[size - i - 1]);
+        newInfo->remainingElements.uncheckedAppend(newInfo->formData->elements()[size - i - 1]);
 
     return newInfo;
 }

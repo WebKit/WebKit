@@ -1,3 +1,48 @@
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
+        Use Vector::uncheckedAppend() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=164952
+
+        Reviewed by Darin Adler.
+
+        We can use Vector::uncheckedAppend() whenever the number of items that will be appended
+        to a vector is equal to or less than its capacity. Using Vector::uncheckedAppend() is
+        more efficient than Vector::append() as it avoids checking the capacity of the vector
+        before appending a value to the end of it.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * contentextensions/DFABytecodeCompiler.cpp:
+        (WebCore::ContentExtensions::DFABytecodeCompiler::extractJumpTable):
+        * contentextensions/DFAMinimizer.cpp:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::copyPropertiesInSet): Use Vector::uncheckedAppend() and inline
+        the assignment of the temporary variable value into the if condition to limit its scope
+        as it is referenced exactly once in the loop body.
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleGroup::StyleRuleGroup): Use Vector::uncheckedAppend() and write for-loop
+        using a C++11 range-based for-loop.
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setLangArgumentList):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsNthLastChildOf):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::updateRenderedRectsForMarker):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::convertToLayoutUnits):
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::AudioBus):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData):
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::polygonsForRect):
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (CaptureDeviceManager::bestSourcesForTypeAndConstraints):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::fitnessDistance):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::formCreate):
+
 2016-12-04  Darin Adler  <darin@apple.com>
 
         Use ASCIICType more, and improve it a little bit

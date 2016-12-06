@@ -218,7 +218,7 @@ DFABytecodeCompiler::JumpTable DFABytecodeCompiler::extractJumpTable(Vector<DFAB
         ASSERT(range.min >= jumpTable.min);
         ASSERT(range.min <= jumpTable.max);
 
-        jumpTable.destinations.append(range.destination);
+        jumpTable.destinations.uncheckedAppend(range.destination);
     }
 
     ranges.remove(firstRange, size);

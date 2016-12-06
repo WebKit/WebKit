@@ -162,7 +162,7 @@ static void updateRenderedRectsForMarker(RenderedDocumentMarker& marker, Node& n
     Vector<FloatRect> absoluteMarkerRects;
     absoluteMarkerRects.reserveInitialCapacity(absoluteMarkerQuads.size());
     for (const auto& quad : absoluteMarkerQuads)
-        absoluteMarkerRects.append(quad.boundingBox());
+        absoluteMarkerRects.uncheckedAppend(quad.boundingBox());
 
     marker.setUnclippedAbsoluteRects(absoluteMarkerRects);
 }

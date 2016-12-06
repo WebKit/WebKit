@@ -2660,7 +2660,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vec
     // need to be isolatedCopies so we don't run into thread safety issues for the StringImpls.
     m_blobURLs.reserveInitialCapacity(blobURLs.size());
     for (auto& url : blobURLs)
-        m_blobURLs.append(url.isolatedCopy());
+        m_blobURLs.uncheckedAppend(url.isolatedCopy());
 }
 
 static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffers(const Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers)

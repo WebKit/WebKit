@@ -296,7 +296,7 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         Vector<String> supportedModes;
         supportedModes.reserveInitialCapacity(modes.size());
         for (auto& mode : modes)
-            supportedModes.append(RealtimeMediaSourceSettings::facingMode(mode));
+            supportedModes.uncheckedAppend(RealtimeMediaSourceSettings::facingMode(mode));
         return downcast<StringConstraint>(constraint).fitnessDistance(supportedModes);
         break;
     }

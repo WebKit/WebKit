@@ -96,7 +96,7 @@ Vector<String> CaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMe
     sourceUIDs.reserveInitialCapacity(bestSources.size());
     std::sort(bestSources.begin(), bestSources.end(), sortBasedOnFitnessScore);
     for (auto& device : bestSources)
-        sourceUIDs.append(device->persistentID());
+        sourceUIDs.uncheckedAppend(device->persistentID());
 
     return sourceUIDs;
 }

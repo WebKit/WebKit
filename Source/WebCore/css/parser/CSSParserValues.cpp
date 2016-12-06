@@ -410,7 +410,7 @@ void CSSParserSelector::setLangArgumentList(const Vector<CSSParserString>& strin
     auto argumentList = std::make_unique<Vector<AtomicString>>();
     argumentList->reserveInitialCapacity(stringVector.size());
     for (const AtomicString& languageArgument : stringVector)
-        argumentList->append(languageArgument);
+        argumentList->uncheckedAppend(languageArgument);
     m_selector->setLangArgumentList(WTFMove(argumentList));
 }
 
