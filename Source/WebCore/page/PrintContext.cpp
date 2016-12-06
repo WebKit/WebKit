@@ -274,7 +274,7 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
         if (!renderer)
             continue;
 
-        FloatPoint point = renderer->anchorRect().minXMinYCorner();
+        FloatPoint point = renderer->absoluteAnchorRect().minXMinYCorner();
         point.expandedTo(FloatPoint());
 
         if (!pageRect.contains(roundedIntPoint(point)))

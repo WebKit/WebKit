@@ -711,17 +711,18 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range
 {
+    bool insideFixed = false; // FIXME: get via firstRectForRange().
     NSRect rangeRect = [self _firstRectForDOMRange:range];    
     Node *startNode = core([range startContainer]);
         
     if (startNode && startNode->renderer()) {
 #if !PLATFORM(IOS)
-        startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+        startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 #else
         RenderLayer* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
             layer->setAdjustForIOSCaretWhenScrolling(true);
-            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
             layer->setAdjustForIOSCaretWhenScrolling(false);
             _private->coreFrame->selection().setCaretRectNeedsUpdate();
             _private->coreFrame->selection().updateAppearance();
@@ -733,6 +734,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #if PLATFORM(IOS)
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range withInset:(CGFloat)inset
 {
+    bool insideFixed = false; // FIXME: get via firstRectForRange().
     NSRect rangeRect = NSInsetRect([self _firstRectForDOMRange:range], inset, inset);
     Node *startNode = core([range startContainer]);
 
@@ -740,7 +742,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         RenderLayer* layer = startNode->renderer()->enclosingLayer();
         if (layer) {
             layer->setAdjustForIOSCaretWhenScrolling(true);
-            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+            startNode->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, enclosingIntRect(rangeRect), insideFixed, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
             layer->setAdjustForIOSCaretWhenScrolling(false);
 
             Frame *coreFrame = core(self);

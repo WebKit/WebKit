@@ -660,11 +660,11 @@ LayoutRect VisiblePosition::localCaretRect(RenderObject*& renderer) const
     return renderer->localCaretRect(inlineBox, caretOffset);
 }
 
-IntRect VisiblePosition::absoluteCaretBounds() const
+IntRect VisiblePosition::absoluteCaretBounds(bool* insideFixed) const
 {
     RenderBlock* renderer = nullptr;
     LayoutRect localRect = localCaretRectInRendererForCaretPainting(*this, renderer);
-    return absoluteBoundsForLocalCaretRect(renderer, localRect);
+    return absoluteBoundsForLocalCaretRect(renderer, localRect, insideFixed);
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const

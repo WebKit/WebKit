@@ -2506,12 +2506,12 @@ bool RenderLayer::allowsCurrentScroll() const
     return box->hasHorizontalOverflow() || box->hasVerticalOverflow();
 }
 
-void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const LayoutRect& absoluteRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << rect);
+    LOG_WITH_STREAM(Scrolling, stream << "Layer " << this << " scrollRectToVisible " << absoluteRect);
 
     RenderLayer* parentLayer = nullptr;
-    LayoutRect newRect = rect;
+    LayoutRect newRect = absoluteRect;
 
     // We may end up propagating a scroll event. It is important that we suspend events until 
     // the end of the function since they could delete the layer or the layer's renderer().
@@ -2525,11 +2525,11 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
         // This will prevent us from revealing text hidden by the slider in Safari RSS.
         RenderBox* box = renderBox();
         ASSERT(box);
-        LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(rect))).boundingBox());
+        LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
         LayoutRect layerBounds(0, 0, box->clientWidth(), box->clientHeight());
-        LayoutRect r = getRectToExpose(layerBounds, layerBounds, localExposeRect, alignX, alignY);
+        LayoutRect revealRect = getRectToExpose(layerBounds, layerBounds, localExposeRect, insideFixed, alignX, alignY);
 
-        ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(r).location()));
+        ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
         if (clampedScrollOffset != scrollOffset()) {
             ScrollOffset oldScrollOffset = scrollOffset();
             scrollToOffset(clampedScrollOffset);
@@ -2551,7 +2551,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
                 NoEventDispatchAssertion assertNoEventDispatch;
 
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
-                LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, rect, alignX, alignY);
+                LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, absoluteRect, insideFixed, alignX, alignY);
 
                 IntPoint scrollOffset(roundedIntPoint(exposeRect.location()));
                 // Adjust offsets if they're outside of the allowable range.
@@ -2562,6 +2562,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
                     parentLayer = ownerElement->renderer()->enclosingLayer();
                     // Convert the rect into the coordinate space of the parent frame's document.
                     newRect = frameView.contentsToContainingViewContents(enclosingIntRect(newRect));
+                    insideFixed = false; // FIXME: ideally need to determine if this <iframe> is inside position:fixed.
                 } else
                     parentLayer = nullptr;
             }
@@ -2571,16 +2572,17 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
 
 #if !PLATFORM(IOS)
             LayoutRect viewRect = frameView.visibleContentRect();
+            viewRect.scale(1 / frameView.frameScaleFactor());
+
             LayoutRect visibleRectRelativeToDocument = viewRect;
             visibleRectRelativeToDocument.setLocation(frameView.documentScrollPositionRelativeToScrollableAreaOrigin());
 #else
             LayoutRect viewRect = frameView.unobscuredContentRect();
             LayoutRect visibleRectRelativeToDocument = viewRect;
 #endif
-
-            LayoutRect r = getRectToExpose(viewRect, visibleRectRelativeToDocument, rect, alignX, alignY);
+            LayoutRect revealRect = getRectToExpose(viewRect, visibleRectRelativeToDocument, absoluteRect, insideFixed, alignX, alignY);
                 
-            frameView.setScrollPosition(roundedIntPoint(r.location()));
+            frameView.setScrollPosition(roundedIntPoint(revealRect.location()));
 
             // This is the outermost view of a web page, so after scrolling this view we
             // scroll its container by calling Page::scrollRectIntoView.
@@ -2588,12 +2590,12 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
             // that put web views into scrolling containers, such as Mac OS X Mail.
             // The canAutoscroll function in EventHandler also knows about this.
             if (Page* page = frameView.frame().page())
-                page->chrome().scrollRectIntoView(snappedIntRect(rect));
+                page->chrome().scrollRectIntoView(snappedIntRect(absoluteRect));
         }
     }
     
     if (parentLayer)
-        parentLayer->scrollRectToVisible(revealMode, newRect, alignX, alignY);
+        parentLayer->scrollRectToVisible(revealMode, newRect, insideFixed, alignX, alignY);
 }
 
 void RenderLayer::updateCompositingLayersAfterScroll()
@@ -2610,8 +2612,35 @@ void RenderLayer::updateCompositingLayersAfterScroll()
     }
 }
 
-LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const LayoutRect &visibleRectRelativeToDocument, const LayoutRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const LayoutRect &visibleRectRelativeToDocument, const LayoutRect &exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
+    FrameView& frameView = renderer().view().frameView();
+    if (insideFixed) {
+        // If the element is inside position:fixed and we're not scaled, no amount of scrolling is going to move things around.
+        if (frameView.frameScaleFactor() == 1)
+            return visibleRect;
+
+        if (frameView.frame().settings().visualViewportEnabled()) {
+            // exposeRect is in absolute coords, affected by page scale. Unscale it.
+            LayoutRect unscaledExposeRect = exposeRect;
+            unscaledExposeRect.scale(1 / frameView.frameScaleFactor());
+            // These are both in unscaled coordinates.
+            LayoutRect layoutViewport = frameView.layoutViewportRect();
+            LayoutRect visualViewport = frameView.visualViewportRect();
+
+            // The rect to expose may be partially offscreen, which we can't do anything about with position:fixed.
+            unscaledExposeRect.intersect(layoutViewport);
+            // Make sure it's not larger than the visual viewport; if so, we'll just move to the top left.
+            unscaledExposeRect.setSize(unscaledExposeRect.size().shrunkTo(visualViewport.size()));
+
+            // Compute how much we have to move the visualViewport to reveal the part of the layoutViewport that contains exposeRect.
+            LayoutRect requiredVisualViewport = getRectToExpose(visualViewport, visualViewport, unscaledExposeRect, false, alignX, alignY);
+            // Scale it back up.
+            requiredVisualViewport.scale(frameView.frameScaleFactor());
+            return requiredVisualViewport;
+        }
+    }
+
     // Determine the appropriate X behavior.
     ScrollAlignment::Behavior scrollX;
     LayoutRect exposeRectX(exposeRect.x(), visibleRect.y(), exposeRect.width(), visibleRect.height());
@@ -2686,7 +2715,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
 void RenderLayer::autoscroll(const IntPoint& position)
 {
     IntPoint currentDocumentPosition = renderer().view().frameView().windowToContents(position);
-    scrollRectToVisible(SelectionRevealMode::Reveal, LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+    scrollRectToVisible(SelectionRevealMode::Reveal, LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 bool RenderLayer::canResize() const

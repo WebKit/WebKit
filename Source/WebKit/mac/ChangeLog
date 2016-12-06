@@ -1,3 +1,17 @@
+2016-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the behavior of scroll-into-view when the target is inside position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=165354
+
+        Reviewed by Zalan Bujtas.
+
+        Plumb through 'insideFixed'. We don't get compute it, so behavior from
+        these call sites won't change.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+        (-[WebFrame _scrollDOMRangeToVisible:withInset:]):
+
 2016-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Enable visual viewports by default on Mac, and iOS Wk2

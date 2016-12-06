@@ -1,3 +1,68 @@
+2016-12-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the behavior of scroll-into-view when the target is inside position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=165354
+
+        Reviewed by Zalan Bujtas.
+        
+        The existing RenderLayer::scrollRectToVisible() code paid no heed to whether the 
+        target was inside position:fixed, resulting in unwanted scrolls.
+        
+        Fix this by plumbing through from the call sites a "insideFixed" flag which we get
+        when we call localToAbsolute(), and use this flag to avoid scrolling at all if
+        unzoomed.
+        
+        If zoomed and we're focussing something inside position:fixed, and if visual viewports
+        are enabled, we can compute the visual viewport required to reveal the target rect,
+        which gives us the ideal scroll position.
+        
+        Fix a bug on non-iOS platforms when zoomed, which is to scale the viewRect since
+        frameView.visibleContentRect() gives an unscaled rect on those platforms.
+        
+        Not all callers of scrollRectToVisible() are fixed, but those that are not will get
+        the current behavior.
+
+        Tests: fast/overflow/scroll-anchor-in-position-fixed.html
+               fast/visual-viewport/zoomed-scroll-into-view-fixed.html
+               fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        (WebCore::Element::scrollIntoViewIfNeeded):
+        (WebCore::Element::scrollIntoViewIfNotVisible):
+        (WebCore::Element::updateFocusAppearance):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::absoluteCaretBounds):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::revealSelection):
+        * editing/FrameSelection.h:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteCaretBounds):
+        * editing/VisiblePosition.h:
+        * editing/htmlediting.cpp:
+        (WebCore::absoluteBoundsForLocalCaretRect):
+        * editing/htmlediting.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollElementToRect):
+        (WebCore::FrameView::scrollToAnchor):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::outputLinkedDestinations):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getLeadingCorner):
+        (WebCore::RenderElement::getTrailingCorner):
+        (WebCore::RenderElement::absoluteAnchorRect):
+        (WebCore::RenderElement::anchorRect): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::getRectToExpose):
+        (WebCore::RenderLayer::autoscroll):
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::scrollRectToVisible):
+        * rendering/RenderObject.h:
+
 2016-12-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(r205396): Intermediate CTRuns with initial advances get double counted when glyph origins are enabled
