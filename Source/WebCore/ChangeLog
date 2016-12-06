@@ -1,3 +1,15 @@
+2016-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add more assertions to ElementQueue diagnose a bug
+        https://bugs.webkit.org/show_bug.cgi?id=164814
+
+        Reviewed by Alexey Proskuryakov.
+
+        Set m_invoking in release builds now that assertions are also run in release builds.
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionStack::ElementQueue::invokeAll):
+
 2016-12-06  Jer Noble  <jer.noble@apple.com>
 
         YouTube sometimes pauses when switching tabs

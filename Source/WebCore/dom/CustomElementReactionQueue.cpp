@@ -213,10 +213,8 @@ inline void CustomElementReactionStack::ElementQueue::add(Element& element)
 
 inline void CustomElementReactionStack::ElementQueue::invokeAll()
 {
-#if !ASSERT_DISABLED
     RELEASE_ASSERT(!m_invoking);
     SetForScope<bool> invoking(m_invoking, true);
-#endif
     Vector<Ref<Element>> elements;
     elements.swap(m_elements);
     RELEASE_ASSERT(m_elements.isEmpty());
