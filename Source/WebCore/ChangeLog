@@ -1,3 +1,16 @@
+2016-12-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rollout r209050.
+
+        This change may impact other popovers than the HTML validation one.
+        The previous code is safer.
+
+        * platform/ValidationBubble.h:
+        * platform/ios/ValidationBubbleIOS.mm:
+        (-[WebValidationBubbleDelegate adaptivePresentationStyleForPresentationController:traitCollection:]):
+        (WebCore::ValidationBubble::setAnchorRect):
+        * platform/spi/ios/UIKitSPI.h:
+
 2016-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the behavior of scroll-into-view when the target is inside position:fixed

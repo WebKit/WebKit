@@ -27,7 +27,6 @@
 
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIInterface_Private.h>
-#import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIViewController_Private.h>
 
@@ -56,12 +55,6 @@
 @interface UIScreen ()
 
 @property (nonatomic, readonly) CGRect _referenceBounds;
-
-@end
-
-@interface UIPopoverPresentationController()
-
-+ (void)_setAlwaysAllowPopoverPresentations:(BOOL)flag;
 
 @end
 
