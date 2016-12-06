@@ -1,3 +1,17 @@
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
+        Remove unused InjectedBundle::overrideXSSAuditorEnabledForTestRunner()
+        https://bugs.webkit.org/show_bug.cgi?id=165408
+
+        Reviewed by Alex Christensen.
+
+        InjectedBundle::overrideXSSAuditorEnabledForTestRunner() is unused. This function was only
+        called by WKBundleOverrideXSSAuditorEnabledForTestRunner(), which was removed in r106005.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideXSSAuditorEnabledForTestRunner): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2016-12-04  Darin Adler  <darin@apple.com>
 
         Use ASCIICType more, and improve it a little bit

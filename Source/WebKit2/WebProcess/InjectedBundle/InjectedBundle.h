@@ -99,7 +99,6 @@ public:
 
     // TestRunner only SPI
     void overrideBoolPreferenceForTestRunner(WebPageGroupProxy*, const String& preference, bool enabled);
-    void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
     void setAllowUniversalAccessFromFileURLs(WebPageGroupProxy*, bool);
     void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
     void setNeedsStorageAccessFromFileURLsQuirk(WebPageGroupProxy*, bool);
