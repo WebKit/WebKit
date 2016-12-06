@@ -435,8 +435,9 @@ void TestRunner::setNeedsStorageAccessFromFileURLsQuirk(bool needsQuirk)
     
 void TestRunner::setPluginsEnabled(bool enabled)
 {
+    WKRetainPtr<WKStringRef> key(AdoptWK, WKStringCreateWithUTF8CString("WebKitPluginsEnabled"));
     auto& injectedBundle = InjectedBundle::singleton();
-    WKBundleSetPluginsEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
+    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
 }
 
 void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)

@@ -1,3 +1,25 @@
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
+        WebKitTestRunner: Plugins are disabled in new windows
+        https://bugs.webkit.org/show_bug.cgi?id=165410
+
+        Reviewed by Alex Christensen.
+
+        Currently WebKitTestRunner only enables plugins in the main window. So, a test that opens
+        a new window and loads a plugin will fail. We should enable plugins in all windows by
+        default. Moreover toggling testRunner.setPluginsEnabled() should effect all windows.
+
+        Making these changes is a step towards running plugins/open-and-close-window-with-plugin.html
+        in WebKitTestRunner (we still need to fix <https://bugs.webkit.org/show_bug.cgi?id=46714>) and
+        will make the behavior of WebKitTestRunner more closely match the behavior DumpRenderTree.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Call TestRunner::setPluginsEnabled() instead of
+        WKBundleSetPluginsEnabled().
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setPluginsEnabled): Take a similar approach as TestRunner::setXSSAuditorEnabled()
+        and make use of WKBundleOverrideBoolPreferenceForTestRunner().
+
 2016-12-05  Dean Jackson  <dino@apple.com>
 
         pointer lock needs to be feature detectable

@@ -303,13 +303,6 @@ void InjectedBundle::setFrameFlatteningEnabled(WebPageGroupProxy* pageGroup, boo
         (*iter)->settings().setFrameFlatteningEnabled(enabled);
 }
 
-void InjectedBundle::setPluginsEnabled(WebPageGroupProxy* pageGroup, bool enabled)
-{
-    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
-    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
-        (*iter)->settings().setPluginsEnabled(enabled);
-}
-
 void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGroup, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

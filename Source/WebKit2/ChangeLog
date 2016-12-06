@@ -1,3 +1,21 @@
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
+        WebKitTestRunner: Plugins are disabled in new windows
+        https://bugs.webkit.org/show_bug.cgi?id=165410
+
+        Reviewed by Alex Christensen.
+
+        Remove SPI exposed to explicitly toggle plugins from WebKitTestRunner.
+        Instead we will update WebKitTestRunner to make use of the SPI
+        WKBundleOverrideBoolPreferenceForTestRunner() to toggle plugins in
+        all windows.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetPluginsEnabled): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPluginsEnabled): Deleted.
+
 2016-12-05  Anders Carlsson  <andersca@apple.com>
 
         Don't memcpy out of line data

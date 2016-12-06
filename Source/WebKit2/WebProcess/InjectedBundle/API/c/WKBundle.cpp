@@ -150,11 +150,6 @@ void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundleRef, WKBundlePageGroupR
     toImpl(bundleRef)->setFrameFlatteningEnabled(toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleSetPluginsEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
-{
-    toImpl(bundleRef)->setPluginsEnabled(toImpl(pageGroupRef), enabled);
-}
-
 void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     toImpl(bundleRef)->setJavaScriptCanAccessClipboard(toImpl(pageGroupRef), enabled);
