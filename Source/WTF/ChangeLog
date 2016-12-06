@@ -1,3 +1,16 @@
+2016-12-06  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r209399): Causes crashes when dumping JIT disassembly
+        https://bugs.webkit.org/show_bug.cgi?id=165483
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed the RELEASE_ASSERT() to check that the 6 character string is terminated by a null
+        character.
+
+        * wtf/SixCharacterHash.cpp:
+        (WTF::sixCharacterHashStringToInteger):
+
 2016-12-04  Darin Adler  <darin@apple.com>
 
         Use ASCIICType more, and improve it a little bit

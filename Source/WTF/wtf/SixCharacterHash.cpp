@@ -50,7 +50,7 @@ unsigned sixCharacterHashStringToInteger(const char* string)
         hash += c - '0' + 26 * 2;
     }
 
-    RELEASE_ASSERT(string[6]); // FIXME: Why does this need to be a RELEASE_ASSERT?
+    RELEASE_ASSERT(!string[6]); // FIXME: Why does this need to be a RELEASE_ASSERT?
 
     return hash;
 }
