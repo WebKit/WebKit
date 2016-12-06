@@ -227,7 +227,7 @@
     macro(EnableInheritURIQueryComponent, enableInheritURIQueryComponent, Bool, bool, false, "", "") \
     macro(ServiceControlsEnabled, serviceControlsEnabled, Bool, bool, false, "", "") \
     macro(NewBlockInsideInlineModelEnabled, newBlockInsideInlineModelEnabled, Bool, bool, false, "", "") \
-    macro(NewCSSParserEnabled, newCSSParserEnabled, Bool, bool, false, "", "") \
+    macro(NewCSSParserEnabled, newCSSParserEnabled, Bool, bool, true, "", "") \
     macro(HTTPEquivEnabled, httpEquivEnabled, Bool, bool, true, "", "") \
     macro(MockCaptureDevicesEnabled, mockCaptureDevicesEnabled, Bool, bool, false, "", "") \
     macro(MediaCaptureRequiresSecureConnection, mediaCaptureRequiresSecureConnection, Bool, bool, true, "", "") \
