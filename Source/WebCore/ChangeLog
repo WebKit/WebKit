@@ -1,3 +1,24 @@
+2016-12-06  Jer Noble  <jer.noble@apple.com>
+
+        YouTube sometimes pauses when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=165468
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-session-restrictions.html
+
+        The bitfield which represents the restrictions for "VideoAudio" media type was unititialized,
+        leading to what was effectively a random set of restrictions at runtime.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::resetRestrictions):
+        * testing/Internals.cpp:
+        (WebCore::mediaTypeFromString):
+        (WebCore::Internals::setMediaSessionRestrictions):
+        (WebCore::Internals::mediaSessionRestrictions):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.

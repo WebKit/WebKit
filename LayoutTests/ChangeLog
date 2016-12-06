@@ -1,3 +1,14 @@
+2016-12-06  Jer Noble  <jer.noble@apple.com>
+
+        YouTube sometimes pauses when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=165468
+
+        Reviewed by Eric Carlson.
+
+        * media/media-session-restrictions.html: Added.
+        * platform/ios-simulator/media/media-session-restrictions-expected.txt: Added.
+        * platform/mac/media/media-session-restrictions-expected.txt: Added.
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.
