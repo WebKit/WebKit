@@ -36,6 +36,10 @@
     cursor: default;
 }
 
+:host(:-webkit-animating-full-screen-transition) .media-controls {
+    display: none;
+}
+
 .media-controls > .controls-bar {
     position: absolute;
 }

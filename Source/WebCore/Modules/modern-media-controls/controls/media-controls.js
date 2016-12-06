@@ -101,11 +101,9 @@ class MediaControls extends LayoutNode
         this._invalidateChildren();
     }
 
-    presentInElement(parentElement, animated)
+    fadeIn()
     {
-        if (animated)
-            this.element.classList.add("fade-in");
-        parentElement.appendChild(this.element);
+        this.element.classList.add("fade-in");
     }
 
     // Private

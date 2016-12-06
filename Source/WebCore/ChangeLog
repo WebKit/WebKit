@@ -1,3 +1,28 @@
+2016-12-05  Antoine Quint  <graouts@apple.com>
+
+        ERROR: post-layout: dirty renderer(s) - Encountered with LayoutTest media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html
+        https://bugs.webkit.org/show_bug.cgi?id=165312
+
+        Reviewed by Simon Fraser.
+
+        Reverting part of the code added in https://bugs.webkit.org/show_bug.cgi?id=165287 that triggered
+        an assertion. We go back to removing previous media controls as we add new ones when the fullscreen
+        status changes, and simply hide the controls during the animated transition using a CSS pseudo-class.
+        This also fixes an issue where we wouldn't have removed the previous controls should we have entered
+        fullscreen in a different way than clicking on the fullscreen button in the media controls.
+
+        We restore testing coverage that was fixed due to this assertion.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(:-webkit-animating-full-screen-transition) .media-controls):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.fadeIn):
+        (MediaControls.prototype.presentInElement): Deleted.
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport.prototype.buttonWasClicked):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+
 2016-12-05  Dean Jackson  <dino@apple.com>
 
         MediaDocuments crash with modern media controls

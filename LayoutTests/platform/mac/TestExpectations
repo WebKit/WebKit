@@ -1472,10 +1472,6 @@ webkit.org/b/164328 media/modern-media-controls/scrubber-support/scrubber-suppor
 webkit.org/b/165290 media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html [ Pass Timeout ]
 webkit.org/b/164598 media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html [ Pass Failure ]
 
-webkit.org/b/165312 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Skip ]
-webkit.org/b/165312 media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Skip ]
-webkit.org/b/165312 media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Skip ]
-
 webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
 webkit.org/b/161650 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
