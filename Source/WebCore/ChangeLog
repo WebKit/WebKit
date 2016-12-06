@@ -1,3 +1,9 @@
+2016-12-06  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the USE(APPLE_INTERNAL_SDK) build after r209385.
+
+        * platform/spi/cocoa/NSTouchBarSPI.h:
+
 2016-12-05  Jer Noble  <jer.noble@apple.com>
 
         [pointer-lock] Cursor should become visible when exiting pointer-lock via ESC key.
