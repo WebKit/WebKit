@@ -1062,6 +1062,8 @@ webkit.org/b/165195 fast/masking/parsing-mask.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-calculated-value.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-shorthand.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/negative-calc-values.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/text-shadow-calc-value.html [ Pass Failure ]
+webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
@@ -1073,6 +1075,8 @@ webkit.org/b/165195 fast/selectors/nth-last-child-bounds.html [ Pass Failure ]
 webkit.org/b/165195 fast/text/text-combine-crash.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-template-shorthand-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-shorthand-from-longhands.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/parse-color-int-or-percent-crash.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/string-quote-binary.html [ Pass Failure ]
 
 # The following tests should probably just be removed, since they will never pass. Do this once
 # the new CSS Parser turns on.
