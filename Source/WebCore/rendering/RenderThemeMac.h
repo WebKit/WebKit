@@ -245,7 +245,9 @@ private:
 
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 
+    String m_legacyMediaControlsScript;
     String m_mediaControlsScript;
+    String m_legacyMediaControlsStyleSheet;
     String m_mediaControlsStyleSheet;
 };
 

@@ -1,5 +1,25 @@
 2016-12-06  Sam Weinig  <sam@webkit.org>
 
+        REGRESSION: media/track LayoutTests are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=165432
+
+        Reviewed by Antoine Quint.
+
+        RenderThemeMac was caching the media controls script / style sheets
+        and not being invalidated when the RuntimeEnabledFeatures changed. So,
+        we can just cache both.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        Initialize m_areModernMediaControlsEnabled to false.
+
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::mediaControlsScript):
+        Have separate caches for the modern and legacy media control scripts/style sheets.
+
+2016-12-06  Sam Weinig  <sam@webkit.org>
+
         DumpRenderTree crashed in com.apple.WebCore: WebCore::MockMediaEndpoint::generateDtlsInfo const + 23
         https://bugs.webkit.org/show_bug.cgi?id=165486
         <rdar://problem/29149588>

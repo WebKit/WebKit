@@ -258,7 +258,7 @@ private:
     // Never instantiate.
     RuntimeEnabledFeatures();
 
-    bool m_areModernMediaControlsEnabled;
+    bool m_areModernMediaControlsEnabled { false };
     bool m_isLocalStorageEnabled;
     bool m_isSessionStorageEnabled;
     bool m_isWebkitNotificationsEnabled;
