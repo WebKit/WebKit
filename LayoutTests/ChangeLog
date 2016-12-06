@@ -1,3 +1,14 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        MediaDocuments crash with modern media controls
+        https://bugs.webkit.org/show_bug.cgi?id=165446
+        <rdar://problem/29524959>
+
+        Reviewed by Antoine Quint.
+
+        * media/modern-media-controls/media-documents/insert-style-should-not-crash-expected.txt: Added.
+        * media/modern-media-controls/media-documents/insert-style-should-not-crash.html: Added.
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Avoid more tests

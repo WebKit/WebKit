@@ -131,7 +131,8 @@ struct CSSParserContextHash {
     static unsigned hash(const CSSParserContext& key)
     {
         auto hash = URLHash::hash(key.baseURL);
-        hash ^= StringHash::hash(key.charset);
+        if (!key.charset.isEmpty())
+            hash ^= StringHash::hash(key.charset);
         unsigned bits = key.isHTMLDocument                  << 0
             & key.isHTMLDocument                            << 1
 #if ENABLE(CSS_GRID_LAYOUT)

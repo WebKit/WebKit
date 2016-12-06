@@ -1,3 +1,23 @@
+2016-12-05  Dean Jackson  <dino@apple.com>
+
+        MediaDocuments crash with modern media controls
+        https://bugs.webkit.org/show_bug.cgi?id=165446
+        <rdar://problem/29524959>
+
+        Reviewed by Antoine Quint.
+
+        The modern media controls inject a <style> element into
+        the document, which exposed a bug when used in MediaDocuments.
+        Such documents were not getting a charset, and the hash table
+        for the CSSParserContexts was crashing.
+
+        Test: media/modern-media-controls/media-documents/insert-style-should-not-crash.html
+
+        * css/parser/CSSParserMode.h: Guard against an empty charset.
+        (WebCore::CSSParserContextHash::hash):
+        * dom/InlineStyleSheetOwner.cpp: Ask for the charset with fallback.
+        (WebCore::parserContextForElement):
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] shape-rendering supports crispEdges rather than crisp-edges
