@@ -74,7 +74,7 @@ HashMap<const char*, size_t> PerformanceLogging::memoryUsageStatistics(ShouldInc
 
 HashCountedSet<const char*> PerformanceLogging::javaScriptObjectCounts()
 {
-    return *JSDOMWindow::commonVM().heap.objectTypeCounts();
+    return WTFMove(*JSDOMWindow::commonVM().heap.objectTypeCounts());
 }
 
 PerformanceLogging::PerformanceLogging(MainFrame& mainFrame)

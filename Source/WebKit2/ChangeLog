@@ -1,3 +1,16 @@
+2016-12-06  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Add some memory usage related information to sysdiagnose state dumps
+        <https://webkit.org/b/165375>
+        <rdar://problem/29057243>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to address two more review comments.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::registerWithStateDumper): Use adoptNS() instead of autorelease for NSStrings.
+
 2016-12-06  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream][Mac] Revoke sandbox extensions when capture ends

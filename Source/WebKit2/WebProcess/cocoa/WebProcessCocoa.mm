@@ -197,15 +197,19 @@ void WebProcess::registerWithStateDumper()
 
             {
                 auto memoryUsageStats = adoptNS([[NSMutableDictionary alloc] init]);
-                for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes))
-                    [memoryUsageStats setObject:@(it.value) forKey:[[[NSString alloc] initWithUTF8String:it.key] autorelease]];
+                for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
+                    auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
+                    [memoryUsageStats setObject:@(it.value) forKey:keyString.get()];
+                }
                 [stateDict setObject:memoryUsageStats.get() forKey:@"Memory Usage Stats"];
             }
 
             {
                 auto jsObjectCounts = adoptNS([[NSMutableDictionary alloc] init]);
-                for (auto& it : PerformanceLogging::javaScriptObjectCounts())
-                    [jsObjectCounts setObject:@(it.value) forKey:[[[NSString alloc] initWithUTF8String:it.key] autorelease]];
+                for (auto& it : PerformanceLogging::javaScriptObjectCounts()) {
+                    auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
+                    [jsObjectCounts setObject:@(it.value) forKey:keyString.get()];
+                }
                 [stateDict setObject:jsObjectCounts.get() forKey:@"JavaScript Object Counts"];
             }
 

@@ -1,3 +1,17 @@
+2016-12-06  Andreas Kling  <akling@apple.com>
+
+        [Cocoa] Add some memory usage related information to sysdiagnose state dumps
+        <https://webkit.org/b/165375>
+        <rdar://problem/29057243>
+
+        Reviewed by Darin Adler.
+
+        Follow-up to address two more review comments.
+
+        * page/PerformanceLogging.cpp:
+        (WebCore::PerformanceLogging::javaScriptObjectCounts): Use WTFMove() when returning the
+        HashCountedSet to avoid making an extra copy.
+
 2016-12-06  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (Safari 10): Scrolling not working inside height 100% table
