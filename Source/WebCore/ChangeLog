@@ -1,3 +1,18 @@
+2016-12-06  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION (Safari 10): Scrolling not working inside height 100% table
+        https://bugs.webkit.org/show_bug.cgi?id=164366
+        <rdar://problem/29095535>
+
+        Reviewed by Zalan Bujtas.
+
+        Added fast/table/overflow-percent-height-regression.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        This patch wasn't merged correctly from Blink. The value returned needed
+        to be 0, not unset.
+
 2016-12-06  Sam Weinig  <sam@webkit.org>
 
         REGRESSION: media/track LayoutTests are flaky failures

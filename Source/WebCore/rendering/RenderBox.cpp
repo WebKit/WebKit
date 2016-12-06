@@ -3014,7 +3014,7 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length
             // don't care if the cell specified a height or not. We just always make ourselves
             // be a percentage of the cell's current content height.
             if (!cb->hasOverrideLogicalContentHeight())
-                return tableCellShouldHaveZeroInitialSize(*cb, scrollsOverflowY()) ? std::optional<LayoutUnit>() : std::nullopt;
+                return tableCellShouldHaveZeroInitialSize(*cb, scrollsOverflowY()) ? std::optional<LayoutUnit>(0) : std::nullopt;
 
             availableHeight = cb->overrideLogicalContentHeight();
             includeBorderPadding = true;
