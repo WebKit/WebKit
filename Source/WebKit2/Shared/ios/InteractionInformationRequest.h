@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #if PLATFORM(IOS)
 
 #include "ArgumentCoders.h"
-#include "InteractionInformationRequest.h"
 #include "ShareableBitmap.h"
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionRect.h>
@@ -37,43 +36,22 @@
 
 namespace WebKit {
 
-struct InteractionInformationAtPosition {
-    InteractionInformationRequest request;
+struct InteractionInformationRequest {
+    WebCore::IntPoint point;
 
-    bool nodeAtPositionIsAssistedNode { false };
-    bool isSelectable { false };
-    bool isNearMarkedText { false };
-    bool touchCalloutEnabled { true };
-    bool isLink { false };
-    bool isImage { false };
-    bool isAttachment { false };
-    bool isAnimatedImage { false };
-    bool isElement { false };
-#if ENABLE(DATA_DETECTION)
-    bool isDataDetectorLink { false };
-#endif
-    String url;
-    String imageURL;
-    String title;
-    String idAttribute;
-    WebCore::IntRect bounds;
-    RefPtr<ShareableBitmap> image;
-    String textBefore;
-    String textAfter;
+    bool includeSnapshot { false };
+    bool includeLinkIndicator { false };
 
-    WebCore::TextIndicatorData linkIndicator;
-#if ENABLE(DATA_DETECTION)
-    String dataDetectorIdentifier;
-    RetainPtr<NSArray> dataDetectorResults;
-#endif
+    InteractionInformationRequest() { }
+    explicit InteractionInformationRequest(WebCore::IntPoint point)
+    {
+        this->point = point;
+    }
 
-    // Copy compatible optional bits forward (for example, if we have a InteractionInformationAtPosition
-    // with snapshots in it, and perform another request for the same point without requesting the snapshots,
-    // we can fetch the cheap information and copy the snapshots into the new response).
-    void mergeCompatibleOptionalInformation(const InteractionInformationAtPosition& oldInformation);
+    bool isValidForRequest(const InteractionInformationRequest&);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, InteractionInformationAtPosition&);
+    static bool decode(IPC::Decoder&, InteractionInformationRequest&);
 };
 
 }

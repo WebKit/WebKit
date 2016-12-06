@@ -628,6 +628,8 @@
 		2D429BFD1721E2C700EC681F /* PDFPluginPasswordField.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */; };
 		2D47B56C1810714E003A3AEE /* RemoteLayerBackingStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */; };
 		2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */; };
+		2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */; };
+		2D4D2C821DF60BF3002EB10C /* InteractionInformationRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D4D2C801DF60BF3002EB10C /* InteractionInformationRequest.cpp */; };
 		2D50365E1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */; };
 		2D50366B1BCDE17900E20BB3 /* NativeWebGestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D50366A1BCDE17900E20BB3 /* NativeWebGestureEvent.h */; };
 		2D5036751BCED19F00E20BB3 /* WebGestureEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5036731BCED19F00E20BB3 /* WebGestureEvent.cpp */; };
@@ -2697,6 +2699,8 @@
 		2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginPasswordField.mm; path = PDF/PDFPluginPasswordField.mm; sourceTree = "<group>"; };
 		2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerBackingStore.mm; sourceTree = "<group>"; };
 		2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerBackingStore.h; sourceTree = "<group>"; };
+		2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InteractionInformationRequest.h; path = ios/InteractionInformationRequest.h; sourceTree = "<group>"; };
+		2D4D2C801DF60BF3002EB10C /* InteractionInformationRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InteractionInformationRequest.cpp; path = ios/InteractionInformationRequest.cpp; sourceTree = "<group>"; };
 		2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebGestureEventMac.mm; sourceTree = "<group>"; };
 		2D50366A1BCDE17900E20BB3 /* NativeWebGestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebGestureEvent.h; sourceTree = "<group>"; };
 		2D5036731BCED19F00E20BB3 /* WebGestureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGestureEvent.cpp; sourceTree = "<group>"; };
@@ -5038,6 +5042,8 @@
 				2DA9449D1884E4F000ED86DB /* GestureTypes.h */,
 				C5BCE5DA1C50761D00CDE3FA /* InteractionInformationAtPosition.h */,
 				C5BCE5DB1C50761D00CDE3FA /* InteractionInformationAtPosition.mm */,
+				2D4D2C7F1DF60BF3002EB10C /* InteractionInformationRequest.h */,
+				2D4D2C801DF60BF3002EB10C /* InteractionInformationRequest.cpp */,
 				2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */,
 				2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */,
 				A118A9EC1907AD6F00F7C92B /* QuickLookDocumentData.cpp */,
@@ -7934,6 +7940,7 @@
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
 				2DE6943E18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h in Headers */,
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
+				2D4D2C811DF60BF3002EB10C /* InteractionInformationRequest.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
 				1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */,
 				1ACECD2517162DB1001FC9EF /* StorageAreaMap.h in Headers */,
@@ -9186,6 +9193,7 @@
 				51E35209180F5D6B00E53BE9 /* DatabaseServiceEntryPoint.mm in Sources */,
 				51E35200180F5D0F00E53BE9 /* DatabaseToWebProcessConnection.cpp in Sources */,
 				51032F1D180F791700961BB7 /* DatabaseToWebProcessConnectionMessageReceiver.cpp in Sources */,
+				2D4D2C821DF60BF3002EB10C /* InteractionInformationRequest.cpp in Sources */,
 				C55F91701C595F630029E92D /* DataDetectionResult.mm in Sources */,
 				1AC7537F183BE50F0072CB15 /* DataReference.cpp in Sources */,
 				BC032DA510F437D10058C15A /* Decoder.cpp in Sources */,

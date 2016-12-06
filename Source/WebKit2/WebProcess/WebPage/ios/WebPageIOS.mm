@@ -598,7 +598,8 @@ void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTransaction
     if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     else if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
-        requestPositionInformation(adjustedIntPoint);
+        InteractionInformationRequest request(adjustedIntPoint);
+        requestPositionInformation(request);
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     } else
         handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
@@ -658,7 +659,8 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, uint64_t
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
     if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
-        requestPositionInformation(roundedIntPoint(adjustedPoint));
+        InteractionInformationRequest request(roundedIntPoint(adjustedPoint));
+        requestPositionInformation(request);
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
     } else
         completeSyntheticClick(nodeRespondingToClick, adjustedPoint, WebCore::TwoFingerTap);
@@ -692,7 +694,8 @@ void WebPage::commitPotentialTap(uint64_t lastLayerTreeTransactionId)
 
     if (m_potentialTapNode == nodeRespondingToClick) {
         if (is<Element>(*nodeRespondingToClick) && DataDetection::shouldCancelDefaultAction(downcast<Element>(*nodeRespondingToClick))) {
-            requestPositionInformation(roundedIntPoint(m_potentialTapLocation));
+            InteractionInformationRequest request(roundedIntPoint(m_potentialTapLocation));
+            requestPositionInformation(request);
             commitPotentialTapFailed();
         } else
             handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
@@ -2274,12 +2277,13 @@ static Element* containingLinkElement(Element* element)
     return nullptr;
 }
 
-void WebPage::getPositionInformation(const IntPoint& point, InteractionInformationAtPosition& info)
+void WebPage::getPositionInformation(const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
-    FloatPoint adjustedPoint;
-    Node* hitNode = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
+    info.request = request;
 
-    info.point = point;
+    FloatPoint adjustedPoint;
+    Node* hitNode = m_page->mainFrame().nodeRespondingToClickEvents(request.point, adjustedPoint);
+
     info.nodeAtPositionIsAssistedNode = (hitNode == m_assistedNode);
     if (m_assistedNode) {
         const Frame& frame = m_page->focusController().focusedOrMainFrame();
@@ -2287,7 +2291,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             const uint32_t kHitAreaWidth = 66;
             const uint32_t kHitAreaHeight = 66;
             FrameView& view = *frame.view();
-            IntPoint adjustedPoint(view.rootViewToContents(point));
+            IntPoint adjustedPoint(view.rootViewToContents(request.point));
             IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, frame, *m_assistedNode) : adjustedPoint;
             VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
 
@@ -2297,9 +2301,9 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             else if (position > compositionRange->endPosition())
                 position = compositionRange->endPosition();
             IntRect caretRect = view.contentsToRootView(position.absoluteCaretBounds());
-            float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - point.x());
-            float deltaYFromTheTop = abs(caretRect.y() - point.y());
-            float deltaYFromTheBottom = abs(caretRect.y() + caretRect.height() - point.y());
+            float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - request.point.x());
+            float deltaYFromTheTop = abs(caretRect.y() - request.point.y());
+            float deltaYFromTheBottom = abs(caretRect.y() + caretRect.height() - request.point.y());
 
             info.isNearMarkedText = !(deltaX > kHitAreaWidth || deltaYFromTheTop > kHitAreaHeight || deltaYFromTheBottom > kHitAreaHeight);
         }
@@ -2323,20 +2327,26 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                 if (linkElement) {
                     info.isLink = true;
 
-                    // Ensure that the image contains at most 600K pixels, so that it is not too big.
-                    if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
-                        info.image = snapshot->bitmap();
-
-                    RefPtr<Range> linkRange = rangeOfContents(*linkElement);
-                    if (linkRange) {
-                        float deviceScaleFactor = corePage()->deviceScaleFactor();
-                        const float marginInPoints = 4;
-
-                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
-                            TextIndicatorOptionIncludeMarginIfRangeMatchesSelection, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
-                        if (textIndicator)
-                            info.linkIndicator = textIndicator->data();
+                    if (request.includeSnapshot) {
+                        // Ensure that the image contains at most 600K pixels, so that it is not too big.
+                        if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
+                            info.image = snapshot->bitmap();
                     }
+
+                    if (request.includeLinkIndicator) {
+                        RefPtr<Range> linkRange = rangeOfContents(*linkElement);
+                        if (linkRange) {
+                            float deviceScaleFactor = corePage()->deviceScaleFactor();
+                            const float marginInPoints = 4;
+
+                            RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorOptionTightlyFitContent | TextIndicatorOptionRespectTextColor | TextIndicatorOptionPaintBackgrounds | TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges |
+                                TextIndicatorOptionIncludeMarginIfRangeMatchesSelection, TextIndicatorPresentationTransition::None, FloatSize(marginInPoints * deviceScaleFactor, marginInPoints * deviceScaleFactor));
+
+                            if (textIndicator)
+                                info.linkIndicator = textIndicator->data();
+                        }
+                    }
+
 #if ENABLE(DATA_DETECTION)
                     info.isDataDetectorLink = DataDetection::isDataDetectorLink(*element);
                     if (info.isDataDetectorLink) {
@@ -2400,7 +2410,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     }
 
     if (!elementIsLinkOrImage) {
-        HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint((point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
+        HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(request.point, HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
         hitNode = result.innerNode();
         // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
         if (hitNode && hitNode->renderer()) {
@@ -2423,11 +2433,11 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     }
 }
 
-void WebPage::requestPositionInformation(const IntPoint& point)
+void WebPage::requestPositionInformation(const InteractionInformationRequest& request)
 {
     InteractionInformationAtPosition info;
 
-    getPositionInformation(point, info);
+    getPositionInformation(request, info);
     send(Messages::WebPageProxy::DidReceivePositionInformation(info));
 }
 

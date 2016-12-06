@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AssistedNodeInformation_h
-#define AssistedNodeInformation_h
+#pragma once
 
 #include "ArgumentCoders.h"
 #include <WebCore/AutocapitalizeTypes.h>
@@ -118,5 +117,3 @@ struct AssistedNodeInformation {
 #endif
 
 }
-
-#endif // InteractionInformationAtPosition_h

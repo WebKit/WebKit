@@ -197,6 +197,7 @@ struct EditingRange;
 struct EditorState;
 class GamepadData;
 struct InteractionInformationAtPosition;
+struct InteractionInformationRequest;
 struct LoadParameters;
 struct PrintInfo;
 struct WebPageCreationParameters;
@@ -561,8 +562,8 @@ public:
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
     void requestAutocorrectionContext(uint64_t callbackID);
     void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
-    void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
-    void requestPositionInformation(const WebCore::IntPoint&);
+    void getPositionInformation(const InteractionInformationRequest&, InteractionInformationAtPosition&);
+    void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
     void stopInteraction();
     void performActionOnElement(uint32_t action);

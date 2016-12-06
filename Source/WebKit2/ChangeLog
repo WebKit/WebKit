@@ -1,3 +1,104 @@
+2016-12-06  Tim Horton  <timothy_horton@apple.com>
+
+        Almost half-second stall scrolling apple.com because of synchronous getPositionInformation
+        https://bugs.webkit.org/show_bug.cgi?id=165403
+        <rdar://problem/29493285>
+
+        Reviewed by Enrica Casucci.
+
+        When retrieving interaction information, we don't always need to do
+        snapshots for 3D Touch or the action sheet, especially if we're
+        synchronously blocking the UI process main thread waiting for the reply.
+
+        Add a new InteractionInformationRequest, which allows callers of
+        getPositionInformation and requestPositionInformation to specify which
+        optional pieces of information they would like to compute.
+
+        * Shared/AssistedNodeInformation.h:
+        Fix a incorrect comment.
+
+        * Shared/ios/InteractionInformationRequest.cpp: Added.
+        (WebKit::InteractionInformationRequest::encode):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest):
+        * Shared/ios/InteractionInformationRequest.h: Added.
+        (WebKit::InteractionInformationRequest::InteractionInformationRequest):
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add InteractionInformationRequest, which encapsulates all of the
+        parameters required to generate an InteractionInformationAtPosition.
+        Previously, that was just a point, but now we have two new parameters:
+        whether we should generate a snapshot of the element, and whether
+        we should generate a TextIndicator if the element is a link.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        (WebKit::InteractionInformationAtPosition::mergeCompatibleOptionalInformation):
+        Adopt InteractionInformationRequest.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::getPositionInformation):
+        (WebKit::WebPageProxy::requestPositionInformation):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant initialPresentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant presentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView annotation:isBeingPressedAtPoint:controller:]):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Adopt InteractionInformationRequest.
+        
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _showAttachmentSheet]):
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        If we have a outstanding asynchronous position information request
+        for the current point, instead of sending a second separate request,
+        just wait for the async one to come in.
+
+        (-[WKContentView requestAsynchronousPositionInformationUpdate:]):
+        If asked to do an asynchronous request with more optional bits than
+        the current otherwise-valid response's request, update the position information.
+
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        The design of this mechanism is that during the highlight long press,
+        we do an async position information update, and then when we actually
+        begin a 3D Touch gesture, we hope to already have the requisite snapshots
+        ready (so that we can avoid synchronously blocking for them, there).
+        So, in the highlight long-press async request, ask for all the goodies.
+
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView pointIsInAssistedNode:]):
+        (-[WKContentView _didNotHandleTapAsClick:]):
+        (-[WKContentView _positionInformationDidChange:]):
+        If we get a position information update for the same point, but with less
+        goodies attached (the snapshot/link indicator), copy them over from the old
+        position information, so that we never accidentally "downgrade" our info.
+
+        (-[WKContentView updatePositionInformationForActionSheetAssistant:]):
+        (-[WKContentView actionSheetAssistant:willStartInteractionWithElement:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):        
+        More adoption.
+        
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::commitPotentialTap):
+        Adopt InteractionInformationRequest.
+
+        (WebKit::WebPage::getPositionInformation):
+        (WebKit::WebPage::requestPositionInformation):
+        Copy the request into the response.
+        Only snapshot if the request wants a snapshot.
+        Only make a link indicator if the request wants one.
+
 2016-12-06  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Rename some HTTP 0.9-specific functions to conform to WebKit Code Style Guidelines

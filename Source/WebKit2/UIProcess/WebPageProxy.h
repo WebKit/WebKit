@@ -210,6 +210,7 @@ struct ColorSpaceData;
 struct EditingRange;
 struct EditorState;
 class GamepadData;
+struct InteractionInformationRequest;
 struct LoadParameters;
 struct PlatformPopupMenuData;
 struct PrintInfo;
@@ -511,8 +512,8 @@ public:
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
-    void getPositionInformation(const WebCore::IntPoint&, InteractionInformationAtPosition&);
-    void requestPositionInformation(const WebCore::IntPoint&);
+    void getPositionInformation(const InteractionInformationRequest&, InteractionInformationAtPosition&);
+    void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
     void stopInteraction();
     void performActionOnElement(uint32_t action);

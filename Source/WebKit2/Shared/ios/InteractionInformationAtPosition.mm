@@ -40,7 +40,8 @@ namespace WebKit {
 
 void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 {
-    encoder << point;
+    encoder << request;
+
     encoder << nodeAtPositionIsAssistedNode;
     encoder << isSelectable;
     encoder << isNearMarkedText;
@@ -80,7 +81,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 
 bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, InteractionInformationAtPosition& result)
 {
-    if (!decoder.decode(result.point))
+    if (!decoder.decode(result.request))
         return false;
 
     if (!decoder.decode(result.nodeAtPositionIsAssistedNode))
@@ -167,6 +168,19 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
 
     return true;
 }
-#endif
+
+void InteractionInformationAtPosition::mergeCompatibleOptionalInformation(const InteractionInformationAtPosition& oldInformation)
+{
+    if (oldInformation.request.point != request.point)
+        return;
+
+    if (oldInformation.request.includeSnapshot && !request.includeSnapshot)
+        image = oldInformation.image;
+
+    if (oldInformation.request.includeLinkIndicator && !request.includeLinkIndicator)
+        linkIndicator = oldInformation.linkIndicator;
+}
+
+#endif // PLATFORM(IOS)
 
 }

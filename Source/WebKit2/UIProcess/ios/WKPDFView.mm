@@ -690,8 +690,9 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
     if (!url)
         return;
 
+    _positionInformation.request.point = roundedIntPoint([controller.pageView convertPoint:point toView:self]);
+
     _positionInformation.url = url.absoluteString;
-    _positionInformation.point = roundedIntPoint([controller.pageView convertPoint:point toView:self]);
     _positionInformation.bounds = roundedIntRect([self convertRect:[controller.pageView convertRectFromPDFPageSpace:annotation.Rect] fromView:controller.pageView]);
 
     [self _highlightLinkAnnotation:linkAnnotation forDuration:.75 completionHandler:^{

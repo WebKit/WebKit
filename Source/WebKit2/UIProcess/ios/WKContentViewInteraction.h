@@ -159,6 +159,8 @@ struct WKAutoCorrectionData {
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
 
+    std::optional<WebKit::InteractionInformationRequest> _outstandingPositionInformationRequest;
+
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
