@@ -1151,7 +1151,6 @@ void InspectorDebuggerAgent::refAsyncCallData(const AsyncCallIdentifier& identif
 void InspectorDebuggerAgent::derefAsyncCallData(const AsyncCallIdentifier& identifier)
 {
     auto iterator = m_asyncCallIdentifierToData.find(identifier);
-    ASSERT(iterator != m_asyncCallIdentifierToData.end());
     if (iterator == m_asyncCallIdentifierToData.end())
         return;
 
