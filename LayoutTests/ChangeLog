@@ -1,3 +1,20 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Skip more bad tests
+        https://bugs.webkit.org/show_bug.cgi?id=165449
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        The font tests have illegal declarations where the
+        ordering of the sub-properties is all wrong. Skip for
+        now until we can rewrite them.
+
+        The negative-calc value test is wrong, since tab-size
+        takes only positive integers, so a calc that resolves
+        to a negative number must be rejected. Avoid the test
+        for now until we can rewrite it.
+
 2016-12-05  Antoine Quint  <graouts@apple.com>
 
         ERROR: post-layout: dirty renderer(s) - Encountered with LayoutTest media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html

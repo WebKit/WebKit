@@ -1059,6 +1059,9 @@ webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Fail
 webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/masking/parsing-mask.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/font-calculated-value.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/font-shorthand.html [ Pass Failure ]
+webkit.org/b/165195 fast/css/negative-calc-values.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
