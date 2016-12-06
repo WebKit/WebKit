@@ -622,7 +622,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     //     ASSERT(RuntimeEnabledFeatures::cssomSmoothScrollEnabled());
     //   return valueID == CSSValueAuto || valueID == CSSValueSmooth;
     case CSSPropertyShapeRendering:
-        return valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueCrispEdges || valueID == CSSValueGeometricprecision;
+        return valueID == CSSValueAuto || valueID == CSSValueOptimizespeed || valueID == CSSValueCrispedges || valueID == CSSValueGeometricprecision;
     case CSSPropertySpeak: // none | normal | spell-out | digits | literal-punctuation | no-punctuation
         return valueID == CSSValueNone || valueID == CSSValueNormal || valueID == CSSValueSpellOut || valueID == CSSValueDigits || valueID == CSSValueLiteralPunctuation || valueID == CSSValueNoPunctuation;
     case CSSPropertyStrokeLinejoin:
