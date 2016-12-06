@@ -1,3 +1,13 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] calcs on column-width that resolve to 0 should be discarded
+        https://bugs.webkit.org/show_bug.cgi?id=165439
+
+        Reviewed by Dean Jackson.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeColumnWidth):
+
 2016-12-05  Dean Jackson  <dino@apple.com>
 
         pointer lock needs to be feature detectable
