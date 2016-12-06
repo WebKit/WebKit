@@ -1,3 +1,13 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Avoid more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165445
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations:
+        Just skip the custom property test, since it's a ref test.
+
 2016-12-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Object.shallowEqual([{}], [{}]) should return true
