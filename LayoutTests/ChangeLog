@@ -1,3 +1,26 @@
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
+        Test insecure-xhr-sync-in-main-frame.html fails with CORS error if run before r203542
+        https://bugs.webkit.org/show_bug.cgi?id=165407
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make the test insecure-xhr-sync-in-main-frame.html demonstrate a mixed content failure
+        instead of a CORS failure when run before r203542.
+
+        In r203542 the test http/tests/security/mixedContent/insecure-xhr-sync-in-main-frame.html
+        was added to ensure that we block loading insecure data via XHR from an HTTPS page. When
+        this test is run prior to r203542 it fails due to a CORS errors as opposed to showing
+        the intended JavaScript alert failure message. The CORS error is due to loading a
+        cross-origin resource that did not return an appropriate Access-Control-Allow-Origin header
+        to allow reading of the response.
+
+        * http/tests/security/mixedContent/insecure-xhr-sync-in-main-frame-expected.txt: Update expected result
+        based on the change below.
+        * http/tests/security/mixedContent/resources/insecure-xhr-sync-in-main-frame-window.html:
+        Load a resource that returns "Access-Control-Allow-Origin: *" so that origin (http, 127.0.0.1, 8000)
+        can read the response returned from origin (https, 127.0.0.1, 8443).
+
 2016-12-06  Tim Horton  <timothy_horton@apple.com>
 
         PDF markup/annotations visible in Mail on macOS but not on iOS

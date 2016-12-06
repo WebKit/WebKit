@@ -16,7 +16,7 @@ window.onload = function() {
     }, 2000);
 
     try {
-        xhr.open("GET", "http://127.0.0.1:8000/", false);
+        xhr.open("GET", "http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi", false);
     } catch (ex) {
         // Firefox raises an exception, which is one way to make this detectable.
         if (window.testRunner)
