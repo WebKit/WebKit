@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+var iterationCount = 11;
+var numberDeleted = 0;
+
+// Delete all databases for the test ahead of time.
+for (var i = 0; i < iterationCount; ++i) {
+    indexedDB.deleteDatabase("index-multientry-DB-" + i).onsuccess = function() {
+        if (++numberDeleted == iterationCount)
+            startIteration();
+    }
+}
+
+var testGenerator = null;
+var db = null;
+var transaction = null;
+var currentIteration = 0;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: iterationCount,
+    unit: 'ms',
+    done: function () {
+        transaction = null;
+        db = null;
+        testGenerator = null;
+        PerfTestRunner.gc();
+        ++currentIteration;
+    }
+});
+
+function startIteration()
+{
+    testGenerator = runIteration();
+    nextStep();
+}
+
+function nextStep()
+{
+    testGenerator.next();
+}
+
+var object = { test: 'yo', indexKeys: [] };
+for (var i = 0; i < 1000; i++)
+    object.indexKeys.push('index_no_' + i);
+
+function *runIteration()
+{
+    var startTime = PerfTestRunner.now();
+
+    var openRequest = indexedDB.open("index-multientry-DB-" + currentIteration);
+    openRequest.onupgradeneeded = function(event) {
+        db = event.target.result;
+        db.createObjectStore('store').createIndex('index', 'indexKeys', { multiEntry: true });
+    }
+    openRequest.onsuccess = nextStep;
+
+    yield;
+
+    transaction = db.transaction('store', 'readwrite');
+    transaction.objectStore('store').put(object, 1);
+    transaction.oncomplete = nextStep;
+
+    yield;
+
+    var index = db.transaction('store').objectStore('store').index('index');
+
+    var completedGets = 0;
+    for (var i = 0; i < 1000; i++)
+    {
+        index.get('index_no_' + i).onsuccess = function (event) {
+            if (event.target.result.test != "yo")
+                alert("Expected 'yo', got '" + event.target.result.test + "'");
+
+            if (++completedGets == 1000)
+                nextStep();
+        };
+    }
+
+    yield;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    setTimeout(startIteration, 0);
+}
+</script>
+</body>
+</html>

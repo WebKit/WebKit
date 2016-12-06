@@ -1,3 +1,12 @@
+2016-12-05  Brady Eidson  <beidson@apple.com>
+
+        Add an IndexedDB perf test to PerformanceTests.
+        https://bugs.webkit.org/show_bug.cgi?id=165430
+
+        Reviewed by Alex Christensen.
+
+        * IndexedDB/index-multientry.html: Added.
+
 2016-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         ES6SampleBench should report an average for Steady State so that all of the numbers are comparable
