@@ -1,3 +1,18 @@
+2016-12-05  Brady Eidson  <beidson@apple.com>
+
+        Build fix followup to r209379:
+
+        STP 19 fails to launch on 16B255
+        https://bugs.webkit.org/show_bug.cgi?id=165388
+        -and corresponding-
+        rdar://problem/29514476
+
+        Rubberstamped by Tim Horton.
+
+        No new tests (No behavior change).
+
+        * platform/spi/cocoa/NSTouchBarSPI.h: Strategically relocate NS_ASSUME_NONNULL* macros.
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix dashboard region parsing

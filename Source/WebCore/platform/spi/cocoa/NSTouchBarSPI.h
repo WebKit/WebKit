@@ -24,6 +24,9 @@
  */
 
 #if PLATFORM(MAC) && HAVE(TOUCH_BAR)
+
+NS_ASSUME_NONNULL_BEGIN
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSFunctionBar_Private.h>
@@ -32,7 +35,6 @@
 
 #else
 
-NS_ASSUME_NONNULL_BEGIN
 
 @interface NSTouchBar ()
 @property (readonly, copy, nullable) NSArray<NSTouchBarItem *> *items;
@@ -51,13 +53,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END
-
 #endif // USE(APPLE_INTERNAL_SDK)
 
 APPKIT_EXTERN NSNotificationName const NSTouchBarWillEnterCustomization API_AVAILABLE(macosx(10.12.2));
 APPKIT_EXTERN NSNotificationName const NSTouchBarDidEnterCustomization API_AVAILABLE(macosx(10.12.2));
 APPKIT_EXTERN NSNotificationName const NSTouchBarWillExitCustomization API_AVAILABLE(macosx(10.12.2));
 APPKIT_EXTERN NSNotificationName const NSTouchBarDidExitCustomization API_AVAILABLE(macosx(10.12.2));
+
+NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(MAC) && HAVE(TOUCH_BAR)
