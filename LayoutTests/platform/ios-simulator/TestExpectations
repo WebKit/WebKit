@@ -2742,3 +2742,6 @@ fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]
 # This test relies on Arial being used to draw Arabic. However, on iOS,
 # we explicitly disallow this because this font is too slow.
 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
+
+# On iOS we do not visually highlight a programmatic selection
+fast/selectors/040.html

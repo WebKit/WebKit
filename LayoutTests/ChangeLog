@@ -1,3 +1,13 @@
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
+        Test fast/selectors/040.html fails on iOS Simulator following <https://trac.webkit.org/changeset/209404>
+        (https://bugs.webkit.org/show_bug.cgi?id=79694)
+
+        Skip test fast/selectors/040.html as we do not visually highlight a programmatic selection on iOS from
+        observation.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-06  Zalan Bujtas  <zalan@apple.com>
 
         Can not select whole line when using flexbox
