@@ -1,3 +1,15 @@
+2016-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable visual viewports by default on Mac, and iOS Wk2
+        https://bugs.webkit.org/show_bug.cgi?id=165452
+
+        Reviewed by Zalan Bujtas.
+
+        Turn visual viewports on by default for WK1 on Mac.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+
 2016-12-05  Dean Jackson  <dino@apple.com>
 
         pointer lock needs to be feature detectable

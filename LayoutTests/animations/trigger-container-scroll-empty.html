@@ -38,6 +38,9 @@ if (window.testRunner) {
     window.testRunner.waitUntilDone();
 }
 
+if (window.internals)
+    window.internals.settings.setVisualViewportEnabled(false);
+
 function runTest() {
     results = document.getElementById("results");
     box = document.getElementById("box");

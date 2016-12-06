@@ -7,6 +7,6 @@
     (behavior for fixed 0)
     (fixed node
       (fixed constraints 
-        (viewport-rect-at-last-layout (0,0) width=683 height=1212)
+        (viewport-rect-at-last-layout (0,0) width=320 height=568)
         (layer-position-at-last-layout (12,10)))
       (layer top left (12,10))))

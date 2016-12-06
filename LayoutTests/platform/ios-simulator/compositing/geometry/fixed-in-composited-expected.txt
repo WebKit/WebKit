@@ -16,7 +16,7 @@ layer at (0,0) size 60x60
   RenderBlock {DIV} at (0,0) size 60x60 [bgcolor=#0000FF33]
 layer at (95,145) size 50x50
   RenderBlock (positioned) zI: 1 {DIV} at (95,145) size 50x50
-layer at (20,20) size 100x100
+layer at (70,70) size 100x100
   RenderBlock (positioned) {DIV} at (20,20) size 100x100 [bgcolor=#008000]
 layer at (200,100) size 50x50
   RenderBlock (positioned) zI: 1 {DIV} at (200,100) size 50x50
@@ -28,3 +28,4 @@ layer at (400,100) size 100x100
   RenderBlock {DIV} at (0,0) size 100x100
 layer at (420,120) size 100x100
   RenderBlock (positioned) {DIV} at (20,20) size 100x100 [bgcolor=#008000]
+scrolled to 50,50

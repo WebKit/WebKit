@@ -2,5 +2,8 @@
   (scrollable area size 785 600)
   (contents size 785 5021)
   (requested scroll position 0 3000)
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,4421))
 )
 

@@ -2,6 +2,9 @@
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 757)
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,157))
   (synchronous event dispatch region for event wheel
     at (68,68) size 300x300)
 )

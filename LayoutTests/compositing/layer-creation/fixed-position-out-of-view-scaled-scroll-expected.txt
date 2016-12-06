@@ -33,11 +33,12 @@ Scale=0.5:
       (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 2
         (GraphicsLayer
-          (position 600.00 0.00)
+          (position 1400.00 600.00)
           (bounds 10.00 10.00)
           (contentsOpaque 1)
         )
         (GraphicsLayer
+          (position 800.00 600.00)
           (bounds 10.00 10.00)
           (contentsOpaque 1)
         )

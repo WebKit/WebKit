@@ -1083,3 +1083,7 @@ webkit.org/b/165195 svg/dom/SVGColor.html [ Pass Failure ]
 webkit.org/b/165195 svg/dom/SVGPaint.html [ Pass Failure ]
 webkit.org/b/165195 svg/dom/rgb-color-parser.html [ Pass Failure ]
 
+# Visual viewports
+webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-no-content.html [ Failure ]
+webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-out-of-view.html [ Failure ]
+webkit.org/b/165465 tiled-drawing/scrolling/fixed-background/fixed-body-background-zoomed.html [ Failure ]

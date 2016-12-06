@@ -2,6 +2,9 @@
   (scrollable area size 785 585)
   (contents size 1805 5108)
   (frame scale factor 2.30)
+  (layout viewport at (0,0) size 785x585)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,1636))
   (children 4
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)

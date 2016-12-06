@@ -10,37 +10,37 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (contentsOpaque 1)
       (children 6
         (GraphicsLayer
-          (position 812.00 61.00)
+          (position 820.00 61.00)
           (bounds 300.00 60.00)
           (contentsOpaque 1)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 612.00 129.00)
+          (position 812.00 129.00)
           (bounds 300.00 60.00)
           (contentsOpaque 1)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 812.00 197.00)
+          (position 960.00 197.00)
           (bounds 300.00 60.00)
           (contentsOpaque 1)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 612.00 265.00)
+          (position 812.00 265.00)
           (bounds 300.00 60.00)
           (contentsOpaque 1)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 612.00 333.00)
+          (position 820.00 333.00)
           (bounds 300.00 60.00)
           (contentsOpaque 1)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 612.00 401.00)
+          (position 960.00 401.00)
           (bounds 300.00 60.00)
           (contentsOpaque 1)
           (drawsContent 1)

@@ -1,6 +1,9 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 2513)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,1913))
   (children 1
     (Overflow scrolling node
       (scrollable area size 300 400)

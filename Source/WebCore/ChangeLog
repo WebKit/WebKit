@@ -1,3 +1,18 @@
+2016-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable visual viewports by default on Mac, and iOS Wk2
+        https://bugs.webkit.org/show_bug.cgi?id=165452
+
+        Reviewed by Zalan Bujtas.
+
+        Some tests revealed an issue where, during scrollbar updates, the visual viewport would be
+        15px wider than the layout viewport, which results in the layout viewport shifting 15px to the
+        right. Prevent this by disallowing viewport updates during the AdjustViewSize phase; we'll
+        be called again in postLayoutTasks.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutViewport):
+
 2016-12-06  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Rename some HTTP 0.9-specific functions to conform to WebKit Code Style Guidelines

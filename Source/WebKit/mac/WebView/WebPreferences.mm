@@ -628,7 +628,13 @@ public:
 #if ENABLE(WEB_ANIMATIONS)
         [NSNumber numberWithBool:NO], WebKitWebAnimationsEnabledPreferenceKey,
 #endif
+
+#if PLATFORM(IOS)
         [NSNumber numberWithBool:NO], WebKitVisualViewportEnabledPreferenceKey,
+#else
+        [NSNumber numberWithBool:YES], WebKitVisualViewportEnabledPreferenceKey,
+#endif
+
         [NSNumber numberWithBool:YES], WebKitNeedsStorageAccessFromFileURLsQuirkKey,
 #if ENABLE(SUBTLE_CRYPTO)
         [NSNumber numberWithBool:YES], WebKitSubtleCryptoEnabledPreferenceKey,

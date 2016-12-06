@@ -1856,6 +1856,11 @@ void FrameView::updateLayoutViewport()
     if (!frame().settings().visualViewportEnabled())
         return;
     
+    // Don't update the layout viewport if we're in the middle of adjusting scrollbars. We'll get another call
+    // as a post-layout task.
+    if (m_layoutPhase == InViewSizeAdjust)
+        return;
+    
     if (m_layoutViewportOverrideRect) {
         LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport() - has layoutViewportOverrideRect" << m_layoutViewportOverrideRect.value());
         return;

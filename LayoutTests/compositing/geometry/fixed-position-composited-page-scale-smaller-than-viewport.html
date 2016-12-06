@@ -25,6 +25,7 @@
 </style>
 <script>
   if (window.internals) {
+    window.internals.settings.setVisualViewportEnabled(false);
     window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
     window.internals.settings.setFixedPositionCreatesStackingContext(true);
     window.internals.setPageScaleFactor(0.5, 0, 0);

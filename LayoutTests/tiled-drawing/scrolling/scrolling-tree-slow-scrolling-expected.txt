@@ -1,6 +1,9 @@
 (Frame scrolling node
   (scrollable area size 800 600)
   (contents size 800 600)
+  (layout viewport at (0,0) size 800x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,0))
   (Scrolling on main thread because: Has slow repaint objects)
 )
 

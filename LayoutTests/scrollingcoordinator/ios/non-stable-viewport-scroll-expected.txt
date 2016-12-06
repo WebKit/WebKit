@@ -17,13 +17,13 @@ fixed
       (children 1
         (GraphicsLayer
           (position 10.00 0.00)
-          (approximate position 10.00 960.75)
+          (approximate position 10.00 621.34)
           (bounds 100.00 568.00)
           (usingTiledLayer 1)
           (contentsOpaque 1)
           (drawsContent 1)
-          (visible rect 0.00, 39.25 96.67 x 189.33)
-          (coverage rect -10.00, -3.42 192.00 x 274.67)
+          (visible rect 0.00, 378.66 96.67 x 189.33)
+          (coverage rect -10.00, 335.99 192.00 x 274.67)
           (intersects coverage rect 1)
           (contentsScale 6.00)
         )

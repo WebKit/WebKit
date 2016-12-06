@@ -1,6 +1,9 @@
 (Frame scrolling node
   (scrollable area size 785 600)
   (contents size 785 1016)
+  (layout viewport at (0,0) size 785x600)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (0,416))
   (children 1
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)

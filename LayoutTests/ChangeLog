@@ -1,3 +1,63 @@
+2016-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable visual viewports by default on Mac, and iOS Wk2
+        https://bugs.webkit.org/show_bug.cgi?id=165452
+
+        Reviewed by Zalan Bujtas.
+
+        Skip, fix or adjust tests for visual viewports.
+
+        * TestExpectations:
+        * animations/trigger-container-scroll-boundaries.html:
+        * animations/trigger-container-scroll-empty.html:
+        * animations/trigger-container-scroll-simple.html:
+        * compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scaled-expected.txt:
+        * compositing/layer-creation/fixed-position-out-of-view-scaled-scroll-expected.txt:
+        * fast/scrolling/ios/remove-scrolling-role-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed.html:
+        * platform/ios-simulator-wk2/compositing/geometry/fixed-in-composited-expected.txt: Removed.
+        * platform/ios-simulator-wk2/compositing/geometry/limit-layer-bounds-fixed-expected.txt:
+        * platform/ios-simulator-wk2/compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt:
+        * platform/ios-simulator-wk2/compositing/layer-creation/fixed-position-under-transform-expected.txt:
+        * platform/ios-simulator-wk2/compositing/layer-creation/no-compositing-for-sticky-expected.txt:
+        * platform/ios-simulator-wk2/fast/overflow/position-fixed-transform-clipping-expected.txt:
+        * platform/ios-simulator/compositing/absolute-inside-out-of-view-fixed-expected.txt:
+        * platform/ios-simulator/compositing/geometry/fixed-in-composited-expected.txt:
+        * scrollingcoordinator/ios/non-stable-viewport-scroll-expected.txt:
+        * scrollingcoordinator/ios/ui-scrolling-tree-expected.txt:
+        * tiled-drawing/fixed-layout-size-fixed-attachment-cover.html:
+        * tiled-drawing/fixed-layout-size-fixed-attachment-local.html:
+        * tiled-drawing/scrolling/clamp-out-of-bounds-scrolls-expected.txt:
+        * tiled-drawing/scrolling/fixed-background/fixed-body-background-zoomed-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/absolute-inside-out-of-view-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-in-overflow-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+        * tiled-drawing/scrolling/fixed/four-bars-zoomed-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/fixed/negative-scroll-offset-in-view-expected.txt:
+        * tiled-drawing/scrolling/fixed/nested-fixed-expected.txt:
+        * tiled-drawing/scrolling/fixed/percentage-inside-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-in-fixed-expected.txt:
+        * tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * tiled-drawing/scrolling/frames/fixed-inside-frame-expected.txt:
+        * tiled-drawing/scrolling/frames/frameset-frame-scrollability-expected.txt:
+        * tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability-expected.txt:
+        * tiled-drawing/scrolling/frames/remove-coordinated-frame-expected.txt:
+        * tiled-drawing/scrolling/frames/scroll-region-after-frame-layout-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-after-scroll-expected.txt:
+        * tiled-drawing/scrolling/scrolling-tree-slow-scrolling-expected.txt:
+        * tiled-drawing/scrolling/sticky/negative-scroll-offset-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-horizontal-expected.txt:
+        * tiled-drawing/scrolling/sticky/sticky-vertical-expected.txt:
+
 2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip modern-media-controls tests until flakiness can be resolved.

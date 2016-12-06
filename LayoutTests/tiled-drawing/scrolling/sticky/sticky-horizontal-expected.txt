@@ -3,6 +3,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
   (scrollable area size 800 585)
   (contents size 2008 585)
   (requested scroll position 800 0)
+  (layout viewport at (800,0) size 800x585)
+  (min layout viewport origin (0,0))
+  (max layout viewport origin (1208,0))
   (children 6
     (Sticky node
       (anchor edges: AnchorEdgeLeft )
