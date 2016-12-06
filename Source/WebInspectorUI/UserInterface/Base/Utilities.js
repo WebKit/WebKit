@@ -447,8 +447,11 @@ Object.defineProperty(Array, "shallowEqual",
         if (length !== b.length)
             return false;
 
-        for (var i = 0; i < length; ++i) {
-            if (a[i] !== b[i])
+        for (let i = 0; i < length; ++i) {
+            if (a[i] === b[i])
+                continue;
+
+            if (!Object.shallowEqual(a[i], b[i]))
                 return false;
         }
 

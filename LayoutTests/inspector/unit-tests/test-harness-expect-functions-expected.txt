@@ -170,6 +170,9 @@ FAIL: expectNotEqual(undefined, undefined)
 Expected to PASS
 PASS: expectShallowEqual({"a":1,"b":2}, {"a":1,"b":2})
 PASS: expectShallowEqual({}, {})
+PASS: expectShallowEqual([1,2], [1,2])
+PASS: expectShallowEqual([{"a":1},{"a":2}], [{"a":1},{"a":2}])
+PASS: expectShallowEqual([{}], [{}])
 PASS: expectShallowEqual([], [])
 Expected to FAIL
 FAIL: expectShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
@@ -178,11 +181,23 @@ FAIL: expectShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
 FAIL: expectShallowEqual({}, [])
     Expected: []
     Actual: {}
+FAIL: expectShallowEqual([1,2], [3,4])
+    Expected: [3,4]
+    Actual: [1,2]
+FAIL: expectShallowEqual([{"a":1},{"a":2}], [{"a":3},{"a":4}])
+    Expected: [{"a":3},{"a":4}]
+    Actual: [{"a":1},{"a":2}]
+FAIL: expectShallowEqual([{"a":1},{"a":2}], [{"b":1},{"b":2}])
+    Expected: [{"b":1},{"b":2}]
+    Actual: [{"a":1},{"a":2}]
 
 -- Running test case: InspectorTest.expectNotShallowEqual
 Expected to PASS
 PASS: expectNotShallowEqual({"a":1,"b":2}, {"a":3,"b":4})
 PASS: expectNotShallowEqual({}, [])
+PASS: expectNotShallowEqual([1,2], [3,4])
+PASS: expectNotShallowEqual([{"a":1},{"a":2}], [{"a":3},{"a":4}])
+PASS: expectNotShallowEqual([{"a":1},{"a":2}], [{"b":1},{"b":2}])
 Expected to FAIL
 FAIL: expectNotShallowEqual({"a":1,"b":2}, {"a":1,"b":2})
     Expected: not {"a":1,"b":2}
@@ -190,6 +205,15 @@ FAIL: expectNotShallowEqual({"a":1,"b":2}, {"a":1,"b":2})
 FAIL: expectNotShallowEqual({}, {})
     Expected: not {}
     Actual: {}
+FAIL: expectNotShallowEqual([1,2], [1,2])
+    Expected: not [1,2]
+    Actual: [1,2]
+FAIL: expectNotShallowEqual([{"a":1},{"a":2}], [{"a":1},{"a":2}])
+    Expected: not [{"a":1},{"a":2}]
+    Actual: [{"a":1},{"a":2}]
+FAIL: expectNotShallowEqual([{}], [{}])
+    Expected: not [{}]
+    Actual: [{}]
 FAIL: expectNotShallowEqual([], [])
     Expected: not []
     Actual: []

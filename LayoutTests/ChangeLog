@@ -1,3 +1,15 @@
+2016-12-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Object.shallowEqual([{}], [{}]) should return true
+        https://bugs.webkit.org/show_bug.cgi?id=165397
+
+        Reviewed by Brian Burg.
+
+        Added passing and failing inputs for TestHarness.prototype.expectShallowEqual.
+
+        * inspector/unit-tests/test-harness-expect-functions-expected.txt:
+        * inspector/unit-tests/test-harness-expect-functions.html:
+
 2016-12-05  Dean Jackson  <dino@apple.com>
 
         pointer lock needs to be feature detectable

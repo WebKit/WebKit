@@ -1,3 +1,15 @@
+2016-12-05  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Object.shallowEqual([{}], [{}]) should return true
+        https://bugs.webkit.org/show_bug.cgi?id=165397
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+        Array.shallowEqual should compare array items using strict equivalence,
+        and on failure defer to Object.shallowEqual.
+
 2016-12-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove legacy styles

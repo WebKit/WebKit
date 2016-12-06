@@ -91,11 +91,17 @@ function test()
         passingInputs: [
             [{a: 1, b: 2}, {a: 1, b: 2}],
             [{}, {}],
+            [[1, 2], [1, 2]],
+            [[{a: 1}, {a: 2}], [{a: 1}, {a: 2}]],
+            [[{}], [{}]],
             [[], []],
         ],
         failingInputs: [
             [{a: 1, b: 2}, {a: 3, b: 4}],
             [{}, []],
+            [[1, 2], [3, 4]],
+            [[{a: 1}, {a: 2}], [{a: 3}, {a: 4}]],
+            [[{a: 1}, {a: 2}], [{b: 1}, {b: 2}]],
         ]
     };
     addTestCase(expectShallowEqualTestCase);
