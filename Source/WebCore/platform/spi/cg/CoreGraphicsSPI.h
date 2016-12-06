@@ -188,6 +188,12 @@ CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
 CGFontAntialiasingStyle CGContextGetFontAntialiasingStyle(CGContextRef);
 void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+typedef struct CGPDFAnnotation *CGPDFAnnotationRef;
+typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageRef page, CGPDFAnnotationRef annotation);
+void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
+#endif
+
 #if USE(IOSURFACE)
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);

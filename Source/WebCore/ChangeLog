@@ -1,3 +1,19 @@
+2016-12-06  Tim Horton  <timothy_horton@apple.com>
+
+        PDF markup/annotations visible in Mail on macOS but not on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=165444
+        <rdar://problem/28942896>
+
+        Reviewed by Simon Fraser.
+
+        No new tests, but enabled an existing test for this feature.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        * platform/spi/cg/CoreGraphicsSPI.h:
+        Make use of CGContextDrawPDFPageWithAnnotations where available,
+        to paint the page with annotations.
+
 2016-12-06  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Turn on the new CSS parser
