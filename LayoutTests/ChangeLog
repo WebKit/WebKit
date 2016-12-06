@@ -1,3 +1,11 @@
+2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/shadow-dom/slotted-pseudo-element-css-text.html after r209396.
+
+        Unreviewed test gardening.
+
+        * fast/shadow-dom/slotted-pseudo-element-css-text-expected.txt:
+
 2016-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Mark two tiled-drawing tests as flakey. Layout viewport rect computation has issues in subframes,
