@@ -29,8 +29,23 @@
 }
 
 /* We need to use relative positioning due to webkit.org/b/163603 */
-.media-controls {
+.media-controls-container {
     position: relative;
+}
+
+.media-controls-container,
+.media-controls-container > * {
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+.media-controls-container > * {
+    position: absolute;
+}
+
+.media-controls {
+    height: 100%;
     font-family: -apple-system;
     -webkit-user-select: none;
     cursor: default;

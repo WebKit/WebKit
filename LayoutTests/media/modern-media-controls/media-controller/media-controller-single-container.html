@@ -1,0 +1,25 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<script type="text/javascript">
+
+description("Testing the <code>MediaController</code> has a single container for captions and media controls.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+shouldBe("shadowRoot.childElementCount", "2");
+shouldBeEqualToString("shadowRoot.firstElementChild.localName", "style");
+shouldBeEqualToString("shadowRoot.lastElementChild.localName", "div");
+shouldBeEqualToString("shadowRoot.lastElementChild.className", "media-controls-container");
+
+shouldBe("shadowRoot.lastElementChild.childElementCount", "2");
+shouldBeEqualToString("shadowRoot.lastElementChild.firstElementChild.localName", "div");
+shouldBeEqualToString("shadowRoot.lastElementChild.firstElementChild.getAttribute('pseudo')", "-webkit-media-text-track-container");
+shouldBeEqualToString("shadowRoot.lastElementChild.lastElementChild.localName", "div");
+shouldBeTrue("shadowRoot.lastElementChild.lastElementChild.classList.contains('media-controls')");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

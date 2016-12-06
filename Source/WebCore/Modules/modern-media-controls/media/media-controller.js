@@ -32,9 +32,12 @@ class MediaController
         this.media = media;
         this.host = host;
 
+        this.container = shadowRoot.appendChild(document.createElement("div"));
+        this.container.className = "media-controls-container";
+
         if (host) {
             media.addEventListener("webkitpresentationmodechanged", this);
-            shadowRoot.appendChild(host.textTrackContainer);
+            this.container.appendChild(host.textTrackContainer);
         }
 
         this._updateControlsIfNeeded();
@@ -99,10 +102,10 @@ class MediaController
 
         if (previousControls) {
             this.controls.fadeIn();
-            this.shadowRoot.replaceChild(this.controls.element, previousControls.element);
+            this.container.replaceChild(this.controls.element, previousControls.element);
             this.controls.usesLTRUserInterfaceLayoutDirection = previousControls.usesLTRUserInterfaceLayoutDirection;
         } else
-            this.shadowRoot.appendChild(this.controls.element);        
+            this.container.appendChild(this.controls.element);        
 
         this._updateControlsSize();
 

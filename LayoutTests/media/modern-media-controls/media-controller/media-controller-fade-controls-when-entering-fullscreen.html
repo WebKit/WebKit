@@ -10,20 +10,22 @@ description("Fading in the controls when entering fullscreen.");
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
+let mediaControls = shadowRoot.lastElementChild.lastElementChild;
 
 media.addEventListener("play", () => {
     media.pause();
 
     window.requestAnimationFrame(() => {
         debug("We should not fade the controls in when showing them inline the first time");
-        shouldBeFalse("shadowRoot.lastChild.classList.contains('fade-in')");
+        shouldBeFalse("mediaControls.classList.contains('fade-in')");
         
         clickOnFullscreenButton();
         media.addEventListener("webkitfullscreenchange", () => {
+            mediaControls = shadowRoot.lastElementChild.lastElementChild;
             debug("Obtained a webkitfullscreenchange event");
             shouldBeTrue("media.webkitDisplayingFullscreen");
             debug("We should fade the controls in when showing them fullscreen");
-            shouldBeTrue("shadowRoot.lastChild.classList.contains('fade-in')");
+            shouldBeTrue("mediaControls.classList.contains('fade-in')");
 
             debug("");
             media.remove();

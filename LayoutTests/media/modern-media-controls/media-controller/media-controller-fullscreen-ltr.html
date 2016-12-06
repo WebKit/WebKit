@@ -19,7 +19,7 @@ media.addEventListener("webkitfullscreenchange", function() {
         window.requestAnimationFrame(() => {
             debug("Media entered fullscreen");
 
-            mediaControlsElement = shadowRoot.lastChild;
+            mediaControlsElement = shadowRoot.lastElementChild.lastElementChild;
             volumeSliderElement = mediaControlsElement.querySelector(".volume.slider");
         
             shouldBeTrue("mediaControlsElement.classList.contains('uses-ltr-user-interface-layout-direction')");

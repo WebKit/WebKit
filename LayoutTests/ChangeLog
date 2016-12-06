@@ -1,5 +1,23 @@
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Rendering issues with controls bar when captions are on
+        https://bugs.webkit.org/show_bug.cgi?id=165390
+
+        Reviewed by Dean Jackson.
+
+        We add a new test that checks we have the expected element structure with a single <div> containing
+        the captions and the media controls elements. Three other tests needed updating since they made
+        assumptions on the DOM structure that were no longer holding.
+
+        * media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html:
+        * media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/media-controller/media-controller-single-container-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-single-container.html: Added.
+
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Automatically hide the controls bar when the mouse is idle
         https://bugs.webkit.org/show_bug.cgi?id=165492
 

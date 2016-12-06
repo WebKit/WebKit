@@ -10,7 +10,7 @@ description("Testing the <code>MediaController</code> resizing behavior.");
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
-const mediaControls = shadowRoot.lastChild;
+const mediaControls = shadowRoot.lastElementChild.lastElementChild;
 
 debug("Checking initial size");
 shouldBeEqualToString("mediaControls.style.width", "320px");

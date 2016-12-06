@@ -682,6 +682,9 @@ void RenderImage::layout()
 
 void RenderImage::layoutShadowControls(const LayoutSize& oldSize)
 {
+    // We expect a single containing box under the UA shadow root.
+    ASSERT(firstChild() == lastChild());
+
     auto* controlsRenderer = downcast<RenderBox>(firstChild());
     if (!controlsRenderer)
         return;
