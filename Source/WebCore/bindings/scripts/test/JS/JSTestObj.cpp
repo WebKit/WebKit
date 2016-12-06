@@ -682,11 +682,11 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     return result;
 }
 
-template<> JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject&, const TestObj::Dictionary& dictionary)
+JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const TestObj::Dictionary& dictionary)
 {
     auto& vm = state.vm();
 
-    auto result = constructEmptyObject(&state)
+    auto result = constructEmptyObject(&state);
 
     auto anyTypedefValueValue = toJS<IDLAny>(state, globalObject, dictionary.anyTypedefValue);
     result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyTypedefValue"), anyTypedefValueValue);

@@ -1,3 +1,13 @@
+2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r209390.
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestObj.h:
+
 2016-12-06  Tim Horton  <timothy_horton@apple.com>
 
         PDF markup/annotations visible in Mail on macOS but not on iOS
