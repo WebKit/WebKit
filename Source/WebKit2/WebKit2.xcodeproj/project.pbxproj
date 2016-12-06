@@ -284,6 +284,8 @@
 		1A6563E51B7A8C50009CF787 /* APIWindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6563E31B7A8C50009CF787 /* APIWindowFeatures.h */; };
 		1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */; };
 		1A67CD2E1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */; };
+		1A6D86C11DF75265007745E8 /* MachMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D86BF1DF75265007745E8 /* MachMessage.cpp */; };
+		1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6D86C01DF75265007745E8 /* MachMessage.h */; };
 		1A6FA21E1BD0435B00AAA650 /* WKFrameInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */; };
 		1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6FB7AD11E64B6800DB1371 /* PluginView.h */; };
@@ -2312,6 +2314,8 @@
 		1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersInternal.h; sourceTree = "<group>"; };
 		1A6D141F1B0167D500785FF0 /* Info-OSX-10.9-10.10.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX-10.9-10.10.plist"; sourceTree = "<group>"; };
 		1A6D14211B01681600785FF0 /* PluginService.32-64-10.9-10.10.Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PluginService.32-64-10.9-10.10.Info.plist"; path = "PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist"; sourceTree = SOURCE_ROOT; };
+		1A6D86BF1DF75265007745E8 /* MachMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachMessage.cpp; sourceTree = "<group>"; };
+		1A6D86C01DF75265007745E8 /* MachMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachMessage.h; sourceTree = "<group>"; };
 		1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameInfoPrivate.h; sourceTree = "<group>"; };
 		1A6FB7AC11E64B6800DB1371 /* PluginView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginView.cpp; sourceTree = "<group>"; };
 		1A6FB7AD11E64B6800DB1371 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
@@ -6978,6 +6982,8 @@
 			children = (
 				1A30EAC5115D7DA30053E937 /* ConnectionMac.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
+				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
+				1A6D86C01DF75265007745E8 /* MachMessage.h */,
 				BCC56F771159957D001CCAF9 /* MachPort.h */,
 			);
 			path = mac;
@@ -7633,6 +7639,7 @@
 				2DF9EEEC1A7836EE00B6CFBE /* APINavigationAction.h in Headers */,
 				2DD9EB2D1A6F012500BB1267 /* APINavigationClient.h in Headers */,
 				BCF69FA21176D01400471A52 /* APINavigationData.h in Headers */,
+				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
 				2DF9EEEE1A786EAD00B6CFBE /* APINavigationResponse.h in Headers */,
 				BC33DD681238464600360F3F /* APINumber.h in Headers */,
 				BC857FB512B830E600EDEB2E /* APIOpenPanelParameters.h in Headers */,
@@ -9522,6 +9529,7 @@
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
 				330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */,
 				330934551315B9750097A7BC /* WebCookieManagerProxy.cpp in Sources */,
+				1A6D86C11DF75265007745E8 /* MachMessage.cpp in Sources */,
 				33AA1066131F060000D4A575 /* WebCookieManagerProxyClient.cpp in Sources */,
 				F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */,
 				330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */,

@@ -1,3 +1,34 @@
+2016-12-06  Anders Carlsson  <andersca@apple.com>
+
+        Add a new MachMessage class and use it for sending outgoing messages
+        https://bugs.webkit.org/show_bug.cgi?id=165484
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendOutgoingMessage):
+        Instead of trying to randomly use memory from the stack as well as using mmap for the message data for out of line messages
+        (which makes no sense at all, since the body data is already mmapped), just always create a MachMessage object and use it.
+        
+        (IPC::machMessageSize): Deleted.
+        This has been moved to MachMessage::messageSize().
+        
+        * Platform/IPC/mac/MachMessage.cpp: Added.
+        (IPC::MachMessage::create):
+        Allocate extra memory to store the actual buffer.
+
+        (IPC::MachMessage::MachMessage):
+        Initialize variables. m_size isn't really used right now, but will be in a subsequent patch.
+
+        (IPC::MachMessage::header):
+        Return the header.
+        
+        * Platform/IPC/mac/MachMessage.h: Added.
+        (IPC::MachMessage::length):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2016-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Enable visual viewports by default on Mac, and iOS Wk2
