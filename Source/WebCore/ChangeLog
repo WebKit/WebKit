@@ -1,3 +1,28 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support setting of custom properties from the CSS OM
+        https://bugs.webkit.org/show_bug.cgi?id=165442
+
+        Reviewed by Tim Horton.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseCustomPropertyValue):
+        Call in to a new function in CSSParserImpl that can handle
+        custom property parsing.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseCustomPropertyValue):
+        New function that is similar to parseValue, but handling custom
+        properties.
+
+        (WebCore::CSSParserImpl::consumeDeclaration):
+        (WebCore::CSSParserImpl::consumeCustomPropertyValue):
+        (WebCore::CSSParserImpl::consumeVariableValue): Deleted.
+        * css/parser/CSSParserImpl.h:
+        Rename consumeVariableValue to consumeCustomPropertyValue, since that
+        is more clear. consumeVariableValue sounds like you might be resolving
+        a variable reference rather than parsing a custom property's value.
+
 2016-12-05  Tim Horton  <timothy_horton@apple.com>
 
         Adopt CAMachPort-as-layer-contents

@@ -1368,6 +1368,9 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
 
 CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomicString& propertyName, const String& string, bool important, const CSSParserContext& context, StyleSheetContents* contextStyleSheet)
 {
+    if (context.useNewParser)
+        return CSSParserImpl::parseCustomPropertyValue(&declaration, propertyName, string, important, context);
+
     CSSParser parser(context);
     parser.setCustomPropertyName(propertyName);
     return parser.parseValue(declaration, CSSPropertyCustom, string, important, contextStyleSheet);
