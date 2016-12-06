@@ -126,7 +126,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties)
+static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
     if (properties.changedProperties & RemoteLayerTreeTransaction::NameChanged)
         layer.name = properties.name;
@@ -234,7 +234,7 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
     {
         RemoteLayerBackingStore* backingStore = properties.backingStore.get();
         if (backingStore && properties.backingStoreAttached)
-            backingStore->applyBackingStoreToLayer(layer);
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType);
         else {
             layer.contents = nil;
             layer.contentsOpaque = NO;
@@ -254,10 +254,10 @@ static void applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTre
         updateCustomAppearance(layer, properties.customAppearance);
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    applyPropertiesToLayer(layer, layerTreeHost, properties);
+    applyPropertiesToLayer(layer, layerTreeHost, properties, layerContentsType);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);
@@ -291,10 +291,10 @@ void RemoteLayerTreePropertyApplier::applyProperties(CALayer *layer, RemoteLayer
 }
 
 #if PLATFORM(IOS)
-void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyProperties(UIView *view, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    applyPropertiesToLayer(view.layer, layerTreeHost, properties);
+    applyPropertiesToLayer(view.layer, layerTreeHost, properties, layerContentsType);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
         RetainPtr<NSMutableArray> children = adoptNS([[NSMutableArray alloc] initWithCapacity:properties.children.size()]);

@@ -191,6 +191,11 @@ bool CARenderServerRenderLayerWithTransform(mach_port_t, uint32_t client_id, uin
 #endif
 #endif
 
+typedef struct _CAMachPort *CAMachPortRef;
+CAMachPortRef CAMachPortCreate(mach_port_t);
+mach_port_t CAMachPortGetPort(CAMachPortRef);
+CFTypeID CAMachPortGetTypeID(void);
+
 WTF_EXTERN_C_END
 
 // FIXME: Move this into the APPLE_INTERNAL_SDK block once it's in an SDK.

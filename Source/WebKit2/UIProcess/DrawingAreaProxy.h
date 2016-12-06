@@ -103,6 +103,8 @@ public:
 
     virtual void willSendUpdateGeometry() { }
 
+    virtual void prepareForAppSuspension() { }
+
 #if PLATFORM(COCOA)
     virtual WebCore::MachSendRight createFence();
 #endif

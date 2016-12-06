@@ -36,7 +36,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/MachSendRight.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/QuartzCoreSPI.h>
@@ -153,7 +152,7 @@ bool RemoteLayerBackingStore::decode(IPC::Decoder& decoder, RemoteLayerBackingSt
         MachSendRight sendRight;
         if (!decoder.decode(sendRight))
             return false;
-        result.m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(sendRight, sRGBColorSpaceRef());
+        result.m_frontBufferSendRight = WTFMove(sendRight);
         return true;
     }
 #endif
@@ -399,13 +398,25 @@ void RemoteLayerBackingStore::enumerateRectsBeingDrawn(CGContextRef context, voi
     }
 }
 
-void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer)
+void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType)
 {
     layer.contentsOpaque = m_isOpaque;
 
 #if USE(IOSURFACE)
     if (acceleratesDrawing()) {
-        layer.contents = m_frontBuffer.surface ? m_frontBuffer.surface->asLayerContents() : nil;
+        switch (contentsType) {
+        case LayerContentsType::IOSurface:
+            if (!m_frontBuffer.surface) {
+                ASSERT(m_frontBufferSendRight);
+                m_frontBuffer.surface = WebCore::IOSurface::createFromSendRight(WTFMove(m_frontBufferSendRight), sRGBColorSpaceRef());
+            }
+            layer.contents = m_frontBuffer.surface ? m_frontBuffer.surface->asLayerContents() : nil;
+            break;
+        case LayerContentsType::CAMachPort:
+            ASSERT(m_frontBufferSendRight);
+            layer.contents = (id)adoptCF(CAMachPortCreate(m_frontBufferSendRight.leakSendRight())).get();
+            break;
+        }
         return;
     }
 #endif
@@ -422,7 +433,7 @@ RetainPtr<CGContextRef> RemoteLayerBackingStore::takeFrontContextPendingFlush()
 #if USE(IOSURFACE)
 bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolatile)
 {
-    switch(type) {
+    switch (type) {
     case BufferType::Front:
         if (m_frontBuffer.surface && m_frontBuffer.isVolatile != isVolatile) {
             if (isVolatile)

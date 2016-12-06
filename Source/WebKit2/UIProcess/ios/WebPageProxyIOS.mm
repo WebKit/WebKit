@@ -673,6 +673,7 @@ void WebPageProxy::applicationDidEnterBackground()
 
 void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
 {
+    m_drawingArea->prepareForAppSuspension();
     m_process->send(Messages::WebPage::ApplicationDidFinishSnapshottingAfterEnteringBackground(), m_pageID);
 }
 

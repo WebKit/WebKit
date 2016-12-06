@@ -72,7 +72,7 @@ std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::create(IntSize size, Int
     return surface;
 }
 
-std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSendRight(const MachSendRight& sendRight, CGColorSpaceRef colorSpace)
+std::unique_ptr<WebCore::IOSurface> WebCore::IOSurface::createFromSendRight(const MachSendRight&& sendRight, CGColorSpaceRef colorSpace)
 {
     auto surface = adoptCF(IOSurfaceLookupFromMachPort(sendRight.sendRight()));
     return IOSurface::createFromSurface(surface.get(), colorSpace);

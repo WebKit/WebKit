@@ -1,3 +1,55 @@
+2016-12-05  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt CAMachPort-as-layer-contents
+        https://bugs.webkit.org/show_bug.cgi?id=141687
+        <rdar://problem/19393233>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/RemoteLayerBackingStore.h:
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::decode):
+        On the UI process side, instead of actually looking up the surface,
+        just keep the MachSendRight around, to later be turned into a CAMachPort.
+
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        Make a CAMachPort and leak our send right into it. CAMachPort
+        will adopt the port and destroy it when needed.
+
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        Tiny style fix.
+
+        * Shared/mac/RemoteLayerTreePropertyApplier.h:
+        * Shared/mac/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::applyPropertiesToLayer):
+        (WebKit::RemoteLayerTreePropertyApplier::applyProperties):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::prepareForAppSuspension):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::prepareForAppSuspension):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::updateLayerTree):
+        (WebKit::RemoteLayerTreeHost::mapAllIOSurfaceBackingStore):
+        * WebProcess/WebPage/mac/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::recursiveBuildTransaction):
+        Two supporting changes in order to fix the two regressions that this
+        caused when we tried to land it two years ago:
+
+        When an app is being suspended, resolve all CAMachPort backing store
+        into actual IOSurfaces. Otherwise, any live CAMachPorts will keep a
+        +1 on their respective IOSurface's use count, causing us to fail to
+        mark them volatile, keeping the app alive for more time (re-trying the
+        volatility change), and increasing the likelihood of background jetsam.
+
+        If the debugging tile map is enabled, do not use CAMachPort, because
+        we don't have a great way to plumb the same CAMachPort to two layers
+        (and it doesn't seem to work even if you do). Instead, just map the
+        IOSurface into the UI process like we used to.
+
 2016-12-05  Dean Jackson  <dino@apple.com>
 
         pointer lock needs to be feature detectable

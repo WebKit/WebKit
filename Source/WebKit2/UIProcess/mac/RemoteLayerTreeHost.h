@@ -67,6 +67,10 @@ public:
     // Detach the root layer; it will be reattached upon the next incoming commit.
     void detachRootLayer();
 
+    // Turn all CAMachPort objects in layer contents into actual IOSurfaces.
+    // This avoids keeping an outstanding InUse reference when suspended.
+    void mapAllIOSurfaceBackingStore();
+
 private:
     LayerOrView *createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeTransaction::LayerProperties*);
     static void setLayerID(CALayer *, WebCore::GraphicsLayer::PlatformLayerID);

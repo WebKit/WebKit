@@ -166,7 +166,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         }
 
         if (isPlatformCALayerRemoteCustom()) {
-            RemoteLayerTreePropertyApplier::applyProperties(platformLayer(), nullptr, m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap());
+            RemoteLayerTreePropertyApplier::applyProperties(platformLayer(), nullptr, m_properties, RemoteLayerTreePropertyApplier::RelatedLayerMap(), RemoteLayerBackingStore::LayerContentsType::CAMachPort);
             didCommit();
             return;
         }

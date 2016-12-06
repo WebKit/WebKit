@@ -474,6 +474,11 @@ void RemoteLayerTreeDrawingAreaProxy::hideContentUntilAnyUpdate()
     m_remoteLayerTreeHost.detachRootLayer();
 }
 
+void RemoteLayerTreeDrawingAreaProxy::prepareForAppSuspension()
+{
+    m_remoteLayerTreeHost.mapAllIOSurfaceBackingStore();
+}
+
 bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
 {
     return m_remoteLayerTreeHost.rootLayer();

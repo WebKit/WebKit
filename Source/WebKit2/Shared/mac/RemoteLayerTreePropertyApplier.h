@@ -37,9 +37,9 @@ class RemoteLayerTreeHost;
 class RemoteLayerTreePropertyApplier {
 public:
     typedef HashMap<WebCore::GraphicsLayer::PlatformLayerID, LayerOrView *> RelatedLayerMap;
-    static void applyProperties(CALayer *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+    static void applyProperties(CALayer *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&, RemoteLayerBackingStore::LayerContentsType);
 #if PLATFORM(IOS)
-    static void applyProperties(UIView *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&);
+    static void applyProperties(UIView *, RemoteLayerTreeHost*, const RemoteLayerTreeTransaction::LayerProperties&, const RelatedLayerMap&, RemoteLayerBackingStore::LayerContentsType);
 #endif
 };
 

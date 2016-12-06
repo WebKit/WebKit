@@ -29,6 +29,7 @@
 #include "ShareableBitmap.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IOSurface.h>
+#include <WebCore/MachSendRight.h>
 #include <WebCore/Region.h>
 #include <chrono>
 
@@ -65,7 +66,8 @@ public:
 
     PlatformCALayerRemote* layer() const { return m_layer; }
 
-    void applyBackingStoreToLayer(CALayer *);
+    enum class LayerContentsType { IOSurface, CAMachPort };
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType);
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, RemoteLayerBackingStore&);
@@ -134,6 +136,7 @@ private:
     Buffer m_backBuffer;
 #if USE(IOSURFACE)
     Buffer m_secondaryBackBuffer;
+    WebCore::MachSendRight m_frontBufferSendRight;
 #endif
 
     RetainPtr<CGContextRef> m_frontContextPendingFlush;
