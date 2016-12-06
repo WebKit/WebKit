@@ -3064,7 +3064,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
 #if ENABLE(POINTER_LOCK)
     if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE && m_frame.page()->pointerLockController().element()) {
-        m_frame.page()->pointerLockController().requestPointerUnlock();
+        m_frame.page()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
         return true;
     }
 #endif

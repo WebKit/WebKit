@@ -43,9 +43,11 @@ class PointerLockController {
 public:
     explicit PointerLockController(Page&);
     void requestPointerLock(Element* target);
+
     void requestPointerUnlock();
-    void elementRemoved(Element*);
-    void documentDetached(Document*);
+    void requestPointerUnlockAndForceCursorVisible();
+    void elementRemoved(Element&);
+    void documentDetached(Document&);
     bool lockPending() const;
     Element* element() const;
 
@@ -60,6 +62,7 @@ private:
     void enqueueEvent(const AtomicString& type, Document*);
     Page& m_page;
     bool m_lockPending;
+    bool m_forceCursorVisibleUponUnlock { false };
     RefPtr<Element> m_element;
     RefPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
 };

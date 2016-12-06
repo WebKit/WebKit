@@ -2284,7 +2284,7 @@ void Document::prepareForDestruction()
 
 #if ENABLE(POINTER_LOCK)
     if (page())
-        page()->pointerLockController().documentDetached(this);
+        page()->pointerLockController().documentDetached(*this);
 #endif
 
     InspectorInstrumentation::documentDetached(*this);

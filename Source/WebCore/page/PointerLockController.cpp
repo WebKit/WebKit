@@ -99,9 +99,18 @@ void PointerLockController::requestPointerUnlock()
     m_page.chrome().client().requestPointerUnlock();
 }
 
-void PointerLockController::elementRemoved(Element* element)
+void PointerLockController::requestPointerUnlockAndForceCursorVisible()
 {
-    if (m_element == element) {
+    if (!m_element || !RuntimeEnabledFeatures::sharedFeatures().pointerLockEnabled())
+        return;
+
+    m_page.chrome().client().requestPointerUnlock();
+    m_forceCursorVisibleUponUnlock = true;
+}
+
+void PointerLockController::elementRemoved(Element& element)
+{
+    if (m_element == &element) {
         m_documentOfRemovedElementWhileWaitingForUnlock = &m_element->document();
         // Set element null immediately to block any future interaction with it
         // including mouse events received before the unlock completes.
@@ -110,11 +119,11 @@ void PointerLockController::elementRemoved(Element* element)
     }
 }
 
-void PointerLockController::documentDetached(Document* document)
+void PointerLockController::documentDetached(Document& document)
 {
-    if (m_element && &m_element->document() == document) {
+    if (m_element && &m_element->document() == &document) {
         clearElement();
-        requestPointerUnlock();
+        requestPointerUnlockAndForceCursorVisible();
     }
 }
 
@@ -145,6 +154,8 @@ void PointerLockController::didLosePointerLock()
     enqueueEvent(eventNames().pointerlockchangeEvent, m_element ? &m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
     clearElement();
     m_documentOfRemovedElementWhileWaitingForUnlock = nullptr;
+    if (m_forceCursorVisibleUponUnlock)
+        m_page.chrome().client().setCursorHiddenUntilMouseMoves(false);
 }
 
 void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType)

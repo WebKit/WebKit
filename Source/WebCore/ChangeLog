@@ -1,3 +1,34 @@
+2016-12-05  Jer Noble  <jer.noble@apple.com>
+
+        [pointer-lock] Cursor should become visible when exiting pointer-lock via ESC key.
+        https://bugs.webkit.org/show_bug.cgi?id=165377
+
+        Reviewed by Darin Adler.
+
+        Introduce the concept of "force cursor to become visible" when requesting the pointer be
+        unlocked.  ESC events will cause the pointer to become visible, while normal key events
+        will not.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerUnlock):
+        (WebCore::PointerLockController::requestPointerUnlockAndForceCursorVisible):
+        (WebCore::PointerLockController::documentDetached):
+        (WebCore::PointerLockController::didLosePointerLock):
+        * page/PointerLockController.h:
+
+        Drive-by fix: apply Darin's feedback to existing functions:
+
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::elementRemoved):
+        (WebCore::PointerLockController::documentDetached):
+
+
 2016-12-06  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for converting dictionaries to JS
