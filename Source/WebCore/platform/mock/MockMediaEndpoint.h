@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockMediaEndpoint_h
-#define MockMediaEndpoint_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
@@ -91,10 +90,10 @@ private:
 
     Vector<String> m_midsOfSourcesToUnmute;
     Timer m_unmuteTimer;
+    
+    WeakPtrFactory<MockMediaEndpoint> m_weakPtrFactory;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // MockMediaEndpoint_h

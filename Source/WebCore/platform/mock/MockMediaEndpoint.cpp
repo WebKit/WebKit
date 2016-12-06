@@ -56,6 +56,7 @@ MockMediaEndpoint::MockMediaEndpoint(MediaEndpointClient& client)
     , m_iceCandidateTimer(*this, &MockMediaEndpoint::iceCandidateTimerFired)
     , m_iceTransportTimer(*this, &MockMediaEndpoint::iceTransportTimerFired)
     , m_unmuteTimer(*this, &MockMediaEndpoint::unmuteTimerFired)
+    , m_weakPtrFactory(this)
 {
 }
 
@@ -71,8 +72,11 @@ std::unique_ptr<RTCDataChannelHandler> MockMediaEndpoint::createDataChannelHandl
 
 void MockMediaEndpoint::generateDtlsInfo()
 {
-    callOnMainThread([this]() {
-        m_client.gotDtlsFingerprint(String(fingerprint), String(fingerprintFunction));
+    auto weakThis = m_weakPtrFactory.createWeakPtr();
+
+    callOnMainThread([weakThis] {
+        if (weakThis)
+            weakThis->m_client.gotDtlsFingerprint(fingerprint, fingerprintFunction);
     });
 }
 
