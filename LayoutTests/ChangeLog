@@ -1,3 +1,44 @@
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Automatically hide the controls bar when the mouse is idle
+        https://bugs.webkit.org/show_bug.cgi?id=165492
+
+        Reviewed by Dean Jackson.
+
+        We add new tests to check the following scenarios:
+
+        1. media-controller-auto-hide-mouse-enter-and-mouse-leave.html checks that, during media playback,
+        as the mouse enters the media the controls bar becomes visible, and as the mouse exits the media,
+        the controls bar becomes faded.
+
+        2. media-controller-auto-hide-mouse-enter-over-controls-bar.html checks that, during media playback,
+        as the mouse enters the media and remains idle over the controls bar, the controls bar remain visible.
+
+        3. media-controller-auto-hide-mouse-leave-after-play.html checks that when the media goes from paused
+        to playing, having the mouse enter and leave the media does not hide the media controls until the initial
+        auto-hide timer started as the playback status changed has elapsed.
+
+        4. media-controller-auto-hide-pause.html checks that the controls bar remains visible as the media is paused.
+
+        5. media-controller-auto-hide-rewind-with-mouse-enter.html checks that the controls bar becomes visible
+        as the mouse enters the media.
+
+        6. media-controller-auto-hide.html checks that the controls bar becomes faded after the auto-hide timer
+        has elapsed after initial playback.
+
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-pause-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-auto-hide.html: Added.
+
 2016-12-06  Daniel Bates  <dabates@apple.com>
 
         Test fast/selectors/040.html fails on iOS Simulator following <https://trac.webkit.org/changeset/209404>

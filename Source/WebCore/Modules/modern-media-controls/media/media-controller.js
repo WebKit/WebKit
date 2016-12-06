@@ -94,6 +94,9 @@ class MediaController
 
         this.controls = new ControlsClass;
 
+        if (this.shadowRoot.host && this.shadowRoot.host.dataset.autoHideDelay)
+            this.controls.controlsBar.autoHideDelay = this.shadowRoot.host.dataset.autoHideDelay;
+
         if (previousControls) {
             this.controls.fadeIn();
             this.shadowRoot.replaceChild(this.controls.element, previousControls.element);

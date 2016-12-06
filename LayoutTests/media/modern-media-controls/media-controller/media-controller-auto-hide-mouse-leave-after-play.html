@@ -1,0 +1,68 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 320px; height: 240px;" controls autoplay data-auto-hide-delay="250"></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the controls bar appears when the mouse enters and disappears when the mouse leaves the media.");
+
+let controlsBar;
+let played = false;
+
+document.querySelector("video").addEventListener("play", (event) => {
+    if (played)
+        return;
+
+    played = true;
+
+    const media = event.target;
+    controlsBar = window.internals.shadowRoot(media).querySelector(".controls-bar");
+
+    debug("Video started playing, controls bar is visible by default.");
+    shouldBeFalse("controlsBar.classList.contains('faded')");
+
+    debug("");
+    debug("Pausing media, this stops the auto-hide timer.");
+    media.pause();
+
+    setTimeout(() => {
+        debug("");
+        debug("Resuming media playback, this should rewind the auto-hide timer and ensure that entering and leaving the media doesn't hide the controls bar until the auto-hide timer has expired after playing.");
+        media.play();
+
+        setTimeout(() => {
+            debug("");
+            debug("Mouse entering the media.");
+            eventSender.mouseMoveTo(100, 100);
+
+            setTimeout(() => {
+                debug("");
+                debug("Mouse leaving the media.");
+                eventSender.mouseMoveTo(400, 400);
+
+                window.requestAnimationFrame(() => {
+                    debug("");
+                    debug("The initial auto-hide timer started when we resumed playback should not have expired or be overriden by the mouse entering and leaving the media, the controls should remain visible.");
+                    shouldBeFalse("controlsBar.classList.contains('faded')");
+
+                });
+            }, 50);
+        }, 50);
+
+        setTimeout(() => {
+            debug("");
+            debug("The initial auto-hide timer started when we resumed playback should now have expired and the controls should be faded.");
+            shouldBeTrue("controlsBar.classList.contains('faded')");
+
+            debug("");
+            media.remove();
+            finishJSTest();
+        }, 300);
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

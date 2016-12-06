@@ -1,3 +1,49 @@
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Automatically hide the controls bar when the mouse is idle
+        https://bugs.webkit.org/show_bug.cgi?id=165492
+
+        Reviewed by Dean Jackson.
+
+        We now automatically hide the controls bar. When the media is no longer paused, the controls remain
+        visible for 4 seconds, regardless of where the mouse pointer is located. When the user mouses over the
+        media, the controls become visible and automatically hide 4 seconds after the last time the user has
+        moved his mouse over the media. When the user mouses out of the media, the controls automatically hide.
+        When the mouse is over the controls bar, it remains visible. When the media is paused, the controls bar
+        remain visible regardless of the mouse position.
+
+        Tests: media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html
+               media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html
+               media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-leave-after-play.html
+               media/modern-media-controls/media-controller/media-controller-auto-hide-pause.html
+               media/modern-media-controls/media-controller/media-controller-auto-hide-rewind-with-mouse-enter.html
+               media/modern-media-controls/media-controller/media-controller-auto-hide.html
+
+        * Modules/modern-media-controls/controls/controls-bar.css: Added.
+        (.controls-bar):
+        (.controls-bar.faded):
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.get userInteractionEnabled):
+        (ControlsBar.prototype.set userInteractionEnabled):
+        (ControlsBar.prototype.get fadesWhileIdle):
+        (ControlsBar.prototype.set fadesWhileIdle):
+        (ControlsBar.prototype.get visible):
+        (ControlsBar.prototype.set visible):
+        (ControlsBar.prototype.get faded):
+        (ControlsBar.prototype.set faded):
+        (ControlsBar.prototype.handleEvent):
+        (ControlsBar.prototype.commitProperty):
+        (ControlsBar.prototype._cancelAutoHideTimer):
+        (ControlsBar.prototype._rewindAutoHideTimer):
+        (ControlsBar.prototype._autoHideTimerFired):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype.get mediaEvents):
+        (ControlsVisibilitySupport.prototype.syncControl):
+        (ControlsVisibilitySupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._updateControlsIfNeeded):
+
 2016-12-06  Zalan Bujtas  <zalan@apple.com>
 
         Can not select whole line when using flexbox

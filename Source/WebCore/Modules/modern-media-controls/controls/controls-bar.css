@@ -23,41 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class ControlsVisibilitySupport extends MediaControllerSupport
-{
+.controls-bar {
+    position: absolute;
+    transition: opacity 0.1s linear;
+}
 
-    constructor(mediaController)
-    {
-        super(mediaController);
-
-        this._controlsAttributeObserver = new MutationObserver(this.syncControl.bind(this));
-        this._controlsAttributeObserver.observe(mediaController.media, { attributes: true, attributeFilter: ["controls"] });
-    }
-
-    // Protected
-
-    destroy()
-    {
-        this._controlsAttributeObserver.disconnect();
-    }
-
-    get mediaEvents()
-    {
-        return ["loadedmetadata", "play", "pause"];
-    }
-
-    syncControl()
-    {
-        const media = this.mediaController.media;
-        const isVideo = media instanceof HTMLVideoElement;
-        let shouldShowControls = this.mediaController.media.controls;
-        if (isVideo)
-            shouldShowControls = shouldShowControls && media.readyState > HTMLMediaElement.HAVE_NOTHING;
-
-        const controls = this.mediaController.controls;
-        controls.startButton.visible = shouldShowControls;
-        controls.controlsBar.visible = shouldShowControls;
-        controls.controlsBar.fadesWhileIdle = isVideo ? !media.paused : false;
-    }
-
+.controls-bar.faded {
+    opacity: 0;
+    pointer-events: none;
+    transition-duration: 0.25s;
 }

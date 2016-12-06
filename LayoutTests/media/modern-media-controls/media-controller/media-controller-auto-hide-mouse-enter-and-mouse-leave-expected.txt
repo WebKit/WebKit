@@ -1,0 +1,21 @@
+Testing the controls bar appears when the mouse enters and disappears when the mouse leaves the media.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Video started playing, controls bar is visible by default.
+PASS controlsBar.classList.contains('faded') is false
+
+Auto-hide timer has elapsed, controls bar should be faded.
+PASS controlsBar.classList.contains('faded') is true
+
+Mouse moved over the media, controls bar should be visible.
+PASS controlsBar.classList.contains('faded') is false
+
+Mouse moved out of the media, controls bar should be faded.
+PASS controlsBar.classList.contains('faded') is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
