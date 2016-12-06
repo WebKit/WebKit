@@ -659,6 +659,9 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 # Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
 media/session [ Skip ]
 
+# Skip modern-media-controls tests until flakiness can be resolved - webkit.org/b/164322
+media/modern-media-controls [ Skip ]
+
 # Only iOS WK1 has testRunner.setPagePaused.
 fast/dom/timer-fire-after-page-pause.html [ Skip ]
 
@@ -975,10 +978,6 @@ webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass
 
 # Temporary failure until we start using ANGLE as a WebGL backend
 webkit.org/b/163924 fast/canvas/webgl/bufferData-offset-length.html [ Pass Failure ]
-
-webkit.org/b/165327 media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Pass Failure ]
-webkit.org/b/164226 media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
-webkit.org/b/164229 media/modern-media-controls/volume-support/volume-support-click.html [ Pass Timeout ]
 
 webkit.org/b/164080 http/tests/websocket/tests/hybi/closed-when-entering-page-cache.html [ Pass Failure ]
 webkit.org/b/164080 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Pass Failure ]

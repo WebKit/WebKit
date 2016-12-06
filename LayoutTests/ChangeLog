@@ -1,3 +1,16 @@
+2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip modern-media-controls tests until flakiness can be resolved.
+        https://bugs.webkit.org/show_bug.cgi?id=164784
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-12-06  Daniel Bates  <dabates@apple.com>
 
         Make fast/selectors/040.html actually test background-color painting for ::selection when run in DRT

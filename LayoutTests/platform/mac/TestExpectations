@@ -1443,35 +1443,6 @@ webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled-private.ht
 
 webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
 
-webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip ]
-webkit.org/b/164088 [ Yosemite ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]
-
-# Internal APIs to test PiP and AirPlay are not available on Yosemite.
-[ Yosemite ] media/modern-media-controls/airplay-support/airplay-support.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/pip-support [ Skip ]
-[ Yosemite ] media/modern-media-controls/placard-support [ Skip ]
-[ Yosemite ] media/modern-media-controls/audio [ Skip ]
-[ Yosemite ] media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/tracks-panel/tracks-panel-select-track-with-keyboard.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/tracks-support/tracks-support-show-and-populate-panel.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/tracks-support/tracks-support-click-track-in-panel.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/media-controller/media-controller-fade-controls-when-entering-fullscreen.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/seek-backward-support/seek-backward-support.html [ Skip ]
-[ Yosemite ] media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Skip ]
-
-webkit.org/b/164616 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Failure ]
-webkit.org/b/164323 media/modern-media-controls/airplay-support/airplay-support.html [ Pass Failure ]
-webkit.org/b/165243 media/modern-media-controls/audio/audio-controls-buttons.html [ Timeout ]
-webkit.org/b/164571 media/modern-media-controls/media-controller/media-controller-resize.html [ Pass Failure ]
-webkit.org/b/164325 [ ElCapitan ] media/modern-media-controls/pip-support/pip-support-click.html [ Timeout ]
-webkit.org/b/165311 [ Sierra ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure ]
-webkit.org/b/164326 [ ElCapitan ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Failure ]
-webkit.org/b/164298 media/modern-media-controls/placard-support/placard-support-airplay.html [ Pass Timeout ]
-webkit.org/b/164322 [ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Timeout ]
-webkit.org/b/164328 media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure Timeout ]
-webkit.org/b/165290 media/modern-media-controls/tracks-panel/tracks-panel-hide-click-outside.html [ Pass Timeout ]
-webkit.org/b/164598 media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html [ Pass Failure ]
-
 webkit.org/b/164277 fast/preloader/image-srcset.html [ Pass Failure ]
 
 webkit.org/b/161650 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
