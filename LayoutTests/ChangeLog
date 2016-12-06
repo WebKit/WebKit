@@ -1,3 +1,17 @@
+2016-12-06  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION (r209396): animations/font-variations/font-variation-settings* tests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=165475
+
+        Reviewed by Myles C. Maxfield.
+
+        The new parser only allows strings for @keyframe names when @-webkit-keyframe is used. Patch
+        the tests to use identifiers instead.
+
+        * animations/font-variations/font-variation-settings-order.html:
+        * animations/font-variations/font-variation-settings-unlike.html:
+        * animations/font-variations/font-variation-settings.html:
+
 2016-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the behavior of scroll-into-view when the target is inside position:fixed
