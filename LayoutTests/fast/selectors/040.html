@@ -2,7 +2,7 @@
 <html>
  <head>
   <title>::selection pseudo-element</title>
-  <style type="text/css">p::selection { background-color : lime }
+  <style type="text/css">p::selection { background-color: rgba(99, 254, 0, 0.95); /* alpha < 1 so that we don't blend the background color with white. */ }
 </style>
   <link rel="first" href="css3-modsel-1.html" title="Groups of selectors">
   <link rel="prev" href="css3-modsel-39b.html" title="::first-letter pseudo-element">
@@ -13,5 +13,9 @@
  </head>
  <body>
 <p>Any textual selection in this long paragraph should have green background. Any textual selection in this long paragraph should have green background. Any textual selection in this long paragraph should have green background.</p>
+<script>
+var p = document.querySelector("p");
+window.getSelection().setBaseAndExtent(p, 0, p, 1);
+</script>
 </body>
 </html>
