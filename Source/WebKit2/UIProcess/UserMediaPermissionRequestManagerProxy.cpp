@@ -22,6 +22,7 @@
 
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
+#include "UserMediaProcessManager.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -92,6 +93,12 @@ FrameAuthorizationState& UserMediaPermissionRequestManagerProxy::stateForRequest
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
 {
+    UserMediaProcessManager::singleton().addUserMediaPermissionRequestManagerProxy(*this);
+}
+
+UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
+{
+    UserMediaProcessManager::singleton().removeUserMediaPermissionRequestManagerProxy(*this);
 }
 
 void UserMediaPermissionRequestManagerProxy::invalidateRequests()
@@ -197,29 +204,7 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
     fameState.setHasPermissionToUseCaptureDevice(audioDeviceUID, true);
     fameState.setHasPermissionToUseCaptureDevice(videoDeviceUID, true);
 
-    size_t extensionCount = 0;
-    unsigned requiredExtensions = SandboxExtensionsGranted::None;
-    if (!audioDeviceUID.isEmpty()) {
-        requiredExtensions |= SandboxExtensionsGranted::Audio;
-        extensionCount++;
-    }
-    if (!videoDeviceUID.isEmpty()) {
-        requiredExtensions |= SandboxExtensionsGranted::Video;
-        extensionCount++;
-    }
-
-    unsigned currentExtensions = m_pageSandboxExtensionsGranted;
-    if (!(requiredExtensions & currentExtensions)) {
-        ASSERT(extensionCount);
-        m_pageSandboxExtensionsGranted = requiredExtensions | currentExtensions;
-        SandboxExtension::HandleArray handles;
-        handles.allocate(extensionCount);
-        if (!videoDeviceUID.isEmpty())
-            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera", handles[--extensionCount]);
-        if (!audioDeviceUID.isEmpty())
-            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", handles[--extensionCount]);
-        m_page.process().send(Messages::WebPage::GrantUserMediaDevicesSandboxExtension(handles), m_page.pageID());
-    }
+    UserMediaProcessManager::singleton().willCreateMediaStream(*this, !audioDeviceUID.isEmpty(), !videoDeviceUID.isEmpty());
 
     m_page.process().send(Messages::WebPage::UserMediaAccessWasGranted(userMediaID, audioDeviceUID, videoDeviceUID), m_page.pageID());
 #else
@@ -339,6 +324,36 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
     // this is a noop if the preference hasn't changed since the last time this was called.
     bool mockDevicesEnabled = m_page.preferences().mockCaptureDevicesEnabled();
     WebCore::MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(mockDevicesEnabled);
+#endif
+}
+
+void UserMediaPermissionRequestManagerProxy::stopCapture()
+{
+    if (!m_page.isValid())
+        return;
+
+#if ENABLE(MEDIA_STREAM)
+    m_page.setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
+#endif
+}
+
+void UserMediaPermissionRequestManagerProxy::startedCaptureSession()
+{
+    if (!m_page.isValid())
+        return;
+
+#if ENABLE(MEDIA_STREAM)
+    UserMediaProcessManager::singleton().startedCaptureSession(*this);
+#endif
+}
+
+void UserMediaPermissionRequestManagerProxy::endedCaptureSession()
+{
+    if (!m_page.isValid())
+        return;
+
+#if ENABLE(MEDIA_STREAM)
+    UserMediaProcessManager::singleton().endedCaptureSession(*this);
 #endif
 }
 
