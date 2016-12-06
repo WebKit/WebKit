@@ -215,6 +215,7 @@ namespace JSC {
 #endif
             NOP = 0xe1a00000,
             DMB_SY = 0xf57ff05f,
+            DMB_ISHST = 0xf57ff05a,
 #if HAVE(ARM_IDIV_INSTRUCTIONS)
             SDIV = 0x0710f010,
             UDIV = 0x0730f010,
@@ -720,6 +721,11 @@ namespace JSC {
         void dmbSY()
         {
             m_buffer.putInt(DMB_SY);
+        }
+
+        void dmbISHST()
+        {
+            m_buffer.putInt(DMB_ISHST);
         }
 
         void bx(int rm, Condition cc = AL)

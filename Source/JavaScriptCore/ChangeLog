@@ -1,3 +1,20 @@
+2016-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add storeFence support for ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=164733
+
+        Reviewed by Saam Barati.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::dmbISHST): Added.
+        * assembler/ARMv7Assembler.h: Typo fixed, DMB has only T1 encoding.
+        (JSC::ARMv7Assembler::dmbSY):
+        (JSC::ARMv7Assembler::dmbISHST): Added.
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::storeFence):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::storeFence):
+
 2016-12-05  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: remove ASSERT from InspectorDebuggerAgent::derefAsyncCallData

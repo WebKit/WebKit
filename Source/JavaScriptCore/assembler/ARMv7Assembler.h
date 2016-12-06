@@ -681,7 +681,7 @@ private:
         OP_MOVT         = 0xF2C0,
         OP_UBFX_T1      = 0xF3C0,
         OP_NOP_T2a      = 0xF3AF,
-        OP_DMB_SY_T2a   = 0xF3BF,
+        OP_DMB_T1a      = 0xF3BF,
         OP_STRB_imm_T3  = 0xF800,
         OP_STRB_reg_T2  = 0xF800,
         OP_LDRB_imm_T3  = 0xF810,
@@ -715,32 +715,33 @@ private:
     } OpcodeID1;
 
     typedef enum {
-        OP_VADD_T2b     = 0x0A00,
-        OP_VDIVb        = 0x0A00,
-        OP_FLDSb        = 0x0A00,
-        OP_VLDRb        = 0x0A00,
-        OP_VMOV_IMM_T2b = 0x0A00,
-        OP_VMOV_T2b     = 0x0A40,
-        OP_VMUL_T2b     = 0x0A00,
-        OP_FSTSb        = 0x0A00,
-        OP_VSTRb        = 0x0A00,
-        OP_VMOV_StoCb   = 0x0A10,
-        OP_VMOV_CtoSb   = 0x0A10,
-        OP_VMOV_DtoCb   = 0x0A10,
-        OP_VMOV_CtoDb   = 0x0A10,
-        OP_VMRSb        = 0x0A10,
-        OP_VABS_T2b     = 0x0A40,
-        OP_VCMPb        = 0x0A40,
-        OP_VCVT_FPIVFPb = 0x0A40,
-        OP_VNEG_T2b     = 0x0A40,
-        OP_VSUB_T2b     = 0x0A40,
-        OP_VSQRT_T1b    = 0x0A40,
-        OP_VCVTSD_T1b   = 0x0A40,
-        OP_VCVTDS_T1b   = 0x0A40,
-        OP_NOP_T2b      = 0x8000,
-        OP_DMB_SY_T2b   = 0x8F5F,
-        OP_B_T3b        = 0x8000,
-        OP_B_T4b        = 0x9000,
+        OP_VADD_T2b      = 0x0A00,
+        OP_VDIVb         = 0x0A00,
+        OP_FLDSb         = 0x0A00,
+        OP_VLDRb         = 0x0A00,
+        OP_VMOV_IMM_T2b  = 0x0A00,
+        OP_VMOV_T2b      = 0x0A40,
+        OP_VMUL_T2b      = 0x0A00,
+        OP_FSTSb         = 0x0A00,
+        OP_VSTRb         = 0x0A00,
+        OP_VMOV_StoCb    = 0x0A10,
+        OP_VMOV_CtoSb    = 0x0A10,
+        OP_VMOV_DtoCb    = 0x0A10,
+        OP_VMOV_CtoDb    = 0x0A10,
+        OP_VMRSb         = 0x0A10,
+        OP_VABS_T2b      = 0x0A40,
+        OP_VCMPb         = 0x0A40,
+        OP_VCVT_FPIVFPb  = 0x0A40,
+        OP_VNEG_T2b      = 0x0A40,
+        OP_VSUB_T2b      = 0x0A40,
+        OP_VSQRT_T1b     = 0x0A40,
+        OP_VCVTSD_T1b    = 0x0A40,
+        OP_VCVTDS_T1b    = 0x0A40,
+        OP_NOP_T2b       = 0x8000,
+        OP_DMB_SY_T1b    = 0x8F5F,
+        OP_DMB_ISHST_T1b = 0x8F5A,
+        OP_B_T3b         = 0x8000,
+        OP_B_T4b         = 0x9000,
     } OpcodeID2;
 
     struct FourFours {
@@ -2042,7 +2043,12 @@ public:
 
     void dmbSY()
     {
-        m_formatter.twoWordOp16Op16(OP_DMB_SY_T2a, OP_DMB_SY_T2b);
+        m_formatter.twoWordOp16Op16(OP_DMB_T1a, OP_DMB_SY_T1b);
+    }
+
+    void dmbISHST()
+    {
+        m_formatter.twoWordOp16Op16(OP_DMB_T1a, OP_DMB_ISHST_T1b);
     }
 
     AssemblerLabel labelIgnoringWatchpoints()
