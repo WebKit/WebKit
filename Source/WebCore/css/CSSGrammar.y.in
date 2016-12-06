@@ -1217,7 +1217,7 @@ specifier:
         $$->setValue($1, parser->m_context.mode == HTMLQuirksMode);
     }
   | HEX {
-        if ($1[0] >= '0' && $1[0] <= '9')
+        if (isASCIIDigit($1[0]))
             $$ = nullptr;
         else {
             $$ = new CSSParserSelector;

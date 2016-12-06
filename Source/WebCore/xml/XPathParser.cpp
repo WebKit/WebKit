@@ -209,7 +209,7 @@ Parser::Token Parser::lexNumber()
         UChar aChar = m_data[m_nextPos];
         if (aChar >= 0xff) break;
 
-        if (aChar < '0' || aChar > '9') {
+        if (!isASCIIDigit(aChar)) {
             if (aChar == '.' && !seenDot)
                 seenDot = true;
             else
@@ -283,7 +283,7 @@ inline Parser::Token Parser::nextTokenInternal()
         char next = peekAheadHelper();
         if (next == '.')
             return makeTokenAndAdvance(DOTDOT, 2);
-        if (next >= '0' && next <= '9')
+        if (isASCIIDigit(next))
             return lexNumber();
         return makeTokenAndAdvance('.');
     }

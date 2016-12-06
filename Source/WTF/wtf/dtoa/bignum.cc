@@ -29,6 +29,7 @@
 
 #include "bignum.h"
 #include "utils.h"
+#include <wtf/ASCIICType.h>
 
 namespace WTF {
 
@@ -123,15 +124,6 @@ namespace double_conversion {
     }
     
     
-    static int HexCharValue(char c) {
-        if ('0' <= c && c <= '9') return c - '0';
-        if ('a' <= c && c <= 'f') return 10 + c - 'a';
-        if ('A' <= c && c <= 'F') return 10 + c - 'A';
-        UNREACHABLE();
-        return 0;  // To make compiler happy.
-    }
-    
-    
     void Bignum::AssignHexString(BufferReference<const char> value) {
         Zero();
         int length = value.length();
@@ -143,7 +135,7 @@ namespace double_conversion {
             // These bigits are guaranteed to be "full".
             Chunk current_bigit = 0;
             for (int j = 0; j < kBigitSize / 4; j++) {
-                current_bigit += HexCharValue(value[string_index--]) << (j * 4);
+                current_bigit += toASCIIHexValue(value[string_index--]) << (j * 4);
             }
             bigits_[i] = current_bigit;
         }
@@ -152,7 +144,7 @@ namespace double_conversion {
         Chunk most_significant_bigit = 0;  // Could be = 0;
         for (int j = 0; j <= string_index; ++j) {
             most_significant_bigit <<= 4;
-            most_significant_bigit += HexCharValue(value[j]);
+            most_significant_bigit += toASCIIHexValue(value[j]);
         }
         if (most_significant_bigit != 0) {
             bigits_[used_digits_] = most_significant_bigit;

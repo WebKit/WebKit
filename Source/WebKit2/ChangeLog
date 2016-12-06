@@ -1,3 +1,13 @@
+2016-12-04  Darin Adler  <darin@apple.com>
+
+        Use ASCIICType more, and improve it a little bit
+        https://bugs.webkit.org/show_bug.cgi?id=165360
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::capitalizeRFC822HeaderFieldName): Removed unneeded checks to simplify code.
+
 2016-12-06  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Turn on the new CSS parser

@@ -97,7 +97,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_state = Comment;
         break;
     case RuleStart:
-        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+        if (isASCIIAlpha(c)) {
             m_rule.clear();
             m_ruleValue.clear();
             m_rule.append(c);

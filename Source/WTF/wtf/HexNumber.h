@@ -24,26 +24,23 @@
 
 namespace WTF {
 
-enum HexConversionMode {
-    Lowercase,
-    Uppercase
-};
+enum HexConversionMode { Lowercase, Uppercase };
 
 namespace Internal {
 
-const LChar lowerHexDigits[17] = "0123456789abcdef";
-const LChar upperHexDigits[17] = "0123456789ABCDEF";
 inline const LChar* hexDigitsForMode(HexConversionMode mode)
 {
-    return mode == Lowercase ? lowerHexDigits : upperHexDigits;
+    static const LChar lowercaseHexDigits[17] = "0123456789abcdef";
+    static const LChar uppercaseHexDigits[17] = "0123456789ABCDEF";
+    return mode == Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
 }
 
-}; // namespace Internal
+} // namespace Internal
 
 template<typename T>
 inline void appendByteAsHex(unsigned char byte, T& destination, HexConversionMode mode = Uppercase)
 {
-    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    auto* hexDigits = Internal::hexDigitsForMode(mode);
     destination.append(hexDigits[byte >> 4]);
     destination.append(hexDigits[byte & 0xF]);
 }
@@ -51,7 +48,7 @@ inline void appendByteAsHex(unsigned char byte, T& destination, HexConversionMod
 template<typename T>
 inline void placeByteAsHexCompressIfPossible(unsigned char byte, T& destination, unsigned& index, HexConversionMode mode = Uppercase)
 {
-    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    auto* hexDigits = Internal::hexDigitsForMode(mode);
     if (byte >= 0x10)
         destination[index++] = hexDigits[byte >> 4];
     destination[index++] = hexDigits[byte & 0xF];
@@ -60,7 +57,7 @@ inline void placeByteAsHexCompressIfPossible(unsigned char byte, T& destination,
 template<typename T>
 inline void placeByteAsHex(unsigned char byte, T& destination, HexConversionMode mode = Uppercase)
 {
-    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    auto* hexDigits = Internal::hexDigitsForMode(mode);
     *destination++ = hexDigits[byte >> 4];
     *destination++ = hexDigits[byte & 0xF];
 }
@@ -68,7 +65,7 @@ inline void placeByteAsHex(unsigned char byte, T& destination, HexConversionMode
 template<typename T>
 inline void appendUnsignedAsHex(unsigned number, T& destination, HexConversionMode mode = Uppercase)
 {
-    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    auto* hexDigits = Internal::hexDigitsForMode(mode);
     Vector<LChar, 8> result;
     do {
         result.append(hexDigits[number % 16]);
@@ -82,7 +79,7 @@ inline void appendUnsignedAsHex(unsigned number, T& destination, HexConversionMo
 template<typename T>
 inline void appendUnsigned64AsHex(uint64_t number, T& destination, HexConversionMode mode = Uppercase)
 {
-    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    auto* hexDigits = Internal::hexDigitsForMode(mode);
     Vector<LChar, 8> result;
     do {
         result.append(hexDigits[number % 16]);
@@ -99,7 +96,7 @@ inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsign
 {
     ASSERT(desiredDigits);
 
-    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    auto* hexDigits = Internal::hexDigitsForMode(mode);
     Vector<LChar, 8> result;
     do {
         result.append(hexDigits[number % 16]);
@@ -111,54 +108,6 @@ inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsign
     destination.append(result.data(), result.size());
 }
 
-
-inline bool isHexDigit(char c)
-{
-    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
-}
-
-inline char uncheckedHexDigit(int i)
-{
-    if (i < 0 || i > 16)
-        return '0';
-
-    return (i >= 10) ? i - 10 + 'A' : i + '0';
-}
-
-inline bool hexDigitValue(char c, char& result)
-{
-    if (c >= '0' && c <= '9') {
-        result = c - '0';
-        return true;
-    }
-
-    if (c >= 'A' && c <= 'F') {
-        result = c - 'A' + 10;
-        return true;
-    }
-
-    if (c >= 'a' && c <= 'f') {
-        result = c - 'a' + 10;
-        return true;
-    }
-
-    return false;
-}
-
-inline int uncheckedHexDigitValue(char c)
-{
-    if (c >= '0' && c <= '9')
-        return c - '0';
-
-    if (c >= 'A' && c <= 'F')
-        return c - 'A' + 10;
-
-    if (c >= 'a' && c <= 'f')
-        return c - 'a' + 10;
-
-    return 0;
-}
-
 } // namespace WTF
 
 using WTF::appendByteAsHex;
@@ -167,7 +116,3 @@ using WTF::appendUnsignedAsHexFixedSize;
 using WTF::placeByteAsHex;
 using WTF::placeByteAsHexCompressIfPossible;
 using WTF::Lowercase;
-using WTF::isHexDigit;
-using WTF::uncheckedHexDigit;
-using WTF::hexDigitValue;
-using WTF::uncheckedHexDigitValue;

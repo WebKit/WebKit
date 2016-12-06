@@ -55,12 +55,6 @@ typedef Vector<UChar, 512> UCharBuffer;
 
 static const unsigned invalidPortNumber = 0xFFFF;
 
-static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLetter)
-{
-    ASSERT(isASCIILower(lowercaseLetter));
-    return (character | 0x20) == lowercaseLetter;
-}
-
 static const char wsScheme[] = {'w', 's'};
 static const char ftpScheme[] = {'f', 't', 'p'};
 static const char ftpPort[] = {'2', '1'};
@@ -72,12 +66,6 @@ static const char httpsScheme[] = {'h', 't', 't', 'p', 's'};
 static const char httpsPort[] = {'4', '4', '3'};
 static const char gopherScheme[] = {'g', 'o', 'p', 'h', 'e', 'r'};
 static const char gopherPort[] = {'7', '0'};
-
-static inline bool isLetterMatchIgnoringCase(char character, char lowercaseLetter)
-{
-    ASSERT(isASCIILower(lowercaseLetter));
-    return (character | 0x20) == lowercaseLetter;
-}
 
 enum URLCharacterClasses {
     // alpha 
@@ -355,14 +343,6 @@ static inline bool isPathSegmentEndChar(char c) { return characterClassTable[sta
 static inline bool isPathSegmentEndChar(UChar c) { return c <= 0xff && (characterClassTable[c] & PathSegmentEndChar); }
 static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
 static inline bool isTabNewline(UChar c) { return c <= 0xff && (characterClassTable[c] & TabNewline); }
-
-static inline bool isSchemeCharacterMatchIgnoringCase(char character, char schemeCharacter)
-{
-    ASSERT(isSchemeChar(character));
-    ASSERT(schemeCharacter & 0x20);
-    ASSERT(isASCIILower(schemeCharacter) || (!isASCIIUpper(schemeCharacter) && isSchemeChar(schemeCharacter)));
-    return (character | 0x20) == schemeCharacter;
-}
 
 String encodeWithURLEscapeSequences(const String& notEncodedString, PercentEncodeCharacterClass whatToEncode);
 
@@ -782,6 +762,7 @@ String URL::baseAsString() const
 }
 
 #if !USE(CF)
+
 String URL::fileSystemPath() const
 {
     if (!isValid() || !isLocalFile())
@@ -789,6 +770,7 @@ String URL::fileSystemPath() const
 
     return decodeURLEscapeSequences(path());
 }
+
 #endif
 
 #ifdef NDEBUG
@@ -801,9 +783,14 @@ static inline void assertProtocolIsGood(StringView)
 
 static void assertProtocolIsGood(StringView protocol)
 {
-    for (size_t i = 0; i < protocol.length(); ++i) {
-        const char c = protocol[i];
-        ASSERT(c > ' ' && c < 0x7F && !(c >= 'A' && c <= 'Z'));
+    // FIXME: We probably don't need this function any more.
+    // The isASCIIAlphaCaselessEqual function asserts that passed-in characters
+    // are ones it can handle; the older code did not and relied on these checks.
+    for (auto character : protocol.codeUnits()) {
+        ASSERT(isASCII(character));
+        ASSERT(character > ' ');
+        ASSERT(!isASCIIUpper(character));
+        ASSERT(toASCIILowerUnchecked(character) == character);
     }
 }
 
@@ -853,7 +840,7 @@ bool URL::protocolIs(const char* protocol) const
 
     // Do the comparison without making a new string object.
     for (unsigned i = 0; i < m_schemeEnd; ++i) {
-        if (!protocol[i] || !isSchemeCharacterMatchIgnoringCase(m_string[i], protocol[i]))
+        if (!protocol[i] || !isASCIIAlphaCaselessEqual(m_string[i], protocol[i]))
             return false;
     }
     return !protocol[m_schemeEnd]; // We should have consumed all characters in the argument.
@@ -871,7 +858,7 @@ bool URL::protocolIs(StringView protocol) const
 
     // Do the comparison without making a new string object.
     for (unsigned i = 0; i < m_schemeEnd; ++i) {
-        if (!isSchemeCharacterMatchIgnoringCase(m_string[i], protocol[i]))
+        if (!isASCIIAlphaCaselessEqual(m_string[i], protocol[i]))
             return false;
     }
     return true;
@@ -1399,12 +1386,14 @@ String URL::serialize(bool omitFragment) const
 }
 
 #if PLATFORM(IOS)
+
 static bool shouldCanonicalizeScheme = true;
 
 void enableURLSchemeCanonicalization(bool enableSchemeCanonicalization)
 {
     shouldCanonicalizeScheme = enableSchemeCanonicalization;
 }
+
 #endif
 
 template<size_t length>
@@ -1537,16 +1526,16 @@ void URL::parse(const char* url, const String* originalString)
     bool hasSecondSlash = hierarchical && url[schemeEnd + 2] == '/';
 
     bool isFile = schemeEnd == 4
-        && isLetterMatchIgnoringCase(url[0], 'f')
-        && isLetterMatchIgnoringCase(url[1], 'i')
-        && isLetterMatchIgnoringCase(url[2], 'l')
-        && isLetterMatchIgnoringCase(url[3], 'e');
+        && isASCIIAlphaCaselessEqual(url[0], 'f')
+        && isASCIIAlphaCaselessEqual(url[1], 'i')
+        && isASCIIAlphaCaselessEqual(url[2], 'l')
+        && isASCIIAlphaCaselessEqual(url[3], 'e');
 
-    m_protocolIsInHTTPFamily = isLetterMatchIgnoringCase(url[0], 'h')
-        && isLetterMatchIgnoringCase(url[1], 't')
-        && isLetterMatchIgnoringCase(url[2], 't')
-        && isLetterMatchIgnoringCase(url[3], 'p')
-        && (url[4] == ':' || (isLetterMatchIgnoringCase(url[4], 's') && url[5] == ':'));
+    m_protocolIsInHTTPFamily = isASCIIAlphaCaselessEqual(url[0], 'h')
+        && isASCIIAlphaCaselessEqual(url[1], 't')
+        && isASCIIAlphaCaselessEqual(url[2], 't')
+        && isASCIIAlphaCaselessEqual(url[3], 'p')
+        && (url[4] == ':' || (isASCIIAlphaCaselessEqual(url[4], 's') && url[5] == ':'));
 
     if ((hierarchical && hasSecondSlash) || isNonFileHierarchicalScheme(url, schemeEnd)) {
         // The part after the scheme is either a net_path or an abs_path whose first path segment is empty.
@@ -1719,15 +1708,15 @@ void URL::parse(const char* url, const String* originalString)
     m_schemeEnd = p - buffer.data();
 
     bool hostIsLocalHost = portEnd - userStart == 9
-        && isLetterMatchIgnoringCase(url[userStart], 'l')
-        && isLetterMatchIgnoringCase(url[userStart+1], 'o')
-        && isLetterMatchIgnoringCase(url[userStart+2], 'c')
-        && isLetterMatchIgnoringCase(url[userStart+3], 'a')
-        && isLetterMatchIgnoringCase(url[userStart+4], 'l')
-        && isLetterMatchIgnoringCase(url[userStart+5], 'h')
-        && isLetterMatchIgnoringCase(url[userStart+6], 'o')
-        && isLetterMatchIgnoringCase(url[userStart+7], 's')
-        && isLetterMatchIgnoringCase(url[userStart+8], 't');
+        && isASCIIAlphaCaselessEqual(url[userStart], 'l')
+        && isASCIIAlphaCaselessEqual(url[userStart+1], 'o')
+        && isASCIIAlphaCaselessEqual(url[userStart+2], 'c')
+        && isASCIIAlphaCaselessEqual(url[userStart+3], 'a')
+        && isASCIIAlphaCaselessEqual(url[userStart+4], 'l')
+        && isASCIIAlphaCaselessEqual(url[userStart+5], 'h')
+        && isASCIIAlphaCaselessEqual(url[userStart+6], 'o')
+        && isASCIIAlphaCaselessEqual(url[userStart+7], 's')
+        && isASCIIAlphaCaselessEqual(url[userStart+8], 't');
 
     // File URLs need a host part unless it is just file:// or file://localhost
     bool degenerateFilePath = pathStart == pathEnd && (hostStart == hostEnd || hostIsLocalHost);
@@ -1975,7 +1964,7 @@ static bool protocolIs(StringView stringURL, const char* protocol)
     for (unsigned i = 0; i < length; ++i) {
         if (!protocol[i])
             return stringURL[i] == ':';
-        if (!isLetterMatchIgnoringCase(stringURL[i], protocol[i]))
+        if (!isASCIIAlphaCaselessEqual(stringURL[i], protocol[i]))
             return false;
     }
     return false;
@@ -2211,7 +2200,7 @@ bool protocolIs(const String& url, const char* protocol)
 
         if (!protocol[j])
             return url[i] == ':';
-        if (!isLetterMatchIgnoringCase(url[i], protocol[j]))
+        if (!isASCIIAlphaCaselessEqual(url[i], protocol[j]))
             return false;
 
         ++j;
@@ -2236,10 +2225,12 @@ bool isValidProtocol(const String& protocol)
 }
 
 #ifndef NDEBUG
+
 void URL::print() const
 {
     printf("%s\n", m_string.utf8().data());
 }
+
 #endif
 
 String URL::strippedForUseAsReferrer() const
@@ -2268,11 +2259,11 @@ bool protocolIsJavaScript(const String& url)
 bool protocolIsInHTTPFamily(const String& url)
 {
     // Do the comparison without making a new string object.
-    return isLetterMatchIgnoringCase(url[0], 'h')
-        && isLetterMatchIgnoringCase(url[1], 't')
-        && isLetterMatchIgnoringCase(url[2], 't')
-        && isLetterMatchIgnoringCase(url[3], 'p')
-        && (url[4] == ':' || (isLetterMatchIgnoringCase(url[4], 's') && url[5] == ':'));
+    return isASCIIAlphaCaselessEqual(url[0], 'h')
+        && isASCIIAlphaCaselessEqual(url[1], 't')
+        && isASCIIAlphaCaselessEqual(url[2], 't')
+        && isASCIIAlphaCaselessEqual(url[3], 'p')
+        && (url[4] == ':' || (isASCIIAlphaCaselessEqual(url[4], 's') && url[5] == ':'));
 }
 
 const URL& blankURL()

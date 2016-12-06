@@ -26,46 +26,42 @@
 #include "config.h"
 #include "SixCharacterHash.h"
 
-#include <wtf/StdLibExtras.h>
-
-#include <string.h>
+#include <wtf/ASCIICType.h>
 
 namespace WTF {
-
-#define TABLE ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 
 unsigned sixCharacterHashStringToInteger(const char* string)
 {
     unsigned hash = 0;
 
-    RELEASE_ASSERT(strlen(string) == 6);
-    
     for (unsigned i = 0; i < 6; ++i) {
         hash *= 62;
         unsigned c = string[i];
-        if (c >= 'A' && c <= 'Z') {
+        RELEASE_ASSERT(c); // FIXME: Why does this need to be a RELEASE_ASSERT?
+        if (isASCIIUpper(c)) {
             hash += c - 'A';
             continue;
         }
-        if (c >= 'a' && c <= 'z') {
+        if (isASCIILower(c)) {
             hash += c - 'a' + 26;
             continue;
         }
-        ASSERT(c >= '0' && c <= '9');
+        ASSERT(isASCIIDigit(c));
         hash += c - '0' + 26 * 2;
     }
-    
+
+    RELEASE_ASSERT(string[6]); // FIXME: Why does this need to be a RELEASE_ASSERT?
+
     return hash;
 }
 
 std::array<char, 7> integerToSixCharacterHashString(unsigned hash)
 {
-    static_assert(WTF_ARRAY_LENGTH(TABLE) - 1 == 62, "Six character hash table is not 62 characters long.");
-
+    static const char table[63] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     std::array<char, 7> buffer;
     unsigned accumulator = hash;
     for (unsigned i = 6; i--;) {
-        buffer[i] = TABLE[accumulator % 62];
+        buffer[i] = table[accumulator % 62];
         accumulator /= 62;
     }
     buffer[6] = 0;

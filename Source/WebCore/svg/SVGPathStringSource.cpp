@@ -134,7 +134,7 @@ template <typename CharacterType>
 static bool nextCommandHelper(const CharacterType*& current, SVGPathSegType previousCommand, SVGPathSegType& nextCommand)
 {
     // Check for remaining coordinates in the current command.
-    if ((*current == '+' || *current == '-' || *current == '.' || (*current >= '0' && *current <= '9'))
+    if ((*current == '+' || *current == '-' || *current == '.' || isASCIIDigit(*current))
         && previousCommand != PathSegClosePath) {
         if (previousCommand == PathSegMoveToAbs) {
             nextCommand = PathSegLineToAbs;

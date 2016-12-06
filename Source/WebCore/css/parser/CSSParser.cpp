@@ -7238,12 +7238,8 @@ bool CSSParser::parseFontFaceUnicodeRange()
             if (c == '-' || c == '?')
                 break;
             from *= 16;
-            if (c >= '0' && c <= '9')
-                from += c - '0';
-            else if (c >= 'A' && c <= 'F')
-                from += 10 + c - 'A';
-            else if (c >= 'a' && c <= 'f')
-                from += 10 + c - 'a';
+            if (isASCIIHexDigit(c))
+                from += toASCIIHexValue(c);
             else {
                 failed = true;
                 break;
@@ -7274,12 +7270,8 @@ bool CSSParser::parseFontFaceUnicodeRange()
             while (i < length) {
                 UChar c = rangeString[i];
                 to *= 16;
-                if (c >= '0' && c <= '9')
-                    to += c - '0';
-                else if (c >= 'A' && c <= 'F')
-                    to += 10 + c - 'A';
-                else if (c >= 'a' && c <= 'f')
-                    to += 10 + c - 'a';
+                if (isASCIIHexDigit(c))
+                    to += toASCIIHexValue(c);
                 else {
                     failed = true;
                     break;
@@ -11504,11 +11496,11 @@ static inline bool isEqualToCSSIdentifier(CharacterType* cssString, const char* 
 {
     // Compare an character memory data with a zero terminated string.
     do {
-        // The input must be part of an identifier if constantChar or constString
+        // The input must be part of an identifier if constantString
         // contains '-'. Otherwise toASCIILowerUnchecked('\r') would be equal to '-'.
-        ASSERT((*constantString >= 'a' && *constantString <= 'z') || *constantString == '-');
+        ASSERT(isASCIILower(*constantString) || *constantString == '-');
         ASSERT(*constantString != '-' || isCSSLetter(*cssString));
-        if (toASCIILowerUnchecked(*cssString++) != (*constantString++))
+        if (toASCIILowerUnchecked(*cssString++) != *constantString++)
             return false;
     } while (*constantString);
     return true;

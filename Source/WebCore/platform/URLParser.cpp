@@ -2156,7 +2156,7 @@ std::optional<uint32_t> URLParser::parseIPv4Piece(CodePointIterator<CharacterTyp
             state = State::Octal;
             break;
         case State::Decimal:
-            if (*iterator < '0' || *iterator > '9')
+            if (!isASCIIDigit(*iterator))
                 return std::nullopt;
             value *= 10;
             value += *iterator - '0';

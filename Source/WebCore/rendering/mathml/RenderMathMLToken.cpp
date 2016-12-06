@@ -330,15 +330,15 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
         Arabic
     };
     CharacterType varType;
-    if ('A' <= codePoint && codePoint <= 'Z') {
+    if (isASCIIUpper(codePoint)) {
         baseChar = codePoint - 'A';
         varType = Latin;
-    } else if ('a' <= codePoint && codePoint <= 'z') {
+    } else if (isASCIILower(codePoint)) {
         // Lowercase characters are placed immediately after the uppercase characters in the Unicode mathematical block.
         // The constant subtraction represents the number of characters between the start of the sequence (capital A) and the first lowercase letter.
         baseChar = mathBoldSmallA - mathBoldUpperA + codePoint - 'a';
         varType = Latin;
-    } else if ('0' <= codePoint && codePoint <= '9') {
+    } else if (isASCIIDigit(codePoint)) {
         baseChar = codePoint - '0';
         varType = Number;
     } else if (greekUpperAlpha <= codePoint && codePoint <= greekUpperOmega) {

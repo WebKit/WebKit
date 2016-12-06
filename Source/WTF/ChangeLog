@@ -1,3 +1,49 @@
+2016-12-04  Darin Adler  <darin@apple.com>
+
+        Use ASCIICType more, and improve it a little bit
+        https://bugs.webkit.org/show_bug.cgi?id=165360
+
+        Reviewed by Sam Weinig.
+
+        * wtf/ASCIICType.h: Added declarations of all the functions to the top of the file,
+        so we have a list of what's available, not just a mix of that and the implementation.
+
+        * wtf/HexNumber.h:
+        (WTF::Internal::hexDigitsForMode): Moved lowerHexDigits and upperHexDigits
+        inside this function.
+        (WTF::appendByteAsHex): Use auto.
+        (WTF::placeByteAsHexCompressIfPossible): Ditto.
+        (WTF::placeByteAsHex): Ditto.
+        (WTF::appendUnsignedAsHex): Ditto.
+        (WTF::appendUnsigned64AsHex): Ditto.
+        (WTF::appendUnsignedAsHexFixedSize): Ditto.
+        (WTF::isHexDigit): Deleted.
+        (WTF::uncheckedHexDigit): Deleted.
+        (WTF::hexDigitValue): Deleted.
+        (WTF::uncheckedHexDigitValue): Deleted.
+
+        * wtf/SixCharacterHash.cpp:
+        (WTF::sixCharacterHashStringToInteger): Use isASCIIUpper, isASCIILower, and
+        isASCIIDigit. Also added some FIXMEs; for some reason this function uses
+        RELEASE_ASSERT to abort if the passed-in string is not six characters long,
+        and it's not clear to me why this is so critical to assert.
+        (WTF::integerToSixCharacterHashString): Moved the table inside this function,
+        obviating the need for a macro named TABLE.
+
+        * wtf/dtoa/bignum.cc:
+        (WTF::double_conversion::HexCharValue): Deleted.
+        (WTF::double_conversion::Bignum::AssignHexString): Use toASCIIHexValue.
+        * wtf/dtoa/double-conversion.cc:
+        (WTF::double_conversion::StringToDoubleConverter::StringToDouble): Use isASCIIDigit.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::appendQuotedJSONStringInternal): Use upperNibbleToASCIIHexDigit and
+        lowerNibbleToASCIIHexDigit.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::convertToUppercaseWithoutLocale): Use toASCIIUpper.
+        Removed the workaround for a bug that was fixed in Visual Studio 2013.
+
 2016-12-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r208985): SafariForWebKitDevelopment Symbol Not Found looking for method with WTF::Optional

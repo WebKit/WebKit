@@ -187,7 +187,7 @@ void FormDataBuilder::encodeStringAsFormData(Vector<char>& buffer, const CString
     for (unsigned i = 0; i < length; ++i) {
         unsigned char c = string.data()[i];
 
-        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || strchr(safeCharacters, c))
+        if (isASCIIAlphanumeric(c) || strchr(safeCharacters, c))
             append(buffer, c);
         else if (c == ' ')
             append(buffer, '+');

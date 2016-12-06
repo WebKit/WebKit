@@ -220,14 +220,14 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
         } else if (ref == '\'') {
             backrefStart = ovector[1];
             backrefLength = source.length() - backrefStart;
-        } else if (reg && ref >= '0' && ref <= '9') {
+        } else if (reg && isASCIIDigit(ref)) {
             // 1- and 2-digit back references are allowed
             unsigned backrefIndex = ref - '0';
             if (backrefIndex > reg->numSubpatterns())
                 continue;
             if (replacement.length() > i + 2) {
                 ref = replacement[i + 2];
-                if (ref >= '0' && ref <= '9') {
+                if (isASCIIDigit(ref)) {
                     backrefIndex = 10 * backrefIndex + ref - '0';
                     if (backrefIndex > reg->numSubpatterns())
                         backrefIndex = backrefIndex / 10;   // Fall back to the 1-digit reference

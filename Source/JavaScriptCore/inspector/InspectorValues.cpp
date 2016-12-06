@@ -151,8 +151,7 @@ bool readHexDigits(const UChar* start, const UChar* end, const UChar** tokenEnd,
         return false;
 
     for (int i = 0; i < digits; ++i) {
-        UChar c = *start++;
-        if (!(('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')))
+        if (!isASCIIHexDigit(*start++))
             return false;
     }
 
@@ -262,19 +261,6 @@ Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart,
     return INVALID_TOKEN;
 }
 
-inline int hexToInt(UChar c)
-{
-    if ('0' <= c && c <= '9')
-        return c - '0';
-    if ('A' <= c && c <= 'F')
-        return c - 'A' + 10;
-    if ('a' <= c && c <= 'f')
-        return c - 'a' + 10;
-
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
 bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
 {
     while (start < end) {
@@ -308,15 +294,11 @@ bool decodeString(const UChar* start, const UChar* end, StringBuilder& output)
             c = '\v';
             break;
         case 'x':
-            c = (hexToInt(*start) << 4) +
-                hexToInt(*(start + 1));
+            c = toASCIIHexValue(start[0], start[1]);
             start += 2;
             break;
         case 'u':
-            c = (hexToInt(*start) << 12) +
-                (hexToInt(*(start + 1)) << 8) +
-                (hexToInt(*(start + 2)) << 4) +
-                hexToInt(*(start + 3));
+            c = toASCIIHexValue(start[0], start[1]) << 8 | toASCIIHexValue(start[2], start[3]);
             start += 4;
             break;
         default:

@@ -451,14 +451,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
         for (int i = 0; i < length; ++i) {
             LChar c = m_data8[i];
             ored |= c;
-#if CPU(X86) && defined(_MSC_VER) && _MSC_VER >=1700
-            // Workaround for an MSVC 2012 x86 optimizer bug. Remove once the bug is fixed.
-            // See https://connect.microsoft.com/VisualStudio/feedback/details/780362/optimization-bug-of-range-comparison
-            // for more details.
-            data8[i] = c >= 'a' && c <= 'z' ? c & ~0x20 : c;
-#else
             data8[i] = toASCIIUpper(c);
-#endif
         }
         if (!(ored & ~0x7F))
             return newImpl;

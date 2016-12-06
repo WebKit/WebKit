@@ -26,10 +26,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
-
-#include <limits.h>
-#include <math.h>
-
 #include "double-conversion.h"
 
 #include "bignum-dtoa.h"
@@ -38,6 +34,9 @@
 #include "fixed-dtoa.h"
 #include "strtod.h"
 #include "utils.h"
+#include <limits.h>
+#include <math.h>
+#include <wtf/ASCIICType.h>
 
 namespace WTF {
 
@@ -483,7 +482,7 @@ namespace double_conversion {
         }
         
         // Copy significant digits of the integer part (if any) to the buffer.
-        while (*current >= '0' && *current <= '9') {
+        while (isASCIIDigit(*current)) {
             if (significant_digits < kMaxSignificantDigits) {
                 ASSERT(buffer_pos < kBufferSize);
                 buffer[buffer_pos++] = static_cast<char>(*current);
@@ -520,7 +519,7 @@ namespace double_conversion {
             }
 
             // There is a fractional part.
-            while (*current >= '0' && *current <= '9') {
+            while (isASCIIDigit(*current)) {
                 if (significant_digits < kMaxSignificantDigits) {
                     ASSERT(buffer_pos < kBufferSize);
                     buffer[buffer_pos++] = static_cast<char>(*current);
@@ -580,7 +579,7 @@ namespace double_conversion {
                     num = num * 10 + digit;
                 }
                 ++current;
-            } while (current != end && *current >= '0' && *current <= '9');
+            } while (current != end && isASCIIDigit(*current));
             
             exponent += (sign == '-' ? -num : num);
         }

@@ -195,7 +195,7 @@ private:
 
 static bool isNotFormControlTypeCharacter(UChar ch)
 {
-    return ch != '-' && (ch > 'z' || ch < 'a');
+    return !(ch == '-' || isASCIILower(ch));
 }
 
 std::unique_ptr<SavedFormState> SavedFormState::deserialize(const Vector<String>& stateVector, size_t& index)

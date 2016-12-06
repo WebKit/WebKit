@@ -1,3 +1,60 @@
+2016-12-04  Darin Adler  <darin@apple.com>
+
+        Use ASCIICType more, and improve it a little bit
+        https://bugs.webkit.org/show_bug.cgi?id=165360
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSGrammar.y.in: Use isASCIIDigit.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFaceUnicodeRange): Use isASCIIHexDigit and
+        toASCIIHexValue.
+        (WebCore::isEqualToCSSIdentifier): Use isASCIILower.
+        * html/FormController.cpp:
+        (WebCore::isNotFormControlTypeCharacter): Use isASCIILower.
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::tokenize): Use isASCIIAlpha.
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::fromString): Use isASCIIDigit.
+        * platform/FileSystem.cpp:
+        (WebCore::decodeFromFilename): Use isASCIIHexDigit and toASCIIHexValue.
+        * platform/URL.cpp:
+        (WebCore::isLetterMatchIgnoringCase): Deleted.
+        (WebCore::isSchemeCharacterMatchIgnoringCase): Deleted.
+        (WebCore::assertProtocolIsGood): Use isASCIIUpper.
+        (WebCore::URL::protocolIs): Use isASCIIAlphaCaselessEqual.
+        (WebCore::URL::parse): Ditto.
+        (WebCore::protocolIs): Ditto.
+        (WebCore::protocolIsInHTTPFamily): Ditto.
+        * platform/URLParser.cpp:
+        (WeCore::URLParser::parseIPv4Piece): Use isASCIIDigit.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isRussianDomainNameCharacter): Use isASCIIDigit.
+        (WebCore::allCharactersAllowedByTLDRules): Ditto.
+        (WebCore::dataWithUserTypedString): Use upperNibbleToASCIIHexDigit and
+        lowerNibbleToASCIIHexDigit.
+        (WebCore::dataForURLComponentType): Ditto.
+        (WebCore::createStringWithEscapedUnsafeCharacters): Ditto.
+        (WebCore::userVisibleString): Use isASCIIHexDigit, toASCIIHexValue,
+        upperNibbleToASCIIHexDigit, and lowerNibbleToASCIIHexDigit.
+        (WebCore::isUserVisibleURL): Use isASCIIHexDigit and toASCIIHexValue.
+
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::encodeStringAsFormData): Use isASCIIAlphanumeric.
+
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::mathVariant): Use isASCIIUpper, isASCIILower, and isASCIIDigit.
+
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber): Use isASCIIDigit.
+        * svg/SVGPathStringSource.cpp:
+        (WebCore::nextCommandHelper): Ditto.
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::lexNumber): Ditto.
+        (WebCore::XPath::Parser::nextTokenInternal): Ditto.
+
 2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r209390.

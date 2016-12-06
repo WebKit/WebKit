@@ -487,7 +487,7 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     if (statusCodeString.length() != 3) // Status code must consist of three digits.
         return lineLength;
     for (int i = 0; i < 3; ++i)
-        if (statusCodeString[i] < '0' || statusCodeString[i] > '9') {
+        if (!isASCIIDigit(statusCodeString[i])) {
             m_failureReason = makeString("Invalid status code: ", statusCodeString);
             return lineLength;
         }

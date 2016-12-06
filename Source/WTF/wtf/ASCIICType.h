@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,37 @@
 // characters if the intent is to do processing only if the character is ASCII.
 
 namespace WTF {
+
+template<typename CharacterType> bool isASCII(CharacterType);
+template<typename CharacterType> bool isASCIIAlpha(CharacterType);
+template<typename CharacterType> bool isASCIIAlphanumeric(CharacterType);
+template<typename CharacterType> bool isASCIIBinaryDigit(CharacterType);
+template<typename CharacterType> bool isASCIIDigit(CharacterType);
+template<typename CharacterType> bool isASCIIHexDigit(CharacterType);
+template<typename CharacterType> bool isASCIILower(CharacterType);
+template<typename CharacterType> bool isASCIIOctalDigit(CharacterType);
+template<typename CharacterType> bool isASCIIPrintable(CharacterType);
+template<typename CharacterType> bool isASCIISpace(CharacterType);
+template<typename CharacterType> bool isASCIIUpper(CharacterType);
+
+template<typename CharacterType> CharacterType toASCIILower(CharacterType);
+template<typename CharacterType> CharacterType toASCIIUpper(CharacterType);
+
+template<typename CharacterType> uint8_t toASCIIHexValue(CharacterType);
+template<typename CharacterType> uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter);
+
+char lowerNibbleToASCIIHexDigit(uint8_t);
+char upperNibbleToASCIIHexDigit(uint8_t);
+char lowerNibbleToLowercaseASCIIHexDigit(uint8_t);
+char upperNibbleToLowercaseASCIIHexDigit(uint8_t);
+
+template<typename CharacterType> bool isASCIIAlphaCaselessEqual(CharacterType, char expectedASCIILowercaseLetter);
+
+// The toASCIILowerUnchecked function can be used for comparing any input character
+// to a lowercase English character. The isASCIIAlphaCaselessEqual function should
+// be used for regular comparison of ASCII alpha characters, but switch statements
+// in the CSS tokenizer, for example, instead make direct use toASCIILowerUnchecked.
+template<typename CharacterType> CharacterType toASCIILowerUnchecked(CharacterType);
 
 const unsigned char asciiCaseFoldTable[256] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,

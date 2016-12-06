@@ -418,13 +418,12 @@ static void appendQuotedJSONStringInternal(OutputCharacterType*& output, const I
             break;
         default:
             ASSERT((*input & 0xFF00) == 0);
-            static const char hexDigits[] = "0123456789abcdef";
             *output++ = '\\';
             *output++ = 'u';
             *output++ = '0';
             *output++ = '0';
-            *output++ = static_cast<LChar>(hexDigits[(*input >> 4) & 0xF]);
-            *output++ = static_cast<LChar>(hexDigits[*input & 0xF]);
+            *output++ = upperNibbleToLowercaseASCIIHexDigit(*input);
+            *output++ = lowerNibbleToLowercaseASCIIHexDigit(*input);
             break;
         }
     }

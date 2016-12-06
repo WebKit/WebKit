@@ -294,7 +294,7 @@ static bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer, int32_
 static bool isRussianDomainNameCharacter(UChar ch)
 {
     // Only modern Russian letters, digits and dashes are allowed.
-    return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || (ch >= '0' && ch <= '9') || ch == '-';
+    return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || isASCIIDigit(ch) || ch == '-';
 }
 
 static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
@@ -385,7 +385,7 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
     };
     CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicBEL, [](UChar ch) {
         // Russian and Byelorussian letters, digits and dashes are allowed.
-        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x0456 || ch == 0x045E || ch == 0x2019 || (ch >= '0' && ch <= '9') || ch == '-';
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x0456 || ch == 0x045E || ch == 0x2019 || isASCIIDigit(ch) || ch == '-';
     });
 
     // http://www.nic.kz/docs/poryadok_vnedreniya_kaz_ru.pdf
@@ -397,7 +397,7 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
     };
     CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicKAZ, [](UChar ch) {
         // Kazakh letters, digits and dashes are allowed.
-        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04D9 || ch == 0x0493 || ch == 0x049B || ch == 0x04A3 || ch == 0x04E9 || ch == 0x04B1 || ch == 0x04AF || ch == 0x04BB || ch == 0x0456 || (ch >= '0' && ch <= '9') || ch == '-';
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04D9 || ch == 0x0493 || ch == 0x049B || ch == 0x04A3 || ch == 0x04E9 || ch == 0x04B1 || ch == 0x04AF || ch == 0x04BB || ch == 0x0456 || isASCIIDigit(ch) || ch == '-';
     });
 
     // http://uanic.net/docs/documents-ukr/Rules%20of%20UKR_v4.0.pdf
@@ -409,7 +409,7 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
     };
     CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicUKR, [](UChar ch) {
         // Russian and Ukrainian letters, digits and dashes are allowed.
-        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x0491 || ch == 0x0404 || ch == 0x0456 || ch == 0x0457 || (ch >= '0' && ch <= '9') || ch == '-';
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x0491 || ch == 0x0404 || ch == 0x0456 || ch == 0x0457 || isASCIIDigit(ch) || ch == '-';
     });
 
     // http://www.rnids.rs/data/DOKUMENTI/idn-srb-policy-termsofuse-v1.4-eng.pdf
@@ -421,7 +421,7 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
     };
     CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicSRB, [](UChar ch) {
         // Serbian letters, digits and dashes are allowed.
-        return (ch >= 0x0430 && ch <= 0x0438) || (ch >= 0x043A && ch <= 0x0448) || ch == 0x0452 || ch == 0x0458 || ch == 0x0459 || ch == 0x045A || ch == 0x045B || ch == 0x045F || (ch >= '0' && ch <= '9') || ch == '-';
+        return (ch >= 0x0430 && ch <= 0x0438) || (ch >= 0x043A && ch <= 0x0448) || ch == 0x0452 || ch == 0x0458 || ch == 0x0459 || ch == 0x045A || ch == 0x045B || ch == 0x045F || isASCIIDigit(ch) || ch == '-';
     });
 
     // http://marnet.mk/doc/pravilnik-mk-mkd.pdf
@@ -433,7 +433,7 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
     };
     CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicMKD, [](UChar ch) {
         // Macedonian letters, digits and dashes are allowed.
-        return (ch >= 0x0430 && ch <= 0x0438) || (ch >= 0x043A && ch <= 0x0448) || ch == 0x0453 || ch == 0x0455 || ch == 0x0458 || ch == 0x0459 || ch == 0x045A || ch == 0x045C || ch == 0x045F || (ch >= '0' && ch <= '9') || ch == '-';
+        return (ch >= 0x0430 && ch <= 0x0438) || (ch >= 0x043A && ch <= 0x0448) || ch == 0x0453 || ch == 0x0455 || ch == 0x0458 || ch == 0x0459 || ch == 0x045A || ch == 0x045C || ch == 0x045F || isASCIIDigit(ch) || ch == '-';
     });
 
     // https://www.mon.mn/cs/
@@ -445,7 +445,7 @@ static BOOL allCharactersAllowedByTLDRules(const UChar* buffer, int32_t length)
     };
     CHECK_RULES_IF_SUFFIX_MATCHES(cyrillicMON, [](UChar ch) {
         // Mongolian letters, digits and dashes are allowed.
-        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04E9 || ch == 0x04AF || (ch >= '0' && ch <= '9') || ch == '-';
+        return (ch >= 0x0430 && ch <= 0x044f) || ch == 0x0451 || ch == 0x04E9 || ch == 0x04AF || isASCIIDigit(ch) || ch == '-';
     });
 
     // Not a known top level domain with special rules.
@@ -806,8 +806,8 @@ static NSData *dataWithUserTypedString(NSString *string)
         UInt8 c = inBytes[i];
         if (c <= 0x20 || c >= 0x7f) {
             *p++ = '%';
-            *p++ = uncheckedHexDigit(c >> 4);
-            *p++ = uncheckedHexDigit(c & 0xf);
+            *p++ = upperNibbleToASCIIHexDigit(c);
+            *p++ = lowerNibbleToASCIIHexDigit(c);
             outLength += 3;
         } else {
             *p++ = c;
@@ -901,8 +901,8 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
         if (c <= 0x20 || c >= 0x7f) {
             char escaped[3];
             escaped[0] = '%';
-            escaped[1] = uncheckedHexDigit(c >> 4);
-            escaped[2] = uncheckedHexDigit(c & 0xf);
+            escaped[1] = upperNibbleToASCIIHexDigit(c);
+            escaped[2] = lowerNibbleToASCIIHexDigit(c);
             [resultData appendBytes:escaped length:3];    
         } else {
             char b[1];
@@ -1013,8 +1013,8 @@ static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
             
             for (CFIndex j = 0; j < offset; ++j) {
                 outBuffer.append('%');
-                outBuffer.append(uncheckedHexDigit(utf8Buffer[j] >> 4));
-                outBuffer.append(uncheckedHexDigit(utf8Buffer[j] & 0xf));
+                outBuffer.append(upperNibbleToASCIIHexDigit(utf8Buffer[j]));
+                outBuffer.append(lowerNibbleToASCIIHexDigit(utf8Buffer[j]));
             }
         } else {
             UChar utf16Buffer[2];
@@ -1045,8 +1045,8 @@ NSString *userVisibleString(NSURL *URL)
     for (int i = 0; i < length; i++) {
         unsigned char c = p[i];
         // unescape escape sequences that indicate bytes greater than 0x7f
-        if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
-            unsigned char u = (uncheckedHexDigitValue(p[i + 1]) << 4) | uncheckedHexDigitValue(p[i + 2]);
+        if (c == '%' && (i + 1 < length && isASCIIHexDigit(p[i + 1])) && i + 2 < length && isASCIIHexDigit(p[i + 2])) {
+            auto u = toASCIIHexValue(p[i + 1], p[i + 2]);
             if (u > 0x7f) {
                 // unescape
                 *q++ = u;
@@ -1083,8 +1083,8 @@ NSString *userVisibleString(NSURL *URL)
             unsigned char c = *p;
             if (c > 0x7f) {
                 *q++ = '%';
-                *q++ = uncheckedHexDigit(c >> 4);
-                *q++ = uncheckedHexDigit(c & 0xf);
+                *q++ = upperNibbleToASCIIHexDigit(c);
+                *q++ = lowerNibbleToASCIIHexDigit(c);
             } else
                 *q++ = *p;
             p++;
@@ -1126,8 +1126,8 @@ BOOL isUserVisibleURL(NSString *string)
         if (c <= 0x20 || c == 0x7f) {
             valid = NO;
             break;
-        } else if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
-            unsigned char u = (uncheckedHexDigitValue(p[i + 1]) << 4) | uncheckedHexDigitValue(p[i + 2]);
+        } else if (c == '%' && (i + 1 < length && isASCIIHexDigit(p[i + 1])) && i + 2 < length && isASCIIHexDigit(p[i + 2])) {
+            auto u = toASCIIHexValue(p[i + 1], p[i + 2]);
             if (u > 0x7f) {
                 valid = NO;
                 break;

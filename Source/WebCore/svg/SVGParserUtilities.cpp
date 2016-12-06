@@ -62,13 +62,12 @@ template <typename CharacterType, typename FloatType> static bool genericParseNu
         sign = -1;
     } 
     
-    if (ptr == end || ((*ptr < '0' || *ptr > '9') && *ptr != '.'))
-        // The first character of a number must be one of [0-9+-.]
+    if (ptr == end || (!isASCIIDigit(*ptr) && *ptr != '.'))
         return false;
 
     // read the integer part, build right-to-left
     const CharacterType* ptrStartIntPart = ptr;
-    while (ptr < end && *ptr >= '0' && *ptr <= '9')
+    while (ptr < end && isASCIIDigit(*ptr))
         ++ptr; // Advance to first non-digit.
 
     if (ptr != ptrStartIntPart) {
@@ -87,10 +86,10 @@ template <typename CharacterType, typename FloatType> static bool genericParseNu
         ptr++;
         
         // There must be a least one digit following the .
-        if (ptr >= end || *ptr < '0' || *ptr > '9')
+        if (ptr >= end || !isASCIIDigit(*ptr))
             return false;
         
-        while (ptr < end && *ptr >= '0' && *ptr <= '9')
+        while (ptr < end && isASCIIDigit(*ptr))
             decimal += (*(ptr++) - '0') * (frac *= static_cast<FloatType>(0.1));
     }
 
@@ -108,10 +107,10 @@ template <typename CharacterType, typename FloatType> static bool genericParseNu
         }
         
         // There must be an exponent
-        if (ptr >= end || *ptr < '0' || *ptr > '9')
+        if (ptr >= end || !isASCIIDigit(*ptr))
             return false;
 
-        while (ptr < end && *ptr >= '0' && *ptr <= '9') {
+        while (ptr < end && isASCIIDigit(*ptr)) {
             exponent *= static_cast<FloatType>(10);
             exponent += *ptr - '0';
             ptr++;
