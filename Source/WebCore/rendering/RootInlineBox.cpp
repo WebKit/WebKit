@@ -641,29 +641,64 @@ LayoutUnit RootInlineBox::selectionTop() const
     return prevBottom;
 }
 
+static RenderBlock* blockBeforeWithinSelectionRoot(const RenderBlockFlow& blockFlow, LayoutSize& offset)
+{
+    if (blockFlow.isSelectionRoot())
+        return nullptr;
+
+    const RenderElement* object = &blockFlow;
+    RenderObject* sibling;
+    do {
+        sibling = object->previousSibling();
+        while (sibling && (!is<RenderBlock>(*sibling) || downcast<RenderBlock>(*sibling).isSelectionRoot()))
+            sibling = sibling->previousSibling();
+
+        offset -= LayoutSize(downcast<RenderBlock>(*object).logicalLeft(), downcast<RenderBlock>(*object).logicalTop());
+        object = object->parent();
+    } while (!sibling && is<RenderBlock>(object) && !downcast<RenderBlock>(*object).isSelectionRoot());
+
+    if (!sibling)
+        return nullptr;
+
+    RenderBlock* beforeBlock = downcast<RenderBlock>(sibling);
+
+    offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
+
+    RenderObject* child = beforeBlock->lastChild();
+    while (is<RenderBlock>(child)) {
+        beforeBlock = downcast<RenderBlock>(child);
+        offset += LayoutSize(beforeBlock->logicalLeft(), beforeBlock->logicalTop());
+        child = beforeBlock->lastChild();
+    }
+    return beforeBlock;
+}
+
 LayoutUnit RootInlineBox::selectionTopAdjustedForPrecedingBlock() const
 {
     const RootInlineBox& rootBox = root();
     LayoutUnit top = selectionTop();
 
-    RenderObject::SelectionState blockSelectionState = rootBox.blockFlow().selectionState();
+    auto blockSelectionState = rootBox.blockFlow().selectionState();
     if (blockSelectionState != RenderObject::SelectionInside && blockSelectionState != RenderObject::SelectionEnd)
         return top;
 
     LayoutSize offsetToBlockBefore;
-    if (RenderBlock* block = rootBox.blockFlow().blockBeforeWithinSelectionRoot(offsetToBlockBefore)) {
-        if (is<RenderBlockFlow>(*block)) {
-            if (RootInlineBox* lastLine = downcast<RenderBlockFlow>(*block).lastRootBox()) {
-                RenderObject::SelectionState lastLineSelectionState = lastLine->selectionState();
-                if (lastLineSelectionState != RenderObject::SelectionInside && lastLineSelectionState != RenderObject::SelectionStart)
-                    return top;
+    auto* blockBefore = blockBeforeWithinSelectionRoot(rootBox.blockFlow(), offsetToBlockBefore);
+    if (!is<RenderBlockFlow>(blockBefore))
+        return top;
 
-                LayoutUnit lastLineSelectionBottom = lastLine->selectionBottom() + offsetToBlockBefore.height();
-                top = std::max(top, lastLineSelectionBottom);
-            }
-        }
+    // Do not adjust blocks sharing the same line.
+    if (!offsetToBlockBefore.height())
+        return top;
+
+    if (auto* lastLine = downcast<RenderBlockFlow>(*blockBefore).lastRootBox()) {
+        RenderObject::SelectionState lastLineSelectionState = lastLine->selectionState();
+        if (lastLineSelectionState != RenderObject::SelectionInside && lastLineSelectionState != RenderObject::SelectionStart)
+            return top;
+
+        LayoutUnit lastLineSelectionBottom = lastLine->selectionBottom() + offsetToBlockBefore.height();
+        top = std::max(top, lastLineSelectionBottom);
     }
-
     return top;
 }
 

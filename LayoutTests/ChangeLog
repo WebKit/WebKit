@@ -1,3 +1,13 @@
+2016-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        Can not select whole line when using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=165299
+
+        Reviewed by David Hyatt.
+
+        * fast/flexbox/flexbox-fail-to-select-same-line-expected.html: Added.
+        * fast/flexbox/flexbox-fail-to-select-same-line.html: Added.
+
 2016-12-06  Jer Noble  <jer.noble@apple.com>
 
         YouTube sometimes pauses when switching tabs

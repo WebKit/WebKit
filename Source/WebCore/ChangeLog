@@ -1,3 +1,25 @@
+2016-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        Can not select whole line when using flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=165299
+
+        Reviewed by David Hyatt.
+
+        RootInlineBox::selectionTopAdjustedForPrecedingBlock assumes that the preceding block is
+        always above the current line. However in certain layout contexts (flex as an example) the block before
+        could just be on the same line as the current one.
+
+        This patch checks if we actually need to adjust the selection top to avoid vertical selection overlap.
+
+        Test: fast/flexbox/flexbox-fail-to-select-same-line.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::blockBeforeWithinSelectionRoot): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::blockBeforeWithinSelectionRoot):
+        (WebCore::RootInlineBox::selectionTopAdjustedForPrecedingBlock):
+
 2016-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add more assertions to ElementQueue diagnose a bug
