@@ -66,7 +66,8 @@ class WebProcessPool;
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
 
-- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect
+- (void)didUpdateVisibleRect:(CGRect)visibleRect
+    unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
     obscuredInset:(CGSize)topInset
     scale:(CGFloat)scale minimumScale:(CGFloat)minimumScale

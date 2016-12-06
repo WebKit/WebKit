@@ -1,3 +1,18 @@
+2016-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor reformat and renames in -didUpdateVisibleRect:
+        https://bugs.webkit.org/show_bug.cgi?id=165365
+
+        Reviewed by Dave Hyatt.
+        
+        didUpdateVisibleRect:... has lots of parameters. Put one on each line.
+
+        Rename the rects to make it clear they are "content" rects (i.e. in document coordinates).
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+
 2016-12-05  Tim Horton  <timothy_horton@apple.com>
 
         Adopt CAMachPort-as-layer-contents

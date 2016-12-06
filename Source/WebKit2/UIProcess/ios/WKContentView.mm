@@ -362,8 +362,14 @@ private:
     [_fixedClippingView setBounds:clippingBounds];
 }
 
-- (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInset:(CGSize)obscuredInset scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale inStableState:(BOOL)isStableState isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
+- (void)didUpdateVisibleRect:(CGRect)visibleContentRect
+    unobscuredRect:(CGRect)unobscuredContentRect
+    unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
+    obscuredInset:(CGSize)obscuredInset
+    scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale
+    inStableState:(BOOL)isStableState
+    isChangingObscuredInsetsInteractively:(BOOL)isChangingObscuredInsetsInteractively
+    enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
 {
     auto drawingArea = _page->drawingArea();
     if (!drawingArea)
@@ -372,16 +378,16 @@ private:
     MonotonicTime timestamp = MonotonicTime::now();
     HistoricalVelocityData::VelocityData velocityData;
     if (!isStableState)
-        velocityData = _historicalKinematicData.velocityForNewData(visibleRect.origin, zoomScale, timestamp);
+        velocityData = _historicalKinematicData.velocityForNewData(visibleContentRect.origin, zoomScale, timestamp);
     else
         _historicalKinematicData.clear();
 
     RemoteScrollingCoordinatorProxy* scrollingCoordinator = _page->scrollingCoordinatorProxy();
-    FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredRect, _page->customFixedPositionRect(), zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect, scrollingCoordinator->visualViewportEnabled());
+    FloatRect fixedPositionRectForLayout = _page->computeCustomFixedPositionRect(unobscuredContentRect, _page->customFixedPositionRect(), zoomScale, WebPageProxy::UnobscuredRectConstraint::ConstrainedToDocumentRect, scrollingCoordinator->visualViewportEnabled());
 
     VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
-        visibleRect,
-        unobscuredRect,
+        visibleContentRect,
+        unobscuredContentRect,
         unobscuredRectInScrollViewCoordinates,
         fixedPositionRectForLayout,
         WebCore::FloatSize(obscuredInset),
