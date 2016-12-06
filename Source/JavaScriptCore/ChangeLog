@@ -1,3 +1,12 @@
+2016-12-06  JF Bastien  <jfbastien@apple.com>
+
+        PureNaN: fix typo
+        https://bugs.webkit.org/show_bug.cgi?id=165493
+
+        Reviewed by Mark Lam.
+
+        * runtime/PureNaN.h:
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.
