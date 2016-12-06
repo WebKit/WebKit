@@ -97,7 +97,7 @@ void NetworkDataTask::scheduleFailure(FailureType type)
 void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(m_client);
-    if (response.isHttpVersion0_9()) {
+    if (response.isHTTP09()) {
         auto url = response.url();
         std::optional<uint16_t> port = url.port();
         if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {

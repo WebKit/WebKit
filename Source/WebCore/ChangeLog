@@ -1,5 +1,26 @@
 2016-12-06  Daniel Bates  <dabates@apple.com>
 
+        Cleanup: Rename some HTTP 0.9-specific functions to conform to WebKit Code Style Guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=165451
+
+        Reviewed by Alex Christensen.
+
+        Rename Document::shouldEnforceHTTP0_9Sandbox() and ResourceResponseBase::isHttpVersion0_9()
+        to Document::shouldEnforceHTTP09Sandbox() and ResourceResponseBase::isHTTP09, respectively,
+        to conform to the WebKit Code Style Guidelines.
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::shouldEnforceHTTP09Sandbox): Renamed; formerly named shouldEnforceHTTP0_9Sandbox
+        * dom/Document.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::didReceiveResponse):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isHTTP09): Renamed; formerly named isHttpVersion0_9.
+        * platform/network/ResourceResponseBase.h:
+
+2016-12-06  Daniel Bates  <dabates@apple.com>
+
         Use Vector::uncheckedAppend() in more places
         https://bugs.webkit.org/show_bug.cgi?id=164952
 

@@ -1394,7 +1394,7 @@ private:
     void applyQuickLookSandbox();
 #endif
 
-    bool shouldEnforceHTTP0_9Sandbox() const;
+    bool shouldEnforceHTTP09Sandbox() const;
 
     unsigned m_referencingNodeCount;
 

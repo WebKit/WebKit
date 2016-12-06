@@ -278,7 +278,7 @@ void ResourceResponseBase::setHTTPVersion(const String& versionText)
     // FIXME: Should invalidate or update platform response if present.
 }
 
-bool ResourceResponseBase::isHttpVersion0_9() const
+bool ResourceResponseBase::isHTTP09() const
 {
     lazyInit(AllFields);
 

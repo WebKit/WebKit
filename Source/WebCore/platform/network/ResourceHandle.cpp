@@ -152,7 +152,7 @@ void ResourceHandle::clearClient()
 
 void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
 {
-    if (response.isHttpVersion0_9()) {
+    if (response.isHTTP09()) {
         auto url = response.url();
         std::optional<uint16_t> port = url.port();
         if (port && !isDefaultPortForProtocol(port.value(), url.protocol())) {

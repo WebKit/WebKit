@@ -92,7 +92,7 @@ public:
 
     WEBCORE_EXPORT const String& httpVersion() const;
     WEBCORE_EXPORT void setHTTPVersion(const String&);
-    WEBCORE_EXPORT bool isHttpVersion0_9() const;
+    WEBCORE_EXPORT bool isHTTP09() const;
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
 
