@@ -1,3 +1,20 @@
+2016-12-06  Mark Lam  <mark.lam@apple.com>
+
+        Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=165227
+        <rdar://problem/29442665>
+
+        Reviewed by Saam Barati.
+
+        * stress/get-from-scope-dynamic-onto-proxy.js:
+        - Updated error message.
+
+        * stress/proxy-dont-infinite-loop.js: Removed.
+        * stress/proxy-json-path.js: Removed.
+        * stress/rest-parameter-allocation-elimination-watchpoints-6.js: Removed.
+        - Removed these tests because the issue they are testing relies on being able to
+          set Object.prototype.__proto__ to something else (which is now not possible).
+
 2016-12-05  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] report unexpected token when "async" is followed by identifier 

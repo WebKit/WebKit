@@ -74,6 +74,8 @@ ImplementationLacksVTable
 ImplementationReturnType=*
 ImplicitThis
 InterfaceName=*
+IsImmutablePrototypeExoticObject
+IsImmutablePrototypeExoticObjectOnPrototype
 IsWeakCallback
 JSBuiltin
 JSBuiltinConstructor

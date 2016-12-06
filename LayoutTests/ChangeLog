@@ -1,3 +1,48 @@
+2016-12-06  Mark Lam  <mark.lam@apple.com>
+
+        Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=165227
+        <rdar://problem/29442665>
+
+        Reviewed by Saam Barati.
+
+        The new prototype-assignment.js test is currently only enabled for LLInt only
+        run in the JSC tests until webkit.org/b/165401 is fixed.
+
+        * TestExpectations:
+        - Skip js/prototype-assignment.html for now until webkit.org/b/165401 is fixed.
+
+        * http/tests/security/window-named-valueOf-expected.txt:
+        * js/dom/proxy-is-not-allowed-in-global-prototype-chain-expected.txt:
+        * js/dom/proxy-is-not-allowed-in-global-prototype-chain.html:
+        - Updated error messages.
+
+        * js/prototype-assignment-expected.txt: Added.
+        * js/prototype-assignment.html: Added.
+        * js/script-tests/prototype-assignment.js: Added.
+        (else):
+        (reportError):
+        (shouldEqual):
+        (shouldThrow):
+        (stringify):
+        (makeTestID):
+        (doInternalSetPrototypeOf):
+        (ordinarySetPrototypeOf):
+        (setImmutablePrototype):
+        (windowProxySetPrototypeOf):
+        (initSetterExpectation):
+        (throwIfNoExceptionPending):
+        (objectSetPrototypeOf):
+        (setUnderscoreProto):
+        (reflectSetPrototypeOf):
+        (newObjectProto.toString):
+        (this.testObject.targets.push.value):
+        (this.testProxy.targets.push.setPrototypeOf):
+        (Symbol):
+        (test):
+        (runTests):
+        * js/setPrototypeOf-expected.txt:
+
 2016-12-06  Dave Hyatt  <hyatt@apple.com>
 
         REGRESSION (Safari 10): Scrolling not working inside height 100% table

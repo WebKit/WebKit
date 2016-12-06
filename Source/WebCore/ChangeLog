@@ -1,3 +1,38 @@
+2016-12-06  Mark Lam  <mark.lam@apple.com>
+
+        Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=165227
+        <rdar://problem/29442665>
+
+        Reviewed by Saam Barati.
+
+        Make all objects in window.__proto__'s prototype chain immutable prototype exotic
+        objects.  This gives us roughly equivalent behavior to other browsers.  
+
+        Firefox's behavior differ slightly in that Firefox will fail any attempted
+        assignment their __proto__, while the immutable prototype exotic objects will
+        only fail if the assignment is of a different value.  See
+        https://tc39.github.io/ecma262/#sec-immutable-prototype-exotic-objects.
+
+        Chrome differs in that assignment to window.__proto__ is also handled like an
+        immutable prototype exotic object.  Instead we adhere to the current HTML spec
+        that says that the assignment should fail unconditionally.  See
+        https://html.spec.whatwg.org/#the-windowproxy-exotic-object and
+        https://html.spec.whatwg.org/#windowproxy-setprototypeof.
+
+        If the HTML spec is changed to make the WindowProxy and Location objects into
+        immutable prototype exotic objects later, we can update to match the spec then.
+
+        Test: js/prototype-assignment.html
+
+        * bindings/js/JSDOMWindowProperties.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GeneratePrototypeDeclaration):
+        * bindings/scripts/IDLAttributes.txt:
+        * dom/EventTarget.idl:
+        * page/DOMWindow.idl:
+
 2016-12-06  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Add some memory usage related information to sysdiagnose state dumps

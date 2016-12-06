@@ -1393,6 +1393,9 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
     if (this->getPrototypeDirect() == prototype)
         return true;
 
+    if (this->structure(vm)->isImmutablePrototypeExoticObject())
+        return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral("Cannot set prototype of immutable prototype object"));
+
     bool isExtensible = this->isExtensible(exec);
     RETURN_IF_EXCEPTION(scope, false);
 

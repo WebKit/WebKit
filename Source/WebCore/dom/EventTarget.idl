@@ -21,6 +21,7 @@
 [
     CustomToJSObject,
     Exposed=(Window,Worker),
+    IsImmutablePrototypeExoticObjectOnPrototype,
     JSCustomHeader,
     JSCustomToNativeObject,
 ] interface EventTarget {

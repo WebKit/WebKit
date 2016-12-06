@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: TypeError: Proxy is not allowed in the global prototype chain.
-onerror saw TypeError: Proxy is not allowed in the global prototype chain.
+Caught: TypeError: Cannot set prototype of immutable prototype object
 
