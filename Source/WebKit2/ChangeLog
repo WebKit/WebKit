@@ -1,3 +1,10 @@
+2016-12-05  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the iOS Simulator build.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::mapAllIOSurfaceBackingStore):
+
 2016-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         Minor reformat and renames in -didUpdateVisibleRect:

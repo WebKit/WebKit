@@ -274,6 +274,7 @@ void RemoteLayerTreeHost::detachRootLayer()
     m_rootLayer = nullptr;
 }
 
+#if USE(IOSURFACE)
 static void recursivelyMapIOSurfaceBackingStore(CALayer *layer)
 {
     if (layer.contents && CFGetTypeID(layer.contents) == CAMachPortGetTypeID()) {
@@ -285,10 +286,13 @@ static void recursivelyMapIOSurfaceBackingStore(CALayer *layer)
     for (CALayer *sublayer in layer.sublayers)
         recursivelyMapIOSurfaceBackingStore(sublayer);
 }
+#endif
 
 void RemoteLayerTreeHost::mapAllIOSurfaceBackingStore()
 {
+#if USE(IOSURFACE)
     recursivelyMapIOSurfaceBackingStore(asLayer(m_rootLayer));
+#endif
 }
 
 } // namespace WebKit
