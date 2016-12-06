@@ -15,6 +15,17 @@
 
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Make sure the SVGPaint URI and currentColor style still paints using the URI
+        https://bugs.webkit.org/show_bug.cgi?id=165457
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::paintingResourceFromSVGPaint):
+        Add support for this paint type. The old parser doesn't use it.
+
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Fix dashboard region parsing
         https://bugs.webkit.org/show_bug.cgi?id=165456
 

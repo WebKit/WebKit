@@ -157,7 +157,7 @@ static inline String targetReferenceFromResource(SVGElement& element)
 
 static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document& document, const SVGPaint::SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)
 {
-    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && paintType != SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)
+    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && paintType != SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR && paintType != SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR)
         return 0;
 
     id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, document);
