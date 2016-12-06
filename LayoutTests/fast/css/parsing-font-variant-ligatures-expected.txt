@@ -13,7 +13,6 @@ PASS: 'discretionary-ligatures' parsed as 'discretionary-ligatures' and computed
 PASS: 'no-historical-ligatures' parsed as 'no-historical-ligatures' and computed to 'no-historical-ligatures'
 PASS: 'historical-ligatures' parsed as 'historical-ligatures' and computed to 'historical-ligatures'
 
-PASS: 'no-common-ligatures no-common-ligatures' parsed as 'no-common-ligatures' and computed to 'no-common-ligatures'
 PASS: 'common-ligatures no-discretionary-ligatures' parsed as 'common-ligatures no-discretionary-ligatures' and computed to 'common-ligatures no-discretionary-ligatures'
 PASS: 'common-ligatures no-discretionary-ligatures historical-ligatures' parsed as 'common-ligatures no-discretionary-ligatures historical-ligatures' and computed to 'common-ligatures no-discretionary-ligatures historical-ligatures'
 PASS: 'common-ligatures no-discretionary-ligatures normal' parsed as '' and computed to 'normal'

@@ -1011,6 +1011,7 @@ webkit.org/b/165195 fast/events/mouse-cursor.html [ Pass Failure ]
 webkit.org/b/165195 fast/forms/basic-selects.html [ Pass Failure ]
 webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass Failure ]
 webkit.org/b/165195 fast/inspector-support/style.html [ Pass Failure ]
+webkit.org/b/165195 svg/webarchive/svg-script-subresouces.svg [ Pass Failure ]
 
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.
@@ -1057,6 +1058,7 @@ webkit.org/b/165195 fast/css/aspect-ratio-parsing-tests.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pass Failure ]
+webkit.org/b/165195 fast/masking/parsing-mask.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
@@ -1073,4 +1075,5 @@ webkit.org/b/165195 fast/css/font-shorthand-from-longhands.html [ Pass Failure ]
 # the new CSS Parser turns on.
 webkit.org/b/165195 svg/dom/SVGColor.html [ Pass Failure ]
 webkit.org/b/165195 svg/dom/SVGPaint.html [ Pass Failure ]
+webkit.org/b/165195 svg/dom/rgb-color-parser.html [ Pass Failure ]
 

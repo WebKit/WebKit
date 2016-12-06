@@ -80,7 +80,7 @@ PASS innerStyle("background-image", "filter(linear-gradient(to top left, white, 
 PASS innerStyle("background-image", "filter(linear-gradient(0deg, white -20%, blue, black 120%), hue-rotate(90deg))") is "filter(linear-gradient(0deg, white -20%, blue, black 120%), hue-rotate(90deg))"
 PASS innerStyle("background-image", "filter(-webkit-cross-fade(url(http://image1.png), url(http://image2.png), 50%), contrast(0.5))") is "filter(-webkit-cross-fade(url(http://image1.png/), url(http://image2.png/), 0.5), contrast(0.5))"
 PASS innerStyle("background-image", "filter(url(http://image1.png), brightness(50%))") is "filter(url(http://image1.png/), brightness(50%))"
-PASS innerStyle("background-image", "filter('http://image1.png', brightness(50%))") is "filter(url(http://image1.png/), brightness(50%))"
+PASS innerStyle("background-image", "filter(url('http://image1.png'), brightness(50%))") is "filter(url(http://image1.png/), brightness(50%))"
 PASS innerStyle("border-image-source", "filter(url(http://image1.png), invert(50%))") is "filter(url(http://image1.png/), invert(50%))"
 PASS innerStyle("-webkit-mask-image", "filter(url(http://image1.png), invert(50%))") is "filter(url(http://image1.png/), invert(50%))"
 PASS innerStyle("-webkit-mask-box-image-source", "filter(url(http://image1.png), invert(50%))") is "filter(url(http://image1.png/), invert(50%))"

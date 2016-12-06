@@ -353,7 +353,7 @@ testInner(
     "filter(url(http://image1.png/), brightness(50%))");
 testInner(
     "background-image",
-    "filter('http://image1.png', brightness(50%))",
+    "filter(url('http://image1.png'), brightness(50%))",
     "filter(url(http://image1.png/), brightness(50%))");
 
 // Test different properties, taking CSS Image values.
