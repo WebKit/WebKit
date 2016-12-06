@@ -419,10 +419,9 @@ static Color fastParseColorInternal(const CharacterType* characters, unsigned le
     CSSPrimitiveValue::UnitTypes expect = CSSPrimitiveValue::UnitTypes::CSS_UNKNOWN;
 
     if (length >= 4 && characters[0] == '#') {
-        // FIXME: Why doesn't this check if the parse worked? Is the fallback black?
         RGBA32 rgb;
-        Color::parseHexColor(characters + 1, length - 1, rgb);
-        return Color(rgb);
+        if (Color::parseHexColor(characters + 1, length - 1, rgb))
+            return Color(rgb);
     }
 
     if (quirksMode && (length == 3 || length == 6)) {

@@ -1,3 +1,15 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Reject invalid hex colors on the fast path
+        https://bugs.webkit.org/show_bug.cgi?id=165461
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::fastParseColorInternal):
+        Make sure to check for success. There was even a FIXME in the code about this!
+        Matches our old parser's behavior.
+
 2016-12-05  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Controls bar in fullscreen cannot be dragged
