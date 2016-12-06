@@ -36,11 +36,22 @@
 
 namespace IPC {
 
-Decoder::Decoder(const DataReference& buffer, Vector<Attachment> attachments)
+static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
 {
-    initialize(buffer.data(), buffer.size());
+    auto bufferCopy = static_cast<uint8_t*>(fastMalloc(bufferSize));
+    memcpy(bufferCopy, buffer, bufferSize);
 
-    m_attachments = WTFMove(attachments);
+    return bufferCopy;
+}
+
+Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment> attachments)
+    : m_buffer { bufferDeallocator ? buffer : copyBuffer(buffer, bufferSize) }
+    , m_bufferPos { m_buffer }
+    , m_bufferEnd { m_buffer + bufferSize }
+    , m_bufferDeallocator { bufferDeallocator }
+    , m_attachments { WTFMove(attachments) }
+{
+    ASSERT(!(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)));
 
     if (!decode(m_messageFlags))
         return;
@@ -58,7 +69,12 @@ Decoder::Decoder(const DataReference& buffer, Vector<Attachment> attachments)
 Decoder::~Decoder()
 {
     ASSERT(m_buffer);
-    fastFree(m_buffer);
+
+    if (m_bufferDeallocator)
+        m_bufferDeallocator(m_buffer, m_bufferEnd - m_buffer);
+    else
+        fastFree(const_cast<uint8_t*>(m_buffer));
+
     // FIXME: We need to dispose of the mach ports in cases of failure.
 
 #if HAVE(QOS_CLASSES)
@@ -103,27 +119,16 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    return std::make_unique<Decoder>(wrappedMessage, WTFMove(attachments));
+    return std::make_unique<Decoder>(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
 }
 
-static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
+static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, unsigned alignment)
 {
     // Assert that the alignment is a power of 2.
     ASSERT(alignment && !(alignment & (alignment - 1)));
 
     uintptr_t alignmentMask = alignment - 1;
     return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
-}
-
-void Decoder::initialize(const uint8_t* buffer, size_t bufferSize)
-{
-    m_buffer = static_cast<uint8_t*>(fastMalloc(bufferSize));
-
-    ASSERT(!(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)));
-
-    m_bufferPos = m_buffer;
-    m_bufferEnd = m_buffer + bufferSize;
-    memcpy(m_buffer, buffer, bufferSize);
 }
 
 static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferEnd, size_t size)
@@ -133,7 +138,7 @@ static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPos
 
 bool Decoder::alignBufferPosition(unsigned alignment, size_t size)
 {
-    uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
+    const uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
     if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_bufferEnd, size)) {
         // We've walked off the end of this buffer.
         markInvalid();
@@ -169,7 +174,7 @@ bool Decoder::decodeVariableLengthByteArray(DataReference& dataReference)
     if (!alignBufferPosition(1, size))
         return false;
 
-    uint8_t* data = m_bufferPos;
+    const uint8_t* data = m_bufferPos;
     m_bufferPos += size;
 
     dataReference = DataReference(data, size);
@@ -177,7 +182,7 @@ bool Decoder::decodeVariableLengthByteArray(DataReference& dataReference)
 }
 
 template<typename Type>
-static void decodeValueFromBuffer(Type& value, uint8_t*& bufferPosition)
+static void decodeValueFromBuffer(Type& value, const uint8_t*& bufferPosition)
 {
     memcpy(&value, bufferPosition, sizeof(value));
     bufferPosition += sizeof(Type);

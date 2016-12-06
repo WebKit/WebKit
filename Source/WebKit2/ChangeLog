@@ -1,3 +1,41 @@
+2016-12-05  Anders Carlsson  <andersca@apple.com>
+
+        Don't memcpy out of line data
+        https://bugs.webkit.org/show_bug.cgi?id=165434
+
+        Reviewed by Sam Weinig.
+
+        Change the Decoder constructor to take a buffer deallocator parameter. If the buffer deallocator is null, the
+        data will be copied as before. Otherwise, the memory will be adopted by the Decoder object, and will be deallocated
+        by invoking the data deallocator.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::copyBuffer):
+        Add a new helper.
+
+        (IPC::Decoder::Decoder):
+        Copy the buffer if the deallocator is null.
+
+        (IPC::Decoder::~Decoder):
+        Invoke the deallocator or call fastFree if it is null.
+
+        (IPC::Decoder::unwrapForTesting):
+        Update constructor.
+        
+        (IPC::roundUpToAlignment):
+        (IPC::Decoder::alignBufferPosition):
+        (IPC::Decoder::decodeVariableLengthByteArray):
+        (IPC::decodeValueFromBuffer):
+        Change all these to deal with const pointers.
+
+        * Platform/IPC/Decoder.h:
+        Add new members.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::createMessageDecoder):
+        When we have out of line data, pass a deallocator that calls vm_deallocate, instead of copying the data
+        and then immediately throwing the original away.
+
 2016-12-06  Tim Horton  <timothy_horton@apple.com>
 
         Almost half-second stall scrolling apple.com because of synchronous getPositionInformation

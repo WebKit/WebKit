@@ -43,8 +43,11 @@ class ImportanceAssertion;
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Decoder(const DataReference& buffer, Vector<Attachment>);
+    Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>);
     ~Decoder();
+
+    Decoder(const Decoder&) = delete;
+    Decoder(Decoder&&) = delete;
 
     StringReference messageReceiverName() const { return m_messageReceiverName; }
     StringReference messageName() const { return m_messageName; }
@@ -130,16 +133,14 @@ public:
 
     static const bool isIPCDecoder = true;
 
-protected:
-    void initialize(const uint8_t* buffer, size_t bufferSize);
-
+private:
     bool alignBufferPosition(unsigned alignment, size_t);
     bool bufferIsLargeEnoughToContain(unsigned alignment, size_t) const;
 
-private:
-    uint8_t* m_buffer;
-    uint8_t* m_bufferPos;
-    uint8_t* m_bufferEnd;
+    const uint8_t* m_buffer;
+    const uint8_t* m_bufferPos;
+    const uint8_t* m_bufferEnd;
+    void (*m_bufferDeallocator)(const uint8_t*, size_t);
 
     Vector<Attachment> m_attachments;
 
@@ -148,7 +149,6 @@ private:
     StringReference m_messageName;
 
     uint64_t m_destinationID;
-
 
 #if PLATFORM(MAC)
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
