@@ -235,7 +235,7 @@ CSSParserToken::CSSParserToken(CSSParserTokenType type, double numericValue, Num
     , m_unit(static_cast<unsigned>(CSSPrimitiveValue::UnitTypes::CSS_NUMBER))
 {
     ASSERT(type == NumberToken);
-    m_numericValue = clampTo<double>(numericValue, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    m_numericValue = numericValue;
 }
 
 CSSParserToken::CSSParserToken(CSSParserTokenType type, UChar32 start, UChar32 end)

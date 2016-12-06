@@ -1,3 +1,28 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Properly reject large numeric values
+        https://bugs.webkit.org/show_bug.cgi?id=165455
+
+        Reviewed by Zalan Bujtas.
+
+        The new parser clamped numeric values in both the slow and fast paths to the max
+        and min float values. The old parser simply allowed the values to be inf, and then
+        had std::isinf checks to reject.
+
+        Blink rejects also even though it clamps, but I could not discern the mechanism by
+        which they did so. Therefore I am changing the new parser to exactly match the old
+        parser. Numeric values are no longer clamped, but instead are allowed to be inf, and
+        isinf checks now exist in the new parser in the same places they do in the old parser.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseSimpleLength):
+        (WebCore::parseSimpleLengthValue):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::CSSParserToken):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+
 2016-12-05  Ricky Mondello  <rmondello@apple.com>
 
         STP 19 fails to launch on 16B255

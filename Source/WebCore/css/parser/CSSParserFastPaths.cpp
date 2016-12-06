@@ -118,7 +118,6 @@ static inline bool parseSimpleLength(const CharacterType* characters, unsigned l
     number = charactersToDouble(characters, length, &ok);
     if (!ok)
         return false;
-    number = clampTo<double>(number, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     return true;
 }
 
@@ -150,6 +149,8 @@ static RefPtr<CSSValue> parseSimpleLengthValue(CSSPropertyID propertyId, const S
     }
 
     if (number < 0 && !acceptsNegativeNumbers)
+        return nullptr;
+    if (std::isinf(number))
         return nullptr;
 
     return CSSPrimitiveValue::create(number, unit);

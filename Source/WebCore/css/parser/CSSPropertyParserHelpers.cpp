@@ -208,13 +208,15 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
         default:
             return nullptr;
         }
-        if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
+        if ((valueRange == ValueRangeNonNegative && token.numericValue() < 0) || std::isinf(token.numericValue()))
             return nullptr;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), token.unitType());
     }
     if (token.type() == NumberToken) {
         if (!shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless)
             || (valueRange == ValueRangeNonNegative && token.numericValue() < 0))
+            return nullptr;
+        if (std::isinf(token.numericValue()))
             return nullptr;
         CSSPrimitiveValue::UnitTypes unitType = CSSPrimitiveValue::UnitTypes::CSS_PX;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unitType);
@@ -231,7 +233,7 @@ RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange 
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == PercentageToken) {
-        if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
+        if ((valueRange == ValueRangeNonNegative && token.numericValue() < 0) || std::isinf(token.numericValue()))
             return nullptr;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), CSSPrimitiveValue::UnitTypes::CSS_PERCENTAGE);
     }
