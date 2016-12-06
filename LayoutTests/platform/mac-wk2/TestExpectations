@@ -267,6 +267,8 @@ webkit.org/b/162505 tiled-drawing/scrolling/latched-div-with-scroll-snap.html [ 
 webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html [ Pass Failure ]
 webkit.org/b/148407 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html [ Pass Failure ]
 webkit.org/b/165196 tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html [ Pass Failure ]
+webkit.org/b/165489 tiled-drawing/scrolling/frames/coordinated-frame-gain-scrolling-ancestor.html [ Pass Failure ]
+webkit.org/b/165489 tiled-drawing/scrolling/frames/coordinated-frame-lose-scrolling-ancestor.html [ Pass Failure ]
 
 webkit.org/b/148408 tiled-drawing/scrolling/root-overflow-with-mousewheel.html [ Pass Failure Timeout ]
 
