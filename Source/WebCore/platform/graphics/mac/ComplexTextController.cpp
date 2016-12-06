@@ -664,14 +664,14 @@ void ComplexTextController::adjustGlyphsAndAdvances()
     bool runForbidsTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForbidTrailingExpansion;
 
     // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
-    for (size_t r = 0; r < runCount; ++r) {
-        ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
+    for (size_t runIndex = 0; runIndex < runCount; ++runIndex) {
+        ComplexTextRun& complexTextRun = *m_complexTextRuns[runIndex];
         unsigned glyphCount = complexTextRun.glyphCount();
         const Font& font = complexTextRun.font();
 
         // Represent the initial advance for a text run by adjusting the advance
         // of the last glyph of the previous text run in the glyph buffer.
-        if (r && m_adjustedBaseAdvances.size()) {
+        if (!complexTextRun.glyphOrigins() && runIndex && m_adjustedBaseAdvances.size()) {
             CGSize previousAdvance = m_adjustedBaseAdvances.last();
             previousAdvance.width += complexTextRun.initialAdvance().width;
             previousAdvance.height -= complexTextRun.initialAdvance().height;
@@ -685,7 +685,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         const CGGlyph* glyphs = complexTextRun.glyphs();
         const CGSize* advances = complexTextRun.baseAdvances();
 
-        bool lastRun = r + 1 == runCount;
+        bool lastRun = runIndex + 1 == runCount;
         float spaceWidth = font.spaceWidth() - font.syntheticBoldOffset();
         const UChar* cp = complexTextRun.characters();
         CGPoint glyphOrigin = CGPointZero;
@@ -709,7 +709,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             else if (i + 1 < glyphCount)
                 nextCh = *(cp + complexTextRun.indexAt(i + 1));
             else
-                nextCh = *(m_complexTextRuns[r + 1]->characters() + m_complexTextRuns[r + 1]->indexAt(0));
+                nextCh = *(m_complexTextRuns[runIndex + 1]->characters() + m_complexTextRuns[runIndex + 1]->indexAt(0));
 
             bool treatAsSpace = FontCascade::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? font.spaceGlyph() : glyphs[i];
@@ -771,7 +771,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                         afterExpansion = false;
 
                     // Account for word-spacing.
-                    if (treatAsSpace && (ch != '\t' || !m_run.allowTabs()) && (characterIndex > 0 || r > 0) && m_font.wordSpacing())
+                    if (treatAsSpace && (ch != '\t' || !m_run.allowTabs()) && (characterIndex > 0 || runIndex > 0) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
                 } else
                     afterExpansion = false;

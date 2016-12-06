@@ -2736,3 +2736,7 @@ webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]
 
 # Test relies on window.scrollTo
 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
+
+# This test relies on Arial being used to draw Arabic. However, on iOS,
+# we explicitly disallow this because this font is too slow.
+fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
