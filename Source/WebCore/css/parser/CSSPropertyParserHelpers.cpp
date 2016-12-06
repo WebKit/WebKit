@@ -221,8 +221,6 @@ RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange& range, CSSParserMod
         CSSPrimitiveValue::UnitTypes unitType = CSSPrimitiveValue::UnitTypes::CSS_PX;
         return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unitType);
     }
-    if (cssParserMode == SVGAttributeMode)
-        return nullptr;
     CalcParser calcParser(range, valueRange);
     if (calcParser.value() && calcParser.value()->category() == CalcLength)
         return calcParser.consumeValue();

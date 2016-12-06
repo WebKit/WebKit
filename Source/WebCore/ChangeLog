@@ -1,3 +1,13 @@
+2016-12-05  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Allow calc in SVG attributes
+        https://bugs.webkit.org/show_bug.cgi?id=165459
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+
 2016-12-05  Brady Eidson  <beidson@apple.com>
 
         Build fix followup to r209379:
