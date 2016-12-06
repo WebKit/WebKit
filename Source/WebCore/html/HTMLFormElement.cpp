@@ -254,6 +254,14 @@ bool HTMLFormElement::validateInteractively()
     return false;
 }
 
+static bool isURLBlacklistedForInteractiveFormValidation(const URL& url)
+{
+    // FIXME: Remove this workaround once <rdar://problem/29518605> is fixed.
+    if (url.host() == "idmsa.apple.com")
+        return true;
+    return false;
+}
+
 void HTMLFormElement::prepareForSubmission(Event& event)
 {
     Frame* frame = document().frame();
@@ -263,7 +271,7 @@ void HTMLFormElement::prepareForSubmission(Event& event)
     m_isSubmittingOrPreparingForSubmission = true;
     m_shouldSubmit = false;
 
-    bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
+    bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate() && !isURLBlacklistedForInteractiveFormValidation(document().url());
 
     HTMLFormControlElement* submitElement = submitElementFromEvent(event);
     if (submitElement && submitElement->formNoValidate())

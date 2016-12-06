@@ -1,5 +1,20 @@
 2016-12-06  Chris Dumez  <cdumez@apple.com>
 
+        Add HTML interactive form validation blacklist for some WebKit-specific sites
+        https://bugs.webkit.org/show_bug.cgi?id=165470
+        <rdar://problem/29509424>
+
+        Reviewed by Simon Fraser.
+
+        Add HTML interactive form validation blacklist for some WebKit-specific sites
+        expecting our old behavior, until they get a chance to be updated.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::isURLBlacklistedForInteractiveFormValidation):
+        (WebCore::HTMLFormElement::prepareForSubmission):
+
+2016-12-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rollout r209050.
 
         This change may impact other popovers than the HTML validation one.
