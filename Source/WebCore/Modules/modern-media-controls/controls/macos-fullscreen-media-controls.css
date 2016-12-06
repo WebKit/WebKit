@@ -28,14 +28,16 @@
 .media-controls.mac.fullscreen {
     --controls-bar-width: 468px;
     --tracks-panel-right-margin: 40px;
+
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .media-controls.mac.fullscreen > .controls-bar {
-    left: 50%;
+    left: calc((100% - var(--controls-bar-width)) / 2);
     bottom: 25px;
     width: var(--controls-bar-width);
     height: 75px;
-    transform: translateX(-50%);
     overflow: hidden;
     border-radius: 8px;
 

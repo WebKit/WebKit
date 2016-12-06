@@ -29,6 +29,34 @@ class ControlsBar extends LayoutNode
     constructor()
     {
         super(`<div class="controls-bar">`);
+
+        this._translation = new DOMPoint;
+    }
+
+    // Public
+
+    get translation()
+    {
+        return new DOMPoint(this._translation.x, this._translation.y);
+    }
+
+    set translation(point)
+    {
+        if (this._translation.x === point.x && this._translation.y === point.y)
+            return
+
+        this._translation = new DOMPoint(point.x, point.y);
+        this.markDirtyProperty("translation");
+    }
+
+    // Protected
+
+    commitProperty(propertyName)
+    {
+        if (propertyName === "translation")
+            this.element.style.transform = `translate(${this._translation.x}px, ${this._translation.y}px)`;
+        else
+            super.commitProperty(propertyName);
     }
 
 }

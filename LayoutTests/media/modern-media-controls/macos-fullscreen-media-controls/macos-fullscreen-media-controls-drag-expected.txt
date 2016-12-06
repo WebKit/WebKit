@@ -1,0 +1,10 @@
+Testing the MediaController resizing behavior.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mediaControls.querySelector('.controls-bar').style.transform is "translate(-50px, -100px)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

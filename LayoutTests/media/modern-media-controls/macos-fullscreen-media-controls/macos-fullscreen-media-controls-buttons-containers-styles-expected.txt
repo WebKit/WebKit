@@ -3,13 +3,13 @@ Testing the MacOSFullscreenMediaControls computed styles.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS centerContainerBounds.left is 61
-PASS centerContainerBounds.top is 50
+PASS centerContainerBounds.left is 311
+PASS centerContainerBounds.top is 500
 PASS centerContainerBounds.width is 178
 PASS centerContainerBounds.height is 44
 
-PASS rightContainerBounds.left is within 0.5 of 218
-PASS rightContainerBounds.top is 50
+PASS rightContainerBounds.left is within 0.5 of 468
+PASS rightContainerBounds.top is 500
 PASS rightContainerBounds.width is within 0.5 of 166
 PASS rightContainerBounds.height is 44
 

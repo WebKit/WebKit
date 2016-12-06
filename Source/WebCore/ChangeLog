@@ -1,3 +1,30 @@
+2016-12-05  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Controls bar in fullscreen cannot be dragged
+        https://bugs.webkit.org/show_bug.cgi?id=165448
+
+        Reviewed by Simon Fraser.
+
+        We weren't listening to mousemove and mouseup events on the right event target, window in the context
+        of a fullscreen shadow root makes no sense. We now listen to those events on the media controls, which
+        we size to fit the whole of the media element's bounds. We then apply a transform to the controls bar
+        to apply the dragging distance.
+
+        Test: media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html
+
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.get translation):
+        (ControlsBar.prototype.set translation):
+        (ControlsBar.prototype.commitProperty):
+        (ControlsBar): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen):
+        (.media-controls.mac.fullscreen > .controls-bar):
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype._handleMousedown):
+        (MacOSFullscreenMediaControls.prototype._handleMousemove):
+        (MacOSFullscreenMediaControls.prototype._handleMouseup):
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Allow calc in SVG attributes

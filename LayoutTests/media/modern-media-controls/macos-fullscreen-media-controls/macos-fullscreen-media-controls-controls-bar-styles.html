@@ -2,14 +2,17 @@
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
 <body>
+<div id="container"></div>
 <style type="text/css" media="screen">
-    
-.media-controls {
+
+#container {
     position: absolute;
     top: 0;
     left: 0;
+    width: 800px;
+    height: 600px;
 }
-    
+
 </style>
 <script type="text/javascript">
 
@@ -22,20 +25,18 @@ const mediaControls = new MacOSFullscreenMediaControls;
 let style, bounds;
 scheduler.frameDidFire = function()
 {
-    document.body.appendChild(mediaControls.element);
+    document.getElementById("container").appendChild(mediaControls.element);
 
     style = window.getComputedStyle(mediaControls.controlsBar.element);
     bounds = mediaControls.controlsBar.element.getBoundingClientRect();
     
-    shouldBeEqualToString("style.left", "50%");
     shouldBeEqualToString("style.bottom", "25px");
     shouldBeEqualToString("style.width", "468px");
     shouldBeEqualToString("style.height", "75px");
-    shouldBeEqualToString("style.transform", "matrix(1, 0, 0, 1, -234, 0)");
     shouldBeEqualToString("style.borderRadius", "8px");
 
-    shouldBe("bounds.left", "-84");
-    shouldBe("bounds.top", "50");
+    shouldBe("bounds.left", "166");
+    shouldBe("bounds.top", "500");
     shouldBe("bounds.width", "468");
     shouldBe("bounds.height", "75");
 
