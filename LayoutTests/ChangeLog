@@ -1,5 +1,17 @@
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Media controls use the fullscreen layout after going from inline to fullscreen to PiP to inline
+        https://bugs.webkit.org/show_bug.cgi?id=165494
+
+        Reviewed by Dean Jackson.
+
+        Add a new tests that goes from inline to fullscreen to PiP to inline and checks the controls have the right type on the way.
+
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html: Added.
+
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Rendering issues with controls bar when captions are on
         https://bugs.webkit.org/show_bug.cgi?id=165390
 

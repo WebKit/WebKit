@@ -1,5 +1,24 @@
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Media controls use the fullscreen layout after going from inline to fullscreen to PiP to inline
+        https://bugs.webkit.org/show_bug.cgi?id=165494
+
+        Reviewed by Dean Jackson.
+
+        We would only call _updateControlsIfNeeded() when entering or leaving fullscreen, so we going from fullscreen to PiP to
+        inline would retain fullscreen controls since we would not check for the event that indicates we went back from PiP to
+        inline. On platforms that support it, we listen to the "webkitpresentationmodechanged" event
+        to update the controls, and only "webkitfullscreenchange" on others (ie. Yosemite).
+
+        Test: media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._returnMediaLayerToInlineIfNeeded):
+
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Rendering issues with controls bar when captions are on
         https://bugs.webkit.org/show_bug.cgi?id=165390
 

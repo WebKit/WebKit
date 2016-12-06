@@ -35,16 +35,17 @@ class MediaController
         this.container = shadowRoot.appendChild(document.createElement("div"));
         this.container.className = "media-controls-container";
 
-        if (host) {
-            media.addEventListener("webkitpresentationmodechanged", this);
+        if (host)
             this.container.appendChild(host.textTrackContainer);
-        }
 
         this._updateControlsIfNeeded();
 
         shadowRoot.addEventListener("resize", this);
 
-        media.addEventListener("webkitfullscreenchange", this);
+        if (media.webkitSupportsPresentationMode)
+            media.addEventListener("webkitpresentationmodechanged", this);
+        else
+            media.addEventListener("webkitfullscreenchange", this);
     }
 
     get layoutTraits()
@@ -71,12 +72,11 @@ class MediaController
     {
         if (event.type === "resize" && event.currentTarget === this.shadowRoot)
             this._updateControlsSize();
-        else if (event.currentTarget !== this.media)
-            return;
-        else if (event.type === "webkitfullscreenchange")
+        else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();
-        else if (event.type === "webkitpresentationmodechanged")
-            this._returnMediaLayerToInlineIfNeeded();
+            if (event.type === "webkitpresentationmodechanged")
+                this._returnMediaLayerToInlineIfNeeded();
+        }
     }
 
     // Private
@@ -122,7 +122,8 @@ class MediaController
 
     _returnMediaLayerToInlineIfNeeded()
     {
-        window.requestAnimationFrame(() => this.host.setPreparedToReturnVideoLayerToInline(this.media.webkitPresentationMode !== PiPMode));
+        if (this.host)
+            window.requestAnimationFrame(() => this.host.setPreparedToReturnVideoLayerToInline(this.media.webkitPresentationMode !== PiPMode));
     }
 
     _controlsClass()
