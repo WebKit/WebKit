@@ -90,19 +90,19 @@ public:
     void queuedCreateOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void queuedCreateAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
 
-    void queuedSetLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
+    void queuedSetLocalDescription(RTCSessionDescription&, DOMPromise<void>&&);
     RefPtr<RTCSessionDescription> localDescription() const;
     RefPtr<RTCSessionDescription> currentLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
 
-    void queuedSetRemoteDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
+    void queuedSetRemoteDescription(RTCSessionDescription&, DOMPromise<void>&&);
     RefPtr<RTCSessionDescription> remoteDescription() const;
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
     String signalingState() const;
 
-    void queuedAddIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&);
+    void queuedAddIceCandidate(RTCIceCandidate&, DOMPromise<void>&&);
 
     String iceGatheringState() const;
     String iceConnectionState() const;
@@ -155,7 +155,7 @@ private:
     bool canSuspendForDocumentSuspension() const final;
 
     // RTCRtpSenderClient
-    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) final;
+    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final;
 
     PeerConnectionStates::SignalingState m_signalingState { PeerConnectionStates::SignalingState::Stable };
     PeerConnectionStates::IceGatheringState m_iceGatheringState { PeerConnectionStates::IceGatheringState::New };

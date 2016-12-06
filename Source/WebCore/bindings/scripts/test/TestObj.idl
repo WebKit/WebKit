@@ -433,7 +433,9 @@ enum TestConfidence { "high", "kinda-low" };
 
 typedef any AnyTypedef;
 
-dictionary TestDictionary {
+[
+    JSGenerateToJSObject
+]dictionary TestDictionary {
     TestEnumType enumerationValueWithoutDefault;
     TestEnumType enumerationValueWithDefault = "enumValue1";
     TestEnumType enumerationValueWithEmptyStringDefault = "";

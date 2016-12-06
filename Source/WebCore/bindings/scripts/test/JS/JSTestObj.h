@@ -169,6 +169,8 @@ template<> const char* expectedEnumerationValues<TestObj::Confidence>();
 
 template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSC::ExecState&, JSC::JSValue);
 
+template<> JSC::JSObject* convertDictionaryToJS(JSC::ExecState&, JSDOMGlobalObject&, const TestObj::Dictionary&);
+
 template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(JSC::ExecState&, JSC::JSValue);
 
 template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(JSC::ExecState&, JSC::JSValue);

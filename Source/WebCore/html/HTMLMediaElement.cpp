@@ -54,6 +54,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "JSDOMError.h"
+#include "JSDOMPromise.h"
 #include "JSHTMLMediaElement.h"
 #include "Language.h"
 #include "Logging.h"
@@ -977,7 +978,7 @@ void HTMLMediaElement::rejectPendingPlayPromises(DOMError& error)
     Vector<DOMPromise<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
 
     for (auto& promise : pendingPlayPromises)
-        promise.reject(error);
+        promise.rejectType<IDLInterface<DOMError>>(error);
 }
 
 void HTMLMediaElement::resolvePendingPlayPromises()

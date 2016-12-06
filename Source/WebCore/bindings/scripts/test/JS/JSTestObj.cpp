@@ -682,6 +682,127 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
     return result;
 }
 
+template<> JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject&, const TestObj::Dictionary& dictionary)
+{
+    auto& vm = state.vm();
+
+    auto result = constructEmptyObject(&state)
+
+    auto anyTypedefValueValue = toJS<IDLAny>(state, globalObject, dictionary.anyTypedefValue);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyTypedefValue"), anyTypedefValueValue);
+    auto anyValueValue = toJS<IDLAny>(state, globalObject, dictionary.anyValue);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyValue"), anyValueValue);
+    auto anyValueWithNullDefaultValue = toJS<IDLAny>(state, globalObject, dictionary.anyValueWithNullDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "anyValueWithNullDefault"), anyValueWithNullDefaultValue);
+    auto booleanWithDefaultValue = toJS<IDLBoolean>(state, globalObject, dictionary.booleanWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "booleanWithDefault"), booleanWithDefaultValue);
+    if (dictionary.booleanWithoutDefault) {
+        auto booleanWithoutDefaultValue = toJS<IDLBoolean>(state, globalObject, dictionary.booleanWithoutDefault);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "booleanWithoutDefault"), booleanWithoutDefaultValue);
+    }
+    if (dictionary.bufferSourceValue) {
+        auto bufferSourceValueValue = toJS<IDLBufferSource>(state, globalObject, dictionary.bufferSourceValue);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "bufferSourceValue"), bufferSourceValueValue);
+    }
+    if (dictionary.dictionaryMember) {
+        auto dictionaryMemberValue = toJS<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(state, globalObject, dictionary.dictionaryMember);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "dictionaryMember"), dictionaryMemberValue);
+    }
+    auto enumerationValueWithDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, globalObject, dictionary.enumerationValueWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithDefault"), enumerationValueWithDefaultValue);
+    auto enumerationValueWithEmptyStringDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, globalObject, dictionary.enumerationValueWithEmptyStringDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithEmptyStringDefault"), enumerationValueWithEmptyStringDefaultValue);
+    if (dictionary.enumerationValueWithoutDefault) {
+        auto enumerationValueWithoutDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(state, globalObject, dictionary.enumerationValueWithoutDefault);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "enumerationValueWithoutDefault"), enumerationValueWithoutDefaultValue);
+    }
+    if (dictionary.integer) {
+        auto integerValue = toJS<IDLLong>(state, globalObject, dictionary.integer);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "integer"), integerValue);
+    }
+    auto integerWithDefaultValue = toJS<IDLLong>(state, globalObject, dictionary.integerWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "integerWithDefault"), integerWithDefaultValue);
+    if (dictionary.largeInteger) {
+        auto largeIntegerValue = toJS<IDLLongLong>(state, globalObject, dictionary.largeInteger);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "largeInteger"), largeIntegerValue);
+    }
+    auto largeIntegerWithDefaultValue = toJS<IDLLongLong>(state, globalObject, dictionary.largeIntegerWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "largeIntegerWithDefault"), largeIntegerWithDefaultValue);
+    auto nullableIntegerWithDefaultValue = toJS<IDLNullable<IDLLong>>(state, globalObject, dictionary.nullableIntegerWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableIntegerWithDefault"), nullableIntegerWithDefaultValue);
+    auto nullableNodeValue = toJS<IDLNullable<IDLInterface<Node>>>(state, globalObject, dictionary.nullableNode);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableNode"), nullableNodeValue);
+    auto nullableStringWithDefaultValue = toJS<IDLNullable<IDLDOMString>>(state, globalObject, dictionary.nullableStringWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableStringWithDefault"), nullableStringWithDefaultValue);
+    auto nullableUnionMemberValue = toJS<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(state, globalObject, dictionary.nullableUnionMember);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableUnionMember"), nullableUnionMemberValue);
+    if (dictionary.restrictedDouble) {
+        auto restrictedDoubleValue = toJS<IDLDouble>(state, globalObject, dictionary.restrictedDouble);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedDouble"), restrictedDoubleValue);
+    }
+    auto restrictedDoubleWithDefaultValue = toJS<IDLDouble>(state, globalObject, dictionary.restrictedDoubleWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedDoubleWithDefault"), restrictedDoubleWithDefaultValue);
+    if (dictionary.restrictedFloat) {
+        auto restrictedFloatValue = toJS<IDLFloat>(state, globalObject, dictionary.restrictedFloat);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedFloat"), restrictedFloatValue);
+    }
+    auto restrictedFloatWithDefaultValue = toJS<IDLFloat>(state, globalObject, dictionary.restrictedFloatWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "restrictedFloatWithDefault"), restrictedFloatWithDefaultValue);
+    if (dictionary.sequenceOfStrings) {
+        auto sequenceOfStringsValue = toJS<IDLSequence<IDLDOMString>>(state, globalObject, dictionary.sequenceOfStrings);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "sequenceOfStrings"), sequenceOfStringsValue);
+    }
+    if (dictionary.smallIntegerClamped) {
+        auto smallIntegerClampedValue = toJS<IDLByte>(state, globalObject, dictionary.smallIntegerClamped);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallIntegerClamped"), smallIntegerClampedValue);
+    }
+    if (dictionary.smallIntegerWithDefault) {
+        auto smallIntegerWithDefaultValue = toJS<IDLByte>(state, globalObject, dictionary.smallIntegerWithDefault);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallIntegerWithDefault"), smallIntegerWithDefaultValue);
+    }
+    if (dictionary.smallUnsignedIntegerEnforcedRange) {
+        auto smallUnsignedIntegerEnforcedRangeValue = toJS<IDLOctet>(state, globalObject, dictionary.smallUnsignedIntegerEnforcedRange);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallUnsignedIntegerEnforcedRange"), smallUnsignedIntegerEnforcedRangeValue);
+    }
+    auto smallUnsignedIntegerWithDefaultValue = toJS<IDLOctet>(state, globalObject, dictionary.smallUnsignedIntegerWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "smallUnsignedIntegerWithDefault"), smallUnsignedIntegerWithDefaultValue);
+    auto stringWithDefaultValue = toJS<IDLDOMString>(state, globalObject, dictionary.stringWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringWithDefault"), stringWithDefaultValue);
+    if (dictionary.stringWithoutDefault) {
+        auto stringWithoutDefaultValue = toJS<IDLDOMString>(state, globalObject, dictionary.stringWithoutDefault);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "stringWithoutDefault"), stringWithoutDefaultValue);
+    }
+    if (dictionary.unionMember) {
+        auto unionMemberValue = toJS<IDLUnion<IDLLong, IDLInterface<Node>>>(state, globalObject, dictionary.unionMember);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unionMember"), unionMemberValue);
+    }
+    if (dictionary.unrestrictedDouble) {
+        auto unrestrictedDoubleValue = toJS<IDLUnrestrictedDouble>(state, globalObject, dictionary.unrestrictedDouble);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedDouble"), unrestrictedDoubleValue);
+    }
+    auto unrestrictedDoubleWithDefaultValue = toJS<IDLUnrestrictedDouble>(state, globalObject, dictionary.unrestrictedDoubleWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedDoubleWithDefault"), unrestrictedDoubleWithDefaultValue);
+    if (dictionary.unrestrictedFloat) {
+        auto unrestrictedFloatValue = toJS<IDLUnrestrictedFloat>(state, globalObject, dictionary.unrestrictedFloat);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedFloat"), unrestrictedFloatValue);
+    }
+    auto unrestrictedFloatWithDefaultValue = toJS<IDLUnrestrictedFloat>(state, globalObject, dictionary.unrestrictedFloatWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unrestrictedFloatWithDefault"), unrestrictedFloatWithDefaultValue);
+    if (dictionary.unsignedInteger) {
+        auto unsignedIntegerValue = toJS<IDLUnsignedLong>(state, globalObject, dictionary.unsignedInteger);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedInteger"), unsignedIntegerValue);
+    }
+    auto unsignedIntegerWithDefaultValue = toJS<IDLUnsignedLong>(state, globalObject, dictionary.unsignedIntegerWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedIntegerWithDefault"), unsignedIntegerWithDefaultValue);
+    if (dictionary.unsignedLargeInteger) {
+        auto unsignedLargeIntegerValue = toJS<IDLUnsignedLongLong>(state, globalObject, dictionary.unsignedLargeInteger);
+        result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedLargeInteger"), unsignedLargeIntegerValue);
+    }
+    auto unsignedLargeIntegerWithDefaultValue = toJS<IDLUnsignedLongLong>(state, globalObject, dictionary.unsignedLargeIntegerWithDefault);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "unsignedLargeIntegerWithDefault"), unsignedLargeIntegerWithDefaultValue);
+    return result;
+}
+
 template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();

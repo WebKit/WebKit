@@ -65,13 +65,13 @@ void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const un
         fulfillPromiseWithArrayBuffer(WTFMove(promise), data, length);
         return;
     case Type::Blob:
-        promise->resolveWithNewlyCreated(blobFromData(data, length, m_contentType));
+        promise->resolveWithNewlyCreated<IDLInterface<Blob>>(blobFromData(data, length, m_contentType).get());
         return;
     case Type::JSON:
         fulfillPromiseWithJSON(WTFMove(promise), textFromUTF8(data, length));
         return;
     case Type::Text:
-        promise->resolve(textFromUTF8(data, length));
+        promise->resolve<IDLDOMString>(textFromUTF8(data, length));
         return;
     case Type::None:
         ASSERT_NOT_REACHED();
@@ -87,13 +87,13 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise)
         fulfillPromiseWithArrayBuffer(WTFMove(promise), takeAsArrayBuffer().get());
         return;
     case Type::Blob:
-        promise->resolveWithNewlyCreated(takeAsBlob());
+        promise->resolveWithNewlyCreated<IDLInterface<Blob>>(takeAsBlob().get());
         return;
     case Type::JSON:
         fulfillPromiseWithJSON(WTFMove(promise), takeAsText());
         return;
     case Type::Text:
-        promise->resolve(takeAsText());
+        promise->resolve<IDLDOMString>(takeAsText());
         return;
     case Type::None:
         ASSERT_NOT_REACHED();

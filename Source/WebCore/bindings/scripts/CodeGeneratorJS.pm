@@ -1204,7 +1204,12 @@ sub GenerateDictionaryHeaderContent
 
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-    $result .= "template<> $className convertDictionary<$className>(JSC::ExecState&, JSC::JSValue);\n\n";
+    $result .= "template<> ${className} convertDictionary<$className>(JSC::ExecState&, JSC::JSValue);\n\n";
+
+    if ($dictionary->extendedAttributes->{JSGenerateToJSObject}) {
+        $result .= "JSC::JSObject* convertDictionaryToJS(JSC::ExecState&, JSDOMGlobalObject&, const ${className}&);\n\n";
+    }
+
     $result .= "#endif\n\n" if $conditionalString;
     return $result;
 }
@@ -1247,6 +1252,7 @@ sub GenerateDictionaryImplementationContent
     $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
     $result .= "    bool isNullOrUndefined = value.isUndefinedOrNull();\n";
     $result .= "    auto* object = isNullOrUndefined ? nullptr : value.getObject();\n";
+
     # 1. If Type(V) is not Undefined, Null or Object, then throw a TypeError.
     $result .= "    if (UNLIKELY(!isNullOrUndefined && !object)) {\n";
     $result .= "        throwTypeError(&state, throwScope);\n";
@@ -1320,6 +1326,48 @@ sub GenerateDictionaryImplementationContent
 
     $result .= "    return result;\n";
     $result .= "}\n\n";
+
+    if ($dictionary->extendedAttributes->{JSGenerateToJSObject}) {
+        $result .= "JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const ${className}& dictionary)\n";
+        $result .= "{\n";
+        $result .= "    auto& vm = state.vm();\n\n";
+
+        # 1. Let O be ! ObjectCreate(%ObjectPrototype%).
+        $result .= "    auto result = constructEmptyObject(&state);\n\n";
+
+        # 2. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries,
+        #    in order from least to most derived.
+        #    NOTE: This was done above.
+
+        # 3. For each dictionary dictionary in dictionaries, in order:
+        foreach my $dictionary (@dictionaries) {
+            # 3.1. For each dictionary member member declared on dictionary, in lexicographical order:
+            my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
+            foreach my $member (@sortedMembers) {
+                my $key = $member->name;
+                my $IDLType = GetIDLType($interface, $member->type);
+
+                # 1. Let key be the identifier of member.
+                # 2. If the dictionary member named key is present in V, then:
+                    # 1. Let idlValue be the value of member on V.
+                    # 2. Let value be the result of converting idlValue to an ECMAScript value.
+                    # 3. Perform ! CreateDataProperty(O, key, value).
+                if (!$member->isRequired && not defined $member->default) {
+                    $result .= "    if (dictionary.${key}) {\n";
+                    $result .= "        auto ${key}Value = toJS<$IDLType>(state, globalObject, dictionary.${key});\n";
+                    $result .= "        result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
+                    $result .= "    }\n";
+                } else {
+                    $result .= "    auto ${key}Value = toJS<$IDLType>(state, globalObject, dictionary.${key});\n";
+                    $result .= "    result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
+                }
+            }
+        }
+
+        $result .= "    return result;\n";
+        $result .= "}\n\n";
+    }
+
     $result .= "#endif\n\n" if $conditionalString;
 
     return $result;

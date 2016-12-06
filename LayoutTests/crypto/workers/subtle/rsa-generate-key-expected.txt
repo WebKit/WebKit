@@ -7,7 +7,7 @@ Starting worker: resources/rsa-generate-key.js
 PASS [Worker] crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS [Worker] crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
 [Worker] Generating a key...
-PASS [Worker] keyPair.toString() is '[object CryptoKeyPair]'
+PASS [Worker] keyPair.toString() is '[object Object]'
 PASS [Worker] keyPair.publicKey.type is 'public'
 PASS [Worker] keyPair.publicKey.extractable is true
 PASS [Worker] keyPair.publicKey.algorithm.name is 'RSA-OAEP'

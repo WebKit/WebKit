@@ -30,6 +30,7 @@
 
 #include "Clock.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
 #include "TimeRanges.h"
 #include <wtf/CurrentTime.h>

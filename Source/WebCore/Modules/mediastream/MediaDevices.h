@@ -32,6 +32,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ExceptionOr.h"
 #include "JSDOMPromise.h"
 #include "MediaDeviceInfo.h"
 
@@ -48,8 +49,8 @@ public:
 
     Document* document() const;
 
-    using Promise = DOMPromise<MediaStream>;
-    using EnumerateDevicesPromise = DOMPromise<MediaDeviceInfoVector>;
+    using Promise = DOMPromise<IDLInterface<MediaStream>>;
+    using EnumerateDevicesPromise = DOMPromise<IDLSequence<IDLInterface<MediaDeviceInfo>>>;
 
     ExceptionOr<void> getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&&) const;
     void enumerateDevices(EnumerateDevicesPromise&&) const;

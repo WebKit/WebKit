@@ -38,6 +38,7 @@
 #include "ContentType.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
 #include "Logging.h"
 #include "MediaSourcePrivate.h"

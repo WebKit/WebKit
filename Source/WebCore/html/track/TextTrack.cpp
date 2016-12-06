@@ -36,6 +36,7 @@
 #include "TextTrack.h"
 
 #include "Event.h"
+#include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
 #include "SourceBuffer.h"
 #include "TextTrackCueList.h"

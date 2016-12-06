@@ -32,7 +32,6 @@
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
 #include "HTMLMediaElementEnums.h"
-#include "JSDOMPromise.h"
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaElementSession.h"
@@ -59,6 +58,7 @@ class AudioSourceProvider;
 class AudioTrackList;
 class AudioTrackPrivate;
 class DOMError;
+class DeferredPromise;
 class DisplaySleepDisabler;
 class Event;
 class HTMLSourceElement;
@@ -86,6 +86,8 @@ class VideoPlaybackQuality;
 class VideoTrackList;
 class VideoTrackPrivate;
 class WebKitMediaKeys;
+
+template<typename> class DOMPromise;
 
 #if ENABLE(VIDEO_TRACK)
 using CueIntervalTree = PODIntervalTree<MediaTime, TextTrackCue*>;

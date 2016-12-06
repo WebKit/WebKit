@@ -270,7 +270,9 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
         context->postTask([algorithm, hash, hasHash, extractable, usage, localCallback, localFailureCallback, ccPublicKey, ccPrivateKey](ScriptExecutionContext& context) {
             auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, ccPublicKey, true, usage);
             auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
-            (*localCallback)(CryptoKeyPair::create(WTFMove(publicKey), WTFMove(privateKey)));
+
+            (*localCallback)(CryptoKeyPair { WTFMove(publicKey), WTFMove(privateKey) });
+
             delete localCallback;
             delete localFailureCallback;
             context.deref();

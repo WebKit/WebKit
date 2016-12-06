@@ -1,3 +1,13 @@
+2016-12-06  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for converting dictionaries to JS
+        https://bugs.webkit.org/show_bug.cgi?id=165367
+
+        Reviewed by Darin Adler and Alex Christensen.
+
+        * CMakeLists.txt:
+        Add missing directories to look in for headers.
+
 2016-12-05  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the iOS Simulator build.

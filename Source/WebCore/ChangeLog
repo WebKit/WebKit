@@ -1,3 +1,151 @@
+2016-12-06  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for converting dictionaries to JS
+        https://bugs.webkit.org/show_bug.cgi?id=165367
+
+        Reviewed by Darin Adler and Alex Christensen.
+
+        - Adds support for converting dictionary types to JSValues via JSDOMConvert.
+        - Adopts that functionality to correct the CryptoKeyPair implementation, which
+          is supposed to be a dictionary.
+          (While doing this, I also update places that were passing both a CryptoKey 
+          and CryptoKeyPair to use a Variant, since they always only wanted one.)
+        - Re-works DOMPromise and DeferredPromise to be based on JSDOMConvert and IDLTypes.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove JSCryptoKeyPairCustom.cpp and CryptoKeyPair.cpp.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp:
+        * Modules/mediasource/MediaSource.cpp:
+        * Modules/mediasource/SourceBuffer.cpp:
+        * bindings/js/JSMediaDevicesCustom.cpp:
+        * html/MediaController.cpp:
+        * html/track/TextTrack.cpp:
+        Add some missing includes.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::canMakePaymentsWithActiveCard):
+        (WebCore::ApplePaySession::openPaymentSetup):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::text):
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::loadingFailed):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::resolveWithData):
+        (WebCore::FetchBodyConsumer::resolve):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::text):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::replaceTrack):
+        (WebCore::MediaEndpointPeerConnection::replaceTrackTask):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::applyConstraints):
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setLocalDescription):
+        (WebCore::PeerConnectionBackend::setRemoteDescription):
+        (WebCore::PeerConnectionBackend::addIceCandidate):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::queuedSetLocalDescription):
+        (WebCore::RTCPeerConnection::queuedSetRemoteDescription):
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate):
+        (WebCore::RTCPeerConnection::replaceTrack):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::replaceTrack):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::deny):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::suspend):
+        (WebCore::AudioContext::resume):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::whenDefinedPromise):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::resolve):
+        (WebCore::ScriptModuleLoader::notifyFinished):
+        * css/FontFace.h:
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::load):
+        * css/FontFaceSet.h:
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::CustomElementRegistry::addElementDefinition):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rejectPendingPlayPromises):
+        * html/HTMLMediaElement.h:
+        Update to use new IDLType based promises.
+
+        * bindings/generic/IDLTypes.h:
+        Add a new type, ParameterType, to use as the parameter to 
+        DOMPromise/DeferredPromise.
+
+        * bindings/js/JSCryptoKeyPairCustom.cpp:
+        Removed.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::JSConverter<IDLDictionary<T>>::convert):
+        Add JSConverter specialization for IDLDictionary. Have it simply forward to a generated 
+        convertDictionaryToJS function, following the convention set in place by IDLEnumeration.
+
+        * bindings/js/JSDOMPromise.cpp:
+        * bindings/js/JSDOMPromise.h:
+        Re-write to be based on IDLTypes and JSDOMConvert, simplifying the implementation.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        Update for variant based KeyOrKeyPair.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryHeaderContent):
+        (GenerateDictionaryImplementationContent):
+        Add generation of the convertDictionaryToJS function. I made it require the JSGenerateToJSObject
+        extended attribute for now, as the majority of dictionaries do not need this code generated for them.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+        Add JSGenerateToJSObject to a dictionary to test generation in bindings tests.
+
+        * crypto/CryptoAlgorithm.h:
+        Change KeyOrKeyPairCallback to take a Variant<RefPtr<CryptoKey>, CryptoKeyPair>, rather
+        than two separate arguments.
+
+        * crypto/CryptoKeyPair.cpp:
+        Removed.
+
+        * crypto/CryptoKeyPair.h:
+        Convert to a struct.
+
+        * crypto/CryptoKeyPair.idl:
+        Convert to a dictionary.
+
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::generateKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::generateKey):
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        Update for new signature of KeyOrKeyPairCallback.
+
 2016-12-05  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Reject invalid hex colors on the fast path

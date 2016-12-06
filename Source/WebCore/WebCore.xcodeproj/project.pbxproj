@@ -6261,9 +6261,7 @@
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; };
 		E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */; };
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
-		E1F80B8718317252007885C3 /* CryptoKeyPair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B8518317252007885C3 /* CryptoKeyPair.cpp */; };
-		E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8618317252007885C3 /* CryptoKeyPair.h */; };
-		E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */; };
+		E1F80B8818317252007885C3 /* CryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8618317252007885C3 /* CryptoKeyPair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1F80B8D183172B5007885C3 /* JSCryptoKeyPair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */; };
 		E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */; };
 		E1FE13641834351100892F13 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE13621834351100892F13 /* CryptoDigestCommonCrypto.cpp */; };
@@ -9770,8 +9768,8 @@
 		5DB1BC6810715A6400EFAA49 /* TransformSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformSource.h; sourceTree = "<group>"; };
 		5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformSourceLibxslt.cpp; sourceTree = "<group>"; };
 		5DFEBAB618592B6D00C75BEB /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
-		5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaEndpointPeerConnection.cpp; sourceTree = "<group>"; };
-		5E16A2E31BFA64FB0029A21E /* MediaEndpointPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaEndpointPeerConnection.h; sourceTree = "<group>"; };
+		5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = MediaEndpointPeerConnection.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		5E16A2E31BFA64FB0029A21E /* MediaEndpointPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MediaEndpointPeerConnection.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5E2C434D1BCEE2E50001E2BC /* PeerConnectionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeerConnectionBackend.h; sourceTree = "<group>"; };
 		5E2C434F1BCEE2E50001E2BC /* RTCConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCConfiguration.cpp; sourceTree = "<group>"; };
 		5E2C43541BCEE30D0001E2BC /* RTCPeerConnection.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = RTCPeerConnection.js; sourceTree = "<group>"; };
@@ -14261,9 +14259,7 @@
 		E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTExtensions.cpp; sourceTree = "<group>"; };
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
 		E1F80B8418317247007885C3 /* CryptoKeyPair.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyPair.idl; sourceTree = "<group>"; };
-		E1F80B8518317252007885C3 /* CryptoKeyPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyPair.cpp; sourceTree = "<group>"; };
 		E1F80B8618317252007885C3 /* CryptoKeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyPair.h; sourceTree = "<group>"; };
-		E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPairCustom.cpp; sourceTree = "<group>"; };
 		E1F80B8B183172B5007885C3 /* JSCryptoKeyPair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoKeyPair.cpp; sourceTree = "<group>"; };
 		E1F80B8C183172B5007885C3 /* JSCryptoKeyPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoKeyPair.h; sourceTree = "<group>"; };
 		E1FE13621834351100892F13 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
@@ -22050,7 +22046,6 @@
 				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				7CEF26181D6A92E300BE905D /* JSCryptoCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
-				E1F80B89183172A2007885C3 /* JSCryptoKeyPairCustom.cpp */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				AD726FE916D9F40A003A4E6D /* JSCSSRuleCustom.h */,
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
@@ -23199,7 +23194,6 @@
 				E157A8E318173A3A009F821D /* CryptoKey.h */,
 				E157A8DC18172C2C009F821D /* CryptoKey.idl */,
 				E125F85D182C2DF600D84CD9 /* CryptoKeyData.h */,
-				E1F80B8518317252007885C3 /* CryptoKeyPair.cpp */,
 				E1F80B8618317252007885C3 /* CryptoKeyPair.h */,
 				E1F80B8418317247007885C3 /* CryptoKeyPair.idl */,
 				E125F855182C0F8300D84CD9 /* CryptoKeySerialization.h */,
@@ -29032,7 +29026,6 @@
 				E1C266DE18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp in Sources */,
 				E125F8351822F18A00D84CD9 /* CryptoKeyHMAC.cpp in Sources */,
 				E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */,
-				E1F80B8718317252007885C3 /* CryptoKeyPair.cpp in Sources */,
 				57E2336B1DCC262400F28D01 /* CryptoKeyRSA.cpp in Sources */,
 				E164FAA518315E1A00DB4E61 /* CryptoKeyRSAMac.cpp in Sources */,
 				E125F859182C1AA600D84CD9 /* CryptoKeySerializationRaw.cpp in Sources */,
@@ -29813,7 +29806,6 @@
 				E157A8E01817331C009F821D /* JSCryptoKey.cpp in Sources */,
 				E157A8E818184C67009F821D /* JSCryptoKeyCustom.cpp in Sources */,
 				E1F80B8D183172B5007885C3 /* JSCryptoKeyPair.cpp in Sources */,
-				E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */,
 				E125F85118283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp in Sources */,
 				E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */,
 				409EBDC516B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp in Sources */,

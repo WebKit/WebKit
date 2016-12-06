@@ -40,15 +40,12 @@ template<typename T> class Strong;
 
 namespace WebCore {
 
-class Dictionary;
-class EventListener;
-class XPathNSResolver;
-
-template <typename Value> class DOMPromise;
+template<typename> class DOMPromise;
 
 template<typename T>
 struct IDLType {
     using ImplementationType = T;
+    using ParameterType = T;
 
     using NullableType = std::optional<ImplementationType>;
     static NullableType nullValue() { return std::nullopt; }
@@ -87,6 +84,8 @@ struct IDLDouble : IDLFloatingPoint<double> { };
 struct IDLUnrestrictedDouble : IDLFloatingPoint<double, true> { };
 
 struct IDLString : IDLType<String> {
+    using ParameterType = const String&;
+
     using NullableType = String;
     static String nullValue() { return String(); }
     static bool isNullValue(const String& value) { return value.isNull(); }
@@ -100,8 +99,10 @@ struct IDLObject : IDLType<JSC::Strong<JSC::JSObject>> { };
 
 template<typename T> struct IDLWrapper : IDLType<RefPtr<T>> {
     using RawType = T;
-    using NullableType = RefPtr<T>;
 
+    using ParameterType = T&;
+
+    using NullableType = RefPtr<T>;
     static inline std::nullptr_t nullValue() { return nullptr; }
     template<typename U> static inline bool isNullValue(U&& value) { return !value; }
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
@@ -111,7 +112,10 @@ template<typename T> struct IDLInterface : IDLWrapper<T> { };
 template<typename T> struct IDLCallbackInterface : IDLWrapper<T> { };
 template<typename T> struct IDLCallbackFunction : IDLWrapper<T> { };
 
-template<typename T> struct IDLDictionary : IDLType<T> { };
+template<typename T> struct IDLDictionary : IDLType<T> {
+    using ParameterType = const T&;
+};
+
 template<typename T> struct IDLEnumeration : IDLType<T> { };
 
 template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
@@ -120,15 +124,21 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
 
 template<typename T> struct IDLSequence : IDLType<Vector<typename T::ImplementationType>> {
     using InnerType = T;
+
+    using ParameterType = const Vector<typename T::ImplementationType>&;
 };
 
 template<typename T> struct IDLFrozenArray : IDLType<Vector<typename T::ImplementationType>> {
     using InnerType = T;
+
+    using ParameterType = const Vector<typename T::ImplementationType>&;
 };
 
 template<typename K, typename V> struct IDLRecord : IDLType<HashMap<typename K::ImplementationType, typename V::ImplementationType>> {
     using KeyType = K;
     using ValueType = V;
+
+    using ParameterType = const HashMap<typename K::ImplementationType, typename V::ImplementationType>&;
 };
 
 template<typename T> struct IDLPromise : IDLType<DOMPromise<T>> {
@@ -141,6 +151,8 @@ struct IDLDOMException : IDLUnsupportedType { };
 template<typename... Ts>
 struct IDLUnion : IDLType<Variant<typename Ts::ImplementationType...>> {
     using TypeList = brigand::list<Ts...>;
+
+    using ParameterType = const Variant<typename Ts::ImplementationType...>&;
 };
 
 // Non-WebIDL extensions

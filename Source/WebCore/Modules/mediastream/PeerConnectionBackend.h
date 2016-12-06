@@ -59,9 +59,8 @@ struct RTCAnswerOptions;
 struct RTCOfferOptions;
 
 namespace PeerConnection {
-typedef DOMPromise<RTCSessionDescription> SessionDescriptionPromise;
-typedef DOMPromise<void> VoidPromise;
-typedef DOMPromise<RTCStatsResponse> StatsPromise;
+using SessionDescriptionPromise = DOMPromise<IDLInterface<RTCSessionDescription>>;
+using StatsPromise = DOMPromise<IDLInterface<RTCStatsResponse>>;
 }
 
 typedef std::unique_ptr<PeerConnectionBackend> (*CreatePeerConnectionBackend)(RTCPeerConnection&);
@@ -75,9 +74,9 @@ public:
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
     void createAnswer(RTCAnswerOptions&&, PeerConnection::SessionDescriptionPromise&&);
-    void setLocalDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
-    void setRemoteDescription(RTCSessionDescription&, PeerConnection::VoidPromise&&);
-    void addIceCandidate(RTCIceCandidate&, PeerConnection::VoidPromise&&);
+    void setLocalDescription(RTCSessionDescription&, DOMPromise<void>&&);
+    void setRemoteDescription(RTCSessionDescription&, DOMPromise<void>&&);
+    void addIceCandidate(RTCIceCandidate&, DOMPromise<void>&&);
 
     virtual std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) = 0;
 
@@ -98,7 +97,7 @@ public:
     virtual Vector<RefPtr<MediaStream>> getRemoteStreams() const = 0;
 
     virtual Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) = 0;
-    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) = 0;
+    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
 
     virtual bool isNegotiationNeeded() const = 0;
     virtual void markAsNeedingNegotiation() = 0;
@@ -140,8 +139,8 @@ protected:
 
 private:
     std::optional<PeerConnection::SessionDescriptionPromise> m_offerAnswerPromise;
-    std::optional<PeerConnection::VoidPromise> m_setDescriptionPromise;
-    std::optional<PeerConnection::VoidPromise> m_addIceCandidatePromise;
+    std::optional<DOMPromise<void>> m_setDescriptionPromise;
+    std::optional<DOMPromise<void>> m_addIceCandidatePromise;
 };
 
 } // namespace WebCore

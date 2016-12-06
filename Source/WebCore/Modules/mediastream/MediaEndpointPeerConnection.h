@@ -69,7 +69,7 @@ public:
     Vector<RefPtr<MediaStream>> getRemoteStreams() const override;
 
     Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
-    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) override;
+    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) override;
 
     bool isNegotiationNeeded() const override { return m_negotiationNeeded; };
     void markAsNeedingNegotiation() override;
@@ -96,7 +96,7 @@ private:
 
     void addIceCandidateTask(RTCIceCandidate&);
 
-    void replaceTrackTask(RTCRtpSender&, const String& mid, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&);
+    void replaceTrackTask(RTCRtpSender&, const String& mid, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&);
 
     bool localDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;
     bool remoteDescriptionTypeValidForState(RTCSessionDescription::SdpType) const;

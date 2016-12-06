@@ -407,7 +407,6 @@ if (ENABLE_SUBTLE_CRYPTO)
         crypto/CryptoAlgorithm.cpp
         crypto/CryptoAlgorithmRegistry.cpp
         crypto/CryptoKey.cpp
-        crypto/CryptoKeyPair.cpp
         crypto/SubtleCrypto.cpp
         crypto/WebKitSubtleCrypto.cpp
 

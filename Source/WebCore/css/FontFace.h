@@ -65,7 +65,7 @@ public:
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
 
-    typedef DOMPromise<FontFace&> Promise;
+    using Promise = DOMPromise<IDLInterface<FontFace>>;
     std::optional<Promise>& promise() { return m_promise; }
     void registerLoaded(Promise&&);
 

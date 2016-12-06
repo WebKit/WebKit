@@ -1066,6 +1066,16 @@ template<typename T> struct Converter<IDLDictionary<T>> : DefaultConverter<IDLDi
     }
 };
 
+template<typename T> struct JSConverter<IDLDictionary<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const T& dictionary)
+    {
+        return convertDictionaryToJS(state, globalObject, dictionary);
+    }
+};
+
 // MARK: -
 // MARK: Enumeration type
 

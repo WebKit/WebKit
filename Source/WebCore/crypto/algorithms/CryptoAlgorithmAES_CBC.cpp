@@ -103,7 +103,7 @@ void CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParameters& parame
         return;
     }
 
-    callback(result.get(), nullptr);
+    callback(WTFMove(result));
 }
 
 void CryptoAlgorithmAES_CBC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
@@ -212,7 +212,7 @@ ExceptionOr<void> CryptoAlgorithmAES_CBC::generateKey(const CryptoAlgorithmParam
         return { };
     }
 
-    callback(result.get(), nullptr);
+    callback(WTFMove(result));
     return { };
 }
 

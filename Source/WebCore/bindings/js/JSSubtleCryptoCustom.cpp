@@ -477,7 +477,7 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 3)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -522,7 +522,7 @@ static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredP
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 3)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -567,7 +567,7 @@ static void jsSubtleCryptoFunctionSignPromise(ExecState& state, Ref<DeferredProm
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 3)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -612,7 +612,7 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 4)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -642,7 +642,7 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
     RETURN_IF_EXCEPTION(scope, void());
 
     auto callback = [capturedPromise = promise.copyRef()](bool result) mutable {
-        capturedPromise->resolve(result);
+        capturedPromise->resolve<IDLBoolean>(result);
         return;
     };
     auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
@@ -660,7 +660,7 @@ static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 2)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -692,7 +692,7 @@ static void jsSubtleCryptoFunctionDeriveKeyPromise(ExecState& state, Ref<Deferre
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 5)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -709,7 +709,7 @@ static void jsSubtleCryptoFunctionDeriveBitsPromise(ExecState& state, Ref<Deferr
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 3)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -726,7 +726,7 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 3)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -742,22 +742,23 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
     auto algorithm = createAlgorithm(state, params->identifier);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto callback = [capturedPromise = promise.copyRef()](CryptoKey* key, CryptoKeyPair* keyPair) mutable {
-        ASSERT(key || keyPair);
-        ASSERT(!key || !keyPair);
-        if (key) {
-            if ((key->type() == CryptoKeyType::Private || key->type() == CryptoKeyType::Secret) && !key->usagesBitmap()) {
-                rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
-                return;
+    auto callback = [capturedPromise = promise.copyRef()](KeyOrKeyPair&& keyOrKeyPair) mutable {
+        WTF::switchOn(keyOrKeyPair,
+            [&capturedPromise] (RefPtr<CryptoKey>& key) {
+                if ((key->type() == CryptoKeyType::Private || key->type() == CryptoKeyType::Secret) && !key->usagesBitmap()) {
+                    rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
+                    return;
+                }
+                capturedPromise->resolve<IDLInterface<CryptoKey>>(*key);
+            },
+            [&capturedPromise] (CryptoKeyPair& keyPair) {
+                if (!keyPair.privateKey->usagesBitmap()) {
+                    rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
+                    return;
+                }
+                capturedPromise->resolve<IDLDictionary<CryptoKeyPair>>(keyPair);
             }
-            capturedPromise->resolve(key);
-        } else {
-            if (!keyPair->privateKey()->usagesBitmap()) {
-                rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
-                return;
-            }
-            capturedPromise->resolve(keyPair);
-        }
+        );
     };
     auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
@@ -775,7 +776,7 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 5)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -802,7 +803,7 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
             rejectWithException(WTFMove(capturedPromise), SYNTAX_ERR);
             return;
         }
-        capturedPromise->resolve(key);
+        capturedPromise->resolve<IDLInterface<CryptoKey>>(key);
     };
     auto exceptionCallback = [capturedPromise = WTFMove(promise)](ExceptionCode ec) mutable {
         rejectWithException(WTFMove(capturedPromise), ec);
@@ -820,7 +821,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 2)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -851,7 +852,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
             return;
         }
         case SubtleCrypto::KeyFormat::Jwk:
-            capturedPromise->resolve(toJSValueFromJsonWebKey(*(capturedPromise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key))));
+            capturedPromise->resolve<IDLAny>(toJSValueFromJsonWebKey(*(capturedPromise->globalObject()), WTFMove(WTF::get<JsonWebKey>(key))));
             return;
         }
         ASSERT_NOT_REACHED();
@@ -872,7 +873,7 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 4)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -973,7 +974,7 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 7)) {
-        promise->reject<JSValue>(createNotEnoughArgumentsError(&state));
+        promise->reject<IDLAny>(createNotEnoughArgumentsError(&state));
         return;
     }
 
@@ -1051,7 +1052,7 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
                 rejectWithException(WTFMove(promise), SYNTAX_ERR);
                 return;
             }
-            promise->resolve(key);
+            promise->resolve<IDLInterface<CryptoKey>>(key);
         };
         auto exceptionCallback = [promise = WTFMove(promise)](ExceptionCode ec) mutable {
             rejectWithException(WTFMove(promise), ec);

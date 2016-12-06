@@ -13,7 +13,7 @@ shouldReject('crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLengt
     return crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: 'sha-1'}, extractable, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]);
 }).then(function(result) {
     keyPair = result;
-    shouldBe("keyPair.toString()", "'[object CryptoKeyPair]'");
+    shouldBe("keyPair.toString()", "'[object Object]'");
     shouldBe("keyPair.publicKey.type", "'public'");
     shouldBe("keyPair.publicKey.extractable", "true");
     shouldBe("keyPair.publicKey.algorithm.name", "'RSA-OAEP'");

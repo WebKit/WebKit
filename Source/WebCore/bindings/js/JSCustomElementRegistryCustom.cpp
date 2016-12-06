@@ -171,7 +171,7 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
     }
 
     if (registry.findInterface(localName)) {
-        DeferredPromise::create(globalObject, promiseDeferred)->resolve(nullptr);
+        DeferredPromise::create(globalObject, promiseDeferred)->resolve();
         return promiseDeferred.promise();
     }
 

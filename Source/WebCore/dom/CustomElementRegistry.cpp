@@ -77,7 +77,7 @@ void CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&&
         enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
 
     if (auto promise = m_promiseMap.take(localName))
-        promise.value()->resolve(nullptr);
+        promise.value()->resolve();
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const Element& element) const

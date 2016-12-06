@@ -31,6 +31,7 @@
 #include "ArrayValue.h"
 #include "Dictionary.h"
 #include "ExceptionCode.h"
+#include "JSDOMPromise.h"
 #include "JSMediaDevices.h"
 #include "Logging.h"
 #include "MediaConstraintsImpl.h"

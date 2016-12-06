@@ -43,10 +43,10 @@ typedef PlatformRSAKeyGnuTLS *PlatformRSAKey;
 namespace WebCore {
 
 class CryptoKeyDataRSAComponents;
-class CryptoKeyPair;
 class PromiseWrapper;
 class ScriptExecutionContext;
 
+struct CryptoKeyPair;
 struct JsonWebKey;
 
 class RsaKeyAlgorithm : public KeyAlgorithm {
@@ -97,7 +97,7 @@ public:
 
     size_t keySizeInBits() const;
 
-    using KeyPairCallback = WTF::Function<void(CryptoKeyPair&)>;
+    using KeyPairCallback = WTF::Function<void(CryptoKeyPair&&)>;
     using VoidCallback = WTF::Function<void()>;
     static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap, KeyPairCallback&&, VoidCallback&& failureCallback, ScriptExecutionContext*);
     static RefPtr<CryptoKeyRSA> importJwk(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);

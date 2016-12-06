@@ -72,7 +72,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
     // So there is no correct URL to retrieve the module source code. If the module name
     // value is a Symbol, it is used directly as a module key.
     if (moduleNameValue.isSymbol()) {
-        promise->resolve(asSymbol(moduleNameValue)->privateName());
+        promise->resolve<IDLAny>(toJS(exec, &globalObject, asSymbol(moduleNameValue)->privateName()));
         return jsPromise.promise();
     }
 
@@ -88,7 +88,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
     // 1. Apply the URL parser to specifier. If the result is not failure, return the result.
     URL absoluteURL(URL(), specifier);
     if (absoluteURL.isValid()) {
-        promise->resolve(absoluteURL.string());
+        promise->resolve<IDLDOMString>(absoluteURL.string());
         return jsPromise.promise();
     }
 
@@ -129,7 +129,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
         return jsPromise.promise();
     }
 
-    promise->resolve(completedURL.string());
+    promise->resolve<IDLDOMString>(completedURL.string());
     return jsPromise.promise();
 }
 
@@ -247,7 +247,7 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
 
     m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());
     // FIXME: Let's wrap around ScriptSourceCode to propagate it directly through the module pipeline.
-    promise->resolve(ScriptSourceCode(&cachedScript, JSC::SourceProviderSourceType::Module).source().toString());
+    promise->resolve<IDLDOMString>(ScriptSourceCode(&cachedScript, JSC::SourceProviderSourceType::Module).source().toString());
 }
 
 }

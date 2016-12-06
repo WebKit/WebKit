@@ -178,7 +178,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = algorithm->encrypt(*parameters, *key, data, WTFMove(successCallback), WTFMove(failureCallback));
@@ -230,7 +230,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = algorithm->decrypt(*parameters, *key, data, WTFMove(successCallback), WTFMove(failureCallback));
@@ -282,7 +282,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = algorithm->sign(*parameters, *key, data, WTFMove(successCallback), WTFMove(failureCallback));
@@ -337,10 +337,10 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
     auto promise = wrapper->promise();
     auto successCallback = [wrapper](bool result) mutable {
-        wrapper->resolve(result);
+        wrapper->resolve<IDLBoolean>(result);
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = algorithm->verify(*parameters, *key, signature, data, WTFMove(successCallback), WTFMove(failureCallback));
@@ -382,7 +382,7 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = algorithm->digest(*parameters, data, WTFMove(successCallback), WTFMove(failureCallback));
@@ -428,16 +428,18 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
     auto promise = wrapper->promise();
-    auto successCallback = [wrapper](CryptoKey* key, CryptoKeyPair* keyPair) mutable {
-        ASSERT(key || keyPair);
-        ASSERT(!key || !keyPair);
-        if (key)
-            wrapper->resolve(key);
-        else
-            wrapper->resolve(keyPair);
+    auto successCallback = [wrapper](KeyOrKeyPair&& keyOrKeyPair) mutable {
+        WTF::switchOn(keyOrKeyPair,
+            [&wrapper] (RefPtr<CryptoKey>& key) {
+                wrapper->resolve<IDLInterface<CryptoKey>>(*key);
+            },
+            [&wrapper] (CryptoKeyPair& keyPair) {
+                wrapper->resolve<IDLDictionary<CryptoKeyPair>>(keyPair);
+            }
+        );
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = algorithm->generateKey(*parameters, extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback), *scriptExecutionContextFromExecState(&state));
@@ -555,10 +557,10 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
     auto promise = wrapper->promise();
     auto successCallback = [wrapper](CryptoKey& result) mutable {
-        wrapper->resolve(result);
+        wrapper->resolve<IDLInterface<CryptoKey>>(result);
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     WebCore::importKey(state, keyFormat, data, WTFMove(algorithm), WTFMove(parameters), extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback));
@@ -625,7 +627,7 @@ JSValue JSWebKitSubtleCrypto::exportKey(ExecState& state)
         fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), result.data(), result.size());
     };
     auto failureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     WebCore::exportKey(state, keyFormat, *key, WTFMove(successCallback), WTFMove(failureCallback));
@@ -680,17 +682,17 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
             fulfillPromiseWithArrayBuffer(wrapper.releaseNonNull(), encryptedData.data(), encryptedData.size());
         };
         auto encryptFailureCallback = [wrapper]() mutable {
-            wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
         };
         auto result = algorithm->encryptForWrapKey(*parameters, *wrappingKey, std::make_pair(exportedKeyData.data(), exportedKeyData.size()), WTFMove(encryptSuccessCallback), WTFMove(encryptFailureCallback));
         if (result.hasException()) {
             // FIXME: Report failure details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
-            wrapper->reject(nullptr);
+            wrapper->reject(); // FIXME: This should reject with an Exception.
         }
     };
 
     auto exportFailureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     WebCore::exportKey(state, keyFormat, *key, WTFMove(exportSuccessCallback), WTFMove(exportFailureCallback));
@@ -771,10 +773,10 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
 
     auto decryptSuccessCallback = [domGlobalObject, keyFormat, unwrappedKeyAlgorithm, unwrappedKeyAlgorithmParameters, extractable, keyUsages, wrapper](const Vector<uint8_t>& result) mutable {
         auto importSuccessCallback = [wrapper](CryptoKey& key) mutable {
-            wrapper->resolve(key);
+            wrapper->resolve<IDLInterface<CryptoKey>>(key);
         };
         auto importFailureCallback = [wrapper]() mutable {
-            wrapper->reject(nullptr);
+            wrapper->reject(); // FIXME: This should reject with an Exception.
         };
 
         VM& vm = domGlobalObject->vm();
@@ -785,12 +787,12 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         if (UNLIKELY(scope.exception())) {
             // FIXME: Report exception details to console, and possibly to calling script once there is a standardized way to pass errors to WebCrypto promise reject functions.
             scope.clearException();
-            wrapper->reject(nullptr);
+            wrapper->reject(); // FIXME: This should reject with an Exception.
         }
     };
 
     auto decryptFailureCallback = [wrapper]() mutable {
-        wrapper->reject(nullptr);
+        wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
     auto result = unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, WTFMove(decryptSuccessCallback), WTFMove(decryptFailureCallback));

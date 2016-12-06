@@ -1031,7 +1031,7 @@ void AudioContext::suspend(DOMPromise<void>&& promise)
     }
 
     if (m_state == State::Closed || m_state == State::Interrupted || !m_destinationNode) {
-        promise.reject(0);
+        promise.reject();
         return;
     }
 
@@ -1060,7 +1060,7 @@ void AudioContext::resume(DOMPromise<void>&& promise)
     }
 
     if (m_state == State::Closed || !m_destinationNode) {
-        promise.reject(0);
+        promise.reject();
         return;
     }
 

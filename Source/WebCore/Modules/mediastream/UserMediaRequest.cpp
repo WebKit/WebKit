@@ -212,7 +212,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
         m_promise.reject(NOT_FOUND_ERR);
         break;
     case MediaAccessDenialReason::InvalidConstraint:
-        m_promise.reject(OverconstrainedError::create(invalidConstraint, ASCIILiteral("Invalid constraint")).get());
+        m_promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(invalidConstraint, ASCIILiteral("Invalid constraint")).get());
         break;
     case MediaAccessDenialReason::HardwareError:
         m_promise.reject(NotReadableError);

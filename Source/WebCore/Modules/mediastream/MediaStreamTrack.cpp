@@ -187,7 +187,7 @@ void MediaStreamTrack::applyConstraints(const MediaConstraints& constraints)
         if (!weakThis || !weakThis->m_promise)
             return;
 
-        weakThis->m_promise->reject(OverconstrainedError::create(failedConstraint, message).get());
+        weakThis->m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(failedConstraint, message).get());
     };
 
     std::function<void()> successHandler = [weakThis]() {

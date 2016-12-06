@@ -133,7 +133,7 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
     auto matchingFaces = matchingFacesResult.releaseReturnValue();
 
     if (matchingFaces.isEmpty()) {
-        promise.resolve(Vector<RefPtr<FontFace>>());
+        promise.resolve({ });
         return;
     }
 

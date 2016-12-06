@@ -39,7 +39,7 @@ namespace WebCore {
 
 class RTCRtpSenderClient {
 public:
-    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, PeerConnection::VoidPromise&&) = 0;
+    virtual void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) = 0;
 
     virtual ~RTCRtpSenderClient() { }
 };
@@ -59,7 +59,7 @@ public:
     void stop() { m_client = nullptr; }
     void setTrack(RefPtr<MediaStreamTrack>&&);
 
-    ExceptionOr<void> replaceTrack(Ref<MediaStreamTrack>&&, PeerConnection::VoidPromise&&);
+    ExceptionOr<void> replaceTrack(Ref<MediaStreamTrack>&&, DOMPromise<void>&&);
 
 private:
     RTCRtpSender(RefPtr<MediaStreamTrack>&&, const String& trackKind, Vector<String>&& mediaStreamIds, RTCRtpSenderClient&);

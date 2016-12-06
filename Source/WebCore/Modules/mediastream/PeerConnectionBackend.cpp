@@ -127,7 +127,7 @@ static inline bool isLocalDescriptionTypeValidForState(RTCSessionDescription::Sd
     return false;
 }
 
-void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDescription, PeerConnection::VoidPromise&& promise)
+void PeerConnectionBackend::setLocalDescription(RTCSessionDescription& sessionDescription, DOMPromise<void>&& promise)
 {
     ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
 
@@ -185,7 +185,7 @@ static inline bool isRemoteDescriptionTypeValidForState(RTCSessionDescription::S
     return false;
 }
 
-void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionDescription, PeerConnection::VoidPromise&& promise)
+void PeerConnectionBackend::setRemoteDescription(RTCSessionDescription& sessionDescription, DOMPromise<void>&& promise)
 {
     ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
 
@@ -224,7 +224,7 @@ void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
     m_setDescriptionPromise = std::nullopt;
 }
 
-void PeerConnectionBackend::addIceCandidate(RTCIceCandidate& iceCandidate, PeerConnection::VoidPromise&& promise)
+void PeerConnectionBackend::addIceCandidate(RTCIceCandidate& iceCandidate, DOMPromise<void>&& promise)
 {
     ASSERT(m_peerConnection.internalSignalingState() != PeerConnectionStates::SignalingState::Closed);
 

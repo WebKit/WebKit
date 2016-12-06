@@ -107,7 +107,7 @@ void FetchBody::json(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     if (isText()) {
-        promise->resolve(textBody());
+        promise->resolve<IDLDOMString>(textBody());
         return;
     }
     m_consumer.setType(FetchBodyConsumer::Type::Text);
@@ -144,7 +144,7 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     }
     if (isFormData()) {
         // FIXME: Support consuming FormData.
-        promise->reject(0);
+        promise->reject();
         return;
     }
     m_consumer.resolve(WTFMove(promise));
@@ -212,7 +212,7 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 void FetchBody::loadingFailed()
 {
     if (m_consumePromise) {
-        m_consumePromise->reject(0);
+        m_consumePromise->reject();
         m_consumePromise = nullptr;
     }
 }

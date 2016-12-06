@@ -99,7 +99,7 @@ void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParameters& parameter
         return;
     }
 
-    callback(result.get(), nullptr);
+    callback(WTFMove(result));
 }
 
 void CryptoAlgorithmHMAC::importKey(SubtleCrypto::KeyFormat format, KeyData&& data, const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsageBitmap usages, KeyCallback&& callback, ExceptionCallback&& exceptionCallback)
@@ -220,7 +220,7 @@ ExceptionOr<void> CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParamete
         failureCallback();
         return { };
     }
-    callback(result.get(), nullptr);
+    callback(WTFMove(result));
     return { };
 }
 

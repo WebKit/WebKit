@@ -735,7 +735,7 @@ ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecution
         bool canMakePayments = paymentCoordinator.canMakePayments();
 
         RunLoop::main().dispatch([promise, canMakePayments]() mutable {
-            promise->resolve(canMakePayments);
+            promise->resolve<IDLBoolean>(canMakePayments);
         });
         return { };
     }
@@ -743,7 +743,7 @@ ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(ScriptExecution
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
     paymentCoordinator.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), [promise](bool canMakePayments) mutable {
-        promise->resolve(canMakePayments);
+        promise->resolve<IDLBoolean>(canMakePayments);
     });
     return { };
 }
@@ -768,7 +768,7 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(ScriptExecutionContext& scri
     auto& paymentCoordinator = document.frame()->mainFrame().paymentCoordinator();
 
     paymentCoordinator.openPaymentSetup(merchantIdentifier, document.domain(), [promise](bool result) mutable {
-        promise->resolve(result);
+        promise->resolve<IDLBoolean>(result);
     });
 
     return { };

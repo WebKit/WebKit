@@ -67,7 +67,7 @@ void RTCRtpSender::setTrack(RefPtr<MediaStreamTrack>&& track)
     m_track = WTFMove(track);
 }
 
-ExceptionOr<void> RTCRtpSender::replaceTrack(Ref<MediaStreamTrack>&& withTrack, PeerConnection::VoidPromise&& promise)
+ExceptionOr<void> RTCRtpSender::replaceTrack(Ref<MediaStreamTrack>&& withTrack, DOMPromise<void>&& promise)
 {
     if (isStopped()) {
         promise.reject(INVALID_STATE_ERR);

@@ -24,7 +24,7 @@ var nonExtractable = false;
 debug("Generating a key pair...");
 crypto.webkitSubtle.generateKey(algorithmKeyGen, nonExtractable, []).then(function(result) {
     keyPair = result;
-    shouldBe("keyPair.toString()", "'[object CryptoKeyPair]'");
+    shouldBe("keyPair.toString()", "'[object Object]'");
     shouldBe("keyPair.publicKey.type", "'public'");
     shouldBe("keyPair.publicKey.extractable", "true");
     shouldBe("keyPair.publicKey.algorithm.name", "'RSA-OAEP'");
