@@ -693,7 +693,7 @@ WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page)
     return toAPI(&API::Array::create(WTFMove(originIdentifiers)).leakRef());
 }
 
-void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, EventThrottlingBehavior* behavior)
+void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEventThrottlingBehavior* behavior)
 {
     std::optional<WebCore::EventThrottlingBehavior> behaviorValue;
     if (behavior) {

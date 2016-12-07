@@ -1,3 +1,16 @@
+2016-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix use of enum in a WK2 C SPI header.
+        rdar://problem/28725583
+
+        Reviewed by Dan Bernstein.
+
+        Use correct enum style for a C SPI header and fix the callers.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetEventThrottlingBehaviorOverride):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2016-12-07  Beth Dakin  <bdakin@apple.com>
 
         Remove iCloud Pages and Keynote site-specific hacks

@@ -1,3 +1,15 @@
+2016-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix use of enum in a WK2 C SPI header.
+        rdar://problem/28725583
+
+        Reviewed by Dan Bernstein.
+
+        Use correct enum style for a C SPI header and fix the callers.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::prepare):
+
 2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new project for recording and playing back editing commands in editable web content
