@@ -1,3 +1,23 @@
+2016-12-07  Jer Noble  <jer.noble@apple.com>
+
+        ASSERT crash while running media-source/mediasource-activesourcebuffers.html under Stress GC bot.
+        https://bugs.webkit.org/show_bug.cgi?id=165514
+
+        Reviewed by Eric Carlson.
+
+        If a track associated with MSE is disabled after a SourceBuffer begins parsing a queued
+        append operation, SourceBuffer can get into a state where it asks SourceBufferPrivateAVFObjC
+        if it is ready to accept data for that disabled track. This causes an ASSERT_NOT_REACHED in
+        isReadyForMoreData().
+
+        However, this seems to be a valid condition; we can safely just return "false" from
+        isReadyForMoreSamples() (and also bail from notifyClientWhenReadyForMoreSamples()) when asked
+        about a disabled track.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples):
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Eliminate the Scope class and fold it into CSSTokenizer

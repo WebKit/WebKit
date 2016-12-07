@@ -965,8 +965,6 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(AtomicString trackIDStrin
         return [m_displayLayer isReadyForMoreMediaData];
     else if (m_audioRenderers.contains(trackID))
         return [m_audioRenderers.get(trackID) isReadyForMoreMediaData];
-    else
-        ASSERT_NOT_REACHED();
 
     return false;
 }
@@ -1030,8 +1028,7 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(AtomicStrin
         [m_audioRenderers.get(trackID) requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
             didBecomeReadyForMoreSamples(trackID);
         }];
-    } else
-        ASSERT_NOT_REACHED();
+    }
 }
 
 }
