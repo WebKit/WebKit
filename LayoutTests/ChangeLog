@@ -1,3 +1,12 @@
+2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/security/module-incorrect-mime-types.html as flaky on ios-simulator-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=165344
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Two tiled drawing tests failing with visual viewports enabled.

@@ -1911,3 +1911,5 @@ webkit.org/b/164960 [ Release ] http/tests/security/module-correct-mime-types.ht
 webkit.org/b/164961 [ Release ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Timeout ]
 
 webkit.org/b/165165 [ Release ] http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html [ Pass Timeout ]
+
+webkit.org/b/165344 [ Release ] http/tests/security/module-incorrect-mime-types.html [ Pass Timeout ]
