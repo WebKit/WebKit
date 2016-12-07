@@ -47,11 +47,11 @@ void WebPreferences::platformInitializeStore()
 #if USE(COORDINATED_GRAPHICS_THREADED)
     setForceCompositingMode(true);
 #else
-    if (g_strcmp0(getenv("WEBKIT_FORCE_COMPOSITING_MODE"), "0"))
+    if (getenv("WEBKIT_FORCE_COMPOSITING_MODE"))
         setForceCompositingMode(true);
 #endif
 
-    if (g_strcmp0(getenv("WEBKIT_DISABLE_COMPOSITING_MODE"), "0")) {
+    if (getenv("WEBKIT_DISABLE_COMPOSITING_MODE")) {
         setAcceleratedCompositingEnabled(false);
         return;
     }
