@@ -40,7 +40,6 @@
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "DOMTokenList.h"
-#include "Dictionary.h"
 #include "DocumentAnimation.h"
 #include "DocumentSharedObjectPool.h"
 #include "ElementIterator.h"

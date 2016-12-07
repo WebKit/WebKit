@@ -47,6 +47,7 @@
 #include "ScopeGuard.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
+#include <heap/StrongInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;

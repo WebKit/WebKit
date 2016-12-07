@@ -53,13 +53,13 @@ JSValue JSApplePaySession::completeShippingMethodSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 3))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    uint16_t status = convert<IDLUnsignedShort>(state, state.argument(0), IntegerConversionConfiguration::Normal);
+    uint16_t status = convert<IDLUnsignedShort>(state, state.uncheckedArgument(0), IntegerConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    Dictionary newTotal = { &state, state.argument(1) };
+    Dictionary newTotal = { &state, state.uncheckedArgument(1) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ArrayValue newLineItems { &state, state.argument(2) };
+    ArrayValue newLineItems { &state, state.uncheckedArgument(2) };
     RETURN_IF_EXCEPTION(scope, JSValue());
     propagateException(state, scope, impl.completeShippingMethodSelection(status, newTotal, newLineItems));
 
@@ -81,16 +81,16 @@ JSValue JSApplePaySession::completeShippingContactSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 4))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    uint16_t status = convert<IDLUnsignedShort>(state, state.argument(0), IntegerConversionConfiguration::Normal);
+    uint16_t status = convert<IDLUnsignedShort>(state, state.uncheckedArgument(0), IntegerConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ArrayValue newShippingMethods { &state, state.argument(1) };
+    ArrayValue newShippingMethods { &state, state.uncheckedArgument(1) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    Dictionary newTotal = { &state, state.argument(2) };
+    Dictionary newTotal = { &state, state.uncheckedArgument(2) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ArrayValue newLineItems { &state, state.argument(3) };
+    ArrayValue newLineItems { &state, state.uncheckedArgument(3) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     propagateException(state, scope, impl.completeShippingContactSelection(status, newShippingMethods, newTotal, newLineItems));
@@ -113,10 +113,10 @@ JSValue JSApplePaySession::completePaymentMethodSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 2))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    Dictionary newTotal = { &state, state.argument(0) };
+    Dictionary newTotal = { &state, state.uncheckedArgument(0) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ArrayValue newLineItems { &state, state.argument(1) };
+    ArrayValue newLineItems { &state, state.uncheckedArgument(1) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     propagateException(state, scope, impl.completePaymentMethodSelection(newTotal, newLineItems));

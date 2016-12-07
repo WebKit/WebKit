@@ -35,7 +35,7 @@ class ArrayBuffer;
 class ArrayBufferView;
 class JSValue;
 class JSObject;
-template<typename T> class Strong;
+template<typename> class Strong;
 }
 
 namespace WebCore {

@@ -40,6 +40,7 @@
 #include "IDBTransaction.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include <heap/HeapInlines.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/NeverDestroyed.h>

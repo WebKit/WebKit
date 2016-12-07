@@ -43,6 +43,7 @@
 #include "IDBVersionChangeEvent.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include <heap/HeapInlines.h>
 
 namespace WebCore {
 

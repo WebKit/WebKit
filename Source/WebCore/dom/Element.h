@@ -41,7 +41,6 @@ class ClientRect;
 class ClientRectList;
 class CustomElementReactionQueue;
 class DatasetDOMStringMap;
-class Dictionary;
 class DOMTokenList;
 class ElementRareData;
 class HTMLDocument;

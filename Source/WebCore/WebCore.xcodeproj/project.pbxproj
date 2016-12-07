@@ -84,18 +84,6 @@
 		0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */; };
 		0704A4151D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */; };
 		0704A4161D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */; };
-		0705852117FDC140005F2BCB /* MediaTrackConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705851D17FDC140005F2BCB /* MediaTrackConstraint.h */; };
-		0705852317FDC140005F2BCB /* MediaTrackConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705851F17FDC140005F2BCB /* MediaTrackConstraints.cpp */; };
-		0705852417FDC140005F2BCB /* MediaTrackConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705852017FDC140005F2BCB /* MediaTrackConstraints.h */; };
-		0705852917FDE02C005F2BCB /* MediaTrackConstraintSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705852617FDE02B005F2BCB /* MediaTrackConstraintSet.h */; };
-		0705853117FDE6D9005F2BCB /* JSMediaTrackConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705852B17FDE6D9005F2BCB /* JSMediaTrackConstraint.cpp */; };
-		0705853217FDE6D9005F2BCB /* JSMediaTrackConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705852C17FDE6D9005F2BCB /* JSMediaTrackConstraint.h */; };
-		0705853317FDE6D9005F2BCB /* JSMediaTrackConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705852D17FDE6D9005F2BCB /* JSMediaTrackConstraints.cpp */; };
-		0705853417FDE6D9005F2BCB /* JSMediaTrackConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705852E17FDE6D9005F2BCB /* JSMediaTrackConstraints.h */; };
-		0705853517FDE6D9005F2BCB /* JSMediaTrackConstraintSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705852F17FDE6D9005F2BCB /* JSMediaTrackConstraintSet.cpp */; };
-		0705853617FDE6D9005F2BCB /* JSMediaTrackConstraintSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0705853017FDE6D9005F2BCB /* JSMediaTrackConstraintSet.h */; };
-		0705853817FE044F005F2BCB /* MediaTrackConstraintSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705853717FE044F005F2BCB /* MediaTrackConstraintSet.cpp */; };
-		0705853A17FE0770005F2BCB /* MediaTrackConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0705853917FE0770005F2BCB /* MediaTrackConstraint.cpp */; };
 		0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07075688142262D600414161 /* HTMLTrackElement.cpp */; };
 		0707568C142262D600414161 /* HTMLTrackElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 07075689142262D600414161 /* HTMLTrackElement.h */; };
 		070756941422668D00414161 /* JSTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0707568E1422668C00414161 /* JSTextTrack.cpp */; };
@@ -7026,21 +7014,6 @@
 		0704A40A1D6DFC690086DCDB /* JSOverconstrainedError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOverconstrainedError.h; sourceTree = "<group>"; };
 		0704A4131D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverconstrainedErrorEvent.cpp; sourceTree = "<group>"; };
 		0704A4141D6F39FB0086DCDB /* JSOverconstrainedErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOverconstrainedErrorEvent.h; sourceTree = "<group>"; };
-		0705851C17FDB23C005F2BCB /* MediaTrackConstraints.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaTrackConstraints.idl; sourceTree = "<group>"; };
-		0705851D17FDC140005F2BCB /* MediaTrackConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackConstraint.h; sourceTree = "<group>"; };
-		0705851E17FDC140005F2BCB /* MediaTrackConstraint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaTrackConstraint.idl; sourceTree = "<group>"; };
-		0705851F17FDC140005F2BCB /* MediaTrackConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTrackConstraints.cpp; sourceTree = "<group>"; };
-		0705852017FDC140005F2BCB /* MediaTrackConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackConstraints.h; sourceTree = "<group>"; };
-		0705852617FDE02B005F2BCB /* MediaTrackConstraintSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackConstraintSet.h; sourceTree = "<group>"; };
-		0705852717FDE02B005F2BCB /* MediaTrackConstraintSet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaTrackConstraintSet.idl; sourceTree = "<group>"; };
-		0705852B17FDE6D9005F2BCB /* JSMediaTrackConstraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaTrackConstraint.cpp; sourceTree = "<group>"; };
-		0705852C17FDE6D9005F2BCB /* JSMediaTrackConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaTrackConstraint.h; sourceTree = "<group>"; };
-		0705852D17FDE6D9005F2BCB /* JSMediaTrackConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaTrackConstraints.cpp; sourceTree = "<group>"; };
-		0705852E17FDE6D9005F2BCB /* JSMediaTrackConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaTrackConstraints.h; sourceTree = "<group>"; };
-		0705852F17FDE6D9005F2BCB /* JSMediaTrackConstraintSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaTrackConstraintSet.cpp; sourceTree = "<group>"; };
-		0705853017FDE6D9005F2BCB /* JSMediaTrackConstraintSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaTrackConstraintSet.h; sourceTree = "<group>"; };
-		0705853717FE044F005F2BCB /* MediaTrackConstraintSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTrackConstraintSet.cpp; sourceTree = "<group>"; };
-		0705853917FE0770005F2BCB /* MediaTrackConstraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTrackConstraint.cpp; sourceTree = "<group>"; };
 		07075688142262D600414161 /* HTMLTrackElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTrackElement.cpp; sourceTree = "<group>"; };
 		07075689142262D600414161 /* HTMLTrackElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTrackElement.h; sourceTree = "<group>"; };
 		0707568A142262D600414161 /* HTMLTrackElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLTrackElement.idl; sourceTree = "<group>"; };
@@ -15086,15 +15059,6 @@
 				07221B5717CEC32700848E51 /* MediaStreamTrackEvent.cpp */,
 				07221B5817CEC32700848E51 /* MediaStreamTrackEvent.h */,
 				07221B5917CEC32700848E51 /* MediaStreamTrackEvent.idl */,
-				0705853917FE0770005F2BCB /* MediaTrackConstraint.cpp */,
-				0705851D17FDC140005F2BCB /* MediaTrackConstraint.h */,
-				0705851E17FDC140005F2BCB /* MediaTrackConstraint.idl */,
-				0705851F17FDC140005F2BCB /* MediaTrackConstraints.cpp */,
-				0705852017FDC140005F2BCB /* MediaTrackConstraints.h */,
-				0705851C17FDB23C005F2BCB /* MediaTrackConstraints.idl */,
-				0705853717FE044F005F2BCB /* MediaTrackConstraintSet.cpp */,
-				0705852617FDE02B005F2BCB /* MediaTrackConstraintSet.h */,
-				0705852717FDE02B005F2BCB /* MediaTrackConstraintSet.idl */,
 				07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */,
 				07C1C0E11BFB600100BD2256 /* MediaTrackSupportedConstraints.idl */,
 				5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */,
@@ -15312,12 +15276,6 @@
 				07277E4717D018CC0015534D /* JSMediaStreamTrack.h */,
 				07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */,
 				07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */,
-				0705852B17FDE6D9005F2BCB /* JSMediaTrackConstraint.cpp */,
-				0705852C17FDE6D9005F2BCB /* JSMediaTrackConstraint.h */,
-				0705852D17FDE6D9005F2BCB /* JSMediaTrackConstraints.cpp */,
-				0705852E17FDE6D9005F2BCB /* JSMediaTrackConstraints.h */,
-				0705852F17FDE6D9005F2BCB /* JSMediaTrackConstraintSet.cpp */,
-				0705853017FDE6D9005F2BCB /* JSMediaTrackConstraintSet.h */,
 				0787C4671BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp */,
 				0787C4681BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h */,
 				073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */,
@@ -26320,9 +26278,6 @@
 				07277E5117D018CC0015534D /* JSMediaStreamEvent.h in Headers */,
 				07277E5317D018CC0015534D /* JSMediaStreamTrack.h in Headers */,
 				07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */,
-				0705853217FDE6D9005F2BCB /* JSMediaTrackConstraint.h in Headers */,
-				0705853417FDE6D9005F2BCB /* JSMediaTrackConstraints.h in Headers */,
-				0705853617FDE6D9005F2BCB /* JSMediaTrackConstraintSet.h in Headers */,
 				0787C46A1BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.h in Headers */,
 				E107400E0E77BDC00033AF24 /* JSMessageChannel.h in Headers */,
 				75793EC90D0CE72D007FC0AC /* JSMessageEvent.h in Headers */,
@@ -26850,9 +26805,6 @@
 				07FFDE69181AED420072D409 /* MediaStreamTrackPrivate.h in Headers */,
 				CD641EC01819B36000EE4C41 /* MediaTimeAVFoundation.h in Headers */,
 				CD60C0C7193E87C7003C656B /* MediaTimeQTKit.h in Headers */,
-				0705852117FDC140005F2BCB /* MediaTrackConstraint.h in Headers */,
-				0705852417FDC140005F2BCB /* MediaTrackConstraints.h in Headers */,
-				0705852917FDE02C005F2BCB /* MediaTrackConstraintSet.h in Headers */,
 				07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */,
 				99C7CCB318C663E40032E413 /* MemoizedDOMResult.h in Headers */,
 				51E1BAC31BD8064E0055D81F /* MemoryBackingStoreTransaction.h in Headers */,
@@ -30103,9 +30055,6 @@
 				07277E5217D018CC0015534D /* JSMediaStreamTrack.cpp in Sources */,
 				07C59B6E17F794F6000FBCBB /* JSMediaStreamTrackCustom.cpp in Sources */,
 				07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */,
-				0705853117FDE6D9005F2BCB /* JSMediaTrackConstraint.cpp in Sources */,
-				0705853317FDE6D9005F2BCB /* JSMediaTrackConstraints.cpp in Sources */,
-				0705853517FDE6D9005F2BCB /* JSMediaTrackConstraintSet.cpp in Sources */,
 				0787C4691BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp in Sources */,
 				072560FB1BFC2482004F9359 /* JSMediaTrackSupportedConstraintsCustom.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
@@ -30662,9 +30611,6 @@
 				07FFDE68181AED420072D409 /* MediaStreamTrackPrivate.cpp in Sources */,
 				CD641EBF1819B36000EE4C41 /* MediaTimeAVFoundation.cpp in Sources */,
 				CD60C0C6193E87C7003C656B /* MediaTimeQTKit.mm in Sources */,
-				0705853A17FE0770005F2BCB /* MediaTrackConstraint.cpp in Sources */,
-				0705852317FDC140005F2BCB /* MediaTrackConstraints.cpp in Sources */,
-				0705853817FE044F005F2BCB /* MediaTrackConstraintSet.cpp in Sources */,
 				99C7CCB518C6B8990032E413 /* MemoizedDOMResult.cpp in Sources */,
 				51E1BAC21BD8064E0055D81F /* MemoryBackingStoreTransaction.cpp in Sources */,
 				BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */,

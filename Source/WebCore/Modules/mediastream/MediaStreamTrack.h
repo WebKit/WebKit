@@ -46,7 +46,6 @@ namespace WebCore {
 class AudioSourceProvider;
 class MediaConstraints;
 class MediaSourceSettings;
-class MediaTrackConstraints;
 
 class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, private MediaStreamTrackPrivate::Observer {
 public:
@@ -78,7 +77,6 @@ public:
     Ref<MediaStreamTrack> clone();
     void stopProducingData();
 
-    RefPtr<MediaTrackConstraints> getConstraints() const;
     RefPtr<MediaSourceSettings> getSettings() const;
     RefPtr<RealtimeMediaSourceCapabilities> getCapabilities() const;
 

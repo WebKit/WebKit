@@ -30,7 +30,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Dictionary.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "JSOverconstrainedError.h"
@@ -38,7 +37,6 @@
 #include "MediaSourceSettings.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
-#include "MediaTrackConstraints.h"
 #include "NotImplemented.h"
 #include "OverconstrainedError.h"
 #include "ScriptExecutionContext.h"
@@ -148,13 +146,6 @@ void MediaStreamTrack::stopProducingData()
     m_ended = true;
 
     m_private->endTrack();
-}
-
-RefPtr<MediaTrackConstraints> MediaStreamTrack::getConstraints() const
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=122428
-    notImplemented();
-    return 0;
 }
 
 RefPtr<MediaSourceSettings> MediaStreamTrack::getSettings() const

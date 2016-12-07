@@ -151,9 +151,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
-    $(WebCore)/Modules/mediastream/MediaTrackConstraint.idl \
-    $(WebCore)/Modules/mediastream/MediaTrackConstraintSet.idl \
-    $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackSupportedConstraints.idl \
     $(WebCore)/Modules/mediastream/NavigatorMediaDevices.idl \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.idl \

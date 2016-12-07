@@ -29,7 +29,6 @@
 #include "CSSFontSelector.h"
 #include "CSSValue.h"
 #include "CSSValueList.h"
-#include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "JSDOMConstructor.h"
 

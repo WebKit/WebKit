@@ -60,6 +60,7 @@
 #include "InstrumentingAgents.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
+#include <heap/HeapInlines.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
 #include <inspector/InspectorFrontendDispatchers.h>

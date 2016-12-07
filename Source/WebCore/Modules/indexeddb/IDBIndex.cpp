@@ -38,6 +38,7 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "Logging.h"
+#include <heap/HeapInlines.h>
 
 using namespace JSC;
 

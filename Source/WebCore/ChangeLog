@@ -1,3 +1,61 @@
+2016-12-04  Darin Adler  <darin@apple.com>
+
+        Remove various stray uses of WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=165358
+
+        Reviewed by Sam Weinig.
+
+        I discovered three completely unused classes in the MediaStream code:
+        MediaTrackConstraint, MediaTrackConstraintSet, and MediaTrackConstraints.
+        While there is some chance we may implement these at some point, they are
+        likely to be dictionaries or some other kind of data structure rather than
+        clases, and there is no reason to keep the current classes.
+
+        * CMakeLists.txt: Removed MediaTrackConstraint, MediaTrackConstraintSet,
+        and MediaTrackConstraints.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+
+        * Modules/indexeddb/IDBDatabase.h: Removed include of Dictionary.h.
+        * Modules/indexeddb/IDBObjectStore.cpp: Added include of HeapInlines.h.
+        * Modules/indexeddb/IDBRequest.cpp: Added include of StrongInlines.h.
+        * Modules/indexeddb/IDBTransaction.cpp: Added include of SerializedScriptValue.h.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getConstraints): Deleted.
+        This function is implemented entirely in the bindings layer.
+        * Modules/mediastream/MediaStreamTrack.h: Removed getConstraints.
+
+        * Modules/mediastream/MediaTrackConstraint.cpp: Removed.
+        * Modules/mediastream/MediaTrackConstraint.h: Removed.
+        * Modules/mediastream/MediaTrackConstraint.idl: Removed.
+        * Modules/mediastream/MediaTrackConstraintSet.cpp: Removed.
+        * Modules/mediastream/MediaTrackConstraintSet.h: Removed.
+        * Modules/mediastream/MediaTrackConstraintSet.idl: Removed.
+        * Modules/mediastream/MediaTrackConstraints.cpp: Removed.
+        * Modules/mediastream/MediaTrackConstraints.h: Removed.
+        * Modules/mediastream/MediaTrackConstraints.idl: Removed.
+
+        * Modules/mediastream/NavigatorUserMedia.idl: Use the type names from the latest
+        getUserMedia specification for the arguments to webkitGetUserMedia; not sure they
+        are precisely correct for this legacy function, but since this is a JSBuiltin,
+        it's all ignored anyway. Just important not to call anything "Dictionary".
+
+        * WebCore.xcodeproj/project.pbxproj: Removed MediaTrackConstraint, MediaTrackConstraintSet,
+        and MediaTrackConstraints.
+
+        * bindings/js/JSApplePaySessionCustom.cpp:
+        (WebCore::JSApplePaySession::completeShippingMethodSelection): Use uncheckedArgument, since
+        the code explicitly checks the number of arguments.
+        (WebCore::JSApplePaySession::completeShippingContactSelection): Ditto.
+        (WebCore::JSApplePaySession::completePaymentMethodSelection): Ditto.
+
+        * bindings/js/JSFontFaceCustom.cpp: Removed include of Dictionary.h.
+        * dom/Document.cpp: Ditto.
+        * dom/Element.cpp: Ditto.
+
+        * dom/Element.h: Removed forward declaration of Dictionary.
+
 2016-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         After preventing a beforeinput event, an input event is fired when formatting rich text

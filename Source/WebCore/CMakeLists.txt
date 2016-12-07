@@ -221,9 +221,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/MediaStreamEvent.idl
     Modules/mediastream/MediaStreamTrack.idl
     Modules/mediastream/MediaStreamTrackEvent.idl
-    Modules/mediastream/MediaTrackConstraint.idl
-    Modules/mediastream/MediaTrackConstraintSet.idl
-    Modules/mediastream/MediaTrackConstraints.idl
     Modules/mediastream/MediaTrackSupportedConstraints.idl
     Modules/mediastream/NavigatorMediaDevices.idl
     Modules/mediastream/NavigatorUserMedia.idl
@@ -912,9 +909,6 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaStreamRegistry.cpp
     Modules/mediastream/MediaStreamTrack.cpp
     Modules/mediastream/MediaStreamTrackEvent.cpp
-    Modules/mediastream/MediaTrackConstraint.cpp
-    Modules/mediastream/MediaTrackConstraintSet.cpp
-    Modules/mediastream/MediaTrackConstraints.cpp
     Modules/mediastream/NavigatorMediaDevices.cpp
     Modules/mediastream/PeerConnectionBackend.cpp
     Modules/mediastream/RTCConfiguration.cpp

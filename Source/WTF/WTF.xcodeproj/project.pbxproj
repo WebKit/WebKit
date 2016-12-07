@@ -130,6 +130,7 @@
 		515F794F1CFC9F4A00CCED93 /* CrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F794C1CFC9F4A00CCED93 /* CrossThreadCopier.h */; };
 		515F79501CFC9F4A00CCED93 /* CrossThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F794D1CFC9F4A00CCED93 /* CrossThreadTask.h */; };
 		515F79561CFD3A6900CCED93 /* CrossThreadQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 515F79551CFD3A6900CCED93 /* CrossThreadQueue.h */; };
+		52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BBDB107FA424886178B9E /* SymbolImpl.cpp */; };
 		539EB0631D55284200C82EF7 /* LEBDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB0621D55284200C82EF7 /* LEBDecoder.h */; };
 		553071CA1C40427200384898 /* TinyLRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 553071C91C40427200384898 /* TinyLRUCache.h */; };
 		5597F82F1D94B9970066BC21 /* SynchronizedFixedQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5597F82C1D94B9970066BC21 /* SynchronizedFixedQueue.h */; };
@@ -356,7 +357,6 @@
 		FE8925B01D00DAEC0046907E /* Indenter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8925AF1D00DAEC0046907E /* Indenter.h */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEDACD3E1630F83F00C69634 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; };
-		52183012C99E476A84EEBEA8 /* SymbolImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F72BBDB107FA424886178B9E /* SymbolImpl.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -721,11 +721,11 @@
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueCocoa.cpp; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
+		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
 		FE8925AF1D00DAEC0046907E /* Indenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Indenter.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
-		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SymbolImpl.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
