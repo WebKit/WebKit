@@ -1,3 +1,18 @@
+2016-12-07  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: count >= 1 in WebCore::RenderMultiColumnSet::columnCount
+        https://bugs.webkit.org/show_bug.cgi?id=136365
+        <rdar://problem/27686727>
+
+        Reviewed by Simon Fraser.
+
+        Margin value overflow ends up confusing the column count computing logic.
+
+        Test: fast/multicol/assert-on-column-count-when-zoomed-in.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::addIntrinsicMargins):
+
 2016-12-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.caretRangeFromPoint doesn't retarget the resultant Range correctly.
