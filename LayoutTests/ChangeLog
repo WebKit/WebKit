@@ -1,3 +1,12 @@
+2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/table/003.html after r209421.
+        https://bugs.webkit.org/show_bug.cgi?id=165513
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/table/003-expected.txt:
+
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Use tap and pinch gestures on iOS
