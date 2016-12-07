@@ -1,3 +1,19 @@
+2016-12-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        DumpRenderTree ASSERT in JSC::ExecutableBase::isHostFunction seen on bots
+        https://bugs.webkit.org/show_bug.cgi?id=165497
+        <rdar://problem/29538973>
+
+        Reviewed by Saam Barati.
+
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        Defer collection when extracting and processing the samples to avoid
+        any objects held by the samples from getting collected while processing.
+        This is because while processing we call into functions that can
+        allocate and we must prevent those functions from syncing with the
+        GC thread which may collect other sample data yet to be processed.
+
 2016-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Correct SDKROOT values in xcconfig files
