@@ -1420,22 +1420,19 @@ RefPtr<Range> Document::caretRangeFromPoint(const LayoutPoint& clientPoint)
     if (!node)
         return nullptr;
 
-    Node* shadowAncestorNode = ancestorInThisScope(node);
-    if (shadowAncestorNode != node) {
-        unsigned offset = shadowAncestorNode->computeNodeIndex();
-        ContainerNode* container = shadowAncestorNode->parentNode();
-        return Range::create(*this, container, offset, container, offset);
-    }
-
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return nullptr;
-    VisiblePosition visiblePosition = renderer->positionForPoint(localPoint, nullptr);
-    if (visiblePosition.isNull())
+    Position rangeCompliantPosition = renderer->positionForPoint(localPoint, nullptr).deepEquivalent().parentAnchoredEquivalent();
+    if (rangeCompliantPosition.isNull())
         return nullptr;
 
-    Position rangeCompliantPosition = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
-    return Range::create(*this, rangeCompliantPosition, rangeCompliantPosition);
+    unsigned offset = rangeCompliantPosition.offsetInContainerNode();
+    node = &retargetToScope(*rangeCompliantPosition.containerNode());
+    if (node != rangeCompliantPosition.containerNode())
+        offset = 0;
+
+    return Range::create(*this, node, offset, node, offset);
 }
 
 Element* Document::scrollingElement()
