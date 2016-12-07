@@ -1,3 +1,18 @@
+2016-12-07  Jer Noble  <jer.noble@apple.com>
+
+        Exiting Element Fullscreen mode loses focus on WKWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=165512
+
+        Reviewed by Eric Carlson.
+
+        Setting 'window.contentView.hidden = YES' will reset the first-responder (whereas
+        previously setting 'window.contentView.layer.hidden = YES' did not). Grab the first-
+        responder before doing so, so that it can be reset correctly when moving the WKWebView
+        back to it's original window.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2016-12-07  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build after r209418.
