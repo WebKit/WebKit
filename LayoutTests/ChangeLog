@@ -1,3 +1,13 @@
+2016-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix behavior of background-attachment:fixed with visual viewports
+        https://bugs.webkit.org/show_bug.cgi?id=165465
+        
+        Fixed backgrounds are working correctly. Unskip and land a new image result for this test.
+
+        * TestExpectations:
+        * tiled-drawing/scrolling/fixed-background/fixed-body-background-zoomed-expected.png:
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         GetByID IC is wrongly unwrapping the global proxy this value for getter/setters.
