@@ -47,6 +47,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIterator.h"
@@ -103,6 +104,13 @@ void MediaDocumentParser::createDocumentStructure()
 #endif
 
     auto body = HTMLBodyElement::create(document);
+    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+        StringBuilder bodyStyle;
+        bodyStyle.appendLiteral("margin: 0; padding: 0;");
+        bodyStyle.appendLiteral("background-color: rgb(38, 38, 38);");
+        bodyStyle.appendLiteral("display: flex; justify-content: center; align-items: center;");
+        body->setAttribute(styleAttr, bodyStyle.toString());
+    }
     rootElement->appendChild(body);
 
     auto videoElement = HTMLVideoElement::create(document);
@@ -116,6 +124,9 @@ void MediaDocumentParser::createDocumentStructure()
 #if PLATFORM(IOS)
     elementStyle.appendLiteral("width: 100%; height: 100%;");
 #endif
+    if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+        elementStyle.appendLiteral("min-height: 50px;");
+    }
     videoElement->setAttribute(styleAttr, elementStyle.toString());
 
     auto sourceElement = HTMLSourceElement::create(document);
