@@ -30,7 +30,9 @@
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLBodyElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
 #include "ImageQualityController.h"
@@ -506,24 +508,45 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     paintObject(paintInfo, paintOffset);
 }
 
-static inline bool rendererObscuresBackground(RenderElement* rootObject)
+RenderElement* RenderView::rendererForRootBackground() const
 {
-    if (!rootObject)
-        return false;
-    
-    const RenderStyle& style = rootObject->style();
-    if (style.visibility() != VISIBLE
-        || style.opacity() != 1
-        || style.hasTransform())
-        return false;
-    
-    if (rootObject->isComposited())
-        return false;
+    auto* firstChild = this->firstChild();
+    if (!firstChild)
+        return nullptr;
+    ASSERT(is<RenderElement>(*firstChild));
+    auto& documentRenderer = downcast<RenderElement>(*firstChild);
 
-    if (rootObject->rendererForRootBackground().style().backgroundClip() == TextFillBox)
+    if (documentRenderer.hasBackground())
+        return &documentRenderer;
+
+    // We propagate the background only for HTML content.
+    if (!is<HTMLHtmlElement>(documentRenderer.element()))
+        return &documentRenderer;
+
+    if (auto* body = document().body()) {
+        if (auto* renderer = body->renderer())
+            return renderer;
+    }
+    return &documentRenderer;
+}
+
+static inline bool rendererObscuresBackground(const RenderElement& rootElement)
+{
+    auto& style = rootElement.style();
+    if (style.visibility() != VISIBLE || style.opacity() != 1 || style.hasTransform())
         return false;
 
     if (style.hasBorderRadius())
+        return false;
+
+    if (rootElement.isComposited())
+        return false;
+
+    auto* rendererForBackground = rootElement.view().rendererForRootBackground();
+    if (!rendererForBackground)
+        return false;
+
+    if (rendererForBackground->style().backgroundClip() == TextFillBox)
         return false;
 
     return true;
@@ -567,7 +590,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         // The document element's renderer is currently forced to be a block, but may not always be.
         RenderBox* rootBox = is<RenderBox>(*rootRenderer) ? downcast<RenderBox>(rootRenderer) : nullptr;
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
-        rootObscuresBackground = rendererObscuresBackground(rootRenderer);
+        rootObscuresBackground = rendererObscuresBackground(*rootRenderer);
     }
 
     bool backgroundShouldExtendBeyondPage = frameView().frame().settings().backgroundShouldExtendBeyondPage();
@@ -1144,11 +1167,9 @@ IntRect RenderView::unscaledDocumentRect() const
 
 bool RenderView::rootBackgroundIsEntirelyFixed() const
 {
-    RenderElement* rootObject = document().documentElement() ? document().documentElement()->renderer() : nullptr;
-    if (!rootObject)
-        return false;
-
-    return rootObject->rendererForRootBackground().style().hasEntirelyFixedBackground();
+    if (auto* rootBackgroundRenderer = rendererForRootBackground())
+        return rootBackgroundRenderer->style().hasEntirelyFixedBackground();
+    return false;
 }
     
 LayoutRect RenderView::unextendedBackgroundRect() const

@@ -1,3 +1,31 @@
+2016-12-06  Zalan Bujtas  <zalan@apple.com>
+
+        Move RenderElement::rendererForRootBackground to RenderView.
+        https://bugs.webkit.org/show_bug.cgi?id=165454
+
+        Reviewed by Simon Fraser.
+
+        Currently RenderElement::rendererForRootBackground can only be called on document element's renderer.
+        This patch removes this limitation and moves the functionality from RenderElement to RenderView.
+
+        No change in functionality.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::calculateExtendedBackgroundMode):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::rendererForRootBackground): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::rendererBackgroundColor):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::rendererForRootBackground):
+        (WebCore::rendererObscuresBackground):
+        (WebCore::RenderView::paintBoxDecorations):
+        (WebCore::RenderView::rootBackgroundIsEntirelyFixed):
+        * rendering/RenderView.h:
+
 2016-12-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Part 1 of 2] Add support for SPKI format while doing SubtleCrypto.importKey/exportKey

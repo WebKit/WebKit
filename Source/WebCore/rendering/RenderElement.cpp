@@ -1167,22 +1167,6 @@ void RenderElement::setNeedsSimplifiedNormalFlowLayout()
         setLayerNeedsFullRepaint();
 }
 
-RenderElement& RenderElement::rendererForRootBackground()
-{
-    ASSERT(isDocumentElementRenderer());
-    if (!hasBackground() && is<HTMLHtmlElement>(element())) {
-        // Locate the <body> element using the DOM. This is easier than trying
-        // to crawl around a render tree with potential :before/:after content and
-        // anonymous blocks created by inline <body> tags etc. We can locate the <body>
-        // render object very easily via the DOM.
-        if (auto* body = document().body()) {
-            if (auto* renderer = body->renderer())
-                return *renderer;
-        }
-    }
-    return *this;
-}
-
 RenderElement* RenderElement::hoverAncestor() const
 {
     // When searching for the hover ancestor and encountering a named flow thread,
