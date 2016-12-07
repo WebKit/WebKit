@@ -57,8 +57,7 @@ void JSPromise::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     putDirect(vm, vm.propertyNames->builtinNames().promiseStatePrivateName(), jsNumber(static_cast<unsigned>(Status::Pending)));
-    putDirect(vm, vm.propertyNames->builtinNames().promiseFulfillReactionsPrivateName(), jsUndefined());
-    putDirect(vm, vm.propertyNames->builtinNames().promiseRejectReactionsPrivateName(), jsUndefined());
+    putDirect(vm, vm.propertyNames->builtinNames().promiseReactionsPrivateName(), jsUndefined());
     putDirect(vm, vm.propertyNames->builtinNames().promiseResultPrivateName(), jsUndefined());
 }
 

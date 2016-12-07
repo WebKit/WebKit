@@ -35,13 +35,14 @@ function isPromise(promise)
 }
 
 @globalPrivate
-function newPromiseReaction(capability, handler)
+function newPromiseReaction(capability, onFulfilled, onRejected)
 {
     "use strict";
 
     return {
         @capabilities: capability,
-        @handler: handler
+        @onFulfilled: onFulfilled,
+        @onRejected: onRejected,
     };
 }
 
@@ -84,12 +85,12 @@ function newPromiseCapability(constructor)
 }
 
 @globalPrivate
-function triggerPromiseReactions(reactions, argument)
+function triggerPromiseReactions(state, reactions, argument)
 {
     "use strict";
 
     for (var index = 0, length = reactions.length; index < length; ++index)
-        @enqueueJob(@promiseReactionJob, [reactions[index], argument]);
+        @enqueueJob(@promiseReactionJob, [state, reactions[index], argument]);
 }
 
 @globalPrivate
@@ -97,15 +98,14 @@ function rejectPromise(promise, reason)
 {
     "use strict";
 
-    var reactions = promise.@promiseRejectReactions;
+    var reactions = promise.@promiseReactions;
     promise.@promiseResult = reason;
-    promise.@promiseFulfillReactions = @undefined;
-    promise.@promiseRejectReactions = @undefined;
+    promise.@promiseReactions = @undefined;
     promise.@promiseState = @promiseStateRejected;
 
     @InspectorInstrumentation.promiseRejected(promise, reason, reactions);
 
-    @triggerPromiseReactions(reactions, reason);
+    @triggerPromiseReactions(@promiseStateRejected, reactions, reason);
 }
 
 @globalPrivate
@@ -113,15 +113,14 @@ function fulfillPromise(promise, value)
 {
     "use strict";
 
-    var reactions = promise.@promiseFulfillReactions;
+    var reactions = promise.@promiseReactions;
     promise.@promiseResult = value;
-    promise.@promiseFulfillReactions = @undefined;
-    promise.@promiseRejectReactions = @undefined;
+    promise.@promiseReactions = @undefined;
     promise.@promiseState = @promiseStateFulfilled;
 
     @InspectorInstrumentation.promiseFulfilled(promise, value, reactions);
 
-    @triggerPromiseReactions(reactions, value);
+    @triggerPromiseReactions(@promiseStateFulfilled, reactions, value);
 }
 
 @globalPrivate
@@ -172,15 +171,16 @@ function createResolvingFunctions(promise)
 }
 
 @globalPrivate
-function promiseReactionJob(reaction, argument)
+function promiseReactionJob(state, reaction, argument)
 {
     "use strict";
 
     var promiseCapability = reaction.@capabilities;
 
     var result;
+    var handler = (state === @promiseStateFulfilled) ? reaction.@onFulfilled: reaction.@onRejected;
     try {
-        result = reaction.@handler.@call(@undefined, argument);
+        result = handler(argument);
     } catch (error) {
         return promiseCapability.@reject.@call(@undefined, error);
     }
@@ -211,8 +211,7 @@ function initializePromise(executor)
         @throwTypeError("Promise constructor takes a function argument");
 
     this.@promiseState = @promiseStatePending;
-    this.@promiseFulfillReactions = [];
-    this.@promiseRejectReactions = [];
+    this.@promiseReactions = [];
 
     var resolvingFunctions = @createResolvingFunctions(this);
     try {

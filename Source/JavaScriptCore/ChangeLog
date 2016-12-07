@@ -1,3 +1,30 @@
+2016-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Merge PromiseReactions
+        https://bugs.webkit.org/show_bug.cgi?id=165526
+
+        Reviewed by Sam Weinig.
+
+        Our promise implementation has two arrays per Promise; promiseFulfillReactions and promiseRejectReactions.
+        And everytime we call `promise.then`, we create two promise reactions for fullfill and reject.
+        However, these two reactions and the arrays for reactions can be merged into one array and one reaction.
+        It reduces the unnecessary object allocations.
+
+        No behavior change.
+
+        * builtins/BuiltinNames.h:
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseReaction):
+        (globalPrivate.triggerPromiseReactions):
+        (globalPrivate.rejectPromise):
+        (globalPrivate.fulfillPromise):
+        (globalPrivate.promiseReactionJob):
+        (globalPrivate.initializePromise):
+        * builtins/PromisePrototype.js:
+        (then):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::finishCreation):
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         GetByID IC is wrongly unwrapping the global proxy this value for getter/setters.
