@@ -1818,7 +1818,10 @@ __eglMustCastToProperFunctionPointerType EGLAPIENTRY GetProcAddress(const char *
         return map;
     };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const ProcAddressMap procAddressMap = generateProcAddressMap();
+#pragma clang diagnostic pop
 
     auto iter = procAddressMap.find(procname);
     if (iter != procAddressMap.end())

@@ -5,33 +5,15 @@ include_directories(
     include/KHR
 )
 
-if (${CMAKE_GENERATOR} MATCHES "Ninja")
-    if (${MSVC_CXX_ARCHITECTURE_ID} STREQUAL "X86")
-        link_directories(${WINDOWSSDKDIR}Lib/${WINDOWSSDKLIBVERSION}/um/x86)
-    else ()
-        link_directories(${WINDOWSSDKDIR}Lib/${WINDOWSSDKLIBVERSION}/um/x64)
-    endif ()
-else ()
-    if (${MSVC_CXX_ARCHITECTURE_ID} STREQUAL "X86")
-        link_directories($(WINDOWSSDKDIR)Lib/$(WINDOWSSDKLIBVERSION)/um/x86)
-    else ()
-        link_directories($(WINDOWSSDKDIR)Lib/$(WINDOWSSDKLIBVERSION)/um/x64)
-    endif ()
-endif ()
-
-add_library(libEGL SHARED
+set(ANGLEEGL_SOURCES
     src/libEGL/libEGL.cpp
-    src/libEGL/libEGL.def
-    src/libEGL/libEGL.rc
 )
 
-set_property(TARGET libEGL PROPERTY COMPILE_DEFINITIONS
-    ANGLE_WEBKIT_WIN
+set(ANGLEEGL_COMPILE_DEFINITIONS
     EGLAPI=
-    __STDC_CONSTANT_MACROS
 )
 
-add_library(libGLESv2 SHARED
+set(ANGLEGLESv2_SOURCES
     src/libGLESv2/entry_points_egl.cpp
     src/libGLESv2/entry_points_egl_ext.cpp
     src/libGLESv2/entry_points_gles_2_0.cpp
@@ -40,19 +22,18 @@ add_library(libGLESv2 SHARED
     src/libGLESv2/entry_points_gles_3_1.cpp
     src/libGLESv2/global_state.cpp
     src/libGLESv2/libGLESv2.cpp
-    src/libGLESv2/libGLESv2.def
-    src/libGLESv2/libGLESv2.rc
 )
 
-set_property(TARGET libGLESv2 PROPERTY COMPILE_DEFINITIONS
-    ANGLE_WEBKIT_WIN
+set(ANGLEGLESv2_COMPILE_DEFINITIONS
     GL_APICALL=
     LIBGLESV2_IMPLEMENTATION
-    __STDC_CONSTANT_MACROS
-    __STDC_LIMIT_MACROS
 )
 
-add_library(libANGLE STATIC
+set(ANGLEGLESv2_LIBRARIES
+    libANGLE
+)
+
+set(ANGLE_SOURCES
     src/common/angleutils.cpp
     src/common/debug.cpp
     src/common/event_tracer.cpp
@@ -76,9 +57,7 @@ add_library(libANGLE STATIC
     src/compiler/translator/AddAndTrueToLoopCondition.cpp
     src/compiler/translator/AddDefaultReturnStatements.cpp
     src/compiler/translator/ArrayReturnValueToOutParameter.cpp
-    src/compiler/translator/ASTMetadataHLSL.cpp
     src/compiler/translator/blocklayout.cpp
-    src/compiler/translator/blocklayoutHLSL.cpp
     src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
     src/compiler/translator/BuiltInFunctionEmulator.cpp
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
@@ -195,80 +174,6 @@ add_library(libANGLE STATIC
     src/libANGLE/queryutils.cpp
     src/libANGLE/Renderbuffer.cpp
     src/libANGLE/renderer/ContextImpl.cpp
-    src/libANGLE/renderer/d3d/BufferD3D.cpp
-    src/libANGLE/renderer/d3d/CompilerD3D.cpp
-    src/libANGLE/renderer/d3d/d3d11/Blit11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Clear11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Context11.cpp
-    src/libANGLE/renderer/d3d/d3d11/DebugAnnotator11.cpp
-    src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp
-    src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.cpp
-    src/libANGLE/renderer/d3d/d3d11/Fence11.cpp
-    src/libANGLE/renderer/d3d/d3d11/formatutils11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Framebuffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Image11.cpp
-    src/libANGLE/renderer/d3d/d3d11/IndexBuffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/InputLayoutCache.cpp
-    src/libANGLE/renderer/d3d/d3d11/PixelTransfer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Query11.cpp
-    src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp
-    src/libANGLE/renderer/d3d/d3d11/Renderer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/RenderStateCache.cpp
-    src/libANGLE/renderer/d3d/d3d11/RenderTarget11.cpp
-    src/libANGLE/renderer/d3d/d3d11/ShaderExecutable11.cpp
-    src/libANGLE/renderer/d3d/d3d11/StateManager11.cpp
-    src/libANGLE/renderer/d3d/d3d11/StreamProducerNV12.cpp
-    src/libANGLE/renderer/d3d/d3d11/SwapChain11.cpp
-    src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp
-    src/libANGLE/renderer/d3d/d3d11/texture_format_table.cpp
-    src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp
-    src/libANGLE/renderer/d3d/d3d11/TransformFeedback11.cpp
-    src/libANGLE/renderer/d3d/d3d11/Trim11.cpp
-    src/libANGLE/renderer/d3d/d3d11/VertexArray11.cpp
-    src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp
-    src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp
-    src/libANGLE/renderer/d3d/d3d9/Blit9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Buffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Context9.cpp
-    src/libANGLE/renderer/d3d/d3d9/DebugAnnotator9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Fence9.cpp
-    src/libANGLE/renderer/d3d/d3d9/formatutils9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Framebuffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Image9.cpp
-    src/libANGLE/renderer/d3d/d3d9/IndexBuffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/NativeWindow9.cpp
-    src/libANGLE/renderer/d3d/d3d9/Query9.cpp
-    src/libANGLE/renderer/d3d/d3d9/renderer9_utils.cpp
-    src/libANGLE/renderer/d3d/d3d9/Renderer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/RenderTarget9.cpp
-    src/libANGLE/renderer/d3d/d3d9/ShaderExecutable9.cpp
-    src/libANGLE/renderer/d3d/d3d9/StateManager9.cpp
-    src/libANGLE/renderer/d3d/d3d9/SwapChain9.cpp
-    src/libANGLE/renderer/d3d/d3d9/TextureStorage9.cpp
-    src/libANGLE/renderer/d3d/d3d9/VertexBuffer9.cpp
-    src/libANGLE/renderer/d3d/d3d9/VertexDeclarationCache.cpp
-    src/libANGLE/renderer/d3d/DeviceD3D.cpp
-    src/libANGLE/renderer/d3d/DisplayD3D.cpp
-    src/libANGLE/renderer/d3d/DynamicHLSL.cpp
-    src/libANGLE/renderer/d3d/EGLImageD3D.cpp
-    src/libANGLE/renderer/d3d/FramebufferD3D.cpp
-    src/libANGLE/renderer/d3d/HLSLCompiler.cpp
-    src/libANGLE/renderer/d3d/ImageD3D.cpp
-    src/libANGLE/renderer/d3d/IndexBuffer.cpp
-    src/libANGLE/renderer/d3d/IndexDataManager.cpp
-    src/libANGLE/renderer/d3d/NativeWindowD3D.cpp
-    src/libANGLE/renderer/d3d/ProgramD3D.cpp
-    src/libANGLE/renderer/d3d/RenderbufferD3D.cpp
-    src/libANGLE/renderer/d3d/RendererD3D.cpp
-    src/libANGLE/renderer/d3d/RenderTargetD3D.cpp
-    src/libANGLE/renderer/d3d/ShaderD3D.cpp
-    src/libANGLE/renderer/d3d/ShaderExecutableD3D.cpp
-    src/libANGLE/renderer/d3d/SurfaceD3D.cpp
-    src/libANGLE/renderer/d3d/TextureD3D.cpp
-    src/libANGLE/renderer/d3d/VaryingPacking.cpp
-    src/libANGLE/renderer/d3d/VertexBuffer.cpp
-    src/libANGLE/renderer/d3d/VertexDataManager.cpp
     src/libANGLE/renderer/DeviceImpl.cpp
     src/libANGLE/renderer/DisplayImpl.cpp
     src/libANGLE/renderer/Format_autogen.cpp
@@ -296,32 +201,62 @@ add_library(libANGLE STATIC
     src/libANGLE/VertexAttribute.cpp
     src/third_party/compiler/ArrayBoundsClamper.cpp
     src/third_party/murmurhash/MurmurHash3.cpp
-    src/third_party/systeminfo/SystemInfo.cpp
 )
 
-set_property(TARGET libANGLE PROPERTY COMPILE_DEFINITIONS
-    ANGLE_DEFAULT_D3D11=1
-    ANGLE_ENABLE_D3D9
-    ANGLE_ENABLE_D3D11
+set(ANGLE_COMPILE_DEFINITIONS
     ANGLE_ENABLE_ESSL
     ANGLE_ENABLE_GLSL
-    ANGLE_ENABLE_HLSL
-    ANGLE_SKIP_DXGI_1_2_CHECK=1
-    ANGLE_WEBKIT_WIN
     LIBANGLE_IMPLEMENTATION
     NOMINMAX
-    __STDC_CONSTANT_MACROS
-    __STDC_LIMIT_MACROS
 )
+
+if (NOT WIN32)
+    list(APPEND ANGLE_SOURCES
+        src/libANGLE/renderer/gl/BlitGL.cpp
+        src/libANGLE/renderer/gl/BufferGL.cpp
+        src/libANGLE/renderer/gl/CompilerGL.cpp
+        src/libANGLE/renderer/gl/ContextGL.cpp
+        src/libANGLE/renderer/gl/DisplayGL.cpp
+        src/libANGLE/renderer/gl/FenceNVGL.cpp
+        src/libANGLE/renderer/gl/FenceSyncGL.cpp
+        src/libANGLE/renderer/gl/FramebufferGL.cpp
+        src/libANGLE/renderer/gl/FunctionsGL.cpp
+        src/libANGLE/renderer/gl/PathGL.cpp
+        src/libANGLE/renderer/gl/ProgramGL.cpp
+        src/libANGLE/renderer/gl/QueryGL.cpp
+        src/libANGLE/renderer/gl/RenderbufferGL.cpp
+        src/libANGLE/renderer/gl/RendererGL.cpp
+        src/libANGLE/renderer/gl/SamplerGL.cpp
+        src/libANGLE/renderer/gl/ShaderGL.cpp
+        src/libANGLE/renderer/gl/StateManagerGL.cpp
+        src/libANGLE/renderer/gl/SurfaceGL.cpp
+        src/libANGLE/renderer/gl/TextureGL.cpp
+        src/libANGLE/renderer/gl/TransformFeedbackGL.cpp
+        src/libANGLE/renderer/gl/VertexArrayGL.cpp
+        src/libANGLE/renderer/gl/formatutilsgl.cpp
+        src/libANGLE/renderer/gl/renderergl_utils.cpp
+    )
+    list(APPEND ANGLE_COMPILE_DEFINITIONS
+        ANGLE_ENABLE_OPENGL
+    )
+endif ()
+
+WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+add_library(libEGL SHARED ${ANGLEEGL_SOURCES})
+set_property(TARGET libEGL PROPERTY COMPILE_DEFINITIONS ${ANGLEEGL_COMPILE_DEFINITIONS})
+
+add_library(libGLESv2 SHARED ${ANGLEGLESv2_SOURCES})
+set_property(TARGET libGLESv2 PROPERTY COMPILE_DEFINITIONS ${ANGLEGLESv2_COMPILE_DEFINITIONS})
+
+add_library(libANGLE STATIC ${ANGLE_SOURCES})
+set_property(TARGET libANGLE PROPERTY COMPILE_DEFINITIONS ${ANGLE_COMPILE_DEFINITIONS})
 
 target_link_libraries(libEGL
     libGLESv2
 )
 
-target_link_libraries(libGLESv2
-    D3d9
-    libANGLE
-)
+target_link_libraries(libGLESv2 ${ANGLEGLESv2_LIBRARIES})
 
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/egl)
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/GLES2)

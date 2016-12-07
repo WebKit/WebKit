@@ -26,7 +26,10 @@ const FastCopyFunctionMap &GetFastCopyFunctionsMap(Format::ID formatID)
     {
         case Format::ID::B8G8R8A8_UNORM:
         {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
             static FastCopyFunctionMap fastCopyMap;
+#pragma clang diagnostic pop
             if (fastCopyMap.empty())
             {
                 fastCopyMap[gl::FormatType(GL_RGBA, GL_UNSIGNED_BYTE)] = CopyBGRA8ToRGBA8;
@@ -35,7 +38,10 @@ const FastCopyFunctionMap &GetFastCopyFunctionsMap(Format::ID formatID)
         }
         default:
         {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
             static FastCopyFunctionMap emptyMap;
+#pragma clang diagnostic pop
             return emptyMap;
         }
     }

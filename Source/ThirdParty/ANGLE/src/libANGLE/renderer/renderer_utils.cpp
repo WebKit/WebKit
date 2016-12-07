@@ -252,7 +252,10 @@ void PackPixels(const PackPixelsParams &params,
 
 ColorWriteFunction GetColorWriteFunction(const gl::FormatType &formatType)
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const FormatWriteFunctionMap formatTypeMap = BuildFormatWriteFunctionMap();
+#pragma clang diagnostic pop
     auto iter = formatTypeMap.find(formatType);
     ASSERT(iter != formatTypeMap.end());
     if (iter != formatTypeMap.end())

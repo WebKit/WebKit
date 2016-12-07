@@ -21,6 +21,8 @@ namespace angle
 const Format &Format::Get(ID id)
 {
     // clang-format off
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     switch (id)
     {
         case ID::A16_FLOAT:
@@ -1363,6 +1365,7 @@ const Format &Format::Get(ID id)
 
     static const Format noneInfo(ID::NONE, GL_NONE, GL_NONE, nullptr, nullptr, GL_NONE, 0, 0, 0, 0,
                                  0, 0);
+#pragma clang diagnostic pop
     return noneInfo;
 }
 

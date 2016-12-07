@@ -1,3 +1,36 @@
+2016-12-07  Alex Christensen  <achristensen@webkit.org>
+
+        Build more of ANGLE on Mac and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=165543
+
+        Reviewed by Dean Jackson.
+
+        We will need to compile these files to use ANGLE's GLESv2 implementation instead of 
+        using OpenGL directly. No functional change.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        Move platform-specific files to Platform*.cmake.
+        * PlatformMac.cmake: Added.
+        * PlatformWin.cmake: Added.
+        * src/libANGLE/renderer/Format.cpp:
+        * src/libANGLE/renderer/Format_autogen.cpp:
+        (angle::Format::Get):
+        * src/libANGLE/renderer/gl/PathGL.cpp:
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.h:
+        * src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm:
+        Rename SwapLayer to WebSwapLayer.  Otherwise, WebCore complains about improperly named ObjC classes.
+        Since this is the only one, let's just rename it instead of adding an exception.
+        (rx::WindowSurfaceCGL::initialize):
+        (-[SwapLayer initWithSharedState:withContext:withFunctions:]): Deleted.
+        * src/libANGLE/renderer/gl/formatutilsgl.cpp:
+        (rx::nativegl::GetInternalFormatMap):
+        (rx::nativegl::GetInternalFormatInfo):
+        * src/libANGLE/renderer/renderer_utils.cpp:
+        (rx::GetColorWriteFunction):
+        * src/libGLESv2/entry_points_egl.cpp:
+        (egl::GetProcAddress):
+
 2016-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Correct SDKROOT values in xcconfig files

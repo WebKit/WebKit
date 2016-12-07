@@ -18,7 +18,7 @@
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 
-@interface SwapLayer : CAOpenGLLayer
+@interface WebSwapLayer : CAOpenGLLayer
 {
     CGLContextObj mDisplayContext;
 
@@ -33,7 +33,7 @@
             withFunctions:(const rx::FunctionsGL *)functions;
 @end
 
-@implementation SwapLayer
+@implementation WebSwapLayer
 - (id)initWithSharedState:(rx::SharedSwapState *)swapState
               withContext:(CGLContextObj)displayContext
             withFunctions:(const rx::FunctionsGL *)functions
@@ -213,7 +213,7 @@ egl::Error WindowSurfaceCGL::initialize()
     mSwapState.lastRendered   = &mSwapState.textures[1];
     mSwapState.beingPresented = &mSwapState.textures[2];
 
-    mSwapLayer = [[SwapLayer alloc] initWithSharedState:&mSwapState
+    mSwapLayer = [[WebSwapLayer alloc] initWithSharedState:&mSwapState
                                             withContext:mContext
                                           withFunctions:mFunctions];
     [mLayer addSublayer:mSwapLayer];
