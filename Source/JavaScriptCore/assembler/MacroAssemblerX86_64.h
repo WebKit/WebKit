@@ -1295,6 +1295,72 @@ public:
         return MacroAssemblerX86Common::branchTest8(cond, Address(scratchRegister()), mask8);
     }
 
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.cvttsd2siq_rr(src, dest);
+    }
+
+    void truncateDoubleToInt64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.cvttsd2siq_rr(src, dest);
+    }
+
+    // int64Min should contain exactly 0x43E0000000000000 == static_cast<double>(int64_t::min()). scratch may
+    // be the same FPR as src.
+    void truncateDoubleToUint64(FPRegisterID src, RegisterID dest, FPRegisterID scratch, FPRegisterID int64Min)
+    {
+        ASSERT(scratch != int64Min);
+
+        // Since X86 does not have a floating point to unsigned integer instruction, we need to use the signed
+        // integer conversion instruction. If the src is less than int64_t::min() then the results of the two
+        // instructions are the same. Otherwise, we need to: subtract int64_t::min(); truncate double to
+        // uint64_t; then add back int64_t::min() in the destination gpr.
+
+        Jump large = branchDouble(DoubleGreaterThanOrEqual, src, int64Min);
+        m_assembler.cvttsd2siq_rr(src, dest);
+        Jump done = jump();
+        large.link(this);
+        moveDouble(src, scratch);
+        m_assembler.subsd_rr(int64Min, scratch);
+        m_assembler.movq_i64r(0x8000000000000000, scratchRegister());
+        m_assembler.cvttsd2siq_rr(scratch, dest);
+        m_assembler.orq_rr(scratchRegister(), dest);
+        done.link(this);
+    }
+
+    void truncateFloatToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.cvttss2siq_rr(src, dest);
+    }
+
+    void truncateFloatToInt64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.cvttss2siq_rr(src, dest);
+    }
+
+    // int64Min should contain exactly 0x5f000000 == static_cast<float>(int64_t::min()). scratch may be the
+    // same FPR as src.
+    void truncateFloatToUint64(FPRegisterID src, RegisterID dest, FPRegisterID scratch, FPRegisterID int64Min)
+    {
+        ASSERT(scratch != int64Min);
+
+        // Since X86 does not have a floating point to unsigned integer instruction, we need to use the signed
+        // integer conversion instruction. If the src is less than int64_t::min() then the results of the two
+        // instructions are the same. Otherwise, we need to: subtract int64_t::min(); truncate double to
+        // uint64_t; then add back int64_t::min() in the destination gpr.
+
+        Jump large = branchFloat(DoubleGreaterThanOrEqual, src, int64Min);
+        m_assembler.cvttss2siq_rr(src, dest);
+        Jump done = jump();
+        large.link(this);
+        moveDouble(src, scratch);
+        m_assembler.subss_rr(int64Min, scratch);
+        m_assembler.movq_i64r(0x8000000000000000, scratchRegister());
+        m_assembler.cvttss2siq_rr(scratch, dest);
+        m_assembler.orq_rr(scratchRegister(), dest);
+        done.link(this);
+    }
+
     void convertInt64ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.cvtsi2sdq_rr(src, dest);

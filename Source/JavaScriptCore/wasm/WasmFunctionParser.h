@@ -221,6 +221,14 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     case OpType::I64Ctz: return unaryCase<OpType::I64Ctz>();
     case OpType::I32Popcnt: return unaryCase<OpType::I32Popcnt>();
     case OpType::I64Popcnt: return unaryCase<OpType::I64Popcnt>();
+    case OpType::I32TruncSF32: return unaryCase<OpType::I32TruncSF32>();
+    case OpType::I32TruncUF32: return unaryCase<OpType::I32TruncUF32>();
+    case OpType::I32TruncSF64: return unaryCase<OpType::I32TruncSF64>();
+    case OpType::I32TruncUF64: return unaryCase<OpType::I32TruncUF64>();
+    case OpType::I64TruncSF32: return unaryCase<OpType::I64TruncSF32>();
+    case OpType::I64TruncUF32: return unaryCase<OpType::I64TruncUF32>();
+    case OpType::I64TruncSF64: return unaryCase<OpType::I64TruncSF64>();
+    case OpType::I64TruncUF64: return unaryCase<OpType::I64TruncUF64>();
 #define CREATE_CASE(name, id, b3op, inc) case OpType::name: return unaryCase<OpType::name>();
     FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE

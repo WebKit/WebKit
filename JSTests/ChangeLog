@@ -1,3 +1,19 @@
+2016-12-06  Keith Miller  <keith_miller@apple.com>
+
+        Add support for truncation operators
+        https://bugs.webkit.org/show_bug.cgi?id=165519
+
+        Reviewed by Geoffrey Garen.
+
+        * wasm/function-tests/i32-trunc-s-f32.js: Added.
+        * wasm/function-tests/i32-trunc-s-f64.js: Added.
+        * wasm/function-tests/i32-trunc-u-f32.js: Added.
+        * wasm/function-tests/i32-trunc-u-f64.js: Added.
+        * wasm/function-tests/i64-trunc-s-f32.js: Added.
+        * wasm/function-tests/i64-trunc-s-f64.js: Added.
+        * wasm/function-tests/i64-trunc-u-f32.js: Added.
+        * wasm/function-tests/i64-trunc-u-f64.js: Added.
+
 2016-12-06  Mark Lam  <mark.lam@apple.com>
 
         Introduce the concept of Immutable Prototype Exotic Objects to comply with the spec.

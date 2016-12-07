@@ -1,3 +1,48 @@
+2016-12-06  Keith Miller  <keith_miller@apple.com>
+
+        Add support for truncation operators
+        https://bugs.webkit.org/show_bug.cgi?id=165519
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds initial support for truncation operators. The current patch
+        does range based out of bounds checking, in the future we should use system
+        register flags on ARM and other tricks on X86 improve the performance of
+        these opcodes.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARM64::truncateDoubleToInt64):
+        (JSC::MacroAssemblerARM64::truncateDoubleToUint64):
+        (JSC::MacroAssemblerARM64::truncateFloatToInt32):
+        (JSC::MacroAssemblerARM64::truncateFloatToUint32):
+        (JSC::MacroAssemblerARM64::truncateFloatToInt64):
+        (JSC::MacroAssemblerARM64::truncateFloatToUint64):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::truncateFloatToInt32):
+        (JSC::MacroAssemblerX86Common::truncateDoubleToUint32): Deleted.
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::truncateDoubleToUint32):
+        (JSC::MacroAssemblerX86_64::truncateDoubleToInt64):
+        (JSC::MacroAssemblerX86_64::truncateDoubleToUint64):
+        (JSC::MacroAssemblerX86_64::truncateFloatToUint32):
+        (JSC::MacroAssemblerX86_64::truncateFloatToInt64):
+        (JSC::MacroAssemblerX86_64::truncateFloatToUint64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::cvttss2si_rr):
+        (JSC::X86Assembler::cvttss2siq_rr):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncUF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncSF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF64>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncSF32>):
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I64TruncUF32>):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused and mostly untested Page domain commands and events

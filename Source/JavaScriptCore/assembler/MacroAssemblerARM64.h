@@ -1655,7 +1655,7 @@ public:
         // Truncate to a 64-bit integer in dataTempRegister, copy the low 32-bit to dest.
         m_assembler.fcvtzs<64, 64>(getCachedDataTempRegisterIDAndInvalidate(), src);
         zeroExtend32ToPtr(dataTempRegister, dest);
-        // Check thlow 32-bits sign extend to be equal to the full value.
+        // Check the low 32-bits sign extend to be equal to the full value.
         m_assembler.cmp<64>(dataTempRegister, dataTempRegister, ARM64Assembler::SXTW, 0);
         return Jump(makeBranch(branchType == BranchIfTruncateSuccessful ? Equal : NotEqual));
     }
@@ -2041,6 +2041,45 @@ public:
         m_assembler.fcvtzu<32, 64>(dest, src);
     }
 
+    void truncateDoubleToInt64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtzs<64, 64>(dest, src);
+    }
+
+    void truncateDoubleToUint64(FPRegisterID src, RegisterID dest, FPRegisterID, FPRegisterID)
+    {
+        truncateDoubleToUint64(src, dest);
+    }
+
+    void truncateDoubleToUint64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtzu<64, 64>(dest, src);
+    }
+
+    void truncateFloatToInt32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtzs<32, 32>(dest, src);
+    }
+
+    void truncateFloatToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtzu<32, 32>(dest, src);
+    }
+
+    void truncateFloatToInt64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtzs<64, 32>(dest, src);
+    }
+
+    void truncateFloatToUint64(FPRegisterID src, RegisterID dest, FPRegisterID, FPRegisterID)
+    {
+        truncateFloatToUint64(src, dest);
+    }
+
+    void truncateFloatToUint64(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.fcvtzu<64, 32>(dest, src);
+    }
 
     // Stack manipulation operations:
     //

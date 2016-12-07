@@ -1678,15 +1678,13 @@ public:
         ASSERT(isSSE2Present());
         m_assembler.cvttsd2si_rr(src, dest);
     }
-    
-#if CPU(X86_64)
-    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+
+    void truncateFloatToInt32(FPRegisterID src, RegisterID dest)
     {
         ASSERT(isSSE2Present());
-        m_assembler.cvttsd2siq_rr(src, dest);
+        m_assembler.cvttss2si_rr(src, dest);
     }
-#endif
-    
+
     // Convert 'src' to an integer, and places the resulting 'dest'.
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits

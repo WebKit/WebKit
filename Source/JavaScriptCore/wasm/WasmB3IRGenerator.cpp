@@ -905,6 +905,229 @@ bool B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& 
     return true;
 }
 
+template<>
+bool B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -static_cast<double>(std::numeric_limits<int32_t>::min()));
+    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int32_t>::min()));
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -static_cast<float>(std::numeric_limits<int32_t>::min()));
+    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int32_t>::min()));
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+
+template<>
+bool B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0);
+    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -1.0);
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int32_t>::min()) * -2.0);
+    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -1.0);
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -static_cast<double>(std::numeric_limits<int64_t>::min()));
+    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int64_t>::min()));
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0);
+    Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -1.0);
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+
+    Value* constant;
+    if (isX86()) {
+        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
+        // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+        // so we can pool them if needed.
+        constant = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max()));
+    }
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    if (isX86()) {
+        patchpoint->append(constant, ValueRep::SomeRegister);
+        patchpoint->numFPScratchRegisters = 1;
+    }
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        FPRReg scratch = InvalidFPRReg;
+        FPRReg constant = InvalidFPRReg;
+        if (isX86()) {
+            scratch = params.fpScratch(0);
+            constant = params[2].fpr();
+        }
+        jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -static_cast<float>(std::numeric_limits<int64_t>::min()));
+    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int64_t>::min()));
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
+template<>
+bool B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionType& result)
+{
+    Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int64_t>::min()) * -2.0);
+    Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -1.0);
+    Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), arg, max),
+        m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
+    outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
+    CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
+    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+
+    Value* constant;
+    if (isX86()) {
+        // Since x86 doesn't have an instruction to convert floating points to unsigned integers, we at least try to do the smart thing if
+        // the numbers are would be positive anyway as a signed integer. Since we cannot materialize constants into fprs we have b3 do it
+        // so we can pool them if needed.
+        constant = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max()));
+    }
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
+    patchpoint->append(arg, ValueRep::SomeRegister);
+    if (isX86()) {
+        patchpoint->append(constant, ValueRep::SomeRegister);
+        patchpoint->numFPScratchRegisters = 1;
+    }
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        FPRReg scratch = InvalidFPRReg;
+        FPRReg constant = InvalidFPRReg;
+        if (isX86()) {
+            scratch = params.fpScratch(0);
+            constant = params[2].fpr();
+        }
+        jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+    });
+    patchpoint->effects = Effects::none();
+    result = patchpoint;
+    return true;
+}
+
 } } // namespace JSC::Wasm
 
 #include "WasmB3IRGeneratorInlines.h"
