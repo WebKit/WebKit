@@ -399,11 +399,15 @@
     </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
+      <dep package="openh264"/>
     </dependencies>
     <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.8.0"
             repo="gstreamer"
             hash="sha256:116376dd1085082422e0b21b0ecd3d1cb345c469c58e32463167d4675f4ca90e"
-            md5sum="1c2d797bb96a81e9ef570c7a0a37203e"/>
+            md5sum="1c2d797bb96a81e9ef570c7a0a37203e">
+      <patch file="gst-plugins-bad-0001-dtls-port-to-OpenSSL-1.1.0.patch" strip="1"/>
+      <patch file="gst-plugins-bad-0002-dtlscertificate-Fix-error-checking-in-RSA_generate_k.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="gst-libav" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">

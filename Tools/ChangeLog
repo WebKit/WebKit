@@ -1,3 +1,16 @@
+2016-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][jhbuild] gst-plugins-bad fails to build with OpenSSL 1.1.0
+        https://bugs.webkit.org/show_bug.cgi?id=165520
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules: Added missing dependency on openh264 in
+        gst-plugins-bad, along with 2 upstream patches fixing the build
+        against OpenSSL 1.1.0.
+        * gtk/patches/gst-plugins-bad-0001-dtls-port-to-OpenSSL-1.1.0.patch: Added.
+        * gtk/patches/gst-plugins-bad-0002-dtlscertificate-Fix-error-checking-in-RSA_generate_k.patch: Added.
+
 2016-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Correct SDKROOT values in xcconfig files
