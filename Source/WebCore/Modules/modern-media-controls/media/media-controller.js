@@ -129,6 +129,8 @@ class MediaController
     _controlsClass()
     {
         const layoutTraits = this.layoutTraits;
+        if (layoutTraits & LayoutTraits.iOS)
+            return IOSInlineMediaControls;
         if (layoutTraits & LayoutTraits.Fullscreen)
             return MacOSFullscreenMediaControls;
         return MacOSInlineMediaControls;

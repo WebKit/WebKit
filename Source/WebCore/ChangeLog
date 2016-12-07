@@ -1,3 +1,22 @@
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Instantiate iOS media controls
+        https://bugs.webkit.org/show_bug.cgi?id=165498
+
+        Reviewed by Dean Jackson.
+
+        Add support for the modern media controls runtime flags in RenderThemeIOS and, when instantiating iOS controls,
+        return an IOSInlineMediaControls class.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype._controlsClass):
+        (MediaController):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::mediaControlsStyleSheet):
+        (WebCore::RenderThemeIOS::mediaControlsScript):
+        (WebCore::RenderThemeIOS::mediaControlsBase64StringForIconAndPlatform):
+
 2016-12-06  Dean Jackson  <dino@apple.com>
 
         Apply styling to media documents with modern controls

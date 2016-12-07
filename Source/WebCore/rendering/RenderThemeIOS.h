@@ -108,6 +108,7 @@ protected:
 #if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;
     String mediaControlsScript() override;
+    String mediaControlsBase64StringForIconAndPlatform(const String&, const String&) override;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -125,7 +126,9 @@ private:
 
     Color systemColor(CSSValueID) const override;
 
+    String m_legacyMediaControlsScript;
     String m_mediaControlsScript;
+    String m_legacyMediaControlsStyleSheet;
     String m_mediaControlsStyleSheet;
 
     mutable HashMap<int, Color> m_systemColorCache;
