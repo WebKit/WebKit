@@ -1,3 +1,16 @@
+2016-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct SDKROOT values in xcconfig files
+        https://bugs.webkit.org/show_bug.cgi?id=165487
+        rdar://problem/29539209
+
+        Reviewed by Dan Bernstein.
+
+        Fix suggested by Dan Bernstein.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
 2016-09-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, woff2 upgrade introduces compiler warnings

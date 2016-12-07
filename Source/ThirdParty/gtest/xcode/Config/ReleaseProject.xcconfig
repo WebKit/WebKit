@@ -36,7 +36,6 @@ WEBCORE_PRIVATE_HEADERS_DIR = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHea
 
 ONLY_ACTIVE_ARCH = YES
 
-SDKROOT[sdk=iphone*] = $(SDKROOT);
-SDKROOT = $(SDKROOT_$(PLATFORM_NAME)_$(USE_INTERNAL_SDK));
-SDKROOT_macosx_ = macosx;
-SDKROOT_macosx_YES = macosx.internal;
+SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
+SDKROOT_ = macosx;
+SDKROOT_YES = macosx.internal;

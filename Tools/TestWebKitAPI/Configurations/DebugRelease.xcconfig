@@ -37,9 +37,8 @@ MACOSX_DEPLOYMENT_TARGET_101300 = 10.13;
 
 WEBKIT_UMBRELLA_FRAMEWORKS_DIR = $(BUILT_PRODUCTS_DIR);
 
-SDKROOT[sdk=iphone*] = $(SDKROOT);
-SDKROOT = $(SDKROOT_macosx_$(USE_INTERNAL_SDK));
-SDKROOT_macosx_ = macosx;
-SDKROOT_macosx_YES = macosx.internal;
+SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
+SDKROOT_ = macosx;
+SDKROOT_YES = macosx.internal;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -ftemplate-depth=256;

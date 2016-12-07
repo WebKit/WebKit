@@ -1,3 +1,15 @@
+2016-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Correct SDKROOT values in xcconfig files
+        https://bugs.webkit.org/show_bug.cgi?id=165487
+        rdar://problem/29539209
+
+        Reviewed by Dan Bernstein.
+
+        Fix suggested by Dan Bernstein.
+
+        * Configurations/DebugRelease.xcconfig:
+
 2016-12-06  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r209399): Causes crashes when dumping JIT disassembly

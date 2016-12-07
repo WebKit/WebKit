@@ -41,7 +41,6 @@ DEBUG_INFORMATION_FORMAT = dwarf;
 CLANG_DEBUG_INFORMATION_LEVEL[sdk=macosx10.8*] = default;
 CLANG_DEBUG_INFORMATION_LEVEL[sdk=macosx10.9*] = default;
 
-SDKROOT[sdk=iphone*] = $(SDKROOT);
-SDKROOT = $(SDKROOT_$(PLATFORM_NAME)_$(USE_INTERNAL_SDK));
-SDKROOT_macosx_ = macosx;
-SDKROOT_macosx_YES = macosx.internal;
+SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
+SDKROOT_ = macosx;
+SDKROOT_YES = macosx.internal;
