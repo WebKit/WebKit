@@ -1798,17 +1798,25 @@ LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewp
 {
     LayoutPoint layoutViewportOrigin = layoutViewport.location();
 
-    if (visualViewport.x() < layoutViewport.x() || visualViewport.x() < stableLayoutViewportOriginMin.x())
+    if (visualViewport.width() > layoutViewport.width())
         layoutViewportOrigin.setX(visualViewport.x());
+    else {
+        if (visualViewport.x() < layoutViewport.x() || visualViewport.x() < stableLayoutViewportOriginMin.x())
+            layoutViewportOrigin.setX(visualViewport.x());
 
-    if (visualViewport.y() < layoutViewport.y() || visualViewport.y() < stableLayoutViewportOriginMin.y())
+        if (visualViewport.maxX() > layoutViewport.maxX() || (visualViewport.maxX() - layoutViewport.width()) > stableLayoutViewportOriginMax.x())
+            layoutViewportOrigin.setX(visualViewport.maxX() - layoutViewport.width());
+    }
+
+    if (visualViewport.height() > layoutViewport.height())
         layoutViewportOrigin.setY(visualViewport.y());
+    else {
+        if (visualViewport.y() < layoutViewport.y() || visualViewport.y() < stableLayoutViewportOriginMin.y())
+            layoutViewportOrigin.setY(visualViewport.y());
 
-    if (visualViewport.maxX() > layoutViewport.maxX() || (visualViewport.maxX() - layoutViewport.width()) > stableLayoutViewportOriginMax.x())
-        layoutViewportOrigin.setX(visualViewport.maxX() - layoutViewport.width());
-
-    if (visualViewport.maxY() > layoutViewport.maxY() || (visualViewport.maxY() - layoutViewport.height()) > stableLayoutViewportOriginMax.y())
-        layoutViewportOrigin.setY(visualViewport.maxY() - layoutViewport.height());
+        if (visualViewport.maxY() > layoutViewport.maxY() || (visualViewport.maxY() - layoutViewport.height()) > stableLayoutViewportOriginMax.y())
+            layoutViewportOrigin.setY(visualViewport.maxY() - layoutViewport.height());
+    }
 
     return layoutViewportOrigin;
 }
