@@ -1,3 +1,16 @@
+2016-12-07  Andreas Kling  <akling@apple.com>
+
+        [iOS] Remove bitrotted FrameLoader attempt to limit page caching under memory pressure.
+        <https://webkit.org/b/165527>
+
+        Reviewed by Antti Koivisto.
+
+        This code no longer does anything, as the page cache is hard capped
+        at 0 entries while under memory pressure.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Use tap and pinch gestures on iOS

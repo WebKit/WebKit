@@ -136,7 +136,6 @@
 #include "DocumentType.h"
 #include "ResourceLoader.h"
 #include "RuntimeApplicationChecks.h"
-#include "SystemMemory.h"
 #include "WKContentObservation.h"
 #endif
 
@@ -148,10 +147,6 @@ using namespace HTMLNames;
 using namespace SVGNames;
 
 static const char defaultAcceptHeader[] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-
-#if PLATFORM(IOS)
-const int memoryLevelThresholdToPrunePageCache = 20;
-#endif
 
 bool isBackForwardLoadType(FrameLoadType type)
 {
@@ -1765,27 +1760,6 @@ void FrameLoader::commitProvisionalLoad()
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
         pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>");
-
-#if PLATFORM(IOS)
-    // In the case where we are not navigating to a cached page, and the system is under (speculative) memory pressure,
-    // we can try to preemptively release some of the pages in the cache.
-    // FIXME: Right now the capacity is 1 on iOS devices with 256 MB of RAM, so this will always blow away the whole
-    // page cache. We could still preemptively prune the page cache while navigating to a cached page if capacity > 1.
-    // See <rdar://problem/11779846> for more details.
-    if (!cachedPage) {
-        if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-            LOG(MemoryPressure, "Pruning page cache because under memory pressure at: %s", __PRETTY_FUNCTION__);
-            LOG(PageCache, "Pruning page cache to 0 due to memory pressure");
-            // Don't cache any page if we are under memory pressure.
-            PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
-        } else if (systemMemoryLevel() <= memoryLevelThresholdToPrunePageCache) {
-            LOG(MemoryPressure, "Pruning page cache because system memory level is %d at: %s", systemMemoryLevel(), __PRETTY_FUNCTION__);
-            auto& pageCache = PageCache::singleton();
-            LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", pageCache.maxSize() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
-            pageCache.pruneToSizeNow(pageCache.maxSize() / 2, PruningReason::MemoryPressure);
-        }
-    }
-#endif
 
     willTransitionToCommitted();
 
