@@ -1,3 +1,22 @@
+2016-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        After preventing a beforeinput event, an input event is fired when formatting rich text
+        https://bugs.webkit.org/show_bug.cgi?id=165435
+        <rdar://problem/29522314>
+
+        Reviewed by Ryosuke Niwa.
+
+        This regressed after I refactored some input event event dispatch logic when formatting text in r208461.
+        I moved the logic for dispatching input events when applying styles into Editor::applyStyle, but left out an
+        early return after firing the beforeinput event if the default behavior was prevented, which caused us to
+        continue on and dispatch an input event. The fix is to bail from applyStyle if default was prevented.
+
+        Augmented an existing layout test to cover this case.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Instantiate iOS media controls

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <div id="editable" contenteditable onbeforeinput=handleBeforeInput(event)></div>
+    <div id="editable" contenteditable onbeforeinput=handleBeforeInput(event) oninput=handleInput(event)></div>
     <script src="../../resources/dump-as-markup.js"></script>
     <script type="text/javascript">
         Markup.description(`To manually test this, turn on bold, italic and underline via the context menu, and then type some text into the contenteditable. The text should be italicized and underlined, but not bold.`);
@@ -32,6 +32,12 @@
         {
             if (event.inputType === "formatBold")
                 event.preventDefault();
+        }
+
+        function handleInput(event)
+        {
+            if (event.inputType === "formatBold")
+                Markup.dump("editable", "FAILED: received input event");
         }
     </script>
 </body>

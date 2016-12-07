@@ -792,17 +792,18 @@ void Editor::applyStyle(RefPtr<EditingStyle>&& style, EditAction editingAction)
     String inputTypeName = inputTypeNameForEditingAction(editingAction);
     String inputEventData = inputEventDataForEditingStyleAndAction(*style, editingAction);
     RefPtr<Element> element = m_frame.selection().selection().rootEditableElement();
-    if (!element || dispatchBeforeInputEvent(*element, inputTypeName, inputEventData)) {
-        switch(selectionType) {
-        case VisibleSelection::CaretSelection:
-            computeAndSetTypingStyle(*style, editingAction);
-            break;
-        case VisibleSelection::RangeSelection:
-            applyCommand(ApplyStyleCommand::create(document(), style.get(), editingAction));
-            break;
-        default:
-            break;
-        }
+    if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
+        return;
+
+    switch (selectionType) {
+    case VisibleSelection::CaretSelection:
+        computeAndSetTypingStyle(*style, editingAction);
+        break;
+    case VisibleSelection::RangeSelection:
+        applyCommand(ApplyStyleCommand::create(document(), style.get(), editingAction));
+        break;
+    default:
+        break;
     }
 
     client()->didApplyStyle();
@@ -826,9 +827,10 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
 
     String inputTypeName = inputTypeNameForEditingAction(editingAction);
     RefPtr<Element> element = m_frame.selection().selection().rootEditableElement();
-    if (!element || dispatchBeforeInputEvent(*element, inputTypeName))
-        applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
+    if (element && !dispatchBeforeInputEvent(*element, inputTypeName))
+        return;
 
+    applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
     client()->didApplyStyle();
     if (element)
         dispatchInputEvent(*element, inputTypeName);

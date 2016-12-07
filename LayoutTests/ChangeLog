@@ -1,3 +1,16 @@
+2016-12-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        After preventing a beforeinput event, an input event is fired when formatting rich text
+        https://bugs.webkit.org/show_bug.cgi?id=165435
+        <rdar://problem/29522314>
+
+        Reviewed by Ryosuke Niwa.
+
+        Augmented a layout test to verify that when preventing beforeinput events, a corresponding input event is not
+        fired in addition to the style not being applied to the text.
+
+        * fast/events/before-input-prevent-biu.html:
+
 2016-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix behavior of background-attachment:fixed with visual viewports
