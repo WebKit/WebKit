@@ -50,7 +50,6 @@ shouldReject('crypto.subtle.importKey({ }, rawKey, "aes-cbc", extractable, ["enc
 shouldReject('crypto.subtle.importKey("foo", rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
 // Currently not support formats.
 shouldReject('crypto.subtle.importKey("pkcs8", rawKey, "rsaes-pkcs1-v1_5", extractable, ["encrypt", "decrypt"])');
-shouldReject('crypto.subtle.importKey("spki", rawKey, "rsaes-pkcs1-v1_5", extractable, ["encrypt", "decrypt"])');
 // Wrong KeyData.
 shouldReject('crypto.subtle.importKey("raw", jwkKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');
 shouldReject('crypto.subtle.importKey("raw", 1, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])');

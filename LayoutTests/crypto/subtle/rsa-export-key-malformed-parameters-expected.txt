@@ -3,9 +3,9 @@ Test exporting a RSA key with malformed parameters
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS crypto.subtle.exportKey("spki", publicKey) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
 PASS crypto.subtle.exportKey("pkcs8", publicKey) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
 PASS crypto.subtle.exportKey("raw", publicKey) rejected promise  with NotSupportedError (DOM Exception 9): The algorithm is not supported.
+PASS crypto.subtle.exportKey("spki", privateKey) rejected promise  with InvalidAccessError (DOM Exception 15): The requested operation is not valid for the provided key.
 PASS successfullyParsed is true
 
 TEST COMPLETE

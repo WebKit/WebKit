@@ -9,7 +9,7 @@
 <div id="console"></div>
 
 <script>
-description("Test exporting a RSA key with malformed parameters");
+description("Test exporting a RSA-OAEP public key with SPKI format.");
 
 jsTestIsAsync = true;
 
@@ -22,20 +22,19 @@ var algorithmKeyGen = {
 };
 var extractable = true;
 
+var keyPair;
+debug("Generating a key pair...");
 crypto.subtle.generateKey(algorithmKeyGen, extractable, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]).then(function(result) {
-    publicKey = result.publicKey;
-    privateKey = result.privateKey;
+    keyPair = result;
+    debug("Exporting the public key...");
+    return crypto.subtle.exportKey("spki", keyPair.publicKey);
+}).then(function(result) {
+    publicKey = result;
 
-    // Currently not support format.
-    return shouldReject('crypto.subtle.exportKey("pkcs8", publicKey)');
-}).then(function() {
-    // Not support format.
-    return shouldReject('crypto.subtle.exportKey("raw", publicKey)');
-}).then(function() {
-    // Wrong key and format.
-    return shouldReject('crypto.subtle.exportKey("spki", privateKey)');
-}).then(finishJSTest, finishJSTest);
+    shouldBe("publicKey.byteLength", "294");
 
+    finishJSTest();
+});
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

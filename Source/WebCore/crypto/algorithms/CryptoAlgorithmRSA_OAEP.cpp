@@ -166,6 +166,15 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
         result = CryptoKeyRSA::importJwk(rsaParameters.identifier, rsaParameters.hashIdentifier, WTFMove(key), extractable, usages);
         break;
     }
+    case SubtleCrypto::KeyFormat::Spki: {
+        if ((usages ^ CryptoKeyUsageEncrypt) && (usages ^ CryptoKeyUsageWrapKey) && (usages ^ (CryptoKeyUsageEncrypt | CryptoKeyUsageWrapKey))) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        // FIXME: <webkit.org/b/165436>
+        result = CryptoKeyRSA::importSpki(rsaParameters.identifier, rsaParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    }
     default:
         exceptionCallback(NOT_SUPPORTED_ERR);
         return;
@@ -211,6 +220,16 @@ void CryptoAlgorithmRSA_OAEP::exportKey(SubtleCrypto::KeyFormat format, Ref<Cryp
             ASSERT_NOT_REACHED();
         }
         result = WTFMove(jwk);
+        break;
+    }
+    case SubtleCrypto::KeyFormat::Spki: {
+        // FIXME: <webkit.org/b/165437>
+        auto spki = rsaKey.exportSpki();
+        if (spki.hasException()) {
+            exceptionCallback(spki.releaseException().code());
+            return;
+        }
+        result = spki.releaseReturnValue();
         break;
     }
     default:

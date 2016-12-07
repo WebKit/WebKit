@@ -21,6 +21,7 @@ var q = "xHYrzkivtmnz_sGchnWGc0q-pDOkKicptRpv2pMFIIXxnFX5aMeEXIZjVujXtwUy1UlFIN2
 var dp = "fBzDzYDUBmBQGop7Hn0dvf_T27V6RqpctWo074CQZcFbP2atFVtKSj3viWT3xid2VHzcgiDHdfpM3nEVlEO1wwIonGCSvdjGEOZiiFVOjrZAOVxA8guOjyyFvqbXke06VwPIIVvfKeSU2zuhbP__1tt6F_fxow4Kb2xonGT0GGk";
 var dq = "jmE2DiIPdhwDgLXAQpIaBqQ81bO3XfVT_LRULAwwwwlPuQV148H04zlh9TJ6Y2GZHYokV1U0eOBpJxfkb7dLYtpJpuiBjRf4yIUEoGlkkI_QlJnFSFr-YjGRdfNHqWBkxlSMZL770R9mIATndGkH7z5x-r9KwBZFC4FCG2hg_zE";
 var qi = "YCX_pLwbMBA1ThVH0WcwmnytqNcrMCEwTm7ByA2eU6nWbQrULvf7m9_kzfLUcjsnpAVlBQG5JMXMy0Sq4ptwbywsa5-G8KAOOOR2L3v4hC-Eys9ftgFM_3i0o40eeQH4b3haPbntrIeMg8IzlOuVYKf9-2QuKDoWeRdd7NsdxTk";
+var spkiKey = hexStringToUint8Array("30820122300d06092a864886f70d01010105000382010f003082010a0282010100d61051c4920d4c7c04a33beabb2412bedc4173fdbe82c7db80f0052d00abd32e01656d2105abef4fa5417bb868bb77780c08d20cfe9e2d767ee952970941398f8bea59a966772b1d89f19693cfff5faba22ba39ef7982ac46257180d557d3cbf3f7e65dd835d1d351e679a841b904a3cf24a0323aac0bb89705777507c76f57663b6d846e995a63057ceb48053ddf9282a366d6dc6cbdceb2ebcb3b374c7dc49da160cba8a3656211b8597a39ef9b8cc44d0c5735f870679ffcb1cb9321bbfbc307844d3174ef5dc144a951071340f4d156bead21fd3d9bd4641afa5851512264b4eed228b5d6324de428b00cbb89a1a88cb138d59de0b4ad75f2196e0e7ba890203010001");
 
 // Jwk: Wrong usages
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
@@ -64,6 +65,10 @@ shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dq: dq, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dp: dp, qi: qi}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
 shouldReject('crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, dp: dp, dq: dq}, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
+// Spki: Wrong usages
+shouldReject('crypto.subtle.importKey("spki", spkiKey, "RSAES-PKCS1-v1_5", extractable, ["decrypt"])');
+shouldReject('crypto.subtle.importKey("spki", spkiKey, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["sign"])');
+shouldReject('crypto.subtle.importKey("spki", spkiKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["decrypt", "unwrapKey"])');
 </script>
 
 <script src="../../resources/js-test-post.js"></script>

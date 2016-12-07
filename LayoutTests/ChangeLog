@@ -1,3 +1,44 @@
+2016-12-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Part 1 of 2] Add support for SPKI format while doing SubtleCrypto.importKey/exportKey
+        https://bugs.webkit.org/show_bug.cgi?id=129978
+        <rdar://problem/21799829>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/subtle/import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/import-key-malformed-parameters.html:
+        * crypto/subtle/rsa-export-key-malformed-parameters-expected.txt:
+        * crypto/subtle/rsa-export-key-malformed-parameters.html:
+        * crypto/subtle/rsa-import-jwk-key-export-spki-key-expected.txt: Added.
+        * crypto/subtle/rsa-import-jwk-key-export-spki-key.html: Added.
+        * crypto/subtle/rsa-import-key-malformed-parameters-expected.txt:
+        * crypto/subtle/rsa-import-key-malformed-parameters.html:
+        * crypto/subtle/rsa-import-spki-key-export-jwk-key-expected.txt: Added.
+        * crypto/subtle/rsa-import-spki-key-export-jwk-key.html: Added.
+        * crypto/subtle/rsa-import-spki-key-export-spki-key-expected.txt: Added.
+        * crypto/subtle/rsa-import-spki-key-export-spki-key.html: Added.
+        * crypto/subtle/rsa-import-spki-small-key-expected.txt: Added.
+        * crypto/subtle/rsa-import-spki-small-key.html: Added.
+        * crypto/subtle/rsa-oaep-generate-export-key-spki-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-generate-export-key-spki.html: Added.
+        * crypto/subtle/rsa-oaep-import-spki-key-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-import-spki-key.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-export-key-spki-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-export-key-spki.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-spki-key-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-import-spki-key.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-spki-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-spki.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-spki-key-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-spki-key.html: Added.
+        * crypto/workers/subtle/resources/rsa-export-spki-key.js: Added.
+        * crypto/workers/subtle/resources/rsa-import-spki-key.js: Added.
+        * crypto/workers/subtle/rsa-export-spki-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-export-spki-key.html: Added.
+        * crypto/workers/subtle/rsa-import-spki-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-import-spki-key.html: Added.
+
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media controls use the fullscreen layout after going from inline to fullscreen to PiP to inline

@@ -1,3 +1,51 @@
+2016-12-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Part 1 of 2] Add support for SPKI format while doing SubtleCrypto.importKey/exportKey
+        https://bugs.webkit.org/show_bug.cgi?id=129978
+        <rdar://problem/21799829>
+
+        This is part 1 of Bug 129978. In this patch, it adds the SPKI format support for
+        SubtleCrypto.importKey/exportKey. Currently support algorithms are RSAES-PKCS1-v1_5,
+        RSASSA-PKCS1-v1_5 and RSA-OAEP.
+
+        Reviewed by Brent Fulgham.
+
+        Tests: crypto/subtle/rsa-import-jwk-key-export-spki-key.html
+               crypto/subtle/rsa-import-spki-key-export-jwk-key.html
+               crypto/subtle/rsa-import-spki-key-export-spki-key.html
+               crypto/subtle/rsa-import-spki-small-key.html
+               crypto/subtle/rsa-oaep-generate-export-key-spki.html
+               crypto/subtle/rsa-oaep-import-spki-key.html
+               crypto/subtle/rsaes-pkcs1-v1_5-generate-export-key-spki.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-spki-key.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-spki.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-spki-key.html
+               crypto/workers/subtle/rsa-export-spki-key.html
+               crypto/workers/subtle/rsa-import-spki-key.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::toKeyData):
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey):
+        (WebCore::CryptoAlgorithmRSA_OAEP::exportKey):
+        * crypto/gnutls/CryptoKeyRSAGnuTLS.cpp:
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::exportSpki):
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::bytesUsedToEncodedLength):
+        (WebCore::bytesNeededForEncodedLength):
+        (WebCore::addEncodedASN1Length):
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::exportSpki):
+
 2016-12-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix editing text flakiness introduced in r209411

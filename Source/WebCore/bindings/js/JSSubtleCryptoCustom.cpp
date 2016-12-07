@@ -341,10 +341,10 @@ static KeyData toKeyData(ExecState& state, SubtleCrypto::KeyFormat format, JSVal
 
     KeyData result;
     switch (format) {
-    case SubtleCrypto::KeyFormat::Spki:
     case SubtleCrypto::KeyFormat::Pkcs8:
         setDOMException(&state, NOT_SUPPORTED_ERR);
         return result;
+    case SubtleCrypto::KeyFormat::Spki:
     case SubtleCrypto::KeyFormat::Raw: {
         BufferSource bufferSource = convert<IDLBufferSource>(state, value);
         RETURN_IF_EXCEPTION(scope, result);
