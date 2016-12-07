@@ -1,3 +1,24 @@
+2016-12-07  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Entering fullscreen and returning to inline shows fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=165536
+
+        Reviewed by Tim Horton.
+
+        We regressed when we implemented the fix for webkit.org/b/165494 and we started to rely solely
+        on the "webkitpresentationmodechanged" event to identify presention mode changes. As it turns out,
+        when the "webkitpresentationmodechanged" event is dispatched when exiting fullscreen and returning
+        to the inline presentation mode, querying the "webkitPresentationMode" property says "inline" while
+        "webkitDisplayingFullscreen" still returns true (raised as webkit.org/b/165538).
+        
+        We now use the "webkitPresentationMode" property when that property is supported and we're using the
+        "webkitpresentationmodechanged" event, and we use the "webkitDisplayingFullscreen" property otherwise.
+
+        Test: media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.get layoutTraits):
+
 2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Scroll position jumps to the origin when scrolling without momentum at the end of a scroll snapping container

@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 320px; height: 240px;" controls autoplay></video>
+<div id="shadow"></div>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing that entering fullscreen then going back into inline presents inline controls.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    debug("");
+    debug("Media started playing, we pause it and enter fullscreen by clicking on the matching button.");
+    shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+
+    media.pause();
+    window.requestAnimationFrame(() => toggleFullscreen());
+});
+
+media.addEventListener("webkitfullscreenchange", () => {
+    debug("");
+
+    if (media.webkitDisplayingFullscreen) {
+        debug("Media entered fullscreen.");
+        window.requestAnimationFrame(() => {
+            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('fullscreen')");
+
+            debug("");
+            debug("We exit fullscreen by clicking on the matching button.");
+            toggleFullscreen();
+        });
+    } else {
+        debug("Media exited fullscreen.");
+        window.requestAnimationFrame(() => {
+            shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+
+            debug("");
+            media.remove();
+            finishJSTest();
+        });
+    }
+});
+
+function toggleFullscreen()
+{
+    const element = shadowRoot.querySelector("button.fullscreen");
+    const bounds = element.getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

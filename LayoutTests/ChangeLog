@@ -1,3 +1,15 @@
+2016-12-07  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Entering fullscreen and returning to inline shows fullscreen controls
+        https://bugs.webkit.org/show_bug.cgi?id=165536
+
+        Reviewed by Tim Horton.
+
+        Add a new test that checks we're using the right media controls presentation as we enter and exit fullscreen.
+
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html: Added.
+
 2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Scroll position jumps to the origin when scrolling without momentum at the end of a scroll snapping container

@@ -51,8 +51,11 @@ class MediaController
     get layoutTraits()
     {
         let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
-        if (this.media.webkitDisplayingFullscreen)
-            traits = traits | LayoutTraits.Fullscreen;
+        if (this.media.webkitSupportsPresentationMode) {
+            if (this.media.webkitPresentationMode === "fullscreen")
+                return traits | LayoutTraits.Fullscreen;
+        } else if (this.media.webkitDisplayingFullscreen)
+            return traits | LayoutTraits.Fullscreen;
         return traits;
     }
 
