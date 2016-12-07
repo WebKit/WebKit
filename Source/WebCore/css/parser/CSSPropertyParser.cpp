@@ -375,11 +375,12 @@ bool CSSPropertyParser::consumeTransformOrigin(bool important)
         m_range.consumeWhitespace();
         bool atEnd = m_range.atEnd();
         RefPtr<CSSPrimitiveValue> resultZ = consumeLength(m_range, m_context.mode, ValueRangeAll);
-        if (!resultZ && !atEnd)
+        bool hasZ = resultZ;
+        if (!hasZ && !atEnd)
             return false;
         addProperty(CSSPropertyTransformOriginX, CSSPropertyTransformOrigin, resultX.releaseNonNull(), important);
         addProperty(CSSPropertyTransformOriginY, CSSPropertyTransformOrigin, resultY.releaseNonNull(), important);
-        addProperty(CSSPropertyTransformOriginZ, CSSPropertyTransformOrigin, resultZ ? resultZ.releaseNonNull() : CSSValuePool::singleton().createValue(0, CSSPrimitiveValue::UnitTypes::CSS_PX), important, !resultZ);
+        addProperty(CSSPropertyTransformOriginZ, CSSPropertyTransformOrigin, resultZ ? resultZ.releaseNonNull() : CSSValuePool::singleton().createValue(0, CSSPrimitiveValue::UnitTypes::CSS_PX), important, !hasZ);
         
         return true;
     }

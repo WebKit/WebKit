@@ -1,3 +1,19 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Turn back on a bunch of layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=165529
+
+        Reviewed by Zalan Bujtas.
+
+        Fixes fast/css/transform-origin-parsing.html.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTransformOrigin):
+        The implicit check was relying on a null check of the z value, but
+        we called releaseNonNull on it already. This meant all z properties were
+        marked as implicit incorrectly. Fix by storing whether or not we had a z
+        value in a local variable.
+
 2016-12-07  Andreas Kling  <akling@apple.com>
 
         [iOS] Remove bitrotted FrameLoader attempt to limit page caching under memory pressure.

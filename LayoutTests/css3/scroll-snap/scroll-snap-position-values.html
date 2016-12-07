@@ -253,7 +253,7 @@
         shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
         shouldBeEqualToString("initialDestination.style['-webkit-scroll-snap-destination']", "initial");
         shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
-        shouldBeEmptyString("initialDestination.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("initialDestination.style['-webkit-scroll-snap-coordinate']", "none");
         shouldBeEqualToString("window.getComputedStyle(initialDestination).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
 
         var initialSnapCoordinate = document.getElementById('initialSnapCoordinate');
@@ -289,7 +289,7 @@
         shouldBeEqualToString("window.getComputedStyle(noneSnapCoordinateAndDestination).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
         shouldBeEmptyString("noneSnapCoordinateAndDestination.style['-webkit-scroll-snap-destination']");
         shouldBeEqualToString("window.getComputedStyle(noneSnapCoordinateAndDestination).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
-        shouldBeEmptyString("noneSnapCoordinateAndDestination.style['-webkit-scroll-snap-coordinate']");
+        shouldBeEqualToString("noneSnapCoordinateAndDestination.style['-webkit-scroll-snap-coordinate']", "none");
         shouldBeEqualToString("window.getComputedStyle(noneSnapCoordinateAndDestination).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
 
         var calculatedCoordinateAndDestination = document.getElementById('calculatedCoordinateAndDestination');

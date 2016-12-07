@@ -993,25 +993,6 @@ webkit.org/b/162828 [ Debug ] tables/table-section-overflow-clip-crash.html  [ S
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-licm.html [ Pass Timeout ]
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass Timeout ]
 
-# The following layout tests are allowed to fail temporarily until we get the new CSS parser
-# enabled. Once it is turned on, all of these tests should have their results reset.
-webkit.org/b/165195 css3/parsing-css3-nthchild.html [ Pass Failure ]
-webkit.org/b/165195 css3/scroll-snap/scroll-snap-position-values.html [ Pass Failure ]
-webkit.org/b/165195 css3/scroll-snap/scroll-snap-position-values.html [ Pass Failure ]
-webkit.org/b/165195 editing/execCommand/insert-list-with-noneditable-content.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/object-position/parsing-object-position.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/large-value-csstext.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/parsing-css-number-types.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/parsing-css-wrap.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/transform-origin-parsing.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/transform-inline-style-remove.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/variables/custom-property-dynamic-update.html [ Skip ]
-webkit.org/b/165195 fast/events/mouse-cursor.html [ Pass Failure ]
-webkit.org/b/165195 fast/forms/basic-selects.html [ Pass Failure ]
-webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass Failure ]
-webkit.org/b/165195 fast/inspector-support/style.html [ Pass Failure ]
-webkit.org/b/165195 svg/webarchive/svg-script-subresouces.svg [ Pass Failure ]
-
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.
 webkit.org/b/165195 css3/font-variant-parsing.html [ Pass Failure ]

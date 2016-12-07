@@ -33,8 +33,8 @@
             shouldBe('test("object-position: inherit;")', '"inherit"');
             shouldBe('test("object-position: initial;")', '"initial"');
             
-            shouldBeEqualToString('test("object-position: 23px;")', '23px 50%');
-            shouldBeEqualToString('test("object-position: center 23px;")', '50% 23px');
+            shouldBeEqualToString('test("object-position: 23px;")', '23px center');
+            shouldBeEqualToString('test("object-position: center 23px;")', 'center 23px');
             shouldBeEqualToString('test("object-position: 50% 23px;")', '50% 23px');
             shouldBeEqualToString('test("object-position: 50% left;")', '');
             

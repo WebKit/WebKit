@@ -1,3 +1,28 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Turn back on a bunch of layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=165529
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * css3/parsing-css3-nthchild-expected.txt:
+        * css3/parsing-css3-nthchild.html:
+        * css3/scroll-snap/scroll-snap-position-values-expected.txt:
+        * css3/scroll-snap/scroll-snap-position-values.html:
+        * editing/execCommand/insert-list-with-noneditable-content-expected.txt:
+        * fast/css/object-position/parsing-object-position-expected.txt:
+        * fast/css/object-position/parsing-object-position.html:
+        * fast/css/parsing-css-number-types-expected.txt:
+        * fast/css/parsing-css-wrap-expected.txt:
+        * fast/css/script-tests/transform-origin-parsing.js:
+        * fast/css/transform-inline-style-remove-expected.txt:
+        * fast/css/transform-origin-parsing-expected.txt:
+        * fast/css/variables/custom-property-dynamic-update-expected.html:
+        * fast/events/mouse-cursor-expected.txt:
+        * fast/inspector-support/style-expected.txt:
+        * platform/mac/svg/webarchive/svg-script-subresouces-expected.txt:
+
 2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/table/003.html after r209421.

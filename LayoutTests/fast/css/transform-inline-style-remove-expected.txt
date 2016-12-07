@@ -12,8 +12,8 @@ transition property (after):
 transition duration (after): 
 transition timing function (after): 
 
-transform origin (before): 0% 30%
-transform origin X (before): 0%
+transform origin (before): left 30%
+transform origin X (before): left
 transform origin Y (before): 30%
 transform origin (after): 
 transform origin X (after): 

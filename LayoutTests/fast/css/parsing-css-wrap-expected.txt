@@ -1,6 +1,6 @@
 Test parsing of CSS '\r\n' newline characters.
 
-FAILURE
+SUCCESS
 
 Rules from the stylesheet:
 
