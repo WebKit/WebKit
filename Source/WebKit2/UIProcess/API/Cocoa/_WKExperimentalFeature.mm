@@ -39,7 +39,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; name = %@; key = { %@ }>", NSStringFromClass(self.class), self, self.name, self.key];
+    return [NSString stringWithFormat:@"<%@: %p; name = %@; key = %@; defaultValue = %s >", NSStringFromClass(self.class), self, self.name, self.key, self.defaultValue ? "on" : "off"];
 }
 
 - (NSString *)name
@@ -55,6 +55,11 @@
 - (NSString *)details
 {
     return _experimentalFeature->details();
+}
+
+- (BOOL)defaultValue
+{
+    return _experimentalFeature->defaultValue();
 }
 
 #pragma mark WKObject protocol implementation

@@ -218,7 +218,7 @@ static Vector<RefPtr<API::Object>> createExperimentalFeaturesVector()
     Vector<RefPtr<API::Object>> features;
 
 #define ADD_EXPERIMENTAL_PREFERENCE_DESCRIPTION(KeyUpper, KeyLower, TypeName, Type, DefaultValue, HumanReadableName, HumanReadableDescription) \
-    features.append(API::ExperimentalFeature::create(HumanReadableName, #KeyUpper, HumanReadableDescription)); \
+    features.append(API::ExperimentalFeature::create(HumanReadableName, #KeyUpper, HumanReadableDescription, DefaultValue)); \
 
     FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(ADD_EXPERIMENTAL_PREFERENCE_DESCRIPTION)
 

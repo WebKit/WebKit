@@ -33,19 +33,21 @@ namespace API {
 
 class ExperimentalFeature final : public ObjectImpl<Object::Type::ExperimentalFeature> {
 public:
-    static Ref<ExperimentalFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details);
+    static Ref<ExperimentalFeature> create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue);
     virtual ~ExperimentalFeature();
 
     WTF::String name() const { return m_name; }
     WTF::String key() const { return m_key; }
     WTF::String details() const { return m_details; }
+    bool defaultValue() const { return m_defaultValue; }
 
 private:
-    explicit ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details);
+    explicit ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue);
 
     WTF::String m_name;
     WTF::String m_key;
     WTF::String m_details;
+    bool m_defaultValue;
 };
 
 }

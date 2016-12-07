@@ -35,6 +35,7 @@ WK_CLASS_AVAILABLE(macosx(10.12), ios(10.0))
 @property (nonatomic, readonly, copy) NSString *key;
 @property (nonatomic, readonly, copy) NSString *name;
 @property (nonatomic, readonly, copy) NSString *details;
+@property (nonatomic, readonly) BOOL defaultValue;
 
 @end
 

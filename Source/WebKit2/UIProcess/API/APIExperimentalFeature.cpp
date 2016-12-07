@@ -28,15 +28,16 @@
 
 namespace API {
 
-Ref<ExperimentalFeature> ExperimentalFeature::create(const WTF::String& name, const WTF::String& key, const WTF::String& details)
+Ref<ExperimentalFeature> ExperimentalFeature::create(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue)
 {
-    return adoptRef(*new ExperimentalFeature(name, key, details));
+    return adoptRef(*new ExperimentalFeature(name, key, details, defaultValue));
 }
 
-ExperimentalFeature::ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details)
+ExperimentalFeature::ExperimentalFeature(const WTF::String& name, const WTF::String& key, const WTF::String& details, bool defaultValue)
     : m_name(name)
     , m_key(key)
     , m_details(details)
+    , m_defaultValue(defaultValue)
 {
 }
 
