@@ -1,3 +1,17 @@
+2016-12-07  Jer Noble  <jer.noble@apple.com>
+
+        [pointer-lock] Cursor should become visible when exiting pointer-lock via ESC key.
+        https://bugs.webkit.org/show_bug.cgi?id=165377
+
+        Reviewed by Eric Carlson.
+
+        Follow up to previous patch; clear the m_forceCursorVisibleUponUnlock flag upon losing
+        pointer lock, so that subsequent unlocks don't erroneously cause the cursor to become
+        visible. 
+
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::didLosePointerLock):
+
 2016-12-06  Geoffrey Garen  <ggaren@apple.com>
 
         performance.now() should truncate to 100us
