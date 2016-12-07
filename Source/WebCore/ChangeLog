@@ -1,3 +1,14 @@
+2016-12-06  Geoffrey Garen  <ggaren@apple.com>
+
+        performance.now() should truncate to 100us
+        https://bugs.webkit.org/show_bug.cgi?id=165503
+        <rdar://problem/29544531>
+
+        Reviewed by Mark Lam.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::reduceTimeResolution):
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Turn back on a bunch of layout tests

@@ -214,7 +214,7 @@ double Performance::now() const
 
 double Performance::reduceTimeResolution(double seconds)
 {
-    const double resolutionSeconds = 0.000005;
+    const double resolutionSeconds = 0.0001;
     return std::floor(seconds / resolutionSeconds) * resolutionSeconds;
 }
 
