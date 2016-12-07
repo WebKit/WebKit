@@ -309,7 +309,6 @@ public:
     Strong<Structure> programExecutableStructure;
     Strong<Structure> functionExecutableStructure;
 #if ENABLE(WEBASSEMBLY)
-    Strong<Structure> webAssemblyExecutableStructure;
     Strong<Structure> webAssemblyCalleeStructure;
 #endif
     Strong<Structure> moduleProgramExecutableStructure;
@@ -340,7 +339,6 @@ public:
     Strong<Structure> moduleProgramCodeBlockStructure;
     Strong<Structure> evalCodeBlockStructure;
     Strong<Structure> functionCodeBlockStructure;
-    Strong<Structure> webAssemblyCodeBlockStructure;
     Strong<Structure> hashMapBucketSetStructure;
     Strong<Structure> hashMapBucketMapStructure;
     Strong<Structure> hashMapImplSetStructure;

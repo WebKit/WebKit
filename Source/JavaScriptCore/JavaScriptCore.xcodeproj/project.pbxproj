@@ -1099,14 +1099,12 @@
 		147341D41DC02E6D00AA29BA /* ProgramExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341D31DC02E6D00AA29BA /* ProgramExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		147341D61DC02EB900AA29BA /* ModuleProgramExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341D51DC02EB900AA29BA /* ModuleProgramExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		147341D81DC02F9900AA29BA /* FunctionExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341D71DC02F9900AA29BA /* FunctionExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		147341DA1DC0300100AA29BA /* WebAssemblyExecutable.h in Headers */ = {isa = PBXBuildFile; fileRef = 147341D91DC0300100AA29BA /* WebAssemblyExecutable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		147341E21DC2CE9600AA29BA /* EvalExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341DB1DC2CE9600AA29BA /* EvalExecutable.cpp */; };
 		147341E31DC2CE9600AA29BA /* FunctionExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341DC1DC2CE9600AA29BA /* FunctionExecutable.cpp */; };
 		147341E41DC2CE9600AA29BA /* ModuleProgramExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341DD1DC2CE9600AA29BA /* ModuleProgramExecutable.cpp */; };
 		147341E51DC2CE9600AA29BA /* NativeExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341DE1DC2CE9600AA29BA /* NativeExecutable.cpp */; };
 		147341E61DC2CE9600AA29BA /* ProgramExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341DF1DC2CE9600AA29BA /* ProgramExecutable.cpp */; };
 		147341E71DC2CE9600AA29BA /* ScriptExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341E01DC2CE9600AA29BA /* ScriptExecutable.cpp */; };
-		147341E81DC2CE9600AA29BA /* WebAssemblyExecutable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341E11DC2CE9600AA29BA /* WebAssemblyExecutable.cpp */; };
 		147341EA1DC2CF2500AA29BA /* ExecutableBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147341E91DC2CF2500AA29BA /* ExecutableBase.cpp */; };
 		1474C33B16AA2D950062F01D /* PrototypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D844A316AA2C7000A65AF0 /* PrototypeMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1474C33C16AA2D9B0062F01D /* PrototypeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D844A216AA2C7000A65AF0 /* PrototypeMap.cpp */; };
@@ -1157,11 +1155,9 @@
 		14AD910E1DCA92940014F9FE /* GlobalCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD91081DCA92940014F9FE /* GlobalCodeBlock.h */; };
 		14AD910F1DCA92940014F9FE /* ModuleProgramCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD91091DCA92940014F9FE /* ModuleProgramCodeBlock.h */; };
 		14AD91101DCA92940014F9FE /* ProgramCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD910A1DCA92940014F9FE /* ProgramCodeBlock.h */; };
-		14AD91111DCA92940014F9FE /* WebAssemblyCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD910B1DCA92940014F9FE /* WebAssemblyCodeBlock.h */; };
 		14AD91171DCA97FD0014F9FE /* EvalCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14AD91121DCA97FD0014F9FE /* EvalCodeBlock.cpp */; };
 		14AD91181DCA97FD0014F9FE /* ModuleProgramCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14AD91131DCA97FD0014F9FE /* ModuleProgramCodeBlock.cpp */; };
 		14AD91191DCA97FD0014F9FE /* ProgramCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14AD91141DCA97FD0014F9FE /* ProgramCodeBlock.cpp */; };
-		14AD911A1DCA97FD0014F9FE /* WebAssemblyCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14AD91151DCA97FD0014F9FE /* WebAssemblyCodeBlock.cpp */; };
 		14AD911B1DCA97FD0014F9FE /* FunctionCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14AD91161DCA97FD0014F9FE /* FunctionCodeBlock.cpp */; };
 		14AD91221DCA9FA40014F9FE /* UnlinkedGlobalCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD911C1DCA9FA40014F9FE /* UnlinkedGlobalCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14AD91231DCA9FA40014F9FE /* UnlinkedFunctionCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14AD911D1DCA9FA40014F9FE /* UnlinkedFunctionCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3485,14 +3481,12 @@
 		147341D31DC02E6D00AA29BA /* ProgramExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutable.h; sourceTree = "<group>"; };
 		147341D51DC02EB900AA29BA /* ModuleProgramExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleProgramExecutable.h; sourceTree = "<group>"; };
 		147341D71DC02F9900AA29BA /* FunctionExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionExecutable.h; sourceTree = "<group>"; };
-		147341D91DC0300100AA29BA /* WebAssemblyExecutable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAssemblyExecutable.h; sourceTree = "<group>"; };
 		147341DB1DC2CE9600AA29BA /* EvalExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvalExecutable.cpp; sourceTree = "<group>"; };
 		147341DC1DC2CE9600AA29BA /* FunctionExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionExecutable.cpp; sourceTree = "<group>"; };
 		147341DD1DC2CE9600AA29BA /* ModuleProgramExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleProgramExecutable.cpp; sourceTree = "<group>"; };
 		147341DE1DC2CE9600AA29BA /* NativeExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeExecutable.cpp; sourceTree = "<group>"; };
 		147341DF1DC2CE9600AA29BA /* ProgramExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramExecutable.cpp; sourceTree = "<group>"; };
 		147341E01DC2CE9600AA29BA /* ScriptExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptExecutable.cpp; sourceTree = "<group>"; };
-		147341E11DC2CE9600AA29BA /* WebAssemblyExecutable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAssemblyExecutable.cpp; sourceTree = "<group>"; };
 		147341E91DC2CF2500AA29BA /* ExecutableBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableBase.cpp; sourceTree = "<group>"; };
 		147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchedTransitionOptimizer.h; sourceTree = "<group>"; };
 		147B84620E6DE6B1004775A4 /* PutPropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutPropertySlot.h; sourceTree = "<group>"; };
@@ -3523,11 +3517,9 @@
 		14AD91081DCA92940014F9FE /* GlobalCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalCodeBlock.h; sourceTree = "<group>"; };
 		14AD91091DCA92940014F9FE /* ModuleProgramCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleProgramCodeBlock.h; sourceTree = "<group>"; };
 		14AD910A1DCA92940014F9FE /* ProgramCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramCodeBlock.h; sourceTree = "<group>"; };
-		14AD910B1DCA92940014F9FE /* WebAssemblyCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAssemblyCodeBlock.h; sourceTree = "<group>"; };
 		14AD91121DCA97FD0014F9FE /* EvalCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvalCodeBlock.cpp; sourceTree = "<group>"; };
 		14AD91131DCA97FD0014F9FE /* ModuleProgramCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleProgramCodeBlock.cpp; sourceTree = "<group>"; };
 		14AD91141DCA97FD0014F9FE /* ProgramCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramCodeBlock.cpp; sourceTree = "<group>"; };
-		14AD91151DCA97FD0014F9FE /* WebAssemblyCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAssemblyCodeBlock.cpp; sourceTree = "<group>"; };
 		14AD91161DCA97FD0014F9FE /* FunctionCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionCodeBlock.cpp; sourceTree = "<group>"; };
 		14AD911C1DCA9FA40014F9FE /* UnlinkedGlobalCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedGlobalCodeBlock.h; sourceTree = "<group>"; };
 		14AD911D1DCA9FA40014F9FE /* UnlinkedFunctionCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedFunctionCodeBlock.h; sourceTree = "<group>"; };
@@ -6660,8 +6652,6 @@
 				709FB8641AE335C60039D069 /* WeakSetConstructor.h */,
 				709FB8651AE335C60039D069 /* WeakSetPrototype.cpp */,
 				709FB8661AE335C60039D069 /* WeakSetPrototype.h */,
-				147341E11DC2CE9600AA29BA /* WebAssemblyExecutable.cpp */,
-				147341D91DC0300100AA29BA /* WebAssemblyExecutable.h */,
 				A7DCB77912E3D90500911940 /* WriteBarrier.h */,
 				C2B6D75218A33793004A9301 /* WriteBarrierInlines.h */,
 				8B47F234366C4B72AC852A7E /* TemplateRegistryKeyTable.cpp */,
@@ -7309,8 +7299,6 @@
 				0F426A461460CBAB00131F8F /* VirtualRegister.h */,
 				0F919D2215853CDE004A4E7D /* Watchpoint.cpp */,
 				0F919D2315853CDE004A4E7D /* Watchpoint.h */,
-				14AD91151DCA97FD0014F9FE /* WebAssemblyCodeBlock.cpp */,
-				14AD910B1DCA92940014F9FE /* WebAssemblyCodeBlock.h */,
 				14142E501B796ECE00F4BF4B /* UnlinkedFunctionExecutable.h */,
 			);
 			path = bytecode;
@@ -7818,7 +7806,6 @@
 				269D636E1BFBE5D100101B1D /* FTLOutput.h in Headers */,
 				0FEC853E1BDACDAC0080FF74 /* B3UpsilonValue.h in Headers */,
 				0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */,
-				14AD91111DCA92940014F9FE /* WebAssemblyCodeBlock.h in Headers */,
 				0FEC85421BDACDAC0080FF74 /* B3Validate.h in Headers */,
 				0FEC85441BDACDAC0080FF74 /* B3Value.h in Headers */,
 				0FEC85451BDACDAC0080FF74 /* B3ValueInlines.h in Headers */,
@@ -8182,7 +8169,6 @@
 				53FF7F991DBFCD9000A26CCC /* WasmValidate.h in Headers */,
 				0FC97F4218202119002C9B26 /* DFGWatchpointCollectionPhase.h in Headers */,
 				0FDB2CE8174830A2007B3C1B /* DFGWorklist.h in Headers */,
-				147341DA1DC0300100AA29BA /* WebAssemblyExecutable.h in Headers */,
 				0F070A491D543A93006E7232 /* HeapCellInlines.h in Headers */,
 				0FE050181AA9091100D33B33 /* DirectArguments.h in Headers */,
 				0FE050161AA9091100D33B33 /* DirectArgumentsOffset.h in Headers */,
@@ -9555,7 +9541,6 @@
 				0FEC85871BDACDC70080FF74 /* AirSpecial.cpp in Sources */,
 				0FEC85891BDACDC70080FF74 /* AirSpillEverything.cpp in Sources */,
 				0FEC858B1BDACDC70080FF74 /* AirStackSlot.cpp in Sources */,
-				14AD911A1DCA97FD0014F9FE /* WebAssemblyCodeBlock.cpp in Sources */,
 				0FEC858D1BDACDC70080FF74 /* AirTmp.cpp in Sources */,
 				0FEC85901BDACDC70080FF74 /* AirValidate.cpp in Sources */,
 				147F39BD107EC37600427A48 /* ArgList.cpp in Sources */,
@@ -9812,7 +9797,6 @@
 				0F2B9CEA19D0BA7D00B1D1B5 /* DFGPhiChildren.cpp in Sources */,
 				A78A977A179738B8009DF744 /* DFGPlan.cpp in Sources */,
 				0FBE0F7416C1DB090082C5E8 /* DFGPredictionInjectionPhase.cpp in Sources */,
-				147341E81DC2CE9600AA29BA /* WebAssemblyExecutable.cpp in Sources */,
 				0FFFC95D14EF90B300C72532 /* DFGPredictionPropagationPhase.cpp in Sources */,
 				0F3E01AA19D353A500F61B7F /* DFGPrePostNumbering.cpp in Sources */,
 				0F2B9CEC19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.cpp in Sources */,

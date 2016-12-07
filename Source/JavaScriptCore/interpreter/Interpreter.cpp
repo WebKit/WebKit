@@ -447,16 +447,6 @@ bool Interpreter::isOpcode(Opcode opcode)
 #endif
 }
 
-static inline bool isWebAssemblyExecutable(ExecutableBase* executable)
-{
-#if !ENABLE(WEBASSEMBLY)
-    UNUSED_PARAM(executable);
-    return false;
-#else
-    return executable->isWebAssemblyExecutable();
-#endif
-}
-
 class GetStackTraceFunctor {
 public:
     GetStackTraceFunctor(VM& vm, Vector<StackFrame>& results, size_t framesToSkip, size_t capacity)
@@ -477,7 +467,6 @@ public:
 
         if (m_remainingCapacityForFrameCapture) {
             if (visitor->isJSFrame()
-                && !isWebAssemblyExecutable(visitor->codeBlock()->ownerExecutable())
                 && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 StackFrame s = {
                     Strong<JSObject>(m_vm, visitor->callee()),
@@ -619,7 +608,7 @@ public:
 
         m_handler = nullptr;
         if (!m_isTermination) {
-            if (m_codeBlock && !isWebAssemblyExecutable(m_codeBlock->ownerExecutable()))
+            if (m_codeBlock)
                 m_handler = findExceptionHandler(visitor, m_codeBlock, RequiredHandler::AnyHandler);
         }
 

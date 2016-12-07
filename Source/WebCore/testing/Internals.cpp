@@ -1553,10 +1553,6 @@ String Internals::parserMetaData(JSC::JSValue code)
         result.appendLiteral("module");
     else if (executable->isProgramExecutable())
         result.appendLiteral("program");
-#if ENABLE(WEBASSEMBLY)
-    else if (executable->isWebAssemblyExecutable())
-        result.appendLiteral("WebAssembly");
-#endif
     else
         ASSERT_NOT_REACHED();
 

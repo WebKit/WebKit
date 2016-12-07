@@ -89,14 +89,6 @@ void ExecutableBase::clearCode()
         return;
     }
     
-#if ENABLE(WEBASSEMBLY)
-    if (classInfo() == WebAssemblyExecutable::info()) {
-        WebAssemblyExecutable* executable = jsCast<WebAssemblyExecutable*>(this);
-        executable->m_codeBlockForCall.clear();
-        return;
-    }
-#endif
-
     ASSERT(classInfo() == NativeExecutable::info());
 }
 

@@ -74,8 +74,6 @@
 #include "TypeProfiler.h"
 #include "UnlinkedInstructionStream.h"
 #include "VMInlines.h"
-#include "WebAssemblyCodeBlock.h"
-#include "WebAssemblyExecutable.h"
 #include <wtf/BagToHashMap.h>
 #include <wtf/CommaPrinter.h>
 #include <wtf/SimpleStats.h>
@@ -2364,43 +2362,6 @@ void CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     heap()->reportExtraMemoryAllocated(m_instructions.size() * sizeof(Instruction));
 }
 
-#if ENABLE(WEBASSEMBLY)
-CodeBlock::CodeBlock(VM* vm, Structure* structure, WebAssemblyExecutable* ownerExecutable, JSGlobalObject* globalObject)
-    : JSCell(*vm, structure)
-    , m_globalObject(globalObject->vm(), this, globalObject)
-    , m_numCalleeLocals(0)
-    , m_numVars(0)
-    , m_shouldAlwaysBeInlined(false)
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CannotCompile)
-#endif
-    , m_didFailJITCompilation(false)
-    , m_didFailFTLCompilation(false)
-    , m_hasBeenCompiledWithFTL(false)
-    , m_isConstructor(false)
-    , m_isStrictMode(false)
-    , m_codeType(FunctionCode)
-    , m_hasDebuggerStatement(false)
-    , m_steppingMode(SteppingModeDisabled)
-    , m_numBreakpoints(0)
-    , m_ownerExecutable(m_globalObject->vm(), this, ownerExecutable)
-    , m_vm(vm)
-    , m_osrExitCounter(0)
-    , m_optimizationDelayCounter(0)
-    , m_reoptimizationRetryCounter(0)
-    , m_creationTime(std::chrono::steady_clock::now())
-{
-    ASSERT(heap()->isDeferred());
-}
-
-void CodeBlock::finishCreation(VM& vm, WebAssemblyExecutable*, JSGlobalObject*)
-{
-    Base::finishCreation(vm);
-
-    heap()->m_codeBlocks->add(this);
-}
-#endif
-
 CodeBlock::~CodeBlock()
 {
     if (m_vm->m_perBytecodeProfiler)
@@ -2817,11 +2778,6 @@ void CodeBlock::clearLLIntGetByIdCache(Instruction* instruction)
 
 void CodeBlock::finalizeLLIntInlineCaches()
 {
-#if ENABLE(WEBASSEMBLY)
-    if (m_ownerExecutable->isWebAssemblyExecutable())
-        return;
-#endif
-
     Interpreter* interpreter = m_vm->interpreter;
     const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
@@ -3376,11 +3332,6 @@ CodeBlock* CodeBlock::replacement()
     if (classInfo == ModuleProgramCodeBlock::info())
         return jsCast<ModuleProgramExecutable*>(ownerExecutable())->codeBlock();
 
-#if ENABLE(WEBASSEMBLY)
-    if (classInfo == WebAssemblyCodeBlock::info())
-        return nullptr;
-#endif
-
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
 }
@@ -3403,11 +3354,6 @@ DFG::CapabilityLevel CodeBlock::computeCapabilityLevel()
 
     if (classInfo == ModuleProgramCodeBlock::info())
         return DFG::programCapabilityLevel(this);
-
-#if ENABLE(WEBASSEMBLY)
-    if (classInfo == WebAssemblyCodeBlock::info())
-        return DFG::CannotCompile;
-#endif
 
     RELEASE_ASSERT_NOT_REACHED();
     return DFG::CannotCompile;
@@ -4080,10 +4026,6 @@ void CodeBlock::updateAllArrayPredictions()
 
 void CodeBlock::updateAllPredictions()
 {
-#if ENABLE(WEBASSEMBLY)
-    if (m_ownerExecutable->isWebAssemblyExecutable())
-        return;
-#endif
     updateAllValueProfilePredictions();
     updateAllArrayPredictions();
 }

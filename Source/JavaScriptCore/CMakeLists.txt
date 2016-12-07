@@ -254,7 +254,6 @@ set(JavaScriptCore_SOURCES
     bytecode/VariableWriteFireDetail.cpp
     bytecode/VirtualRegister.cpp
     bytecode/Watchpoint.cpp
-    bytecode/WebAssemblyCodeBlock.cpp
 
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
@@ -887,7 +886,6 @@ set(JavaScriptCore_SOURCES
     runtime/WeakMapPrototype.cpp
     runtime/WeakSetConstructor.cpp
     runtime/WeakSetPrototype.cpp
-    runtime/WebAssemblyExecutable.cpp
 
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp

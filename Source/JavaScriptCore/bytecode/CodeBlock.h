@@ -119,15 +119,9 @@ public:
 protected:
     CodeBlock(VM*, Structure*, CopyParsedBlockTag, CodeBlock& other);
     CodeBlock(VM*, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
-#if ENABLE(WEBASSEMBLY)
-    CodeBlock(VM*, Structure*, WebAssemblyExecutable* ownerExecutable, JSGlobalObject*);
-#endif
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
     void finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
-#if ENABLE(WEBASSEMBLY)
-    void finishCreation(VM&, WebAssemblyExecutable* ownerExecutable, JSGlobalObject*);
-#endif
 
     WriteBarrier<JSGlobalObject> m_globalObject;
 

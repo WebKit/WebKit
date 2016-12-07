@@ -70,7 +70,6 @@
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
-#include "WebAssemblyCodeBlock.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
@@ -895,18 +894,6 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction()) {
         codePtr = executable->entrypointFor(kind, MustCheckArity);
-#if ENABLE(WEBASSEMBLY)
-    } else if (executable->isWebAssemblyExecutable()) {
-        WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-        codeBlock = webAssemblyExecutable->codeBlockForCall();
-        ASSERT(codeBlock);
-        ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
-        else
-            arity = ArityCheckNotRequired;
-        codePtr = webAssemblyExecutable->entrypointFor(kind, arity);
-#endif
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1015,37 +1002,22 @@ inline SlowPathReturnType virtualForWithFunction(
     JSScope* scope = function->scopeUnchecked();
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
-        bool isWebAssemblyExecutable = false;
-#if ENABLE(WEBASSEMBLY)
-        isWebAssemblyExecutable = executable->isWebAssemblyExecutable();
-#endif
-        if (!isWebAssemblyExecutable) {
-            FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
-            if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
-                throwException(exec, throwScope, createNotAConstructorError(exec, function));
-                return encodeResult(
-                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
-                    reinterpret_cast<void*>(KeepTheFrame));
-            }
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct) {
+            throwException(exec, throwScope, createNotAConstructorError(exec, function));
+            return encodeResult(
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                reinterpret_cast<void*>(KeepTheFrame));
+        }
 
-            CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-            JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
-            if (error) {
-                throwException(exec, throwScope, error);
-                return encodeResult(
-                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
-                    reinterpret_cast<void*>(KeepTheFrame));
-            }
-        } else {
-#if ENABLE(WEBASSEMBLY)
-            if (!isCall(kind)) {
-                throwException(exec, throwScope, createNotAConstructorError(exec, function));
-                return encodeResult(
-                    vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
-                    reinterpret_cast<void*>(KeepTheFrame));
-            }
-#endif
+        CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
+        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
+        if (error) {
+            throwException(exec, throwScope, error);
+            return encodeResult(
+                vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress(),
+                reinterpret_cast<void*>(KeepTheFrame));
         }
     }
     return encodeResult(executable->entrypointFor(

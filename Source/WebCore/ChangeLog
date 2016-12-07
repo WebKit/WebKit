@@ -1,3 +1,13 @@
+2016-12-06  Saam Barati  <sbarati@apple.com>
+
+        Remove old Wasm object model
+        https://bugs.webkit.org/show_bug.cgi?id=165481
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::parserMetaData):
+
 2016-12-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media controls use the fullscreen layout after going from inline to fullscreen to PiP to inline

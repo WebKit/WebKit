@@ -66,7 +66,6 @@
 #include "ShadowChicken.h"
 #include "StructureRareDataInlines.h"
 #include "VMInlines.h"
-#include "WebAssemblyCodeBlock.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 
@@ -1292,14 +1291,9 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
 
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
-    bool isWebAssemblyExecutable = false;
-#if ENABLE(WEBASSEMBLY)
-    isWebAssemblyExecutable = executable->isWebAssemblyExecutable();
-#endif
-
     if (executable->isHostFunction()) {
         codePtr = executable->entrypointFor(kind, MustCheckArity);
-    } else if (!isWebAssemblyExecutable) {
+    } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
@@ -1318,20 +1312,8 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         else
             arity = ArityCheckNotRequired;
         codePtr = functionExecutable->entrypointFor(kind, arity);
-    } else {
-#if ENABLE(WEBASSEMBLY)
-        WebAssemblyExecutable* webAssemblyExecutable = static_cast<WebAssemblyExecutable*>(executable);
-        codeBlock = webAssemblyExecutable->codeBlockForCall();
-        ASSERT(codeBlock);
-        ArityCheckMode arity;
-        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
-        else
-            arity = ArityCheckNotRequired;
-        codePtr = webAssemblyExecutable->entrypointFor(kind, arity);
-#endif
     }
-    
+
     ASSERT(!!codePtr);
     
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {

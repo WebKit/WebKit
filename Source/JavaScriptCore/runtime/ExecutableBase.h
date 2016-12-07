@@ -50,7 +50,6 @@ class JSWebAssemblyModule;
 class LLIntOffsetsExtractor;
 class ModuleProgramCodeBlock;
 class ProgramCodeBlock;
-class WebAssemblyCodeBlock;
 
 enum CompilationKind { FirstCompilation, OptimizingCompilation };
 
@@ -114,13 +113,6 @@ public:
         ASSERT((m_numParametersForCall == NUM_PARAMETERS_IS_HOST) == (m_numParametersForConstruct == NUM_PARAMETERS_IS_HOST));
         return m_numParametersForCall == NUM_PARAMETERS_IS_HOST;
     }
-
-#if ENABLE(WEBASSEMBLY)
-    bool isWebAssemblyExecutable() const
-    {
-        return type() == WebAssemblyExecutableType;
-    }
-#endif
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CellType, StructureFlags), info()); }
         

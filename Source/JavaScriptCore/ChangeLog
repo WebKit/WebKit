@@ -1,3 +1,50 @@
+2016-12-06  Saam Barati  <sbarati@apple.com>
+
+        Remove old Wasm object model
+        https://bugs.webkit.org/show_bug.cgi?id=165481
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        It's confusing to see code that consults both the old
+        Wasm object model alongside the new one. The old object
+        model is not a thing, and it's not being used. Let's
+        remove it now to prevent further confusion.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::replacement):
+        (JSC::CodeBlock::computeCapabilityLevel):
+        (JSC::CodeBlock::updateAllPredictions):
+        * bytecode/CodeBlock.h:
+        * bytecode/WebAssemblyCodeBlock.cpp: Removed.
+        * bytecode/WebAssemblyCodeBlock.h: Removed.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::isSupportedForInlining):
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::isWebAssemblyExecutable): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/ExecutableBase.cpp:
+        (JSC::ExecutableBase::clearCode):
+        * runtime/ExecutableBase.h:
+        (JSC::ExecutableBase::isWebAssemblyExecutable): Deleted.
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::isBuiltinFunction):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/WebAssemblyExecutable.cpp: Removed.
+        * runtime/WebAssemblyExecutable.h: Removed.
+
 2016-12-06  JF Bastien  <jfbastien@apple.com>
 
         PureNaN: fix typo

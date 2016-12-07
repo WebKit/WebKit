@@ -74,16 +74,6 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
     return result;
 }
 
-#if ENABLE(WEBASSEMBLY)
-JSFunction* JSFunction::create(VM& vm, WebAssemblyExecutable* executable, JSScope* scope)
-{
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm.heap)) JSFunction(vm, executable, scope);
-    ASSERT(function->structure(vm)->globalObject());
-    function->finishCreation(vm);
-    return function;
-}
-#endif
-
 JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);

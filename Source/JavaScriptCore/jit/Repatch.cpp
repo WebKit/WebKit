@@ -53,7 +53,6 @@
 #include "StructureStubClearingWatchpoint.h"
 #include "StructureStubInfo.h"
 #include "ThunkGenerators.h"
-#include "WebAssemblyCodeBlock.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 #include <wtf/StringPrintStream.h>
@@ -714,12 +713,7 @@ void linkPolymorphicCall(
             codeBlock = nullptr;
         else {
             ExecutableBase* executable = variant.executable();
-#if ENABLE(WEBASSEMBLY)
-            if (executable->isWebAssemblyExecutable())
-                codeBlock = jsCast<WebAssemblyExecutable*>(executable)->codeBlockForCall();
-            else
-#endif
-                codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
+            codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
             // If we cannot handle a callee, either because we don't have a CodeBlock or because arity mismatch,
             // assume that it's better for this whole thing to be a virtual call.
             if (!codeBlock || exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
