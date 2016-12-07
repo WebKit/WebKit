@@ -1,5 +1,4 @@
-//@ runFTLNoCJIT("--useJIT=false")
-// FIXME: Remove the "--useJIT=false" option when https://bugs.webkit.org/show_bug.cgi?id=165401 is fixed.
+//@ runFTLNoCJIT
 
 // This test suite compares the behavior of setting the prototype on various values
 // (using Object.setPrototypeOf(), obj.__proto__ assignment, and Reflect.setPrototypeOf())

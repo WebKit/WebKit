@@ -1,3 +1,15 @@
+2016-12-06  Mark Lam  <mark.lam@apple.com>
+
+        GetByID IC is wrongly unwrapping the global proxy this value for getter/setters.
+        https://bugs.webkit.org/show_bug.cgi?id=165401
+
+        Reviewed by Saam Barati.
+
+        Set the test loose now that this bug is fixed.
+
+        * TestExpectations:
+        * js/script-tests/prototype-assignment.js:
+
 2016-12-06  Dean Jackson  <dino@apple.com>
 
         Apply styling to media documents with modern controls

@@ -885,6 +885,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case CustomAccessorGetter:
     case CustomValueSetter:
     case CustomAccessorSetter: {
+        GPRReg valueRegsPayloadGPR = valueRegs.payloadGPR();
+        
         if (isValidOffset(m_offset)) {
             Structure* currStructure;
             if (m_conditionSet.isEmpty())
@@ -896,7 +898,15 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
         GPRReg baseForGetGPR;
         if (viaProxy()) {
-            baseForGetGPR = valueRegs.payloadGPR();
+            ASSERT(m_type != CustomValueSetter || m_type != CustomAccessorSetter); // Because setters need to not trash valueRegsPayloadGPR.
+            if (m_type == Getter || m_type == Setter)
+                baseForGetGPR = scratchGPR;
+            else
+                baseForGetGPR = valueRegsPayloadGPR;
+
+            ASSERT((m_type != Getter && m_type != Setter) || baseForGetGPR != baseGPR);
+            ASSERT(m_type != Setter || baseForGetGPR != valueRegsPayloadGPR);
+
             jit.loadPtr(
                 CCallHelpers::Address(baseGPR, JSProxy::targetOffset()),
                 baseForGetGPR);
@@ -915,9 +925,12 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         GPRReg loadedValueGPR = InvalidGPRReg;
         if (m_type != CustomValueGetter && m_type != CustomAccessorGetter && m_type != CustomValueSetter && m_type != CustomAccessorSetter) {
             if (m_type == Load || m_type == GetGetter)
-                loadedValueGPR = valueRegs.payloadGPR();
+                loadedValueGPR = valueRegsPayloadGPR;
             else
                 loadedValueGPR = scratchGPR;
+
+            ASSERT((m_type != Getter && m_type != Setter) || loadedValueGPR != baseGPR);
+            ASSERT(m_type != Setter || loadedValueGPR != valueRegsPayloadGPR);
 
             GPRReg storageGPR;
             if (isInlineOffset(m_offset))
@@ -986,6 +999,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCount)));
 
         if (m_type == Getter || m_type == Setter) {
+            ASSERT(baseGPR != loadedValueGPR);
+            ASSERT(m_type != Setter || (baseGPR != valueRegsPayloadGPR && loadedValueGPR != valueRegsPayloadGPR));
+
             // Create a JS call using a JS call inline cache. Assume that:
             //
             // - SP is aligned and represents the extent of the calling compiler's stack usage.
@@ -1064,7 +1080,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 loadedValueGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
             jit.storeCell(
-                baseForGetGPR,
+                baseGPR,
                 calleeFrame.withOffset(virtualRegisterForArgument(0).offset() * sizeof(Register)));
 
             if (m_type == Setter) {
@@ -1118,6 +1134,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                         CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
                 });
         } else {
+            ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);
+
             // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
             // hard to track if someone did spillage or not, so we just assume that we always need
             // to make some space here.

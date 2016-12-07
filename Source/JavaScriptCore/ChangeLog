@@ -1,3 +1,23 @@
+2016-12-06  Mark Lam  <mark.lam@apple.com>
+
+        GetByID IC is wrongly unwrapping the global proxy this value for getter/setters.
+        https://bugs.webkit.org/show_bug.cgi?id=165401
+
+        Reviewed by Saam Barati.
+
+        When the this value for a property access is the JS global and that property
+        access is via a GetterSetter, the underlying getter / setter functions would
+        expect the this value they receive to be the JSProxy instance instead of the
+        JSGlobalObject.  This is consistent with how the LLINT and runtime code behaves.
+        The IC code should behave the same way.
+
+        Also added some ASSERTs to document invariants in the code, and help detect
+        bugs sooner if the code gets changed in a way that breaks those invariants in
+        the future.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+
 2016-12-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         DumpRenderTree ASSERT in JSC::ExecutableBase::isHostFunction seen on bots
