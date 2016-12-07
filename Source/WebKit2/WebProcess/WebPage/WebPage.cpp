@@ -4824,7 +4824,7 @@ static bool needsHiddenContentEditableQuirk(bool needsQuirks, const URL& url)
 
     String host = url.host();
     String path = url.path();
-    return equalLettersIgnoringASCIICase(host, "docs.google.com") || (equalLettersIgnoringASCIICase(host, "www.icloud.com") && path.contains("/pages/"));
+    return equalLettersIgnoringASCIICase(host, "docs.google.com");
 }
 
 static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
@@ -4841,7 +4841,7 @@ static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
         return true;
 
     String path = url.path();
-    if (equalLettersIgnoringASCIICase(host, "www.icloud.com") && (path.contains("notes") || url.fragmentIdentifier().contains("notes") || path.contains("/keynote/")))
+    if (equalLettersIgnoringASCIICase(host, "www.icloud.com") && (path.contains("notes") || url.fragmentIdentifier().contains("notes")))
         return true;
 
     if (equalLettersIgnoringASCIICase(host, "trix-editor.org"))

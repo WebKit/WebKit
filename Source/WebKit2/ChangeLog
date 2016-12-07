@@ -1,3 +1,16 @@
+2016-12-07  Beth Dakin  <bdakin@apple.com>
+
+        Remove iCloud Pages and Keynote site-specific hacks
+        https://bugs.webkit.org/show_bug.cgi?id=165544
+        -and corresponding-
+        rdar://problem/29082536
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::needsHiddenContentEditableQuirk):
+        (WebKit::needsPlainTextQuirk):
+
 2016-12-05  Ada Chan  <adachan@apple.com>
 
         Add a getter for serverTrust in _WKObservablePageState
