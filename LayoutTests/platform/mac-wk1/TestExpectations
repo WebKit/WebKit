@@ -136,6 +136,7 @@ fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 fast/scrolling/scroll-container-horizontally.html [ Failure ]
 
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
+compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Pass Failure ]
 
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
