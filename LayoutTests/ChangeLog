@@ -1,3 +1,13 @@
+2016-12-07  Nan Wang  <n_wang@apple.com>
+
+        AX: menu type toolbar should be mapped correctly on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=165537
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/menu-type-toolbar-expected.txt: Added.
+        * accessibility/mac/menu-type-toolbar.html: Added.
+
 2016-12-07  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed a test failure seen in web-timing-minimal-performance-now.html

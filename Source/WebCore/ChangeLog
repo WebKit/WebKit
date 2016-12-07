@@ -1,3 +1,17 @@
+2016-12-07  Nan Wang  <n_wang@apple.com>
+
+        AX: menu type toolbar should be mapped correctly on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=165537
+
+        Reviewed by Chris Fleizach.
+
+        The menu tag with a toolbar type should have the corresponding role.
+
+        Test: accessibility/mac/menu-type-toolbar.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+
 2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new project for recording and playing back editing commands in editable web content

@@ -1,0 +1,12 @@
+menu toolbar
+This tests that menu type toolbar should be mapped correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS toolbar.role is 'AXRole: AXToolbar'
+PASS toolbar.roleDescription is 'AXRoleDescription: toolbar'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
