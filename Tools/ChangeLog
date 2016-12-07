@@ -1,3 +1,14 @@
+2016-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Add system trace points for JavaScript VM entry/exit
+        https://bugs.webkit.org/show_bug.cgi?id=165550
+
+        Reviewed by Tim Horton.
+
+        Add trace points for entry/exit into/out of the JS VM.
+
+        * Tracing/SystemTracePoints.plist:
+
 2016-12-07  ChangSeok Oh  <changseok@webkit.org>
 
         [GTK] Cannot build GTK+ with CUPS 2.* versions
