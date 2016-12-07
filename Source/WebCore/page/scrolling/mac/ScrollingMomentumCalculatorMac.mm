@@ -39,16 +39,23 @@ std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create
 
 ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity)
+    , m_requiresMomentumScrolling(initialOffset != targetOffset || initialVelocity.area())
 {
 }
 
 FloatPoint ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime(Seconds elapsedTime)
 {
+    if (!m_requiresMomentumScrolling)
+        return { m_targetScrollOffset.width(), m_targetScrollOffset.height() };
+
     return [ensurePlatformMomentumCalculator() positionAfterDuration:elapsedTime.value()];
 }
 
 Seconds ScrollingMomentumCalculatorMac::animationDuration()
 {
+    if (!m_requiresMomentumScrolling)
+        return 0_s;
+
     return Seconds([ensurePlatformMomentumCalculator() durationUntilStop]);
 }
 

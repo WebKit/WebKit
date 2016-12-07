@@ -44,6 +44,7 @@ private:
     _NSScrollingMomentumCalculator *ensurePlatformMomentumCalculator();
 
     RetainPtr<_NSScrollingMomentumCalculator> m_platformMomentumCalculator;
+    bool m_requiresMomentumScrolling { true };
 };
 
 } // namespace WebCore

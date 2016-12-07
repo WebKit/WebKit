@@ -1,3 +1,25 @@
+2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll position jumps to the origin when scrolling without momentum at the end of a scroll snapping container
+        https://bugs.webkit.org/show_bug.cgi?id=165474
+        <rdar://problem/29534305>
+
+        Reviewed by Simon Fraser.
+
+        When initializing an AppKit _NSScrollingMomentumCalculator, if the initial and target positions are the same and
+        the initial velocity is (0, 0), the momentum calculator will output (0, 0) as the animated scroll position when
+        animating. This causes the scroll position to jump to the top left in some cases when scrolling in scroll snap
+        containers. To fix this, we teach the ScrollingMomentumCalculatorMac to return an animation duration of 0 and
+        an animated scroll position equal to the final scroll position when this is the case.
+
+        Test: tiled-drawing/scrolling/scroll-snap/scrolling-jumps-to-top.html
+
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.h:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        (WebCore::ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac):
+        (WebCore::ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime):
+        (WebCore::ScrollingMomentumCalculatorMac::animationDuration):
+
 2016-12-07  Nan Wang  <n_wang@apple.com>
 
         AX: menu type toolbar should be mapped correctly on Mac

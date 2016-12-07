@@ -1,3 +1,17 @@
+2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Scroll position jumps to the origin when scrolling without momentum at the end of a scroll snapping container
+        https://bugs.webkit.org/show_bug.cgi?id=165474
+        <rdar://problem/29534305>
+
+        Reviewed by Simon Fraser.
+
+        Added a new test verifying that if a scroll gesture ends without momentum at the bottom of a scroll snapping
+        container, the scroll position won't jump to the top.
+
+        * tiled-drawing/scrolling/scroll-snap/scrolling-jumps-to-top-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scrolling-jumps-to-top.html: Added.
+
 2016-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r209447): LayoutTests compositing/layer-creation/fixed-position-out-of-view-scaled.html and compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html failing
