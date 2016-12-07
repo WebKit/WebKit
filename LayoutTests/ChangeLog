@@ -1,5 +1,11 @@
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
+        Fix a bad result that I landed by accident.
+
+        * fast/css/object-position/parsing-object-position-expected.txt:
+
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Turn back on a bunch of layout tests
         https://bugs.webkit.org/show_bug.cgi?id=165529
 
