@@ -312,13 +312,13 @@ private:
 #elif OS(DARWIN)
     // Called on the connection queue.
     void receiveSourceEventHandler();
-    void initializeDeadNameSource();
+    void initializeSendSource();
 
     mach_port_t m_sendPort;
-    dispatch_source_t m_deadNameSource;
+    dispatch_source_t m_sendSource;
 
     mach_port_t m_receivePort;
-    dispatch_source_t m_receivePortDataAvailableSource;
+    dispatch_source_t m_receiveSource;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     void exceptionSourceEventHandler();

@@ -1,3 +1,24 @@
+2016-12-07  Anders Carlsson  <andersca@apple.com>
+
+        Rename the connection sources to better indicate what data direction they are used for
+        https://bugs.webkit.org/show_bug.cgi?id=165548
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+        (IPC::Connection::platformInitialize):
+        (IPC::createReceiveSource):
+        (IPC::Connection::initializeSendSource):
+        (IPC::Connection::receiveSourceEventHandler):
+        (IPC::createDataAvailableSource): Deleted.
+        (IPC::Connection::initializeDeadNameSource): Deleted.
+        Rename m_deadNameSource to m_sendSource, and m_receivePortDataAvailableSource to m_receiveSource.
+
+        (IPC::Connection::open):
+        Initialize the send source before we attempt to send a first message.
+
 2016-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Fix use of enum in a WK2 C SPI header.
