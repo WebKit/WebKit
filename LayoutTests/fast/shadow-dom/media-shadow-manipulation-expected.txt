@@ -1,5 +1,5 @@
-PASS Passes if we did not debug assert.
+PASS bounds = video_element.getBoundingClientRect(); document.caretRangeFromPoint(bounds.left + 10, bounds.bottom - 10) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE
-foo 
+

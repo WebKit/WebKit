@@ -6,12 +6,7 @@
 window.jsTestIsAsync = true;
 
 function runTest() {
-    var bounds = video_element.getBoundingClientRect();
-    var range = document.caretRangeFromPoint(bounds.left + 10, bounds.bottom - 10);
-    var shadow_tree_container = range.commonAncestorContainer;
-    shadow_tree_container.prepend("foo");
-    video_element.disabled = true;
-    testPassed("Passes if we did not debug assert.");
+    shouldBe('bounds = video_element.getBoundingClientRect(); document.caretRangeFromPoint(bounds.left + 10, bounds.bottom - 10)', 'null');
     finishJSTest();
 }
 </script>
