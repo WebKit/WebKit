@@ -2249,6 +2249,8 @@
 		51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */; };
 		51CBFC990D10E483002DBF51 /* CachedFramePlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */; };
+		51D394781DF2492200ABE875 /* DumpEditingHistory.js in Copy Internal Scripts */ = {isa = PBXBuildFile; fileRef = 51D394741DF2454000ABE875 /* DumpEditingHistory.js */; };
+		51D394791DF2492200ABE875 /* EditingHistoryUtil.js in Copy Internal Scripts */ = {isa = PBXBuildFile; fileRef = 51D394751DF2454000ABE875 /* EditingHistoryUtil.js */; };
 		51D7236C1BB6174900478CA3 /* IDBResultData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7236A1BB60BFE00478CA3 /* IDBResultData.cpp */; };
 		51D7236D1BB6174900478CA3 /* IDBResultData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7236B1BB60BFE00478CA3 /* IDBResultData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D7EFEA1BDE8F8C00E93E10 /* ThreadSafeDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 511FAEA91BDC989A00B4AFE4 /* ThreadSafeDataBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6949,6 +6951,18 @@
 			name = "Copy Scripts";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		51D394771DF2486700ABE875 /* Copy Internal Scripts */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "$(APPLE_INTERNAL_LIBRARY_DIR)/WebKit/InternalScripts";
+			dstSubfolderSpec = 0;
+			files = (
+				51D394781DF2492200ABE875 /* DumpEditingHistory.js in Copy Internal Scripts */,
+				51D394791DF2492200ABE875 /* EditingHistoryUtil.js in Copy Internal Scripts */,
+			);
+			name = "Copy Internal Scripts";
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		CD0DBF001422765700280263 /* Copy Audio Resources */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9444,6 +9458,8 @@
 		51C81B880C4422F70019ECE3 /* FTPDirectoryParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryParser.h; sourceTree = "<group>"; };
 		51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFramePlatformData.h; sourceTree = "<group>"; };
 		51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageCustom.cpp; sourceTree = "<group>"; };
+		51D394741DF2454000ABE875 /* DumpEditingHistory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = InternalScripts/DumpEditingHistory.js; sourceTree = "<group>"; };
+		51D394751DF2454000ABE875 /* EditingHistoryUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = InternalScripts/EditingHistoryUtil.js; sourceTree = "<group>"; };
 		51D7196C181106DF0016DC51 /* DOMWindowIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowIndexedDatabase.cpp; sourceTree = "<group>"; };
 		51D7196D181106DF0016DC51 /* DOMWindowIndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowIndexedDatabase.h; sourceTree = "<group>"; };
 		51D7196E181106DF0016DC51 /* DOMWindowIndexedDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowIndexedDatabase.idl; sourceTree = "<group>"; };
@@ -15386,6 +15402,7 @@
 				2E4346310F546A6800B0F1BA /* workers */,
 				E1F0424309839389006694EA /* xml */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
+				51D394731DF244BA00ABE875 /* InternalScripts */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				3717D7E417ECC36C003C276D /* Scripts */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
@@ -17277,6 +17294,15 @@
 				510192D018B6B9AB007FC7A1 /* ImageControlsRootElementMac.h */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		51D394731DF244BA00ABE875 /* InternalScripts */ = {
+			isa = PBXGroup;
+			children = (
+				51D394741DF2454000ABE875 /* DumpEditingHistory.js */,
+				51D394751DF2454000ABE875 /* EditingHistoryUtil.js */,
+			);
+			name = InternalScripts;
 			sourceTree = "<group>";
 		};
 		59B5977111086556007159E8 /* jsc */ = {
@@ -28383,6 +28409,7 @@
 				37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */,
 				5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */,
 				71D6AA381DA4E69400B23969 /* Copy modern media controls code and assets */,
+				51D394771DF2486700ABE875 /* Copy internal scripts */,
 			);
 			buildRules = (
 			);

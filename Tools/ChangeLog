@@ -1,3 +1,80 @@
+2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a new project for recording and playing back editing commands in editable web content
+        https://bugs.webkit.org/show_bug.cgi?id=165114
+        <rdar://problem/29408135>
+
+        Reviewed by Beth Dakin.
+
+        Adds a new Xcode project containing work towards rewinding and playing back editing commands. This work is
+        wrapped in an Xcode project to take advantage of the XCTest framework. To manually test recording, open the
+        capture test harness, edit the contenteditable body, and then hit cmd-S. This downloads a .json file which may
+        then be dragged into the playback test harness.
+
+        Also adds 3 new unit tests in EditingHistoryTests/RewindAndPlaybackTests.m. These tests carry out the following
+        steps:
+
+        1. Load the capture harness and perform test-specific editing on the web view.
+        2. Let originalState be a dump of the DOM at this point in time.
+        3. Extract the JSON-serialized editing history data and load the playback harness with this data.
+        4. Rewind all editing to the beginning.
+        5. Playback all editing to the end.
+        6. Dump the state of the DOM. This should be identical to originalState.
+
+        * EditingHistory/EditingHistory.xcodeproj/project.pbxproj: Added.
+        * EditingHistory/EditingHistory/Info.plist: Added.
+        * EditingHistory/EditingHistory/Resources/CaptureHarness.html: Added.
+        * EditingHistory/EditingHistory/Resources/DOMTestingUtil.js: Added.
+        * EditingHistory/EditingHistory/Resources/PlaybackHarness.html: Added.
+        * EditingHistory/EditingHistory/TestRunner.h: Added.
+        * EditingHistory/EditingHistory/TestRunner.m: Added.
+        (injectedMessageEventHandlerScript):
+        (-[TestRunner init]):
+        (-[TestRunner deleteBackwards:]):
+        (-[TestRunner typeString:]):
+        (-[TestRunner bodyElementSubtree]):
+        (-[TestRunner bodyTextContent]):
+        (-[TestRunner editingHistoryJSON]):
+        (-[TestRunner loadPlaybackTestHarnessWithJSON:]):
+        (-[TestRunner numberOfUpdates]):
+        (-[TestRunner jumpToUpdateIndex:]):
+        (-[TestRunner expectEvents:afterPerforming:]):
+        (-[TestRunner loadCaptureTestHarness]):
+        (-[TestRunner setTextObfuscationEnabled:]):
+        (-[TestRunner isDoneWaitingForPendingEvents]):
+        (-[TestRunner userContentController:didReceiveScriptMessage:]):
+
+        The TestRunner provides utilities that a unit test should use to drive the test forward (e.g. loading harnesses)
+        or inspect the state of the loaded page (e.g. extracting JSON editing history data from the capture harness).
+
+        * EditingHistory/EditingHistory/TestUtil.h: Added.
+        * EditingHistory/EditingHistory/TestUtil.m: Added.
+        (waitUntilWithTimeout):
+        (waitUntil):
+
+        Provides utilities for running tests. For now, this is just spinning the runloop on a given condition.
+
+        * EditingHistory/EditingHistory/WKWebViewAdditions.h: Added.
+        * EditingHistory/EditingHistory/WKWebViewAdditions.m: Added.
+        (-[WKWebView loadPageFromBundleNamed:]):
+        (-[WKWebView typeCharacter:]):
+        (-[WKWebView keyPressWithCharacters:keyCode:]):
+        (-[WKWebView stringByEvaluatingJavaScriptFromString:]):
+
+        Provides utilities for simulating interaction in a web view.
+
+        * EditingHistory/EditingHistory/main.m: Added.
+        (main):
+        * EditingHistory/EditingHistoryTests/Info.plist: Added.
+        * EditingHistory/EditingHistoryTests/RewindAndPlaybackTests.m: Added.
+        (-[RewindAndPlaybackTests setUp]):
+        (-[RewindAndPlaybackTests tearDown]):
+        (-[RewindAndPlaybackTests testTypingSingleLineOfText]):
+        (-[RewindAndPlaybackTests testTypingMultipleLinesOfText]):
+        (-[RewindAndPlaybackTests testTypingAndDeletingText]):
+        (-[RewindAndPlaybackTests rewindAndPlaybackEditingInPlaybackTestHarness]):
+        (-[RewindAndPlaybackTests originalBodySubtree:isEqualToFinalSubtree:]):
+
 2016-12-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][jhbuild] missing dependency on libvpx in gst-plugins-good

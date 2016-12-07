@@ -1,3 +1,127 @@
+2016-12-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a new project for recording and playing back editing commands in editable web content
+        https://bugs.webkit.org/show_bug.cgi?id=165114
+        <rdar://problem/29408135>
+
+        Reviewed by Beth Dakin.
+
+        Adds new scripts used to record and play back editing, as well as a new Xcode Copy files phase that pushes these
+        scripts to the internal system directory when installing. See the Tools ChangeLog and individual comments below
+        for more details. Covered by 3 new unit tests in the EditingHistory project.
+
+        * InternalScripts/DumpEditingHistory.js: Added.
+        (beginProcessingTopLevelUpdate):
+        (endProcessingTopLevelUpdate):
+        (appendDOMUpdatesFromRecords):
+        (appendSelectionUpdateIfNecessary):
+
+        Adds new entries into the top-level list of DOM updates captured when editing. Respectively, these are input
+        events and selection changes.
+
+        (EditingHistory.getEditingHistoryAsJSONString):
+        * InternalScripts/EditingHistoryUtil.js: Added.
+        (prototype._scramble):
+        (prototype.applyToText):
+        (prototype.applyToFilename):
+        (prototype._scrambedNumberIndexForCode):
+        (prototype._scrambedLowercaseIndexForCode):
+        (prototype._scrambedUppercaseIndexForCode):
+
+        Naive implementation of an obfuscator. Currently, this only affects alphanumeric characters. Obfuscation is off
+        by default, but can be toggled on in JavaScript.
+
+        (elementFromMarkdown):
+        (GlobalNodeMap):
+        (GlobalNodeMap.prototype.nodesForGUIDs):
+        (GlobalNodeMap.prototype.guidsForTNodes):
+        (GlobalNodeMap.prototype.nodeForGUID):
+        (GlobalNodeMap.prototype.guidForNode):
+        (GlobalNodeMap.prototype.hasGUIDForNode):
+        (GlobalNodeMap.prototype.nodes):
+        (GlobalNodeMap.prototype.toObject):
+        (GlobalNodeMap.fromObject):
+        (GlobalNodeMap.dataForNode):
+        (GlobalNodeMap.elementFromTagName):
+        (GlobalNodeMap.nodeAttributesToObject):
+        (GlobalNodeMap.prototype.descriptionHTMLForGUID):
+        (GlobalNodeMap.prototype.descriptionHTMLForNode):
+
+        The GlobalNodeMap keeps track of every node that has appeared in the DOM, assigning each node a globally unique
+        identifier (GUID). This GUID is used when reconstructing the DOM, as well as unapplying or applying editing.
+
+        (SelectionState):
+        (SelectionState.prototype.isEqual):
+        (SelectionState.prototype.applyToSelection):
+        (SelectionState.fromSelection):
+        (SelectionState.prototype.toObject):
+        (SelectionState.fromObject):
+
+        Represents a snapshot of the Selection state (determined by getSelection()).
+
+        (DOMUpdate):
+        (DOMUpdate.prototype.apply):
+        (DOMUpdate.prototype.unapply):
+        (DOMUpdate.prototype.targetNode):
+        (DOMUpdate.prototype.detailsElement):
+        (DOMUpdate.ofType):
+        (DOMUpdate.fromRecords):
+
+        A DOMUpdate is an abstract object representing a change in the DOM that may be applied and unapplied. These are
+        also serializable as hashes, which may then be converted to JSON when generating editing history data.
+
+        (ChildListUpdate):
+        (ChildListUpdate.prototype.apply):
+        (ChildListUpdate.prototype.unapply):
+        (ChildListUpdate.prototype._nextSibling):
+        (ChildListUpdate.prototype._removedNodes):
+        (ChildListUpdate.prototype._addedNodes):
+        (ChildListUpdate.prototype.toObject):
+        (ChildListUpdate.prototype.detailsElement):
+        (ChildListUpdate.fromObject):
+
+        These three update types correspond to the three types of DOM mutations. These may appear as top-level updates
+        if they are not captured during an input event, but for the majority of user-input-driven changes, they will be
+        children of an input event.
+
+        (CharacterDataUpdate):
+        (CharacterDataUpdate.prototype.apply):
+        (CharacterDataUpdate.prototype.unapply):
+        (CharacterDataUpdate.prototype.detailsElement):
+        (CharacterDataUpdate.prototype.toObject):
+        (CharacterDataUpdate.fromObject):
+        (AttributeUpdate):
+        (AttributeUpdate.prototype.apply):
+        (AttributeUpdate.prototype.unapply):
+        (AttributeUpdate.prototype.detailsElement):
+        (AttributeUpdate.prototype.toObject):
+        (AttributeUpdate.fromObject):
+        (SelectionUpdate):
+        (SelectionUpdate.prototype.apply):
+        (SelectionUpdate.prototype.unapply):
+        (SelectionUpdate.prototype.toObject):
+        (SelectionUpdate.fromObject):
+        (SelectionUpdate.prototype._rangeDescriptionHTML):
+        (SelectionUpdate.prototype._anchorDescriptionHTML):
+        (SelectionUpdate.prototype._focusDescriptionHTML):
+        (SelectionUpdate.prototype.detailsElement):
+
+        Represents a change in the Selection. While no changes to the DOM structure occur as a result of a
+        SelectionUpdate, the information contained in these updates is used to determine where the selection should be
+        when rewinding or playing back the editing history.
+
+        (InputEventUpdate):
+        (InputEventUpdate.prototype._obfuscatedData):
+        (InputEventUpdate.prototype.apply):
+        (InputEventUpdate.prototype.unapply):
+        (InputEventUpdate.prototype.toObject):
+        (InputEventUpdate.fromObject):
+        (InputEventUpdate.prototype.detailsElement):
+
+        Represents an update due to user input, which consists of some number of child DOM mutation updates.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-12-07  Jer Noble  <jer.noble@apple.com>
 
         ASSERT crash while running media-source/mediasource-activesourcebuffers.html under Stress GC bot.

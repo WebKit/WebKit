@@ -1,0 +1,14 @@
+<html>
+<head>
+<script src="DOMTestingUtil.js"></script>
+<script src="EditingHistoryUtil.js"></script>
+<script>
+window.addEventListener("load", () => {
+    let scriptElement = document.createElement("script");
+    scriptElement.src = "DumpEditingHistory.js";
+    scriptElement.addEventListener("load", () => document.body.focus());
+    document.head.appendChild(scriptElement);
+});
+</script>
+</head>
+</html>
