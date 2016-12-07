@@ -1,3 +1,12 @@
+2016-12-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r209407.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::processMessage):
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::decodeLegacySessionState):
+
 2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209422.

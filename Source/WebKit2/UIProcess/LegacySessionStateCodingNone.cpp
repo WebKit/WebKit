@@ -47,7 +47,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
 
 bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
 {
-    IPC::Decoder decoder(IPC::DataReference(data, dataSize), Vector<IPC::Attachment>());
+    IPC::Decoder decoder(data, dataSize, nullptr, Vector<IPC::Attachment>());
     if (!decoder.decode(sessionState.backForwardListState))
         return false;
     if (!decoder.decode(sessionState.renderTreeSize))

@@ -245,7 +245,7 @@ bool Connection::processMessage()
     if (messageInfo.isMessageBodyIsOutOfLine())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
-    auto decoder = std::make_unique<Decoder>(DataReference(messageBody, messageInfo.bodySize()), WTFMove(attachments));
+    auto decoder = std::make_unique<Decoder>(messageBody, messageInfo.bodySize(), nullptr, WTFMove(attachments));
 
     processIncomingMessage(WTFMove(decoder));
 
