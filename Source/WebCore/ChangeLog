@@ -1,3 +1,114 @@
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Use tap and pinch gestures on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=165518
+
+        Reviewed by Dean Jackson.
+
+        We now use touch events to identify taps and pinches on media controls to respond immediately
+        to user interaction on buttons and enter fullscreen when pinching out.
+
+        * Modules/modern-media-controls/controls/button.css:
+        (button):
+        * Modules/modern-media-controls/controls/button.js:
+        (Button):
+        (Button.prototype.handleEvent):
+        (Button.prototype.gestureRecognizerStateDidChange):
+        (Button.prototype._notifyDelegateOfActivation):
+        (Button.prototype._handleUIEvent): Deleted.
+        * Modules/modern-media-controls/controls/controls-bar.js:
+        (ControlsBar.prototype.set fadesWhileIdle):
+        (ControlsBar.prototype.gestureRecognizerStateDidChange):
+        * Modules/modern-media-controls/controls/icon-button.js:
+        (IconButton.prototype._updateImage):
+        (IconButton):
+        * Modules/modern-media-controls/controls/ios-inline-media-controls.js:
+        (IOSInlineMediaControls.prototype.gestureRecognizerStateDidChange):
+        * Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js: Added.
+        (GestureRecognizer):
+        (GestureRecognizer.prototype.get state):
+        (GestureRecognizer.prototype.set state):
+        (GestureRecognizer.prototype.get target):
+        (GestureRecognizer.prototype.set target):
+        (GestureRecognizer.prototype.get numberOfTouches):
+        (GestureRecognizer.prototype.get enabled):
+        (GestureRecognizer.prototype.set enabled):
+        (GestureRecognizer.prototype.reset):
+        (GestureRecognizer.prototype.locationInElement):
+        (GestureRecognizer.prototype.locationInClient):
+        (GestureRecognizer.prototype.locationOfTouchInElement):
+        (GestureRecognizer.prototype.touchesBegan):
+        (GestureRecognizer.prototype.touchesMoved):
+        (GestureRecognizer.prototype.touchesEnded):
+        (GestureRecognizer.prototype.touchesCancelled):
+        (GestureRecognizer.prototype.gestureBegan):
+        (GestureRecognizer.prototype.gestureChanged):
+        (GestureRecognizer.prototype.gestureEnded):
+        (GestureRecognizer.prototype.enterPossibleState):
+        (GestureRecognizer.prototype.enterBeganState):
+        (GestureRecognizer.prototype.enterEndedState):
+        (GestureRecognizer.prototype.enterCancelledState):
+        (GestureRecognizer.prototype.enterFailedState):
+        (GestureRecognizer.prototype.enterChangedState):
+        (GestureRecognizer.prototype.enterRecognizedState):
+        (GestureRecognizer.prototype.handleEvent):
+        (GestureRecognizer.prototype._initRecognizer):
+        (GestureRecognizer.prototype._updateBaseListeners):
+        (GestureRecognizer.prototype._removeTrackingListeners):
+        (GestureRecognizer.prototype._updateTargetTouches):
+        (GestureRecognizer.prototype._updateKeyboardModifiers):
+        * Modules/modern-media-controls/gesture-recognizers/pinch.js: Added.
+        (PinchGestureRecognizer):
+        (PinchGestureRecognizer.prototype.get velocity):
+        (PinchGestureRecognizer.prototype.touchesBegan):
+        (PinchGestureRecognizer.prototype.touchesMoved):
+        (PinchGestureRecognizer.prototype.touchesEnded):
+        (PinchGestureRecognizer.prototype.gestureBegan):
+        (PinchGestureRecognizer.prototype.gestureChanged):
+        (PinchGestureRecognizer.prototype.gestureEnded):
+        (PinchGestureRecognizer.prototype.reset):
+        (PinchGestureRecognizer.prototype._recordGesture):
+        (PinchGestureRecognizer.prototype._updateStateWithEvent):
+        (PinchGestureRecognizer.prototype._distance):
+        * Modules/modern-media-controls/gesture-recognizers/tap.js: Added.
+        (TapGestureRecognizer):
+        (TapGestureRecognizer.prototype.touchesBegan):
+        (TapGestureRecognizer.prototype.touchesMoved):
+        (TapGestureRecognizer.prototype.touchesEnded):
+        (TapGestureRecognizer.prototype.reset):
+        (TapGestureRecognizer.prototype.locationInElement):
+        (TapGestureRecognizer.prototype.locationInClient):
+        (TapGestureRecognizer.prototype._clearTimer):
+        (TapGestureRecognizer.prototype._rewindTimer):
+        (TapGestureRecognizer.prototype._timerFired):
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/airplay-support.js:
+        (AirplaySupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport):
+        (ControlsVisibilitySupport.prototype.handleEvent):
+        (ControlsVisibilitySupport.prototype.syncControl): Deleted.
+        * Modules/modern-media-controls/media/fullscreen-support.js:
+        (FullscreenSupport):
+        (FullscreenSupport.prototype.iOSInlineMediaControlsRecognizedPinchInGesture):
+        (FullscreenSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/media-controller-support.js:
+        (MediaControllerSupport):
+        (MediaControllerSupport.prototype.handleEvent):
+        (MediaControllerSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/mute-support.js:
+        (MuteSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/pip-support.js:
+        (PiPSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/playback-support.js:
+        (PlaybackSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/skip-back-support.js:
+        (SkipBackSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/start-support.js:
+        (StartSupport.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/tracks-support.js:
+        (TracksSupport.prototype.buttonWasClicked): Deleted.
+
 2016-12-06  Dean Jackson  <dino@apple.com>
 
         Apply styling to media documents with modern controls

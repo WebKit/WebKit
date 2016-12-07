@@ -29,4 +29,6 @@ button {
     left: 0;
     border: 0;
     -webkit-appearance: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }

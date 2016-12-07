@@ -38,7 +38,7 @@ class MuteSupport extends MediaControllerSupport
         return ["volumechange"];
     }
 
-    buttonWasClicked(control)
+    buttonWasPressed(control)
     {
         const media = this.mediaController.media;
         media.muted = !media.muted;

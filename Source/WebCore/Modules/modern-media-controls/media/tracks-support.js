@@ -68,7 +68,7 @@ class TracksSupport extends MediaControllerSupport
         return ["loadedmetadata"];
     }
 
-    buttonWasClicked(control)
+    buttonWasPressed(control)
     {
         this.mediaController.controls.showTracksPanel();
     }

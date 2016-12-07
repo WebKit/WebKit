@@ -35,8 +35,6 @@ class IOSInlineMediaControls extends MediaControls
         this.element.classList.add("ios");
         this.element.classList.add("inline");
 
-        this.element.appendChild(this.startButton.element);
-
         this._leftContainer = new ButtonsContainer({
             buttons: [this.playPauseButton, this.skipBackButton],
             cssClassName: "left",
@@ -52,6 +50,22 @@ class IOSInlineMediaControls extends MediaControls
         });
 
         this.controlsBar.children = [this._leftContainer, this._rightContainer];
+
+        this._pinchGestureRecognizer = new PinchGestureRecognizer(this.element, this);
+    }
+
+    // Protected
+
+    gestureRecognizerStateDidChange(recognizer)
+    {
+        if (this._pinchGestureRecognizer !== recognizer)
+            return;
+
+        if (recognizer.state !== GestureRecognizer.States.Ended && recognizer.state !== GestureRecognizer.States.Changed)
+            return;
+
+        if (recognizer.scale > IOSInlineMediaControls.MinimumScaleToEnterFullscreen && this.delegate && typeof this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture === "function")
+            this.delegate.iOSInlineMediaControlsRecognizedPinchInGesture();
     }
 
     // Public
@@ -95,3 +109,5 @@ class IOSInlineMediaControls extends MediaControls
     }
 
 }
+
+IOSInlineMediaControls.MinimumScaleToEnterFullscreen = 1.5;

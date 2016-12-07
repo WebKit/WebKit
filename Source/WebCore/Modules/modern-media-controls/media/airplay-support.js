@@ -38,7 +38,7 @@ class AirplaySupport extends MediaControllerSupport
         return ["webkitplaybacktargetavailabilitychanged", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 
-    buttonWasClicked(control)
+    buttonWasPressed(control)
     {
         this.mediaController.media.webkitShowPlaybackTargetPicker();
     }

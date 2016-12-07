@@ -35,7 +35,7 @@ class SkipBackSupport extends MediaControllerSupport
         return this.mediaController.controls.skipBackButton;
     }
 
-    buttonWasClicked(control)
+    buttonWasPressed(control)
     {
         const media = this.mediaController.media;
         media.currentTime = Math.max(media.currentTime - SkipBackSeconds, media.seekable.start(0));

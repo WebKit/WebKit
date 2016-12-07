@@ -30,6 +30,9 @@ class FullscreenSupport extends MediaControllerSupport
     {
         super(mediaController);
 
+        if (mediaController.controls instanceof IOSInlineMediaControls)
+            mediaController.controls.delegate = this;
+
         const videoTracks = mediaController.media.videoTracks;
         for (let eventType of ["change", "addtrack", "removetrack"])
             videoTracks.addEventListener(eventType, this);
@@ -58,7 +61,7 @@ class FullscreenSupport extends MediaControllerSupport
         return ["loadedmetadata", "error"];
     }
 
-    buttonWasClicked(control)
+    buttonWasPressed(control)
     {
         const media = this.mediaController.media;
         if (media.webkitDisplayingFullscreen)
@@ -67,6 +70,11 @@ class FullscreenSupport extends MediaControllerSupport
             media.webkitEnterFullscreen();
     }
 
+    iOSInlineMediaControlsRecognizedPinchInGesture()
+    {
+        this.mediaController.media.webkitEnterFullscreen();
+    }
+    
     syncControl()
     {
         const control = this.control;

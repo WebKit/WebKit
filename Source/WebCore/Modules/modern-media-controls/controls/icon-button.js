@@ -107,8 +107,6 @@ class IconButton extends Button
         this.height = this._image.height / window.devicePixelRatio;
 
         this.needsLayout = true;
-        if (this.layoutDelegate)
-            this.layoutDelegate.needsLayout = true;
     }
 
 }

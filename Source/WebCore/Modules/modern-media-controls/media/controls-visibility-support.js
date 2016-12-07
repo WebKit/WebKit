@@ -30,8 +30,10 @@ class ControlsVisibilitySupport extends MediaControllerSupport
     {
         super(mediaController);
 
-        this._controlsAttributeObserver = new MutationObserver(this.syncControl.bind(this));
+        this._controlsAttributeObserver = new MutationObserver(this._updateControls.bind(this));
         this._controlsAttributeObserver.observe(mediaController.media, { attributes: true, attributeFilter: ["controls"] });
+
+        this._updateControls();
     }
 
     // Protected
@@ -46,7 +48,14 @@ class ControlsVisibilitySupport extends MediaControllerSupport
         return ["loadedmetadata", "play", "pause"];
     }
 
-    syncControl()
+    handleEvent()
+    {
+        this._updateControls();
+    }
+
+    // Private
+
+    _updateControls()
     {
         const media = this.mediaController.media;
         const isVideo = media instanceof HTMLVideoElement;

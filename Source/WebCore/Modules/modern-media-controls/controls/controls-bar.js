@@ -37,6 +37,9 @@ class ControlsBar extends LayoutNode
         this.userInteractionEnabled = true;
 
         this.autoHideDelay = ControlsBar.DefaultAutoHideDelay;
+
+        if (GestureRecognizer.SupportsTouches)
+            this._tapGestureRecognizer = new TapGestureRecognizer(this._mediaControls.element, this);
     }
 
     // Public
@@ -81,16 +84,18 @@ class ControlsBar extends LayoutNode
 
         this._fadesWhileIdle = flag;
 
-        if (flag) {
-            this._mediaControls.element.addEventListener("mousemove", this);
-            this._mediaControls.element.addEventListener("mouseleave", this);
-            this.element.addEventListener("mouseenter", this);
-            this.element.addEventListener("mouseleave", this);
-        } else {
-            this._mediaControls.element.removeEventListener("mousemove", this);
-            this._mediaControls.element.removeEventListener("mouseleave", this);
-            this.element.removeEventListener("mouseenter", this);
-            this.element.removeEventListener("mouseleave", this);
+        if (!GestureRecognizer.SupportsTouches) {
+            if (flag) {
+                this._mediaControls.element.addEventListener("mousemove", this);
+                this._mediaControls.element.addEventListener("mouseleave", this);
+                this.element.addEventListener("mouseenter", this);
+                this.element.addEventListener("mouseleave", this);
+            } else {
+                this._mediaControls.element.removeEventListener("mousemove", this);
+                this._mediaControls.element.removeEventListener("mouseleave", this);
+                this.element.removeEventListener("mouseenter", this);
+                this.element.removeEventListener("mouseleave", this);
+            }
         }
 
         if (flag && !this.faded)
@@ -153,6 +158,21 @@ class ControlsBar extends LayoutNode
                 this._resetAutoHideTimer(true);
             } else if (event.type === "focus")
                 this.faded = false;
+        }
+    }
+
+    gestureRecognizerStateDidChange(recognizer)
+    {
+        if (this._tapGestureRecognizer !== recognizer || recognizer.state !== GestureRecognizer.States.Recognized)
+            return;
+
+        if (this.faded)
+            this.faded = false;
+        else {
+            const tapLocation = recognizer.locationInClient();
+            const tappedElement = document.elementFromPoint(tapLocation.x, tapLocation.y);
+            if (!this.element.contains(tappedElement))
+                this.faded = true;
         }
     }
 

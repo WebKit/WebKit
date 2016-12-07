@@ -35,7 +35,10 @@ class Button extends LayoutItem
 
         this._enabled = true;
 
-        this.element.addEventListener("click", this);
+        if (GestureRecognizer.SupportsTouches)
+            this._tapGestureRecognizer = new TapGestureRecognizer(this.element, this);
+        else
+            this.element.addEventListener("click", this);
     }
 
     // Public
@@ -59,16 +62,22 @@ class Button extends LayoutItem
 
     handleEvent(event)
     {
-        if (event.currentTarget === this.element)
-            this._handleUIEvent(event);
+        if (event.type === "click" && event.currentTarget === this.element)
+            this._notifyDelegateOfActivation();
+    }
+
+    gestureRecognizerStateDidChange(recognizer)
+    {
+        if (this._tapGestureRecognizer === recognizer && recognizer.state === GestureRecognizer.States.Recognized)
+            this._notifyDelegateOfActivation();
     }
 
     // Private
 
-    _handleUIEvent(event)
+    _notifyDelegateOfActivation()
     {
-        if (this._enabled && event.type === "click" && this.uiDelegate && typeof this.uiDelegate.buttonWasClicked === "function")
-            this.uiDelegate.buttonWasClicked(this);
+        if (this._enabled && this.uiDelegate && typeof this.uiDelegate.buttonWasPressed === "function")
+            this.uiDelegate.buttonWasPressed(this);
     }
 
 }

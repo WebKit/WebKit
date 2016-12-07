@@ -41,7 +41,7 @@ class PiPSupport extends MediaControllerSupport
         return ["loadedmetadata", "error", "webkitpresentationmodechanged", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 
-    buttonWasClicked(control)
+    buttonWasPressed(control)
     {
         const media = this.mediaController.media;
         media.webkitSetPresentationMode(media.webkitPresentationMode === PiPMode ? InlineMode : PiPMode);

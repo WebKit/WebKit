@@ -1,3 +1,31 @@
+2016-12-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Use tap and pinch gestures on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=165518
+
+        Reviewed by Dean Jackson.
+
+        With the addition of new gesture recognizer source files, some tests were failing
+        due to linking to only a subset of the modern media controls resources.
+
+        * media/modern-media-controls/airplay-button/airplay-button.html:
+        * media/modern-media-controls/aspect-ratio-button/aspect-ratio-button.html:
+        * media/modern-media-controls/button/button.html:
+        * media/modern-media-controls/buttons-container/buttons-container-buttons-property.html:
+        * media/modern-media-controls/buttons-container/buttons-container-constructor.html:
+        * media/modern-media-controls/buttons-container/buttons-container-layout.html:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html:
+        * media/modern-media-controls/icon-button/icon-button-active-state.html:
+        * media/modern-media-controls/icon-button/icon-button.html:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * media/modern-media-controls/pip-button/pip-button.html:
+        * media/modern-media-controls/placard/placard.html:
+        * media/modern-media-controls/play-pause-button/play-pause-button.html:
+        * media/modern-media-controls/skip-back-button/skip-back-button.html:
+        * media/modern-media-controls/start-button/start-button-styles.html:
+        * media/modern-media-controls/start-button/start-button.html:
+        * media/modern-media-controls/tracks-button/tracks-button.html:
+
 2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/security/module-incorrect-mime-types.html as flaky on ios-simulator-wk2.

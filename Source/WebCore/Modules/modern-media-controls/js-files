@@ -1,3 +1,6 @@
+gesture-recognizers/gesture-recognizer.js
+gesture-recognizers/tap.js
+gesture-recognizers/pinch.js
 controls/scheduler.js
 controls/layout-node.js
 controls/layout-item.js
