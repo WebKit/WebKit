@@ -1,3 +1,14 @@
+2016-12-05  Ada Chan  <adachan@apple.com>
+
+        Add a getter for serverTrust in _WKObservablePageState
+        https://bugs.webkit.org/show_bug.cgi?id=165433
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.h:
+        * UIProcess/API/C/mac/WKPagePrivateMac.mm:
+        (-[WKObservablePageState serverTrust]):
+
 2016-12-07  Jer Noble  <jer.noble@apple.com>
 
         Exiting Element Fullscreen mode loses focus on WKWebView.

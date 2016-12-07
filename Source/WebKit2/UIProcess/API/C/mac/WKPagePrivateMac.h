@@ -48,6 +48,7 @@ extern "C" {
 
 // Not KVO compliant.
 @property (nonatomic, readonly) NSURL *unreachableURL;
+@property (nonatomic, readonly) SecTrustRef serverTrust;
 
 @end
 

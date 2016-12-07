@@ -100,6 +100,19 @@ using namespace WebKit;
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
 }
 
+- (SecTrustRef)serverTrust
+{
+#if HAVE(SEC_TRUST_SERIALIZATION)
+    auto certificateInfo = _page->pageLoadState().certificateInfo();
+    if (!certificateInfo)
+        return nil;
+
+    return certificateInfo->certificateInfo().trust();
+#else
+    return nil;
+#endif
+}
+
 @end
 
 id <_WKObservablePageState> WKPageCreateObservableState(WKPageRef pageRef)
