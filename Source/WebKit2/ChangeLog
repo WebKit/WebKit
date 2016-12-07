@@ -1,3 +1,16 @@
+2016-12-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r209422.
+
+        This change caused assertion failures during API tests.
+
+        Reverted changeset:
+
+        "[MediaStream][Mac] Revoke sandbox extensions when capture
+        ends"
+        https://bugs.webkit.org/show_bug.cgi?id=165476
+        http://trac.webkit.org/changeset/209422
+
 2016-12-06  Dean Jackson  <dino@apple.com>
 
         Include default value in Experimental Feature information

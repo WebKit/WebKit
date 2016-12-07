@@ -6409,20 +6409,14 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
 
     WebCore::MediaProducer::MediaStateFlags oldMediaStateHasActiveCapture = m_mediaState & (WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice);
     WebCore::MediaProducer::MediaStateFlags newMediaStateHasActiveCapture = state & (WebCore::MediaProducer::HasActiveAudioCaptureDevice | WebCore::MediaProducer::HasActiveVideoCaptureDevice);
+    if (!oldMediaStateHasActiveCapture && newMediaStateHasActiveCapture)
+        m_uiClient->didBeginCaptureSession();
+    if (oldMediaStateHasActiveCapture && !newMediaStateHasActiveCapture)
+        m_uiClient->didEndCaptureSession();
 
     MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
     MediaProducer::MediaStateFlags oldState = m_mediaState;
     m_mediaState = state;
-
-#if ENABLE(MEDIA_STREAM)
-    if (!oldMediaStateHasActiveCapture && newMediaStateHasActiveCapture) {
-        m_uiClient->didBeginCaptureSession();
-        m_userMediaPermissionRequestManager.startedCaptureSession();
-    } else if (oldMediaStateHasActiveCapture && !newMediaStateHasActiveCapture) {
-        m_uiClient->didEndCaptureSession();
-        m_userMediaPermissionRequestManager.endedCaptureSession();
-    }
-#endif
 
     activityStateDidChange(ActivityState::IsAudible);
 

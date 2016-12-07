@@ -53,9 +53,6 @@ private:
 class UserMediaPermissionRequestManagerProxy {
 public:
     explicit UserMediaPermissionRequestManagerProxy(WebPageProxy&);
-    ~UserMediaPermissionRequestManagerProxy();
-
-    WebPageProxy& page() const { return m_page; }
 
     void invalidateRequests();
 
@@ -71,10 +68,6 @@ public:
 
     void clearCachedState();
 
-    void startedCaptureSession();
-    void endedCaptureSession();
-    void stopCapture();
-
 private:
     Ref<UserMediaPermissionRequestProxy> createRequest(uint64_t userMediaID, uint64_t frameID, const String&userMediaDocumentOriginIdentifier, const String& topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs);
     void denyRequest(uint64_t userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& invalidConstraint);
@@ -83,6 +76,14 @@ private:
 
     HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;
     HashMap<uint64_t, RefPtr<UserMediaPermissionCheckProxy>> m_pendingDeviceRequests;
+
+    enum SandboxExtensionsGranted {
+        None = 0,
+        Video = 1 << 0,
+        Audio = 1 << 1
+    };
+    unsigned m_pageSandboxExtensionsGranted;
+
     HashMap<uint64_t, std::unique_ptr<FrameAuthorizationState>> m_frameStates;
 
     WebPageProxy& m_page;

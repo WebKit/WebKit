@@ -292,8 +292,7 @@ messages -> WebPage LegacyReceiver {
     UserMediaAccessWasGranted(uint64_t userMediaID, String audioDeviceUID, String videoDeviceUID)
     UserMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
     DidCompleteMediaDeviceEnumeration(uint64_t userMediaID, Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
-    GrantUserMediaDeviceSandboxExtensions(WebKit::MediaDeviceSandboxExtensions sandboxExtensions)
-    RevokeUserMediaDeviceSandboxExtensions(Vector<String> sandboxExtensionIDs)
+    GrantUserMediaDevicesSandboxExtension(WebKit::SandboxExtension::HandleArray sandboxExtensionHandle)
 #endif
 
     # Notification

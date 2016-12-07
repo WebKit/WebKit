@@ -52,7 +52,7 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager()
 {
     for (auto& sandboxExtension : m_userMediaDeviceSandboxExtensions)
-        sandboxExtension.value->revoke();
+        sandboxExtension->revoke();
 }
 
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
@@ -202,21 +202,15 @@ void UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration(uint64
     request->setDeviceInfo(deviceList, mediaDeviceIdentifierHashSalt, hasPersistentAccess);
 }
 
-void UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions& extensions)
+void UserMediaPermissionRequestManager::grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray& sandboxExtensionHandles)
 {
-    for (size_t i = 0; i < extensions.size(); i++) {
-        auto& extension = extensions[i];
-        extension.second->consume();
-        m_userMediaDeviceSandboxExtensions.add(extension.first, extension.second.copyRef());
-    }
-}
+    ASSERT(m_userMediaDeviceSandboxExtensions.size() <= 2);
 
-void UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& extensionIDs)
-{
-    for (const auto& extensionID : extensionIDs) {
-        auto extension = m_userMediaDeviceSandboxExtensions.take(extensionID);
-        if (extension)
-            extension->revoke();
+    for (size_t i = 0; i < sandboxExtensionHandles.size(); i++) {
+        if (auto extension = SandboxExtension::create(sandboxExtensionHandles[i])) {
+            extension->consume();
+            m_userMediaDeviceSandboxExtensions.append(extension.release());
+        }
     }
 }
 

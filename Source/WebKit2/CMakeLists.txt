@@ -369,7 +369,6 @@ set(WebKit2_SOURCES
     UIProcess/UserMediaPermissionCheckProxy.cpp
     UIProcess/UserMediaPermissionRequestManagerProxy.cpp
     UIProcess/UserMediaPermissionRequestProxy.cpp
-    UIProcess/UserMediaProcessManager.cpp
     UIProcess/VisitedLinkStore.cpp
     UIProcess/WebBackForwardList.cpp
     UIProcess/WebColorPicker.cpp
@@ -582,7 +581,6 @@ set(WebKit2_SOURCES
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp
 
-    WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
     WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 
     WebProcess/Network/NetworkProcessConnection.cpp
