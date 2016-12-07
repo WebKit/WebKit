@@ -196,7 +196,9 @@
     </dependencies>
     <branch module="/pub/GNOME/sources/gtk+/3.16/gtk+-3.16.4.tar.xz" version="3.16.4"
             repo="ftp.gnome.org"
-            hash="sha256:1ee5dbd7a4cb81a91eaa1b7ae64ba5a3eab6a3c0a764155583ab96524590fc8e"/>
+            hash="sha256:1ee5dbd7a4cb81a91eaa1b7ae64ba5a3eab6a3c0a764155583ab96524590fc8e">
+      <patch file="gtk+-configure-fix-detecting-CUPS-2.x.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="glib"

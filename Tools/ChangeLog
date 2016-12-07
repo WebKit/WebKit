@@ -1,3 +1,21 @@
+2016-12-07  ChangSeok Oh  <changseok@webkit.org>
+
+        [GTK] Cannot build GTK+ with CUPS 2.* versions
+        https://bugs.webkit.org/show_bug.cgi?id=163591
+
+        Reviewed by Michael Catanzaro.
+
+        GTK+ build has failed on the system which CUPS 2.x is installed in. GTK+ 3.16.4
+        does not assume to use the recent CUPS thus it fails to detect the CUPS in configuration.
+        GTK+ upstream fixed this issue but it is not easy to apply the original patch to our
+        old gtk+ since it requires not only bumping up glib accordingly and its consequence
+        causes many printing test failures. So, I propose to fix the configuration issue by
+        applying the change to the configure file directly. By doing this, we don't need to
+        upgrade glib and worry about any test failures as a consequence of the upgraded glib.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/gtk+-configure-fix-detecting-CUPS-2.x.patch: Added.
+
 2016-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Fix use of enum in a WK2 C SPI header.
