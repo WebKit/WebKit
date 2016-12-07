@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-CSSTokenizer::Scope::Scope(const String& string)
-    : m_string(string)
+CSSTokenizer::CSSTokenizer(const String& string)
+    : m_input(string)
 {
     // According to the spec, we should perform preprocessing here.
     // See: http://dev.w3.org/csswg/css-syntax/#input-preprocessing
@@ -58,10 +58,8 @@ CSSTokenizer::Scope::Scope(const String& string)
     // Most strings we tokenize have about 3.5 to 5 characters per token.
     m_tokens.reserveInitialCapacity(string.length() / 3);
 
-    CSSTokenizerInputStream input(string);
-    CSSTokenizer tokenizer(input, *this);
     while (true) {
-        CSSParserToken token = tokenizer.nextToken();
+        CSSParserToken token = nextToken();
         if (token.type() == CommentToken)
             continue;
         if (token.type() == EOFToken)
@@ -70,39 +68,36 @@ CSSTokenizer::Scope::Scope(const String& string)
     }
 }
 
-CSSTokenizer::Scope::Scope(const String& string, CSSParserObserverWrapper& wrapper)
-    : m_string(string)
+CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper& wrapper)
+    : m_input(string)
 {
     if (string.isEmpty())
         return;
 
-    CSSTokenizerInputStream input(string);
-    CSSTokenizer tokenizer(input, *this);
-
     unsigned offset = 0;
     while (true) {
-        CSSParserToken token = tokenizer.nextToken();
+        CSSParserToken token = nextToken();
         if (token.type() == EOFToken)
             break;
         if (token.type() == CommentToken)
-            wrapper.addComment(offset, input.offset(), m_tokens.size());
+            wrapper.addComment(offset, m_input.offset(), m_tokens.size());
         else {
             m_tokens.append(token);
             wrapper.addToken(offset);
         }
-        offset = input.offset();
+        offset = m_input.offset();
     }
 
     wrapper.addToken(offset);
     wrapper.finalizeConstruction(m_tokens.begin());
 }
 
-CSSParserTokenRange CSSTokenizer::Scope::tokenRange()
+CSSParserTokenRange CSSTokenizer::tokenRange()
 {
     return m_tokens;
 }
 
-unsigned CSSTokenizer::Scope::tokenCount()
+unsigned CSSTokenizer::tokenCount()
 {
     return m_tokens.size();
 }
@@ -117,12 +112,6 @@ static bool isNewLine(UChar cc)
 static bool twoCharsAreValidEscape(UChar first, UChar second)
 {
     return first == '\\' && !isNewLine(second);
-}
-
-CSSTokenizer::CSSTokenizer(CSSTokenizerInputStream& inputStream, Scope& scope)
-    : m_input(inputStream)
-    , m_scope(scope)
-{
 }
 
 void CSSTokenizer::reconsume(UChar c)
@@ -883,7 +872,7 @@ bool CSSTokenizer::nextCharsAreIdentifier()
 
 StringView CSSTokenizer::registerString(const String& string)
 {
-    m_scope.storeString(string);
+    m_stringPool.append(string);
     return string;
 }
 

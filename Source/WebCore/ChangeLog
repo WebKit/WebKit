@@ -1,3 +1,48 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Eliminate the Scope class and fold it into CSSTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=165532
+
+        Reviewed by Dean Jackson.
+
+        The Scope class, nested inside CSSTokenizer, is both poorly named and serves
+        no purpose. It's especially weird that it was the entry point into tokenization
+        instead of CSSTokenizer.
+
+        Eliminate the class, fold its members and functions into CSSTokenizer, and have
+        callers just make a CSSTokenizer instead.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseSupportsCondition):
+        (WebCore::CSSParser::parseSelector):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseValue):
+        (WebCore::CSSParserImpl::parseCustomPropertyValue):
+        (WebCore::CSSParserImpl::parseInlineStyleDeclaration):
+        (WebCore::CSSParserImpl::parseDeclarationList):
+        (WebCore::CSSParserImpl::parseRule):
+        (WebCore::CSSParserImpl::parseStyleSheet):
+        (WebCore::CSSParserImpl::parseKeyframeKeyList):
+        (WebCore::CSSParserImpl::parseDeclarationListForInspector):
+        (WebCore::CSSParserImpl::parseStyleSheetForInspector):
+        * css/parser/CSSTokenizer.cpp:
+        (WebCore::CSSTokenizer::CSSTokenizer):
+        (WebCore::CSSTokenizer::tokenRange):
+        (WebCore::CSSTokenizer::tokenCount):
+        (WebCore::CSSTokenizer::registerString):
+        (WebCore::CSSTokenizer::Scope::Scope): Deleted.
+        (WebCore::CSSTokenizer::Scope::tokenRange): Deleted.
+        (WebCore::CSSTokenizer::Scope::tokenCount): Deleted.
+        * css/parser/CSSTokenizer.h:
+        (WebCore::CSSTokenizer::Scope::storeString): Deleted.
+        * css/parser/CSSTokenizerInputStream.cpp:
+        (WebCore::CSSTokenizerInputStream::CSSTokenizerInputStream):
+        * css/parser/CSSTokenizerInputStream.h:
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::parseMediaQuerySet):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::SizesAttributeParser):
+
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused and mostly untested Page domain commands and events

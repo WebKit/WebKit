@@ -38,7 +38,7 @@ namespace WebCore {
 
 RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(const String& queryString)
 {
-    return parseMediaQuerySet(CSSTokenizer::Scope(queryString).tokenRange());
+    return parseMediaQuerySet(CSSTokenizer(queryString).tokenRange());
 }
 
 RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(CSSParserTokenRange range)

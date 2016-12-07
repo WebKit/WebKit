@@ -427,8 +427,8 @@ RefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(StyleSheetContents* sheet, co
 bool CSSParser::parseSupportsCondition(const String& condition)
 {
     if (m_context.useNewParser) {
-        CSSTokenizer::Scope scope(condition);
-        CSSParserTokenRange range = scope.tokenRange();
+        CSSTokenizer tokenizer(condition);
+        CSSParserTokenRange range = tokenizer.tokenRange();
         CSSParserImpl parser(m_context);
         return CSSSupportsParser::supportsCondition(range, parser) == CSSSupportsParser::Supported;
     }
@@ -1455,8 +1455,8 @@ Color CSSParser::parseSystemColor(const String& string, Document* document)
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
     if (m_context.useNewParser) {
-        CSSTokenizer::Scope scope(string);
-        selectorList = CSSSelectorParser::parseSelector(scope.tokenRange(), m_context, nullptr);
+        CSSTokenizer tokenizer(string);
+        selectorList = CSSSelectorParser::parseSelector(tokenizer.tokenRange(), m_context, nullptr);
         return;
     }
 
