@@ -1,3 +1,17 @@
+2016-12-06  Dean Jackson  <dino@apple.com>
+
+        Apply styling to media documents with modern controls
+        https://bugs.webkit.org/show_bug.cgi?id=165499
+        <rdar://problems/29543847>
+
+        Reviewed by Antoine Quint.
+
+        Make sure that the small test video has the correct background,
+        and is not anchored to the top left of the page.
+
+        * media/modern-media-controls/media-documents/background-color-and-centering-expected.html: Added.
+        * media/modern-media-controls/media-documents/background-color-and-centering.html: Added.
+
 2016-12-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Part 1 of 2] Add support for SPKI format while doing SubtleCrypto.importKey/exportKey

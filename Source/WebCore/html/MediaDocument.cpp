@@ -98,7 +98,7 @@ void MediaDocumentParser::createDocumentStructure()
 
     auto metaElement = HTMLMetaElement::create(document);
     metaElement->setAttributeWithoutSynchronization(nameAttr, AtomicString("viewport", AtomicString::ConstructFromLiteral));
-    metaElement->setAttributeWithoutSynchronization(contentAttr, AtomicString("width=device-width,initial-scale=1,user-scalable=no", AtomicString::ConstructFromLiteral));
+    metaElement->setAttributeWithoutSynchronization(contentAttr, AtomicString("width=device-width,initial-scale=1", AtomicString::ConstructFromLiteral));
     headElement->appendChild(metaElement);
 #endif
 

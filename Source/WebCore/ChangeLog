@@ -1,3 +1,21 @@
+2016-12-06  Dean Jackson  <dino@apple.com>
+
+        Apply styling to media documents with modern controls
+        https://bugs.webkit.org/show_bug.cgi?id=165499
+        <rdar://problems/29543847>
+
+        Reviewed by Antoine Quint.
+
+        Existing MediaDocuments got styling from the injected style
+        sheet, which had rules for such documents. The modern media controls
+        use a scoped style rule, so we can't touch the document style. Instead,
+        inline the style directly from MediaDocument.
+
+        Test: media/modern-media-controls/media-documents/background-color-and-centering.html
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+
 2016-12-06  Zalan Bujtas  <zalan@apple.com>
 
         Move RenderElement::rendererForRootBackground to RenderView.
