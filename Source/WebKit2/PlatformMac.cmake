@@ -43,6 +43,7 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/mac/RemoteNetworkingContext.mm
 
     Platform/IPC/mac/ConnectionMac.mm
+    Platform/IPC/mac/MachMessage.cpp
 
     Platform/cf/ModuleCF.cpp
 
