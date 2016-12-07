@@ -1,3 +1,18 @@
+2016-12-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix editing text flakiness introduced in r209411
+        https://bugs.webkit.org/show_bug.cgi?id=165500
+
+        Reviewed by Dean Jackson.
+
+        The "insideFixed" out param was left uninitialized sometimes. This affected FrameSelection's 
+        m_caretInsidePositionFixed, which caused problems in these tests.
+
+        Tested by editing tests in WK1.
+
+        * editing/htmlediting.cpp:
+        (WebCore::absoluteBoundsForLocalCaretRect):
+
 2016-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Correct SDKROOT values in xcconfig files

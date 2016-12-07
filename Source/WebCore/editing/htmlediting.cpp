@@ -1292,6 +1292,9 @@ LayoutRect localCaretRectInRendererForRect(LayoutRect& localRect, Node* node, Re
 
 IntRect absoluteBoundsForLocalCaretRect(RenderBlock* rendererForCaretPainting, const LayoutRect& rect, bool* insideFixed)
 {
+    if (insideFixed)
+        *insideFixed = false;
+
     if (!rendererForCaretPainting || rect.isEmpty())
         return IntRect();
 
