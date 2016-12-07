@@ -379,6 +379,7 @@
     </if>
     <dependencies>
       <dep package="gst-plugins-base"/>
+      <dep package="libvpx"/>
     </dependencies>
 
     <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.8.0"
