@@ -416,7 +416,7 @@ void InjectedBundlePage::prepare()
     WKBundlePageSetTracksRepaints(m_page, false);
     
     // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.
-    WKEventThrottlingBehavior behavior = EventThrottlingBehaviorResponsive;
+    WKEventThrottlingBehavior behavior = kWKEventThrottlingBehaviorResponsive;
     WKBundlePageSetEventThrottlingBehaviorOverride(m_page, &behavior);
 }
 

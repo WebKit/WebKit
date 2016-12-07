@@ -698,10 +698,10 @@ void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEven
     std::optional<WebCore::EventThrottlingBehavior> behaviorValue;
     if (behavior) {
         switch (*behavior) {
-        case EventThrottlingBehaviorResponsive:
+        case kWKEventThrottlingBehaviorResponsive:
             behaviorValue = WebCore::EventThrottlingBehavior::Responsive;
             break;
-        case EventThrottlingBehaviorUnresponsive:
+        case kWKEventThrottlingBehaviorUnresponsive:
             behaviorValue = WebCore::EventThrottlingBehavior::Unresponsive;
             break;
         }

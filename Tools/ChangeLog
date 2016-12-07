@@ -21,6 +21,16 @@
         Fix use of enum in a WK2 C SPI header.
         rdar://problem/28725583
 
+        Followup to correctly prefix the enum values.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::prepare):
+
+2016-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix use of enum in a WK2 C SPI header.
+        rdar://problem/28725583
+
         Reviewed by Dan Bernstein.
 
         Use correct enum style for a C SPI header and fix the callers.

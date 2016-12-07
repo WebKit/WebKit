@@ -112,8 +112,8 @@ WK_EXPORT void WKBundlePageResetApplicationCacheOriginQuota(WKBundlePageRef page
 WK_EXPORT WKArrayRef WKBundlePageCopyOriginsWithApplicationCache(WKBundlePageRef page);
 
 enum {
-    EventThrottlingBehaviorResponsive = 0,
-    EventThrottlingBehaviorUnresponsive
+    kWKEventThrottlingBehaviorResponsive = 0,
+    kWKEventThrottlingBehaviorUnresponsive
 };
 
 typedef uint32_t WKEventThrottlingBehavior;
