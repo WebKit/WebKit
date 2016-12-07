@@ -186,32 +186,10 @@
             ]
         },
         {
-            "name": "setDocumentContent",
-            "description": "Sets given markup as the document's HTML.",
-            "parameters": [
-                { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id to set HTML for." },
-                { "name": "html", "type": "string", "description": "HTML content to set."  }
-            ]
-        },
-        {
             "name": "setShowPaintRects",
             "description": "Requests that backend shows paint rectangles",
             "parameters": [
                 { "name": "result", "type": "boolean", "description": "True for showing paint rectangles" }
-            ]
-        },
-        {
-            "name": "getScriptExecutionStatus",
-            "description": "Determines if scripts can be executed in the page.",
-            "returns": [
-                { "name": "result", "type": "string", "enum": ["allowed", "disabled", "forbidden"], "description": "Script execution status: \"allowed\" if scripts can be executed, \"disabled\" if script execution has been disabled through page settings, \"forbidden\" if script execution for the given page is not possible for other reasons." }
-            ]
-        },
-        {
-            "name": "setScriptExecutionDisabled",
-            "description": "Switches script execution in the page.",
-            "parameters": [
-                { "name": "value", "type": "boolean", "description": "Whether script execution should be disabled in the page." }
             ]
         },
         {
@@ -257,14 +235,6 @@
             ],
             "returns": [
                 { "name": "dataURL", "type": "string", "description": "Base64-encoded image data (PNG)." }
-            ]
-        },
-        {
-            "name": "handleJavaScriptDialog",
-            "description": "Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).",
-            "parameters": [
-                { "name": "accept", "type": "boolean", "description": "Whether to accept or dismiss the dialog." },
-                { "name": "promptText", "type": "string", "optional": true, "description": "The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog." }
             ]
         },
         {
@@ -329,24 +299,6 @@
             "description": "Fired when frame no longer has a scheduled navigation.",
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the frame that has cleared its scheduled navigation." }
-            ]
-        },
-        {
-            "name": "javascriptDialogOpening",
-            "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.",
-            "parameters": [
-                { "name": "message", "type": "string", "description": "Message that will be displayed by the dialog." }
-            ]
-        },
-        {
-            "name": "javascriptDialogClosed",
-            "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed."
-        },
-        {
-            "name": "scriptsEnabled",
-            "description": "Fired when the JavaScript is enabled/disabled on the page",
-            "parameters": [
-                { "name": "isEnabled", "type": "boolean", "description": "Whether script execution is enabled or disabled on the page." }
             ]
         }
     ]

@@ -1,3 +1,16 @@
+2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused and mostly untested Page domain commands and events
+        https://bugs.webkit.org/show_bug.cgi?id=165507
+
+        Reviewed by Brian Burg.
+
+        * inspector/page/javascriptDialogEvents-expected.txt: Removed.
+        * inspector/page/javascriptDialogEvents.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        Remove test skipped by all platforms.
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         Fix a bad result that I landed by accident.

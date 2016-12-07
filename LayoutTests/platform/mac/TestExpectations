@@ -620,8 +620,6 @@ webkit.org/b/105777 editing/mac/spelling/autocorrection-in-textarea.html [ Failu
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
-webkit.org/b/110186 inspector/page/javascriptDialogEvents.html [ Skip ]
-
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 

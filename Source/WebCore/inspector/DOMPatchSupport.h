@@ -43,8 +43,6 @@ class Node;
 
 class DOMPatchSupport final {
 public:
-    static void patchDocument(Document&, const String& markup);
-
     DOMPatchSupport(DOMEditor&, Document&);
 
     void patchDocument(const String& markup);

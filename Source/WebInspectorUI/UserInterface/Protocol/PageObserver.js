@@ -69,16 +69,16 @@ WebInspector.PageObserver = class PageObserver
 
     javascriptDialogOpening(message)
     {
-        // Not handled yet.
+        // COMPATIBILITY (iOS 10): Page.javascriptDialogOpening was removed after iOS 10.
     }
 
     javascriptDialogClosed()
     {
-        // Not handled yet.
+        // COMPATIBILITY (iOS 10): Page.javascriptDialogClosed was removed after iOS 10.
     }
 
     scriptsEnabled(enabled)
     {
-        // Not handled yet.
+        // COMPATIBILITY (iOS 10): Page.scriptsEnabled was removed after iOS 10.
     }
 };

@@ -1470,7 +1470,6 @@ webkit.org/b/122571 inspector/dom/request-child-nodes-depth.html [ Timeout Pass 
 webkit.org/b/122571 inspector/dom/focus.html [ Failure Timeout Pass ]
 webkit.org/b/122571 inspector/runtime/getProperties.html [ Timeout Pass Crash ]
 webkit.org/b/122571 inspector/runtime/saveResult.html [ Timeout Pass Crash ]
-webkit.org/b/122571 inspector/page/javascriptDialogEvents.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/page/frameStartedLoading.html [ Timeout Pass ]
 webkit.org/b/122571 inspector/page/frameScheduledNavigation.html [ Timeout Pass Crash ]
 webkit.org/b/122571 inspector/page/setEmulatedMedia.html [ Timeout Pass ]

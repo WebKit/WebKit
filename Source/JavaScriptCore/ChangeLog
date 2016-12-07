@@ -1,3 +1,22 @@
+2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused and mostly untested Page domain commands and events
+        https://bugs.webkit.org/show_bug.cgi?id=165507
+
+        Reviewed by Brian Burg.
+
+        Remove unused and unsupported commands and events.
+
+          - Page.setDocumentContent
+          - Page.getScriptExecutionStatus
+          - Page.setScriptExecutionDisabled
+          - Page.handleJavaScriptDialog
+          - Page.javascriptDialogOpening
+          - Page.javascriptDialogClosed
+          - Page.scriptsEnabled
+
+        * inspector/protocol/Page.json:
+
 2016-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Merge PromiseReactions

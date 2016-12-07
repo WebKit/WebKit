@@ -39,7 +39,6 @@
 #include "FrameView.h"
 #include "HTMLMediaElement.h"
 #include "HistoryItem.h"
-#include "InspectorInstrumentation.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -389,7 +388,6 @@ void Settings::setScriptEnabled(bool isScriptEnabled)
 #if PLATFORM(IOS)
     m_page->setNeedsRecalcStyleInAllFrames();
 #endif
-    InspectorInstrumentation::scriptsEnabled(*m_page, m_isScriptEnabled);
 }
 
 void Settings::setJavaEnabled(bool isJavaEnabled)

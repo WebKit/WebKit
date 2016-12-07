@@ -270,14 +270,6 @@
                 "parameters": [
                     { "name": "visible", "type": "boolean", "description": "True for showing compositing borders." }
                 ]
-            },
-            {
-                "name": "handleJavaScriptDialog",
-                "description": "Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).",
-                "parameters": [
-                    { "name": "accept", "type": "boolean", "description": "Whether to accept or dismiss the dialog." },
-                    { "name": "promptText", "type": "string", "optional": true, "description": "The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog." }
-                ]
             }
         ],
         "events": [

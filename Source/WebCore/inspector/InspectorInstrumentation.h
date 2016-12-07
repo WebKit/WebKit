@@ -134,7 +134,6 @@ public:
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&, Frame&);
-    static void scriptsEnabled(Page&, bool isEnabled);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext&, int timerId);
     static void didFireTimer(const InspectorInstrumentationCookie&);
     static void didInvalidateLayout(Frame&);
@@ -179,8 +178,6 @@ public:
     static void frameStoppedLoading(Frame&);
     static void frameScheduledNavigation(Frame&, double delay);
     static void frameClearedScheduledNavigation(Frame&);
-    static InspectorInstrumentationCookie willRunJavaScriptDialog(Page&, const String& message);
-    static void didRunJavaScriptDialog(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResource(CachedResource&);
 
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -307,7 +304,6 @@ private:
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&, Frame&);
-    static void scriptsEnabledImpl(InstrumentingAgents&, bool isEnabled);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext&);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static void didInvalidateLayoutImpl(InstrumentingAgents&, Frame&);
@@ -353,8 +349,6 @@ private:
     static void frameStoppedLoadingImpl(InstrumentingAgents&, Frame&);
     static void frameScheduledNavigationImpl(InstrumentingAgents&, Frame&, double delay);
     static void frameClearedScheduledNavigationImpl(InstrumentingAgents&, Frame&);
-    static InspectorInstrumentationCookie willRunJavaScriptDialogImpl(InstrumentingAgents&, const String& message);
-    static void didRunJavaScriptDialogImpl(const InspectorInstrumentationCookie&);
     static void willDestroyCachedResourceImpl(CachedResource&);
 
     static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
@@ -733,12 +727,6 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
         didEvaluateScriptImpl(cookie, frame);
 }
 
-inline void InspectorInstrumentation::scriptsEnabled(Page& page, bool isEnabled)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    return scriptsEnabledImpl(instrumentingAgentsForPage(page), isEnabled);
-}
-
 inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(ScriptExecutionContext& context, int timerId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
@@ -1012,19 +1000,6 @@ inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& fra
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameClearedScheduledNavigationImpl(*instrumentingAgents, frame);
-}
-
-inline InspectorInstrumentationCookie InspectorInstrumentation::willRunJavaScriptDialog(Page& page, const String& message)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    return willRunJavaScriptDialogImpl(instrumentingAgentsForPage(page), message);
-}
-
-inline void InspectorInstrumentation::didRunJavaScriptDialog(const InspectorInstrumentationCookie& cookie)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didRunJavaScriptDialogImpl(cookie);
 }
 
 inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& cachedResource)

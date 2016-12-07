@@ -1,3 +1,46 @@
+2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused and mostly untested Page domain commands and events
+        https://bugs.webkit.org/show_bug.cgi?id=165507
+
+        Reviewed by Brian Burg.
+
+        Remove any code associated with the commands/events being removed.
+
+        * inspector/DOMPatchSupport.cpp:
+        * inspector/DOMPatchSupport.h:
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::handleJavaScriptDialog): Deleted.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::scriptsEnabledImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willRunJavaScriptDialogImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didRunJavaScriptDialogImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::scriptsEnabled): Deleted.
+        (WebCore::InspectorInstrumentation::willRunJavaScriptDialog): Deleted.
+        (WebCore::InspectorInstrumentation::didRunJavaScriptDialog): Deleted.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::didPaint):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        (WebCore::InspectorPageAgent::archive):
+        (WebCore::createXHRTextDecoder): Deleted.
+        (WebCore::InspectorPageAgent::getScriptExecutionStatus): Deleted.
+        (WebCore::InspectorPageAgent::setScriptExecutionDisabled): Deleted.
+        (WebCore::InspectorPageAgent::willRunJavaScriptDialog): Deleted.
+        (WebCore::InspectorPageAgent::didRunJavaScriptDialog): Deleted.
+        (WebCore::InspectorPageAgent::scriptsEnabled): Deleted.
+        (WebCore::InspectorPageAgent::handleJavaScriptDialog): Deleted.
+        * inspector/InspectorPageAgent.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runBeforeUnloadConfirmPanel):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        * page/Settings.cpp:
+        (WebCore::Settings::setScriptEnabled):
+
 2016-12-07  Jer Noble  <jer.noble@apple.com>
 
         [pointer-lock] Cursor should become visible when exiting pointer-lock via ESC key.

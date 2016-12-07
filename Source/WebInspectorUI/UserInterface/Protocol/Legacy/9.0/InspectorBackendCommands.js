@@ -298,7 +298,6 @@ InspectorBackend.registerCommand("Page.getCompositingBordersVisible", [], ["resu
 InspectorBackend.registerCommand("Page.setCompositingBordersVisible", [{"name": "visible", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Page.snapshotNode", [{"name": "nodeId", "type": "number", "optional": false}], ["dataURL"]);
 InspectorBackend.registerCommand("Page.snapshotRect", [{"name": "x", "type": "number", "optional": false}, {"name": "y", "type": "number", "optional": false}, {"name": "width", "type": "number", "optional": false}, {"name": "height", "type": "number", "optional": false}, {"name": "coordinateSystem", "type": "string", "optional": false}], ["dataURL"]);
-InspectorBackend.registerCommand("Page.handleJavaScriptDialog", [{"name": "accept", "type": "boolean", "optional": false}, {"name": "promptText", "type": "string", "optional": true}], []);
 InspectorBackend.registerCommand("Page.archive", [], ["data"]);
 InspectorBackend.activateDomain("Page", "web");
 

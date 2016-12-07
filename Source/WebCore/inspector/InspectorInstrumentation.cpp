@@ -434,12 +434,6 @@ void InspectorInstrumentation::didEvaluateScriptImpl(const InspectorInstrumentat
         timelineAgent->didEvaluateScript(frame);
 }
 
-void InspectorInstrumentation::scriptsEnabledImpl(InstrumentingAgents& instrumentingAgents, bool isEnabled)
-{
-    if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())
-        pageAgent->scriptsEnabled(isEnabled);
-}
-
 InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, ScriptExecutionContext& context)
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, timerFiredEventName, false);
@@ -844,19 +838,6 @@ void InspectorInstrumentation::frameClearedScheduledNavigationImpl(Instrumenting
 {
     if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())
         inspectorPageAgent->frameClearedScheduledNavigation(frame);
-}
-
-InspectorInstrumentationCookie InspectorInstrumentation::willRunJavaScriptDialogImpl(InstrumentingAgents& instrumentingAgents, const String& message)
-{
-    if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents.inspectorPageAgent())
-        inspectorPageAgent->willRunJavaScriptDialog(message);
-    return InspectorInstrumentationCookie(instrumentingAgents, 0);
-}
-
-void InspectorInstrumentation::didRunJavaScriptDialogImpl(const InspectorInstrumentationCookie& cookie)
-{
-    if (InspectorPageAgent* inspectorPageAgent = cookie.instrumentingAgents()->inspectorPageAgent())
-        inspectorPageAgent->didRunJavaScriptDialog();
 }
 
 void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource& cachedResource)

@@ -40,7 +40,6 @@
 #include "CachedScript.h"
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "DOMPatchSupport.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -373,8 +372,6 @@ void InspectorPageAgent::enable(ErrorString&)
     auto stopwatch = m_environment.executionStopwatch();
     stopwatch->reset();
     stopwatch->start();
-
-    m_originalScriptExecutionDisabled = !mainFrame().settings().isScriptEnabled();
 }
 
 void InspectorPageAgent::disable(ErrorString&)
@@ -384,7 +381,6 @@ void InspectorPageAgent::disable(ErrorString&)
     m_instrumentingAgents.setInspectorPageAgent(nullptr);
 
     ErrorString unused;
-    setScriptExecutionDisabled(unused, m_originalScriptExecutionDisabled);
     setShowPaintRects(unused, false);
     setEmulatedMedia(unused, emptyString());
 }
@@ -656,20 +652,6 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
         networkAgent->searchOtherRequests(regex, result);
 }
 
-void InspectorPageAgent::setDocumentContent(ErrorString& errorString, const String& frameId, const String& html)
-{
-    Frame* frame = assertFrame(errorString, frameId);
-    if (!frame)
-        return;
-
-    Document* document = frame->document();
-    if (!document) {
-        errorString = ASCIILiteral("No Document instance to set HTML for");
-        return;
-    }
-    DOMPatchSupport::patchDocument(*document, html);
-}
-
 void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
 {
     m_showPaintRects = show;
@@ -679,31 +661,6 @@ void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
         return;
 
     m_overlay->setShowingPaintRects(show);
-}
-
-void InspectorPageAgent::getScriptExecutionStatus(ErrorString&, Inspector::PageBackendDispatcherHandler::Result* status)
-{
-    bool disabledByScriptController = false;
-    bool disabledInSettings = false;
-    disabledByScriptController = mainFrame().script().canExecuteScripts(NotAboutToExecuteScript);
-    disabledInSettings = !mainFrame().settings().isScriptEnabled();
-
-    if (!disabledByScriptController) {
-        *status = Inspector::PageBackendDispatcherHandler::Result::Allowed;
-        return;
-    }
-
-    if (disabledInSettings)
-        *status = Inspector::PageBackendDispatcherHandler::Result::Disabled;
-    else
-        *status = Inspector::PageBackendDispatcherHandler::Result::Forbidden;
-}
-
-void InspectorPageAgent::setScriptExecutionDisabled(ErrorString&, bool value)
-{
-    m_ignoreScriptsEnabledNotification = true;
-    mainFrame().settings().setScriptEnabled(!value);
-    m_ignoreScriptsEnabledNotification = false;
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
@@ -846,16 +803,6 @@ void InspectorPageAgent::frameClearedScheduledNavigation(Frame& frame)
     m_frontendDispatcher->frameClearedScheduledNavigation(frameId(&frame));
 }
 
-void InspectorPageAgent::willRunJavaScriptDialog(const String& message)
-{
-    m_frontendDispatcher->javascriptDialogOpening(message);
-}
-
-void InspectorPageAgent::didRunJavaScriptDialog()
-{
-    m_frontendDispatcher->javascriptDialogClosed();
-}
-
 void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect)
 {
     if (!m_enabled || !m_showPaintRects)
@@ -900,14 +847,6 @@ void InspectorPageAgent::didRecalculateStyle()
 {
     if (m_enabled)
         m_overlay->update();
-}
-
-void InspectorPageAgent::scriptsEnabled(bool isEnabled)
-{
-    if (m_ignoreScriptsEnabledNotification)
-        return;
-
-    m_frontendDispatcher->scriptsEnabled(isEnabled);
 }
 
 Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
@@ -1040,12 +979,6 @@ void InspectorPageAgent::snapshotRect(ErrorString& errorString, int x, int y, in
     }
 
     *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"));
-}
-
-void InspectorPageAgent::handleJavaScriptDialog(ErrorString& errorString, bool accept, const String* promptText)
-{
-    if (!m_client->handleJavaScriptDialog(accept, promptText))
-        errorString = ASCIILiteral("Could not handle JavaScript dialog");
 }
 
 void InspectorPageAgent::archive(ErrorString& errorString, String* data)

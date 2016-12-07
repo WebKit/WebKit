@@ -2859,14 +2859,6 @@
             ]
         },
         {
-            "name": "handleJavaScriptDialog",
-            "description": "Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).",
-            "parameters": [
-                { "name": "accept", "type": "boolean", "description": "Whether to accept or dismiss the dialog." },
-                { "name": "promptText", "type": "string", "optional": true, "description": "The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog." }
-            ]
-        },
-        {
             "name": "archive",
             "description": "Grab an archive of the page.",
             "returns": [
