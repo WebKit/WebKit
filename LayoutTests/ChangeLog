@@ -1,3 +1,19 @@
+2016-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Fixed a test failure seen in web-timing-minimal-performance-now.html
+        https://bugs.webkit.org/show_bug.cgi?id=165542
+
+        Reviewed by Beth Dakin.
+
+        This test was always slightly wrong, but it is much more likely to fail
+        as of <https://trac.webkit.org/changeset/209462>.
+
+        * fast/dom/Window/web-timing-minimal-performance-now.html: < is not a
+        correct test for monotonicity. < tests for stricly increasing. <= is a
+        correct test for monotonicity. All computer clocks have some granularity,
+        so computer clocks are monotonic but not strictly increasing: you can
+        sample the clock twice in the same tick.
+
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused and mostly untested Page domain commands and events
