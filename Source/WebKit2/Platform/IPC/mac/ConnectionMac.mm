@@ -231,7 +231,7 @@ bool Connection::open()
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
     if (m_exceptionPort) {
-        m_exceptionPortDataAvailableSource = createDataAvailableSource(m_exceptionPort, m_connectionQueue, [connection] {
+        m_exceptionPortDataAvailableSource = createReceiveSource(m_exceptionPort, m_connectionQueue, [connection] {
             connection->exceptionSourceEventHandler();
         });
 
