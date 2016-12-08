@@ -1,3 +1,17 @@
+2016-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r209490): [ios-simulator] LayoutTest fast/shadow-dom/media-shadow-manipulation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=165590
+
+        Unreviewed. Revert r209490 on this test and make the check conditional
+        since iOS and Mac implements video element differently.
+
+        In any case, these tests aren't testing anything useful after r209486.
+        We should consider removing them or make them use internals.shadowRoot instead in a near term.
+
+        * fast/shadow-dom/media-shadow-manipulation-expected.txt:
+        * fast/shadow-dom/media-shadow-manipulation.html:
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove font test that tests something nobody supports
