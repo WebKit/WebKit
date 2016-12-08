@@ -1,3 +1,12 @@
+2016-12-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, Skip imported/w3c/WebCryptoAPI/generateKey/test_failures.html
+
+        This is a superset test for all test_failures*.html. No need for it as we run
+        all the sub tests.
+
+        * TestExpectations:
+
 2016-12-07  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Remove aspect ratio button

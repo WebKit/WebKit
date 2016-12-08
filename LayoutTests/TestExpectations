@@ -929,9 +929,11 @@ webkit.org/b/159678 http/tests/preload/single_download_preload_runner.html [ Tim
 workers/bomb-with-v8.html [ Skip ]
 
 # WebCryptoAPI tests that take too long to complete, need to scale down. webkit.org/b/159638
-imported/w3c/WebCryptoAPI/generateKey/test_failures.html [ Slow ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html [ Skip ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html [ Slow ]
+
+# WebCryptoAPI superset tests
+imported/w3c/WebCryptoAPI/generateKey/test_failures.html [ Skip ]
 imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
