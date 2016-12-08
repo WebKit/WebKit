@@ -1,3 +1,28 @@
+2016-12-07  Dean Jackson  <dino@apple.com>
+
+        Expose internal API to detect media documents
+        https://bugs.webkit.org/show_bug.cgi?id=165559
+        <rdar://problems/29564054>
+
+        Reviewed by Antoine Quint.
+
+        Expose via MediaControlsHost whether or not we're in
+        a MediaDocument.
+
+        Since MediaControlsHost is only exposed to our
+        internal controls, it's not possible to test this
+        directly. However, a subsequent test for media documents
+        with audio-only content will cover this change.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp: Add isInMediaDocument and put const on
+        various methods that should have it.
+        (WebCore::MediaControlsHost::captionDisplayMode):
+        (WebCore::MediaControlsHost::supportsFullscreen):
+        (WebCore::MediaControlsHost::isVideoLayerInline):
+        (WebCore::MediaControlsHost::isInMediaDocument):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl: Add isInMediaDocument.
+
 2016-12-07  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: count >= 1 in WebCore::RenderMultiColumnSet::columnCount

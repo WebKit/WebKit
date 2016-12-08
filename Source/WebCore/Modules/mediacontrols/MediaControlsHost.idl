@@ -47,6 +47,7 @@ enum DeviceType {
     readonly attribute boolean supportsFullscreen;
     readonly attribute boolean isVideoLayerInline;
     readonly attribute boolean userGestureRequired;
+    readonly attribute boolean isInMediaDocument;
 
     readonly attribute DOMString externalDeviceDisplayName;
     readonly attribute DeviceType externalDeviceType;

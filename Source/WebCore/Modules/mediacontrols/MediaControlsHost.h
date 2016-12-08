@@ -61,13 +61,14 @@ public:
 
     TextTrack* captionMenuOffItem();
     TextTrack* captionMenuAutomaticItem();
-    AtomicString captionDisplayMode();
+    AtomicString captionDisplayMode() const;
     void setSelectedTextTrack(TextTrack*);
     Element* textTrackContainer();
     void updateTextTrackContainer();
     bool allowsInlineMediaPlayback() const;
-    bool supportsFullscreen();
-    bool isVideoLayerInline();
+    bool supportsFullscreen() const;
+    bool isVideoLayerInline() const;
+    bool isInMediaDocument() const;
     bool userGestureRequired() const;
     void setPreparedToReturnVideoLayerToInline(bool);
 

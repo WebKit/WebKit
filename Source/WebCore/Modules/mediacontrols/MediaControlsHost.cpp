@@ -126,7 +126,7 @@ TextTrack* MediaControlsHost::captionMenuAutomaticItem()
     return TextTrack::captionMenuAutomaticItem();
 }
 
-AtomicString MediaControlsHost::captionDisplayMode()
+AtomicString MediaControlsHost::captionDisplayMode() const
 {
     Page* page = m_mediaElement->document().page();
     if (!page)
@@ -190,14 +190,19 @@ bool MediaControlsHost::allowsInlineMediaPlayback() const
     return !m_mediaElement->mediaSession().requiresFullscreenForVideoPlayback(*m_mediaElement);
 }
 
-bool MediaControlsHost::supportsFullscreen()
+bool MediaControlsHost::supportsFullscreen() const
 {
     return m_mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard);
 }
 
-bool MediaControlsHost::isVideoLayerInline()
+bool MediaControlsHost::isVideoLayerInline() const
 {
     return m_mediaElement->isVideoLayerInline();
+}
+
+bool MediaControlsHost::isInMediaDocument() const
+{
+    return m_mediaElement->document().isMediaDocument();
 }
 
 void MediaControlsHost::setPreparedToReturnVideoLayerToInline(bool value)
