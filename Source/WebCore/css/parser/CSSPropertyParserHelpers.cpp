@@ -159,7 +159,7 @@ bool consumePositiveIntegerRaw(CSSParserTokenRange& range, int& result)
     const CSSParserToken& token = range.peek();
     if (token.type() == NumberToken) {
         if (token.numericValueType() == NumberValueType || token.numericValue() < 1)
-            return nullptr;
+            return false;
         result = range.consumeIncludingWhitespace().numericValue();
         return true;
     }
