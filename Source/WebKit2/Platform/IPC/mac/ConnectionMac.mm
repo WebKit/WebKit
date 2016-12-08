@@ -126,6 +126,7 @@ void Connection::platformInvalidate()
         return;
     }
 
+    m_pendingOutgoingMachMessage = nullptr;
     m_isConnected = false;
 
     ASSERT(m_sendPort);
@@ -134,12 +135,12 @@ void Connection::platformInvalidate()
     // Unregister our ports.
     dispatch_source_cancel(m_sendSource);
     dispatch_release(m_sendSource);
-    m_sendSource = 0;
+    m_sendSource = nullptr;
     m_sendPort = MACH_PORT_NULL;
 
     dispatch_source_cancel(m_receiveSource);
     dispatch_release(m_receiveSource);
-    m_receiveSource = 0;
+    m_receiveSource = nullptr;
     m_receivePort = MACH_PORT_NULL;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
@@ -259,13 +260,41 @@ bool Connection::open()
     return true;
 }
 
+bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
+{
+    ASSERT(!m_pendingOutgoingMachMessage);
+
+    // Send the message.
+    kern_return_t kr = mach_msg(message->header(), MACH_SEND_MSG | MACH_SEND_TIMEOUT | MACH_SEND_NOTIFY, message->size(), 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
+    switch (kr) {
+    case MACH_MSG_SUCCESS:
+        // The kernel has already adopted the descriptors.
+        message->leakDescriptors();
+        return true;
+
+    case MACH_SEND_TIMED_OUT:
+        // We timed out, stash away the message for later.
+        m_pendingOutgoingMachMessage = WTFMove(message);
+        return false;
+
+    case MACH_SEND_INVALID_DEST:
+        // The other end has disappeared, we'll get a dead name notification which will cause us to be invalidated.
+        return false;
+
+    default:
+        CRASH();
+    }
+}
+
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return true;
+    return !m_pendingOutgoingMachMessage;
 }
 
 bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 {
+    ASSERT(!m_pendingOutgoingMachMessage);
+
     Vector<Attachment> attachments = encoder->releaseAttachments();
     
     size_t numberOfPortDescriptors = 0;
@@ -347,22 +376,29 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<Encoder> encoder)
 
     ASSERT(m_sendPort);
 
-    // Send the message.
-    kern_return_t kr = mach_msg(header, MACH_SEND_MSG, messageSize, 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-    if (kr != KERN_SUCCESS) {
-        // FIXME: What should we do here?
-    }
-
-    return true;
+    return sendMessage(WTFMove(message));
 }
 
 void Connection::initializeSendSource()
 {
-    m_sendSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, 0, m_connectionQueue->dispatchQueue());
+    m_sendSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_DEAD | DISPATCH_MACH_SEND_POSSIBLE, m_connectionQueue->dispatchQueue());
 
     RefPtr<Connection> connection(this);
     dispatch_source_set_event_handler(m_sendSource, [connection] {
-        connection->connectionDidClose();
+        if (!connection->m_sendSource)
+            return;
+
+        unsigned long data = dispatch_source_get_data(connection->m_sendSource);
+
+        if (data & DISPATCH_MACH_SEND_DEAD) {
+            connection->connectionDidClose();
+            return;
+        }
+
+        if (data & DISPATCH_MACH_SEND_POSSIBLE) {
+            connection->sendMessage(WTFMove(connection->m_pendingOutgoingMachMessage));
+            return;
+        }
     });
 
     mach_port_t sendPort = m_sendPort;

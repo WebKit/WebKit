@@ -1,3 +1,15 @@
+2016-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Defer sending Mach messages if the queue is full
+        https://bugs.webkit.org/show_bug.cgi?id=165622
+        rdar://problem/29518036
+
+        Reviewed by Brady Eidson.
+
+        Add new SPI.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2016-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent GC should be stable enough to land enabled on X86_64

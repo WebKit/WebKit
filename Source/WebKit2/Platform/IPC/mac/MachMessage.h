@@ -32,18 +32,21 @@ namespace IPC {
 class MachMessage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<MachMessage> create(size_t length);
+    static std::unique_ptr<MachMessage> create(size_t);
     ~MachMessage();
 
     static size_t messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
 
-    size_t length() const { return m_length; }
+    size_t size() const { return m_size; }
     mach_msg_header_t* header();
 
-private:
-    MachMessage(size_t length);
+    void leakDescriptors();
 
-    size_t m_length;
+private:
+    explicit MachMessage(size_t);
+
+    size_t m_size;
+    bool m_shouldFreeDescriptors;
     uint8_t m_buffer[0];
 };
 

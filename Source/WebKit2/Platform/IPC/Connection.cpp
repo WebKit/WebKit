@@ -35,6 +35,10 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/threads/BinarySemaphore.h>
 
+#if PLATFORM(COCOA)
+#include "MachMessage.h"
+#endif
+
 namespace IPC {
 
 struct Connection::ReplyHandler {

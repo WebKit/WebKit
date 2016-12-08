@@ -1,3 +1,52 @@
+2016-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Defer sending Mach messages if the queue is full
+        https://bugs.webkit.org/show_bug.cgi?id=165622
+        rdar://problem/29518036
+
+        Reviewed by Brady Eidson.
+
+        * Platform/IPC/Connection.cpp:
+        Include MachMessage.h so the Connection destructor can do its thing.
+
+        * Platform/IPC/Connection.h:
+        Add new members.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::platformInvalidate):
+        Null out the pending outgoing mach message.
+
+        (IPC::Connection::sendMessage):
+        New helper that will send a Mach message. If we time out, store the message in m_pendingOutgoingMachMessage.
+        When our send source will be triggered we'll try to send the message again.
+
+        (IPC::Connection::platformCanSendOutgoingMessages):
+        We can only send messages if we don't have a pending outgoing message.
+
+        (IPC::Connection::sendOutgoingMessage):
+        Call the newly added sendMessage function.
+
+        (IPC::Connection::initializeSendSource):
+        Add the DISPATCH_MACH_SEND_POSSIBLE mask (and DISPATCH_MACH_SEND_DEAD which was previously implicit).
+        In our event handler, check for DISPATCH_MACH_SEND_POSSIBLE and try to send the pending outgoing message again.
+
+        * Platform/IPC/mac/MachMessage.cpp:
+        (IPC::MachMessage::create):
+        Rename length to size.
+
+        (IPC::MachMessage::MachMessage):
+        Initialize m_shouldFreeDescriptors.
+
+        (IPC::MachMessage::~MachMessage):
+        Call mach_msg_destroy, which will free the descriptors.
+
+        (IPC::MachMessage::leakDescriptors):
+        Set m_shouldFreeDescriptors to false.
+
+        * Platform/IPC/mac/MachMessage.h:
+        (IPC::MachMessage::size):
+        (IPC::MachMessage::length): Deleted.
+
 2016-12-08  Chelsea Pugh  <cpugh@apple.com>
 
         [iOS] WKWebView should not allow app links to be opened on back or forward navigation

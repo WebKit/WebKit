@@ -28,19 +28,22 @@
 
 namespace IPC {
 
-std::unique_ptr<MachMessage> MachMessage::create(size_t length)
+std::unique_ptr<MachMessage> MachMessage::create(size_t size)
 {
-    void* memory = WTF::fastMalloc(sizeof(MachMessage) + length);
-    return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { length } };
+    void* memory = WTF::fastMalloc(sizeof(MachMessage) + size);
+    return std::unique_ptr<MachMessage> { new (NotNull, memory) MachMessage { size } };
 }
 
-MachMessage::MachMessage(size_t length)
-    : m_length { length }
+MachMessage::MachMessage(size_t size)
+    : m_size { size }
+    , m_shouldFreeDescriptors { true }
 {
 }
 
 MachMessage::~MachMessage()
 {
+    if (m_shouldFreeDescriptors)
+        ::mach_msg_destroy(header());
 }
 
 size_t MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount)
@@ -62,6 +65,11 @@ size_t MachMessage::messageSize(size_t bodySize, size_t portDescriptorCount, siz
 mach_msg_header_t* MachMessage::header()
 {
     return reinterpret_cast<mach_msg_header_t*>(m_buffer);
+}
+
+void MachMessage::leakDescriptors()
+{
+    m_shouldFreeDescriptors = false;
 }
 
 }
