@@ -137,6 +137,10 @@
 #include "GamepadManager.h"
 #endif
 
+#if ENABLE(POINTER_LOCK)
+#include "PointerLockController.h"
+#endif
+
 #if PLATFORM(IOS)
 #if ENABLE(GEOLOCATION)
 #include "NavigatorGeolocation.h"
@@ -1141,6 +1145,9 @@ void DOMWindow::alert(const String& message)
     }
 
     m_frame->document()->updateStyleIfNeeded();
+#if ENABLE(POINTER_LOCK)
+    page->pointerLockController().requestPointerUnlock();
+#endif
 
     page->chrome().runJavaScriptAlert(m_frame, message);
 }
@@ -1160,6 +1167,9 @@ bool DOMWindow::confirm(const String& message)
     }
 
     m_frame->document()->updateStyleIfNeeded();
+#if ENABLE(POINTER_LOCK)
+    page->pointerLockController().requestPointerUnlock();
+#endif
 
     return page->chrome().runJavaScriptConfirm(m_frame, message);
 }
@@ -1179,6 +1189,9 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
     }
 
     m_frame->document()->updateStyleIfNeeded();
+#if ENABLE(POINTER_LOCK)
+    page->pointerLockController().requestPointerUnlock();
+#endif
 
     String returnValue;
     if (page->chrome().runJavaScriptPrompt(m_frame, message, defaultValue, returnValue))

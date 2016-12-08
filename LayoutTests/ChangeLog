@@ -1,3 +1,15 @@
+2016-12-08  Jeremy Jones  <jeremyj@apple.com>
+
+        pointer lock should exit when a js alert is shown
+        https://bugs.webkit.org/show_bug.cgi?id=165423
+        rdar://problem/29430803
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/TestExpectations:
+        * pointer-lock/lock-lost-on-alert-expected.txt: Added.
+        * pointer-lock/lock-lost-on-alert.html: Added.
+
 2016-12-08  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] WebGLContextAttributes should be a dictionary

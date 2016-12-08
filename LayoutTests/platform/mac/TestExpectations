@@ -291,6 +291,8 @@ pointer-lock/pointerlockelement-null-when-pending.html
 pointer-lock/lock-lost-on-navigation.html [ Pass ]
 http/tests/pointer-lock/
 
+pointer-lock/lock-lost-on-alert.html [ Pass ]
+
 webkit.org/b/82763 fast/forms/textarea-placeholder-set-attribute.html
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html
