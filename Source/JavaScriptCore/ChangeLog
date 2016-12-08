@@ -1,3 +1,18 @@
+2016-12-08  Keith Miller  <keith_miller@apple.com>
+
+        Move LEB tests to API tests
+        https://bugs.webkit.org/show_bug.cgi?id=165586
+
+        Reviewed by Saam Barati.
+
+        Delete old stuff.
+
+        * testWasm.cpp:
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (main):
+        (runLEBTests): Deleted.
+
 2016-12-07  JF Bastien  <jfbastien@apple.com>
 
         Cleanup WebAssembly's RETURN_IF_EXCEPTION

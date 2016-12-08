@@ -46,7 +46,6 @@ public:
         parseArguments(argc, argv);
     }
 
-    bool m_runLEBTests { false };
     bool m_runWasmTests { false };
 
     void parseArguments(int, char**);
@@ -56,7 +55,6 @@ static NO_RETURN void printUsageStatement(bool help = false)
 {
     fprintf(stderr, "Usage: testWasm [options]\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
-    fprintf(stderr, "  -l|--leb   Runs the LEB decoder tests\n");
     fprintf(stderr, "  -w|--web   Run the Wasm tests\n");
     fprintf(stderr, "\n");
 
@@ -76,11 +74,6 @@ void CommandLine::parseArguments(int argc, char** argv)
         if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
             printUsageStatement(true);
             RELEASE_ASSERT_NOT_REACHED();
-        }
-
-        if (!strcmp(arg, "-l") || !strcmp(arg, "--leb")) {
-            m_runLEBTests = true;
-            continue;
         }
 
         if (!strcmp(arg, "-w") || !strcmp(arg, "--web")) {
@@ -106,109 +99,6 @@ StaticLock crashLock;
     } while (false)
 
 #define CHECK(x) CHECK_EQ(x, true)
-
-#define FOR_EACH_UNSIGNED_LEB_TEST(macro) \
-    /* Simple tests that use all the bits in the array */ \
-    macro(({ 0x07 }), 0, true, 0x7lu, 1lu) \
-    macro(({ 0x77 }), 0, true, 0x77lu, 1lu) \
-    macro(({ 0x80, 0x07 }), 0, true, 0x380lu, 2lu) \
-    macro(({ 0x89, 0x12 }), 0, true, 0x909lu, 2lu) \
-    macro(({ 0xf3, 0x85, 0x02 }), 0, true, 0x82f3lu, 3lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0x74 }), 0, true, 0xe9fc2f3lu, 4lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0xf4, 0x7f }), 0, true, 0xfe9fc2f3lu, 5lu) \
-    /* Test with extra trailing numbers */ \
-    macro(({ 0x07, 0x80 }), 0, true, 0x7lu, 1lu) \
-    macro(({ 0x07, 0x75 }), 0, true, 0x7lu, 1lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0x74, 0x43 }), 0, true, 0xe9fc2f3lu, 4lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0x74, 0x80 }), 0, true, 0xe9fc2f3lu, 4lu) \
-    /* Test with preceeding numbers */ \
-    macro(({ 0xf3, 0x07 }), 1, true, 0x7lu, 2lu) \
-    macro(({ 0x03, 0x07 }), 1, true, 0x7lu, 2lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0x67, 0x79, 0x77 }), 5, true, 0x77lu, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf7, 0x84, 0x77 }), 5, true, 0x77lu, 6ul) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf3, 0x85, 0x02 }), 3, true, 0x82f3lu, 6lu) \
-    /* Test in the middle */ \
-    macro(({ 0xf3, 0x07, 0x89 }), 1, true, 0x7lu, 2lu) \
-    macro(({ 0x03, 0x07, 0x23 }), 1, true, 0x7lu, 2lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0x67, 0x79, 0x77, 0x43 }), 5, true, 0x77lu, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf7, 0x84, 0x77, 0xf9 }), 5, true, 0x77lu, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf3, 0x85, 0x02, 0xa4 }), 3, true, 0x82f3lu, 6lu) \
-    /* Test decode too long */ \
-    macro(({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}), 0, false, 0x0lu, 0lu) \
-    macro(({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff}), 1, false, 0x0lu, 0lu) \
-    macro(({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff}), 0, false, 0x0lu, 0lu) \
-    /* Test decode off end of array */ \
-    macro(({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff}), 2, false, 0x0lu, 0lu) \
-
-
-#define TEST_UNSIGNED_LEB_DECODE(init, startOffset, expectedStatus, expectedResult, expectedOffset) \
-    { \
-        Vector<uint8_t> vector = Vector<uint8_t> init; \
-        size_t offset = startOffset; \
-        uint32_t result; \
-        bool status = WTF::LEBDecoder::decodeUInt32(vector.data(), vector.size(), offset, result); \
-        CHECK_EQ(status, expectedStatus); \
-        if (expectedStatus) { \
-            CHECK_EQ(result, expectedResult); \
-            CHECK_EQ(offset, expectedOffset); \
-        } \
-    };
-
-
-#define FOR_EACH_SIGNED_LEB_TEST(macro) \
-    /* Simple tests that use all the bits in the array */ \
-    macro(({ 0x07 }), 0, true, 0x7, 1lu) \
-    macro(({ 0x77 }), 0, true, -0x9, 1lu) \
-    macro(({ 0x80, 0x07 }), 0, true, 0x380, 2lu) \
-    macro(({ 0x89, 0x12 }), 0, true, 0x909, 2lu) \
-    macro(({ 0xf3, 0x85, 0x02 }), 0, true, 0x82f3, 3lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0x74 }), 0, true, 0xfe9fc2f3, 4lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0xf4, 0x7f }), 0, true, 0xfe9fc2f3, 5lu) \
-    /* Test with extra trailing numbers */ \
-    macro(({ 0x07, 0x80 }), 0, true, 0x7, 1lu) \
-    macro(({ 0x07, 0x75 }), 0, true, 0x7, 1lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0x74, 0x43 }), 0, true, 0xfe9fc2f3, 4lu) \
-    macro(({ 0xf3, 0x85, 0xff, 0x74, 0x80 }), 0, true, 0xfe9fc2f3, 4lu) \
-    /* Test with preceeding numbers */ \
-    macro(({ 0xf3, 0x07 }), 1, true, 0x7, 2lu) \
-    macro(({ 0x03, 0x07 }), 1, true, 0x7, 2lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0x67, 0x79, 0x77 }), 5, true, -0x9, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf7, 0x84, 0x77 }), 5, true, -0x9, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf3, 0x85, 0x02 }), 3, true, 0x82f3, 6lu) \
-    /* Test in the middle */ \
-    macro(({ 0xf3, 0x07, 0x89 }), 1, true, 0x7, 2lu) \
-    macro(({ 0x03, 0x07, 0x23 }), 1, true, 0x7, 2lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0x67, 0x79, 0x77, 0x43 }), 5, true, -0x9, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf7, 0x84, 0x77, 0xf9 }), 5, true, -0x9, 6lu) \
-    macro(({ 0xf2, 0x53, 0x43, 0xf3, 0x85, 0x02, 0xa4 }), 3, true, 0x82f3, 6lu) \
-    /* Test decode too long */ \
-    macro(({ 0x80, 0x80, 0x80, 0x80, 0x80, 0x80}), 0, false, 0x0, 0lu) \
-    macro(({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff}), 1, false, 0x0, 0lu) \
-    macro(({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff}), 0, false, 0x0, 0lu) \
-    /* Test decode off end of array */ \
-    macro(({ 0x80, 0x80, 0xab, 0x8a, 0x9a, 0xa3, 0xff}), 2, false, 0x0, 0lu) \
-
-
-#define TEST_SIGNED_LEB_DECODE(init, startOffset, expectedStatus, expectedResult, expectedOffset) \
-    { \
-        Vector<uint8_t> vector = Vector<uint8_t> init; \
-        size_t offset = startOffset; \
-        int32_t result; \
-        bool status = WTF::LEBDecoder::decodeInt32(vector.data(), vector.size(), offset, result); \
-        CHECK_EQ(status, expectedStatus); \
-        if (expectedStatus) { \
-            int32_t expected = expectedResult; \
-            CHECK_EQ(result, expected); \
-            CHECK_EQ(offset, expectedOffset); \
-        } \
-    };
-
-
-static void runLEBTests()
-{
-    FOR_EACH_UNSIGNED_LEB_TEST(TEST_UNSIGNED_LEB_DECODE)
-    FOR_EACH_SIGNED_LEB_TEST(TEST_SIGNED_LEB_DECODE)
-}
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -1437,9 +1327,6 @@ static void runWasmTests()
 int main(int argc, char** argv)
 {
     CommandLine options(argc, argv);
-
-    if (options.m_runLEBTests)
-        runLEBTests();
 
     if (options.m_runWasmTests) {
 #if ENABLE(WEBASSEMBLY)
