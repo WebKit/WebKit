@@ -1,3 +1,22 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip calc() tests
+        https://bugs.webkit.org/show_bug.cgi?id=165583
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/css/flex-shrink-calculated-value-expected.txt:
+        * fast/css/flex-shrink-calculated-value.html:
+        * fast/css/negative-calc-values-expected.txt:
+        * fast/css/negative-calc-values.html:
+        * fast/css/text-shadow-calc-value-expected.txt:
+        * fast/css/text-shadow-calc-value.html:
+        * fast/css/webkit-line-clamp-calculated-value-expected.txt:
+        * fast/css/webkit-line-clamp-calculated-value.html:
+        * fast/css/z-index-calculated-value-expected.txt:
+        * fast/css/z-index-calculated-value.html:
+
 2016-12-07  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Tracks panel does not display in the right location in fullscreen and cannot be dismissed

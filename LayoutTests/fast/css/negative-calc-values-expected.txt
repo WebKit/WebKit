@@ -18,8 +18,8 @@ PASS testDiv.style['line-height'] is "calc(-10%)"
 PASS window.getComputedStyle(testDiv).getPropertyValue('line-height') is "0px"
 testPre.style['tab-size'] = '8'
 testPre.style['tab-size'] = 'calc(2 - 4)'
-PASS testPre.style['tab-size'] is "calc(-2)"
-PASS window.getComputedStyle(testPre).getPropertyValue('tab-size') is "0"
+PASS testPre.style['tab-size'] is "8"
+PASS window.getComputedStyle(testPre).getPropertyValue('tab-size') is "8"
 PASS successfullyParsed is true
 
 TEST COMPLETE

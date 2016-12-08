@@ -12,7 +12,7 @@ evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(10% * 2)'");
 shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(20%)");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "20%");
 evalAndLog("testDiv.style['-webkit-line-clamp'] = 'calc(2 * 3)'");
-shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "calc(6)");
+shouldBeEqualToString("testDiv.style['-webkit-line-clamp']", "6");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp')", "6");
 
 </script>

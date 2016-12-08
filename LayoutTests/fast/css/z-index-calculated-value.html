@@ -9,7 +9,7 @@ var testDiv = document.getElementById("testDiv");
 
 shouldBeEmptyString("testDiv.style['z-index']");
 evalAndLog("testDiv.style['z-index'] = 'calc(-2 * 3)'");
-shouldBeEqualToString("testDiv.style['z-index']", "calc(-6)");
+shouldBeEqualToString("testDiv.style['z-index']", "-6");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('z-index')", "-6");
 
 </script>

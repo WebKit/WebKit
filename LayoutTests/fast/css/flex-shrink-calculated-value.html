@@ -9,7 +9,7 @@ var testDiv = document.getElementById("testDiv");
 
 shouldBeEmptyString("testDiv.style['flex-shrink']");
 evalAndLog("testDiv.style['flex-shrink'] = 'calc(2 * 3)'");
-shouldBeEqualToString("testDiv.style['flex-shrink']", "calc(6)");
+shouldBeEqualToString("testDiv.style['flex-shrink']", "6");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('flex-shrink')", "6");
 
 </script>

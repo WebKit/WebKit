@@ -8,7 +8,7 @@ testDiv.style['-webkit-line-clamp'] = 'calc(10% * 2)'
 PASS testDiv.style['-webkit-line-clamp'] is "calc(20%)"
 PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp') is "20%"
 testDiv.style['-webkit-line-clamp'] = 'calc(2 * 3)'
-PASS testDiv.style['-webkit-line-clamp'] is "calc(6)"
+PASS testDiv.style['-webkit-line-clamp'] is "6"
 PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-line-clamp') is "6"
 PASS successfullyParsed is true
 

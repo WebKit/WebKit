@@ -28,8 +28,8 @@ shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('line-h
 
 evalAndLog("testPre.style['tab-size'] = '8'");
 evalAndLog("testPre.style['tab-size'] = 'calc(2 - 4)'");
-shouldBeEqualToString("testPre.style['tab-size']", "calc(-2)");
-shouldBeEqualToString("window.getComputedStyle(testPre).getPropertyValue('tab-size')", "0");
+shouldBeEqualToString("testPre.style['tab-size']", "8");
+shouldBeEqualToString("window.getComputedStyle(testPre).getPropertyValue('tab-size')", "8");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -20,8 +20,8 @@ shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('text-s
 // Negative blur-radius is not allowed so it should become 0.
 evalAndLog("testDiv.style['text-shadow'] = 'calc(1 * 3px) calc(2 * 3px) calc(-3 * 3px) rgb(255, 255, 255)'");
 // text-shadow should not be updated.
-shouldBeEqualToString("testDiv.style['text-shadow']", "rgb(255, 255, 255) calc(3px) calc(6px) calc(-9px)");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('text-shadow')", "rgb(255, 255, 255) 3px 6px 0px")
+shouldBeEqualToString("testDiv.style['text-shadow']", "rgb(255, 255, 255) calc(-3px) calc(-6px) calc(9px)");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('text-shadow')", "rgb(255, 255, 255) -3px -6px 9px")
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

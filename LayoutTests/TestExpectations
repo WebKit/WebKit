@@ -1025,9 +1025,6 @@ webkit.org/b/165195 fast/backgrounds/background-shorthand-with-backgroundSize-st
 webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/variables/custom-property-dynamic-update.html [ Skip ]
 webkit.org/b/165195 transitions/transitions-parsing.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/flex-shrink-calculated-value.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/webkit-line-clamp-calculated-value.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/z-index-calculated-value.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/aspect-ratio-parsing-tests.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
@@ -1035,8 +1032,6 @@ webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pa
 webkit.org/b/165195 fast/masking/parsing-mask.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-calculated-value.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-shorthand.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/negative-calc-values.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/text-shadow-calc-value.html [ Pass Failure ]
 webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
