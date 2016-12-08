@@ -205,6 +205,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
     const CSSSelector* classSelector = nullptr;
     const CSSSelector* linkSelector = nullptr;
     const CSSSelector* focusSelector = nullptr;
+    const CSSSelector* hostPseudoClassSelector = nullptr;
     const CSSSelector* customPseudoElementSelector = nullptr;
     const CSSSelector* slottedPseudoElementSelector = nullptr;
 #if ENABLE(VIDEO_TRACK)
@@ -265,8 +266,8 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
                 focusSelector = selector;
                 break;
             case CSSSelector::PseudoClassHost:
-                m_hostPseudoClassRules.append(ruleData);
-                return;
+                hostPseudoClassSelector = selector;
+                break;
             default:
                 break;
             }
@@ -305,6 +306,11 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
         // FIXME: Custom pseudo elements are handled by the shadow tree's selector filter. It doesn't know about the main DOM.
         ruleData.disableSelectorFiltering();
         addToRuleSet(customPseudoElementSelector->value().impl(), m_shadowPseudoElementRules, ruleData);
+        return;
+    }
+
+    if (hostPseudoClassSelector) {
+        m_hostPseudoClassRules.append(ruleData);
         return;
     }
 

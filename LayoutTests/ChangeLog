@@ -1,3 +1,14 @@
+2016-12-08  Antti Koivisto  <antti@apple.com>
+
+        :after and :before don't work on :host
+        https://bugs.webkit.org/show_bug.cgi?id=164675
+        <rdar://problem/29231874>
+
+        Reviewed by Andreas Kling.
+
+        * fast/shadow-dom/shadow-host-with-before-after-expected.html: Added.
+        * fast/shadow-dom/shadow-host-with-before-after.html: Added.
+
 2016-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r209490): [ios-simulator] LayoutTest fast/shadow-dom/media-shadow-manipulation.html is failing

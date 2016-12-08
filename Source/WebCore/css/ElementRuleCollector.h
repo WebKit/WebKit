@@ -103,6 +103,7 @@ private:
     bool m_sameOriginOnly { false };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
     bool m_isMatchingSlottedPseudoElements { false };
+    bool m_isMatchingHostPseudoClass { false };
     Vector<std::unique_ptr<RuleSet::RuleDataVector>> m_keepAliveSlottedPseudoElementRules;
 
     Vector<MatchedRule, 64> m_matchedRules;

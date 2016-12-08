@@ -214,7 +214,7 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     if (parent && parent->shadowRoot())
         matchSlottedPseudoElementRules(includeEmptyRules, ruleRange);
 
-    if (m_element.shadowRoot() && m_pseudoStyleRequest.pseudoId == NOPSEUDO)
+    if (m_element.shadowRoot())
         matchHostPseudoClassRules(includeEmptyRules, ruleRange);
 
     if (m_element.isInShadowTree())
@@ -244,18 +244,10 @@ void ElementRuleCollector::matchHostPseudoClassRules(bool includeEmptyRules, Sty
     if (shadowHostRules.isEmpty())
         return;
 
-    SelectorChecker::CheckingContext context(m_mode);
-    SelectorChecker selectorChecker(m_element.document());
+    SetForScope<bool> change(m_isMatchingHostPseudoClass, true);
 
-    for (auto& ruleData : shadowHostRules) {
-        if (ruleData.rule()->properties().isEmpty() && !includeEmptyRules)
-            continue;
-        auto& selector = *ruleData.selector();
-        unsigned specificity = 0;
-        if (!selectorChecker.matchHostPseudoClass(selector, m_element, context, specificity))
-            continue;
-        addMatchedRule(ruleData, specificity, Style::ScopeOrdinal::Shadow, ruleRange);
-    }
+    MatchRequest hostMatchRequest { nullptr, includeEmptyRules, Style::ScopeOrdinal::Shadow };
+    collectMatchingRulesForList(&shadowHostRules, hostMatchRequest, ruleRange);
 }
 
 void ElementRuleCollector::matchSlottedPseudoElementRules(bool includeEmptyRules, StyleResolver::RuleRange& ruleRange)
@@ -438,6 +430,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
+    context.isMatchingHostPseudoClass = m_isMatchingHostPseudoClass;
 
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)

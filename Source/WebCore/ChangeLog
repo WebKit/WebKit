@@ -1,3 +1,54 @@
+2016-12-08  Antti Koivisto  <antti@apple.com>
+
+        ::after and ::before don't work on :host
+        https://bugs.webkit.org/show_bug.cgi?id=164675
+        <rdar://problem/29231874>
+
+        Reviewed by Andreas Kling.
+
+        We didn't allow combining :host with any other selectors. Pseudo elements should be allowed.
+
+        Test: fast/shadow-dom/shadow-host-with-before-after.html
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+
+            Allow pseudo element matching.
+
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+
+            Use the normal collectMatchingRulesForList path instead of a direct call to SelectorChecker::matchHostPseudoClass.
+            This path supports pseudo elements.
+
+            Pass the information that we are matching :host rules with m_isMatchingHostPseudoClass bit
+            similarly to how this is done with slots.
+
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/ElementRuleCollector.h:
+        * css/RuleSet.cpp:
+
+            Collect :host rules similarly to other rules.
+
+        (WebCore::RuleSet::addRule):
+        * css/SelectorChecker.cpp:
+
+            Rename didMoveToShadowHost->mayMatchHostPseudoClass for clarity.
+
+        (WebCore::SelectorChecker::match):
+
+            Enable :host matching in the current context immediately if needed.
+
+        (WebCore::SelectorChecker::matchHostPseudoClass):
+
+            The check for illegal combinations with :host is now done in checkOne().
+
+        (WebCore::localContextForParent):
+        (WebCore::SelectorChecker::checkOne):
+
+            In context where :host matches nothing else can match, except pseudo elements.
+
+        * css/SelectorChecker.h:
+
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.
