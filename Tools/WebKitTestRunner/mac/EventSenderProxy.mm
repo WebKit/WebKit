@@ -630,7 +630,7 @@ void EventSenderProxy::leapForward(int milliseconds)
 
 void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
 {
-    NSString* character = [NSString stringWithCString:toSTD(key).c_str() 
+    NSString* character = [NSString stringWithCString:toSTD(key).c_str()
                                    encoding:[NSString defaultCStringEncoding]];
 
     NSString *eventCharacter = character;
@@ -707,6 +707,10 @@ void EventSenderProxy::keyDown(WKStringRef key, WKEventModifiers modifiers, unsi
         const unichar ch = 0xFFE8;
         eventCharacter = [NSString stringWithCharacters:&ch length:1];
         keyCode = 0x3D;
+    } else if ([character isEqualToString:@"escape"]) {
+        const unichar ch = 0x1B;
+        eventCharacter = [NSString stringWithCharacters:&ch length:1];
+        keyCode = 0x35;
     }
 
     // Compare the input string with the function-key names defined by the DOM spec (i.e. "F1",...,"F24").

@@ -2229,7 +2229,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
         void didLosePointerLock(WebPageProxy* page) override
         {
-            if (!m_client.requestPointerLock)
+            if (!m_client.didLosePointerLock)
                 return;
 
             m_client.didLosePointerLock(toAPI(page), m_client.base.clientInfo);

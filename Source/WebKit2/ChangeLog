@@ -1,3 +1,16 @@
+2016-12-07  Jeremy Jones  <jeremyj@apple.com>
+
+        One esc to exit fullscreen and pointer lock
+        https://bugs.webkit.org/show_bug.cgi?id=165416
+        rdar://problem/29430711
+
+        Reviewed by Jer Noble.
+
+        Fix a crash when didLosePointerLock is not specified.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+
 2016-12-07  Keith Rollin  <krollin@apple.com>
 
         Network event record/replay

@@ -1,3 +1,19 @@
+2016-12-07  Jeremy Jones  <jeremyj@apple.com>
+
+        One esc to exit fullscreen and pointer lock
+        https://bugs.webkit.org/show_bug.cgi?id=165416
+        rdar://problem/29430711
+
+        Reviewed by Jer Noble.
+
+        Test: pointer-lock/lock-lost-on-esc-in-fullscreen.html
+
+        When handling escape, also exit fullscreen on escape.
+        This also means that escape can exit fullscreen in TestRunner.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+
 2016-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop translate phase in module loader

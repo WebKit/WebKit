@@ -1,3 +1,21 @@
+2016-12-07  Jeremy Jones  <jeremyj@apple.com>
+
+        One esc to exit fullscreen and pointer lock
+        https://bugs.webkit.org/show_bug.cgi?id=165416
+        rdar://problem/29430711
+
+        Reviewed by Jer Noble.
+
+        Implement WKPageUIClientV8 for pointer lock support.
+        Add "escape" key support in EventSenderProxy.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::requestPointerLock):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::keyDown):
+
 2016-12-07  Simon Fraser  <simon.fraser@apple.com>
 
         Add system trace points for JavaScript VM entry/exit

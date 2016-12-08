@@ -3065,13 +3065,19 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 #if ENABLE(POINTER_LOCK)
     if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE && m_frame.page()->pointerLockController().element()) {
         m_frame.page()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
-        return true;
     }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (m_frame.document()->webkitIsFullScreen() && !isKeyEventAllowedInFullScreen(initialKeyEvent))
-        return false;
+    if (m_frame.document()->webkitIsFullScreen()) {
+        if (initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
+            m_frame.document()->webkitCancelFullScreen();
+            return true;
+        }
+
+        if (!isKeyEventAllowedInFullScreen(initialKeyEvent))
+            return false;
+    }
 #endif
 
     if (initialKeyEvent.windowsVirtualKeyCode() == VK_CAPITAL) {

@@ -1,3 +1,15 @@
+2016-12-07  Jeremy Jones  <jeremyj@apple.com>
+
+        One esc to exit fullscreen and pointer lock
+        https://bugs.webkit.org/show_bug.cgi?id=165416
+        rdar://problem/29430711
+
+        Reviewed by Jer Noble.
+
+        * platform/mac-wk2/TestExpectations:
+        * pointer-lock/lock-lost-on-esc-in-fullscreen-expected.txt: Added.
+        * pointer-lock/lock-lost-on-esc-in-fullscreen.html: Added.
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove tests that depend on SVG CSS OM that has been removed
