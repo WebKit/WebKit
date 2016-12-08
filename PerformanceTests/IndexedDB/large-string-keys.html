@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+var iterationCount = 20;
+var numberDeleted = 0;
+
+// Delete all databases for the test ahead of time.
+var databasePrefix = "large-string-keys-DB-";
+for (var i = 0; i < iterationCount + 1; ++i) {
+    indexedDB.deleteDatabase(databasePrefix + i).onsuccess = function() {
+        if (++numberDeleted == iterationCount)
+            startIteration();
+    }
+}
+
+var testGenerator = null;
+var db = null;
+var currentIteration = 0;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: iterationCount,
+    unit: 'ms',
+    done: function () {
+        db = null;
+        testGenerator = null;
+        PerfTestRunner.gc();
+        ++currentIteration;
+    }
+});
+
+function startIteration()
+{
+    testGenerator = runIteration();
+    nextStep();
+}
+
+function nextStep()
+{
+    testGenerator.next();
+}
+
+var baseString;
+for (var i = 0; i < 100000; ++i)
+    baseString += "abcdefghijklmnopqrstuvwxyz";
+
+var numberOfInserts = 10;
+var array = new Array(numberOfInserts);
+for (var i = 0; i < numberOfInserts; ++i)
+    array[i] = baseString + i;
+
+function *runIteration()
+{
+    var openRequest = indexedDB.open(databasePrefix + currentIteration);
+    openRequest.onupgradeneeded = function(event) {
+        db = event.target.result;
+        db.createObjectStore('arrays');
+    }
+    openRequest.onsuccess = nextStep;
+
+    yield;
+
+    var startTime = PerfTestRunner.now();
+
+    var objectStore = db.transaction('arrays', 'readwrite').objectStore('arrays');
+    objectStore.transaction.oncomplete = nextStep;
+
+    for (var i = 0; i < numberOfInserts; ++i)
+        objectStore.put("Some value!!!", array[i]);
+
+    yield;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    setTimeout(startIteration, 0);
+}
+
+</script>
+</body>
+</html>

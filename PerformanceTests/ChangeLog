@@ -1,3 +1,14 @@
+2016-12-07  Brady Eidson  <beidson@apple.com>
+
+        Add IDB perf tests stressing key size.
+        https://bugs.webkit.org/show_bug.cgi?id=165567
+
+        Reviewed by Alex Christensen.
+
+        * IndexedDB/large-array-keys.html: Added.
+        * IndexedDB/large-binary-keys.html: Added.
+        * IndexedDB/large-string-keys.html: Added.
+
 2016-12-05  Brady Eidson  <beidson@apple.com>
 
         Add an IndexedDB perf test to PerformanceTests.
