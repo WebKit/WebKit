@@ -1,3 +1,11 @@
+2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix the filename for a newly added test expectation file.
+
+        Unreviewed test gardening.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-scrolling-jumps-to-top-expected.txt: Renamed from LayoutTests/tiled-drawing/scrolling/scroll-snap/scroll-snap-scrolling-jumps-to-top.txt.
+
 2016-12-07  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Use a small picture-in-picture button in fullscreen
