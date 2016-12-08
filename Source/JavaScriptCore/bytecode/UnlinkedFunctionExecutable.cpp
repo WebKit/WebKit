@@ -75,14 +75,14 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     return result;
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& source, SourceCode&& parentSourceOverride, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& parentSource, SourceCode&& parentSourceOverride, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType)
     : Base(*vm, structure)
-    , m_firstLineOffset(node->firstLine() - source.firstLine())
+    , m_firstLineOffset(node->firstLine() - parentSource.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
-    , m_unlinkedFunctionNameStart(node->functionNameStart() - source.startOffset())
+    , m_unlinkedFunctionNameStart(node->functionNameStart() - parentSource.startOffset())
     , m_unlinkedBodyStartColumn(node->startColumn())
     , m_unlinkedBodyEndColumn(m_lineCount ? node->endColumn() : node->endColumn() - node->startColumn())
-    , m_startOffset(node->source().startOffset() - source.startOffset())
+    , m_startOffset(node->source().startOffset() - parentSource.startOffset())
     , m_sourceLength(node->source().length())
     , m_parametersStartOffset(node->parametersStart())
     , m_typeProfilingStartOffset(node->functionKeywordStart())
