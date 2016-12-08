@@ -677,12 +677,12 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
 static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer* layer, const RenderStyle& style)
 {
     auto positionList = CSSValueList::createSpaceSeparated();
-    if (layer->isBackgroundOriginSet()) {
+    if (layer->isBackgroundXOriginSet()) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         positionList.get().append(CSSValuePool::singleton().createValue(layer->backgroundXOrigin()));
     }
     positionList.get().append(zoomAdjustedPixelValueForLength(layer->xPosition(), style));
-    if (layer->isBackgroundOriginSet()) {
+    if (layer->isBackgroundYOriginSet()) {
         ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         positionList.get().append(CSSValuePool::singleton().createValue(layer->backgroundYOrigin()));
     }

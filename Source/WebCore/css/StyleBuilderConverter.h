@@ -347,7 +347,6 @@ inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& sty
         auto& first = *value.pairValue()->first();
         if (first.valueID() == CSSValueRight || first.valueID() == CSSValueBottom)
             relativeToTrailingEdge = true;
-
         lengthValue = value.pairValue()->second();
     }
     

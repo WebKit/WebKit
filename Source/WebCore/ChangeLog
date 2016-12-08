@@ -1,3 +1,32 @@
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip background parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=165619
+
+        Reviewed by Zalan Bujtas.
+
+        Change background-position so that the origin being set is tracked
+        on a per-x/y basis instead of as a single boolean. The single boolean
+        caused lousy computed style dumping, since we would switch into verbose
+        mode for both x and y, even if only one of them had a pair set for it.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createPositionListForLayer):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertPositionComponent):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::fillUnsetProperties):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::isBackgroundXOriginSet):
+        (WebCore::FillLayer::isBackgroundYOriginSet):
+        (WebCore::FillLayer::setBackgroundXOrigin):
+        (WebCore::FillLayer::setBackgroundYOrigin):
+        (WebCore::FillLayer::clearXPosition):
+        (WebCore::FillLayer::clearYPosition):
+        (WebCore::FillLayer::isBackgroundOriginSet): Deleted.
+
 2016-12-08  Jeremy Jones  <jeremyj@apple.com>
 
         pointer lock should exit when a js alert is shown

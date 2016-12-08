@@ -1,3 +1,18 @@
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip background parsing tests
+        https://bugs.webkit.org/show_bug.cgi?id=165619
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/backgrounds/background-position-parsing-2-expected.txt:
+        * fast/backgrounds/background-position-parsing-2.html:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize-expected.txt:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize.html:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+
 2016-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Unable to delete breakpoint from worker script
