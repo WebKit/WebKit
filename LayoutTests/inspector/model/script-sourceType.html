@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerProgramScript() {
+    let script = document.createElement("script");
+    script.src = "resources/program.js";
+    document.body.appendChild(script);
+}
+
+function triggerModuleScript() {
+    let script = document.createElement("script");
+    script.type = "module";
+    script.src = "resources/module.js";
+    document.body.appendChild(script);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebInspector.Script.SourceType");
+
+    suite.addTestCase({
+        name: "WebInspector.Script.SourceType.Program",
+        description: "Normal <script src> should be Program.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage("triggerProgramScript()");
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                let script = event.data.script;
+                if (!/program.js$/.test(script.url))
+                    return;
+
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                InspectorTest.expectEqual(script.sourceType, WebInspector.Script.SourceType.Program, `<script> should be SourceType.Program.`);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Script.SourceType.Module",
+        description: "Module <script type=module> should be Module.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage("triggerModuleScript()");
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                let script = event.data.script;
+                if (!/module.js$/.test(script.url))
+                    return;
+
+                if (/other-module.js$/.test(script.url)) {
+                    InspectorTest.expectEqual(script.sourceType, WebInspector.Script.SourceType.Module, `imported module should be SourceType.Module.`);
+                    return;
+                }
+
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                InspectorTest.expectEqual(script.sourceType, WebInspector.Script.SourceType.Module, `<script type="module"> should be SourceType.Module.`);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for WebInspector.Script.SourceType.</p>
+</body>
+</html>

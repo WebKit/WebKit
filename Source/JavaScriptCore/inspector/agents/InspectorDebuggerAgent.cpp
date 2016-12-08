@@ -887,11 +887,12 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
     String sourceURL = script.sourceURL;
     String sourceMappingURL = sourceMapURLForScript(script);
 
+    const bool isModule = script.sourceProvider->sourceType() == JSC::SourceProviderSourceType::Module;
     const bool* isContentScript = script.isContentScript ? &script.isContentScript : nullptr;
     String* sourceURLParam = hasSourceURL ? &sourceURL : nullptr;
     String* sourceMapURLParam = sourceMappingURL.isEmpty() ? nullptr : &sourceMappingURL;
 
-    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceURLParam, sourceMapURLParam);
+    m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceURLParam, sourceMapURLParam, isModule ? &isModule : nullptr);
 
     m_scripts.set(sourceID, script);
 

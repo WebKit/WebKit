@@ -671,7 +671,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         InspectorFrontendHost.beep();
     }
 
-    scriptDidParse(target, scriptIdentifier, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL)
+    scriptDidParse(target, scriptIdentifier, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, sourceURL, sourceMapURL)
     {
         // Called from WebInspector.DebuggerObserver.
 
@@ -690,7 +690,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         if (!WebInspector.isDebugUIEnabled() && isWebKitInternalScript(sourceURL))
             return;
 
-        let script = new WebInspector.Script(target, scriptIdentifier, new WebInspector.TextRange(startLine, startColumn, endLine, endColumn), url, isContentScript, sourceURL, sourceMapURL);
+        let range = new WebInspector.TextRange(startLine, startColumn, endLine, endColumn);
+        let sourceType = isModule ? WebInspector.Script.SourceType.Module : WebInspector.Script.SourceType.Program;
+        let script = new WebInspector.Script(target, scriptIdentifier, range, url, sourceType, isContentScript, sourceURL, sourceMapURL);
 
         targetData.addScript(script);
 

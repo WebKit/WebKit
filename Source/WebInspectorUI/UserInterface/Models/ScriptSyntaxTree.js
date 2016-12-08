@@ -34,7 +34,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         this._script = script;
 
         try {
-            var esprimaSyntaxTree = esprima.parse(sourceText, {range: true});
+            let sourceType = this._script.sourceType === WebInspector.Script.SourceType.Module ? "module" : "script";
+            let esprimaSyntaxTree = esprima.parse(sourceText, {range: true, sourceType});
             this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
             this._parsedSuccessfully = true;
         } catch (error) {
@@ -487,6 +488,39 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case WebInspector.ScriptSyntaxTree.NodeType.YieldExpression:
             this._recurse(node.argument, callback, state);
             break;
+
+        // Modules.
+
+        case WebInspector.ScriptSyntaxTree.NodeType.ExportAllDeclaration:
+            this._recurse(node.source, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ExportNamedDeclaration:
+            this._recurse(node.declaration, callback, state);
+            this._recurseArray(node.specifiers, callback, state);
+            this._recurse(node.source, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration:
+            this._recurse(node.declaration, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier:
+            this._recurse(node.local, callback, state);
+            this._recurse(node.exported, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration:
+            this._recurseArray(node.specifiers, callback, state);
+            this._recurse(node.source, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier:
+            this._recurse(node.local, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier:
+            this._recurse(node.local, callback, state);
+            break;
+        case WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier:
+            this._recurse(node.imported, callback, state);
+            this._recurse(node.local, callback, state);
+            break;
+
         // All the leaf nodes go here.
         case WebInspector.ScriptSyntaxTree.NodeType.DebuggerStatement:
         case WebInspector.ScriptSyntaxTree.NodeType.EmptyStatement:
@@ -938,6 +972,63 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 delegate: node.delegate
             };
             break;
+
+        // Modules.
+
+        case "ExportAllDeclaration":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ExportAllDeclaration,
+                source: this._createInternalSyntaxTree(node.source),
+            };
+            break;
+        case "ExportNamedDeclaration":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ExportNamedDeclaration,
+                declaration: this._createInternalSyntaxTree(node.declaration),
+                specifiers: node.specifiers.map(this._createInternalSyntaxTree, this),
+                source: this._createInternalSyntaxTree(node.source),
+            };
+            break;
+        case "ExportDefaultDeclaration":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration,
+                declaration: this._createInternalSyntaxTree(node.declaration),
+            };
+            break;
+        case "ExportSpecifier":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier,
+                local: this._createInternalSyntaxTree(node.local),
+                exported: this._createInternalSyntaxTree(node.exported),
+            };
+            break;
+        case "ImportDeclaration":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration,
+                specifiers: node.specifiers.map(this._createInternalSyntaxTree, this),
+                source: this._createInternalSyntaxTree(node.source),
+            };
+            break;
+        case "ImportDefaultSpecifier":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier,
+                local: this._createInternalSyntaxTree(node.local),
+            };
+            break;
+        case "ImportNamespaceSpecifier":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier,
+                local: this._createInternalSyntaxTree(node.local),
+            };
+            break;
+        case "ImportSpecifier":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier,
+                imported: this._createInternalSyntaxTree(node.imported),
+                local: this._createInternalSyntaxTree(node.local),
+            };
+            break;
+
         default:
             console.error("Unsupported Syntax Tree Node: " + node.type, node);
             return null;
@@ -977,6 +1068,10 @@ WebInspector.ScriptSyntaxTree.NodeType = {
     DebuggerStatement: Symbol("debugger-statement"),
     DoWhileStatement: Symbol("do-while-statement"),
     EmptyStatement: Symbol("empty-statement"),
+    ExportAllDeclaration: Symbol("export-all-declaration"),
+    ExportDefaultDeclaration: Symbol("export-default-declaration"),
+    ExportNamedDeclaration: Symbol("export-named-declaration"),
+    ExportSpecifier: Symbol("export-specifier"),
     ExpressionStatement: Symbol("expression-statement"),
     ForInStatement: Symbol("for-in-statement"),
     ForOfStatement: Symbol("for-of-statement"),
@@ -985,6 +1080,10 @@ WebInspector.ScriptSyntaxTree.NodeType = {
     FunctionExpression: Symbol("function-expression"),
     Identifier: Symbol("identifier"),
     IfStatement: Symbol("if-statement"),
+    ImportDeclaration: Symbol("import-declaration"),
+    ImportDefaultSpecifier: Symbol("import-default-specifier"),
+    ImportNamespaceSpecifier: Symbol("import-namespace-specifier"),
+    ImportSpecifier: Symbol("import-specifier"),
     LabeledStatement: Symbol("labeled-statement"),
     Literal: Symbol("literal"),
     LogicalExpression: Symbol("logical-expression"),

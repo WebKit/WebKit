@@ -1183,6 +1183,12 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         return this._sourceCode.url;
     }
 
+    textEditorScriptSourceType(textEditor)
+    {
+        let script = this._getAssociatedScript();
+        return script ? script.sourceType : WebInspector.Script.SourceType.Program;
+    }
+
     textEditorShouldHideLineNumber(textEditor, lineNumber)
     {
         return lineNumber in this._invalidLineNumbers;

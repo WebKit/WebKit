@@ -25,7 +25,7 @@
 
 WebInspector.Script = class Script extends WebInspector.SourceCode
 {
-    constructor(target, id, range, url, injected, sourceURL, sourceMapURL)
+    constructor(target, id, range, url, sourceType, injected, sourceURL, sourceMapURL)
     {
         super();
 
@@ -37,6 +37,7 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         this._id = id || null;
         this._range = range || null;
         this._url = url || null;
+        this._sourceType = sourceType || WebInspector.Script.SourceType.Program;
         this._sourceURL = sourceURL || null;
         this._sourceMappingURL = sourceMapURL || null;
         this._injected = injected || false;
@@ -77,25 +78,14 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
 
     // Public
 
-    get target()
-    {
-        return this._target;
-    }
-
-    get id()
-    {
-        return this._id;
-    }
-
-    get range()
-    {
-        return this._range;
-    }
-
-    get url()
-    {
-        return this._url;
-    }
+    get target() { return this._target; }
+    get id() { return this._id; }
+    get range() { return this._range; }
+    get url() { return this._url; }
+    get sourceType() { return this._sourceType; }
+    get sourceURL() { return this._sourceURL; }
+    get sourceMappingURL() { return this._sourceMappingURL; }
+    get injected() { return this._injected; }
 
     get contentIdentifier()
     {
@@ -117,16 +107,6 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
             return null;
 
         return this._sourceURL;
-    }
-
-    get sourceURL()
-    {
-        return this._sourceURL;
-    }
-
-    get sourceMappingURL()
-    {
-        return this._sourceMappingURL;
     }
 
     get urlComponents()
@@ -177,11 +157,6 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
         if (this._sourceURL)
             return WebInspector.truncateURL(this._sourceURL, isMultiLine, dataURIMaxSize);
         return null;
-    }
-
-    get injected()
-    {
-        return this._injected;
     }
 
     get dynamicallyAddedScriptElement()
@@ -313,6 +288,11 @@ WebInspector.Script = class Script extends WebInspector.SourceCode
 
         this._scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(sourceText, this);
     }
+};
+
+WebInspector.Script.SourceType = {
+    Program: "script-source-type-program",
+    Module: "script-source-type-module",
 };
 
 WebInspector.Script.TypeIdentifier = "script";

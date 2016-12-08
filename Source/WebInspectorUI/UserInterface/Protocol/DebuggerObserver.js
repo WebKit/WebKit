@@ -37,7 +37,7 @@ WebInspector.DebuggerObserver = class DebuggerObserver
         WebInspector.debuggerManager.reset();
     }
 
-    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL)
+    scriptParsed(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL, isModule)
     {
         if (this._legacyScriptParsed) {
             // COMPATIBILITY (iOS 9): Debugger.scriptParsed had slightly different arguments.
@@ -46,11 +46,11 @@ WebInspector.DebuggerObserver = class DebuggerObserver
             let legacySourceMapURL = arguments[7];
             let hasSourceURL = arguments[8];
             let legacySourceURL = hasSourceURL ? url : undefined;
-            WebInspector.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, legacySourceURL, legacySourceMapURL);
+            WebInspector.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, legacySourceURL, legacySourceMapURL);
             return;
         }
 
-        WebInspector.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL);
+        WebInspector.debuggerManager.scriptDidParse(this.target, scriptId, url, startLine, startColumn, endLine, endColumn, isModule, isContentScript, sourceURL, sourceMapURL);
     }
 
     scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)

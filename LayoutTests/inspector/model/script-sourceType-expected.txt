@@ -1,0 +1,11 @@
+Tests for WebInspector.Script.SourceType.
+
+
+== Running test suite: WebInspector.Script.SourceType
+-- Running test case: WebInspector.Script.SourceType.Program
+PASS: <script> should be SourceType.Program.
+
+-- Running test case: WebInspector.Script.SourceType.Module
+PASS: imported module should be SourceType.Module.
+PASS: <script type="module"> should be SourceType.Module.
+

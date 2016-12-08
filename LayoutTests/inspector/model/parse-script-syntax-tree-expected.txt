@@ -45,6 +45,12 @@ passed AssignmentPattern
 passed ArrowFunctionExpression
 passed Async Functions
 passed AwaitExpression
+passed ImportDeclaration, ImportSpecifier
+passed ImportDefaultSpecifier
+passed ImportNamespaceSpecifier
+passed ExportNamedDeclaration, ExportSpecifier
+passed ExportDefaultDeclaration
+passed ExportAllDeclaration
 passed computed method on object literal
 passed method on object literal
 passed computed method property on object literal

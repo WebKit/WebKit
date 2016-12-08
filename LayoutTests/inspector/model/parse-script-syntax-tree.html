@@ -5,11 +5,13 @@
 <script>
 function test()
 {
-    function makeNode(text, isExpression)
+    function makeNode(text, isExpression, isModule)
     {
-        var script = new WebInspector.Script(1, new WebInspector.TextRange(0, text.length));
-        var scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(text, script);
-        var syntaxTree = scriptSyntaxTree._syntaxTree;
+        const target = null, url = null;
+        let sourceType = isModule ? WebInspector.Script.SourceType.Module : WebInspector.Script.SourceType.Program;
+        let script = new WebInspector.Script(target, 1, new WebInspector.TextRange(0, text.length), url, sourceType);
+        let scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(text, script);
+        let syntaxTree = scriptSyntaxTree._syntaxTree;
 
         InspectorTest.assert(scriptSyntaxTree.parsedSuccessfully, "ScriptSyntaxTree should be able to parse: \"" + text + "\"");
         InspectorTest.assert(syntaxTree.type === WebInspector.ScriptSyntaxTree.NodeType.Program, "Should be program.");
@@ -17,11 +19,21 @@ function test()
         if (isExpression) {
             InspectorTest.assert(syntaxTree.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
             return syntaxTree.body[0].expression;
-        } else
+        } else if (isModule) {
+            InspectorTest.assert(syntaxTree.sourceType === "module");
             return syntaxTree.body[0];
+        } else {
+            InspectorTest.assert(syntaxTree.sourceType === "script");
+            return syntaxTree.body[0];
+        }
     }
 
-    var node = null;
+    function makeNodeForModule(text)
+    {
+        return makeNode(text, false, true);
+    }
+
+    let node = null;
 
     node = makeNode("x = 20;", true);
     InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.AssignmentExpression);
@@ -52,7 +64,7 @@ function test()
     InspectorTest.assert(node.elements[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.assert(node.elements[1].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.log("passed ArrayExpression");
-    
+
     node = makeNode("{foo();}", false);
     InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
     InspectorTest.assert(node.body);
@@ -112,7 +124,7 @@ function test()
     InspectorTest.assert(node.consequent.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.alternate.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.log("passed ConditionalExpression");
-    
+
     node = makeNode("label:while(true) {continue label;}", false);
     InspectorTest.assert(node.body.body.body[0].type === WebInspector.ScriptSyntaxTree.NodeType.ContinueStatement);
     InspectorTest.assert(node.body.body.body[0].label.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
@@ -321,7 +333,7 @@ function test()
     InspectorTest.assert(node.right.properties[0].key.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.log("passed Property");
 
-    node = makeNode("function foo(...things) { return things; }", false);    
+    node = makeNode("function foo(...things) { return things; }", false);
     InspectorTest.assert(node.params.length === 1);
     InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.RestElement);
     InspectorTest.assert(node.params[0].argument.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
@@ -549,6 +561,66 @@ function test()
     InspectorTest.assert(node.body.body[0].expression.argument.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.assert(node.body.body[0].expression.argument.value === 1);
     InspectorTest.log("passed AwaitExpression");
+
+
+    // Modules
+
+    node = makeNodeForModule(`import {a,b as x,c} from "module.js"`);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration);
+    InspectorTest.assert(node.source.value === "module.js");
+    InspectorTest.assert(node.specifiers.length === 3);
+    InspectorTest.assert(node.specifiers[0].type === WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier);
+    InspectorTest.assert(node.specifiers[0].local.name === "a");
+    InspectorTest.assert(node.specifiers[0].imported.name === "a");
+    InspectorTest.assert(node.specifiers[1].type === WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier);
+    InspectorTest.assert(node.specifiers[1].local.name === "x");
+    InspectorTest.assert(node.specifiers[1].imported.name === "b");
+    InspectorTest.assert(node.specifiers[2].type === WebInspector.ScriptSyntaxTree.NodeType.ImportSpecifier);
+    InspectorTest.assert(node.specifiers[2].local.name === "c");
+    InspectorTest.assert(node.specifiers[2].imported.name === "c");
+    InspectorTest.log("passed ImportDeclaration, ImportSpecifier");
+
+    node = makeNodeForModule(`import x from "module.js"`);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration);
+    InspectorTest.assert(node.source.value === "module.js");
+    InspectorTest.assert(node.specifiers.length === 1);
+    InspectorTest.assert(node.specifiers[0].type === WebInspector.ScriptSyntaxTree.NodeType.ImportDefaultSpecifier);
+    InspectorTest.log("passed ImportDefaultSpecifier");
+
+    node = makeNodeForModule(`import * as A from "module.js"`);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ImportDeclaration);
+    InspectorTest.assert(node.source.value === "module.js");
+    InspectorTest.assert(node.specifiers.length === 1);
+    InspectorTest.assert(node.specifiers[0].type === WebInspector.ScriptSyntaxTree.NodeType.ImportNamespaceSpecifier);
+    InspectorTest.assert(node.specifiers[0].local.name === "A");
+    InspectorTest.log("passed ImportNamespaceSpecifier");
+
+    node = makeNodeForModule(`export {a, b as x, c}`);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ExportNamedDeclaration);
+    InspectorTest.assert(node.specifiers.length === 3);
+    InspectorTest.assert(node.specifiers[0].type === WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier);
+    InspectorTest.assert(node.specifiers[0].local.name === "a");
+    InspectorTest.assert(node.specifiers[0].exported.name === "a");
+    InspectorTest.assert(node.specifiers[1].type === WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier);
+    InspectorTest.assert(node.specifiers[1].local.name === "b");
+    InspectorTest.assert(node.specifiers[1].exported.name === "x");
+    InspectorTest.assert(node.specifiers[2].type === WebInspector.ScriptSyntaxTree.NodeType.ExportSpecifier);
+    InspectorTest.assert(node.specifiers[2].local.name === "c");
+    InspectorTest.assert(node.specifiers[2].exported.name === "c");
+    InspectorTest.log("passed ExportNamedDeclaration, ExportSpecifier");
+
+    node = makeNodeForModule(`export default x`);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration);
+    InspectorTest.assert(node.declaration.name === "x");
+    InspectorTest.log("passed ExportDefaultDeclaration");
+
+    node = makeNodeForModule(`export * from "module.js"`);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ExportAllDeclaration);
+    InspectorTest.assert(node.source.value === "module.js");
+    InspectorTest.log("passed ExportAllDeclaration");
+
+
+    // Divots
 
     node = makeNode("var o = {['c']() { }};", false);
     //                        ^

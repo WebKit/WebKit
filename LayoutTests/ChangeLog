@@ -1,5 +1,24 @@
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add ability to distinguish if a Script was parsed as a module
+        https://bugs.webkit.org/show_bug.cgi?id=164900
+        <rdar://problem/29323817>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/model/parse-script-syntax-tree-expected.txt:
+        * inspector/model/parse-script-syntax-tree.html:
+        * inspector/model/resources/module.js: Added.
+        (import.string_appeared_here.myModule):
+        * inspector/model/resources/other-module.js: Added.
+        (myOtherModule):
+        * inspector/model/resources/program.js: Added.
+        (myProgram):
+        * inspector/model/script-sourceType-expected.txt: Added.
+        * inspector/model/script-sourceType.html: Added.
+
+2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update Esprima to support new features / syntax (**, async/await, trailing comma)
         https://bugs.webkit.org/show_bug.cgi?id=164830
         <rdar://problem/29293814>

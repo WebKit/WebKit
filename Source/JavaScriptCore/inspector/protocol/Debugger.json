@@ -304,7 +304,8 @@
                 { "name": "endColumn", "type": "integer", "description": "Length of the last line of the script." },
                 { "name": "isContentScript", "type": "boolean", "optional": true, "description": "Determines whether this script is a user extension script." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "sourceURL name of the script (if any)." },
-                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with script (if any)." }
+                { "name": "sourceMapURL", "type": "string", "optional": true, "description": "URL of source map associated with script (if any)." },
+                { "name": "module", "type": "boolean", "optional": true, "description": "True if this script was parsed as a module." }
             ],
             "description": "Fired when virtual machine parses script. This event is also fired for all known and uncollected scripts upon enabling debugger."
         },

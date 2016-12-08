@@ -839,8 +839,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         let indentString = WebInspector.indentString();
         const includeSourceMapData = true;
 
-        // FIXME: Properly pass if this is a module or script.
-        const isModule = false;
+        let sourceType = this._delegate.textEditorScriptSourceType(this);
+        const isModule = sourceType === WebInspector.Script.SourceType.Module;
 
         let workerProxy = WebInspector.FormatterWorkerProxy.singleton();
         workerProxy.formatJavaScript(sourceText, isModule, indentString, includeSourceMapData, ({formattedText, sourceMapData}) => {

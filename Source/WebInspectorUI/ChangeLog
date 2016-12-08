@@ -1,5 +1,35 @@
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add ability to distinguish if a Script was parsed as a module
+        https://bugs.webkit.org/show_bug.cgi?id=164900
+        <rdar://problem/29323817>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.get sourceType):
+        New property of Scripts. SourceType is either Program or Module.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WebInspector.DebuggerObserver.prototype.scriptParsed):
+        Convert incoming module boolean into SourceType when creating new Scripts.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree):
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        Update the generic AST for new module specific Esprima types.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorScriptSourceType):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype._startWorkerPrettyPrint):
+        For pretty printing correctly state if this is a module or not for Esprima.
+
+2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Update Esprima to support new features / syntax (**, async/await, trailing comma)
         https://bugs.webkit.org/show_bug.cgi?id=164830
         <rdar://problem/29293814>
