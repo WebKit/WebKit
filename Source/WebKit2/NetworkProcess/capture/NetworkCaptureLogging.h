@@ -46,7 +46,7 @@
 #endif
 #else
 #define DEBUG_LOG(...)                  ((void)0)
-#define DEBUG_LOG_ERROR(...)            RELEASE_LOG_ERROR(Network, __VA_ARGS__)
+#define DEBUG_LOG_ERROR(...)            ((void)0)
 #define DEBUG_LOG_VERBOSE(...)          ((void)0)
 #endif
 
