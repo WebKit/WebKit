@@ -22,6 +22,9 @@ function testImageSetRule(description, property, rule, expected)
     debug(`${description} : ${rule}`);
 
     var rule = `image-set(${rule})`;
+    if (property == 'cursor')
+        rule += ', default';
+
     if (testComputedStyle(property, rule) == rule)
         debug("Unprefixed: PASS");
     else

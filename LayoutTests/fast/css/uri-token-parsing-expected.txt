@@ -18,7 +18,7 @@ Rules from the stylesheet:
 #n { content: url(e); }
 #o { content: url(f); }
 #p { content: url('url(g)'); }
-#q { cursor: url('url(q)'); }
+#q { cursor: url('url(q)'), default; }
 #r { list-style-image: url('url(r)'); }
 #s { background-image: url('url(s)'); }
 #t { -webkit-mask-image: url('url(t)'); }
@@ -43,7 +43,7 @@ Expected result:
 #n { content: url(e); }
 #o { content: url(f); }
 #p { content: url('url(g)'); }
-#q { cursor: url('url(q)'); }
+#q { cursor: url('url(q)'), default; }
 #r { list-style-image: url('url(r)'); }
 #s { background-image: url('url(s)'); }
 #t { -webkit-mask-image: url('url(t)'); }

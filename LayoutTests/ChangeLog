@@ -1,5 +1,21 @@
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Unskip more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165608
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/css/font-property-priority-expected.txt:
+        * fast/css/image-set-unprefixed.html:
+        * fast/css/parsing-text-emphasis-expected.txt:
+        * fast/css/parsing-text-emphasis.html:
+        * fast/css/uri-token-parsing-expected.txt:
+        * fast/css/uri-token-parsing.html:
+        * platform/mac/fast/css/font_property_normal-expected.txt:
+
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] REGRESSION: Values of 0 should not be allowed for -webkit-aspect-ratio
         https://bugs.webkit.org/show_bug.cgi?id=165607
 

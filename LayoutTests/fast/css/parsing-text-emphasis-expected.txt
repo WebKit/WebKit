@@ -1,7 +1,7 @@
 PASS: '-webkit-text-emphasis-color: initial;' parsed as ['initial', '', '', '']
 PASS: '-webkit-text-emphasis-color: inherit;' parsed as ['inherit', '', '', '']
 PASS: '-webkit-text-emphasis-color: currentcolor;' parsed as ['currentcolor', '', '', '']
-PASS: '-webkit-text-emphasis-color: cyan;' parsed as ['rgb(0, 255, 255)', '', '', '']
+PASS: '-webkit-text-emphasis-color: cyan;' parsed as ['cyan', '', '', '']
 PASS: '-webkit-text-emphasis-color: bold;' parsed as ['', '', '', '']
 PASS: '-webkit-text-emphasis-color: 1px;' parsed as ['', '', '', '']
 PASS: '-webkit-text-emphasis-color: "cyan";' parsed as ['', '', '', '']

@@ -971,17 +971,12 @@ webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.
 webkit.org/b/165195 fast/css/attr-parsing.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/font-property-priority.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/font_property_normal.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/image-set-unprefixed.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/invalid-cursor-property-crash.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-attribute-case-insensitive-value-1.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-attribute-case-insensitive-value-2.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-nth-child.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/parsing-text-emphasis.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/css-selector-text.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/css-set-selector-text.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/uri-token-parsing.html [ Pass Failure ]
 webkit.org/b/165195 fast/backgrounds/background-shorthand-after-set-backgroundSize.html [ Pass Failure ]
 webkit.org/b/165195 fast/backgrounds/background-position-parsing-2.html [ Pass Failure ]
 webkit.org/b/165195 fast/backgrounds/background-shorthand-with-backgroundSize-style.html [ Pass Failure ]
