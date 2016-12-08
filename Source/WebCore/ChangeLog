@@ -1,3 +1,16 @@
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add strict checking for right parens to selector functions like :matches, :not etc.
+        https://bugs.webkit.org/show_bug.cgi?id=165624
+
+        Reviewed by Dean Jackson.
+
+        Unskipped fast/selectors/invalid-functional-pseudo-class.html.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Bail if we don't actually consume a right parenthesis.
+
 2016-12-08  Jeremy Jones  <jeremyj@apple.com>
 
         Exit fullscreen on escape key down, not up.
