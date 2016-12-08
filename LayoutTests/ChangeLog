@@ -1,5 +1,20 @@
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Remove font test that tests something nobody supports
+        https://bugs.webkit.org/show_bug.cgi?id=165596
+
+        Reviewed by Zalan Bujtas.
+
+        Remove this test that thinks "default" should be a special keyword in fonts. No
+        other browser treat this as special. Our old parser did, but it's just from some
+        reading of ancient CSS2 specs and not for any real-world reason.
+
+        * TestExpectations:
+        * fast/css/font-family-parse-keyword.html: Removed.
+        * fast/css/font-family-parse-keyword-expected.html: Removed.
+
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
         REGRESSION: font shorthand parsing is broken
         https://bugs.webkit.org/show_bug.cgi?id=165594
 
