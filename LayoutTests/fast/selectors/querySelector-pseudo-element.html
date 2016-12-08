@@ -25,13 +25,6 @@ shouldBe('document.querySelector("#test div p.ng")', 'target');
 
 shouldBe('document.querySelectorAll("#test p:first-line").length', '0');
 shouldBeNull('document.querySelector("#test p:first-line")');
-shouldBe('document.querySelectorAll("#test p:first-line.ng").length', '0');
-shouldBeNull('document.querySelector("#test p:first-line.ng")');
-
-shouldBe('document.querySelectorAll("#test div:first-line p").length', '0');
-shouldBeNull('document.querySelector("#test div:first-line p")');
-shouldBe('document.querySelectorAll("#test div:first-line p.ng").length', '0');
-shouldBeNull('document.querySelector("#test div:first-line p.ng")');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </html>

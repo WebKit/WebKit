@@ -13,12 +13,6 @@ PASS document.querySelectorAll("#test div p.ng").length is 1
 PASS document.querySelector("#test div p.ng") is target
 PASS document.querySelectorAll("#test p:first-line").length is 0
 PASS document.querySelector("#test p:first-line") is null
-PASS document.querySelectorAll("#test p:first-line.ng").length is 0
-PASS document.querySelector("#test p:first-line.ng") is null
-PASS document.querySelectorAll("#test div:first-line p").length is 0
-PASS document.querySelector("#test div:first-line p") is null
-PASS document.querySelectorAll("#test div:first-line p.ng").length is 0
-PASS document.querySelector("#test div:first-line p.ng") is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

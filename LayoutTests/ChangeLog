@@ -1,6 +1,21 @@
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165605
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/dom/Window/getMatchedCSSRules-with-pseudo-elements-complex-expected.txt:
+        * fast/dom/Window/getMatchedCSSRules-with-pseudo-elements-complex.html:
+        * fast/selectors/querySelector-pseudo-element-expected.txt:
+        * fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-any-expected.txt:
+        * fast/selectors/querySelector-pseudo-element-inside-functional-pseudo-class-any.html:
+        * fast/selectors/querySelector-pseudo-element.html:
+
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip more tests
         https://bugs.webkit.org/show_bug.cgi?id=165604
 
         Reviewed by Zalan Bujtas.

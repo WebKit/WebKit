@@ -13,8 +13,6 @@ PASS document.querySelectorAll("#test div :-webkit-any(p.ng)").length is 1
 PASS document.querySelector("#test div :-webkit-any(p.ng)") is target
 PASS document.querySelectorAll("#test :-webkit-any(p:first-line)").length is 0
 PASS document.querySelector("#test :-webkit-any(p:first-line)") is null
-PASS document.querySelectorAll("#test :-webkit-any(p:first-line.ng)").length is 0
-PASS document.querySelector("#test :-webkit-any(p:first-line.ng)") is null
 PASS document.querySelectorAll("#test :-webkit-any(div:first-line) p").length is 0
 PASS document.querySelector("#test :-webkit-any(div:first-line) p") is null
 PASS document.querySelectorAll("#test :-webkit-any(div:first-line) p.ng").length is 0
