@@ -3550,10 +3550,10 @@ static RefPtr<CSSValue> consumeWebkitAspectRatio(CSSParserTokenRange& range)
         return consumeIdent<CSSValueAuto, CSSValueFromDimensions, CSSValueFromIntrinsic>(range);
     
     RefPtr<CSSPrimitiveValue> leftValue = consumeNumber(range, ValueRangeNonNegative);
-    if (!leftValue || range.atEnd() || !consumeSlashIncludingWhitespace(range))
+    if (!leftValue || !leftValue->floatValue() || range.atEnd() || !consumeSlashIncludingWhitespace(range))
         return nullptr;
     RefPtr<CSSPrimitiveValue> rightValue = consumeNumber(range, ValueRangeNonNegative);
-    if (!rightValue)
+    if (!rightValue || !rightValue->floatValue())
         return nullptr;
     
     return CSSAspectRatioValue::create(leftValue->floatValue(), rightValue->floatValue());

@@ -1,3 +1,16 @@
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] REGRESSION: Values of 0 should not be allowed for -webkit-aspect-ratio
+        https://bugs.webkit.org/show_bug.cgi?id=165607
+
+        Reviewed by Simon Fraser.
+
+        Unskipped fast/css/aspect-ratio-parsing-tests.html.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWebkitAspectRatio):
+        Don't allow 0 as either the left or right value of the ratio.
+
 2016-12-08  Antti Koivisto  <antti@apple.com>
 
         ::after and ::before don't work on :host
