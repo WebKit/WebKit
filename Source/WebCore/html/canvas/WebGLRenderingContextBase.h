@@ -30,6 +30,7 @@
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
 #include "Timer.h"
+#include "WebGLContextAttributes.h"
 #include "WebGLGetInfo.h"
 #include "WebGLObject.h"
 #include "WebGLTexture.h"
@@ -64,7 +65,6 @@ class WebGLContextObject;
 class WebGLCompressedTextureATC;
 class WebGLCompressedTexturePVRTC;
 class WebGLCompressedTextureS3TC;
-class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
 class WebGLDepthTexture;
@@ -108,7 +108,7 @@ inline bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
 
 class WebGLRenderingContextBase : public CanvasRenderingContext, public ActiveDOMObject {
 public:
-    static std::unique_ptr<WebGLRenderingContextBase> create(HTMLCanvasElement&, WebGLContextAttributes*, const String&);
+    static std::unique_ptr<WebGLRenderingContextBase> create(HTMLCanvasElement&, WebGLContextAttributes&, const String&);
     virtual ~WebGLRenderingContextBase();
 
 #if PLATFORM(WIN)
@@ -192,7 +192,7 @@ public:
     bool getAttachedShaders(WebGLProgram*, Vector<RefPtr<WebGLShader>>&);
     GC3Dint getAttribLocation(WebGLProgram*, const String& name);
     WebGLGetInfo getBufferParameter(GC3Denum target, GC3Denum pname);
-    RefPtr<WebGLContextAttributes> getContextAttributes();
+    std::optional<WebGLContextAttributes> getContextAttributes();
     GC3Denum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
     virtual WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) = 0;
@@ -334,8 +334,8 @@ public:
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 protected:
-    WebGLRenderingContextBase(HTMLCanvasElement&, GraphicsContext3D::Attributes);
-    WebGLRenderingContextBase(HTMLCanvasElement&, RefPtr<GraphicsContext3D>&&, GraphicsContext3D::Attributes);
+    WebGLRenderingContextBase(HTMLCanvasElement&, WebGLContextAttributes);
+    WebGLRenderingContextBase(HTMLCanvasElement&, RefPtr<GraphicsContext3D>&&, WebGLContextAttributes);
 
     friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
@@ -515,7 +515,7 @@ protected:
     GC3Denum m_unpackColorspaceConversion;
     bool m_contextLost;
     LostContextMode m_contextLostMode;
-    GraphicsContext3D::Attributes m_attributes;
+    WebGLContextAttributes m_attributes;
 
     bool m_layerCleared;
     GC3Dfloat m_clearColor[4];

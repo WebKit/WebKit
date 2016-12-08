@@ -24,16 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef boolean GLboolean;
+
 [
-    NoInterfaceObject,
     Conditional=WEBGL,
-] interface WebGLContextAttributes {
-    attribute boolean alpha;
-    attribute boolean depth;
-    attribute boolean stencil;
-    attribute boolean antialias;
-    attribute boolean premultipliedAlpha;
-    attribute boolean preserveDrawingBuffer;
-    attribute boolean preferLowPowerToHighPerformance;
-    attribute boolean failIfMajorPerformanceCaveat;
+    JSGenerateToJSObject
+] dictionary WebGLContextAttributes {
+    GLboolean alpha = true;
+    GLboolean depth = true;
+    GLboolean stencil = false;
+    GLboolean antialias = true;
+    GLboolean premultipliedAlpha = true;
+    GLboolean preserveDrawingBuffer = false;
+    GLboolean preferLowPowerToHighPerformance = false;
+    GLboolean failIfMajorPerformanceCaveat = false;
 };

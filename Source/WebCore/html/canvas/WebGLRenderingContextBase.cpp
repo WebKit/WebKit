@@ -348,7 +348,7 @@ private:
     WebGLRenderingContextBase* m_context;
 };
 
-std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement& canvas, WebGLContextAttributes* attrs, const String& type)
+std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTMLCanvasElement& canvas, WebGLContextAttributes& attributes, const String& type)
 {
 #if ENABLE(WEBGL2)
     if (type == "webgl2" && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
@@ -387,8 +387,6 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
             isPendingPolicyResolution = true;
         }
     }
-
-    GraphicsContext3D::Attributes attributes = attrs ? attrs->attributes() : GraphicsContext3D::Attributes();
 
     if (attributes.antialias) {
         if (!frame->settings().openGLMultisamplingEnabled())
@@ -453,7 +451,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     return renderingContext;
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, GraphicsContext3D::Attributes attributes)
+WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, WebGLContextAttributes attributes)
     : CanvasRenderingContext(passedCanvas)
     , ActiveDOMObject(&passedCanvas.document())
     , m_context(nullptr)
@@ -471,7 +469,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCa
 {
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, RefPtr<GraphicsContext3D>&& context, GraphicsContext3D::Attributes attributes)
+WebGLRenderingContextBase::WebGLRenderingContextBase(HTMLCanvasElement& passedCanvas, RefPtr<GraphicsContext3D>&& context, WebGLContextAttributes attributes)
     : CanvasRenderingContext(passedCanvas)
     , ActiveDOMObject(&passedCanvas.document())
     , m_context(WTFMove(context))
@@ -667,7 +665,8 @@ bool WebGLRenderingContextBase::clearIfComposited(GC3Dbitfield mask)
         || m_attributes.preserveDrawingBuffer || (mask && m_framebufferBinding))
         return false;
 
-    RefPtr<WebGLContextAttributes> contextAttributes = getContextAttributes();
+    auto contextAttributes = getContextAttributes();
+    ASSERT(contextAttributes);
 
     // Determine if it's possible to combine the clear the user asked for and this clear.
     bool combinedClear = mask && !m_scissorEnabled;
@@ -682,13 +681,13 @@ bool WebGLRenderingContextBase::clearIfComposited(GC3Dbitfield mask)
         m_context->clearColor(0, 0, 0, 0);
     m_context->colorMask(true, true, true, true);
     GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
-    if (contextAttributes->depth()) {
+    if (contextAttributes->depth) {
         if (!combinedClear || !m_depthMask || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT))
             m_context->clearDepth(1.0f);
         clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
         m_context->depthMask(true);
     }
-    if (contextAttributes->stencil()) {
+    if (contextAttributes->stencil) {
         if (combinedClear && (mask & GraphicsContext3D::STENCIL_BUFFER_BIT))
             m_context->clearStencil(m_clearStencil & m_stencilMask);
         else
@@ -2223,21 +2222,20 @@ WebGLGetInfo WebGLRenderingContextBase::getBufferParameter(GC3Denum target, GC3D
     return WebGLGetInfo(static_cast<unsigned int>(value));
 }
 
-RefPtr<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes()
+std::optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes()
 {
     if (isContextLostOrPending())
-        return nullptr;
-    // We always need to return a new WebGLContextAttributes object to
-    // prevent the user from mutating any cached version.
+        return std::nullopt;
 
     // Also, we need to enforce requested values of "false" for depth
     // and stencil, regardless of the properties of the underlying
     // GraphicsContext3D.
-    auto attributes = WebGLContextAttributes::create(m_context->getContextAttributes());
+
+    auto attributes = m_context->getContextAttributes();
     if (!m_attributes.depth)
-        attributes->setDepth(false);
+        attributes.depth = false;
     if (!m_attributes.stencil)
-        attributes->setStencil(false);
+        attributes.stencil = false;
     return WTFMove(attributes);
 }
 
@@ -5787,11 +5785,11 @@ void WebGLRenderingContextBase::applyStencilTest()
     if (m_framebufferBinding)
         haveStencilBuffer = m_framebufferBinding->hasStencilBuffer();
     else {
-        RefPtr<WebGLContextAttributes> attributes = getContextAttributes();
-        haveStencilBuffer = attributes->stencil();
+        auto attributes = getContextAttributes();
+        ASSERT(attributes);
+        haveStencilBuffer = attributes->stencil;
     }
-    enableOrDisable(GraphicsContext3D::STENCIL_TEST,
-                    m_stencilEnabled && haveStencilBuffer);
+    enableOrDisable(GraphicsContext3D::STENCIL_TEST, m_stencilEnabled && haveStencilBuffer);
 }
 
 void WebGLRenderingContextBase::enableOrDisable(GC3Denum capability, bool enable)

@@ -1,6 +1,6 @@
 Note that some of the values tested here might not be supported, and thus should return the default values.
 
-{"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}
-{"alpha":true,"depth":true,"stencil":true,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}
-{"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":true,"failIfMajorPerformanceCaveat":false}
-{"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}
+{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":false,"preferLowPowerToHighPerformance":false,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":false}
+{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":false,"preferLowPowerToHighPerformance":false,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":true}
+{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":false,"preferLowPowerToHighPerformance":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":false}
+{"alpha":true,"antialias":true,"depth":true,"failIfMajorPerformanceCaveat":true,"preferLowPowerToHighPerformance":false,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"stencil":false}

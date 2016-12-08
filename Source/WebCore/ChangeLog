@@ -1,3 +1,69 @@
+2016-12-07  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] WebGLContextAttributes should be a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=165572
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove unused files.
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        (WebCore::attributesFor3DContext): Deleted.
+        Re-work getContext to use JSDOMConvert and use the WebGLContextAttributes dictionary.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Add missing inclusion of dictionaries.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::maxActivePixelMemory):
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::is2dType):
+        (WebCore::HTMLCanvasElement::getContext2d):
+        (WebCore::shouldEnableWebGL):
+        (WebCore::HTMLCanvasElement::is3dType):
+        (WebCore::HTMLCanvasElement::getContextWebGL):
+        * html/HTMLCanvasElement.h:
+        Refactor context creation of 2d and WebGL contexts into their own functions. Make the 
+        WebGL one take a WebGLContextAttributes struct.
+
+        * html/HTMLCanvasElement.idl:
+        No functionality change. Make IDL match the latest spec.
+
+        * html/canvas/CanvasContextAttributes.cpp: Removed.
+        * html/canvas/CanvasContextAttributes.h: Removed.
+        Remove unneeded base class.
+
+        * html/canvas/WebGLContextAttributes.cpp: Removed.
+        * html/canvas/WebGLContextAttributes.h:
+        Instead of a class, we can use a type alias of GraphicsContext3D::Attributes for
+        WebGLContextAttributes.
+
+        * html/canvas/WebGLContextAttributes.idl:
+        Convert to a dictionary.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::clearIfComposited):
+        (WebCore::WebGLRenderingContextBase::getContextAttributes):
+        (WebCore::WebGLRenderingContextBase::applyStencilTest):
+        * html/canvas/WebGLRenderingContextBase.h:
+        Update to WebGLContextAttributes by value, since it is a simple struct now. Update getContextAttributes
+        to return a std::optional<WebGLContextAttributes>.
+
+        * html/canvas/WebGLRenderingContextBase.idl:
+        Make getContextAttributes return a nullable WebGLContextAttributes, as per spec.
+        
+        * platform/graphics/GraphicsContext3D.h:
+        Sort attributes into categories, one that match WebGLContextAttributes, and the remainder.
+
 2016-12-08  Zalan Bujtas  <zalan@apple.com>
 
         Do not create multicolumn context for certain type of renderers.

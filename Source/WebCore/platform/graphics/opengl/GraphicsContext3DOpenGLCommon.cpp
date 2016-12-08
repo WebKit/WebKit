@@ -132,7 +132,7 @@ static uint64_t nameHashForShader(const char* name, size_t length)
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::createForCurrentGLContext()
 {
-    auto context = adoptRef(*new GraphicsContext3D(Attributes(), 0, GraphicsContext3D::RenderToCurrentGLContext));
+    auto context = adoptRef(*new GraphicsContext3D({ }, 0, GraphicsContext3D::RenderToCurrentGLContext));
     if (!context->m_private)
         return nullptr;
     return WTFMove(context);
@@ -1007,7 +1007,7 @@ int GraphicsContext3D::getAttribLocation(Platform3DObject program, const String&
     return ::glGetAttribLocation(program, mappedName.utf8().data());
 }
 
-GraphicsContext3D::Attributes GraphicsContext3D::getContextAttributes()
+GraphicsContext3DAttributes GraphicsContext3D::getContextAttributes()
 {
     return m_attrs;
 }

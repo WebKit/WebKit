@@ -33,9 +33,12 @@
 #include <memory>
 #include <wtf/Forward.h>
 
+#if ENABLE(WEBGL)
+#include "WebGLContextAttributes.h"
+#endif
+
 namespace WebCore {
 
-class CanvasContextAttributes;
 class CanvasRenderingContext;
 class GraphicsContext;
 class GraphicsContextStateSaver;
@@ -85,10 +88,14 @@ public:
         reset();
     }
 
-    CanvasRenderingContext* getContext(const String&, CanvasContextAttributes* = nullptr);
+    CanvasRenderingContext* getContext(const String&);
+
     static bool is2dType(const String&);
+    CanvasRenderingContext* getContext2d(const String&);
+
 #if ENABLE(WEBGL)
     static bool is3dType(const String&);
+    CanvasRenderingContext* getContextWebGL(const String&, WebGLContextAttributes&& = { });
 #endif
 
     static String toEncodingMimeType(const String& mimeType);

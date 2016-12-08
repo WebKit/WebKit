@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+typedef (CanvasRenderingContext2D or WebGLRenderingContextBase) RenderingContext;
+
 [
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
@@ -32,8 +34,7 @@
     attribute unsigned long width;
     attribute unsigned long height;
 
-    [Custom, MayThrowException] DOMString toDataURL(optional DOMString? type);
+    [Custom] RenderingContext? getContext(DOMString contextId, any... arguments);
 
-    // The custom binding is needed to handle context creation attributes.
-    [Custom] any getContext(DOMString contextId, any... arguments);
+    [Custom, MayThrowException] DOMString toDataURL(optional DOMString? type);
 };

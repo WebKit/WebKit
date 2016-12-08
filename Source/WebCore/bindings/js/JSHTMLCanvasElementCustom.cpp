@@ -27,79 +27,44 @@
 #include "config.h"
 #include "JSHTMLCanvasElement.h"
 
-#include "CanvasContextAttributes.h"
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
 #include <bindings/ScriptObject.h>
 #include <wtf/GetPtr.h>
 
 #if ENABLE(WEBGL)
-#include "JSDictionary.h"
+#include "JSWebGLContextAttributes.h"
 #include "JSWebGLRenderingContextBase.h"
-#include "WebGLContextAttributes.h"
 #endif
 
 using namespace JSC;
 
 namespace WebCore {
 
-#if ENABLE(WEBGL)
-
-static RefPtr<CanvasContextAttributes> attributesFor3DContext(ExecState& state, ThrowScope& scope)
-{
-    JSValue initializerValue = state.argument(1);
-    if (initializerValue.isUndefinedOrNull())
-        return nullptr;
-    
-    JSObject* initializerObject = initializerValue.toObject(&state);
-    ASSERT_UNUSED(scope, !scope.exception());
-    JSDictionary dictionary(&state, initializerObject);
-    
-    GraphicsContext3D::Attributes graphicsAttrs;
-    
-    dictionary.tryGetProperty("alpha", graphicsAttrs.alpha);
-    dictionary.tryGetProperty("depth", graphicsAttrs.depth);
-    dictionary.tryGetProperty("stencil", graphicsAttrs.stencil);
-    dictionary.tryGetProperty("antialias", graphicsAttrs.antialias);
-    dictionary.tryGetProperty("premultipliedAlpha", graphicsAttrs.premultipliedAlpha);
-    dictionary.tryGetProperty("preserveDrawingBuffer", graphicsAttrs.preserveDrawingBuffer);
-    dictionary.tryGetProperty("preferLowPowerToHighPerformance", graphicsAttrs.preferLowPowerToHighPerformance);
-
-    return WebGLContextAttributes::create(graphicsAttrs);
-}
-
-#endif
-
 JSValue JSHTMLCanvasElement::getContext(ExecState& state)
 {
-    VM& vm = state.vm();
+    auto& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (UNLIKELY(state.argumentCount() < 1))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    HTMLCanvasElement& canvas = wrapped();
-    const String& contextId = state.uncheckedArgument(0).toWTFString(&state);
-    
-    RefPtr<CanvasContextAttributes> attributes;
+    auto contextId = convert<IDLDOMString>(state, state.uncheckedArgument(0), StringConversionConfiguration::Normal);
+    RETURN_IF_EXCEPTION(scope, JSValue());
+
+    if (HTMLCanvasElement::is2dType(contextId))
+        return toJS<IDLNullable<IDLInterface<CanvasRenderingContext2D>>>(state, *globalObject(), static_cast<CanvasRenderingContext2D*>(wrapped().getContext2d(contextId)));
 
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::is3dType(contextId)) {
-        attributes = attributesFor3DContext(state, scope);
+        auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, state.argument(1));
         RETURN_IF_EXCEPTION(scope, JSValue());
+
+        return toJS<IDLNullable<IDLInterface<WebGLRenderingContextBase>>>(state, *globalObject(), static_cast<WebGLRenderingContextBase*>(wrapped().getContextWebGL(contextId, WTFMove(attributes))));
     }
 #endif
-    
-    auto* context = canvas.getContext(contextId, attributes.get());
-    if (!context)
-        return jsNull();
 
-#if ENABLE(WEBGL)
-    if (is<WebGLRenderingContextBase>(*context))
-        return toJS(&state, globalObject(), downcast<WebGLRenderingContextBase>(*context));
-#endif
-
-    return toJS(&state, globalObject(), downcast<CanvasRenderingContext2D>(*context));
+    return jsNull();
 }
 
 JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)

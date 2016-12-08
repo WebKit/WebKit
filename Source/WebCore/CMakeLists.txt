@@ -1783,7 +1783,6 @@ set(WebCore_SOURCES
     html/WeekInputType.cpp
 
     html/canvas/ANGLEInstancedArrays.cpp
-    html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPath.cpp
     html/canvas/CanvasPattern.cpp
@@ -1809,7 +1808,6 @@ set(WebCore_SOURCES
     html/canvas/WebGLCompressedTextureATC.cpp
     html/canvas/WebGLCompressedTexturePVRTC.cpp
     html/canvas/WebGLCompressedTextureS3TC.cpp
-    html/canvas/WebGLContextAttributes.cpp
     html/canvas/WebGLContextEvent.cpp
     html/canvas/WebGLContextGroup.cpp
     html/canvas/WebGLContextObject.cpp
@@ -3104,7 +3102,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLCompressedTextureATC.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
         html/canvas/WebGLCompressedTextureS3TC.cpp
-        html/canvas/WebGLContextAttributes.cpp
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLContextGroup.cpp
         html/canvas/WebGLContextObject.cpp

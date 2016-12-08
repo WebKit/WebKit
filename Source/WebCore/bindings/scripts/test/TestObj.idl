@@ -82,6 +82,8 @@ enum TestConfidence { "high", "kinda-low" };
     attribute record<ByteString, long> usvstringLongRecordAttr;
     attribute record<DOMString, TestObj> stringObjRecordAttr;
     attribute record<DOMString, TestObj?> stringNullableObjRecordAttr;
+    attribute TestDictionary dictionaryAttr;
+    attribute TestDictionary? nullableDictionaryAttr;
 
     attribute TestEnumTypeWithAlternateImplementationName implementationEnumAttr;
 

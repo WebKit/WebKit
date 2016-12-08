@@ -5335,6 +5335,7 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $codeGenerator->IsRecordType($type);
     return 1 if $codeGenerator->IsStringType($type);
     return 1 if $codeGenerator->IsEnumType($type);
+    return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
     return 1 if $codeGenerator->IsTypedArrayType($type);
     return 1 if $type->name eq "Date";
@@ -5352,6 +5353,7 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
     return 1 if $type->isUnion;
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($type);
     return 1 if $codeGenerator->IsRecordType($type);
+    return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
     return 1 if $codeGenerator->IsTypedArrayType($type);
     return 1 if $type->name eq "SerializedScriptValue";

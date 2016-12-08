@@ -551,7 +551,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
 
     [Custom] any getBufferParameter(GLenum target, GLenum pname);
 
-    WebGLContextAttributes getContextAttributes();
+    WebGLContextAttributes? getContextAttributes();
 
     GLenum getError();
 
