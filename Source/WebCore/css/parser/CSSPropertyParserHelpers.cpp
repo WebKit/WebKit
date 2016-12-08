@@ -111,6 +111,17 @@ public:
         result = m_calcValue->doubleValue();
         return true;
     }
+    
+    bool consumePositiveIntegerRaw(int& result)
+    {
+        if (!m_calcValue || m_calcValue->category() != CalcNumber || !m_calcValue->isInt())
+            return false;
+        result = static_cast<int>(m_calcValue->doubleValue());
+        if (result < 1)
+            return false;
+        m_sourceRange = m_range;
+        return true;
+    }
 
 private:
     CSSParserTokenRange& m_sourceRange;
@@ -143,6 +154,19 @@ RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange& range)
     return consumeInteger(range, 1);
 }
 
+bool consumePositiveIntegerRaw(CSSParserTokenRange& range, int& result)
+{
+    const CSSParserToken& token = range.peek();
+    if (token.type() == NumberToken) {
+        if (token.numericValueType() == NumberValueType || token.numericValue() < 1)
+            return nullptr;
+        result = range.consumeIncludingWhitespace().numericValue();
+        return true;
+    }
+    CalcParser calcParser(range);
+    return calcParser.consumePositiveIntegerRaw(result);
+}
+    
 bool consumeNumberRaw(CSSParserTokenRange& range, double& result)
 {
     if (range.peek().type() == NumberToken) {

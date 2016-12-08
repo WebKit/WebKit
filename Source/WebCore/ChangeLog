@@ -1,3 +1,32 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        REGRESSION: font shorthand parsing is broken
+        https://bugs.webkit.org/show_bug.cgi?id=165594
+
+        Reviewed by Zalan Bujtas.
+
+        Unskipping fast/css/font-calculated-value.html.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontWeight):
+        The new parser did not support calc() in the font-weight property.
+        In order to support a positive integer, add new functions to consume
+        and handle positive integers without making a CSSPrimitiveValue out of
+        the number. These correspond to consumeNumberRaw but are limited to positive
+        integers.
+
+        (WebCore::CSSPropertyParser::consumeFont):
+        The implicit bool was incorrectly set to true when properties were
+        defined because releaseNonNull() cleared the variables being null
+        checked. Add separate booleans to avoid this.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumePositiveIntegerRaw):
+        (WebCore::CSSPropertyParserHelpers::consumePositiveIntegerRaw):
+        * css/parser/CSSPropertyParserHelpers.h:
+        Add the new helpers that consume positive integers without creating
+        CSSPrimitiveValues out of them.
+
 2016-12-07  Jeremy Jones  <jeremyj@apple.com>
 
         Exit pointer lock when page goes into page cache.

@@ -862,12 +862,11 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
     const CSSParserToken& token = range.peek();
     if (token.id() >= CSSValueNormal && token.id() <= CSSValueLighter)
         return consumeIdent(range);
-    if (token.type() != NumberToken || token.numericValueType() != IntegerValueType)
+    int weight;
+    if (!consumePositiveIntegerRaw(range, weight))
         return nullptr;
-    int weight = static_cast<int>(token.numericValue());
     if ((weight % 100) || weight < 100 || weight > 900)
         return nullptr;
-    range.consumeIncludingWhitespace();
     return CSSValuePool::singleton().createIdentifierValue(static_cast<CSSValueID>(CSSValue100 + weight / 100 - 1));
 }
 
@@ -4333,6 +4332,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     RefPtr<CSSPrimitiveValue> fontStyle;
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
     RefPtr<CSSPrimitiveValue> fontWeight;
+    
     // FIXME-NEWPARSER: Implement. RefPtr<CSSPrimitiveValue> fontStretch;
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
@@ -4362,18 +4362,19 @@ bool CSSPropertyParser::consumeFont(bool important)
     if (m_range.atEnd())
         return false;
 
-    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontStyle);
-    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontVariantCaps);
+    bool hasStyle = fontStyle;
+    bool hasVariant = fontVariantCaps;
+    bool hasWeight = fontWeight;
+    
+    addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasStyle);
+    addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasVariant);
 /*  
     // FIXME-NEWPARSER: What do we do with these? They aren't part of our fontShorthand().
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, true);
 */
     
-    addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontWeight);
-    /* FIXME-NEWPARSER: Implement.
-    addProperty(CSSPropertyFontStretch, CSSPropertyFont, fontStretch ? fontStretch.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !fontStretch);
-    */
+    addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important, !hasWeight);
 
     // Now a font size _must_ come.
     RefPtr<CSSValue> fontSize = consumeFontSize(m_range, m_context.mode);
@@ -4398,9 +4399,6 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     addProperty(CSSPropertyFontFamily, CSSPropertyFont, parsedFamilyValue.releaseNonNull(), important);
 
-    // FIXME: http://www.w3.org/TR/2011/WD-css3-fonts-20110324/#font-prop requires that
-    // "font-stretch", "font-size-adjust", and "font-kerning" be reset to their initial values
-    // but we don't seem to support them at the moment. They should also be added here once implemented.
     return m_range.atEnd();
 }
 
