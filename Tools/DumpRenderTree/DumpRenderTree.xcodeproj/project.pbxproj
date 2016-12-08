@@ -112,7 +112,6 @@
 		A134E53618905EFF00901D06 /* AccessibilityCommonMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */; };
 		A8B91ADA0CF3B32F008F91FF /* DumpRenderTreePasteboard.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B91AD70CF3B32F008F91FF /* DumpRenderTreePasteboard.m */; };
 		A8B91ADC0CF3B32F008F91FF /* DumpRenderTreeWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */; };
-		A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */; };
 		A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A8D79CE90FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m */; };
 		A9BB7C5C1C505278002C525B /* AccessibilityTextMarkerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = A9BB7C5B1C505278002C525B /* AccessibilityTextMarkerIOS.mm */; };
 		AA5A15EF16E15CD000F7C561 /* AccessibilityControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA5A15ED16E15CD000F7C561 /* AccessibilityControllerIOS.mm */; };
@@ -350,8 +349,6 @@
 		A8B91AD90CF3B32F008F91FF /* DumpRenderTreeWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DumpRenderTreeWindow.mm; path = mac/DumpRenderTreeWindow.mm; sourceTree = "<group>"; };
 		A8B91ADD0CF3B372008F91FF /* DumpRenderTreeWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeWindow.h; path = mac/DumpRenderTreeWindow.h; sourceTree = "<group>"; };
 		A8B91ADF0CF3B372008F91FF /* DumpRenderTreePasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreePasteboard.h; path = mac/DumpRenderTreePasteboard.h; sourceTree = "<group>"; };
-		A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CheckedMalloc.cpp; path = mac/CheckedMalloc.cpp; sourceTree = "<group>"; };
-		A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedMalloc.h; path = mac/CheckedMalloc.h; sourceTree = "<group>"; };
 		A8D79CE80FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreeFileDraggingSource.h; sourceTree = "<group>"; };
 		A8D79CE90FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumpRenderTreeFileDraggingSource.m; sourceTree = "<group>"; };
 		A9BB7C5B1C505278002C525B /* AccessibilityTextMarkerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityTextMarkerIOS.mm; path = ios/AccessibilityTextMarkerIOS.mm; sourceTree = "<group>"; };
@@ -490,8 +487,6 @@
 				A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */,
 				BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */,
 				A134E52F188FC27000901D06 /* DumpRenderTreeMain.mm */,
-				A8B91BF70CF522B4008F91FF /* CheckedMalloc.cpp */,
-				A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */,
 				7CBBC3211DDFCF9A00786B9D /* TestOptions.mm */,
 				7CBBC3221DDFCF9A00786B9D /* TestOptions.h */,
 				BC4741290D038A4C0072B006 /* JavaScriptThreading.h */,
@@ -1111,7 +1106,6 @@
 				AA5A15F016E15CD000F7C561 /* AccessibilityUIElementIOS.mm in Sources */,
 				BC0E26150E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm in Sources */,
 				BCA18B390C9B021900114369 /* AppleScriptController.m in Sources */,
-				A8B91BFD0CF522B4008F91FF /* CheckedMalloc.cpp in Sources */,
 				53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */,
 				1A2FB84F178C80930059FD96 /* DefaultPolicyDelegate.m in Sources */,
 				BCA18C470C9B5B9400114369 /* DumpRenderTree.mm in Sources */,

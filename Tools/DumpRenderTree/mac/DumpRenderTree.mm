@@ -31,7 +31,6 @@
 #import "DumpRenderTree.h"
 
 #import "AccessibilityController.h"
-#import "CheckedMalloc.h"
 #import "DefaultPolicyDelegate.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreePasteboard.h"
@@ -1247,8 +1246,6 @@ static void prepareConsistentTestingEnvironment()
     
     allocateGlobalControllers();
     
-    makeLargeMallocFailSilently();
-
 #if PLATFORM(MAC)
     NSActivityOptions options = (NSActivityUserInitiatedAllowingIdleSystemSleep | NSActivityLatencyCritical) & ~(NSActivitySuddenTerminationDisabled | NSActivityAutomaticTerminationDisabled);
     static id assertion = [[[NSProcessInfo processInfo] beginActivityWithOptions:options reason:@"DumpRenderTree should not be subject to process suppression"] retain];

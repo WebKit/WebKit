@@ -1,3 +1,26 @@
+2016-12-07  Mark Lam  <mark.lam@apple.com>
+
+        DumpRenderTree should stop using CheckedMalloc.
+        https://bugs.webkit.org/show_bug.cgi?id=165563
+        <rdar://problem/28945820>
+
+        Reviewed by Geoffrey Garen.
+
+        1. WebKitTestRunner does not have equivalent behavior to that which is implemented
+           in CheckedMalloc.
+        2. bmalloc does not honor the settings of CheckedMalloc.
+
+        The only time CheckedMalloc comes into play is when DRT uses gmalloc or system
+        malloc.  As a result, DRT exhibits different behavior from the normal way we run
+        our tests.  We should obsolete CheckedMalloc and make DRT behave consistently
+        with WKTR.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/CheckedMalloc.cpp: Removed.
+        * DumpRenderTree/mac/CheckedMalloc.h: Removed.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (prepareConsistentTestingEnvironment):
+
 2016-12-07  Dean Jackson  <dino@apple.com>
 
         Remove runtime toggle for pointer-lock
