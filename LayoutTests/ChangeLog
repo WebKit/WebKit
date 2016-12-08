@@ -1,3 +1,19 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip gradients tests
+        https://bugs.webkit.org/show_bug.cgi?id=165576
+
+        Reviewed by Dean Jackson.
+
+        Keywords like left, center, top, right and bottom are preserved when serializing in
+        the new parser.
+
+        * TestExpectations:
+        * fast/gradients/css3-gradient-parsing-expected.txt:
+        * fast/gradients/css3-gradient-parsing.html:
+        * fast/gradients/unprefixed-gradient-parsing-expected.txt:
+        * fast/gradients/unprefixed-gradient-parsing.html:
+
 2016-12-07  John Wilander  <wilander@apple.com>
 
         Allow commas in Accept, Accept-Language, and Content-Language request headers for simple CORS
