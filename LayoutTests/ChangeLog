@@ -1,3 +1,12 @@
+2016-12-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline some css tests for ios-simulator.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/fast/css/font_property_normal-expected.txt:
+        * platform/ios-simulator/fast/css/image-set-unprefixed-expected.txt:
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip grid tests

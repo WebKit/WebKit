@@ -20,24 +20,24 @@ Unprefixed: PASS
 Prefixed: PASS
 
 Single value for cursor : url(http://www.webkit.org/a) 1x
-Unprefixed: FAIL
-Prefixed: FAIL
+Unprefixed: PASS
+Prefixed: PASS
 
 Multiple values for cursor : url(http://www.webkit.org/a) 1x, url(http://www.webkit.org/b) 2x
-Unprefixed: FAIL
-Prefixed: FAIL
+Unprefixed: PASS
+Prefixed: PASS
 
 Multiple values for cursor, out of order : url(http://www.webkit.org/c) 3x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x
-Unprefixed: FAIL
-Prefixed: FAIL
+Unprefixed: PASS
+Prefixed: PASS
 
 Duplicate values for cursor : url(http://www.webkit.org/c) 1x, url(http://www.webkit.org/b) 2x, url(http://www.webkit.org/a) 1x
-Unprefixed: FAIL
-Prefixed: FAIL
+Unprefixed: PASS
+Prefixed: PASS
 
 Fractional values for cursor : url(http://www.webkit.org/c) 0.2x, url(http://www.webkit.org/b) 2.3x, url(http://www.webkit.org/a) 12.3456x
-Unprefixed: FAIL
-Prefixed: FAIL
+Unprefixed: PASS
+Prefixed: PASS
 
 Single value for list-style-image : url(http://www.webkit.org/a) 1x
 Unprefixed: PASS
