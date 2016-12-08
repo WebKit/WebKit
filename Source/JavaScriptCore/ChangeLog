@@ -1,3 +1,20 @@
+2016-12-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Renamed SourceCode members to match their accessor names
+        https://bugs.webkit.org/show_bug.cgi?id=165573
+
+        Reviewed by Keith Miller.
+
+        startChar => startOffset
+        endChar => endOffset
+
+        * parser/UnlinkedSourceCode.h:
+        (JSC::UnlinkedSourceCode::UnlinkedSourceCode):
+        (JSC::UnlinkedSourceCode::view):
+        (JSC::UnlinkedSourceCode::startOffset):
+        (JSC::UnlinkedSourceCode::endOffset):
+        (JSC::UnlinkedSourceCode::length):
+
 2016-12-07  Keith Miller  <keith_miller@apple.com>
 
         Add more missing trivial wasm ops.

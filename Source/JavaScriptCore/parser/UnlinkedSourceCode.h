@@ -37,8 +37,8 @@ namespace JSC {
     public:
         UnlinkedSourceCode()
             : m_provider(0)
-            , m_startChar(0)
-            , m_endChar(0)
+            , m_startOffset(0)
+            , m_endOffset(0)
         {
         }
 
@@ -49,22 +49,22 @@ namespace JSC {
 
         UnlinkedSourceCode(PassRefPtr<SourceProvider> provider)
             : m_provider(provider)
-            , m_startChar(0)
-            , m_endChar(m_provider->source().length())
+            , m_startOffset(0)
+            , m_endOffset(m_provider->source().length())
         {
         }
 
         UnlinkedSourceCode(PassRefPtr<SourceProvider> provider, int startOffset, int endOffset)
             : m_provider(provider)
-            , m_startChar(startOffset)
-            , m_endChar(endOffset)
+            , m_startOffset(startOffset)
+            , m_endOffset(endOffset)
         {
         }
 
         UnlinkedSourceCode(const UnlinkedSourceCode& other)
             : m_provider(other.m_provider)
-            , m_startChar(other.m_startChar)
-            , m_endChar(other.m_endChar)
+            , m_startOffset(other.m_startOffset)
+            , m_endOffset(other.m_endOffset)
         {
         }
 
@@ -80,20 +80,20 @@ namespace JSC {
         {
             if (!m_provider)
                 return StringView();
-            return m_provider->getRange(m_startChar, m_endChar);
+            return m_provider->getRange(m_startOffset, m_endOffset);
         }
         
         CString toUTF8() const;
         
         bool isNull() const { return !m_provider; }
-        int startOffset() const { return m_startChar; }
-        int endOffset() const { return m_endChar; }
-        int length() const { return m_endChar - m_startChar; }
+        int startOffset() const { return m_startOffset; }
+        int endOffset() const { return m_endOffset; }
+        int length() const { return m_endOffset - m_startOffset; }
 
     protected:
         RefPtr<SourceProvider> m_provider;
-        int m_startChar;
-        int m_endChar;
+        int m_startOffset;
+        int m_endOffset;
     };
 
 } // namespace JSC
