@@ -38,7 +38,7 @@ var keyData = asciiToUint8Array("16 bytes of key!");
 var aesKeyGenParams = {name: "aes-cbc", length: 128};
 var usages = ["encrypt", "decrypt"]
 for (i = 0; i < 10; i++)
-    crypto.webkitSubtle.importKey(keyFormat, keyData, aesKeyGenParams, true, usages).then(function(localKey) {
+    crypto.subtle.importKey(keyFormat, keyData, aesKeyGenParams, true, usages).then(function(localKey) {
         worker.postMessage(localKey);
     });
 </script>

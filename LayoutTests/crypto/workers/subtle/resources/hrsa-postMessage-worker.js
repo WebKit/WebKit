@@ -15,8 +15,8 @@ onmessage = function(evt)
             postMessage({ result:false, message:'publicKey.algorithm.publicExponent should be "010001"' });
         else if (publicKey.algorithm.hash.name != "SHA-256")
             postMessage({ result:false, message:'publicKey.algorithm.hash.name should be "SHA-256"' });
-        else if (publicKey.usages.toString() != "encrypt")
-            postMessage({ result:false, message:'publicKey.usages should be ["encrypt"]' });
+        else if (publicKey.usages.toString() != "verify")
+            postMessage({ result:false, message:'publicKey.usages should be ["verify"]' });
         else
             postMessage({ result:true, publicKey:publicKey });
     } else if (privateKey = evt.data.privateKey) {
@@ -32,8 +32,8 @@ onmessage = function(evt)
             postMessage({ result:false, message:'privateKey.algorithm.publicExponent should be "010001"' });
         else if (privateKey.algorithm.hash.name != "SHA-256")
             postMessage({ result:false, message:'publicKey.algorithm.hash.name should be "SHA-256"' });
-        else if (privateKey.usages.toString() != "decrypt")
-            postMessage({ result:false, message:'privateKey.usages should be ["decrypt"]' });
+        else if (privateKey.usages.toString() != "sign")
+            postMessage({ result:false, message:'privateKey.usages should be ["sign"]' });
         else
             postMessage({ result:true, privateKey:privateKey });
     } else {

@@ -37,6 +37,7 @@ var algorithmKeyGen = {
     // RsaKeyGenParams
     modulusLength: 2048,
     publicExponent: new Uint8Array([0x01, 0x00, 0x01]),  // Equivalent to 65537
+    hash: "sha-256",
 };
 
 var count = 0;
@@ -54,7 +55,7 @@ worker.onmessage = function(evt) {
             shouldBe("publicKey.algorithm.modulusLength", "2048");
             shouldBe("bytesToHexString(publicKey.algorithm.publicExponent)", "'010001'");
             shouldBe("publicKey.algorithm.hash.name", "'SHA-256'");
-            shouldBe("publicKey.usages", "['encrypt']");
+            shouldBe("publicKey.usages", "['verify']");
         } else if (privateKey = evt.data.privateKey) {
             testPassed("All checks passed in worker for private key");
             shouldBe("privateKey.type", "'private'");
@@ -63,7 +64,7 @@ worker.onmessage = function(evt) {
             shouldBe("privateKey.algorithm.modulusLength", "2048");
             shouldBe("bytesToHexString(privateKey.algorithm.publicExponent)", "'010001'");
             shouldBe("privateKey.algorithm.hash.name", "'SHA-256'");
-            shouldBe("privateKey.usages", "['decrypt']");
+            shouldBe("privateKey.usages", "['sign']");
         }
         count = count + 1;
     }
@@ -72,10 +73,10 @@ worker.onmessage = function(evt) {
         finishJSTest();
 }
 
-crypto.webkitSubtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)), algorithmKeyGen, true, ['encrypt']).then(function(localPublicKey) {
+crypto.subtle.importKey("jwk", publicKeyJSON, algorithmKeyGen, true, ['verify']).then(function(localPublicKey) {
     worker.postMessage({ publicKey: localPublicKey });
 });
-crypto.webkitSubtle.importKey("jwk", asciiToUint8Array(JSON.stringify(privateKeyJSON)), algorithmKeyGen, false, ['decrypt']).then(function(localPrivateKey) {
+crypto.subtle.importKey("jwk", privateKeyJSON, algorithmKeyGen, false, ['sign']).then(function(localPrivateKey) {
     worker.postMessage({ privateKey: localPrivateKey });
 });
 </script>

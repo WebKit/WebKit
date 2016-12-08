@@ -12,7 +12,7 @@ description("Test sending hmac crypto keys via postMessage to a worker.");
 
 jsTestIsAsync = true;
 
-crypto.webkitSubtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: 'hmac', hash: {name: 'sha-1'}}, true, ['sign', 'verify']).then(function(localKey) {
+crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: 'hmac', hash: {name: 'sha-1'}}, true, ['sign', 'verify']).then(function(localKey) {
     var worker = new Worker("resources/hmac-postMessage-worker.js");
     worker.onmessage = function(evt) {
         if (!evt.data.result) {

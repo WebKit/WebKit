@@ -1,3 +1,18 @@
+2016-12-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Replace webkitSubtle with subtle for all crypto/workers/subtle/ tests
+        https://bugs.webkit.org/show_bug.cgi?id=165540
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/workers/subtle/aes-postMessage-worker.html:
+        * crypto/workers/subtle/hmac-postMessage-worker.html:
+        * crypto/workers/subtle/hrsa-postMessage-worker-expected.txt:
+        * crypto/workers/subtle/hrsa-postMessage-worker.html:
+        * crypto/workers/subtle/multiple-postMessage-worker.html:
+        * crypto/workers/subtle/resources/hrsa-postMessage-worker.js:
+        * crypto/workers/subtle/rsa-postMessage-worker.html:
+
 2016-12-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline some css tests for ios-simulator.

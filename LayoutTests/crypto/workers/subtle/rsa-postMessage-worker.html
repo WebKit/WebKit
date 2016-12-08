@@ -72,10 +72,10 @@ worker.onmessage = function(evt) {
         finishJSTest();
 }
 
-crypto.webkitSubtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)), algorithmKeyGen, true, ['encrypt']).then(function(localPublicKey) {
+crypto.subtle.importKey("jwk", publicKeyJSON, algorithmKeyGen, true, ['encrypt']).then(function(localPublicKey) {
     worker.postMessage({ publicKey: localPublicKey });
 });
-crypto.webkitSubtle.importKey("jwk", asciiToUint8Array(JSON.stringify(privateKeyJSON)), algorithmKeyGen, false, ['decrypt']).then(function(localPrivateKey) {
+crypto.subtle.importKey("jwk", privateKeyJSON, algorithmKeyGen, false, ['decrypt']).then(function(localPrivateKey) {
     worker.postMessage({ privateKey: localPrivateKey });
 });
 </script>
