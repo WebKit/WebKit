@@ -1,3 +1,16 @@
+2016-12-07  Keith Miller  <keith_miller@apple.com>
+
+        Add more missing trivial wasm ops.
+        https://bugs.webkit.org/show_bug.cgi?id=165564
+
+        Add tests for drop and tee_local.
+
+        Reviewed by Geoffrey Garen.
+
+        * wasm/function-tests/drop.js: Added.
+        * wasm/function-tests/nop.js: Added.
+        * wasm/function-tests/tee-local.js: Added.
+
 2016-12-06  Keith Miller  <keith_miller@apple.com>
 
         Add support for truncation operators

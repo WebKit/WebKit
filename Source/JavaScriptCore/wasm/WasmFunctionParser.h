@@ -336,6 +336,15 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return m_context.setLocal(index, value);
     }
 
+    case OpType::TeeLocal: {
+        uint32_t index;
+        if (!parseVarUInt32(index))
+            return false;
+        if (!m_expressionStack.size())
+            return false;
+        return m_context.setLocal(index, m_expressionStack.last());
+    }
+
     case OpType::Call: {
         uint32_t functionIndex;
         if (!parseVarUInt32(functionIndex))
@@ -492,7 +501,24 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
-    default: {
+    case OpType::Drop: {
+        if (!m_expressionStack.size()) {
+            setErrorMessage("Attempted to drop an expression from an empty stack.");
+            return false;
+        }
+        m_expressionStack.takeLast();
+        return true;
+    }
+
+    case OpType::Nop: {
+        return true;
+    }
+
+    case OpType::GrowMemory:
+    case OpType::CurrentMemory:
+    case OpType::GetGlobal:
+    case OpType::SetGlobal:
+    case OpType::CallIndirect: {
         // FIXME: Not yet implemented.
         return false;
     }
