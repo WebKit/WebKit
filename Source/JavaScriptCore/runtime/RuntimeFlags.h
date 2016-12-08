@@ -31,8 +31,7 @@
 namespace JSC {
 
 // macro(name, isEnabledFlag)
-#define JSC_RUNTIME_FLAG(macro) \
-    macro(SharedArrayBufferEnabled, true)
+#define JSC_RUNTIME_FLAG(macro)
 
 class RuntimeFlags {
 private:

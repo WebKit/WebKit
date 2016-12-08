@@ -1,3 +1,12 @@
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Enable SharedArrayBuffer, remove the flag
+        https://bugs.webkit.org/show_bug.cgi?id=165614
+
+        Rubber stamped by Geoffrey Garen.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+
 2016-11-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Import std::optional reference implementation as WTF::Optional

@@ -32,8 +32,7 @@ import "ocidl.idl";
 #endif
 
 typedef enum WebKitJavaScriptRuntimeFlags {
-    WebKitJavaScriptRuntimeFlagsSharedArrayBufferEnabled = 1,
-    WebKitJavaScriptRuntimeFlagsAllEnabled = 1
+    WebKitJavaScriptRuntimeFlagsAllEnabled = 0
 } WebKitJavaScriptRuntimeFlags;
 
 [

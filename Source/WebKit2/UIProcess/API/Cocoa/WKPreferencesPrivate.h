@@ -43,8 +43,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 } WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
-    _WKJavaScriptRuntimeFlagsSharedArrayBufferEnabled = 1 << 0,
-    _WKJavaScriptRuntimeFlagsAllEnabled = _WKJavaScriptRuntimeFlagsSharedArrayBufferEnabled
+    _WKJavaScriptRuntimeFlagsAllEnabled = 0
 } WK_API_AVAILABLE(macosx(10.11), ios(9.0));
 
 @class _WKExperimentalFeature;
