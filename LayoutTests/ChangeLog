@@ -1,3 +1,15 @@
+2016-12-07  John Wilander  <wilander@apple.com>
+
+        Allow commas in Accept, Accept-Language, and Content-Language request headers for simple CORS
+        https://bugs.webkit.org/show_bug.cgi?id=165566
+        <rdar://problem/29560983>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight.html:
+            Added ',' to the tests as well as two examples from
+            two sites where we found a regression.
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Stop skipping tests in the css3 LayoutTests subdirectory
