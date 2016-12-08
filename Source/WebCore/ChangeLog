@@ -1,3 +1,53 @@
+2016-12-08  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=165625
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add/remove files.
+
+        * Modules/geolocation/GeoNotifier.cpp:
+        (WebCore::GeoNotifier::GeoNotifier):
+        (WebCore::GeoNotifier::hasZeroTimeout):
+        (WebCore::GeoNotifier::startTimerIfNeeded):
+        * Modules/geolocation/GeoNotifier.h:
+        (WebCore::GeoNotifier::create):
+        (WebCore::GeoNotifier::options):
+        Update to store PositionOptions as a value, and pass the PositionCallback
+        as a Ref, rather than a RefPtr, since it is not optional.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::createGeoposition):
+        Use auto, to get the good type for Coordinates (Ref).
+
+        (WebCore::Geolocation::getCurrentPosition):
+        (WebCore::Geolocation::watchPosition):
+        (WebCore::Geolocation::haveSuitableCachedPosition):
+        (WebCore::Geolocation::startUpdating):
+        * Modules/geolocation/Geolocation.h:
+        Update to pass PositionOptions itself now that it is a plain struct.
+
+        * Modules/geolocation/Geolocation.idl:
+        Remove [Custom] extended attribute and add FIXME about nullable annotation. 
+
+        * Modules/geolocation/Geoposition.h:
+        Pass/store Coordinates as a Ref.
+ 
+        * Modules/geolocation/PositionOptions.h:
+        Convert to be a simple struct.
+
+        * Modules/geolocation/PositionOptions.idl:
+        Added.
+        
+        * bindings/js/JSGeolocationCustom.cpp:
+        Removed.
+
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (URL parser): Relative URLs aren’t resolved correctly when the base URL is an applewebdata: URL

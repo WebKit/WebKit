@@ -57,9 +57,10 @@ static RefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
     if (!position)
         return nullptr;
     
-    RefPtr<Coordinates> coordinates = Coordinates::create(position->latitude(), position->longitude(), position->canProvideAltitude(), position->altitude(), 
-                                                          position->accuracy(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(),
-                                                          position->canProvideHeading(), position->heading(), position->canProvideSpeed(), position->speed());
+    auto coordinates = Coordinates::create(position->latitude(), position->longitude(), position->canProvideAltitude(), position->altitude(), 
+        position->accuracy(), position->canProvideAltitudeAccuracy(), position->altitudeAccuracy(),
+        position->canProvideHeading(), position->heading(), position->canProvideSpeed(), position->speed());
+
     return Geoposition::create(WTFMove(coordinates), convertSecondsToDOMTimeStamp(position->timestamp()));
 }
 
@@ -311,7 +312,7 @@ Geoposition* Geolocation::lastPosition()
     return m_lastPosition.get();
 }
 
-void Geolocation::getCurrentPosition(RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
+void Geolocation::getCurrentPosition(Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
 {
     if (!frame())
         return;
@@ -322,7 +323,7 @@ void Geolocation::getCurrentPosition(RefPtr<PositionCallback>&& successCallback,
     m_oneShots.add(notifier);
 }
 
-int Geolocation::watchPosition(RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
+int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
 {
     if (!frame())
         return 0;
@@ -459,17 +460,15 @@ void Geolocation::requestTimedOut(GeoNotifier* notifier)
         stopUpdating();
 }
 
-bool Geolocation::haveSuitableCachedPosition(PositionOptions* options)
+bool Geolocation::haveSuitableCachedPosition(const PositionOptions& options)
 {
     Geoposition* cachedPosition = lastPosition();
     if (!cachedPosition)
         return false;
-    if (!options->hasMaximumAge())
-        return true;
-    if (!options->maximumAge())
+    if (!options.maximumAge)
         return false;
     DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(currentTime());
-    return cachedPosition->timestamp() > currentTimeMillis - options->maximumAge();
+    return cachedPosition->timestamp() > currentTimeMillis - options.maximumAge;
 }
 
 void Geolocation::clearWatch(int watchID)
@@ -703,7 +702,7 @@ bool Geolocation::startUpdating(GeoNotifier* notifier)
     if (!page)
         return false;
 
-    GeolocationController::from(page)->addObserver(this, notifier->options()->enableHighAccuracy());
+    GeolocationController::from(page)->addObserver(this, notifier->options().enableHighAccuracy);
     return true;
 }
 

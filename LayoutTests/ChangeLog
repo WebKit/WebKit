@@ -1,3 +1,15 @@
+2016-12-08  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=165625
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/Geolocation/argument-types-expected.txt:
+        * fast/dom/Geolocation/not-enough-arguments-expected.txt:
+        * fast/dom/Geolocation/script-tests/argument-types.js:
+        Update tests for improved error messages / adherence to WebIDL.
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip passing flexbox tests

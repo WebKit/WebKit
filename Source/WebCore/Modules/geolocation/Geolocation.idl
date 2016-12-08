@@ -29,14 +29,16 @@
     Conditional=GEOLOCATION, 
     GenerateIsReachable=ImplFrame,
 ] interface Geolocation {
-    [Custom] void getCurrentPosition(PositionCallback successCallback,
-                                     optional PositionErrorCallback? errorCallback,
-                                     optional PositionOptions options);
+    // FIXME: PositionErrorCallback should not be nullable
+    void getCurrentPosition(PositionCallback successCallback,
+                            optional PositionErrorCallback? errorCallback,
+                            optional PositionOptions options);
 
-    [Custom] long watchPosition(PositionCallback successCallback,
-                                optional PositionErrorCallback? errorCallback,
-                                optional PositionOptions options);
+    // FIXME: PositionErrorCallback should not be nullable
+    long watchPosition(PositionCallback successCallback,
+                       optional PositionErrorCallback? errorCallback,
+                       optional PositionOptions options);
 
-    void clearWatch(long watchID);
+    void clearWatch(long watchId);
 };
 
