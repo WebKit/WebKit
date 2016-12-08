@@ -1,3 +1,18 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove tests that depend on SVG CSS OM that has been removed
+        https://bugs.webkit.org/show_bug.cgi?id=165565
+
+        Reviewed by Jon Lee.
+
+        * TestExpectations:
+        * svg/dom/SVGColor-expected.txt: Removed.
+        * svg/dom/SVGColor.html: Removed.
+        * svg/dom/SVGPaint-expected.txt: Removed.
+        * svg/dom/SVGPaint.html: Removed.
+        * svg/dom/rgb-color-parser-expected.txt: Removed.
+        * svg/dom/rgb-color-parser.html: Removed.
+
 2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking compositing/layer-creation/fixed-overlap-extent-rtl.html as failing on mac-wk1.
