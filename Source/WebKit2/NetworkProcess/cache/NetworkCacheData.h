@@ -156,7 +156,11 @@ Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
 Data adoptAndMapFile(int fd, size_t offset, size_t);
 Data mapFile(const char* path);
-SHA1::Digest computeSHA1(const Data&);
+
+using Salt = std::array<uint8_t, 8>;
+
+std::optional<Salt> readOrMakeSalt(const String& path);
+SHA1::Digest computeSHA1(const Data&, const Salt&);
 
 }
 }

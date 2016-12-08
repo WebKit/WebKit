@@ -1,3 +1,82 @@
+2016-12-08  Antti Koivisto  <antti@apple.com>
+
+        Salt network cache hashes
+        https://bugs.webkit.org/show_bug.cgi?id=164924
+
+        Reviewed by Alex Christensen.
+
+        To enhance privacy make cache content unidentifiable from file names alone.
+        This is done by generating a unique persistent salt for each cache instance.
+        It is used when computing hashes used in file names.
+
+        The patch also replaces plain text partition directory names with salted hashes.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::makeCacheKey):
+        (WebKit::NetworkCache::makeCacheKey): Deleted.
+        * NetworkProcess/cache/NetworkCache.h:
+
+            Increment cache version.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::BlobStorage):
+        (WebKit::NetworkCache::BlobStorage::add):
+        (WebKit::NetworkCache::BlobStorage::get):
+
+            Use salt for blob content hash.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.h:
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::computeSHA1):
+
+            For simplicity all SHA1s are now salted.
+
+        (WebKit::NetworkCache::makeSalt):
+        (WebKit::NetworkCache::readOrMakeSalt):
+
+            Read salt if it exists, generate and persist it otherwise.
+
+        * NetworkProcess/cache/NetworkCacheData.h:
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::Key):
+
+            Remove the "No partition" string and just empty.
+            That was only needed to have a directory name of some sort.
+
+        (WebKit::NetworkCache::Key::computeHash):
+
+            Use salt for key hash.
+
+        (WebKit::NetworkCache::Key::computePartitionHash):
+
+            Separate hash for partition.
+
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::makeSubresourcesKey):
+        (WebKit::NetworkCache::SpeculativeLoadManager::PendingFrameLoad::saveToDiskIfReady):
+        (WebKit::NetworkCache::SpeculativeLoadManager::retrieveSubresourcesEntry):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeSaltFilePath):
+        (WebKit::NetworkCache::Storage::open):
+
+            Cache can't be opened if we can't read or persist a salt.
+
+        (WebKit::NetworkCache::traverseRecordsFiles):
+        (WebKit::NetworkCache::Storage::Storage):
+        (WebKit::NetworkCache::Storage::synchronize):
+        (WebKit::NetworkCache::Storage::recordDirectoryPathForKey):
+
+            Use the partition hash in the directory name instead of a plain text name.
+
+        (WebKit::NetworkCache::decodeRecordHeader):
+        (WebKit::NetworkCache::Storage::readRecord):
+        (WebKit::NetworkCache::Storage::encodeRecord):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::salt):
+
 2016-12-08  Eric Carlson  <eric.carlson@apple.com>
 
         Fix the EFL build.

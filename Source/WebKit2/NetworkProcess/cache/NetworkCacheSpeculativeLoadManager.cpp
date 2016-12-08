@@ -79,9 +79,9 @@ static const AtomicString& subresourcesType()
     return resource;
 }
 
-static inline Key makeSubresourcesKey(const Key& resourceKey)
+static inline Key makeSubresourcesKey(const Key& resourceKey, const Salt& salt)
 {
-    return Key(resourceKey.partition(), subresourcesType(), resourceKey.range(), resourceKey.identifier());
+    return Key(resourceKey.partition(), subresourcesType(), resourceKey.range(), resourceKey.identifier(), salt);
 }
 
 static inline ResourceRequest constructRevalidationRequest(const Entry& entry, const SubresourceInfo& subResourceInfo)
@@ -90,7 +90,7 @@ static inline ResourceRequest constructRevalidationRequest(const Entry& entry, c
     revalidationRequest.setHTTPHeaderFields(subResourceInfo.requestHeaders());
     revalidationRequest.setFirstPartyForCookies(subResourceInfo.firstPartyForCookies());
 #if ENABLE(CACHE_PARTITIONING)
-    if (entry.key().hasPartition())
+    if (!entry.key().partition().isEmpty())
         revalidationRequest.setCachePartition(entry.key().partition());
 #endif
     ASSERT_WITH_MESSAGE(entry.key().range().isEmpty(), "range is not supported");
@@ -226,7 +226,7 @@ private:
             m_existingEntry->updateSubresourceLoads(m_subresourceLoads);
             m_storage.store(m_existingEntry->encodeAsStorageRecord(), [](const Data&) { });
         } else {
-            SubresourcesEntry entry(makeSubresourcesKey(m_mainResourceKey), m_subresourceLoads);
+            SubresourcesEntry entry(makeSubresourcesKey(m_mainResourceKey, m_storage.salt()), m_subresourceLoads);
             m_storage.store(entry.encodeAsStorageRecord(), [](const Data&) { });
         }
     }
@@ -521,7 +521,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
 void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, std::function<void (std::unique_ptr<SubresourcesEntry>)>&& completionHandler)
 {
     ASSERT(storageKey.type() == "Resource");
-    auto subresourcesStorageKey = makeSubresourcesKey(storageKey);
+    auto subresourcesStorageKey = makeSubresourcesKey(storageKey, m_storage.salt());
     m_storage.retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record) {
         if (!record) {
             completionHandler(nullptr);
