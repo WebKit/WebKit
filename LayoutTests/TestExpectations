@@ -720,33 +720,6 @@ webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/148922 svg/as-object/svg-in-object-dynamic-attribute-change.html [ Pass ImageOnlyFailure ]
 webkit.org/b/148925 svg/dom/svg-root-lengths.html [ Pass Failure ]
 
-# Known failures on CSS Variables Test Suite
-webkit.org/b/150183 fast/css/variables/test-suite/failures/024.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/025.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/026.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/028.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/030.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/054.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/055.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/056.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/058.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/071.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/081.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/082.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/085.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/086.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/087.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/091.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/103.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/111.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/115.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/126.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/152.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/159.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/161.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/163.html [ ImageOnlyFailure ]
-webkit.org/b/150183 fast/css/variables/test-suite/failures/169.html [ ImageOnlyFailure ]
-
 webkit.org/b/150541 imported/blink/transitions/unprefixed-perspective.html [ Pass Failure Timeout ]
 
 # Subpixel table failures.
