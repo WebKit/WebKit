@@ -1,3 +1,20 @@
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (URL parser): Relative URLs aren’t resolved correctly when the base URL is an applewebdata: URL
+        https://bugs.webkit.org/show_bug.cgi?id=165621
+
+        Reviewed by Dan Bernstein.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        URLs with nonspecial schemes and no slash after the host get no slash as the path to maintain compatibility with all browsers.
+        This was proposed to the URL spec in https://github.com/whatwg/url/issues/148
+        When such as URL is used as a base URL with a relative path, in order to maintain compatibility with URL::parse we need to prepend
+        a slash to the path.  For completeness I added tests with a relative path, a relative query, a relative fragment, and a relative empty string,
+        and because the fate of the spec is unclear in this case, I decided to maintain compatibility with URL::parse in all these cases.
+
 2016-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent GC should be stable enough to land enabled on X86_64

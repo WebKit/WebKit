@@ -634,6 +634,11 @@ TEST_F(URLParserTest, ParseRelative)
         {"foo", "", "", "", 0, "", "", "", "foo://"},
         {"foo", "", "", "", 0, "//", "", "", "foo://"});
     checkRelativeURL(utf16String(u"#β"), "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "%CE%B2", "http://example.org/foo/bar#%CE%B2"});
+    checkRelativeURL("index.html", "applewebdata://Host/", {"applewebdata", "", "", "Host", 0, "/index.html", "", "", "applewebdata://Host/index.html"});
+    checkRelativeURL("index.html", "applewebdata://Host", {"applewebdata", "", "", "Host", 0, "/index.html", "", "", "applewebdata://Host/index.html"});
+    checkRelativeURL("", "applewebdata://Host", {"applewebdata", "", "", "Host", 0, "", "", "", "applewebdata://Host"});
+    checkRelativeURL("?query", "applewebdata://Host", {"applewebdata", "", "", "Host", 0, "", "query", "", "applewebdata://Host?query"});
+    checkRelativeURL("#fragment", "applewebdata://Host", {"applewebdata", "", "", "Host", 0, "", "", "fragment", "applewebdata://Host#fragment"});
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.

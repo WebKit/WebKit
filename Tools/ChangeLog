@@ -1,3 +1,13 @@
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (URL parser): Relative URLs aren’t resolved correctly when the base URL is an applewebdata: URL
+        https://bugs.webkit.org/show_bug.cgi?id=165621
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent GC should be stable enough to land enabled
