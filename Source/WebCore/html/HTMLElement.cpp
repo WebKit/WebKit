@@ -25,7 +25,7 @@
 #include "config.h"
 #include "HTMLElement.h"
 
-#include "CSSParser.h"
+#include "CSSMarkup.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
@@ -117,7 +117,7 @@ void HTMLElement::mapLanguageAttributeToLocale(const AtomicString& value, Mutabl
 {
     if (!value.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(value));
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, serializeString(value));
     } else {
         // The empty string means the language is explicitly unknown.
         addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);

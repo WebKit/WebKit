@@ -1,3 +1,13 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Consolidate string/ident/url serialization functions
+        https://bugs.webkit.org/show_bug.cgi?id=165552
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/content-language-only-whitespace-expected.txt:
+        * fast/css/content-language-with-whitespace-expected.txt:
+
 2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html as flaky on El Capitan WK2.

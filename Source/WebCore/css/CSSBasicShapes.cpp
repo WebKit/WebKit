@@ -31,7 +31,7 @@
 
 #include "CSSBasicShapes.h"
 
-#include "CSSParser.h"
+#include "CSSMarkup.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
 #include "Pair.h"
@@ -216,7 +216,7 @@ static String buildPathString(const WindRule& windRule, const String& path, cons
     else
         result.appendLiteral("path(");
 
-    result.append(quoteCSSString(path));
+    serializeString(path, result);
     result.append(')');
 
     if (box.length()) {

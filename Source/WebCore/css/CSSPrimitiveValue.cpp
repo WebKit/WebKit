@@ -25,7 +25,8 @@
 #include "CSSCalculationValue.h"
 #include "CSSFontFamily.h"
 #include "CSSHelper.h"
-#include "CSSParser.h"
+#include "CSSMarkup.h"
+#include "CSSParserValues.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
@@ -1068,11 +1069,14 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         // FIXME: We currently don't handle CSS_DIMENSION properly as we don't store
         // the actual dimension, just the numeric value as a string.
     case CSS_STRING:
-        return quoteCSSStringIfNeeded(m_value.string);
+        // FIME-NEWPARSER: Once we have CSSCustomIdentValue hooked up, this can just be
+        // serializeString, since custom identifiers won't be the same value as strings
+        // any longer.
+        return serializeAsStringOrCustomIdent(m_value.string);
     case CSS_FONT_FAMILY:
-        return quoteCSSStringIfNeeded(m_value.fontFamily->familyName);
+        return serializeFontFamily(m_value.fontFamily->familyName);
     case CSS_URI:
-        return "url(" + quoteCSSURLIfNeeded(m_value.string) + ')';
+        return serializeURL(m_value.string);
     case CSS_VALUE_ID:
         return valueName(m_value.valueID);
     case CSS_PROPERTY_ID:
@@ -1099,7 +1103,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         result.append(m_value.counter->identifier());
         if (!separator.isEmpty()) {
             result.appendLiteral(", ");
-            result.append(quoteCSSStringIfNeeded(separator));
+            serializeString(separator, result);
         }
         String listStyle = m_value.counter->listStyle();
         if (!listStyle.isEmpty()) {

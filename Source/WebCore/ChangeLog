@@ -1,3 +1,64 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Consolidate string/ident/url serialization functions
+        https://bugs.webkit.org/show_bug.cgi?id=165552
+
+        Reviewed by Zalan Bujtas.
+
+        Right now CSSParser has string, ident and url serialization functions
+        called quoteCSStringIfNeeded (which actually serializes both strings and
+        identifiers), as well as quoteCSSURLIfNeeded.
+
+        CSSMarkup already has serialization functions that exist outside of the
+        CSSParser and that handle serialization of strings, idents and URLs. This
+        patch eliminates the CSSParser functions and consolidates all of the
+        serialization to use CSSMarkup's functions.
+
+        Note that we are not spec-compliant at all here, and so I had to amend
+        the functions to support our non-spec-compliant serialization. The goal
+        of this patch is consolidation and not to fix our broken serialization.
+
+        Notable changes include parameterizing string serialization so that
+        both single and double quotes are supported, since in the existing code
+        we're sometimes spec-compliant (CSSSelectors) and sometimes not
+        (CSSPrimitiveValue).
+
+        We also overload CSS_STRING primitive value type and have it act as both
+        a string and a custom identifier. This is lame, since the parser should
+        have made two different types of objects instead, but since our parser
+        doesn't do that yet, I added a serializeAsStringOrCustomIdent that
+        preserves our old behavior of "quote the string only if needed." In this
+        case what that really meant was "Try to guess that we were originally a
+        custom ident and leave off quotes if so." This function will go away
+        once we properly create CSSStringValues and CSSCustomIdentValues instead
+        of turning the latter into strings.
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildPathString):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::customCSSText):
+        * css/CSSMarkup.cpp:
+        (WebCore::isCSSTokenizerURL):
+        (WebCore::serializeString):
+        (WebCore::serializeURL):
+        (WebCore::serializeAsStringOrCustomIdent):
+        (WebCore::serializeURI): Deleted.
+        * css/CSSMarkup.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/parser/CSSParser.cpp:
+        (WebCore::isCSSTokenizerIdent): Deleted.
+        (WebCore::isCSSTokenizerURL): Deleted.
+        (WebCore::quoteCSSStringInternal): Deleted.
+        (WebCore::quoteCSSString): Deleted.
+        (WebCore::quoteCSSStringIfNeeded): Deleted.
+        (WebCore::quoteCSSURLIfNeeded): Deleted.
+        * css/parser/CSSParser.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+
 2016-12-07  Dean Jackson  <dino@apple.com>
 
         Expose internal API to detect media documents

@@ -22,7 +22,8 @@
 #include "CSSImageValue.h"
 
 #include "CSSCursorImageValue.h"
-#include "CSSParser.h"
+#include "CSSMarkup.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -94,7 +95,7 @@ bool CSSImageValue::equals(const CSSImageValue& other) const
 
 String CSSImageValue::customCSSText() const
 {
-    return "url(" + quoteCSSURLIfNeeded(m_url) + ')';
+    return serializeURL(m_url);
 }
 
 Ref<CSSValue> CSSImageValue::cloneForCSSOM() const

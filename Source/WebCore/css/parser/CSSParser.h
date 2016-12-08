@@ -753,10 +753,6 @@ struct CSSParser::Location {
     CSSParserString token;
 };
 
-String quoteCSSString(const String&);
-String quoteCSSStringIfNeeded(const String&);
-String quoteCSSURLIfNeeded(const String&);
-
 bool isValidNthToken(const CSSParserString&);
 
 template <>
