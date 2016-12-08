@@ -1,3 +1,21 @@
+2016-12-08  Zalan Bujtas  <zalan@apple.com>
+
+        Do not create multicolumn context for certain type of renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=135601
+        <rdar://problem/27686300>
+
+        Reviewed by David Hyatt.
+
+        Certain type of renderers including forms should not initialize multicolumn context for
+        their inner (shadow) content. It just does not makes sense and is inline with what other browsers do.
+
+        Test: fast/multicol/no-multicol-for-textareas.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willCreateColumns):
+        (WebCore::RenderBlockFlow::requiresColumns):
+        * rendering/RenderBlockFlow.h:
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] REGRESSION: Values of 0 should not be allowed for -webkit-aspect-ratio

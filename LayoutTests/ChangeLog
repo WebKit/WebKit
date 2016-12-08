@@ -1,3 +1,14 @@
+2016-12-08  Zalan Bujtas  <zalan@apple.com>
+
+        Do not create multicolumn context for certain type of renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=135601
+        <rdar://problem/27686300>
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/no-multicol-for-textareas-expected.txt: Added.
+        * fast/multicol/no-multicol-for-textareas.html: Added.
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip more tests

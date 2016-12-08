@@ -428,21 +428,32 @@ void RenderBlockFlow::computeColumnCountAndWidth()
     setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
 }
 
-bool RenderBlockFlow::willCreateColumns()
+bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCount) const
 {
+    // The following types are not supposed to create multicol context.
+    if (isFieldset() || isFileUploadControl() || isTextControl() || isListBox())
+        return false;
+
     if (!firstChild())
         return false;
+
+    // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating in the RenderView instead.
+    if ((style().overflowY() == OPAGEDX || style().overflowY() == OPAGEDY) && !(isDocumentElementRenderer() || isBody()))
+        return true;
 
     if (!style().specifiesColumns())
         return false;
 
-    // column-axis initiates MultiColumnFlowThread.
+    // column-axis with opposite writing direction initiates MultiColumnFlowThread.
     if (!style().hasInlineColumnAxis())
         return true;
 
     // Non-auto column-width always initiates MultiColumnFlowThread.
     if (!style().hasAutoColumnWidth())
         return true;
+
+    if (desiredColumnCount)
+        return desiredColumnCount.value() > 1;
 
     // column-count > 1 always initiates MultiColumnFlowThread.
     if (!style().hasAutoColumnCount())
@@ -3946,12 +3957,8 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
 }
 
 bool RenderBlockFlow::requiresColumns(int desiredColumnCount) const
-{
-    // If overflow-y is set to paged-x or paged-y on the body or html element, we'll handle the paginating
-    // in the RenderView instead.
-    bool isPaginated = (style().overflowY() == OPAGEDX || style().overflowY() == OPAGEDY) && !(isDocumentElementRenderer() || isBody());
-
-    return firstChild() && (desiredColumnCount != 1 || !style().hasAutoColumnWidth() || !style().hasInlineColumnAxis() || isPaginated);
+{    
+    return willCreateColumns(desiredColumnCount);
 }
 
 void RenderBlockFlow::setComputedColumnCountAndWidth(int count, LayoutUnit width)
