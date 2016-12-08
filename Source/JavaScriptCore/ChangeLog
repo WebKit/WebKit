@@ -1,3 +1,16 @@
+2016-12-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r209489.
+
+        Likely caused large regressions on JetStream, Sunspider and
+        Speedometer
+
+        Reverted changeset:
+
+        "Add system trace points for JavaScript VM entry/exit"
+        https://bugs.webkit.org/show_bug.cgi?id=165550
+        http://trac.webkit.org/changeset/209489
+
 2016-12-08  Keith Miller  <keith_miller@apple.com>
 
         Move LEB tests to API tests
