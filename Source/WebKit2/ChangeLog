@@ -1,3 +1,10 @@
+2016-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix the EFL build.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): Add another ENABLE(MEDIA_STREAM) guard.
+
 2016-12-08  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Process accelerated compositing env variables only if they are really enabled
