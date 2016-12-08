@@ -1,3 +1,15 @@
+2016-12-08  Zalan Bujtas  <zalan@apple.com>
+
+        Overlapping text at AppleSeed forum's footer.
+        https://bugs.webkit.org/show_bug.cgi?id=165613
+
+        Reviewed by Simon Fraser.
+
+        This is a test case for r207219.
+
+        * fast/text/float-with-sibling-text-overlaps-when-text-decoration-changes-expected.html: Added.
+        * fast/text/float-with-sibling-text-overlaps-when-text-decoration-changes.html: Added.
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip background parsing tests
