@@ -1,3 +1,17 @@
+2016-12-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Exit fullscreen on escape key down, not up.
+        https://bugs.webkit.org/show_bug.cgi?id=165618
+        rdar://problem/29581688
+
+        This problem was introduced by https://bugs.webkit.org/show_bug.cgi?id=165416
+        The fix to only exit fullscreen on key down, not key up.
+
+        Reviewed by Jer Noble.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip background parsing tests

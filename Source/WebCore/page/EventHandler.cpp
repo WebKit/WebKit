@@ -3070,7 +3070,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
 #if ENABLE(FULLSCREEN_API)
     if (m_frame.document()->webkitIsFullScreen()) {
-        if (initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
+        if (initialKeyEvent.type() == PlatformEvent::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
             m_frame.document()->webkitCancelFullScreen();
             return true;
         }
