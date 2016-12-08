@@ -1000,7 +1000,6 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 
     preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
-    preferences.pointerLockEnabled = options.enablePointerLock;
 
     [preferences setSubtleCryptoEnabled:YES];
 

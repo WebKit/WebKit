@@ -108,7 +108,9 @@ class PlugInClient;
 class PluginData;
 class PluginInfoProvider;
 class PluginViewBase;
+#if ENABLE(POINTER_LOCK)
 class PointerLockController;
+#endif
 class ProgressTracker;
 class ProgressTrackerClient;
 class Range;

@@ -212,11 +212,6 @@ public:
     bool webGL2Enabled() const { return m_isWebGL2Enabled; }
 #endif
 
-#if ENABLE(POINTER_LOCK)
-    void setPointerLockEnabled(bool isEnabled) { m_isPointerLockEnabled = isEnabled; }
-    bool pointerLockEnabled() const { return m_isPointerLockEnabled; }
-#endif
-
 #if ENABLE(FETCH_API)
     void setFetchAPIEnabled(bool isEnabled) { m_isFetchAPIEnabled = isEnabled; }
     bool fetchAPIEnabled() const { return m_isFetchAPIEnabled; }
@@ -350,10 +345,6 @@ private:
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled;
-#endif
-
-#if ENABLE(POINTER_LOCK)
-    bool m_isPointerLockEnabled;
 #endif
 
 #if ENABLE(FETCH_API)

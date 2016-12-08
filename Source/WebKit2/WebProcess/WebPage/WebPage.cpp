@@ -3185,10 +3185,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(store.getBoolValueForKey(WebPreferencesKey::webGL2EnabledKey()));
 #endif
 
-#if ENABLE(POINTER_LOCK)
-    RuntimeEnabledFeatures::sharedFeatures().setPointerLockEnabled(store.getBoolValueForKey(WebPreferencesKey::pointerLockEnabledKey()));
-#endif
-
     settings.setSpringTimingFunctionEnabled(store.getBoolValueForKey(WebPreferencesKey::springTimingFunctionEnabledKey()));
 
     settings.setVisualViewportEnabled(store.getBoolValueForKey(WebPreferencesKey::visualViewportEnabledKey()));

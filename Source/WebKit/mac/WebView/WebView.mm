@@ -2842,10 +2842,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled([preferences customElementsEnabled]);
 
-#if ENABLE(POINTER_LOCK)
-    RuntimeEnabledFeatures::sharedFeatures().setPointerLockEnabled([preferences pointerLockEnabled]);
-#endif
-
 #if ENABLE(FETCH_API)
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled([preferences fetchAPIEnabled]);
 #endif

@@ -1,3 +1,19 @@
+2016-12-07  Dean Jackson  <dino@apple.com>
+
+        Remove runtime toggle for pointer-lock
+        https://bugs.webkit.org/show_bug.cgi?id=165577
+        <rdar://problems/29566996>
+
+        Reviewed by Jon Lee.
+
+        Remove any runtime calls to check if pointer-lock is enabled. It's
+        either compiled in or out.
+
+        * platform/mac/TestExpectations: Enable the pointer-lock tests that should work.
+        * pointer-lock/pointer-lock-api.html: Fix a bad DOM call.
+        * pointer-lock/pointerlock-interface-disabled-expected.txt: Removed.
+        * pointer-lock/pointerlock-interface-disabled.html: Removed.
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip gradients tests

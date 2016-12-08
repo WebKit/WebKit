@@ -99,10 +99,6 @@ function testInputEvents() {
     return window.InputEvent;
 }
 
-function testPointerLock() {
-    return "exitPointerLock" in Document.prototype;
-}
-
 function testES6Modules() {
     return window.es6modules;
 }
@@ -124,14 +120,13 @@ window.addEventListener("load", function () {
         <p>These tests do not exercise actual functionality. They are just the most basic check to see if the feature claims to be available.</p>
 
         <div class="test" id="CSSGrid"><p>CSS Grid</p></div>
-        <div class="test" id="Gamepad"><p>Gamepad API</p></div>
-        <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
-        <div class="test" id="PointerLock"><p>Mouse Pointer Lock</p></div>
-        <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
-        <div class="test" id="FormValidation"><p>HTML Form Validation</p></div>
-        <div class="test" id="InputEvents"><p>HTML Input Events</p></div>
         <div class="test" id="SpringAnimation"><p>CSS Spring Animations</p></div>
         <div class="test" id="ES6Modules"><p>ES6 Modules in HTML</p></div>
+        <div class="test" id="Gamepad"><p>Gamepad API</p></div>
+        <div class="test" id="FormValidation"><p>HTML Form Validation</p></div>
+        <div class="test" id="InputEvents"><p>HTML Input Events</p></div>
+        <div class="test" id="VariationFonts"><p>Variation Fonts</p></div>
+        <div class="test" id="WebGL2"><p>WebGL 2.0</p></div>
     </div>
 </body>
 </html>

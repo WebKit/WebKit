@@ -172,7 +172,6 @@
 #define WebKitCSSGridLayoutEnabledPreferenceKey @"WebKitCSSGridLayoutEnabled"
 #define WebKitVisualViewportEnabledPreferenceKey @"WebKitVisualViewportEnabled"
 #define WebKitModernMediaControlsEnabledPreferenceKey @"WebKitModernMediaControlsEnabled"
-#define WebKitPointerLockEnabledPreferenceKey @"WebKitPointerLockEnabled"
 #define WebKitSubtleCryptoEnabledPreferenceKey @"WebKitSubtleCryptoEnabled"
 
 #if !TARGET_OS_IPHONE

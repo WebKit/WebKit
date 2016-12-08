@@ -284,9 +284,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setAllowsPictureInPictureMediaPlayback:(BOOL)flag;
 - (BOOL)allowsPictureInPictureMediaPlayback;
 
-- (void)setPointerLockEnabled:(BOOL)flag;
-- (BOOL)pointerLockEnabled;
-
 - (NSString *)pictographFontFamily;
 - (void)setPictographFontFamily:(NSString *)family;
 

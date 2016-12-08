@@ -1,7 +1,0 @@
-
-PASS Document.prototype.exitPointerLock does not exist 
-PASS Document.prototype.pointerLockElement does not exist 
-PASS Document.prototype.onpointerlockchange does not exist 
-PASS Document.prototype.onpointerlockerror does not exist 
-PASS Element.prototype.requestPointerLock does not exist 
-

@@ -2380,16 +2380,6 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitAllowsPictureInPictureMediaPlaybackPreferenceKey];
 }
 
-- (BOOL)pointerLockEnabled
-{
-    return [self _boolValueForKey:WebKitPointerLockEnabledPreferenceKey];
-}
-
-- (void)setPointerLockEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitPointerLockEnabledPreferenceKey];
-}
-
 - (BOOL)mockScrollbarsEnabled
 {
     return [self _boolValueForKey:WebKitMockScrollbarsEnabledPreferenceKey];

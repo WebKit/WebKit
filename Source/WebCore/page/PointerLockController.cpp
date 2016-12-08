@@ -50,9 +50,6 @@ PointerLockController::PointerLockController(Page& page)
 
 void PointerLockController::requestPointerLock(Element* target)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().pointerLockEnabled())
-        return;
-
     if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock) {
         enqueueEvent(eventNames().pointerlockerrorEvent, target);
         return;
@@ -93,15 +90,12 @@ void PointerLockController::requestPointerUnlock()
     if (!m_element)
         return;
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().pointerLockEnabled())
-        return;
-
     m_page.chrome().client().requestPointerUnlock();
 }
 
 void PointerLockController::requestPointerUnlockAndForceCursorVisible()
 {
-    if (!m_element || !RuntimeEnabledFeatures::sharedFeatures().pointerLockEnabled())
+    if (!m_element)
         return;
 
     m_page.chrome().client().requestPointerUnlock();
