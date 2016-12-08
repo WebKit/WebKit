@@ -156,6 +156,7 @@ public:
         VisitedLinkStore,
         WebsiteDataRecord,
         WebsiteDataStore,
+        WebsitePolicies,
         WindowFeatures,
 
 #if ENABLE(MEDIA_SESSION)

@@ -334,7 +334,7 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
     // Allow non-main frames to navigate anywhere.
     API::FrameInfo* sourceFrame = toImpl(navigationActionRef)->sourceFrame();
     if (sourceFrame && !sourceFrame->isMainFrame()) {
-        toImpl(listenerRef)->use();
+        toImpl(listenerRef)->use({ });
         return;
     }
 
@@ -345,7 +345,7 @@ static void decidePolicyForNavigationAction(WKPageRef pageRef, WKNavigationActio
 
     // Allow loading of the main inspector file.
     if (WebInspectorProxy::isMainOrTestInspectorPage(request.url())) {
-        toImpl(listenerRef)->use();
+        toImpl(listenerRef)->use({ });
         return;
     }
 

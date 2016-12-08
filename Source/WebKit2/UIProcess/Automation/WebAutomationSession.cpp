@@ -435,8 +435,7 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
 
     const bool reloadFromOrigin = false;
-    const bool contentBlockersEnabled = true;
-    page->reload(reloadFromOrigin, contentBlockersEnabled);
+    page->reload(reloadFromOrigin, { });
 }
 
 void WebAutomationSession::inspectBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const bool* optionalEnableAutoCapturing, Ref<InspectBrowsingContextCallback>&& callback)

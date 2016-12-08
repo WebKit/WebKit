@@ -1,3 +1,19 @@
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for sending WebsiteSettings to WebProcess during navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165517
+        <rdar://29341068>
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/contentBlockerCheck.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm: Added.
+        (-[WebsitePoliciesDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2016-12-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209489.

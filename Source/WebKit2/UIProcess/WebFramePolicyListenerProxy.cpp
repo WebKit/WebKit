@@ -27,6 +27,7 @@
 #include "WebFramePolicyListenerProxy.h"
 
 #include "WebFrameProxy.h"
+#include "WebsitePolicies.h"
 
 namespace WebKit {
 
@@ -35,19 +36,19 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, u
 {
 }
 
-void WebFramePolicyListenerProxy::use()
+void WebFramePolicyListenerProxy::use(const WebsitePolicies& websitePolicies)
 {
-    receivedPolicyDecision(WebCore::PolicyUse);
+    receivedPolicyDecision(WebCore::PolicyUse, websitePolicies);
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    receivedPolicyDecision(WebCore::PolicyDownload);
+    receivedPolicyDecision(WebCore::PolicyDownload, { });
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    receivedPolicyDecision(WebCore::PolicyIgnore);
+    receivedPolicyDecision(WebCore::PolicyIgnore, { });
 }
 
 } // namespace WebKit

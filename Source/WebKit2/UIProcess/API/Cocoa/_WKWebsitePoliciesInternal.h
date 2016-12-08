@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "_WKWebsitePolicies.h"
 
-#include "WebFrameListenerProxy.h"
+#if WK_API_ENABLED
 
-#if PLATFORM(COCOA)
-#include "WKFoundation.h"
-#endif
-
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
+#import "APIWebsitePolicies.h"
+#import "WKObject.h"
 
 namespace WebKit {
 
-class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
-public:
-    static const Type APIType = Type::FramePolicyListener;
+inline _WKWebsitePolicies *wrapper(API::WebsitePolicies& websitePolicies)
+{
+    ASSERT([websitePolicies.wrapper() isKindOfClass:[_WKWebsitePolicies class]]);
+    return (_WKWebsitePolicies *)websitePolicies.wrapper();
+}
 
-    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
-    {
-        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID));
-    }
+}
 
-    void use(const WebsitePolicies&);
-    void download();
-    void ignore();
+@interface _WKWebsitePolicies () <WKObject> {
+@package
+    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
+}
+@end
 
-private:
-    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
-
-    virtual Type type() const { return APIType; }
-
-#if DELEGATE_REF_COUNTING_TO_COCOA
-    void* operator new(size_t size) { return newObject(size, APIType); }
 #endif
-};
-
-} // namespace WebKit
-
-#undef DELEGATE_REF_COUNTING_TO_COCOA

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebFormSubmissionListenerProxy.h"
 
+#include "WebsitePolicies.h"
+
 namespace WebKit {
 
 WebFormSubmissionListenerProxy::WebFormSubmissionListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
@@ -35,7 +37,7 @@ WebFormSubmissionListenerProxy::WebFormSubmissionListenerProxy(WebFrameProxy* fr
 
 void WebFormSubmissionListenerProxy::continueSubmission()
 {
-    receivedPolicyDecision(WebCore::PolicyUse);
+    receivedPolicyDecision(WebCore::PolicyUse, { });
 }
 
 } // namespace WebKit

@@ -223,6 +223,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/_WKVisitedLinkStore.mm
     UIProcess/API/Cocoa/_WKWebsiteDataSize.mm
     UIProcess/API/Cocoa/_WKWebsiteDataStore.mm
+    UIProcess/API/Cocoa/_WKWebsitePolicies.mm
 
     UIProcess/API/mac/WKView.mm
 

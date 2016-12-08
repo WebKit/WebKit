@@ -62,6 +62,7 @@
 #import "_WKFrameHandleInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
+#import "_WKWebsitePoliciesInternal.h"
 #import <WebCore/Credential.h>
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
@@ -137,6 +138,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegate = delegate;
 
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)];
+    m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies = [delegate respondsToSelector:@selector(_webView:decidePolicyForNavigationAction:decisionHandler:)];
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
 
     m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
@@ -265,7 +267,7 @@ NavigationState::NavigationClient::~NavigationClient()
 {
 }
 
-static void tryAppLink(RefPtr<API::NavigationAction> navigationAction, const String& currentMainFrameURL, std::function<void (bool)> completionHandler)
+static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, std::function<void(bool)> completionHandler)
 {
 #if HAVE(APP_LINKS)
     if (!navigationAction->shouldOpenAppLinks()) {
@@ -289,18 +291,19 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 {
     String mainFrameURLString = webPageProxy.mainFrame()->url();
 
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler
+        && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies) {
         RefPtr<API::NavigationAction> localNavigationAction = &navigationAction;
         RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
 
-        tryAppLink(localNavigationAction, mainFrameURLString, [localListener, localNavigationAction] (bool followedLinkToApp) {
+        tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [localListener, localNavigationAction = RefPtr<API::NavigationAction>(&navigationAction)] (bool followedLinkToApp) {
             if (followedLinkToApp) {
                 localListener->ignore();
                 return;
             }
 
             if (!localNavigationAction->targetFrame()) {
-                localListener->use();
+                localListener->use({ });
                 return;
             }
 
@@ -309,7 +312,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 if (localNavigationAction->shouldPerformDownload())
                     localListener->download();
                 else
-                    localListener->use();
+                    localListener->use({ });
                 return;
             }
 
@@ -329,21 +332,26 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     if (!navigationDelegate)
         return;
 
-    RefPtr<API::NavigationAction> localNavigationAction = &navigationAction;
-    RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:[localListener, localNavigationAction, checker, mainFrameURLString](WKNavigationActionPolicy actionPolicy) {
+    bool delegateHasWebsitePolicies = m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies;
+    
+    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
+    
+    auto decisionHandlerWithPolicies = [localListener = RefPtr<WebFramePolicyListenerProxy>(WTFMove(listener)), localNavigationAction = RefPtr<API::NavigationAction>(&navigationAction), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
         checker->didCallCompletionHandler();
+
+        WebsitePolicies policies;
+        if (websitePolicies)
+            policies = websitePolicies->_websitePolicies->websitePolicies();
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            tryAppLink(localNavigationAction, mainFrameURLString, [localListener](bool followedLinkToApp) {
+            tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [localListener = WTFMove(localListener), policies = WTFMove(policies)](bool followedLinkToApp) mutable {
                 if (followedLinkToApp) {
                     localListener->ignore();
                     return;
                 }
 
-                localListener->use();
+                localListener->use(policies);
             });
         
             break;
@@ -356,17 +364,23 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyDownload:
-#pragma clang diagnostic pop
             localListener->download();
             break;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
 #pragma clang diagnostic pop
-            localListener->use();
+            localListener->use(policies);
             break;
         }
-    }];
+    };
+    
+    if (delegateHasWebsitePolicies)
+        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:decisionHandlerWithPolicies];
+    else {
+        auto decisionHandlerWithoutPolicies = [decisionHandlerWithPolicies] (WKNavigationActionPolicy actionPolicy) mutable {
+            decisionHandlerWithPolicies(actionPolicy, nil);
+        };
+        [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:decisionHandlerWithoutPolicies];
+    }
 }
 
 void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
@@ -378,14 +392,14 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
 
             if (exists && !isDirectory && navigationResponse.canShowMIMEType())
-                listener->use();
+                listener->use({ });
             else
                 listener->ignore();
             return;
         }
 
         if (navigationResponse.canShowMIMEType())
-            listener->use();
+            listener->use({ });
         else
             listener->ignore();
         return;
@@ -402,7 +416,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 
         switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
-            localListener->use();
+            localListener->use({ });
             break;
 
         case WKNavigationResponsePolicyCancel:

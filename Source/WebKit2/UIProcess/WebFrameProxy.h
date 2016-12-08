@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrameProxy_h
-#define WebFrameProxy_h
+#pragma once
 
 #include "APIObject.h"
 #include "FrameLoadState.h"
@@ -53,6 +52,7 @@ class WebCertificateInfo;
 class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
+struct WebsitePolicies;
 
 typedef GenericCallback<API::Data*> DataCallback;
 
@@ -115,7 +115,7 @@ public:
     void didChangeTitle(const String&);
 
     // Policy operations.
-    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation* = nullptr);
+    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, const WebsitePolicies&);
     WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID);
     WebFormSubmissionListenerProxy& setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
@@ -149,5 +149,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebFrameProxy_h

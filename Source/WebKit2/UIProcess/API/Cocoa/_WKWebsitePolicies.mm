@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKWebsitePoliciesInternal.h"
 
-#include "WebFrameListenerProxy.h"
+#if WK_API_ENABLED
 
-#if PLATFORM(COCOA)
-#include "WKFoundation.h"
+@implementation _WKWebsitePolicies
+
+- (void)dealloc
+{
+    _websitePolicies->API::WebsitePolicies::~WebsitePolicies();
+    
+    [super dealloc];
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    API::Object::constructInWrapper<API::WebsitePolicies>(self);
+    
+    return self;
+}
+
+- (void)setContentBlockersEnabled:(BOOL)contentBlockersEnabled
+{
+    _websitePolicies->setContentBlockersEnabled(contentBlockersEnabled);
+}
+
+- (BOOL)contentBlockersEnabled
+{
+    return _websitePolicies->contentBlockersEnabled();
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p; contentBlockersEnabled = %d>", NSStringFromClass(self.class), self, self.contentBlockersEnabled];
+}
+
+- (API::Object&)_apiObject
+{
+    return *_websitePolicies;
+}
+
+@end
+
 #endif
-
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
-
-namespace WebKit {
-
-class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
-public:
-    static const Type APIType = Type::FramePolicyListener;
-
-    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
-    {
-        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID));
-    }
-
-    void use(const WebsitePolicies&);
-    void download();
-    void ignore();
-
-private:
-    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
-
-    virtual Type type() const { return APIType; }
-
-#if DELEGATE_REF_COUNTING_TO_COCOA
-    void* operator new(size_t size) { return newObject(size, APIType); }
-#endif
-};
-
-} // namespace WebKit
-
-#undef DELEGATE_REF_COUNTING_TO_COCOA

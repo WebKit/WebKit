@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WKFramePolicyListener.h"
 
+#include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
+#include "WebsitePolicies.h"
 
 using namespace WebKit;
 
@@ -39,7 +41,12 @@ WKTypeID WKFramePolicyListenerGetTypeID()
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 {
-    toImpl(policyListenerRef)->use();
+    toImpl(policyListenerRef)->use({ });
+}
+
+void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
+{
+    toImpl(policyListenerRef)->use(toImpl(websitePolicies)->websitePolicies());
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)

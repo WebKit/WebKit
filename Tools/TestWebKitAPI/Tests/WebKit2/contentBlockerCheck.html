@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <script>
+            function sendMessage() { alert(getComputedStyle(document.querySelector(".hidden")).display == "none" ? "content blockers enabled" :"content blockers disabled"); }
+        </script>
+    </head>
+    <body onload="sendMessage()">
+        <p class="hidden">
+            This text exists to determine if content blockers are enabled.
+            If they're enabled, the computed style of this text will be display:none.
+        </p>
+    </body>
+</html>

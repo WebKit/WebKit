@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,26 @@
 
 #pragma once
 
-#include "WebFrameListenerProxy.h"
-
-#if PLATFORM(COCOA)
-#include "WKFoundation.h"
-#endif
-
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
-
 namespace WebKit {
 
-class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
-public:
-    static const Type APIType = Type::FramePolicyListener;
+struct WebsitePolicies {
 
-    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
-    {
-        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID));
-    }
-
-    void use(const WebsitePolicies&);
-    void download();
-    void ignore();
-
-private:
-    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
-
-    virtual Type type() const { return APIType; }
-
-#if DELEGATE_REF_COUNTING_TO_COCOA
-    void* operator new(size_t size) { return newObject(size, APIType); }
-#endif
+    bool contentBlockersEnabled { true };
+    
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, WebsitePolicies&);
 };
 
-} // namespace WebKit
+template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
+{
+    encoder << contentBlockersEnabled;
+}
 
-#undef DELEGATE_REF_COUNTING_TO_COCOA
+template<class Decoder> bool WebsitePolicies::decode(Decoder& decoder, WebsitePolicies& result)
+{
+    if (!decoder.decode(result.contentBlockersEnabled))
+        return false;
+    return true;
+}
+
+} // namespace WebKit

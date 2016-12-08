@@ -176,14 +176,14 @@ void WebFrameProxy::didChangeTitle(const String& title)
     m_title = title;
 }
 
-void WebFrameProxy::receivedPolicyDecision(WebCore::PolicyAction action, uint64_t listenerID, API::Navigation* navigation)
+void WebFrameProxy::receivedPolicyDecision(WebCore::PolicyAction action, uint64_t listenerID, API::Navigation* navigation, const WebsitePolicies& websitePolicies)
 {
     if (!m_page)
         return;
 
     ASSERT(m_activeListener);
     ASSERT(m_activeListener->listenerID() == listenerID);
-    m_page->receivedPolicyDecision(action, this, listenerID, navigation);
+    m_page->receivedPolicyDecision(action, *this, listenerID, navigation, websitePolicies);
 }
 
 WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID)

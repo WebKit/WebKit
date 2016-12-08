@@ -45,12 +45,12 @@ void WebFrameListenerProxy::invalidate()
     m_frame = nullptr;
 }
 
-void WebFrameListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action)
+void WebFrameListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action, const WebsitePolicies& websitePolicies)
 {
     if (!m_frame)
         return;
 
-    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get());
+    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get(), websitePolicies);
     m_frame = nullptr;
 }
 

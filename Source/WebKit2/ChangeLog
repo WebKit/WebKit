@@ -1,3 +1,91 @@
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for sending WebsiteSettings to WebProcess during navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165517
+        <rdar://29341068>
+
+        We add the ability for the navigation client to send settings to the WebProcess 
+        based on the URL of the document being navigated to. This approach adds no new IPC 
+        messages and allows the application to decide what settings to use during navigation 
+        instead of declaratively before navigation. Right now there is only one setting, 
+        whether to disable content blockers, but this infrastructure can be used for more settings.
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/WebsitePolicies.h: Added.
+        (WebKit::WebsitePolicies::encode):
+        (WebKit::WebsitePolicies::decode):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForNavigationAction):
+        (API::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        (API::PolicyClient::decidePolicyForResponse):
+        * UIProcess/API/APIWebsitePolicies.cpp: Added.
+        (API::WebsitePolicies::create):
+        * UIProcess/API/APIWebsitePolicies.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUse):
+        (WKFramePolicyListenerUseWithPolicies):
+        * UIProcess/API/C/WKFramePolicyListener.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        * UIProcess/API/C/WKWebsitePolicies.cpp: Added.
+        (WKWebsitePoliciesGetTypeID):
+        (WKWebsitePoliciesCreate):
+        (WKWebsitePoliciesSetContentBlockersEnabled):
+        (WKWebsitePoliciesGetContentBlockersEnabled):
+        * UIProcess/API/C/WKWebsitePolicies.h: Added.
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h: Added.
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm: Added.
+        (-[_WKWebsitePolicies dealloc]):
+        (-[_WKWebsitePolicies init]):
+        (-[_WKWebsitePolicies setContentBlockersEnabled:]):
+        (-[_WKWebsitePolicies contentBlockersEnabled]):
+        (-[_WKWebsitePolicies description]):
+        (-[_WKWebsitePolicies _apiObject]):
+        * UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h: Added.
+        (WebKit::wrapper):
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::reloadBrowsingContext):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::tryAppLink):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/WebFormSubmissionListenerProxy.cpp:
+        (WebKit::WebFormSubmissionListenerProxy::continueSubmission):
+        * UIProcess/WebFrameListenerProxy.cpp:
+        (WebKit::WebFrameListenerProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameListenerProxy.h:
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::create):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::receivedPolicyDecision):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2016-12-08  Antti Koivisto  <antti@apple.com>
 
         Salt network cache hashes

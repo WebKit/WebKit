@@ -2253,7 +2253,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     m_process->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID, API::Navigation* navigation)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& frame, uint64_t listenerID, API::Navigation* navigation, const WebsitePolicies& websitePolicies)
 {
     if (!isValid())
         return;
@@ -2293,10 +2293,11 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         m_syncNavigationActionPolicyActionIsValid = true;
         m_syncNavigationActionPolicyAction = action;
         m_syncNavigationActionPolicyDownloadID = downloadID;
+        m_syncNavigationActionPolicyWebsitePolicies = websitePolicies;
         return;
     }
     
-    m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID), m_pageID);
+    m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame.frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID), m_pageID);
 }
 
 void WebPageProxy::setUserAgent(const String& userAgent)
@@ -3609,7 +3610,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const NavigationActionData& navigationActionData, uint64_t originatingFrameID, const SecurityOriginData& originatingFrameSecurityOrigin, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, uint64_t& newNavigationID, uint64_t& policyAction, DownloadID& downloadID)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const NavigationActionData& navigationActionData, uint64_t originatingFrameID, const SecurityOriginData& originatingFrameSecurityOrigin, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, const UserData& userData, bool& receivedPolicyAction, uint64_t& newNavigationID, uint64_t& policyAction, DownloadID& downloadID, WebsitePolicies& websitePolicies)
 {
     PageClientProtector protector(m_pageClient);
 
@@ -3677,6 +3678,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     if (m_syncNavigationActionPolicyActionIsValid) {
         policyAction = m_syncNavigationActionPolicyAction;
         downloadID = m_syncNavigationActionPolicyDownloadID;
+        websitePolicies = m_syncNavigationActionPolicyWebsitePolicies;
     }
 }
 

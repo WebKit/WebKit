@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKFramePolicyListener_h
-#define WKFramePolicyListener_h
+#pragma once
 
 #include <WebKit/WKBase.h>
 
@@ -34,12 +33,11 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKFramePolicyListenerGetTypeID();
 
-WK_EXPORT void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListener);
-WK_EXPORT void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListener);
-WK_EXPORT void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef policyListener);
+WK_EXPORT void WKFramePolicyListenerUse(WKFramePolicyListenerRef);
+WK_EXPORT void WKFramePolicyListenerDownload(WKFramePolicyListenerRef);
+WK_EXPORT void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef);
+WK_EXPORT void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef, WKWebsitePoliciesRef);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* WKFramePolicyListener_h */
