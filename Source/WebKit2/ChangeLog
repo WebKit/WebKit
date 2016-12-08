@@ -1,3 +1,16 @@
+2016-12-08  Chelsea Pugh  <cpugh@apple.com>
+
+        [iOS] WKWebView should not allow app links to be opened on back or forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165502
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Add a condition to shouldOpenAppLinks
+        (which we use when creating a NavigationAction) that the navigationActionData is not a navigation
+        of type BackForward. This way, we don't open app links when a navigation is done via back or
+        forward.
+
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         Enable SharedArrayBuffer, remove the flag
