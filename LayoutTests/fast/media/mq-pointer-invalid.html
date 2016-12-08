@@ -24,7 +24,7 @@
         shouldBeFalse('window.matchMedia("(' + testCase + ')").matches');
 
         targetStyle.innerText = "@media " + testCase + " { }";
-        shouldBe("document.styleSheets[1].cssRules[0].media.length", "0");
+        shouldBe("document.styleSheets[1].cssRules[0].media.length", "1");
     }
 </script>
 

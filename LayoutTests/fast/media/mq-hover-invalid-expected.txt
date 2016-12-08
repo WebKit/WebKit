@@ -4,19 +4,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS window.matchMedia("(hover:)").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS window.matchMedia("(hover: )").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS window.matchMedia("(hover: WebKit)").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS window.matchMedia("(hover: fine)").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS window.matchMedia("(hover: portrait)").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS window.matchMedia("(hover: \"None\")").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS window.matchMedia("(hover: 'None')").matches is false
-PASS document.styleSheets[1].cssRules[0].media.length is 0
+PASS document.styleSheets[1].cssRules[0].media.length is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
