@@ -229,14 +229,11 @@ webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure 
 webkit.org/b/136754 css3/flexbox/csswg/css-box-justify-content.html [ ImageOnlyFailure ]
 webkit.org/b/143294 css3/flexbox/csswg/css-flexbox-height-animation-stretch.html [ Pass ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-img-expand-evenly.html [ ImageOnlyFailure ]
-webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-row.html [ ImageOnlyFailure ]
-webkit.org/b/136754 css3/flexbox/csswg/css-flexbox-test1.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-align-items-center.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-flexitem-percentage-prescation.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-items-flexibility.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-lines/multi-line-wrap-reverse-column-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flex-lines/multi-line-wrap-with-column-reverse.html [ ImageOnlyFailure ]
-webkit.org/b/136754 css3/flexbox/csswg/flexbox-flex-wrap-flexing.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_flex-natural-mixed-basis-auto.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_generated-container.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_justifycontent-center-overflow.html [ ImageOnlyFailure ]
@@ -245,7 +242,6 @@ webkit.org/b/136754 css3/flexbox/csswg/flexbox_min-width-auto.html [ ImageOnlyFa
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_stf-table-singleline.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_visibility-collapse-line-wrapping.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/flexbox_visibility-collapse.html [ ImageOnlyFailure ]
-webkit.org/b/136754 css3/flexbox/csswg/flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/order/order-with-column-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-direction-row-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-inline.html [ ImageOnlyFailure ]
@@ -731,8 +727,6 @@ fast/css-intrinsic-dimensions/height-tables.html [ ImageOnlyFailure ]
 # integral hittest vs. subpixel table
 fast/table/hittest-tablecell-with-borders-right-edge.html [ Pass Failure ]
 fast/table/hittest-tablecell-right-edge.html [ Pass Failure ]
-# Table vs. flex
-ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure ]
 
 webkit.org/b/150598 fast/repaint/table-hover-on-link.html [ Pass Failure ]
 
