@@ -542,6 +542,7 @@ webkit.org/b/163932 inspector/css/pseudo-element-matches.html [ Pass Failure ]
 webkit.org/b/163604 inspector/debugger/breakpoint-action-eval.html [ Pass Timeout ]
 webkit.org/b/161774 inspector/debugger/breakpoint-columns.html [ Pass Failure ]
 webkit.org/b/159447 [ Debug ] inspector/debugger/tail-deleted-frames-from-vm-entry.html [ Pass Failure ]
+webkit.org/b/165582 inspector/worker/debugger-scripts.html [ Pass Failure ]
 
 webkit.org/b/159430 [ Debug Sierra+ ] media/restore-from-page-cache.html [ Pass Crash ]
 

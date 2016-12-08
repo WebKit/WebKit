@@ -1,3 +1,12 @@
+2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/worker/debugger-scripts.html as flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=165582
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip media tests
