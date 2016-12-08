@@ -304,7 +304,6 @@ webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect
 webkit.org/b/148856 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused.html [ ImageOnlyFailure ]
 
 # @supports W3C Failures
-webkit.org/b/137566 css3/conditional/w3c/at-supports-010.html [ ImageOnlyFailure ]
 webkit.org/b/137568 css3/conditional/w3c/at-supports-014.html [ ImageOnlyFailure ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]

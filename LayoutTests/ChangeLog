@@ -1,5 +1,16 @@
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
+        @supports fails combinations of conjuctions, disjunctions, and negations of simple conditions
+        https://bugs.webkit.org/show_bug.cgi?id=137566
+        <rdar://problem/18600949>
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        Test passes now with new @supports parser.
+
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Add strict checking for right parens to selector functions like :matches, :not etc.
         https://bugs.webkit.org/show_bug.cgi?id=165624
 
