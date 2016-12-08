@@ -132,11 +132,3 @@
 .media-controls.mac.fullscreen .scrubber {
     top: 7px;
 }
-
-/* Tracks Panel */
-
-.media-controls.mac.fullscreen .tracks-panel {
-    /* Half of the screen width minus half of the controls bar width minus the distance to the right edge of the tracks button */
-    right: calc(50% - var(--controls-bar-width) / 2 + var(--tracks-panel-right-margin));
-    bottom: 234px;
-}

@@ -1,5 +1,33 @@
 2016-12-07  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Tracks panel does not display in the right location in fullscreen and cannot be dismissed
+        https://bugs.webkit.org/show_bug.cgi?id=165575
+
+        Reviewed by Dean Jackson.
+
+        We position the tracks panel programmatically based on the current bounds of the fullscreen button in fullscreen.
+        This allows for the tracks panel to be shown in the right spot even after dragging the controls bar. We also use
+        the fullscreen media controls as the target for tracking "mousedown" events when the tracks panel is shown in a
+        fullscreen presentation.
+
+        Tests: media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html
+               media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html
+
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+        (.media-controls.mac.fullscreen .scrubber):
+        (.media-controls.mac.fullscreen .tracks-panel): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype.showTracksPanel):
+        * Modules/modern-media-controls/controls/tracks-panel.js:
+        (TracksPanel.prototype.presentInParent):
+        (TracksPanel.prototype.hide):
+        (TracksPanel.prototype.get bottomY):
+        (TracksPanel.prototype.set bottomY):
+        (TracksPanel.prototype.commitProperty):
+        (TracksPanel.prototype._mousedownTarget):
+
+2016-12-07  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Use a small picture-in-picture button in fullscreen
         https://bugs.webkit.org/show_bug.cgi?id=165587
 

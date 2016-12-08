@@ -6,6 +6,7 @@ class TracksPanel extends LayoutNode
     {
         super(`<div class="tracks-panel">`);
         this._rightX = 0;
+        this._bottomY = 0;
     }
 
     // Public
@@ -27,7 +28,7 @@ class TracksPanel extends LayoutNode
         this.element.removeEventListener("transitionend", this);
         this.element.classList.remove("fade-out");
 
-        window.addEventListener("mousedown", this, true);
+        this._mousedownTarget().addEventListener("mousedown", this, true);
         window.addEventListener("keydown", this, true);
 
         this._focusedTrackNode = null;
@@ -38,11 +39,25 @@ class TracksPanel extends LayoutNode
         if (!this.presented)
             return;
 
-        window.removeEventListener("mousedown", this, true);
+        this._mousedownTarget().removeEventListener("mousedown", this, true);
         window.removeEventListener("keydown", this, true);
 
         this.element.addEventListener("transitionend", this);
         this.element.classList.add("fade-out");
+    }
+
+    get bottomY()
+    {
+        return this._bottomY;
+    }
+
+    set bottomY(bottomY)
+    {
+        if (this._bottomY === bottomY)
+            return;
+
+        this._bottomY = bottomY;
+        this.markDirtyProperty("bottomY");
     }
 
     get rightX()
@@ -82,6 +97,8 @@ class TracksPanel extends LayoutNode
     {
         if (propertyName === "rightX")
             this.element.style.right = `${this._rightX}px`;
+        else if (propertyName === "bottomY")
+            this.element.style.bottom = `${this._bottomY}px`;
         else
             super.commitProperty(propertyName);
     }
@@ -102,6 +119,14 @@ class TracksPanel extends LayoutNode
     }
 
     // Private
+
+    _mousedownTarget()
+    {
+        const mediaControls = this.parentOfType(MacOSFullscreenMediaControls);
+        if (mediaControls)
+            return mediaControls.element;
+        return window;
+    }
 
     _childrenFromDataSource()
     {

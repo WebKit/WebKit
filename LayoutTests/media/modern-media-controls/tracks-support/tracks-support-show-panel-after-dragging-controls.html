@@ -1,0 +1,59 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<video src="../../content/CC+Subtitles.mov" style="width: 320px; height: 240px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the display of a tracks panel after dragging the controls bar in fullscreen.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("webkitbeginfullscreen", () => {
+    debug("webkitbeginfullscreen");
+});
+
+media.addEventListener("webkitfullscreenchange", () => {
+    if (media.webkitDisplayingFullscreen) {
+        window.requestAnimationFrame(() => {
+            const bounds = shadowRoot.querySelector(".controls-bar").getBoundingClientRect();
+            eventSender.mouseMoveTo(bounds.left + 10, bounds.top + 10);
+            eventSender.mouseDown();
+            eventSender.mouseMoveTo(bounds.left - 40, bounds.top - 40);
+            eventSender.mouseUp();
+
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    clickOnButton("tracks");
+                    window.requestAnimationFrame(() => {
+                        shouldBeEqualToString("shadowRoot.querySelector('.tracks-panel').style.right", "267px");
+                        shouldBeEqualToString("shadowRoot.querySelector('.tracks-panel').style.bottom", "151px");
+
+                        debug("");
+                        media.remove();
+                        finishJSTest();
+                    });
+                });
+            });
+        });
+    }
+});
+
+media.addEventListener("play", () => {
+    media.pause();
+    window.requestAnimationFrame(() => clickOnButton("fullscreen"));
+});
+
+function clickOnButton(name)
+{
+    const bounds = shadowRoot.querySelector(`button.${name}`).getBoundingClientRect();
+    eventSender.mouseMoveTo(bounds.left + 1, bounds.top + 1);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
