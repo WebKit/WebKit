@@ -47,11 +47,14 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         this._navigationSidebarPanel = navigationSidebarPanel || null;
         this._detailsSidebarPanels = detailsSidebarPanels || [];
 
+        const defaultSidebarWidth = 300;
+
         this._navigationSidebarCollapsedSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-collapsed", false);
+        this._navigationSidebarWidthSetting = new WebInspector.Setting(identifier + "-navigation-sidebar-width", defaultSidebarWidth);
 
         this._detailsSidebarCollapsedSetting = new WebInspector.Setting(identifier + "-details-sidebar-collapsed", true);
         this._detailsSidebarSelectedPanelSetting = new WebInspector.Setting(identifier + "-details-sidebar-selected-panel", null);
-        this._detailsSidebarWidthSetting = new WebInspector.Setting(identifier + "-details-sidebar-width", 0);
+        this._detailsSidebarWidthSetting = new WebInspector.Setting(identifier + "-details-sidebar-width", defaultSidebarWidth);
 
         this._cookieSetting = new WebInspector.Setting(identifier + "-tab-cookie", {});
     }
@@ -170,33 +173,12 @@ WebInspector.TabContentView = class TabContentView extends WebInspector.ContentV
         this._cookieSetting.value = cookie;
     }
 
-    get navigationSidebarPanel()
-    {
-        return this._navigationSidebarPanel;
-    }
+    get navigationSidebarPanel() { return this._navigationSidebarPanel; }
+    get navigationSidebarCollapsedSetting() { return this._navigationSidebarCollapsedSetting; }
+    get navigationSidebarWidthSetting() { return this._navigationSidebarWidthSetting; }
 
-    get navigationSidebarCollapsedSetting()
-    {
-        return this._navigationSidebarCollapsedSetting;
-    }
-
-    get detailsSidebarWidthSetting()
-    {
-        return this._detailsSidebarWidthSetting;
-    }
-
-    get detailsSidebarPanels()
-    {
-        return this._detailsSidebarPanels;
-    }
-
-    get detailsSidebarCollapsedSetting()
-    {
-        return this._detailsSidebarCollapsedSetting;
-    }
-
-    get detailsSidebarSelectedPanelSetting()
-    {
-        return this._detailsSidebarSelectedPanelSetting;
-    }
+    get detailsSidebarPanels() { return this._detailsSidebarPanels; }
+    get detailsSidebarCollapsedSetting() { return this._detailsSidebarCollapsedSetting; }
+    get detailsSidebarSelectedPanelSetting() { return this._detailsSidebarSelectedPanelSetting; }
+    get detailsSidebarWidthSetting() { return this._detailsSidebarWidthSetting; }
 };

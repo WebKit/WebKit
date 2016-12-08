@@ -1,3 +1,28 @@
+2016-12-07  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        REGRESSION(r203912): Web Inspector: Navigation sidebar widths are not saved
+        https://bugs.webkit.org/show_bug.cgi?id=165496
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser):
+        (WebInspector.TabBrowser.prototype._sidebarWidthDidChange):
+        (WebInspector.TabBrowser.prototype._showNavigationSidebarPanelForTabContentView):
+        (WebInspector.TabBrowser.prototype._sidebarWidthDidChange): Renamed from _detailsSidebarWidthDidChange.
+        Add event listener for when the navigation sidebar's width is changed.
+
+        * UserInterface/Views/TabContentView.js:
+        (WebInspector.TabContentView):
+        (WebInspector.TabContentView.prototype.get navigationSidebarPanel):
+        (WebInspector.TabContentView.prototype.get navigationSidebarCollapsedSetting):
+        (WebInspector.TabContentView.prototype.get navigationSidebarWidthSetting):
+        (WebInspector.TabContentView.prototype.get detailsSidebarPanels):
+        (WebInspector.TabContentView.prototype.get detailsSidebarCollapsedSetting):
+        (WebInspector.TabContentView.prototype.get detailsSidebarSelectedPanelSetting):
+        (WebInspector.TabContentView.prototype.get detailsSidebarWidthSetting):
+        Add WebInspector.Setting object for the navigation sidebar's width.
+
 2016-12-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Control Flow Profiler's event handlers aren't getting removed when ContentView closes

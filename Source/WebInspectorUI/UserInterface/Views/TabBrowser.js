@@ -37,13 +37,15 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         this._navigationSidebar = navigationSidebar || null;
         this._detailsSidebar = detailsSidebar || null;
 
-        if (this._navigationSidebar)
+        if (this._navigationSidebar) {
             this._navigationSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
+            this._navigationSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
+        }
 
         if (this._detailsSidebar) {
             this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.CollapsedStateDidChange, this._sidebarCollapsedStateDidChange, this);
             this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.SidebarPanelSelected, this._sidebarPanelSelected, this);
-            this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._detailsSidebarWidthDidChange, this);
+            this._detailsSidebar.addEventListener(WebInspector.Sidebar.Event.WidthDidChange, this._sidebarWidthDidChange, this);
         }
 
         this._contentViewContainer = new WebInspector.ContentViewContainer;
@@ -294,17 +296,24 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             tabContentView.detailsSidebarCollapsedSetting.value = this._detailsSidebar.collapsed;
     }
 
-    _detailsSidebarWidthDidChange(event)
+    _sidebarWidthDidChange(event)
     {
-        if (this._ignoreSidebarEvents)
+        if (this._ignoreSidebarEvents || !event.data)
             return;
 
         let tabContentView = this.selectedTabContentView;
         if (!tabContentView)
             return;
 
-        if (event.target === this._detailsSidebar && event.data)
+        switch (event.target) {
+        case this._navigationSidebar:
+            tabContentView.navigationSidebarWidthSetting.value = event.data.newWidth;
+            break;
+
+        case this._detailsSidebar:
             tabContentView.detailsSidebarWidthSetting.value = event.data.newWidth;
+            break;
+        }
     }
 
     _showNavigationSidebarPanelForTabContentView(tabContentView)
@@ -322,6 +331,9 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
             this._ignoreSidebarEvents = false;
             return;
         }
+
+        if (tabContentView.navigationSidebarWidthSetting.value)
+            this._navigationSidebar.width = tabContentView.navigationSidebarWidthSetting.value;
 
         var navigationSidebarPanel = tabContentView.navigationSidebarPanel;
         if (!navigationSidebarPanel) {
