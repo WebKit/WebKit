@@ -27,40 +27,25 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCallee.h"
-#include "WasmFormat.h"
+#include "JSCell.h"
 
 namespace JSC {
 
-class JSWebAssemblyCallee : public JSCell {
+class WebAssemblyToJSCallee : public JSCell {
 public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCallee* create(VM& vm, std::unique_ptr<B3::Compilation>&& code, std::unique_ptr<B3::Compilation>&& jsToWasmEntryPoint)
-    {
-        JSWebAssemblyCallee* callee = new (NotNull, allocateCell<JSWebAssemblyCallee>(vm.heap)) JSWebAssemblyCallee(vm);
-        callee->finishCreation(vm, std::forward<std::unique_ptr<B3::Compilation>>(code), std::forward<std::unique_ptr<B3::Compilation>>(jsToWasmEntryPoint));
-        return callee;
-    }
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-    }
+    static WebAssemblyToJSCallee* create(VM&, Structure*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
 
-    void* jsToWasmEntryPoint() { return m_jsToWasmEntryPoint->code().executableAddress(); }
-
 private:
-    void finishCreation(VM&, std::unique_ptr<B3::Compilation>&&, std::unique_ptr<B3::Compilation>&&);
-    JSWebAssemblyCallee(VM&);
-
-    std::unique_ptr<B3::Compilation> m_code;
-    std::unique_ptr<B3::Compilation> m_jsToWasmEntryPoint;
+    void finishCreation(VM&);
+    WebAssemblyToJSCallee(VM&, Structure* structure);
 };
 
 } // namespace JSC

@@ -30,11 +30,13 @@
 #include "CompilationResult.h"
 #include "VM.h"
 #include "WasmFormat.h"
+#include <wtf/Bag.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
+class CallLinkInfo;
 class JSGlobalObject;
 class JSWebAssemblyCallee;
 
@@ -58,31 +60,61 @@ public:
         RELEASE_ASSERT(failed());
         return m_errorMessage;
     }
-    
-    std::unique_ptr<ModuleInformation>& getModuleInformation()
+
+    Vector<Export>& exports() const
     {
         RELEASE_ASSERT(!failed());
-        return m_moduleInformation;
+        return m_moduleInformation->exports;
     }
+
     const Memory* memory() const
     {
         RELEASE_ASSERT(!failed());
         return m_moduleInformation->memory.get();
     }
-    size_t compiledFunctionCount() const
+
+    size_t internalFunctionCount() const
     {
         RELEASE_ASSERT(!failed());
-        return m_compiledFunctions.size();
+        return m_wasmInternalFunctions.size();
     }
-    const FunctionCompilation* compiledFunction(size_t i) const
+    B3::Compilation* jsToWasmEntryPointForFunction(size_t i) const
+    {
+        ASSERT(i > m_wasmToJSStubs.size());
+        return m_wasmInternalFunctions.at(i - m_wasmToJSStubs.size())->jsToWasmEntryPoint.get();
+    }
+
+    std::unique_ptr<ModuleInformation>&& takeModuleInformation()
     {
         RELEASE_ASSERT(!failed());
-        return m_compiledFunctions.at(i).get();
+        return WTFMove(m_moduleInformation);
+    }
+
+    Bag<CallLinkInfo>&& takeCallLinkInfos()
+    {
+        RELEASE_ASSERT(!failed());
+        return WTFMove(m_callLinkInfos);
+    }
+
+    Vector<WasmToJSStub>&& takeWasmToJSStubs()
+    {
+        RELEASE_ASSERT(!failed());
+        return WTFMove(m_wasmToJSStubs);
+    }
+
+    FunctionIndexSpace&& takeFunctionIndexSpace()
+    {
+        RELEASE_ASSERT(!failed());
+        return WTFMove(m_functionIndexSpace);
     }
 
 private:
     std::unique_ptr<ModuleInformation> m_moduleInformation;
-    CompiledFunctions m_compiledFunctions;
+    Vector<FunctionLocationInBinary> m_functionLocationInBinary;
+    Bag<CallLinkInfo> m_callLinkInfos;
+    Vector<WasmToJSStub> m_wasmToJSStubs;
+    Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
+    FunctionIndexSpace m_functionIndexSpace;
 
     VM* m_vm;
     const uint8_t* m_source;

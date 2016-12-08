@@ -1,3 +1,121 @@
+2016-12-08  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: wire up Instance imports
+        https://bugs.webkit.org/show_bug.cgi?id=165118
+
+        Reviewed by Saam Barati.
+
+        Change a bunch of the WebAssembly object model, and pipe the
+        necessary changes to be able to call JS imports from
+        WebAssembly. This will make it easier to call_indirect, and
+        unblock many other missing features.
+
+        As a follow-up I need to teach JSC::linkFor to live without a
+        CodeBlock: wasm doesn't have one and the IC patching is sad. We'll
+        switch on the callee (or its type?) and then use that as the owner
+        (because the callee is alive if the instance is alive, ditto
+        module, and module owns the CallLinkInfo).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callee): give access to the callee as a JSCell
+        * jit/RegisterSet.cpp: dead code from previous WebAssembly implementation
+        * jsc.cpp:
+        (callWasmFunction):
+        (functionTestWasmModuleFunctions):
+        * runtime/JSCellInlines.h:
+        (JSC::ExecState::vm): check callee instead of jsCallee: wasm only has a JSCell and not a JSObject
+        * runtime/VM.cpp:
+        (JSC::VM::VM): store the "top" WebAssembly.Instance on entry to WebAssembly (and restore the previous one on exit)
+        * runtime/VM.h:
+        * testWasm.cpp:
+        (runWasmTests):
+        * wasm/JSWebAssembly.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator): pass unlinked calls around to shorten their lifetime: they're ony needed until the Plan is done
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile): also pass in the function index space, so that imports can be signature-checked along with internal functions
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmBinding.cpp: Added.
+        (JSC::Wasm::importStubGenerator): stubs from wasm to JS
+        * wasm/WasmBinding.h: Copied from Source/JavaScriptCore/wasm/WasmValidate.h.
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue):
+        * wasm/WasmFormat.h: fix the object model
+        (JSC::Wasm::CallableFunction::CallableFunction):
+        * wasm/WasmFunctionParser.h: simplify some of the failure condition checks
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser): need function index space, not just internal functions
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleParser.cpp: early-create some of the structures which will be needed later
+        (JSC::Wasm::ModuleParser::parseImport):
+        (JSC::Wasm::ModuleParser::parseFunction):
+        (JSC::Wasm::ModuleParser::parseMemory):
+        (JSC::Wasm::ModuleParser::parseExport):
+        (JSC::Wasm::ModuleParser::parseCode):
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::functionIndexSpace):
+        (JSC::Wasm::ModuleParser::functionLocations):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::consumeUTF8String):
+        * wasm/WasmPlan.cpp: pass around the wasm objects at the right time, reducing their lifetime and making it easier to pass them around when needed
+        (JSC::Wasm::Plan::run):
+        (JSC::Wasm::Plan::initializeCallees):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::exports):
+        (JSC::Wasm::Plan::internalFunctionCount):
+        (JSC::Wasm::Plan::jsToWasmEntryPointForFunction):
+        (JSC::Wasm::Plan::takeModuleInformation):
+        (JSC::Wasm::Plan::takeCallLinkInfos):
+        (JSC::Wasm::Plan::takeWasmToJSStubs):
+        (JSC::Wasm::Plan::takeFunctionIndexSpace):
+        * wasm/WasmValidate.cpp: check function index space instead of only internal functions
+        (JSC::Wasm::Validate::addCall):
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+        * wasm/js/JSWebAssemblyCallee.cpp:
+        (JSC::JSWebAssemblyCallee::finishCreation):
+        * wasm/js/JSWebAssemblyCallee.h:
+        (JSC::JSWebAssemblyCallee::create):
+        (JSC::JSWebAssemblyCallee::jsToWasmEntryPoint):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h: hold the import functions off the end of the Instance
+        (JSC::JSWebAssemblyInstance::importFunction):
+        (JSC::JSWebAssemblyInstance::importFunctions):
+        (JSC::JSWebAssemblyInstance::setImportFunction):
+        (JSC::JSWebAssemblyInstance::offsetOfImportFunctions):
+        (JSC::JSWebAssemblyInstance::offsetOfImportFunction):
+        (JSC::JSWebAssemblyInstance::allocationSize):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        * wasm/js/JSWebAssemblyModule.h: hold the link call info, the import function stubs, and the function index space
+        (JSC::JSWebAssemblyModule::signatureForFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::importCount):
+        (JSC::JSWebAssemblyModule::calleeFromFunctionIndexSpace):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction): set top Instance on VM
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::instance):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance): handle function imports
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule): generate the stubs for import functions
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyToJSCallee.cpp: Copied from Source/JavaScriptCore/wasm/js/JSWebAssemblyCallee.cpp.
+        (JSC::WebAssemblyToJSCallee::create): dummy JSCell singleton which lives on the VM, and is put as the callee in the import stub's frame to identified it when unwinding
+        (JSC::WebAssemblyToJSCallee::createStructure):
+        (JSC::WebAssemblyToJSCallee::WebAssemblyToJSCallee):
+        (JSC::WebAssemblyToJSCallee::finishCreation):
+        (JSC::WebAssemblyToJSCallee::destroy):
+        * wasm/js/WebAssemblyToJSCallee.h: Copied from Source/JavaScriptCore/wasm/WasmB3IRGenerator.h.
+
 2016-12-08  Mark Lam  <mark.lam@apple.com>
 
         Enable JSC restricted options by default in the jsc shell.

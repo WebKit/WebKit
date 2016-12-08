@@ -1,3 +1,12 @@
+2016-12-08  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: wire up Instance imports
+        https://bugs.webkit.org/show_bug.cgi?id=165118
+
+        Reviewed by Saam Barati.
+
+        * wasm/js-api/test_Instance.js: add the test, disabled for now
+
 2016-12-07  Keith Miller  <keith_miller@apple.com>
 
         Add more missing trivial wasm ops.

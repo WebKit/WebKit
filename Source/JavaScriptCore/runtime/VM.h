@@ -96,6 +96,7 @@ class Interpreter;
 class JSCustomGetterSetterFunction;
 class JSGlobalObject;
 class JSObject;
+class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class RegExpCache;
@@ -292,7 +293,8 @@ public:
     // topVMEntryFrame.
     // FIXME: This should be a void*, because it might not point to a CallFrame.
     // https://bugs.webkit.org/show_bug.cgi?id=160441
-    ExecState* topCallFrame; 
+    ExecState* topCallFrame;
+    JSWebAssemblyInstance* topJSWebAssemblyInstance;
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
     Strong<Structure> terminatedExecutionErrorStructure;
@@ -310,6 +312,8 @@ public:
     Strong<Structure> functionExecutableStructure;
 #if ENABLE(WEBASSEMBLY)
     Strong<Structure> webAssemblyCalleeStructure;
+    Strong<Structure> webAssemblyToJSCalleeStructure;
+    Strong<JSCell> webAssemblyToJSCallee;
 #endif
     Strong<Structure> moduleProgramExecutableStructure;
     Strong<Structure> regExpStructure;

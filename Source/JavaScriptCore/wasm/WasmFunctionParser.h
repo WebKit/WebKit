@@ -45,7 +45,7 @@ public:
     typedef typename Context::ControlType ControlType;
     typedef typename Context::ExpressionList ExpressionList;
 
-    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const Vector<FunctionInformation>& functions);
+    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const FunctionIndexSpace&);
 
     bool WARN_UNUSED_RETURN parse();
 
@@ -77,16 +77,16 @@ private:
     ExpressionList m_expressionStack;
     Vector<ControlEntry> m_controlStack;
     const Signature* m_signature;
-    const Vector<FunctionInformation>& m_functions;
+    const FunctionIndexSpace& m_functionIndexSpace;
     unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const Vector<FunctionInformation>& functions)
+FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const FunctionIndexSpace& functionIndexSpace)
     : Parser(functionStart, functionLength)
     , m_context(context)
     , m_signature(signature)
-    , m_functions(functions)
+    , m_functionIndexSpace(functionIndexSpace)
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
@@ -350,23 +350,23 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseVarUInt32(functionIndex))
             return false;
 
-        if (functionIndex >= m_functions.size())
+        if (functionIndex >= m_functionIndexSpace.size())
             return false;
 
-        const FunctionInformation& info = m_functions[functionIndex];
+        const Signature* calleeSignature = m_functionIndexSpace[functionIndex].signature;
 
-        if (info.signature->arguments.size() > m_expressionStack.size())
+        if (calleeSignature->arguments.size() > m_expressionStack.size())
             return false;
 
-        size_t firstArgumentIndex = m_expressionStack.size() - info.signature->arguments.size();
+        size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature->arguments.size();
         Vector<ExpressionType> args;
-        args.reserveInitialCapacity(info.signature->arguments.size());
+        args.reserveInitialCapacity(calleeSignature->arguments.size());
         for (unsigned i = firstArgumentIndex; i < m_expressionStack.size(); ++i)
             args.append(m_expressionStack[i]);
         m_expressionStack.shrink(firstArgumentIndex);
 
         ExpressionType result = Context::emptyExpression;
-        if (!m_context.addCall(functionIndex, info, args, result))
+        if (!m_context.addCall(functionIndex, calleeSignature, args, result))
             return false;
 
         if (result != Context::emptyExpression)

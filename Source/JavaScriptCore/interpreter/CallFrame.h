@@ -86,6 +86,7 @@ namespace JSC  {
     public:
         static const int headerSizeInRegisters = CallFrameSlot::argumentCount + 1;
 
+        JSCell* callee() const { return this[CallFrameSlot::callee].unboxedCell(); }
         JSValue calleeAsValue() const { return this[CallFrameSlot::callee].jsValue(); }
         JSObject* jsCallee() const { return this[CallFrameSlot::callee].object(); }
         SUPPRESS_ASAN JSValue unsafeCallee() const { return this[CallFrameSlot::callee].asanUnsafeJSValue(); }

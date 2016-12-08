@@ -61,6 +61,18 @@ public:
         return m_module;
     }
 
+    FunctionIndexSpace& functionIndexSpace()
+    {
+        RELEASE_ASSERT(!failed());
+        return m_functionIndexSpace;
+    }
+
+    Vector<FunctionLocationInBinary>& functionLocationInBinary()
+    {
+        RELEASE_ASSERT(!failed());
+        return m_functionLocationInBinary;
+    }
+
 private:
 #define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) bool WARN_UNUSED_RETURN parse ## NAME();
     FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
@@ -68,6 +80,8 @@ private:
 
     VM* m_vm;
     std::unique_ptr<ModuleInformation> m_module;
+    FunctionIndexSpace m_functionIndexSpace;
+    Vector<FunctionLocationInBinary> m_functionLocationInBinary;
     bool m_failed { true };
     String m_errorMessage;
 };

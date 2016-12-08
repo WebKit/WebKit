@@ -896,6 +896,7 @@ set(JavaScriptCore_SOURCES
 
     wasm/JSWebAssembly.cpp
     wasm/WasmB3IRGenerator.cpp
+    wasm/WasmBinding.cpp
     wasm/WasmCallingConvention.cpp
     wasm/WasmFormat.cpp
     wasm/WasmMemory.cpp
@@ -925,6 +926,7 @@ set(JavaScriptCore_SOURCES
     wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
     wasm/js/WebAssemblyTableConstructor.cpp
     wasm/js/WebAssemblyTablePrototype.cpp
+    wasm/js/WebAssemblyToJSCallee.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp

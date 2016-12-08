@@ -79,17 +79,18 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
 
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
     auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->jsCallee())->globalObject()->WebAssemblyModuleStructure());
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     // The export symbol table is the same for all Instances of a Module.
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
-    for (auto& exp : plan.getModuleInformation()->exports) {
+    for (auto& exp : plan.exports()) {
         auto offset = exportSymbolTable->takeNextScopeOffset(NoLockingNecessary);
         exportSymbolTable->set(NoLockingNecessary, exp.field.impl(), SymbolTableEntry(VarOffset(offset)));
     }
 
-    unsigned calleeCount = plan.compiledFunctionCount();
-    JSWebAssemblyModule* result = JSWebAssemblyModule::create(vm, structure, plan.getModuleInformation(), exportSymbolTable, calleeCount);
+    // Only wasm-internal functions have a callee, stubs to JS do not.
+    unsigned calleeCount = plan.internalFunctionCount();
+    JSWebAssemblyModule* result = JSWebAssemblyModule::create(vm, structure, plan.takeModuleInformation(), plan.takeCallLinkInfos(), plan.takeWasmToJSStubs(), plan.takeFunctionIndexSpace(), exportSymbolTable, calleeCount);
     plan.initializeCallees(state->jsCallee()->globalObject(), 
         [&] (unsigned calleeIndex, JSWebAssemblyCallee* callee) {
             result->callees()[calleeIndex].set(vm, result, callee);

@@ -102,7 +102,7 @@ ALWAYS_INLINE bool Parser::consumeString(const char* str)
 ALWAYS_INLINE bool Parser::consumeUTF8String(String& result, size_t stringLength)
 {
     if (stringLength == 0) {
-        result = String();
+        result = emptyString();
         return true;
     }
     if (length() < stringLength || m_offset > length() - stringLength)

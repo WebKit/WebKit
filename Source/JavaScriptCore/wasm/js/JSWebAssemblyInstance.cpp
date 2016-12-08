@@ -33,12 +33,13 @@
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssemblyModule.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject, unsigned numImportFunctions)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, structure);
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap, allocationSize(numImportFunctions))) JSWebAssemblyInstance(vm, structure, numImportFunctions);
     instance->finishCreation(vm, module, moduleNamespaceObject);
     return instance;
 }
@@ -48,9 +49,11 @@ Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* global
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure)
+JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, unsigned numImportFunctions)
     : Base(vm, structure)
+    , m_numImportFunctions(numImportFunctions)
 {
+    memset(importFunctions(), 0, m_numImportFunctions * sizeof(WriteBarrier<JSCell>));
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
@@ -75,6 +78,8 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_module);
     visitor.append(&thisObject->m_moduleNamespaceObject);
+    for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
+        visitor.append(thisObject->importFunction(i));
 }
 
 const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyInstance) };

@@ -130,7 +130,7 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(Memory*, Procedure&, FunctionCompilation*);
+    B3IRGenerator(Memory*, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&);
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
     bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -164,7 +164,7 @@ public:
     bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
-    bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const FunctionInformation&, Vector<ExpressionType>& args, ExpressionType& result);
+    bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
@@ -183,17 +183,16 @@ private:
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
-    // m_unlikedCalls is list of each call site and the function index whose address it should be patched with.
-    Vector<UnlinkedCall>& m_unlinkedCalls;
+    Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
     Value* m_zeroValues[numTypes];
 };
 
-B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, FunctionCompilation* compilation)
+B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
     : m_memory(memory)
     , m_proc(procedure)
-    , m_unlinkedCalls(compilation->unlinkedCalls)
+    , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
 {
     m_currentBlock = m_proc.addBlock();
 
@@ -595,14 +594,14 @@ bool B3IRGenerator::addEndToUnreachable(ControlEntry& entry)
     return true;
 }
 
-bool B3IRGenerator::addCall(unsigned functionIndex, const FunctionInformation& info, Vector<ExpressionType>& args, ExpressionType& result)
+bool B3IRGenerator::addCall(unsigned functionIndex, const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result)
 {
-    ASSERT(info.signature->arguments.size() == args.size());
+    ASSERT(signature->arguments.size() == args.size());
 
-    Type returnType = info.signature->returnType;
+    Type returnType = signature->returnType;
 
-    size_t callIndex = m_unlinkedCalls.size();
-    m_unlinkedCalls.grow(callIndex + 1);
+    size_t callIndex = m_unlinkedWasmToWasmCalls.size();
+    m_unlinkedWasmToWasmCalls.grow(callIndex + 1);
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(returnType),
         [&] (PatchpointValue* patchpoint) {
             patchpoint->effects.writesPinned = true;
@@ -614,7 +613,7 @@ bool B3IRGenerator::addCall(unsigned functionIndex, const FunctionInformation& i
                 CCallHelpers::Call call = jit.call();
 
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    m_unlinkedCalls[callIndex] = { linkBuffer.locationOf(call), functionIndex };
+                    m_unlinkedWasmToWasmCalls[callIndex] = { linkBuffer.locationOf(call), functionIndex };
                 });
             });
         });
@@ -660,7 +659,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn("\n");
 }
 
-static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, Memory* memory)
+static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, Memory* memory)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
@@ -739,13 +738,13 @@ static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* sig
     return std::make_unique<Compilation>(vm, proc);
 }
 
-std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, Memory* memory, const Signature* signature, const Vector<FunctionInformation>& functions, unsigned optLevel)
+std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, Memory* memory, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const FunctionIndexSpace& functionIndexSpace, unsigned optLevel)
 {
-    auto result = std::make_unique<FunctionCompilation>();
+    auto result = std::make_unique<WasmInternalFunction>();
 
     Procedure procedure;
-    B3IRGenerator context(memory, procedure, result.get());
-    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functions);
+    B3IRGenerator context(memory, procedure, result.get(), unlinkedWasmToWasmCalls);
+    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functionIndexSpace);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -759,7 +758,7 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* func
         dataLog("Post SSA: ", procedure);
 
     result->code = std::make_unique<Compilation>(vm, procedure, optLevel);
-    result->jsEntryPoint = createJSWrapper(vm, signature, result->code->code(), memory);
+    result->jsToWasmEntryPoint = createJSToWasmWrapper(vm, signature, result->code->code(), memory);
     return result;
 }
 

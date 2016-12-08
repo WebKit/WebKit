@@ -50,6 +50,7 @@
 #include "js/WebAssemblyRuntimeErrorPrototype.h"
 #include "js/WebAssemblyTableConstructor.h"
 #include "js/WebAssemblyTablePrototype.h"
+#include "js/WebAssemblyToJSCallee.h"
 
 namespace JSC {
 

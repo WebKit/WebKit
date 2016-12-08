@@ -97,7 +97,11 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(nullptr, wasmFunction, firstArgument, argCount, remainingArgs);
     
-    EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->webAssemblyCallee()->jsEntryPoint(), &vm, &protoCallFrame);
+    JSWebAssemblyInstance* prevJSWebAssemblyInstance = vm.topJSWebAssemblyInstance;
+    vm.topJSWebAssemblyInstance = wasmFunction->instance();
+    EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->webAssemblyCallee()->jsToWasmEntryPoint(), &vm, &protoCallFrame);
+    vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
+
     // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876
     switch (signature->returnType) {
     case Wasm::Void:

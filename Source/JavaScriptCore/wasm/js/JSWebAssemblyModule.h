@@ -30,6 +30,8 @@
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "WasmFormat.h"
+#include <wtf/Bag.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -40,16 +42,20 @@ class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, SymbolTable* exports, unsigned calleeCount);
+    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmToJSStub>&&, Wasm::FunctionIndexSpace&&, SymbolTable*, unsigned);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
+    Wasm::Signature* signatureForFunctionIndexSpace(unsigned functionIndexSpace) const { return m_functionIndexSpace.at(functionIndexSpace).signature; }
+    unsigned importCount() const { return m_wasmToJSStubs.size(); }
 
-    JSWebAssemblyCallee* callee(unsigned calleeIndex)
+    JSWebAssemblyCallee* calleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
+        RELEASE_ASSERT(functionIndexSpace >= importCount());
+        unsigned calleeIndex = functionIndexSpace - importCount();
         RELEASE_ASSERT(calleeIndex < m_calleeCount);
         return callees()[calleeIndex].get();
     }
@@ -60,7 +66,7 @@ public:
     }
 
 protected:
-    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&, unsigned calleeCount);
+    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmToJSStub>&&, Wasm::FunctionIndexSpace&&, unsigned calleeCount);
     void finishCreation(VM&, SymbolTable*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -77,7 +83,10 @@ private:
     }
 
     std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
+    Bag<CallLinkInfo> m_callLinkInfos;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
+    Vector<Wasm::WasmToJSStub> m_wasmToJSStubs;
+    Wasm::FunctionIndexSpace m_functionIndexSpace;
     unsigned m_calleeCount;
 };
 

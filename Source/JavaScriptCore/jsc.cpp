@@ -2592,7 +2592,7 @@ static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, JSWebAssem
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(nullptr, globalObject->globalExec()->jsCallee(), firstArgument, argCount, remainingArgs);
 
-    return JSValue::decode(vmEntryToWasm(wasmCallee->jsEntryPoint(), vm, &protoCallFrame));
+    return JSValue::decode(vmEntryToWasm(wasmCallee->jsToWasmEntryPoint(), vm, &protoCallFrame));
 }
 
 // testWasmModule(JSArrayBufferView source, number functionCount, ...[[WasmValue, [WasmValue]]]) where the ith copy of [[result, [args]]] is a list
@@ -2618,7 +2618,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
         CRASH();
     }
 
-    if (plan.compiledFunctionCount() != functionCount)
+    if (plan.internalFunctionCount() != functionCount)
         CRASH();
 
     MarkedArgumentBuffer callees;

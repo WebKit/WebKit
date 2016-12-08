@@ -83,7 +83,7 @@ private:
     }
 
 public:
-    void setupFrameInPrologue(FunctionCompilation* compilation, B3::Procedure& proc, B3::Origin origin, B3::BasicBlock* block) const
+    void setupFrameInPrologue(WasmInternalFunction* compilation, B3::Procedure& proc, B3::Origin origin, B3::BasicBlock* block) const
     {
         static_assert(CallFrameSlot::callee * sizeof(Register) < headerSize, "We rely on this here for now.");
         static_assert(CallFrameSlot::codeBlock * sizeof(Register) < headerSize, "We rely on this here for now.");

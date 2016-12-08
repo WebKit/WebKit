@@ -40,7 +40,7 @@ public:
     typedef JSDestructibleObject Base;
 
 
-    static JSWebAssemblyInstance* create(VM&, Structure*, JSWebAssemblyModule*, JSModuleNamespaceObject*);
+    static JSWebAssemblyInstance* create(VM&, Structure*, JSWebAssemblyModule*, JSModuleNamespaceObject*, unsigned);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -51,8 +51,39 @@ public:
         return m_module.get();
     }
 
+    WriteBarrier<JSCell>* importFunction(unsigned idx)
+    {
+        RELEASE_ASSERT(idx < m_numImportFunctions);
+        return &importFunctions()[idx];
+    }
+
+    WriteBarrier<JSCell>* importFunctions()
+    {
+        return bitwise_cast<WriteBarrier<JSCell>*>(bitwise_cast<char*>(this) + offsetOfImportFunctions());
+    }
+
+    void setImportFunction(VM& vm, JSCell* value, unsigned idx)
+    {
+        importFunction(idx)->set(vm, this, value);
+    }
+
+    static size_t offsetOfImportFunctions()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSCell>)>(sizeof(JSWebAssemblyInstance));
+    }
+
+    static size_t offsetOfImportFunction(unsigned idx)
+    {
+        return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * idx;
+    }
+
+    static size_t allocationSize(unsigned numImportFunctions)
+    {
+        return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions;
+    }
+
 protected:
-    JSWebAssemblyInstance(VM&, Structure*);
+    JSWebAssemblyInstance(VM&, Structure*, unsigned);
     void finishCreation(VM&, JSWebAssemblyModule*, JSModuleNamespaceObject*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -60,6 +91,7 @@ protected:
 private:
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
+    unsigned m_numImportFunctions;
 };
 
 } // namespace JSC

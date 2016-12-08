@@ -33,11 +33,13 @@
 #include "JSGlobalObject.h"
 #include "JSWebAssemblyCallee.h"
 #include "WasmB3IRGenerator.h"
+#include "WasmBinding.h"
 #include "WasmCallingConvention.h"
 #include "WasmMemory.h"
 #include "WasmModuleParser.h"
 #include "WasmValidate.h"
 #include <wtf/DataLog.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace Wasm {
@@ -69,27 +71,52 @@ void Plan::run()
             return;
         }
         m_moduleInformation = WTFMove(moduleParser.moduleInformation());
+        m_functionLocationInBinary = WTFMove(moduleParser.functionLocationInBinary());
+        m_functionIndexSpace = WTFMove(moduleParser.functionIndexSpace());
     }
     if (verbose)
         dataLogLn("Parsed module.");
 
-    if (!m_compiledFunctions.tryReserveCapacity(m_moduleInformation->functions.size())) {
-        StringBuilder builder;
-        builder.appendLiteral("Failed allocating enough space for ");
-        builder.appendNumber(m_moduleInformation->functions.size());
-        builder.appendLiteral(" compiled functions");
-        m_errorMessage = builder.toString();
+    auto tryReserveCapacity = [this] (auto& vector, size_t size, const char* what) {
+        if (UNLIKELY(!vector.tryReserveCapacity(size))) {
+            StringBuilder builder;
+            builder.appendLiteral("Failed allocating enough space for ");
+            builder.appendNumber(size);
+            builder.append(what);
+            m_errorMessage = builder.toString();
+            return false;
+        }
+        return true;
+    };
+    Vector<Vector<UnlinkedWasmToWasmCall>> unlinkedWasmToWasmCalls;
+    if (!tryReserveCapacity(m_wasmToJSStubs, m_moduleInformation->importFunctions.size(), " WebAssembly to JavaScript stubs")
+        || !tryReserveCapacity(unlinkedWasmToWasmCalls, m_functionLocationInBinary.size(), " unlinked WebAssembly to WebAssembly calls")
+        || !tryReserveCapacity(m_wasmInternalFunctions, m_functionLocationInBinary.size(), " WebAssembly functions"))
         return;
+
+    for (unsigned importIndex = 0; importIndex < m_moduleInformation->imports.size(); ++importIndex) {
+        Import* import = &m_moduleInformation->imports[importIndex];
+        if (import->kind != External::Function)
+            continue;
+        unsigned importFunctionIndex = m_wasmToJSStubs.size();
+        if (verbose)
+            dataLogLn("Processing import function number ", importFunctionIndex, ": ", import->module, ": ", import->field);
+        Signature* signature = m_moduleInformation->importFunctions.at(import->kindIndex);
+        m_wasmToJSStubs.uncheckedAppend(importStubGenerator(m_vm, m_callLinkInfos, signature, importFunctionIndex));
+        m_functionIndexSpace[importFunctionIndex].code = m_wasmToJSStubs[importFunctionIndex].code().executableAddress();
     }
 
-    for (const FunctionInformation& info : m_moduleInformation->functions) {
+    for (unsigned functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); ++functionIndex) {
         if (verbose)
-            dataLogLn("Processing function starting at: ", info.start, " and ending at: ", info.end);
-        const uint8_t* functionStart = m_source + info.start;
-        size_t functionLength = info.end - info.start;
+            dataLogLn("Processing function starting at: ", m_functionLocationInBinary[functionIndex].start, " and ending at: ", m_functionLocationInBinary[functionIndex].end);
+        const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
+        size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
+        Signature* signature = m_moduleInformation->internalFunctionSignatures[functionIndex];
+        unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
+        ASSERT(m_functionIndexSpace[functionIndexSpace].signature == signature);
 
-        String error = validateFunction(functionStart, functionLength, info.signature, m_moduleInformation->functions);
+        String error = validateFunction(functionStart, functionLength, signature, m_functionIndexSpace);
         if (!error.isNull()) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -100,14 +127,15 @@ void Plan::run()
             return;
         }
 
-        m_compiledFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, m_moduleInformation->memory.get(), info.signature, m_moduleInformation->functions));
+        unlinkedWasmToWasmCalls.uncheckedAppend(Vector<UnlinkedWasmToWasmCall>());
+        m_wasmInternalFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, m_moduleInformation->memory.get(), signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace));
+        m_functionIndexSpace[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->code->code().executableAddress();
     }
 
-    // Patch the call sites for each function.
-    for (std::unique_ptr<FunctionCompilation>& functionPtr : m_compiledFunctions) {
-        FunctionCompilation* function = functionPtr.get();
-        for (auto& call : function->unlinkedCalls)
-            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_compiledFunctions[call.functionIndex]->code->code()));
+    // Patch the call sites for each WebAssembly function.
+    for (auto& unlinked : unlinkedWasmToWasmCalls) {
+        for (auto& call : unlinked)
+            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_functionIndexSpace[call.functionIndex].code));
     }
 
     m_failed = false;
@@ -116,17 +144,17 @@ void Plan::run()
 void Plan::initializeCallees(JSGlobalObject* globalObject, std::function<void(unsigned, JSWebAssemblyCallee*)> callback)
 {
     ASSERT(!failed());
-    for (unsigned i = 0; i < m_compiledFunctions.size(); i++) {
-        std::unique_ptr<FunctionCompilation>& compilation = m_compiledFunctions[i];
-        CodeLocationDataLabelPtr calleeMoveLocation = compilation->calleeMoveLocation;
-        JSWebAssemblyCallee* callee = JSWebAssemblyCallee::create(globalObject->vm(), WTFMove(compilation));
+    for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
+        WasmInternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
+        CodeLocationDataLabelPtr calleeMoveLocation = function->calleeMoveLocation;
+        JSWebAssemblyCallee* callee = JSWebAssemblyCallee::create(globalObject->vm(), WTFMove(function->code), WTFMove(function->jsToWasmEntryPoint));
 
         MacroAssembler::repatchPointer(calleeMoveLocation, callee);
 
         if (verbose)
             dataLogLn("Made Wasm callee: ", RawPointer(callee));
 
-        callback(i, callee);
+        callback(internalFunctionIndex, callee);
     }
 }
 

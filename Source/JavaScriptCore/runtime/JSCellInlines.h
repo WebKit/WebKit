@@ -123,11 +123,11 @@ inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 ALWAYS_INLINE VM& ExecState::vm() const
 {
-    ASSERT(jsCallee());
-    ASSERT(jsCallee()->vm());
-    ASSERT(!jsCallee()->isLargeAllocation());
+    ASSERT(callee());
+    ASSERT(callee()->vm());
+    ASSERT(!callee()->isLargeAllocation());
     // This is an important optimization since we access this so often.
-    return *calleeAsValue().asCell()->markedBlock().vm();
+    return *callee()->markedBlock().vm();
 }
 
 template<typename T>

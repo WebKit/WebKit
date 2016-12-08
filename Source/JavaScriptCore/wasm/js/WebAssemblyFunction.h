@@ -56,7 +56,7 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JSWebAssemblyCallee* webAssemblyCallee() const { return m_wasmCallee.get(); }
-    const JSWebAssemblyInstance* instance() const { return m_instance.get(); }
+    JSWebAssemblyInstance* instance() const { return m_instance.get(); }
     const Wasm::Signature* signature()
     { 
         ASSERT(m_signature);

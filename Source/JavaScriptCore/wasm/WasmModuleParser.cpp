@@ -218,23 +218,23 @@ bool ModuleParser::parseImport()
     uint32_t importCount;
     if (!parseVarUInt32(importCount))
         return false;
-    if (!m_module->imports.tryReserveCapacity(importCount))
+    if (!m_module->imports.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
+        || !m_module->importFunctions.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
+        || !m_functionIndexSpace.tryReserveCapacity(importCount)) // FIXME this over-allocates when we fix the FIXMEs below. We'll allocate some more here when we know how many functions to expect.
         return false;
 
     for (uint32_t importNumber = 0; importNumber != importCount; ++importNumber) {
         Import imp;
         uint32_t moduleLen;
         uint32_t fieldLen;
-        if (!parseVarUInt32(moduleLen))
-            return false;
         String moduleString;
-        if (!consumeUTF8String(moduleString, moduleLen))
+        String fieldString;
+        if (!parseVarUInt32(moduleLen)
+            || !consumeUTF8String(moduleString, moduleLen))
             return false;
         imp.module = Identifier::fromString(m_vm, moduleString);
-        if (!parseVarUInt32(fieldLen))
-            return false;
-        String fieldString;
-        if (!consumeUTF8String(fieldString, fieldLen))
+        if (!parseVarUInt32(fieldLen)
+            || !consumeUTF8String(fieldString, fieldLen))
             return false;
         imp.field = Identifier::fromString(m_vm, fieldString);
         if (!parseExternalKind(imp.kind))
@@ -242,11 +242,13 @@ bool ModuleParser::parseImport()
         switch (imp.kind) {
         case External::Function: {
             uint32_t functionSignatureIndex;
-            if (!parseVarUInt32(functionSignatureIndex))
+            if (!parseVarUInt32(functionSignatureIndex)
+                || functionSignatureIndex >= m_module->signatures.size())
                 return false;
-            if (functionSignatureIndex >= m_module->signatures.size())
-                return false;
-            imp.functionSignature = &m_module->signatures[functionSignatureIndex];
+            imp.kindIndex = m_module->importFunctions.size();
+            Signature* signature = &m_module->signatures[functionSignatureIndex];
+            m_module->importFunctions.uncheckedAppend(signature);
+            m_functionIndexSpace.uncheckedAppend(signature);
             break;
         }
         case External::Table: {
@@ -273,23 +275,25 @@ bool ModuleParser::parseImport()
 bool ModuleParser::parseFunction()
 {
     uint32_t count;
-    if (!parseVarUInt32(count))
-        return false;
-    if (!m_module->functions.tryReserveCapacity(count))
+    if (!parseVarUInt32(count)
+        || !m_module->internalFunctionSignatures.tryReserveCapacity(count)
+        || !m_functionLocationInBinary.tryReserveCapacity(count)
+        || !m_functionIndexSpace.tryReserveCapacity(m_functionIndexSpace.size() + count))
         return false;
 
     for (uint32_t i = 0; i != count; ++i) {
         uint32_t typeNumber;
-        if (!parseVarUInt32(typeNumber))
+        if (!parseVarUInt32(typeNumber)
+            || typeNumber >= m_module->signatures.size())
             return false;
 
-        if (typeNumber >= m_module->signatures.size())
-            return false;
-
+        Signature* signature = &m_module->signatures[typeNumber];
         // The Code section fixes up start and end.
         size_t start = 0;
         size_t end = 0;
-        m_module->functions.uncheckedAppend({ &m_module->signatures[typeNumber], start, end });
+        m_module->internalFunctionSignatures.uncheckedAppend(signature);
+        m_functionLocationInBinary.uncheckedAppend({ start, end });
+        m_functionIndexSpace.uncheckedAppend(signature);
     }
 
     return true;
@@ -311,20 +315,17 @@ bool ModuleParser::parseMemory()
         return true;
 
     uint8_t flags;
-    if (!parseVarUInt1(flags))
-        return false;
-
     uint32_t size;
-    if (!parseVarUInt32(size))
-        return false;
-    if (size > maxPageCount)
+    if (!parseVarUInt1(flags)
+        || !parseVarUInt32(size)
+        || size > maxPageCount)
         return false;
 
     uint32_t capacity = maxPageCount;
     if (flags) {
-        if (!parseVarUInt32(capacity))
-            return false;
-        if (size > capacity || capacity > maxPageCount)
+        if (!parseVarUInt32(capacity)
+            || size > capacity
+            || capacity > maxPageCount)
             return false;
     }
 
@@ -345,27 +346,24 @@ bool ModuleParser::parseGlobal()
 bool ModuleParser::parseExport()
 {
     uint32_t exportCount;
-    if (!parseVarUInt32(exportCount))
-        return false;
-    if (!m_module->exports.tryReserveCapacity(exportCount))
+    if (!parseVarUInt32(exportCount)
+        || !m_module->exports.tryReserveCapacity(exportCount))
         return false;
 
     for (uint32_t exportNumber = 0; exportNumber != exportCount; ++exportNumber) {
         Export exp;
         uint32_t fieldLen;
-        if (!parseVarUInt32(fieldLen))
-            return false;
         String fieldString;
-        if (!consumeUTF8String(fieldString, fieldLen))
+        if (!parseVarUInt32(fieldLen)
+            || !consumeUTF8String(fieldString, fieldLen))
             return false;
         exp.field = Identifier::fromString(m_vm, fieldString);
         if (!parseExternalKind(exp.kind))
             return false;
         switch (exp.kind) {
         case External::Function: {
-            if (!parseVarUInt32(exp.functionIndex))
-                return false;
-            if (exp.functionIndex >= m_module->functions.size())
+            if (!parseVarUInt32(exp.functionIndex)
+                || exp.functionIndex >= m_functionIndexSpace.size())
                 return false;
             break;
         }
@@ -405,23 +403,20 @@ bool ModuleParser::parseElement()
 bool ModuleParser::parseCode()
 {
     uint32_t count;
-    if (!parseVarUInt32(count))
-        return false;
-
-    if (count != m_module->functions.size())
+    if (!parseVarUInt32(count)
+        || count != m_functionLocationInBinary.size())
         return false;
 
     for (uint32_t i = 0; i != count; ++i) {
         uint32_t functionSize;
-        if (!parseVarUInt32(functionSize))
-            return false;
-        if (functionSize > length() || functionSize > length() - m_offset)
+        if (!parseVarUInt32(functionSize)
+            || functionSize > length()
+            || functionSize > length() - m_offset)
             return false;
 
-        FunctionInformation& info = m_module->functions[i];
-        info.start = m_offset;
-        info.end = m_offset + functionSize;
-        m_offset = info.end;
+        m_functionLocationInBinary[i].start = m_offset;
+        m_functionLocationInBinary[i].end = m_offset + functionSize;
+        m_offset = m_functionLocationInBinary[i].end;
     }
 
     return true;

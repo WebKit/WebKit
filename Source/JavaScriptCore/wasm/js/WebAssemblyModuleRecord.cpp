@@ -105,8 +105,10 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     UNUSED_PARAM(scope);
     auto* globalObject = state->lexicalGlobalObject();
 
-    const Wasm::ModuleInformation& moduleInformation = instance->module()->moduleInformation();
-    SymbolTable* exportSymbolTable = instance->module()->exportSymbolTable();
+    JSWebAssemblyModule* module = instance->module();
+    const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
+    SymbolTable* exportSymbolTable = module->exportSymbolTable();
+    unsigned importCount = module->importCount();
 
     // FIXME wire up the imports. https://bugs.webkit.org/show_bug.cgi?id=165118
 
@@ -119,12 +121,16 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             // 1. If e is a closure c:
             //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
+            if (exp.functionIndex < importCount) {
+                // FIXME Implement re-exporting an import. https://bugs.webkit.org/show_bug.cgi?id=165510
+                RELEASE_ASSERT_NOT_REACHED();
+            }
             //   iii. Otherwise:
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            JSWebAssemblyCallee* wasmCallee = instance->module()->callee(exp.functionIndex);
-            Wasm::Signature* signature = moduleInformation.functions.at(exp.functionIndex).signature;
+            JSWebAssemblyCallee* wasmCallee = module->calleeFromFunctionIndexSpace(exp.functionIndex);
+            Wasm::Signature* signature = module->signatureForFunctionIndexSpace(exp.functionIndex);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), exp.field.string(), instance, wasmCallee, signature);
             exportedValue = function;
             break;
