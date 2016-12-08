@@ -1,5 +1,14 @@
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Disable collectContinuously if not useConcurrentGC
+
+        Rubber stamped by Geoffrey Garen.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix cloop build.
 
         * runtime/JSObject.h:

@@ -365,6 +365,9 @@ static void recomputeDependentOptions()
         || Options::verboseCFA()
         || Options::verboseFTLFailure())
         Options::alwaysComputeHash() = true;
+    
+    if (!Options::useConcurrentGC())
+        Options::collectContinuously() = false;
 
     if (Option(Options::jitPolicyScaleID).isOverridden())
         scaleJITPolicy();
