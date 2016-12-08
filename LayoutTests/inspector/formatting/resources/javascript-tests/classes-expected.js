@@ -79,6 +79,10 @@ class Foo extends Bar {
     {
         1
     }
+    async a()
+    {
+        1
+    }
 }
 
 A = class Foo extends (b ? Bar : Bar) {
@@ -114,4 +118,29 @@ A = class Foo extends (b ? Bar : Bar) {
     {
         1
     }
+    async a()
+    {
+        1
+    }
+}
+
+class Foo {
+    static async async()
+    {
+        1
+    }
+    async async()
+    {
+        1
+    }
+    async()
+    {
+        1
+    }
+}
+
+class Foo {
+    async "f"() {}
+    async 1() {}
+    async ["f"]() {}
 }

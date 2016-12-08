@@ -425,7 +425,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             }
         } else {
             // This is a new request for a new frame, which is always the main resource.
-            console.assert(!targetId)
+            console.assert(!targetId);
             resource = new WebInspector.Resource(url, null, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
             frame = new WebInspector.Frame(frameIdentifier, frameName, frameSecurityOrigin, loaderIdentifier, resource);
             this._frameIdentifierMap[frame.id] = frame;

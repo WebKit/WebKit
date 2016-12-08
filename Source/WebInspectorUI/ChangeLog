@@ -1,5 +1,35 @@
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Update Esprima to support new features / syntax (**, async/await, trailing comma)
+        https://bugs.webkit.org/show_bug.cgi?id=164830
+        <rdar://problem/29293814>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/External/Esprima/LICENSE:
+        * UserInterface/External/Esprima/esprima.js:
+        Updated to Esprima@7219731 (4.0.0-dev).
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WebInspector.ScriptSyntaxTree.prototype._recurse):
+        (WebInspector.ScriptSyntaxTree.prototype._createInternalSyntaxTree):
+        * UserInterface/Workers/Formatter/ESTreeWalker.js:
+        (ESTreeWalker.prototype._walkChildren):
+        Add new nodes (AwaitExpression).
+        Add new states (async boolean property on Functions).
+        Remove stale properties (defaults is no longer needed, as parameters
+        with default values are now AssignmentPatterns).
+        Update MetaProperty where meta/property are now Identifiers not strings.
+
+        * UserInterface/Workers/Formatter/EsprimaFormatter.js:
+        (EsprimaFormatter.prototype._handleTokenAtNode):
+        Handle pretty printing of new nodes and identifiers.
+
+        * Controllers/FrameResourceManager.js
+        Address a console.assert warning for stripping assertions in Production.
+
+2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unused and mostly untested Page domain commands and events
         https://bugs.webkit.org/show_bug.cgi?id=165507
 

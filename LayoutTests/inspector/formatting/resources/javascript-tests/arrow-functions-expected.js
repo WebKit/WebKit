@@ -29,3 +29,11 @@ setTimeout(() => {
 });
 
 foo((a=1, ...rest) => rest[a]);
+
+foo((a=1, b) => b);
+
+foo((a=1, b, ) => b);
+
+async x => x
+async (x) => x
+async (x) => {x}

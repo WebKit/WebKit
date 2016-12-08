@@ -327,6 +327,9 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             this._recurse(node.left, callback, state);
             this._recurse(node.right, callback, state);
             break;
+        case WebInspector.ScriptSyntaxTree.NodeType.AwaitExpression:
+            this._recurse(node.argument, callback, state);
+            break;
         case WebInspector.ScriptSyntaxTree.NodeType.BlockStatement:
             this._recurseArray(node.body, callback, state);
             break;
@@ -381,7 +384,6 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
         case WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression:
             this._recurse(node.id, callback, state);
             this._recurseArray(node.params, callback, state);
-            this._recurseArray(node.defaults, callback, state);
             this._recurse(node.body, callback, state);
             break;
         case WebInspector.ScriptSyntaxTree.NodeType.IfStatement:
@@ -534,10 +536,10 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree, this),
-                defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
                 generator: node.generator,
                 expression: node.expression, // Boolean indicating if the body a single expression or a block statement.
+                async: node.async,
                 typeProfilingReturnDivot: node.range[0]
             };
             break;
@@ -554,6 +556,12 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern,
                 left: this._createInternalSyntaxTree(node.left),
                 right: this._createInternalSyntaxTree(node.right),
+            };
+            break;
+        case "AwaitExpression":
+            result = {
+                type: WebInspector.ScriptSyntaxTree.NodeType.AwaitExpression,
+                argument: this._createInternalSyntaxTree(node.argument),
             };
             break;
         case "BlockStatement":
@@ -679,9 +687,9 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree, this),
-                defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
                 generator: node.generator,
+                async: node.async,
                 typeProfilingReturnDivot: node.range[0]
             };
             break;
@@ -690,9 +698,9 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
                 type: WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression,
                 id: this._createInternalSyntaxTree(node.id),
                 params: node.params.map(this._createInternalSyntaxTree, this),
-                defaults: node.defaults.map(this._createInternalSyntaxTree, this),
                 body: this._createInternalSyntaxTree(node.body),
                 generator: node.generator,
+                async: node.async,
                 typeProfilingReturnDivot: node.range[0] // This may be overridden in the Property AST node.
             };
             break;
@@ -744,8 +752,8 @@ WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Obje
             // i.e: new.target produces {meta: "new", property: "target"}
             result = {
                 type: WebInspector.ScriptSyntaxTree.NodeType.MetaProperty,
-                meta: node.meta,
-                property: node.property
+                meta: this._createInternalSyntaxTree(node.meta),
+                property: this._createInternalSyntaxTree(node.property),
             };
             break;
         case "MethodDefinition":
@@ -955,6 +963,7 @@ WebInspector.ScriptSyntaxTree.NodeType = {
     ArrowFunctionExpression: Symbol("arrow-function-expression"),
     AssignmentExpression: Symbol("assignment-expression"),
     AssignmentPattern: Symbol("assignment-pattern"),
+    AwaitExpression: Symbol("await-expression"),
     BinaryExpression: Symbol("binary-expression"),
     BlockStatement: Symbol("block-statement"),
     BreakStatement: Symbol("break-statement"),

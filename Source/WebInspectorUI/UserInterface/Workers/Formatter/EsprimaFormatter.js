@@ -209,8 +209,16 @@ EsprimaFormatter = class EsprimaFormatter
         let tokenOffset = token.range[0];
 
         // Very common types that just pass through.
-        if (nodeType === "Identifier" || nodeType === "MemberExpression" || nodeType === "Literal" || nodeType === "ThisExpression" || nodeType === "UpdateExpression") {
+        if (nodeType === "MemberExpression" || nodeType === "Literal" || nodeType === "ThisExpression" || nodeType === "UpdateExpression") {
             builder.appendToken(tokenValue, tokenOffset);
+            return;
+        }
+
+        // Most identifiers just pass through, but a few are special.
+        if (nodeType === "Identifier") {
+            builder.appendToken(tokenValue, tokenOffset);
+            if (tokenValue === "async" && node.parent.type === "Property" && node.parent.value.async && token.range[1] !== node.range[1])
+                builder.appendSpace();
             return;
         }
 
@@ -424,6 +432,11 @@ EsprimaFormatter = class EsprimaFormatter
                 builder.appendToken(tokenValue, tokenOffset);
                 if (tokenValue === ")" || tokenValue === ",")
                     builder.appendSpace();
+                return;
+            }
+            if (tokenType === "Identifier" && tokenValue === "async") {
+                builder.appendToken(tokenValue, tokenOffset);
+                builder.appendSpace();
                 return;
             }
             builder.appendToken(tokenValue, tokenOffset);
@@ -661,12 +674,30 @@ EsprimaFormatter = class EsprimaFormatter
                 }
             }
             builder.appendToken(tokenValue, tokenOffset);
+            if (tokenType === "Identifier" && tokenValue === "async")
+                builder.appendSpace();
+            return;
+        }
+
+        if (nodeType === "AwaitExpression") {
+            builder.appendToken(tokenValue, tokenOffset);
+            if (tokenType === "Identifier" && tokenValue === "await")
+                builder.appendSpace();
             return;
         }
 
         if (nodeType === "Property") {
+            console.assert(tokenValue === ":" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async" || tokenValue === "*" || tokenValue === "[" || tokenValue === "]", token);
             builder.appendToken(tokenValue, tokenOffset);
-            if (tokenValue === ":" || tokenValue === "get" || tokenValue === "set")
+            if (tokenValue === ":" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async")
+                builder.appendSpace();
+            return;
+        }
+
+        if (nodeType === "MethodDefinition") {
+            console.assert(tokenValue === "static" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async" || tokenValue === "*" || tokenValue === "[" || tokenValue === "]", token);
+            builder.appendToken(tokenValue, tokenOffset);
+            if (tokenValue === "static" || tokenValue === "get" || tokenValue === "set" || tokenValue === "async")
                 builder.appendSpace();
             return;
         }
@@ -758,14 +789,6 @@ EsprimaFormatter = class EsprimaFormatter
             return;
         }
 
-        if (nodeType === "MethodDefinition") {
-            console.assert(tokenValue === "static" || tokenValue === "get" || tokenValue === "set" || tokenValue === "*", token);
-            builder.appendToken(tokenValue, tokenOffset);
-            if (tokenValue !== "*")
-                builder.appendSpace();
-            return;
-        }
-
         if (nodeType === "YieldExpression") {
             if (tokenType === "Keyword") {
                 console.assert(tokenValue === "yield", token);
@@ -810,7 +833,8 @@ EsprimaFormatter = class EsprimaFormatter
             || nodeType === "RestElement"
             || nodeType === "TemplateElement"
             || nodeType === "TemplateLiteral"
-            || nodeType === "DebuggerStatement") {
+            || nodeType === "DebuggerStatement"
+            || nodeType === "AssignmentPattern") {
             builder.appendToken(tokenValue, tokenOffset);
             return;
         }

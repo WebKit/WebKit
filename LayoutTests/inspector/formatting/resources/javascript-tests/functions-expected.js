@@ -2,6 +2,8 @@
 
 foo();
 foo(1);
+foo(1, 2);
+foo(1, 2, );
 foo(1, 2, 3);
 foo(foo(1));
 foo(foo(1), foo(2, 3));
@@ -79,6 +81,10 @@ function foo([a, b]) {
     1
 }
 
+function foo([a, b, ]) {
+    1
+}
+
 // Methods
 
 o = {
@@ -87,7 +93,8 @@ o = {
     get getter() {},
     set setter(x) {},
     *gen1() {},
-    *gen2() {}
+    *gen2() {},
+    async a() {}
 }
 
 o = {
@@ -108,6 +115,9 @@ o = {
     },
     *gen2() {
         1
+    },
+    async a() {
+        1
     }
 }
 // Multiple / Nested
@@ -121,4 +131,31 @@ function outer() {
         2
     }
     3
+}
+
+// Async / Await
+
+async function foo() {}
+async function foo() {
+    1
+}
+async function foo() {
+    await foo()
+}
+o = {
+    async async() {},
+    async() {},
+    async: 1
+}
+o = {
+    async 1() {}
+}
+o = {
+    async "foo"() {}
+}
+o = {
+    async ["foo"]() {}
+}
+o = {
+    foo: async function() {}
 }

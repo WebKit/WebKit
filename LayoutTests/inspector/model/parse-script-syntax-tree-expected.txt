@@ -43,6 +43,8 @@ passed YieldExpression
 passed ClassStatement, Super, MetaProperty
 passed AssignmentPattern
 passed ArrowFunctionExpression
+passed Async Functions
+passed AwaitExpression
 passed computed method on object literal
 passed method on object literal
 passed computed method property on object literal

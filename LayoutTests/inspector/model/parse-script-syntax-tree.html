@@ -479,8 +479,8 @@ function test()
     InspectorTest.assert(node.body.body[0].value.body.body[0].expression.callee.type === WebInspector.ScriptSyntaxTree.NodeType.Super);
     InspectorTest.assert(node.body.body[0].value.body.body[1].type === WebInspector.ScriptSyntaxTree.NodeType.ExpressionStatement);
     InspectorTest.assert(node.body.body[0].value.body.body[1].expression.type === WebInspector.ScriptSyntaxTree.NodeType.MetaProperty);
-    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.meta === "new");
-    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.property === "target");
+    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.meta.name === "new");
+    InspectorTest.assert(node.body.body[0].value.body.body[1].expression.property.name === "target");
     InspectorTest.log("passed ClassStatement, Super, MetaProperty");
 
     node = makeNode("let [x=20] = [];", false);
@@ -503,19 +503,52 @@ function test()
     InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
     InspectorTest.assert(node.params[0].name === "x");
     InspectorTest.assert(node.expression === true);
-    InspectorTest.assert(node.defaults.length === 0);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
 
     node = makeNode("(x = 20) => { return x; };", true);
     InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
     InspectorTest.assert(node.params.length === 1);
-    InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
-    InspectorTest.assert(node.params[0].name === "x");
+    InspectorTest.assert(node.params[0].type === WebInspector.ScriptSyntaxTree.NodeType.AssignmentPattern);
+    InspectorTest.assert(node.params[0].left.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier);
+    InspectorTest.assert(node.params[0].left.name === "x");
+    InspectorTest.assert(node.params[0].right.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.params[0].right.value === 20);
     InspectorTest.assert(node.expression === false);
-    InspectorTest.assert(node.defaults.length === 1);
-    InspectorTest.assert(node.defaults[0].type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
     InspectorTest.assert(node.body.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement);
     InspectorTest.log("passed ArrowFunctionExpression");
+
+    node = makeNode("async function foo() {}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(node.async);
+    node = makeNode("function foo() {}", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(!node.async);
+    node = makeNode("(async function() {})", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(node.async);
+    node = makeNode("(function() {})", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionExpression);
+    InspectorTest.assert(!node.async);
+    node = makeNode("async () => {}", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
+    InspectorTest.assert(node.async);
+    node = makeNode("() => {}", true);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.ArrowFunctionExpression);
+    InspectorTest.assert(!node.async);
+    InspectorTest.log("passed Async Functions");
+
+    node = makeNode("async function foo() { await foo(); }", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(node.async);
+    InspectorTest.assert(node.body.body[0].expression.type === WebInspector.ScriptSyntaxTree.NodeType.AwaitExpression);
+    InspectorTest.assert(node.body.body[0].expression.argument.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression);
+    node = makeNode("async function foo() { await 1; }", false);
+    InspectorTest.assert(node.type === WebInspector.ScriptSyntaxTree.NodeType.FunctionDeclaration);
+    InspectorTest.assert(node.async);
+    InspectorTest.assert(node.body.body[0].expression.type === WebInspector.ScriptSyntaxTree.NodeType.AwaitExpression);
+    InspectorTest.assert(node.body.body[0].expression.argument.type === WebInspector.ScriptSyntaxTree.NodeType.Literal);
+    InspectorTest.assert(node.body.body[0].expression.argument.value === 1);
+    InspectorTest.log("passed AwaitExpression");
 
     node = makeNode("var o = {['c']() { }};", false);
     //                        ^
