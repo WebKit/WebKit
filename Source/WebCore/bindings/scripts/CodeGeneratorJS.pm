@@ -1907,9 +1907,9 @@ sub GenerateHeader
 
             push(@headerContent, "JSC::DOMJIT::GetterSetter* domJITGetterSetterFor$className(void);\n");
 
-            push(@headerContent, "class $domJITClassName : public JSC::DOMJIT::GetterSetter {\n");
+            push(@headerContent, "class ${domJITClassName} : public JSC::DOMJIT::GetterSetter {\n");
             push(@headerContent, "public:\n");
-            push(@headerContent, "    $domJITClassName();\n");
+            push(@headerContent, "    ${domJITClassName}();\n");
             push(@headerContent, "#if ENABLE(JIT)\n");
             push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;\n");
             push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMGetterPatchpoint> callDOMGetter() override;\n");
@@ -3441,14 +3441,14 @@ sub GenerateImplementation
                 my $getter = GetAttributeGetterName($interface, $generatorName, $attribute);
                 my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $generatorName, $attribute);
                 my $resultType = GetResultTypeFilter($interface, $attribute->type);
-                push(@implContent, "$domJITClassName::$domJITClassName()\n");
+                push(@implContent, "${domJITClassName}::${domJITClassName}()\n");
                 push(@implContent, "    : JSC::DOMJIT::GetterSetter($getter, $setter, ${className}::info(), $resultType)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "}\n\n");
 
                 push(@implContent, "JSC::DOMJIT::GetterSetter* domJITGetterSetterFor" . $generatorName . "()\n");
                 push(@implContent, "{\n");
-                push(@implContent, "    static NeverDestroyed<$domJITClassName> compiler;\n");
+                push(@implContent, "    static NeverDestroyed<${domJITClassName}> compiler;\n");
                 push(@implContent, "    return &compiler.get();\n");
                 push(@implContent, "}\n\n");
             }

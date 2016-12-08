@@ -1,3 +1,19 @@
+2016-12-08  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Some versions of Cygwin Perl generate incorrect C++ code.
+        https://bugs.webkit.org/show_bug.cgi?id=165524
+        rdar://problem/29508043
+
+        Reviewed by Daniel Bates.
+
+        Perl strings with variables seems to be handled differently, depending on which version of
+        Cygwin Perl you are running. To make sure they are handled identically, specify variables
+        in strings as "${var}" instead of "$var".
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix EFL build after r209526
