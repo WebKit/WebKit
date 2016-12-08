@@ -506,6 +506,8 @@ public:
 
     JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
 
+    JS_EXPORT_PRIVATE static void enableRestrictedOptions(bool enableOrNot);
+
     // Declare accessors for each option:
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
     ALWAYS_INLINE static type_& name_() { return s_options[name_##ID].type_##Val; } \

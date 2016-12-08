@@ -1,3 +1,21 @@
+2016-12-08  Mark Lam  <mark.lam@apple.com>
+
+        Enable JSC restricted options by default in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=165615
+
+        Reviewed by Keith Miller.
+
+        The jsc shell is only used for debugging and development testing.  We should
+        allow it to use restricted options like JSC_useDollarVM even for release builds.
+
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.cpp:
+        (JSC::Options::enableRestrictedOptions):
+        (JSC::Options::isAvailable):
+        (JSC::allowRestrictedOptions): Deleted.
+        * runtime/Options.h:
+
 2016-12-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209489.

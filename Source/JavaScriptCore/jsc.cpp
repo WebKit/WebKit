@@ -3221,6 +3221,9 @@ static int NEVER_INLINE runJSC(VM* vm, CommandLine options)
 
 int jscmain(int argc, char** argv)
 {
+    // Need to override and enable restricted options before we start parsing options below.
+    Options::enableRestrictedOptions(true);
+
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
     CommandLine options(argc, argv);
