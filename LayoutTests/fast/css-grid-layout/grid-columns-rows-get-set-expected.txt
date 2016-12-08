@@ -184,10 +184,6 @@ PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-column
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
-PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 
 Test setting grid-template-columns and grid-template-rows back to 'none' through JS
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "18px"

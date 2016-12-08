@@ -93,9 +93,7 @@ testGridTemplatesSetBadJSValues("fit-content([a] 100px)", "fit-content(30px [b c
 
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
-testGridTemplatesSetBadJSValues("0fr", "1r");
-// A dimension doesn't allow spaces between the number and the unit.
-testGridTemplatesSetBadJSValues(".0000fr", "13 fr");
+
 testGridTemplatesSetBadJSValues("7.-fr", "-8,0fr");
 
 // Negative values are not allowed.

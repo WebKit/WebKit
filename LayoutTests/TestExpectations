@@ -968,18 +968,11 @@ webkit.org/b/162828 [ Debug ] tables/table-section-overflow-clip-crash.html  [ S
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-licm.html [ Pass Timeout ]
 webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass Timeout ]
 
-# The following layout tests need to be changed when the new CSS Parser is turned on, since they
-# incorrectly indicate failures on valid syntax.
-webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Failure ]
-webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
-webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pass Failure ]
-
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
 # the tests may be wrong.
 webkit.org/b/165195 fast/css/parsing-css-allowed-string-characters.html [ Pass Failure ]
 webkit.org/b/165195 fast/selectors/invalid-functional-pseudo-class.html [ Pass Failure ]
-webkit.org/b/165195 fast/css-grid-layout/grid-template-shorthand-get-set.html [ Pass Failure ]
 
 # Visual viewports
 webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-no-content.html [ Failure ]

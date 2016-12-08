@@ -71,9 +71,6 @@ testGridTemplatesSetBadJSValues("minmax(1fr, 100px)", "minmax(2.5fr, 200px)");
 
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
-testGridTemplatesSetBadJSValues("0fr", "1r");
-// A dimension doesn't allow spaces between the number and the unit.
-testGridTemplatesSetBadJSValues(".0000fr", "13 fr");
 testGridTemplatesSetBadJSValues("7.-fr", "-8,0fr");
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-1px", "-6em");
