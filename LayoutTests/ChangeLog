@@ -1,3 +1,23 @@
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165602
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/css/remove-shorthand-expected.txt:
+        * fast/css/transform-inline-style-expected.txt:
+        * fast/regions/region-styling/parsing-region-style-rule.html:
+        * fast/shapes/parsing/parsing-shape-image-threshold-expected.txt:
+        * fast/shapes/parsing/parsing-shape-image-threshold.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * platform/mac/svg/webarchive/svg-cursor-subresources-expected.txt:
+        * svg/webarchive/svg-cursor-subresources.svg:
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+
 2016-12-08  Antti Koivisto  <antti@apple.com>
 
         :after and :before don't work on :host

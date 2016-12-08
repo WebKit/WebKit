@@ -72,5 +72,5 @@ Removing padding
 removes "padding"
 and adds "".
 Removing -webkit-text-stroke
-removes "-webkit-text-stroke-color, -webkit-text-stroke-width"
+removes "-webkit-text-stroke-width, -webkit-text-stroke-color"
 and adds "".
