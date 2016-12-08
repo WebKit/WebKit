@@ -1,3 +1,17 @@
+2016-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Concurrent GC should be stable enough to land enabled
+        https://bugs.webkit.org/show_bug.cgi?id=164990
+
+        Reviewed by Geoffrey Garen.
+        
+        Add a new mode that runs GC continuously. Also made eager modes run GC continuously.
+        
+        It's clear that this works just fine in release, but I'm still trying to figure out if it's
+        safe for debug. It might be too slow for debug.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for sending WebsiteSettings to WebProcess during navigation

@@ -142,6 +142,8 @@ public:
     void resumeAllocating(); // If we just stopped allocation but we didn't do a collection, we need to resume allocation.
     
     void prepareForMarking();
+    
+    void prepareForConservativeScan();
 
     typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
@@ -223,6 +225,7 @@ private:
     bool m_isIterating;
     bool m_isMarking { false };
     MarkedBlockSet m_blocks;
+    
     Vector<LargeAllocation*> m_largeAllocations;
     unsigned m_largeAllocationsNurseryOffset { 0 };
     unsigned m_largeAllocationsOffsetForThisCollection { 0 };
@@ -230,6 +233,7 @@ private:
     LargeAllocation** m_largeAllocationsForThisCollectionBegin { nullptr };
     LargeAllocation** m_largeAllocationsForThisCollectionEnd { nullptr };
     unsigned m_largeAllocationsForThisCollectionSize { 0 };
+    
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_activeWeakSets;
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_newActiveWeakSets;
     

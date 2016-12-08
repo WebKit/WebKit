@@ -900,12 +900,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         
     case AllocatePropertyStorage:
         write(JSObject_butterfly);
+        write(JSCell_structureID);
         def(HeapLocation(ButterflyLoc, JSObject_butterfly, node->child1()), LazyNode(node));
         return;
         
     case ReallocatePropertyStorage:
         read(JSObject_butterfly);
         write(JSObject_butterfly);
+        write(JSCell_structureID);
         def(HeapLocation(ButterflyLoc, JSObject_butterfly, node->child1()), LazyNode(node));
         return;
         

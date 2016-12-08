@@ -48,10 +48,6 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     if (textTrackCue.isFiringEventListeners())
         return true;
 
-    // If the cue has no event listeners and has no custom properties, it is not reachable.
-    if (!textTrackCue.hasEventListeners() && !jsTextTrackCue->hasCustomProperties())
-        return false;
-
     // If the cue is not associated with a track, it is not reachable.
     if (!textTrackCue.track())
         return false;

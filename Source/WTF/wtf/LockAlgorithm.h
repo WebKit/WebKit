@@ -98,6 +98,18 @@ public:
             unlockSlow(lock, Fair);
     }
     
+    static bool safepointFast(const Atomic<LockType>& lock)
+    {
+        WTF::compilerFence();
+        return !(lock.load(std::memory_order_relaxed) & hasParkedBit);
+    }
+    
+    static void safepoint(Atomic<LockType>& lock)
+    {
+        if (UNLIKELY(!safepointFast(lock)))
+            safepointSlow(lock);
+    }
+    
     static bool isLocked(const Atomic<LockType>& lock)
     {
         return lock.load(std::memory_order_acquire) & isHeldBit;
@@ -203,6 +215,12 @@ public:
                 });
             return;
         }
+    }
+    
+    NEVER_INLINE static void safepointSlow(Atomic<LockType>& lockWord)
+    {
+        unlockFairly(lockWord);
+        lock(lockWord);
     }
     
 private:

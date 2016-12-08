@@ -85,10 +85,10 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     ScriptExecutable::visitChildren(thisObject, visitor);
-    if (thisObject->m_codeBlockForCall)
-        thisObject->m_codeBlockForCall->visitWeakly(visitor);
-    if (thisObject->m_codeBlockForConstruct)
-        thisObject->m_codeBlockForConstruct->visitWeakly(visitor);
+    if (FunctionCodeBlock* codeBlockForCall = thisObject->m_codeBlockForCall.get())
+        codeBlockForCall->visitWeakly(visitor);
+    if (FunctionCodeBlock* codeBlockForConstruct = thisObject->m_codeBlockForConstruct.get())
+        codeBlockForConstruct->visitWeakly(visitor);
     visitor.append(&thisObject->m_unlinkedExecutable);
     visitor.append(&thisObject->m_singletonFunction);
 }

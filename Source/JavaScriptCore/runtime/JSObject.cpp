@@ -90,36 +90,318 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
-ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure)
+ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset lastOffset)
 {
-    ASSERT(butterfly);
+    // We call this when we found everything without races.
+    ASSERT(structure);
     
-    size_t storageSize = structure->outOfLineSize();
-    size_t propertyCapacity = structure->outOfLineCapacity();
+    if (!butterfly)
+        return;
+    
+    bool hasIndexingHeader = structure->hasIndexingHeader(this);
     size_t preCapacity;
-    bool hasIndexingHeader = this->hasIndexingHeader();
-    if (UNLIKELY(hasIndexingHeader))
+    if (hasIndexingHeader)
         preCapacity = butterfly->indexingHeader()->preCapacity(structure);
     else
         preCapacity = 0;
     
-    HeapCell* base = bitwise_cast<HeapCell*>(butterfly->base(preCapacity, propertyCapacity));
+    HeapCell* base = bitwise_cast<HeapCell*>(
+        butterfly->base(preCapacity, Structure::outOfLineCapacity(lastOffset)));
     
     ASSERT(Heap::heap(base) == visitor.heap());
-
-    // Keep the butterfly alive.
+    
     visitor.markAuxiliary(base);
     
-    // Mark the properties.
-    visitor.appendValuesHidden(butterfly->propertyStorage() - storageSize, storageSize);
+    unsigned outOfLineSize = Structure::outOfLineSize(lastOffset);
+    visitor.appendValuesHidden(butterfly->propertyStorage() - outOfLineSize, outOfLineSize);
+}
 
+ALWAYS_INLINE Structure* JSObject::visitButterfly(SlotVisitor& visitor)
+{
+    static const char* raceReason = "JSObject::visitButterfly";
+    Structure* result = visitButterflyImpl(visitor);
+    if (result)
+        visitor.didNotRace(this, raceReason);
+    else
+        visitor.didRace(this, raceReason);
+    return result;
+}
+
+ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
+{
+    VM& vm = visitor.vm();
+    
+    Butterfly* butterfly;
+    Structure* structure;
+    PropertyOffset lastOffset;
+    
+    if (visitor.mutatorIsStopped()) {
+        butterfly = this->butterfly();
+        structure = this->structure(vm);
+        lastOffset = structure->lastOffset();
+        
+        markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, lastOffset);
+        
+        switch (structure->indexingType()) {
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+            visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
+            break;
+        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+            visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
+            if (butterfly->arrayStorage()->m_sparseMap)
+                visitor.append(&butterfly->arrayStorage()->m_sparseMap);
+            break;
+        default:
+            break;
+        }
+        return structure;
+    }
+    
+    // We want to ensure that we only scan the butterfly if we have an exactly matched structure and an
+    // exactly matched size. The mutator is required to perform the following shenanigans when
+    // reallocating the butterfly with a concurrent collector, with all fencing necessary to ensure
+    // that this executes as if under sequential consistency:
+    //
+    //     object->structure = nuke(object->structure)
+    //     object->butterfly = newButterfly
+    //     structure->m_offset = newLastOffset
+    //     object->structure = newStructure
+    //
+    // It's OK to skip this when reallocating the butterfly in a way that does not affect the m_offset.
+    // We have other protocols in place for that.
+    //
+    // Note that the m_offset can change without the structure changing, but in that case the mutator
+    // will still store null to the structure.
+    //
+    // The collector will ensure that it always sees a matched butterfly/structure by reading the
+    // structure before and after reading the butterfly. For simplicity, let's first consider the case
+    // where the only way to change the outOfLineCapacity is to change the structure. This works
+    // because the mutator performs the following steps sequentially:
+    //
+    //     NukeStructure ChangeButterfly PutNewStructure
+    //
+    // Meanwhile the collector performs the following steps sequentially:
+    //
+    //     ReadStructureEarly ReadButterfly ReadStructureLate
+    //
+    // The collector is allowed to do any of these three things:
+    //
+    // BEFORE: Scan the object with the structure and butterfly *before* the mutator's transition.
+    // AFTER: Scan the object with the structure and butterfly *after* the mutator's transition.
+    // IGNORE: Give up, so long as the write barrier on PutNewStructure executes after ReadStructureEarly.
+    //
+    // In other words, the collector will never see any torn structure/butterfly mix. It will
+    // always see the structure/butterfly before the transition or after but not in between.
+    //
+    // We can prove that this is correct by exhaustively considering all interleavings:
+    //
+    // NukeStructure ChangeButterfly PutNewStructure ReadStructureEarly ReadButterfly ReadStructureLate: AFTER, trivially.
+    // NukeStructure ChangeButterfly ReadStructureEarly PutNewStructure ReadButterfly ReadStructureLate: IGNORE, because nuked structure read early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadButterfly PutNewStructure ReadStructureLate: IGNORE, because nuked structure read early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadButterfly ReadStructureLate PutNewStructure: IGNORE, because nuked structure read early
+    // NukeStructure ReadStructureEarly ChangeButterfly PutNewStructure ReadButterfly ReadStructureLate: IGNORE, because nuked structure read early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadButterfly PutNewStructure ReadStructureLate: IGNORE, because nuked structure read early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadButterfly ReadStructureLate PutNewStructure: IGNORE, because nuked structure read early
+    // NukeStructure ReadStructureEarly ReadButterfly ChangeButterfly PutNewStructure ReadStructureLate: IGNORE, because nuked structure read early
+    // NukeStructure ReadStructureEarly ReadButterfly ChangeButterfly ReadStructureLate PutNewStructure: IGNORE, because nuked structure read early
+    // NukeStructure ReadStructureEarly ReadButterfly ReadStructureLate ChangeButterfly PutNewStructure: IGNORE, because nuked structure read early
+    // ReadStructureEarly NukeStructure ChangeButterfly PutNewStructure ReadButterfly ReadStructureLate: IGNORE, because early and late structures don't match
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadButterfly PutNewStructure ReadStructureLate: IGNORE, because early and late structures don't match
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate PutNewStructure: IGNORE, because nuked structure read late
+    // ReadStructureEarly NukeStructure ReadButterfly ChangeButterfly PutNewStructure ReadStructureLate: IGNORE, because early and late structures don't match
+    // ReadStructureEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate PutNewStructure: IGNORE, because nuked structure read late
+    // ReadStructureEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly PutNewStructure: IGNORE, because nuked structure read late
+    // ReadStructureEarly ReadButterfly NukeStructure ChangeButterfly PutNewStructure ReadStructureLate: IGNORE, because early and late structures don't match
+    // ReadStructureEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate PutNewStructure: IGNORE, because nuked structure read late
+    // ReadStructureEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly PutNewStructure: IGNORE, because nuked structure read late
+    // ReadStructureEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly PutNewStructure: BEFORE, trivially.
+    //
+    // But we additionally have to worry about the size changing. We make this work by requiring that
+    // the collector reads the size early and late as well. Lets consider the interleaving of the
+    // mutator changing the size without changing the structure:
+    //
+    //     NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure
+    //
+    // Meanwhile the collector does:
+    //
+    //     ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate
+    //
+    // The collector can detect races by not only comparing the early structure to the late structure
+    // (which will be the same before and after the algorithm runs) but also by comparing the early and
+    // late lastOffsets.  Note: the IGNORE proofs do not cite all of the reasons why the collector will
+    // ignore the case, since we only need to identify one to say that we're in the ignore case.
+    //
+    // NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: AFTER, trivially
+    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ChangeLastOffset ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ChangeButterfly ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
+    // NukeStructure ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure early
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate: AFTER, the ReadStructureEarly sees the same structure as after and everything else runs after.
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: AFTER, as above and the ReadLastOffsetEarly sees the lastOffset after.
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: AFTER, as above and the ReadButterfly sees the right butterfly after.
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ChangeButterfly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ChangeButterfly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly NukeStructure ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadButterfly ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset ReadButterfly RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ChangeLastOffset ReadButterfly ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ChangeButterfly ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly NukeStructure ReadButterfly ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadStructureLate ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeLastOffset ReadStructureLate RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ChangeLastOffset ReadStructureLate ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ChangeButterfly ReadStructureLate ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly NukeStructure ReadStructureLate ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: IGNORE, read nuked structure late
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure ReadLastOffsetLate: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ChangeLastOffset ReadLastOffsetLate RestoreStructure: IGNORE, read different offsets
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ChangeButterfly ReadLastOffsetLate ChangeLastOffset RestoreStructure: BEFORE, reads the offset before, everything else happens before
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate NukeStructure ReadLastOffsetLate ChangeButterfly ChangeLastOffset RestoreStructure: BEFORE, reads the offset before, everything else happens before
+    // ReadStructureEarly ReadLastOffsetEarly ReadButterfly ReadStructureLate ReadLastOffsetLate NukeStructure ChangeButterfly ChangeLastOffset RestoreStructure: BEFORE, trivially
+    //
+    // Whew.
+    //
+    // What the collector is doing is just the "double collect" snapshot from "The Unbounded Single-
+    // Writer Algorithm" from Yehuda Afek et al's "Atomic Snapshots of Shared Memory" in JACM 1993,
+    // also available here:
+    //
+    // http://people.csail.mit.edu/shanir/publications/AADGMS.pdf
+    //
+    // Unlike Afek et al's algorithm, ours does not require extra hacks to force wait-freedom (see
+    // "Observation 2" in the paper). This simplifies the whole algorithm. Instead we are happy with
+    // obstruction-freedom, and like any good obstruction-free algorithm, we ensure progress using
+    // scheduling. We also only collect the butterfly once instead of twice; this optimization seems
+    // to hold up in my proofs above and I'm not sure it's part of Afek et al's algos.
+    //
+    // For more background on this kind of madness, I like this paper; it's where I learned about
+    // both the snapshot algorithm and obstruction-freedom:
+    //
+    // Lunchangco, Moir, Shavit. "Nonblocking k-compare-single-swap." SPAA '03
+    // https://pdfs.semanticscholar.org/343f/7182cde7669ca2a7de3dc01127927f384ef7.pdf
+    
+    StructureID structureID = this->structureID();
+    if (isNuked(structureID))
+        return nullptr;
+    structure = vm.getStructure(structureID);
+    lastOffset = structure->lastOffset();
+    WTF::loadLoadFence();
+    butterfly = this->butterfly();
+    if (!butterfly)
+        return structure;
+    WTF::loadLoadFence();
+    if (this->structureID() != structureID)
+        return nullptr;
+    if (structure->lastOffset() != lastOffset)
+        return nullptr;
+    
+    markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, lastOffset);
+    
     IndexingType oldType = structure->indexingType();
     switch (oldType) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
         // This lock is here to protect Contiguous->ArrayStorage transitions, but we could make that
         // race work if we needed to.
-        JSCell::InternalLocker locker(this);
+        auto locker = holdLock(*this);
         IndexingType newType = this->indexingType();
         butterfly = this->butterfly();
         switch (newType) {
@@ -137,6 +419,8 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     default:
         break;
     }
+    
+    return structure;
 }
 
 size_t JSObject::estimatedSize(JSCell* cell)
@@ -156,34 +440,8 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
     
     JSCell::visitChildren(thisObject, visitor);
-
-    // We want to defend against multiple possible races with the mutator:
-    // - Mutator could install a bigger butterfly and then install a structure that claims more
-    //   properties. This trivially works.
-    // - Mutator could mutate the dictionary structure. Hence, we hold the structure lock for
-    //   dictionary structures.
-    // - The butterfly could shrink, but this could only happen if the object was a dictionary.
-    //   Usually, this means that we would get the dictionary structure and acquire a lock. That
-    //   trivially works. But we could load the structure before the object became a dictionary
-    //   and then load the butterfly that was shrunk. We protect against this case by checking
-    //   the structure a second time before scanning the butterfly. This means that the butterfly
-    //   is at worst the butterfly that the mutator had installed just prior to flipping the
-    //   sturcture. So if the structure we see is a non-dictionary then the butterfly cannot yet
-    //   have been shrunk.
-    VM& vm = visitor.vm();
-    Structure* structure = thisObject->structure(vm);
-    bool wasDictionary = structure->isDictionary();
-    if (wasDictionary) {
-        structure->lock().lock();
-    } else
-        WTF::loadLoadFence();
-    if (Butterfly* butterfly = thisObject->m_butterfly.get()) {
-        WTF::loadLoadFence();
-        if (thisObject->structureID() == structure->id())
-            thisObject->visitButterfly(visitor, butterfly, structure);
-    }
-    if (wasDictionary)
-        structure->lock().unlock();
+    
+    thisObject->visitButterfly(visitor);
     
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
@@ -238,25 +496,11 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
     
     JSCell::visitChildren(thisObject, visitor);
-
-    VM& vm = visitor.vm();
-    Structure* structure = thisObject->structure(vm);
-    bool wasDictionary = structure->isDictionary();
-    if (wasDictionary)
-        structure->lock().lock();
-    else
-        WTF::loadLoadFence();
-    if (Butterfly* butterfly = thisObject->butterfly()) {
-        WTF::loadLoadFence();
-        if (structure->id() == thisObject->structureID())
-            thisObject->visitButterfly(visitor, butterfly, structure);
+    
+    if (Structure* structure = thisObject->visitButterfly(visitor)) {
+        if (unsigned storageSize = structure->inlineSize())
+            visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
     }
-
-    size_t storageSize = structure->inlineSize();
-    if (storageSize)
-        visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
-    if (wasDictionary)
-        structure->lock().unlock();
     
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
@@ -711,7 +955,6 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
     newButterfly->arrayStorage()->m_indexBias = 0;
     newButterfly->arrayStorage()->setVectorLength(0);
     newButterfly->arrayStorage()->m_sparseMap.set(vm, this, map);
-    WTF::storeStoreFence();
     setButterfly(vm, newButterfly);
     
     return newButterfly->arrayStorage();
@@ -776,10 +1019,10 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
 {
     DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateUndecided);
-    WTF::storeStoreFence();
-    setButterfly(vm, newButterfly);
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateUndecided);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return newButterfly;
 }
@@ -790,10 +1033,10 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousInt32()[i].setWithoutWriteBarrier(JSValue());
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateInt32);
-    WTF::storeStoreFence();
-    setButterfly(vm, newButterfly);
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateInt32);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return newButterfly->contiguousInt32();
 }
@@ -804,10 +1047,10 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousDouble()[i] = PNaN;
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateDouble);
-    WTF::storeStoreFence();
-    setButterfly(vm, newButterfly);
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateDouble);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return newButterfly->contiguousDouble();
 }
@@ -818,10 +1061,10 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length);
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguous()[i].setWithoutWriteBarrier(JSValue());
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateContiguous);
-    WTF::storeStoreFence();
-    setButterfly(vm, newButterfly);
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, NonPropertyTransition::AllocateContiguous);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return newButterfly->contiguous();
 }
@@ -848,16 +1091,15 @@ Butterfly* JSObject::createArrayStorageButterfly(VM& vm, JSCell* intendedOwner, 
 ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vectorLength)
 {
     DeferGC deferGC(vm.heap);
-    Structure* structure = this->structure(vm);
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
     IndexingType oldType = indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
 
-    Butterfly* newButterfly = createArrayStorageButterfly(vm, this, structure, length, vectorLength, m_butterfly.get());
+    Butterfly* newButterfly = createArrayStorageButterfly(vm, this, oldStructure, length, vectorLength, m_butterfly.get());
     ArrayStorage* result = newButterfly->arrayStorage();
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure, structure->suggestedArrayStorageTransition());
-    WTF::storeStoreFence();
-    setButterfly(vm, newButterfly);
-    WTF::storeStoreFence();
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, oldStructure->suggestedArrayStorageTransition());
+    nukeStructureAndSetButterfly(vm, oldStructureID, newButterfly);
     setStructure(vm, newStructure);
     return result;
 }
@@ -900,6 +1142,7 @@ ContiguousJSValues JSObject::convertUndecidedToContiguous(VM& vm)
     for (unsigned i = butterfly->vectorLength(); i--;)
         butterfly->contiguous()[i].setWithoutWriteBarrier(JSValue());
 
+    WTF::storeStoreFence();
     setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateContiguous));
     return m_butterfly.get()->contiguous();
 }
@@ -940,10 +1183,10 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransi
     for (unsigned i = vectorLength; i--;)
         storage->m_vector[i].setWithoutWriteBarrier(JSValue());
     
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    WTF::storeStoreFence();
-    setButterfly(vm, storage->butterfly());
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
+    nukeStructureAndSetButterfly(vm, oldStructureID, storage->butterfly());
     setStructure(vm, newStructure);
     return storage;
 }
@@ -998,10 +1241,10 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
             newStorage->m_numValuesInVector++;
     }
     
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    WTF::storeStoreFence();
-    setButterfly(vm, newStorage->butterfly());
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
     setStructure(vm, newStructure);
     return newStorage;
 }
@@ -1028,6 +1271,7 @@ ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
         currentAsValue->setWithoutWriteBarrier(v);
     }
     
+    WTF::storeStoreFence();
     setStructure(vm, Structure::nonPropertyTransition(vm, structure(vm), NonPropertyTransition::AllocateContiguous));
     return m_butterfly.get()->contiguous();
 }
@@ -1047,10 +1291,10 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
             newStorage->m_numValuesInVector++;
     }
     
-    Structure* newStructure = Structure::nonPropertyTransition(vm, structure(vm), transition);
-    WTF::storeStoreFence();
-    setButterfly(vm, newStorage->butterfly());
-    WTF::storeStoreFence();
+    StructureID oldStructureID = this->structureID();
+    Structure* oldStructure = vm.getStructure(oldStructureID);
+    Structure* newStructure = Structure::nonPropertyTransition(vm, oldStructure, transition);
+    nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
     setStructure(vm, newStructure);
     return newStorage;
 }
@@ -1089,10 +1333,18 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
     //
     // Fortunately, we have the JSCell lock for this purpose!
     
-    InternalLocker locker(this);
-    setButterfly(vm, newStorage->butterfly());
-    WTF::storeStoreFence();
-    setStructure(vm, newStructure);
+    if (vm.heap.mutatorShouldBeFenced()) {
+        auto locker = holdLock(*this);
+        setStructureIDDirectly(nuke(structureID()));
+        WTF::storeStoreFence();
+        m_butterfly.set(vm, this, newStorage->butterfly());
+        WTF::storeStoreFence();
+        setStructure(vm, newStructure);
+    } else {
+        m_butterfly.set(vm, this, newStorage->butterfly());
+        setStructure(vm, newStructure);
+    }
+    
     return newStorage;
 }
 
@@ -2814,7 +3066,6 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
         for (unsigned i = vectorLength; i < newVectorLength; ++i)
             newButterfly->arrayStorage()->m_vector[i].clear();
         newButterfly->arrayStorage()->setVectorLength(newVectorLength);
-        WTF::storeStoreFence();
         setButterfly(vm, newButterfly);
         return true;
     }
@@ -2832,7 +3083,6 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
         newButterfly->arrayStorage()->m_vector[i].clear();
     newButterfly->arrayStorage()->setVectorLength(newVectorLength);
     newButterfly->arrayStorage()->m_indexBias = newIndexBias;
-    WTF::storeStoreFence();
     setButterfly(vm, newButterfly);
     return true;
 }
@@ -3218,7 +3468,6 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
 
     memcpy(newBase, currentBase, Butterfly::totalSize(0, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes));
     
-    WTF::storeStoreFence();
     setButterfly(vm, newButterfly);
 }
 

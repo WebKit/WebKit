@@ -2174,9 +2174,7 @@ char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitial
 
     ASSERT(!object->structure()->outOfLineCapacity());
     Butterfly* result = object->allocateMoreOutOfLineStorage(vm, 0, initialOutOfLineCapacity);
-    WTF::storeStoreFence();
-    object->setButterfly(vm, result);
-    WTF::storeStoreFence();
+    object->nukeStructureAndSetButterfly(vm, object->structureID(), result);
     return reinterpret_cast<char*>(result);
 }
 
@@ -2186,9 +2184,7 @@ char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     NativeCallFrameTracer tracer(&vm, exec);
 
     Butterfly* result = object->allocateMoreOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize);
-    WTF::storeStoreFence();
-    object->setButterfly(vm, result);
-    WTF::storeStoreFence();
+    object->nukeStructureAndSetButterfly(vm, object->structureID(), result);
     return reinterpret_cast<char*>(result);
 }
 

@@ -65,6 +65,14 @@ inline void CellContainer::noteMarked()
         markedBlock().noteMarked();
 }
 
+inline void CellContainer::assertValidCell(VM& vm, HeapCell* cell) const
+{
+    if (isLargeAllocation())
+        largeAllocation().assertValidCell(vm, cell);
+    else
+        markedBlock().assertValidCell(vm, cell);
+}
+
 inline size_t CellContainer::cellSize() const
 {
     if (isLargeAllocation())

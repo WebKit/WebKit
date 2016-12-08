@@ -1,3 +1,42 @@
+2016-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Concurrent GC should be stable enough to land enabled on X86_64
+        https://bugs.webkit.org/show_bug.cgi?id=164990
+
+        Reviewed by Geoffrey Garen.
+        
+        Adds the ability to say:
+        
+        auto locker = holdLock(any type of lock)
+        
+        Instead of having to say:
+        
+        Locker<LockType> locker(locks of type LockType)
+        
+        I think that we should use "auto locker = holdLock(lock)" as the default way that we acquire
+        locks unless we need to use a special locker type.
+        
+        This also adds the ability to safepoint a lock. Safepointing a lock is basically a super fast
+        way of unlocking it fairly and then immediately relocking it - i.e. letting anyone who is
+        waiting to run without losing steam of there is noone waiting.
+
+        * wtf/Lock.cpp:
+        (WTF::LockBase::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::LockBase::safepoint):
+        * wtf/LockAlgorithm.h:
+        (WTF::LockAlgorithm::safepointFast):
+        (WTF::LockAlgorithm::safepoint):
+        (WTF::LockAlgorithm::safepointSlow):
+        * wtf/Locker.h:
+        (WTF::AbstractLocker::AbstractLocker):
+        (WTF::Locker::tryLock):
+        (WTF::Locker::operator bool):
+        (WTF::Locker::Locker):
+        (WTF::Locker::operator=):
+        (WTF::holdLock):
+        (WTF::tryHoldLock):
+
 2016-12-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209489.

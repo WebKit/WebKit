@@ -31,14 +31,12 @@
 #include "CallFrame.h"
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
-#include "HeapInlines.h"
 #include "HeapIterationScope.h"
 #include "HeapUtil.h"
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
-#include "JSObjectInlines.h"
 #include "LLIntPCRanges.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
@@ -46,8 +44,6 @@
 #include "NativeExecutable.h"
 #include "PCToCodeOriginMap.h"
 #include "SlotVisitor.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
 #include "VM.h"
 #include <wtf/HashSet.h>
 #include <wtf/RandomNumber.h>
@@ -737,6 +733,7 @@ Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const 
 
 String SamplingProfiler::stackTracesAsJSON()
 {
+    DeferGC deferGC(m_vm.heap);
     LockHolder locker(m_lock);
 
     {

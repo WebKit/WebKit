@@ -184,9 +184,12 @@ typedef const char* optionString;
     v(bool, verboseSanitizeStack, false, Normal, nullptr) \
     v(bool, useGenerationalGC, true, Normal, nullptr) \
     v(bool, useConcurrentBarriers, true, Normal, nullptr) \
-    v(bool, useConcurrentGC, false, Normal, nullptr) \
+    v(bool, useConcurrentGC, true, Normal, nullptr) \
     v(bool, collectContinuously, false, Normal, nullptr) \
+    v(double, collectContinuouslyPeriodMS, 1, Normal, nullptr) \
     v(bool, forceFencedBarrier, false, Normal, nullptr) \
+    v(bool, verboseVisitRace, false, Normal, nullptr) \
+    v(bool, optimizeParallelSlotVisitorsForStoppedMutator, false, Normal, nullptr) \
     v(unsigned, largeHeapSize, 32 * 1024 * 1024, Normal, nullptr) \
     v(unsigned, smallHeapSize, 1 * 1024 * 1024, Normal, nullptr) \
     v(double, smallHeapRAMFraction, 0.25, Normal, nullptr) \
@@ -322,7 +325,7 @@ typedef const char* optionString;
     v(unsigned, maximumDirectCallStackSize, 200, Normal, nullptr) \
     \
     v(unsigned, minimumNumberOfScansBetweenRebalance, 100, Normal, nullptr) \
-    v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7), Normal, nullptr) \
+    v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(8), Normal, nullptr) \
     v(unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \
     v(double, minHeapUtilization, 0.8, Normal, nullptr) \
     v(double, minMarkedBlockUtilization, 0.9, Normal, nullptr) \

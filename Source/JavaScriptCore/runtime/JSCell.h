@@ -104,26 +104,11 @@ public:
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
     // a full-blown WTF::Lock. Note that this lock is currently used in JSArray and that lock's
     // ordering with the Structure lock is that the Structure lock must be acquired first.
-    void lockInternalLock();
-    void unlockInternalLock();
+    void lock();
+    bool tryLock();
+    void unlock();
+    bool isLocked() const;
     
-    class InternalLocker {
-    public:
-        InternalLocker(JSCell* cell)
-            : m_cell(cell)
-        {
-            m_cell->lockInternalLock();
-        }
-        
-        ~InternalLocker()
-        {
-            m_cell->unlockInternalLock();
-        }
-        
-    private:
-        JSCell* m_cell;
-    };
-
     JSType type() const;
     IndexingType indexingTypeAndMisc() const;
     IndexingType indexingType() const;
@@ -131,6 +116,7 @@ public:
     Structure* structure() const;
     Structure* structure(VM&) const;
     void setStructure(VM&, Structure*);
+    void setStructureIDDirectly(StructureID id) { m_structureID = id; }
     void clearStructure() { m_structureID = 0; }
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }

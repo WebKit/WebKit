@@ -29,6 +29,7 @@
 #include "HandleTypes.h"
 #include "MarkStack.h"
 #include "OpaqueRootSet.h"
+#include "VisitRaceKey.h"
 #include <wtf/MonotonicTime.h>
 
 namespace JSC {
@@ -106,10 +107,8 @@ public:
     SharedDrainResult drainFromShared(SharedDrainMode, MonotonicTime timeout = MonotonicTime::infinity());
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
+    SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());
 
-    void harvestWeakReferences();
-    void finalizeUnconditionalFinalizers();
-    
     // This informs the GC about auxiliary of some size that we are keeping alive. If you don't do
     // this then the space will be freed at end of GC.
     void markAuxiliary(const void* base);
@@ -129,6 +128,23 @@ public:
     HeapVersion markingVersion() const { return m_markingVersion; }
 
     void mergeOpaqueRootsIfNecessary();
+    
+    bool mutatorIsStopped() const { return m_mutatorIsStopped; }
+    
+    Lock& rightToRun() { return m_rightToRun; }
+    
+    void updateMutatorIsStopped(const AbstractLocker&);
+    void updateMutatorIsStopped();
+    
+    bool hasAcknowledgedThatTheMutatorIsResumed() const;
+    bool mutatorIsStoppedIsUpToDate() const;
+    
+    void optimizeForStoppedMutator();
+    
+    void didRace(const VisitRaceKey&);
+    void didRace(JSCell* cell, const char* reason) { didRace(VisitRaceKey(cell, reason)); }
+    void didNotRace(const VisitRaceKey&);
+    void didNotRace(JSCell* cell, const char* reason) { didNotRace(VisitRaceKey(cell, reason)); }
 
 private:
     friend class ParallelModeEnabler;
@@ -158,6 +174,9 @@ private:
     
     void donateKnownParallel();
     void donateKnownParallel(MarkStackArray& from, MarkStackArray& to);
+    
+    bool hasWork();
+    bool didReachTermination();
 
     MarkStackArray m_collectorStack;
     MarkStackArray m_mutatorStack;
@@ -174,7 +193,10 @@ private:
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
     bool m_isVisitingMutatorStack { false };
-
+    bool m_mutatorIsStopped { false };
+    bool m_canOptimizeForStoppedMutator { false };
+    Lock m_rightToRun;
+    
 public:
 #if !ASSERT_DISABLED
     bool m_isCheckingForDefaultMarkViolation;

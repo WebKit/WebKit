@@ -110,18 +110,21 @@ void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 #endif
     JSObject* privateReadableStreamDefaultReaderConstructor = createReadableStreamDefaultReaderPrivateConstructor(vm, *this);
 
-    ASSERT(!constructors().get(privateReadableStreamDefaultControllerConstructor->info()).get());
+    ASSERT(!constructors(NoLockingNecessary).get(privateReadableStreamDefaultControllerConstructor->info()).get());
 #if ENABLE(READABLE_BYTE_STREAM_API)
-    ASSERT(!constructors().get(privateReadableByteStreamControllerConstructor->info()).get());
+    ASSERT(!constructors(NoLockingNecessary).get(privateReadableByteStreamControllerConstructor->info()).get());
 #endif
-    ASSERT(!constructors().get(privateReadableStreamDefaultReaderConstructor->info()).get());
+    ASSERT(!constructors(NoLockingNecessary).get(privateReadableStreamDefaultReaderConstructor->info()).get());
     JSC::WriteBarrier<JSC::JSObject> temp;
-    constructors().add(privateReadableStreamDefaultControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultControllerConstructor);
+    {
+        auto locker = lockDuringMarking(vm.heap, m_gcLock);
+        constructors(locker).add(privateReadableStreamDefaultControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultControllerConstructor);
 #if ENABLE(READABLE_BYTE_STREAM_API)
-    constructors().add(privateReadableByteStreamControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableByteStreamControllerConstructor);
+        constructors(locker).add(privateReadableByteStreamControllerConstructor->info(), temp).iterator->value.set(vm, this, privateReadableByteStreamControllerConstructor);
 #endif
-    constructors().add(privateReadableStreamDefaultReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultReaderConstructor);
+        constructors(locker).add(privateReadableStreamDefaultReaderConstructor->info(), temp).iterator->value.set(vm, this, privateReadableStreamDefaultReaderConstructor);
 #endif
+    }
     JSVMClientData& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
         JSDOMGlobalObject::GlobalPropertyInfo(clientData.builtinNames().makeThisTypeErrorPrivateName(),
@@ -183,15 +186,19 @@ void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSDOMGlobalObject* thisObject = jsCast<JSDOMGlobalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-
-    for (auto& structure : thisObject->structures().values())
-        visitor.append(&structure);
-
-    for (auto& constructor : thisObject->constructors().values())
-        visitor.append(&constructor);
-
-    for (auto& deferredPromise : thisObject->deferredPromises())
-        deferredPromise->visitAggregate(visitor);
+    
+    {
+        auto locker = holdLock(thisObject->m_gcLock);
+        
+        for (auto& structure : thisObject->structures(locker).values())
+            visitor.append(&structure);
+        
+        for (auto& constructor : thisObject->constructors(locker).values())
+            visitor.append(&constructor);
+        
+        for (auto& deferredPromise : thisObject->deferredPromises(locker))
+            deferredPromise->visitAggregate(visitor);
+    }
 
     thisObject->m_builtinInternalFunctions.visit(visitor);
 }

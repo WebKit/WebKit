@@ -82,6 +82,8 @@ bool EventListenerMap::containsActive(const AtomicString& eventType) const
 
 void EventListenerMap::clear()
 {
+    auto locker = holdLock(m_lock);
+    
     assertNoActiveIterators();
 
     m_entries.clear();
@@ -110,6 +112,8 @@ static inline size_t findListener(const EventListenerVector& listeners, EventLis
 
 void EventListenerMap::replace(const AtomicString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options& options)
 {
+    auto locker = holdLock(m_lock);
+    
     assertNoActiveIterators();
 
     auto* listeners = find(eventType);
@@ -123,6 +127,8 @@ void EventListenerMap::replace(const AtomicString& eventType, EventListener& old
 
 bool EventListenerMap::add(const AtomicString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
+    auto locker = holdLock(m_lock);
+    
     assertNoActiveIterators();
 
     if (auto* listeners = find(eventType)) {
@@ -151,6 +157,8 @@ static bool removeListenerFromVector(EventListenerVector& listeners, EventListen
 
 bool EventListenerMap::remove(const AtomicString& eventType, EventListener& listener, bool useCapture)
 {
+    auto locker = holdLock(m_lock);
+    
     assertNoActiveIterators();
 
     for (unsigned i = 0; i < m_entries.size(); ++i) {
@@ -167,8 +175,6 @@ bool EventListenerMap::remove(const AtomicString& eventType, EventListener& list
 
 EventListenerVector* EventListenerMap::find(const AtomicString& eventType) const
 {
-    assertNoActiveIterators();
-
     for (auto& entry : m_entries) {
         if (entry.first == eventType)
             return entry.second.get();
@@ -191,6 +197,8 @@ static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVe
 
 void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomicString& eventType)
 {
+    auto locker = holdLock(m_lock);
+    
     assertNoActiveIterators();
 
     for (unsigned i = 0; i < m_entries.size(); ++i) {
@@ -215,8 +223,6 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventT
 
 void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarget* target)
 {
-    assertNoActiveIterators();
-
     for (auto& entry : m_entries)
         copyListenersNotCreatedFromMarkupToTarget(entry.first, *entry.second, target);
 }
@@ -230,6 +236,15 @@ EventListenerIterator::EventListenerIterator(EventTarget* target)
         return;
 
     m_map = &data->eventListenerMap;
+
+#ifndef NDEBUG
+    m_map->m_activeIteratorCount++;
+#endif
+}
+
+EventListenerIterator::EventListenerIterator(EventListenerMap* map)
+{
+    m_map = map;
 
 #ifndef NDEBUG
     m_map->m_activeIteratorCount++;

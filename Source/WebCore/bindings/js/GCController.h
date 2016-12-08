@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <heap/DeleteAllCodeEffort.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include "Timer.h"
@@ -44,8 +45,8 @@ public:
 
     WEBCORE_EXPORT void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
     WEBCORE_EXPORT void setJavaScriptGarbageCollectorTimerEnabled(bool);
-    WEBCORE_EXPORT void deleteAllCode();
-    WEBCORE_EXPORT void deleteAllLinkedCode();
+    WEBCORE_EXPORT void deleteAllCode(JSC::DeleteAllCodeEffort);
+    WEBCORE_EXPORT void deleteAllLinkedCode(JSC::DeleteAllCodeEffort);
 
 private:
     GCController(); // Use singleton() instead.

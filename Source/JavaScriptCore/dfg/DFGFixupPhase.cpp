@@ -385,7 +385,7 @@ private:
         case ArithTrunc: {
             if (node->child1()->shouldSpeculateInt32OrBoolean() && m_graph.roundShouldSpeculateInt32(node, FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
-                insertCheck<Int32Use>(m_indexInBlock, node->child1().node());
+                insertCheck<Int32Use>(node->child1().node());
                 node->convertToIdentity();
                 break;
             }
@@ -1325,8 +1325,9 @@ private:
             if (!node->child1()->hasStorageResult())
                 fixEdge<KnownCellUse>(node->child1());
             fixEdge<KnownCellUse>(node->child2());
+            unsigned index = indexForChecks();
             insertInferredTypeCheck(
-                m_insertionSet, m_indexInBlock, node->origin, node->child3().node(),
+                m_insertionSet, index, originForCheck(index), node->child3().node(),
                 node->storageAccessData().inferredType);
             speculateForBarrier(node->child3());
             break;
@@ -2495,6 +2496,19 @@ private:
         edge.setUseKind(useKind);
     }
     
+    unsigned indexForChecks()
+    {
+        unsigned index = m_indexInBlock;
+        while (!m_block->at(index)->origin.exitOK)
+            index--;
+        return index;
+    }
+    
+    NodeOrigin originForCheck(unsigned index)
+    {
+        return m_block->at(index)->origin.withSemantic(m_currentNode->origin.semantic);
+    }
+    
     void speculateForBarrier(Edge value)
     {
         // Currently, the DFG won't take advantage of this speculation. But, we want to do it in
@@ -2502,37 +2516,37 @@ private:
         // we do an expensive compile.
         
         if (value->shouldSpeculateInt32()) {
-            insertCheck<Int32Use>(m_indexInBlock, value.node());
+            insertCheck<Int32Use>(value.node());
             return;
         }
             
         if (value->shouldSpeculateBoolean()) {
-            insertCheck<BooleanUse>(m_indexInBlock, value.node());
+            insertCheck<BooleanUse>(value.node());
             return;
         }
             
         if (value->shouldSpeculateOther()) {
-            insertCheck<OtherUse>(m_indexInBlock, value.node());
+            insertCheck<OtherUse>(value.node());
             return;
         }
             
         if (value->shouldSpeculateNumber()) {
-            insertCheck<NumberUse>(m_indexInBlock, value.node());
+            insertCheck<NumberUse>(value.node());
             return;
         }
             
         if (value->shouldSpeculateNotCell()) {
-            insertCheck<NotCellUse>(m_indexInBlock, value.node());
+            insertCheck<NotCellUse>(value.node());
             return;
         }
     }
     
     template<UseKind useKind>
-    void insertCheck(unsigned indexInBlock, Node* node)
+    void insertCheck(Node* node)
     {
         observeUseKindOnNode<useKind>(node);
-        m_insertionSet.insertNode(
-            indexInBlock, SpecNone, Check, m_currentNode->origin, Edge(node, useKind));
+        unsigned index = indexForChecks();
+        m_insertionSet.insertNode(index, SpecNone, Check, originForCheck(index), Edge(node, useKind));
     }
 
     void fixIntConvertingEdge(Edge& edge)
@@ -2824,7 +2838,7 @@ private:
             }
 
             originForChecks = originForChecks.withSemantic(node->origin.semantic);
-
+            
             // First, try to relax the representational demands of each node, in order to have
             // fewer conversions.
             switch (node->op()) {

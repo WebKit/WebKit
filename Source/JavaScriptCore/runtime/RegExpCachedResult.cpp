@@ -48,12 +48,13 @@ JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
     if (!m_reified) {
         m_reifiedInput.set(exec->vm(), owner, m_lastInput.get());
         if (m_result)
-            m_reifiedResult.set(exec->vm(), owner, createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start));
+            m_reifiedResult.setWithoutWriteBarrier(createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start));
         else
-            m_reifiedResult.set(exec->vm(), owner, createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get()));
+            m_reifiedResult.setWithoutWriteBarrier(createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get()));
         m_reifiedLeftContext.clear();
         m_reifiedRightContext.clear();
         m_reified = true;
+        exec->vm().heap.writeBarrier(owner);
     }
     return m_reifiedResult.get();
 }

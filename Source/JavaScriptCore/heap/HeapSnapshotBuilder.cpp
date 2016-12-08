@@ -32,6 +32,7 @@
 #include "HeapSnapshot.h"
 #include "JSCInlines.h"
 #include "JSCell.h"
+#include "PreventCollectionScope.h"
 #include "VM.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -52,6 +53,8 @@ HeapSnapshotBuilder::~HeapSnapshotBuilder()
 
 void HeapSnapshotBuilder::buildSnapshot()
 {
+    PreventCollectionScope preventCollectionScope(m_profiler.vm().heap);
+    
     m_snapshot = std::make_unique<HeapSnapshot>(m_profiler.mostRecentSnapshot());
     {
         m_profiler.setActiveSnapshotBuilder(this);

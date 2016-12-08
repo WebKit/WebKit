@@ -530,6 +530,7 @@ public:
 #endif
 
     EventTargetData* eventTargetData() final;
+    EventTargetData* eventTargetDataConcurrently() final;
     EventTargetData& ensureEventTargetData() final;
 
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);

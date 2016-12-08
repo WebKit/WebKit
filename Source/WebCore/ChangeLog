@@ -1,3 +1,60 @@
+2016-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Concurrent GC should be stable enough to land enabled on X86_64
+        https://bugs.webkit.org/show_bug.cgi?id=164990
+
+        Reviewed by Geoffrey Garen.
+        
+        Made WebCore down with concurrent marking by adding some locking and adapting to some new API.
+
+        This has new test modes in run-sjc-stress-tests. Also, the way that LayoutTests run is already
+        a fantastic GC test.
+
+        * ForwardingHeaders/heap/DeleteAllCodeEffort.h: Added.
+        * ForwardingHeaders/heap/LockDuringMarking.h: Added.
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::deleteAllCode):
+        (WebCore::GCController::deleteAllLinkedCode):
+        * bindings/js/GCController.h:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMStructure):
+        (WebCore::cacheDOMStructure):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredPromise::DeferredPromise):
+        (WebCore::DeferredPromise::clear):
+        * bindings/js/JSXPathResultCustom.cpp:
+        (WebCore::JSXPathResult::visitAdditionalChildren):
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::clear):
+        (WebCore::EventListenerMap::replace):
+        (WebCore::EventListenerMap::add):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::EventListenerMap::find):
+        (WebCore::EventListenerMap::removeFirstEventListenerCreatedFromMarkup):
+        (WebCore::EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget):
+        (WebCore::EventListenerIterator::EventListenerIterator):
+        * dom/EventListenerMap.h:
+        (WebCore::EventListenerMap::lock):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::visitJSEventListeners):
+        * dom/EventTarget.h:
+        (WebCore::EventTarget::visitJSEventListeners): Deleted.
+        * dom/Node.cpp:
+        (WebCore::Node::eventTargetDataConcurrently):
+        (WebCore::Node::ensureEventTargetData):
+        (WebCore::Node::clearEventTargetData):
+        * dom/Node.h:
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::jettisonExpensiveObjectsOnTopLevelNavigation):
+        (WebCore::registerMemoryReleaseNotifyCallbacks):
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Add strict checking for right parens to selector functions like :matches, :not etc.

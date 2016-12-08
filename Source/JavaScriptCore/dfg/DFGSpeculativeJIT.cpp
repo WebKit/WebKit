@@ -7414,12 +7414,15 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
     if (useGCFences()) {
         for (ptrdiff_t offset = 0; offset < static_cast<ptrdiff_t>(size); offset += sizeof(void*))
             m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))));
-        
-        m_jit.mutatorFence();
     }
         
     addSlowPathGenerator(
         slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR1));
+
+    if (useGCFences()) {
+        m_jit.store32(TrustedImm32(0), JITCompiler::Address(baseGPR, JSCell::structureIDOffset()));
+        m_jit.mutatorFence();
+    }
 
     m_jit.storePtr(scratchGPR1, JITCompiler::Address(baseGPR, JSObject::butterflyOffset()));
     m_jit.mutatorFence();
@@ -7482,7 +7485,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
         m_jit.storePtr(scratchGPR2, JITCompiler::Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))));
     }
         
-    m_jit.storeButterfly(scratchGPR1, baseGPR);
+    m_jit.nukeStructureAndStoreButterfly(scratchGPR1, baseGPR);
 
     storageResult(scratchGPR1, node);
 }

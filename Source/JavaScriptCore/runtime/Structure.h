@@ -296,6 +296,35 @@ public:
         return static_cast<Structure*>(cell);
     }
     bool transitivelyTransitionedFrom(Structure* structureToFind);
+    
+    PropertyOffset lastOffset() const { return m_offset; }
+    
+    void setLastOffset(PropertyOffset offset) { m_offset = offset; }
+
+    static unsigned outOfLineCapacity(PropertyOffset lastOffset)
+    {
+        unsigned outOfLineSize = Structure::outOfLineSize(lastOffset);
+
+        // This algorithm completely determines the out-of-line property storage growth algorithm.
+        // The JSObject code will only trigger a resize if the value returned by this algorithm
+        // changed between the new and old structure. So, it's important to keep this simple because
+        // it's on a fast path.
+        
+        if (!outOfLineSize)
+            return 0;
+
+        if (outOfLineSize <= initialOutOfLineCapacity)
+            return initialOutOfLineCapacity;
+
+        ASSERT(outOfLineSize > initialOutOfLineCapacity);
+        COMPILE_ASSERT(outOfLineGrowthFactor == 2, outOfLineGrowthFactor_is_two);
+        return WTF::roundUpToPowerOfTwo(outOfLineSize);
+    }
+    
+    static unsigned outOfLineSize(PropertyOffset lastOffset)
+    {
+        return numberOfOutOfLineSlotsForLastOffset(lastOffset);
+    }
 
     unsigned outOfLineCapacity() const
     {
@@ -457,8 +486,7 @@ public:
         // https://bugs.webkit.org/show_bug.cgi?id=133625
         
         // - We don't watch Structures that either decided not to be watched, or whose predecessors
-        //   decided not to be watched. This happens either when a transition is fired while being
-        //   watched.
+        //   decided not to be watched. This happens when a transition is fired while being watched.
         if (transitionWatchpointIsLikelyToBeFired())
             return false;
 
@@ -607,6 +635,7 @@ public:
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 25);
     DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 26);
     DEFINE_BITFIELD(bool, hasBeenDictionary, HasBeenDictionary, 1, 27);
+    DEFINE_BITFIELD(bool, isAddingPropertyForTransition, IsAddingPropertyForTransition, 1, 28);
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -627,33 +656,6 @@ private:
     
     static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind, DeferredStructureTransitionWatchpointFire* = nullptr);
     
-    unsigned outOfLineCapacity(PropertyOffset lastOffset) const
-    {
-        unsigned outOfLineSize = this->outOfLineSize(lastOffset);
-
-        // This algorithm completely determines the out-of-line property storage growth algorithm.
-        // The JSObject code will only trigger a resize if the value returned by this algorithm
-        // changed between the new and old structure. So, it's important to keep this simple because
-        // it's on a fast path.
-        
-        if (!outOfLineSize)
-            return 0;
-
-        if (outOfLineSize <= initialOutOfLineCapacity)
-            return initialOutOfLineCapacity;
-
-        ASSERT(outOfLineSize > initialOutOfLineCapacity);
-        COMPILE_ASSERT(outOfLineGrowthFactor == 2, outOfLineGrowthFactor_is_two);
-        return WTF::roundUpToPowerOfTwo(outOfLineSize);
-    }
-    
-    unsigned outOfLineSize(PropertyOffset lastOffset) const
-    {
-        ASSERT(structure()->classInfo() == info());
-            
-        return numberOfOutOfLineSlotsForLastOffset(lastOffset);
-    }
-
     template<typename Func>
     PropertyOffset add(VM&, PropertyName, unsigned attributes, const Func&);
     PropertyOffset add(VM&, PropertyName, unsigned attributes);

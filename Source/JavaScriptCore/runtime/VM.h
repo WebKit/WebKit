@@ -32,6 +32,7 @@
 #include "ConcurrentJSLock.h"
 #include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
+#include "DeleteAllCodeEffort.h"
 #include "ExceptionEventLocation.h"
 #include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
@@ -476,12 +477,17 @@ public:
         return result;
     }
     
+    ALWAYS_INLINE Structure* getStructure(StructureID id)
+    {
+        return heap.structureIDTable().get(decontaminate(id));
+    }
+    
     void* stackPointerAtVMEntry() const { return m_stackPointerAtVMEntry; }
     void setStackPointerAtVMEntry(void*);
 
     size_t softReservedZoneSize() const { return m_currentSoftReservedZoneSize; }
     size_t updateSoftReservedZoneSize(size_t softReservedZoneSize);
-
+    
     static size_t committedStackByteCount();
     inline bool ensureStackCapacityFor(Register* newTopOfStack);
 
@@ -601,8 +607,8 @@ public:
 
     JS_EXPORT_PRIVATE void whenIdle(std::function<void()>);
 
-    JS_EXPORT_PRIVATE void deleteAllCode();
-    JS_EXPORT_PRIVATE void deleteAllLinkedCode();
+    JS_EXPORT_PRIVATE void deleteAllCode(DeleteAllCodeEffort);
+    JS_EXPORT_PRIVATE void deleteAllLinkedCode(DeleteAllCodeEffort);
 
     WatchpointSet* ensureWatchpointSetForImpureProperty(const Identifier&);
     void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);

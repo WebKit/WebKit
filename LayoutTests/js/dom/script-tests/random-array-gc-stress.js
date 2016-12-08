@@ -42,5 +42,4 @@ while (runs < 10) {
     test();
     runs += 1;
     global = [];
-    gc();
 }

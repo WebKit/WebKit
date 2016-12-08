@@ -334,16 +334,23 @@ static Inspector::Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOpe
 
 void InspectorHeapAgent::willGarbageCollect()
 {
-    ASSERT(m_enabled);
-    ASSERT(std::isnan(m_gcStartTime));
+    if (!m_enabled)
+        return;
 
     m_gcStartTime = m_environment.executionStopwatch()->elapsedTime();
 }
 
 void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 {
-    ASSERT(m_enabled);
-    ASSERT(!std::isnan(m_gcStartTime));
+    if (!m_enabled) {
+        m_gcStartTime = NAN;
+        return;
+    }
+
+    if (std::isnan(m_gcStartTime)) {
+        // We were not enabled when the GC began.
+        return;
+    }
 
     // FIXME: Include number of bytes freed by collection.
 

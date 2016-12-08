@@ -101,8 +101,9 @@ void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
     JSAPIWrapperObject* thisObject = JSC::jsCast<JSAPIWrapperObject*>(cell);
     Base::visitChildren(cell, visitor);
 
-    if (thisObject->wrappedObject())
-        scanExternalObjectGraph(cell->structure()->globalObject()->vm(), visitor, thisObject->wrappedObject());
+    void* wrappedObject = thisObject->wrappedObject();
+    if (wrappedObject)
+        scanExternalObjectGraph(visitor.vm(), visitor, wrappedObject);
 }
 
 } // namespace JSC

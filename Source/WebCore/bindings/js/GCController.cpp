@@ -116,16 +116,16 @@ void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
     JSDOMWindow::commonVM().heap.setGarbageCollectionTimerEnabled(enable);
 }
 
-void GCController::deleteAllCode()
+void GCController::deleteAllCode(DeleteAllCodeEffort effort)
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().deleteAllCode();
+    JSDOMWindow::commonVM().deleteAllCode(effort);
 }
 
-void GCController::deleteAllLinkedCode()
+void GCController::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
     JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().deleteAllLinkedCode();
+    JSDOMWindow::commonVM().deleteAllLinkedCode(effort);
 }
 
 } // namespace WebCore

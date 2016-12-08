@@ -66,8 +66,6 @@ bool clobbersExitState(Graph& graph, Node* node)
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
     case CountExecution:
-    case AllocatePropertyStorage:
-    case ReallocatePropertyStorage:
     case StoreBarrier:
     case FencedStoreBarrier:
         // These do clobber memory, but nothing that is observable. It may be nice to separate the

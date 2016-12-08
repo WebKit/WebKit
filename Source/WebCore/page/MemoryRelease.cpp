@@ -109,7 +109,7 @@ static void releaseCriticalMemory(Synchronous synchronous)
 
     {
         MemoryPressureHandler::ReliefLogger log("Discard all JIT-compiled code");
-        GCController::singleton().deleteAllCode();
+        GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
     }
 
 #if ENABLE(VIDEO)

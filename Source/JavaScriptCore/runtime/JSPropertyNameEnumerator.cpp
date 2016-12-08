@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include "JSPropertyNameEnumerator.h"
 
 #include "JSCInlines.h"
+#include "LockDuringMarking.h"
 #include "StrongInlines.h"
 
 namespace JSC {
@@ -70,7 +71,10 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, ui
     m_endStructurePropertyIndex = endStructurePropertyIndex;
     m_endGenericPropertyIndex = vector.size();
 
-    m_propertyNames.resizeToFit(vector.size());
+    {
+        auto locker = lockDuringMarking(vm.heap, *this);
+        m_propertyNames.resizeToFit(vector.size());
+    }
     for (unsigned i = 0; i < vector.size(); ++i) {
         const Identifier& identifier = vector[i];
         m_propertyNames[i].set(vm, this, jsString(&vm, identifier.string()));
@@ -86,6 +90,7 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
+    auto locker = holdLock(*thisObject);
     for (unsigned i = 0; i < thisObject->m_propertyNames.size(); ++i)
         visitor.append(&thisObject->m_propertyNames[i]);
     visitor.append(&thisObject->m_prototypeChain);

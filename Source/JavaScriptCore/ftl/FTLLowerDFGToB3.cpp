@@ -9491,7 +9491,7 @@ private:
                 m_out.int64Zero, m_heaps.properties.atAnyNumber());
         }
         
-        setButterfly(result, object);
+        nukeStructureAndSetButterfly(result, object);
         return result;
     }
     
@@ -9526,7 +9526,7 @@ private:
                 m_out.int64Zero, m_heaps.properties.atAnyNumber());
         }
         
-        setButterfly(result, object);
+        nukeStructureAndSetButterfly(result, object);
         
         return result;
     }
@@ -13048,7 +13048,7 @@ private:
     
     void mutatorFence()
     {
-        if (isX86() || !useGCFences()) {
+        if (isX86()) {
             m_out.fence(&m_heaps.root, nullptr);
             return;
         }
@@ -13070,9 +13070,14 @@ private:
         m_out.appendTo(continuation, lastNext);
     }
     
-    void setButterfly(LValue butterfly, LValue object)
+    void nukeStructureAndSetButterfly(LValue butterfly, LValue object)
     {
-        if (isX86() || !useGCFences()) {
+        if (isX86()) {
+            m_out.store32(
+                m_out.bitOr(
+                    m_out.load32(object, m_heaps.JSCell_structureID),
+                    m_out.constInt32(nukedStructureIDBit())),
+                object, m_heaps.JSCell_structureID);
             m_out.fence(&m_heaps.root, nullptr);
             m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
             m_out.fence(&m_heaps.root, nullptr);
@@ -13096,6 +13101,11 @@ private:
         
         m_out.appendTo(slowPath, continuation);
         
+        m_out.store32(
+            m_out.bitOr(
+                m_out.load32(object, m_heaps.JSCell_structureID),
+                m_out.constInt32(nukedStructureIDBit())),
+            object, m_heaps.JSCell_structureID);
         m_out.fence(&m_heaps.root, nullptr);
         m_out.storePtr(butterfly, object, m_heaps.JSObject_butterfly);
         m_out.fence(&m_heaps.root, nullptr);

@@ -1387,6 +1387,25 @@ public:
         done.link(this);
     }
     
+    void nukeStructureAndStoreButterfly(GPRReg butterfly, GPRReg object)
+    {
+        if (isX86() || !useGCFences()) {
+            or32(TrustedImm32(bitwise_cast<int32_t>(nukedStructureIDBit())), Address(object, JSCell::structureIDOffset()));
+            storePtr(butterfly, Address(object, JSObject::butterflyOffset()));
+            return;
+        }
+        
+        Jump ok = jumpIfMutatorFenceNotNeeded();
+        or32(TrustedImm32(bitwise_cast<int32_t>(nukedStructureIDBit())), Address(object, JSCell::structureIDOffset()));
+        storeFence();
+        storePtr(butterfly, Address(object, JSObject::butterflyOffset()));
+        storeFence();
+        Jump done = jump();
+        ok.link(this);
+        storePtr(butterfly, Address(object, JSObject::butterflyOffset()));
+        done.link(this);
+    }
+    
     Jump jumpIfMutatorFenceNotNeeded()
     {
         return branchTest8(Zero, AbsoluteAddress(vm()->heap.addressOfMutatorShouldBeFenced()));

@@ -159,6 +159,7 @@ void JSArrayBufferView::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
 
     if (thisObject->hasArrayBuffer()) {
+        WTF::loadLoadFence();
         ArrayBuffer* buffer = thisObject->possiblySharedBuffer();
         RELEASE_ASSERT(buffer);
         visitor.addOpaqueRoot(buffer);

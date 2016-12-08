@@ -1997,8 +1997,16 @@ static EventTargetDataMap& eventTargetDataMap()
     return map;
 }
 
+static StaticLock s_eventTargetDataMapLock;
+
 EventTargetData* Node::eventTargetData()
 {
+    return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
+}
+
+EventTargetData* Node::eventTargetDataConcurrently()
+{
+    auto locker = holdLock(s_eventTargetDataMapLock);
     return hasEventTargetData() ? eventTargetDataMap().get(this) : nullptr;
 }
 
@@ -2007,12 +2015,14 @@ EventTargetData& Node::ensureEventTargetData()
     if (hasEventTargetData())
         return *eventTargetDataMap().get(this);
 
+    auto locker = holdLock(s_eventTargetDataMapLock);
     setHasEventTargetData(true);
     return *eventTargetDataMap().add(this, std::make_unique<EventTargetData>()).iterator->value;
 }
 
 void Node::clearEventTargetData()
 {
+    auto locker = holdLock(s_eventTargetDataMapLock);
     eventTargetDataMap().remove(this);
 }
 

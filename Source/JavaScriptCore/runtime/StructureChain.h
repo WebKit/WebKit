@@ -69,11 +69,14 @@ protected:
         for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
             ++size;
 
-        m_vector = std::make_unique<WriteBarrier<Structure>[]>(size + 1);
+        std::unique_ptr<WriteBarrier<Structure>[]> vector = std::make_unique<WriteBarrier<Structure>[]>(size + 1);
 
         size_t i = 0;
         for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
-            m_vector[i++].set(vm, this, current);
+            vector[i++].set(vm, this, current);
+        
+        vm.heap.mutatorFence();
+        m_vector = WTFMove(vector);
     }
 
 private:

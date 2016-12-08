@@ -71,9 +71,10 @@ public:
 
     void visitChildren(SlotVisitor& visitor)
     {
-        if (!m_privateProperties)
+        JSPrivatePropertyMap* properties = m_privateProperties.get();
+        if (!properties)
             return;
-        m_privateProperties->visitChildren(visitor);
+        properties->visitChildren(visitor);
     }
 
     void* privateData;
@@ -91,17 +92,20 @@ public:
         
         void setPrivateProperty(VM& vm, JSCell* owner, const Identifier& propertyName, JSValue value)
         {
+            LockHolder locker(m_lock);
             WriteBarrier<Unknown> empty;
             m_propertyMap.add(propertyName.impl(), empty).iterator->value.set(vm, owner, value);
         }
         
         void deletePrivateProperty(const Identifier& propertyName)
         {
+            LockHolder locker(m_lock);
             m_propertyMap.remove(propertyName.impl());
         }
 
         void visitChildren(SlotVisitor& visitor)
         {
+            LockHolder locker(m_lock);
             for (PrivatePropertyMap::iterator ptr = m_propertyMap.begin(); ptr != m_propertyMap.end(); ++ptr) {
                 if (ptr->value)
                     visitor.append(&ptr->value);
@@ -111,6 +115,7 @@ public:
     private:
         typedef HashMap<RefPtr<UniquedStringImpl>, WriteBarrier<Unknown>, IdentifierRepHash> PrivatePropertyMap;
         PrivatePropertyMap m_propertyMap;
+        Lock m_lock;
     };
     std::unique_ptr<JSPrivatePropertyMap> m_privateProperties;
 };

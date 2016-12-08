@@ -85,6 +85,7 @@ public:
     bool isMarked(HeapVersion markingVersion, HeapCell*) const;
     
     void noteMarked();
+    void assertValidCell(VM&, HeapCell*) const;
     
     size_t cellSize() const;
     

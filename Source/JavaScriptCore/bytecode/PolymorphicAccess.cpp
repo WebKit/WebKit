@@ -1377,7 +1377,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // We set the new butterfly and the structure last. Doing it this way ensures that
             // whatever we had done up to this point is forgotten if we choose to branch to slow
             // path.
-            jit.storeButterfly(scratchGPR, baseGPR);
+            jit.nukeStructureAndStoreButterfly(scratchGPR, baseGPR);
         }
         
         uint32_t structureBits = bitwise_cast<uint32_t>(newStructure()->id());

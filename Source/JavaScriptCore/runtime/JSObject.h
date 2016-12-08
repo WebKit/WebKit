@@ -748,8 +748,14 @@ public:
     void reifyAllStaticProperties(ExecState*);
 
     JS_EXPORT_PRIVATE Butterfly* allocateMoreOutOfLineStorage(VM&, size_t oldSize, size_t newSize);
-        
-    void setButterfly(VM&, Butterfly*); // Always change the butterfly before changing the structure!
+
+    // Call this when you do not need to change the structure.
+    void setButterfly(VM&, Butterfly*);
+    
+    // Call this if you do need to change the structure, or if you changed something about a structure
+    // in-place.
+    void nukeStructureAndSetButterfly(VM&, StructureID, Butterfly*);
+    
     void setStructure(VM&, Structure*);
 
     JS_EXPORT_PRIVATE void convertToDictionary(VM&);
@@ -865,8 +871,13 @@ protected:
     // To instantiate objects you likely want JSFinalObject, below.
     // To create derived types you likely want JSNonFinalObject, below.
     JSObject(VM&, Structure*, Butterfly* = 0);
-        
-    void visitButterfly(SlotVisitor&, Butterfly*, Structure*);
+    
+    // Visits the butterfly unless there is a race. Returns the structure if there was no race.
+    Structure* visitButterfly(SlotVisitor&);
+    
+    Structure* visitButterflyImpl(SlotVisitor&);
+    
+    void markAuxiliaryAndVisitOutOfLineProperties(SlotVisitor&, Butterfly*, Structure*, PropertyOffset lastOffset);
 
     // Call this if you know that the object is in a mode where it has array
     // storage. This will assert otherwise.
@@ -1017,6 +1028,8 @@ private:
     ContiguousDoubles ensureDoubleSlow(VM&);
     ContiguousJSValues ensureContiguousSlow(VM&);
     JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageSlow(VM&);
+
+    PropertyOffset prepareToPutDirectWithoutTransition(VM&, PropertyName, unsigned attributes, StructureID, Structure*);
 
 protected:
     AuxiliaryBarrier<Butterfly*> m_butterfly;
@@ -1214,6 +1227,26 @@ inline void JSObject::setStructure(VM& vm, Structure* structure)
 
 inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly)
 {
+    if (isX86() || vm.heap.mutatorShouldBeFenced()) {
+        WTF::storeStoreFence();
+        m_butterfly.set(vm, this, butterfly);
+        WTF::storeStoreFence();
+        return;
+    }
+    
+    m_butterfly.set(vm, this, butterfly);
+}
+
+inline void JSObject::nukeStructureAndSetButterfly(VM& vm, StructureID oldStructureID, Butterfly* butterfly)
+{
+    if (isX86() || vm.heap.mutatorShouldBeFenced()) {
+        setStructureIDDirectly(nuke(oldStructureID));
+        WTF::storeStoreFence();
+        m_butterfly.set(vm, this, butterfly);
+        WTF::storeStoreFence();
+        return;
+    }
+    
     m_butterfly.set(vm, this, butterfly);
 }
 

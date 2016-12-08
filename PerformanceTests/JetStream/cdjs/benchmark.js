@@ -29,6 +29,7 @@ function benchmarkImpl(configuration) {
     var numFrames = configuration.numFrames;
     var expectedCollisions = configuration.expectedCollisions;
     var percentile = configuration.percentile;
+    var exclude = configuration.exclude;
 
     var simulator = new Simulator(numAircraft);
     var detector = new CollisionDetector();
@@ -47,9 +48,13 @@ function benchmarkImpl(configuration) {
             numCollisions: collisions.length
         };
         if (verbosity >= 2)
+            print("CDjs: " + result.time);
+        if (verbosity >= 3)
             result.collisions = collisions;
         results.push(result);
     }
+    
+    results.splice(0, exclude);
 
     if (verbosity >= 1) {
         for (var i = 0; i < results.length; ++i) {
@@ -85,17 +90,30 @@ function benchmark() {
         numAircraft: 1000,
         numFrames: 200,
         expectedCollisions: 14484,
-        percentile: 95
+        percentile: 95,
+        exclude: 0
+    });
+}
+
+function longBenchmark() {
+    return benchmarkImpl({
+        verbosity: 0,
+        numAircraft: 1000,
+        numFrames: 20000,
+        expectedCollisions: 697299,
+        percentile: 99.5,
+        exclude: 0
     });
 }
 
 function largeBenchmark() {
     return benchmarkImpl({
-        verbosity: 0,
+        verbosity: 1,
         numAircraft: 20000,
-        numFrames: 100,
-        expectedCollisions: 5827,
-        percentile: 95
+        numFrames: 110,
+        expectedCollisions: 7316,
+        percentile: 97,
+        exclude: 10
     });
 }
 

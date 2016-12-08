@@ -61,10 +61,6 @@ void CodeBlockSet::clearMarksForFullCollection()
     LockHolder locker(&m_lock);
     for (CodeBlock* codeBlock : m_oldCodeBlocks)
         codeBlock->clearVisitWeaklyHasBeenCalled();
-
-    // We promote after we clear marks on the old generation CodeBlocks because
-    // none of the young generations CodeBlocks need to be cleared.
-    promoteYoungCodeBlocks(locker);
 }
 
 void CodeBlockSet::lastChanceToFinalize()
@@ -80,17 +76,29 @@ void CodeBlockSet::lastChanceToFinalize()
 void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
 {
     LockHolder locker(&m_lock);
-    HashSet<CodeBlock*>& set = scope == CollectionScope::Eden ? m_newCodeBlocks : m_oldCodeBlocks;
     Vector<CodeBlock*> unmarked;
-    for (CodeBlock* codeBlock : set) {
-        if (Heap::isMarked(codeBlock))
-            continue;
-        unmarked.append(codeBlock);
-    }
+    
+    auto consider = [&] (HashSet<CodeBlock*>& set) {
+        for (CodeBlock* codeBlock : set) {
+            if (Heap::isMarked(codeBlock))
+                continue;;
+            unmarked.append(codeBlock);
+        }
+        for (CodeBlock* codeBlock : unmarked) {
+            codeBlock->classInfo()->methodTable.destroy(codeBlock);
+            set.remove(codeBlock);
+        }
+        unmarked.resize(0);
+    };
 
-    for (CodeBlock* codeBlock : unmarked) {
-        codeBlock->classInfo()->methodTable.destroy(codeBlock);
-        set.remove(codeBlock);
+    switch (scope) {
+    case CollectionScope::Eden:
+        consider(m_newCodeBlocks);
+        break;
+    case CollectionScope::Full:
+        consider(m_oldCodeBlocks);
+        consider(m_newCodeBlocks);
+        break;
     }
 
     // Any remaining young CodeBlocks are live and need to be promoted to the set of old CodeBlocks.

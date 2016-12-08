@@ -105,14 +105,14 @@ inline IndexingType JSCell::indexingType() const
     return indexingTypeAndMisc() & AllArrayTypes;
 }
 
-inline Structure* JSCell::structure() const
+ALWAYS_INLINE Structure* JSCell::structure() const
 {
-    return Heap::heap(this)->structureIDTable().get(m_structureID);
+    return structure(*vm());
 }
 
-inline Structure* JSCell::structure(VM& vm) const
+ALWAYS_INLINE Structure* JSCell::structure(VM& vm) const
 {
-    return vm.heap.structureIDTable().get(m_structureID);
+    return vm.getStructure(m_structureID);
 }
 
 inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -312,16 +312,28 @@ inline void JSCell::callDestructor(VM& vm)
     zap();
 }
 
-inline void JSCell::lockInternalLock()
+inline void JSCell::lock()
 {
     Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
     IndexingTypeLockAlgorithm::lock(*lock);
 }
 
-inline void JSCell::unlockInternalLock()
+inline bool JSCell::tryLock()
+{
+    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    return IndexingTypeLockAlgorithm::tryLock(*lock);
+}
+
+inline void JSCell::unlock()
 {
     Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
     IndexingTypeLockAlgorithm::unlock(*lock);
+}
+
+inline bool JSCell::isLocked() const
+{
+    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    return IndexingTypeLockAlgorithm::isLocked(*lock);
 }
 
 } // namespace JSC

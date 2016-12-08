@@ -43,5 +43,10 @@ void LockBase::unlockFairlySlow()
     DefaultLockAlgorithm::unlockSlow(m_byte, DefaultLockAlgorithm::Fair);
 }
 
+void LockBase::safepointSlow()
+{
+    DefaultLockAlgorithm::safepointSlow(m_byte);
+}
+
 } // namespace WTF
 

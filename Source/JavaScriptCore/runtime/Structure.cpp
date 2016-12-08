@@ -201,6 +201,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);
     setHasBeenDictionary(false);
+    setIsAddingPropertyForTransition(false);
  
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
@@ -232,6 +233,7 @@ Structure::Structure(VM& vm)
     setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);
     setHasBeenDictionary(false);
+    setIsAddingPropertyForTransition(false);
  
     TypeInfo typeInfo = TypeInfo(CellType, StructureFlags);
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
@@ -261,6 +263,7 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setDidTransition(true);
     setStaticPropertiesReified(previous->staticPropertiesReified());
     setHasBeenDictionary(previous->hasBeenDictionary());
+    setIsAddingPropertyForTransition(false);
  
     TypeInfo typeInfo = previous->typeInfo();
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), previous->indexingTypeIncludingHistory(), typeInfo);
@@ -318,6 +321,7 @@ void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
 PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable)
 {
     ASSERT(structure()->classInfo() == info());
+    ASSERT(!isAddingPropertyForTransition());
     
     DeferGC deferGC(vm.heap);
     
@@ -468,6 +472,21 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     Structure* transition = create(vm, structure, deferred);
 
     transition->m_cachedPrototypeChain.setMayBeNull(vm, transition, structure->m_cachedPrototypeChain.get());
+    
+    // While we are adding the property, rematerializing the property table is super weird: we already
+    // have a m_nameInPrevious and attributesInPrevious but the m_offset is still wrong. If the
+    // materialization algorithm runs, it'll build a property table that already has the property but
+    // at a bogus offset. Rather than try to teach the materialization code how to create a table under
+    // those conditions, we just tell the GC not to blow the table away during this period of time.
+    // Holding the lock ensures that we either do this before the GC starts scanning the structure, in
+    // which case the GC will not blow the table away, or we do it after the GC already ran in which
+    // case all is well.  If it wasn't for the lock, the GC would have TOCTOU: if could read
+    // isAddingPropertyForTransition before we set it to true, and then blow the table away after.
+    {
+        ConcurrentJSLocker locker(transition->m_lock);
+        transition->setIsAddingPropertyForTransition(true);
+    }
+    
     transition->m_nameInPrevious = propertyName.uid();
     transition->setAttributesInPrevious(attributes);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
@@ -475,6 +494,11 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     transition->m_inferredTypeTable.setMayBeNull(vm, transition, structure->m_inferredTypeTable.get());
 
     offset = transition->add(vm, propertyName, attributes);
+
+    // Now that everything is fine with the new structure's bookkeeping, the GC is free to blow the
+    // table away if it wants. We can now rebuild it fine.
+    WTF::storeStoreFence();
+    transition->setIsAddingPropertyForTransition(false);
 
     checkOffset(transition->m_offset, transition->inlineCapacity());
     {
@@ -720,6 +744,9 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     ASSERT(isDictionary());
     
     GCSafeConcurrentJSLocker locker(m_lock, vm.heap);
+    
+    object->setStructureIDDirectly(nuke(id()));
+    WTF::storeStoreFence();
 
     size_t beforeOutOfLineCapacity = this->outOfLineCapacity();
     if (isUncacheableDictionary()) {
@@ -765,6 +792,10 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
         else
             object->shiftButterflyAfterFlattening(locker, vm, this, afterOutOfLineCapacity);
     }
+    
+    vm.heap.writeBarrier(object);
+    WTF::storeStoreFence();
+    object->setStructureIDDirectly(id());
     
     return this;
 }
@@ -943,7 +974,11 @@ Vector<PropertyMapEntry> Structure::getPropertiesConcurrently()
 
 PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned attributes)
 {
-    return add(vm, propertyName, attributes, [] (const GCSafeConcurrentJSLocker&, PropertyOffset, unsigned) { });
+    return add(
+        vm, propertyName, attributes,
+        [this] (const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset newLastOffset) {
+            setLastOffset(newLastOffset);
+        });
 }
 
 PropertyOffset Structure::remove(PropertyName propertyName)
@@ -1034,7 +1069,7 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     }
     visitor.append(&thisObject->m_previousOrRareData);
 
-    if (thisObject->isPinnedPropertyTable()) {
+    if (thisObject->isPinnedPropertyTable() || thisObject->isAddingPropertyForTransition()) {
         // NOTE: This can interleave in pin(), in which case it may see a null property table.
         // That's fine, because then the barrier will fire and we will scan this again.
         visitor.append(&thisObject->m_propertyTableUnsafe);

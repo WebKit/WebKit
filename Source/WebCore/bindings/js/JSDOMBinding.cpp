@@ -418,13 +418,14 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 
 Structure* getCachedDOMStructure(JSDOMGlobalObject& globalObject, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = globalObject.structures();
+    JSDOMStructureMap& structures = globalObject.structures(NoLockingNecessary);
     return structures.get(classInfo).get();
 }
 
 Structure* cacheDOMStructure(JSDOMGlobalObject& globalObject, Structure* structure, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = globalObject.structures();
+    auto locker = lockDuringMarking(globalObject.vm().heap, globalObject.gcLock());
+    JSDOMStructureMap& structures = globalObject.structures(locker);
     ASSERT(!structures.contains(classInfo));
     return structures.set(classInfo, WriteBarrier<Structure>(globalObject.vm(), &globalObject, structure)).iterator->value.get();
 }

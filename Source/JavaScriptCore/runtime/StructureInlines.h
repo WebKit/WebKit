@@ -146,7 +146,7 @@ inline bool Structure::hasIndexingHeader(const JSCell* cell) const
     if (hasIndexedProperties(indexingType()))
         return true;
     
-    if (!isTypedView(m_classInfo->typedArrayStorageType))
+    if (!isTypedView(typedArrayTypeForType(m_blob.type())))
         return false;
     
     return jsCast<const JSArrayBufferView*>(cell)->mode() == WastefulTypedArray;
@@ -307,9 +307,9 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     PropertyOffset newLastOffset = m_offset;
     table->add(PropertyMapEntry(rep, newOffset, attributes), newLastOffset, PropertyTable::PropertyOffsetMayChange);
     
-    func(locker, newOffset, outOfLineCapacity(newLastOffset));
-    vm.heap.mutatorFence();
-    m_offset = newLastOffset;
+    func(locker, newOffset, newLastOffset);
+    
+    ASSERT(m_offset == newLastOffset);
 
     checkConsistency();
     return newOffset;

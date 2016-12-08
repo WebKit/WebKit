@@ -94,6 +94,7 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
         addSlowCase(Jump());
     JumpList slowCases;
     emitAllocateJSObject(resultReg, allocator, allocatorReg, TrustedImmPtr(structure), TrustedImmPtr(0), scratchReg, slowCases);
+    emitInitializeInlineStorage(resultReg, structure->inlineCapacity());
     addSlowCase(slowCases);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -752,6 +753,10 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
 
     JumpList slowCases;
     emitAllocateJSObject(resultReg, nullptr, allocatorReg, structureReg, TrustedImmPtr(0), scratchReg, slowCases);
+    emitGetVirtualRegister(callee, scratchReg);
+    loadPtr(Address(scratchReg, JSFunction::offsetOfRareData()), scratchReg);
+    load32(Address(scratchReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), scratchReg);
+    emitInitializeInlineStorage(resultReg, scratchReg);
     addSlowCase(slowCases);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }

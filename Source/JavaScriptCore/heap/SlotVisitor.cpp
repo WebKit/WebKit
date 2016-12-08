@@ -264,6 +264,7 @@ void SlotVisitor::noteLiveAuxiliaryCell(HeapCell* cell)
     
     CellContainer container = cell->cellContainer();
     
+    container.assertValidCell(vm(), cell);
     container.noteMarked();
     
     m_visitCount++;
@@ -328,7 +329,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     default:
         // FIXME: This could be so much better.
         // https://bugs.webkit.org/show_bug.cgi?id=162462
-        cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
+        cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
     }
     
@@ -370,11 +371,41 @@ void SlotVisitor::donateKnownParallel()
     donateKnownParallel(m_mutatorStack, *m_heap.m_sharedMutatorMarkStack);
 }
 
+void SlotVisitor::updateMutatorIsStopped(const AbstractLocker&)
+{
+    m_mutatorIsStopped = (m_heap.collectorBelievesThatTheWorldIsStopped() & m_canOptimizeForStoppedMutator);
+}
+
+void SlotVisitor::updateMutatorIsStopped()
+{
+    if (mutatorIsStoppedIsUpToDate())
+        return;
+    updateMutatorIsStopped(holdLock(m_rightToRun));
+}
+
+bool SlotVisitor::hasAcknowledgedThatTheMutatorIsResumed() const
+{
+    return !m_mutatorIsStopped;
+}
+
+bool SlotVisitor::mutatorIsStoppedIsUpToDate() const
+{
+    return m_mutatorIsStopped == (m_heap.collectorBelievesThatTheWorldIsStopped() & m_canOptimizeForStoppedMutator);
+}
+
+void SlotVisitor::optimizeForStoppedMutator()
+{
+    m_canOptimizeForStoppedMutator = true;
+}
+
 void SlotVisitor::drain(MonotonicTime timeout)
 {
     ASSERT(m_isInParallelMode);
-   
+    
+    auto locker = holdLock(m_rightToRun);
+    
     while ((!m_collectorStack.isEmpty() || !m_mutatorStack.isEmpty()) && !hasElapsed(timeout)) {
+        updateMutatorIsStopped(locker);
         if (!m_collectorStack.isEmpty()) {
             m_collectorStack.refill();
             m_isVisitingMutatorStack = false;
@@ -389,10 +420,24 @@ void SlotVisitor::drain(MonotonicTime timeout)
             for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_mutatorStack.canRemoveLast() && countdown--;)
                 visitChildren(m_mutatorStack.removeLast());
         }
+        m_rightToRun.safepoint();
         donateKnownParallel();
     }
     
     mergeOpaqueRootsIfNecessary();
+}
+
+bool SlotVisitor::didReachTermination()
+{
+    return !m_heap.m_numberOfActiveParallelMarkers
+        && m_heap.m_sharedCollectorMarkStack->isEmpty()
+        && m_heap.m_sharedMutatorMarkStack->isEmpty();
+}
+
+bool SlotVisitor::hasWork()
+{
+    return !m_heap.m_sharedCollectorMarkStack->isEmpty()
+        || !m_heap.m_sharedMutatorMarkStack->isEmpty();
 }
 
 SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode, MonotonicTime timeout)
@@ -402,39 +447,29 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
     ASSERT(Options::numberOfGCMarkers());
     
     {
-        std::lock_guard<Lock> lock(m_heap.m_markingMutex);
+        LockHolder locker(m_heap.m_markingMutex);
         m_heap.m_numberOfActiveParallelMarkers++;
     }
     while (true) {
         {
-            std::unique_lock<Lock> lock(m_heap.m_markingMutex);
+            LockHolder locker(m_heap.m_markingMutex);
             m_heap.m_numberOfActiveParallelMarkers--;
             m_heap.m_numberOfWaitingParallelMarkers++;
 
-            // How we wait differs depending on drain mode.
             if (sharedDrainMode == MasterDrain) {
-                // Wait until either termination is reached, or until there is some work
-                // for us to do.
                 while (true) {
                     if (hasElapsed(timeout))
                         return SharedDrainResult::TimedOut;
                     
-                    // Did we reach termination?
-                    if (!m_heap.m_numberOfActiveParallelMarkers
-                        && m_heap.m_sharedCollectorMarkStack->isEmpty()
-                        && m_heap.m_sharedMutatorMarkStack->isEmpty()) {
-                        // Let any sleeping slaves know it's time for them to return;
+                    if (didReachTermination()) {
                         m_heap.m_markingConditionVariable.notifyAll();
                         return SharedDrainResult::Done;
                     }
                     
-                    // Is there work to be done?
-                    if (!m_heap.m_sharedCollectorMarkStack->isEmpty()
-                        || !m_heap.m_sharedMutatorMarkStack->isEmpty())
+                    if (hasWork())
                         break;
                     
-                    // Otherwise wait.
-                    m_heap.m_markingConditionVariable.waitUntil(lock, timeout);
+                    m_heap.m_markingConditionVariable.waitUntil(m_heap.m_markingMutex, timeout);
                 }
             } else {
                 ASSERT(sharedDrainMode == SlaveDrain);
@@ -442,21 +477,16 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
                 if (hasElapsed(timeout))
                     return SharedDrainResult::TimedOut;
                 
-                // Did we detect termination? If so, let the master know.
-                if (!m_heap.m_numberOfActiveParallelMarkers
-                    && m_heap.m_sharedCollectorMarkStack->isEmpty()
-                    && m_heap.m_sharedMutatorMarkStack->isEmpty())
+                if (didReachTermination())
                     m_heap.m_markingConditionVariable.notifyAll();
 
                 m_heap.m_markingConditionVariable.waitUntil(
-                    lock, timeout,
+                    m_heap.m_markingMutex, timeout,
                     [this] {
-                        return !m_heap.m_sharedCollectorMarkStack->isEmpty()
-                            || !m_heap.m_sharedMutatorMarkStack->isEmpty()
+                        return hasWork()
                             || m_heap.m_parallelMarkersShouldExit;
                     });
                 
-                // Is the current phase done? If so, return from this function.
                 if (m_heap.m_parallelMarkersShouldExit)
                     return SharedDrainResult::Done;
             }
@@ -477,6 +507,32 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallel(MonotonicTime timeou
 {
     donateAndDrain(timeout);
     return drainFromShared(MasterDrain, timeout);
+}
+
+SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTime timeout)
+{
+    ASSERT(m_isInParallelMode);
+    
+    ASSERT(Options::numberOfGCMarkers());
+    
+    if (!m_heap.hasHeapAccess() || m_heap.collectorBelievesThatTheWorldIsStopped()) {
+        // This is an optimization over drainInParallel() when we have a concurrent mutator but
+        // otherwise it is not profitable.
+        return drainInParallel(timeout);
+    }
+    
+    LockHolder locker(m_heap.m_markingMutex);
+    for (;;) {
+        if (hasElapsed(timeout))
+            return SharedDrainResult::TimedOut;
+        
+        if (didReachTermination()) {
+            m_heap.m_markingConditionVariable.notifyAll();
+            return SharedDrainResult::Done;
+        }
+        
+        m_heap.m_markingConditionVariable.waitUntil(m_heap.m_markingMutex, timeout);
+    }
 }
 
 void SlotVisitor::addOpaqueRoot(void* root)
@@ -547,16 +603,25 @@ void SlotVisitor::mergeOpaqueRoots()
     m_opaqueRoots.clear();
 }
 
-void SlotVisitor::harvestWeakReferences()
+void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)
 {
-    for (WeakReferenceHarvester* current = m_heap.m_weakReferenceHarvesters.head(); current; current = current->next())
-        current->visitWeakReferences(*this);
+    m_heap.m_weakReferenceHarvesters.addThreadSafe(weakReferenceHarvester);
 }
 
-void SlotVisitor::finalizeUnconditionalFinalizers()
+void SlotVisitor::addUnconditionalFinalizer(UnconditionalFinalizer* unconditionalFinalizer)
 {
-    while (m_heap.m_unconditionalFinalizers.hasNext())
-        m_heap.m_unconditionalFinalizers.removeNext()->finalizeUnconditionally();
+    m_heap.m_unconditionalFinalizers.addThreadSafe(unconditionalFinalizer);
+}
+
+void SlotVisitor::didRace(const VisitRaceKey& race)
+{
+    if (Options::verboseVisitRace())
+        dataLog(toCString("GC visit race: ", race, "\n"));
+    
+    if (!ASSERT_DISABLED) {
+        auto locker = holdLock(heap()->m_visitRaceLock);
+        heap()->m_visitRaces.add(race);
+    }
 }
 
 void SlotVisitor::dump(PrintStream& out) const

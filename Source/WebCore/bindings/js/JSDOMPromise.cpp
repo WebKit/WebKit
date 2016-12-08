@@ -43,8 +43,9 @@ DeferredPromise::DeferredPromise(JSDOMGlobalObject& globalObject, JSPromiseDefer
     , m_deferred(&promiseDeferred)
     , m_globalObject(&globalObject)
 {
+    auto locker = lockDuringMarking(globalObject.vm().heap, globalObject.gcLock());
     globalObject.vm().heap.writeBarrier(&globalObject, &promiseDeferred);
-    globalObject.deferredPromises().add(this);
+    globalObject.deferredPromises(locker).add(this);
 }
 
 DeferredPromise::~DeferredPromise()
@@ -55,8 +56,10 @@ DeferredPromise::~DeferredPromise()
 void DeferredPromise::clear()
 {
     ASSERT(!m_deferred || m_globalObject);
-    if (m_deferred && m_globalObject)
-        m_globalObject->deferredPromises().remove(this);
+    if (m_deferred && m_globalObject) {
+        auto locker = lockDuringMarking(m_globalObject->vm().heap, m_globalObject->gcLock());
+        m_globalObject->deferredPromises(locker).remove(this);
+    }
     m_deferred.clear();
 }
 

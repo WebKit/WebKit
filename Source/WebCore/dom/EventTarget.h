@@ -123,6 +123,7 @@ protected:
     virtual ~EventTarget() = default;
     
     virtual EventTargetData* eventTargetData() = 0;
+    virtual EventTargetData* eventTargetDataConcurrently() = 0;
     virtual EventTargetData& ensureEventTargetData() = 0;
     const EventTargetData* eventTargetData() const;
 
@@ -138,6 +139,7 @@ private:
 class EventTargetWithInlineData : public EventTarget {
 protected:
     EventTargetData* eventTargetData() final { return &m_eventTargetData; }
+    EventTargetData* eventTargetDataConcurrently() final { return &m_eventTargetData; }
     EventTargetData& ensureEventTargetData() final { return m_eventTargetData; }
 private:
     EventTargetData m_eventTargetData;
@@ -146,13 +148,6 @@ private:
 inline const EventTargetData* EventTarget::eventTargetData() const
 {
     return const_cast<EventTarget*>(this)->eventTargetData();
-}
-
-inline void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
-{
-    EventListenerIterator iterator { this };
-    while (auto* listener = iterator.nextListener())
-        listener->visitJSFunction(visitor);
 }
 
 inline bool EventTarget::isFiringEventListeners() const

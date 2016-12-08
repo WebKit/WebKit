@@ -117,7 +117,7 @@ $hostOS = nil
 $filter = nil
 $envVars = []
 $quickMode = false
-$buildType = "release"
+$buildType = :release
 
 
 def usage
@@ -226,9 +226,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--quick'
         $quickMode = true
     when '--debug'
-        $buildType = "debug"
+        $buildType = :debug
     when '--release'
-        $buildType = "release"
+        $buildType = :release
     end
 }
 
@@ -252,7 +252,7 @@ end
 unless jscArg
     # If we're not provided a JSC path, try to come up with a sensible JSC path automagically.
     command = SCRIPTS_PATH.join("webkit-build-directory").to_s
-    command += ($buildType == "release") ? " --release" : " --debug"
+    command += ($buildType == :release) ? " --release" : " --debug"
     command += " --executablePath"
 
     output = `#{command}`.split("\n")
@@ -424,6 +424,12 @@ BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--maxPer
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true"]
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
+
+def shouldCollectContinuously?
+    $buildType == :release
+end
+
+COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false"] : []
 
 $runlist = []
 
@@ -826,6 +832,10 @@ def runNoCJITValidatePhases(*optionalTestSpecificOptions)
     run("no-cjit-validate-phases", "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--useSourceProviderCache=false", *(NO_CJIT_OPTIONS + optionalTestSpecificOptions))
 end
 
+def runNoCJITCollectContinuously(*optionalTestSpecificOptions)
+    run("no-cjit-collect-continuously", *(NO_CJIT_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
 def runDefault(*optionalTestSpecificOptions)
     run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
@@ -851,23 +861,23 @@ def runFTLNoCJITOSRValidation(*optionalTestSpecificOptions)
 end
 
 def runDFGEager(*optionalTestSpecificOptions)
-    run("dfg-eager", *(EAGER_OPTIONS + optionalTestSpecificOptions))
+    run("dfg-eager", *(EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runDFGEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+    run("dfg-eager-no-cjit-validate", "--validateGraph=true", *(NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEager(*optionalTestSpecificOptions)
-    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager-no-cjit", "--validateGraph=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLEagerNoCJITOSRValidation(*optionalTestSpecificOptions)
-    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-eager-no-cjit-osr-validation", "--validateFTLOSRExitLiveness=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runNoCJITNoASO(*optionalTestSpecificOptions)
@@ -906,6 +916,7 @@ def defaultRun
         if $jitTests
             runNoLLInt
             runNoCJITValidatePhases
+            runNoCJITCollectContinuously if shouldCollectContinuously?
             runDFGEager
             runDFGEagerNoCJITValidate
             runDFGMaximalFlushPhase
@@ -930,6 +941,7 @@ def defaultNoNoLLIntRun
         runDefault
         if $jitTests
             runNoCJITValidatePhases
+            runNoCJITCollectContinuously if shouldCollectContinuously?
             runDFGEager
             runDFGEagerNoCJITValidate
             runDFGMaximalFlushPhase
@@ -982,6 +994,7 @@ def defaultNoEagerRun
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
+        runNoCJITCollectContinuously if shouldCollectContinuously?
 
         return if !$isFTLPlatform
 
@@ -996,6 +1009,7 @@ def defaultNoSamplingProfilerRun
     if $jitTests
         runNoLLInt
         runNoCJITValidatePhases
+        runNoCJITCollectContinuously if shouldCollectContinuously?
         runDFGEager
         runDFGEagerNoCJITValidate
         runDFGMaximalFlushPhase

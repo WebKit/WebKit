@@ -454,7 +454,7 @@ Watchdog& VM::ensureWatchdog()
         // And if we've previously compiled any functions, we need to revert
         // them because they don't have the needed polling checks for the watchdog
         // yet.
-        deleteAllCode();
+        deleteAllCode(PreventCollectionAndDeleteAllCode);
     }
     return *m_watchdog;
 }
@@ -561,20 +561,20 @@ void VM::whenIdle(std::function<void()> callback)
     entryScope->addDidPopListener(callback);
 }
 
-void VM::deleteAllLinkedCode()
+void VM::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
-    whenIdle([this]() {
-        heap.deleteAllCodeBlocks();
+    whenIdle([=] () {
+        heap.deleteAllCodeBlocks(effort);
     });
 }
 
-void VM::deleteAllCode()
+void VM::deleteAllCode(DeleteAllCodeEffort effort)
 {
-    whenIdle([this]() {
+    whenIdle([=] () {
         m_codeCache->clear();
         m_regExpCache->deleteAllCode();
-        heap.deleteAllCodeBlocks();
-        heap.deleteAllUnlinkedCodeBlocks();
+        heap.deleteAllCodeBlocks(effort);
+        heap.deleteAllUnlinkedCodeBlocks(effort);
         heap.reportAbandonedObjectGraph();
     });
 }

@@ -274,4 +274,16 @@ void EventTarget::removeAllEventListeners()
     data->eventListenerMap.clear();
 }
 
+void EventTarget::visitJSEventListeners(JSC::SlotVisitor& visitor)
+{
+    EventTargetData* data = eventTargetDataConcurrently();
+    if (!data)
+        return;
+    
+    auto locker = holdLock(data->eventListenerMap.lock());
+    EventListenerIterator iterator(&data->eventListenerMap);
+    while (auto* listener = iterator.nextListener())
+        listener->visitJSFunction(visitor);
+}
+
 } // namespace WebCore

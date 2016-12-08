@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "PropertyName.h"
 #include "PutByIdFlags.h"
 #include "Watchpoint.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
 
@@ -253,8 +254,7 @@ private:
         void finalizeUnconditionally() override;
     };
 
-    class InferredStructure {
-        WTF_MAKE_FAST_ALLOCATED;
+    class InferredStructure : public ThreadSafeRefCounted<InferredStructure> {
     public:
         InferredStructure(VM&, InferredType* parent, Structure*);
 
@@ -272,7 +272,7 @@ private:
         InferredStructureFinalizer m_finalizer;
     };
 
-    std::unique_ptr<InferredStructure> m_structure;
+    RefPtr<InferredStructure> m_structure;
 
     // NOTE: If this is being watched, we transform to Top because that implies that it wouldn't be
     // profitable to watch it again. Also, this set is initialized clear, and is never exposed to the DFG

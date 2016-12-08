@@ -1,3 +1,231 @@
+2016-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Concurrent GC should be stable enough to land enabled on X86_64
+        https://bugs.webkit.org/show_bug.cgi?id=164990
+
+        Reviewed by Geoffrey Garen.
+        
+        This fixes a ton of performance and correctness bugs revealed by getting the concurrent GC to
+        be stable enough to land enabled.
+        
+        I had to redo the JSObject::visitChildren concurrency protocol again. This time I think it's
+        even more correct than ever!
+        
+        This is an enormous win on JetStream/splay-latency and Octane/SplayLatency. It looks to be
+        mostly neutral on everything else, though Speedometer is showing statistically weak signs of a
+        slight regression.
+
+        * API/JSAPIWrapperObject.mm: Added locking.
+        (JSC::JSAPIWrapperObject::visitChildren):
+        * API/JSCallbackObject.h: Added locking.
+        (JSC::JSCallbackObjectData::visitChildren):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::setPrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::deletePrivateProperty):
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::UnconditionalFinalizer::finalizeUnconditionally): This had a TOCTOU race on shouldJettisonDueToOldAge.
+        (JSC::EvalCodeCache::visitAggregate): Moved to EvalCodeCache.cpp.
+        * bytecode/DirectEvalCodeCache.cpp: Added. Outlined some functions and made them use locks.
+        (JSC::DirectEvalCodeCache::setSlow):
+        (JSC::DirectEvalCodeCache::clear):
+        (JSC::DirectEvalCodeCache::visitAggregate):
+        * bytecode/DirectEvalCodeCache.h:
+        (JSC::DirectEvalCodeCache::set):
+        (JSC::DirectEvalCodeCache::clear): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp: Added locking.
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        (JSC::UnlinkedCodeBlock::setInstructions):
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        * bytecode/UnlinkedCodeBlock.h: Added locking.
+        (JSC::UnlinkedCodeBlock::addRegExp):
+        (JSC::UnlinkedCodeBlock::addConstant):
+        (JSC::UnlinkedCodeBlock::addFunctionDecl):
+        (JSC::UnlinkedCodeBlock::addFunctionExpr):
+        (JSC::UnlinkedCodeBlock::createRareDataIfNecessary):
+        (JSC::UnlinkedCodeBlock::shrinkToFit): Deleted.
+        * debugger/Debugger.cpp: Use the right delete API.
+        (JSC::Debugger::recompileAllJSFunctions):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Fix a pre-existing bug in ToFunction constant folding.
+        * dfg/DFGClobberize.h: Add support for nuking.
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp: Add support for nuking.
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGFixupPhase.cpp: Add support for nuking.
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::indexForChecks):
+        (JSC::DFG::FixupPhase::originForCheck):
+        (JSC::DFG::FixupPhase::speculateForBarrier):
+        (JSC::DFG::FixupPhase::insertCheck):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        * dfg/DFGSpeculativeJIT.cpp: Add support for nuking.
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * ftl/FTLLowerDFGToB3.cpp: Add support for nuking.
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::mutatorFence):
+        (JSC::FTL::DFG::LowerDFGToB3::nukeStructureAndSetButterfly):
+        (JSC::FTL::DFG::LowerDFGToB3::setButterfly): Deleted.
+        * heap/CodeBlockSet.cpp: We need to be more careful about the CodeBlockSet workflow during GC, since we will allocate CodeBlocks in eden while collecting.
+        (JSC::CodeBlockSet::clearMarksForFullCollection):
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        * heap/Heap.cpp: Added code to measure max pauses. Added a better collectContinuously mode.
+        (JSC::Heap::lastChanceToFinalize): Stop the collectContinuously thread.
+        (JSC::Heap::harvestWeakReferences): Inline SlotVisitor::harvestWeakReferences.
+        (JSC::Heap::finalizeUnconditionalFinalizers): Inline SlotVisitor::finalizeUnconditionalReferences.
+        (JSC::Heap::markToFixpoint): We need to do some MarkedSpace stuff before every conservative scan, rather than just at the start of marking, so we now call prepareForConservativeScan() before each conservative scan. Also call a less-parallel version of drainInParallel when the mutator is running.
+        (JSC::Heap::collectInThread): Inline Heap::prepareForAllocation().
+        (JSC::Heap::stopIfNecessarySlow): We need to be more careful about ensuring that we run finalization before and after stopping. Also, we should sanitize stack when stopping the world.
+        (JSC::Heap::acquireAccessSlow): Add some optional debug prints.
+        (JSC::Heap::handleNeedFinalize): Assert that we are running this when the world is not stopped.
+        (JSC::Heap::finalize): Remove the old collectContinuously code.
+        (JSC::Heap::requestCollection): We don't need to sanitize stack here anymore.
+        (JSC::Heap::notifyIsSafeToCollect): Start the collectContinuously thread. It will request collection 1 KHz.
+        (JSC::Heap::prepareForAllocation): Deleted.
+        (JSC::Heap::preventCollection): Prevent any new concurrent GCs from being initiated.
+        (JSC::Heap::allowCollection):
+        (JSC::Heap::forEachSlotVisitor): Allows us to safely iterate slot visitors.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrier): If the 'to' cell is not NewWhite then it could be AnthraciteOrBlack. During a full collection, objects may be AnthraciteOrBlack from a previous GC. Turns out, we don't benefit from this optimization so we can just kill it.
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::buildSnapshot): This needs to use PreventCollectionScope to ensure snapshot soundness.
+        * heap/ListableHandler.h:
+        (JSC::ListableHandler::isOnList): Useful helper.
+        * heap/LockDuringMarking.h:
+        (JSC::lockDuringMarking): It's a locker that only locks while we're marking.
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::addBlock): Hold the bitvector lock while resizing.
+        * heap/MarkedBlock.cpp: Hold the bitvector lock while accessing the bitvectors while the mutator is running.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::prepareForConservativeScan): We used to do this in prepareForMarking, but we need to do it before each conservative scan not just before marking.
+        (JSC::MarkedSpace::prepareForMarking): Remove the logic moved to prepareForConservativeScan.
+        * heap/MarkedSpace.h:
+        * heap/PreventCollectionScope.h: Added.
+        * heap/SlotVisitor.cpp: Refactored drainFromShared so that we can write a similar function called drainInParallelPassively.
+        (JSC::SlotVisitor::updateMutatorIsStopped): Update whether we can use "fast" scanning.
+        (JSC::SlotVisitor::mutatorIsStoppedIsUpToDate):
+        (JSC::SlotVisitor::didReachTermination):
+        (JSC::SlotVisitor::hasWork):
+        (JSC::SlotVisitor::drain): This now uses the rightToRun lock to allow the main GC thread to safepoint the workers.
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively): This runs marking with one fewer threads than normal. It's useful for when we have resumed the mutator, since then the mutator has a better chance of getting on a core.
+        (JSC::SlotVisitor::addWeakReferenceHarvester):
+        (JSC::SlotVisitor::addUnconditionalFinalizer):
+        (JSC::SlotVisitor::harvestWeakReferences): Deleted.
+        (JSC::SlotVisitor::finalizeUnconditionalFinalizers): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h: Outline stuff.
+        (JSC::SlotVisitor::addWeakReferenceHarvester): Deleted.
+        (JSC::SlotVisitor::addUnconditionalFinalizer): Deleted.
+        * runtime/InferredType.cpp: This needed thread safety.
+        (JSC::InferredType::visitChildren): This needs to keep its structure finalizer alive until it runs.
+        (JSC::InferredType::set):
+        (JSC::InferredType::InferredStructureFinalizer::finalizeUnconditionally):
+        * runtime/InferredType.h:
+        * runtime/InferredValue.cpp: This needed thread safety.
+        (JSC::InferredValue::visitChildren):
+        (JSC::InferredValue::ValueCleanup::finalizeUnconditionally):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase): Update to use new butterfly API.
+        (JSC::JSArray::unshiftCountWithArrayStorage): Update to use new butterfly API.
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::visitChildren): Thread safety.
+        * runtime/JSCell.h:
+        (JSC::JSCell::setStructureIDDirectly): This is used for nuking the structure.
+        (JSC::JSCell::InternalLocker::InternalLocker): Deleted. The cell is now the lock.
+        (JSC::JSCell::InternalLocker::~InternalLocker): Deleted. The cell is now the lock.
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::structure): Clean this up.
+        (JSC::JSCell::lock): The cell is now the lock.
+        (JSC::JSCell::tryLock):
+        (JSC::JSCell::unlock):
+        (JSC::JSCell::isLocked):
+        (JSC::JSCell::lockInternalLock): Deleted.
+        (JSC::JSCell::unlockInternalLock): Deleted.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildren): Thread safety.
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren): Thread safety.
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory): Thread safety.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markAuxiliaryAndVisitOutOfLineProperties): Factor out this "easy" step of butterfly visiting.
+        (JSC::JSObject::visitButterfly): Make this achieve 100% precision about structure-butterfly relationships. This relies on the mutator "nuking" the structure prior to "locked" structure-butterfly transitions.
+        (JSC::JSObject::visitChildren): Use the new, nicer API.
+        (JSC::JSFinalObject::visitChildren): Use the new, nicer API.
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists): Use the new butterfly API.
+        (JSC::JSObject::createInitialUndecided): Use the new butterfly API.
+        (JSC::JSObject::createInitialInt32): Use the new butterfly API.
+        (JSC::JSObject::createInitialDouble): Use the new butterfly API.
+        (JSC::JSObject::createInitialContiguous): Use the new butterfly API.
+        (JSC::JSObject::createArrayStorage): Use the new butterfly API.
+        (JSC::JSObject::convertUndecidedToContiguous): Use the new butterfly API.
+        (JSC::JSObject::convertUndecidedToArrayStorage): Use the new butterfly API.
+        (JSC::JSObject::convertInt32ToArrayStorage): Use the new butterfly API.
+        (JSC::JSObject::convertDoubleToContiguous): Use the new butterfly API.
+        (JSC::JSObject::convertDoubleToArrayStorage): Use the new butterfly API.
+        (JSC::JSObject::convertContiguousToArrayStorage): Use the new butterfly API.
+        (JSC::JSObject::increaseVectorLength): Use the new butterfly API.
+        (JSC::JSObject::shiftButterflyAfterFlattening): Use the new butterfly API.
+        * runtime/JSObject.h:
+        (JSC::JSObject::setButterfly): This now does all of the fences. Only use this when you are not also transitioning the structure or the structure's lastOffset.
+        (JSC::JSObject::nukeStructureAndSetButterfly): Use this when doing locked structure-butterfly transitions.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectWithoutTransition): Use the newly factored out API.
+        (JSC::JSObject::prepareToPutDirectWithoutTransition): Factor this out!
+        (JSC::JSObject::putDirectInternal): Use the newly factored out API.
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::finishCreation): Locks!
+        (JSC::JSPropertyNameEnumerator::visitChildren): Locks!
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildren): Locks!
+        * runtime/JSString.cpp:
+        (JSC::JSString::visitChildren): Thread safety.
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildren): Thread safety.
+        * runtime/Options.cpp: For now we disable concurrent GC on not-X86_64.
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h: Change the default max GC parallelism to 8. I don't know why it was still 7.
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::stackTracesAsJSON): This needs to defer GC before grabbing its lock.
+        * runtime/SparseArrayValueMap.cpp: This needed thread safety.
+        (JSC::SparseArrayValueMap::add):
+        (JSC::SparseArrayValueMap::remove):
+        (JSC::SparseArrayValueMap::visitChildren):
+        * runtime/SparseArrayValueMap.h:
+        * runtime/Structure.cpp: This had a race between addNewPropertyTransition and visitChildren.
+        (JSC::Structure::Structure):
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::add): Help out with nuking support - the m_offset needs to play along.
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h: Make some useful things public - like the notion of a lastOffset.
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren): Thread safety!
+        * runtime/StructureChain.h: Thread safety!
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::allocateID): Ensure that we don't get nuked IDs.
+        * runtime/StructureIDTable.h: Add the notion of a nuked ID! It's a bit that the runtime never sees except during specific shady actions like locked structure-butterfly transitions. "Nuking" tells the GC to steer clear and rescan once we fire the barrier.
+        (JSC::nukedStructureIDBit):
+        (JSC::nuke):
+        (JSC::isNuked):
+        (JSC::decontaminate):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::hasIndexingHeader): Better API.
+        (JSC::Structure::add):
+        * runtime/VM.cpp: Better GC interaction.
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::deleteAllLinkedCode):
+        (JSC::VM::deleteAllCode):
+        * runtime/VM.h:
+        (JSC::VM::getStructure): Why wasn't this always an API!
+        * runtime/WebAssemblyExecutable.cpp:
+        (JSC::WebAssemblyExecutable::visitChildren): Thread safety.
+
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         Enable SharedArrayBuffer, remove the flag

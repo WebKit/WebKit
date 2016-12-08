@@ -34,6 +34,7 @@
 #include "Identifier.h"
 #include "JSCell.h"
 #include "JSString.h"
+#include "LockDuringMarking.h"
 #include "ParserModes.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
@@ -153,8 +154,10 @@ public:
     unsigned addRegExp(RegExp* r)
     {
         createRareDataIfNecessary();
+        VM& vm = *this->vm();
+        auto locker = lockDuringMarking(vm.heap, *this);
         unsigned size = m_rareData->m_regexps.size();
-        m_rareData->m_regexps.append(WriteBarrier<RegExp>(*vm(), this, r));
+        m_rareData->m_regexps.append(WriteBarrier<RegExp>(vm, this, r));
         return size;
     }
     unsigned numberOfRegExps() const
@@ -182,14 +185,18 @@ public:
 
     unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
     {
+        VM& vm = *this->vm();
+        auto locker = lockDuringMarking(vm.heap, *this);
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantRegisters.last().set(*vm(), this, v);
+        m_constantRegisters.last().set(vm, this, v);
         m_constantsSourceCodeRepresentation.append(sourceCodeRepresentation);
         return result;
     }
     unsigned addConstant(LinkTimeConstant type)
     {
+        VM& vm = *this->vm();
+        auto locker = lockDuringMarking(vm.heap, *this);
         unsigned result = m_constantRegisters.size();
         ASSERT(result);
         unsigned index = static_cast<unsigned>(type);
@@ -225,27 +232,7 @@ public:
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
     JSParserScriptMode scriptMode() const { return static_cast<JSParserScriptMode>(m_scriptMode); }
 
-    void shrinkToFit()
-    {
-        m_jumpTargets.shrinkToFit();
-        m_identifiers.shrinkToFit();
-        m_bitVectors.shrinkToFit();
-        m_constantRegisters.shrinkToFit();
-        m_constantsSourceCodeRepresentation.shrinkToFit();
-        m_functionDecls.shrinkToFit();
-        m_functionExprs.shrinkToFit();
-        m_propertyAccessInstructions.shrinkToFit();
-        m_expressionInfo.shrinkToFit();
-
-        if (m_rareData) {
-            m_rareData->m_exceptionHandlers.shrinkToFit();
-            m_rareData->m_regexps.shrinkToFit();
-            m_rareData->m_constantBuffers.shrinkToFit();
-            m_rareData->m_switchJumpTables.shrinkToFit();
-            m_rareData->m_stringSwitchJumpTables.shrinkToFit();
-            m_rareData->m_expressionInfoFatPositions.shrinkToFit();
-        }
-    }
+    void shrinkToFit();
 
     void setInstructions(std::unique_ptr<UnlinkedInstructionStream>);
     const UnlinkedInstructionStream& instructions() const;
@@ -268,18 +255,22 @@ public:
 
     unsigned addFunctionDecl(UnlinkedFunctionExecutable* n)
     {
+        VM& vm = *this->vm();
+        auto locker = lockDuringMarking(vm.heap, *this);
         unsigned size = m_functionDecls.size();
         m_functionDecls.append(WriteBarrier<UnlinkedFunctionExecutable>());
-        m_functionDecls.last().set(*vm(), this, n);
+        m_functionDecls.last().set(vm, this, n);
         return size;
     }
     UnlinkedFunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
     size_t numberOfFunctionDecls() { return m_functionDecls.size(); }
     unsigned addFunctionExpr(UnlinkedFunctionExecutable* n)
     {
+        VM& vm = *this->vm();
+        auto locker = lockDuringMarking(vm.heap, *this);
         unsigned size = m_functionExprs.size();
         m_functionExprs.append(WriteBarrier<UnlinkedFunctionExecutable>());
-        m_functionExprs.last().set(*vm(), this, n);
+        m_functionExprs.last().set(vm, this, n);
         return size;
     }
     UnlinkedFunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
@@ -404,8 +395,10 @@ private:
 
     void createRareDataIfNecessary()
     {
-        if (!m_rareData)
+        if (!m_rareData) {
+            auto locker = lockDuringMarking(*heap(), *this);
             m_rareData = std::make_unique<RareData>();
+        }
     }
 
     void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;

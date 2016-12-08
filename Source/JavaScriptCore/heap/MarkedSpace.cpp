@@ -393,21 +393,26 @@ void MarkedSpace::stopAllocating()
         });
 }
 
+void MarkedSpace::prepareForConservativeScan()
+{
+    m_largeAllocationsForThisCollectionBegin = m_largeAllocations.begin() + m_largeAllocationsOffsetForThisCollection;
+    m_largeAllocationsForThisCollectionSize = m_largeAllocations.size() - m_largeAllocationsOffsetForThisCollection;
+    m_largeAllocationsForThisCollectionEnd = m_largeAllocations.end();
+    RELEASE_ASSERT(m_largeAllocationsForThisCollectionEnd == m_largeAllocationsForThisCollectionBegin + m_largeAllocationsForThisCollectionSize);
+    
+    std::sort(
+        m_largeAllocationsForThisCollectionBegin, m_largeAllocationsForThisCollectionEnd,
+        [&] (LargeAllocation* a, LargeAllocation* b) {
+            return a < b;
+        });
+}
+
 void MarkedSpace::prepareForMarking()
 {
     if (m_heap->collectionScope() == CollectionScope::Eden)
         m_largeAllocationsOffsetForThisCollection = m_largeAllocationsNurseryOffset;
     else
         m_largeAllocationsOffsetForThisCollection = 0;
-    m_largeAllocationsForThisCollectionBegin = m_largeAllocations.begin() + m_largeAllocationsOffsetForThisCollection;
-    m_largeAllocationsForThisCollectionSize = m_largeAllocations.size() - m_largeAllocationsOffsetForThisCollection;
-    m_largeAllocationsForThisCollectionEnd = m_largeAllocations.end();
-    RELEASE_ASSERT(m_largeAllocationsForThisCollectionEnd == m_largeAllocationsForThisCollectionBegin + m_largeAllocationsForThisCollectionSize);
-    std::sort(
-        m_largeAllocationsForThisCollectionBegin, m_largeAllocationsForThisCollectionEnd,
-        [&] (LargeAllocation* a, LargeAllocation* b) {
-            return a < b;
-        });
 }
 
 void MarkedSpace::resumeAllocating()

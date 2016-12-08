@@ -71,7 +71,7 @@ void jettisonExpensiveObjectsOnTopLevelNavigation()
 
     // Throw away linked JS code. Linked code is tied to a global object and is not reusable.
     // The immediate memory savings outweigh the cost of recompilation in case we go back again.
-    GCController::singleton().deleteAllLinkedCode();
+    GCController::singleton().deleteAllLinkedCode(JSC::DeleteAllCodeIfNotCollecting);
 #endif
 }
 
@@ -84,7 +84,7 @@ void registerMemoryReleaseNotifyCallbacks()
             GCController::singleton().garbageCollectNow();
         });
         notify_register_dispatch("com.apple.WebKit.deleteAllCode", &dummy, dispatch_get_main_queue(), ^(int) {
-            GCController::singleton().deleteAllCode();
+            GCController::singleton().deleteAllCode(JSC::PreventCollectionAndDeleteAllCode);
             GCController::singleton().garbageCollectNow();
         });
     });

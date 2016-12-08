@@ -171,13 +171,13 @@ public:
     
     static size_t blockSizeForBytes(size_t);
     
+    Lock& bitvectorLock() { return m_bitvectorLock; }
+   
 #define MARKED_ALLOCATOR_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
-    bool is ## capitalBitName(size_t index) const { return m_ ## lowerBitName[index]; } \
-    bool is ## capitalBitName(MarkedBlock::Handle* block) const { return is ## capitalBitName(block->index()); } \
-    void setIs ## capitalBitName(size_t index, bool value) { m_ ## lowerBitName[index] = value; } \
-    void setIs ## capitalBitName(MarkedBlock::Handle* block, bool value) { setIs ## capitalBitName(block->index(), value); } \
-    bool atomicSetAndCheckIs ## capitalBitName(size_t index, bool value) { return m_ ## lowerBitName.atomicSetAndCheck(index, value); } \
-    bool atomicSetAndCheckIs ## capitalBitName(MarkedBlock::Handle* block, bool value) { return m_ ## lowerBitName.atomicSetAndCheck(block->index(), value); }
+    bool is ## capitalBitName(const AbstractLocker&, size_t index) const { return m_ ## lowerBitName[index]; } \
+    bool is ## capitalBitName(const AbstractLocker& locker, MarkedBlock::Handle* block) const { return is ## capitalBitName(locker, block->index()); } \
+    void setIs ## capitalBitName(const AbstractLocker&, size_t index, bool value) { m_ ## lowerBitName[index] = value; } \
+    void setIs ## capitalBitName(const AbstractLocker& locker, MarkedBlock::Handle* block, bool value) { setIs ## capitalBitName(locker, block->index(), value); }
     FOR_EACH_MARKED_ALLOCATOR_BIT(MARKED_ALLOCATOR_BIT_ACCESSORS)
 #undef MARKED_ALLOCATOR_BIT_ACCESSORS
 
@@ -210,7 +210,7 @@ public:
     
     void dump(PrintStream&) const;
     void dumpBits(PrintStream& = WTF::dataFile());
-   
+    
 private:
     friend class MarkedBlock;
     
@@ -232,7 +232,10 @@ private:
     
     Vector<MarkedBlock::Handle*> m_blocks;
     Vector<unsigned> m_freeBlockIndices;
-    
+
+    // Mutator uses this to guard resizing the bitvectors. Those things in the GC that may run
+    // concurrently to the mutator must lock this when accessing the bitvectors.
+    Lock m_bitvectorLock;
 #define MARKED_ALLOCATOR_BIT_DECLARATION(lowerBitName, capitalBitName) \
     FastBitVector m_ ## lowerBitName;
     FOR_EACH_MARKED_ALLOCATOR_BIT(MARKED_ALLOCATOR_BIT_DECLARATION)

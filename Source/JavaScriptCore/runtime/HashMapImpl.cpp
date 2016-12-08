@@ -70,8 +70,8 @@ void HashMapImpl<HashMapBucket>::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_head);
     visitor.append(&thisObject->m_tail);
     
-    if (thisObject->m_buffer)
-        visitor.markAuxiliary(thisObject->m_buffer.get());
+    if (HashMapBufferType* buffer = thisObject->m_buffer.get())
+        visitor.markAuxiliary(buffer);
 }
 
 const ClassInfo* getHashMapBucketKeyClassInfo()

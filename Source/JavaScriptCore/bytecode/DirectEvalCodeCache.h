@@ -92,23 +92,23 @@ namespace JSC {
         void set(ExecState* exec, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, DirectEvalExecutable* evalExecutable)
         {
             if (m_cacheMap.size() < maxCacheEntries)
-                m_cacheMap.set(CacheKey(evalSource, callSiteIndex), WriteBarrier<DirectEvalExecutable>(exec->vm(), owner, evalExecutable));
+                setSlow(exec, owner, evalSource, callSiteIndex, evalExecutable);
         }
 
         bool isEmpty() const { return m_cacheMap.isEmpty(); }
 
         void visitAggregate(SlotVisitor&);
 
-        void clear()
-        {
-            m_cacheMap.clear();
-        }
+        void clear();
 
     private:
         static const int maxCacheEntries = 64;
 
+        void setSlow(ExecState*, JSCell* owner, const String& evalSource, CallSiteIndex, DirectEvalExecutable*);
+
         typedef HashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, CacheKey::Hash, CacheKey::HashTraits> EvalCacheMap;
         EvalCacheMap m_cacheMap;
+        Lock m_lock;
     };
 
 } // namespace JSC

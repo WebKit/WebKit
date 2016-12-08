@@ -512,8 +512,8 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     
     switch (thisObject->m_mode) {
     case FastTypedArray: {
-        if (thisObject->m_vector)
-            visitor.markAuxiliary(thisObject->m_vector.get());
+        if (void* vector = thisObject->m_vector.get())
+            visitor.markAuxiliary(vector);
         break;
     }
         
@@ -582,6 +582,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
 
     thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
     thisObject->m_vector.setWithoutBarrier(buffer->data());
+    WTF::storeStoreFence();
     thisObject->m_mode = WastefulTypedArray;
     heap->addReference(thisObject, buffer.get());
     

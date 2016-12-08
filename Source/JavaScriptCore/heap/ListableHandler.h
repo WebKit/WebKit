@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,12 @@ class SlotVisitor;
 template<typename T>
 class ListableHandler {
     WTF_MAKE_NONCOPYABLE(ListableHandler);
+
+public:    
+    bool isOnList() const
+    {
+        return m_nextAndFlag & 1;
+    }
     
 protected:
     ListableHandler()

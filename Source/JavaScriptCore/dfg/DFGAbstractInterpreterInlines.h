@@ -1213,7 +1213,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             
-            if (!(child.m_type & (SpecFunction | SpecObjectOther))) {
+            if (!(child.m_type & (SpecFunction | SpecObjectOther | SpecProxyObject))) {
                 setConstant(node, jsBoolean(false));
                 constantWasSet = true;
                 break;
@@ -2309,6 +2309,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetButterfly:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
+        // FIXME: We don't model the fact that the structureID is nuked, simply because currently
+        // nobody would currently benefit from having that information. But it's a bug nonetheless.
         forNode(node).clear(); // The result is not a JS value.
         break;
     case CheckDOM: {

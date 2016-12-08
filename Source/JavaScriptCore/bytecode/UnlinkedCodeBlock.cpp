@@ -92,6 +92,7 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
+    auto locker = holdLock(*thisObject);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionDecls.begin(), end = thisObject->m_functionDecls.end(); ptr != end; ++ptr)
         visitor.append(ptr);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
@@ -313,7 +314,10 @@ UnlinkedCodeBlock::~UnlinkedCodeBlock()
 void UnlinkedCodeBlock::setInstructions(std::unique_ptr<UnlinkedInstructionStream> instructions)
 {
     ASSERT(instructions);
-    m_unlinkedInstructions = WTFMove(instructions);
+    {
+        auto locker = holdLock(*this);
+        m_unlinkedInstructions = WTFMove(instructions);
+    }
     Heap::heap(this)->reportExtraMemoryAllocated(m_unlinkedInstructions->sizeInBytes());
 }
 
@@ -385,4 +389,28 @@ void UnlinkedCodeBlock::applyModification(BytecodeRewriter& rewriter)
     recomputePreciseJumpTargets(this, graph.instructions().begin(), graph.instructions().size(), m_jumpTargets);
 }
 
+void UnlinkedCodeBlock::shrinkToFit()
+{
+    auto locker = holdLock(*this);
+    
+    m_jumpTargets.shrinkToFit();
+    m_identifiers.shrinkToFit();
+    m_bitVectors.shrinkToFit();
+    m_constantRegisters.shrinkToFit();
+    m_constantsSourceCodeRepresentation.shrinkToFit();
+    m_functionDecls.shrinkToFit();
+    m_functionExprs.shrinkToFit();
+    m_propertyAccessInstructions.shrinkToFit();
+    m_expressionInfo.shrinkToFit();
+
+    if (m_rareData) {
+        m_rareData->m_exceptionHandlers.shrinkToFit();
+        m_rareData->m_regexps.shrinkToFit();
+        m_rareData->m_constantBuffers.shrinkToFit();
+        m_rareData->m_switchJumpTables.shrinkToFit();
+        m_rareData->m_stringSwitchJumpTables.shrinkToFit();
+        m_rareData->m_expressionInfoFatPositions.shrinkToFit();
+    }
 }
+
+} // namespace JSC

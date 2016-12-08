@@ -64,7 +64,7 @@ inline bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, bool isMarki
             return true;
     }
     
-    if (allocator()->isAllocated(this))
+    if (allocator()->isAllocated(NoLockingNecessary, this))
         return true;
     
     MarkedBlock& block = this->block();

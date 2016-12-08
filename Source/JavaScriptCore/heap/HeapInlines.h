@@ -134,7 +134,7 @@ inline void Heap::writeBarrier(const JSCell* from, JSCell* to)
         return;
     if (!isWithinThreshold(from->cellState(), barrierThreshold()))
         return;
-    if (LIKELY(!to || to->cellState() != CellState::NewWhite))
+    if (LIKELY(!to))
         return;
     writeBarrierSlowPath(from);
 }

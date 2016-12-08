@@ -107,7 +107,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
-    if (m_blocks.isEmpty() && !isOnList())
+    if (!isOnList())
         heap()->objectSpace().addActiveWeakSet(this);
     
     WeakBlock* block = WeakBlock::create(*heap(), m_container);

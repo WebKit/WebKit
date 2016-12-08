@@ -209,6 +209,7 @@ set(JavaScriptCore_SOURCES
     bytecode/DataFormat.cpp
     bytecode/DeferredCompilationCallback.cpp
     bytecode/DeferredSourceDump.cpp
+    bytecode/DirectEvalCodeCache.cpp
     bytecode/EvalCodeBlock.cpp
     bytecode/ExecutionCounter.cpp
     bytecode/ExitKind.cpp
@@ -498,6 +499,7 @@ set(JavaScriptCore_SOURCES
     heap/MutatorState.cpp
     heap/SlotVisitor.cpp
     heap/StopIfNecessaryTimer.cpp
+    heap/VisitRaceKey.cpp
     heap/Weak.cpp
     heap/WeakBlock.cpp
     heap/WeakHandleOwner.cpp

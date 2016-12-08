@@ -332,6 +332,10 @@ static void recomputeDependentOptions()
     Options::useFTLJIT() = false;
 #endif
     
+#if !CPU(X86_64)
+    Options::useConcurrentGC() = false;
+#endif
+    
 #if OS(WINDOWS) && CPU(X86) 
     // Disable JIT on Windows if SSE2 is not present 
     if (!MacroAssemblerX86::supportsFloatingPoint())

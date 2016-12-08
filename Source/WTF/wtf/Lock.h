@@ -93,6 +93,12 @@ struct LockBase {
         if (UNLIKELY(!DefaultLockAlgorithm::unlockFastAssumingZero(m_byte)))
             unlockFairlySlow();
     }
+    
+    void safepoint()
+    {
+        if (UNLIKELY(!DefaultLockAlgorithm::safepointFast(m_byte)))
+            safepointSlow();
+    }
 
     bool isHeld() const
     {
@@ -113,6 +119,7 @@ protected:
     WTF_EXPORT_PRIVATE void lockSlow();
     WTF_EXPORT_PRIVATE void unlockSlow();
     WTF_EXPORT_PRIVATE void unlockFairlySlow();
+    WTF_EXPORT_PRIVATE void safepointSlow();
 
     // Method used for testing only.
     bool isFullyReset() const

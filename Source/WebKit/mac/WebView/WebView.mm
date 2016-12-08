@@ -1749,7 +1749,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 {
     ASSERT(WebThreadIsCurrent());
     WebKit::MemoryMeasure measurer("Memory warning: Discarding JIT'ed code.");
-    WebCore::GCController::singleton().deleteAllCode();
+    WebCore::GCController::singleton().deleteAllCode(PreventCollectionAndDeleteAllCode);
 }
 
 + (BOOL)isCharacterSmartReplaceExempt:(unichar)character isPreviousCharacter:(BOOL)b

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,11 +74,16 @@ Structure* SparseArrayValueMap::createStructure(VM& vm, JSGlobalObject* globalOb
 
 SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigned i)
 {
-    SparseArrayEntry entry;
-    entry.setWithoutWriteBarrier(jsUndefined());
-
-    AddResult result = m_map.add(i, entry);
-    size_t capacity = m_map.capacity();
+    AddResult result;
+    size_t capacity;
+    {
+        auto locker = holdLock(*this);
+        SparseArrayEntry entry;
+        entry.setWithoutWriteBarrier(jsUndefined());
+        
+        result = m_map.add(i, entry);
+        capacity = m_map.capacity();
+    }
     if (capacity != m_reportedCapacity) {
         // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
         // https://bugs.webkit.org/show_bug.cgi?id=142595
@@ -86,6 +91,18 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
         m_reportedCapacity = capacity;
     }
     return result;
+}
+
+void SparseArrayValueMap::remove(iterator it)
+{
+    auto locker = holdLock(*this);
+    m_map.remove(it);
+}
+
+void SparseArrayValueMap::remove(unsigned i)
+{
+    auto locker = holdLock(*this);
+    m_map.remove(i);
 }
 
 bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i, JSValue value, bool shouldThrow)
@@ -182,6 +199,7 @@ void SparseArrayValueMap::visitChildren(JSCell* thisObject, SlotVisitor& visitor
     Base::visitChildren(thisObject, visitor);
     
     SparseArrayValueMap* thisMap = jsCast<SparseArrayValueMap*>(thisObject);
+    auto locker = holdLock(*thisMap);
     iterator end = thisMap->m_map.end();
     for (iterator it = thisMap->m_map.begin(); it != end; ++it)
         visitor.append(&it->value);

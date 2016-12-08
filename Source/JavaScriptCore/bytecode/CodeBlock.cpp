@@ -2437,13 +2437,6 @@ void CodeBlock::setNumParameters(int newValue)
     m_argumentValueProfiles = RefCountedArray<ValueProfile>(newValue);
 }
 
-void DirectEvalCodeCache::visitAggregate(SlotVisitor& visitor)
-{
-    EvalCacheMap::iterator end = m_cacheMap.end();
-    for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
-        visitor.append(&ptr->value);
-}
-
 CodeBlock* CodeBlock::specialOSREntryBlockOrNull()
 {
 #if ENABLE(FTL_JIT)
@@ -2902,15 +2895,11 @@ void CodeBlock::UnconditionalFinalizer::finalizeUnconditionally()
     
     codeBlock->updateAllPredictions();
     
-#if ENABLE(DFG_JIT)
-    if (codeBlock->shouldJettisonDueToWeakReference()) {
-        codeBlock->jettison(Profiler::JettisonDueToWeakReference);
-        return;
-    }
-#endif // ENABLE(DFG_JIT)
-
-    if (codeBlock->shouldJettisonDueToOldAge(NoLockingNecessary)) {
-        codeBlock->jettison(Profiler::JettisonDueToOldAge);
+    if (!Heap::isMarked(codeBlock)) {
+        if (codeBlock->shouldJettisonDueToWeakReference())
+            codeBlock->jettison(Profiler::JettisonDueToWeakReference);
+        else
+            codeBlock->jettison(Profiler::JettisonDueToOldAge);
         return;
     }
 
