@@ -997,8 +997,6 @@ webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass
 
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.
-webkit.org/b/165195 css3/font-variant-parsing.html [ Pass Failure ]
-webkit.org/b/165195 css3/supports-cssom.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/attr-parsing.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/font-family-parse-keyword.html [ Skip ]
 webkit.org/b/165195 fast/css/font-property-priority.html [ Pass Failure ]

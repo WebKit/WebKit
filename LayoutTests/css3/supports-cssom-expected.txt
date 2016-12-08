@@ -29,11 +29,11 @@ PASS rules[0].cssRules.length is 2
 
 @charset, @namespace, @import rules are not allowed inside @supports.
 PASS rules[0].insertRule('@charset "UTF-8"', 2) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
-PASS rules[0].insertRule('@namespace ""', 2) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
-PASS rules[0].insertRule('@import url("../fast/cssom/resources/import.css")', 2) threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS rules[0].insertRule('@namespace ""', 2) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS rules[0].insertRule('@import url("../fast/cssom/resources/import.css")', 2) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
 
 Whitespace and formatting should be preserved within the condition, whitespace outside the condition should be trimmed.
-PASS rules[1].conditionText is "((  (     padding: 0)    and (display: none)) or (display: rainbow))"
+PASS rules[1].conditionText is "(( ( padding: 0) and (display: none)) or (display: rainbow))"
 
 @supports rule nested inside a media rule.
 PASS rules[2].type is CSSRule.MEDIA_RULE

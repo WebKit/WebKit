@@ -1,3 +1,25 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Stop skipping tests in the css3 LayoutTests subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=165574
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        Stop skipping two tests.
+
+        * css3/font-variant-parsing-expected.txt:
+        * css3/font-variant-parsing.html:
+        Patched to yield the correct results when multiple values are specified for the
+        same sub-property.
+
+        * css3/supports-cssom-expected.txt:
+        * css3/supports-cssom.html:
+        Patched to account for the new result for @namespace insertion failure (see
+        corresponding WebCore ChangeLog for explanation), and also patched to get rid
+        of excess whitespace, since the new parser doesn't preserve whitespace formatting
+        when serializing @supports.
+
 2016-12-07  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, Skip imported/w3c/WebCryptoAPI/generateKey/test_failures.html

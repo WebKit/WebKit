@@ -93,7 +93,7 @@
 
 
     debug("\nWhitespace and formatting should be preserved within the condition, whitespace outside the condition should be trimmed.");
-    shouldBeEqualToString("rules[1].conditionText", "((  (     padding: 0)    and (display: none)) or (display: rainbow))");
+    shouldBeEqualToString("rules[1].conditionText", "(( ( padding: 0) and (display: none)) or (display: rainbow))");
 
 
     debug("\n@supports rule nested inside a media rule.");

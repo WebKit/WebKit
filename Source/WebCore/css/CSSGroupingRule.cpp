@@ -74,7 +74,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
         return Exception { SYNTAX_ERR };
     }
 
-    if (newRule->isImportRule()) {
+    if (newRule->isImportRule() || newRule->isNamespaceRule()) {
         // FIXME: an HIERARCHY_REQUEST_ERR should also be thrown for a @charset or a nested
         // @media rule. They are currently not getting parsed, resulting in a SYNTAX_ERR
         // to get raised above.

@@ -1,3 +1,19 @@
+2016-12-07  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Stop skipping tests in the css3 LayoutTests subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=165574
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::insertRule):
+        The old parser didn't support the creation of @namespace rules in the
+        CSS OM, but the new parser does. We need to ensure that just like for
+        @import rules, that the insertion of a @namespace rule inside a
+        @supports rule is not allowed. This test passed in the old parser because
+        the rule just didn't get created, but in the new parser, we need to
+        add a check along with the @import rule check to ensure it isn't allowed.
+
 2016-12-07  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Remove aspect ratio button
