@@ -970,9 +970,6 @@ webkit.org/b/164797 js/dom/domjit-function-get-element-by-id-changed.html [ Pass
 
 # The following layout tests need to be changed when the new CSS Parser is turned on, since they
 # incorrectly indicate failures on valid syntax.
-webkit.org/b/165195 fast/css/attr-parsing.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/invalid-cursor-property-crash.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/parsing-css-attribute-case-insensitive-value-1.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-attribute-case-insensitive-value-2.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parsing-css-nth-child.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/css-selector-text.html [ Pass Failure ]
@@ -984,7 +981,6 @@ webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Fail
 webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/masking/parsing-mask.html [ Pass Failure ]
-webkit.org/b/165195 fast/shadow-dom/slotted-pseudo-element-css-text.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
@@ -995,7 +991,6 @@ webkit.org/b/165195 fast/selectors/nth-child-bounds.html [ Pass Failure ]
 webkit.org/b/165195 fast/selectors/nth-last-child-bounds.html [ Pass Failure ]
 webkit.org/b/165195 fast/text/text-combine-crash.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-template-shorthand-get-set.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/font-shorthand-from-longhands.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/parse-color-int-or-percent-crash.html [ Pass Failure ]
 webkit.org/b/165195 fast/css/string-quote-binary.html [ Pass Failure ]
 

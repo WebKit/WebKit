@@ -1,6 +1,30 @@
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165609
+
+        Reviewed by Zalan Bujtas.
+
+        A note on the parsing-css-attribute-* tests. These tests attempted to test namespaces, but
+        you really can't do that easily. A @namespace rule is only valid within the scope of its
+        stylesheet, and the test was assuming the namespace would apply outside of the stylesheet
+        scope.
+
+        The old parser would not properly reject prefixes that didn't point to any valid namespace,
+        and so it was possible to test prefixes. The new parser rejects these invalid prefixes, so just
+        remove the namespace component of these two tests.
+
+        * TestExpectations:
+        * fast/css/attr-parsing-expected.txt:
+        * fast/css/attr-parsing.html:
+        * fast/css/invalid-cursor-property-crash.html:
+        * fast/css/parsing-css-attribute-case-insensitive-value-1.html:
+        * fast/css/parsing-css-attribute-case-insensitive-value-2.html:
+        * fast/shadow-dom/slotted-pseudo-element-css-text-expected.txt:
+
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unskip more tests
         https://bugs.webkit.org/show_bug.cgi?id=165608
 
         Reviewed by Zalan Bujtas.

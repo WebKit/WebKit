@@ -7,867 +7,651 @@ Various valid cases of the selector that are not using the canonical form.
 PASS document.querySelector("[foo=bar I]") did not throw exception.
 PASS document.querySelector("[*|foo=bar I]") did not throw exception.
 PASS document.querySelector("[|foo=bar I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=bar I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[*|foo=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[|foo=\"bar\" I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=\"bar\" I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo~=bar I]") did not throw exception.
 PASS document.querySelector("[*|foo~=bar I]") did not throw exception.
 PASS document.querySelector("[|foo~=bar I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=bar I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo~=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[*|foo~=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[|foo~=\"bar\" I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=\"bar\" I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo|=bar I]") did not throw exception.
 PASS document.querySelector("[*|foo|=bar I]") did not throw exception.
 PASS document.querySelector("[|foo|=bar I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=bar I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo|=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[*|foo|=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[|foo|=\"bar\" I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=\"bar\" I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo^=bar I]") did not throw exception.
 PASS document.querySelector("[*|foo^=bar I]") did not throw exception.
 PASS document.querySelector("[|foo^=bar I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=bar I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo^=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[*|foo^=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[|foo^=\"bar\" I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=\"bar\" I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo$=bar I]") did not throw exception.
 PASS document.querySelector("[*|foo$=bar I]") did not throw exception.
 PASS document.querySelector("[|foo$=bar I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=bar I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo$=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[*|foo$=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[|foo$=\"bar\" I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=\"bar\" I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo*=bar I]") did not throw exception.
 PASS document.querySelector("[*|foo*=bar I]") did not throw exception.
 PASS document.querySelector("[|foo*=bar I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=bar I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo*=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[*|foo*=\"bar\" I]") did not throw exception.
 PASS document.querySelector("[|foo*=\"bar\" I]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=\"bar\" I]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo=BaR i]") did not throw exception.
 PASS document.querySelector("[*|foo=BaR i]") did not throw exception.
 PASS document.querySelector("[|foo=BaR i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=BaR i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"BaR\" i]"
 PASS document.querySelector("[foo=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[*|foo=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[|foo=\"BaR\" i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=\"BaR\" i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"BaR\" i]"
 PASS document.querySelector("[foo~=BaR i]") did not throw exception.
 PASS document.querySelector("[*|foo~=BaR i]") did not throw exception.
 PASS document.querySelector("[|foo~=BaR i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=BaR i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"BaR\" i]"
 PASS document.querySelector("[foo~=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[*|foo~=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[|foo~=\"BaR\" i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=\"BaR\" i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"BaR\" i]"
 PASS document.querySelector("[foo|=BaR i]") did not throw exception.
 PASS document.querySelector("[*|foo|=BaR i]") did not throw exception.
 PASS document.querySelector("[|foo|=BaR i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=BaR i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"BaR\" i]"
 PASS document.querySelector("[foo|=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[*|foo|=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[|foo|=\"BaR\" i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=\"BaR\" i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"BaR\" i]"
 PASS document.querySelector("[foo^=BaR i]") did not throw exception.
 PASS document.querySelector("[*|foo^=BaR i]") did not throw exception.
 PASS document.querySelector("[|foo^=BaR i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=BaR i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"BaR\" i]"
 PASS document.querySelector("[foo^=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[*|foo^=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[|foo^=\"BaR\" i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=\"BaR\" i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"BaR\" i]"
 PASS document.querySelector("[foo$=BaR i]") did not throw exception.
 PASS document.querySelector("[*|foo$=BaR i]") did not throw exception.
 PASS document.querySelector("[|foo$=BaR i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=BaR i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"BaR\" i]"
 PASS document.querySelector("[foo$=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[*|foo$=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[|foo$=\"BaR\" i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=\"BaR\" i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"BaR\" i]"
 PASS document.querySelector("[foo*=BaR i]") did not throw exception.
 PASS document.querySelector("[*|foo*=BaR i]") did not throw exception.
 PASS document.querySelector("[|foo*=BaR i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=BaR i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"BaR\" i]"
 PASS document.querySelector("[foo*=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[*|foo*=\"BaR\" i]") did not throw exception.
 PASS document.querySelector("[|foo*=\"BaR\" i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=\"BaR\" i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"BaR\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"BaR\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"BaR\" i]"
 PASS document.querySelector("[foo=bar	i]") did not throw exception.
 PASS document.querySelector("[*|foo=bar	i]") did not throw exception.
 PASS document.querySelector("[|foo=bar	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=bar	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[*|foo=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[|foo=\"bar\"	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=\"bar\"	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo~=bar	i]") did not throw exception.
 PASS document.querySelector("[*|foo~=bar	i]") did not throw exception.
 PASS document.querySelector("[|foo~=bar	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=bar	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo~=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[*|foo~=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[|foo~=\"bar\"	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=\"bar\"	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo|=bar	i]") did not throw exception.
 PASS document.querySelector("[*|foo|=bar	i]") did not throw exception.
 PASS document.querySelector("[|foo|=bar	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=bar	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo|=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[*|foo|=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[|foo|=\"bar\"	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=\"bar\"	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo^=bar	i]") did not throw exception.
 PASS document.querySelector("[*|foo^=bar	i]") did not throw exception.
 PASS document.querySelector("[|foo^=bar	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=bar	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo^=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[*|foo^=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[|foo^=\"bar\"	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=\"bar\"	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo$=bar	i]") did not throw exception.
 PASS document.querySelector("[*|foo$=bar	i]") did not throw exception.
 PASS document.querySelector("[|foo$=bar	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=bar	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo$=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[*|foo$=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[|foo$=\"bar\"	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=\"bar\"	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo*=bar	i]") did not throw exception.
 PASS document.querySelector("[*|foo*=bar	i]") did not throw exception.
 PASS document.querySelector("[|foo*=bar	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=bar	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo*=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[*|foo*=\"bar\"	i]") did not throw exception.
 PASS document.querySelector("[|foo*=\"bar\"	i]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=\"bar\"	i]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo=bar i ]") did not throw exception.
 PASS document.querySelector("[*|foo=bar i ]") did not throw exception.
 PASS document.querySelector("[|foo=bar i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=bar i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[*|foo=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[|foo=\"bar\" i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=\"bar\" i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo~=bar i ]") did not throw exception.
 PASS document.querySelector("[*|foo~=bar i ]") did not throw exception.
 PASS document.querySelector("[|foo~=bar i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=bar i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo~=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[*|foo~=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[|foo~=\"bar\" i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=\"bar\" i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo|=bar i ]") did not throw exception.
 PASS document.querySelector("[*|foo|=bar i ]") did not throw exception.
 PASS document.querySelector("[|foo|=bar i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=bar i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo|=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[*|foo|=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[|foo|=\"bar\" i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=\"bar\" i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo^=bar i ]") did not throw exception.
 PASS document.querySelector("[*|foo^=bar i ]") did not throw exception.
 PASS document.querySelector("[|foo^=bar i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=bar i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo^=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[*|foo^=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[|foo^=\"bar\" i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=\"bar\" i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo$=bar i ]") did not throw exception.
 PASS document.querySelector("[*|foo$=bar i ]") did not throw exception.
 PASS document.querySelector("[|foo$=bar i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=bar i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo$=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[*|foo$=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[|foo$=\"bar\" i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=\"bar\" i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo*=bar i ]") did not throw exception.
 PASS document.querySelector("[*|foo*=bar i ]") did not throw exception.
 PASS document.querySelector("[|foo*=bar i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=bar i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo*=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[*|foo*=\"bar\" i ]") did not throw exception.
 PASS document.querySelector("[|foo*=\"bar\" i ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=\"bar\" i ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo=bar i	]") did not throw exception.
 PASS document.querySelector("[*|foo=bar i	]") did not throw exception.
 PASS document.querySelector("[|foo=bar i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=bar i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[*|foo=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[|foo=\"bar\" i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=\"bar\" i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo~=bar i	]") did not throw exception.
 PASS document.querySelector("[*|foo~=bar i	]") did not throw exception.
 PASS document.querySelector("[|foo~=bar i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=bar i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo~=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[*|foo~=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[|foo~=\"bar\" i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=\"bar\" i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo|=bar i	]") did not throw exception.
 PASS document.querySelector("[*|foo|=bar i	]") did not throw exception.
 PASS document.querySelector("[|foo|=bar i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=bar i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo|=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[*|foo|=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[|foo|=\"bar\" i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=\"bar\" i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo^=bar i	]") did not throw exception.
 PASS document.querySelector("[*|foo^=bar i	]") did not throw exception.
 PASS document.querySelector("[|foo^=bar i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=bar i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo^=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[*|foo^=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[|foo^=\"bar\" i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=\"bar\" i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo$=bar i	]") did not throw exception.
 PASS document.querySelector("[*|foo$=bar i	]") did not throw exception.
 PASS document.querySelector("[|foo$=bar i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=bar i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo$=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[*|foo$=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[|foo$=\"bar\" i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=\"bar\" i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo*=bar i	]") did not throw exception.
 PASS document.querySelector("[*|foo*=bar i	]") did not throw exception.
 PASS document.querySelector("[|foo*=bar i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=bar i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo*=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[*|foo*=\"bar\" i	]") did not throw exception.
 PASS document.querySelector("[|foo*=\"bar\" i	]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=\"bar\" i	]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo=bar 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=bar 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo=\"bar\" 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo=\"bar\" 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
 PASS document.querySelector("[foo~=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo~=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo~=bar 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=bar 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo~=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo~=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo~=\"bar\" 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo~=\"bar\" 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
 PASS document.querySelector("[foo|=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo|=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo|=bar 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=bar 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo|=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo|=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo|=\"bar\" 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo|=\"bar\" 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
 PASS document.querySelector("[foo^=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo^=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo^=bar 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=bar 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo^=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo^=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo^=\"bar\" 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo^=\"bar\" 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
 PASS document.querySelector("[foo$=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo$=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo$=bar 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=bar 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo$=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo$=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo$=\"bar\" 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo$=\"bar\" 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
 PASS document.querySelector("[foo*=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo*=bar 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo*=bar 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=bar 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS document.querySelector("[foo*=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[*|foo*=\"bar\" 	 i 	 ]") did not throw exception.
 PASS document.querySelector("[|foo*=\"bar\" 	 i 	 ]") did not throw exception.
-PASS document.querySelector("[WebKit|foo*=\"bar\" 	 i 	 ]") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
 PASS successfullyParsed is true
 
 TEST COMPLETE
