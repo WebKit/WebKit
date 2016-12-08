@@ -1,3 +1,21 @@
+2016-12-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream][Mac] Revoke sandbox extensions when capture ends
+        https://bugs.webkit.org/show_bug.cgi?id=165476
+
+        Reviewed by Brady Eidson.
+        
+        Add a test which loads a page that calls navigator.mediaDevices.enumerateDevices, kills the
+        page, and loads the same page again to ensure that the WK2 UserMediaPermissionRequestManagerProxy
+        is reset and recreated when a web page exits and is reloaded.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/EnumerateMediaDevices.cpp: Added.
+        (TestWebKitAPI::checkUserMediaPermissionCallback):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/enumerateMediaDevices.html: Added.
+
 2016-12-07  Jeremy Jones  <jeremyj@apple.com>
 
         One esc to exit fullscreen and pointer lock

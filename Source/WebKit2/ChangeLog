@@ -1,3 +1,83 @@
+2016-12-07  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream][Mac] Revoke sandbox extensions when capture ends
+        https://bugs.webkit.org/show_bug.cgi?id=165476
+
+        Reviewed by Brady Eidson.
+
+        Track media capture by process so it is possible to revoke the sandbox extensions issued to
+        a web process when capture stops. Allocate WK2 user media permission manager lazily rather
+        than every time a page is created as most pages won't need one.
+
+        * CMakeLists.txt: Add new files.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy): Register
+          with process manager.
+        (WebKit::UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Move sandbox 
+          extension code to the process manager.
+        (WebKit::UserMediaPermissionRequestManagerProxy::stopCapture): New.
+        (WebKit::UserMediaPermissionRequestManagerProxy::startedCaptureSession): New, report state
+          change to the process manager.
+        (WebKit::UserMediaPermissionRequestManagerProxy::endedCaptureSession): Ditto.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * UIProcess/UserMediaProcessManager.cpp: Added.
+        (WebKit::ProcessState::ProcessState):
+        (WebKit::ProcessState::managers):
+        (WebKit::ProcessState::sandboxExtensionsGranted):
+        (WebKit::ProcessState::setSandboxExtensionsGranted):
+        (WebKit::stateMap):
+        (WebKit::processState):
+        (WebKit::ProcessState::addRequestManager):
+        (WebKit::ProcessState::removeRequestManager):
+        (WebKit::UserMediaProcessManager::singleton):
+        (WebKit::UserMediaProcessManager::addUserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaProcessManager::removeUserMediaPermissionRequestManagerProxy):
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::startedCaptureSession):
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        * UIProcess/UserMediaProcessManager.h: Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Don't allocate m_userMediaPermissionRequestManager.
+        (WebKit::WebPageProxy::resetState): Set m_userMediaPermissionRequestManager to null.
+        (WebKit::WebPageProxy::userMediaPermissionRequestManager): Allocate m_userMediaPermissionRequestManager
+          lazily as most pages don't need it.
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame): Call userMediaPermissionRequestManager().
+        (WebKit::WebPageProxy::enumerateMediaDevicesForFrame): Ditto.
+        (WebKit::WebPageProxy::clearUserMediaState): Ditto.
+        (WebKit::WebPageProxy::isPlayingMediaDidChange): Report capture state changes to the request
+          manager proxy.
+        * UIProcess/WebPageProxy.h:
+
+        * WebKit2.xcodeproj/project.pbxproj: Add new files.
+
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp: Added.
+        (WebKit::MediaDeviceSandboxExtensions::MediaDeviceSandboxExtensions):
+        (WebKit::MediaDeviceSandboxExtensions::encode):
+        (WebKit::MediaDeviceSandboxExtensions::decode):
+        (WebKit::MediaDeviceSandboxExtensions::operator[]):
+        (WebKit::MediaDeviceSandboxExtensions::size):
+        * WebProcess/MediaStream/MediaDeviceSandboxExtensions.h: Added.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager): Sandbox extension
+          is now in a HashMap, not a Vector.
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDeviceSandboxExtensions): Record
+          IDs with extensions so they can be revoked later.
+        (WebKit::UserMediaPermissionRequestManager::revokeUserMediaDeviceSandboxExtensions): New.
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDevicesSandboxExtension): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::grantUserMediaDeviceSandboxExtensions):
+        (WebKit::WebPage::revokeUserMediaDeviceSandboxExtensions):
+        (WebKit::WebPage::grantUserMediaDevicesSandboxExtension): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-12-07  Jeremy Jones  <jeremyj@apple.com>
 
         One esc to exit fullscreen and pointer lock

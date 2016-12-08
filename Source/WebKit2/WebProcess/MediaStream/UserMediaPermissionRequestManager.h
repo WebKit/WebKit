@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "MediaDeviceSandboxExtensions.h"
 #include "SandboxExtension.h"
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
@@ -51,7 +52,8 @@ public:
     void cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest&);
     void didCompleteMediaDeviceEnumeration(uint64_t, const Vector<WebCore::CaptureDevice>& deviceList, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 
-    void grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray&);
+    void grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions&);
+    void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
 
 private:
     void sendUserMediaRequest(WebCore::UserMediaRequest&);
@@ -69,7 +71,7 @@ private:
     HashMap<uint64_t, RefPtr<WebCore::MediaDevicesEnumerationRequest>> m_idToMediaDevicesEnumerationRequestMap;
     HashMap<RefPtr<WebCore::MediaDevicesEnumerationRequest>, uint64_t> m_mediaDevicesEnumerationRequestToIDMap;
 
-    Vector<RefPtr<SandboxExtension>> m_userMediaDeviceSandboxExtensions;
+    HashMap<String, RefPtr<SandboxExtension>> m_userMediaDeviceSandboxExtensions;
 
     HashMap<RefPtr<WebCore::Document>, Vector<RefPtr<WebCore::UserMediaRequest>>> m_blockedRequests;
 };

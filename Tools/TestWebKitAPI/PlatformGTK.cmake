@@ -75,6 +75,7 @@ add_executable(TestWebKit2
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DOMWindowExtensionBasic.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DOMWindowExtensionNoCache.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DownloadDecideDestinationCrash.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit2/EnumerateMediaDevices.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/EvaluateJavaScript.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/FailedLoad.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/Find.cpp
