@@ -1,3 +1,11 @@
+2016-12-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/selectors/nth-last-child-bounds.html after r209548.
+
+        Unreviewed test gardening.
+
+        * fast/selectors/nth-child-bounds-expected.txt:
+
 2016-12-08  Jeremy Jones  <jeremyj@apple.com>
 
         pointer lock should exit when a js alert is shown
