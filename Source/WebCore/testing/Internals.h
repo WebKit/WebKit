@@ -508,6 +508,11 @@ public:
     
     void reportBacktrace();
 
+#if ENABLE(POINTER_LOCK)
+    bool pageHasPendingPointerLock() const;
+    bool pageHasPointerLock() const;
+#endif
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

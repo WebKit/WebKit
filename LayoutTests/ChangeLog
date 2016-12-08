@@ -1,3 +1,16 @@
+2016-12-07  Jeremy Jones  <jeremyj@apple.com>
+
+        Exit pointer lock when page goes into page cache.
+        https://bugs.webkit.org/show_bug.cgi?id=165425
+        rdar://problem/29430834
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/TestExpectations:
+        * pointer-lock/lock-lost-on-navigation-expected.txt: Added.
+        * pointer-lock/lock-lost-on-navigation.html: Added.
+        * pointer-lock/resources/lock-lost-on-navigation2.html: Added.
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unskip calc() tests

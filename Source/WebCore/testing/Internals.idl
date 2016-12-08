@@ -483,4 +483,7 @@ enum EventThrottlingBehavior {
     boolean userPrefersReducedMotion();
     
     void reportBacktrace();
+
+    [Conditional=POINTER_LOCK] boolean pageHasPendingPointerLock();
+    [Conditional=POINTER_LOCK] boolean pageHasPointerLock();
 };

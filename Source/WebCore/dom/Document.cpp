@@ -4544,6 +4544,10 @@ void Document::setPageCacheState(PageCacheState state)
                 v->resetScrollbars();
         }
 
+#if ENABLE(POINTER_LOCK)
+        exitPointerLock();
+#endif
+
         styleScope().clearResolver();
         clearSelectorQueryCache();
         m_styleRecalcTimer.stop();

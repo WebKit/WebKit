@@ -288,6 +288,7 @@ pointer-lock/mouse-event-delivery.html
 pointer-lock/pointerlockchange-event-on-lock-lost.html
 pointer-lock/pointerlockchange-pointerlockerror-events.html
 pointer-lock/pointerlockelement-null-when-pending.html
+pointer-lock/lock-lost-on-navigation.html [ Pass ]
 http/tests/pointer-lock/
 
 webkit.org/b/82763 fast/forms/textarea-placeholder-set-attribute.html

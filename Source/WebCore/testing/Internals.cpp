@@ -212,6 +212,10 @@
 #include "MediaPlaybackTargetContext.h"
 #endif
 
+#if ENABLE(POINTER_LOCK)
+#include "PointerLockController.h"
+#endif
+
 using JSC::CallData;
 using JSC::CallType;
 using JSC::CodeBlock;
@@ -3404,5 +3408,35 @@ void Internals::reportBacktrace()
 {
     WTFReportBacktrace();
 }
+
+#if ENABLE(POINTER_LOCK)
+bool Internals::pageHasPendingPointerLock() const
+{
+    Document* document = contextDocument();
+    if (!document)
+        return false;
+
+    Page* page = document->page();
+    if (!page)
+        return false;
+
+    return page->pointerLockController().lockPending();
+}
+
+bool Internals::pageHasPointerLock() const
+{
+    Document* document = contextDocument();
+    if (!document)
+        return false;
+
+    Page* page = document->page();
+    if (!page)
+        return false;
+
+    auto& controller = page->pointerLockController();
+    return controller.element() && !controller.lockPending();
+}
+#endif
+
 
 } // namespace WebCore
