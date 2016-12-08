@@ -1,3 +1,15 @@
+2016-12-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Control Flow Profiler's event handlers aren't getting removed when ContentView closes
+        https://bugs.webkit.org/show_bug.cgi?id=165556
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ScriptContentView.js:
+        (WebInspector.ScriptContentView.prototype.closed):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype.closed):
+
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add ability to distinguish if a Script was parsed as a module
