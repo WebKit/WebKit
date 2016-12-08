@@ -169,19 +169,6 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue i
     return deferred->promise();
 }
 
-JSInternalPromise* JSModuleLoader::translate(ExecState* exec, JSValue key, JSValue payload, JSValue initiator)
-{
-    if (Options::dumpModuleLoadingState())
-        dataLog("Loader [translate] ", printableModuleKey(exec, key), "\n");
-
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    if (globalObject->globalObjectMethodTable()->moduleLoaderTranslate)
-        return globalObject->globalObjectMethodTable()->moduleLoaderTranslate(globalObject, exec, this, key, payload, initiator);
-    JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-    deferred->resolve(exec, payload);
-    return deferred->promise();
-}
-
 JSInternalPromise* JSModuleLoader::instantiate(ExecState* exec, JSValue key, JSValue source, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())

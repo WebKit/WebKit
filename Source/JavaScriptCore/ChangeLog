@@ -1,3 +1,45 @@
+2016-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop translate phase in module loader
+        https://bugs.webkit.org/show_bug.cgi?id=164861
+
+        Reviewed by Saam Barati.
+
+        Originally, this "translate" phase was introduced to the module loader.
+        However, recent rework discussion[1] starts dropping this phase.
+        And this "translate" phase is meaningless in the browser side module loader
+        since this phase originally mimics the node.js's translation hook (like,
+        transpiling CoffeeScript source to JavaScript).
+
+        This "translate" phase is not necessary for the exposed HTML5
+        <script type="module"> tag right now. Once the module loader pipeline is
+        redefined and specified, we need to update the current loader anyway.
+        So dropping "translate" phase right now is OK.
+
+        This a bit simplifies the current module loader pipeline.
+
+        [1]: https://github.com/whatwg/loader/issues/147
+
+        * builtins/ModuleLoaderPrototype.js:
+        (newRegistryEntry):
+        (fulfillFetch):
+        (requestFetch):
+        (requestInstantiate):
+        (provide):
+        (fulfillTranslate): Deleted.
+        (requestTranslate): Deleted.
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        (JSC::BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry):
+        * jsc.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::translate): Deleted.
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeInstantiate):
+        (JSC::moduleLoaderPrototypeTranslate): Deleted.
+
 2016-12-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add ability to distinguish if a Script was parsed as a module

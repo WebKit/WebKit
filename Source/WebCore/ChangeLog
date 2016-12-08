@@ -1,3 +1,13 @@
+2016-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop translate phase in module loader
+        https://bugs.webkit.org/show_bug.cgi?id=164861
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+
 2016-12-07  Keith Rollin  <krollin@apple.com>
 
         Network event record/replay

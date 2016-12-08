@@ -189,9 +189,6 @@ struct GlobalObjectMethodTable {
     typedef JSInternalPromise* (*ModuleLoaderFetchPtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue);
     ModuleLoaderFetchPtr moduleLoaderFetch;
 
-    typedef JSInternalPromise* (*ModuleLoaderTranslatePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
-    ModuleLoaderTranslatePtr moduleLoaderTranslate;
-
     typedef JSInternalPromise* (*ModuleLoaderInstantiatePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
     ModuleLoaderInstantiatePtr moduleLoaderInstantiate;
 
