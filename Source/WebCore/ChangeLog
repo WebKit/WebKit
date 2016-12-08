@@ -1,3 +1,10 @@
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+        Add PerformanceLoggingCocoa.mm after r209181.
+
 2016-12-08  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Some versions of Cygwin Perl generate incorrect C++ code.

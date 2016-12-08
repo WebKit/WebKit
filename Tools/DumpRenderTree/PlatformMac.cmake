@@ -83,8 +83,6 @@ list(APPEND DumpRenderTree_Cpp_SOURCES
     cf/WebArchiveDumpSupport.cpp
 
     cg/PixelDumpSupportCG.cpp
-
-    mac/CheckedMalloc.cpp
 )
 
 list(APPEND DumpRenderTree_ObjCpp_SOURCES

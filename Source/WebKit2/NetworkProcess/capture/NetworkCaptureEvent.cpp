@@ -103,7 +103,7 @@ Response::Response(String&& url, String&& mimeType, long long expectedLength, St
 }
 
 Response::Response(const WebCore::ResourceResponse& response)
-    : url(response.url())
+    : url(response.url().string())
     , mimeType(response.mimeType())
     , expectedLength(response.expectedContentLength())
     , textEncodingName(response.textEncodingName())
@@ -141,7 +141,7 @@ Error::Error(String&& domain, String&& failingURL, String&& localizedDescription
 
 Error::Error(const WebCore::ResourceError& error)
     : domain(error.domain())
-    , failingURL(error.failingURL())
+    , failingURL(error.failingURL().string())
     , localizedDescription(error.localizedDescription())
     , errorCode(error.errorCode())
     , type(static_cast<int>(error.type()))

@@ -1,5 +1,20 @@
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
+        Fix CMake build.
+
+        * CMakeLists.txt:
+        Add the new NetworkProcess/capture include directory to find new headers from r209498.
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        (WebKit::NetworkCapture::Response::Response):
+        (WebKit::NetworkCapture::Error::Error):
+        The String constructor was ambiguous after r209498 because URL has an operator NSString* and String has an NSString constructor.
+        We should get rid of operator NSString* and operator String on URL.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        Add some ENABLE(MEDIA_STREAM) macros to fix the build without it enabled after r209512.
+
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
         Fix iOS debug build after r209498
         https://bugs.webkit.org/show_bug.cgi?id=164527
 

@@ -261,10 +261,11 @@ list(APPEND WebCore_SOURCES
     page/PageDebuggable.cpp
 
     page/cocoa/MemoryReleaseCocoa.mm
-    page/cocoa/UserAgent.mm
+    page/cocoa/PerformanceLoggingCocoa.mm
     page/cocoa/ResourceUsageOverlayCocoa.mm
     page/cocoa/ResourceUsageThreadCocoa.mm
     page/cocoa/SettingsCocoa.mm
+    page/cocoa/UserAgent.mm
 
     page/mac/ChromeMac.mm
     page/mac/DragControllerMac.mm
