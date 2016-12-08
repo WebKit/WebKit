@@ -43,6 +43,10 @@
 #include "NetworkDataTaskCocoa.h"
 #endif
 
+#if ENABLE(NETWORK_CAPTURE)
+#include "NetworkCaptureManager.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -66,6 +70,45 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& para
     : m_client(client)
     , m_parameters(WTFMove(parameters))
     , m_currentRequest(m_parameters.request)
+{
+#if ENABLE(NETWORK_CAPTURE)
+    switch (NetworkCapture::Manager::singleton().mode()) {
+    case NetworkCapture::Manager::RecordReplayMode::Record:
+        initializeForRecord(networkSession);
+        break;
+    case NetworkCapture::Manager::RecordReplayMode::Replay:
+        initializeForReplay(networkSession);
+        break;
+    case NetworkCapture::Manager::RecordReplayMode::Disabled:
+        initialize(networkSession);
+        break;
+    }
+#else
+    initialize(networkSession);
+#endif
+}
+
+#if ENABLE(NETWORK_CAPTURE)
+void NetworkLoad::initializeForRecord(NetworkSession& networkSession)
+{
+    m_recorder = std::make_unique<NetworkCapture::Recorder>();
+    m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
+    if (!m_parameters.defersLoading) {
+        m_task->resume();
+        m_recorder->recordRequestSent(m_parameters.request);
+    }
+}
+
+void NetworkLoad::initializeForReplay(NetworkSession& networkSession)
+{
+    m_replayer = std::make_unique<NetworkCapture::Replayer>();
+    m_task = m_replayer->replayResource(networkSession, *this, m_parameters);
+    if (!m_parameters.defersLoading)
+        m_task->resume();
+}
+#endif
+
+void NetworkLoad::initialize(NetworkSession& networkSession)
 {
     m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
     if (!m_parameters.defersLoading)
@@ -113,8 +156,13 @@ void NetworkLoad::setDefersLoading(bool defers)
     if (m_task) {
         if (defers)
             m_task->suspend();
-        else
+        else {
             m_task->resume();
+#if ENABLE(NETWORK_CAPTURE)
+            if (m_recorder)
+                m_recorder->recordRequestSent(m_parameters.request);
+#endif
+        }
     }
 #else
     if (m_handle)
@@ -140,6 +188,11 @@ void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
 #elif USE(SOUP)
     // FIXME: Implement ResourceRequest::updateFromDelegatePreservingOldProperties. See https://bugs.webkit.org/show_bug.cgi?id=126127.
     m_currentRequest.updateFromDelegatePreservingOldProperties(newRequest);
+#endif
+
+#if ENABLE(NETWORK_CAPTURE)
+    if (m_recorder)
+        m_recorder->recordRedirectSent(newRequest);
 #endif
 
 #if USE(NETWORK_SESSION)
@@ -193,6 +246,11 @@ void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, Res
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
+
+#if ENABLE(NETWORK_CAPTURE)
+    if (m_recorder)
+        m_recorder->recordRedirectReceived(request, redirectResponse);
+#endif
 
     auto oldRequest = WTFMove(m_currentRequest);
     m_currentRequest = request;
@@ -324,6 +382,11 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Response
 {
     ASSERT(isMainThread());
 
+#if ENABLE(NETWORK_CAPTURE)
+    if (m_recorder)
+        m_recorder->recordResponseReceived(response);
+#endif
+
     if (sharedDidReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::No) {
         m_responseCompletionHandler = WTFMove(completionHandler);
         return;
@@ -335,6 +398,11 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
     ASSERT(!m_throttle);
 
+#if ENABLE(NETWORK_CAPTURE)
+    if (m_recorder)
+        m_recorder->recordDataReceived(buffer.get());
+#endif
+
     // FIXME: This should be the encoded data length, not the decoded data length.
     auto size = buffer->size();
     m_client.get().didReceiveBuffer(WTFMove(buffer), size);
@@ -343,6 +411,11 @@ void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
 void NetworkLoad::didCompleteWithError(const ResourceError& error)
 {
     ASSERT(!m_throttle);
+
+#if ENABLE(NETWORK_CAPTURE)
+    if (m_recorder)
+        m_recorder->recordFinish(error);
+#endif
 
     if (error.isNull())
         m_client.get().didFinishLoading(WTF::monotonicallyIncreasingTime());

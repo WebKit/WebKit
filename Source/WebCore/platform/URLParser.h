@@ -47,7 +47,7 @@ public:
     WEBCORE_EXPORT static void setEnabled(bool);
     
     typedef Vector<std::pair<String, String>> URLEncodedForm;
-    static URLEncodedForm parseURLEncodedForm(StringView);
+    WEBCORE_EXPORT static URLEncodedForm parseURLEncodedForm(StringView);
     static String serialize(const URLEncodedForm&);
 
     static const UIDNA& internationalDomainNameTranscoder();

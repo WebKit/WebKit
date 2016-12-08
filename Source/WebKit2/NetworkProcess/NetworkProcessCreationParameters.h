@@ -106,6 +106,11 @@ struct NetworkProcessCreationParameters {
 #if OS(LINUX)
     IPC::Attachment memoryPressureMonitorHandle;
 #endif
+
+#if ENABLE(NETWORK_CAPTURE)
+    String recordReplayMode;
+    String recordReplayCacheLocation;
+#endif
 };
 
 } // namespace WebKit

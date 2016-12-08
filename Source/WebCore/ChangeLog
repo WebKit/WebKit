@@ -1,3 +1,17 @@
+2016-12-07  Keith Rollin  <krollin@apple.com>
+
+        Network event record/replay
+        https://bugs.webkit.org/show_bug.cgi?id=164527
+        <rdar://problem/29168157>
+
+        Reviewed by Alex Christensen.
+
+        Export parseURLEncodedForm.
+
+        No new tests -- no functionality added, changed, or removed.
+
+        * platform/URLParser.h:
+
 2016-12-07  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Consolidate string/ident/url serialization functions

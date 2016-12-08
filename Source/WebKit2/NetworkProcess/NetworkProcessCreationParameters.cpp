@@ -93,6 +93,10 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if OS(LINUX)
     encoder << memoryPressureMonitorHandle;
 #endif
+#if ENABLE(NETWORK_CAPTURE)
+    encoder << recordReplayMode;
+    encoder << recordReplayCacheLocation;
+#endif
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -185,6 +189,13 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 
 #if OS(LINUX)
     if (!decoder.decode(result.memoryPressureMonitorHandle))
+        return false;
+#endif
+
+#if ENABLE(NETWORK_CAPTURE)
+    if (!decoder.decode(result.recordReplayMode))
+        return false;
+    if (!decoder.decode(result.recordReplayCacheLocation))
         return false;
 #endif
 

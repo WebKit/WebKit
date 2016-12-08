@@ -208,6 +208,13 @@ set(NetworkProcess_COMMON_SOURCES
     NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp
     NetworkProcess/cache/NetworkCacheStatistics.cpp
     NetworkProcess/cache/NetworkCacheStorage.cpp
+
+    NetworkProcess/capture/NetworkCaptureEvent.cpp
+    NetworkProcess/capture/NetworkCaptureManager.cpp
+    NetworkProcess/capture/NetworkCaptureRecorder.cpp
+    NetworkProcess/capture/NetworkCaptureReplayer.cpp
+    NetworkProcess/capture/NetworkCaptureResource.cpp
+    NetworkProcess/capture/NetworkDataTaskReplay.cpp
 )
 
 set(WebKit2_SOURCES

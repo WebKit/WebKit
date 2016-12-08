@@ -87,6 +87,11 @@ static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey 
 
 static NSString * const WebKitVariationFontsEnabledDefaultsKey = @"ExperimentalVariationFontsEnabled";
 
+#if ENABLE(NETWORK_CAPTURE)
+static NSString * const WebKitRecordReplayModeDefaultsKey = @"WebKitRecordReplayMode";
+static NSString * const WebKitRecordReplayCacheLocationDefaultsKey = @"WebKitRecordReplayCacheLocation";
+#endif
+
 namespace WebKit {
 
 NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
@@ -284,6 +289,13 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 #endif
 
     parameters.cookieStoragePartitioningEnabled = cookieStoragePartitioningEnabled();
+
+#if ENABLE(NETWORK_CAPTURE)
+    parameters.recordReplayMode = [defaults stringForKey:WebKitRecordReplayModeDefaultsKey];
+    parameters.recordReplayCacheLocation = [defaults stringForKey:WebKitRecordReplayCacheLocationDefaultsKey];
+    if (parameters.recordReplayCacheLocation.isEmpty())
+        parameters.recordReplayCacheLocation = parameters.diskCacheDirectory;
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

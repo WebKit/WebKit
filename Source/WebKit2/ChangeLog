@@ -1,3 +1,158 @@
+2016-12-07  Keith Rollin  <krollin@apple.com>
+
+        Network event record/replay
+        https://bugs.webkit.org/show_bug.cgi?id=164527
+        <rdar://problem/29168157>
+
+        Reviewed by Alex Christensen.
+
+        Add WebKit2/NetworkProcess/capture/* for recording the network events
+        that occur when loading a page and for replaying them later. Update
+        NetworkLoad to invoke capture facilities. Add preferences for enabling
+        record or replay.
+
+        * CMakeLists.txt:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::NetworkLoad):
+        (WebKit::NetworkLoad::initializeForRecord):
+        (WebKit::NetworkLoad::initializeForReplay):
+        (WebKit::NetworkLoad::initialize):
+        (WebKit::NetworkLoad::setDefersLoading):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::sharedWillSendRedirectedRequest):
+        (WebKit::NetworkLoad::notifyDidReceiveResponse):
+        (WebKit::NetworkLoad::didReceiveData):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::terminate):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp: Added.
+        (WebKit::NetworkCapture::copyHeaders):
+        (WebKit::NetworkCapture::KeyValuePair::KeyValuePair):
+        (WebKit::NetworkCapture::ResourceRequest::ResourceRequest):
+        (WebKit::NetworkCapture::ResourceRequest::operator WebCore::ResourceRequest):
+        (WebKit::NetworkCapture::ResourceResponse::ResourceResponse):
+        (WebKit::NetworkCapture::ResourceResponse::operator WebCore::ResourceResponse):
+        (WebKit::NetworkCapture::ResourceError::ResourceError):
+        (WebKit::NetworkCapture::ResourceError::operator WebCore::ResourceError):
+        (WebKit::NetworkCapture::JSONCoder::encode):
+        (WebKit::NetworkCapture::JSONCoder::decode):
+        (WebKit::NetworkCapture::JSONCoder<String>::encode):
+        (WebKit::NetworkCapture::JSONCoder<String>::decode):
+        (WebKit::NetworkCapture::JSONCoder<CaptureTimeType>::encode):
+        (WebKit::NetworkCapture::JSONCoder<CaptureTimeType>::decode):
+        (WebKit::NetworkCapture::JSONCoder<KeyValuePair>::encode):
+        (WebKit::NetworkCapture::JSONCoder<KeyValuePair>::decode):
+        (WebKit::NetworkCapture::JSONCoder<Vector<T>>::encode):
+        (WebKit::NetworkCapture::JSONCoder<Vector<T>>::decode):
+        (WebKit::NetworkCapture::JSONCoder<ResourceRequest>::encode):
+        (WebKit::NetworkCapture::JSONCoder<ResourceRequest>::decode):
+        (WebKit::NetworkCapture::JSONCoder<ResourceResponse>::encode):
+        (WebKit::NetworkCapture::JSONCoder<ResourceResponse>::decode):
+        (WebKit::NetworkCapture::JSONCoder<ResourceError>::encode):
+        (WebKit::NetworkCapture::JSONCoder<ResourceError>::decode):
+        (WebKit::NetworkCapture::JSONCoder<WebCore::SharedBuffer>::encode):
+        (WebKit::NetworkCapture::JSONCoder<WebCore::SharedBuffer>::decode):
+        (WebKit::NetworkCapture::JSONCoder<RequestSentEvent>::encode):
+        (WebKit::NetworkCapture::JSONCoder<RequestSentEvent>::decode):
+        (WebKit::NetworkCapture::JSONCoder<ResponseReceivedEvent>::encode):
+        (WebKit::NetworkCapture::JSONCoder<ResponseReceivedEvent>::decode):
+        (WebKit::NetworkCapture::JSONCoder<RedirectReceivedEvent>::encode):
+        (WebKit::NetworkCapture::JSONCoder<RedirectReceivedEvent>::decode):
+        (WebKit::NetworkCapture::JSONCoder<RedirectSentEvent>::encode):
+        (WebKit::NetworkCapture::JSONCoder<RedirectSentEvent>::decode):
+        (WebKit::NetworkCapture::JSONCoder<DataReceivedEvent>::encode):
+        (WebKit::NetworkCapture::JSONCoder<DataReceivedEvent>::decode):
+        (WebKit::NetworkCapture::JSONCoder<FinishedEvent>::encode):
+        (WebKit::NetworkCapture::JSONCoder<FinishedEvent>::decode):
+        (WebKit::NetworkCapture::eventToString):
+        (WebKit::NetworkCapture::stringToEvent):
+        * NetworkProcess/capture/NetworkCaptureEvent.h: Added.
+        (WebKit::NetworkCapture::TimedEvent::TimedEvent):
+        * NetworkProcess/capture/NetworkCaptureLogging.h: Added.
+        * NetworkProcess/capture/NetworkCaptureManager.cpp: Added.
+        (WebKit::NetworkCapture::Manager::singleton):
+        (WebKit::NetworkCapture::Manager::initialize):
+        (WebKit::NetworkCapture::Manager::terminate):
+        (WebKit::NetworkCapture::Manager::findMatch):
+        (WebKit::NetworkCapture::Manager::findExactMatch):
+        (WebKit::NetworkCapture::Manager::findBestFuzzyMatch):
+        (WebKit::NetworkCapture::Manager::fuzzyMatchURLs):
+        (WebKit::NetworkCapture::Manager::loadResources):
+        (WebKit::NetworkCapture::Manager::reportLoadPath):
+        (WebKit::NetworkCapture::Manager::reportRecordPath):
+        (WebKit::NetworkCapture::Manager::reportReplayPath):
+        (WebKit::NetworkCapture::Manager::requestToPath):
+        (WebKit::NetworkCapture::Manager::stringToHash):
+        (WebKit::NetworkCapture::Manager::hashToPath):
+        (WebKit::NetworkCapture::Manager::logRecordedResource):
+        (WebKit::NetworkCapture::Manager::logLoadedResource):
+        (WebKit::NetworkCapture::Manager::logPlayedBackResource):
+        (WebKit::NetworkCapture::Manager::ensureFileHandle):
+        (WebKit::NetworkCapture::Manager::openCacheFile):
+        (WebKit::NetworkCapture::Manager::readFile):
+        (WebKit::NetworkCapture::Manager::getLine):
+        (WebKit::NetworkCapture::Manager::getWord):
+        (WebKit::NetworkCapture::Manager::printToFile):
+        * NetworkProcess/capture/NetworkCaptureManager.h: Added.
+        (WebKit::NetworkCapture::Manager::isRecording):
+        (WebKit::NetworkCapture::Manager::isReplaying):
+        (WebKit::NetworkCapture::Manager::mode):
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp: Added.
+        (WebKit::NetworkCapture::Recorder::recordRequestSent):
+        (WebKit::NetworkCapture::Recorder::recordResponseReceived):
+        (WebKit::NetworkCapture::Recorder::recordRedirectReceived):
+        (WebKit::NetworkCapture::Recorder::recordRedirectSent):
+        (WebKit::NetworkCapture::Recorder::recordDataReceived):
+        (WebKit::NetworkCapture::Recorder::recordFinish):
+        (WebKit::NetworkCapture::Recorder::writeEvents):
+        * NetworkProcess/capture/NetworkCaptureRecorder.h: Added.
+        (WebKit::NetworkCapture::Recorder::recordEvent):
+        * NetworkProcess/capture/NetworkCaptureReplayer.cpp: Added.
+        (WebKit::NetworkCapture::Replayer::replayResource):
+        * NetworkProcess/capture/NetworkCaptureReplayer.h: Added.
+        * NetworkProcess/capture/NetworkCaptureResource.cpp: Added.
+        (WebKit::NetworkCapture::Resource::Resource):
+        (WebKit::NetworkCapture::Resource::url):
+        (WebKit::NetworkCapture::Resource::baseURL):
+        (WebKit::NetworkCapture::Resource::queryParameters):
+        (WebKit::NetworkCapture::Resource::eventStream):
+        (WebKit::NetworkCapture::Resource::EventStream::EventStream):
+        (WebKit::NetworkCapture::Resource::EventStream::nextEvent):
+        * NetworkProcess/capture/NetworkCaptureResource.h: Added.
+        * NetworkProcess/capture/NetworkCaptureTypes.h: Added.
+        (WebKit::NetworkCapture::TypeHolder::forEachTypeImpl):
+        (WebKit::NetworkCapture::TypeHolder::forEachType):
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp: Added.
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::NetworkDataTaskReplay):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::~NetworkDataTaskReplay):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::resume):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::suspend):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::cancel):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::complete):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::invalidateAndCancel):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::enqueueEventHandler):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayRequestSent):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayResponseReceived):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayRedirectReceived):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayRedirectSent):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayDataReceived):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayFinished):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::didReceiveResponse):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::didFinish):
+        * NetworkProcess/capture/NetworkDataTaskReplay.h: Added.
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::create):
+        * NetworkProcess/capture/json.hpp: Added.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * config.h:
+
 2016-12-07  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
