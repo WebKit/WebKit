@@ -41,9 +41,9 @@ scheduler.frameDidFire = function()
 
     debug("");
     rightContainerBounds = rightContainer.element.getBoundingClientRect();
-    shouldBeCloseTo("rightContainerBounds.left", 468, 0.5);
+    shouldBeCloseTo("rightContainerBounds.left", 488, 0.5);
     shouldBe("rightContainerBounds.top", "500");
-    shouldBeCloseTo("rightContainerBounds.width", 166, 0.5);
+    shouldBeCloseTo("rightContainerBounds.width", 146, 0.5);
     shouldBe("rightContainerBounds.height", "44");
 
     mediaControls.element.remove();

@@ -21,7 +21,7 @@ PASS mediaControls.controlsBar.children[1].padding is 27
 PASS mediaControls.controlsBar.children[1].margin is 27
 
 Right container
-PASS mediaControls.controlsBar.children[2].buttons is [mediaControls.airplayButton, mediaControls.aspectRatioButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
+PASS mediaControls.controlsBar.children[2].buttons is [mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
 PASS mediaControls.controlsBar.children[2].element.className is "buttons-container right"
 PASS mediaControls.controlsBar.children[2].padding is 12
 PASS mediaControls.controlsBar.children[2].margin is 0

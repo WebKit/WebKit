@@ -1,3 +1,17 @@
+2016-12-07  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Remove aspect ratio button
+        https://bugs.webkit.org/show_bug.cgi?id=165571
+
+        Reviewed by Dean Jackson.
+
+        Since we do not have a way to toggle letterboxing on an HTMLMediaElement, we remove the
+        corresponding button in the media controls.
+
+        * Modules/modern-media-controls/controls/aspect-ratio-button.js: Removed.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        * Modules/modern-media-controls/js-files:
+
 2016-12-07  Jeremy Jones  <jeremyj@apple.com>
 
         One esc to exit fullscreen and pointer lock

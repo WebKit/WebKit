@@ -20,7 +20,6 @@ controls/airplay-button.js
 controls/pip-button.js
 controls/tracks-button.js
 controls/fullscreen-button.js
-controls/aspect-ratio-button.js
 controls/seek-button.js
 controls/rewind-button.js
 controls/forward-button.js

@@ -41,7 +41,6 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
 
         // Set up fullscreen-specific buttons.
         this.rewindButton = new RewindButton(this);
-        this.aspectRatioButton = new AspectRatioButton(this);
         this.forwardButton = new ForwardButton(this);
         this.fullscreenButton.isFullscreen = true;
 
@@ -55,7 +54,7 @@ class MacOSFullscreenMediaControls extends MacOSMediaControls
         });
 
         this._rightContainer = new ButtonsContainer({
-            buttons: [this.airplayButton, this.aspectRatioButton, this.pipButton, this.tracksButton, this.fullscreenButton],
+            buttons: [this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton],
             cssClassName: "right",
             padding: 12
         });

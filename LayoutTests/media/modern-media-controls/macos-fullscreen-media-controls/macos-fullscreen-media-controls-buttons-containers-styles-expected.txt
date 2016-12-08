@@ -8,9 +8,9 @@ PASS centerContainerBounds.top is 500
 PASS centerContainerBounds.width is 178
 PASS centerContainerBounds.height is 44
 
-PASS rightContainerBounds.left is within 0.5 of 468
+PASS rightContainerBounds.left is within 0.5 of 488
 PASS rightContainerBounds.top is 500
-PASS rightContainerBounds.width is within 0.5 of 166
+PASS rightContainerBounds.width is within 0.5 of 146
 PASS rightContainerBounds.height is 44
 
 PASS successfullyParsed is true

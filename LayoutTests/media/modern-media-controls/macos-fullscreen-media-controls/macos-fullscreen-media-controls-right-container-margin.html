@@ -17,21 +17,16 @@ scheduler.frameDidFire = function()
     numberOfFrames++;
 
     if (numberOfFrames == 1) {
-        debug("5 enabled buttons")
-        shouldBe("rightContainer.margin", "12");
-        debug("");
-        mediaControls.airplayButton.enabled = false;
-    } else if (numberOfFrames == 2) {
         debug("4 enabled buttons")
         shouldBe("rightContainer.margin", "16");
         debug("");
         mediaControls.tracksButton.enabled = false;
-    } else if (numberOfFrames == 3) {
+    } else if (numberOfFrames == 2) {
         debug("3 enabled buttons")
         shouldBe("rightContainer.margin", "24");
         mediaControls.pipButton.enabled = false;
         debug("");
-    } else if (numberOfFrames == 4) {
+    } else if (numberOfFrames == 3) {
         debug("2 enabled buttons")
         shouldBe("rightContainer.margin", "24");
         debug("");

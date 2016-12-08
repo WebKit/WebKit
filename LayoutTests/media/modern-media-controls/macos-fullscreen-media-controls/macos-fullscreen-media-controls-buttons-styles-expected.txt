@@ -23,23 +23,18 @@ PASS style.left is "12px"
 PASS style.webkitMaskPositionY is "13px"
 PASS style.height is "44px"
 
-AspectRatioButton
-PASS style.left is "40px"
-PASS style.webkitMaskPositionY is "13px"
-PASS style.height is "44px"
-
 PiPButton
-PASS style.left is "72px"
+PASS style.left is "44px"
 PASS style.webkitMaskPositionY is "13px"
 PASS style.height is "44px"
 
 TracksButton
-PASS style.left is "111px"
+PASS style.left is "87px"
 PASS style.webkitMaskPositionY is "15px"
 PASS style.height is "44px"
 
 FullscreenButton
-PASS style.left is "139px"
+PASS style.left is "119px"
 PASS style.webkitMaskPositionY is "13px"
 PASS style.height is "44px"
 

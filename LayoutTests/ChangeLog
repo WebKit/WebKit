@@ -1,3 +1,23 @@
+2016-12-07  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Remove aspect ratio button
+        https://bugs.webkit.org/show_bug.cgi?id=165571
+
+        Reviewed by Dean Jackson.
+
+        We no longer have an AspectRatioButton.
+
+        * media/modern-media-controls/aspect-ratio-button/aspect-ratio-button-expected.txt: Removed.
+        * media/modern-media-controls/aspect-ratio-button/aspect-ratio-button.html: Removed.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html:
+
 2016-12-07  Jeremy Jones  <jeremyj@apple.com>
 
         One esc to exit fullscreen and pointer lock
