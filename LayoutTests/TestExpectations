@@ -976,19 +976,13 @@ webkit.org/b/165195 fast/backgrounds/background-shorthand-with-backgroundSize-st
 webkit.org/b/165195 fast/css-grid-layout/grid-auto-flow-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-columns-rows-get-set.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/non-grid-columns-rows-get-set.html [ Pass Failure ]
-webkit.org/b/165195 fast/masking/parsing-mask.html [ Pass Failure ]
 
 # The following tests match Blink/Chrome, but we're not sure yet what to do with them when the
 # new CSS parser is turned on. The tests may be right, and these may be bugs in Blink/Chrome, or
 # the tests may be wrong.
 webkit.org/b/165195 fast/css/parsing-css-allowed-string-characters.html [ Pass Failure ]
 webkit.org/b/165195 fast/selectors/invalid-functional-pseudo-class.html [ Pass Failure ]
-webkit.org/b/165195 fast/selectors/nth-child-bounds.html [ Pass Failure ]
-webkit.org/b/165195 fast/selectors/nth-last-child-bounds.html [ Pass Failure ]
-webkit.org/b/165195 fast/text/text-combine-crash.html [ Pass Failure ]
 webkit.org/b/165195 fast/css-grid-layout/grid-template-shorthand-get-set.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/parse-color-int-or-percent-crash.html [ Pass Failure ]
-webkit.org/b/165195 fast/css/string-quote-binary.html [ Pass Failure ]
 
 # Visual viewports
 webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-no-content.html [ Failure ]

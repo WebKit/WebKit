@@ -154,7 +154,7 @@ webtest_fn_7();
 function webtest_fn_8() {
 try {
 for (wf_i=0;wf_i<78;wf_i++) {
-var lis = document.querySelector("*|:nth-last-of-type(65536n-1024)");
+var lis = document.querySelector(":nth-last-of-type(65536n-1024)");
 for (var i = 0; i < lis.length; i++) {
   lis.item(i).parentNode.removeChild(lis.item(i));
 }

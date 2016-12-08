@@ -1,5 +1,23 @@
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Unskip/remove more tests
+        https://bugs.webkit.org/show_bug.cgi?id=165611
+
+        Reviewed by Zalan Bujtas.
+
+        * TestExpectations:
+        * fast/css/parse-color-int-or-percent-crash.html:
+        * fast/css/string-quote-binary-expected.txt: Removed.
+        * fast/css/string-quote-binary.html: Removed.
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+        * fast/selectors/nth-child-bounds.html:
+        * fast/selectors/nth-last-child-bounds-expected.txt:
+        * fast/selectors/nth-last-child-bounds.html:
+        * fast/text/text-combine-crash.html:
+
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Unskip more tests
         https://bugs.webkit.org/show_bug.cgi?id=165610
 

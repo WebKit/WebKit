@@ -24,7 +24,6 @@ PASS document.querySelectorAll("li:nth-last-child(2147483648)").length is 0
 PASS document.querySelectorAll("li:nth-last-child(3147483647n+3147483647)").length is 0
 PASS document.querySelectorAll("li:nth-last-child(3147483647n)").length is 0
 PASS document.querySelectorAll("li:nth-last-child(3147483647)").length is 0
-PASS document.querySelectorAll("li:nth-last-child(-2147483649n-2147483649)").length is 0
 PASS document.querySelectorAll("li:nth-last-child(-2147483649n)").length is 0
 PASS document.querySelectorAll("li:nth-last-child(-2147483649)").length is 0
 PASS allItems.length is 20
