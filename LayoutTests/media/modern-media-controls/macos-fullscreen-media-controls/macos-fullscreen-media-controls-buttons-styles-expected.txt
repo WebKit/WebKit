@@ -29,12 +29,12 @@ PASS style.webkitMaskPositionY is "13px"
 PASS style.height is "44px"
 
 TracksButton
-PASS style.left is "87px"
+PASS style.left is "82px"
 PASS style.webkitMaskPositionY is "15px"
 PASS style.height is "44px"
 
 FullscreenButton
-PASS style.left is "119px"
+PASS style.left is "114px"
 PASS style.webkitMaskPositionY is "13px"
 PASS style.height is "44px"
 

@@ -1,3 +1,17 @@
+2016-12-07  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Use a small picture-in-picture button in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=165587
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline tests to account for the smaller picture-in-picture button in fullscreen.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+
 2016-12-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/debugger/async-stack-trace.html as flaky on macOS.

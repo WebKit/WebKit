@@ -44,7 +44,7 @@ const Icons = {
     VolumeMuted     : "volume-mute"
 };
 
-const IconsWithFullscreenVariants = [Icons.Airplay, Icons.Tracks, Icons.Pause, Icons.Play];
+const IconsWithFullscreenVariants = [Icons.Airplay, Icons.Tracks, Icons.Pause, Icons.EnterPiP, Icons.Play];
 
 const iconService = new class IconService {
 
