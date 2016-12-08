@@ -174,6 +174,7 @@ void DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     if (ownerDocument) {
         document->setCookieURL(ownerDocument->cookieURL());
         document->setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
+        document->setStrictMixedContentMode(ownerDocument->isStrictMixedContentMode());
     }
 
     m_frame->loader().didBeginDocument(dispatch);

@@ -123,6 +123,8 @@ http/tests/security/contentSecurityPolicy/object-src-param-src-blocked.html
 http/tests/security/contentSecurityPolicy/object-src-param-url-blocked.html
 http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html
 http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html
 
 # Pointer-lock not supported on iOS
 pointer-lock

@@ -1,3 +1,88 @@
+2016-12-08  Daniel Bates  <dabates@apple.com>
+
+        Implement Strict Mixed Content Checking
+        https://bugs.webkit.org/show_bug.cgi?id=165438
+        <rdar://problem/26103867>
+
+        Reviewed by Brent Fulgham and Andy Estes.
+
+        Add tests to ensure that we do not regress strict mixed content checking.
+
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/data-url-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/data-url-iframe-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/duplicate-directive-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/duplicate-directive.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-blob-url-iframe-in-iframe-expected.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-blob-url-iframe-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-inherited-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-inherited-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-xslt-document-in-iframe-with-inherited-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-xslt-document-in-iframe-with-inherited-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe-with-inherited-policy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe-with-inherited-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/dump-securitypolicyviolation-and-notify-done.js: Added.
+        (logMessage):
+        (securityPolicyViolationToString):
+        (checkNotify):
+        (recordSecurityPolicyViolation):
+        (window.onload):
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/fail.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-data-url-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.php: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-and-without-policy.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-in-blob-url-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-in-javascript-url-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-with-enforced-and-report-policies.php: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-plugin.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-xhr.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-secure-image-after-upgrade-redirect.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-secure-image-after-upgrade.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/red-square.png: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/transform-functions.xsl: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/secure-image-after-upgrade-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/secure-image-after-upgrade-in-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/secure-image-after-upgrade-redirect-in-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/secure-image-after-upgrade-redirect-in-iframe.html: Added.
+        * platform/ios-simulator/TestExpectations: Skip plugin tests as plugins are not supported on iOS.
+
 2016-12-08  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for Geolocation

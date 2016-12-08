@@ -29,6 +29,7 @@
 #include "config.h"
 #include "MixedContentChecker.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -60,12 +61,19 @@ bool MixedContentChecker::isMixedContent(SecurityOrigin* securityOrigin, const U
     return !SecurityOrigin::isSecure(url);
 }
 
-bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrigin, ContentType type, const URL& url) const
+bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin* securityOrigin, ContentType type, const URL& url, AlwaysDisplayInNonStrictMode alwaysDisplayInNonStrictMode) const
 {
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = (m_frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn) && !m_frame.document()->geolocationAccessed();
+    if (!m_frame.document()->contentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
+        return false;
+
+    bool isStrictMode = m_frame.document()->isStrictMixedContentMode();
+    if (!isStrictMode && alwaysDisplayInNonStrictMode == AlwaysDisplayInNonStrictMode::Yes)
+        return true;
+
+    bool allowed = !isStrictMode && (m_frame.settings().allowDisplayOfInsecureContent() || type == ContentType::ActiveCanWarn) && !m_frame.document()->geolocationAccessed();
     logWarning(allowed, "display", url);
 
     if (allowed) {
@@ -81,7 +89,10 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
     if (!isMixedContent(securityOrigin, url))
         return true;
 
-    bool allowed = m_frame.settings().allowRunningOfInsecureContent() && !m_frame.document()->geolocationAccessed();
+    if (!m_frame.document()->contentSecurityPolicy()->allowRunningOrDisplayingInsecureContent(url))
+        return false;
+
+    bool allowed = !m_frame.document()->isStrictMixedContentMode() && m_frame.settings().allowRunningOfInsecureContent() && !m_frame.document()->geolocationAccessed();
     logWarning(allowed, "run", url);
 
     if (allowed) {

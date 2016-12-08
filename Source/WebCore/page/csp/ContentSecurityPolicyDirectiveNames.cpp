@@ -47,6 +47,7 @@ const char* const sandbox = "sandbox";
 const char* const scriptSrc = "script-src";
 const char* const styleSrc = "style-src";
 const char* const upgradeInsecureRequests = "upgrade-insecure-requests";
+const char* const blockAllMixedContent = "block-all-mixed-content";
     
 } // namespace ContentSecurityPolicyDirectiveNames
 

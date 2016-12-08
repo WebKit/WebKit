@@ -81,6 +81,9 @@ public:
     bool geolocationAccessed() const { return m_geolocationAccessed; }
     void setGeolocationAccessed() { m_geolocationAccessed = true; }
 
+    bool isStrictMixedContentMode() const { return m_isStrictMixedContentMode; }
+    void setStrictMixedContentMode(bool strictMixedContentMode) { m_isStrictMixedContentMode = strictMixedContentMode; }
+
 protected:
     SecurityContext();
     virtual ~SecurityContext();
@@ -97,6 +100,7 @@ private:
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
     bool m_foundMixedContent { false };
     bool m_geolocationAccessed { false };
+    bool m_isStrictMixedContentMode { false };
 };
 
 } // namespace WebCore

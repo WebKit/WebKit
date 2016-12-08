@@ -5161,6 +5161,8 @@ void Document::initSecurityContext()
         m_isSrcdocDocument = true;
         setBaseURLOverride(parentDocument->baseURL());
     }
+    if (parentDocument)
+        setStrictMixedContentMode(parentDocument->isStrictMixedContentMode());
 
     if (!shouldInheritSecurityOriginFromOwner(m_url))
         return;
@@ -5178,7 +5180,7 @@ void Document::initSecurityContext()
         didFailToInitializeSecurityOrigin();
         return;
     }
-    
+
     Document* openerDocument = openerFrame ? openerFrame->document() : nullptr;
 
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, new browsing contexts must inherit from an

@@ -71,6 +71,8 @@ public:
 
     const ContentSecurityPolicyDirective* defaultSrc() const { return m_defaultSrc.get(); }
 
+    bool hasBlockAllMixedContentDirective() const { return m_hasBlockAllMixedContentDirective; }
+
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
     bool isReportOnly() const { return m_reportOnly; }
     const Vector<String>& reportURIs() const { return m_reportURIs; }
@@ -87,6 +89,7 @@ private:
     void addDirective(const String& name, const String& value);
     void applySandboxPolicy(const String& name, const String& sandboxPolicy);
     void setUpgradeInsecureRequests(const String& name);
+    void setBlockAllMixedContentEnabled(const String& name);
 
     template <class CSPDirectiveType>
     void setCSPDirective(const String& name, const String& value, std::unique_ptr<CSPDirectiveType>&);
@@ -104,6 +107,7 @@ private:
     bool m_reportOnly { false };
     bool m_haveSandboxPolicy { false };
     bool m_upgradeInsecureRequests { false };
+    bool m_hasBlockAllMixedContentDirective { false };
 
     std::unique_ptr<ContentSecurityPolicyMediaListDirective> m_pluginTypes;
     std::unique_ptr<ContentSecurityPolicySourceListDirective> m_baseURI;

@@ -446,6 +446,15 @@ void ContentSecurityPolicyDirectiveList::setUpgradeInsecureRequests(const String
     m_policy.setUpgradeInsecureRequests(true);
 }
 
+void ContentSecurityPolicyDirectiveList::setBlockAllMixedContentEnabled(const String& name)
+{
+    if (m_hasBlockAllMixedContentDirective) {
+        m_policy.reportDuplicateDirective(name);
+        return;
+    }
+    m_hasBlockAllMixedContentDirective = true;
+}
+
 void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const String& value)
 {
     ASSERT(!name.isEmpty());
@@ -494,6 +503,8 @@ void ContentSecurityPolicyDirectiveList::addDirective(const String& name, const 
         parseReportURI(name, value);
     else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::upgradeInsecureRequests))
         setUpgradeInsecureRequests(name);
+    else if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::blockAllMixedContent))
+        setBlockAllMixedContentEnabled(name);
     else
         m_policy.reportUnsupportedDirective(name);
 }

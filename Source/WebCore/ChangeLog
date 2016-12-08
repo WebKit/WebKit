@@ -1,3 +1,95 @@
+2016-12-08  Daniel Bates  <dabates@apple.com>
+
+        Implement Strict Mixed Content Checking
+        https://bugs.webkit.org/show_bug.cgi?id=165438
+        <rdar://problem/26103867>
+
+        Reviewed by Brent Fulgham and Andy Estes.
+
+        Add support for the CSP directive block-all-mixed-content to enable strict mixed content checking
+        as per <https://www.w3.org/TR/2016/CR-mixed-content-20160802/#strict-checking> (2 August 2016).
+
+        Currently WebKit only blocks blockable content as such content can contaminate the security origin
+        that loaded it. Optionally-blockable content, including images, would be allowed to load as mixed
+        content. When strict mixed content checking is enabled all mixed content is blocked. That is, both
+        blockable and optionally-blockable content will be blocked. A web site can opt into strict mixed
+        content checking by adding the directive block-all-mixed-content to their content security policy.
+
+        Tests: http/tests/security/contentSecurityPolicy/block-all-mixed-content/data-url-iframe-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/duplicate-directive.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe-report-only.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-css-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-blob-url-iframe-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-inherited-policy.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-javascript-url-iframe-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-xslt-document-in-iframe-with-inherited-policy.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe-with-inherited-policy.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-script-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-asynchronous-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-xhr-synchronous-in-main-frame.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/secure-image-after-upgrade-in-iframe.html
+               http/tests/security/contentSecurityPolicy/block-all-mixed-content/secure-image-after-upgrade-redirect-in-iframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Inherit strict mixed content checking mode from parent document.
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::isStrictMixedContentMode): Added.
+        (WebCore::SecurityContext::setStrictMixedContentMode): Added.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Check mixed content policy with respect to the current frame.
+        The document in the current frame may have opted into strict mixed content checking or inherited it from
+        its parent document.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin): Inherit the strict mixed content checking mode from the owner document
+        when loading a JavaScript URL in a frame (e.g. <iframe src="javascript:...">) because such URLs inherit
+        the security origin of their parent document.
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::canDisplayInsecureContent): Check the content security policy of the document
+        and the strict mixed content checking mode bit on the document (in that order) to determine if we are in
+        strict mode. Block display of insecure content when in strict mode. Modified to take enum AlwaysDisplayInNonStrictMode (defaults
+        to AlwaysDisplayInNonStrictMode::No) as to whether to allow our current relaxed behavior of displaying insecure
+        content in non-strict mode.
+        (WebCore::MixedContentChecker::canRunInsecureContent): Check the content security policy of the document
+        and the strict mixed content checking mode bit on the document (in that order) to determine if we are in
+        strict mode. Block running of insecure content when in strict mode.
+        * loader/MixedContentChecker.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::checkInsecureContent): Always check mixed content policy with respect to
+        the current frame. The document in the current frame may have opted into strict mixed content checking or
+        inherited it from its parent document. Also renamed a local variable f to frame to better describe its
+        purpose.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowRunningOrDisplayingInsecureContent): Added. Iterate through all the
+        policies and report violations with respect to policies that have directive block-all-mixed-content.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader): Move logic to set eval() error message from here...
+        (WebCore::ContentSecurityPolicy::applyPolicyToScriptExecutionContext): ...to here so that we only perform
+        it once we are ready to apply the CSP policy to the script execution context. Additionally, enable
+        strict mixed content checking on the script execution context if applicable.
+        (WebCore::ContentSecurityPolicy::reportViolation): Added overrides that take a string and a directive list
+        object (ContentSecurityPolicyDirectiveList) for the effective violated directive and its associated directive
+        list, respectively. We make use of these overrides so as to support reporting block-all-mixed-content
+        violations, which are not implemented using a ContentSecurityPolicyDirective object as it seemed sufficient
+        to implement it as a boolean on ContentSecurityPolicyDirectiveList.
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::setBlockAllMixedContentEnabled): Added.
+        (WebCore::ContentSecurityPolicyDirectiveList::addDirective): Parse the directive block-all-mixed-content.
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        (WebCore::ContentSecurityPolicyDirectiveList::hasBlockAllMixedContentDirective): Added.
+        * page/csp/ContentSecurityPolicyDirectiveNames.cpp:
+        * page/csp/ContentSecurityPolicyDirectiveNames.h: Add constant for "block-all-mixed-content".
+
 2016-12-08  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for Geolocation
