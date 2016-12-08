@@ -1,3 +1,18 @@
+2016-12-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Unable to delete breakpoint from worker script
+        https://bugs.webkit.org/show_bug.cgi?id=165578
+
+        Reviewed by Matt Baker.
+
+        * inspector/worker/debugger-shared-breakpoint-expected.txt: Added.
+        * inspector/worker/debugger-shared-breakpoint.html: Added.
+        Ensure setting / removing a breakpoint affects all Workers that share
+        a resource with the same URL.
+
+        * inspector/worker/resources/worker-debugger-pause.js:
+        Add an echo command that will be useful to ensure Workers are not paused.
+
 2016-12-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/selectors/nth-last-child-bounds.html after r209548.

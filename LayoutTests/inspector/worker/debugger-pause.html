@@ -20,7 +20,7 @@ function test()
     }
 
     // In each test, the Worker pauses and the Main Thread is waiting to
-    // pause on the next statement. Do an InspectorTest.log, which evalutes
+    // pause on the next statement. Do an InspectorTest.log, which evaluates
     // JavaScript in the page and should pause. Then later run work.
     // In WebKit1, because the VM is shared between the inspector and
     // inspected page we need to put an artificial break between our

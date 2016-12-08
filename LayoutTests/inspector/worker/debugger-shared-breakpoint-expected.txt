@@ -1,0 +1,27 @@
+Ensure setting and removing a breakpoint affects all Workers sharing a resource by URL.
+
+
+== Running test suite: Worker.Debugger.SharedBreakpoint
+-- Running test case: Worker.Debugger.SharedBreakpoint.CreateWorkers
+PASS: Two Workers created.
+PASS: Two Workers ready.
+
+-- Running test case: Worker.Debugger.SharedBreakpoint.BreakpointAdded
+PASS: All Targets paused.
+PASS: Active CalleFrame should be in a Worker.
+PASS: Pause reason should be a breakpoint.
+PAUSE AT triggerBreakpoint:9:5
+      5    
+      6    function triggerBreakpoint() {
+      7        let alpha = 1;
+ ->   8        |let beta = 2; // BREAKPOINT
+      9        let gamma = 3;
+     10    }
+     11    
+
+
+
+-- Running test case: Worker.Debugger.SharedBreakpoint.BreakpointRemoved
+PASS: Worker 1 should not have paused.
+PASS: Worker 2 should not have paused.
+

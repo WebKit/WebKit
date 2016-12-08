@@ -27,4 +27,6 @@ onmessage = function(event) {
         triggerException();
     else if (event.data === "triggerAssertion")
         triggerAssertion();
+    else if (event.data === "triggerResponse")
+        postMessage("response");
 }

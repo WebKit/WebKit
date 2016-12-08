@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-pause-location.js"></script>
+<script>
+let worker1, worker2;
+
+function triggerCreateWorkers() {
+    worker1 = new Worker("resources/worker-debugger-pause.js");
+    worker2 = new Worker("resources/worker-debugger-pause.js");
+    worker1.onmessage = worker2.onmessage = function(event) {
+        TestPage.dispatchEventToFrontend("WorkerResponded");
+    };
+}
+
+function triggerWorkerBreakpointPauses() {
+    worker1.postMessage("triggerBreakpoint");
+    worker2.postMessage("triggerBreakpoint");
+}
+
+function triggerWorkerResponse() {
+    worker1.postMessage("triggerResponse");
+    worker2.postMessage("triggerResponse");
+}
+
+function test()
+{
+    let breakpoint = null;
+    let workerTarget1, workerTarget2;
+
+    // In each test, the Worker pauses and the Main Thread is waiting to
+    // pause on the next statement. Do an InspectorTest.log, which evaluates
+    // JavaScript in the page and should pause. Then later run work.
+    // In WebKit1, because the VM is shared between the inspector and
+    // inspected page we need to put an artificial break between our
+    // Inspector JavaScript, the Page JavaScript, and back to the Inspector.
+    function pauseTheMainThread() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                InspectorTest.log("");
+                setTimeout(resolve);
+            });
+        });
+    }
+
+    function areAllTargetsPaused() {
+        for (let target of WebInspector.targets) {
+            let targetData = WebInspector.debuggerManager.dataForTarget(target);
+            if (!targetData.paused)
+                return false;
+        }
+        return true;
+    }
+
+    function whenAllTargetsPaused() {
+        InspectorTest.assert(!areAllTargetsPaused());
+        return new Promise((resolve, reject) => {
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, (event) => {
+                if (areAllTargetsPaused()) {
+                    WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.CallFramesDidChange, listener);
+                    resolve();
+                }
+            });
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Debugger.SharedBreakpoint");
+
+    suite.addTestCase({
+        name: "Worker.Debugger.SharedBreakpoint.CreateWorkers",
+        description: "Create multiple workers.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`triggerCreateWorkers(); triggerWorkerResponse();`);
+            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+                workerTarget1 = event.data.target;
+                WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+                    workerTarget2 = event.data.target;
+                    InspectorTest.pass("Two Workers created.");
+                });
+            });
+            InspectorTest.singleFireEventListener("WorkerResponded", () => {
+                InspectorTest.singleFireEventListener("WorkerResponded", () => {
+                    InspectorTest.pass("Two Workers ready.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.SharedBreakpoint.BreakpointAdded",
+        description: "All workers should pause on the breakpoint after adding it.",
+        test(resolve, reject) {
+            InspectorTest.assert(workerTarget1.mainResource instanceof WebInspector.Script);
+            let location = workerTarget1.mainResource.createSourceCodeLocation(8, 0);
+            breakpoint = new WebInspector.Breakpoint(location);
+            WebInspector.debuggerManager.addBreakpoint(breakpoint);
+
+            InspectorTest.evaluateInPage(`triggerWorkerBreakpointPauses()`);
+            WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                pauseTheMainThread();
+                whenAllTargetsPaused().then(() => {
+                    let target = WebInspector.debuggerManager.activeCallFrame.target;
+                    let targetData = WebInspector.debuggerManager.dataForTarget(target);
+
+                    InspectorTest.pass("All Targets paused.");
+                    InspectorTest.expectEqual(target.type, WebInspector.Target.Type.Worker, "Active CalleFrame should be in a Worker.");
+                    InspectorTest.expectEqual(targetData.pauseReason, WebInspector.DebuggerManager.PauseReason.Breakpoint, "Pause reason should be a breakpoint.");
+                    window.loadLinesFromSourceCode(target.mainResource).then(() => {
+                        logPauseLocation();
+                        WebInspector.debuggerManager.resume().then(resolve, reject);
+                    });
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Debugger.SharedBreakpoint.BreakpointRemoved",
+        description: "No worker should pause on the breakpoint after removing it.",
+        test(resolve, reject) {
+            WebInspector.debuggerManager.removeBreakpoint(breakpoint);
+
+            InspectorTest.evaluateInPage(`triggerWorkerBreakpointPauses()`);
+            InspectorTest.evaluateInPage(`triggerWorkerResponse()`);
+
+            InspectorTest.singleFireEventListener("WorkerResponded", () => {
+                InspectorTest.pass("Worker 1 should not have paused.");
+                InspectorTest.singleFireEventListener("WorkerResponded", () => {
+                    InspectorTest.pass("Worker 2 should not have paused.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure setting and removing a breakpoint affects all Workers sharing a resource by URL.</p>
+</body>
+</html>

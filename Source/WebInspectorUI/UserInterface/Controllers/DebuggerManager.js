@@ -919,11 +919,12 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
                 callback();
         }
 
-        if (breakpoint.target)
-            breakpoint.target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
-        else {
+        if (breakpoint.contentIdentifier) {
             for (let target of WebInspector.targets)
                 target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
+        } else if (breakpoint.scriptIdentifier) {
+            let target = breakpoint.target;
+            target.DebuggerAgent.removeBreakpoint(breakpoint.identifier, didRemoveBreakpoint.bind(this));
         }
     }
 
