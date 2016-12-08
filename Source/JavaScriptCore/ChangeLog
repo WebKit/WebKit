@@ -1,3 +1,9 @@
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix cloop build.
+
+        * runtime/JSObject.h:
+
 2016-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent GC should be stable enough to land enabled on X86_64

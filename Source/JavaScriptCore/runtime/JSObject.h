@@ -27,6 +27,7 @@
 #include "ArrayStorage.h"
 #include "AuxiliaryBarrier.h"
 #include "Butterfly.h"
+#include "CPU.h"
 #include "CallFrame.h"
 #include "ClassInfo.h"
 #include "CommonIdentifiers.h"
