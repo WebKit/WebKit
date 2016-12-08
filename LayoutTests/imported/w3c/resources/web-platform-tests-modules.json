@@ -3,7 +3,7 @@
         "path": [
             "resources"
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/873f9680aff66553f84d38f21a038c4534cc2789.tar.gz", 
+        "url": "web-platform-tests-modules/w3c/testharness.js/archive/873f9680aff66553f84d38f21a038c4534cc2789.tar.gz", 
         "url_subpath": "testharness.js-873f9680aff66553f84d38f21a038c4534cc2789"
     }, 
     {
@@ -11,7 +11,7 @@
             "resources", 
             "webidl2"
         ], 
-        "url": "https://github.com/darobin/webidl2.js/archive/bd216bcd5596d60734450adc938155deab1e1a80.tar.gz", 
+        "url": "web-platform-tests-modules/darobin/webidl2.js/archive/bd216bcd5596d60734450adc938155deab1e1a80.tar.gz", 
         "url_subpath": "webidl2.js-bd216bcd5596d60734450adc938155deab1e1a80"
     }, 
     {
@@ -21,14 +21,14 @@
             "test", 
             "widlproc"
         ], 
-        "url": "https://github.com/dontcallmedom/widlproc/archive/4ef8dde69c0ba3d0167bccfa2775eea7f0d6c7fe.tar.gz", 
+        "url": "web-platform-tests-modules/dontcallmedom/widlproc/archive/4ef8dde69c0ba3d0167bccfa2775eea7f0d6c7fe.tar.gz", 
         "url_subpath": "widlproc-4ef8dde69c0ba3d0167bccfa2775eea7f0d6c7fe"
     }, 
     {
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wpt-tools/archive/cf9748586c2bca14998eda5956be6cf4d6d221d9.tar.gz", 
+        "url": "web-platform-tests-modules/w3c/wpt-tools/archive/cf9748586c2bca14998eda5956be6cf4d6d221d9.tar.gz", 
         "url_subpath": "wpt-tools-cf9748586c2bca14998eda5956be6cf4d6d221d9"
     }, 
     {
@@ -36,7 +36,7 @@
             "tools", 
             "html5lib"
         ], 
-        "url": "https://github.com/html5lib/html5lib-python/archive/7cce65bbaa78411f98b8b37eeefc9db03c580097.tar.gz", 
+        "url": "web-platform-tests-modules/html5lib/html5lib-python/archive/7cce65bbaa78411f98b8b37eeefc9db03c580097.tar.gz", 
         "url_subpath": "html5lib-python-7cce65bbaa78411f98b8b37eeefc9db03c580097"
     }, 
     {
@@ -47,7 +47,7 @@
             "tests", 
             "testdata"
         ], 
-        "url": "https://github.com/html5lib/html5lib-tests/archive/a9badff0cd2fe337170769d42ca2df5e96d30f97.tar.gz", 
+        "url": "web-platform-tests-modules/html5lib/html5lib-tests/archive/a9badff0cd2fe337170769d42ca2df5e96d30f97.tar.gz", 
         "url_subpath": "html5lib-tests-a9badff0cd2fe337170769d42ca2df5e96d30f97"
     }, 
     {
@@ -55,7 +55,7 @@
             "tools", 
             "pytest"
         ], 
-        "url": "https://github.com/pytest-dev/pytest/archive/168daaa71f4cc5f846064ebebab41b9cf625a89a.tar.gz", 
+        "url": "web-platform-tests-modules/pytest-dev/pytest/archive/168daaa71f4cc5f846064ebebab41b9cf625a89a.tar.gz", 
         "url_subpath": "pytest-168daaa71f4cc5f846064ebebab41b9cf625a89a"
     }, 
     {
@@ -63,7 +63,7 @@
             "tools", 
             "pywebsocket"
         ], 
-        "url": "https://github.com/w3c/pywebsocket/archive/8c285d9015121e8c1c40be852439fc03b4a18112.tar.gz", 
+        "url": "web-platform-tests-modules/w3c/pywebsocket/archive/8c285d9015121e8c1c40be852439fc03b4a18112.tar.gz", 
         "url_subpath": "pywebsocket-8c285d9015121e8c1c40be852439fc03b4a18112"
     }, 
     {
@@ -71,7 +71,7 @@
             "tools", 
             "six"
         ], 
-        "url": "https://github.com/jgraham/six/archive/3b6173c833d217ab0186c355804f5925cbcfca47.tar.gz", 
+        "url": "web-platform-tests-modules/jgraham/six/archive/3b6173c833d217ab0186c355804f5925cbcfca47.tar.gz", 
         "url_subpath": "six-3b6173c833d217ab0186c355804f5925cbcfca47"
     }, 
     {
@@ -79,7 +79,7 @@
             "tools", 
             "webdriver"
         ], 
-        "url": "https://github.com/w3c/wdclient/archive/de9b46ec049f0b2a6fe261e27804970535ba8658.tar.gz", 
+        "url": "web-platform-tests-modules/w3c/wdclient/archive/de9b46ec049f0b2a6fe261e27804970535ba8658.tar.gz", 
         "url_subpath": "wdclient-de9b46ec049f0b2a6fe261e27804970535ba8658"
     }, 
     {
@@ -87,7 +87,7 @@
             "tools", 
             "wptserve"
         ], 
-        "url": "https://github.com/w3c/wptserve/archive/071c51e26a57300979ad53313970d7247979f6d3.tar.gz", 
+        "url": "web-platform-tests-modules/w3c/wptserve/archive/071c51e26a57300979ad53313970d7247979f6d3.tar.gz", 
         "url_subpath": "wptserve-071c51e26a57300979ad53313970d7247979f6d3"
     }
 ]

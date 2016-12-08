@@ -25,6 +25,7 @@ import json
 import logging
 import sys
 import time
+import urllib
 
 from webkitpy.common.system.autoinstall import AutoInstaller
 from webkitpy.layout_tests.servers import http_server_base
@@ -104,7 +105,10 @@ class WebPlatformTestServer(http_server_base.HttpServerBase):
         for module in modules:
             path = module["path"]
             name = path.pop()
-            AutoInstaller(target_dir=self._filesystem.join(self._doc_root, self._filesystem.sep.join(path))).install(url=module["url"], url_subpath=module["url_subpath"], target_name=name)
+            resolved_url = module["url"]
+            if not resolved_url.startswith("http"):
+                resolved_url = "file://" + urllib.pathname2url(self._filesystem.join(self._doc_root_path, "..", "resources", resolved_url))
+            AutoInstaller(target_dir=self._filesystem.join(self._doc_root, self._filesystem.sep.join(path))).install(url=resolved_url, url_subpath=module["url_subpath"], target_name=name)
 
     def _copy_webkit_test_files(self):
         _log.debug('Copying WebKit resources files')
