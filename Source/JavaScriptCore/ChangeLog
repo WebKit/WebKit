@@ -1,3 +1,24 @@
+2016-12-08  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: JSC::link* shouldn't need a CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=165591
+
+        Reviewed by Keith Miller.
+
+        Allow linking without a CodeBlock, which WebAssembly's wasm -> JS stubs does. This needs to work for polymorphic and virtual calls. This patch adds corresponding tests for this.
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::shouldDumpDisassemblyFor): don't look at the tier option if there isn't a CodeBlock, only look at the global one. This is a WebAssembly function, so the tier information is irrelevant.
+        * jit/Repatch.cpp:
+        (JSC::isWebAssemblyToJSCallee): this is used in the link* functions below
+        (JSC::linkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * runtime/Options.h: add an option to change the maximum number of polymorphic calls in stubs from wasm to JS, which will come in handy when we try to tune performance or try merging some of the WebAssembly stubs
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::importStubGenerator): remove the breakpoint since the code now works
+        * wasm/js/WebAssemblyToJSCallee.h:
+
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         MultiPutByOffset should get a barrier if it transitions

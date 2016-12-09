@@ -39,7 +39,7 @@ namespace JSC {
 
 bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
 {
-    if (JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
+    if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
         return true;
     return Options::dumpDisassembly();
 }

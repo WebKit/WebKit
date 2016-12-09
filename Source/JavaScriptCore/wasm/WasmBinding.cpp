@@ -49,7 +49,6 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     ASSERT(!jsCC.m_fprArgs.size());
 
     jit.emitFunctionPrologue();
-    jit.breakpoint(); // FIXME make calling to JavaScript work. https://bugs.webkit.org/show_bug.cgi?id=165591
     jit.store64(JIT::TrustedImm32(0), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register)))); // FIXME Stop using 0 as codeBlocks. https://bugs.webkit.org/show_bug.cgi?id=165321
     jit.storePtr(JIT::TrustedImmPtr(vm->webAssemblyToJSCallee.get()), JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 

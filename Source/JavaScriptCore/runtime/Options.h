@@ -232,6 +232,7 @@ typedef const char* optionString;
     v(bool, usePolymorphicCallInliningForNonStubStatus, false, Normal, nullptr) \
     v(unsigned, maxPolymorphicCallVariantListSize, 15, Normal, nullptr) \
     v(unsigned, maxPolymorphicCallVariantListSizeForTopTier, 5, Normal, nullptr) \
+    v(unsigned, maxPolymorphicCallVariantListSizeForWebAssemblyToJS, 5, Normal, nullptr) \
     v(unsigned, maxPolymorphicCallVariantsForInlining, 5, Normal, nullptr) \
     v(unsigned, frequentCallThreshold, 2, Normal, nullptr) \
     v(double, minimumCallToKnownRate, 0.51, Normal, nullptr) \

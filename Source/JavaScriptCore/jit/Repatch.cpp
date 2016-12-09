@@ -44,6 +44,7 @@
 #include "JIT.h"
 #include "JITInlines.h"
 #include "JSCInlines.h"
+#include "JSWebAssembly.h"
 #include "LinkBuffer.h"
 #include "PolymorphicAccess.h"
 #include "ScopedArguments.h"
@@ -556,32 +557,60 @@ static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo)
     callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
 }
 
+static bool isWebAssemblyToJSCallee(VM& vm, JSCell* callee)
+{
+#if ENABLE(WEBASSEMBLY)
+    // The WebAssembly -> JS stub sets it caller frame's callee to a singleton which lives on the VM.
+    return callee == vm.webAssemblyToJSCallee.get();
+#else
+    UNUSED_PARAM(vm);
+    UNUSED_PARAM(callee);
+    return false;
+#endif // ENABLE(WEBASSEMBLY)
+}
+
+static JSCell* webAssemblyOwner(VM& vm)
+{
+#if ENABLE(WEBASSEMBLY)
+    // Each WebAssembly.Instance shares the stubs from their WebAssembly.Module, which are therefore the appropriate owner.
+    return vm.topJSWebAssemblyInstance->module();
+#else
+    UNUSED_PARAM(vm);
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+#endif // ENABLE(WEBASSEMBLY)
+}
+
 void linkFor(
     ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
     JSFunction* callee, MacroAssemblerCodePtr codePtr)
 {
     ASSERT(!callLinkInfo.stub());
-    
-    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
 
-    VM* vm = callerCodeBlock->vm();
-    
+    CallFrame* callerFrame = exec->callerFrame();
+    VM& vm = callerFrame->vm();
+    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+
+    // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    JSCell* owner = isWebAssemblyToJSCallee(vm, callerFrame->callee()) ? webAssemblyOwner(vm) : callerCodeBlock;
+    ASSERT(owner);
+
     ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setCallee(exec->callerFrame()->vm(), callerCodeBlock, callee);
-    callLinkInfo.setLastSeenCallee(exec->callerFrame()->vm(), callerCodeBlock, callee);
+    callLinkInfo.setCallee(vm, owner, callee);
+    callLinkInfo.setLastSeenCallee(vm, owner, callee);
     if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking call in ", *callerCodeBlock, " at ", callLinkInfo.codeOrigin(), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
     MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), CodeLocationLabel(codePtr));
-    
+
     if (calleeCodeBlock)
-        calleeCodeBlock->linkIncomingCall(exec->callerFrame(), &callLinkInfo);
-    
+        calleeCodeBlock->linkIncomingCall(callerFrame, &callLinkInfo);
+
     if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs()) {
-        linkSlowFor(vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
+        linkSlowFor(&vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
         return;
     }
     
-    linkSlowFor(vm, callLinkInfo);
+    linkSlowFor(&vm, callLinkInfo);
 }
 
 void linkDirectFor(
@@ -645,18 +674,18 @@ void unlinkFor(VM& vm, CallLinkInfo& callLinkInfo)
     revertCall(&vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator));
 }
 
-void linkVirtualFor(
-    ExecState* exec, CallLinkInfo& callLinkInfo)
+void linkVirtualFor(ExecState* exec, CallLinkInfo& callLinkInfo)
 {
-    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
-    VM* vm = callerCodeBlock->vm();
+    CallFrame* callerFrame = exec->callerFrame();
+    VM& vm = callerFrame->vm();
+    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
 
     if (shouldDumpDisassemblyFor(callerCodeBlock))
-        dataLog("Linking virtual call at ", *callerCodeBlock, " ", exec->callerFrame()->codeOrigin(), "\n");
-    
-    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(vm, callLinkInfo);
-    revertCall(vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
+        dataLog("Linking virtual call at ", *callerCodeBlock, " ", callerFrame->codeOrigin(), "\n");
+
+    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&vm, callLinkInfo);
+    revertCall(&vm, callLinkInfo, virtualThunk);
+    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
 }
 
 namespace {
@@ -677,10 +706,16 @@ void linkPolymorphicCall(
         linkVirtualFor(exec, callLinkInfo);
         return;
     }
-    
-    CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
-    VM* vm = callerCodeBlock->vm();
-    
+
+    CallFrame* callerFrame = exec->callerFrame();
+    VM& vm = callerFrame->vm();
+    CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+    bool isWebAssembly = isWebAssemblyToJSCallee(vm, callerFrame->callee());
+
+    // WebAssembly -> JS stubs don't have a valid CodeBlock.
+    JSCell* owner = isWebAssembly ? webAssemblyOwner(vm) : callerCodeBlock;
+    ASSERT(owner);
+
     CallVariantList list;
     if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub())
         list = stub->variants();
@@ -709,7 +744,7 @@ void linkPolymorphicCall(
     // Figure out what our cases are.
     for (CallVariant variant : list) {
         CodeBlock* codeBlock;
-        if (variant.executable()->isHostFunction())
+        if (isWebAssembly || variant.executable()->isHostFunction())
             codeBlock = nullptr;
         else {
             ExecutableBase* executable = variant.executable();
@@ -727,10 +762,13 @@ void linkPolymorphicCall(
     
     // If we are over the limit, just use a normal virtual call.
     unsigned maxPolymorphicCallVariantListSize;
-    if (callerCodeBlock->jitType() == JITCode::topTierJIT())
+    if (isWebAssembly)
+        maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForWebAssemblyToJS();
+    else if (callerCodeBlock->jitType() == JITCode::topTierJIT())
         maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSizeForTopTier();
     else
         maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
+
     if (list.size() > maxPolymorphicCallVariantListSize) {
         linkVirtualFor(exec, callLinkInfo);
         return;
@@ -738,7 +776,7 @@ void linkPolymorphicCall(
     
     GPRReg calleeGPR = static_cast<GPRReg>(callLinkInfo.calleeGPR());
     
-    CCallHelpers stubJit(vm, callerCodeBlock);
+    CCallHelpers stubJit(&vm, callerCodeBlock);
     
     CCallHelpers::JumpList slowPath;
     
@@ -787,7 +825,7 @@ void linkPolymorphicCall(
     Vector<CallToCodePtr> calls(callCases.size());
     std::unique_ptr<uint32_t[]> fastCounts;
     
-    if (callerCodeBlock->jitType() != JITCode::topTierJIT())
+    if (!isWebAssembly && callerCodeBlock->jitType() != JITCode::topTierJIT())
         fastCounts = std::make_unique<uint32_t[]>(callCases.size());
     
     for (size_t i = 0; i < callCases.size(); ++i) {
@@ -884,7 +922,7 @@ void linkPolymorphicCall(
     stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
         
-    LinkBuffer patchBuffer(*vm, stubJit, callerCodeBlock, JITCompilationCanFail);
+    LinkBuffer patchBuffer(vm, stubJit, owner, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
         linkVirtualFor(exec, callLinkInfo);
         return;
@@ -898,19 +936,19 @@ void linkPolymorphicCall(
         patchBuffer.link(
             callToCodePtr.call, FunctionPtr(isTailCall ? callToCodePtr.codePtr.dataLocation() : callToCodePtr.codePtr.executableAddress()));
     }
-    if (JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
+    if (isWebAssembly || JITCode::isOptimizingJIT(callerCodeBlock->jitType()))
         patchBuffer.link(done, callLinkInfo.callReturnLocation().labelAtOffset(0));
     else
         patchBuffer.link(done, callLinkInfo.hotPathOther().labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(vm->getCTIStub(linkPolymorphicCallThunkGenerator).code()));
+    patchBuffer.link(slow, CodeLocationLabel(vm.getCTIStub(linkPolymorphicCallThunkGenerator).code()));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer,
             ("Polymorphic call stub for %s, return point %p, targets %s",
-                toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
+                isWebAssembly ? "WebAssembly" : toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation().labelAtOffset(0).executableAddress(),
                 toCString(listDump(callCases)).data())),
-        *vm, callerCodeBlock, exec->callerFrame(), callLinkInfo, callCases,
+        vm, owner, exec->callerFrame(), callLinkInfo, callCases,
         WTFMove(fastCounts)));
     
     MacroAssembler::replaceWithJump(
@@ -919,7 +957,7 @@ void linkPolymorphicCall(
     // The original slow path is unreachable on 64-bits, but still
     // reachable on 32-bits since a non-cell callee will always
     // trigger the slow path
-    linkSlowFor(vm, callLinkInfo);
+    linkSlowFor(&vm, callLinkInfo);
     
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.

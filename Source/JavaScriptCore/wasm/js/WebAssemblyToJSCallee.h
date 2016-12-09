@@ -45,7 +45,7 @@ public:
 
 private:
     void finishCreation(VM&);
-    WebAssemblyToJSCallee(VM&, Structure* structure);
+    WebAssemblyToJSCallee(VM&, Structure*);
 };
 
 } // namespace JSC
