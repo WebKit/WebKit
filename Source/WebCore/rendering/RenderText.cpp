@@ -742,7 +742,7 @@ static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style
     Vector<int, 8> hyphenLocations;
     ASSERT(word.length() >= minimumSuffixLength);
     unsigned hyphenLocation = word.length() - minimumSuffixLength;
-    while ((hyphenLocation = lastHyphenLocation(word, hyphenLocation, style.locale())) >= minimumPrefixLength)
+    while ((hyphenLocation = lastHyphenLocation(word, hyphenLocation, style.locale())) >= std::max(minimumPrefixLength, 1U))
         hyphenLocations.append(hyphenLocation);
 
     if (hyphenLocations.isEmpty())
@@ -750,6 +750,7 @@ static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style
 
     hyphenLocations.reverse();
 
+    // FIXME: Breaking the string at these places in the middle of words is completely broken with complex text.
     float minimumFragmentWidthToConsider = font.pixelSize() * 5 / 4 + hyphenWidth(renderer, font);
     float maxFragmentWidth = 0;
     for (size_t k = 0; k < hyphenLocations.size(); ++k) {

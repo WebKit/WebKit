@@ -1,3 +1,26 @@
+2016-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: locale in WebCore::lastHyphenLocation
+        https://bugs.webkit.org/show_bug.cgi?id=164182
+
+        Reviewed by Zalan Bujtas.
+
+        Our hyphenation code assumes the locale is in a small set of known locales.
+        However, web content can put whatever string it wants in the locale field.
+
+        Test: fast/text/hyphenation-unknown-locale.html
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::lastHyphenLocation):
+        * rendering/RenderText.cpp:
+        (WebCore::maxWordFragmentWidth): When computing the minimum preferred width of
+        an element, we want to know the size of the widest nonbreakable unit. When
+        hyphenation is enabled, we have to measure the width of each fragment of each
+        word (where "fragment" is determined by a substring between two successive
+        hyphenation points, appended with a hyphen character). A hyphenation point at
+        string offset 0 is irrelevant for this purpose, because it would lead to an
+        empty fragment. Therefore, skip this situation.
+
 2016-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Always check the return value of pthread_key_create()

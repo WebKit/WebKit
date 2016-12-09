@@ -76,10 +76,9 @@ bool canHyphenate(const AtomicString& localeIdentifier)
 size_t lastHyphenLocation(StringView text, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
     RetainPtr<CFLocaleRef> locale = TinyLRUCachePolicy<AtomicString, RetainPtr<CFLocaleRef>>::cache().get(localeIdentifier);
-    ASSERT(locale);
 
     CFOptionFlags searchAcrossWordBoundaries = 1;
-    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(text.createCFStringWithoutCopying().get(), beforeIndex, CFRangeMake(0, text.length()), searchAcrossWordBoundaries, locale.get(), 0);
+    CFIndex result = CFStringGetHyphenationLocationBeforeIndex(text.createCFStringWithoutCopying().get(), beforeIndex, CFRangeMake(0, text.length()), searchAcrossWordBoundaries, locale.get(), nullptr);
     return result == kCFNotFound ? 0 : result;
 }
 
