@@ -1,3 +1,23 @@
+2016-12-08  Keith Miller  <keith_miller@apple.com>
+
+        Add 64-bit signed LEB decode method
+        https://bugs.webkit.org/show_bug.cgi?id=165630
+
+        Reviewed by Ryosuke Niwa.
+
+        Add int64 LEB decode and fix some 64-bit specific issues
+        with the decoder. There is also a fix where we would allow
+        LEBs with canonical length + 1 size that is fixed by this
+        patch.
+
+        * wtf/LEBDecoder.h:
+        (WTF::LEBDecoder::decodeUInt):
+        (WTF::LEBDecoder::decodeInt):
+        (WTF::LEBDecoder::decodeUInt32):
+        (WTF::LEBDecoder::decodeUInt64):
+        (WTF::LEBDecoder::decodeInt32):
+        (WTF::LEBDecoder::decodeInt64):
+
 2016-12-08  Anders Carlsson  <andersca@apple.com>
 
         Defer sending Mach messages if the queue is full
