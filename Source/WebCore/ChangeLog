@@ -1,3 +1,16 @@
+2016-12-09  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Validation message for required checkbox doesn’t conform the the Apple Style Guide
+        https://bugs.webkit.org/show_bug.cgi?id=165661
+
+        Reviewed by Dan Bernstein.
+
+        Update validation message as per Apple Style Guide.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::validationMessageValueMissingForCheckboxText):
+
 2016-12-09  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !beforeChild->isRubyRun() in WebCore::RenderRubyAsBlock::addChild

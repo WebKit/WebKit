@@ -36,7 +36,7 @@
 
         testRunner.runUIScript(getValidationBubbleContents(), function(result) {
             validationBubbleContents = JSON.parse(result).validationBubble;
-            shouldBeEqualToString("validationBubbleContents.message", "Check this box");
+            shouldBeEqualToString("validationBubbleContents.message", "Select this checkbox");
 
             testRunner.runUIScript(getTapAtPointUIScript(0, 0), function() {
                 testRunner.runUIScript(getValidationBubbleContents(), function(result) {

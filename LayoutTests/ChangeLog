@@ -1,3 +1,18 @@
+2016-12-09  Chris Dumez  <cdumez@apple.com>
+
+        [Cocoa] Validation message for required checkbox doesn’t conform the the Apple Style Guide
+        https://bugs.webkit.org/show_bug.cgi?id=165661
+
+        Reviewed by Dan Bernstein.
+
+        Update / rebaseline tests.
+
+        * fast/forms/ios/validation-bubble-dismiss-on-tap-expected.txt:
+        * fast/forms/ios/validation-bubble-dismiss-on-tap.html:
+        * fast/forms/validation-messages-expected.txt:
+        * fast/forms/validation-messages.html:
+        * platform/ios-simulator-wk2/fast/forms/validation-messages-expected.txt:
+
 2016-12-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, followup after r209598.

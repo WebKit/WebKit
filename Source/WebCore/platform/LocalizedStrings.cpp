@@ -1073,7 +1073,7 @@ String validationMessageValueMissingText()
 
 String validationMessageValueMissingForCheckboxText()
 {
-    return WEB_UI_STRING("Check this box", "Validation message for required checkboxes that have not be checked");
+    return WEB_UI_STRING("Select this checkbox", "Validation message for required checkboxes that have not be selected");
 }
 
 String validationMessageValueMissingForFileText()

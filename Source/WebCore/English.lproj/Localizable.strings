@@ -151,9 +151,6 @@
 /* Check spelling while typing context menu item */
 "Check Spelling While Typing" = "Check Spelling While Typing";
 
-/* Validation message for required checkboxes that have not be checked */
-"Check this box" = "Check this box";
-
 /* title for a single file chooser button used in HTML forms */
 "Choose File" = "Choose File";
 
@@ -528,6 +525,9 @@
 
 /* Validation message for required radio boxes that have no selection */
 "Select one of these options" = "Select one of these options";
+
+/* Validation message for required checkboxes that have not be selected */
+"Select this checkbox" = "Select this checkbox";
 
 /* Selection direction context sub-menu item */
 "Selection Direction" = "Selection Direction";

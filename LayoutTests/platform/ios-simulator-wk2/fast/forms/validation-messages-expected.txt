@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS validationBubbleContents.message is "Fill out this field"
-PASS validationBubbleContents.message is "Check this box"
+PASS validationBubbleContents.message is "Select this checkbox"
 PASS validationBubbleContents.message is "Select one of these options"
 PASS validationBubbleContents.message is "Select a file"
 PASS validationBubbleContents.message is "Enter an email address"
