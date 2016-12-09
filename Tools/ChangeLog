@@ -1,3 +1,11 @@
+2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix the 32-bit build.
+
+        Unreviewed build fix.
+
+        * MiniBrowser/mac/SettingsController.h:
+
 2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fedora also needs a PHP7 config file alternative
