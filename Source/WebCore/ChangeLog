@@ -1,3 +1,20 @@
+2016-12-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Exiting fullscreen with paused media shows the start button
+        https://bugs.webkit.org/show_bug.cgi?id=165640
+
+        Reviewed by Dean Jackson.
+
+        Like all supporting objects, the StartSupport instance gets recreated when creating controls
+        for new layout traits, which happens when going from fullscreen to inline. Due to this, the
+        "_isPlayed" property is not longer set to true, even if the media has played prior to being
+        paused in fullscreen. We now also check the media's played range to identify whether media
+        has been played.
+
+        * Modules/modern-media-controls/media/start-support.js:
+        (StartSupport.prototype._shouldShowStartButton):
+        (StartSupport):
+
 2016-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: locale in WebCore::lastHyphenLocation

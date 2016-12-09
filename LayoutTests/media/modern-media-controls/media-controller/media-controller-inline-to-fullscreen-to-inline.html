@@ -37,6 +37,7 @@ media.addEventListener("webkitfullscreenchange", () => {
         debug("Media exited fullscreen.");
         window.requestAnimationFrame(() => {
             shouldBeTrue("shadowRoot.querySelector('.media-controls').classList.contains('inline')");
+            shouldBeNull("shadowRoot.querySelector('.start-button')");
 
             debug("");
             media.remove();

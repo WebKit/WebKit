@@ -62,7 +62,7 @@ class StartSupport extends MediaControllerSupport
     {
         const media = this.mediaController.media;
 
-        if (this._hasPlayed)
+        if (this._hasPlayed || media.played.length)
             return false;
 
         if (!media.paused)

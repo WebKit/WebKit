@@ -1,3 +1,16 @@
+2016-12-08  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Exiting fullscreen with paused media shows the start button
+        https://bugs.webkit.org/show_bug.cgi?id=165640
+
+        Reviewed by Dean Jackson.
+
+        Modify the existing test that enters fullscreen and returns to inline controls with paused media
+        to check that the start button is not shown upon returning to inline controls.
+
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline-expected.txt:
+        * media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html:
+
 2016-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: locale in WebCore::lastHyphenLocation

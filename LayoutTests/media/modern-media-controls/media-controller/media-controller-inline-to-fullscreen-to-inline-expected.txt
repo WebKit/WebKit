@@ -14,6 +14,7 @@ We exit fullscreen by clicking on the matching button.
 
 Media exited fullscreen.
 PASS shadowRoot.querySelector('.media-controls').classList.contains('inline') is true
+PASS shadowRoot.querySelector('.start-button') is null
 
 PASS successfullyParsed is true
 
