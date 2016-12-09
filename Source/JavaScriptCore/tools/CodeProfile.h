@@ -36,7 +36,7 @@ class CodeProfile {
 public:
     CodeProfile(const SourceCode& source, CodeProfile* parent)
         : m_file(source.provider()->url().utf8())
-        , m_lineNumber(source.firstLine())
+        , m_lineNumber(source.firstLine().oneBasedInt())
         , m_parent(parent)
     {
         if (parent)

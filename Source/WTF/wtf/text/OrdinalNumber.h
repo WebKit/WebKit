@@ -31,6 +31,7 @@ namespace WTF {
 // call a first element '0' or '1' which makes integer type ambiguous.
 class OrdinalNumber {
 public:
+    static OrdinalNumber beforeFirst() { return OrdinalNumber(-1); }
     static OrdinalNumber fromZeroBasedInt(int zeroBasedInt) { return OrdinalNumber(zeroBasedInt); }
     static OrdinalNumber fromOneBasedInt(int oneBasedInt) { return OrdinalNumber(oneBasedInt - 1); }
 
@@ -41,8 +42,7 @@ public:
 
     bool operator==(OrdinalNumber other) { return m_zeroBasedValue == other.m_zeroBasedValue; }
     bool operator!=(OrdinalNumber other) { return !((*this) == other); }
-
-    static OrdinalNumber beforeFirst() { return OrdinalNumber(-1); }
+    bool operator>(OrdinalNumber other) { return m_zeroBasedValue > other.m_zeroBasedValue; }
 
 private:
     OrdinalNumber(int zeroBasedInt) : m_zeroBasedValue(zeroBasedInt) { }

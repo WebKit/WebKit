@@ -445,7 +445,7 @@ namespace JSC {
             ASSERT(divotEnd.offset >= divot.offset);
 
             int sourceOffset = m_scopeNode->source().startOffset();
-            unsigned firstLine = m_scopeNode->source().firstLine();
+            unsigned firstLine = m_scopeNode->source().firstLine().oneBasedInt();
 
             int divotOffset = divot.offset - sourceOffset;
             int startOffset = divot.offset - divotStart.offset;

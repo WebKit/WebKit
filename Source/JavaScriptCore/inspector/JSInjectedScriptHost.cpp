@@ -215,10 +215,10 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
         return jsUndefined();
 
     // In the inspector protocol all positions are 0-based while in SourceCode they are 1-based
-    int lineNumber = sourceCode->firstLine();
+    int lineNumber = sourceCode->firstLine().oneBasedInt();
     if (lineNumber)
         lineNumber -= 1;
-    int columnNumber = sourceCode->startColumn();
+    int columnNumber = sourceCode->startColumn().oneBasedInt();
     if (columnNumber)
         columnNumber -= 1;
 

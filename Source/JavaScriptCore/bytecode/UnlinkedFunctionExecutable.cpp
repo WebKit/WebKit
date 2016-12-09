@@ -77,7 +77,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
 UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& parentSource, SourceCode&& parentSourceOverride, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, VariableEnvironment& parentScopeTDZVariables, DerivedContextType derivedContextType)
     : Base(*vm, structure)
-    , m_firstLineOffset(node->firstLine() - parentSource.firstLine())
+    , m_firstLineOffset(node->firstLine() - parentSource.firstLine().oneBasedInt())
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_unlinkedFunctionNameStart(node->functionNameStart() - parentSource.startOffset())
     , m_unlinkedBodyStartColumn(node->startColumn())
@@ -134,11 +134,11 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
 FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& passedParentSource, std::optional<int> overrideLineNumber, Intrinsic intrinsic)
 {
     const SourceCode& parentSource = m_parentSourceOverride.isNull() ? passedParentSource : m_parentSourceOverride;
-    unsigned firstLine = parentSource.firstLine() + m_firstLineOffset;
+    unsigned firstLine = parentSource.firstLine().oneBasedInt() + m_firstLineOffset;
     unsigned startOffset = parentSource.startOffset() + m_startOffset;
     unsigned lineCount = m_lineCount;
 
-    unsigned startColumn = linkedStartColumn(parentSource.startColumn());
+    unsigned startColumn = linkedStartColumn(parentSource.startColumn().oneBasedInt());
     unsigned endColumn = linkedEndColumn(startColumn);
 
     SourceCode source(parentSource.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);

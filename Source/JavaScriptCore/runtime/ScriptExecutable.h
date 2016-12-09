@@ -41,12 +41,12 @@ public:
     const SourceCode& source() const { return m_source; }
     intptr_t sourceID() const { return m_source.providerID(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
-    int firstLine() const { return m_source.firstLine(); }
+    int firstLine() const { return m_source.firstLine().oneBasedInt(); }
     void setOverrideLineNumber(int overrideLineNumber) { m_overrideLineNumber = overrideLineNumber; }
     bool hasOverrideLineNumber() const { return m_overrideLineNumber != -1; }
     int overrideLineNumber() const { return m_overrideLineNumber; }
     int lastLine() const { return m_lastLine; }
-    unsigned startColumn() const { return m_source.startColumn(); }
+    unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }
     unsigned endColumn() const { return m_endColumn; }
     unsigned typeProfilingStartOffset() const { return m_typeProfilingStartOffset; }
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }

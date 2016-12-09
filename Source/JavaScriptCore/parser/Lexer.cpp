@@ -541,7 +541,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
 {
     m_arena = &arena->identifierArena();
     
-    m_lineNumber = source.firstLine();
+    m_lineNumber = source.firstLine().oneBasedInt();
     m_lastToken = -1;
     
     StringView sourceString = source.provider()->source();

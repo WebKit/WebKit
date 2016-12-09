@@ -1790,8 +1790,8 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     errMsg = String();
 
     JSTokenLocation startLocation(tokenLocation());
-    ASSERT(m_source->startColumn() > 0);
-    unsigned startColumn = m_source->startColumn() - 1;
+    ASSERT(m_source->startColumn() > OrdinalNumber::beforeFirst());
+    unsigned startColumn = m_source->startColumn().zeroBasedInt();
 
     String parseError = parseInner(calleeName, parseMode);
 
@@ -1830,7 +1830,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     currentScope()->innerArrowFunctionFeatures(),
                                     m_numConstants,
                                     WTFMove(m_moduleScopeData));
-        result->setLoc(m_source->firstLine(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
+        result->setLoc(m_source->firstLine().oneBasedInt(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
         result->setEndOffset(m_lexer->currentOffset());
 
         if (!isFunctionParseMode(parseMode)) {

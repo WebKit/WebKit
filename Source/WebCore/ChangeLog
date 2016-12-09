@@ -1,3 +1,17 @@
+2016-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Deploy OrdinalNumber in JSC::SourceCode
+        https://bugs.webkit.org/show_bug.cgi?id=165687
+
+        Reviewed by Michael Saboff.
+
+        Updated for interface changes.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateModule):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::startLine):
+
 2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Some resources fetched via Fetch API do not have data

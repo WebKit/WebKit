@@ -62,7 +62,7 @@ public:
 
     StringView source() const { return m_provider->source(); }
 
-    int startLine() const { return m_code.firstLine(); }
+    int startLine() const { return m_code.firstLine().oneBasedInt(); }
 
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
 

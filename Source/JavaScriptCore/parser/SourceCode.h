@@ -36,34 +36,32 @@ namespace JSC {
     public:
         SourceCode()
             : UnlinkedSourceCode()
-            , m_firstLine(0)
-            , m_startColumn(0)
+            , m_firstLine(OrdinalNumber::beforeFirst())
+            , m_startColumn(OrdinalNumber::beforeFirst())
         {
         }
 
         SourceCode(PassRefPtr<SourceProvider> provider)
             : UnlinkedSourceCode(provider)
-            , m_firstLine(1)
-            , m_startColumn(1)
         {
         }
 
         SourceCode(PassRefPtr<SourceProvider> provider, int firstLine, int startColumn)
             : UnlinkedSourceCode(provider)
-            , m_firstLine(std::max(firstLine, 1))
-            , m_startColumn(std::max(startColumn, 1))
+            , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
+            , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
         {
         }
 
         SourceCode(PassRefPtr<SourceProvider> provider, int startOffset, int endOffset, int firstLine, int startColumn)
             : UnlinkedSourceCode(provider, startOffset, endOffset)
-            , m_firstLine(std::max(firstLine, 1))
-            , m_startColumn(std::max(startColumn, 1))
+            , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
+            , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
         {
         }
 
-        int firstLine() const { return m_firstLine; }
-        int startColumn() const { return m_startColumn; }
+        OrdinalNumber firstLine() const { return m_firstLine; }
+        OrdinalNumber startColumn() const { return m_startColumn; }
 
         intptr_t providerID() const
         {
@@ -77,8 +75,8 @@ namespace JSC {
         SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn);
 
     private:
-        int m_firstLine;
-        int m_startColumn;
+        OrdinalNumber m_firstLine;
+        OrdinalNumber m_startColumn;
     };
 
     inline SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)

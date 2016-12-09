@@ -1,3 +1,38 @@
+2016-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Deploy OrdinalNumber in JSC::SourceCode
+        https://bugs.webkit.org/show_bug.cgi?id=165687
+
+        Reviewed by Michael Saboff.
+
+        We have a lot of confusion between 1-based and 0-based counting in line
+        and column numbers. Let's use OrdinalNumber to clear up the confusion.
+
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::link):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::setCode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        (JSC::SourceCode::firstLine):
+        (JSC::SourceCode::startColumn):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::firstLine):
+        (JSC::ScriptExecutable::startColumn):
+        * tools/CodeProfile.h:
+        (JSC::CodeProfile::CodeProfile):
+
 2016-12-09  Saam Barati  <sbarati@apple.com>
 
         WebAssembly JS API: implement importing and defining Memory
