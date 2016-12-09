@@ -128,6 +128,14 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
         result = CryptoKeyRSA::importSpki(parameters->identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
+    case SubtleCrypto::KeyFormat::Pkcs8: {
+        if (usages ^ CryptoKeyUsageDecrypt) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        result = CryptoKeyRSA::importPkcs8(parameters->identifier, std::nullopt, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    }
     default:
         exceptionCallback(NOT_SUPPORTED_ERR);
         return;
@@ -164,6 +172,15 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format, 
             return;
         }
         result = spki.releaseReturnValue();
+        break;
+    }
+    case SubtleCrypto::KeyFormat::Pkcs8: {
+        auto pkcs8 = rsaKey.exportPkcs8();
+        if (pkcs8.hasException()) {
+            exceptionCallback(pkcs8.releaseException().code());
+            return;
+        }
+        result = pkcs8.releaseReturnValue();
         break;
     }
     default:

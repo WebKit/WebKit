@@ -162,6 +162,15 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format,
         result = CryptoKeyRSA::importSpki(rsaParameters.identifier, rsaParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
+    case SubtleCrypto::KeyFormat::Pkcs8: {
+        if (usages ^ CryptoKeyUsageSign) {
+            exceptionCallback(SYNTAX_ERR);
+            return;
+        }
+        // FIXME: <webkit.org/b/165436>
+        result = CryptoKeyRSA::importPkcs8(parameters->identifier, rsaParameters.hashIdentifier, WTFMove(WTF::get<Vector<uint8_t>>(data)), extractable, usages);
+        break;
+    }
     default:
         exceptionCallback(NOT_SUPPORTED_ERR);
         return;
@@ -216,6 +225,15 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey(SubtleCrypto::KeyFormat format,
             return;
         }
         result = spki.releaseReturnValue();
+        break;
+    }
+    case SubtleCrypto::KeyFormat::Pkcs8: {
+        auto pkcs8 = rsaKey.exportPkcs8();
+        if (pkcs8.hasException()) {
+            exceptionCallback(pkcs8.releaseException().code());
+            return;
+        }
+        result = pkcs8.releaseReturnValue();
         break;
     }
     default:

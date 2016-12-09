@@ -40,9 +40,14 @@ namespace WebCore {
 
 // OID rsaEncryption: 1.2.840.113549.1.1.1. Per https://tools.ietf.org/html/rfc3279#section-2.3.1
 static unsigned char RSAOIDHeader[] = {0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00};
+// Version 0. Per https://tools.ietf.org/html/rfc5208#section-5
+static unsigned char Version[] = {0x02, 0x01, 0x00};
+
 // Per X.690 08/2015: https://www.itu.int/rec/T-REC-X.680-X.693/en
-static unsigned char SequenceMark = 0x30;
 static unsigned char BitStringMark = 0x03;
+static unsigned char OctetStringMark = 0x04;
+static unsigned char SequenceMark = 0x30;
+
 static unsigned char InitialOctet = 0x00;
 
 // FIXME: We should get rid of magic number 16384. It assumes that the length of provided key will not exceed 16KB.
@@ -332,10 +337,10 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
     // the most common one for now.
     // Per https://tools.ietf.org/html/rfc5280#section-4.1. subjectPublicKeyInfo.
     size_t headerSize = 1;
-    if (keyData.size() < headerSize)
+    if (keyData.size() < headerSize + 1)
         return nullptr;
     headerSize += bytesUsedToEncodedLength(keyData[headerSize]) + sizeof(RSAOIDHeader) + sizeof(BitStringMark);
-    if (keyData.size() < headerSize)
+    if (keyData.size() < headerSize + 1)
         return nullptr;
     headerSize += bytesUsedToEncodedLength(keyData[headerSize]) + sizeof(InitialOctet);
 
@@ -373,6 +378,64 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     result.append(BitStringMark);
     addEncodedASN1Length(result, keySize + 1);
     result.append(InitialOctet);
+    result.append(keyBytes.data(), keyBytes.size());
+
+    return WTFMove(result);
+}
+
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
+{
+    // The current SecLibrary cannot import a PKCS8 format binary. Hence, we need to strip out the PKCS8 header.
+    // This hack can be removed when <rdar://problem/29523286> is resolved.
+    // The header format we assume is: SequenceMark(1) + Length(?) + Version(3) + rsaEncryption(15) + OctetStringMark(1) + Length(?).
+    // The header format could be varied. However since we don't have a full-fledged ASN.1 encoder/decoder, we want to restrict it to
+    // the most common one for now.
+    // Per https://tools.ietf.org/html/rfc5208#section-5. PrivateKeyInfo.
+    // We also assume there is no optional parameters.
+    size_t headerSize = 1;
+    if (keyData.size() < headerSize + 1)
+        return nullptr;
+    headerSize += bytesUsedToEncodedLength(keyData[headerSize]) + sizeof(Version) + sizeof(RSAOIDHeader) + sizeof(OctetStringMark);
+    if (keyData.size() < headerSize + 1)
+        return nullptr;
+    headerSize += bytesUsedToEncodedLength(keyData[headerSize]);
+
+    CCRSACryptorRef ccPrivateKey;
+    if (CCRSACryptorImport(keyData.data() + headerSize, keyData.size() - headerSize, &ccPrivateKey))
+        return nullptr;
+
+    // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
+    return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, ccPrivateKey, extractable, usages));
+}
+
+ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
+{
+    if (type() != CryptoKeyType::Private)
+        return Exception { INVALID_ACCESS_ERR };
+
+    // The current SecLibrary cannot output a valid PKCS8 format binary. Hence, we need the following hack.
+    // This hack can be removed when <rdar://problem/29523286> is resolved.
+    // Estimated size in produced bytes format. Per https://tools.ietf.org/html/rfc3447#appendix-A.1.2. RSAPrivateKey.
+    // O(size) = Sequence(1) + Length(3) + Integer(1) + Length(3) + Modulus + Integer(1) + Length(3) + publicExponent + Integer(1) + Length(3) +
+    // privateExponent + Integer(1) + Length(3) + prime1 + Integer(1) + Length(3) + prime2 + Integer(1) + Length(3) + exponent1 + Integer(1) +
+    // Length(3) + exponent2 + Integer(1) + Length(3) + coefficient.
+    Vector<uint8_t> keyBytes(keySizeInBits());
+    size_t keySize = keyBytes.size();
+    if (CCRSACryptorExport(platformKey(), keyBytes.data(), &keySize))
+        return Exception { OperationError };
+    keyBytes.shrink(keySize);
+
+    // Version + RSAOIDHeader + OctetStringMark + Length + keySize
+    size_t totalSize = sizeof(Version) + sizeof(RSAOIDHeader) + bytesNeededForEncodedLength(keySize) + keySize + 2;
+
+    // Per https://tools.ietf.org/html/rfc5208#section-5. PrivateKeyInfo.
+    Vector<uint8_t> result;
+    result.append(SequenceMark);
+    addEncodedASN1Length(result, totalSize);
+    result.append(Version, sizeof(Version));
+    result.append(RSAOIDHeader, sizeof(RSAOIDHeader));
+    result.append(OctetStringMark);
+    addEncodedASN1Length(result, keySize);
     result.append(keyBytes.data(), keyBytes.size());
 
     return WTFMove(result);

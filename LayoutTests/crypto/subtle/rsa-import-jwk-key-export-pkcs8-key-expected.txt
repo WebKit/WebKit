@@ -1,11 +1,11 @@
-Test importing a JWK RSA-OAEP public key with SHA-1 and then export it in SPKI format
+Test importing a JWK RSA-OAEP public key with SHA-1 and then export it in PKCS8 format
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Importing a key...
 Exporting a key...
-PASS bytesToHexString(spkiKey) is expectedSpkiKey
+PASS bytesToHexString(pkcs8Key) is expectedPkcs8Key
 PASS successfullyParsed is true
 
 TEST COMPLETE

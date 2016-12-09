@@ -126,6 +126,20 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     return Exception { NOT_SUPPORTED_ERR };
 }
 
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+{
+    notImplemented();
+
+    return nullptr;
+}
+
+ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
+{
+    notImplemented();
+
+    return Exception { NOT_SUPPORTED_ERR };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SUBTLE_CRYPTO)

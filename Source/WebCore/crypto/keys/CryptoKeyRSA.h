@@ -103,10 +103,12 @@ public:
     static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap, KeyPairCallback&&, VoidCallback&& failureCallback, ScriptExecutionContext*);
     static RefPtr<CryptoKeyRSA> importJwk(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier> hash, JsonWebKey&&, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyRSA> importSpki(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap);
+    static RefPtr<CryptoKeyRSA> importPkcs8(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
     JsonWebKey exportJwk() const;
     ExceptionOr<Vector<uint8_t>> exportSpki() const;
+    ExceptionOr<Vector<uint8_t>> exportPkcs8() const;
 
     CryptoAlgorithmIdentifier hashAlgorithmIdentifier() const { return m_hash; }
 

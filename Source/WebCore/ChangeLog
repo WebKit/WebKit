@@ -1,3 +1,47 @@
+2016-12-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [Part 2 of 2] Add support for PKCS8 format while doing SubtleCrypto.importKey/exportKey
+        https://bugs.webkit.org/show_bug.cgi?id=129978
+        <rdar://problem/21799829>
+
+        Reviewed by Brent Fulgham.
+
+        This is part 2 of Bug 129978. In this patch, it adds the PKCS8 format support for
+        SubtleCrypto.importKey/exportKey. Currently support algorithms are RSAES-PKCS1-v1_5,
+        RSASSA-PKCS1-v1_5 and RSA-OAEP.
+
+        Tests: crypto/subtle/rsa-import-jwk-key-export-pkcs8-key.html
+               crypto/subtle/rsa-import-pkcs8-key-export-jwk-key.html
+               crypto/subtle/rsa-import-pkcs8-key-export-pkcs8-key.html
+               crypto/subtle/rsa-oaep-generate-export-key-pkcs8.html
+               crypto/subtle/rsa-oaep-import-pkcs8-key.html
+               crypto/subtle/rsaes-pkcs1-v1_5-generate-export-key-pkcs8.html
+               crypto/subtle/rsaes-pkcs1-v1_5-import-pkcs8-key.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-export-key-pkcs8.html
+               crypto/subtle/rsassa-pkcs1-v1_5-import-pkcs8-key.html
+               crypto/workers/subtle/rsa-export-pkcs8-key.html
+               crypto/workers/subtle/rsa-import-pkcs8-key.html
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::toKeyData):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey):
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::importKey):
+        (WebCore::CryptoAlgorithmRSA_OAEP::exportKey):
+        * crypto/gnutls/CryptoKeyRSAGnuTLS.cpp:
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportPkcs8):
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+        (WebCore::CryptoKeyRSA::exportPkcs8):
+
 2016-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Deploy OrdinalNumber in JSC::SourceCode

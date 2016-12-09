@@ -39,6 +39,19 @@ PASS crypto.subtle.importKey("jwk", {kty: "RSA", n: n, e: e, d: d, p: p, q: q, d
 PASS crypto.subtle.importKey("spki", spkiKey, "RSAES-PKCS1-v1_5", extractable, ["decrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.importKey("spki", spkiKey, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
 PASS crypto.subtle.importKey("spki", spkiKey, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["decrypt", "unwrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("pkcs8", pkcs8Key, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSASSA-PKCS1-v1_5", hash: "sha-1"}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSA-OAEP", hash: "sha-1"}, extractable, ["encrypt", "wrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.importKey("spki", malformedKey0, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("spki", malformedKey1, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("spki", malformedKey2, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("spki", malformedKey4, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("spki", malformedKey6, "RSAES-PKCS1-v1_5", extractable, ["encrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("pkcs8", malformedKey0, "RSAES-PKCS1-v1_5", extractable, ["decrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("pkcs8", malformedKey1, "RSAES-PKCS1-v1_5", extractable, ["decrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("pkcs8", malformedKey3, "RSAES-PKCS1-v1_5", extractable, ["decrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("pkcs8", malformedKey5, "RSAES-PKCS1-v1_5", extractable, ["decrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("pkcs8", malformedKey7, "RSAES-PKCS1-v1_5", extractable, ["decrypt"]) rejected promise  with DataError (DOM Exception 30): Data provided to an operation does not meet requirements.
 PASS successfullyParsed is true
 
 TEST COMPLETE

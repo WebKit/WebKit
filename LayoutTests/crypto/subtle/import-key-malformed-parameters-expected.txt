@@ -15,7 +15,6 @@ PASS crypto.subtle.importKey(undefined, rawKey, "aes-cbc", extractable, ["encryp
 PASS crypto.subtle.importKey(Symbol(), rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey({ }, rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey("foo", rawKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
-PASS crypto.subtle.importKey("pkcs8", rawKey, "rsaes-pkcs1-v1_5", extractable, ["encrypt", "decrypt"]) rejected promise  with NotSupportedError (DOM Exception 9): The operation is not supported..
 PASS crypto.subtle.importKey("raw", jwkKey, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey("raw", 1, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.importKey("raw", true, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]) rejected promise  with TypeError: Type error.
