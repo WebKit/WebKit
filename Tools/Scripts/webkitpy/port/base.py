@@ -1154,6 +1154,11 @@ class Port(object):
         _log.error("Could not find apache. Not installed or unknown path.")
         return None
 
+    def _is_fedora_php_version_7(self):
+        if self._filesystem.exists("/etc/httpd/modules/libphp7.so"):
+            return True
+        return False
+
     def _is_debian_php_version_7(self):
         if self._filesystem.exists("/usr/lib/apache2/modules/libphp7.0.so"):
             return True
@@ -1178,13 +1183,18 @@ class Port(object):
             return "-php7"
         return ""
 
+    def _fedora_php_version(self):
+        if self._is_fedora_php_version_7():
+            return "-php7"
+        return ""
+
     # We pass sys_platform into this method to make it easy to unit test.
     def _apache_config_file_name_for_platform(self, sys_platform):
         if sys_platform == 'cygwin' or sys_platform.startswith('win'):
             return 'apache' + self._apache_version() + '-httpd-win.conf'
         if sys_platform.startswith('linux'):
             if self._is_redhat_based():
-                return 'fedora-httpd-' + self._apache_version() + '.conf'
+                return 'fedora-httpd-' + self._apache_version() + self._fedora_php_version() + '.conf'
             if self._is_debian_based():
                 return 'debian-httpd-' + self._apache_version() + self._debian_php_version() + '.conf'
             if self._is_arch_based():

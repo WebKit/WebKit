@@ -1,3 +1,15 @@
+2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Fedora also needs a PHP7 config file alternative
+        https://bugs.webkit.org/show_bug.cgi?id=165606
+
+        Reviewed by Michael Catanzaro.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._is_fedora_php_version_7): check for the php7 library.
+        (Port._fedora_php_version): get the appropriate filename for Fedora.
+        (Port._apache_config_file_name_for_platform):
+
 2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Complete the revert of r208865.
