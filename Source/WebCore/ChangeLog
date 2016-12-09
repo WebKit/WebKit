@@ -1,3 +1,19 @@
+2016-12-08  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce PassRefPtr use in platform/graphics
+        https://bugs.webkit.org/show_bug.cgi?id=165636
+
+        Reviewed by Dean Jackson.
+
+        No change in behavior.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.h:
+        (WebCore::DisplayRefreshMonitorMac::create):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::createForCurrentGLContext):
+        (WebCore::GraphicsContext3D::paintRenderingResultsToImageData):
+
 2016-12-08  Keith Rollin  <krollin@apple.com>
 
         Move FileHandle to WebCore FileHandle.h

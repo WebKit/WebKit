@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DisplayRefreshMonitorMac_h
-#define DisplayRefreshMonitorMac_h
+#pragma once
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 
@@ -37,9 +36,9 @@ namespace WebCore {
 
 class DisplayRefreshMonitorMac : public DisplayRefreshMonitor {
 public:
-    static PassRefPtr<DisplayRefreshMonitorMac> create(PlatformDisplayID displayID)
+    static Ref<DisplayRefreshMonitorMac> create(PlatformDisplayID displayID)
     {
-        return adoptRef(new DisplayRefreshMonitorMac(displayID));
+        return adoptRef(*new DisplayRefreshMonitorMac(displayID));
     }
     
     virtual ~DisplayRefreshMonitorMac();
@@ -57,5 +56,3 @@ private:
 }
 
 #endif // USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
-#endif

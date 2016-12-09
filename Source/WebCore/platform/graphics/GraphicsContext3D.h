@@ -740,7 +740,7 @@ public:
     void setErrorMessageCallback(std::unique_ptr<ErrorMessageCallback>);
 
     static RefPtr<GraphicsContext3D> create(GraphicsContext3DAttributes, HostWindow*, RenderStyle = RenderOffscreen);
-    static PassRefPtr<GraphicsContext3D> createForCurrentGLContext();
+    static RefPtr<GraphicsContext3D> createForCurrentGLContext();
     ~GraphicsContext3D();
 
 #if PLATFORM(COCOA)
@@ -1131,7 +1131,7 @@ public:
     void recycleContext();
 
     void paintRenderingResultsToCanvas(ImageBuffer*);
-    PassRefPtr<ImageData> paintRenderingResultsToImageData();
+    RefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintCompositedResultsToCanvas(ImageBuffer*);
 
 #if PLATFORM(IOS)
