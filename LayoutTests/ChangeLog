@@ -1,3 +1,17 @@
+2016-12-09  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Policy of window opener not applied to about:blank window
+        https://bugs.webkit.org/show_bug.cgi?id=165531
+        <rdar://problem/29426639>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test to ensure that an about:blank window inherits the CSP policy of its
+        opener document.
+
+        * http/tests/security/contentSecurityPolicy/image-blocked-in-about-blank-window-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-blocked-in-about-blank-window-blocked.html: Added.
+
 2016-12-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Remaining time label first appears way to the left

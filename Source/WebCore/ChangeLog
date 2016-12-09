@@ -1,3 +1,44 @@
+2016-12-09  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Policy of window opener not applied to about:blank window
+        https://bugs.webkit.org/show_bug.cgi?id=165531
+        <rdar://problem/29426639>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes an issue where the content security policy of the opener document was not applied to
+        an about:blank window.
+
+        An about:blank window inherits its security origin from its opener document. It should also
+        copy (inherit) the ContentSecurityPolicy from its opener document. When copying the ContentSecurityPolicy
+        state from the opener document to the about:blank document we must take care to avoid copying
+        any upgrade-insecure-request directive because new windows should not inherit it by definition.
+        With respect to upgrade-insecure-requests, new windows should only inherit the insecure navigation set
+        from their opener document.
+
+        Test: http/tests/security/contentSecurityPolicy/image-blocked-in-about-blank-window.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initContentSecurityPolicy): Copy the ContentSecurityPolicy state from the
+        owner document to this document when it inherits its security origin from its owner. An about:blank
+        window is one example of a document that inherits its security origin from its owner.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Call ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom()
+        to copy the upgrade insecure requests state from the owner document to the worker now that
+        ContentSecurityPolicy::copyStateFrom() no longer does this.
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::copyStateFrom): Do not copy the upgrade insecure request state.
+        Callers are now responsible for calling ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom()
+        to copy this state.
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::parse): Ignore directive upgrade-insecure-requests when
+        inheriting ContentSecurityPolicy state as this directive as the Upgrade Insecure Requests feature has
+        its own inheritance semantics that differ from the semantics of copying a ContentSecurityPolicy object.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Call ContentSecurityPolicy::copyUpgradeInsecureRequestStateFrom()
+        to copy the upgrade insecure requests state from the original document to the transformed document now
+        that ContentSecurityPolicy::copyStateFrom() no longer does this.
+
 2016-12-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Remaining time label first appears way to the left

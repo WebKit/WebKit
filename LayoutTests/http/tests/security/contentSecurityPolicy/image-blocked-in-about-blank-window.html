@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'; img-src 'none'">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", function (messageEvent) {
+    document.getElementById("console").textContent = messageEvent.data + "\n";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, false);
+</script>
+</head>
+<body>
+<pre id="console"></pre>
+<script>
+let childWindow = window.open("about:blank");
+childWindow.document.write(`<img src="../resources/abe.png" onerror="window.opener.postMessage('PASS did not load image.', '*')" onload="window.opener.postMessage('FAIL did load image.', '*')">`);
+</script>
+</body>
+</html>

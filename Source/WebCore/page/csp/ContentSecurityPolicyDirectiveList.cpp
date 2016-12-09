@@ -307,19 +307,18 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
         String name, value;
         if (parseDirective(directiveBegin, position, name, value)) {
             ASSERT(!name.isEmpty());
-            switch (policyFrom) {
-            case ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta:
+            if (policyFrom == ContentSecurityPolicy::PolicyFrom::Inherited) {
+                if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::upgradeInsecureRequests))
+                    continue;
+            } else if (policyFrom == ContentSecurityPolicy::PolicyFrom::HTTPEquivMeta) {
                 if (equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::sandbox)
                     || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::reportURI)
                     || equalIgnoringASCIICase(name, ContentSecurityPolicyDirectiveNames::frameAncestors)) {
                     m_policy.reportInvalidDirectiveInHTTPEquivMeta(name);
-                    break;
+                    continue;
                 }
-                FALLTHROUGH;
-            default:
-                addDirective(name, value);
-                break;
             }
+            addDirective(name, value);
         }
 
         ASSERT(position == end || *position == ';');
