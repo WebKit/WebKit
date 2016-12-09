@@ -100,6 +100,10 @@ int FileHandle::write(const void* data, int length)
 
 bool FileHandle::printf(const char* format, ...)
 {
+#if OS(WINDOWS)
+    // TODO: implement this without relying on vasprintf.
+    return false;
+#else
     va_list args;
     va_start(args, format);
 
@@ -112,6 +116,7 @@ bool FileHandle::printf(const char* format, ...)
     va_end(args);
 
     return writeResult >= 0;
+#endif
 }
 
 void FileHandle::close()
