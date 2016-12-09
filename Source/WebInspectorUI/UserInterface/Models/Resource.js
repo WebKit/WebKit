@@ -114,6 +114,10 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
             if (plural)
                 return WebInspector.UIString("XHRs");
             return WebInspector.UIString("XHR");
+        case WebInspector.Resource.Type.Fetch:
+            if (plural)
+                return WebInspector.UIString("Fetches");
+            return WebInspector.UIString("Fetch");
         case WebInspector.Resource.Type.WebSocket:
             if (plural)
                 return WebInspector.UIString("Sockets");
@@ -753,6 +757,7 @@ WebInspector.Resource.Type = {
     Font: "resource-type-font",
     Script: "resource-type-script",
     XHR: "resource-type-xhr",
+    Fetch: "resource-type-fetch",
     WebSocket: "resource-type-websocket",
     Other: "resource-type-other"
 };

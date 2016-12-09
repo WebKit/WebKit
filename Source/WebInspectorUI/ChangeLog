@@ -1,3 +1,26 @@
+2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some resources fetched via Fetch API do not have data
+        https://bugs.webkit.org/show_bug.cgi?id=165230
+        <rdar://problem/29449220>
+
+        Reviewed by Alex Christensen.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New "Fetch" and "Fetches" localized strings.
+
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.displayNameForType):
+        * UserInterface/Models/ResourceCollection.js:
+        (WebInspector.ResourceCollection.verifierForType):
+        * UserInterface/Views/CollectionContentView.js:
+        (WebInspector.CollectionContentView):
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.get responseContentView):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.compareResourceTreeElements):
+        New ResourceType.Fetch. Behave like XHR in most places.
+
 2016-12-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Unable to delete breakpoint from worker script

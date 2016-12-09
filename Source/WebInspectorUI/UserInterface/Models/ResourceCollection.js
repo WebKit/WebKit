@@ -51,6 +51,8 @@ WebInspector.ResourceCollection = class ResourceCollection extends WebInspector.
             return WebInspector.ResourceCollection.TypeVerifier.Script;
         case WebInspector.Resource.Type.XHR:
             return WebInspector.ResourceCollection.TypeVerifier.XHR;
+        case WebInspector.Resource.Type.Fetch:
+            return WebInspector.ResourceCollection.TypeVerifier.Fetch;
         case WebInspector.Resource.Type.WebSocket:
             return WebInspector.ResourceCollection.TypeVerifier.WebSocket;
         case WebInspector.Resource.Type.Other:
@@ -191,6 +193,7 @@ WebInspector.ResourceCollection.TypeVerifier = {
     Font: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Font,
     Script: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Script,
     XHR: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.XHR,
+    Fetch: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Fetch,
     WebSocket: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.WebSocket,
     Other: (object) => WebInspector.Collection.TypeVerifier.Resource(object) && object.type === WebInspector.Resource.Type.Other,
 };

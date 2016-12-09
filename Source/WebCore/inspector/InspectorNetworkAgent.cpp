@@ -35,6 +35,7 @@
 #include "CachedRawResource.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -450,14 +451,18 @@ void InspectorNetworkAgent::didReceiveScriptResponse(unsigned long identifier)
     m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::ScriptResource);
 }
 
+void InspectorNetworkAgent::didReceiveThreadableLoaderResponse(unsigned long identifier, DocumentThreadableLoader& documentThreadableLoader)
+{
+    String initiator = documentThreadableLoader.options().initiator;
+    if (initiator == cachedResourceRequestInitiators().fetch)
+        m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::FetchResource);
+    else if (initiator == cachedResourceRequestInitiators().xmlhttprequest)
+        m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::XHRResource);
+}
+
 void InspectorNetworkAgent::didFinishXHRLoading(unsigned long identifier, const String& decodedText)
 {
     m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), decodedText);
-}
-
-void InspectorNetworkAgent::didReceiveXHRResponse(unsigned long identifier)
-{
-    m_resourcesData->setResourceType(IdentifiersFactory::requestId(identifier), InspectorPageAgent::XHRResource);
 }
 
 void InspectorNetworkAgent::willLoadXHRSynchronously()

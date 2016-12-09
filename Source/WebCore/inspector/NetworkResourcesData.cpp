@@ -129,21 +129,6 @@ void NetworkResourcesData::resourceCreated(const String& requestId, const String
     m_requestIdToResourceDataMap.set(requestId, new ResourceData(requestId, loaderId));
 }
 
-static RefPtr<TextResourceDecoder> createOtherResourceTextDecoder(const String& mimeType, const String& textEncodingName)
-{
-    RefPtr<TextResourceDecoder> decoder;
-    if (!textEncodingName.isEmpty())
-        decoder = TextResourceDecoder::create("text/plain", textEncodingName);
-    else if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
-        decoder = TextResourceDecoder::create("application/xml");
-        decoder->useLenientXMLDecoding();
-    } else if (equalLettersIgnoringASCIICase(mimeType, "text/html"))
-        decoder = TextResourceDecoder::create("text/html", "UTF-8");
-    else if (mimeType == "text/plain")
-        decoder = TextResourceDecoder::create("text/plain", "ISO-8859-1");
-    return decoder;
-}
-
 void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response)
 {
     ResourceData* resourceData = resourceDataForRequestId(requestId);
@@ -151,7 +136,7 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
         return;
     resourceData->setFrameId(frameId);
     resourceData->setUrl(response.url());
-    resourceData->setDecoder(createOtherResourceTextDecoder(response.mimeType(), response.textEncodingName()));
+    resourceData->setDecoder(InspectorPageAgent::createTextDecoder(response.mimeType(), response.textEncodingName()));
     resourceData->setHTTPStatusCode(response.httpStatusCode());
 }
 

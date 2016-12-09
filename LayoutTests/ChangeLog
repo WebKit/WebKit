@@ -1,3 +1,23 @@
+2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some resources fetched via Fetch API do not have data
+        https://bugs.webkit.org/show_bug.cgi?id=165230
+        <rdar://problem/29449220>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/inspector/network/fetch-response-body-expected.txt: Added.
+        * http/tests/inspector/network/fetch-response-body.html: Added.
+        * http/tests/inspector/network/resources/data.html: Added.
+        * http/tests/inspector/network/resources/data.json: Added.
+        * http/tests/inspector/network/resources/data.svg: Added.
+        * http/tests/inspector/network/resources/data.txt: Added.
+        * http/tests/inspector/network/resources/echo.php: Added.
+        * http/tests/inspector/network/xhr-response-body-expected.txt: Added.
+        * http/tests/inspector/network/xhr-response-body.html: Added.
+        Tests for viewing content of XHR and Fetch requested resources
+        with different kinds of content.
+
 2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.webkitFullscreenElement leaks elements inside a shadow tree

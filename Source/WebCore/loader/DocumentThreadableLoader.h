@@ -58,6 +58,8 @@ namespace WebCore {
         virtual void setDefersLoading(bool);
 
         friend CrossOriginPreflightChecker;
+        friend class InspectorInstrumentation;
+        friend class InspectorNetworkAgent;
 
         using RefCounted<DocumentThreadableLoader>::ref;
         using RefCounted<DocumentThreadableLoader>::deref;

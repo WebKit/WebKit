@@ -627,6 +627,12 @@ void InspectorInstrumentation::continueWithPolicyIgnoreImpl(Frame* frame, Docume
     didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
 }
 
+void InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl(InstrumentingAgents& instrumentingAgents, DocumentThreadableLoader& documentThreadableLoader, unsigned long identifier)
+{
+    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
+        networkAgent->didReceiveThreadableLoaderResponse(identifier, documentThreadableLoader);
+}
+
 void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
 {
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
@@ -661,12 +667,6 @@ void InspectorInstrumentation::didFinishXHRLoadingImpl(InstrumentingAgents& inst
         if (decodedText)
             networkAgent->didFinishXHRLoading(identifier, *decodedText);
     }
-}
-
-void InspectorInstrumentation::didReceiveXHRResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier)
-{
-    if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
-        networkAgent->didReceiveXHRResponse(identifier);
 }
 
 void InspectorInstrumentation::willLoadXHRSynchronouslyImpl(InstrumentingAgents& instrumentingAgents)

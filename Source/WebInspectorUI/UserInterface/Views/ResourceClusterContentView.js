@@ -65,7 +65,13 @@ WebInspector.ResourceClusterContentView = class ResourceClusterContentView exten
         case WebInspector.Resource.Type.Document:
         case WebInspector.Resource.Type.Script:
         case WebInspector.Resource.Type.Stylesheet:
+            this._responseContentView = new WebInspector.TextResourceContentView(this._resource);
+            break;
+
         case WebInspector.Resource.Type.XHR:
+        case WebInspector.Resource.Type.Fetch:
+            // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
+            // XHR / Fetch content may not always be text.
             this._responseContentView = new WebInspector.TextResourceContentView(this._resource);
             break;
 

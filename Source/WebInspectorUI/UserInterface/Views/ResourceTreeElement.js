@@ -44,7 +44,9 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
             return comparisonResult;
 
         // Compare async resource types by their first timestamp so they are in chronological order.
-        if (a.resource.type === WebInspector.Resource.Type.XHR || a.resource.type === WebInspector.Resource.Type.WebSocket)
+        if (a.resource.type === WebInspector.Resource.Type.XHR
+            || a.resource.type === WebInspector.Resource.Type.Fetch
+            || a.resource.type === WebInspector.Resource.Type.WebSocket)
             return a.resource.firstTimestamp - b.resource.firstTimestamp || 0;
 
         // Compare by subtitle when the types are the same. The subtitle is used to show the

@@ -81,6 +81,10 @@ WebInspector.CollectionContentView = class CollectionContentView extends WebInsp
             title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.XHR, true);
             break;
 
+        case WebInspector.ResourceCollection.TypeVerifier.Fetch:
+            title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.Fetch, true);
+            break;
+
         case WebInspector.ResourceCollection.TypeVerifier.WebSocket:
             title = WebInspector.Resource.displayNameForType(WebInspector.Resource.Type.WebSocket, true);
             break;

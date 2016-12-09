@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function createFetchForText() {
+    fetch("resources/data.txt");
+}
+
+function createFetchForHTML() {
+    fetch("resources/data.html");
+}
+
+function createFetchForJSON() {
+    fetch("resources/data.json");
+}
+
+function createFetchForJSON2() {
+    fetch(`resources/echo.php?mimetype=application/json&content={"json":true,"value":42}`);
+}
+
+function createFetchForJSON3() {
+    fetch(`resources/echo.php?mimetype=application/vnd.api%2Bjson&content={"json":true,"value":999}`);
+}
+
+function createFetchForSVG() {
+    fetch("resources/data.svg");
+}
+
+function createFetchForPNG() {
+    fetch("/resources/square100.png");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.getResponseBody.Fetch");
+
+    function addTestCase({name, description, expression, contentHandler}) {
+        suite.addTestCase({
+            name, description,
+            test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded)
+                    .then((event) => {
+                        let resource = event.data.resource;
+                        InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.Fetch, "Resource should be Fetch type.");
+                        return resource.requestContent();
+                    })
+                    .then(contentHandler)
+                    .then(resolve, reject);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.Text",
+        description: "Get text/plain content as text.",
+        expression: "createFetchForText()",
+        contentHandler({error, sourceCode, content}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIMEType should be 'text/plain'.");
+            InspectorTest.expectEqual(content, "Plain text resource.\n", "Text content should match data.txt.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.HTML",
+        description: "Get text/html content as text.",
+        expression: "createFetchForHTML()",
+        contentHandler({error, sourceCode, content}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "text/html", "MIMEType should be 'text/html'.");
+            InspectorTest.expectEqual(content, "<span>Hello World</span>\n", "Text content should match data.html.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.JSON",
+        description: "Get application/octet-stream content as text.",
+        expression: "createFetchForJSON()",
+        contentHandler({error, sourceCode, content}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "application/octet-stream", "MIMEType should be 'application/octet-stream'.");
+            InspectorTest.expectEqual(content, `{"json": true, "value": 42}\n`, "JSON content should match data.json.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.JSON2",
+        description: "Get application/json content as text.",
+        expression: "createFetchForJSON2()",
+        contentHandler({error, sourceCode, content}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(content, `{"json":true,"value":42}`, "JSON content should match specified content.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.JSON3",
+        description: "Get arbitrary +json content as text.",
+        expression: "createFetchForJSON3()",
+        contentHandler({error, sourceCode, content}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "application/vnd.api+json", "MIMEType should be 'application/vnd.api+json'.");
+            InspectorTest.expectEqual(content, `{"json":true,"value":999}`, "JSON content should match specified content.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.SVG",
+        description: "Get image/svg+xml content as text.",
+        expression: "createFetchForSVG()",
+        contentHandler({error, sourceCode, content}) {
+            InspectorTest.expectEqual(sourceCode.mimeType, "image/svg+xml", "MIMEType should be 'image/svg+xml'.");
+            InspectorTest.expectEqual(content,
+`<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200">
+  <rect width="100%" height="50%" fill="green"/>
+</svg>
+`, "SVG content should be text.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.getResponseBody.Fetch.PNG",
+        description: "Get image/png content.",
+        expression: "createFetchForPNG()",
+        contentHandler({error, sourceCode, content}) {
+            // FIXME: <https://webkit.org/b/165495> Web Inspector: XHR / Fetch for non-text content should not show garbled text
+            InspectorTest.expectEqual(sourceCode.mimeType, "image/png", "MIMEType should be 'image/png'.");
+            InspectorTest.expectEqual(typeof content, "string", "Image content should be text.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for getting the content of Fetch requests.</p>
+</body>
+</html>

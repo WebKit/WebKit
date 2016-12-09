@@ -151,6 +151,7 @@ ExceptionOr<FetchHeaders&> FetchRequest::initializeWith(const String& url, const
     m_internalRequest.options.credentials = Credentials::Omit;
     m_internalRequest.referrer = ASCIILiteral("client");
     m_internalRequest.request.setURL(requestURL);
+    m_internalRequest.request.setRequester(ResourceRequest::Requester::Fetch);
     m_internalRequest.request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
 
     return initializeOptions(init);

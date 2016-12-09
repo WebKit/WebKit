@@ -1,3 +1,57 @@
+2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Some resources fetched via Fetch API do not have data
+        https://bugs.webkit.org/show_bug.cgi?id=165230
+        <rdar://problem/29449220>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/inspector/network/fetch-response-body.html
+               http/tests/inspector/network/xhr-response-body.html
+
+        * platform/network/ResourceRequestBase.h:
+        Distinguish Fetch requests.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith):
+        Set the requester type as Fetch.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        * loader/DocumentThreadableLoader.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveXHRResponseImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didReceiveThreadableLoaderResponse):
+        (WebCore::InspectorInstrumentation::didReceiveXHRResponse): Deleted.
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveThreadableLoaderResponse):
+        (WebCore::InspectorNetworkAgent::didFinishXHRLoading):
+        (WebCore::InspectorNetworkAgent::didReceiveXHRResponse): Deleted.
+        Add a generic way for a ThreadableLoader load to update the type of a network request.
+        This will include both XHR and Fetch requests.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::hasTextContent):
+        (WebCore::createXHRTextDecoder):
+        (WebCore::InspectorPageAgent::resourceTypeJson):
+        (WebCore::InspectorPageAgent::cachedResourceType):
+        (WebCore::InspectorPageAgent::createTextDecoder):
+        (WebCore::textContentForCachedResource):
+        * inspector/InspectorPageAgent.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::createOtherResourceTextDecoder): Deleted.
+        Share the logic that creates a Text Decoders for XHR with other non-buffered requests
+        (like Fetch). This moves us to identical behavior for now.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedJSONMIMEType):
+        (WebCore::MIMETypeRegistry::isTextMIMEType):
+        * platform/MIMETypeRegistry.h:
+        Better detect different JSON content based on MIME Type.
+
 2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         document.webkitFullscreenElement leaks elements inside a shadow tree

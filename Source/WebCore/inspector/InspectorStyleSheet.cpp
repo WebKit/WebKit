@@ -805,7 +805,6 @@ Ref<InspectorStyleSheet> InspectorStyleSheet::create(InspectorPageAgent* pageAge
     return adoptRef(*new InspectorStyleSheet(pageAgent, id, WTFMove(pageStyleSheet), origin, documentURL, listener));
 }
 
-// static
 String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
 {
     if (pageStyleSheet && !pageStyleSheet->contents().baseURL().isEmpty())

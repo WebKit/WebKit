@@ -160,7 +160,7 @@ public:
     bool ignoreForRequestCount() const { return m_ignoreForRequestCount; }
     void setIgnoreForRequestCount(bool ignoreForRequestCount) { m_ignoreForRequestCount = ignoreForRequestCount; }
 
-    enum class Requester { Unspecified, Main, XHR, Media };
+    enum class Requester { Unspecified, Main, XHR, Fetch, Media };
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 

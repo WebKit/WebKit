@@ -51,10 +51,11 @@ class Frame;
 class InspectorClient;
 class InspectorOverlay;
 class MainFrame;
-class URL;
 class Page;
 class RenderObject;
 class SharedBuffer;
+class TextResourceDecoder;
+class URL;
 
 typedef String ErrorString;
 
@@ -71,6 +72,7 @@ public:
         FontResource,
         ScriptResource,
         XHRResource,
+        FetchResource,
         WebSocketResource,
         OtherResource
     };
@@ -84,6 +86,7 @@ public:
     static Inspector::Protocol::Page::ResourceType resourceTypeJson(ResourceType);
     static ResourceType cachedResourceType(const CachedResource&);
     static Inspector::Protocol::Page::ResourceType cachedResourceTypeJson(const CachedResource&);
+    static RefPtr<TextResourceDecoder> createTextDecoder(const String& mimeType, const String& textEncodingName);
 
     // Page API for InspectorFrontend
     void enable(ErrorString&) override;

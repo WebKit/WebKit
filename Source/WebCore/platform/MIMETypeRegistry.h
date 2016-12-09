@@ -54,8 +54,9 @@ public:
     // Check to see if a MIME type is suitable for being encoded.
     static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
 
-    // Check to see if a MIME type is suitable for being loaded as a JavaScript resource.
-    static bool isSupportedJavaScriptMIMEType(const String& mimeType);    
+    // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
+    static bool isSupportedJavaScriptMIMEType(const String& mimeType);
+    static bool isSupportedJSONMIMEType(const String& mimeType);
 
     // Check to see if a non-image MIME type is suitable for being loaded as a
     // document in a frame. Includes supported JavaScript MIME types.

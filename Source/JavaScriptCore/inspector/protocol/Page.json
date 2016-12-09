@@ -6,7 +6,7 @@
         {
             "id": "ResourceType",
             "type": "string",
-            "enum": ["Document", "Stylesheet", "Image", "Font", "Script", "XHR", "WebSocket", "Other"],
+            "enum": ["Document", "Stylesheet", "Image", "Font", "Script", "XHR", "Fetch", "WebSocket", "Other"],
             "description": "Resource type as it was perceived by the rendering engine."
         },
         {
