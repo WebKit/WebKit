@@ -1,3 +1,10 @@
+2016-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r209570.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+
 2016-12-01  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Pass Grid as argument to items' placement methods
