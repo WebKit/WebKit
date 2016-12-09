@@ -58,7 +58,7 @@ void Recorder::recordRequestSent(const WebCore::ResourceRequest& request)
     if (m_events.size())
         return;
 
-    DEBUG_LOG("Sent request for URL = %{public}s", DEBUG_STR(request.url().string()));
+    DEBUG_LOG("Sent request for URL = " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
 
     m_initialRequest = request;
     recordEvent(RequestSentEvent(request));
@@ -68,7 +68,7 @@ void Recorder::recordResponseReceived(const WebCore::ResourceResponse& response)
 {
     // Called when receiving a response other than a redirect or error.
 
-    DEBUG_LOG("Received response from URL = %{public}s", DEBUG_STR(response.url().string()));
+    DEBUG_LOG("Received response from URL = " STRING_SPECIFIER, DEBUG_STR(response.url().string()));
     ASSERT(m_events.size());
 
     // TODO: Is there a better response to receiving a multi-part resource?
@@ -83,7 +83,7 @@ void Recorder::recordResponseReceived(const WebCore::ResourceResponse& response)
 
 void Recorder::recordRedirectReceived(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
-    DEBUG_LOG("Received redirect to URL = %{public}s", DEBUG_STR(request.url().string()));
+    DEBUG_LOG("Received redirect to URL = " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
     ASSERT(m_events.size());
 
     recordEvent(RedirectReceivedEvent(request, response));
@@ -91,7 +91,7 @@ void Recorder::recordRedirectReceived(const WebCore::ResourceRequest& request, c
 
 void Recorder::recordRedirectSent(const WebCore::ResourceRequest& request)
 {
-    DEBUG_LOG("Sent redirect for URL = %{public}s", DEBUG_STR(request.url().string()));
+    DEBUG_LOG("Sent redirect for URL = " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
     ASSERT(m_events.size());
 
     recordEvent(RedirectSentEvent(request));
@@ -142,7 +142,7 @@ void Recorder::writeEvents()
         // file. It also works better with JSON parsers that expect to find a
         // NUL at the end of their input.
         if (handle.write(asString.c_str(), asString.size() + 1) == -1) {
-            DEBUG_LOG_ERROR("Error trying to write to file for URL = %{public}s", DEBUG_STR(m_initialRequest.url().string()));
+            DEBUG_LOG_ERROR("Error trying to write to file for URL = " STRING_SPECIFIER, DEBUG_STR(m_initialRequest.url().string()));
             return;
         }
     }

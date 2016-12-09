@@ -1,3 +1,49 @@
+2016-12-09  Keith Rollin  <krollin@apple.com>
+
+        Fix string specification in print format
+        https://bugs.webkit.org/show_bug.cgi?id=165650
+
+        Reviewed by Alex Christensen.
+
+        Change "%{public}s" string specifier to something that can be changed
+        to "%s" at compile time when the build environment doesn't support the
+        former.
+
+        * NetworkProcess/capture/NetworkCaptureLogging.h:
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::initialize):
+        (WebKit::NetworkCapture::Manager::findMatch):
+        (WebKit::NetworkCapture::Manager::findExactMatch):
+        (WebKit::NetworkCapture::Manager::findBestFuzzyMatch):
+        (WebKit::NetworkCapture::Manager::fuzzyMatchURLs):
+        (WebKit::NetworkCapture::Manager::logPlayedBackResource):
+        (WebKit::NetworkCapture::Manager::openCacheFile):
+        (WebKit::NetworkCapture::Manager::getLine):
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp:
+        (WebKit::NetworkCapture::Recorder::recordRequestSent):
+        (WebKit::NetworkCapture::Recorder::recordResponseReceived):
+        (WebKit::NetworkCapture::Recorder::recordRedirectReceived):
+        (WebKit::NetworkCapture::Recorder::recordRedirectSent):
+        (WebKit::NetworkCapture::Recorder::writeEvents):
+        * NetworkProcess/capture/NetworkCaptureResource.cpp:
+        (WebKit::NetworkCapture::Resource::url):
+        (WebKit::NetworkCapture::Resource::EventStream::nextEvent):
+        * NetworkProcess/capture/NetworkDataTaskReplay.cpp:
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::NetworkDataTaskReplay):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::~NetworkDataTaskReplay):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::resume):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::suspend):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::complete):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::invalidateAndCancel):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::enqueueEventHandler):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayRequestSent):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayResponseReceived):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayRedirectReceived):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayRedirectSent):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayDataReceived):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::replayFinished):
+        (WebKit::NetworkCapture::NetworkDataTaskReplay::didReceiveResponse):
+
 2016-12-09  Jeremy Jones  <jeremyj@apple.com>
 
         WebView doesn't become first responder in element fullscreen.

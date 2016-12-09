@@ -46,9 +46,9 @@ const WebCore::URL& Resource::url()
         auto events = eventStream();
         auto event = events.nextEvent();
         if (!event)
-            DEBUG_LOG_ERROR("Event stream does not contain events: file = %{public}s", DEBUG_STR(m_eventFilePath));
+            DEBUG_LOG_ERROR("Event stream does not contain events: file = " STRING_SPECIFIER, DEBUG_STR(m_eventFilePath));
         else if (!WTF::holds_alternative<RequestSentEvent>(*event))
-            DEBUG_LOG_ERROR("Event stream does not have a requestSent event: file = %{public}s", DEBUG_STR(m_eventFilePath));
+            DEBUG_LOG_ERROR("Event stream does not have a requestSent event: file = " STRING_SPECIFIER, DEBUG_STR(m_eventFilePath));
         else {
             auto requestSentEvent = WTF::get<RequestSentEvent>(*event);
             WebCore::URLParser parser(requestSentEvent.request.url);
@@ -93,7 +93,7 @@ Resource::EventStream::EventStream(const String& eventFilePath)
 OptionalCaptureEvent Resource::EventStream::nextEvent()
 {
     if (m_offset == m_mappedEventFile.size()) {
-        DEBUG_LOG_ERROR("Unable to return event - at end of file: %{public}s", DEBUG_STR(m_eventFilePath));
+        DEBUG_LOG_ERROR("Unable to return event - at end of file: " STRING_SPECIFIER, DEBUG_STR(m_eventFilePath));
         return std::nullopt;
     }
 
@@ -104,7 +104,7 @@ OptionalCaptureEvent Resource::EventStream::nextEvent()
         ++m_offset;
 
     if (m_offset == m_mappedEventFile.size()) {
-        DEBUG_LOG_ERROR("Unable to return event - no terminating NUL: %{public}s", DEBUG_STR(m_eventFilePath));
+        DEBUG_LOG_ERROR("Unable to return event - no terminating NUL: " STRING_SPECIFIER, DEBUG_STR(m_eventFilePath));
         return std::nullopt;
     }
 

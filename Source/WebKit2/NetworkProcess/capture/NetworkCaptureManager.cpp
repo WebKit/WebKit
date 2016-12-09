@@ -76,7 +76,7 @@ void Manager::initialize(const String& recordReplayMode, const String& recordRep
     m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForWrite);
     m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), WebCore::OpenForWrite);
 
-    DEBUG_LOG("Cache location = %{public}s", DEBUG_STR(m_recordReplayCacheLocation));
+    DEBUG_LOG("Cache location = " STRING_SPECIFIER, DEBUG_STR(m_recordReplayCacheLocation));
 
     if (isReplaying())
         loadResources();
@@ -91,7 +91,7 @@ void Manager::terminate()
 
 Resource* Manager::findMatch(const WebCore::ResourceRequest& request)
 {
-    DEBUG_LOG_VERBOSE("URL = %{public}s", DEBUG_STR(request.url().string()));
+    DEBUG_LOG_VERBOSE("URL = " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
 
     auto bestMatch = findExactMatch(request);
     if (!bestMatch)
@@ -99,12 +99,12 @@ Resource* Manager::findMatch(const WebCore::ResourceRequest& request)
 
 #if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
     if (!bestMatch)
-        DEBUG_LOG("Could not find match for: %{public}s", DEBUG_STR(request.url().string()));
+        DEBUG_LOG("Could not find match for: " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
     else if (request.url() == bestMatch->url())
-        DEBUG_LOG("Found exact match for: %{public}s", DEBUG_STR(request.url().string()));
+        DEBUG_LOG("Found exact match for: " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
     else {
-        DEBUG_LOG("Found fuzzy match for: %{public}s", DEBUG_STR(request.url().string()));
-        DEBUG_LOG("       replaced with : %{public}s", DEBUG_STR(bestMatch->url().string()));
+        DEBUG_LOG("Found fuzzy match for: " STRING_SPECIFIER, DEBUG_STR(request.url().string()));
+        DEBUG_LOG("       replaced with : " STRING_SPECIFIER, DEBUG_STR(bestMatch->url().string()));
     }
 #endif
 
@@ -119,7 +119,7 @@ Resource* Manager::findExactMatch(const WebCore::ResourceRequest& request)
     });
 
     if (lower != std::end(m_cachedResources) && lower->url() == url) {
-        DEBUG_LOG_VERBOSE("Found exact match: %{public}s", DEBUG_STR(lower->url().string()));
+        DEBUG_LOG_VERBOSE("Found exact match: " STRING_SPECIFIER, DEBUG_STR(lower->url().string()));
         return &*lower;
     }
 
@@ -145,7 +145,7 @@ Resource* Manager::findBestFuzzyMatch(const WebCore::ResourceRequest& request)
         int thisScore = fuzzyMatchURLs(url, requestParameters, iResource->url(), iResource->queryParameters());
         // TODO: Consider ignoring any matches < 0 as being too different.
         if (bestScore < thisScore) {
-            DEBUG_LOG("New best match (%d): %{public}s", thisScore, DEBUG_STR(iResource->url().string()));
+            DEBUG_LOG("New best match (%d): " STRING_SPECIFIER, thisScore, DEBUG_STR(iResource->url().string()));
             bestScore = thisScore;
             bestMatch = &*iResource;
             if (bestScore == kMaxMatch)
@@ -171,20 +171,20 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
     // match.
 
     if (!protocolHostAndPortAreEqual(requestURL, resourceURL)) {
-        DEBUG_LOG("Scheme/host/port mismatch: %{public}s != %{public}s", DEBUG_STR(requestURL.string()), DEBUG_STR(resourceURL.string()));
+        DEBUG_LOG("Scheme/host/port mismatch: " STRING_SPECIFIER " != " STRING_SPECIFIER, DEBUG_STR(requestURL.string()), DEBUG_STR(resourceURL.string()));
         return kMinMatch;
     }
 
     // If fragments don't match, return this as the "worst" match.
 
     if (requestURL.fragmentIdentifier() != resourceURL.fragmentIdentifier()) {
-        DEBUG_LOG("Fragments mismatch: %{public}s != %{public}s", DEBUG_STR(requestURL.string()), DEBUG_STR(resourceURL.string()));
+        DEBUG_LOG("Fragments mismatch: " STRING_SPECIFIER " != " STRING_SPECIFIER, DEBUG_STR(requestURL.string()), DEBUG_STR(resourceURL.string()));
         return kMinMatch;
     }
 
     DEBUG_LOG("Fuzzy matching:");
-    DEBUG_LOG("   : %{public}s", DEBUG_STR(requestURL.string()));
-    DEBUG_LOG("   : %{public}s", DEBUG_STR(resourceURL.string()));
+    DEBUG_LOG("   : " STRING_SPECIFIER, DEBUG_STR(requestURL.string()));
+    DEBUG_LOG("   : " STRING_SPECIFIER, DEBUG_STR(resourceURL.string()));
 
     // Compare the path components and the query parameters. Score each partial
     // match as +4, each mismatch as -1, and each missing component as -1.
@@ -285,14 +285,14 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
         if (requestParameter->first == resourceParameter->first) {
 #if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
             if (requestParameter->second == resourceParameter->second)
-                DEBUG_LOG("Matching parameter names and values: \"%{public}s\" = \"%{public}s\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second));
+                DEBUG_LOG("Matching parameter names and values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second));
             else
-                DEBUG_LOG("Mismatching parameter values: \"%{public}s\" = \"%{public}s\" vs. \"%{public}s\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second), DEBUG_STR(resourceParameter->second));
+                DEBUG_LOG("Mismatching parameter values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\" vs. \"" STRING_SPECIFIER "\"", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second), DEBUG_STR(resourceParameter->second));
 #endif
             score += (requestParameter->second == resourceParameter->second) ? kParameterMatchScore : kParameterMismatchScore;
             DEBUG_LOG("Score = %d", score);
         } else {
-            DEBUG_LOG("Mismatching parameter names: %{public}s, %{public}s", DEBUG_STR(requestParameter->first), DEBUG_STR(resourceParameter->first));
+            DEBUG_LOG("Mismatching parameter names: " STRING_SPECIFIER ", " STRING_SPECIFIER, DEBUG_STR(requestParameter->first), DEBUG_STR(resourceParameter->first));
 
             const auto scanForwardForMatch = [this, &score, kParameterMatchScore, kParameterMismatchScore, kParameterMissingScore](const auto& fixedIter, auto& scanningIter, const auto& scannerEnd) {
                 auto scanner = scanningIter;
@@ -305,9 +305,9 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
                 DEBUG_LOG("Score = %d", score);
 #if ENABLE(WTF_CAPTURE_INTERNAL_DEBUGGING)
                 if (fixedIter->second == scanner->second)
-                    DEBUG_LOG("Matching parameter names and values: \"%{public}s\" = \"%{public}s\"", DEBUG_STR(fixedIter->first), DEBUG_STR(fixedIter->second));
+                    DEBUG_LOG("Matching parameter names and values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\"", DEBUG_STR(fixedIter->first), DEBUG_STR(fixedIter->second));
                 else
-                    DEBUG_LOG("Mismatching parameter values: \"%{public}s\" = \"%{public}s\" vs. \"%{public}s\"", DEBUG_STR(fixedIter->first), DEBUG_STR(fixedIter->second), DEBUG_STR(scanner->second));
+                    DEBUG_LOG("Mismatching parameter values: \"" STRING_SPECIFIER "\" = \"" STRING_SPECIFIER "\" vs. \"" STRING_SPECIFIER "\"", DEBUG_STR(fixedIter->first), DEBUG_STR(fixedIter->second), DEBUG_STR(scanner->second));
 #endif
                 score += (fixedIter->second == scanner->second) ? kParameterMatchScore : kParameterMismatchScore;
                 DEBUG_LOG("Score = %d", score);
@@ -317,8 +317,8 @@ int Manager::fuzzyMatchURLs(const WebCore::URL& requestURL, const WebCore::URLPa
 
             if (!scanForwardForMatch(requestParameter, resourceParameter, std::end(resourceParameters))) {
                 if (!scanForwardForMatch(resourceParameter, requestParameter, std::end(requestParameters))) {
-                    DEBUG_LOG("Unmatched parameter: %{public}s=%{public}s", DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second));
-                    DEBUG_LOG("Unmatched parameter: %{public}s=%{public}s", DEBUG_STR(resourceParameter->first), DEBUG_STR(resourceParameter->second));
+                    DEBUG_LOG("Unmatched parameter: " STRING_SPECIFIER "=" STRING_SPECIFIER, DEBUG_STR(requestParameter->first), DEBUG_STR(requestParameter->second));
+                    DEBUG_LOG("Unmatched parameter: " STRING_SPECIFIER "=" STRING_SPECIFIER, DEBUG_STR(resourceParameter->first), DEBUG_STR(resourceParameter->second));
                     score += kParameterMissingScore + kParameterMissingScore;
                     DEBUG_LOG("Score = %d", score);
                 }
@@ -436,9 +436,9 @@ void Manager::logPlayedBackResource(const WebCore::ResourceRequest& request, boo
     const auto& url = request.url();
 
     if (wasCacheMiss)
-        DEBUG_LOG("Cache miss: URL = %{public}s", DEBUG_STR(url.string()));
+        DEBUG_LOG("Cache miss: URL = " STRING_SPECIFIER, DEBUG_STR(url.string()));
     else
-        DEBUG_LOG("Cache hit:  URL = %{public}s", DEBUG_STR(url.string()));
+        DEBUG_LOG("Cache hit:  URL = " STRING_SPECIFIER, DEBUG_STR(url.string()));
 
     m_replayFileHandle.printf("%s %s\n", wasCacheMiss ? "miss" : "hit ", DEBUG_STR(url.string()));
 }
@@ -458,7 +458,7 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::File
     if (mode != WebCore::OpenForRead) {
         const auto& parentDir = WebCore::directoryName(filePath);
         if (!WebCore::makeAllDirectories(parentDir)) {
-            DEBUG_LOG_ERROR("Error %d trying to create intermediate directories: %{public}s", errno, DEBUG_STR(parentDir));
+            DEBUG_LOG_ERROR("Error %d trying to create intermediate directories: " STRING_SPECIFIER, errno, DEBUG_STR(parentDir));
             return fileHandle;
         }
 
@@ -471,9 +471,9 @@ WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::File
     // file handle.
 
     if (mode == WebCore::OpenForRead)
-        DEBUG_LOG_ERROR("Error %d trying to open %{public}s for reading", errno, DEBUG_STR(filePath));
+        DEBUG_LOG_ERROR("Error %d trying to open " STRING_SPECIFIER " for reading", errno, DEBUG_STR(filePath));
     else
-        DEBUG_LOG_ERROR("Error %d trying to open %{public}s for writing", errno, DEBUG_STR(filePath));
+        DEBUG_LOG_ERROR("Error %d trying to open " STRING_SPECIFIER " for writing", errno, DEBUG_STR(filePath));
 
     return fileHandle;
 }
@@ -513,7 +513,7 @@ bool Manager::getLine(uint8_t const *& p, uint8_t const * const end, Vector<Stri
     String word;
     while (getWord(p, end, word)) {
         if (!word.isEmpty()) {
-            DEBUG_LOG_VERBOSE("Adding word: %{public}s", DEBUG_STR(word));
+            DEBUG_LOG_VERBOSE("Adding word: " STRING_SPECIFIER, DEBUG_STR(word));
             line.append(word);
         }
     }

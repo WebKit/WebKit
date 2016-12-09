@@ -50,8 +50,8 @@ NetworkDataTaskReplay::NetworkDataTaskReplay(NetworkSession& session, NetworkDat
     , m_currentRequest(m_firstRequest)
     , m_resource(resource)
 {
-    DEBUG_LOG("request URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
-    DEBUG_LOG("cached URL = %{public}s", resource ? DEBUG_STR(resource->url().string()) : "<not found>");
+    DEBUG_LOG("request URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("cached URL = " STRING_SPECIFIER, resource ? DEBUG_STR(resource->url().string()) : "<not found>");
 
     m_session->registerNetworkDataTask(*this);
 
@@ -61,14 +61,14 @@ NetworkDataTaskReplay::NetworkDataTaskReplay(NetworkSession& session, NetworkDat
 
 NetworkDataTaskReplay::~NetworkDataTaskReplay()
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     m_session->unregisterNetworkDataTask(*this);
 }
 
 void NetworkDataTaskReplay::resume()
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     if (m_state == State::Canceling || m_state == State::Completed)
         return;
@@ -85,7 +85,7 @@ void NetworkDataTaskReplay::resume()
 
 void NetworkDataTaskReplay::suspend()
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     if (m_state == State::Canceling || m_state == State::Completed)
         return;
@@ -105,7 +105,7 @@ void NetworkDataTaskReplay::cancel()
 
 void NetworkDataTaskReplay::complete()
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     if (m_state == State::Completed)
         return;
@@ -116,7 +116,7 @@ void NetworkDataTaskReplay::complete()
 
 void NetworkDataTaskReplay::invalidateAndCancel()
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     cancel();
     complete();
@@ -124,7 +124,7 @@ void NetworkDataTaskReplay::invalidateAndCancel()
 
 void NetworkDataTaskReplay::enqueueEventHandler()
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
         DEBUG_LOG("enqueueEventHandler callback");
@@ -138,20 +138,20 @@ void NetworkDataTaskReplay::enqueueEventHandler()
         }
 
         if (!m_resource) {
-            DEBUG_LOG_ERROR("Error loading resource: could not find cached resource, URL = %{public}s", DEBUG_STR(m_currentRequest.url().string()));
+            DEBUG_LOG_ERROR("Error loading resource: could not find cached resource, URL = " STRING_SPECIFIER, DEBUG_STR(m_currentRequest.url().string()));
             didFinish(Error::NotFoundError); // TODO: Turn this into a 404?
             return;
         }
 
         if (!equalLettersIgnoringASCIICase(m_currentRequest.httpMethod(), "get")) {
-            DEBUG_LOG_ERROR("Error loading resource: unsupported method (%{public}s), URL = %{public}s", DEBUG_STR(m_currentRequest.httpMethod()), DEBUG_STR(m_currentRequest.url().string()));
+            DEBUG_LOG_ERROR("Error loading resource: unsupported method (" STRING_SPECIFIER "), URL = " STRING_SPECIFIER, DEBUG_STR(m_currentRequest.httpMethod()), DEBUG_STR(m_currentRequest.url().string()));
             didFinish(Error::MethodNotAllowed);
             return;
         }
 
         auto event = m_eventStream.nextEvent();
         if (!event) {
-            DEBUG_LOG_ERROR("Error loading resource: nextEvent return null, URL = %{public}s", DEBUG_STR(m_currentRequest.url().string()));
+            DEBUG_LOG_ERROR("Error loading resource: nextEvent return null, URL = " STRING_SPECIFIER, DEBUG_STR(m_currentRequest.url().string()));
             didFinish(Error::NotFoundError); // TODO: Turn this into a 404?
             return;
         }
@@ -182,14 +182,14 @@ void NetworkDataTaskReplay::enqueueEventHandler()
 
 void NetworkDataTaskReplay::replayRequestSent(const RequestSentEvent& event)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     enqueueEventHandler();
 }
 
 void NetworkDataTaskReplay::replayResponseReceived(const ResponseReceivedEvent& event)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     WebCore::ResourceResponse response(event.response);
     didReceiveResponse(WTFMove(response));
@@ -197,14 +197,14 @@ void NetworkDataTaskReplay::replayResponseReceived(const ResponseReceivedEvent& 
 
 void NetworkDataTaskReplay::replayRedirectReceived(const RedirectReceivedEvent& event)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     WebCore::ResourceResponse receivedResponse = event.response;
     WebCore::ResourceRequest receivedRequest = event.request;
 
     ASSERT(m_client);
     m_client->willPerformHTTPRedirection(WTFMove(receivedResponse), WTFMove(receivedRequest), [this, protectedThis = makeRef(*this)] (const WebCore::ResourceRequest& updatedRequest) {
-        DEBUG_LOG("replayRedirectReceived callback: URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+        DEBUG_LOG("replayRedirectReceived callback: URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
         m_currentRequest = updatedRequest;
         enqueueEventHandler();
@@ -213,14 +213,14 @@ void NetworkDataTaskReplay::replayRedirectReceived(const RedirectReceivedEvent& 
 
 void NetworkDataTaskReplay::replayRedirectSent(const RedirectSentEvent& event)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     enqueueEventHandler();
 }
 
 void NetworkDataTaskReplay::replayDataReceived(const DataReceivedEvent& event)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     ASSERT(m_client);
     m_client->didReceiveData(event.data.copyRef());
@@ -230,14 +230,14 @@ void NetworkDataTaskReplay::replayDataReceived(const DataReceivedEvent& event)
 
 void NetworkDataTaskReplay::replayFinished(const FinishedEvent& event)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     didFinish(event.error);
 }
 
 void NetworkDataTaskReplay::didReceiveResponse(WebCore::ResourceResponse&& response)
 {
-    DEBUG_LOG("URL = %{public}s", DEBUG_STR(m_firstRequest.url().string()));
+    DEBUG_LOG("URL = " STRING_SPECIFIER, DEBUG_STR(m_firstRequest.url().string()));
 
     ASSERT(m_client);
     m_client->didReceiveResponseNetworkSession(WTFMove(response), [this, protectedThis = makeRef(*this)](WebCore::PolicyAction policyAction) {
