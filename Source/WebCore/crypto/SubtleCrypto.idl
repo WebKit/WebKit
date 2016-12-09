@@ -29,7 +29,6 @@ enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
     Conditional=SUBTLE_CRYPTO,
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
-    NoInterfaceObject,
 ] interface SubtleCrypto {
     [Custom] Promise<any> encrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);
     [Custom] Promise<any> decrypt(AlgorithmIdentifier algorithm, CryptoKey key, BufferSource data);

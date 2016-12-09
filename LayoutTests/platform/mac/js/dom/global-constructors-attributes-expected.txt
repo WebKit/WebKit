@@ -2113,6 +2113,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'StyleSheetList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').value is SubtleCrypto
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'SubtleCrypto').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Symbol').value is Symbol
 PASS Object.getOwnPropertyDescriptor(global, 'Symbol').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Symbol').hasOwnProperty('set') is false

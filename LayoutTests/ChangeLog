@@ -1,3 +1,15 @@
+2016-12-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Remove NoInterfaceObject attribute from SubtleCrypto Interface
+        https://bugs.webkit.org/show_bug.cgi?id=165629
+        <rdar://problem/29586203>
+
+        Reviewed by Chris Dumez.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+
 2016-12-08  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Exiting fullscreen with paused media shows the start button
