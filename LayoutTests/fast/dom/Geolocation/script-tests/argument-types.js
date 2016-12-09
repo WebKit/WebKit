@@ -15,7 +15,7 @@ function test(expression, expressionShouldThrow, expectedException) {
         if (expectedException)
             shouldThrow(expression, '(function() { return "' + expectedException + '"; })();');
         else
-            shouldThrow(expression, '(function() { return "TypeError: Type error"; })();');
+            shouldThrow(expression, '(function() { return "TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object."; })();');
     } else {
         shouldNotThrow(expression);
     }
@@ -33,44 +33,44 @@ ObjectThrowingException.prototype.__defineGetter__("enableHighAccuracy", functio
 var objectThrowingException = new ObjectThrowingException();
 
 
-test('navigator.geolocation.getCurrentPosition()', true, "TypeError: Not enough arguments");
+test('navigator.geolocation.getCurrentPosition()', true);
 
-test('navigator.geolocation.getCurrentPosition(undefined)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(null)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition({})', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(objectThrowingException)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
+test('navigator.geolocation.getCurrentPosition(undefined)', true);
+test('navigator.geolocation.getCurrentPosition(null)', true);
+test('navigator.geolocation.getCurrentPosition({})', true);
+test('navigator.geolocation.getCurrentPosition(objectThrowingException)', true);
 test('navigator.geolocation.getCurrentPosition(emptyFunction)', false);
 test('navigator.geolocation.getCurrentPosition(Math.abs)', false);
 test('navigator.geolocation.getCurrentPosition(testRunner.setGeolocationPermission)', false);
-test('navigator.geolocation.getCurrentPosition(true)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(42)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(Infinity)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(-Infinity)', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition("string")', true, "TypeError: Argument 1 ('successCallback') to Geolocation.getCurrentPosition must be a function");
+test('navigator.geolocation.getCurrentPosition(true)', true);
+test('navigator.geolocation.getCurrentPosition(42)', true);
+test('navigator.geolocation.getCurrentPosition(Infinity)', true);
+test('navigator.geolocation.getCurrentPosition(-Infinity)', true);
+test('navigator.geolocation.getCurrentPosition("string")', true);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, null)', false);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, {})', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(emptyFunction, objectThrowingException)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
+test('navigator.geolocation.getCurrentPosition(emptyFunction, {})', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, objectThrowingException)', true);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, emptyFunction)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, Math.abs)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, testRunner.setGeolocationPermission)', false);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, true)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(emptyFunction, 42)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(emptyFunction, Infinity)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(emptyFunction, -Infinity)', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
-test('navigator.geolocation.getCurrentPosition(emptyFunction, "string")', true, "TypeError: Argument 2 ('errorCallback') to Geolocation.getCurrentPosition must be a function");
+test('navigator.geolocation.getCurrentPosition(emptyFunction, true)', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, 42)', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, Infinity)', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, -Infinity)', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, "string")', true);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, undefined)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, null)', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, objectThrowingException)', true, 'Error: enableHighAccuracy getter exception');
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, emptyFunction)', false);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, true)', true);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, 42)', true);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, Infinity)', true);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, -Infinity)', true);
-test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, "string")', true);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, true)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, 42)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, Infinity)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, -Infinity)', false);
+test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, "string")', false);
 
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:undefined})', false);
 test('navigator.geolocation.getCurrentPosition(emptyFunction, undefined, {dummyProperty:null})', false);

@@ -76,6 +76,7 @@
 #include "JSEventTargetCustom.cpp"
 #include "JSExceptionBase.cpp"
 #include "JSFileReaderCustom.cpp"
+#include "JSGeolocationCustom.cpp"
 #include "JSHTMLAllCollectionCustom.cpp"
 #include "JSHTMLAppletElementCustom.cpp"
 #include "JSHTMLCanvasElementCustom.cpp"

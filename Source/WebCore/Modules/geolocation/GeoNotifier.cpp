@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-GeoNotifier::GeoNotifier(Geolocation& geolocation, Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
+GeoNotifier::GeoNotifier(Geolocation& geolocation, RefPtr<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, RefPtr<PositionOptions>&& options)
     : m_geolocation(geolocation)
     , m_successCallback(WTFMove(successCallback))
     , m_errorCallback(WTFMove(errorCallback))
@@ -42,6 +42,10 @@ GeoNotifier::GeoNotifier(Geolocation& geolocation, Ref<PositionCallback>&& succe
     , m_timer(*this, &GeoNotifier::timerFired)
     , m_useCachedPosition(false)
 {
+    ASSERT(m_successCallback);
+    // If no options were supplied from JS, we should have created a default set
+    // of options in JSGeolocationCustom.cpp.
+    ASSERT(m_options);
 }
 
 void GeoNotifier::setFatalError(RefPtr<PositionError>&& error)
@@ -66,7 +70,7 @@ void GeoNotifier::setUseCachedPosition()
 
 bool GeoNotifier::hasZeroTimeout() const
 {
-    return !m_options.timeout;
+    return m_options->hasTimeout() && !m_options->timeout();
 }
 
 void GeoNotifier::runSuccessCallback(Geoposition* position)
@@ -87,7 +91,8 @@ void GeoNotifier::runErrorCallback(PositionError* error)
 
 void GeoNotifier::startTimerIfNeeded()
 {
-    m_timer.startOneShot(m_options.timeout / 1000.0);
+    if (m_options->hasTimeout())
+        m_timer.startOneShot(m_options->timeout() / 1000.0);
 }
 
 void GeoNotifier::stopTimer()

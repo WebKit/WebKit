@@ -34,7 +34,7 @@ namespace WebCore {
 
 class Geoposition : public RefCounted<Geoposition> {
 public:
-    static Ref<Geoposition> create(Ref<Coordinates>&& coordinates, DOMTimeStamp timestamp)
+    static Ref<Geoposition> create(RefPtr<Coordinates>&& coordinates, DOMTimeStamp timestamp)
     {
         return adoptRef(*new Geoposition(WTFMove(coordinates), timestamp));
     }
@@ -45,16 +45,17 @@ public:
     }
 
     DOMTimeStamp timestamp() const { return m_timestamp; }
-    const Coordinates& coords() const { return m_coordinates.get(); }
+    Coordinates* coords() const { return m_coordinates.get(); }
     
 private:
-    Geoposition(Ref<Coordinates>&& coordinates, DOMTimeStamp timestamp)
+    Geoposition(RefPtr<Coordinates>&& coordinates, DOMTimeStamp timestamp)
         : m_coordinates(WTFMove(coordinates))
         , m_timestamp(timestamp)
     {
+        ASSERT(m_coordinates);
     }
 
-    Ref<Coordinates> m_coordinates;
+    RefPtr<Coordinates> m_coordinates;
     DOMTimeStamp m_timestamp;
 };
     

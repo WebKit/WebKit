@@ -392,7 +392,6 @@
 #include "JSPositionCallback.cpp"
 #include "JSPositionError.cpp"
 #include "JSPositionErrorCallback.cpp"
-#include "JSPositionOptions.cpp"
 #include "JSProcessingInstruction.cpp"
 #include "JSProgressEvent.cpp"
 #include "JSRadioNodeList.cpp"

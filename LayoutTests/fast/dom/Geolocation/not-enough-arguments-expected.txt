@@ -3,8 +3,8 @@ Tests how Geolocation handles receiving too few arguments.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.navigator.geolocation.getCurrentPosition() threw exception TypeError: Not enough arguments.
-PASS window.navigator.geolocation.watchPosition() threw exception TypeError: Not enough arguments.
+PASS window.navigator.geolocation.getCurrentPosition() threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
+PASS window.navigator.geolocation.watchPosition() threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
 PASS window.navigator.geolocation.clearWatch() threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 

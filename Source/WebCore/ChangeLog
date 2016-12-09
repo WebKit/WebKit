@@ -1,3 +1,15 @@
+2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r209574.
+
+        This change broke the Windows build.
+
+        Reverted changeset:
+
+        "[WebIDL] Remove custom bindings for Geolocation"
+        https://bugs.webkit.org/show_bug.cgi?id=165625
+        http://trac.webkit.org/changeset/209574
+
 2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Custom Elements from a different document are not customized when created with innerHTML

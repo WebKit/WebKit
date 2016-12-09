@@ -48,10 +48,11 @@ class GeolocationError;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
-struct PositionOptions;
 
-class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject {
-    friend class GeoNotifier;
+class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject
+{
+friend class GeoNotifier;
+
 public:
     static Ref<Geolocation> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~Geolocation();
@@ -60,8 +61,8 @@ public:
     Document* document() const;
     WEBCORE_EXPORT Frame* frame() const;
 
-    void getCurrentPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
-    int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
+    void getCurrentPosition(RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
+    int watchPosition(RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
     void clearWatch(int watchID);
 
     WEBCORE_EXPORT void setIsAllowed(bool);
@@ -140,7 +141,7 @@ private:
     void fatalErrorOccurred(GeoNotifier*);
     void requestTimedOut(GeoNotifier*);
     void requestUsesCachedPosition(GeoNotifier*);
-    bool haveSuitableCachedPosition(const PositionOptions&);
+    bool haveSuitableCachedPosition(PositionOptions*);
     void makeCachedPositionCallbacks();
 
     GeoNotifierSet m_oneShots;
