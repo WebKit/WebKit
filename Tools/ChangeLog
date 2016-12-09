@@ -1,3 +1,19 @@
+2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Force GDK backend to x11 when running with XvfbDriver
+        https://bugs.webkit.org/show_bug.cgi?id=165612
+
+        Reviewed by Michael Catanzaro.
+
+        When the developer is running a Wayland session, GDK may get confused
+        and try to use its Wayland backend (which is higher priority) instead.
+        This ensures it will use the appropriate backend when running under
+        Xvfb.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server): when running with XvfbDriver,
+        force GDK_BACKEND to x11.
+
 2016-12-08  Keith Miller  <keith_miller@apple.com>
 
         Add 64-bit signed LEB decode method
