@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MachMessage.h"
 
+#include <mach/mach.h>
+
 namespace IPC {
 
 std::unique_ptr<MachMessage> MachMessage::create(size_t size)

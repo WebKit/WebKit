@@ -1,5 +1,11 @@
 2016-12-08  Anders Carlsson  <andersca@apple.com>
 
+        Attempt to fix the iOS build.
+
+        * Platform/IPC/mac/MachMessage.cpp:
+
+2016-12-08  Anders Carlsson  <andersca@apple.com>
+
         Defer sending Mach messages if the queue is full
         https://bugs.webkit.org/show_bug.cgi?id=165622
         rdar://problem/29518036
