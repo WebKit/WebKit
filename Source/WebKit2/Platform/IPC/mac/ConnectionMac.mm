@@ -397,6 +397,7 @@ void Connection::initializeSendSource()
 
         if (data & DISPATCH_MACH_SEND_POSSIBLE) {
             connection->sendMessage(WTFMove(connection->m_pendingOutgoingMachMessage));
+            connection->sendOutgoingMessages();
             return;
         }
     });

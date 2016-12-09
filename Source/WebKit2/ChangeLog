@@ -1,3 +1,13 @@
+2016-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Once we can send Mach messages again, make sure to send any pending outgoing messages
+        https://bugs.webkit.org/show_bug.cgi?id=165693
+
+        Reviewed by Brady Eidson.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::initializeSendSource):
+
 2016-12-09  Beth Dakin  <bdakin@apple.com>
 
         Password fields should not show the emoji button in TouchBar
