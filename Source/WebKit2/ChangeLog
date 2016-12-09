@@ -1,3 +1,44 @@
+2016-12-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Revert - Add _WKIconLoadingDelegate SPI
+        https://bugs.webkit.org/show_bug.cgi?id=164894
+
+        Unreviewed rollout due to performance regression.
+
+        * PlatformMac.cmake:
+        * UIProcess/API/APIIconLoadingClient.h: Removed.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _iconLoadingDelegate]): Deleted.
+        (-[WKWebView _setIconLoadingDelegate:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKIconLoadingDelegate.h: Removed.
+        * UIProcess/API/Cocoa/_WKLinkIconParameters.h: Removed.
+        * UIProcess/API/Cocoa/_WKLinkIconParameters.mm: Removed.
+        * UIProcess/API/Cocoa/_WKLinkIconParametersInternal.h: Removed.
+        * UIProcess/Cocoa/IconLoadingDelegate.h: Removed.
+        * UIProcess/Cocoa/IconLoadingDelegate.mm: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIconLoadingClient): Deleted.
+        (WebKit::WebPageProxy::getLoadDecisionForIcon): Deleted.
+        (WebKit::WebPageProxy::finishedLoadingIcon): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::iconLoadingClient): Deleted.
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::useIconLoadingClient): Deleted.
+        (WebKit::WebFrameLoaderClient::getLoadDecisionForIcon): Deleted.
+        (WebKit::WebFrameLoaderClient::finishedLoadingIcon): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        (WebKit::WebFrameLoaderClient::setUseIconLoadingClient): Deleted.
+        (): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didGetLoadDecisionForIcon): Deleted.
+        (WebKit::WebPage::setUseIconLoadingClient): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-12-08  Keith Rollin  <krollin@apple.com>
 
         Move FileHandle to WebCore FileHandle.h

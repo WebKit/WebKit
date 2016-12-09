@@ -1,3 +1,30 @@
+2016-12-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Revert - Add _WKIconLoadingDelegate SPI
+        https://bugs.webkit.org/show_bug.cgi?id=164894
+
+        Unreviewed rollout due to performance regression.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        * html/LinkIconCollector.cpp:
+        (WebCore::iconSize):
+        (WebCore::compareIcons):
+        * html/LinkIconCollector.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startIconLoading): Deleted.
+        (WebCore::DocumentLoader::didGetLoadDecisionForIcon): Deleted.
+        (WebCore::DocumentLoader::finishedLoadingIcon): Deleted.
+        * loader/DocumentLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::IconLoader):
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::notifyFinished):
+        * loader/icon/IconLoader.h:
+        * platform/LinkIcon.h: Removed.
+
 2016-12-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Remove NoInterfaceObject attribute from SubtleCrypto Interface

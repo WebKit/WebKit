@@ -33,7 +33,6 @@
 #include "CachedResourceHandle.h"
 #include "DocumentWriter.h"
 #include "IconDatabaseBase.h"
-#include "LinkIcon.h"
 #include "LoadTiming.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
@@ -72,7 +71,6 @@ class ContentFilter;
 class FormState;
 class Frame;
 class FrameLoader;
-class IconLoader;
 class Page;
 class ResourceLoader;
 class SharedBuffer;
@@ -291,10 +289,6 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
-    void startIconLoading();
-    WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID);
-    void finishedLoadingIcon(IconLoader&, SharedBuffer*);
-
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -447,13 +441,8 @@ private:
     bool m_waitingForContentPolicy { false };
     bool m_waitingForNavigationPolicy { false };
 
-    // For IconDatabase-style loads
     RefPtr<IconLoadDecisionCallback> m_iconLoadDecisionCallback;
     RefPtr<IconDataCallback> m_iconDataCallback;
-
-    // For IconLoadingClient-style loads
-    HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
-    HashMap<std::unique_ptr<IconLoader>, uint64_t> m_iconLoaders;
 
     bool m_subresourceLoadersArePageCacheAcceptable;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };

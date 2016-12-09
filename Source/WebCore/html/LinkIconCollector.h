@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "LinkIcon.h"
+#include "URL.h"
 #include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -40,7 +41,14 @@ public:
     {
     }
 
-    WEBCORE_EXPORT Vector<LinkIcon> iconsOfTypes(OptionSet<LinkIconType>);
+    struct Icon {
+        URL url;
+
+        LinkIconType type;
+        std::optional<unsigned> size;
+    };
+
+    WEBCORE_EXPORT Vector<Icon> iconsOfTypes(OptionSet<LinkIconType>);
 
 private:
     Document& m_document;

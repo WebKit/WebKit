@@ -31,7 +31,6 @@
 
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
-#include "LinkIcon.h"
 #include "ResourceLoadPriority.h"
 #include <functional>
 #include <wtf/Forward.h>
@@ -355,10 +354,6 @@ public:
     virtual void prefetchDNS(const String&) = 0;
 
     virtual void didRestoreScrollPosition() { }
-
-    virtual bool useIconLoadingClient() { return false; }
-    virtual void getLoadDecisionForIcon(const LinkIcon&, uint64_t) { }
-    virtual void finishedLoadingIcon(uint64_t, SharedBuffer*) { }
 };
 
 } // namespace WebCore

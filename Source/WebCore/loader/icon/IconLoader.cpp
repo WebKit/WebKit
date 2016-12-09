@@ -44,14 +44,7 @@
 namespace WebCore {
 
 IconLoader::IconLoader(Frame& frame)
-    : m_frame(&frame)
-    , m_url(frame.loader().icon().url())
-{
-}
-
-IconLoader::IconLoader(DocumentLoader& documentLoader, const URL& url)
-    : m_documentLoader(&documentLoader)
-    , m_url(url)
+    : m_frame(frame)
 {
 }
 
@@ -62,18 +55,10 @@ IconLoader::~IconLoader()
 
 void IconLoader::startLoading()
 {
-    ASSERT(m_frame || m_documentLoader);
-
-    if (m_resource)
+    if (m_resource || !m_frame.document())
         return;
 
-    if (m_frame && !m_frame->document())
-        return;
-
-    if (m_documentLoader && !m_documentLoader->frame())
-        return;
-
-    ResourceRequest resourceRequest(m_url);
+    ResourceRequest resourceRequest(m_frame.loader().icon().url());
     resourceRequest.setPriority(ResourceLoadPriority::Low);
 
     // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
@@ -81,12 +66,11 @@ void IconLoader::startLoading()
 
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
-    auto* frame = m_frame ? m_frame : m_documentLoader->frame();
-    m_resource = frame->document()->cachedResourceLoader().requestRawResource(WTFMove(request));
+    m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(WTFMove(request));
     if (m_resource)
         m_resource->addClient(*this);
     else
-        LOG_ERROR("Failed to start load for icon at url %s", frame->loader().icon().url().string().ascii().data());
+        LOG_ERROR("Failed to start load for icon at url %s", m_frame.loader().icon().url().string().ascii().data());
 }
 
 void IconLoader::stopLoading()
@@ -116,19 +100,12 @@ void IconLoader::notifyFinished(CachedResource& resource)
     }
 
     LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", m_resource->url().string().ascii().data());
-
-    if (m_frame) {
-        m_frame->loader().icon().commitToDatabase(m_resource->url());
-
-        // Setting the icon data only after committing to the database ensures that the data is
-        // kept in memory (so it does not have to be read from the database asynchronously), since
-        // there is a page URL referencing it.
-        iconDatabase().setIconDataForIconURL(data, m_resource->url().string());
-        m_frame->loader().client().dispatchDidReceiveIcon();
-
-    } else
-        m_documentLoader->finishedLoadingIcon(*this, data);
-
+    m_frame.loader().icon().commitToDatabase(m_resource->url());
+    // Setting the icon data only after committing to the database ensures that the data is
+    // kept in memory (so it does not have to be read from the database asynchronously), since
+    // there is a page URL referencing it.
+    iconDatabase().setIconDataForIconURL(data, m_resource->url().string());
+    m_frame.loader().client().dispatchDidReceiveIcon();
     stopLoading();
 }
 

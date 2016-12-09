@@ -209,7 +209,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/_WKElementAction.mm
     UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.mm
     UIProcess/API/Cocoa/_WKExperimentalFeature.mm
-    UIProcess/API/Cocoa/_WKLinkIconParameters.mm
     UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
     UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm
     UIProcess/API/Cocoa/_WKSessionState.mm
@@ -233,7 +232,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/DownloadClient.mm
     UIProcess/Cocoa/FindClient.mm
     UIProcess/Cocoa/FullscreenClient.mm
-    UIProcess/Cocoa/IconLoadingDelegate.mm
     UIProcess/Cocoa/NavigationState.mm
     UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm
     UIProcess/Cocoa/SessionStateCoding.mm

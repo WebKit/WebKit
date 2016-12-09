@@ -46,8 +46,6 @@ public:
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
-    void setUseIconLoadingClient(bool useIconLoadingClient) { m_useIconLoadingClient = useIconLoadingClient; }
-
 private:
     void frameLoaderDestroyed() override;
 
@@ -257,17 +255,12 @@ private:
 
     void didRestoreScrollPosition() override;
 
-    bool useIconLoadingClient() override;
-    void getLoadDecisionForIcon(const WebCore::LinkIcon&, uint64_t callbackID) override;
-    void finishedLoadingIcon(uint64_t loadIdentifier, WebCore::SharedBuffer*) override;
-
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;
     bool m_didCompletePageTransition;
     bool m_frameHasCustomContentProvider;
     bool m_frameCameFromPageCache;
-    bool m_useIconLoadingClient { false };
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return 0.

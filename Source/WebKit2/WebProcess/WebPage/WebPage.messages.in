@@ -448,9 +448,6 @@ messages -> WebPage LegacyReceiver {
 
     SetUserInterfaceLayoutDirection(uint32_t direction)
 
-    DidGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID)
-    SetUseIconLoadingClient(bool useIconLoadingClient)
-
 #if ENABLE(GAMEPAD)
     GamepadActivity(Vector<WebKit::GamepadData> gamepadDatas)
 #endif
