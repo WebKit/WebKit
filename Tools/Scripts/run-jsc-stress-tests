@@ -118,7 +118,7 @@ $filter = nil
 $envVars = []
 $quickMode = false
 $buildType = :release
-
+$forceCollectContinuously = false
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -129,6 +129,8 @@ def usage
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
     puts "                            Skip tests tagged with //@largeHeap"
     puts "--no-jit                    Do not run JIT specific tests."
+    puts "--force-collectContinuously Enable the collectContinuously mode even if disabled on this"
+    puts "                            platform."
     puts "--output-dir         (-o)   Path where to put results. Default is #{$outputDir}."
     puts "--verbose            (-v)   Print more things while running."
     puts "--run-bundle                Runs a bundle previously created by run-jsc-stress-tests."
@@ -160,6 +162,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--no-copy', GetoptLong::NO_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
                ['--no-jit', GetoptLong::NO_ARGUMENT],
+               ['--force-collectContinuously', GetoptLong::NO_ARGUMENT],
                ['--output-dir', '-o', GetoptLong::REQUIRED_ARGUMENT],
                ['--run-bundle', GetoptLong::REQUIRED_ARGUMENT],
                ['--tarball', GetoptLong::OPTIONAL_ARGUMENT],
@@ -191,6 +194,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $memoryLimited = true
     when '--no-jit'
         $jitTests = false
+    when '--force-collectContinuously'
+        $forceCollectContinuously = true;
     when '--verbose'
         $verbosity += 1
     when '--run-bundle'
@@ -426,7 +431,9 @@ NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100
 FTL_OPTIONS = ["--useFTLJIT=true"]
 
 def shouldCollectContinuously?
-    $buildType == :release
+    # FIXME: Enable this once we fix all the bugs.
+    # $buildType == :release
+    $forceCollectContinuously
 end
 
 COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false"] : []

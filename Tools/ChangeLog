@@ -1,3 +1,14 @@
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Disable the collectContinuously mode until I investigate failures.
+
+        Rubber stamped by Keith Miller.
+        
+        I'm seeing collectContinuously crashes on some platforms. Disabling that testing mode
+        while I investigate.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (URL parser): Relative URLs aren’t resolved correctly when the base URL is an applewebdata: URL
