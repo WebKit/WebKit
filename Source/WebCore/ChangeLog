@@ -1,3 +1,36 @@
+2016-12-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Implement the pageScaleFactor property
+        https://bugs.webkit.org/show_bug.cgi?id=165660
+
+        Reviewed by Dean Jackson.
+
+        We implement the pageScaleFactor property on MediaController. This property is set
+        by the HTMLMediaElement when the page scale factor changes, and we only choose to handle
+        it on iOS by setting controlsDependOnPageScaleFactor to true on the MediaControlsHost.
+
+        To do so, we now size the media controls by multiplying the layout size of the media by
+        the page scale factor, and apply an inverse CSS zoom on the media controls themselves.
+
+        Test: media/modern-media-controls/media-controller/media-controller-scale-factor.html
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls-container,):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get scaleFactor):
+        (MediaControls.prototype.set scaleFactor):
+        (MediaControls.prototype.commitProperty):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.set pageScaleFactor):
+        (MediaController.prototype._updateControlsSize):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::setControllerJSProperty):
+
+        We no longer hit a JSC assertion when trying to set the pageScaleFactor property before
+        the JS controller was actually created.
+
 2016-12-09  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Mac CMake build following <http://trac.webkit.org/changeset/209549>

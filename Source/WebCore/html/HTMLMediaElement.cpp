@@ -3863,7 +3863,7 @@ static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& g
     
     JSC::Identifier controlsHost = JSC::Identifier::fromString(&vm, "controlsHost");
     JSC::JSValue controlsHostJSWrapper = mediaJSWrapperObject->get(&exec, controlsHost);
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    RETURN_IF_EXCEPTION(scope, JSC::jsNull());
 
     JSC::JSObject* controlsHostJSWrapperObject = jsDynamicDowncast<JSC::JSObject*>(controlsHostJSWrapper);
     if (!controlsHostJSWrapperObject)
@@ -3871,7 +3871,7 @@ static JSC::JSValue controllerJSValue(JSC::ExecState& exec, JSDOMGlobalObject& g
 
     JSC::Identifier controllerID = JSC::Identifier::fromString(&vm, "controller");
     JSC::JSValue controllerJSWrapper = controlsHostJSWrapperObject->get(&exec, controllerID);
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    RETURN_IF_EXCEPTION(scope, JSC::jsNull());
 
     return controllerJSWrapper;
 }
@@ -6566,6 +6566,9 @@ void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JS
     JSC::JSLockHolder lock(exec);
 
     JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
+    if (controllerValue.isNull())
+        return;
+
     JSC::PutPropertySlot propertySlot(controllerValue);
     JSC::JSObject* controllerObject = controllerValue.toObject(exec);
     if (!controllerObject)

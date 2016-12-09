@@ -30,6 +30,8 @@ class MediaControls extends LayoutNode
     {
         super(`<div class="media-controls">`);
 
+        this._scaleFactor = 1;
+
         this.width = width;
         this.height = height;
         this.layoutTraits = layoutTraits;
@@ -80,6 +82,20 @@ class MediaControls extends LayoutNode
         this.element.classList.toggle("uses-ltr-user-interface-layout-direction", flag);
     }
 
+    get scaleFactor()
+    {
+        return this._scaleFactor;
+    }
+    
+    set scaleFactor(scaleFactor)
+    {
+        if (this._scaleFactor === scaleFactor)
+            return;
+    
+        this._scaleFactor = scaleFactor;
+        this.markDirtyProperty("scaleFactor");
+    }
+
     get showsPlacard()
     {
         return this.children[0] instanceof Placard;
@@ -104,6 +120,16 @@ class MediaControls extends LayoutNode
     fadeIn()
     {
         this.element.classList.add("fade-in");
+    }
+
+    // Protected
+
+    commitProperty(propertyName)
+    {
+        if (propertyName === "scaleFactor")
+            this.element.style.zoom = 1 / this._scaleFactor;
+        else
+            super.commitProperty(propertyName);
     }
 
     // Private

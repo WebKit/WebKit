@@ -40,6 +40,12 @@
     width: 100%;
 }
 
+.media-controls-container,
+.media-controls-container * {
+    -webkit-text-zoom: reset;
+    -webkit-text-size-adjust: auto;
+}
+
 .media-controls-container > * {
     position: absolute;
 }

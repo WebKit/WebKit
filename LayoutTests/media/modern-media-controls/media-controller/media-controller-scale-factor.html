@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableModernMediaControls=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<meta name="viewport" content="width=400">
+<body>
+<video src="../../content/test.mp4" style="position: absolute; top: 0; left: 0; width: 400px; height: 300px;" controls></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Testing the <code>MediaController</code> has a single container for captions and media controls.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+window.requestAnimationFrame(() => {
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.width", "800px");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.height", "600px");
+    shouldBeEqualToString("shadowRoot.querySelector('.media-controls').style.zoom", "0.5");
+
+    debug("");
+    media.remove();
+    finishJSTest();
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

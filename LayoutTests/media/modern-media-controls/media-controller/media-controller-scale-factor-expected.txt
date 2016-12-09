@@ -1,0 +1,13 @@
+Testing the MediaController has a single container for captions and media controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('.media-controls').style.width is "800px"
+PASS shadowRoot.querySelector('.media-controls').style.height is "600px"
+PASS shadowRoot.querySelector('.media-controls').style.zoom is "0.5"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,16 @@
+2016-12-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Implement the pageScaleFactor property
+        https://bugs.webkit.org/show_bug.cgi?id=165660
+
+        Reviewed by Dean Jackson.
+
+        Add a new test to check that we correctly zoom and size the media controls when the page
+        scale factor is a value other than 1.
+
+        * media/modern-media-controls/media-controller/media-controller-scale-factor-expected.txt: Added.
+        * media/modern-media-controls/media-controller/media-controller-scale-factor.html: Added.
+
 2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209574.

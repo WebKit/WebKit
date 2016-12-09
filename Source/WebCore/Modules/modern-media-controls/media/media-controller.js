@@ -35,8 +35,10 @@ class MediaController
         this.container = shadowRoot.appendChild(document.createElement("div"));
         this.container.className = "media-controls-container";
 
-        if (host)
+        if (host) {
+            host.controlsDependOnPageScaleFactor = this.layoutTraits & LayoutTraits.iOS;
             this.container.appendChild(host.textTrackContainer);
+        }
 
         this._updateControlsIfNeeded();
 
@@ -63,7 +65,8 @@ class MediaController
 
     set pageScaleFactor(pageScaleFactor)
     {
-        // FIXME: To be implemented.
+        this.controls.scaleFactor = pageScaleFactor;
+        this._updateControlsSize();
     }
 
     set usesLTRUserInterfaceLayoutDirection(flag)
@@ -119,8 +122,8 @@ class MediaController
 
     _updateControlsSize()
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        this.controls.width = Math.round(this.media.offsetWidth * this.controls.scaleFactor);
+        this.controls.height = Math.round(this.media.offsetHeight * this.controls.scaleFactor);
     }
 
     _returnMediaLayerToInlineIfNeeded()
