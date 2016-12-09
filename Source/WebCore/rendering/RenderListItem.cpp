@@ -34,6 +34,7 @@
 #include "RenderInline.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlowThread.h"
+#include "RenderRuby.h"
 #include "RenderTable.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
@@ -232,7 +233,10 @@ static RenderBlock* getParentOfFirstLineBox(RenderBlock& current, RenderObject& 
         if (child.isFloating() || child.isOutOfFlowPositioned())
             continue;
 
-        if (is<RenderTable>(child) || !is<RenderBlock>(child) || (is<RenderBox>(child) && downcast<RenderBox>(child).isWritingModeRoot()))
+        if (!is<RenderBlock>(child) || is<RenderTable>(child) || is<RenderRubyAsBlock>(child))
+            break;
+
+        if (is<RenderBox>(child) && downcast<RenderBox>(child).isWritingModeRoot())
             break;
 
         if (is<RenderListItem>(current) && inQuirksMode && child.node() && isHTMLListElement(*child.node()))

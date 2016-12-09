@@ -1,3 +1,19 @@
+2016-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !beforeChild->isRubyRun() in WebCore::RenderRubyAsBlock::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=141433
+        <rdar://problem/27711351>
+
+        Reviewed by Dean Jackson.
+
+        Do not try to inject the list marker into a block ruby subtree. Have it as the sibling
+        of the ruby instead (with an anonymous block wrapper ofc).
+
+        Test: fast/ruby/assert-with-listitem-and-block-ruby.html
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::getParentOfFirstLineBox):
+
 2016-12-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Implement the pageScaleFactor property

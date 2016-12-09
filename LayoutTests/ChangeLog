@@ -1,3 +1,14 @@
+2016-12-09  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !beforeChild->isRubyRun() in WebCore::RenderRubyAsBlock::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=141433
+        <rdar://problem/27711351>
+
+        Reviewed by Dean Jackson.
+
+        * fast/ruby/assert-with-listitem-and-block-ruby-expected.txt: Added.
+        * fast/ruby/assert-with-listitem-and-block-ruby.html: Added.
+
 2016-12-09  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Implement the pageScaleFactor property
