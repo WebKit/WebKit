@@ -96,6 +96,7 @@ protected:
         setSymbolTable(vm, SymbolTable::create(vm));
     }
     
+private:
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
     ConcurrentJSLock m_lock;
 };

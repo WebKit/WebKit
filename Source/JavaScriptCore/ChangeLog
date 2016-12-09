@@ -1,3 +1,14 @@
+2016-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        JSSegmentedVariableObject should keep its state private
+
+        Rubber stamped by Michael Saboff.
+        
+        Its state fields were protected for no reason. They really should be private because
+        you have to know to obey a particular concurrency protocol when accessing them.
+
+        * runtime/JSSegmentedVariableObject.h:
+
 2016-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed ARM buildfix after 209570.
