@@ -25,10 +25,11 @@
 
 #include "config.h"
 #include "IntPoint.h"
-#include "MathExtras.h"
 
 #include <d2d1.h>
 #include <windows.h>
+
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

@@ -1,3 +1,15 @@
+2016-12-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix compile errors on Windows when building with .proj files.
+
+        Unreviewed build fix.
+
+        Fix include paths.
+
+        * platform/graphics/win/IntPointWin.cpp:
+        * platform/graphics/win/IntRectWin.cpp:
+        * platform/graphics/win/IntSizeWin.cpp:
+
 2016-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r209570.
