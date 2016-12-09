@@ -24,33 +24,31 @@
 
 #pragma once
 
-#include "OrdinalNumber.h"
-
 namespace WTF {
 
-// TextPosition structure specifies coordinates within an text resource. It is used mostly
-// for saving script source position.
-class TextPosition {
+// An abstract number of element in a sequence. The sequence has a first element.
+// This type should be used instead of integer because 2 contradicting traditions can
+// call a first element '0' or '1' which makes integer type ambiguous.
+class OrdinalNumber {
 public:
-    TextPosition(OrdinalNumber line, OrdinalNumber column)
-        : m_line(line)
-        , m_column(column)
-    {
-    }
-    TextPosition() { }
-    bool operator==(const TextPosition& other) { return m_line == other.m_line && m_column == other.m_column; }
-    bool operator!=(const TextPosition& other) { return !((*this) == other); }
+    static OrdinalNumber fromZeroBasedInt(int zeroBasedInt) { return OrdinalNumber(zeroBasedInt); }
+    static OrdinalNumber fromOneBasedInt(int oneBasedInt) { return OrdinalNumber(oneBasedInt - 1); }
+    OrdinalNumber() : m_zeroBasedValue(0) { }
 
-    // A 'minimum' value of position, used as a default value.
-    static TextPosition minimumPosition() { return TextPosition(OrdinalNumber::first(), OrdinalNumber::first()); }
+    int zeroBasedInt() const { return m_zeroBasedValue; }
+    int oneBasedInt() const { return m_zeroBasedValue + 1; }
 
-    // A value with line value less than a minimum; used as an impossible position.
-    static TextPosition belowRangePosition() { return TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber::beforeFirst()); }
+    bool operator==(OrdinalNumber other) { return m_zeroBasedValue == other.m_zeroBasedValue; }
+    bool operator!=(OrdinalNumber other) { return !((*this) == other); }
 
-    OrdinalNumber m_line;
-    OrdinalNumber m_column;
+    static OrdinalNumber first() { return OrdinalNumber(0); }
+    static OrdinalNumber beforeFirst() { return OrdinalNumber(-1); }
+
+private:
+    OrdinalNumber(int zeroBasedInt) : m_zeroBasedValue(zeroBasedInt) { }
+    int m_zeroBasedValue;
 };
 
 }
 
-using WTF::TextPosition;
+using WTF::OrdinalNumber;

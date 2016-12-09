@@ -1,3 +1,28 @@
+2016-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Moved OrdinalNumber into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=165663
+
+        Reviewed by Saam Barati.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/text/OrdinalNumber.h: Copied from Source/WTF/wtf/text/TextPosition.h.
+        (WTF::TextPosition::TextPosition): Deleted.
+        (WTF::TextPosition::operator==): Deleted.
+        (WTF::TextPosition::operator!=): Deleted.
+        (WTF::TextPosition::minimumPosition): Deleted.
+        (WTF::TextPosition::belowRangePosition): Deleted.
+        * wtf/text/TextPosition.h:
+        (WTF::OrdinalNumber::fromZeroBasedInt): Deleted.
+        (WTF::OrdinalNumber::fromOneBasedInt): Deleted.
+        (WTF::OrdinalNumber::OrdinalNumber): Deleted.
+        (WTF::OrdinalNumber::zeroBasedInt): Deleted.
+        (WTF::OrdinalNumber::oneBasedInt): Deleted.
+        (WTF::OrdinalNumber::operator==): Deleted.
+        (WTF::OrdinalNumber::operator!=): Deleted.
+        (WTF::OrdinalNumber::first): Deleted.
+        (WTF::OrdinalNumber::beforeFirst): Deleted.
+
 2016-12-08  David Kilzer  <ddkilzer@apple.com>
 
         Always check the return value of pthread_key_create()
