@@ -908,6 +908,22 @@
         }
     },
     {
+        "name": "Strict Mixed Content Checking",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://w3c.github.io/webappsec-mixed-content/#strict-checking",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=165438",
+        "keywords": ["csp", "content security policy", "blockable", "optionally-blockable", "block-all-mixed-content", "HTTPS"],
+        "category": "webapps",
+        "description": "Allows developers to opt into blocking display and running of all insecure content on an HTTPS page.",
+        "contact": {
+            "name": "Daniel Bates",
+            "email": "dbates@webkit.org"
+        }
+    },
+    {
         "name": "Subresource Integrity",
         "status": {
             "status": "Under Consideration"
@@ -931,6 +947,18 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template",
         "specification": "Web Components",
         "description": "Declares HTML fragments that can be cloned and inserted into the document by a script."
+    },
+    {
+        "name": "Upgrade Insecure Requests",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "https://w3c.github.io/webappsec-upgrade-insecure-requests/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=143653",
+        "keywords": ["csp", "content security policy", "upgrade-insecure-requests", "HTTPS"],
+        "category": "webapps",
+        "description": "Allows developers to opt into automatic upgrading of insecure requests to secure requests."
     },
     {
         "name": "Variation Fonts",

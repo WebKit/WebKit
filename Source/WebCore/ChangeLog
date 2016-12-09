@@ -1,5 +1,14 @@
 2016-12-08  Daniel Bates  <dabates@apple.com>
 
+        Add Strict Mixed Content Checking and Upgrade Insecure Requests to WebKit Feature Status dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=165635
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * features.json:
+
+2016-12-08  Daniel Bates  <dabates@apple.com>
+
         Implement Strict Mixed Content Checking
         https://bugs.webkit.org/show_bug.cgi?id=165438
         <rdar://problem/26103867>
