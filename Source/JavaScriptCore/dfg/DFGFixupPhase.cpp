@@ -1335,7 +1335,6 @@ private:
             
         case MultiPutByOffset: {
             fixEdge<CellUse>(node->child1());
-            speculateForBarrier(node->child2());
             break;
         }
             

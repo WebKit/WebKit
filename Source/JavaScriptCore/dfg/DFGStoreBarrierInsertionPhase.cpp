@@ -272,9 +272,13 @@ private:
 
             case PutClosureVar:
             case PutToArguments:
-            case SetRegExpObjectLastIndex:
-            case MultiPutByOffset: {
+            case SetRegExpObjectLastIndex: {
                 considerBarrier(m_node->child1(), m_node->child2());
+                break;
+            }
+                
+            case MultiPutByOffset: {
+                considerBarrier(m_node->child1());
                 break;
             }
                 
@@ -325,7 +329,6 @@ private:
                 
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
-                // These allocate but then run their own barrier.
                 insertBarrier(m_nodeIndex + 1, m_node->child1());
                 m_node->setEpoch(Epoch());
                 break;

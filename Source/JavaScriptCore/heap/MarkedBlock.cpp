@@ -568,8 +568,8 @@ bool MarkedBlock::Handle::isLiveCell(const void* p)
 #if !ASSERT_DISABLED
 void MarkedBlock::assertValidCell(VM& vm, HeapCell* cell) const
 {
-    ASSERT(&vm == this->vm());
-    ASSERT(const_cast<MarkedBlock*>(this)->handle().cellAlign(cell) == cell);
+    RELEASE_ASSERT(&vm == this->vm());
+    RELEASE_ASSERT(const_cast<MarkedBlock*>(this)->handle().cellAlign(cell) == cell);
 }
 #endif
 

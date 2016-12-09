@@ -1,5 +1,33 @@
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
+        MultiPutByOffset should get a barrier if it transitions
+        https://bugs.webkit.org/show_bug.cgi?id=165646
+
+        Reviewed by Keith Miller.
+        
+        Previously, if we knew that we were storing a non-cell but we needed to transition, we
+        would fail to add the barrier but the FTL's lowering expected the barrier to be there.
+        
+        Strictly, we need to "consider" the barrier on MultiPutByOffset if the value is
+        possibly a cell or if the MultiPutByOffset may transition. Then "considering" the
+        barrier implies checking if the base is possibly old.
+        
+        But because the barrier is so cheap anyway, this patch implements something safer: we
+        just consider the barrier on MultiPutByOffset unconditionally, which opts it out of any
+        barrier optimizations other than those based on the predicted state of the base. Those
+        optimizations are already sound - for example they use doesGC() to detect safepoints
+        and that function correctly predicts when MultiPutByOffset could GC.
+        
+        Because the barrier optimizations are only a very small speed-up, I think it's great to
+        fix bugs by weakening the optimizer without cleverness.
+
+        * dfg/DFGFixupPhase.cpp:
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::assertValidCell):
+
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
         Enable concurrent GC on ARM64
         https://bugs.webkit.org/show_bug.cgi?id=165643
 
