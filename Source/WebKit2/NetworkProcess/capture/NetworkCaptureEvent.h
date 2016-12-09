@@ -27,7 +27,6 @@
 
 #if ENABLE(NETWORK_CAPTURE)
 
-#include "NetworkCaptureTypes.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>

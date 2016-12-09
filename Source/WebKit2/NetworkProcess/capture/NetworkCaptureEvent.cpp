@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_CAPTURE)
 
-
 #include "NetworkCaptureLogging.h"
 #include "json.hpp"
 #include <WebCore/ResourceError.h>

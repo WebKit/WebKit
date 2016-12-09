@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "FileHandle.h"
+
+#include <stdarg.h>
+#include <stdio.h>
+
+namespace WebCore {
+
+FileHandle::FileHandle(const String& path, FileOpenMode mode)
+    : m_path(path)
+    , m_mode(mode)
+{
+}
+
+FileHandle::FileHandle(FileHandle&& other)
+    : m_path(WTFMove(other.m_path))
+    , m_mode(WTFMove(other.m_mode))
+    , m_fileHandle(std::exchange(other.m_fileHandle, invalidPlatformFileHandle))
+{
+}
+
+FileHandle::~FileHandle()
+{
+    close();
+}
+
+FileHandle& FileHandle::operator=(FileHandle&& other)
+{
+    close();
+    m_path = WTFMove(other.m_path);
+    m_mode = WTFMove(other.m_mode);
+    m_fileHandle = std::exchange(other.m_fileHandle, invalidPlatformFileHandle);
+    return *this;
+}
+
+FileHandle::operator bool() const
+{
+    return isHandleValid(m_fileHandle);
+}
+
+bool FileHandle::open(const String& path, FileOpenMode mode)
+{
+    if (*this && path == m_path && mode == m_mode)
+        return true;
+
+    close();
+    m_path = path;
+    m_mode = mode;
+    return open();
+}
+
+bool FileHandle::open()
+{
+    if (!*this)
+        m_fileHandle = openFile(m_path, m_mode);
+    return static_cast<bool>(*this);
+}
+
+int FileHandle::read(void* data, int length)
+{
+    if (!open())
+        return -1;
+    return readFromFile(m_fileHandle, static_cast<char*>(data), length);
+}
+
+int FileHandle::write(const void* data, int length)
+{
+    if (!open())
+        return -1;
+    return writeToFile(m_fileHandle, static_cast<const char*>(data), length);
+}
+
+bool FileHandle::printf(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    char* buffer = nullptr;
+    if (vasprintf(&buffer, format, args) == -1)
+        return false;
+    auto writeResult = write(buffer, strlen(buffer));
+    free(buffer);
+
+    va_end(args);
+
+    return writeResult >= 0;
+}
+
+void FileHandle::close()
+{
+    closeFile(m_fileHandle);
+}
+
+} // namespace WebCore

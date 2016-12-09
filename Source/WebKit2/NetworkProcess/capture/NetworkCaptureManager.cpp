@@ -39,7 +39,6 @@
 #include <algorithm>
 #include <iterator>
 #include <limits>
-#include <stdarg.h>
 
 #define DEBUG_CLASS Manager
 
@@ -73,6 +72,9 @@ void Manager::initialize(const String& recordReplayMode, const String& recordRep
         m_recordReplayMode = Disabled;
 
     m_recordReplayCacheLocation = WebCore::pathByAppendingComponent(recordReplayCacheLocation, kDirNameRecordReplay);
+    m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), WebCore::OpenForWrite);
+    m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForWrite);
+    m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), WebCore::OpenForWrite);
 
     DEBUG_LOG("Cache location = %{public}s", DEBUG_STR(m_recordReplayCacheLocation));
 
@@ -82,9 +84,9 @@ void Manager::initialize(const String& recordReplayMode, const String& recordRep
 
 void Manager::terminate()
 {
-    m_loadFileHandle.closeFile();
-    m_replayFileHandle.closeFile();
-    m_recordFileHandle.closeFile();
+    m_loadFileHandle.close();
+    m_recordFileHandle.close();
+    m_replayFileHandle.close();
 }
 
 Resource* Manager::findMatch(const WebCore::ResourceRequest& request)
@@ -416,18 +418,15 @@ void Manager::logRecordedResource(const WebCore::ResourceRequest& request)
 {
     // Log network resources as they are cached to disk.
 
-    if (ensureFileHandle(reportRecordPath(), m_recordFileHandle)) {
-        const auto& url = request.url();
-        printToFile(m_recordFileHandle, "%s %s\n", DEBUG_STR(stringToHash(url.string())), DEBUG_STR(url.string()));
-    }
+    const auto& url = request.url();
+    m_recordFileHandle.printf("%s %s\n", DEBUG_STR(stringToHash(url.string())), DEBUG_STR(url.string()));
 }
 
 void Manager::logLoadedResource(Resource& resource)
 {
     // Log cached resources as they are loaded from disk.
 
-    if (ensureFileHandle(reportLoadPath(), m_loadFileHandle))
-        printToFile(m_loadFileHandle, "%s\n", DEBUG_STR(resource.url().string()));
+    m_loadFileHandle.printf("%s\n", DEBUG_STR(resource.url().string()));
 }
 
 void Manager::logPlayedBackResource(const WebCore::ResourceRequest& request, bool wasCacheMiss)
@@ -441,24 +440,16 @@ void Manager::logPlayedBackResource(const WebCore::ResourceRequest& request, boo
     else
         DEBUG_LOG("Cache hit:  URL = %{public}s", DEBUG_STR(url.string()));
 
-    if (ensureFileHandle(reportReplayPath(), m_replayFileHandle))
-        printToFile(m_replayFileHandle, "%s %s\n", wasCacheMiss ? "miss" : "hit ", DEBUG_STR(url.string()));
+    m_replayFileHandle.printf("%s %s\n", wasCacheMiss ? "miss" : "hit ", DEBUG_STR(url.string()));
 }
 
-bool Manager::ensureFileHandle(const String& filePath, FileHandle& fileHandle)
-{
-    if (!fileHandle)
-        fileHandle = openCacheFile(filePath, WebCore::OpenForWrite);
-    return fileHandle;
-}
-
-FileHandle Manager::openCacheFile(const String& filePath, WebCore::FileOpenMode mode)
+WebCore::FileHandle Manager::openCacheFile(const String& filePath, WebCore::FileOpenMode mode)
 {
     // If we can trivially open the file, then do that and return the new file
     // handle.
 
-    auto fileHandle = FileHandle::openFile(filePath, mode);
-    if (fileHandle)
+    auto fileHandle = WebCore::FileHandle(filePath, mode);
+    if (fileHandle.open())
         return fileHandle;
 
     // If we're opening the file for writing (including appending), then try
@@ -471,8 +462,8 @@ FileHandle Manager::openCacheFile(const String& filePath, WebCore::FileOpenMode 
             return fileHandle;
         }
 
-        fileHandle = FileHandle::openFile(filePath, mode);
-        if (fileHandle)
+        fileHandle = WebCore::FileHandle(filePath, mode);
+        if (fileHandle.open())
             return fileHandle;
     }
 
@@ -576,21 +567,6 @@ bool Manager::getWord(uint8_t const *& p, uint8_t const * const end, String& wor
     }
 
     return true;
-}
-
-bool Manager::printToFile(const FileHandle& fileHandle, const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-
-    char* buffer = nullptr;
-    vasprintf(&buffer, format, args);
-    auto writeResult = fileHandle.writeToFile(buffer, strlen(buffer));
-    free(buffer);
-
-    va_end(args);
-
-    return writeResult >= 0;
 }
 
 } // namespace NetworkCapture

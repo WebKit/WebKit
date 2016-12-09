@@ -1076,7 +1076,6 @@
 		53BA47D01DC2EF5E004DF4AD /* NetworkDataTaskBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */; };
 		53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */; };
 		53DEA3661DDE423100E82648 /* json.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 53DEA3651DDE422E00E82648 /* json.hpp */; };
-		53E260651DDA948E00590818 /* NetworkCaptureTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E260641DDA948100590818 /* NetworkCaptureTypes.h */; };
 		5C052F261C6D3BD30076E919 /* AuthenticationManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */; };
 		5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
@@ -3191,7 +3190,7 @@
 		52D5A1B31C5749F200DE34A3 /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
 		52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenManager.mm; sourceTree = "<group>"; };
 		5302582E1DCBBD1D00DA89C2 /* NetworkCaptureResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkCaptureResource.cpp; path = NetworkProcess/capture/NetworkCaptureResource.cpp; sourceTree = "<group>"; };
-		5302582F1DCBBD1D00DA89C2 /* NetworkCaptureResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureResource.h; path = NetworkProcess/capture/NetworkeCachedResource.h; sourceTree = "<group>"; };
+		5302582F1DCBBD1D00DA89C2 /* NetworkCaptureResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureResource.h; path = NetworkProcess/capture/NetworkCaptureResource.h; sourceTree = "<group>"; };
 		530258301DCBBD1D00DA89C2 /* NetworkCaptureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkCaptureEvent.cpp; path = NetworkProcess/capture/NetworkCaptureEvent.cpp; sourceTree = "<group>"; };
 		530258311DCBBD1D00DA89C2 /* NetworkCaptureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureEvent.h; path = NetworkProcess/capture/NetworkCaptureEvent.h; sourceTree = "<group>"; };
 		530258321DCBBD1D00DA89C2 /* NetworkCaptureLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureLogging.h; path = NetworkProcess/capture/NetworkCaptureLogging.h; sourceTree = "<group>"; };
@@ -3210,7 +3209,6 @@
 		539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkDataTaskBlob.cpp; path = NetworkProcess/NetworkDataTaskBlob.cpp; sourceTree = "<group>"; };
 		539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTaskBlob.h; path = NetworkProcess/NetworkDataTaskBlob.h; sourceTree = "<group>"; };
 		53DEA3651DDE422E00E82648 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = json.hpp; path = NetworkProcess/capture/json.hpp; sourceTree = "<group>"; };
-		53E260641DDA948100590818 /* NetworkCaptureTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkCaptureTypes.h; path = NetworkProcess/capture/NetworkCaptureTypes.h; sourceTree = "<group>"; };
 		579D18B71CCFE34B00B1974C /* PhotosSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotosSPI.h; sourceTree = "<group>"; };
 		5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = NetworkProcess/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
@@ -5887,7 +5885,6 @@
 				530258361DCBBD1D00DA89C2 /* NetworkCaptureRecorder.h */,
 				530258371DCBBD1D00DA89C2 /* NetworkCaptureReplayer.cpp */,
 				530258381DCBBD1D00DA89C2 /* NetworkCaptureReplayer.h */,
-				53E260641DDA948100590818 /* NetworkCaptureTypes.h */,
 				530258391DCBBD1D00DA89C2 /* NetworkDataTaskReplay.cpp */,
 				5302583A1DCBBD1D00DA89C2 /* NetworkDataTaskReplay.h */,
 			);
@@ -7916,7 +7913,6 @@
 				530258411DCBBD2200DA89C2 /* NetworkCaptureManager.h in Headers */,
 				530258431DCBBD2200DA89C2 /* NetworkCaptureRecorder.h in Headers */,
 				530258451DCBBD2200DA89C2 /* NetworkCaptureReplayer.h in Headers */,
-				53E260651DDA948E00590818 /* NetworkCaptureTypes.h in Headers */,
 				513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */,
 				51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */,
 				5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */,

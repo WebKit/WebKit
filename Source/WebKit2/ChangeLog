@@ -1,3 +1,30 @@
+2016-12-08  Keith Rollin  <krollin@apple.com>
+
+        Move FileHandle to WebCore FileHandle.h
+        https://bugs.webkit.org/show_bug.cgi?id=165562
+
+        Reviewed by Alex Christensen.
+
+        Move FileHandle from NetworkCaptureTypes.h (which can now be deleted)
+        to WebCore. Update client code to use the new version.
+
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        * NetworkProcess/capture/NetworkCaptureEvent.h:
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::initialize):
+        (WebKit::NetworkCapture::Manager::terminate):
+        (WebKit::NetworkCapture::Manager::logRecordedResource):
+        (WebKit::NetworkCapture::Manager::logLoadedResource):
+        (WebKit::NetworkCapture::Manager::logPlayedBackResource):
+        (WebKit::NetworkCapture::Manager::openCacheFile):
+        (WebKit::NetworkCapture::Manager::ensureFileHandle): Deleted.
+        (WebKit::NetworkCapture::Manager::printToFile): Deleted.
+        * NetworkProcess/capture/NetworkCaptureManager.h:
+        * NetworkProcess/capture/NetworkCaptureRecorder.cpp:
+        (WebKit::NetworkCapture::Recorder::writeEvents):
+        * NetworkProcess/capture/NetworkCaptureTypes.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-12-08  Anders Carlsson  <andersca@apple.com>
 
         Attempt to fix the iOS build.

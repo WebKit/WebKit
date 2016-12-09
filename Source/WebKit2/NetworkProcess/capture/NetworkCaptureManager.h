@@ -27,7 +27,7 @@
 
 #if ENABLE(NETWORK_CAPTURE)
 
-#include "NetworkCaptureTypes.h"
+#include <WebCore/FileHandle.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/URLParser.h>
 #include <wtf/Function.h>
@@ -80,7 +80,7 @@ public:
     void logLoadedResource(Resource&);
     void logPlayedBackResource(const WebCore::ResourceRequest&, bool wasCacheMiss);
 
-    FileHandle openCacheFile(const String&, WebCore::FileOpenMode);
+    WebCore::FileHandle openCacheFile(const String&, WebCore::FileOpenMode);
 
     String requestToPath(const WebCore::ResourceRequest&);
 
@@ -101,19 +101,16 @@ private:
     String stringToHash(const String&);
     String hashToPath(const String& hash);
 
-    bool ensureFileHandle(const String& filePath, FileHandle&);
-
     std::optional<Vector<Vector<String>>> readFile(const String& filePath);
     bool getLine(uint8_t const *& p, uint8_t const * const end, Vector<String>& line);
     bool getWord(uint8_t const *& p, uint8_t const * const end, String& word);
-    bool printToFile(const FileHandle&, const char* format, ...);
 
     RecordReplayMode m_recordReplayMode { Disabled };
     String m_recordReplayCacheLocation;
 
-    FileHandle m_loadFileHandle;
-    FileHandle m_replayFileHandle;
-    FileHandle m_recordFileHandle;
+    WebCore::FileHandle m_loadFileHandle;
+    WebCore::FileHandle m_recordFileHandle;
+    WebCore::FileHandle m_replayFileHandle;
 
     Vector<Resource> m_cachedResources;
 };

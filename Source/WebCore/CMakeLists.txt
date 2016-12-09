@@ -2142,6 +2142,7 @@ set(WebCore_SOURCES
     platform/DragImage.cpp
     platform/EventTrackingRegions.cpp
     platform/FileChooser.cpp
+    platform/FileHandle.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp
     platform/GenericTaskQueue.cpp

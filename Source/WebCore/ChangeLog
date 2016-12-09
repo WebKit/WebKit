@@ -1,3 +1,30 @@
+2016-12-08  Keith Rollin  <krollin@apple.com>
+
+        Move FileHandle to WebCore FileHandle.h
+        https://bugs.webkit.org/show_bug.cgi?id=165562
+
+        Reviewed by Alex Christensen.
+
+        Add FileHandle, a small wrapper around FileSystem facilities to manage
+        the lifetime of an open file and give the facilities a C++ interface.
+
+        No new tests -- affected facility is currently only used in testing
+        code and is not user reachable.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/FileHandle.cpp: Added.
+        (WebCore::FileHandle::FileHandle):
+        (WebCore::FileHandle::~FileHandle):
+        (WebCore::FileHandle::operator=):
+        (WebCore::FileHandle::operator bool):
+        (WebCore::FileHandle::open):
+        (WebCore::FileHandle::read):
+        (WebCore::FileHandle::write):
+        (WebCore::FileHandle::printf):
+        (WebCore::FileHandle::close):
+        * platform/FileHandle.h: Added.
+
 2016-12-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         ASSERTION FAILED: m_items.isEmpty() in CustomElementReactionQueue destructor

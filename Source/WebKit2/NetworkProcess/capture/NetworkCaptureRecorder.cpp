@@ -33,7 +33,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 
-#define DEBUG_CLASS Manager
+#define DEBUG_CLASS Recorder
 
 namespace WebKit {
 namespace NetworkCapture {
@@ -141,7 +141,7 @@ void Recorder::writeEvents()
         // to better find the separate JSON objects that we write to a single
         // file. It also works better with JSON parsers that expect to find a
         // NUL at the end of their input.
-        if (handle.writeToFile(asString.c_str(), asString.size() + 1) == -1) {
+        if (handle.write(asString.c_str(), asString.size() + 1) == -1) {
             DEBUG_LOG_ERROR("Error trying to write to file for URL = %{public}s", DEBUG_STR(m_initialRequest.url().string()));
             return;
         }
