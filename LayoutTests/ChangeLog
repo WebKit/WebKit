@@ -1,3 +1,9 @@
+2016-12-09  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, followup after r209598.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
 2016-12-09  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !beforeChild->isRubyRun() in WebCore::RenderRubyAsBlock::addChild
