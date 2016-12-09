@@ -612,6 +612,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     editing/cocoa
     editing/mac
 
+    html/canvas
     html/forms
     html/parser
     html/shadow

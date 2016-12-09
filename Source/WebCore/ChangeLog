@@ -1,3 +1,14 @@
+2016-12-09  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Mac CMake build following <http://trac.webkit.org/changeset/209549>
+        (https://bugs.webkit.org/show_bug.cgi?id=165572)
+
+        Add directory html/canvas to the list of forwarding headers directories so that
+        the Legacy WebKit Objective-C DOM binding DOMHTMLCanvasElement.mm can ultimately
+        include header WebGLContextAttributes.h.
+
+        * PlatformMac.cmake:
+
 2016-12-09  Brady Eidson  <beidson@apple.com>
 
         LinkIconCollector refactoring.
