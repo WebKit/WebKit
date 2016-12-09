@@ -1,5 +1,19 @@
 2016-12-09  Geoffrey Garen  <ggaren@apple.com>
 
+        TextPosition and OrdinalNumber should be more like idiomatic numbers
+        https://bugs.webkit.org/show_bug.cgi?id=165678
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/text/TextPosition.h:
+        (WTF::TextPosition::minimumPosition): Deleted. Just use the default
+        constructor. Other numbers use their default constructors to mean zero.
+
+        Any time you need a comment that says "used as a default value", that's
+        a pretty good indicator that it should be the default constructor.
+
+2016-12-09  Geoffrey Garen  <ggaren@apple.com>
+
         Moved OrdinalNumber into its own file
         https://bugs.webkit.org/show_bug.cgi?id=165663
 

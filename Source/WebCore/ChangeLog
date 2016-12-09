@@ -1,3 +1,38 @@
+2016-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        TextPosition and OrdinalNumber should be more like idiomatic numbers
+        https://bugs.webkit.org/show_bug.cgi?id=165678
+
+        Reviewed by Filip Pizlo.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::sourcePosition):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::JSLazyEventListener):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::eventHandlerPosition):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::create):
+        * dom/ScriptElement.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::uninitializedPositionValue1):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo): Adopt
+        default construtor.
+
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::XMLErrors):
+        (WebCore::XMLErrors::handleError):
+        * xml/XMLErrors.h: Use std::optional instead of belowRangePosition()
+        because in-band signaling is harder to reason about.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::textPosition): Adopt default constructor.
+
 2016-12-09  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Validation message for required checkbox doesn’t conform the the Apple Style Guide

@@ -89,7 +89,7 @@ namespace JSC {
 
     class StringSourceProvider : public SourceProvider {
     public:
-        static Ref<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition = TextPosition::minimumPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
+        static Ref<StringSourceProvider> create(const String& source, const String& url, const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
         {
             return adoptRef(*new StringSourceProvider(source, url, startPosition, sourceType));
         }
@@ -139,7 +139,7 @@ namespace JSC {
 
     private:
         WebAssemblySourceProvider(const Vector<uint8_t>& data, const String& url)
-            : SourceProvider(url, TextPosition::minimumPosition(), SourceProviderSourceType::WebAssembly)
+            : SourceProvider(url, TextPosition(), SourceProviderSourceType::WebAssembly)
             , m_source("[WebAssembly source]")
             , m_data(data)
         {

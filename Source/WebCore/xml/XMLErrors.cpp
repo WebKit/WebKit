@@ -50,7 +50,6 @@ const int maxErrors = 25;
 
 XMLErrors::XMLErrors(Document& document)
     : m_document(document)
-    , m_lastErrorPosition(TextPosition::belowRangePosition())
 {
 }
 
@@ -61,7 +60,7 @@ void XMLErrors::handleError(ErrorType type, const char* message, int lineNumber,
 
 void XMLErrors::handleError(ErrorType type, const char* message, TextPosition position)
 {
-    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorPosition.m_line != position.m_line && m_lastErrorPosition.m_column != position.m_column)) {
+    if (type == fatal || (m_errorCount < maxErrors && (!m_lastErrorPosition || (m_lastErrorPosition->m_line != position.m_line && m_lastErrorPosition->m_column != position.m_column)))) {
         switch (type) {
         case warning:
             appendErrorMessage("warning", position, message);

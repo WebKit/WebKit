@@ -60,7 +60,7 @@ public:
 
 private:
     OpaqueJSScript(VM* vm, const String& url, int startingLineNumber, const String& source)
-        : SourceProvider(url, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber::first()), SourceProviderSourceType::Program)
+        : SourceProvider(url, TextPosition(OrdinalNumber::fromOneBasedInt(startingLineNumber), OrdinalNumber()), SourceProviderSourceType::Program)
         , m_vm(vm)
         , m_source(source.isNull() ? *StringImpl::empty() : *source.impl())
     {

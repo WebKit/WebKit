@@ -73,7 +73,7 @@ inline bool isHTMLSpaceOrReplacementCharacter(UChar character)
 
 static inline TextPosition uninitializedPositionValue1()
 {
-    return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber::first());
+    return TextPosition(OrdinalNumber::fromOneBasedInt(-1), OrdinalNumber());
 }
 
 static inline bool isAllWhitespace(const String& string)

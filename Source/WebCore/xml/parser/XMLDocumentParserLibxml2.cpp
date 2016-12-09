@@ -1381,7 +1381,7 @@ TextPosition XMLDocumentParser::textPosition() const
 {
     xmlParserCtxtPtr context = this->context();
     if (!context)
-        return TextPosition::minimumPosition();
+        return TextPosition();
     return TextPosition(OrdinalNumber::fromOneBasedInt(context->input->line),
                         OrdinalNumber::fromOneBasedInt(context->input->col));
 }

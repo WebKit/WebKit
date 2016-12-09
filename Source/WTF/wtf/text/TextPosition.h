@@ -37,12 +37,10 @@ public:
         , m_column(column)
     {
     }
+
     TextPosition() { }
     bool operator==(const TextPosition& other) { return m_line == other.m_line && m_column == other.m_column; }
     bool operator!=(const TextPosition& other) { return !((*this) == other); }
-
-    // A 'minimum' value of position, used as a default value.
-    static TextPosition minimumPosition() { return TextPosition(OrdinalNumber::first(), OrdinalNumber::first()); }
 
     // A value with line value less than a minimum; used as an impossible position.
     static TextPosition belowRangePosition() { return TextPosition(OrdinalNumber::beforeFirst(), OrdinalNumber::beforeFirst()); }

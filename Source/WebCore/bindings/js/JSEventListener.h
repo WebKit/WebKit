@@ -71,7 +71,7 @@ public:
     void setWrapper(JSC::VM&, JSC::JSObject* wrapper) const { m_wrapper = JSC::Weak<JSC::JSObject>(wrapper); }
 
     virtual String sourceURL() const { return String(); }
-    virtual TextPosition sourcePosition() const { return TextPosition::minimumPosition(); }
+    virtual TextPosition sourcePosition() const { return TextPosition(); }
 
 private:
     virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;

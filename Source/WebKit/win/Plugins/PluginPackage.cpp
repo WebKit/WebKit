@@ -192,7 +192,7 @@ static void getListFromVariantArgs(JSC::ExecState* exec, const NPVariant* args, 
         aList.append(JSC::Bindings::convertNPVariantToValue(exec, &args[i], rootObject));
 }
 
-static inline JSC::SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition::minimumPosition())
+static inline JSC::SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition())
 {
     return JSC::SourceCode(JSC::StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
 }

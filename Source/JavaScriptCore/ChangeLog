@@ -1,3 +1,31 @@
+2016-12-09  Geoffrey Garen  <ggaren@apple.com>
+
+        TextPosition and OrdinalNumber should be more like idiomatic numbers
+        https://bugs.webkit.org/show_bug.cgi?id=165678
+
+        Reviewed by Filip Pizlo.
+
+        Adopt default constructor.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::OpaqueJSScript):
+        * jsc.cpp:
+        (functionCheckModuleSyntax):
+        * parser/SourceCode.h:
+        (JSC::makeSource):
+        * parser/SourceProvider.h:
+        (JSC::StringSourceProvider::create):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+
 2016-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, disable concurrent GC for real.
