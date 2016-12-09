@@ -1,5 +1,35 @@
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Enable concurrent GC on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=165643
+
+        Reviewed by Saam Barati.
+
+        It looks stable enough to enable.
+
+        * assembler/CPU.h:
+        (JSC::useGCFences): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::mutatorFence):
+        (JSC::AssemblyHelpers::storeButterfly):
+        (JSC::AssemblyHelpers::nukeStructureAndStoreButterfly):
+        (JSC::AssemblyHelpers::emitInitializeInlineStorage):
+        (JSC::AssemblyHelpers::emitInitializeOutOfLineStorage):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
         Disable collectContinuously if not useConcurrentGC
 
         Rubber stamped by Geoffrey Garen.

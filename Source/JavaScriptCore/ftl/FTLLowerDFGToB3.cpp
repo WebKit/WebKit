@@ -8603,13 +8603,11 @@ private:
                 
                 ValueFromBlock haveButterfly = m_out.anchor(fastButterflyValue);
                 
-                if (useGCFences()) {
-                    splatWords(
-                        fastButterflyValue,
-                        m_out.constInt32(-structure->outOfLineCapacity() - 1),
-                        m_out.constInt32(-1),
-                        m_out.int64Zero, m_heaps.properties.atAnyNumber());
-                }
+                splatWords(
+                    fastButterflyValue,
+                    m_out.constInt32(-structure->outOfLineCapacity() - 1),
+                    m_out.constInt32(-1),
+                    m_out.int64Zero, m_heaps.properties.atAnyNumber());
 
                 m_out.store32(vectorLength, fastButterflyValue, m_heaps.Butterfly_vectorLength);
                 
@@ -9484,12 +9482,10 @@ private:
         
         LValue result = allocatePropertyStorageWithSizeImpl(initialOutOfLineCapacity);
 
-        if (useGCFences()) {
-            splatWords(
-                result,
-                m_out.constInt32(-initialOutOfLineCapacity - 1), m_out.constInt32(-1),
-                m_out.int64Zero, m_heaps.properties.atAnyNumber());
-        }
+        splatWords(
+            result,
+            m_out.constInt32(-initialOutOfLineCapacity - 1), m_out.constInt32(-1),
+            m_out.int64Zero, m_heaps.properties.atAnyNumber());
         
         nukeStructureAndSetButterfly(result, object);
         return result;
@@ -9519,12 +9515,10 @@ private:
             m_out.storePtr(loaded, m_out.address(m_heaps.properties.atAnyNumber(), result, offset));
         }
         
-        if (useGCFences()) {
-            splatWords(
-                result,
-                m_out.constInt32(-newSize - 1), m_out.constInt32(-oldSize - 1),
-                m_out.int64Zero, m_heaps.properties.atAnyNumber());
-        }
+        splatWords(
+            result,
+            m_out.constInt32(-newSize - 1), m_out.constInt32(-oldSize - 1),
+            m_out.int64Zero, m_heaps.properties.atAnyNumber());
         
         nukeStructureAndSetButterfly(result, object);
         
@@ -10401,14 +10395,12 @@ private:
         LValue allocator, Structure* structure, LValue butterfly, LBasicBlock slowPath)
     {
         LValue result = allocateCell(allocator, structure, slowPath);
-        if (useGCFences()) {
-            splatWords(
-                result,
-                m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8),
-                m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8 + structure->inlineCapacity()),
-                m_out.int64Zero,
-                m_heaps.properties.atAnyNumber());
-        }
+        splatWords(
+            result,
+            m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8),
+            m_out.constInt32(JSFinalObject::offsetOfInlineStorage() / 8 + structure->inlineCapacity()),
+            m_out.int64Zero,
+            m_heaps.properties.atAnyNumber());
         m_out.storePtr(butterfly, result, m_heaps.JSObject_butterfly);
         return result;
     }
