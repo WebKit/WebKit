@@ -1,3 +1,21 @@
+2016-12-09  Brady Eidson  <beidson@apple.com>
+
+        LinkIconCollector refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=165657
+
+        Reviewed by Dean Jackson.
+
+        No new tests (Refactor, no behavior change)
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * html/LinkIconCollector.cpp:
+        (WebCore::iconSize):
+        (WebCore::compareIcons):
+        * html/LinkIconCollector.h:
+
+        * platform/LinkIcon.h: Move outside of LinkIconCollector for future expandability.
+
 2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r209574.

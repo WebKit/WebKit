@@ -36,7 +36,7 @@ namespace WebCore {
 
 const unsigned defaultTouchIconWidth = 60;
 
-static unsigned iconSize(const LinkIconCollector::Icon& icon)
+static unsigned iconSize(const LinkIcon& icon)
 {
     if (icon.size)
         return *icon.size;
@@ -47,7 +47,7 @@ static unsigned iconSize(const LinkIconCollector::Icon& icon)
     return 0;
 }
 
-static int compareIcons(const LinkIconCollector::Icon& a, const LinkIconCollector::Icon& b)
+static int compareIcons(const LinkIcon& a, const LinkIcon& b)
 {
     // Apple Touch icons always come first.
     if (a.type == LinkIconType::Favicon && b.type != LinkIconType::Favicon)
@@ -72,13 +72,13 @@ static int compareIcons(const LinkIconCollector::Icon& a, const LinkIconCollecto
     return 0;
 }
 
-auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vector<Icon>
+auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vector<LinkIcon>
 {
     auto* head = m_document.head();
     if (!head)
         return { };
 
-    Vector<Icon> icons;
+    Vector<LinkIcon> icons;
 
     for (auto& linkElement : childrenOfType<HTMLLinkElement>(*head)) {
         if (!linkElement.iconType())
@@ -104,7 +104,7 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
                 iconSize = size;
         }
 
-        icons.append({ url, iconType, iconSize });
+        icons.append({ url, iconType, linkElement.type(), iconSize });
     }
 
     std::sort(icons.begin(), icons.end(), [](auto& a, auto& b) {
