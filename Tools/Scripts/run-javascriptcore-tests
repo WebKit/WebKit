@@ -62,6 +62,7 @@ my $runJSCStress = 1;
 my $runJITStressTests = 1;
 my $runMozillaTests = 1;
 my $runQuickMode = 0;
+my $forceCollectContinuously = 0;
 my $envVars = "";
 my $gmallocPath = undef;
 my $gmallocDefaultPath = "/usr/lib/libgmalloc.dylib";
@@ -123,6 +124,7 @@ Usage: $programName [options] [options to pass to build system]
                                 Note, this will not change the behavior of tests that specify their own modes.
 
   --[no-]fail-fast              Stop this script when a test family reports an error or failure (default: $failFastDefault)
+  --[no-]force-collectContinuously Enable the collectContinuously mode even if it was disabled on this platform.
   --json-output=                Create a file at specified path, listing failed stress tests in JSON format.
   --tarball                     Create a tarball of the bundle produced by running the JSC stress tests.
   --remote=                     Run the JSC stress tests on the specified remote host. Implies --tarball.
@@ -158,6 +160,7 @@ GetOptions(
     'mozilla-tests!' => \$runMozillaTests,
     'quick!' => \$runQuickMode,
     'fail-fast!' => \$failFast,
+    'force-collectContinuously!' => \$forceCollectContinuously,
     'json-output=s' => \$jsonFileName,
     'tarball!' => \$createTarball,
     'remote=s' => \$remoteHost,
@@ -304,6 +307,10 @@ sub runJSCStressTests
 
     if (configuration() eq "Debug") {
         push(@jscStressDriverCmd, "--debug");
+    }
+    
+    if ($forceCollectContinuously) {
+        push(@jscStressDriverCmd, "--force-collectContinuously");
     }
 
     if ($envVars ne "") {
