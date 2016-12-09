@@ -229,7 +229,6 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     NSDisableScreenUpdates();
     [[self window] setAutodisplay:NO];
 
-    NSResponder *webWindowFirstResponder = [[_webView window] firstResponder];
     [self _manager]->saveScrollPosition();
     _savedTopContentInset = _page->topContentInset();
     _page->setTopContentInset(0);
@@ -255,8 +254,6 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     NSView *contentView = [[self window] contentView];
     [_clipView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
     _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
-
-    makeResponderFirstResponderIfDescendantOfView(self.window, webWindowFirstResponder, _webView);
 
     _savedScale = _page->pageScaleFactor();
     _page->scalePage(1, IntPoint());
@@ -619,6 +616,7 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [window setCollectionBehavior:(behavior | NSWindowCollectionBehaviorCanJoinAllSpaces)];
     [window makeKeyAndOrderFront:self];
     [window setCollectionBehavior:behavior];
+    [window makeFirstResponder:_webView];
 
     _page->setSuppressVisibilityUpdates(false);
     [[self window] setAutodisplay:YES];

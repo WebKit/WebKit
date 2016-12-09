@@ -1,3 +1,20 @@
+2016-12-09  Jeremy Jones  <jeremyj@apple.com>
+
+        WebView doesn't become first responder in element fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=165664
+        rdar://problem/28927252
+
+        Reviewed by Tim Horton.
+
+        WebView was being set as the first responder while the contentView was still hidden.
+        A view can not become first responder while it or its ancestor is hidden.
+
+        This change waits until after the contentView is visible to make the web view the first responder.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]):
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]):
+
 2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Unreviewed build fix. Thanks to Konstantin Tokarev and Csaba Osztrogonác
