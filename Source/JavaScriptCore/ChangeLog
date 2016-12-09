@@ -1,5 +1,12 @@
 2016-12-09  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, disable concurrent GC for real.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2016-12-09  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, disable concurrent GC while crashes get investigated.
 
         * runtime/Options.cpp:
