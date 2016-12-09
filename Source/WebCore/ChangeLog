@@ -1,3 +1,30 @@
+2016-12-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: m_items.isEmpty() in CustomElementReactionQueue destructor
+        https://bugs.webkit.org/show_bug.cgi?id=162029
+        <rdar://problem/28945851>
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by Document::removedLastRef enqueuing disconnectedCallback during a tear down.
+        Don't enqueue a disconnectedCallback while a document is getting torn down since that should not be
+        observable to author scripts. The connected, adopted, and attributeChanged callbacks are immune from
+        this problem since they don't happen during a document destruction.
+
+        Note that this was also the case prior to this patch since the disconnectedCallback would have been
+        added to the current CustomElementReactionQueue which will be destructed without invoking callbacks
+        (or hit a release assertion added in r208785 and r209426 for now).
+
+        Tests: fast/custom-elements/disconnected-callback-in-detached-iframe.html
+               fast/custom-elements/element-queue-during-document-destruction.html
+
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded): Added an assertion that
+        document's refCount hasn't reached zero yet.
+        (WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded): Fixed the bug.
+        (WebCore::CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded): Added the same assertion.
+        (WebCore::CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded): Ditto.
+
 2016-12-08  Daniel Bates  <dabates@apple.com>
 
         Add Strict Mixed Content Checking and Upgrade Insecure Requests to WebKit Feature Status dashboard

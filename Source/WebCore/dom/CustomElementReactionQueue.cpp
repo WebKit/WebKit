@@ -141,6 +141,7 @@ void CustomElementReactionQueue::enqueueElementUpgradeIfDefined(Element& element
 void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)
 {
     ASSERT(element.isDefinedCustomElement());
+    ASSERT(element.document().refCount() > 0);
     auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
     if (queue.m_interface->hasConnectedCallback())
         queue.m_items.append({CustomElementReactionQueueItem::Type::Connected});
@@ -149,6 +150,8 @@ void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& eleme
 void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& element)
 {
     ASSERT(element.isDefinedCustomElement());
+    if (element.document().refCount() <= 0)
+        return; // Don't enqueue disconnectedCallback if the entire document is getting destructed.
     auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
     if (queue.m_interface->hasDisconnectedCallback())
         queue.m_items.append({CustomElementReactionQueueItem::Type::Disconnected});
@@ -157,6 +160,7 @@ void CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(Element& el
 void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element, Document& oldDocument, Document& newDocument)
 {
     ASSERT(element.isDefinedCustomElement());
+    ASSERT(element.document().refCount() > 0);
     auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
     if (queue.m_interface->hasAdoptedCallback())
         queue.m_items.append({oldDocument, newDocument});
@@ -165,6 +169,7 @@ void CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded(Element& element
 void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
     ASSERT(element.isDefinedCustomElement());
+    ASSERT(element.document().refCount() > 0);
     auto& queue = CustomElementReactionStack::ensureCurrentQueue(element);
     if (queue.m_interface->observesAttribute(attributeName.localName()))
         queue.m_items.append({attributeName, oldValue, newValue});

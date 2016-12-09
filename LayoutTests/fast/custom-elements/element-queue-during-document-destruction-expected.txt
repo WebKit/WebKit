@@ -1,0 +1,4 @@
+This tests removing an iframe with a custom element inside a callback. WebKit should not hit assertions.
+WebKit should not hit any assertions.
+
+PASS. WebKit did not hit any assertions.

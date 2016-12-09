@@ -1,3 +1,20 @@
+2016-12-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: m_items.isEmpty() in CustomElementReactionQueue destructor
+        https://bugs.webkit.org/show_bug.cgi?id=162029
+        <rdar://problem/28945851>
+
+        Reviewed by Chris Dumez.
+
+        Added a regression test that reliably reproduces the crash in DumpRenderTree / WebKitTestRunner.
+
+        Also added a W3C style testharness.js test for the behavior I broke in an earlier iteration of the patch.
+
+        * fast/custom-elements/disconnected-callback-in-detached-iframe-expected.txt: Added.
+        * fast/custom-elements/disconnected-callback-in-detached-iframe.html: Added.
+        * fast/custom-elements/element-queue-during-document-destruction-expected.txt: Added.
+        * fast/custom-elements/element-queue-during-document-destruction.html: Added.
+
 2016-12-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking compositing/rtl/rtl-fixed-overflow.html as failing on mac-wk1.
