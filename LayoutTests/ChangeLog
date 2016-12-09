@@ -1,3 +1,16 @@
+2016-12-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Remaining time label first appears way to the left
+        https://bugs.webkit.org/show_bug.cgi?id=165637
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks that marking a property as dirty during a layout correctly commits
+        that property on the next frame.
+
+        * media/modern-media-controls/layout-node/node-made-dirty-during-layout-expected.txt: Added.
+        * media/modern-media-controls/layout-node/node-made-dirty-during-layout.html: Added.
+
 2016-12-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Remove NoInterfaceObject attribute from SubtleCrypto Interface

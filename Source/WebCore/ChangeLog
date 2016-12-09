@@ -1,3 +1,27 @@
+2016-12-09  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Remaining time label first appears way to the left
+        https://bugs.webkit.org/show_bug.cgi?id=165637
+
+        Reviewed by Dean Jackson.
+
+        We would sometimes see the remaining time label be laid out in an incorrect position
+        when a video would start playing. This happened because the time label was being committed
+        from a previous value before, in the same frame, we would call the layout() function
+        of MacOSInlineMediaControls. This would set the newly computed location for the
+        remaining time label, but because we would reset the list of dirty properties after
+        calling all layout functions, the new value set in MacOSInlineMediaControls.layout()
+        would be disregarded and the wrong, committed value would persist until it was reset
+        in a much later frame.
+
+        We now correctly clear the list of dirty nodes before laying them out, giving all nodes
+        a chance to become dirty again during layout, and updated again in the next frame.
+
+        Test: media/modern-media-controls/layout-node/node-made-dirty-during-layout.html
+
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (performScheduledLayout):
+
 2016-12-09  Per Arne Vollan  <pvollan@apple.com>
 
         Fix compile errors on Windows when building with .proj files.

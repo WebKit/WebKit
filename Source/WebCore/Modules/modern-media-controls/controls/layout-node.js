@@ -288,12 +288,12 @@ LayoutNode.DOMManipulation = {
 
 function performScheduledLayout()
 {
-    dirtyNodes.forEach(node => {
-        node.needsLayout = false;
+    const previousDirtyNodes = Array.from(dirtyNodes);
+    dirtyNodes.clear();
+    previousDirtyNodes.forEach(node => {
+        node._needsLayout = false;
         node.layout();
     });
-    dirtyNodes.clear();
-    scheduler.unscheduleLayout(performScheduledLayout);
 
     nodesRequiringChildrenUpdate.forEach(node => node._updateChildren());
     nodesRequiringChildrenUpdate.clear();
