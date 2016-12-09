@@ -195,12 +195,23 @@ Node& TreeScope::retargetToScope(Node& node) const
     return *shadowRootInLowestCommonTreeScope.host();
 }
 
-Node* TreeScope::ancestorInThisScope(Node* node) const
+Node* TreeScope::ancestorNodeInThisScope(Node* node) const
 {
     for (; node; node = node->shadowHost()) {
         if (&node->treeScope() == this)
             return node;
         if (!node->isInShadowTree())
+            return nullptr;
+    }
+    return nullptr;
+}
+
+Element* TreeScope::ancestorElementInThisScope(Element* element) const
+{
+    for (; element; element = element->shadowHost()) {
+        if (&element->treeScope() == this)
+            return element;
+        if (!element->isInShadowTree())
             return nullptr;
     }
     return nullptr;
@@ -364,28 +375,15 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFram
     return nullptr;
 }
 
-Element* TreeScope::focusedElement()
+Element* TreeScope::focusedElementInScope()
 {
     Document& document = m_rootNode.document();
     Element* element = document.focusedElement();
 
     if (!element && document.page())
         element = focusedFrameOwnerElement(document.page()->focusController().focusedFrame(), document.frame());
-    if (!element)
-        return nullptr;
-    TreeScope* treeScope = &element->treeScope();
-    RELEASE_ASSERT(&document == &treeScope->documentScope());
-    while (treeScope != this && treeScope != &document) {
-        auto& rootNode = treeScope->rootNode();
-        if (is<ShadowRoot>(rootNode))
-            element = downcast<ShadowRoot>(rootNode).host();
-        else
-            return nullptr;
-        treeScope = &element->treeScope();
-    }
-    if (this != treeScope)
-        return nullptr;
-    return element;
+
+    return ancestorElementInThisScope(element);
 }
 
 static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)

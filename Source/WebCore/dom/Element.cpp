@@ -2438,7 +2438,7 @@ void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMod
 void Element::blur()
 {
     cancelFocusAppearanceUpdate();
-    if (treeScope().focusedElement() == this) {
+    if (treeScope().focusedElementInScope() == this) {
         if (Frame* frame = document().frame())
             frame->page()->focusController().setFocusedElement(0, frame);
         else

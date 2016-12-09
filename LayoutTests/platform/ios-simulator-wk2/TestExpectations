@@ -1778,6 +1778,10 @@ fast/loader/location-hash-user-gesture.html [ Skip ]
 imported/blink/editing/selection/selectstart-event-crash.html [ Skip ]
 fast/dom/Window/post-message-user-action.html [ Skip ]
 fast/shadow-dom/click-text-inside-linked-slot.html [ Skip ]
+fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html
+fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html
+fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html
+fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html
 
 # No touch events
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Skip ]

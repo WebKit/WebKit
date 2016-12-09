@@ -1,3 +1,31 @@
+2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.webkitFullscreenElement leaks elements inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=158471
+
+        Reviewed by Chris Dumez.
+
+        Added tests for calling webkitFullscreenElement and webkitCurrentFullScreenElement on a fullscreened element
+        to make sure they return the shadow host instead.
+
+        Also added two unrelated test cases for temporal regressions I introduced while working on this patch.
+
+        Skip the fullscreen tests on iOS WK2 since eventSender doesn't work there.
+
+        * fast/shadow-dom/activeElement-for-focused-element-in-another-shadow-expected.txt: Added.
+        * fast/shadow-dom/activeElement-for-focused-element-in-another-shadow.html: Added.
+        * fast/shadow-dom/blur-on-shadow-host-with-focused-shadow-content-expected.txt: Added.
+        * fast/shadow-dom/blur-on-shadow-host-with-focused-shadow-content.html: Added.
+        * fast/shadow-dom/fullscreen-in-shadow-fullscreenElement-expected.txt: Added.
+        * fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html: Added.
+        * fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement-expected.txt: Added.
+        * fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html: Added.
+        * fast/shadow-dom/fullscreen-in-slot-fullscreenElement-expected.txt: Added.
+        * fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html: Added.
+        * fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement-expected.txt: Added.
+        * fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2016-12-09  Chris Dumez  <cdumez@apple.com>
 
         [Cocoa] Validation message for required checkbox doesn’t conform the the Apple Style Guide

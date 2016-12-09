@@ -1,3 +1,16 @@
+2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.webkitFullscreenElement leaks elements inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=158471
+
+        Reviewed by Chris Dumez.
+
+        Use the API for bindings to avoid exposing nodes inside a shadow tree.
+
+        * DOM/DOMDocument.mm:
+        (-[DOMDocument webkitCurrentFullScreenElement]):
+        (-[DOMDocument webkitFullscreenElement]):
+
 2016-12-09  Beth Dakin  <bdakin@apple.com>
 
         Password fields should not show the emoji button in TouchBar

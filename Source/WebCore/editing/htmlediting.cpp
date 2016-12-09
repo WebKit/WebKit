@@ -83,12 +83,12 @@ int comparePositions(const Position& a, const Position& b)
     if (!commonScope)
         return 0;
 
-    Node* nodeA = commonScope->ancestorInThisScope(a.containerNode());
+    Node* nodeA = commonScope->ancestorNodeInThisScope(a.containerNode());
     ASSERT(nodeA);
     bool hasDescendentA = nodeA != a.containerNode();
     int offsetA = hasDescendentA ? 0 : a.computeOffsetInContainerNode();
 
-    Node* nodeB = commonScope->ancestorInThisScope(b.containerNode());
+    Node* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
     ASSERT(nodeB);
     bool hasDescendentB = nodeB != b.containerNode();
     int offsetB = hasDescendentB ? 0 : b.computeOffsetInContainerNode();
@@ -292,7 +292,7 @@ Position firstEditablePositionAfterPositionInRoot(const Position& position, Cont
     Position candidate = position;
 
     if (&position.deprecatedNode()->treeScope() != &highestRoot->treeScope()) {
-        auto* shadowAncestor = highestRoot->treeScope().ancestorInThisScope(position.deprecatedNode());
+        auto* shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.deprecatedNode());
         if (!shadowAncestor)
             return { };
 
@@ -320,7 +320,7 @@ Position lastEditablePositionBeforePositionInRoot(const Position& position, Cont
     Position candidate = position;
 
     if (&position.deprecatedNode()->treeScope() != &highestRoot->treeScope()) {
-        auto* shadowAncestor = highestRoot->treeScope().ancestorInThisScope(position.deprecatedNode());
+        auto* shadowAncestor = highestRoot->treeScope().ancestorNodeInThisScope(position.deprecatedNode());
         if (!shadowAncestor)
             return { };
 

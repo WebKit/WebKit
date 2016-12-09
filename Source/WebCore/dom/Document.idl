@@ -143,12 +143,12 @@
     // Mozilla version
     readonly attribute boolean webkitIsFullScreen;
     readonly attribute boolean webkitFullScreenKeyboardInputAllowed;
-    readonly attribute Element webkitCurrentFullScreenElement;
+    [ImplementedAs=webkitCurrentFullScreenElementForBindings] readonly attribute Element webkitCurrentFullScreenElement;
     void webkitCancelFullScreen();
 
     // W3C version
     readonly attribute boolean webkitFullscreenEnabled;
-    readonly attribute Element? webkitFullscreenElement;
+    [ImplementedAs=webkitFullscreenElementForBindings] readonly attribute Element? webkitFullscreenElement;
     void webkitExitFullscreen();
 #endif
 

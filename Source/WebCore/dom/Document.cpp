@@ -3540,7 +3540,7 @@ void Document::removeFocusedNodeOfSubtree(Node& node, bool amongChildrenOnly)
     if (!m_focusedElement || pageCacheState() != NotInPageCache) // If the document is in the page cache, then we don't need to clear out the focused node.
         return;
 
-    Element* focusedElement = node.treeScope().focusedElement();
+    Element* focusedElement = node.treeScope().focusedElementInScope();
     if (!focusedElement)
         return;
     
@@ -6771,7 +6771,7 @@ bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t
 
 Element* Document::activeElement()
 {
-    if (Element* element = treeScope().focusedElement())
+    if (Element* element = treeScope().focusedElementInScope())
         return element;
     return bodyOrFrameset();
 }

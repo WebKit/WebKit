@@ -1,3 +1,73 @@
+2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.webkitFullscreenElement leaks elements inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=158471
+
+        Reviewed by Chris Dumez.
+
+        Fixed the bug by calling the newly added ancestorElementInThisScope in webkitCurrentFullScreenElementForBindings
+        and webkitFullscreenElementForBinding.
+
+        The specification (https://fullscreen.spec.whatwg.org/#dom-document-fullscreenelement) uses "the result of
+        retargeting fullscreen element" and returns null if the result is not in the same tree as the context object.
+
+        This is equivalent to the algorithm implemented by ancestorElementInThisScope. Observe that the retargeting
+        algorithm (https://dom.spec.whatwg.org/#retarget) finds the lowest common tree scope of the retargetee and
+        the context object. There are two cases to consider.
+
+        1. The context object's tree scope is the lowest common tree scope: In this case, an ancestor shadow host or
+        the retargetee itself is in this tree scope. It's sufficient traverse every shadow host to find the one that
+        resides in the same tree scope as the context object. This is precisely what ancestorElementInThisScope does.
+
+        2. The context object's tree scope is not the lowest common tree scope: In this case, the context object is
+        inside a shadow tree whose ancestor shadow host is in the lowest common tree scope. In this case, retargeting
+        algorithm finds a node which is not in the same tree as the context object. Thus, the result is null.
+        ancestorElementInThisScope traveres ancestor shadow hosts and returns null if no shadow host's tree scope
+        matches that of the context object's tree scope. Thus, it would return null in this case as desired.
+
+        Also renamed TreeScope::focusedElement to focusedElementInScope for clarity since Document which inherits
+        from TreeScope also has a distinct member function named focusedElement called by TreeScope::focusedElement,
+        and used ancestorElementInThisScope since it uses the same algorithm.
+
+        Tests: fast/shadow-dom/activeElement-for-focused-element-in-another-shadow.html
+               fast/shadow-dom/blur-on-shadow-host-with-focused-shadow-content.html
+               fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html
+               fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html
+               fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html
+               fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removeFocusedNodeOfSubtree):
+        (WebCore::Document::activeElement):
+        * dom/Document.h:
+        (WebCore::Document::webkitCurrentFullScreenElementForBindings): Added.
+        (WebCore::Document::webkitFullscreenElementForBindings): Added.
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::blur):
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::activeElement):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::ancestorNodeInThisScope): Renamed from ancestorInThisScope for clarity.
+        (WebCore::TreeScope::ancestorElementInThisScope):
+        (WebCore::TreeScope::focusedElementInScope): Renamed from focusedElement to disambiguate it from Document's
+        focusedElement.
+        * dom/TreeScope.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::adjustPositionForEnd):
+        (WebCore::adjustPositionForStart):
+        * editing/htmlediting.cpp:
+        (WebCore::comparePositions):
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::lastEditablePositionBeforePositionInRoot):
+        * page/DOMSelection.cpp:
+        (WebCore::selectionShadowAncestor):
+        (WebCore::DOMSelection::shadowAdjustedNode):
+        (WebCore::DOMSelection::shadowAdjustedOffset):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult): Added a FIXME here since this is clearly wrong for
+        shadow trees created by author scripts.
+
 2016-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         TextPosition and OrdinalNumber should be more like idiomatic numbers

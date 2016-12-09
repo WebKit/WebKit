@@ -473,7 +473,7 @@ static Position adjustPositionForEnd(const Position& currentPosition, Node* star
 
     ASSERT(&currentPosition.containerNode()->treeScope() != &treeScope);
 
-    if (Node* ancestor = treeScope.ancestorInThisScope(currentPosition.containerNode())) {
+    if (Node* ancestor = treeScope.ancestorNodeInThisScope(currentPosition.containerNode())) {
         if (ancestor->contains(startContainerNode))
             return positionAfterNode(ancestor);
         return positionBeforeNode(ancestor);
@@ -491,7 +491,7 @@ static Position adjustPositionForStart(const Position& currentPosition, Node* en
 
     ASSERT(&currentPosition.containerNode()->treeScope() != &treeScope);
     
-    if (Node* ancestor = treeScope.ancestorInThisScope(currentPosition.containerNode())) {
+    if (Node* ancestor = treeScope.ancestorNodeInThisScope(currentPosition.containerNode())) {
         if (ancestor->contains(endContainerNode))
             return positionBeforeNode(ancestor);
         return positionAfterNode(ancestor);

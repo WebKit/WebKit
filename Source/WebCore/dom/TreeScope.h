@@ -51,7 +51,7 @@ public:
     TreeScope* parentTreeScope() const { return m_parentTreeScope; }
     void setParentTreeScope(TreeScope&);
 
-    Element* focusedElement();
+    Element* focusedElementInScope();
     WEBCORE_EXPORT Element* getElementById(const AtomicString&) const;
     WEBCORE_EXPORT Element* getElementById(const String&) const;
     const Vector<Element*>* getAllElementsById(const AtomicString&) const;
@@ -72,7 +72,8 @@ public:
     // https://dom.spec.whatwg.org/#retarget
     Node& retargetToScope(Node&) const;
 
-    Node* ancestorInThisScope(Node*) const;
+    Node* ancestorNodeInThisScope(Node*) const;
+    WEBCORE_EXPORT Element* ancestorElementInThisScope(Element*) const;
 
     void addImageMap(HTMLMapElement&);
     void removeImageMap(HTMLMapElement&);

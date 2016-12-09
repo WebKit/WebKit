@@ -110,7 +110,7 @@ private:
 
 inline Element* ShadowRoot::activeElement() const
 {
-    return treeScope().focusedElement();
+    return treeScope().focusedElementInScope();
 }
 
 inline ShadowRoot* Node::shadowRoot() const
