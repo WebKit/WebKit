@@ -1,5 +1,12 @@
 2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
+        Unreviewed build fix. Thanks to Konstantin Tokarev and Csaba Osztrogonác
+        for pointing out the fix.
+
+        * CMakeLists.txt: add WebCore/html/canvas to include paths.
+
+2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
         [GTK] Fix build after r209558
         https://bugs.webkit.org/show_bug.cgi?id=165653
 

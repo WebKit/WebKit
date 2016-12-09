@@ -105,6 +105,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/fileapi"
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
+    "${WEBCORE_DIR}/html/canvas"
     "${WEBCORE_DIR}/html/shadow"
     "${WEBCORE_DIR}/html/track"
     "${WEBCORE_DIR}/inspector"
