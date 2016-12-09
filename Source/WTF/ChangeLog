@@ -1,3 +1,15 @@
+2016-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Always check the return value of pthread_key_create()
+        <https://webkit.org/b/165274>
+
+        Reviewed by Darin Adler.
+
+        * wtf/ThreadIdentifierDataPthreads.cpp:
+        (WTF::ThreadIdentifierData::initializeOnce): Make the code more
+        readable by assigning a variable to the result of
+        pthread_key_create().  This matches the idiom used elsewhere.
+
 2016-12-08  Keith Miller  <keith_miller@apple.com>
 
         Add 64-bit signed LEB decode method

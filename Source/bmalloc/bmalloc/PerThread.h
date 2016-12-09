@@ -97,7 +97,9 @@ template<typename T> struct PerThreadStorage {
     static void init(void* object, void (*destructor)(void*))
     {
         std::call_once(s_onceFlag, [destructor]() {
-            pthread_key_create(&s_key, destructor);
+            int error = pthread_key_create(&s_key, destructor);
+            if (error)
+                BCRASH();
             s_didInitialize = true;
         });
         pthread_setspecific(s_key, object);

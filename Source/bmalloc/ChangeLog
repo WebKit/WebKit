@@ -1,3 +1,16 @@
+2016-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Always check the return value of pthread_key_create()
+        <https://webkit.org/b/165274>
+
+        Reviewed by Darin Adler.
+
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThreadStorage::init): Call BCRASH() if
+        pthread_key_create() returns an error.  The error code will be
+        stored in a register available in a crash log, so no need to log
+        the value explicitly.
+
 2016-12-06  Alexey Proskuryakov  <ap@apple.com>
 
         Correct SDKROOT values in xcconfig files

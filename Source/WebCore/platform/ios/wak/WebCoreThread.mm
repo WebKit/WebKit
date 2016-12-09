@@ -620,7 +620,9 @@ static void FreeThreadContext(void *threadContext)
 
 static void InitThreadContextKey()
 {
-    pthread_key_create(&threadContextKey, FreeThreadContext);
+    int error = pthread_key_create(&threadContextKey, FreeThreadContext);
+    if (error)
+        CRASH();
 }
 
 static WebThreadContext *CurrentThreadContext(void)

@@ -1,3 +1,16 @@
+2016-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Always check the return value of pthread_key_create()
+        <https://webkit.org/b/165274>
+
+        Reviewed by Darin Adler.
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (InitThreadContextKey): Call CRASH() if pthread_key_create()
+        returns an error.  The error code will be stored in a register
+        available in a crash log, so no need to log the value
+        explicitly.
+
 2016-12-08  Alex Christensen  <achristensen@webkit.org>
 
         Reduce PassRefPtr use in platform/graphics
