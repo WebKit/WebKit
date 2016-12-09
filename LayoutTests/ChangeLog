@@ -1,3 +1,15 @@
+2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom Elements from a different document are not customized when created with innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=165617
+
+        Reviewed by Antti Koivisto.
+
+        Added a W3C style testharness.js test.
+
+        * fast/custom-elements/adopting-from-frameless-document-expected.txt: Added.
+        * fast/custom-elements/adopting-from-frameless-document.html: Added.
+
 2016-12-09  Daniel Bates  <dabates@apple.com>
 
         [CSP] Policy of window opener not applied to about:blank window

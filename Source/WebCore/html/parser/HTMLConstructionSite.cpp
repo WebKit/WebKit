@@ -666,7 +666,7 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
         }
 
         QualifiedName qualifiedName(nullAtom, localName, xhtmlNamespaceURI);
-        if (window && Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+        if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
             element = HTMLElement::create(qualifiedName, ownerDocument);
             element->setIsCustomElementUpgradeCandidate();
         } else

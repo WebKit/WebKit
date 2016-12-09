@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: A custom element candidate created in a frameless document should be upgraded once adopted into a document with a definition</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="A custom element candidate created in a frameless document should be upgraded once adopted into a document with a definition">
+<meta name="help" content="https://html.spec.whatwg.org/multipage/syntax.html#create-an-element-for-the-token">
+<meta name="help" content="https://dom.spec.whatwg.org/#concept-create-element">
+<meta name="help" content="https://dom.spec.whatwg.org/#concept-node-insert">
+<meta name="help" content="https://html.spec.whatwg.org/multipage/scripting.html#concept-try-upgrade">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/custom-elements/resources/custom-elements-helpers.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+let customElement = define_custom_element_in_window(window, 'test-element', []);
+
+document_types().forEach((entry) => {
+    if (entry.isOwner || entry.hasBrowsingContext)
+        return;
+
+    promise_test(() => {
+        return entry.create().then((doc) => {
+            assert_array_equals(customElement.takeLog().types(), []);
+            let instance = doc.createElementNS('http://www.w3.org/1999/xhtml', 'test-element');
+            doc.documentElement.appendChild(instance);
+            assert_array_equals(customElement.takeLog().types(), []);
+            document.body.appendChild(instance);
+            assert_array_equals(customElement.takeLog().types(), ['constructed', 'connected']);
+            instance.remove();
+            assert_array_equals(customElement.takeLog().types(), ['disconnected']);
+        });
+    }, `A custom element candidate created by document.createElementNS in ${entry.name} should be upgraded once adopted into a document with a definition`);
+
+    promise_test(() => {
+        return entry.create().then((doc) => {
+            assert_array_equals(customElement.takeLog().types(), []);
+            doc.documentElement.innerHTML = '<test-element xmlns="http://www.w3.org/1999/xhtml"></test-element>';
+            let instance = doc.querySelector('test-element');
+            assert_array_equals(customElement.takeLog().types(), []);
+            document.body.appendChild(instance);
+            assert_array_equals(customElement.takeLog().types(), ['constructed', 'connected']);
+            instance.remove();
+            assert_array_equals(customElement.takeLog().types(), ['disconnected']);
+        });
+    }, `A custom element candidate created by innerHTML in ${entry.name} should be upgraded once adopted into a document with a definition`);
+
+    promise_test(() => {
+        return entry.create().then((doc) => {
+            assert_array_equals(customElement.takeLog().types(), []);
+            try {
+                doc.open();
+                doc.write('<!DOCTYPE html><test-element></test-element>');
+                doc.close();
+            } catch (e) {
+                // The standards mandates that all documents have document.write but in reality, no browser implements this.
+                return;
+            }
+
+            let instance = doc.querySelector('test-element');
+            assert_array_equals(customElement.takeLog().types(), []);
+            document.body.appendChild(instance);
+            assert_array_equals(customElement.takeLog().types(), ['constructed', 'connected']);
+            instance.remove();
+            assert_array_equals(customElement.takeLog().types(), ['disconnected']);
+        });
+    }, `A custom element candidate created by document.write in ${entry.name} should be upgraded once adopted into a document with a definition`);
+
+});
+
+</script>
+</body>
+</html>

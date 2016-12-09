@@ -1,3 +1,18 @@
+2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom Elements from a different document are not customized when created with innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=165617
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by a superflous null check on window in createHTMLElementOrFindCustomElementInterface.
+        Removed the nullcheck to fix the bug.
+
+        Test: fast/custom-elements/adopting-from-frameless-document.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+
 2016-12-09  Daniel Bates  <dabates@apple.com>
 
         [CSP] Policy of window opener not applied to about:blank window
