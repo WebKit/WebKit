@@ -1,3 +1,19 @@
+2016-12-09  Chris Dumez  <cdumez@apple.com>
+
+        Inline JSCell::toObject()
+        https://bugs.webkit.org/show_bug.cgi?id=165679
+
+        Reviewed by Geoffrey Garen.
+
+        Inline JSCell::toObject() as it shows on Speedometer profiles.
+
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toObjectSlow):
+        (JSC::JSCell::toObject): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::toObject):
+
 2016-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         Deploy OrdinalNumber in JSC::SourceCode

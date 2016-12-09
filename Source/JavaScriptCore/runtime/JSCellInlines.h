@@ -336,4 +336,11 @@ inline bool JSCell::isLocked() const
     return IndexingTypeLockAlgorithm::isLocked(*lock);
 }
 
+inline JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+{
+    if (isObject())
+        return jsCast<JSObject*>(const_cast<JSCell*>(this));
+    return toObjectSlow(exec, globalObject);
+}
+
 } // namespace JSC

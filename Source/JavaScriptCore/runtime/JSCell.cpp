@@ -169,14 +169,13 @@ double JSCell::toNumber(ExecState* exec) const
     return static_cast<const JSObject*>(this)->toNumber(exec);
 }
 
-JSObject* JSCell::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+JSObject* JSCell::toObjectSlow(ExecState* exec, JSGlobalObject* globalObject) const
 {
+    ASSERT(!isObject());
     if (isString())
         return static_cast<const JSString*>(this)->toObject(exec, globalObject);
-    if (isSymbol())
-        return static_cast<const Symbol*>(this)->toObject(exec, globalObject);
-    ASSERT(isObject());
-    return jsCast<JSObject*>(const_cast<JSCell*>(this));
+    ASSERT(isSymbol());
+    return static_cast<const Symbol*>(this)->toObject(exec, globalObject);
 }
 
 void slowValidateCell(JSCell* cell)

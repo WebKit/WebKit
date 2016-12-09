@@ -144,7 +144,7 @@ public:
     bool toBoolean(ExecState*) const;
     TriState pureToBoolean() const;
     JS_EXPORT_PRIVATE double toNumber(ExecState*) const;
-    JS_EXPORT_PRIVATE JSObject* toObject(ExecState*, JSGlobalObject*) const;
+    JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
     void dump(PrintStream&) const;
     JS_EXPORT_PRIVATE static void dumpToStream(const JSCell*, PrintStream&);
@@ -249,6 +249,8 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
+
+    JS_EXPORT_PRIVATE JSObject* toObjectSlow(ExecState*, JSGlobalObject*) const;
 
     StructureID m_structureID;
     IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.
