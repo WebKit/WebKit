@@ -1,3 +1,47 @@
+2016-12-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Pass Grid as argument to items' placement methods
+        https://bugs.webkit.org/show_bug.cgi?id=165250
+
+        Reviewed by Darin Adler.
+
+        In order to constify computeIntrinsicLogicalWidths() it is required to constify
+        placeItemsOnGrid() first, which is the base method of the grid items' positioning logic. The
+        first step is to constify all the methods invoked by the latter, which basically means to
+        pass the Grid as argument to all of them instead of directly using the m_grid attribute from
+        RenderGrid. As this is an intermediate step, a new const_cast<> was required in the
+        intrinsic size computation. However it will be promptly removed after the const-ification of
+        placeItemsOnGrid().
+
+        After this, only the methods used by the track sizing algorithm will directly access
+        m_grid. All those would get a reference to the Grid via GridSizingData, but that's a matter
+        of a follow up patch.
+
+        Apart from that, m_gridIsDirty was removed because it was always too confusing. It was
+        replaced by Grid's m_needsItemsPlacement which is much more concise. The clearGrid() call
+        was indeed only forcing a new placement of the grid items.
+
+        No new tests as this is a refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::Grid::setNeedsItemsPlacement): New method to flag the Grid whenever
+        grid items' placement algorithm needs to be run.
+        (WebCore::RenderGrid::canPerformSimplifiedLayout):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths):
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat):
+        (WebCore::RenderGrid::placeItemsOnGrid):
+        (WebCore::RenderGrid::populateExplicitGridAndOrderIterator): Constified. Got Grid as
+        argument.
+        (WebCore::RenderGrid::createEmptyGridAreaAtSpecifiedPositionsOutsideGrid): Ditto.
+        (WebCore::RenderGrid::placeSpecifiedMajorAxisItemsOnGrid): Ditto.
+        (WebCore::RenderGrid::placeAutoMajorAxisItemsOnGrid): Ditto.
+        (WebCore::RenderGrid::placeAutoMajorAxisItemOnGrid): Ditto.
+        (WebCore::RenderGrid::clearGrid):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::numTracks):
+        * rendering/RenderGrid.h:
+
 2016-12-09  Gavin Barraclough  <barraclough@apple.com>
 
         Revert - Add _WKIconLoadingDelegate SPI

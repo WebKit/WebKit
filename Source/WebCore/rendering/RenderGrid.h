@@ -79,6 +79,7 @@ private:
 
     std::optional<LayoutUnit> computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const override;
 
+    class Grid;
     class GridIterator;
     class GridSizingData;
     enum SizingOperation { TrackSizing, IntrinsicSizeComputation };
@@ -91,15 +92,15 @@ private:
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, SizingOperation) const;
 
     typedef ListHashSet<size_t> OrderedTrackIndexSet;
-    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(GridTrackSizingDirection) const;
+    std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
 
-    void placeItemsOnGrid(SizingOperation);
-    void populateExplicitGridAndOrderIterator();
-    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
-    void placeSpecifiedMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
-    void placeAutoMajorAxisItemsOnGrid(const Vector<RenderBox*>&);
+    void placeItemsOnGrid(Grid&, SizingOperation);
+    void populateExplicitGridAndOrderIterator(Grid&) const;
+    std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid&, const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
+    void placeSpecifiedMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
+    void placeAutoMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;
     typedef std::pair<unsigned, unsigned> AutoPlacementCursor;
-    void placeAutoMajorAxisItemOnGrid(RenderBox&, AutoPlacementCursor&);
+    void placeAutoMajorAxisItemOnGrid(Grid&, RenderBox&, AutoPlacementCursor&) const;
     GridTrackSizingDirection autoPlacementMajorAxisDirection() const;
     GridTrackSizingDirection autoPlacementMinorAxisDirection() const;
 
@@ -184,7 +185,7 @@ private:
 
     bool spanningItemCrossesFlexibleSizedTracks(const GridSpan&, GridTrackSizingDirection, SizingOperation) const;
 
-    unsigned numTracks(GridTrackSizingDirection) const;
+    unsigned numTracks(GridTrackSizingDirection, const Grid&) const;
 
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
@@ -234,12 +235,13 @@ private:
 
         OrderIterator& orderIterator() { return m_orderIterator; }
 
-        void shrinkToFit() { m_grid.shrinkToFit(); }
-
-        void clear();
+        void setNeedsItemsPlacement(bool);
+        bool needsItemsPlacement() const { return m_needsItemsPlacement; };
 
     private:
         friend class GridIterator;
+
+        void clear();
 
         OrderIterator m_orderIterator;
 
@@ -250,6 +252,7 @@ private:
         unsigned m_autoRepeatRows { 0 };
 
         bool m_hasAnyOrthogonalGridItem { false };
+        bool m_needsItemsPlacement { true };
 
         GridAsMatrix m_grid;
 
@@ -268,8 +271,6 @@ private:
 
     std::optional<LayoutUnit> m_minContentHeight;
     std::optional<LayoutUnit> m_maxContentHeight;
-
-    bool m_gridIsDirty { true };
 };
 
 } // namespace WebCore
