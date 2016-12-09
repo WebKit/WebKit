@@ -2065,17 +2065,11 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (shouldActivate) {
             console.assert(this.visible, "Annotators should not be enabled if the TextEditor is not visible");
 
-            for (let target of WebInspector.targets)
-                target.RuntimeAgent.enableTypeProfiler();
-
             this._typeTokenAnnotator.reset();
 
             if (!this._typeTokenScrollHandler)
                 this._enableScrollEventsForTypeTokenAnnotator();
         } else {
-            for (let target of WebInspector.targets)
-                target.RuntimeAgent.disableTypeProfiler();
-
             this._typeTokenAnnotator.clear();
 
             if (this._typeTokenScrollHandler)
@@ -2095,18 +2089,12 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         if (shouldActivate) {
             console.assert(this.visible, "Annotators should not be enabled if the TextEditor is not visible");
 
-            for (let target of WebInspector.targets)
-                target.RuntimeAgent.enableControlFlowProfiler();
-
             console.assert(!this._basicBlockAnnotator.isActive());
             this._basicBlockAnnotator.reset();
 
             if (!this._controlFlowScrollHandler)
                 this._enableScrollEventsForControlFlowAnnotator();
         } else {
-            for (let target of WebInspector.targets)
-                target.RuntimeAgent.disableControlFlowProfiler();
-
             this._basicBlockAnnotator.clear();
 
             if (this._controlFlowScrollHandler)

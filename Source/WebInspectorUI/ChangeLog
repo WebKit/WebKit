@@ -1,5 +1,21 @@
 2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Frontend should not be resetting TypeProfiler state when switching between ContentViews
+        https://bugs.webkit.org/show_bug.cgi?id=165648
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Update all backends when the state changes.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+        (WebInspector.SourceCodeTextEditor.prototype.set _basicBlockAnnotatorEnabled):
+        Moved this code to when the global Setting (which affects all editors) changes.
+
+2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Some resources fetched via Fetch API do not have data
         https://bugs.webkit.org/show_bug.cgi?id=165230
         <rdar://problem/29449220>

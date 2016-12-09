@@ -167,10 +167,12 @@ WebInspector.loaded = function()
 
     // COMPATIBILITY (iOS 8): Page.enableTypeProfiler did not exist.
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
+    this.showJavaScriptTypeInformationSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showJavaScriptTypeInformationSettingChanged, this);
     if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler)
         RuntimeAgent.enableTypeProfiler();
 
     this.enableControlFlowProfilerSetting = new WebInspector.Setting("enable-control-flow-profiler", false);
+    this.enableControlFlowProfilerSetting.addEventListener(WebInspector.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
     if (this.enableControlFlowProfilerSetting.value && window.RuntimeAgent && RuntimeAgent.enableControlFlowProfiler)
         RuntimeAgent.enableControlFlowProfiler();
 
@@ -2087,6 +2089,28 @@ WebInspector._showTabAtIndex = function(i, event)
 {
     if (i <= WebInspector.tabBar.tabBarItems.length)
         WebInspector.tabBar.selectedTabBarItem = i - 1;
+};
+
+WebInspector._showJavaScriptTypeInformationSettingChanged = function(event)
+{
+    if (this.showJavaScriptTypeInformationSetting.value) {
+        for (let target of WebInspector.targets)
+            target.RuntimeAgent.enableTypeProfiler();
+    } else {
+        for (let target of WebInspector.targets)
+            target.RuntimeAgent.disableTypeProfiler();
+    }
+};
+
+WebInspector._enableControlFlowProfilerSettingChanged = function(event)
+{
+    if (this.enableControlFlowProfilerSetting.value) {
+        for (let target of WebInspector.targets)
+            target.RuntimeAgent.enableControlFlowProfiler();
+    } else {
+        for (let target of WebInspector.targets)
+            target.RuntimeAgent.disableControlFlowProfiler();
+    }
 };
 
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)
