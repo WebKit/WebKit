@@ -78,6 +78,8 @@ private:
     FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
 #undef WASM_SECTION_DECLARE_PARSER
 
+    bool WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
+
     VM* m_vm;
     std::unique_ptr<ModuleInformation> m_module;
     FunctionIndexSpace m_functionIndexSpace;

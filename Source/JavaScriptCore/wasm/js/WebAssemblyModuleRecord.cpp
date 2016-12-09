@@ -79,7 +79,7 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
             break;
         }
         case Wasm::External::Memory: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
             break;
         }
         case Wasm::External::Global: {
@@ -140,7 +140,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             break;
         }
         case Wasm::External::Memory: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
             break;
         }
         case Wasm::External::Global: {

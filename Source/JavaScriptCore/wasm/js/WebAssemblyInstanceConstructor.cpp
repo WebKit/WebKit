@@ -33,6 +33,7 @@
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyInstancePrototype.h"
@@ -51,64 +52,66 @@ const ClassInfo WebAssemblyInstanceConstructor::s_info = { "Function", &Base::s_
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* exec)
 {
-    auto& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* globalObject = state->lexicalGlobalObject();
+    auto& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* globalObject = exec->lexicalGlobalObject();
 
     // If moduleObject is not a WebAssembly.Module instance, a TypeError is thrown.
-    JSWebAssemblyModule* jsModule = jsDynamicCast<JSWebAssemblyModule*>(state->argument(0));
+    JSWebAssemblyModule* jsModule = jsDynamicCast<JSWebAssemblyModule*>(exec->argument(0));
     if (!jsModule)
-        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("first argument to WebAssembly.Instance must be a WebAssembly.Module"), defaultSourceAppender, runtimeTypeForValue(state->argument(0)))));
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("first argument to WebAssembly.Instance must be a WebAssembly.Module"), defaultSourceAppender, runtimeTypeForValue(exec->argument(0)))));
     const Wasm::ModuleInformation& moduleInformation = jsModule->moduleInformation();
 
     // If the importObject parameter is not undefined and Type(importObject) is not Object, a TypeError is thrown.
-    JSValue importArgument = state->argument(1);
+    JSValue importArgument = exec->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject)
-        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("second argument to WebAssembly.Instance must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
     // If the list of module.imports is not empty and Type(importObject) is not Object, a TypeError is thrown.
     if (moduleInformation.imports.size() && !importObject)
-        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("second argument to WebAssembly.Instance must be Object because the WebAssembly.Module has imports"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("second argument to WebAssembly.Instance must be Object because the WebAssembly.Module has imports"), defaultSourceAppender, runtimeTypeForValue(importArgument))));
 
     Identifier moduleKey = Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
-    WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(state, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
-    RETURN_IF_EXCEPTION(scope, { });
+    WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(exec, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
+    RETURN_IF_EXCEPTION(throwScope, { });
 
-    Structure* instanceStructure = InternalFunction::createSubclassStructure(state, state->newTarget(), globalObject->WebAssemblyInstanceStructure());
-    RETURN_IF_EXCEPTION(scope, { });
+    Structure* instanceStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->WebAssemblyInstanceStructure());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
-    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, instanceStructure, jsModule, moduleRecord->getModuleNamespace(state), moduleInformation.imports.size());
-    RETURN_IF_EXCEPTION(scope, { });
+    JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, instanceStructure, jsModule, moduleRecord->getModuleNamespace(exec), moduleInformation.imports.size());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.
     // Let imports be an initially-empty list of external values.
     unsigned numImportFunctions = 0;
 
     // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
-    // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=164134
     // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
 
+    bool hasMemoryImport = false;
     // For each import i in module.imports:
     for (auto& import : moduleInformation.imports) {
         // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
-        JSValue importModuleValue = importObject->get(state, import.module);
-        RETURN_IF_EXCEPTION(scope, { });
+        JSValue importModuleValue = importObject->get(exec, import.module);
+        RETURN_IF_EXCEPTION(throwScope, { });
         // 2. If Type(o) is not Object, throw a TypeError.
         if (!importModuleValue.isObject())
-            return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("import must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue))));
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("import must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue))));
+
         // 3. Let v be the value of performing Get(o, i.item_name)
         JSObject* object = jsCast<JSObject*>(importModuleValue);
-        JSValue value = object->get(state, import.field);
-        RETURN_IF_EXCEPTION(scope, { });
+        JSValue value = object->get(exec, import.field);
+        RETURN_IF_EXCEPTION(throwScope, { });
+
         switch (import.kind) {
         case Wasm::External::Function: {
             // 4. If i is a function import:
             // i. If IsCallable(v) is false, throw a TypeError.
             if (!value.isFunction())
-                return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("import function must be callable"), defaultSourceAppender, runtimeTypeForValue(value))));
+                return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("import function must be callable"), defaultSourceAppender, runtimeTypeForValue(value))));
             JSCell* cell = value.asCell();
             // ii. If v is an Exported Function Exotic Object:
             if (WebAssemblyFunction* importedExports = jsDynamicCast<WebAssemblyFunction*>(object)) {
@@ -138,11 +141,34 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
         }
         case Wasm::External::Memory: {
             // 6. If i is a memory import:
-            // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=164134
+            RELEASE_ASSERT(!hasMemoryImport); // This should be guaranteed by a validation failure.
+            RELEASE_ASSERT(moduleInformation.memory);
+            hasMemoryImport = true;
+            JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(value);
             // i. If v is not a WebAssembly.Memory object, throw a TypeError.
+            if (!memory)
+                return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Memory import is not an instance of WebAssembly.Memory"))));
+
+            Wasm::PageCount expectedInitial = moduleInformation.memory.initial();
+            Wasm::PageCount actualInitial = memory->memory()->initial();
+            if (actualInitial < expectedInitial)
+                return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Memory import provided an 'initial' that is too small"))));
+
+            if (Wasm::PageCount expectedMaximum = moduleInformation.memory.maximum()) {
+                Wasm::PageCount actualMaximum = memory->memory()->maximum();
+                if (!actualMaximum) {
+                    return JSValue::encode(
+                        throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Memory import did not have a 'maximum' but the module requires that it does"))));
+                }
+
+                if (actualMaximum > expectedMaximum) {
+                    return JSValue::encode(
+                        throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Memory imports 'maximum' is larger than the module's expected 'maximum"))));
+                }
+            }
             // ii. Append v to memories.
             // iii. Append v.[[Memory]] to imports.
-            RELEASE_ASSERT_NOT_REACHED();
+            instance->setMemory(vm, memory);
             break;
         }
         case Wasm::External::Global: {
@@ -157,13 +183,28 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* st
         }
     }
 
-    moduleRecord->link(state, instance);
-    RETURN_IF_EXCEPTION(scope, { });
+    {
+        if (!!moduleInformation.memory && moduleInformation.memory.isImport()) {
+            // We should either have an import or we should have thrown an exception.
+            RELEASE_ASSERT(hasMemoryImport);
+        }
+
+        if (moduleInformation.memory && !hasMemoryImport) {
+            RELEASE_ASSERT(!moduleInformation.memory.isImport());
+            // We create a memory when it's a memory definition.
+            std::unique_ptr<Wasm::Memory> memory = std::make_unique<Wasm::Memory>(moduleInformation.memory.initial(), moduleInformation.memory.maximum());
+            instance->setMemory(vm,
+               JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));
+        }
+    }
+
+    moduleRecord->link(exec, instance);
+    RETURN_IF_EXCEPTION(throwScope, { });
     if (verbose)
         moduleRecord->dump();
-    JSValue startResult = moduleRecord->evaluate(state);
+    JSValue startResult = moduleRecord->evaluate(exec);
     UNUSED_PARAM(startResult);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     return JSValue::encode(instance);
 }

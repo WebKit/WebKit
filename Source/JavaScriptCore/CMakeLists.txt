@@ -902,6 +902,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmCallingConvention.cpp
     wasm/WasmFormat.cpp
     wasm/WasmMemory.cpp
+    wasm/WasmMemoryInformation.cpp
     wasm/WasmModuleParser.cpp
     wasm/WasmPlan.cpp
     wasm/WasmValidate.cpp

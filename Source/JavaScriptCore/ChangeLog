@@ -1,3 +1,111 @@
+2016-12-09  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly JS API: implement importing and defining Memory
+        https://bugs.webkit.org/show_bug.cgi?id=164134
+
+        Reviewed by Keith Miller.
+
+        This patch implements the WebAssembly.Memory object. It refactors
+        the code to now associate a Memory with the instance instead of
+        the Module.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * runtime/VM.h:
+        * shell/CMakeLists.txt:
+        * testWasm.cpp: Removed.
+        This has bitrotted. I'm removing it.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::sizeOfLoadOp):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::ModuleInformation::~ModuleInformation): Deleted.
+        * wasm/WasmFormat.h:
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::size):
+        (JSC::Wasm::Memory::initial):
+        (JSC::Wasm::Memory::maximum):
+        (JSC::Wasm::Memory::pinnedRegisters): Deleted.
+        * wasm/WasmMemoryInformation.cpp: Added.
+        (JSC::Wasm::MemoryInformation::MemoryInformation):
+        * wasm/WasmMemoryInformation.h: Added.
+        (JSC::Wasm::MemoryInformation::MemoryInformation):
+        (JSC::Wasm::MemoryInformation::pinnedRegisters):
+        (JSC::Wasm::MemoryInformation::initial):
+        (JSC::Wasm::MemoryInformation::maximum):
+        (JSC::Wasm::MemoryInformation::isImport):
+        (JSC::Wasm::MemoryInformation::operator bool):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseImport):
+        (JSC::Wasm::ModuleParser::parseMemoryHelper):
+        (JSC::Wasm::ModuleParser::parseMemory):
+        (JSC::Wasm::ModuleParser::parseExport):
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmPageCount.h: Added. Implement a new way of describing Wasm
+        pages and then asking for how many bytes a quantity of pages is. This
+        class also makes it clear when we're talking about bytes or pages.
+
+        (JSC::Wasm::PageCount::PageCount):
+        (JSC::Wasm::PageCount::bytes):
+        (JSC::Wasm::PageCount::isValid):
+        (JSC::Wasm::PageCount::max):
+        (JSC::Wasm::PageCount::operator bool):
+        (JSC::Wasm::PageCount::operator<):
+        (JSC::Wasm::PageCount::operator>):
+        (JSC::Wasm::PageCount::operator>=):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::run):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::memory): Deleted.
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::hasMemory):
+        (JSC::Wasm::Validate::Validate):
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+        * wasm/generateWasmValidateInlinesHeader.py:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::memory):
+        (JSC::JSWebAssemblyInstance::setMemory):
+        (JSC::JSWebAssemblyInstance::offsetOfImportFunctions):
+        (JSC::JSWebAssemblyInstance::allocationSize):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::create):
+        (JSC::JSWebAssemblyMemory::JSWebAssemblyMemory):
+        (JSC::JSWebAssemblyMemory::buffer):
+        (JSC::JSWebAssemblyMemory::visitChildren):
+        * wasm/js/JSWebAssemblyMemory.h:
+        (JSC::JSWebAssemblyMemory::memory):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        Handle importing and creating of memory according
+        to the spec. This also does the needed validation
+        of making sure the memory defined in the module
+        is compatible with the imported memory.
+
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        (JSC::callJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::webAssemblyMemoryProtoFuncBuffer):
+        (JSC::WebAssemblyMemoryPrototype::create):
+        (JSC::WebAssemblyMemoryPrototype::finishCreation):
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        (JSC::WebAssemblyModuleRecord::link):
+
 2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Some resources fetched via Fetch API do not have data

@@ -30,7 +30,11 @@
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyMemory.h"
+#include "WasmMemory.h"
+#include "WasmPageCount.h"
 #include "WebAssemblyMemoryPrototype.h"
+#include <wtf/Optional.h>
 
 #include "WebAssemblyMemoryConstructor.lut.h"
 
@@ -43,19 +47,75 @@ const ClassInfo WebAssemblyMemoryConstructor::s_info = { "Function", &Base::s_in
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec)
 {
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
-    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the Memory constructor property"))));
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    if (exec->argumentCount() != 1)
+        return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Memory expects exactly one argument"))));
+
+    auto getUint32 = [&] (JSValue value) -> uint32_t {
+        double doubleValue = value.toInteger(exec);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        if (doubleValue < 0 || doubleValue > UINT_MAX) {
+            throwException(exec, throwScope,
+                createRangeError(exec, ASCIILiteral("WebAssembly.Memory expects the 'initial' and 'maximum' properties to be integers in the range: [0, 2^32 - 1]")));
+            return 0;
+        }
+        return static_cast<uint32_t>(doubleValue);
+    };
+
+    JSObject* memoryDescriptor;
+    {
+        JSValue argument = exec->argument(0);
+        if (!argument.isObject())
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Memory expects its first argument to be an object"))));
+        memoryDescriptor = jsCast<JSObject*>(argument);
+    }
+
+    Wasm::PageCount initialPageCount;
+    {
+        Identifier initial = Identifier::fromString(&vm, "initial");
+        JSValue minSizeValue = memoryDescriptor->get(exec, initial);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        uint32_t size = getUint32(minSizeValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        if (!Wasm::PageCount::isValid(size))
+            return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory 'initial' page count is too large"))));
+        initialPageCount = Wasm::PageCount(size);
+    }
+
+    Wasm::PageCount maximumPageCount;
+    {
+        Identifier maximum = Identifier::fromString(&vm, "maximum");
+        bool hasProperty = memoryDescriptor->hasProperty(exec, maximum);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        if (hasProperty) {
+            JSValue maxSizeValue = memoryDescriptor->get(exec, maximum);
+            RETURN_IF_EXCEPTION(throwScope, { });
+            uint32_t size = getUint32(maxSizeValue);
+            if (!Wasm::PageCount::isValid(size))
+                return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory 'maximum' page count is too large"))));
+            RETURN_IF_EXCEPTION(throwScope, { });
+            maximumPageCount = Wasm::PageCount(size);
+
+            if (initialPageCount > maximumPageCount) {
+                return JSValue::encode(throwException(exec, throwScope,
+                    createRangeError(exec, ASCIILiteral("'maximum' page count must be than greater than or equal to the 'initial' page count"))));
+            }
+        }
+    }
+
+    std::unique_ptr<Wasm::Memory> memory = std::make_unique<Wasm::Memory>(initialPageCount, maximumPageCount);
+
+    return JSValue::encode(JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyMemory(ExecState* state)
 {
     VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Memory"));
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, throwScope, "WebAssembly.Memory"));
 }
 
 WebAssemblyMemoryConstructor* WebAssemblyMemoryConstructor::create(VM& vm, Structure* structure, WebAssemblyMemoryPrototype* thisPrototype)

@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
+#include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
 #include <wtf/StdLibExtras.h>
 
@@ -78,6 +79,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_module);
     visitor.append(&thisObject->m_moduleNamespaceObject);
+    visitor.append(&thisObject->m_memory);
     for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
         visitor.append(thisObject->importFunction(i));
 }

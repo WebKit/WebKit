@@ -75,8 +75,7 @@ for (const c in constructorProperties) {
         // assert.eq(Symbol.toStringTag in instance.exports, true);
         break;
     case "Memory":
-        // FIXME Implement and test these APIs further. For now they just throw. https://bugs.webkit.org/show_bug.cgi?id=159775
-        assert.throws(() => new WebAssembly[c](), Error, `WebAssembly doesn't yet implement the ${c} constructor property`);
+        new WebAssembly.Memory({initial: 20});
         break;
     case "Table":
         // FIXME Implement and test these APIs further. For now they just throw. https://bugs.webkit.org/show_bug.cgi?id=159775

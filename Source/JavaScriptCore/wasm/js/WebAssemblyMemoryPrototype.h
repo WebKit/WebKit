@@ -43,7 +43,7 @@ public:
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 
 private:
     WebAssemblyMemoryPrototype(VM&, Structure*);

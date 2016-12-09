@@ -23,21 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmMemoryInformation.h"
+
+#include "WasmCallingConvention.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
-#include "VM.h"
-#include "WasmFormat.h"
-
-extern "C" void dumpProcedure(void*);
-
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum,  const Vector<unsigned>& pinnedSizeRegisters, bool isImport)
+    : m_initial(initial)
+    , m_maximum(maximum)
+    , m_isImport(isImport)
+{
+    RELEASE_ASSERT(!!m_initial);
+    RELEASE_ASSERT(!m_maximum || m_maximum >= m_initial);
+    ASSERT(!!*this);
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM&, const uint8_t*, size_t, MemoryInformation&, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const FunctionIndexSpace&, unsigned optLevel = 1);
+    unsigned remainingPinnedRegisters = pinnedSizeRegisters.size() + 1;
+    jscCallingConvention().m_calleeSaveRegisters.forEach([&] (Reg reg) {
+        GPRReg gpr = reg.gpr();
+        if (!remainingPinnedRegisters || RegisterSet::stackRegisters().get(reg))
+            return;
+        if (remainingPinnedRegisters == 1) {
+            m_pinnedRegisters.baseMemoryPointer = gpr;
+            remainingPinnedRegisters--;
+        } else
+            m_pinnedRegisters.sizeRegisters.append({ gpr, pinnedSizeRegisters[--remainingPinnedRegisters - 1] });
+    });
+
+    ASSERT(!remainingPinnedRegisters);
+}
 
 } } // namespace JSC::Wasm
 

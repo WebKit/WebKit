@@ -27,18 +27,48 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
-#include "VM.h"
-#include "WasmFormat.h"
-
-extern "C" void dumpProcedure(void*);
+#include "GPRInfo.h"
+#include "WasmPageCount.h"
+#include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+struct PinnedSizeRegisterInfo {
+    GPRReg sizeRegister;
+    unsigned sizeOffset;
+};
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM&, const uint8_t*, size_t, MemoryInformation&, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const FunctionIndexSpace&, unsigned optLevel = 1);
+// FIXME: We should support more than one memory size register. Right now we take a vector with only one
+// entry. Specifically an entry where the sizeOffset == 0. If we have more than one size register,
+// we can have one for each load size class. see: https://bugs.webkit.org/show_bug.cgi?id=162952
+struct PinnedRegisterInfo {
+    Vector<PinnedSizeRegisterInfo> sizeRegisters;
+    GPRReg baseMemoryPointer;
+};
+
+class MemoryInformation {
+public:
+    MemoryInformation()
+    {
+        ASSERT(!*this);
+    }
+
+    MemoryInformation(PageCount initial, PageCount maximum, const Vector<unsigned>& pinnedSizeRegisters, bool isImport);
+
+    const PinnedRegisterInfo& pinnedRegisters() const { return m_pinnedRegisters; }
+    PageCount initial() const { return m_initial; }
+    PageCount maximum() const { return m_maximum; }
+    bool isImport() const { return m_isImport; }
+
+    explicit operator bool() const { return !!m_initial; }
+
+private:
+    PageCount m_initial { };
+    PageCount m_maximum { };
+    PinnedRegisterInfo m_pinnedRegisters { };
+    bool m_isImport { false };
+};
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WASM)

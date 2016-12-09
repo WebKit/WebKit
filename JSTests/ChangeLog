@@ -1,3 +1,35 @@
+2016-12-09  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly JS API: implement importing and defining Memory
+        https://bugs.webkit.org/show_bug.cgi?id=164134
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (const._importMemoryContinuation.section):
+        (const._importMemoryContinuation.assert):
+        (const._importMemoryContinuation):
+        (const._exportFunctionContinuation.const): Deleted.
+        (const._exportFunctionContinuation): Deleted.
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Import):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+        * wasm/js-api/test_memory.js: Added.
+        (assert):
+        (binaryShouldNotParse):
+        (test):
+        (test.testMemImportError):
+        * wasm/js-api/test_memory_constructor.js: Added.
+        (assert):
+        (throw.new.Error):
+        (testInvalidSize):
+        (assert.testInvalidInitial):
+        (testInvalidInitial.testInvalidMaximum):
+        (testInvalidInitial):
+        (testInvalidMaximum):
+        * wasm/self-test/test_BuilderJSON.js:
+
 2016-12-08  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: JSC::link* shouldn't need a CodeBlock

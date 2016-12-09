@@ -28,26 +28,11 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCallingConvention.h"
+#include "WasmPageCount.h"
 
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
-
-struct PinnedSizeRegisterInfo {
-    GPRReg sizeRegister;
-    unsigned sizeOffset;
-};
-
-// FIXME: We should support more than one memory size register. Right now we take a vector with only one
-// entry. Specifically an entry where the sizeOffset == 0. If we have more than one size register,
-// we can have one for each load size class. see: https://bugs.webkit.org/show_bug.cgi?id=162952
-struct PinnedRegisterInfo {
-    Vector<PinnedSizeRegisterInfo> sizeRegisters;
-    GPRReg baseMemoryPointer;
-};
-
-constexpr uint32_t pageSize = 64 * KB;
-constexpr uint32_t maxPageCount = static_cast<uint32_t>((1ull << 32) / pageSize);
 
 class Memory {
     WTF_MAKE_NONCOPYABLE(Memory);
@@ -59,8 +44,7 @@ public:
         BoundsChecking
     };
 
-    Memory() = default;
-    Memory(uint32_t startingSize, uint32_t capacity, const Vector<unsigned>& pinnedSizeRegisters);
+    JS_EXPORT_PRIVATE Memory(PageCount initial, PageCount maximum);
 
     ~Memory()
     {
@@ -70,9 +54,11 @@ public:
 
     void* memory() const { return m_memory; }
     uint32_t size() const { return m_size; }
-    const PinnedRegisterInfo& pinnedRegisters() const { return m_pinnedRegisters; }
 
     Mode mode() const { return m_mode; }
+
+    PageCount initial() const { return m_initial; }
+    PageCount maximum() const { return m_maximum; }
 
     bool grow(uint32_t newSize)
     {
@@ -84,13 +70,15 @@ public:
     }
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Memory, m_size); }
+
     
 private:
     void* m_memory { nullptr };
-    PinnedRegisterInfo m_pinnedRegisters;
     Mode m_mode;
     uint32_t m_size { 0 };
     uint32_t m_capacity { 0 };
+    PageCount m_initial;
+    PageCount m_maximum;
     uint64_t m_mappedCapacity { 0 };
 };
 

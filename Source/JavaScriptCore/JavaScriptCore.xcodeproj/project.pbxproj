@@ -25,7 +25,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				539EB0831D5560F400C82EF7 /* PBXTargetDependency */,
 				0F6183471C45F67A0072450B /* PBXTargetDependency */,
 				0F93275D1C20BF3A00CF6564 /* PBXTargetDependency */,
 				0FEC85B11BDB5D8F0080FF74 /* PBXTargetDependency */,
@@ -1287,9 +1286,6 @@
 		5370B4F51BF26202005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5370B4F31BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.cpp */; };
 		5370B4F61BF26205005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5370B4F41BF25EA2005C40FC /* AdaptiveInferredPropertyValueWatchpointBase.h */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
-		539EB0791D55607000C82EF7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
-		539EB07A1D55607000C82EF7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
-		539EB0811D55608A00C82EF7 /* testWasm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB0711D553DF800C82EF7 /* testWasm.cpp */; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
 		53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */; };
 		53D444DE1DAF09A000B92784 /* B3WasmAddressValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */; };
@@ -1429,6 +1425,9 @@
 		79B00CBE1C6AB07E0088C65D /* ProxyObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79B00CBA1C6AB07E0088C65D /* ProxyObject.cpp */; settings = {COMPILER_FLAGS = "-fno-optimize-sibling-calls"; }; };
 		79B00CBF1C6AB07E0088C65D /* ProxyObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B00CBB1C6AB07E0088C65D /* ProxyObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79B1788E1D399B8000B1A567 /* JITMathICForwards.h in Headers */ = {isa = PBXBuildFile; fileRef = 79A899FE1D38612E00D18C73 /* JITMathICForwards.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		79B759741DFA4C600052174C /* WasmMemoryInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79B759711DFA4C600052174C /* WasmMemoryInformation.cpp */; };
+		79B759751DFA4C600052174C /* WasmMemoryInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B759721DFA4C600052174C /* WasmMemoryInformation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		79B759761DFA4C600052174C /* WasmPageCount.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B759731DFA4C600052174C /* WasmPageCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79B819931DD25CF500DDC714 /* JSGlobalObjectInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 79B819921DD25CF500DDC714 /* JSGlobalObjectInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79C4B15D1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */; };
 		79C4B15E1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2378,13 +2377,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0F4680A914BA7FD900BFE272;
 			remoteInfo = "LLInt Offsets";
-		};
-		539EB0821D5560F400C82EF7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 539EB0751D55607000C82EF7;
-			remoteInfo = testWASM;
 		};
 		5D69E911152BE5470028D720 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3683,7 +3675,6 @@
 		53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArrayViewPrototype.h; sourceTree = "<group>"; };
 		53917E831B791CB8000EBD33 /* TypedArrayPrototype.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = TypedArrayPrototype.js; path = builtins/TypedArrayPrototype.js; sourceTree = SOURCE_ROOT; };
 		539EB0711D553DF800C82EF7 /* testWasm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testWasm.cpp; sourceTree = "<group>"; };
-		539EB0801D55607000C82EF7 /* testWASM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testWASM; sourceTree = BUILT_PRODUCTS_DIR; };
 		539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayInlines.h; sourceTree = "<group>"; };
 		53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmAddressValue.h; path = b3/B3WasmAddressValue.h; sourceTree = "<group>"; };
 		53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmAddressValue.cpp; path = b3/B3WasmAddressValue.cpp; sourceTree = "<group>"; };
@@ -3860,6 +3851,9 @@
 		79B00CB91C6AB07E0088C65D /* ProxyConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyConstructor.h; sourceTree = "<group>"; };
 		79B00CBA1C6AB07E0088C65D /* ProxyObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyObject.cpp; sourceTree = "<group>"; };
 		79B00CBB1C6AB07E0088C65D /* ProxyObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyObject.h; sourceTree = "<group>"; };
+		79B759711DFA4C600052174C /* WasmMemoryInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmMemoryInformation.cpp; sourceTree = "<group>"; };
+		79B759721DFA4C600052174C /* WasmMemoryInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmMemoryInformation.h; sourceTree = "<group>"; };
+		79B759731DFA4C600052174C /* WasmPageCount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmPageCount.h; sourceTree = "<group>"; };
 		79B819921DD25CF500DDC714 /* JSGlobalObjectInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectInlines.h; sourceTree = "<group>"; };
 		79C4B15B1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLiveCatchVariablePreservationPhase.cpp; path = dfg/DFGLiveCatchVariablePreservationPhase.cpp; sourceTree = "<group>"; };
 		79C4B15C1BA2158F00FD592E /* DFGLiveCatchVariablePreservationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLiveCatchVariablePreservationPhase.h; path = dfg/DFGLiveCatchVariablePreservationPhase.h; sourceTree = "<group>"; };
@@ -4911,15 +4905,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		539EB0781D55607000C82EF7 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				539EB0791D55607000C82EF7 /* Foundation.framework in Frameworks */,
-				539EB07A1D55607000C82EF7 /* JavaScriptCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		651122FC14046A4C002B101D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4967,7 +4952,6 @@
 				6511230514046A4C002B101D /* testRegExp */,
 				0F9327591C20BCBA00CF6564 /* dynbench */,
 				0F6183431C45F62A0072450B /* testair */,
-				539EB0801D55607000C82EF7 /* testWASM */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6024,8 +6008,11 @@
 				53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */,
 				535557151D9DFA32006D583B /* WasmMemory.cpp */,
 				535557131D9D9EA5006D583B /* WasmMemory.h */,
+				79B759711DFA4C600052174C /* WasmMemoryInformation.cpp */,
+				79B759721DFA4C600052174C /* WasmMemoryInformation.h */,
 				53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */,
 				53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */,
+				79B759731DFA4C600052174C /* WasmPageCount.h */,
 				53F40E8C1D5901F20099A1B6 /* WasmParser.h */,
 				531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */,
 				531374BC1D5CE67600AF7A0B /* WasmPlan.h */,
@@ -7983,6 +7970,7 @@
 				0F18D3D01B55A6E0002C5C9F /* DFGAdaptiveStructureWatchpoint.h in Headers */,
 				998ED6751BED768C00DD8017 /* RemoteControllableTarget.h in Headers */,
 				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
+				79B759761DFA4C600052174C /* WasmPageCount.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
@@ -8222,6 +8210,7 @@
 				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
 				BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */,
 				996B731B1BDA08D100331B84 /* ErrorPrototype.lut.h in Headers */,
+				79B759751DFA4C600052174C /* WasmMemoryInformation.h in Headers */,
 				969A07980ED1D3AE00F1F681 /* DirectEvalCodeCache.h in Headers */,
 				A54982041891D0B00081E5B8 /* EventLoop.h in Headers */,
 				FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */,
@@ -9146,22 +9135,6 @@
 			productReference = 14BD59BF0A3E8F9000BAF59C /* testapi */;
 			productType = "com.apple.product-type.tool";
 		};
-		539EB0751D55607000C82EF7 /* testWASM */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 539EB07B1D55607000C82EF7 /* Build configuration list for PBXNativeTarget "testWASM" */;
-			buildPhases = (
-				539EB0761D55607000C82EF7 /* Sources */,
-				539EB0781D55607000C82EF7 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = testWASM;
-			productName = testapi;
-			productReference = 539EB0801D55607000C82EF7 /* testWASM */;
-			productType = "com.apple.product-type.tool";
-		};
 		651122F714046A4C002B101D /* testRegExp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6511230014046A4C002B101D /* Build configuration list for PBXNativeTarget "testRegExp" */;
@@ -9263,7 +9236,6 @@
 				5D6B2A47152B9E17005231DE /* Test Tools */,
 				0F93274E1C20BCBA00CF6564 /* dynbench */,
 				0F6183381C45F62A0072450B /* testair */,
-				539EB0751D55607000C82EF7 /* testWASM */,
 			);
 		};
 /* End PBXProject section */
@@ -9534,14 +9506,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		539EB0761D55607000C82EF7 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				539EB0811D55608A00C82EF7 /* testWasm.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		651122FA14046A4C002B101D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -9647,6 +9611,7 @@
 				C2FCAE1017A9C24E0034C735 /* BytecodeBasicBlock.cpp in Sources */,
 				148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */,
 				7094C4DE1AE439530041A2EE /* BytecodeIntrinsicRegistry.cpp in Sources */,
+				79B759741DFA4C600052174C /* WasmMemoryInformation.cpp in Sources */,
 				C2FCAE1217A9C24E0034C735 /* BytecodeLivenessAnalysis.cpp in Sources */,
 				0F338E0D1BF0276C0013C88F /* B3DataSection.cpp in Sources */,
 				65B8392F1BACAD6A0044E824 /* CachedRecovery.cpp in Sources */,
@@ -10471,11 +10436,6 @@
 			target = 0F4680A914BA7FD900BFE272 /* LLInt Offsets */;
 			targetProxy = 0FF922D214F46B2F0041A24E /* PBXContainerItemProxy */;
 		};
-		539EB0831D5560F400C82EF7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 539EB0751D55607000C82EF7 /* testWASM */;
-			targetProxy = 539EB0821D5560F400C82EF7 /* PBXContainerItemProxy */;
-		};
 		5D69E912152BE5470028D720 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 932F5BDA0822A1C700736975 /* jsc */;
@@ -10811,38 +10771,6 @@
 			};
 			name = Production;
 		};
-		539EB07C1D55607000C82EF7 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		539EB07D1D55607000C82EF7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		539EB07E1D55607000C82EF7 /* Profiling */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Profiling;
-		};
-		539EB07F1D55607000C82EF7 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
-		};
 		5D6B2A48152B9E17005231DE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11130,17 +11058,6 @@
 				14BD59D80A3E8FC900BAF59C /* Release */,
 				A76148420E6402F700E357FA /* Profiling */,
 				14BD59D90A3E8FC900BAF59C /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		539EB07B1D55607000C82EF7 /* Build configuration list for PBXNativeTarget "testWASM" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				539EB07C1D55607000C82EF7 /* Debug */,
-				539EB07D1D55607000C82EF7 /* Release */,
-				539EB07E1D55607000C82EF7 /* Profiling */,
-				539EB07F1D55607000C82EF7 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

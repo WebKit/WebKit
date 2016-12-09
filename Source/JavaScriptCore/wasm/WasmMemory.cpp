@@ -30,15 +30,17 @@
 
 namespace JSC { namespace Wasm {
 
-Memory::Memory(uint32_t startingSize, uint32_t capacity, const Vector<unsigned>& pinnedSizeRegisters)
+Memory::Memory(PageCount initial, PageCount maximum)
     : m_mode(Mode::BoundsChecking)
-    , m_size(startingSize)
-    , m_capacity(capacity)
+    , m_size(initial.bytes())
+    , m_capacity(maximum ? maximum.bytes() : PageCount::max().bytes())
+    , m_initial(initial)
+    , m_maximum(maximum)
     // FIXME: If we add signal based bounds checking then we need extra space for overflow on load.
     // see: https://bugs.webkit.org/show_bug.cgi?id=162693
-    , m_mappedCapacity(static_cast<uint64_t>(maxPageCount) * static_cast<uint64_t>(pageSize))
+    , m_mappedCapacity(PageCount::max().bytes())
 {
-    ASSERT(pinnedSizeRegisters.size() > 0);
+    RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
 
     // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
     void* result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
@@ -50,25 +52,12 @@ Memory::Memory(uint32_t startingSize, uint32_t capacity, const Vector<unsigned>&
             return;
     }
 
-    ASSERT(startingSize <= m_mappedCapacity);
-    if (mprotect(result, startingSize, PROT_READ | PROT_WRITE)) {
+    ASSERT(m_size <= m_mappedCapacity);
+    if (mprotect(result, m_size, PROT_READ | PROT_WRITE)) {
         munmap(result, m_mappedCapacity);
         return;
     }
 
-    unsigned remainingPinnedRegisters = pinnedSizeRegisters.size() + 1;
-    jscCallingConvention().m_calleeSaveRegisters.forEach([&] (Reg reg) {
-        GPRReg gpr = reg.gpr();
-        if (!remainingPinnedRegisters || RegisterSet::stackRegisters().get(reg))
-            return;
-        if (remainingPinnedRegisters == 1) {
-            m_pinnedRegisters.baseMemoryPointer = gpr;
-            remainingPinnedRegisters--;
-        } else
-            m_pinnedRegisters.sizeRegisters.append({ gpr, pinnedSizeRegisters[--remainingPinnedRegisters - 1] });
-    });
-
-    ASSERT(!remainingPinnedRegisters);
     m_memory = result;
 }
 

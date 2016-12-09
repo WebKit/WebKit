@@ -32,7 +32,9 @@
 #include "CodeLocation.h"
 #include "Identifier.h"
 #include "MacroAssemblerCodeRef.h"
+#include "WasmMemoryInformation.h"
 #include "WasmOps.h"
+#include "WasmPageCount.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -95,15 +97,13 @@ struct Import {
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
-class Memory;
-
 struct Export {
     Identifier field;
     External::Kind kind;
     union {
         uint32_t functionIndex;
         // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
-        // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=164134
+        // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=165671
         // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
     };
 };
@@ -119,13 +119,10 @@ struct ModuleInformation {
     Vector<Import> imports;
     Vector<Signature*> importFunctions;
     // FIXME implement import Table https://bugs.webkit.org/show_bug.cgi?id=164135
-    // FIXME implement import Memory https://bugs.webkit.org/show_bug.cgi?id=164134
     // FIXME implement import Global https://bugs.webkit.org/show_bug.cgi?id=164133
     Vector<Signature*> internalFunctionSignatures;
-    std::unique_ptr<Memory> memory;
+    MemoryInformation memory;
     Vector<Export> exports;
-
-    ~ModuleInformation();
 };
 
 struct UnlinkedWasmToWasmCall {

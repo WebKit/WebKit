@@ -143,6 +143,9 @@ namespace JSC { namespace Wasm {
 
 bool Validate::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t)
 {
+    if (!hasMemory())
+        return false;
+
     switch (op) {
 """ + loadCases + """
     }
@@ -150,6 +153,9 @@ bool Validate::load(LoadOpType op, ExpressionType pointer, ExpressionType& resul
 
 bool Validate::store(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t)
 {
+    if (!hasMemory())
+        return false;
+
     switch (op) {
 """ + storeCases + """
     }

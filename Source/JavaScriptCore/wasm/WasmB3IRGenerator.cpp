@@ -130,7 +130,7 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(Memory*, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&);
+    B3IRGenerator(MemoryInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&);
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
     bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -179,7 +179,6 @@ private:
     void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
     Value* zeroForType(Type);
 
-    Memory* m_memory;
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
@@ -189,9 +188,8 @@ private:
     Value* m_zeroValues[numTypes];
 };
 
-B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
-    : m_memory(memory)
-    , m_proc(procedure)
+B3IRGenerator::B3IRGenerator(MemoryInformation& memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
+    : m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
 {
     m_currentBlock = m_proc.addBlock();
@@ -210,12 +208,12 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, WasmInternalF
         }
     }
 
-    if (m_memory) {
-        m_memoryBaseGPR = m_memory->pinnedRegisters().baseMemoryPointer;
+    if (!!memory) {
+        m_memoryBaseGPR = memory.pinnedRegisters().baseMemoryPointer;
         m_proc.pinRegister(m_memoryBaseGPR);
-        ASSERT(!m_memory->pinnedRegisters().sizeRegisters[0].sizeOffset);
-        m_memorySizeGPR = m_memory->pinnedRegisters().sizeRegisters[0].sizeRegister;
-        for (const PinnedSizeRegisterInfo& info : m_memory->pinnedRegisters().sizeRegisters)
+        ASSERT(!memory.pinnedRegisters().sizeRegisters[0].sizeOffset);
+        m_memorySizeGPR = memory.pinnedRegisters().sizeRegisters[0].sizeRegister;
+        for (const PinnedSizeRegisterInfo& info : memory.pinnedRegisters().sizeRegisters)
             m_proc.pinRegister(info.sizeRegister);
 
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
@@ -302,13 +300,13 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
     case LoadOpType::I32Load:
     case LoadOpType::I64Load32S:
     case LoadOpType::I64Load32U:
+    case LoadOpType::F32Load:
         return 4;
     case LoadOpType::I64Load:
+    case LoadOpType::F64Load:
         return 8;
     case LoadOpType::I32Load16U:
     case LoadOpType::I64Load16U:
-    case LoadOpType::F32Load:
-    case LoadOpType::F64Load:
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -659,7 +657,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn("\n");
 }
 
-static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, Memory* memory)
+static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, MemoryInformation& memory)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
@@ -681,12 +679,13 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signatur
     // Move memory values to the approriate places, if needed.
     Value* baseMemory = nullptr;
     Vector<Value*> sizes;
-    if (memory) {
-        baseMemory = block->appendNew<ConstPtrValue>(proc, Origin(), memory->memory());
+    if (!!memory) {
+        baseMemory = block->appendNew<MemoryValue>(proc, Load, Int64, Origin(),
+            block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topWasmMemoryPointer));
         Value* size = block->appendNew<MemoryValue>(proc, Load, Int32, Origin(),
-            block->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<char*>(memory) + Memory::offsetOfSize()));
-        sizes.reserveCapacity(memory->pinnedRegisters().sizeRegisters.size());
-        for (auto info : memory->pinnedRegisters().sizeRegisters) {
+            block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topWasmMemorySize));
+        sizes.reserveCapacity(memory.pinnedRegisters().sizeRegisters.size());
+        for (auto info : memory.pinnedRegisters().sizeRegisters) {
             sizes.append(block->appendNew<Value>(proc, Sub, Origin(), size,
                 block->appendNew<Const32Value>(proc, Origin(), info.sizeOffset)));
         }
@@ -700,11 +699,11 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signatur
 
     // Move the arguments into place.
     Value* result = wasmCallingConvention().setupCall(proc, block, Origin(), arguments, toB3Type(signature->returnType), [&] (PatchpointValue* patchpoint) {
-        if (memory) {
-            ASSERT(sizes.size() == memory->pinnedRegisters().sizeRegisters.size());
-            patchpoint->append(ConstrainedValue(baseMemory, ValueRep::reg(memory->pinnedRegisters().baseMemoryPointer)));
+        if (!!memory) {
+            ASSERT(sizes.size() == memory.pinnedRegisters().sizeRegisters.size());
+            patchpoint->append(ConstrainedValue(baseMemory, ValueRep::reg(memory.pinnedRegisters().baseMemoryPointer)));
             for (unsigned i = 0; i < sizes.size(); ++i)
-                patchpoint->append(ConstrainedValue(sizes[i], ValueRep::reg(memory->pinnedRegisters().sizeRegisters[i].sizeRegister)));
+                patchpoint->append(ConstrainedValue(sizes[i], ValueRep::reg(memory.pinnedRegisters().sizeRegisters[i].sizeRegister)));
         }
 
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
@@ -738,7 +737,7 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signatur
     return std::make_unique<Compilation>(vm, proc);
 }
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, Memory* memory, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const FunctionIndexSpace& functionIndexSpace, unsigned optLevel)
+std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, MemoryInformation& memory, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const FunctionIndexSpace& functionIndexSpace, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 

@@ -27,18 +27,49 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
-#include "VM.h"
-#include "WasmFormat.h"
-
-extern "C" void dumpProcedure(void*);
-
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+class PageCount {
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM&, const uint8_t*, size_t, MemoryInformation&, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const FunctionIndexSpace&, unsigned optLevel = 1);
+public:
+    PageCount()
+        : m_pageCount(UINT_MAX)
+    {
+        static_assert(maxPageCount < UINT_MAX, "We rely on this here.");
+    }
+
+    PageCount(uint32_t pageCount)
+        : m_pageCount(pageCount)
+    { }
+
+    size_t bytes() { return m_pageCount * pageSize; }
+
+    static bool isValid(uint32_t pageCount)
+    {
+        return pageCount <= maxPageCount;
+    }
+
+    static PageCount max()
+    {
+        return PageCount(maxPageCount);
+    }
+
+    explicit operator bool() const
+    {
+        return m_pageCount != UINT_MAX;
+    }
+
+    bool operator<(const PageCount& other) const { return m_pageCount < other.m_pageCount; }
+    bool operator>(const PageCount& other) const { return m_pageCount > other.m_pageCount; }
+    bool operator>=(const PageCount& other) const { return m_pageCount >= other.m_pageCount; }
+
+private:
+    static constexpr uint32_t pageSize = 64 * KB;
+    static constexpr uint32_t maxPageCount = static_cast<uint32_t>((1ull << 32) / pageSize);
+
+    uint32_t m_pageCount;
+};
 
 } } // namespace JSC::Wasm
 
-#endif // ENABLE(WEBASSEMBLY)
+#endif // ENABLE(WASM)

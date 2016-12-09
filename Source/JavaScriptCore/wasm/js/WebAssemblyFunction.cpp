@@ -34,10 +34,12 @@
 #include "JSObject.h"
 #include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyMemory.h"
 #include "LLIntThunks.h"
 #include "ProtoCallFrame.h"
 #include "VM.h"
 #include "WasmFormat.h"
+#include "WasmMemory.h"
 
 namespace JSC {
 
@@ -88,6 +90,16 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         firstArgument = *remainingArgs;
         remainingArgs++;
         argCount = boxedArgs.size();
+    }
+
+    // Setup the memory that the entrance loads.
+    if (JSWebAssemblyMemory* memory = wasmFunction->instance()->memory()) {
+        Wasm::Memory* wasmMemory = memory->memory();
+        vm.topWasmMemoryPointer = wasmMemory->memory();
+        vm.topWasmMemorySize = wasmMemory->size();
+    } else {
+        vm.topWasmMemoryPointer = nullptr;
+        vm.topWasmMemorySize = 0;
     }
 
     // Note: we specifically use the WebAsseblyFunction as the callee to begin with in the ProtoCallFrame.

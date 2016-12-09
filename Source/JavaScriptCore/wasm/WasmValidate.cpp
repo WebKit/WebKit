@@ -115,10 +115,13 @@ public:
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
+    bool hasMemory() const { return !!m_memory; }
+
     void setErrorMessage(String&& message) { ASSERT(m_errorMessage.isNull()); m_errorMessage = WTFMove(message); }
     String errorMessage() const { return m_errorMessage; }
-    Validate(ExpressionType returnType)
+    Validate(ExpressionType returnType, const MemoryInformation& memory)
         : m_returnType(returnType)
+        , m_memory(memory)
     {
     }
 
@@ -131,6 +134,7 @@ private:
     ExpressionType m_returnType;
     Vector<Type> m_locals;
     String m_errorMessage;
+    const MemoryInformation& m_memory;
 };
 
 bool Validate::addArguments(const Vector<Type>& args)
@@ -367,9 +371,9 @@ void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
     // Think of this as penance for the sin of bad error messages.
 }
 
-String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const FunctionIndexSpace& functionIndexSpace)
+String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const FunctionIndexSpace& functionIndexSpace, const MemoryInformation& memory)
 {
-    Validate context(signature->returnType);
+    Validate context(signature->returnType, memory);
     FunctionParser<Validate> validator(context, source, length, signature, functionIndexSpace);
     if (!validator.parse()) {
         // FIXME: add better location information here. see: https://bugs.webkit.org/show_bug.cgi?id=164288

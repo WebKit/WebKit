@@ -69,6 +69,7 @@
 #include "TestRunnerUtils.h"
 #include "TypeProfilerLog.h"
 #include "WasmPlan.h"
+#include "WasmMemory.h"
 #include <locale.h>
 #include <math.h>
 #include <stdio.h>
@@ -2631,6 +2632,19 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
                 lastIndex = calleeIndex;
             });
     }
+
+    void* memoryBytes = nullptr;
+    uint32_t memorySize = 0;
+    std::unique_ptr<Wasm::Memory> memory;
+    std::unique_ptr<Wasm::ModuleInformation> moduleInformation = plan.takeModuleInformation();
+
+    if (!!moduleInformation->memory) {
+        memory = std::make_unique<Wasm::Memory>(moduleInformation->memory.initial(), moduleInformation->memory.maximum());
+        memoryBytes = memory->memory();
+        memorySize = memory->size();
+    }
+    vm.topWasmMemoryPointer = memoryBytes;
+    vm.topWasmMemorySize = memorySize;
 
     for (uint32_t i = 0; i < functionCount; ++i) {
         JSArray* testCases = jsCast<JSArray*>(exec->argument(i + 2));

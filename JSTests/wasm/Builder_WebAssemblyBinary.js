@@ -53,9 +53,29 @@ const emitters = {
             put(bin, "uint8", WASM.externalKindValue[entry.kind]);
             switch (entry.kind) {
             default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
-            case "Function": put(bin, "varuint32", entry.type); break;
+            case "Function": {
+                put(bin, "varuint32", entry.type);
+                break;
+            }
             case "Table": throw new Error(`Not yet implemented`);
-            case "Memory": throw new Error(`Not yet implemented`);
+            case "Memory": {
+                let {initial, maximum} = entry.memoryDescription;
+                assert.truthy(typeof initial === "number", "We expect 'initial' to be a number");
+                initial |= 0;
+                let hasMaximum = 0;
+                if (typeof maximum === "number") {
+                    maximum |= 0;
+                    hasMaximum = 1;
+                } else {
+                    assert.truthy(typeof maximum === "undefined", "We expect 'maximum' to be a number if it's defined");
+                }
+
+                put(bin, "varuint1", hasMaximum);
+                put(bin, "varuint32", initial);
+                if (hasMaximum)
+                    put(bin, "varuint32", maximum);
+                break;
+            };
             case "Global": throw new Error(`Not yet implemented`);
             }
         }

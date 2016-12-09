@@ -569,4 +569,23 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(j.section[1].data[0].code[3].name, "select");
 })();
 
+(function MemoryImport() {
+    const builder = (new Builder())
+        .Type().End()
+        .Import()
+            .Memory("__module__", "__field__", {initial: 30, maximum: 31})
+        .End()
+        .Code().End();
+
+    const json = JSON.parse(builder.json());
+    assert.eq(json.section.length, 3);
+    assert.eq(json.section[1].name, "Import");
+    assert.eq(json.section[1].data.length, 1);
+    assert.eq(json.section[1].data[0].module, "__module__");
+    assert.eq(json.section[1].data[0].field, "__field__");
+    assert.eq(json.section[1].data[0].kind, "Memory");
+    assert.eq(json.section[1].data[0].memoryDescription.initial, 30);
+    assert.eq(json.section[1].data[0].memoryDescription.maximum, 31);
+})();
+
 // FIXME test type mismatch with select. https://bugs.webkit.org/show_bug.cgi?id=163267

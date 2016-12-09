@@ -296,6 +296,8 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=160441
     ExecState* topCallFrame;
     JSWebAssemblyInstance* topJSWebAssemblyInstance;
+    void* topWasmMemoryPointer;
+    uint32_t topWasmMemorySize;
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
     Strong<Structure> terminatedExecutionErrorStructure;

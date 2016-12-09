@@ -102,6 +102,15 @@ const _importFunctionContinuation = (builder, section, nextBuilder) => {
     };
 };
 
+const _importMemoryContinuation = (builder, section, nextBuilder) => {
+    return (module, field, memoryDescription) => {
+        assert.isString(module, `Import function module should be a string, got "${module}"`);
+        assert.isString(field, `Import function field should be a string, got "${field}"`);
+        section.data.push({module, field, kind: "Memory", memoryDescription});
+        return nextBuilder;
+    };
+};
+
 const _exportFunctionContinuation = (builder, section, nextBuilder) => {
     return (field, index, type) => {
         assert.isString(field, `Export function field should be a string, got "${field}"`);
@@ -110,6 +119,7 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
             // Exports can leave the type unspecified, letting the Code builder patch them up later.
             type = _maybeRegisterType(builder, type);
         }
+
         // We can't check much about "index" here because the Code section succeeds the Export section. More work is done at Code().End() time.
         switch (typeof(index)) {
         case "string": break; // Assume it's a function name which will be revealed in the Code section.
@@ -125,6 +135,7 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
             break;
         default: throw new Error(`Export section's index must be a string or a number, got ${index}`);
         }
+
         const correspondingImport = builder._getFunctionFromIndexSpace(index);
         const importSection = builder._getSection("Import");
         if (typeof(index) === "object") {
@@ -368,10 +379,10 @@ export default class Builder {
                     const importBuilder = {
                         End: () => this,
                         Table: () => { throw new Error(`Unimplemented: import table`); },
-                        Memory: () => { throw new Error(`Unimplemented: import memory`); },
                         Global: () => { throw new Error(`Unimplemented: import global`); },
                     };
                     importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
+                    importBuilder.Memory = _importMemoryContinuation(this, s, importBuilder);
                     return importBuilder;
                 };
                 break;
@@ -465,7 +476,13 @@ export default class Builder {
                                     }
                                     if (typeof(e.type) === "undefined") {
                                         // This must be a function export from the Code section (re-exports were handled earlier).
-                                        const functionIndexSpaceOffset = importSection ? importSection.data.length : 0;
+                                        let functionIndexSpaceOffset = 0;
+                                        if (importSection) {
+                                            for (const {kind} of importSection.data) {
+                                                if (kind === "Function")
+                                                    ++functionIndexSpaceOffset;
+                                            }
+                                        }
                                         const functionIndex = e.index - functionIndexSpaceOffset;
                                         e.type = codeSection.data[functionIndex].type;
                                     }

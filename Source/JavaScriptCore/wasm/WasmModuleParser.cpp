@@ -30,7 +30,7 @@
 
 #include "IdentifierInlines.h"
 #include "WasmFormat.h"
-#include "WasmMemory.h"
+#include "WasmMemoryInformation.h"
 #include "WasmOps.h"
 #include "WasmSections.h"
 
@@ -256,7 +256,9 @@ bool ModuleParser::parseImport()
             break;
         }
         case External::Memory: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            bool isImport = true;
+            if (!parseMemoryHelper(isImport))
+                return false;
             break;
         }
         case External::Global: {
@@ -305,6 +307,44 @@ bool ModuleParser::parseTable()
     return true;
 }
 
+bool ModuleParser::parseMemoryHelper(bool isImport)
+{
+    // We don't allow redeclaring memory. Either via import or definition.
+    if (m_module->memory)
+        return false;
+
+    uint8_t flags;
+    if (!parseVarUInt1(flags))
+        return false;
+
+    uint32_t initial;
+    if (!parseVarUInt32(initial))
+        return false;
+
+    if (!PageCount::isValid(initial))
+        return false;
+
+    PageCount initialPageCount(initial);
+
+    PageCount maximumPageCount;
+    if (flags) {
+        uint32_t maximum;
+        if (!parseVarUInt32(maximum))
+            return false;
+
+        if (!PageCount::isValid(maximum))
+            return false;
+
+        maximumPageCount = PageCount(maximum);
+        if (initialPageCount > maximumPageCount)
+            return false;
+    }
+
+    Vector<unsigned> pinnedSizes = { 0 };
+    m_module->memory = MemoryInformation(initialPageCount, maximumPageCount, pinnedSizes, isImport);
+    return true;
+}
+
 bool ModuleParser::parseMemory()
 {
     uint8_t count;
@@ -314,27 +354,12 @@ bool ModuleParser::parseMemory()
     if (!count)
         return true;
 
-    uint8_t flags;
-    uint32_t size;
-    if (!parseVarUInt1(flags)
-        || !parseVarUInt32(size)
-        || size > maxPageCount)
+    // We only allow one memory for now.
+    if (count != 1)
         return false;
 
-    uint32_t capacity = maxPageCount;
-    if (flags) {
-        if (!parseVarUInt32(capacity)
-            || size > capacity
-            || capacity > maxPageCount)
-            return false;
-    }
-
-    capacity *= pageSize;
-    size *= pageSize;
-
-    Vector<unsigned> pinnedSizes = { 0 };
-    m_module->memory = std::make_unique<Memory>(size, capacity, pinnedSizes);
-    return m_module->memory->memory();
+    bool isImport = false;
+    return parseMemoryHelper(isImport);
 }
 
 bool ModuleParser::parseGlobal()
@@ -372,7 +397,7 @@ bool ModuleParser::parseExport()
             break;
         }
         case External::Memory: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164134
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
             break;
         }
         case External::Global: {

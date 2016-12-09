@@ -29,23 +29,35 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "WasmMemory.h"
+#include <wtf/RefPtr.h>
 
 namespace JSC {
+
+class ArrayBuffer;
+class JSArrayBuffer;
 
 class JSWebAssemblyMemory : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyMemory* create(VM&, Structure*);
+    static JSWebAssemblyMemory* create(VM&, Structure*, std::unique_ptr<Wasm::Memory>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
+    Wasm::Memory* memory() { return m_memory.get(); }
+    JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
+
 protected:
-    JSWebAssemblyMemory(VM&, Structure*);
+    JSWebAssemblyMemory(VM&, Structure*, std::unique_ptr<Wasm::Memory>&&);
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    std::unique_ptr<Wasm::Memory> m_memory;
+    WriteBarrier<JSArrayBuffer> m_bufferWrapper;
+    RefPtr<ArrayBuffer> m_buffer;
 };
 
 } // namespace JSC

@@ -29,6 +29,7 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "JSWebAssemblyMemory.h"
 
 namespace JSC {
 
@@ -67,19 +68,12 @@ public:
         importFunction(idx)->set(vm, this, value);
     }
 
-    static size_t offsetOfImportFunctions()
-    {
-        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSCell>)>(sizeof(JSWebAssemblyInstance));
-    }
+    JSWebAssemblyMemory* memory() { return m_memory.get(); }
+    void setMemory(VM& vm, JSWebAssemblyMemory* memory) { m_memory.set(vm, this, memory); }
 
     static size_t offsetOfImportFunction(unsigned idx)
     {
         return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * idx;
-    }
-
-    static size_t allocationSize(unsigned numImportFunctions)
-    {
-        return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions;
     }
 
 protected:
@@ -88,9 +82,20 @@ protected:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
+    static size_t offsetOfImportFunctions()
+    {
+        return WTF::roundUpToMultipleOf<sizeof(WriteBarrier<JSCell>)>(sizeof(JSWebAssemblyInstance));
+    }
+
+    static size_t allocationSize(unsigned numImportFunctions)
+    {
+        return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * numImportFunctions;
+    }
+
 private:
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
+    WriteBarrier<JSWebAssemblyMemory> m_memory;
     unsigned m_numImportFunctions;
 };
 

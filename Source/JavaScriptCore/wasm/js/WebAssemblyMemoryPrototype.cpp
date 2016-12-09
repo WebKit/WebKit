@@ -29,7 +29,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "FunctionPrototype.h"
+#include "JSArrayBuffer.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyMemory.h"
 
 #include "WebAssemblyMemoryPrototype.lut.h"
 
@@ -42,10 +44,25 @@ const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory.proto
  @end
  */
 
-WebAssemblyMemoryPrototype* WebAssemblyMemoryPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+static EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(ExecState*);
+
+EncodedJSValue JSC_HOST_CALL webAssemblyMemoryProtoFuncBuffer(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(exec->thisValue()); 
+    if (!memory) {
+        return JSValue::encode(throwException(exec, throwScope, 
+                    createTypeError(exec, ASCIILiteral("WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value"))));
+    }
+    return JSValue::encode(memory->buffer(exec->vm(), exec->lexicalGlobalObject()));
+}
+
+WebAssemblyMemoryPrototype* WebAssemblyMemoryPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     auto* object = new (NotNull, allocateCell<WebAssemblyMemoryPrototype>(vm.heap)) WebAssemblyMemoryPrototype(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
@@ -54,9 +71,10 @@ Structure* WebAssemblyMemoryPrototype::createStructure(VM& vm, JSGlobalObject* g
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyMemoryPrototype::finishCreation(VM& vm)
+void WebAssemblyMemoryPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
+    JSC_NATIVE_GETTER("buffer", webAssemblyMemoryProtoFuncBuffer, DontEnum | Accessor);
 }
 
 WebAssemblyMemoryPrototype::WebAssemblyMemoryPrototype(VM& vm, Structure* structure)

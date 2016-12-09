@@ -116,7 +116,7 @@ void Plan::run()
         unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
         ASSERT(m_functionIndexSpace[functionIndexSpace].signature == signature);
 
-        String error = validateFunction(functionStart, functionLength, signature, m_functionIndexSpace);
+        String error = validateFunction(functionStart, functionLength, signature, m_functionIndexSpace, m_moduleInformation->memory);
         if (!error.isNull()) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -128,7 +128,7 @@ void Plan::run()
         }
 
         unlinkedWasmToWasmCalls.uncheckedAppend(Vector<UnlinkedWasmToWasmCall>());
-        m_wasmInternalFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, m_moduleInformation->memory.get(), signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace));
+        m_wasmInternalFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, m_moduleInformation->memory, signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace));
         m_functionIndexSpace[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->code->code().executableAddress();
     }
 

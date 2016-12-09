@@ -49,17 +49,10 @@ if (NOT WIN32)
         ../b3/air/testair.cpp
     )
 
-    set(TESTWASM_SOURCES
-        ../testWasm.cpp
-    )
-
     add_executable(testb3 ${TESTB3_SOURCES})
     target_link_libraries(testb3 ${JSC_LIBRARIES})
 
     add_executable(testair ${TESTAIR_SOURCES})
     target_link_libraries(testair ${JSC_LIBRARIES})
-
-    add_executable(testWASM ${TESTWASM_SOURCES})
-    target_link_libraries(testWASM ${JSC_LIBRARIES})
 
 endif ()

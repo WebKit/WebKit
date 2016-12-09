@@ -42,8 +42,6 @@ class JSWebAssemblyCallee;
 
 namespace Wasm {
 
-class Memory;
-
 class Plan {
 public:
     JS_EXPORT_PRIVATE Plan(VM*, Vector<uint8_t>);
@@ -67,17 +65,12 @@ public:
         return m_moduleInformation->exports;
     }
 
-    const Memory* memory() const
-    {
-        RELEASE_ASSERT(!failed());
-        return m_moduleInformation->memory.get();
-    }
-
     size_t internalFunctionCount() const
     {
         RELEASE_ASSERT(!failed());
         return m_wasmInternalFunctions.size();
     }
+
     B3::Compilation* jsToWasmEntryPointForFunction(size_t i) const
     {
         ASSERT(i > m_wasmToJSStubs.size());
