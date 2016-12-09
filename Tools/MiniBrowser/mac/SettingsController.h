@@ -52,7 +52,7 @@
 @property (nonatomic, readonly) BOOL visualViewportEnabled;
 @property (nonatomic, readonly) BOOL largeImageAsyncDecodingEnabled;
 @property (nonatomic, readonly) BOOL animatedImageAsyncDecodingEnabled;
-@property (nonatomic, readonly) BOOL loadsAllSiteIcons;
+@property (nonatomic, readonly) BOOL asyncImageDecodingEnabled;
 @property (nonatomic, readonly) BOOL usesGameControllerFramework;
 
 @property (nonatomic, readonly) NSString *defaultURL;

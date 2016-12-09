@@ -41,7 +41,6 @@ static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible
 static NSString * const SimpleLineLayoutDebugBordersEnabledPreferenceKey = @"SimpleLineLayoutDebugBordersEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
 static NSString * const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
-static NSString * const LoadsAllSiteIconsKey = @"LoadsAllSiteIcons";
 static NSString * const UsesGameControllerFrameworkKey = @"UsesGameControllerFramework";
 static NSString * const IncrementalRenderingSuppressedPreferenceKey = @"IncrementalRenderingSuppressed";
 static NSString * const AcceleratedDrawingEnabledPreferenceKey = @"AcceleratedDrawingEnabled";
@@ -138,7 +137,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Use UI-Side Compositing" action:@selector(toggleUseUISideCompositing:) indented:YES];
     [self _addItemWithTitle:@"Disable Per-Window Web Processes" action:@selector(togglePerWindowWebProcessesDisabled:) indented:YES];
     [self _addItemWithTitle:@"Show Resource Usage Overlay" action:@selector(toggleShowResourceUsageOverlay:) indented:YES];
-    [self _addItemWithTitle:@"Load All Site Icons Per-Page" action:@selector(toggleLoadsAllSiteIcons:) indented:YES];
     [self _addItemWithTitle:@"Use GameController.framework on macOS (Restart required)" action:@selector(toggleUsesGameControllerFramework:) indented:YES];
 
     NSMenuItem *debugOverlaysSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Debug Overlays" action:nil keyEquivalent:@""];
@@ -215,8 +213,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowResourceUsageOverlay:))
         [menuItem setState:[self resourceUsageOverlayVisible] ? NSOnState : NSOffState];
-    else if (action == @selector(toggleLoadsAllSiteIcons:))
-        [menuItem setState:[self loadsAllSiteIcons] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUsesGameControllerFramework:))
         [menuItem setState:[self usesGameControllerFramework] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUseUISideCompositing:))
@@ -364,16 +360,6 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (void)toggleShowResourceUsageOverlay:(id)sender
 {
     [self _toggleBooleanDefault:ResourceUsageOverlayVisiblePreferenceKey];
-}
-
-- (BOOL)loadsAllSiteIcons
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:LoadsAllSiteIconsKey];
-}
-
-- (void)toggleLoadsAllSiteIcons:(id)sender
-{
-    [self _toggleBooleanDefault:LoadsAllSiteIconsKey];
 }
 
 - (BOOL)usesGameControllerFramework

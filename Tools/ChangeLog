@@ -1,3 +1,20 @@
+2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Complete the revert of r208865.
+        https://bugs.webkit.org/show_bug.cgi?id=164894
+
+        Unreviewed build fix.
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController loadsAllSiteIcons]): Deleted.
+        (-[SettingsController toggleLoadsAllSiteIcons:]): Deleted.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController webView:shouldLoadIconWithParameters:completionHandler:]): Deleted.
+
 2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Force GDK backend to x11 when running with XvfbDriver
