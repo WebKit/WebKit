@@ -185,10 +185,11 @@ private:
     RetainPtr<NSTouchBar> _currentTouchBar;
     RetainPtr<NSTouchBar> _plainTextTouchBar;
     RetainPtr<NSTouchBar> _richTextTouchBar;
+    RetainPtr<NSTouchBar> _passwordTextTouchBar;
     RetainPtr<WebTextTouchBarItemController> _textTouchBarItemController;
     RetainPtr<NSCandidateListTouchBarItem> _richTextCandidateListTouchBarItem;
     RetainPtr<NSCandidateListTouchBarItem> _plainTextCandidateListTouchBarItem;
-    RetainPtr<NSArray> _emptyCandidatesArray;
+    RetainPtr<NSCandidateListTouchBarItem> _passwordTextCandidateListTouchBarItem;
     RetainPtr<AVFunctionBarPlaybackControlsProvider> mediaTouchBarProvider;
     RetainPtr<AVFunctionBarScrubber> mediaPlaybackControlsView;
 

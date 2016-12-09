@@ -9362,6 +9362,11 @@ bool LayerFlushController::flushLayers()
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
 }
 
+- (NSArray<NSString *> *)_passwordTextTouchBarDefaultItemIdentifiers
+{
+    return @[ NSTouchBarItemIdentifierCandidateList ];
+}
+
 - (void)touchBarDidExitCustomization:(NSNotification *)notification
 {
     _private->_isCustomizingTouchBar = NO;
@@ -9381,18 +9386,35 @@ bool LayerFlushController::flushLayers()
     if (_private->_plainTextTouchBar)
         [self setUpTextTouchBar:_private->_plainTextTouchBar.get()];
 
+    if (_private->_passwordTextTouchBar)
+        [self setUpTextTouchBar:_private->_passwordTextTouchBar.get()];
+
     [self updateTouchBar];
 }
 
 - (void)setUpTextTouchBar:(NSTouchBar *)textTouchBar
 {
-    BOOL isRichTextTouchBar = textTouchBar == _private->_richTextTouchBar;
-    [textTouchBar setDelegate:self];
-    [textTouchBar setTemplateItems:[NSMutableSet setWithObject:isRichTextTouchBar ? _private->_richTextCandidateListTouchBarItem.get() : _private->_plainTextCandidateListTouchBarItem.get()]];
-    [textTouchBar setCustomizationAllowedItemIdentifiers:[self _textTouchBarCustomizationAllowedIdentifiers]];
+    NSSet<NSTouchBarItem *> *templateItems = nil;
+    NSArray<NSTouchBarItemIdentifier> *defaultItemIdentifiers = nil;
+    NSArray<NSTouchBarItemIdentifier> *customizationAllowedItemIdentifiers = nil;
 
-    NSArray<NSString *> *defaultIdentifiers = isRichTextTouchBar ? [self _richTextTouchBarDefaultItemIdentifiers] : [self _plainTextTouchBarDefaultItemIdentifiers];
-    [textTouchBar setDefaultItemIdentifiers:defaultIdentifiers];
+    if (textTouchBar == _private->_passwordTextTouchBar) {
+        templateItems = [NSMutableSet setWithObject:_private->_passwordTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = [self _passwordTextTouchBarDefaultItemIdentifiers];
+    } else if (textTouchBar == _private->_richTextTouchBar) {
+        templateItems = [NSMutableSet setWithObject:_private->_richTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = [self _richTextTouchBarDefaultItemIdentifiers];
+        customizationAllowedItemIdentifiers = [self _textTouchBarCustomizationAllowedIdentifiers];
+    } else if (textTouchBar == _private->_plainTextTouchBar) {
+        templateItems = [NSMutableSet setWithObject:_private->_plainTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = [self _plainTextTouchBarDefaultItemIdentifiers];
+        customizationAllowedItemIdentifiers = [self _textTouchBarCustomizationAllowedIdentifiers];
+    }
+
+    [textTouchBar setDelegate:self];
+    [textTouchBar setTemplateItems:templateItems];
+    [textTouchBar setDefaultItemIdentifiers:defaultItemIdentifiers];
+    [textTouchBar setCustomizationAllowedItemIdentifiers:customizationAllowedItemIdentifiers];
 
     if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[textTouchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
         textFormatItem.groupTouchBar.customizationIdentifier = @"WebTextFormatTouchBar";
@@ -9410,10 +9432,14 @@ bool LayerFlushController::flushLayers()
 
 - (NSTouchBar *)textTouchBar
 {
-    if (self._isRichlyEditable)
-        return _private->_richTextTouchBar.get();
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return nil;
 
-    return _private->_plainTextTouchBar.get();
+    if (coreFrame->selection().selection().isInPasswordField())
+        return _private->_passwordTextTouchBar.get();
+
+    return self._isRichlyEditable ? _private->_richTextTouchBar.get() : _private->_plainTextTouchBar.get();
 }
 
 static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
@@ -9482,11 +9508,14 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
         _private->_startedListeningToCustomizationEvents = YES;
     }
 
-    if (!_private->_plainTextCandidateListTouchBarItem || !_private->_richTextCandidateListTouchBarItem) {
+    if (!_private->_plainTextCandidateListTouchBarItem || !_private->_richTextCandidateListTouchBarItem || !_private->_passwordTextCandidateListTouchBarItem) {
         _private->_plainTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
         [_private->_plainTextCandidateListTouchBarItem setDelegate:self];
         _private->_richTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
         [_private->_richTextCandidateListTouchBarItem setDelegate:self];
+        _private->_passwordTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [_private->_passwordTextCandidateListTouchBarItem setDelegate:self];
+
         coreFrame->editor().client()->requestCandidatesForSelection(coreFrame->selection().selection());
     }
 
@@ -9510,9 +9539,11 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
     if (coreFrame->selection().selection().isInPasswordField()) {
         // We don't request candidates for password fields. If the user was previously in a non-password field, then the
         // old candidates will still show by default, so we clear them here by setting an empty array of candidates.
-        if (!_private->_emptyCandidatesArray)
-            _private->_emptyCandidatesArray = adoptNS([[NSArray alloc] init]);
-        [self.candidateList setCandidates:_private->_emptyCandidatesArray.get() forSelectedRange:NSMakeRange(0, 0) inString:nil];
+        if (!_private->_passwordTextTouchBar) {
+            _private->_passwordTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+            [self setUpTextTouchBar:_private->_passwordTextTouchBar.get()];
+        }
+        [_private->_passwordTextCandidateListTouchBarItem setCandidates:@[ ] forSelectedRange:NSMakeRange(0, 0) inString:nil];
     }
 
     NSTouchBar *textTouchBar = self.textTouchBar;
@@ -9634,6 +9665,13 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const RenderStyle* style)
 
 - (NSCandidateListTouchBarItem *)candidateList
 {
+    Frame* coreFrame = core([self _selectedOrMainFrame]);
+    if (!coreFrame)
+        return nil;
+
+    if (coreFrame->selection().selection().isInPasswordField())
+        return _private->_passwordTextCandidateListTouchBarItem.get();
+
     return self._isRichlyEditable ? _private->_richTextCandidateListTouchBarItem.get() : _private->_plainTextCandidateListTouchBarItem.get();
 }
 #else

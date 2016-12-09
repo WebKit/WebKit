@@ -1,3 +1,35 @@
+2016-12-09  Beth Dakin  <bdakin@apple.com>
+
+        Password fields should not show the emoji button in TouchBar
+        https://bugs.webkit.org/show_bug.cgi?id=165673
+        -and corresponding-
+        rdar://problem/29235739
+
+        Reviewed by Wenson Hsieh.
+
+        This patch adds a new ivar for the password touch bar and password 
+        candidateListTouchBarItem. Since this TouchBar will actually have a different set 
+        of identifiers than the plain text TouchBar, it should just have its own variable.
+
+        The candidate list should be the only item for passwords.
+        * WebView/WebView.mm:
+        (-[WebView _passwordTextTouchBarDefaultItemIdentifiers]):
+
+        Account for _passwordTextTouchBar.
+        (-[WebView didChangeAutomaticTextCompletion:]):
+        (-[WebView setUpTextTouchBar:]):
+        (-[WebView textTouchBar]):
+
+        The empty candidates array is not needed. We can just set @[ ] as the candidates 
+        for the _passwordTextCandidateListTouchBarItem. Safe guards already exist in the 
+        other parts of the code to prevent us from requesting or setting other candidates 
+        when in a password field. 
+        (-[WebView updateTextTouchBar]):
+
+        Account for _passwordTextTouchBar.
+        (-[WebView candidateList]):
+        * WebView/WebViewData.h:
+
 2016-12-08  Filip Pizlo  <fpizlo@apple.com>
 
         Enable SharedArrayBuffer, remove the flag

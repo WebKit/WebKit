@@ -896,6 +896,8 @@ void WebViewImpl::updateTouchBar()
 
 NSCandidateListTouchBarItem *WebViewImpl::candidateListTouchBarItem() const
 {
+    if (m_page->editorState().isInPasswordField)
+        return m_passwordTextCandidateListTouchBarItem.get();
     return isRichlyEditable() ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get();
 }
 
@@ -956,6 +958,11 @@ static NSArray<NSString *> *richTextTouchBarDefaultItemIdentifiers()
     return @[ NSTouchBarItemIdentifierCharacterPicker, NSTouchBarItemIdentifierTextFormat, NSTouchBarItemIdentifierCandidateList ];
 }
 
+static NSArray<NSString *> *passwordTextTouchBarDefaultItemIdentifiers()
+{
+    return @[ NSTouchBarItemIdentifierCandidateList ];
+}
+
 void WebViewImpl::updateTouchBarAndRefreshTextBarIdentifiers()
 {
     if (m_richTextTouchBar)
@@ -964,16 +971,35 @@ void WebViewImpl::updateTouchBarAndRefreshTextBarIdentifiers()
     if (m_plainTextTouchBar)
         setUpTextTouchBar(m_plainTextTouchBar.get());
 
+    if (m_passwordTextTouchBar)
+        setUpTextTouchBar(m_passwordTextTouchBar.get());
+
     updateTouchBar();
 }
 
 void WebViewImpl::setUpTextTouchBar(NSTouchBar *touchBar)
 {
-    bool isRichTextTouchBar = touchBar == m_richTextTouchBar.get();
+    NSSet<NSTouchBarItem *> *templateItems = nil;
+    NSArray<NSTouchBarItemIdentifier> *defaultItemIdentifiers = nil;
+    NSArray<NSTouchBarItemIdentifier> *customizationAllowedItemIdentifiers = nil;
+
+    if (touchBar == m_passwordTextTouchBar.get()) {
+        templateItems = [NSMutableSet setWithObject:m_passwordTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = passwordTextTouchBarDefaultItemIdentifiers();
+    } else if (touchBar == m_richTextTouchBar.get()) {
+        templateItems = [NSMutableSet setWithObject:m_richTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = richTextTouchBarDefaultItemIdentifiers();
+        customizationAllowedItemIdentifiers = textTouchBarCustomizationAllowedIdentifiers();
+    } else if (touchBar == m_plainTextTouchBar.get()) {
+        templateItems = [NSMutableSet setWithObject:m_plainTextCandidateListTouchBarItem.get()];
+        defaultItemIdentifiers = plainTextTouchBarDefaultItemIdentifiers();
+        customizationAllowedItemIdentifiers = textTouchBarCustomizationAllowedIdentifiers();
+    }
+
     [touchBar setDelegate:m_textTouchBarItemController.get()];
-    [touchBar setTemplateItems:[NSMutableSet setWithObject:isRichTextTouchBar ? m_richTextCandidateListTouchBarItem.get() : m_plainTextCandidateListTouchBarItem.get()]];
-    [touchBar setCustomizationAllowedItemIdentifiers:textTouchBarCustomizationAllowedIdentifiers()];
-    [touchBar setDefaultItemIdentifiers:isRichTextTouchBar ? richTextTouchBarDefaultItemIdentifiers() : plainTextTouchBarDefaultItemIdentifiers()];
+    [touchBar setTemplateItems:templateItems];
+    [touchBar setDefaultItemIdentifiers:defaultItemIdentifiers];
+    [touchBar setCustomizationAllowedItemIdentifiers:customizationAllowedItemIdentifiers];
 
     if (NSGroupTouchBarItem *textFormatItem = (NSGroupTouchBarItem *)[touchBar itemForIdentifier:NSTouchBarItemIdentifierTextFormat])
         textFormatItem.groupTouchBar.customizationIdentifier = @"WKTextFormatTouchBar";
@@ -986,6 +1012,8 @@ bool WebViewImpl::isRichlyEditable() const
 
 NSTouchBar *WebViewImpl::textTouchBar() const
 {
+    if (m_page->editorState().isInPasswordField)
+        return m_passwordTextTouchBar.get();
     return isRichlyEditable() ? m_richTextTouchBar.get() : m_plainTextTouchBar.get();
 }
 
@@ -1036,11 +1064,13 @@ void WebViewImpl::updateTextTouchBar()
         m_startedListeningToCustomizationEvents = true;
     }
 
-    if (!m_richTextCandidateListTouchBarItem || !m_plainTextCandidateListTouchBarItem) {
+    if (!m_richTextCandidateListTouchBarItem || !m_plainTextCandidateListTouchBarItem || !m_passwordTextCandidateListTouchBarItem) {
         m_richTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
         [m_richTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
         m_plainTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
         [m_plainTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
+        m_passwordTextCandidateListTouchBarItem = adoptNS([[NSCandidateListTouchBarItem alloc] initWithIdentifier:NSTouchBarItemIdentifierCandidateList]);
+        [m_passwordTextCandidateListTouchBarItem setDelegate:m_textTouchBarItemController.get()];
         requestCandidatesForSelectionIfNeeded();
     }
 
@@ -1063,11 +1093,11 @@ void WebViewImpl::updateTextTouchBar()
     }
 
     if (m_page->editorState().isInPasswordField) {
-        // We don't request candidates for password fields. If the user was previously in a non-password field, then the
-        // old candidates will still show by default, so we clear them here by setting an empty array of candidates.
-        if (!m_emptyCandidatesArray)
-            m_emptyCandidatesArray = adoptNS([[NSArray alloc] init]);
-        [candidateListTouchBarItem() setCandidates:m_emptyCandidatesArray.get() forSelectedRange:NSMakeRange(0, 0) inString:nil];
+        if (!m_passwordTextTouchBar) {
+            m_passwordTextTouchBar = adoptNS([[NSTouchBar alloc] init]);
+            setUpTextTouchBar(m_passwordTextTouchBar.get());
+        }
+        [m_passwordTextCandidateListTouchBarItem setCandidates:@[ ] forSelectedRange:NSMakeRange(0, 0) inString:nil];
     }
 
     NSTouchBar *textTouchBar = this->textTouchBar();

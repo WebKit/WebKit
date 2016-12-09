@@ -541,10 +541,11 @@ private:
     RetainPtr<NSTouchBar> m_currentTouchBar;
     RetainPtr<NSTouchBar> m_richTextTouchBar;
     RetainPtr<NSTouchBar> m_plainTextTouchBar;
+    RetainPtr<NSTouchBar> m_passwordTextTouchBar;
     RetainPtr<WKTextTouchBarItemController> m_textTouchBarItemController;
     RetainPtr<NSCandidateListTouchBarItem> m_richTextCandidateListTouchBarItem;
     RetainPtr<NSCandidateListTouchBarItem> m_plainTextCandidateListTouchBarItem;
-    RetainPtr<NSArray> m_emptyCandidatesArray;
+    RetainPtr<NSCandidateListTouchBarItem> m_passwordTextCandidateListTouchBarItem;
     RetainPtr<WebPlaybackControlsManager> m_playbackControlsManager;
     RetainPtr<NSCustomTouchBarItem> m_exitFullScreenButton;
 
