@@ -28,6 +28,7 @@
 
 #include "WebEvent.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebsitePolicies.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 

@@ -25,6 +25,7 @@
 #include "WebKitResponsePolicyDecisionPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include "WebsitePolicies.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 

@@ -22,6 +22,7 @@
 
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
+#include "WebsitePolicies.h"
 
 using namespace WebKit;
 
@@ -79,7 +80,7 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
     if (decision->priv->madePolicyDecision)
         return;
 
-    decision->priv->listener->use();
+    decision->priv->listener->use({ });
     decision->priv->madePolicyDecision = true;
 }
 

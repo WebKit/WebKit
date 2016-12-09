@@ -1,3 +1,15 @@
+2016-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Fix build after r209558
+        https://bugs.webkit.org/show_bug.cgi?id=165653
+
+        Unreviewed build fix.
+
+        * UIProcess/API/APIPolicyClient.h: include WebsitePolicies.h.
+        * UIProcess/API/gtk/WebKitPolicyClient.cpp: ditto.
+        * UIProcess/API/gtk/WebKitPolicyDecision.cpp:
+        (webkit_policy_decision_use):  pass empty structure to new required argument.
+
 2016-12-09  Gavin Barraclough  <barraclough@apple.com>
 
         Revert - Add _WKIconLoadingDelegate SPI
