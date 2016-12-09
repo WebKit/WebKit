@@ -1,3 +1,10 @@
+2016-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed ARM buildfix after 209570.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::or32): Added.
+
 2016-12-08  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: JSC::link* shouldn't need a CodeBlock
