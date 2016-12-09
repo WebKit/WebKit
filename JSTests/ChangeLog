@@ -1,3 +1,9 @@
+2016-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Green the cloop bot by raising this threshold.
+
+        * mozilla/js1_5/Array/regress-101964.js:
+
 2016-12-08  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: wire up Instance imports
