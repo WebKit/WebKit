@@ -36,7 +36,7 @@
 #include "CSSKeyframesRule.h"
 #include "CSSParserObserver.h"
 #include "CSSParserObserverWrapper.h"
-#include "CSSParserValues.h" // FIXME-NEWPARSER We need to move CSSParserSelector to its own file.
+#include "CSSParserSelector.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelectorParser.h"
 #include "CSSStyleSheet.h"

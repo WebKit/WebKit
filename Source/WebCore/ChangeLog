@@ -1,5 +1,24 @@
 2016-12-10  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Move CSSParserValues.h/.cpp to CSSParserSelector.h/.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=165730
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCustomPropertyValue.cpp:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSSelectorList.cpp:
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        * css/parser/CSSParserImpl.cpp:
+        * css/parser/CSSParserSelector.cpp: Copied from Source/WebCore/css/parser/CSSParserValues.cpp.
+        * css/parser/CSSParserSelector.h: Copied from Source/WebCore/css/parser/CSSParserValues.h.
+        * css/parser/CSSParserValues.cpp: Removed.
+        * css/parser/CSSParserValues.h: Removed.
+        * css/parser/CSSSelectorParser.h:
+
+2016-12-10  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Remove the pseudoclass/element hacks
         https://bugs.webkit.org/show_bug.cgi?id=165729
 

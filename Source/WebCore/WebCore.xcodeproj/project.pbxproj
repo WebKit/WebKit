@@ -3518,8 +3518,8 @@
 		946D372D1D6CB2940077084F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D37281D6CB28B0077084F /* CSSParser.cpp */; };
 		946D372E1D6CB2940077084F /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D37291D6CB28B0077084F /* CSSParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		946D372F1D6CB2940077084F /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D372A1D6CB28B0077084F /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		946D37301D6CB2940077084F /* CSSParserValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D372B1D6CB28B0077084F /* CSSParserValues.cpp */; };
-		946D37311D6CB2940077084F /* CSSParserValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D372C1D6CB28B0077084F /* CSSParserValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		946D37301D6CB2940077084F /* CSSParserSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D372B1D6CB28B0077084F /* CSSParserSelector.cpp */; };
+		946D37311D6CB2940077084F /* CSSParserSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D372C1D6CB28B0077084F /* CSSParserSelector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		946D37391D6CDFC00077084F /* CSSTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D37341D6CDF980077084F /* CSSTokenizer.cpp */; };
 		946D373A1D6CDFC00077084F /* CSSTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D37371D6CDF980077084F /* CSSTokenizer.h */; };
 		946D373B1D6CDFC00077084F /* CSSTokenizerInputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D37351D6CDF980077084F /* CSSTokenizerInputStream.cpp */; };
@@ -11094,8 +11094,8 @@
 		946D37281D6CB28B0077084F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParser.cpp; path = parser/CSSParser.cpp; sourceTree = "<group>"; };
 		946D37291D6CB28B0077084F /* CSSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParser.h; path = parser/CSSParser.h; sourceTree = "<group>"; };
 		946D372A1D6CB28B0077084F /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserMode.h; path = parser/CSSParserMode.h; sourceTree = "<group>"; };
-		946D372B1D6CB28B0077084F /* CSSParserValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserValues.cpp; path = parser/CSSParserValues.cpp; sourceTree = "<group>"; };
-		946D372C1D6CB28B0077084F /* CSSParserValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserValues.h; path = parser/CSSParserValues.h; sourceTree = "<group>"; };
+		946D372B1D6CB28B0077084F /* CSSParserSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserSelector.cpp; path = parser/CSSParserSelector.cpp; sourceTree = "<group>"; };
+		946D372C1D6CB28B0077084F /* CSSParserSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserSelector.h; path = parser/CSSParserSelector.h; sourceTree = "<group>"; };
 		946D37341D6CDF980077084F /* CSSTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSTokenizer.cpp; path = parser/CSSTokenizer.cpp; sourceTree = "<group>"; };
 		946D37351D6CDF980077084F /* CSSTokenizerInputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSTokenizerInputStream.cpp; path = parser/CSSTokenizerInputStream.cpp; sourceTree = "<group>"; };
 		946D37371D6CDF980077084F /* CSSTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSTokenizer.h; path = parser/CSSTokenizer.h; sourceTree = "<group>"; };
@@ -19073,8 +19073,8 @@
 				946D373D1D6CE31A0077084F /* CSSParserToken.h */,
 				946D374B1D6D07F50077084F /* CSSParserTokenRange.cpp */,
 				946D374C1D6D07F50077084F /* CSSParserTokenRange.h */,
-				946D372B1D6CB28B0077084F /* CSSParserValues.cpp */,
-				946D372C1D6CB28B0077084F /* CSSParserValues.h */,
+				946D372B1D6CB28B0077084F /* CSSParserSelector.cpp */,
+				946D372C1D6CB28B0077084F /* CSSParserSelector.h */,
 				946D37411D6CF6320077084F /* CSSPropertyParser.cpp */,
 				946D37421D6CF6320077084F /* CSSPropertyParser.h */,
 				949C77021D6E393500C0DE4F /* CSSPropertyParserHelpers.cpp */,
@@ -25250,7 +25250,7 @@
 				949C77091D6E498700C0DE4F /* CSSParserObserverWrapper.h in Headers */,
 				946D37401D6CE3C20077084F /* CSSParserToken.h in Headers */,
 				946D374E1D6D08AA0077084F /* CSSParserTokenRange.h in Headers */,
-				946D37311D6CB2940077084F /* CSSParserValues.h in Headers */,
+				946D37311D6CB2940077084F /* CSSParserSelector.h in Headers */,
 				9418278F1D8CAF9200492764 /* CSSPendingSubstitutionValue.h in Headers */,
 				977B3863122883E900B81FF8 /* CSSPreloadScanner.h in Headers */,
 				A80E6CE60A1989CA007FB8C5 /* CSSPrimitiveValue.h in Headers */,
@@ -29063,7 +29063,7 @@
 				949C77081D6E498700C0DE4F /* CSSParserObserverWrapper.cpp in Sources */,
 				946D373F1D6CE3C20077084F /* CSSParserToken.cpp in Sources */,
 				946D374D1D6D08A60077084F /* CSSParserTokenRange.cpp in Sources */,
-				946D37301D6CB2940077084F /* CSSParserValues.cpp in Sources */,
+				946D37301D6CB2940077084F /* CSSParserSelector.cpp in Sources */,
 				9418278E1D8CAF9200492764 /* CSSPendingSubstitutionValue.cpp in Sources */,
 				977B3862122883E900B81FF8 /* CSSPreloadScanner.cpp in Sources */,
 				A80E6D050A1989CA007FB8C5 /* CSSPrimitiveValue.cpp in Sources */,

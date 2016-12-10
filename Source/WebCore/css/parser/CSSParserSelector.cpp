@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "CSSParserValues.h"
+#include "CSSParserSelector.h"
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserIdioms.h"

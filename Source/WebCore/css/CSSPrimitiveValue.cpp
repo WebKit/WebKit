@@ -26,7 +26,7 @@
 #include "CSSFontFamily.h"
 #include "CSSHelper.h"
 #include "CSSMarkup.h"
-#include "CSSParserValues.h"
+#include "CSSParserSelector.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"

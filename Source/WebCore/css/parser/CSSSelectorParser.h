@@ -29,8 +29,8 @@
 
 #pragma once
 
+#include "CSSParserSelector.h"
 #include "CSSParserTokenRange.h"
-#include "CSSParserValues.h" // FIXME-NEWPARSER Change when CSSParserSelector moves into its own file.
 #include <memory>
 
 namespace WebCore {

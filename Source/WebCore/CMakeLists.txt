@@ -1380,7 +1380,7 @@ set(WebCore_SOURCES
     css/parser/CSSParserObserverWrapper.cpp
     css/parser/CSSParserToken.cpp
     css/parser/CSSParserTokenRange.cpp
-    css/parser/CSSParserValues.cpp
+    css/parser/CSSParserSelector.cpp
     css/parser/CSSPropertyParser.cpp
     css/parser/CSSPropertyParserHelpers.cpp
     css/parser/CSSSelectorParser.cpp

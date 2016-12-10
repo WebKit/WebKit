@@ -91,7 +91,7 @@ output_file.write("""
 #include "config.h"
 #include "SelectorPseudoTypeMap.h"
 
-#include "CSSParserValues.h"
+#include "CSSParserSelector.h"
 
 #if defined(__clang__)
 #pragma clang diagnostic push
