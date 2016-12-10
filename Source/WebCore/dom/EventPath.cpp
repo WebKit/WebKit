@@ -269,7 +269,7 @@ Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& t
 
     for (auto& context : m_path) {
         if (Node* nodeInPath = context->currentTarget()->toNode()) {
-            if (targetNode->isUnclosedNode(*nodeInPath))
+            if (!targetNode->isClosedShadowHidden(*nodeInPath))
                 path.append(context->currentTarget());
         } else
             path.append(context->currentTarget());
@@ -400,7 +400,7 @@ void RelatedNodeRetargeter::checkConsistency(Node& currentTarget)
 {
     if (!m_retargetedRelatedNode)
         return;
-    ASSERT(currentTarget.isUnclosedNode(*m_retargetedRelatedNode));
+    ASSERT(!currentTarget.isClosedShadowHidden(*m_retargetedRelatedNode));
     ASSERT(m_retargetedRelatedNode == &currentTarget.treeScope().retargetToScope(m_relatedNode));
 }
 #endif

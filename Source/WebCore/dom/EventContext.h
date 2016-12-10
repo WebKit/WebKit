@@ -132,7 +132,7 @@ inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
 inline bool EventContext::isUnreachableNode(EventTarget* target) const
 {
     // FIXME: Checks also for SVG elements.
-    return target && target->toNode() && !target->toNode()->isSVGElement() && !m_node->isUnclosedNode(*target->toNode());
+    return target && target->toNode() && !target->toNode()->isSVGElement() && m_node->isClosedShadowHidden(*target->toNode());
 }
 #endif
 

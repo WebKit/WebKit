@@ -1073,8 +1073,18 @@ ShadowRoot* Node::containingShadowRoot() const
     return is<ShadowRoot>(root) ? downcast<ShadowRoot>(&root) : nullptr;
 }
 
+#if !ASSERT_DISABLED
+// https://dom.spec.whatwg.org/#concept-closed-shadow-hidden
+static bool isClosedShadowHiddenUsingSpecDefinition(const Node& A, const Node& B)
+{
+    return A.isInShadowTree()
+        && !A.rootNode().containsIncludingShadowDOM(&B)
+        && (A.containingShadowRoot()->mode() != ShadowRootMode::Open || isClosedShadowHiddenUsingSpecDefinition(*A.shadowHost(), B));
+}
+#endif
+
 // http://w3c.github.io/webcomponents/spec/shadow/#dfn-unclosed-node
-bool Node::isUnclosedNode(const Node& otherNode) const
+bool Node::isClosedShadowHidden(const Node& otherNode) const
 {
     // Use Vector instead of HashSet since we expect the number of ancestor tree scopes to be small.
     Vector<TreeScope*, 8> ancestorScopesOfThisNode;
@@ -1084,15 +1094,18 @@ bool Node::isUnclosedNode(const Node& otherNode) const
 
     for (auto* treeScopeThatCanAccessOtherNode = &otherNode.treeScope(); treeScopeThatCanAccessOtherNode; treeScopeThatCanAccessOtherNode = treeScopeThatCanAccessOtherNode->parentTreeScope()) {
         for (auto* scope : ancestorScopesOfThisNode) {
-            if (scope == treeScopeThatCanAccessOtherNode)
-                return true; // treeScopeThatCanAccessOtherNode is a shadow-including inclusive ancestor of this node.
+            if (scope == treeScopeThatCanAccessOtherNode) {
+                ASSERT(!isClosedShadowHiddenUsingSpecDefinition(otherNode, *this));
+                return false; // treeScopeThatCanAccessOtherNode is a shadow-including inclusive ancestor of this node.
+            }
         }
         auto& root = treeScopeThatCanAccessOtherNode->rootNode();
         if (is<ShadowRoot>(root) && downcast<ShadowRoot>(root).mode() != ShadowRootMode::Open)
             break;
     }
 
-    return false;
+    ASSERT(isClosedShadowHiddenUsingSpecDefinition(otherNode, *this));
+    return true;
 }
 
 static inline ShadowRoot* parentShadowRoot(const Node& node)

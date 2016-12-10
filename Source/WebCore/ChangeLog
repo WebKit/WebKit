@@ -1,3 +1,28 @@
+2016-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Replace isUnclosedNode by isClosedShadowHidden
+        https://bugs.webkit.org/show_bug.cgi?id=165722
+
+        Reviewed by Antti Koivisto.
+
+        Replaced Node::isUnclosedNode by Node::isClosedShadowHidden and negated the semantics as done in the spec:
+        https://dom.spec.whatwg.org/#concept-closed-shadow-hidden
+        https://github.com/whatwg/dom/pull/306
+
+        Also added a version which follows the spec text for a debug assertion.
+
+        No new tests since this has no behavioral change.
+
+        * dom/EventContext.h:
+        (WebCore::EventContext::isUnreachableNode):
+        * dom/EventPath.cpp:
+        (WebCore::EventPath::computePathUnclosedToTarget):
+        (WebCore::RelatedNodeRetargeter::checkConsistency):
+        * dom/Node.cpp:
+        (WebCore::isClosedShadowHiddenUsingSpecDefinition): Added to assert our implementation matches the spec text.
+        (WebCore::Node::isClosedShadowHidden): Renamed from Node::isUnclosedNode and negated the return value.
+        * dom/Node.h:
+
 2016-12-10  Antti Koivisto  <antti@apple.com>
 
         CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebCore: WTF::match_constness<WebCore::CSSValue, WebCore::CSSContentDistributionValue>::type& WTF::downcast<WebCore::CSSContentDistributionValue, WebCore::CSSValue> + 65

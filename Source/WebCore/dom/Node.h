@@ -241,7 +241,7 @@ public:
     WEBCORE_EXPORT Node* deprecatedShadowAncestorNode() const;
     ShadowRoot* containingShadowRoot() const;
     ShadowRoot* shadowRoot() const;
-    bool isUnclosedNode(const Node&) const;
+    bool isClosedShadowHidden(const Node&) const;
 
     HTMLSlotElement* assignedSlot() const;
     HTMLSlotElement* assignedSlotForBindings() const;
