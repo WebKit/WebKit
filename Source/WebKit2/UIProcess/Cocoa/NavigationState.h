@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NavigationState_h
-#define NavigationState_h
+#pragma once
 
 #import "WKFoundation.h"
 
@@ -35,8 +34,8 @@
 #import "PageLoadState.h"
 #import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
-#import <WebCore/Timer.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
 
 @class WKWebView;
 @protocol WKHistoryDelegatePrivate;
@@ -205,12 +204,10 @@ private:
 
 #if PLATFORM(IOS)
     ProcessThrottler::BackgroundActivityToken m_activityToken;
-    WebCore::Timer m_releaseActivityTimer;
+    RunLoop::Timer<NavigationState> m_releaseActivityTimer;
 #endif
 };
 
 } // namespace WebKit
 
 #endif
-
-#endif // NavigationState_h

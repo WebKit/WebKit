@@ -93,7 +93,7 @@ NavigationState::NavigationState(WKWebView *webView)
     , m_navigationDelegateMethods()
     , m_historyDelegateMethods()
 #if PLATFORM(IOS)
-    , m_releaseActivityTimer(*this, &NavigationState::releaseNetworkActivityToken)
+    , m_releaseActivityTimer(RunLoop::current(), this, &NavigationState::releaseNetworkActivityToken)
 #endif
 {
     ASSERT(m_webView->_page);

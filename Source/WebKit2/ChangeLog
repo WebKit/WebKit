@@ -1,3 +1,22 @@
+2016-12-09  Brent Fulgham  <bfulgham@apple.com>
+
+        WebCore::Timer is not compatible with UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=165706
+        <rdar://problem/29360564>
+
+        Reviewed by Andy Estes.
+
+        Anders has explained to me (at least twice) that WebCore::Timer must not
+        be used in UIProcess code. A recent bug fix introduced a WebCore::Timer,
+        which led to another crash.
+        
+        This patch switches from WebCore::Timer to WTF::RunLoop::Timer to avoid
+        the problem.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationState):
+
 2016-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
