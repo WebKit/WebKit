@@ -53,7 +53,7 @@ static RefPtr<InspectorValue> jsToInspectorValue(ExecState& scriptState, JSValue
     maxDepth--;
 
     if (value.isUndefinedOrNull())
-        return InspectorValue::null(); // FIXME: Why is it OK to turn undefined into null?
+        return InspectorValue::null();
     if (value.isBoolean())
         return InspectorValue::create(value.asBoolean());
     if (value.isNumber() && value.isDouble())

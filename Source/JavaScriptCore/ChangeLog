@@ -1,3 +1,15 @@
+2016-12-09  Karim H  <karim@karhm.com>
+
+        It is okay to turn undefined into null because we are producing values for a
+        JSON representation (InspectorValue) and JSON has a `null` value and no
+        `undefined` value.
+        https://bugs.webkit.org/show_bug.cgi?id=165506
+
+        Reviewed by Darin Adler.
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+
 2016-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r209554-209571): stress/poly-setter-combo crashing
