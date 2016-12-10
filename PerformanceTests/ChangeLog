@@ -1,3 +1,17 @@
+2016-12-10  Brady Eidson  <beidson@apple.com>
+
+        More IndexedDB perf tests.
+        https://bugs.webkit.org/show_bug.cgi?id=165634
+
+        Reviewed by Sam Weinig.
+
+        * IndexedDB/index-multientry.html:
+        * IndexedDB/large-number-of-inserts-responsiveness.html: Added.
+        * IndexedDB/large-number-of-inserts.html: Added.
+        * IndexedDB/objectstore-cursor.html: Added.
+        
+        * resources/runner.js: Add "track responsiveness" functionality to PerfTestRunner.
+
 2016-12-06  Filip Pizlo  <fpizlo@apple.com>
 
         Concurrent GC should be stable enough to land enabled
