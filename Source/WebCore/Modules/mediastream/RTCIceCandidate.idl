@@ -33,6 +33,7 @@
     Conditional=WEB_RTC,
     Constructor(Dictionary dictionary),
     ConstructorMayThrowException,
+    EnabledAtRuntime=peerConnection,
     ImplementationLacksVTable,
     PrivateIdentifier,
     PublicIdentifier

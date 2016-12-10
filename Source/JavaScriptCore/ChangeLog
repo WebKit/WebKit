@@ -1,3 +1,14 @@
+2016-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
+        https://bugs.webkit.org/show_bug.cgi?id=165251
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Dr Alex Gouaillard <agouaillard@gmail.com>
+
+        * runtime/CommonIdentifiers.h: Add WebRTC and MediaStream identifiers.
+
 2016-12-09  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: implement start function

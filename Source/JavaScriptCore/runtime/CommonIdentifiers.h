@@ -78,8 +78,11 @@
     macro(MediaKeyStatusMap) \
     macro(MediaKeySystemAccess) \
     macro(MediaKeys) \
+    macro(MediaStreamEvent) \
     macro(ModernMediaControls) \
     macro(NaN) \
+    macro(NavigatorMediaDevices) \
+    macro(NavigatorUserMedia) \
     macro(Number) \
     macro(NumberFormat) \
     macro(Object) \
@@ -94,6 +97,14 @@
     macro(RegExp) \
     macro(Response) \
     macro(Request) \
+    macro(RTCDTMFToneChangeEvent) \
+    macro(RTCIceCandidate) \
+    macro(RTCPeerConnection) \
+    macro(RTCRtpReceiver) \
+    macro(RTCRtpSender) \
+    macro(RTCRtpTransceiver) \
+    macro(RTCSessionDescription) \
+    macro(RTCTrackEvent) \
     macro(Set)\
     macro(SetIterator)\
     macro(ShadowRoot) \

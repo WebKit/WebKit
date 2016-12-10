@@ -2808,6 +2808,11 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(MEDIA_STREAM)
     settings.setMockCaptureDevicesEnabled([preferences mockCaptureDevicesEnabled]);
     settings.setMediaCaptureRequiresSecureConnection([preferences mediaCaptureRequiresSecureConnection]);
+    RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled([preferences mediaStreamEnabled]);
+#endif
+
+#if ENABLE(WEB_RTC)
+    RuntimeEnabledFeatures::sharedFeatures().setPeerConnectionEnabled([preferences peerConnectionEnabled]);
 #endif
 
 #if ENABLE(WEB_AUDIO)

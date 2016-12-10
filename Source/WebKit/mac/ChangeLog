@@ -1,3 +1,23 @@
+2016-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
+        https://bugs.webkit.org/show_bug.cgi?id=165251
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Dr Alex Gouaillard <agouaillard@gmail.com>
+
+        * WebView/WebPreferenceKeysPrivate.h: Add MediaStream and PeerConnection preferences.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences mediaStreamEnabled]):
+        (-[WebPreferences setMediaStreamEnabled:]):
+        (-[WebPreferences peerConnectionEnabled]):
+        (-[WebPreferences setPeerConnectionEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don’t expose pointer lock in WebKit1 Objective-C API

@@ -42,6 +42,9 @@ namespace WebCore {
 RuntimeEnabledFeatures::RuntimeEnabledFeatures()
 {
     reset();
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    m_isMediaStreamEnabled = false;
+#endif
 }
 
 void RuntimeEnabledFeatures::reset()
@@ -63,9 +66,6 @@ void RuntimeEnabledFeatures::reset()
 #endif
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     m_isIndexedDBWorkersEnabled = true;
-#endif
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    m_isMediaStreamEnabled = false;
 #endif
 #if ENABLE(WEB_RTC)
     m_isPeerConnectionEnabled = true;

@@ -1002,6 +1002,9 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 
     [preferences setSubtleCryptoEnabled:YES];
 
+    [preferences setMediaStreamEnabled:YES];
+    [preferences setPeerConnectionEnabled:YES];
+
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }

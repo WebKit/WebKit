@@ -54,6 +54,7 @@ dictionary RTCDataChannelInit {
     ActiveDOMObject,
     Conditional=WEB_RTC,
     ConstructorCallWith=ScriptExecutionContext,
+    EnabledAtRuntime=peerConnection,
     ExportMacro=WEBCORE_EXPORT,
     JSBuiltinConstructor,
 ] interface RTCPeerConnection : EventTarget {

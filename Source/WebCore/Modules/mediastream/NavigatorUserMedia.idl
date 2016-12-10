@@ -19,6 +19,7 @@
 
 [
     Conditional=MEDIA_STREAM,
+    EnabledAtRuntime=mediaStream,
 ] partial interface Navigator {
     [JSBuiltin] void webkitGetUserMedia(MediaStreamConstraints constraints, NavigatorUserMediaSuccessCallback successCallback, NavigatorUserMediaErrorCallback errorCallback);
 };

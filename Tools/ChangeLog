@@ -1,3 +1,23 @@
+2016-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
+        https://bugs.webkit.org/show_bug.cgi?id=165251
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Dr Alex Gouaillard <agouaillard@gmail.com>
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues): Enable MediaStream and PeerConnection.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Ditto.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setMediaStreamEnabled): New.
+        (WTR::TestRunner::setPeerConnectionEnabled): New.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2016-12-09  Brady Eidson  <beidson@apple.com> 
  
         Re-landing:

@@ -1,3 +1,32 @@
+2016-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
+        https://bugs.webkit.org/show_bug.cgi?id=165251
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Dr Alex Gouaillard <agouaillard@gmail.com>
+        No new tests, covered by existing tests.
+
+        * Modules/mediastream/MediaStreamEvent.idl: Add "EnabledAtRuntime".
+        * Modules/mediastream/NavigatorMediaDevices.idl: Ditto.
+        * Modules/mediastream/NavigatorUserMedia.idl: Ditto.
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl: Ditto.
+        * Modules/mediastream/RTCIceCandidate.idl: Ditto.
+        * Modules/mediastream/RTCPeerConnection.idl: Ditto.
+        * Modules/mediastream/RTCRtpReceiver.idl: Ditto.
+        * Modules/mediastream/RTCRtpSender.idl: Ditto.
+        * Modules/mediastream/RTCRtpTransceiver.idl: Ditto.
+        * Modules/mediastream/RTCSessionDescription.idl: Ditto.
+        * Modules/mediastream/RTCTrackEvent.idl: Ditto.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::RuntimeEnabledFeatures): Set m_isMediaStreamEnabled in the
+          constructor instead of in reset() because the later is called by the Internals constructor,
+          making it impossible to override the runtime flag from WTR or DRT.
+        (WebCore::RuntimeEnabledFeatures::reset): Don't set m_isMediaStreamEnabled.
+        * page/Settings.in: Add peerConnectionEnabled.
+
 2016-12-09  Daniel Bates  <dabates@apple.com>
 
         Remove QuickLook scheme from the list of secure schemes

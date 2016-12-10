@@ -3035,6 +3035,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setMediaStreamEnabled(store.getBoolValueForKey(WebPreferencesKey::mediaStreamEnabledKey()));
 #endif
 
+#if ENABLE(WEB_RTC)
+    settings.setPeerConnectionEnabled(store.getBoolValueForKey(WebPreferencesKey::peerConnectionEnabledKey()));
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     settings.setImageControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::imageControlsEnabledKey()));
 #endif

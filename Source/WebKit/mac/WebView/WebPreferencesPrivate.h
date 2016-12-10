@@ -162,6 +162,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setSubtleCryptoEnabled:(BOOL)flag;
 - (BOOL)subtleCryptoEnabled;
 
+- (void)setMediaStreamEnabled:(BOOL)flag;
+- (BOOL)mediaStreamEnabled;
+
+- (void)setPeerConnectionEnabled:(BOOL)flag;
+- (BOOL)peerConnectionEnabled;
+
 #if !TARGET_OS_IPHONE
 // zero means do AutoScale
 - (float)PDFScaleFactor;

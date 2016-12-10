@@ -1,3 +1,26 @@
+2016-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
+        https://bugs.webkit.org/show_bug.cgi?id=165251
+
+        Reviewed by Dean Jackson.
+
+        Based on a patch by Dr Alex Gouaillard <agouaillard@gmail.com>
+
+        * Shared/WebPreferencesDefinitions.h: Add peerConnectionEnabled.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPeerConnectionEnabled): Added.
+        (WKPreferencesGetPeerConnectionEnabled): Added.
+        * UIProcess/API/C/WKPreferencesRef.h:
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Add WebKitMediaStreamEnabled
+          and WebKitPeerConnectionEnabled.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Initialize the peerConnection preference.
+
 2016-12-09  Brady Eidson  <beidson@apple.com>
 
         Re-landing:

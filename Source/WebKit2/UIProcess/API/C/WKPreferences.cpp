@@ -1321,6 +1321,16 @@ bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mediaStreamEnabled();
 }
 
+void WKPreferencesSetPeerConnectionEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setPeerConnectionEnabled(enabled);
+}
+
+bool WKPreferencesGetPeerConnectionEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->peerConnectionEnabled();
+}
+
 void WKPreferencesSetSpatialNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setSpatialNavigationEnabled(enabled);
