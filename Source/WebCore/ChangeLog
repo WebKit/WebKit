@@ -1,3 +1,20 @@
+2016-12-09  Daniel Bates  <dabates@apple.com>
+
+        Remove QuickLook scheme from the list of secure schemes
+        https://bugs.webkit.org/show_bug.cgi?id=165699
+
+        Reviewed by Andy Estes.
+
+        Following r207155 we use a unique origin for QuickLook documents. Unique origins are not
+        subject to mixed content restrictions. Prior to r207155 QuickLook documents used the
+        origin from which they were served. We added the QuickLook scheme to the list of secure
+        schemes as a workaround to avoid mixed content errors when loading subresources in a
+        QuickLook document served over HTTPS. Now that we use a unique origin for QuickLook
+        documents we no longer need this workaround.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::secureSchemes):
+
 2016-12-09  Brady Eidson  <beidson@apple.com>
 
         Re-landing:

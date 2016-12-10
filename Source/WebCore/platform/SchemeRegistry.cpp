@@ -28,10 +28,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#if USE(QUICK_LOOK)
-#include "QuickLook.h"
-#endif
-
 namespace WebCore {
 
 static URLSchemesMap& localURLSchemes()
@@ -63,9 +59,6 @@ static URLSchemesMap& secureSchemes()
         secureSchemes.get().add("about");
         secureSchemes.get().add("data");
         secureSchemes.get().add("wss");
-#if USE(QUICK_LOOK)
-        secureSchemes.get().add(QLPreviewProtocol());
-#endif
 #if PLATFORM(GTK)
         secureSchemes.get().add("resource");
 #endif
