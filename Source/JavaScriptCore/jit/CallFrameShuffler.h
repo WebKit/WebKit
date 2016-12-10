@@ -113,13 +113,33 @@ public:
             data.callee = cachedRecovery->recovery();
         }
         data.args.resize(argCount());
+
+        Vector<ValueRecovery> registerArgRecoveries;
+#if USE(JSVALUE64)
+        // Find cached recoveries for all argument registers.
+        // We do this here, because a cached recovery may be the source for multiple
+        // argument registers, but it is only stored in one m_newRegister index.
+        if (data.argumentsInRegisters) {
+            unsigned maxArgumentRegister = std::min(static_cast<unsigned>(argCount()), NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS);
+            registerArgRecoveries.resize(maxArgumentRegister);
+            for (size_t i = 0; i < maxArgumentRegister; ++i) {
+                Reg reg { argumentRegisterForFunctionArgument(i) };
+                CachedRecovery* cachedRecovery { m_newRegisters[reg] };
+                if (cachedRecovery) {
+                    for (auto jsValueReg : cachedRecovery->gprTargets())
+                        registerArgRecoveries[jsFunctionArgumentForArgumentRegister(jsValueReg.gpr())] = cachedRecovery->recovery();
+                }
+            }
+        }
+#endif
+        
         for (size_t i = 0; i < argCount(); ++i) {
             if (argumentsLocation == StackArgs || i >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
                 data.args[i] = getNew(virtualRegisterForArgument(i))->recovery();
             else {
                 Reg reg { argumentRegisterForFunctionArgument(i) };
-                CachedRecovery* cachedRecovery { m_newRegisters[reg] };
-                data.args[i] = cachedRecovery->recovery();
+                ASSERT(registerArgRecoveries[i]);
+                data.args[i] = registerArgRecoveries[i];
             }
         }
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
@@ -440,15 +460,22 @@ private:
     bool tryAcquireTagTypeNumber();
 #endif
 
-    // This stores, for each register, information about the recovery
-    // for the value that should eventually go into that register. The
-    // only registers that have a target recovery will be callee-save
-    // registers, as well as possibly one JSValueRegs for holding the
-    // callee.
+    // This stores information about the recovery for the value that
+    // should eventually go into that register. In some cases there
+    // are recoveries that have multiple targets. For those recoveries,
+    // only the first target register in the map has the recovery.
+    // We optimize the case where there are multiple targets for one
+    // recovery where one of those targets is also the source register.
+    // Restoring the first target becomes a nop and simplifies the logic
+    // of restoring the remaining targets.
     //
     // Once the correct value has been put into the registers, and
     // contrary to what we do with m_newFrame, we keep the entry in
     // m_newRegisters to simplify spilling.
+    //
+    // If a recovery has multiple target registers, we copy the value
+    // from the first target register to the remaining target registers
+    // at the end of the shuffling process.
     RegisterMap<CachedRecovery*> m_newRegisters;
 
     template<typename CheckFunctor>

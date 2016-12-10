@@ -1,3 +1,24 @@
+2016-12-10  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r209653) Crash in CallFrameShuffler::snapshot()
+        https://bugs.webkit.org/show_bug.cgi?id=165728
+
+        Reviewed by Filip Pizlo.
+
+        It can be the case that a JSValueReg's CachedRecovery is the source for mutliple
+        GPRs. We only store the CachedRecovery in one slot of m_newRegisters to simplify
+        the recovery process. This is also done for the case where the recovery source
+        and destination are the same GPR.
+
+        In light of this change, snapshot needs to be taught that one CacheRecovery is
+        the source for multiple registers.  This is done by using a two step process.
+        First find all the argument CachedRecovery's and create a vector mapping all of
+        the target GPRs and the source recovery.  Then use that vector to get the
+        recovery for each register.
+
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot):
+
 2016-12-10  Keith Miller  <keith_miller@apple.com>
 
         Fix indirect_call if the result type is used.
