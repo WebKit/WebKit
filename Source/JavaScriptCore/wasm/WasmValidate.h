@@ -31,7 +31,7 @@
 
 namespace JSC { namespace Wasm {
 
-String validateFunction(const uint8_t*, size_t, const Signature*, const FunctionIndexSpace&, const MemoryInformation&);
+String validateFunction(const uint8_t*, size_t, const Signature*, const ImmutableFunctionIndexSpace&, const ModuleInformation&);
 
 } } // namespace JSC::Wasm
 

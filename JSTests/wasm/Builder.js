@@ -236,6 +236,7 @@ const _checkImms = (op, imms, expectedImms, ret) => {
             break;
         case "target_count": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         case "target_table": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
+        case "reserved": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421
         default: throw new Error(`Implementation problem: unhandled immediate "${expect.name}" on "${op}"`);
         }
     }

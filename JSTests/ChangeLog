@@ -1,3 +1,20 @@
+2016-12-09  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should support call_indirect
+        https://bugs.webkit.org/show_bug.cgi?id=165718
+
+        Reviewed by Filip Pizlo.
+
+        * wasm/Builder.js:
+        * wasm/function-tests/call-indirect-params.js: Added.
+        * wasm/function-tests/call-indirect.js: Added.
+        * wasm/js-api/call-indirect.js: Added.
+        (const.wasmModuleWhichImportJS):
+        (MonomorphicImport):
+        (Polyphic2Import):
+        (VirtualImport):
+        * wasm/wasm.json:
+
 2016-12-09  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: implement data section

@@ -95,7 +95,7 @@ public:
         return WTFMove(m_wasmToJSStubs);
     }
 
-    FunctionIndexSpace&& takeFunctionIndexSpace()
+    ImmutableFunctionIndexSpace&& takeFunctionIndexSpace()
     {
         RELEASE_ASSERT(!failed());
         return WTFMove(m_functionIndexSpace);
@@ -107,7 +107,7 @@ private:
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<WasmToJSStub> m_wasmToJSStubs;
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
-    FunctionIndexSpace m_functionIndexSpace;
+    ImmutableFunctionIndexSpace m_functionIndexSpace;
 
     VM* m_vm;
     const uint8_t* m_source;

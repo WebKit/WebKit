@@ -187,6 +187,12 @@ struct CallableFunction {
 };
 typedef Vector<CallableFunction> FunctionIndexSpace;
 
+
+struct ImmutableFunctionIndexSpace {
+    MallocPtr<CallableFunction> buffer;
+    size_t size;
+};
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

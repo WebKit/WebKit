@@ -38,9 +38,9 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
 
-JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>&& moduleInformation, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmToJSStub>&& wasmToJSStubs, Wasm::FunctionIndexSpace&& functionIndexSpace, SymbolTable* exportSymbolTable, unsigned calleeCount)
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>&& moduleInformation, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmToJSStub>&& wasmToJSStubs, Wasm::ImmutableFunctionIndexSpace&& functionIndexSpace, SymbolTable* exportSymbolTable, unsigned calleeCount)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyModule(vm, structure, std::forward<std::unique_ptr<Wasm::ModuleInformation>>(moduleInformation), std::forward<Bag<CallLinkInfo>>(callLinkInfos), std::forward<Vector<Wasm::WasmToJSStub>>(wasmToJSStubs), std::forward<Wasm::FunctionIndexSpace>(functionIndexSpace), calleeCount);
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap, allocationSize(calleeCount))) JSWebAssemblyModule(vm, structure, std::forward<std::unique_ptr<Wasm::ModuleInformation>>(moduleInformation), std::forward<Bag<CallLinkInfo>>(callLinkInfos), std::forward<Vector<Wasm::WasmToJSStub>>(wasmToJSStubs), std::forward<Wasm::ImmutableFunctionIndexSpace>(functionIndexSpace), calleeCount);
     instance->finishCreation(vm, exportSymbolTable);
     return instance;
 }
@@ -50,7 +50,7 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>&& moduleInformation, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmToJSStub>&& wasmToJSStubs, Wasm::FunctionIndexSpace&& functionIndexSpace, unsigned calleeCount)
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::unique_ptr<Wasm::ModuleInformation>&& moduleInformation, Bag<CallLinkInfo>&& callLinkInfos, Vector<Wasm::WasmToJSStub>&& wasmToJSStubs, Wasm::ImmutableFunctionIndexSpace&& functionIndexSpace, unsigned calleeCount)
     : Base(vm, structure)
     , m_moduleInformation(WTFMove(moduleInformation))
     , m_callLinkInfos(WTFMove(callLinkInfos))

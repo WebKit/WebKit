@@ -40,6 +40,8 @@
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "JSWebAssemblyInstance.h"
+#include "JSWebAssemblyModule.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
 #include "WasmFunctionParser.h"
@@ -130,7 +132,7 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(MemoryInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&);
+    B3IRGenerator(const MemoryInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
     bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -164,7 +166,9 @@ public:
     bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
-    bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
+    // Calls
+    bool WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
+    bool WARN_UNUSED_RETURN addCallIndirect(const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
@@ -179,6 +183,7 @@ private:
     void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
     Value* zeroForType(Type);
 
+    const ImmutableFunctionIndexSpace& m_functionIndexSpace;
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
@@ -186,10 +191,12 @@ private:
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
     Value* m_zeroValues[numTypes];
+    Value* m_functionIndexSpaceValue;
 };
 
-B3IRGenerator::B3IRGenerator(MemoryInformation& memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
-    : m_proc(procedure)
+B3IRGenerator::B3IRGenerator(const MemoryInformation& memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
+    : m_functionIndexSpace(functionIndexSpace)
+    , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
 {
     m_currentBlock = m_proc.addBlock();
@@ -224,6 +231,8 @@ B3IRGenerator::B3IRGenerator(MemoryInformation& memory, Procedure& procedure, Wa
     }
 
     wasmCallingConvention().setupFrameInPrologue(compilation, m_proc, Origin(), m_currentBlock);
+
+    m_functionIndexSpaceValue = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), functionIndexSpace.buffer.get());
 }
 
 Value* B3IRGenerator::zeroForType(Type type)
@@ -592,7 +601,7 @@ bool B3IRGenerator::addEndToUnreachable(ControlEntry& entry)
     return true;
 }
 
-bool B3IRGenerator::addCall(unsigned functionIndex, const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result)
+bool B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result)
 {
     ASSERT(signature->arguments.size() == args.size());
 
@@ -613,6 +622,57 @@ bool B3IRGenerator::addCall(unsigned functionIndex, const Signature* signature, 
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                     m_unlinkedWasmToWasmCalls[callIndex] = { linkBuffer.locationOf(call), functionIndex };
                 });
+            });
+        });
+    return true;
+}
+
+bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result)
+{
+    ExpressionType calleeIndex = args.takeLast();
+    ASSERT(signature->arguments.size() == args.size());
+
+    // Check the index we are looking for is valid.
+    {
+        ExpressionType maxValidIndex = m_currentBlock->appendIntConstant(m_proc, Origin(), Int32, m_functionIndexSpace.size);
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), m_zeroValues[linearizeType(I32)],
+                m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), calleeIndex, maxValidIndex)));
+
+        check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.breakpoint();
+        });
+    }
+
+    // Compute the offset in the function index space we are looking for.
+    ExpressionType offset = m_currentBlock->appendNew<Value>(m_proc, Mul, Origin(),
+        m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), calleeIndex),
+        m_currentBlock->appendIntConstant(m_proc, Origin(), pointerType(), sizeof(CallableFunction)));
+    ExpressionType callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, Origin(), m_functionIndexSpaceValue, offset);
+
+    // Check the signature matches the value we expect.
+    {
+        ExpressionType calleeSignature = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, signature));
+        ExpressionType expectedSignature = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), signature);
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
+            m_currentBlock->appendNew<Value>(m_proc, NotEqual, Origin(), calleeSignature, expectedSignature));
+
+        check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.breakpoint();
+        });
+    }
+
+    ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, code));
+
+    result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(signature->returnType),
+        [&] (PatchpointValue* patchpoint) {
+            patchpoint->effects.writesPinned = true;
+            patchpoint->effects.readsPinned = true;
+
+            patchpoint->append(calleeCode, ValueRep::SomeRegister);
+
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                jit.call(params[0].gpr());
             });
         });
     return true;
@@ -657,7 +717,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn("\n");
 }
 
-static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, MemoryInformation& memory)
+static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, const MemoryInformation& memory)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
@@ -737,13 +797,13 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signatur
     return std::make_unique<Compilation>(vm, proc);
 }
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, MemoryInformation& memory, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const FunctionIndexSpace& functionIndexSpace, unsigned optLevel)
+std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
     Procedure procedure;
-    B3IRGenerator context(memory, procedure, result.get(), unlinkedWasmToWasmCalls);
-    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functionIndexSpace);
+    B3IRGenerator context(info.memory, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
+    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functionIndexSpace, info);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -757,7 +817,7 @@ std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* fun
         dataLog("Post SSA: ", procedure);
 
     result->code = std::make_unique<Compilation>(vm, procedure, optLevel);
-    result->jsToWasmEntryPoint = createJSToWasmWrapper(vm, signature, result->code->code(), memory);
+    result->jsToWasmEntryPoint = createJSToWasmWrapper(vm, signature, result->code->code(), info.memory);
     return result;
 }
 

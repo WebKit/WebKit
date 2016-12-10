@@ -42,14 +42,14 @@ class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmToJSStub>&&, Wasm::FunctionIndexSpace&&, SymbolTable*, unsigned);
+    static JSWebAssemblyModule* create(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmToJSStub>&&, Wasm::ImmutableFunctionIndexSpace&&, SymbolTable*, unsigned);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
     const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
-    Wasm::Signature* signatureForFunctionIndexSpace(unsigned functionIndexSpace) const { return m_functionIndexSpace.at(functionIndexSpace).signature; }
+    Wasm::Signature* signatureForFunctionIndexSpace(unsigned functionIndexSpace) const { ASSERT(functionIndexSpace < m_functionIndexSpace.size); return m_functionIndexSpace.buffer.get()[functionIndexSpace].signature; }
     unsigned importCount() const { return m_wasmToJSStubs.size(); }
 
     JSWebAssemblyCallee* calleeFromFunctionIndexSpace(unsigned functionIndexSpace)
@@ -65,8 +65,10 @@ public:
         return bitwise_cast<WriteBarrier<JSWebAssemblyCallee>*>(bitwise_cast<char*>(this) + offsetOfCallees());
     }
 
+    static ptrdiff_t offsetOfFunctionIndexSpace() { return OBJECT_OFFSETOF(JSWebAssemblyModule, m_functionIndexSpace); }
+
 protected:
-    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmToJSStub>&&, Wasm::FunctionIndexSpace&&, unsigned calleeCount);
+    JSWebAssemblyModule(VM&, Structure*, std::unique_ptr<Wasm::ModuleInformation>&&, Bag<CallLinkInfo>&&, Vector<Wasm::WasmToJSStub>&&, Wasm::ImmutableFunctionIndexSpace&&, unsigned calleeCount);
     void finishCreation(VM&, SymbolTable*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -86,7 +88,7 @@ private:
     Bag<CallLinkInfo> m_callLinkInfos;
     WriteBarrier<SymbolTable> m_exportSymbolTable;
     Vector<Wasm::WasmToJSStub> m_wasmToJSStubs;
-    Wasm::FunctionIndexSpace m_functionIndexSpace;
+    const Wasm::ImmutableFunctionIndexSpace m_functionIndexSpace;
     unsigned m_calleeCount;
 };
 

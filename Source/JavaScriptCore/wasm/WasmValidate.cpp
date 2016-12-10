@@ -110,8 +110,9 @@ public:
     bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
-
+    // Calls
     bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);
+    bool WARN_UNUSED_RETURN addCallIndirect(const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
@@ -347,6 +348,35 @@ bool Validate::addCall(unsigned, const Signature* signature, const Vector<Expres
     return true;
 }
 
+bool Validate::addCallIndirect(const Signature* signature, const Vector<ExpressionType>& args, ExpressionType& result)
+{
+    const auto argumentCount = signature->arguments.size();
+    if (argumentCount != args.size() - 1) {
+        StringBuilder builder;
+        builder.append("Arity mismatch in call_indirect, expected: ");
+        builder.appendNumber(signature->arguments.size());
+        builder.append(" but got: ");
+        builder.appendNumber(args.size());
+        m_errorMessage = builder.toString();
+        return false;
+    }
+
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        if (args[i] != signature->arguments[i]) {
+            m_errorMessage = makeString("Expected argument type: ", toString(signature->arguments[i]), " does not match passed argument type: ", toString(args[i]));
+            return false;
+        }
+    }
+
+    if (args.last() != I32) {
+        m_errorMessage = makeString("Expected call_indirect target index to have type: i32 but got type: ", toString(args.last()));
+        return false;
+    }
+    
+    result = signature->returnType;
+    return true;
+}
+
 bool Validate::unify(const ExpressionList& values, const ControlType& block)
 {
     ASSERT(values.size() <= 1);
@@ -371,10 +401,11 @@ void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
     // Think of this as penance for the sin of bad error messages.
 }
 
-String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const FunctionIndexSpace& functionIndexSpace, const MemoryInformation& memory)
+String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info)
 {
-    Validate context(signature->returnType, memory);
-    FunctionParser<Validate> validator(context, source, length, signature, functionIndexSpace);
+    Validate context(signature->returnType, info.memory);
+    FunctionParser<Validate> validator(context, source, length, signature, functionIndexSpace, info);
+
     if (!validator.parse()) {
         // FIXME: add better location information here. see: https://bugs.webkit.org/show_bug.cgi?id=164288
         // FIXME: We should never not have an error message if we return false.

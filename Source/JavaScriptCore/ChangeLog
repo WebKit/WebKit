@@ -1,3 +1,55 @@
+2016-12-09  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should support call_indirect
+        https://bugs.webkit.org/show_bug.cgi?id=165718
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support for call_indirect. The basic framework for
+        an indirect call is that the module holds a buffer containing a
+        stub for each function in the index space. Whenever a function
+        needs to do an indirect call it gets a index into that table. In
+        order to ensure call_indirect is calling a valid function the
+        functionIndexSpace also needs a pointer to a canonicalized
+        signature. When making an indirect call, we first check the index
+        is in range, then check the signature matches the value we were given.
+
+        This patch also differentiates between FunctionIndexSpaces and
+        ImmutableFunctionIndexSpaces. Since we don't know the size of the
+        FunctionIndexSpace when we start parsing we need to be able to
+        resize the IndexSpace. However, once we have finished parsing all
+        the sections we want to prevent an relocation of the function
+        index space pointer.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::setupCall):
+        * wasm/WasmFormat.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser::setErrorMessage):
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::run):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::takeFunctionIndexSpace):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addCallIndirect):
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::signatureForFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::offsetOfFunctionIndexSpace):
+
 2016-12-09  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: implement data section

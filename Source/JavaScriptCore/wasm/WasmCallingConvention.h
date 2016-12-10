@@ -163,8 +163,8 @@ public:
         B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, returnType, origin);
         patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
         patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
-        patchpoint->appendVector(constrainedArguments);
         patchpointFunctor(patchpoint);
+        patchpoint->appendVector(constrainedArguments);
 
         switch (returnType) {
         case B3::Void:

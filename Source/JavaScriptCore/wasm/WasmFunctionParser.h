@@ -45,7 +45,7 @@ public:
     typedef typename Context::ControlType ControlType;
     typedef typename Context::ExpressionList ExpressionList;
 
-    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const FunctionIndexSpace&);
+    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const ImmutableFunctionIndexSpace&, const ModuleInformation&);
 
     bool WARN_UNUSED_RETURN parse();
 
@@ -71,22 +71,28 @@ private:
     template<OpType>
     bool WARN_UNUSED_RETURN binaryCase();
 
-    void setErrorMessage(String&& message) { m_context.setErrorMessage(WTFMove(message)); }
+    bool setErrorMessage(String&& message)
+    {
+        m_context.setErrorMessage(WTFMove(message));
+        return false;
+    }
 
     Context& m_context;
     ExpressionList m_expressionStack;
     Vector<ControlEntry> m_controlStack;
     const Signature* m_signature;
-    const FunctionIndexSpace& m_functionIndexSpace;
+    const ImmutableFunctionIndexSpace& m_functionIndexSpace;
+    const ModuleInformation& m_info;
     unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const FunctionIndexSpace& functionIndexSpace)
+FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info)
     : Parser(functionStart, functionLength)
     , m_context(context)
     , m_signature(signature)
     , m_functionIndexSpace(functionIndexSpace)
+    , m_info(info)
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
@@ -350,10 +356,10 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         if (!parseVarUInt32(functionIndex))
             return false;
 
-        if (functionIndex >= m_functionIndexSpace.size())
+        if (functionIndex >= m_functionIndexSpace.size)
             return false;
 
-        const Signature* calleeSignature = m_functionIndexSpace[functionIndex].signature;
+        const Signature* calleeSignature = m_functionIndexSpace.buffer.get()[functionIndex].signature;
 
         if (calleeSignature->arguments.size() > m_expressionStack.size())
             return false;
@@ -367,6 +373,42 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
         ExpressionType result = Context::emptyExpression;
         if (!m_context.addCall(functionIndex, calleeSignature, args, result))
+            return false;
+
+        if (result != Context::emptyExpression)
+            m_expressionStack.append(result);
+
+        return true;
+    }
+
+    case OpType::CallIndirect: {
+        uint32_t signatureIndex;
+        if (!parseVarUInt32(signatureIndex))
+            return false;
+
+        uint8_t reserved;
+        if (!parseVarUInt1(reserved))
+            return false;
+
+        if (m_info.signatures.size() <= signatureIndex)
+            return setErrorMessage("Tried to use a signature outside the range of valid signatures");
+
+        const Signature* calleeSignature = &m_info.signatures[signatureIndex];
+        size_t argumentCount = calleeSignature->arguments.size() + 1; // Add the callee's index.
+        if (argumentCount > m_expressionStack.size())
+            return setErrorMessage("Not enough values on the stack for call_indirect");
+
+        Vector<ExpressionType> args;
+        if (!args.tryReserveCapacity(argumentCount))
+            return setErrorMessage("Out of memory");
+
+        size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
+        for (unsigned i = firstArgumentIndex; i < m_expressionStack.size(); ++i)
+            args.uncheckedAppend(m_expressionStack[i]);
+        m_expressionStack.shrink(firstArgumentIndex);
+
+        ExpressionType result = Context::emptyExpression;
+        if (!m_context.addCallIndirect(calleeSignature, args, result))
             return false;
 
         if (result != Context::emptyExpression)
@@ -517,8 +559,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     case OpType::GrowMemory:
     case OpType::CurrentMemory:
     case OpType::GetGlobal:
-    case OpType::SetGlobal:
-    case OpType::CallIndirect: {
+    case OpType::SetGlobal: {
         // FIXME: Not yet implemented.
         return false;
     }

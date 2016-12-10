@@ -72,7 +72,8 @@ void Plan::run()
         }
         m_moduleInformation = WTFMove(moduleParser.moduleInformation());
         m_functionLocationInBinary = WTFMove(moduleParser.functionLocationInBinary());
-        m_functionIndexSpace = WTFMove(moduleParser.functionIndexSpace());
+        m_functionIndexSpace.size = moduleParser.functionIndexSpace().size();
+        m_functionIndexSpace.buffer = moduleParser.functionIndexSpace().releaseBuffer();
     }
     if (verbose)
         dataLogLn("Parsed module.");
@@ -103,7 +104,7 @@ void Plan::run()
             dataLogLn("Processing import function number ", importFunctionIndex, ": ", import->module, ": ", import->field);
         Signature* signature = m_moduleInformation->importFunctions.at(import->kindIndex);
         m_wasmToJSStubs.uncheckedAppend(importStubGenerator(m_vm, m_callLinkInfos, signature, importFunctionIndex));
-        m_functionIndexSpace[importFunctionIndex].code = m_wasmToJSStubs[importFunctionIndex].code().executableAddress();
+        m_functionIndexSpace.buffer.get()[importFunctionIndex].code = m_wasmToJSStubs[importFunctionIndex].code().executableAddress();
     }
 
     for (unsigned functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); ++functionIndex) {
@@ -114,9 +115,9 @@ void Plan::run()
         ASSERT(functionLength <= m_sourceLength);
         Signature* signature = m_moduleInformation->internalFunctionSignatures[functionIndex];
         unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
-        ASSERT(m_functionIndexSpace[functionIndexSpace].signature == signature);
+        ASSERT(m_functionIndexSpace.buffer.get()[functionIndexSpace].signature == signature);
 
-        String error = validateFunction(functionStart, functionLength, signature, m_functionIndexSpace, m_moduleInformation->memory);
+        String error = validateFunction(functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation);
         if (!error.isNull()) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -128,14 +129,14 @@ void Plan::run()
         }
 
         unlinkedWasmToWasmCalls.uncheckedAppend(Vector<UnlinkedWasmToWasmCall>());
-        m_wasmInternalFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, m_moduleInformation->memory, signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace));
-        m_functionIndexSpace[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->code->code().executableAddress();
+        m_wasmInternalFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace, *m_moduleInformation));
+        m_functionIndexSpace.buffer.get()[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->code->code().executableAddress();
     }
 
     // Patch the call sites for each WebAssembly function.
     for (auto& unlinked : unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked)
-            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_functionIndexSpace[call.functionIndex].code));
+            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_functionIndexSpace.buffer.get()[call.functionIndex].code));
     }
 
     m_failed = false;
