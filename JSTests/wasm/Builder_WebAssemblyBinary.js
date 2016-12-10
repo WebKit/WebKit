@@ -156,7 +156,20 @@ const emitters = {
         }
     },
 
-    Data: (section, bin) => { throw new Error(`Not yet implemented`); },
+    Data: (section, bin) => {
+        put(bin, "varuint32", section.data.length);
+        for (const datum of section.data) {
+            put(bin, "varuint32", datum.index);
+            // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
+            // For now we only handle i32.const as offset.
+            put(bin, "uint8", WASM.description.opcode["i32.const"].value);
+            put(bin, WASM.description.opcode["i32.const"].immediate[0].type, datum.offset);
+            put(bin, "uint8", WASM.description.opcode["end"].value);
+            put(bin, "varuint32", datum.data.length);
+            for (const byte of datum.data)
+                put(bin, "uint8", byte);
+        }
+    },
 };
 
 export const Binary = (preamble, sections) => {

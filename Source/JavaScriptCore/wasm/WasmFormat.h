@@ -35,6 +35,8 @@
 #include "WasmMemoryInformation.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
+#include <memory>
+#include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
@@ -114,6 +116,35 @@ struct FunctionLocationInBinary {
     size_t end;
 };
 
+struct Segment {
+    uint32_t offset;
+    uint32_t sizeInBytes;
+    // Bytes are allocated at the end.
+    static Segment* make(uint32_t offset, uint32_t sizeInBytes)
+    {
+        auto allocated = tryFastCalloc(sizeof(Segment) + sizeInBytes, 1);
+        Segment* segment;
+        if (!allocated.getValue(segment))
+            return nullptr;
+        segment->offset = offset;
+        segment->sizeInBytes = sizeInBytes;
+        return segment;
+    }
+    static void destroy(Segment *segment)
+    {
+        fastFree(segment);
+    }
+    uint8_t& byte(uint32_t pos)
+    {
+        ASSERT(pos < sizeInBytes);
+        return *reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(this) + sizeof(offset) + sizeof(sizeInBytes) + pos);
+    }
+    typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
+    static Ptr makePtr(Segment* segment)
+    {
+        return Ptr(segment, &Segment::destroy);
+    }
+};
 
 struct ModuleInformation {
     Vector<Signature> signatures;
@@ -125,6 +156,7 @@ struct ModuleInformation {
     MemoryInformation memory;
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
+    Vector<Segment::Ptr> data;
 
     ~ModuleInformation();
 };

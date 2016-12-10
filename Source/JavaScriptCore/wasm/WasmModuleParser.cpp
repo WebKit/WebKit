@@ -157,12 +157,12 @@ bool ModuleParser::parse()
 bool ModuleParser::parseType()
 {
     uint32_t count;
-    if (!parseVarUInt32(count))
+    if (!parseVarUInt32(count)
+        || count == std::numeric_limits<uint32_t>::max()
+        || !m_module->signatures.tryReserveCapacity(count))
         return false;
     if (verbose)
-        dataLogLn("count: ", count);
-    if (!m_module->signatures.tryReserveCapacity(count))
-        return false;
+        dataLogLn("  count: ", count);
 
     for (uint32_t i = 0; i < count; ++i) {
         int8_t type;
@@ -175,17 +175,15 @@ bool ModuleParser::parseType()
             dataLogLn("Got function type.");
 
         uint32_t argumentCount;
-        if (!parseVarUInt32(argumentCount))
-            return false;
-
-        if (verbose)
-            dataLogLn("argumentCount: ", argumentCount);
-
         Vector<Type> argumentTypes;
-        if (!argumentTypes.tryReserveCapacity(argumentCount))
+        if (!parseVarUInt32(argumentCount)
+            || argumentCount == std::numeric_limits<uint32_t>::max()
+            || !argumentTypes.tryReserveCapacity(argumentCount))
             return false;
+        if (verbose)
+            dataLogLn("  argument count: ", argumentCount);
 
-        for (unsigned i = 0; i != argumentCount; ++i) {
+        for (unsigned i = 0; i < argumentCount; ++i) {
             Type argumentType;
             if (!parseResultType(argumentType))
                 return false;
@@ -216,14 +214,14 @@ bool ModuleParser::parseType()
 bool ModuleParser::parseImport()
 {
     uint32_t importCount;
-    if (!parseVarUInt32(importCount))
-        return false;
-    if (!m_module->imports.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
+    if (!parseVarUInt32(importCount)
+        || importCount == std::numeric_limits<uint32_t>::max()
+        || !m_module->imports.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
         || !m_module->importFunctions.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
         || !m_functionIndexSpace.tryReserveCapacity(importCount)) // FIXME this over-allocates when we fix the FIXMEs below. We'll allocate some more here when we know how many functions to expect.
         return false;
 
-    for (uint32_t importNumber = 0; importNumber != importCount; ++importNumber) {
+    for (uint32_t importNumber = 0; importNumber < importCount; ++importNumber) {
         Import imp;
         uint32_t moduleLen;
         uint32_t fieldLen;
@@ -278,12 +276,13 @@ bool ModuleParser::parseFunction()
 {
     uint32_t count;
     if (!parseVarUInt32(count)
+        || count == std::numeric_limits<uint32_t>::max()
         || !m_module->internalFunctionSignatures.tryReserveCapacity(count)
         || !m_functionLocationInBinary.tryReserveCapacity(count)
         || !m_functionIndexSpace.tryReserveCapacity(m_functionIndexSpace.size() + count))
         return false;
 
-    for (uint32_t i = 0; i != count; ++i) {
+    for (uint32_t i = 0; i < count; ++i) {
         uint32_t typeNumber;
         if (!parseVarUInt32(typeNumber)
             || typeNumber >= m_module->signatures.size())
@@ -374,10 +373,11 @@ bool ModuleParser::parseExport()
 {
     uint32_t exportCount;
     if (!parseVarUInt32(exportCount)
+        || exportCount == std::numeric_limits<uint32_t>::max()
         || !m_module->exports.tryReserveCapacity(exportCount))
         return false;
 
-    for (uint32_t exportNumber = 0; exportNumber != exportCount; ++exportNumber) {
+    for (uint32_t exportNumber = 0; exportNumber < exportCount; ++exportNumber) {
         Export exp;
         uint32_t fieldLen;
         String fieldString;
@@ -385,8 +385,10 @@ bool ModuleParser::parseExport()
             || !consumeUTF8String(fieldString, fieldLen))
             return false;
         exp.field = Identifier::fromString(m_vm, fieldString);
+
         if (!parseExternalKind(exp.kind))
             return false;
+
         switch (exp.kind) {
         case External::Function: {
             if (!parseVarUInt32(exp.functionIndex)
@@ -440,10 +442,11 @@ bool ModuleParser::parseCode()
 {
     uint32_t count;
     if (!parseVarUInt32(count)
+        || count == std::numeric_limits<uint32_t>::max()
         || count != m_functionLocationInBinary.size())
         return false;
 
-    for (uint32_t i = 0; i != count; ++i) {
+    for (uint32_t i = 0; i < count; ++i) {
         uint32_t functionSize;
         if (!parseVarUInt32(functionSize)
             || functionSize > length()
@@ -460,8 +463,56 @@ bool ModuleParser::parseCode()
 
 bool ModuleParser::parseData()
 {
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
-    RELEASE_ASSERT_NOT_REACHED();
+    uint32_t segmentCount;
+    if (!parseVarUInt32(segmentCount)
+        || segmentCount == std::numeric_limits<uint32_t>::max()
+        || !m_module->data.tryReserveCapacity(segmentCount))
+        return false;
+    if (verbose)
+        dataLogLn("  segments: ", segmentCount);
+
+    for (uint32_t segmentNumber = 0; segmentNumber < segmentCount; ++segmentNumber) {
+        if (verbose)
+            dataLogLn("  segment #", segmentNumber);
+        uint32_t index;
+        uint8_t opcode;
+        uint32_t offset;
+        uint8_t endOpcode;
+        uint32_t dataByteLength;
+        if (!parseVarUInt32(index)
+            || index)
+            return false;
+
+        // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
+        // For now we only handle i32.const as offset.
+        if (!parseUInt8(opcode)
+            || opcode != Wasm::I32Const
+            || !parseVarUInt32(offset)
+            || !parseUInt8(endOpcode)
+            || endOpcode != Wasm::End)
+            return false;
+        if (verbose)
+            dataLogLn("    offset: ", offset);
+
+        if (!parseVarUInt32(dataByteLength)
+            || dataByteLength == std::numeric_limits<uint32_t>::max())
+            return false;
+        if (verbose)
+            dataLogLn("    data bytes: ", dataByteLength);
+
+        Segment* segment = Segment::make(offset, dataByteLength);
+        if (!segment)
+            return false;
+        m_module->data.uncheckedAppend(Segment::makePtr(segment));
+        for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
+            uint8_t byte;
+            if (!parseUInt8(byte))
+                return false;
+            segment->byte(dataByte) = byte;
+            if (verbose)
+                dataLogLn("    [", dataByte, "] = ", segment->byte(dataByte));
+        }
+    }
     return true;
 }
 

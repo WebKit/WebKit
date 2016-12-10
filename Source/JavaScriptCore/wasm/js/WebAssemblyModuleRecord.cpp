@@ -187,9 +187,27 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
 
 JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
 {
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (JSWebAssemblyMemory* jsMemory = m_instance->memory()) {
+        uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory()->memory());
+        auto sizeInBytes = jsMemory->memory()->size();
+        if (memory) {
+            const Vector<Wasm::Segment::Ptr>& data = m_instance->module()->moduleInformation().data;
+            for (auto& segment : data) {
+                if (segment->sizeInBytes) {
+                    if (sizeInBytes < segment->sizeInBytes
+                        || segment->offset > sizeInBytes
+                        || segment->offset > sizeInBytes - segment->sizeInBytes)
+                        return throwException(state, scope, createRangeError(state, ASCIILiteral("Data segment initializes memory out of range")));
+                    memcpy(memory + segment->offset, &segment->byte(0), segment->sizeInBytes);
+                }
+            }
+        }
+    }
+
     if (WebAssemblyFunction* startFunction = m_startFunction.get()) {
-        VM& vm = state->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
         ProtoCallFrame protoCallFrame;
         protoCallFrame.init(nullptr, startFunction, JSValue(), 1, nullptr);
         startFunction->call(vm, &protoCallFrame);

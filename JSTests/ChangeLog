@@ -1,5 +1,26 @@
 2016-12-09  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: implement data section
+        https://bugs.webkit.org/show_bug.cgi?id=165696
+
+        Reviewed by Keith Miller.
+
+        As specified in https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md#data-section
+        Note that some of the interesting corner cases are ill-defined by the spec: https://github.com/WebAssembly/design/issues/897
+
+        * wasm/Builder.js: create a data section from JavaScript
+        * wasm/Builder_WebAssemblyBinary.js: assemble the data section into the proper binary encoding
+        (const.emitters.Data):
+        * wasm/js-api/test_Data.js: Added.
+        (DataSection):
+        (DataSectionOffTheEnd):
+        (DataSectionPartlyOffTheEnd):
+        (DataSectionEmptyOffTheEnd):
+        (DataSectionSeenByStart):
+        * wasm/self-test/test_BuilderJSON.js: make sure the JSON structure is fine (this sanity checks before going to binary)
+
+2016-12-09  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly JS API: implement start function
         https://bugs.webkit.org/show_bug.cgi?id=165150
 

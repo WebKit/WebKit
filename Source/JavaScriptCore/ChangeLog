@@ -1,3 +1,28 @@
+2016-12-09  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: implement data section
+        https://bugs.webkit.org/show_bug.cgi?id=165696
+
+        Reviewed by Keith Miller.
+
+        As specified in https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md#data-section
+        Note that some of the interesting corner cases are ill-defined by the spec: https://github.com/WebAssembly/design/issues/897
+
+        * wasm/WasmFormat.h: segments are what represent sections of memory to initialize (similar to ELF's non-zero intializer data / rodata)
+        (JSC::Wasm::Segment::make):
+        (JSC::Wasm::Segment::destroy):
+        (JSC::Wasm::Segment::byte):
+        (JSC::Wasm::Segment::makePtr):
+        * wasm/WasmModuleParser.cpp: parse the data section, and prevent a few overflows if a user passes in UINT_MAX (the loops would overflow)
+        (JSC::Wasm::ModuleParser::parseType):
+        (JSC::Wasm::ModuleParser::parseImport):
+        (JSC::Wasm::ModuleParser::parseFunction):
+        (JSC::Wasm::ModuleParser::parseExport):
+        (JSC::Wasm::ModuleParser::parseCode):
+        (JSC::Wasm::ModuleParser::parseData):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate): the only sensible time to initialize the data section is after linking, but before calling start, I test for this but the spec isn't clear it's correct yet
+
 2016-12-09  Karim H  <karim@karhm.com>
 
         It is okay to turn undefined into null because we are producing values for a

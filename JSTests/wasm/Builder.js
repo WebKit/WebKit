@@ -523,8 +523,38 @@ export default class Builder {
                 break;
 
             case "Data":
-                // FIXME implement data https://bugs.webkit.org/show_bug.cgi?id=161709
-                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const dataBuilder = {
+                        End: () => this,
+                        Segment: data => {
+                            assert.isArray(data);
+                            for (const datum of data) {
+                                assert.isNumber(datum);
+                                assert.ge(datum, 0);
+                                assert.le(datum, 0xff);
+                            }
+                            s.data.push({ data: data, index: 0, offset: 0 });
+                            let thisSegment = s.data[s.data.length - 1];
+                            const segmentBuilder = {
+                                End: () => dataBuilder,
+                                Index: index => {
+                                    assert.eq(index, 0); // Linear memory index must be zero in MVP.
+                                    thisSegment.index = index;
+                                    return segmentBuilder;
+                                },
+                                Offset: offset => {
+                                    // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
+                                    assert.isNumber(offset);
+                                    thisSegment.offset = offset;
+                                    return segmentBuilder;
+                                },
+                            };
+                            return segmentBuilder;
+                        },
+                    };
+                    return dataBuilder;
+                };
                 break;
 
             default:

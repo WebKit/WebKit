@@ -619,6 +619,7 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(j.section[1].data[0].code.length, 6);
     assert.eq(j.section[1].data[0].code[3].name, "select");
 })();
+// FIXME test type mismatch with select. https://bugs.webkit.org/show_bug.cgi?id=163267
 
 (function MemoryImport() {
     const builder = (new Builder())
@@ -639,4 +640,27 @@ const assertOpThrows = (opFn, message) => {
     assert.eq(json.section[1].data[0].memoryDescription.maximum, 31);
 })();
 
-// FIXME test type mismatch with select. https://bugs.webkit.org/show_bug.cgi?id=163267
+(function DataSection() {
+    const builder = (new Builder())
+        .Memory().InitialMaxPages(64, 64).End()
+        .Data()
+          .Segment([0xff, 0x2a]).Offset(4).End()
+          .Segment([0xde, 0xad, 0xbe, 0xef]).Index(0).Offset(24).End()
+        .End();
+    const json = JSON.parse(builder.json());
+    assert.eq(json.section.length, 2);
+    assert.eq(json.section[1].name, "Data");
+    assert.eq(json.section[1].data.length, 2);
+    assert.eq(json.section[1].data[0].index, 0);
+    assert.eq(json.section[1].data[0].offset, 4);
+    assert.eq(json.section[1].data[0].data.length, 2);
+    assert.eq(json.section[1].data[0].data[0], 0xff);
+    assert.eq(json.section[1].data[0].data[1], 0x2a);
+    assert.eq(json.section[1].data[1].index, 0);
+    assert.eq(json.section[1].data[1].offset, 24);
+    assert.eq(json.section[1].data[1].data.length, 4);
+    assert.eq(json.section[1].data[1].data[0], 0xde);
+    assert.eq(json.section[1].data[1].data[1], 0xad);
+    assert.eq(json.section[1].data[1].data[2], 0xbe);
+    assert.eq(json.section[1].data[1].data[3], 0xef);
+})();
