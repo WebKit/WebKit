@@ -2842,7 +2842,7 @@ private:
         Air::Opcode div = m_value->type() == Int32 ? X86UDiv32 : X86UDiv64;
 
         ASSERT(op == UDiv || op == UMod);
-        X86Registers::RegisterID result = op == Div ? X86Registers::eax : X86Registers::edx;
+        X86Registers::RegisterID result = op == UDiv ? X86Registers::eax : X86Registers::edx;
 
         append(Move, tmp(m_value->child(0)), eax);
         append(Xor64, edx, edx);

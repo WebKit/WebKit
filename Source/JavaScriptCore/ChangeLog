@@ -1,3 +1,16 @@
+2016-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION(r208791): Assertion in testb3
+        https://bugs.webkit.org/show_bug.cgi?id=165651
+
+        Reviewed by Saam Barati.
+
+        Accidentally we always use edx/rdx for the result of UDiv/UMod.
+        But it is incorrect. We should use eax/rax for the result of UDiv.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lowerX86UDiv):
+
 2016-12-09  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix for 32 bit builds.
