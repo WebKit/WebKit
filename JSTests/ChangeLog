@@ -1,3 +1,35 @@
+2016-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Module namespace object behaves like immutable prototype exotic object
+        https://bugs.webkit.org/show_bug.cgi?id=165598
+
+        Reviewed by Mark Lam.
+
+        * modules/namespace-prototype-assignment.js: Added.
+        (else):
+        (reportError):
+        (shouldEqual):
+        (shouldThrow):
+        (stringify):
+        (makeTestID):
+        (doInternalSetPrototypeOf):
+        (ordinarySetPrototypeOf):
+        (setImmutablePrototype):
+        (windowProxySetPrototypeOf):
+        (initSetterExpectation):
+        (throwIfNoExceptionPending):
+        (objectSetPrototypeOf):
+        (setUnderscoreProto):
+        (reflectSetPrototypeOf):
+        (setPrototypeOf):
+        (newObjectProto.toString):
+        (Symbol):
+        (test):
+        (runTests):
+        * modules/namespace-set-prototype-of.js: Added.
+        (shouldThrow):
+        (TypeError.Cannot.set prototype):
+
 2016-12-09  Michael Saboff  <msaboff@apple.com>
 
         JSVALUE64: Pass arguments in platform argument registers when making JavaScript calls

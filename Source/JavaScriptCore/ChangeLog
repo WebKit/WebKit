@@ -1,5 +1,17 @@
 2016-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Module namespace object behaves like immutable prototype exotic object
+        https://bugs.webkit.org/show_bug.cgi?id=165598
+
+        Reviewed by Mark Lam.
+
+        In the latest ECMA262 draft, the module namespace object behaves like immutable prototype exotic object.
+        https://tc39.github.io/ecma262/#sec-module-namespace-exotic-objects-setprototypeof-v
+
+        * runtime/JSModuleNamespaceObject.h:
+
+2016-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         REGRESSION(r208791): Assertion in testb3
         https://bugs.webkit.org/show_bug.cgi?id=165651
 
