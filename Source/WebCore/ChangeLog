@@ -1,3 +1,15 @@
+2016-12-10  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Make sure content extensions initialize AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=165737
+
+        Reviewed by Simon Fraser.
+
+        Fixes two broken tests in TestWebkitAPI.
+
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::isValidSelector):
+
 2016-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Animation followed by transition doesn't always fire transitionend event
