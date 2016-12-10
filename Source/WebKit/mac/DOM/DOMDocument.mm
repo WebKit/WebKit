@@ -378,16 +378,6 @@
 
 #endif
 
-#if ENABLE(POINTER_LOCK)
-
-- (DOMElement *)pointerLockElement
-{
-    WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->pointerLockElement()));
-}
-
-#endif
-
 - (NSString *)visibilityState
 {
     WebCore::JSMainThreadNullState state;
@@ -721,16 +711,6 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 {
     WebCore::JSMainThreadNullState state;
     IMPL->webkitExitFullscreen();
-}
-
-#endif
-
-#if ENABLE(POINTER_LOCK)
-
-- (void)exitPointerLock
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->exitPointerLock();
 }
 
 #endif

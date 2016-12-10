@@ -104,22 +104,6 @@
     return kit(WTF::getPtr(IMPL->relatedTarget()));
 }
 
-#if ENABLE(POINTER_LOCK)
-- (int)movementX
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->movementX();
-}
-#endif
-
-#if ENABLE(POINTER_LOCK)
-- (int)movementY
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->movementY();
-}
-#endif
-
 - (int)offsetX
 {
     WebCore::JSMainThreadNullState state;

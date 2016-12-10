@@ -453,16 +453,6 @@ DOMElement *kit(Element* value)
 
 #endif
 
-#if ENABLE(POINTER_LOCK)
-
-- (void)requestPointerLock
-{
-    JSMainThreadNullState state;
-    unwrap(*self).requestPointerLock();
-}
-
-#endif
-
 - (void)remove
 {
     JSMainThreadNullState state;
