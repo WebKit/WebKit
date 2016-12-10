@@ -1356,6 +1356,8 @@ inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentD
     StyleContentAlignmentData alignmentData = RenderStyle::initialContentAlignment();
 #if ENABLE(CSS_GRID_LAYOUT)
     if (RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled()) {
+        if (!is<CSSContentDistributionValue>(value))
+            return alignmentData;
         auto& contentValue = downcast<CSSContentDistributionValue>(value);
         if (contentValue.distribution()->valueID() != CSSValueInvalid)
             alignmentData.setDistribution(contentValue.distribution().get());
@@ -1366,6 +1368,8 @@ inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentD
         return alignmentData;
     }
 #endif
+    if (!is<CSSPrimitiveValue>(value))
+        return alignmentData;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.valueID()) {
     case CSSValueStretch:

@@ -1,3 +1,18 @@
+2016-12-10  Antti Koivisto  <antti@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebCore: WTF::match_constness<WebCore::CSSValue, WebCore::CSSContentDistributionValue>::type& WTF::downcast<WebCore::CSSContentDistributionValue, WebCore::CSSValue> + 65
+        https://bugs.webkit.org/show_bug.cgi?id=165652
+        rdar://problem/28465278
+
+        Reviewed by Darin Adler.
+
+        No, test don't know how to get here.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertContentAlignmentData):
+
+        Add type checks.
+
 2016-12-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] RSA algorithms should allow importing keys without usages
