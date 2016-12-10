@@ -1,3 +1,13 @@
+2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Ignore LayoutTests/imported/w3c/web-platform-tests/config.json
+        https://bugs.webkit.org/show_bug.cgi?id=165685
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/.gitignore:
+        Ignore generated user-specific config.json file.
+
 2016-12-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Part 2 of 2] Add support for PKCS8 format while doing SubtleCrypto.importKey/exportKey
