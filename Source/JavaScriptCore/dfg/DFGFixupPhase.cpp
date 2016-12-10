@@ -1199,6 +1199,11 @@ private:
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
+            
+        case NukeStructureAndSetButterfly: {
+            fixEdge<KnownCellUse>(node->child1());
+            break;
+        }
 
         case TryGetById: {
             if (node->child1()->shouldSpeculateCell())

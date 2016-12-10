@@ -3594,12 +3594,22 @@ void ByteCodeParser::handlePutById(
         data->inferredType = variant.requiredType();
         m_graph.registerInferredType(data->inferredType);
         
+        // NOTE: We could GC at this point because someone could insert an operation that GCs.
+        // That's fine because:
+        // - Things already in the structure will get scanned because we haven't messed with
+        //   the object yet.
+        // - The value we are fixing to put is going to be kept live by OSR exit handling. So
+        //   if the GC does a conservative scan here it will see the new value.
+        
         addToGraph(
             PutByOffset,
             OpInfo(data),
             propertyStorage,
             base,
             value);
+        
+        if (variant.reallocatesStorage())
+            addToGraph(NukeStructureAndSetButterfly, base, propertyStorage);
 
         // FIXME: PutStructure goes last until we fix either
         // https://bugs.webkit.org/show_bug.cgi?id=142921 or

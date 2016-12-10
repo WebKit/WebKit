@@ -7389,19 +7389,17 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
         flushRegisters();
 
         GPRFlushedCallResult result(this);
-        callOperation(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, result.gpr(), baseGPR);
+        callOperation(operationAllocateComplexPropertyStorageWithInitialCapacity, result.gpr(), baseGPR);
         m_jit.exceptionCheck();
         
         storageResult(result.gpr(), node);
         return;
     }
     
-    SpeculateCellOperand base(this, node->child1());
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     GPRTemporary scratch3(this);
         
-    GPRReg baseGPR = base.gpr();
     GPRReg scratchGPR1 = scratch1.gpr();
     GPRReg scratchGPR2 = scratch2.gpr();
     GPRReg scratchGPR3 = scratch3.gpr();
@@ -7415,10 +7413,7 @@ void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
         m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))));
         
     addSlowPathGenerator(
-        slowPathCall(slowPath, this, operationAllocatePropertyStorageWithInitialCapacity, scratchGPR1));
-
-    m_jit.store32(TrustedImm32(0), JITCompiler::Address(baseGPR, JSCell::structureIDOffset()));
-    m_jit.storeButterfly(scratchGPR1, baseGPR);
+        slowPathCall(slowPath, this, operationAllocateSimplePropertyStorageWithInitialCapacity, scratchGPR1));
 
     storageResult(scratchGPR1, node);
 }
@@ -7439,20 +7434,18 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
         flushRegisters();
 
         GPRFlushedCallResult result(this);
-        callOperation(operationReallocateButterflyToGrowPropertyStorage, result.gpr(), baseGPR, newSize / sizeof(JSValue));
+        callOperation(operationAllocateComplexPropertyStorage, result.gpr(), baseGPR, newSize / sizeof(JSValue));
         m_jit.exceptionCheck();
 
         storageResult(result.gpr(), node);
         return;
     }
     
-    SpeculateCellOperand base(this, node->child1());
     StorageOperand oldStorage(this, node->child2());
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     GPRTemporary scratch3(this);
         
-    GPRReg baseGPR = base.gpr();
     GPRReg oldStorageGPR = oldStorage.gpr();
     GPRReg scratchGPR1 = scratch1.gpr();
     GPRReg scratchGPR2 = scratch2.gpr();
@@ -7468,7 +7461,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
         m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))));
 
     addSlowPathGenerator(
-        slowPathCall(slowPath, this, operationAllocatePropertyStorage, scratchGPR1, newSize / sizeof(JSValue)));
+        slowPathCall(slowPath, this, operationAllocateSimplePropertyStorage, scratchGPR1, newSize / sizeof(JSValue)));
 
     // We have scratchGPR1 = new storage, scratchGPR2 = scratch
     for (ptrdiff_t offset = 0; offset < static_cast<ptrdiff_t>(oldSize); offset += sizeof(void*)) {
@@ -7476,9 +7469,20 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
         m_jit.storePtr(scratchGPR2, JITCompiler::Address(scratchGPR1, -(offset + sizeof(JSValue) + sizeof(void*))));
     }
         
-    m_jit.nukeStructureAndStoreButterfly(scratchGPR1, baseGPR);
-
     storageResult(scratchGPR1, node);
+}
+
+void SpeculativeJIT::compileNukeStructureAndSetButterfly(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    StorageOperand storage(this, node->child2());
+    
+    GPRReg baseGPR = base.gpr();
+    GPRReg storageGPR = storage.gpr();
+    
+    m_jit.nukeStructureAndStoreButterfly(storageGPR, baseGPR);
+    
+    noResult(node);
 }
 
 void SpeculativeJIT::compileGetButterfly(Node* node)

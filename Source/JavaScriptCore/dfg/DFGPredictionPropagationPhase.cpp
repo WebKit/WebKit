@@ -1105,6 +1105,7 @@ private:
         case LoadVarargs:
         case ForwardVarargs:
         case PutDynamicVar:
+        case NukeStructureAndSetButterfly:
             break;
             
         // This gets ignored because it only pretends to produce a value.

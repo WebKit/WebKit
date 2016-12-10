@@ -766,6 +766,7 @@ private:
 
         DFG_ASSERT(m_graph, node, origin.exitOK);
         bool canExit = true;
+        bool didAllocateStorage = false;
 
         if (isInlineOffset(variant.offset()))
             propertyStorage = childEdge;
@@ -777,19 +778,21 @@ private:
             ASSERT(!isInlineOffset(variant.offset()));
             Node* allocatePropertyStorage = m_insertionSet.insertNode(
                 indexInBlock, SpecNone, AllocatePropertyStorage,
-                origin.takeValidExit(canExit), OpInfo(transition), childEdge);
+                origin, OpInfo(transition), childEdge);
             propertyStorage = Edge(allocatePropertyStorage);
+            didAllocateStorage = true;
         } else {
             ASSERT(variant.oldStructureForTransition()->outOfLineCapacity());
             ASSERT(variant.newStructure()->outOfLineCapacity() > variant.oldStructureForTransition()->outOfLineCapacity());
             ASSERT(!isInlineOffset(variant.offset()));
 
             Node* reallocatePropertyStorage = m_insertionSet.insertNode(
-                indexInBlock, SpecNone, ReallocatePropertyStorage, origin.takeValidExit(canExit),
+                indexInBlock, SpecNone, ReallocatePropertyStorage, origin,
                 OpInfo(transition), childEdge,
                 Edge(m_insertionSet.insertNode(
                     indexInBlock, SpecNone, GetButterfly, origin, childEdge)));
             propertyStorage = Edge(reallocatePropertyStorage);
+            didAllocateStorage = true;
         }
 
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
@@ -800,6 +803,12 @@ private:
         node->origin.exitOK = canExit;
 
         if (variant.kind() == PutByIdVariant::Transition) {
+            if (didAllocateStorage) {
+                m_insertionSet.insertNode(
+                    indexInBlock + 1, SpecNone, NukeStructureAndSetButterfly,
+                    origin.withInvalidExit(), childEdge, propertyStorage);
+            }
+            
             // FIXME: PutStructure goes last until we fix either
             // https://bugs.webkit.org/show_bug.cgi?id=142921 or
             // https://bugs.webkit.org/show_bug.cgi?id=142924.

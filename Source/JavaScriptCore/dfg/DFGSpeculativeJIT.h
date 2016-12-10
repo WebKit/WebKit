@@ -2579,6 +2579,7 @@ public:
     
     void compileAllocatePropertyStorage(Node*);
     void compileReallocatePropertyStorage(Node*);
+    void compileNukeStructureAndSetButterfly(Node*);
     void compileGetButterfly(Node*);
     void compileCallDOMGetter(Node*);
     void compileCallDOM(Node*);

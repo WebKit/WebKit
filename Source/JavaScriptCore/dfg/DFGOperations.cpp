@@ -1480,7 +1480,7 @@ int32_t JIT_OPERATION operationTypeOfObjectAsTypeofType(ExecState* exec, JSGloba
     return static_cast<int32_t>(TypeofType::Object);
 }
 
-char* JIT_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState* exec)
+char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(ExecState* exec)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1489,13 +1489,32 @@ char* JIT_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecStat
         Butterfly::createUninitialized(vm, 0, 0, initialOutOfLineCapacity, false, 0));
 }
 
-char* JIT_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t newSize)
+char* JIT_OPERATION operationAllocateSimplePropertyStorage(ExecState* exec, size_t newSize)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
     return reinterpret_cast<char*>(
         Butterfly::createUninitialized(vm, 0, 0, newSize, false, 0));
+}
+
+char* JIT_OPERATION operationAllocateComplexPropertyStorageWithInitialCapacity(ExecState* exec, JSObject* object)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    ASSERT(!object->structure()->outOfLineCapacity());
+    return reinterpret_cast<char*>(
+        object->allocateMoreOutOfLineStorage(vm, 0, initialOutOfLineCapacity));
+}
+
+char* JIT_OPERATION operationAllocateComplexPropertyStorage(ExecState* exec, JSObject* object, size_t newSize)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return reinterpret_cast<char*>(
+        object->allocateMoreOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize));
 }
 
 char* JIT_OPERATION operationEnsureInt32(ExecState* exec, JSCell* cell)

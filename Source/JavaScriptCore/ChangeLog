@@ -1,3 +1,80 @@
+2016-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        GC might be forced to look at a nuked object due to ordering of AllocatePropertyStorage, MaterializeNewObject, and PutStructure
+        https://bugs.webkit.org/show_bug.cgi?id=165672
+
+        Reviewed by Geoffrey Garen.
+        
+        We need to make sure that the shady stuff in a property put happens after the
+        PutByOffset, since the PutByOffset is the place where we materialize. More generally, we
+        should strive to not have any fenceposts between Nodes where a GC would be illegal.
+        
+        This gets us most of the way there by separating NukeStructureAndSetButterfly from
+        [Re]AllocatePropertyStorage. A transitioning put will now look something like:
+        
+            GetButterfly
+            ReallocatePropertyStorage
+            PutByOffset
+            NukeStructureAndSetButterfly
+            PutStructure
+        
+        Previously the structure would get nuked by ReallocatePropertyStorage, so if we placed
+        an object materialization just after it (before the PutByOffset) then any GC that
+        completed at that safepoint would encounter an unresolved visit race due to seeing a
+        nuked structure. We cannot have nuked structures at safepoints, and this change makes
+        sure that we don't - at least until someone tries to sink to the PutStructure. We will
+        eventually have to create a combined SetStructureAndButterfly node, but we don't need it
+        yet.
+        
+        This also fixes a goof where the DFG's AllocatePropertyStorage was nulling the structure
+        instead of nuking it. This could easily have caused many crashes in GC.
+        
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::emitPutByOffset):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileNukeStructureAndSetButterfly):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNukeStructureAndSetButterfly):
+        (JSC::FTL::DFG::LowerDFGToB3::storageForTransition):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::reallocatePropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h: Fix a bug - make it possible to turn on concurrent GC optionally again.
+
 2016-12-09  Chris Dumez  <cdumez@apple.com>
 
         Inline JSCell::toObject()

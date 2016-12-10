@@ -389,6 +389,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
 
     case StoreBarrier:
     case FencedStoreBarrier:
+    case PutStructure:
+    case NukeStructureAndSetButterfly:
         // We conservatively assume that these cannot be put anywhere, which forces the compiler to
         // keep them exactly where they were. This is sort of overkill since the clobberize effects
         // already force these things to be ordered precisely. I'm just not confident enough in my
@@ -413,7 +415,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         return node->arrayMode().modeForPut().alreadyChecked(
             graph, node, state.forNode(graph.varArgChild(node, 0)));
 
-    case PutStructure:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
         return state.forNode(node->child1()).m_structure.isSubsetOf(

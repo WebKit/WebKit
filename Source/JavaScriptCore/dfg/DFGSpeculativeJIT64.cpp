@@ -4395,6 +4395,10 @@ void SpeculativeJIT::compile(Node* node)
         compileReallocatePropertyStorage(node);
         break;
         
+    case NukeStructureAndSetButterfly:
+        compileNukeStructureAndSetButterfly(node);
+        break;
+        
     case GetButterfly:
         compileGetButterfly(node);
         break;

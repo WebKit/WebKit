@@ -753,6 +753,9 @@ private:
         case ReallocatePropertyStorage:
             compileReallocatePropertyStorage();
             break;
+        case NukeStructureAndSetButterfly:
+            compileNukeStructureAndSetButterfly();
+            break;
         case ToNumber:
             compileToNumber();
             break;
@@ -4751,6 +4754,11 @@ private:
         setStorage(
             reallocatePropertyStorage(
                 object, oldStorage, transition->previous, transition->next));
+    }
+    
+    void compileNukeStructureAndSetButterfly()
+    {
+        nukeStructureAndSetButterfly(lowStorage(m_node->child2()), lowCell(m_node->child1()));
     }
 
     void compileToNumber()
@@ -9406,6 +9414,7 @@ private:
                 previousStructure, nextStructure);
         }
         
+        nukeStructureAndSetButterfly(result, object);
         return result;
     }
 
@@ -9475,8 +9484,7 @@ private:
         if (previousStructure->couldHaveIndexingHeader()) {
             return vmCall(
                 pointerType(),
-                m_out.operation(
-                    operationReallocateButterflyToHavePropertyStorageWithInitialCapacity),
+                m_out.operation(operationAllocateComplexPropertyStorageWithInitialCapacity),
                 m_callFrame, object);
         }
         
@@ -9487,7 +9495,6 @@ private:
             m_out.constInt32(-initialOutOfLineCapacity - 1), m_out.constInt32(-1),
             m_out.int64Zero, m_heaps.properties.atAnyNumber());
         
-        nukeStructureAndSetButterfly(result, object);
         return result;
     }
     
@@ -9501,7 +9508,7 @@ private:
         
         if (previous->couldHaveIndexingHeader()) {
             LValue newAllocSize = m_out.constIntPtr(newSize);                    
-            return vmCall(pointerType(), m_out.operation(operationReallocateButterflyToGrowPropertyStorage), m_callFrame, object, newAllocSize);
+            return vmCall(pointerType(), m_out.operation(operationAllocateComplexPropertyStorage), m_callFrame, object, newAllocSize);
         }
         
         LValue result = allocatePropertyStorageWithSizeImpl(newSize);
@@ -9519,8 +9526,6 @@ private:
             result,
             m_out.constInt32(-newSize - 1), m_out.constInt32(-oldSize - 1),
             m_out.int64Zero, m_heaps.properties.atAnyNumber());
-        
-        nukeStructureAndSetButterfly(result, object);
         
         return result;
     }
@@ -9546,14 +9551,14 @@ private:
             slowButterflyValue = lazySlowPath(
                 [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                     return createLazyCallGenerator(
-                        operationAllocatePropertyStorageWithInitialCapacity,
+                        operationAllocateSimplePropertyStorageWithInitialCapacity,
                         locations[0].directGPR());
                 });
         } else {
             slowButterflyValue = lazySlowPath(
                 [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                     return createLazyCallGenerator(
-                        operationAllocatePropertyStorage, locations[0].directGPR(),
+                        operationAllocateSimplePropertyStorage, locations[0].directGPR(),
                         CCallHelpers::TrustedImmPtr(sizeInValues));
                 });
         }
