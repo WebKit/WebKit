@@ -10,6 +10,7 @@ PASS Calling close() after calling error() should throw a TypeError
 PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
+PASS By default initial value of desiredSize should be 1 
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
 PASS ReadableByteStreamController instances should have the correct list of properties 
 PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
@@ -21,4 +22,5 @@ PASS Calling close() after calling error() should throw a TypeError
 PASS Calling read() on a reader associated to a controller that has been errored should fail with provided error 
 PASS Calling read() on a reader associated to a controller that has been closed should not be rejected 
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
+PASS By default initial value of desiredSize should be 1 
 

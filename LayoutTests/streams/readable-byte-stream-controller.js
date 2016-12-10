@@ -217,4 +217,17 @@ test4.step(function() {
     );
 });
 
+test(function() {
+    let controller;
+
+    const rs = new ReadableStream({
+        start: function(c) {
+            controller = c;
+        },
+        type: "bytes"
+    });
+
+    assert_equals(controller.desiredSize, 1, "by default initial value of desiredSize should be 1");
+}, "By default initial value of desiredSize should be 1");
+
 done();

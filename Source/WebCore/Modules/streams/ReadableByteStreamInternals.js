@@ -125,3 +125,10 @@ function readableByteStreamControllerClearPendingPullIntos(controller)
 
     // FIXME: To be implemented in conjunction with ReadableStreamBYOBRequest.
 }
+
+function readableByteStreamControllerGetDesiredSize(controller)
+{
+   "use strict";
+
+   return controller.@strategyHWM - controller.@totalQueuedBytes;
+}

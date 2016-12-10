@@ -74,7 +74,8 @@ function desiredSize()
 {
     "use strict";
 
-    //FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableByteStreamController desiredSize is not implemented");
-}
+    if (!@isReadableByteStreamController(this))
+        throw @makeGetterTypeError("ReadableByteStreamController", "desiredSize");
 
+    return @readableByteStreamControllerGetDesiredSize(this);
+}
