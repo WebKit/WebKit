@@ -1,3 +1,14 @@
+2016-12-10  Keith Miller  <keith_miller@apple.com>
+
+        Fix indirect_call if the result type is used.
+        https://bugs.webkit.org/show_bug.cgi?id=165727
+
+        Reviewed by Michael Saboff.
+
+        * wasm/js-api/call-indirect-results.js: Added.
+        (const.wasmModuleWhichImportJS):
+        (MonomorphicImport):
+
 2016-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Module namespace object behaves like immutable prototype exotic object

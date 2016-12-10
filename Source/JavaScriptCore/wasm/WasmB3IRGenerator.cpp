@@ -664,7 +664,8 @@ bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
 
     ExpressionType calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, code));
 
-    result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(signature->returnType),
+    Type returnType = signature->returnType;
+    result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(returnType),
         [&] (PatchpointValue* patchpoint) {
             patchpoint->effects.writesPinned = true;
             patchpoint->effects.readsPinned = true;
@@ -672,7 +673,7 @@ bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
 
             patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-                jit.call(params[0].gpr());
+                jit.call(params[returnType == Void ? 0 : 1].gpr());
             });
         });
     return true;
