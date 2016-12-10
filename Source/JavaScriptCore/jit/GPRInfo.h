@@ -1023,6 +1023,8 @@ inline JSValueRegs extractResult(JSValueRegs result) { return result; }
 #endif
 inline NoResultTag extractResult(NoResultTag) { return NoResult; }
 
+#else // CLOOP
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS 0u
 #endif // ENABLE(JIT)
 
 } // namespace JSC

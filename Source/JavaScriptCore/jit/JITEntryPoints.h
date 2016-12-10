@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(JIT)
-
 #include "GPRInfo.h"
 #include "MacroAssemblerCodeRef.h"
 
@@ -359,5 +357,3 @@ private:
 
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)

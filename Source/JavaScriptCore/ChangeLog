@@ -1,3 +1,12 @@
+2016-12-10  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix for the CLOOP after r209653
+
+        * jit/GPRInfo.h:
+        Provided a definition for NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS when the JIT is disabled.
+        * jit/JITEntryPoints.h:
+        Removed #if ENABLE(JIT) protection around contents.
+
 2016-12-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Module namespace object behaves like immutable prototype exotic object
