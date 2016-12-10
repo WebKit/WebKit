@@ -1,3 +1,15 @@
+2016-12-10  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove the pseudoclass/element hacks
+        https://bugs.webkit.org/show_bug.cgi?id=165729
+
+        Reviewed by Sam Weinig.
+
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        * css/SelectorPseudoElementTypeMap.in:
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2016-12-09  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for Geolocation

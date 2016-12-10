@@ -501,37 +501,15 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     
     auto lowercasedValue = token.value().toString().convertToASCIILowercase();
     auto value = StringView { lowercasedValue };
-    
-    // FIXME-NEWPARSER: We can't change the pseudoclass/element maps that the old parser
-    // uses without breaking it; this hack allows function selectors to work. When the new
-    // parser turns on, we can patch the map and remove this code.
-    String newValue;
-    if (token.type() == FunctionToken && colons == 1) {
-        auto tokenString = value.toString();
-        if (!value.startsWithIgnoringASCIICase(StringView { "host" })) {
-            newValue = makeString(value, '(');
-            value = newValue;
-        }
-    }
 
     if (colons == 1)
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoClassSelectorFromStringView(value));
     else {
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoElementSelectorFromStringView(value));
 #if ENABLE(VIDEO_TRACK)
-        if (selector && selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementWebKitCustom) {
-            // FIXME-NEWPARSER: The old parser treats cue as two pseudo-element types, because it
-            // is unable to handle a dual pseudo-element (one that can be both an ident or a
-            // function) without splitting them up.
-            //
-            // This means that "cue" is being parsed as PseudoElementWebkitCustom when used as an
-            // identifier, and it's being parsed as PseudoElementCue when used as a function.
-            //
-            // We have to mimic this behavior until the old parser is gone, at which point we can
-            // make all code use PseudoElementCue.
-            if (token.type() == FunctionToken && value.startsWithIgnoringASCIICase("cue"))
-                selector->setPseudoElementType(CSSSelector::PseudoElementCue);
-        }
+        // Treat the ident version of cue as PseudoElementWebkitCustom.
+        if (token.type() == IdentToken && selector && selector->match() == CSSSelector::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue)
+            selector->setPseudoElementType(CSSSelector::PseudoElementWebKitCustom);
 #endif
     }
 

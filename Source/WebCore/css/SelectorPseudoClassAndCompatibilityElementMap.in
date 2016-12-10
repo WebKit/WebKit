@@ -1,5 +1,5 @@
 -khtml-drag
--webkit-any(
+-webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
 -webkit-autofill
 -webkit-drag
@@ -14,7 +14,7 @@ decrement
 default
 defined
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-dir(
+dir
 #endif
 disabled
 double-button
@@ -34,17 +34,17 @@ in-range
 increment
 indeterminate
 invalid
-lang(
+lang
 last-child
 last-of-type
 link
-matches(
+matches
 no-button
-not(
-nth-child(
-nth-last-child(
-nth-last-of-type(
-nth-of-type(
+not
+nth-child
+nth-last-child
+nth-last-of-type
+nth-of-type
 only-child
 only-of-type
 optional
@@ -54,7 +54,7 @@ read-only
 read-write
 required
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-role(
+role
 #endif
 root
 scope
