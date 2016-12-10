@@ -1,3 +1,20 @@
+2016-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        document.pointerLockElement exposes a node inside a shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=165702
+
+        Reviewed by Simon Fraser.
+
+        Added tests for pointer locks inside a shadow root as well as one assigned to a slot.
+
+        * fast/shadow-dom/pointerlockelement-in-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/pointerlockelement-in-shadow-tree.html: Added.
+        * fast/shadow-dom/pointerlockelement-in-slot-expected.txt: Added.
+        * fast/shadow-dom/pointerlockelement-in-slot.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-09  Daniel Bates  <dabates@apple.com>
 
         Add reflected nonce attribute to HTML Link element IDL

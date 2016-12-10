@@ -31,4 +31,5 @@
 ] interface DocumentOrShadowRoot {
     Element?                    elementFromPoint(optional long x = 0, optional long y = 0); // FIXME: x and y should be double and not be optional.
     readonly attribute Element? activeElement;
+    [Conditional=POINTER_LOCK] readonly attribute Element? pointerLockElement;
 };

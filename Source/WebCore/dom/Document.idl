@@ -153,7 +153,6 @@
 #endif
 
     [Conditional=POINTER_LOCK] void exitPointerLock();
-    [Conditional=POINTER_LOCK] readonly attribute Element? pointerLockElement;
 
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 

@@ -1523,6 +1523,8 @@ webkit.org/b/161839 imported/w3c/web-platform-tests [ Skip ]
 # Requires POINTER_LOCK support.
 webkit.org/b/88080 pointer-lock [ Skip ]
 webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
+webkit.org/b/88080 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
+webkit.org/b/88080 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
 
 # Requires INDIE_UI support
 webkit.org/b/111446 indieui [ Skip ]

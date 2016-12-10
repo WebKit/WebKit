@@ -39,6 +39,7 @@
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
 #include "Page.h"
+#include "PointerLockController.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
@@ -377,7 +378,7 @@ static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFram
 
 Element* TreeScope::focusedElementInScope()
 {
-    Document& document = m_rootNode.document();
+    Document& document = documentScope();
     Element* element = document.focusedElement();
 
     if (!element && document.page())
@@ -385,6 +386,22 @@ Element* TreeScope::focusedElementInScope()
 
     return ancestorElementInThisScope(element);
 }
+
+#if ENABLE(POINTER_LOCK)
+
+Element* TreeScope::pointerLockElement() const
+{
+    Document& document = documentScope();
+    Page* page = document.page();
+    if (!page || page->pointerLockController().lockPending())
+        return nullptr;
+    auto* element = page->pointerLockController().element();
+    if (!element || &element->document() != &document)
+        return nullptr;
+    return ancestorElementInThisScope(element);
+}
+
+#endif
 
 static void listTreeScopes(Node* node, Vector<TreeScope*, 5>& treeScopes)
 {

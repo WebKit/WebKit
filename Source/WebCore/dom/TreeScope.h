@@ -52,6 +52,8 @@ public:
     void setParentTreeScope(TreeScope&);
 
     Element* focusedElementInScope();
+    Element* pointerLockElement() const;
+
     WEBCORE_EXPORT Element* getElementById(const AtomicString&) const;
     WEBCORE_EXPORT Element* getElementById(const String&) const;
     const Vector<Element*>* getAllElementsById(const AtomicString&) const;

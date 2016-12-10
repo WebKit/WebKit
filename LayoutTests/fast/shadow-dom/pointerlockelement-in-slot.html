@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="host"><span id="target" tabindex=0>Click here</span></div>
+<div id="anotherHost"></div>
+<script>
+description('Test pointerLockElement is the node in the same tree as the context object.<br>'
+    + 'To manually test, click on "Click here" below.');
+window.jsTestIsAsync = true;
+
+shadowHost = document.getElementById('host');
+shadowRoot = shadowHost.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = '<slot></slot>';
+
+target = document.getElementById('target');
+anotherShadowRoot = document.getElementById('anotherHost').attachShadow({mode: 'closed'});
+
+target.onclick = function () {
+    shouldBe("document.pointerLockElement", "null");
+    shouldBe("shadowRoot.pointerLockElement", "null");
+    target.requestPointerLock();
+}
+
+function clickElement(element) {
+    eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+if (window.eventSender)
+    clickElement(target);
+
+let state = 0;
+document.addEventListener('pointerlockchange', function () {
+    switch (state) {
+    case 0:
+        shouldBe("document.pointerLockElement", "target");
+        shouldBe("shadowRoot.pointerLockElement", "null");
+        shouldBe("anotherShadowRoot.pointerLockElement", "null");
+        document.exitPointerLock();
+        break;
+    case 1:
+        shouldBe("document.pointerLockElement", "null");
+        shouldBe("shadowRoot.pointerLockElement", "null");
+        shouldBe("anotherShadowRoot.pointerLockElement", "null");
+        finishJSTest();
+        break;
+    }
+    state++;
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

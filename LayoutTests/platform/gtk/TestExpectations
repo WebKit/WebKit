@@ -281,6 +281,9 @@ webkit.org/b/99036 pointer-lock [ Skip ]
 # As well as testing fullscreen functionality, these tests also utilize the pointer lock feature.
 webkit.org/b/99036 http/tests/fullscreen [ Skip ]
 webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
+webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-shadow-tree.html [ Skip ]
+webkit.org/b/99036 fast/shadow-dom/pointerlockelement-in-slot.html [ Skip ]
+
 
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]

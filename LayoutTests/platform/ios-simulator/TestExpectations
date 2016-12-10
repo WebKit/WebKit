@@ -129,6 +129,8 @@ http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugi
 # Pointer-lock not supported on iOS
 pointer-lock
 http/tests/pointer-lock
+fast/shadow-dom/pointerlockelement-in-shadow-tree.html
+fast/shadow-dom/pointerlockelement-in-slot.html
 
 # FIXME: Media tests not supported on iOS
 http/tests/media

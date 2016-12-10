@@ -6040,17 +6040,6 @@ void Document::exitPointerLock()
     page->pointerLockController().requestPointerUnlock();
 }
 
-Element* Document::pointerLockElement() const
-{
-    Page* page = this->page();
-    if (!page || page->pointerLockController().lockPending())
-        return nullptr;
-    auto* element = page->pointerLockController().element();
-    if (!element || &element->document() != this)
-        return nullptr;
-    return element;
-}
-
 #endif
 
 void Document::decrementLoadEventDelayCount()
