@@ -1,3 +1,16 @@
+2016-12-09  Daniel Bates  <dabates@apple.com>
+
+        Add reflected nonce attribute to HTML Link element IDL
+        https://bugs.webkit.org/show_bug.cgi?id=165709
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to ensure that we reflect the nonce attribute for the HTML link, script,
+        and style elements.
+
+        * fast/dom/nonce-attribute-reflection-expected.txt: Added.
+        * fast/dom/nonce-attribute-reflection.html: Added.
+
 2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/debugger/csp-exceptions.html as flaky on mac-wk2.

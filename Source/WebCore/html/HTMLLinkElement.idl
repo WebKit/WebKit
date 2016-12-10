@@ -40,5 +40,7 @@
     readonly attribute StyleSheet sheet;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;
+
+    [Reflect] attribute DOMString nonce;
 };
 
