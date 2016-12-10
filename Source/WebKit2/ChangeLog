@@ -1,3 +1,17 @@
+2016-12-10  Antti Koivisto  <antti@apple.com>
+
+        CrashTracer: com.apple.WebKit.Networking at WTF::ThreadSafeRefCounted<WebKit::NetworkCache::IOChannel>::deref
+        https://bugs.webkit.org/show_bug.cgi?id=165659
+        <rdar://problem/27077977>
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::~IOChannel):
+
+            Add non-inlined destructor and release assert against double deletion to narrow down this crash.
+
 2016-12-09  Brent Fulgham  <bfulgham@apple.com>
 
         WebCore::Timer is not compatible with UIProcess

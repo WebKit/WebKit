@@ -64,6 +64,11 @@ IOChannel::IOChannel(const String& filePath, Type type)
     }
 }
 
+IOChannel::~IOChannel()
+{
+    RELEASE_ASSERT(!m_wasDeleted.exchange(true));
+}
+
 Ref<IOChannel> IOChannel::open(const String& filePath, IOChannel::Type type)
 {
     return adoptRef(*new IOChannel(filePath, type));
