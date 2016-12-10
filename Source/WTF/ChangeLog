@@ -1,3 +1,18 @@
+2016-12-10  Chris Dumez  <cdumez@apple.com>
+
+        Avoid calling shrink() in the Vector destructor
+        https://bugs.webkit.org/show_bug.cgi?id=165675
+
+        Reviewed by Daniel Bates.
+
+        Avoid calling shrink() in the Vector destructor to avoid function call
+        overhead and unnecessarily reseting m_size to 0.
+
+        * wtf/Vector.h:
+        (WTF::Vector::~Vector):
+        (WTF::Vector::asanSetBufferSizeToFullCapacity):
+        (WTF::minCapacity>::asanSetBufferSizeToFullCapacity):
+
 2016-12-09  Michael Saboff  <msaboff@apple.com>
 
         JSVALUE64: Pass arguments in platform argument registers when making JavaScript calls

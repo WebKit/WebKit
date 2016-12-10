@@ -628,9 +628,9 @@ public:
     ~Vector()
     {
         if (m_size)
-            shrink(0);
+            TypeOperations::destruct(begin(), end());
 
-        asanSetBufferSizeToFullCapacity();
+        asanSetBufferSizeToFullCapacity(0);
     }
 
     Vector(const Vector&);
@@ -789,7 +789,9 @@ private:
     template<typename... Args> bool tryConstructAndAppendSlowCase(Args&&...);
 
     void asanSetInitialBufferSizeTo(size_t);
-    void asanSetBufferSizeToFullCapacity();
+    void asanSetBufferSizeToFullCapacity(size_t);
+    void asanSetBufferSizeToFullCapacity() { asanSetBufferSizeToFullCapacity(size()); }
+
     void asanBufferSizeWillChangeTo(size_t);
 
     using Base::m_size;
@@ -1056,14 +1058,16 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::asanSetInit
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::asanSetBufferSizeToFullCapacity()
+inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity>::asanSetBufferSizeToFullCapacity(size_t size)
 {
 #if ASAN_ENABLED
     if (!buffer())
         return;
 
     // ASan requires that the annotation is returned to its initial state before deallocation.
-    __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size(), endOfBuffer());
+    __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size, endOfBuffer());
+#else
+    UNUSED_PARAM(size);
 #endif
 }
 
