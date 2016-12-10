@@ -37,6 +37,7 @@
 #include "APIGeometry.h"
 #include "APIHistoryClient.h"
 #include "APIHitTestResult.h"
+#include "APIIconLoadingClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APILoaderClient.h"
 #include "APINavigation.h"
@@ -625,6 +626,20 @@ void WebPageProxy::setUIClient(std::unique_ptr<API::UIClient> uiClient)
 
     m_process->send(Messages::WebPage::SetCanRunBeforeUnloadConfirmPanel(m_uiClient->canRunBeforeUnloadConfirmPanel()), m_pageID);
     setCanRunModal(m_uiClient->canRunModal());
+}
+
+void WebPageProxy::setIconLoadingClient(std::unique_ptr<API::IconLoadingClient> iconLoadingClient)
+{
+    bool hasClient = iconLoadingClient.get();
+    if (!iconLoadingClient)
+        m_iconLoadingClient = std::make_unique<API::IconLoadingClient>();
+    else
+        m_iconLoadingClient = WTFMove(iconLoadingClient);
+
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetUseIconLoadingClient(hasClient), m_pageID);
 }
 
 void WebPageProxy::setFindClient(std::unique_ptr<API::FindClient> findClient)
@@ -6671,6 +6686,30 @@ void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocu
 void WebPageProxy::didRestoreScrollPosition()
 {
     m_pageClient.didRestoreScrollPosition();
+}
+
+void WebPageProxy::getLoadDecisionForIcon(const WebCore::LinkIcon& icon, uint64_t loadIdentifier)
+{
+    if (!m_iconLoadingClient)
+        return;
+
+    m_iconLoadingClient->getLoadDecisionForIcon(icon, [this, protectedThis = Ref<WebPageProxy>(*this), loadIdentifier](std::function<void (API::Data*, CallbackBase::Error)> callbackFunction) {
+        if (!isValid()) {
+            if (callbackFunction)
+                callbackFunction(nullptr, CallbackBase::Error::Unknown);
+            return;
+        }
+
+        bool decision = (bool)callbackFunction;
+        uint64_t newCallbackIdentifier = decision ? m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken()) : 0;
+
+        m_process->send(Messages::WebPage::DidGetLoadDecisionForIcon(decision, loadIdentifier, newCallbackIdentifier), m_pageID);
+    });
+}
+
+void WebPageProxy::finishedLoadingIcon(uint64_t callbackIdentifier, const IPC::DataReference& data)
+{
+    dataCallback(data, callbackIdentifier);
 }
 
 void WebPageProxy::setResourceCachingDisabled(bool disabled)

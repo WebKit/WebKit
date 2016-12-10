@@ -23,48 +23,66 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKLinkIconParametersInternal.h"
 
-#include "LinkIconType.h"
-#include "URL.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
+#import <WebCore/LinkIcon.h>
 
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
-    String mimeType;
-    std::optional<unsigned> size;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
-};
-
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size;
-    encoder.encodeEnum(type);
+@implementation _WKLinkIconParameters {
+    RetainPtr<NSURL> _url;
+    WKLinkIconType _iconType;
+    RetainPtr<NSString> _mimeType;
+    RetainPtr<NSNumber> _size;
 }
 
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
+- (instancetype)_initWithLinkIcon:(const WebCore::LinkIcon&)linkIcon
 {
-    if (!decoder.decode(result.url))
-        return false;
+    if (!(self = [super init]))
+        return nil;
 
-    if (!decoder.decode(result.mimeType))
-        return false;
+    _url = adoptNS([(NSURL *)linkIcon.url copy]);
+    _mimeType = adoptNS([(NSString *)linkIcon.mimeType copy]);
 
-    if (!decoder.decode(result.size))
-        return false;
+    if (linkIcon.size)
+        _size = adoptNS([[NSNumber alloc] initWithUnsignedInt:linkIcon.size.value()]);
 
-    if (!decoder.decodeEnum(result.type))
-        return false;
+    switch (linkIcon.type) {
+    case WebCore::LinkIconType::Favicon:
+        _iconType = WKLinkIconTypeFavicon;
+        break;
+    case WebCore::LinkIconType::TouchIcon:
+        _iconType = WKLinkIconTypeTouchIcon;
+        break;
+    case WebCore::LinkIconType::TouchPrecomposedIcon:
+        _iconType = WKLinkIconTypeTouchPrecomposedIcon;
+        break;
+    }
 
-    return true;
+    return self;
 }
 
-} // namespace WebCore
+- (NSURL *)url
+{
+    return _url.get();
+}
+
+- (NSString *)mimeType
+{
+    return _mimeType.get();
+}
+
+- (NSNumber *)size
+{
+    return _size.get();
+}
+
+- (WKLinkIconType)iconType
+{
+    return _iconType;
+}
+
+@end
+
+#endif // WK_API_ENABLED

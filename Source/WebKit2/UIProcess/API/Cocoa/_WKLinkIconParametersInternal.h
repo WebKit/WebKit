@@ -23,48 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "_WKLinkIconParameters.h"
 
-#include "LinkIconType.h"
-#include "URL.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
 namespace WebCore {
-
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
-    String mimeType;
-    std::optional<unsigned> size;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
-};
-
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size;
-    encoder.encodeEnum(type);
+struct LinkIcon;
 }
 
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
-{
-    if (!decoder.decode(result.url))
-        return false;
+@interface _WKLinkIconParameters ()
 
-    if (!decoder.decode(result.mimeType))
-        return false;
+- (instancetype)_initWithLinkIcon:(const WebCore::LinkIcon&)linkIcon;
 
-    if (!decoder.decode(result.size))
-        return false;
+@end
 
-    if (!decoder.decodeEnum(result.type))
-        return false;
-
-    return true;
-}
-
-} // namespace WebCore
+#endif

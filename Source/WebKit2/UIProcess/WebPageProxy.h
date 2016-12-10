@@ -130,6 +130,7 @@ class FindMatchesClient;
 class FormClient;
 class FullscreenClient;
 class HistoryClient;
+class IconLoadingClient;
 class LoaderClient;
 class Navigation;
 class NavigationClient;
@@ -367,6 +368,9 @@ public:
 
     API::UIClient& uiClient() { return *m_uiClient; }
     void setUIClient(std::unique_ptr<API::UIClient>);
+
+    API::IconLoadingClient& iconLoadingClient() { return *m_iconLoadingClient; }
+    void setIconLoadingClient(std::unique_ptr<API::IconLoadingClient>);
 
     void initializeWebPage();
 
@@ -1141,6 +1145,9 @@ public:
 
     void didRestoreScrollPosition();
 
+    void getLoadDecisionForIcon(const WebCore::LinkIcon&, uint64_t callbackID);
+    void finishedLoadingIcon(uint64_t callbackIdentifier, const IPC::DataReference&);
+
     void setFocus(bool focused);
     void setWindowFrame(const WebCore::FloatRect&);
     void getWindowFrame(WebCore::FloatRect&);
@@ -1593,6 +1600,7 @@ private:
     std::unique_ptr<API::PolicyClient> m_policyClient;
     std::unique_ptr<API::NavigationClient> m_navigationClient;
     std::unique_ptr<API::HistoryClient> m_historyClient;
+    std::unique_ptr<API::IconLoadingClient> m_iconLoadingClient;
     std::unique_ptr<API::FormClient> m_formClient;
     std::unique_ptr<API::UIClient> m_uiClient;
     std::unique_ptr<API::FindClient> m_findClient;

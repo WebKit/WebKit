@@ -25,46 +25,49 @@
 
 #pragma once
 
-#include "LinkIconType.h"
-#include "URL.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#import "WKFoundation.h"
 
-namespace WebCore {
+#if WK_API_ENABLED
 
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
-    String mimeType;
-    std::optional<unsigned> size;
+#import "APIIconLoadingClient.h"
+#import "WeakObjCPtr.h"
+#import <wtf/RetainPtr.h>
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
+@class WKWebView;
+@protocol _WKIconLoadingDelegate;
+
+namespace WebKit {
+
+class IconLoadingDelegate {
+public:
+    explicit IconLoadingDelegate(WKWebView *);
+    ~IconLoadingDelegate();
+
+    std::unique_ptr<API::IconLoadingClient> createIconLoadingClient();
+
+    RetainPtr<id <_WKIconLoadingDelegate> > delegate();
+    void setDelegate(id <_WKIconLoadingDelegate>);
+
+private:
+    class IconLoadingClient : public API::IconLoadingClient {
+    public:
+        explicit IconLoadingClient(IconLoadingDelegate&);
+        ~IconLoadingClient();
+
+    private:
+        void getLoadDecisionForIcon(const WebCore::LinkIcon&, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) override;
+
+        IconLoadingDelegate& m_iconLoadingDelegate;
+    };
+
+    WKWebView *m_webView;
+    WeakObjCPtr<id <_WKIconLoadingDelegate> > m_delegate;
+
+    struct {
+        bool webViewShouldLoadIconWithParametersCompletionHandler : 1;
+    } m_delegateMethods;
 };
 
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size;
-    encoder.encodeEnum(type);
-}
+} // namespace WebKit
 
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
-{
-    if (!decoder.decode(result.url))
-        return false;
-
-    if (!decoder.decode(result.mimeType))
-        return false;
-
-    if (!decoder.decode(result.size))
-        return false;
-
-    if (!decoder.decodeEnum(result.type))
-        return false;
-
-    return true;
-}
-
-} // namespace WebCore
+#endif // WK_API_ENABLED

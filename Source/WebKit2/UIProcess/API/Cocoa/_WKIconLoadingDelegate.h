@@ -23,48 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#include "LinkIconType.h"
-#include "URL.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
+NS_ASSUME_NONNULL_BEGIN
 
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
-    String mimeType;
-    std::optional<unsigned> size;
+@class _WKLinkIconParameters;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
-};
+@protocol _WKIconLoadingDelegate <NSObject>
+@optional
 
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size;
-    encoder.encodeEnum(type);
-}
+- (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler;
 
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
-{
-    if (!decoder.decode(result.url))
-        return false;
+@end
 
-    if (!decoder.decode(result.mimeType))
-        return false;
+NS_ASSUME_NONNULL_END
 
-    if (!decoder.decode(result.size))
-        return false;
-
-    if (!decoder.decodeEnum(result.type))
-        return false;
-
-    return true;
-}
-
-} // namespace WebCore
+#endif

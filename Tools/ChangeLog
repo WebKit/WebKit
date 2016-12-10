@@ -1,3 +1,23 @@
+2016-12-09  Brady Eidson  <beidson@apple.com> 
+ 
+        Re-landing:
+        Add _WKIconLoadingDelegate SPI. 
+        https://bugs.webkit.org/show_bug.cgi?id=164894 
+ 
+        Reviewed by Alex Christensen. 
+        
+        Add MiniBrowser support for this new SPI, configurable with a setting. 
+ 
+        * MiniBrowser/mac/SettingsController.h: 
+        * MiniBrowser/mac/SettingsController.m: 
+        (-[SettingsController _populateMenu]): 
+        (-[SettingsController validateMenuItem:]): 
+        (-[SettingsController loadsAllSiteIcons]): 
+        (-[SettingsController toggleLoadsAllSiteIcons:]): 
+        * MiniBrowser/mac/WK2BrowserWindowController.m: 
+        (-[WK2BrowserWindowController awakeFromNib]): 
+        (-[WK2BrowserWindowController webView:shouldLoadIconWithParameters:completionHandler:]): 
+
 2016-12-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix the 32-bit build.

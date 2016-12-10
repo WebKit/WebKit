@@ -1755,4 +1755,25 @@ void WebFrameLoaderClient::didRestoreScrollPosition()
     webPage->didRestoreScrollPosition();
 }
 
+bool WebFrameLoaderClient::useIconLoadingClient()
+{
+    return m_useIconLoadingClient;
+}
+
+void WebFrameLoaderClient::getLoadDecisionForIcon(const LinkIcon& icon, uint64_t callbackID)
+{
+    if (WebPage* webPage { m_frame->page() })
+        webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon, callbackID));
+}
+
+void WebFrameLoaderClient::finishedLoadingIcon(uint64_t loadIdentifier, SharedBuffer* data)
+{
+    if (WebPage* webPage { m_frame->page() }) {
+        if (data)
+            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(loadIdentifier, { reinterpret_cast<const uint8_t*>(data->data()), data->size() }));
+        else
+            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(loadIdentifier, { nullptr, 0 }));
+    }
+}
+
 } // namespace WebKit

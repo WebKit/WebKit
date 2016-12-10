@@ -38,11 +38,13 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/_WKIconLoadingDelegate.h>
+#import <WebKit/_WKLinkIconParameters.h>
 #import <WebKit/_WKUserInitiatedAction.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
 
-@interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate>
+@interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
@@ -73,6 +75,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
+
+    // This setting installs the new WK2 Icon Loading Delegate and tests that mechanism by
+    // telling WebKit to load every icon referenced by the page.
+    if ([[SettingsController shared] loadsAllSiteIcons])
+        _webView._iconLoadingDelegate = self;
     
     _webView._observedRenderingProgressEvents = _WKRenderingProgressEventFirstLayout
         | _WKRenderingProgressEventFirstVisuallyNonEmptyLayout
@@ -648,6 +655,13 @@ static NSSet *dataTypes()
 
     if (progressEvents & _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering)
         LOG(@"renderingProgressDidChange: %@", @"first paint after suppressed incremental rendering");
+}
+
+- (void)webView:(WKWebView *)webView shouldLoadIconWithParameters:(_WKLinkIconParameters *)parameters completionHandler:(void (^)(void (^)(NSData*)))completionHandler
+{
+    completionHandler(^void (NSData *data) {
+        LOG(@"Icon URL %@ received icon data of length %u", parameters.url, (unsigned)data.length);
+    });
 }
 
 @end

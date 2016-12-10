@@ -1,3 +1,47 @@
+2016-12-09  Brady Eidson  <beidson@apple.com>
+
+        Re-landing:
+        Add _WKIconLoadingDelegate SPI.
+        https://bugs.webkit.org/show_bug.cgi?id=164894
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Manual testing possible in MiniBrowser now, WKTR tests coming soon in https://bugs.webkit.org/show_bug.cgi?id=164895).
+
+        With this client, WebCore will ask the FrameLoaderClient about each icon found in the <head>.
+
+        WebKit2 will then ask the embedding app - for each icon - if it wants that icon to load.
+
+        For icons the app decides to load, WebKit will pass the data to the app without storing locally.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
+        * html/LinkIconCollector.cpp:
+        (WebCore::iconSize):
+        (WebCore::compareIcons):
+        * html/LinkIconCollector.h:
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startIconLoading):
+        (WebCore::DocumentLoader::didGetLoadDecisionForIcon):
+        (WebCore::DocumentLoader::finishedLoadingIcon):
+        * loader/DocumentLoader.h:
+
+        * loader/FrameLoaderClient.h:
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::IconLoader):
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::notifyFinished):
+        * loader/icon/IconLoader.h:
+
+        * platform/LinkIcon.h: Copied from Source/WebCore/html/LinkIconCollector.h.
+        (WebCore::LinkIcon::encode):
+        (WebCore::LinkIcon::decode):
+
 2016-12-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         [Part 2 of 2] Add support for PKCS8 format while doing SubtleCrypto.importKey/exportKey

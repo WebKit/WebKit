@@ -41,6 +41,7 @@
 #include "Document.h"
 #include "DocumentParser.h"
 #include "DocumentWriter.h"
+#include "ElementChildIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExtensionStyleSheets.h"
@@ -53,7 +54,10 @@
 #include "HTTPHeaderNames.h"
 #include "HistoryItem.h"
 #include "IconController.h"
+#include "IconLoader.h"
 #include "InspectorInstrumentation.h"
+#include "LinkIconCollector.h"
+#include "LinkIconType.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryCache.h"
@@ -1700,6 +1704,46 @@ void DocumentLoader::getIconDataForIconURL(const String& urlString)
         m_iconDataCallback->invalidate();
     m_iconDataCallback = IconDataCallback::create(this, iconDataCallback);
     iconDatabase().iconDataForIconURL(urlString, m_iconDataCallback);
+}
+
+void DocumentLoader::startIconLoading()
+{
+    ASSERT(m_frame->loader().client().useIconLoadingClient());
+
+    static uint64_t nextIconCallbackID = 1;
+
+    auto* document = this->document();
+    if (!document)
+        return;
+
+    Vector<LinkIcon> icons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
+
+    if (icons.isEmpty())
+        icons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
+
+    for (auto& icon : icons) {
+        auto result = m_iconsPendingLoadDecision.add(nextIconCallbackID++, icon);
+        m_frame->loader().client().getLoadDecisionForIcon(icon, result.iterator->key);
+    }
+}
+
+void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID)
+{
+    auto icon = m_iconsPendingLoadDecision.take(loadIdentifier);
+    if (!decision || icon.url.isEmpty() || !m_frame)
+        return;
+
+    auto iconLoader = std::make_unique<IconLoader>(*this, icon.url);
+    iconLoader->startLoading();
+    m_iconLoaders.set(WTFMove(iconLoader), newCallbackID);
+}
+
+void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffer)
+{
+    auto loadIdentifier = m_iconLoaders.take(&loader);
+    ASSERT(loadIdentifier);
+
+    m_frame->loader().client().finishedLoadingIcon(loadIdentifier, buffer);
 }
 
 void DocumentLoader::dispatchOnloadEvents()

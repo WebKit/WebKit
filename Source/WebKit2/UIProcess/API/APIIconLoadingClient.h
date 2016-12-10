@@ -25,46 +25,23 @@
 
 #pragma once
 
-#include "LinkIconType.h"
-#include "URL.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#include "GenericCallback.h"
+#include <WebCore/LinkIcon.h>
+#include <wtf/Function.h>
 
-namespace WebCore {
+namespace IPC {
+class DataReference;
+}
 
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
-    String mimeType;
-    std::optional<unsigned> size;
+namespace API {
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
+class IconLoadingClient {
+public:
+    virtual ~IconLoadingClient() { }
+
+    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) {
+        completionHandler(nullptr);
+    }
 };
 
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size;
-    encoder.encodeEnum(type);
-}
-
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
-{
-    if (!decoder.decode(result.url))
-        return false;
-
-    if (!decoder.decode(result.mimeType))
-        return false;
-
-    if (!decoder.decode(result.size))
-        return false;
-
-    if (!decoder.decodeEnum(result.type))
-        return false;
-
-    return true;
-}
-
-} // namespace WebCore
+} // namespace API

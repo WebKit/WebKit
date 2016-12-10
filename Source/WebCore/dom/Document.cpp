@@ -2651,7 +2651,12 @@ void Document::implicitClose()
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
     Frame* f = frame();
     if (f) {
-        f->loader().icon().startLoader();
+        if (f->loader().client().useIconLoadingClient()) {
+            if (auto* documentLoader = loader())
+                documentLoader->startIconLoading();
+        } else
+            f->loader().icon().startLoader();
+
         f->animation().startAnimationsIfNotSuspended(this);
 
         // FIXME: We shouldn't be dispatching pending events globally on all Documents here.

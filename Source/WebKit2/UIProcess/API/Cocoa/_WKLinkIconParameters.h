@@ -23,48 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#include "LinkIconType.h"
-#include "URL.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
-namespace WebCore {
+#import <Foundation/Foundation.h>
 
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
-    String mimeType;
-    std::optional<unsigned> size;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, LinkIcon&);
+typedef NS_ENUM(NSInteger, WKLinkIconType) {
+    WKLinkIconTypeFavicon,
+    WKLinkIconTypeTouchIcon,
+    WKLinkIconTypeTouchPrecomposedIcon,
 };
 
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size;
-    encoder.encodeEnum(type);
-}
+@interface _WKLinkIconParameters : NSObject
 
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
-{
-    if (!decoder.decode(result.url))
-        return false;
+@property (nonatomic, readonly, copy) NSURL *url;
+@property (nonatomic, readonly) WKLinkIconType iconType;
+@property (nonatomic, readonly, copy) NSString *mimeType;
+@property (nonatomic, readonly, copy) NSNumber *size;
 
-    if (!decoder.decode(result.mimeType))
-        return false;
+@end
 
-    if (!decoder.decode(result.size))
-        return false;
-
-    if (!decoder.decodeEnum(result.type))
-        return false;
-
-    return true;
-}
-
-} // namespace WebCore
+#endif
