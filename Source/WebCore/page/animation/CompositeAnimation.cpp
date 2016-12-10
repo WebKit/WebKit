@@ -375,6 +375,8 @@ double CompositeAnimation::timeToNextService() const
     if (!m_transitions.isEmpty()) {
         for (auto& transition : m_transitions.values()) {
             double t = transition->timeToNextService();
+            if (t == -1)
+                continue;
             if (t < minT || minT == -1)
                 minT = t;
             if (minT == 0)
@@ -385,6 +387,8 @@ double CompositeAnimation::timeToNextService() const
         m_keyframeAnimations.checkConsistency();
         for (auto& animation : m_keyframeAnimations.values()) {
             double t = animation->timeToNextService();
+            if (t == -1)
+                continue;
             if (t < minT || minT == -1)
                 minT = t;
             if (minT == 0)

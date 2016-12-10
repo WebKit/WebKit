@@ -1,3 +1,14 @@
+2016-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Animation followed by transition doesn't always fire transitionend event
+        https://bugs.webkit.org/show_bug.cgi?id=165731
+        rdar://problem/28471240
+
+        Reviewed by Zalan Bujtas.
+
+        * animations/animation-followed-by-transition-expected.txt: Added.
+        * animations/animation-followed-by-transition.html: Added.
+
 2016-12-09  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for Geolocation

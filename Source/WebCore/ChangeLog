@@ -1,3 +1,35 @@
+2016-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Animation followed by transition doesn't always fire transitionend event
+        https://bugs.webkit.org/show_bug.cgi?id=165731
+        rdar://problem/28471240
+
+        Reviewed by Zalan Bujtas.
+        
+        After r200047, a keyframe animation of an accelerated property followed by a
+        transition didn't always fire a transitionend event.
+        
+        This happened if CompositeAnimation::timeToNextService() happend to be called
+        when the transitions's timeToNextService() returned a positive value, but the
+        keyframe animation still existed, but its timeToNextService() returned -1. In
+        this case that -1 would clobber the positing minT.
+
+        Fix by just continuing in each loop when the timeToNextService() returns -1.
+
+        This code should probably be rewritten to use std::optional<double> rather than
+        magic values.
+
+        Test: animations/animation-followed-by-transition.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::timeToNextService):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::pauseAnimation):
+        (WebCore::GraphicsLayerCA::removeAnimation):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationEnded):
+
 2016-12-10  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Merge JSDictionary into Dictionary, and remove unused bits
