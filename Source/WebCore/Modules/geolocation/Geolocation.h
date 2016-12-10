@@ -29,6 +29,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include "Geoposition.h"
 #include "PositionCallback.h"
 #include "PositionError.h"
@@ -41,28 +42,26 @@
 
 namespace WebCore {
 
-class Document;
 class Frame;
 class GeoNotifier;
 class GeolocationError;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
+struct PositionOptions;
 
-class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject
-{
-friend class GeoNotifier;
-
+class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject {
+    friend class GeoNotifier;
 public:
     static Ref<Geolocation> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~Geolocation();
 
     WEBCORE_EXPORT void resetAllGeolocationPermission();
-    Document* document() const;
-    WEBCORE_EXPORT Frame* frame() const;
+    Document* document() const { return downcast<Document>(scriptExecutionContext()); }
+    Frame* frame() const { return document() ? document()->frame() : nullptr; }
 
-    void getCurrentPosition(RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
-    int watchPosition(RefPtr<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, RefPtr<PositionOptions>&&);
+    void getCurrentPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
+    int watchPosition(Ref<PositionCallback>&&, RefPtr<PositionErrorCallback>&&, PositionOptions&&);
     void clearWatch(int watchID);
 
     WEBCORE_EXPORT void setIsAllowed(bool);
@@ -141,7 +140,7 @@ private:
     void fatalErrorOccurred(GeoNotifier*);
     void requestTimedOut(GeoNotifier*);
     void requestUsesCachedPosition(GeoNotifier*);
-    bool haveSuitableCachedPosition(PositionOptions*);
+    bool haveSuitableCachedPosition(const PositionOptions&);
     void makeCachedPositionCallbacks();
 
     GeoNotifierSet m_oneShots;
