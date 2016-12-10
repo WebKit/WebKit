@@ -105,7 +105,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
     switch (format) {
     case SubtleCrypto::KeyFormat::Jwk: {
         JsonWebKey key = WTFMove(WTF::get<JsonWebKey>(data));
-        if ((key.d && (usages ^ CryptoKeyUsageDecrypt)) || (!key.d && (usages ^ CryptoKeyUsageEncrypt))) {
+        if (usages && ((key.d && (usages ^ CryptoKeyUsageDecrypt)) || (!key.d && (usages ^ CryptoKeyUsageEncrypt)))) {
             exceptionCallback(SYNTAX_ERR);
             return;
         }
@@ -121,7 +121,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
         break;
     }
     case SubtleCrypto::KeyFormat::Spki: {
-        if (usages ^ CryptoKeyUsageEncrypt) {
+        if (usages && (usages ^ CryptoKeyUsageEncrypt)) {
             exceptionCallback(SYNTAX_ERR);
             return;
         }
@@ -129,7 +129,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(SubtleCrypto::KeyFormat format, 
         break;
     }
     case SubtleCrypto::KeyFormat::Pkcs8: {
-        if (usages ^ CryptoKeyUsageDecrypt) {
+        if (usages && (usages ^ CryptoKeyUsageDecrypt)) {
             exceptionCallback(SYNTAX_ERR);
             return;
         }

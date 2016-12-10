@@ -128,6 +128,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
             isUsagesAllowed = isUsagesAllowed || !(usages ^ CryptoKeyUsageWrapKey);
             isUsagesAllowed = isUsagesAllowed || !(usages ^ (CryptoKeyUsageEncrypt | CryptoKeyUsageWrapKey));
         }
+        isUsagesAllowed = isUsagesAllowed || !usages;
         if (!isUsagesAllowed) {
             exceptionCallback(SYNTAX_ERR);
             return;
@@ -167,7 +168,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
         break;
     }
     case SubtleCrypto::KeyFormat::Spki: {
-        if ((usages ^ CryptoKeyUsageEncrypt) && (usages ^ CryptoKeyUsageWrapKey) && (usages ^ (CryptoKeyUsageEncrypt | CryptoKeyUsageWrapKey))) {
+        if (usages && (usages ^ CryptoKeyUsageEncrypt) && (usages ^ CryptoKeyUsageWrapKey) && (usages ^ (CryptoKeyUsageEncrypt | CryptoKeyUsageWrapKey))) {
             exceptionCallback(SYNTAX_ERR);
             return;
         }
@@ -176,7 +177,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(SubtleCrypto::KeyFormat format, KeyData&
         break;
     }
     case SubtleCrypto::KeyFormat::Pkcs8: {
-        if ((usages ^ CryptoKeyUsageDecrypt) && (usages ^ CryptoKeyUsageUnwrapKey) && (usages ^ (CryptoKeyUsageDecrypt | CryptoKeyUsageUnwrapKey))) {
+        if (usages && (usages ^ CryptoKeyUsageDecrypt) && (usages ^ CryptoKeyUsageUnwrapKey) && (usages ^ (CryptoKeyUsageDecrypt | CryptoKeyUsageUnwrapKey))) {
             exceptionCallback(SYNTAX_ERR);
             return;
         }
