@@ -68,8 +68,10 @@ math {
        /*
        The following fonts have Times style and are provided with most TeX & Linux distributions.
        We put XITS & STIX as a second option because they have very good unicode coverage.
-       XITS is a fork of STIX with bug fixes and more Arabic/RTL features so we put it first.
+       STIX Two is a complete redesign of STIX that fixes serious bugs in version one so we put it in first position.
+       XITS is a fork of STIX with bug fixes and more Arabic/RTL features so we put it in second position.
        */
+       "STIX Two Math",
        "XITS Math",
        "STIX Math",
        "Libertinus Math",
