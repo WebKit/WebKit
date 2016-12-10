@@ -35,6 +35,7 @@
 #include "WasmMemoryInformation.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -123,6 +124,9 @@ struct ModuleInformation {
     Vector<Signature*> internalFunctionSignatures;
     MemoryInformation memory;
     Vector<Export> exports;
+    std::optional<uint32_t> startFunctionIndexSpace;
+
+    ~ModuleInformation();
 };
 
 struct UnlinkedWasmToWasmCall {

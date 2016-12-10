@@ -115,7 +115,9 @@ const emitters = {
             }
         }
     },
-    Start: (section, bin) => { throw new Error(`Not yet implemented`); },
+    Start: (section, bin) => {
+        put(bin, "varuint32", section.data[0]);
+    },
     Element: (section, bin) => { throw new Error(`Not yet implemented`); },
 
     Code: (section, bin) => {

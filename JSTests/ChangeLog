@@ -1,3 +1,16 @@
+2016-12-09  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement start function
+        https://bugs.webkit.org/show_bug.cgi?id=165150
+
+        Reviewed by Saam Barati.
+
+        * wasm/Builder.js: allow building a .Start()
+        * wasm/Builder_WebAssemblyBinary.js:
+        * wasm/js-api/test_Start.js: Added.
+        (const.emitters.Start): serialize a start section
+        * wasm/self-test/test_BuilderJSON.js: validate the start section's content
+
 2016-12-09  Saam Barati  <sbarati@apple.com>
 
         WebAssembly JS API: implement importing and defining Memory

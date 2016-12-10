@@ -33,6 +33,8 @@
 
 namespace JSC { namespace Wasm {
 
+JS_EXPORT_PRIVATE ModuleInformation::~ModuleInformation() { }
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

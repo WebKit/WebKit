@@ -34,8 +34,10 @@
 #include "JSModuleEnvironment.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "ProtoCallFrame.h"
 #include "WasmFormat.h"
 #include "WebAssemblyFunction.h"
+#include <limits>
 
 namespace JSC {
 
@@ -96,6 +98,7 @@ void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
     WebAssemblyModuleRecord* thisObject = jsCast<WebAssemblyModuleRecord*>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_instance);
+    visitor.append(&thisObject->m_startFunction);
 }
 
 void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* instance)
@@ -107,6 +110,10 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
 
     JSWebAssemblyModule* module = instance->module();
     const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
+
+    bool hasStart = !!moduleInformation.startFunctionIndexSpace;
+    auto startFunctionIndexSpace = moduleInformation.startFunctionIndexSpace.value_or(0);
+
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
     unsigned importCount = module->importCount();
 
@@ -133,6 +140,8 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             Wasm::Signature* signature = module->signatureForFunctionIndexSpace(exp.functionIndex);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), exp.field.string(), instance, wasmCallee, signature);
             exportedValue = function;
+            if (hasStart && startFunctionIndexSpace == exp.functionIndex)
+                m_startFunction.set(vm, this, function);
             break;
         }
         case Wasm::External::Table: {
@@ -157,6 +166,20 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
         RELEASE_ASSERT(putResult);
     }
 
+    if (hasStart) {
+        Wasm::Signature* signature = module->signatureForFunctionIndexSpace(startFunctionIndexSpace);
+        // The start function must not take any arguments or return anything. This is enforced by the parser.
+        ASSERT(!signature->arguments.size());
+        ASSERT(signature->returnType == Wasm::Void);
+        // FIXME can start call imports / tables? This assumes not. https://github.com/WebAssembly/design/issues/896
+        if (!m_startFunction.get()) {
+            // The start function wasn't added above. It must be a purely internal function.
+            JSWebAssemblyCallee* wasmCallee = module->calleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), "start", instance, wasmCallee, signature);
+            m_startFunction.set(vm, this, function);
+        }
+    }
+
     RELEASE_ASSERT(!m_instance);
     m_instance.set(vm, this, instance);
     m_moduleEnvironment.set(vm, this, moduleEnvironment);
@@ -164,10 +187,14 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
 
 JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
 {
-    // FIXME this should call the module's `start` function, if any. https://bugs.webkit.org/show_bug.cgi?id=165150
-    // https://github.com/WebAssembly/design/blob/master/Modules.md#module-start-function
-    // The start function must not take any arguments or return anything
-    UNUSED_PARAM(state);
+    if (WebAssemblyFunction* startFunction = m_startFunction.get()) {
+        VM& vm = state->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        ProtoCallFrame protoCallFrame;
+        protoCallFrame.init(nullptr, startFunction, JSValue(), 1, nullptr);
+        startFunction->call(vm, &protoCallFrame);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
     return jsUndefined();
 }
 

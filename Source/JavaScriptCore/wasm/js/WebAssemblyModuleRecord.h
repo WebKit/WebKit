@@ -33,6 +33,7 @@
 namespace JSC {
 
 class JSWebAssemblyInstance;
+class WebAssemblyFunction;
 
 // Based on the WebAssembly.Instance specification
 // https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-constructor
@@ -58,6 +59,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
+    WriteBarrier<WebAssemblyFunction> m_startFunction;
 };
 
 } // namespace JSC

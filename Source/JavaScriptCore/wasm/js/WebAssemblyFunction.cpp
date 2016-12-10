@@ -92,8 +92,20 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         argCount = boxedArgs.size();
     }
 
+    // Note: we specifically use the WebAssemblyFunction as the callee to begin with in the ProtoCallFrame.
+    // The reason for this is that calling into the llint may stack overflow, and the stack overflow
+    // handler might read the global object from the callee. The JSWebAssemblyCallee doesn't have a
+    // global object, but the WebAssemblyFunction does.
+    ProtoCallFrame protoCallFrame;
+    protoCallFrame.init(nullptr, wasmFunction, firstArgument, argCount, remainingArgs);
+
+    return wasmFunction->call(vm, &protoCallFrame);
+}
+
+EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
+{
     // Setup the memory that the entrance loads.
-    if (JSWebAssemblyMemory* memory = wasmFunction->instance()->memory()) {
+    if (JSWebAssemblyMemory* memory = instance()->memory()) {
         Wasm::Memory* wasmMemory = memory->memory();
         vm.topWasmMemoryPointer = wasmMemory->memory();
         vm.topWasmMemorySize = wasmMemory->size();
@@ -102,20 +114,13 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         vm.topWasmMemorySize = 0;
     }
 
-    // Note: we specifically use the WebAsseblyFunction as the callee to begin with in the ProtoCallFrame.
-    // The reason for this is that calling into the llint may stack overflow, and the stack overflow
-    // handler might read the global object from the callee. The JSWebAssemblyCallee doesn't have a
-    // global object, but the WebAssemblyFunction does.
-    ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(nullptr, wasmFunction, firstArgument, argCount, remainingArgs);
-    
     JSWebAssemblyInstance* prevJSWebAssemblyInstance = vm.topJSWebAssemblyInstance;
-    vm.topJSWebAssemblyInstance = wasmFunction->instance();
-    EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->webAssemblyCallee()->jsToWasmEntryPoint(), &vm, &protoCallFrame);
+    vm.topJSWebAssemblyInstance = instance();
+    EncodedJSValue rawResult = vmEntryToWasm(webAssemblyCallee()->jsToWasmEntryPoint(), &vm, protoCallFrame);
     vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
 
     // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876
-    switch (signature->returnType) {
+    switch (signature()->returnType) {
     case Wasm::Void:
         return JSValue::encode(jsUndefined());
     case Wasm::I32:

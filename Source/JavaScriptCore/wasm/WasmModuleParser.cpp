@@ -303,7 +303,8 @@ bool ModuleParser::parseFunction()
 
 bool ModuleParser::parseTable()
 {
-    // FIXME
+    // FIXME implement table https://bugs.webkit.org/show_bug.cgi?id=164135
+    RELEASE_ASSERT_NOT_REACHED();
     return true;
 }
 
@@ -365,6 +366,7 @@ bool ModuleParser::parseMemory()
 bool ModuleParser::parseGlobal()
 {
     // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
+    RELEASE_ASSERT_NOT_REACHED();
     return true;
 }
 
@@ -415,13 +417,22 @@ bool ModuleParser::parseExport()
 
 bool ModuleParser::parseStart()
 {
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
+    uint32_t startFunctionIndex;
+    if (!parseVarUInt32(startFunctionIndex)
+        || startFunctionIndex >= m_functionIndexSpace.size())
+        return false;
+    Signature* signature = m_functionIndexSpace[startFunctionIndex].signature;
+    if (signature->arguments.size() != 0
+        || signature->returnType != Void)
+        return false;
+    m_module->startFunctionIndexSpace = startFunctionIndex;
     return true;
 }
 
 bool ModuleParser::parseElement()
 {
     // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
+    RELEASE_ASSERT_NOT_REACHED();
     return true;
 }
 
@@ -450,6 +461,7 @@ bool ModuleParser::parseCode()
 bool ModuleParser::parseData()
 {
     // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
+    RELEASE_ASSERT_NOT_REACHED();
     return true;
 }
 

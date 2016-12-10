@@ -437,8 +437,16 @@ export default class Builder {
                 break;
 
             case "Start":
-                // FIXME implement start https://bugs.webkit.org/show_bug.cgi?id=161709
-                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                this[section] = function(functionIndexOrName) {
+                    const s = this._addSection(section);
+                    const startBuilder = {
+                        End: () => this,
+                    };
+                    if (typeof(functionIndexOrName) !== "number" && typeof(functionIndexOrName) !== "string")
+                        throw new Error(`Start section's function index  must either be a number or a string`);
+                    s.data.push(functionIndexOrName);
+                    return startBuilder;
+                };
                 break;
 
             case "Element":
@@ -456,6 +464,7 @@ export default class Builder {
                             const typeSection = builder._getSection("Type");
                             const importSection = builder._getSection("Import");
                             const exportSection = builder._getSection("Export");
+                            const startSection = builder._getSection("Start");
                             const codeSection = s;
                             if (exportSection) {
                                 for (const e of exportSection.data) {
@@ -486,6 +495,22 @@ export default class Builder {
                                         const functionIndex = e.index - functionIndexSpaceOffset;
                                         e.type = codeSection.data[functionIndex].type;
                                     }
+                                }
+                            }
+                            if (startSection) {
+                                const start = startSection.data[0];
+                                let mapped = builder._getFunctionFromIndexSpace(start);
+                                if (!builder._checked) {
+                                    if (typeof(mapped) === "undefined")
+                                        mapped = start; // In unchecked mode, simply use what was provided if it's nonsensical.
+                                    assert.isA(start, "number"); // It can't be too nonsensical, otherwise we can't create a binary.
+                                    startSection.data[0] = start;
+                                } else {
+                                    if (typeof(mapped) === "undefined")
+                                        throw new Error(`Start section refers to non-existant function '${start}'`);
+                                    if (typeof(start) === "string" || typeof(start) === "object")
+                                        startSection.data[0] = mapped;
+                                    // FIXME in checked mode, test that the type is acceptable for start function. We probably want _registerFunctionToIndexSpace to also register types per index. https://bugs.webkit.org/show_bug.cgi?id=165658
                                 }
                             }
                             return builder;

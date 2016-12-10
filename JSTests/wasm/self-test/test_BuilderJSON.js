@@ -241,6 +241,57 @@ const assertOpThrows = (opFn, message) => {
     assert.throws(() => e.Function("foo", 0, { params: ["i32"] }), Error, `Not the same: "1" and "0": Re-exporting import "bar" as "foo" has mismatching type`);
 })();
 
+(function StartInvalidNumberedFunction() {
+    const b = (new Builder())
+        .Type().End()
+        .Function().End()
+        .Start(0).End()
+    assert.throws(() => b.Code().End(), Error, `Start section refers to non-existant function '0'`);
+})();
+
+(function StartInvalidNamedFunction() {
+    const b = (new Builder())
+        .Type().End()
+        .Function().End()
+        .Start("foo").End();
+    assert.throws(() => b.Code().End(), Error, `Start section refers to non-existant function 'foo'`);
+})();
+
+(function StartNamedFunction() {
+    const b = (new Builder())
+        .Type().End()
+        .Function().End()
+        .Start("foo").End()
+        .Code()
+            .Function("foo", { params: [] }).End()
+        .End();
+    const j = JSON.parse(b.json());
+    assert.eq(j.section.length, 4);
+    assert.eq(j.section[2].name, "Start");
+    assert.eq(j.section[2].data.length, 1);
+    assert.eq(j.section[2].data[0], 0);
+})();
+
+/* FIXME implement checking of signature https://bugs.webkit.org/show_bug.cgi?id=165658
+(function StartInvalidTypeArg() {
+    const b = (new Builder())
+        .Type().End()
+        .Function().End()
+        .Start("foo").End()
+    assert.throws(() => b.Code().Function("foo", { params: ["i32"] }).End(), Error, `???`);
+})();
+
+(function StartInvalidTypeReturn() {
+    const b = (new Builder())
+        .Type().End()
+        .Function().End()
+        .Start("foo").End()
+    assert.throws(() => b.Code().Function("foo", { params: [], ret: "i32" }).I32Const(42).Ret().End(), Error, `???`);
+})();
+*/
+
+// FIXME test start of import or table. https://bugs.webkit.org/show_bug.cgi?id=165658
+
 (function EmptyCodeSection() {
     const b = new Builder();
     b.Code();

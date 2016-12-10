@@ -1,3 +1,27 @@
+2016-12-09  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement start function
+        https://bugs.webkit.org/show_bug.cgi?id=165150
+
+        Reviewed by Saam Barati.
+
+        * wasm/WasmFormat.h: pass the start function around
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseTable): mark unreachable code
+        (JSC::Wasm::ModuleParser::parseGlobal): mark unreachable code
+        (JSC::Wasm::ModuleParser::parseStart): mark unreachable code
+        (JSC::Wasm::ModuleParser::parseElement): mark unreachable code
+        (JSC::Wasm::ModuleParser::parseData): mark unreachable code
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction): NFC: call the new function below
+        (JSC::WebAssemblyFunction::call): separate this out so that the start function can use it
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::visitChildren): visit the start function
+        (JSC::WebAssemblyModuleRecord::link): handle start function
+        (JSC::WebAssemblyModuleRecord::evaluate): call the start function, if present
+        * wasm/js/WebAssemblyModuleRecord.h:
+
 2016-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         GC might be forced to look at a nuked object due to ordering of AllocatePropertyStorage, MaterializeNewObject, and PutStructure

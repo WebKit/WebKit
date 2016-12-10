@@ -34,6 +34,7 @@ namespace JSC {
 
 class JSGlobalObject;
 class JSWebAssemblyCallee;
+struct ProtoCallFrame;
 class WebAssemblyInstance;
 
 namespace B3 {
@@ -62,6 +63,7 @@ public:
         ASSERT(m_signature);
         return m_signature;
     }
+    EncodedJSValue call(VM&, ProtoCallFrame*);
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
