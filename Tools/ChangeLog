@@ -1,3 +1,9 @@
+2016-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r209630.
+
+        * Scripts/build-jsc: Remove building the non-existing testWASM.
+
 2016-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
