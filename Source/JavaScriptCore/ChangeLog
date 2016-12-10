@@ -1,3 +1,18 @@
+2016-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r209554-209571): stress/poly-setter-combo crashing
+        https://bugs.webkit.org/show_bug.cgi?id=165669
+
+        Reviewed by Geoffrey Garen.
+        
+        We now rely on objects being zero-filled in a bunch of places, not just concurrent GC.
+        So, we need 32-bit to do it too.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+
 2016-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
