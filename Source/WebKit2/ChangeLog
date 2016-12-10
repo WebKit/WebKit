@@ -1,3 +1,16 @@
+2016-12-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix initialization of contentUpdateFrequency
+        https://bugs.webkit.org/show_bug.cgi?id=165705
+        rdar://problem/29602039
+
+        Reviewed by Tim Horton.
+
+        The value that controls web content update frequency was not being initialized.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
 2016-12-09  Anders Carlsson  <andersca@apple.com>
 
         Once we can send Mach messages again, make sure to send any pending outgoing messages
