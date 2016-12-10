@@ -1,3 +1,59 @@
+2016-12-10  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Merge JSDictionary into Dictionary, and remove unused bits
+        https://bugs.webkit.org/show_bug.cgi?id=165641
+
+        Reviewed by Dan Bernstein.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Remove JSDictionary.h/cpp
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        Remove unused #include of Dictionary.h
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCPeerConnection.h:
+        Replace unnecessary #include of Dictionary in a header with forward declaration.
+
+        * bindings/js/Dictionary.cpp:
+        (WebCore::Dictionary::Dictionary):
+        (WebCore::Dictionary::tryGetProperty):
+        (WebCore::Dictionary::getOwnPropertyNames):
+        (WebCore::Dictionary::convertValue):
+        (WebCore::Dictionary::asJSObject<Notification>): Deleted.
+        (WebCore::Dictionary::getOwnPropertiesAsStringHashMap): Deleted.
+        (WebCore::Dictionary::getWithUndefinedOrNullCheck): Deleted.
+        * bindings/js/Dictionary.h:
+        (WebCore::Dictionary::isObject):
+        (WebCore::Dictionary::isUndefinedOrNull):
+        (WebCore::Dictionary::execState):
+        (WebCore::Dictionary::initializerObject):
+        (WebCore::Dictionary::isValid):
+        (WebCore::Dictionary::convertValue):
+        (WebCore::Dictionary::get):
+        (WebCore::Dictionary::tryGetPropertyAndResult):
+        (WebCore::Dictionary::getEventListener): Deleted.
+        Merge JSDictionary into Dictionary. Remove all unused functions (some getters, lots
+        of convertValue overrides). Modernize to taste.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::getAlgorithmIdentifier):
+        (WebCore::getHashAlgorithm):
+        (WebCore::createHmacParams):
+        (WebCore::createHmacKeyParams):
+        (WebCore::createRsaKeyGenParams):
+        (WebCore::createRsaOaepParams):
+        (WebCore::createRsaSsaParams):
+        Update for rename. JSDictionary is now Dictionary.
+
+        * bindings/js/JSDictionary.cpp: Removed.
+        * bindings/js/JSDictionary.h: Removed.
+
+        * dom/MutationObserver.cpp:
+        Remove unused #include of Dictionary.h
+
 2016-12-10  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Move CSSParserValues.h/.cpp to CSSParserSelector.h/.cpp

@@ -32,7 +32,6 @@
 
 #include "MutationObserver.h"
 
-#include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLSlotElement.h"

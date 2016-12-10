@@ -35,6 +35,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "Dictionary.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"

@@ -29,7 +29,6 @@
 #include "RTCDataChannel.h"
 
 #include "Blob.h"
-#include "Dictionary.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "MessageEvent.h"

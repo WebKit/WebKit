@@ -35,7 +35,6 @@
 #if ENABLE(WEB_RTC)
 
 #include "ActiveDOMObject.h"
-#include "Dictionary.h"
 #include "EventTarget.h"
 #include "MediaStream.h"
 #include "RTCDataChannel.h"
@@ -47,6 +46,7 @@
 
 namespace WebCore {
 
+class Dictionary;
 class MediaStreamTrack;
 class PeerConnectionBackend;
 class RTCConfiguration;

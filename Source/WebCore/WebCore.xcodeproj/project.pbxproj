@@ -5489,8 +5489,6 @@
 		BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */; };
 		BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE32B9B1517C0B100F542EC /* RenderMultiColumnSet.h */; };
 		BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */; };
-		BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4389B140B1BA7005E437E /* JSDictionary.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCE438A2140C0DC0005E437E /* JSDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE438A1140C0DBF005E437E /* JSDictionary.cpp */; };
 		BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */; };
 		BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4413212F748E2009B84B8 /* RenderCombineText.h */; };
 		BCE658FF0EA9248A007E4533 /* Theme.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE658FE0EA9248A007E4533 /* Theme.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13384,8 +13382,6 @@
 		BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocationCustom.cpp; sourceTree = "<group>"; };
 		BCE32B9B1517C0B100F542EC /* RenderMultiColumnSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMultiColumnSet.h; sourceTree = "<group>"; };
 		BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnSet.cpp; sourceTree = "<group>"; };
-		BCE4389B140B1BA7005E437E /* JSDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDictionary.h; sourceTree = "<group>"; };
-		BCE438A1140C0DBF005E437E /* JSDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDictionary.cpp; sourceTree = "<group>"; };
 		BCE4413112F748E2009B84B8 /* RenderCombineText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderCombineText.cpp; sourceTree = "<group>"; };
 		BCE4413212F748E2009B84B8 /* RenderCombineText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderCombineText.h; sourceTree = "<group>"; };
 		BCE658FE0EA9248A007E4533 /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
@@ -21937,8 +21933,6 @@
 				E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */,
 				9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */,
 				9BD4E9151C462872005065BC /* JSCustomElementInterface.h */,
-				BCE438A1140C0DBF005E437E /* JSDictionary.cpp */,
-				BCE4389B140B1BA7005E437E /* JSDictionary.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
 				413C2C331BC29A7B0075204C /* JSDOMConstructor.h */,
@@ -26090,7 +26084,6 @@
 				FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
-				BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */,
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
 				1221E05E1C02B444006A1A00 /* JSDocumentAnimation.h in Headers */,
 				ADDA94C219687AA500453029 /* JSDocumentCustom.h in Headers */,
@@ -29827,7 +29820,6 @@
 				31FB1A6C120A5D6900DC02A0 /* JSDeviceMotionEventCustom.cpp in Sources */,
 				59A86006119DAF7F00DEF1EF /* JSDeviceOrientationEvent.cpp in Sources */,
 				590E1B4B11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp in Sources */,
-				BCE438A2140C0DC0005E437E /* JSDictionary.cpp in Sources */,
 				659DDC8209E198BA001BF3C6 /* JSDocument.cpp in Sources */,
 				1221E05D1C02B444006A1A00 /* JSDocumentAnimation.cpp in Sources */,
 				49C7BA8D1042F5B10009D447 /* JSDocumentCustom.cpp in Sources */,

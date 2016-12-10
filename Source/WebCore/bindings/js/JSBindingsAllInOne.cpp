@@ -65,7 +65,6 @@
 #include "JSDataCueCustom.cpp"
 #include "JSDataTransferCustom.cpp"
 #include "JSDeviceOrientationEventCustom.cpp"
-#include "JSDictionary.cpp"
 #include "JSDocumentCustom.cpp"
 #include "JSDocumentFragmentCustom.cpp"
 #include "JSElementCustom.cpp"
