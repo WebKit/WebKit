@@ -75,7 +75,7 @@ public:
 
     bool hasArgumentIndex() const { return hasArgumentIndex(m_op); }
 
-    unsigned argumentIndex() const { return m_info; }
+    unsigned argumentIndex() const { return static_cast<unsigned>(m_info); }
     
     static MinifiedID getID(MinifiedNode* node) { return node->id(); }
     static bool compareByNodeIndex(const MinifiedNode& a, const MinifiedNode& b)

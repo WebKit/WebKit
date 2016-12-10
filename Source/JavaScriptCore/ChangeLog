@@ -1,5 +1,12 @@
 2016-12-09  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed build fix for 32 bit builds.
+
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::MinifiedNode::argumentIndex): Added a static_cast<unsigned>().
+
+2016-12-09  Michael Saboff  <msaboff@apple.com>
+
         JSVALUE64: Pass arguments in platform argument registers when making JavaScript calls
         https://bugs.webkit.org/show_bug.cgi?id=160355
 
