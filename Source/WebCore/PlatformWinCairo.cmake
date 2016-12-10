@@ -8,7 +8,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBKIT_LIBRARIES_DIR}/include"
     "${WEBKIT_LIBRARIES_DIR}/include/SQLite"
     "${WEBKIT_LIBRARIES_DIR}/include/zlib"
-    "${JAVASCRIPTCORE_DIR}/wtf/text"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/cf"
     "${WEBCORE_DIR}/platform/graphics/cairo"

@@ -113,11 +113,8 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
-    "${DERIVED_SOURCES_DIR}"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
-    "${CMAKE_BINARY_DIR}"
 )
 
 set(WebCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -3399,11 +3396,6 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
 endif ()
 
 if (ENABLE_WEB_REPLAY)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${JAVASCRIPTCORE_DIR}/inspector"
-        "${JAVASCRIPTCORE_DIR}/replay"
-    )
-
     set(WebCore_WEB_REPLAY_INPUTS ${CMAKE_CURRENT_SOURCE_DIR}/replay/WebInputs.json ${JAVASCRIPTCORE_DIR}/replay/JSInputs.json)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.h ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.cpp
@@ -3876,7 +3868,9 @@ endif ()
 # files on OS X.
 add_library(WebCoreDerivedSources STATIC ${WebCore_DERIVED_SOURCES})
 set_target_properties(WebCoreDerivedSources PROPERTIES OUTPUT_NAME WebCoreDerivedSources${DEBUG_SUFFIX})
-add_dependencies(WebCoreDerivedSources JavaScriptCore WebCoreBindings)
+target_link_libraries(WebCoreDerivedSources ${WebCore_LIBRARIES})
+target_include_directories(WebCoreDerivedSources PUBLIC ${WebCore_INCLUDE_DIRECTORIES})
+add_dependencies(WebCoreDerivedSources WebCoreBindings)
 if (NOT WIN32)
     list(APPEND WebCore_LIBRARIES WebCoreDerivedSources)
 endif ()
@@ -3905,9 +3899,9 @@ if (MSVC)
     ADD_PRECOMPILED_HEADER("WebCoreTestSupportPrefix.h" "testing/js/WebCoreTestSupportPrefix.cpp" WebCoreTestSupport_SOURCES)
 endif ()
 
-include_directories(${WebCoreTestSupport_INCLUDE_DIRECTORIES})
 add_library(WebCoreTestSupport ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
 add_dependencies(WebCoreTestSupport WebCore WebCoreTestSupportBindings)
+target_include_directories(WebCoreTestSupport PUBLIC ${WebCoreTestSupport_INCLUDE_DIRECTORIES} ${WebCore_INCLUDE_DIRECTORIES})
 target_link_libraries(WebCoreTestSupport ${WebCoreTestSupport_LIBRARIES})
 
 if (WebCoreTestSupport_OUTPUT_NAME)

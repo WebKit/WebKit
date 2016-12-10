@@ -99,25 +99,8 @@ include_directories(
     ${TESTWEBKITAPI_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
-    ${DERIVED_SOURCES_WEBCORE_DIR}
     ${JAVASCRIPTCORE_DIR}
-    ${JAVASCRIPTCORE_DIR}/API
-    ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${THIRDPARTY_DIR}/gtest/include
-    ${WEBCORE_DIR}/css
-    ${WEBCORE_DIR}/css/parser
-    ${WEBCORE_DIR}/dom
-    ${WEBCORE_DIR}/editing
-    ${WEBCORE_DIR}/loader/cache
-    ${WEBCORE_DIR}/page
-    ${WEBCORE_DIR}/platform
-    ${WEBCORE_DIR}/platform/animation
-    ${WEBCORE_DIR}/platform/graphics
-    ${WEBCORE_DIR}/platform/text
-    ${WEBCORE_DIR}/platform/network
-    ${WEBCORE_DIR}/platform/network/soup
-    ${WEBCORE_DIR}/rendering/style
     ${WEBKIT2_DIR}/Platform/IPC
     ${WEBKIT2_DIR}/Shared
     ${WEBKIT2_DIR}/Shared/API
@@ -127,7 +110,6 @@ include_directories(
     ${WEBKIT2_DIR}/UIProcess/API
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
-    ${WTF_DIR}
 )
 
 if (ENABLE_WEBKIT2)
@@ -221,6 +203,8 @@ if (ENABLE_WEBKIT2)
         ${TESTWEBKITAPI_DIR}/PlatformUtilities.cpp
         ${TESTWEBKITAPI_DIR}/TestsController.cpp
     )
+
+    target_link_libraries(TestWebKitAPIBase ${test_webkit2_api_LIBRARIES})
 
     add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 

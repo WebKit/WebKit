@@ -16,9 +16,7 @@ set(MiniBrowser_SOURCES
 )
 
 set(MiniBrowser_INCLUDE_DIRECTORIES
-    ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
-    ${DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders
     ${FORWARDING_HEADERS_DIR}
     ${MINIBROWSER_DIR}

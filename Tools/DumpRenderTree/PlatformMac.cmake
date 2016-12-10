@@ -44,7 +44,6 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy
-    ${WTF_DIR}/icu
 )
 
 # Common ${TestNetscapePlugIn_SOURCES} from CMakeLists.txt are C++ source files.

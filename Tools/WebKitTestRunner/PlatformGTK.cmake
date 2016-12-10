@@ -15,7 +15,6 @@ list(APPEND WebKitTestRunner_SOURCES
 
 list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_DIR}
-    ${WTF_DIR}/wtf/glib
 )
 
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES

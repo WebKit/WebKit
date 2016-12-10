@@ -9,26 +9,6 @@ endif ()
 set(WebCore_OUTPUT_NAME WebCoreGTK)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
-    "${JAVASCRIPTCORE_DIR}"
-    "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
-    "${JAVASCRIPTCORE_DIR}/API"
-    "${JAVASCRIPTCORE_DIR}/assembler"
-    "${JAVASCRIPTCORE_DIR}/bytecode"
-    "${JAVASCRIPTCORE_DIR}/bytecompiler"
-    "${JAVASCRIPTCORE_DIR}/dfg"
-    "${JAVASCRIPTCORE_DIR}/disassembler"
-    "${JAVASCRIPTCORE_DIR}/domjit"
-    "${JAVASCRIPTCORE_DIR}/heap"
-    "${JAVASCRIPTCORE_DIR}/debugger"
-    "${JAVASCRIPTCORE_DIR}/interpreter"
-    "${JAVASCRIPTCORE_DIR}/jit"
-    "${JAVASCRIPTCORE_DIR}/llint"
-    "${JAVASCRIPTCORE_DIR}/parser"
-    "${JAVASCRIPTCORE_DIR}/profiler"
-    "${JAVASCRIPTCORE_DIR}/runtime"
-    "${JAVASCRIPTCORE_DIR}/yarr"
     "${THIRDPARTY_DIR}/ANGLE/"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/accessibility/atk"
@@ -56,7 +36,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/gtk"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/gtk"
-    "${WTF_DIR}"
 )
 
 list(APPEND WebCore_SOURCES
@@ -379,7 +358,6 @@ target_link_libraries(WebCorePlatformGTK
 include_directories(
     ${WebCore_INCLUDE_DIRECTORIES}
     "${WEBCORE_DIR}/bindings/gobject/"
-    "${DERIVED_SOURCES_DIR}"
 )
 
 include_directories(SYSTEM

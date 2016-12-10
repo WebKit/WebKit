@@ -1,8 +1,3 @@
-list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
-    "${WTF_DIR}"
-    "${WTF_DIR}/wtf/efl"
-)
-
 list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ECORE_EVAS_INCLUDE_DIRS}
     ${ECORE_IMF_INCLUDE_DIRS}

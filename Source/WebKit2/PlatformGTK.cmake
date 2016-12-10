@@ -828,14 +828,6 @@ list(INSERT WebKit2_INCLUDE_DIRECTORIES 0
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/PluginProcess/unix"
-    "${WEBCORE_DIR}/platform/cairo"
-    "${WEBCORE_DIR}/platform/gtk"
-    "${WEBCORE_DIR}/platform/graphics/cairo"
-    "${WEBCORE_DIR}/platform/graphics/freetype"
-    "${WEBCORE_DIR}/platform/graphics/opentype"
-    "${WEBCORE_DIR}/platform/graphics/x11"
-    "${WEBCORE_DIR}/platform/network/soup"
-    "${WEBCORE_DIR}/platform/text/enchant"
     "${WEBKIT2_DIR}/DatabaseProcess/unix"
     "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols/soup"
     "${WEBKIT2_DIR}/NetworkProcess/Downloads/soup"
@@ -872,9 +864,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT2_DIR}/WebProcess/WebPage/atk"
     "${WEBKIT2_DIR}/WebProcess/WebPage/gtk"
-    "${WTF_DIR}/wtf/gtk"
-    "${WTF_DIR}/wtf/glib"
-    "${WTF_DIR}"
 )
 
 list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
@@ -1192,7 +1181,6 @@ if (ENABLE_THREADED_COMPOSITOR)
         WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
     )
     list(APPEND WebKit2_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
         "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
         "${WEBKIT2_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
         "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
@@ -1211,7 +1199,6 @@ include_directories(
     "${WEBKIT2_DIR}/UIProcess/API/C"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle"
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c"
-    "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_DIR}/InjectedBundle"
     "${FORWARDING_HEADERS_DIR}"
     "${FORWARDING_HEADERS_WEBKIT2GTK_DIR}"

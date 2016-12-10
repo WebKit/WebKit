@@ -231,14 +231,6 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
 )
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/platform/efl"
-    "${WEBCORE_DIR}/platform/graphics/cairo"
-    "${WEBCORE_DIR}/platform/graphics/efl"
-    "${WEBCORE_DIR}/platform/graphics/freetype"
-    "${WEBCORE_DIR}/platform/graphics/opentype"
-    "${WEBCORE_DIR}/platform/graphics/x11"
-    "${WEBCORE_DIR}/platform/network/soup"
-    "${WEBCORE_DIR}/platform/text/enchant"
     "${WEBKIT2_DIR}/DatabaseProcess/unix"
     "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols/soup"
     "${WEBKIT2_DIR}/NetworkProcess/Downloads/soup"
@@ -274,9 +266,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/efl"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
-    "${WTF_DIR}/wtf/efl"
-    "${WTF_DIR}/wtf/glib"
-    "${WTF_DIR}"
     "${WEBKIT2_DIR}"
 )
 

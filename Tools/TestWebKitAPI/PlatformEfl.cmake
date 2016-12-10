@@ -9,7 +9,6 @@ set(ForwardingHeadersForTestWebKitAPI_NAME forwarding-headersEflForTestWebKitAPI
 
 include_directories(
     ${DERIVED_SOURCES_WEBKIT2_DIR}/include
-    ${WTF_DIR}/wtf/efl
     ${WEBKIT2_DIR}/UIProcess/API/C/CoordinatedGraphics
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/efl

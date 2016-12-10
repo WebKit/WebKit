@@ -3,7 +3,6 @@ set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_D
 
 include_directories(
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders
-    "${WTF_DIR}/icu"
 )
 
 set(test_main_SOURCES

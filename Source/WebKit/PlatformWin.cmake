@@ -52,13 +52,11 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/../include/private"
     "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${CMAKE_BINARY_DIR}/../include/private/WebCore"
-    win
-    win/plugins
-    win/WebCoreSupport
-    "${WEBKIT_DIR}/.."
+    "${WEBKIT_DIR}/win"
+    "${WEBKIT_DIR}/win/plugins"
+    "${WEBKIT_DIR}/win/WebCoreSupport"
     "${DERIVED_SOURCES_WEBKIT_DIR}/include"
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
-    "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE/include/egl"

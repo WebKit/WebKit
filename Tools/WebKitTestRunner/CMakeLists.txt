@@ -35,16 +35,6 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTRUNNER_DIR}/InjectedBundle/atk
     ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}
     ${WEBKIT_TESTRUNNER_BINDINGS_DIR}
-    ${JAVASCRIPTCORE_DIR}
-    ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
-    ${WEBCORE_DIR}/editing
-    ${WEBCORE_DIR}/platform
-    ${WEBCORE_DIR}/platform/graphics
-    ${WEBCORE_DIR}/platform/graphics/harfbuzz
-    ${WEBCORE_DIR}/platform/graphics/harfbuzz/ng
-    ${WEBCORE_DIR}/platform/network
-    ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/testing/js
     ${WEBKIT2_DIR}/Platform/IPC
     ${WEBKIT2_DIR}/Shared
@@ -54,10 +44,8 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
-    ${WTF_DIR}
     ${DERIVED_SOURCES_DIR}/InjectedBundle
     ${DERIVED_SOURCES_DIR}/UIScriptContext
-    ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
 )
 

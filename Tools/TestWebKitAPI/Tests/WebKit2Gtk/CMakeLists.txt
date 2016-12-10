@@ -12,10 +12,8 @@ add_definitions(
 )
 
 include_directories(
-    ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
     ${CMAKE_SOURCE_DIR}/Source/WTF
-    ${DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_WEBKIT2GTK_DIR}
     ${FORWARDING_HEADERS_DIR}
     ${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
