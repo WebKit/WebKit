@@ -27,8 +27,8 @@
 #include "SVGAnimationElement.h"
 
 #include "CSSComputedStyleDeclaration.h"
-#include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
 #include "Document.h"
 #include "FloatConversion.h"
 #include "RenderObject.h"

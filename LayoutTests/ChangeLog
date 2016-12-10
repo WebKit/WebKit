@@ -1,3 +1,33 @@
+2016-12-09  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove the old CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=165645
+
+        Reviewed by Daniel Bates.
+
+        * TestExpectations:
+        Some canvas tests pass now that they use the new parser's color parsing.
+
+        * fast/dom/HTMLFontElement/face-attribute-expected.txt:
+        * fast/dom/HTMLFontElement/face-attribute.html:
+        Converted font face parsing over to just use the CSS parser's font-family
+        parsing. This matches other browsers, so removing cases that we used to
+        accept now that we're more strict.
+
+        * platform/mac/canvas/philip/tests/2d.fillStyle.parse.rgb-eof-expected.txt:
+        * platform/mac/canvas/philip/tests/2d.fillStyle.parse.rgba-eof-expected.txt:
+        These tests pass now that canvas uses the new parser's color parsing.
+
+        * platform/ios-simulator/svg/custom/fill-SVGPaint-interface-expected.txt: Removed.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.png: Removed.
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.txt: Removed.
+        * svg/custom/fill-SVGPaint-interface.svg: Removed.
+        Remove another test of the SVG CSS OM, since the SVG CSS OM for SVGPaint etc.
+        is gone now.
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        Rebaselined because of CSSNamespaceRule.
+
 2016-12-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] RSA algorithms should allow importing keys without usages

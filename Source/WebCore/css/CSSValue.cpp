@@ -60,9 +60,7 @@
 #include "CSSUnicodeRangeValue.h"
 #include "CSSUnsetValue.h"
 #include "CSSValueList.h"
-#include "CSSVariableDependentValue.h"
 #include "CSSVariableReferenceValue.h"
-#include "CSSVariableValue.h"
 #include "SVGColor.h"
 #include "SVGPaint.h"
 #include "WebKitCSSTransformValue.h"
@@ -246,10 +244,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSVariableReferenceValue>(*this, other);
         case PendingSubstitutionValueClass:
             return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
-        case VariableDependentClass:
-            return compareCSSValues<CSSVariableDependentValue>(*this, other);
-        case VariableClass:
-            return compareCSSValues<CSSVariableValue>(*this, other);
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -354,10 +348,6 @@ String CSSValue::cssText() const
         return downcast<CSSContentDistributionValue>(*this).customCSSText();
     case CustomPropertyClass:
         return downcast<CSSCustomPropertyValue>(*this).customCSSText();
-    case VariableDependentClass:
-        return downcast<CSSVariableDependentValue>(*this).customCSSText();
-    case VariableClass:
-        return downcast<CSSVariableValue>(*this).customCSSText();
     case CustomIdentClass:
         return downcast<CSSCustomIdentValue>(*this).customCSSText();
     case VariableReferenceClass:
@@ -502,12 +492,6 @@ void CSSValue::destroy()
         return;
     case CustomPropertyClass:
         delete downcast<CSSCustomPropertyValue>(this);
-        return;
-    case VariableDependentClass:
-        delete downcast<CSSVariableDependentValue>(this);
-        return;
-    case VariableClass:
-        delete downcast<CSSVariableValue>(this);
         return;
     case CustomIdentClass:
         delete downcast<CSSCustomIdentValue>(this);

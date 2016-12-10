@@ -330,7 +330,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     }
 
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, TextPosition(), nullptr, true);
+    p.parseSheet(this, sheetText);
 
     if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
@@ -345,13 +345,8 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
 
 bool StyleSheetContents::parseString(const String& sheetText)
 {
-    return parseStringAtPosition(sheetText, TextPosition(), false);
-}
-
-bool StyleSheetContents::parseStringAtPosition(const String& sheetText, const TextPosition& textPosition, bool createdByParser)
-{
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, textPosition, nullptr, createdByParser);
+    p.parseSheet(this, sheetText);
     return true;
 }
 
@@ -426,7 +421,7 @@ Document* StyleSheetContents::singleOwnerDocument() const
 
 URL StyleSheetContents::completeURL(const String& url) const
 {
-    return CSSParser::completeURL(m_parserContext, url);
+    return m_parserContext.completeURL(url);
 }
 
 static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rules, const std::function<bool (const CachedResource&)>& handler)

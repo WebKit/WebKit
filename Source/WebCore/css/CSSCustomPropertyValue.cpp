@@ -33,8 +33,6 @@ namespace WebCore {
 bool CSSCustomPropertyValue::checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap& customProperties, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
 {
     ASSERT(containsVariables());
-    if (m_deprecatedValue && m_deprecatedValue->isVariableDependentValue())
-        return downcast<CSSVariableDependentValue>(*m_deprecatedValue).checkVariablesForCycles(name, customProperties, seenProperties, invalidProperties);
     if (m_value)
         return m_value->checkVariablesForCycles(name, customProperties, seenProperties, invalidProperties);
     return true;
@@ -43,15 +41,6 @@ bool CSSCustomPropertyValue::checkVariablesForCycles(const AtomicString& name, C
 void CSSCustomPropertyValue::resolveVariableReferences(const CustomPropertyValueMap& customProperties, Vector<Ref<CSSCustomPropertyValue>>& resolvedValues) const
 {
     ASSERT(containsVariables());
-    if (m_deprecatedValue && m_deprecatedValue->isVariableDependentValue()) {
-        CSSParserValueList parserList;
-        if (!downcast<CSSVariableDependentValue>(*m_deprecatedValue).valueList().buildParserValueListSubstitutingVariables(&parserList, customProperties))
-            resolvedValues.append(CSSCustomPropertyValue::create(m_name, CSSCustomPropertyValue::createInvalid()));
-        else
-            resolvedValues.append(CSSCustomPropertyValue::create(m_name, CSSValueList::createFromParserValueList(parserList)));
-        return;
-    }
-    
     if (!m_value)
         return;
     
@@ -60,7 +49,7 @@ void CSSCustomPropertyValue::resolveVariableReferences(const CustomPropertyValue
     if (resolvedData)
         resolvedValues.append(CSSCustomPropertyValue::createWithVariableData(m_name, resolvedData.releaseNonNull()));
     else
-        resolvedValues.append(CSSCustomPropertyValue::create(m_name, CSSCustomPropertyValue::createInvalid()));
+        resolvedValues.append(CSSCustomPropertyValue::createWithID(m_name, CSSValueInvalid));
 }
 
 }

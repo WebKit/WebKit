@@ -29,14 +29,11 @@
 
 namespace WebCore {
 
-struct CSSParserString;
-
 struct PseudoClassOrCompatibilityPseudoElement {
     CSSSelector::PseudoClassType pseudoClass;
     CSSSelector::PseudoElementType compatibilityPseudoElement;
 };
 
-PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(const CSSParserString& pseudoTypeString);
 PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(const StringView& pseudoTypeString);
 CSSSelector::PseudoElementType parsePseudoElementString(const StringImpl& pseudoTypeString);
 

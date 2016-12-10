@@ -31,6 +31,7 @@
 #include "CSSParser.h"
 #include "CSSParserObserver.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
@@ -1332,11 +1333,8 @@ bool InspectorStyleSheet::ensureSourceData()
     auto ruleSourceDataResult = std::make_unique<RuleSourceDataList>();
     
     CSSParserContext context(parserContextForDocument(m_pageStyleSheet->ownerDocument()));
-    if (context.useNewParser) {
-        StyleSheetHandler handler(m_parsedStyleSheet->text(), m_pageStyleSheet->ownerDocument(), ruleSourceDataResult.get());
-        CSSParser::parseSheetForInspector(context, newStyleSheet.get(), m_parsedStyleSheet->text(), handler);
-    } else
-        CSSParser(context).parseSheet(newStyleSheet.get(), m_parsedStyleSheet->text(), TextPosition(), ruleSourceDataResult.get(), false);
+    StyleSheetHandler handler(m_parsedStyleSheet->text(), m_pageStyleSheet->ownerDocument(), ruleSourceDataResult.get());
+    CSSParser::parseSheetForInspector(context, newStyleSheet.get(), m_parsedStyleSheet->text(), handler);
     m_parsedStyleSheet->setSourceData(WTFMove(ruleSourceDataResult));
     return m_parsedStyleSheet->hasSourceData();
 }
@@ -1575,17 +1573,10 @@ Ref<CSSRuleSourceData> InspectorStyleSheetForInlineStyle::ruleSourceData() const
     }
 
     CSSParserContext context(parserContextForDocument(&m_element->document()));
-    if (context.useNewParser) {
-        RuleSourceDataList ruleSourceDataResult;
-        StyleSheetHandler handler(m_styleText, &m_element->document(), &ruleSourceDataResult);
-        CSSParser::parseDeclarationForInspector(context, m_styleText, handler);
-        return WTFMove(ruleSourceDataResult.first());
-    }
-    
-    auto result = CSSRuleSourceData::create(StyleRule::Style);
-    auto tempDeclaration = MutableStyleProperties::create();
-    CSSParser(context).parseDeclaration(tempDeclaration, m_styleText, result.ptr(), nullptr);
-    return result;
+    RuleSourceDataList ruleSourceDataResult;
+    StyleSheetHandler handler(m_styleText, &m_element->document(), &ruleSourceDataResult);
+    CSSParser::parseDeclarationForInspector(context, m_styleText, handler);
+    return WTFMove(ruleSourceDataResult.first());
 }
 
 } // namespace WebCore

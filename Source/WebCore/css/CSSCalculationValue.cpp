@@ -56,7 +56,6 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
 {
     switch (type) {
     case CSSPrimitiveValue::CSS_NUMBER:
-    case CSSPrimitiveValue::CSS_PARSER_INTEGER:
         return CalcNumber;
     case CSSPrimitiveValue::CSS_EMS:
     case CSSPrimitiveValue::CSS_EXS:
@@ -96,7 +95,6 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitTypes type)
     switch (type) {
     case CSSPrimitiveValue::CSS_FR:
     case CSSPrimitiveValue::CSS_NUMBER:
-    case CSSPrimitiveValue::CSS_PARSER_INTEGER:
     case CSSPrimitiveValue::CSS_PERCENTAGE:
     case CSSPrimitiveValue::CSS_EMS:
     case CSSPrimitiveValue::CSS_EXS:
@@ -136,10 +134,6 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_RGBCOLOR:
     case CSSPrimitiveValue::CSS_PAIR:
     case CSSPrimitiveValue::CSS_UNICODE_RANGE:
-    case CSSPrimitiveValue::CSS_PARSER_OPERATOR:
-    case CSSPrimitiveValue::CSS_PARSER_HEXCOLOR:
-    case CSSPrimitiveValue::CSS_PARSER_IDENTIFIER:
-    case CSSPrimitiveValue::CSS_PARSER_WHITESPACE:
     case CSSPrimitiveValue::CSS_COUNTER_NAME:
     case CSSPrimitiveValue::CSS_SHAPE:
     case CSSPrimitiveValue::CSS_QUAD:
@@ -374,7 +368,7 @@ public:
 
         // Simplify numbers.
         if (leftCategory == CalcNumber && rightCategory == CalcNumber) {
-            CSSPrimitiveValue::UnitTypes evaluationType = isInteger ? CSSPrimitiveValue::CSS_PARSER_INTEGER : CSSPrimitiveValue::CSS_NUMBER;
+            CSSPrimitiveValue::UnitTypes evaluationType = CSSPrimitiveValue::CSS_NUMBER;
             return CSSCalcPrimitiveValue::create(evaluateOperator(op, leftSide->doubleValue(), rightSide->doubleValue()), evaluationType, isInteger);
         }
 
@@ -487,8 +481,6 @@ private:
         switch (category()) {
         case CalcNumber:
             ASSERT(m_leftSide->category() == CalcNumber && m_rightSide->category() == CalcNumber);
-            if (isInteger())
-                return CSSPrimitiveValue::CSS_PARSER_INTEGER;
             return CSSPrimitiveValue::CSS_NUMBER;
         case CalcLength:
         case CalcPercent: {
@@ -688,140 +680,6 @@ private:
         return parseAdditiveValueExpression(tokens, depth, result);
     }
 };
-    
-static ParseState checkDepthAndIndexDeprecated(int* depth, unsigned index, CSSParserValueList* tokens)
-{
-    (*depth)++;
-    if (*depth > maxExpressionDepth)
-        return TooDeep;
-    if (index >= tokens->size())
-        return NoMoreTokens;
-    return OK;
-}
-
-class CSSCalcExpressionNodeParserDeprecated {
-public:
-    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserValueList* tokens)
-    {
-        unsigned index = 0;
-        Value result;
-        bool ok = parseValueExpression(tokens, 0, &index, &result);
-        ASSERT_WITH_SECURITY_IMPLICATION(index <= tokens->size());
-        if (!ok || index != tokens->size())
-            return nullptr;
-        return result.value;
-    }
-
-private:
-    struct Value {
-        RefPtr<CSSCalcExpressionNode> value;
-    };
-
-    char operatorValue(CSSParserValueList* tokens, unsigned index)
-    {
-        if (index >= tokens->size())
-            return 0;
-        CSSParserValue* value = tokens->valueAt(index);
-        if (value->unit != CSSParserValue::Operator)
-            return 0;
-
-        return value->iValue;
-    }
-
-    bool parseValue(CSSParserValueList* tokens, unsigned* index, Value* result)
-    {
-        CSSParserValue* parserValue = tokens->valueAt(*index);
-        if (parserValue->unit == CSSParserValue::Operator || parserValue->unit == CSSParserValue::Function)
-            return false;
-
-        RefPtr<CSSValue> value = parserValue->createCSSValue();
-        if (!is<CSSPrimitiveValue>(value.get()))
-            return false;
-
-        result->value = CSSCalcPrimitiveValue::create(Ref<CSSPrimitiveValue>(downcast<CSSPrimitiveValue>(*value)), parserValue->isInt);
-
-        ++*index;
-        return true;
-    }
-
-    bool parseValueTerm(CSSParserValueList* tokens, int depth, unsigned* index, Value* result)
-    {
-        if (checkDepthAndIndexDeprecated(&depth, *index, tokens) != OK)
-            return false;
-
-        if (operatorValue(tokens, *index) == '(') {
-            unsigned currentIndex = *index + 1;
-            if (!parseValueExpression(tokens, depth, &currentIndex, result))
-                return false;
-
-            if (operatorValue(tokens, currentIndex) != ')')
-                return false;
-            *index = currentIndex + 1;
-            return true;
-        }
-
-        return parseValue(tokens, index, result);
-    }
-
-    bool parseValueMultiplicativeExpression(CSSParserValueList* tokens, int depth, unsigned* index, Value* result)
-    {
-        if (checkDepthAndIndexDeprecated(&depth, *index, tokens) != OK)
-            return false;
-
-        if (!parseValueTerm(tokens, depth, index, result))
-            return false;
-
-        while (*index < tokens->size() - 1) {
-            char operatorCharacter = operatorValue(tokens, *index);
-            if (operatorCharacter != CalcMultiply && operatorCharacter != CalcDivide)
-                break;
-            ++*index;
-
-            Value rhs;
-            if (!parseValueTerm(tokens, depth, index, &rhs))
-                return false;
-
-            result->value = CSSCalcBinaryOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), result->value, rhs.value);
-            if (!result->value)
-                return false;
-        }
-
-        ASSERT_WITH_SECURITY_IMPLICATION(*index <= tokens->size());
-        return true;
-    }
-
-    bool parseAdditiveValueExpression(CSSParserValueList* tokens, int depth, unsigned* index, Value* result)
-    {
-        if (checkDepthAndIndexDeprecated(&depth, *index, tokens) != OK)
-            return false;
-
-        if (!parseValueMultiplicativeExpression(tokens, depth, index, result))
-            return false;
-
-        while (*index < tokens->size() - 1) {
-            char operatorCharacter = operatorValue(tokens, *index);
-            if (operatorCharacter != CalcAdd && operatorCharacter != CalcSubtract)
-                break;
-            ++*index;
-
-            Value rhs;
-            if (!parseValueMultiplicativeExpression(tokens, depth, index, &rhs))
-                return false;
-
-            result->value = CSSCalcBinaryOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), result->value, rhs.value);
-            if (!result->value)
-                return false;
-        }
-
-        ASSERT_WITH_SECURITY_IMPLICATION(*index <= tokens->size());
-        return true;
-    }
-
-    bool parseValueExpression(CSSParserValueList* tokens, int depth, unsigned* index, Value* result)
-    {
-        return parseAdditiveValueExpression(tokens, depth, index, result);
-    }
-};
 
 static inline RefPtr<CSSCalcBinaryOperation> createBlendHalf(const Length& length, const RenderStyle& style, float progress)
 {
@@ -878,17 +736,6 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const Rende
     }
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-RefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserValueList& parserValueList, ValueRange range)
-{
-    CSSCalcExpressionNodeParserDeprecated parser;
-    RefPtr<CSSCalcExpressionNode> expression;
-
-    if (equalLettersIgnoringASCIICase(name, "calc(") || equalLettersIgnoringASCIICase(name, "-webkit-calc("))
-        expression = parser.parseCalc(&parserValueList);
-
-    return expression ? adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll)) : nullptr;
 }
 
 RefPtr<CSSCalcValue> CSSCalcValue::create(const CSSParserTokenRange& tokens, ValueRange range)

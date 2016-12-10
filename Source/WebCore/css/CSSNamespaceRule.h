@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,31 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSRule.h"
 
-// FIXME-NEWPARSER: This will be removed in favor of the new variables implementation.
 namespace WebCore {
 
-class CSSValueList;
-class CSSParserValueList;
-struct CSSParserVariable;
+class StyleRuleNamespace;
 
-class CSSVariableValue final : public CSSValue {
+class CSSNamespaceRule final : public CSSRule {
 public:
-    static Ref<CSSVariableValue> create(CSSParserVariable* Variable)
-    {
-        return adoptRef(*new CSSVariableValue(Variable));
-    }
+    static Ref<CSSNamespaceRule> create(StyleRuleNamespace& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSNamespaceRule(rule, sheet)); }
 
-    static Ref<CSSVariableValue> create(const String& name, PassRefPtr<CSSValueList> fallbackArguments)
-    {
-        return adoptRef(*new CSSVariableValue(name, fallbackArguments));
-    }
+    virtual ~CSSNamespaceRule();
 
-    String customCSSText() const;
-
-    bool equals(const CSSVariableValue&) const;
-    
-    const String& name() const { return m_name; }
-    CSSValueList* fallbackArguments() const { return m_fallbackArguments.get(); }
-
-    bool buildParserValueListSubstitutingVariables(CSSParserValueList*, const CustomPropertyValueMap& customProperties) const;
+    AtomicString namespaceURI() const;
+    AtomicString prefix() const;
 
 private:
-    explicit CSSVariableValue(CSSParserVariable*);
-    CSSVariableValue(const String&, PassRefPtr<CSSValueList>);
+    CSSNamespaceRule(StyleRuleNamespace&, CSSStyleSheet*);
 
-    String m_name;
-    RefPtr<CSSValueList> m_fallbackArguments;
+    CSSRule::Type type() const final { return NAMESPACE_RULE; }
+    String cssText() const final;
+    void reattach(StyleRuleBase&) final;
+
+    Ref<StyleRuleNamespace> m_namespaceRule;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSVariableValue, isVariableValue())
+SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSNamespaceRule, CSSRule::NAMESPACE_RULE)

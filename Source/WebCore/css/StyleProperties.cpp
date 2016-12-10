@@ -30,7 +30,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "CSSVariableDependentValue.h"
 #include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertyShorthand.h"
@@ -132,8 +131,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[0]);
         if (!value)
             return String();
-        if (value->isVariableDependentValue())
-            return value->cssText();
         if (value->isPendingSubstitutionValue())
             return downcast<CSSPendingSubstitutionValue>(*value).shorthandValue()->cssText();
     }
@@ -608,14 +605,7 @@ String StyleProperties::borderPropertyValue(CommonValueMode valueMode) const
 
 RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) const
 {
-    RefPtr<CSSValue> value = getPropertyCSSValueInternal(propertyID);
-    if (value && value->isVariableDependentValue()) {
-        auto& dependentValue = downcast<CSSVariableDependentValue>(*value);
-        if (dependentValue.propertyID() != propertyID)
-            return CSSCustomPropertyValue::createInvalid(); // Have to return special "pending-substitution" value.
-    }
-
-    return value;
+    return getPropertyCSSValueInternal(propertyID);
 }
 
 RefPtr<CSSValue> StyleProperties::getPropertyCSSValueInternal(CSSPropertyID propertyID) const
@@ -749,7 +739,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
     return setProperty(propertyID, value, important, parserContext);
 }
 
-bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext parserContext, StyleSheetContents* contextStyleSheet)
+bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext parserContext)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -759,7 +749,7 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
     parserContext.mode = cssParserMode();
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseCustomPropertyValue(*this, propertyName, value, important, parserContext, contextStyleSheet) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseCustomPropertyValue(*this, propertyName, value, important, parserContext) == CSSParser::ParseResult::Changed;
 }
 
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
@@ -811,7 +801,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSPropertyID
     return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
 }
 
-bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context, StyleSheetContents* contextStyleSheet)
+bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context)
 {
     auto oldProperties = WTFMove(m_propertyVector);
     m_propertyVector.clear();
@@ -819,7 +809,7 @@ bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CS
     context.mode = cssParserMode();
 
     CSSParser parser(context);
-    parser.parseDeclaration(*this, styleDeclaration, 0, contextStyleSheet);
+    parser.parseDeclaration(*this, styleDeclaration);
 
     // We could do better. Just changing property order does not require style invalidation.
     return oldProperties != m_propertyVector;
@@ -868,11 +858,7 @@ String StyleProperties::asText() const
         CSSPropertyID borderFallbackShorthandProperty = CSSPropertyInvalid;
         String value;
         
-        if (property.value() && property.value()->isVariableDependentValue()) {
-            auto& dependentValue = downcast<CSSVariableDependentValue>(*property.value());
-            if (dependentValue.propertyID() != propertyID)
-                shorthandPropertyID = dependentValue.propertyID();
-        } else if (property.value() && property.value()->isPendingSubstitutionValue()) {
+        if (property.value() && property.value()->isPendingSubstitutionValue()) {
             auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
             shorthandPropertyID = substitutionValue.shorthandPropertyId();
             value = substitutionValue.shorthandValue()->cssText();

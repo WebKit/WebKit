@@ -140,8 +140,13 @@ PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& s
         m_fontFaceValueCache.remove(m_fontFaceValueCache.begin());
 
     RefPtr<CSSValueList>& value = m_fontFaceValueCache.add(string, nullptr).iterator->value;
-    if (!value)
-        value = CSSParser::parseFontFaceValue(string);
+    if (value)
+        return value;
+    
+    RefPtr<CSSValue> result = CSSParser::parseSingleValue(CSSPropertyFontFamily, string);
+    if (!result || !result->isValueList())
+        return value;
+    value = static_pointer_cast<CSSValueList>(result);
     return value;
 }
 

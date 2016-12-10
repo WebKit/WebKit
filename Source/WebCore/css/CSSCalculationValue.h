@@ -36,11 +36,8 @@
 namespace WebCore {
 
 class CSSParserTokenRange;
-class CSSParserValueList;
 class CSSToLengthConversionData;
 class RenderStyle;
-
-struct CSSParserString;
 
 enum CalculationCategory {
     CalcNumber = 0,
@@ -88,8 +85,6 @@ private:
 
 class CSSCalcValue final : public CSSValue {
 public:
-    // FIXME-NEWPARSER: Remove the CSSParserString create when old parser goes away.
-    static RefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList& arguments, ValueRange);
     static RefPtr<CSSCalcValue> create(const CSSParserTokenRange&, ValueRange);
     
     static RefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);

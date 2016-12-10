@@ -23,7 +23,7 @@
 #include "PropertySetCSSStyleDeclaration.h"
 
 #include "CSSCustomPropertyValue.h"
-#include "CSSParser.h"
+#include "CSSPropertyParser.h"
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "CustomElementReactionQueue.h"
@@ -167,7 +167,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setCssText(const String& text)
     if (!willMutate())
         return { };
 
-    bool changed = m_propertySet->parseDeclaration(text, cssParserContext(), contextStyleSheet());
+    bool changed = m_propertySet->parseDeclaration(text, cssParserContext());
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
@@ -247,7 +247,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
 
     bool changed;
     if (propertyID == CSSPropertyCustom)
-        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext(), contextStyleSheet());
+        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext());
     else
         changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext(), contextStyleSheet());
 

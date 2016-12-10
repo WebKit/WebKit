@@ -33,13 +33,10 @@
 
 namespace WebCore {
 
-class CSSParserValueList;
-
 // FIXME: Rename the file to match this class's name.
 class MediaQueryExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaQueryExpression(const AtomicString& mediaFeature = emptyAtom, CSSParserValueList* values = nullptr);
     explicit MediaQueryExpression(const String& mediaFeature, const Vector<CSSParserToken, 4>& tokenList);
 
     const AtomicString& mediaFeature() const;

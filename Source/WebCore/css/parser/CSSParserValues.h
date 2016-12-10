@@ -32,161 +32,6 @@ namespace WebCore {
 class CSSValue;
 class QualifiedName;
 
-// This should be a StringView but currently it can't because it's used as an element of a union in CSSParserValue.
-struct CSSParserString {
-    void init(LChar* characters, unsigned length)
-    {
-        m_data.characters8 = characters;
-        m_length = length;
-        m_is8Bit = true;
-    }
-
-    void init(UChar* characters, unsigned length)
-    {
-        m_data.characters16 = characters;
-        m_length = length;
-        m_is8Bit = false;
-    }
-
-    void init(const String& string)
-    {
-        m_length = string.length();
-        if (!m_length || string.is8Bit()) {
-            m_data.characters8 = const_cast<LChar*>(string.characters8());
-            m_is8Bit = true;
-        } else {
-            m_data.characters16 = const_cast<UChar*>(string.characters16());
-            m_is8Bit = false;
-        }
-    }
-
-    void clear()
-    {
-        m_data.characters8 = 0;
-        m_length = 0;
-        m_is8Bit = true;
-    }
-
-    bool is8Bit() const { return m_is8Bit; }
-    LChar* characters8() const { ASSERT(is8Bit()); return m_data.characters8; }
-    UChar* characters16() const { ASSERT(!is8Bit()); return m_data.characters16; }
-    template<typename CharacterType> CharacterType* characters() const;
-
-    unsigned length() const { return m_length; }
-    void setLength(unsigned length) { m_length = length; }
-
-    void convertToASCIILowercaseInPlace();
-
-    UChar operator[](unsigned i) const
-    {
-        ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
-        if (is8Bit())
-            return m_data.characters8[i];
-        return m_data.characters16[i];
-    }
-
-    operator String() const { return is8Bit() ? String(m_data.characters8, m_length) : String(m_data.characters16, m_length); }
-    operator AtomicString() const { return is8Bit() ? AtomicString(m_data.characters8, m_length) : AtomicString(m_data.characters16, m_length); }
-    StringView toStringView() const { return is8Bit() ? StringView(m_data.characters8, m_length) : StringView(m_data.characters16, m_length); }
-
-    union {
-        LChar* characters8;
-        UChar* characters16;
-    } m_data;
-    unsigned m_length;
-    bool m_is8Bit;
-};
-
-template<unsigned length> bool equalLettersIgnoringASCIICase(const CSSParserString&, const char (&lowercaseLetters)[length]);
-
-struct CSSParserFunction;
-struct CSSParserVariable;
-
-struct CSSParserValue {
-    CSSValueID id;
-    bool isInt;
-    union {
-        double fValue;
-        int iValue;
-        CSSParserString string;
-        CSSParserFunction* function;
-        CSSParserVariable* variable;
-        CSSParserValueList* valueList;
-    };
-    enum {
-        Operator  = 0x100000,
-        Function  = 0x100001,
-        ValueList = 0x100002,
-        Q_EMS     = 0x100003,
-        Variable  = 0x100004
-    };
-    int unit;
-
-    void setFromValueList(std::unique_ptr<CSSParserValueList>);
-
-    RefPtr<CSSValue> createCSSValue();
-};
-
-void destroy(const CSSParserValue&);
-
-class CSSParserValueList {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CSSParserValueList()
-        : m_current(0)
-    {
-    }
-    ~CSSParserValueList();
-
-    void addValue(const CSSParserValue&);
-    void insertValueAt(unsigned, const CSSParserValue&);
-    void extend(CSSParserValueList&);
-
-    unsigned size() const { return m_values.size(); }
-    unsigned currentIndex() { return m_current; }
-    CSSParserValue* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }
-    CSSParserValue* next() { ++m_current; return current(); }
-    CSSParserValue* previous()
-    {
-        if (!m_current)
-            return 0;
-        --m_current;
-        return current();
-    }
-    void setCurrentIndex(unsigned index)
-    {
-        ASSERT(index < m_values.size());
-        if (index < m_values.size())
-            m_current = index;
-    }
-
-    CSSParserValue* valueAt(unsigned i) { return i < m_values.size() ? &m_values[i] : 0; }
-
-    void clear() { m_values.clear(); }
-    
-    String toString();
-    
-    bool containsVariables() const;
-
-private:
-    unsigned m_current;
-    Vector<CSSParserValue, 4> m_values;
-};
-
-struct CSSParserFunction {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CSSParserString name;
-    std::unique_ptr<CSSParserValueList> args;
-};
-
-struct CSSParserVariable {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CSSParserString name; // The custom property name
-    std::unique_ptr<CSSParserValueList> args; // The fallback args
-};
-
 enum class CSSParserSelectorCombinator {
     Child,
     DescendantSpace,
@@ -200,14 +45,6 @@ enum class CSSParserSelectorCombinator {
 class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // FIXME-NEWPARSER: Remove the CSSParserString-based parsing functions once the old parser is gone.
-    static CSSParserSelector* parsePagePseudoSelector(const CSSParserString& pseudoTypeString);
-    static CSSParserSelector* parsePseudoElementSelector(CSSParserString& pseudoTypeString);
-    static CSSParserSelector* parsePseudoElementCueFunctionSelector(const CSSParserString& functionIdentifier, Vector<std::unique_ptr<CSSParserSelector>>*);
-    static CSSParserSelector* parsePseudoElementSlottedFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector*);
-    static CSSParserSelector* parsePseudoClassHostFunctionSelector(const CSSParserString& functionIdentifier, CSSParserSelector*);
-    static CSSParserSelector* parsePseudoClassAndCompatibilityElementSelector(CSSParserString& pseudoTypeString);
-
     static CSSParserSelector* parsePseudoClassSelectorFromStringView(StringView&);
     static CSSParserSelector* parsePseudoElementSelectorFromStringView(StringView&);
     static CSSParserSelector* parsePagePseudoSelector(const AtomicString&);
@@ -239,11 +76,9 @@ public:
     void setPseudoElementType(CSSSelector::PseudoElementType type) { m_selector->setPseudoElementType(type); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
-    void setLangArgumentList(const Vector<CSSParserString>& stringVector);
     void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
-    void setPseudoClassValue(const CSSParserString& pseudoClassString);
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }
     bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 
@@ -295,18 +130,6 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
             || pseudoElementType() == CSSSelector::PseudoElementCue
 #endif
             || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
-}
-
-inline void CSSParserValue::setFromValueList(std::unique_ptr<CSSParserValueList> valueList)
-{
-    id = CSSValueInvalid;
-    this->valueList = valueList.release();
-    unit = ValueList;
-}
-
-template<unsigned length> inline bool equalLettersIgnoringASCIICase(const CSSParserString& string, const char (&lowercaseLetters)[length])
-{
-    return WTF::equalLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
 }
 
 }

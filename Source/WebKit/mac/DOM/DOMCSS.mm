@@ -76,19 +76,16 @@ Class kitClass(WebCore::CSSRule* impl)
         case DOM_PAGE_RULE:
             return [DOMCSSPageRule class];
         case DOM_KEYFRAMES_RULE:
-            return [DOMCSSRule class];
+        case DOM_NAMESPACE_RULE:
         case DOM_KEYFRAME_RULE:
-            return [DOMCSSRule class];
         case DOM_SUPPORTS_RULE:
-            return [DOMCSSRule class];
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         case DOM_WEBKIT_VIEWPORT_RULE:
-            return [DOMCSSRule class];
 #endif
 #if ENABLE(CSS_REGIONS)
         case DOM_WEBKIT_REGION_RULE:
-            return [DOMCSSRule class];
 #endif
+            return [DOMCSSRule class];
     }
     ASSERT_NOT_REACHED();
     return nil;

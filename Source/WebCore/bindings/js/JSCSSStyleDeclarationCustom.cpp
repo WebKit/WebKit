@@ -26,9 +26,9 @@
 #include "config.h"
 #include "JSCSSStyleDeclarationCustom.h"
 
-#include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
 #include "CSSRule.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"

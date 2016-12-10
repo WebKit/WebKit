@@ -27,6 +27,7 @@
 #include "WebKitCSSMatrix.h"
 
 #include "CSSParser.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"

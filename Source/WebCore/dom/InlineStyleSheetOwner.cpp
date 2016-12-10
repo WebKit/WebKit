@@ -202,7 +202,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     m_sheet->setMediaQueries(mediaQueries.releaseNonNull());
     m_sheet->setTitle(element.title());
 
-    contents->parseStringAtPosition(text, m_startTextPosition, m_isParsingChildren);
+    contents->parseString(text);
 
     m_loading = false;
 

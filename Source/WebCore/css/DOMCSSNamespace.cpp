@@ -32,6 +32,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSParser.h"
+#include "CSSPropertyParser.h"
 #include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

@@ -79,8 +79,6 @@ public:
     bool isCrossfadeValue() const { return m_classType == CrossfadeClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
     bool isCustomPropertyValue() const { return m_classType == CustomPropertyClass; }
-    bool isVariableDependentValue() const { return m_classType == VariableDependentClass; }
-    bool isVariableValue() const { return m_classType == VariableClass; }
     bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
 #if ENABLE(VARIATION_FONTS)
@@ -129,7 +127,7 @@ public:
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
     bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
     
-    bool hasVariableReferences() const { return isVariableDependentValue() || isVariableReferenceValue() || isPendingSubstitutionValue(); }
+    bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
 
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
@@ -204,12 +202,7 @@ protected:
         
         CustomIdentClass,
 
-        // FIXME-NEWPARSER: Unify variables implementation.
         CustomPropertyClass,
-        VariableDependentClass,
-        VariableClass,
-
-        // New variables implementation.
         VariableReferenceClass,
         PendingSubstitutionValueClass,
 

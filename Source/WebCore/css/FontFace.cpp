@@ -30,6 +30,7 @@
 #include "CSSFontFeatureValue.h"
 #include "CSSParser.h"
 #include "CSSUnicodeRangeValue.h"
+#include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "Document.h"
 #include "FontVariantBuilder.h"
@@ -126,10 +127,8 @@ WeakPtr<FontFace> FontFace::createWeakPtr() const
 
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)
 {
-    auto style = MutableStyleProperties::create();
-    if (CSSParser::parseValue(style, propertyID, string, true, HTMLStandardMode, nullptr) == CSSParser::ParseResult::Error)
-        return nullptr;
-    return style->getPropertyCSSValue(propertyID);
+    // FIXME: Should use the Document to get the right parsing mode.
+    return CSSParser::parseFontFaceDescriptor(propertyID, string, HTMLStandardMode);
 }
 
 ExceptionOr<void> FontFace::setFamily(const String& family)

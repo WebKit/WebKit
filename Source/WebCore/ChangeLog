@@ -1,3 +1,656 @@
+2016-12-09  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove the old CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=165645
+
+        Reviewed by Daniel Bates.
+
+        Remove the old CSS parser code. In doing so, code that used documentless
+        CSSParserContexts is now going through the new parser. This resulted in
+        some additional changes. These include:
+
+        (1) Canvas color parsing switched to new parser's code. This resulted in
+        progressions on canvas tests.
+
+        (2) Support for CSSNamespaceRule in the CSS OM, since the Inspector's
+        creation of CSS OM wrappers made it necessary to add this in. The old parser
+        did not create style rules for namespaces, but the new one (and other browsers)
+        did.
+
+        (3) <font face="X"> now uses the new parser's font-family parsing code. This
+        change was made in createFontFaceValue in CSSValuePool.
+
+        (4) FontFace now uses a new function on the new parser called
+        parseFontFaceDescriptor. This function sets things up so that parsing occurs
+        as though you are inside a @font-face. The old parser let you call parseValue
+        to parse "properties", but descriptors need to be handled differently in the
+        new parser.
+
+        (5) Illegal CSS rules in mediaControlsApple/ios.css forced me to add a quirk
+        to handle chained shadow DOM pseudo-elements. This should not be allowed, but
+        for now it is.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::unitCategory):
+        (WebCore::hasDoubleValue):
+        (WebCore::checkDepthAndIndexDeprecated): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::parseCalc): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::operatorValue): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::parseValue): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::parseValueTerm): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::parseValueMultiplicativeExpression): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::parseAdditiveValueExpression): Deleted.
+        (WebCore::CSSCalcExpressionNodeParserDeprecated::parseValueExpression): Deleted.
+        * css/CSSCalculationValue.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::specifiedValueForGridTrackSize):
+        * css/CSSCustomPropertyValue.cpp:
+        (WebCore::CSSCustomPropertyValue::checkVariablesForCycles):
+        (WebCore::CSSCustomPropertyValue::resolveVariableReferences):
+        * css/CSSCustomPropertyValue.h:
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::CSSFunctionValue):
+        (WebCore::CSSFunctionValue::customCSSText):
+        (WebCore::CSSFunctionValue::append):
+        (WebCore::CSSFunctionValue::buildParserValueSubstitutingVariables): Deleted.
+        * css/CSSFunctionValue.h:
+        * css/CSSGrammar.y.in: Removed.
+        * css/CSSGrammar.y.includes: Removed.
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::insertRule):
+        * css/CSSKeyframeRule.h:
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::CSSKeyframesRule::appendRule):
+        * css/CSSNamespaceRule.cpp: Added.
+        (WebCore::CSSNamespaceRule::CSSNamespaceRule):
+        (WebCore::CSSNamespaceRule::~CSSNamespaceRule):
+        (WebCore::CSSNamespaceRule::namespaceURI):
+        (WebCore::CSSNamespaceRule::prefix):
+        (WebCore::CSSNamespaceRule::cssText):
+        (WebCore::CSSNamespaceRule::reattach):
+        * css/CSSNamespaceRule.h: Added.
+        * css/CSSNamespaceRule.idl: Added.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+        (WebCore::CSSPrimitiveValue::buildParserValue): Deleted.
+        * css/CSSPrimitiveValue.h:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::insertRule):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCustomPropertyValue):
+        (WebCore::CSSValue::hasVariableReferences):
+        (WebCore::CSSValue::isVariableDependentValue): Deleted.
+        (WebCore::CSSValue::isVariableValue): Deleted.
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::customCSSText):
+        (WebCore::CSSValueList::containsVariables): Deleted.
+        (WebCore::CSSValueList::checkVariablesForCycles): Deleted.
+        (WebCore::CSSValueList::buildParserValueSubstitutingVariables): Deleted.
+        (WebCore::CSSValueList::buildParserValueListSubstitutingVariables): Deleted.
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::createSlashSeparated):
+        (WebCore::CSSValueList::createFromParserValueList): Deleted.
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFaceValue):
+        * css/CSSVariableData.cpp:
+        * css/CSSVariableDependentValue.cpp: Removed.
+        * css/CSSVariableDependentValue.h: Removed.
+        * css/CSSVariableValue.cpp: Removed.
+        * css/CSSVariableValue.h: Removed.
+        * css/DOMCSSNamespace.cpp:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::parseString):
+        * css/InspectorCSSOMWrappers.cpp:
+        * css/MediaQueryExp.cpp:
+        (WebCore::isFeatureValidWithIdentifier): Deleted.
+        (WebCore::isFeatureValidWithNonNegativeLengthOrNumber): Deleted.
+        (WebCore::isFeatureValidWithDensity): Deleted.
+        (WebCore::isFeatureValidWithNonNegativeInteger): Deleted.
+        (WebCore::isFeatureValidWithNonNegativeNumber): Deleted.
+        (WebCore::isFeatureValidWithZeroOrOne): Deleted.
+        (WebCore::isFeatureValidWithNumberWithUnit): Deleted.
+        (WebCore::isFeatureValidWithNumber): Deleted.
+        (WebCore::isSlash): Deleted.
+        (WebCore::isPositiveIntegerValue): Deleted.
+        * css/MediaQueryExp.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        * css/SelectorPseudoTypeMap.h:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::getPropertyCSSValue):
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        (WebCore::MutableStyleProperties::parseDeclaration):
+        (WebCore::StyleProperties::asText):
+        * css/StyleProperties.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/StyleResolver.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::parseString):
+        (WebCore::StyleSheetContents::completeURL):
+        (WebCore::StyleSheetContents::parseStringAtPosition): Deleted.
+        * css/StyleSheetContents.h:
+        * css/WebKitCSSMatrix.cpp:
+        * css/makeSelectorPseudoClassAndCompatibilityElementMap.py:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseKeyframeRule):
+        (WebCore::CSSParser::parseSupportsCondition):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseSystemColor):
+        (WebCore::CSSParser::parseSingleValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseCustomPropertyValue):
+        (WebCore::CSSParser::parseSelector):
+        (WebCore::CSSParser::parseInlineStyleDeclaration):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        (WebCore::CSSParser::parseKeyframeKeyList):
+        (WebCore::CSSParser::parseFontFaceDescriptor):
+        (WebCore::equalLettersIgnoringASCIICase): Deleted.
+        (WebCore::hasPrefix): Deleted.
+        (WebCore::createPrimitiveValuePair): Deleted.
+        (WebCore::AnimationParseContext::commitFirstAnimation): Deleted.
+        (WebCore::AnimationParseContext::hasCommittedFirstAnimation): Deleted.
+        (WebCore::AnimationParseContext::commitAnimationPropertyKeyword): Deleted.
+        (WebCore::AnimationParseContext::animationPropertyKeywordAllowed): Deleted.
+        (WebCore::AnimationParseContext::hasSeenAnimationPropertyKeyword): Deleted.
+        (WebCore::AnimationParseContext::sawAnimationPropertyKeyword): Deleted.
+        (): Deleted.
+        (WebCore::convertToASCIILowercaseInPlace): Deleted.
+        (WebCore::CSSParserString::convertToASCIILowercaseInPlace): Deleted.
+        (WebCore::CSSParser::setupParser): Deleted.
+        (WebCore::isColorPropertyID): Deleted.
+        (WebCore::CSSParser::isValidSystemColorValue): Deleted.
+        (WebCore::validPrimitiveValueColor): Deleted.
+        (WebCore::parseColorValue): Deleted.
+        (WebCore::isSimpleLengthPropertyID): Deleted.
+        (WebCore::parseSimpleLength): Deleted.
+        (WebCore::parseSimpleLengthValue): Deleted.
+        (WebCore::isValidKeywordPropertyAndValue): Deleted.
+        (WebCore::isUniversalKeyword): Deleted.
+        (WebCore::isKeywordPropertyID): Deleted.
+        (WebCore::parseKeywordValue): Deleted.
+        (WebCore::parseTransformTranslateArguments): Deleted.
+        (WebCore::parseTranslateTransformValue): Deleted.
+        (WebCore::CSSParser::parseFontFaceValue): Deleted.
+        (WebCore::CSSParser::parseColorFromString): Deleted.
+        (WebCore::CSSParser::parseDeclarationDeprecated): Deleted.
+        (WebCore::filterProperties): Deleted.
+        (WebCore::CSSParser::createStyleProperties): Deleted.
+        (WebCore::CSSParser::addProperty): Deleted.
+        (WebCore::CSSParser::rollbackLastProperties): Deleted.
+        (WebCore::CSSParser::clearProperties): Deleted.
+        (WebCore::CSSParser::completeURL): Deleted.
+        (WebCore::CSSParser::validateCalculationUnit): Deleted.
+        (WebCore::CSSParser::shouldAcceptUnitLessValues): Deleted.
+        (WebCore::CSSParser::validateUnit): Deleted.
+        (WebCore::CSSParser::createPrimitiveNumericValue): Deleted.
+        (WebCore::CSSParser::createPrimitiveStringValue): Deleted.
+        (WebCore::isComma): Deleted.
+        (WebCore::isForwardSlashOperator): Deleted.
+        (WebCore::CSSParser::isValidSize): Deleted.
+        (WebCore::CSSParser::parseValidPrimitive): Deleted.
+        (WebCore::CSSParser::addExpandedPropertyForValue): Deleted.
+        (WebCore::isImageSetFunctionValue): Deleted.
+        (WebCore::CSSParser::addFillValue): Deleted.
+        (WebCore::isContentDistributionKeyword): Deleted.
+        (WebCore::isContentPositionKeyword): Deleted.
+        (WebCore::isBaselinePositionKeyword): Deleted.
+        (WebCore::isAlignmentOverflowKeyword): Deleted.
+        (WebCore::isItemPositionKeyword): Deleted.
+        (WebCore::CSSParser::parseLegacyPosition): Deleted.
+        (WebCore::CSSParser::parseContentDistributionOverflowPosition): Deleted.
+        (WebCore::CSSParser::parseItemPositionOverflowPosition): Deleted.
+        (WebCore::parseBackgroundClip): Deleted.
+        (WebCore::CSSParser::useLegacyBackgroundSizeShorthandBehavior): Deleted.
+        (WebCore::CSSParser::parseNonElementSnapPoints): Deleted.
+        (WebCore::CSSParser::parseScrollSnapPositions): Deleted.
+        (WebCore::CSSParser::parseScrollSnapDestination): Deleted.
+        (WebCore::CSSParser::parseScrollSnapCoordinate): Deleted.
+        (WebCore::CSSParser::parseFillShorthand): Deleted.
+        (WebCore::CSSParser::addAnimationValue): Deleted.
+        (WebCore::CSSParser::parseAnimationShorthand): Deleted.
+        (WebCore::CSSParser::parseColumnWidth): Deleted.
+        (WebCore::CSSParser::parseColumnCount): Deleted.
+        (WebCore::CSSParser::parseColumnsShorthand): Deleted.
+        (WebCore::CSSParser::parseTransitionShorthand): Deleted.
+        (WebCore::CSSParser::parseShorthand): Deleted.
+        (WebCore::CSSParser::parse4Values): Deleted.
+        (WebCore::CSSParser::parsePage): Deleted.
+        (WebCore::CSSParser::parseSize): Deleted.
+        (WebCore::CSSParser::parseSizeParameter): Deleted.
+        (WebCore::CSSParser::parseQuotes): Deleted.
+        (WebCore::CSSParser::parseAlt): Deleted.
+        (WebCore::CSSParser::parseCustomPropertyDeclaration): Deleted.
+        (WebCore::CSSParser::parseContent): Deleted.
+        (WebCore::CSSParser::parseAttr): Deleted.
+        (WebCore::CSSParser::parseBackgroundColor): Deleted.
+        (WebCore::CSSParser::parseFillImage): Deleted.
+        (WebCore::CSSParser::parsePositionX): Deleted.
+        (WebCore::CSSParser::parsePositionY): Deleted.
+        (WebCore::CSSParser::parseFillPositionComponent): Deleted.
+        (WebCore::isValueConflictingWithCurrentEdge): Deleted.
+        (WebCore::isFillPositionKeyword): Deleted.
+        (WebCore::CSSParser::parse4ValuesFillPosition): Deleted.
+        (WebCore::CSSParser::parse3ValuesFillPosition): Deleted.
+        (WebCore::CSSParser::isPotentialPositionValue): Deleted.
+        (WebCore::CSSParser::parseFillPosition): Deleted.
+        (WebCore::CSSParser::parse2ValuesFillPosition): Deleted.
+        (WebCore::CSSParser::parseFillRepeat): Deleted.
+        (WebCore::CSSParser::parseFillSize): Deleted.
+        (WebCore::CSSParser::parseFillProperty): Deleted.
+        (WebCore::CSSParser::parseAnimationDelay): Deleted.
+        (WebCore::CSSParser::parseAnimationDirection): Deleted.
+        (WebCore::CSSParser::parseAnimationDuration): Deleted.
+        (WebCore::CSSParser::parseAnimationFillMode): Deleted.
+        (WebCore::CSSParser::parseAnimationIterationCount): Deleted.
+        (WebCore::CSSParser::parseAnimationName): Deleted.
+        (WebCore::CSSParser::parseAnimationPlayState): Deleted.
+        (WebCore::CSSParser::parseAnimationTrigger): Deleted.
+        (WebCore::CSSParser::parseAnimationProperty): Deleted.
+        (WebCore::CSSParser::parseTransformOriginShorthand): Deleted.
+        (WebCore::CSSParser::isSpringTimingFunctionEnabled): Deleted.
+        (WebCore::CSSParser::parseCubicBezierTimingFunctionValue): Deleted.
+        (WebCore::CSSParser::parseSpringTimingFunctionValue): Deleted.
+        (WebCore::CSSParser::parseAnimationTimingFunction): Deleted.
+        (WebCore::isValidGridPositionCustomIdent): Deleted.
+        (WebCore::CSSParser::parseIntegerOrCustomIdentFromGridPosition): Deleted.
+        (WebCore::CSSParser::parseGridPosition): Deleted.
+        (WebCore::gridMissingGridPositionValue): Deleted.
+        (WebCore::CSSParser::parseGridItemPositionShorthand): Deleted.
+        (WebCore::CSSParser::parseGridGapShorthand): Deleted.
+        (WebCore::CSSParser::parseGridTemplateColumns): Deleted.
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreasAndColumns): Deleted.
+        (WebCore::CSSParser::parseGridTemplateShorthand): Deleted.
+        (WebCore::parseImplicitAutoFlow): Deleted.
+        (WebCore::CSSParser::parseGridShorthand): Deleted.
+        (WebCore::CSSParser::parseGridAreaShorthand): Deleted.
+        (WebCore::CSSParser::parseSingleGridAreaLonghand): Deleted.
+        (WebCore::CSSParser::parseGridLineNames): Deleted.
+        (WebCore::isGridTrackFixedSized): Deleted.
+        (WebCore::CSSParser::parseGridTrackList): Deleted.
+        (WebCore::CSSParser::parseGridTrackRepeatFunction): Deleted.
+        (WebCore::CSSParser::parseGridTrackSize): Deleted.
+        (WebCore::CSSParser::parseGridBreadth): Deleted.
+        (WebCore::isValidGridAutoFlowId): Deleted.
+        (WebCore::CSSParser::parseGridAutoFlow): Deleted.
+        (WebCore::skipCommaInDashboardRegion): Deleted.
+        (WebCore::CSSParser::parseDashboardRegions): Deleted.
+        (WebCore::parseGridTemplateAreasColumnNames): Deleted.
+        (WebCore::CSSParser::parseGridTemplateAreasRow): Deleted.
+        (WebCore::CSSParser::parseGridTemplateAreas): Deleted.
+        (WebCore::CSSParser::parseCounterContent): Deleted.
+        (WebCore::CSSParser::parseClipShape): Deleted.
+        (WebCore::completeBorderRadii): Deleted.
+        (WebCore::CSSParser::parseInsetRoundedCorners): Deleted.
+        (WebCore::CSSParser::parseBasicShapeInset): Deleted.
+        (WebCore::CSSParser::parseShapeRadius): Deleted.
+        (WebCore::CSSParser::parseBasicShapeCircle): Deleted.
+        (WebCore::CSSParser::parseBasicShapeEllipse): Deleted.
+        (WebCore::CSSParser::parseBasicShapePolygon): Deleted.
+        (WebCore::CSSParser::parseBasicShapePath): Deleted.
+        (WebCore::isBoxValue): Deleted.
+        (WebCore::CSSParser::parseBasicShapeAndOrBox): Deleted.
+        (WebCore::CSSParser::parseShapeProperty): Deleted.
+        (WebCore::CSSParser::parseClipPath): Deleted.
+        (WebCore::CSSParser::parseBasicShape): Deleted.
+        (WebCore::CSSParser::parseFont): Deleted.
+        (WebCore::CSSParser::parseSystemFont): Deleted.
+        (WebCore::FontFamilyValueBuilder::FontFamilyValueBuilder): Deleted.
+        (WebCore::FontFamilyValueBuilder::add): Deleted.
+        (WebCore::FontFamilyValueBuilder::commit): Deleted.
+        (WebCore::valueIsCSSKeyword): Deleted.
+        (WebCore::CSSParser::parseFontFamily): Deleted.
+        (WebCore::CSSParser::parseLineHeight): Deleted.
+        (WebCore::CSSParser::parseFontSize): Deleted.
+        (WebCore::createFontWeightValueKeyword): Deleted.
+        (WebCore::CSSParser::parseFontWeight): Deleted.
+        (WebCore::CSSParser::parseFontSynthesis): Deleted.
+        (WebCore::CSSParser::parseFontFaceSrcURI): Deleted.
+        (WebCore::CSSParser::parseFontFaceSrcLocal): Deleted.
+        (WebCore::CSSParser::parseFontFaceSrc): Deleted.
+        (WebCore::CSSParser::parseFontFaceUnicodeRange): Deleted.
+        (WebCore::checkForValidDouble): Deleted.
+        (WebCore::parseDouble): Deleted.
+        (WebCore::parseColorIntOrPercentage): Deleted.
+        (WebCore::isTenthAlpha): Deleted.
+        (WebCore::parseAlphaValue): Deleted.
+        (WebCore::mightBeRGBA): Deleted.
+        (WebCore::mightBeRGB): Deleted.
+        (WebCore::fastParseColorInternal): Deleted.
+        (WebCore::CSSParser::fastParseColor): Deleted.
+        (WebCore::CSSParser::parsedDouble): Deleted.
+        (WebCore::CSSParser::isCalculation): Deleted.
+        (WebCore::isPercent): Deleted.
+        (WebCore::CSSParser::parseColorInt): Deleted.
+        (WebCore::CSSParser::parseColorDouble): Deleted.
+        (WebCore::CSSParser::parseRGBParameters): Deleted.
+        (WebCore::CSSParser::parseColorFunctionParameters): Deleted.
+        (WebCore::CSSParser::parseHSLParameters): Deleted.
+        (WebCore::CSSParser::parseColorFromValue): Deleted.
+        (WebCore::ShadowParseContext::ShadowParseContext): Deleted.
+        (WebCore::ShadowParseContext::allowLength): Deleted.
+        (WebCore::ShadowParseContext::commitValue): Deleted.
+        (WebCore::ShadowParseContext::commitLength): Deleted.
+        (WebCore::ShadowParseContext::commitColor): Deleted.
+        (WebCore::ShadowParseContext::commitStyle): Deleted.
+        (WebCore::CSSParser::parseShadow): Deleted.
+        (WebCore::CSSParser::parseReflect): Deleted.
+        (WebCore::CSSParser::parseFlex): Deleted.
+        (WebCore::BorderImageParseContext::BorderImageParseContext): Deleted.
+        (WebCore::BorderImageParseContext::canAdvance): Deleted.
+        (WebCore::BorderImageParseContext::setCanAdvance): Deleted.
+        (WebCore::BorderImageParseContext::allowCommit): Deleted.
+        (WebCore::BorderImageParseContext::allowImage): Deleted.
+        (WebCore::BorderImageParseContext::allowImageSlice): Deleted.
+        (WebCore::BorderImageParseContext::allowRepeat): Deleted.
+        (WebCore::BorderImageParseContext::allowForwardSlashOperator): Deleted.
+        (WebCore::BorderImageParseContext::requireWidth): Deleted.
+        (WebCore::BorderImageParseContext::requireOutset): Deleted.
+        (WebCore::BorderImageParseContext::commitImage): Deleted.
+        (WebCore::BorderImageParseContext::commitImageSlice): Deleted.
+        (WebCore::BorderImageParseContext::commitForwardSlashOperator): Deleted.
+        (WebCore::BorderImageParseContext::commitBorderWidth): Deleted.
+        (WebCore::BorderImageParseContext::commitBorderOutset): Deleted.
+        (WebCore::BorderImageParseContext::commitRepeat): Deleted.
+        (WebCore::BorderImageParseContext::commitWebKitBorderImage): Deleted.
+        (WebCore::BorderImageParseContext::commitBorderImage): Deleted.
+        (WebCore::BorderImageParseContext::commitBorderImageProperty): Deleted.
+        (WebCore::CSSParser::parseBorderImage): Deleted.
+        (WebCore::isBorderImageRepeatKeyword): Deleted.
+        (WebCore::CSSParser::parseBorderImageRepeat): Deleted.
+        (WebCore::BorderImageSliceParseContext::BorderImageSliceParseContext): Deleted.
+        (WebCore::BorderImageSliceParseContext::allowNumber): Deleted.
+        (WebCore::BorderImageSliceParseContext::allowFill): Deleted.
+        (WebCore::BorderImageSliceParseContext::allowFinalCommit): Deleted.
+        (WebCore::BorderImageSliceParseContext::top): Deleted.
+        (WebCore::BorderImageSliceParseContext::commitNumber): Deleted.
+        (WebCore::BorderImageSliceParseContext::commitFill): Deleted.
+        (WebCore::BorderImageSliceParseContext::commitBorderImageSlice): Deleted.
+        (WebCore::CSSParser::parseBorderImageSlice): Deleted.
+        (WebCore::BorderImageQuadParseContext::BorderImageQuadParseContext): Deleted.
+        (WebCore::BorderImageQuadParseContext::allowNumber): Deleted.
+        (WebCore::BorderImageQuadParseContext::allowFinalCommit): Deleted.
+        (WebCore::BorderImageQuadParseContext::top): Deleted.
+        (WebCore::BorderImageQuadParseContext::commitNumber): Deleted.
+        (WebCore::BorderImageQuadParseContext::setAllowFinalCommit): Deleted.
+        (WebCore::BorderImageQuadParseContext::setTop): Deleted.
+        (WebCore::BorderImageQuadParseContext::commitBorderImageQuad): Deleted.
+        (WebCore::CSSParser::parseBorderImageQuad): Deleted.
+        (WebCore::CSSParser::parseBorderImageWidth): Deleted.
+        (WebCore::CSSParser::parseBorderImageOutset): Deleted.
+        (WebCore::CSSParser::parseBorderRadius): Deleted.
+        (WebCore::CSSParser::parseAspectRatio): Deleted.
+        (WebCore::CSSParser::parseCounter): Deleted.
+        (WebCore::parseDeprecatedGradientPoint): Deleted.
+        (WebCore::parseDeprecatedGradientColorStop): Deleted.
+        (WebCore::CSSParser::parseDeprecatedGradient): Deleted.
+        (WebCore::valueFromSideKeyword): Deleted.
+        (WebCore::parseGradientColorOrKeyword): Deleted.
+        (WebCore::CSSParser::parseDeprecatedLinearGradient): Deleted.
+        (WebCore::CSSParser::parseDeprecatedRadialGradient): Deleted.
+        (WebCore::CSSParser::parseLinearGradient): Deleted.
+        (WebCore::CSSParser::parseRadialGradient): Deleted.
+        (WebCore::CSSParser::parseGradientColorStops): Deleted.
+        (WebCore::CSSParser::isGeneratedImageValue): Deleted.
+        (WebCore::CSSParser::parseGeneratedImage): Deleted.
+        (WebCore::CSSParser::parseFilterImage): Deleted.
+        (WebCore::CSSParser::parseCrossfade): Deleted.
+        (WebCore::CSSParser::parseCanvas): Deleted.
+        (WebCore::CSSParser::parseNamedImage): Deleted.
+        (WebCore::CSSParser::parseImageResolution): Deleted.
+        (WebCore::CSSParser::parseImageSet): Deleted.
+        (WebCore::TransformOperationInfo::TransformOperationInfo): Deleted.
+        (WebCore::TransformOperationInfo::type): Deleted.
+        (WebCore::TransformOperationInfo::argCount): Deleted.
+        (WebCore::TransformOperationInfo::unit): Deleted.
+        (WebCore::TransformOperationInfo::unknown): Deleted.
+        (WebCore::TransformOperationInfo::hasCorrectArgCount): Deleted.
+        (WebCore::CSSParser::parseTransform): Deleted.
+        (WebCore::CSSParser::parseTransformValue): Deleted.
+        (WebCore::CSSParser::isBlendMode): Deleted.
+        (WebCore::CSSParser::isCompositeOperator): Deleted.
+        (WebCore::isValidPrimitiveFilterFunction): Deleted.
+        (WebCore::CSSParser::parseBuiltinFilterArguments): Deleted.
+        (WebCore::cssValueKeywordIDForFunctionName): Deleted.
+        (WebCore::CSSParser::parseFilter): Deleted.
+        (WebCore::validFlowName): Deleted.
+        (WebCore::CSSParser::isTextAutosizingEnabled): Deleted.
+        (WebCore::CSSParser::isCSSGridLayoutEnabled): Deleted.
+        (WebCore::CSSParser::parseFlowThread): Deleted.
+        (WebCore::CSSParser::parseRegionThread): Deleted.
+        (WebCore::CSSParser::parseTransformOrigin): Deleted.
+        (WebCore::CSSParser::parsePerspectiveOrigin): Deleted.
+        (WebCore::CSSParser::addTextDecorationProperty): Deleted.
+        (WebCore::CSSParser::parseTextDecoration): Deleted.
+        (WebCore::CSSParser::parseTextDecorationSkip): Deleted.
+        (WebCore::CSSParser::parseTextUnderlinePosition): Deleted.
+        (WebCore::CSSParser::parseTextEmphasisStyle): Deleted.
+        (WebCore::CSSParser::parseTextEmphasisPosition): Deleted.
+        (WebCore::CSSParser::parseTextIndent): Deleted.
+        (WebCore::CSSParser::parseHangingPunctuation): Deleted.
+        (WebCore::CSSParser::parseLineBoxContain): Deleted.
+        (WebCore::CSSParser::parseFontFeatureTag): Deleted.
+        (WebCore::CSSParser::parseFontFeatureSettings): Deleted.
+        (WebCore::CSSParser::parseFontVariationTag): Deleted.
+        (WebCore::CSSParser::parseFontVariationSettings): Deleted.
+        (WebCore::CSSParser::parseFontVariantLigatures): Deleted.
+        (WebCore::CSSParser::parseFontVariantNumeric): Deleted.
+        (WebCore::CSSParser::parseFontVariantEastAsian): Deleted.
+        (WebCore::CSSParser::parseFontVariant): Deleted.
+        (WebCore::isValidWillChangeAnimatableFeature): Deleted.
+        (WebCore::CSSParser::parseWillChange): Deleted.
+        (WebCore::CSSParser::parseCalculation): Deleted.
+        (WebCore::isCSSLetter): Deleted.
+        (WebCore::isCSSEscape): Deleted.
+        (WebCore::isURILetter): Deleted.
+        (WebCore::isIdentifierStartAfterDash): Deleted.
+        (WebCore::isCustomPropertyIdentifier): Deleted.
+        (WebCore::isEqualToCSSIdentifier): Deleted.
+        (WebCore::isEqualToCSSCaseSensitiveIdentifier): Deleted.
+        (WebCore::checkAndSkipEscape): Deleted.
+        (WebCore::skipWhiteSpace): Deleted.
+        (WebCore::CSSParserString::characters<LChar>): Deleted.
+        (WebCore::CSSParserString::characters<UChar>): Deleted.
+        (WebCore::CSSParser::currentCharacter<LChar>): Deleted.
+        (WebCore::CSSParser::currentCharacter<UChar>): Deleted.
+        (WebCore::CSSParser::currentCharacter16): Deleted.
+        (WebCore::CSSParser::tokenStart<LChar>): Deleted.
+        (WebCore::CSSParser::tokenStart<UChar>): Deleted.
+        (WebCore::CSSParser::currentLocation): Deleted.
+        (WebCore::CSSParser::isIdentifierStart): Deleted.
+        (WebCore::checkAndSkipString): Deleted.
+        (WebCore::CSSParser::parseEscape): Deleted.
+        (WebCore::CSSParser::UnicodeToChars<LChar>): Deleted.
+        (WebCore::CSSParser::UnicodeToChars<UChar>): Deleted.
+        (WebCore::CSSParser::parseIdentifierInternal): Deleted.
+        (WebCore::CSSParser::parseIdentifier): Deleted.
+        (WebCore::CSSParser::parseStringInternal): Deleted.
+        (WebCore::CSSParser::parseString): Deleted.
+        (WebCore::CSSParser::findURI): Deleted.
+        (WebCore::CSSParser::parseURIInternal): Deleted.
+        (WebCore::CSSParser::parseURI): Deleted.
+        (WebCore::CSSParser::parseUnicodeRange): Deleted.
+        (WebCore::CSSParser::parseNthChild): Deleted.
+        (WebCore::CSSParser::parseNthChildExtra): Deleted.
+        (WebCore::CSSParser::detectFunctionTypeToken): Deleted.
+        (WebCore::CSSParser::detectMediaQueryToken): Deleted.
+        (WebCore::CSSParser::detectNumberToken): Deleted.
+        (WebCore::CSSParser::detectDashToken): Deleted.
+        (WebCore::CSSParser::detectAtToken): Deleted.
+        (WebCore::CSSParser::detectSupportsToken): Deleted.
+        (WebCore::CSSParser::realLex): Deleted.
+        (WebCore::CSSParser::createImportRule): Deleted.
+        (WebCore::CSSParser::createMediaRule): Deleted.
+        (WebCore::CSSParser::createEmptyMediaRule): Deleted.
+        (WebCore::CSSParser::createSupportsRule): Deleted.
+        (WebCore::CSSParser::markSupportsRuleHeaderStart): Deleted.
+        (WebCore::CSSParser::markSupportsRuleHeaderEnd): Deleted.
+        (WebCore::CSSParser::popSupportsRuleData): Deleted.
+        (WebCore::CSSParser::processAndAddNewRuleToSourceTreeIfNeeded): Deleted.
+        (WebCore::CSSParser::addNewRuleToSourceTree): Deleted.
+        (WebCore::CSSParser::popRuleData): Deleted.
+        (WebCore::CSSParser::syntaxError): Deleted.
+        (WebCore::CSSParser::isLoggingErrors): Deleted.
+        (WebCore::CSSParser::logError): Deleted.
+        (WebCore::CSSParser::createKeyframesRule): Deleted.
+        (WebCore::CSSParser::createStyleRule): Deleted.
+        (WebCore::CSSParser::createFontFaceRule): Deleted.
+        (WebCore::CSSParser::addNamespace): Deleted.
+        (WebCore::CSSParser::determineNameInNamespace): Deleted.
+        (WebCore::CSSParser::rewriteSpecifiersWithNamespaceIfNeeded): Deleted.
+        (WebCore::CSSParser::rewriteSpecifiersWithElementName): Deleted.
+        (WebCore::CSSParser::rewriteSpecifiers): Deleted.
+        (WebCore::CSSParser::createPageRule): Deleted.
+        (WebCore::CSSParser::createSelectorVector): Deleted.
+        (WebCore::CSSParser::recycleSelectorVector): Deleted.
+        (WebCore::CSSParser::createRegionRule): Deleted.
+        (WebCore::CSSParser::createMarginAtRule): Deleted.
+        (WebCore::CSSParser::startDeclarationsForMarginBox): Deleted.
+        (WebCore::CSSParser::endDeclarationsForMarginBox): Deleted.
+        (WebCore::CSSParser::createKeyframe): Deleted.
+        (WebCore::CSSParser::invalidBlockHit): Deleted.
+        (WebCore::CSSParser::updateLastMediaLine): Deleted.
+        (WebCore::fixUnparsedProperties): Deleted.
+        (WebCore::CSSParser::fixUnparsedPropertyRanges): Deleted.
+        (WebCore::CSSParser::markRuleHeaderStart): Deleted.
+        (WebCore::CSSParser::setRuleHeaderEnd): Deleted.
+        (WebCore::CSSParser::markRuleHeaderEnd): Deleted.
+        (WebCore::CSSParser::markSelectorStart): Deleted.
+        (WebCore::CSSParser::markSelectorEnd): Deleted.
+        (WebCore::CSSParser::markRuleBodyStart): Deleted.
+        (WebCore::CSSParser::markRuleBodyEnd): Deleted.
+        (WebCore::CSSParser::markPropertyStart): Deleted.
+        (WebCore::CSSParser::markPropertyEnd): Deleted.
+        (WebCore::CSSParser::createViewportRule): Deleted.
+        (WebCore::CSSParser::parseViewportProperty): Deleted.
+        (WebCore::CSSParser::parseViewportShorthand): Deleted.
+        (WebCore::isAppleLegacyCSSPropertyKeyword): Deleted.
+        (WebCore::cssPropertyID): Deleted.
+        (WebCore::cssPropertyNameIOSAliasing): Deleted.
+        (WebCore::isAppleLegacyCSSValueKeyword): Deleted.
+        (WebCore::cssValueKeywordID): Deleted.
+        (WebCore::isValidNthToken): Deleted.
+        * css/parser/CSSParser.h:
+        (): Deleted.
+        (WebCore::CSSParser::ValueWithCalculation::ValueWithCalculation): Deleted.
+        (WebCore::CSSParser::ValueWithCalculation::value): Deleted.
+        (WebCore::CSSParser::ValueWithCalculation::operator CSSParserValue&): Deleted.
+        (WebCore::CSSParser::ValueWithCalculation::calculation): Deleted.
+        (WebCore::CSSParser::ValueWithCalculation::setCalculation): Deleted.
+        (WebCore::CSSParser::hasProperties): Deleted.
+        (WebCore::CSSParser::startNestedSelectorList): Deleted.
+        (WebCore::CSSParser::endNestedSelectorList): Deleted.
+        (WebCore::CSSParser::resetPropertyRange): Deleted.
+        (WebCore::CSSParser::isExtractingSourceData): Deleted.
+        (WebCore::CSSParser::lex): Deleted.
+        (WebCore::CSSParser::token): Deleted.
+        (WebCore::CSSParser::markViewportRuleBodyStart): Deleted.
+        (WebCore::CSSParser::markViewportRuleBodyEnd): Deleted.
+        (WebCore::CSSParser::setCustomPropertyName): Deleted.
+        (WebCore::CSSParser::is8BitSource): Deleted.
+        (WebCore::CSSParser::setStyleSheet): Deleted.
+        (WebCore::CSSParser::inStrictMode): Deleted.
+        (WebCore::CSSParser::inQuirksMode): Deleted.
+        (WebCore::CSSParser::setupParser): Deleted.
+        (WebCore::CSSParser::inShorthand): Deleted.
+        (WebCore::CSSParser::inViewport): Deleted.
+        (WebCore::CSSParser::operator|): Deleted.
+        (WebCore::CSSParser::validateUnit): Deleted.
+        (WebCore::ShorthandScope::ShorthandScope): Deleted.
+        (WebCore::ShorthandScope::~ShorthandScope): Deleted.
+        (WebCore::CSSParser::setTokenStart<LChar>): Deleted.
+        (WebCore::CSSParser::setTokenStart<UChar>): Deleted.
+        (WebCore::CSSParser::tokenStartOffset): Deleted.
+        (WebCore::CSSParser::currentCharacterOffset): Deleted.
+        (WebCore::CSSParser::tokenStartChar): Deleted.
+        (WebCore::isCustomPropertyName): Deleted.
+        (WebCore::cssyylex): Deleted.
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setSelectorList):
+        (WebCore::destroy): Deleted.
+        (WebCore::CSSParserValueList::~CSSParserValueList): Deleted.
+        (WebCore::CSSParserValueList::addValue): Deleted.
+        (WebCore::CSSParserValueList::insertValueAt): Deleted.
+        (WebCore::CSSParserValueList::extend): Deleted.
+        (WebCore::CSSParserValueList::containsVariables): Deleted.
+        (WebCore::CSSParserValue::createCSSValue): Deleted.
+        (WebCore::CSSParserSelector::parsePseudoElementSelector): Deleted.
+        (WebCore::CSSParserSelector::parsePseudoElementCueFunctionSelector): Deleted.
+        (WebCore::CSSParserSelector::parsePseudoElementSlottedFunctionSelector): Deleted.
+        (WebCore::CSSParserSelector::parsePseudoClassHostFunctionSelector): Deleted.
+        (WebCore::CSSParserSelector::parsePseudoClassAndCompatibilityElementSelector): Deleted.
+        (WebCore::CSSParserSelector::setPseudoClassValue): Deleted.
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserString::init): Deleted.
+        (WebCore::CSSParserString::clear): Deleted.
+        (WebCore::CSSParserString::is8Bit): Deleted.
+        (WebCore::CSSParserString::characters8): Deleted.
+        (WebCore::CSSParserString::characters16): Deleted.
+        (WebCore::CSSParserString::length): Deleted.
+        (WebCore::CSSParserString::setLength): Deleted.
+        (WebCore::CSSParserString::operator[]): Deleted.
+        (WebCore::CSSParserString::operator String): Deleted.
+        (WebCore::CSSParserString::operator AtomicString): Deleted.
+        (WebCore::CSSParserString::toStringView): Deleted.
+        (): Deleted.
+        (WebCore::CSSParserValueList::CSSParserValueList): Deleted.
+        (WebCore::CSSParserValueList::size): Deleted.
+        (WebCore::CSSParserValueList::currentIndex): Deleted.
+        (WebCore::CSSParserValueList::current): Deleted.
+        (WebCore::CSSParserValueList::next): Deleted.
+        (WebCore::CSSParserValueList::previous): Deleted.
+        (WebCore::CSSParserValueList::setCurrentIndex): Deleted.
+        (WebCore::CSSParserValueList::valueAt): Deleted.
+        (WebCore::CSSParserValueList::clear): Deleted.
+        (WebCore::CSSParserValue::setFromValueList): Deleted.
+        (WebCore::equalLettersIgnoringASCIICase): Deleted.
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isCustomPropertyName):
+        (WebCore::cssPropertyNameIOSAliasing):
+        * css/parser/CSSPropertyParser.h:
+        * css/parser/SVGCSSParser.cpp: Removed.
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::ensureSourceData):
+        (WebCore::InspectorStyleSheetForInlineStyle::ruleSourceData):
+        * page/animation/AnimationController.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * svg/SVGAnimateElementBase.cpp:
+        * svg/SVGAnimationElement.cpp:
+        * svg/SVGElement.cpp:
+
 2016-12-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Include WTF, JSC, and WebCore headers automatically to targers using them

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +24,49 @@
  */
 
 #include "config.h"
-#include "CSSVariableDependentValue.h"
+#include "CSSNamespaceRule.h"
 
-#include "CSSCustomPropertyValue.h"
-#include <wtf/text/AtomicStringHash.h>
+#include "CSSMarkup.h"
+#include "StyleRule.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-bool CSSVariableDependentValue::checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap& customProperties, const HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties)
+CSSNamespaceRule::CSSNamespaceRule(StyleRuleNamespace& namespaceRule, CSSStyleSheet* parent)
+    : CSSRule(parent)
+    , m_namespaceRule(namespaceRule)
 {
-    if (invalidProperties.contains(name))
-        return false;
+}
 
-    HashSet<AtomicString> newSeenProperties = seenProperties;
-    newSeenProperties.add(name);
+CSSNamespaceRule::~CSSNamespaceRule()
+{
+}
+
+AtomicString CSSNamespaceRule::namespaceURI() const
+{
+    return m_namespaceRule->uri();
+}
     
-    bool valid = valueList().checkVariablesForCycles(customProperties, newSeenProperties, invalidProperties);
-    if (!valid)
-        invalidProperties.add(name);
-
-    return valid;
+AtomicString CSSNamespaceRule::prefix() const
+{
+    return m_namespaceRule->prefix();
 }
 
+String CSSNamespaceRule::cssText() const
+{
+    StringBuilder result;
+    result.appendLiteral("@namespace ");
+    serializeIdentifier(prefix(), result);
+    if (!prefix().isEmpty())
+        result.append(' ');
+    result.append("url(");
+    result.append(serializeString(namespaceURI()));
+    result.append(");");
+    return result.toString();
 }
+
+void CSSNamespaceRule::reattach(StyleRuleBase&)
+{
+}
+
+} // namespace WebCore

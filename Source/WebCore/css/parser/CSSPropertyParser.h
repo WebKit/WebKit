@@ -108,5 +108,10 @@ private:
 
 CSSPropertyID cssPropertyID(StringView);
 CSSValueID cssValueKeywordID(StringView);
+bool isCustomPropertyName(const String&);
+
+#if PLATFORM(IOS)
+void cssPropertyNameIOSAliasing(const char* propertyName, const char*& propertyNameAlias, unsigned& newLength);
+#endif
 
 } // namespace WebCore

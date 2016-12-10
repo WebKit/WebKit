@@ -1,3 +1,13 @@
+2016-12-08  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove the old CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=165645
+
+        Reviewed by Daniel Bates.
+
+        * TestWebKitAPI/Tests/WebCore/CSSParser.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-12-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Include WTF, JSC, and WebCore headers automatically to targers using them

@@ -106,7 +106,6 @@ public:
     bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
-    bool useNewParser { false };
     
     URL completeURL(const String& url) const
     {
@@ -145,11 +144,10 @@ struct CSSParserContextHash {
             & key.enforcesCSSMIMETypeInNoQuirksMode         << 5
             & key.useLegacyBackgroundSizeShorthandBehavior  << 6
             & key.springTimingFunctionEnabled               << 7
-            & key.useNewParser                              << 8
 #if ENABLE(VARIATION_FONTS)
-            & key.variationFontsEnabled                     << 9
+            & key.variationFontsEnabled                     << 8
 #endif
-            & key.mode                                      << 10;
+            & key.mode                                      << 9;
         hash ^= WTF::intHash(bits);
         return hash;
     }

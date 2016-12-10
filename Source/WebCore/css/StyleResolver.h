@@ -56,7 +56,6 @@ class CSSPrimitiveValue;
 class CSSProperty;
 class CSSStyleSheet;
 class CSSValue;
-class CSSVariableDependentValue;
 class ContainerNode;
 class Document;
 class Element;

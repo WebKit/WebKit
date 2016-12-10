@@ -35,6 +35,7 @@
     const unsigned short PAGE_RULE = 6;
     const unsigned short KEYFRAMES_RULE = 7;
     const unsigned short KEYFRAME_RULE = 8;
+    const unsigned short NAMESPACE_RULE = 10;
     const unsigned short SUPPORTS_RULE = 12;
     [Conditional=CSS_DEVICE_ADAPTATION] const unsigned short WEBKIT_VIEWPORT_RULE = 15;
     [Conditional=CSS_REGIONS] const unsigned short WEBKIT_REGION_RULE = 16;

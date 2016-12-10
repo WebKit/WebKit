@@ -46,7 +46,6 @@ class Rect;
 class RenderStyle;
 
 struct CSSFontFamily;
-struct CSSParserValue;
 struct Length;
 struct LengthSize;
 
@@ -122,14 +121,6 @@ public:
 #endif
         CSS_UNICODE_RANGE = 102,
 
-        // These next types are just used internally to allow us to translate back and forth from CSSPrimitiveValues to CSSParserValues.
-        CSS_PARSER_OPERATOR = 103,
-        CSS_PARSER_INTEGER = 104,
-        CSS_PARSER_HEXCOLOR = 105,
-
-        // This is used internally for unknown identifiers
-        CSS_PARSER_IDENTIFIER = 106,
-
         // These are from CSS3 Values and Units, but that isn't a finished standard yet
         CSS_TURN = 107,
         CSS_REMS = 108,
@@ -152,9 +143,6 @@ public:
 
         CSS_PROPERTY_ID = 117,
         CSS_VALUE_ID = 118,
-        
-        // More internal parse stuff for CSS variables
-        CSS_PARSER_WHITESPACE = 119,
         
         // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
         // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
@@ -222,13 +210,9 @@ public:
     bool isViewportPercentageMin() const { return m_primitiveUnitType == CSS_VMIN; }
     bool isValueID() const { return m_primitiveUnitType == CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSS_FR; }
-    
-    bool isParserOperator() const { return primitiveType() == CSS_PARSER_OPERATOR; }
-    int parserOperator() const { return isParserOperator() ? m_value.parserOperator : 0; }
 
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
-    static Ref<CSSPrimitiveValue> createParserOperator(int parserOperator) { return adoptRef(*new CSSPrimitiveValue(parserOperator)); }
 
     static Ref<CSSPrimitiveValue> create(double value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static Ref<CSSPrimitiveValue> create(const String& value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
@@ -257,8 +241,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<RGBColor>> getRGBColorValue() const;
 
     double computeDegrees() const;
-    
-    bool buildParserValue(CSSParserValue*) const;
     
     enum TimeUnit { Seconds, Milliseconds };
     template<typename T, TimeUnit timeUnit> T computeTime() const;
@@ -328,7 +310,6 @@ private:
 
     CSSPrimitiveValue(CSSValueID);
     CSSPrimitiveValue(CSSPropertyID);
-    CSSPrimitiveValue(int parserOperator);
     CSSPrimitiveValue(const Color&);
     CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle&);
@@ -371,7 +352,6 @@ private:
     union {
         CSSPropertyID propertyID;
         CSSValueID valueID;
-        int parserOperator;
         double num;
         StringImpl* string;
         Counter* counter;

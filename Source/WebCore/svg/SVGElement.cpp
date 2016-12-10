@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SVGElement.h"
 
-#include "CSSParser.h"
+#include "CSSPropertyParser.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "Event.h"

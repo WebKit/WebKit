@@ -45,15 +45,6 @@ shouldBe('fontFaceAttributeEffect(" Serif ")', '"serif"');
 shouldBe('fontFaceAttributeEffect(",Serif ")', 'null');
 
 shouldBe('fontFaceAttributeEffect("Inherited")', '"Inherited"');
-shouldBe('fontFaceAttributeEffect("Initial")', '"Initial"');
-
-shouldBe('fontFaceAttributeEffect("foo + foo")', '"\'foo + foo\'"');
-shouldBe('fontFaceAttributeEffect(" foo + foo")', '"\'foo + foo\'"');
-shouldBe('fontFaceAttributeEffect(" foo + foo ")', '"\'foo + foo\'"');
-shouldBe('fontFaceAttributeEffect("foo + foo ")', '"\'foo + foo\'"');
-
-shouldBe('fontFaceAttributeEffect("foo + foo,serif")', '"\'foo + foo\', serif"');
-shouldBe('fontFaceAttributeEffect("serif,foo + foo,serif")', '"serif, \'foo + foo\', serif"');
 shouldBe('fontFaceAttributeEffect(",foo + foo,serif")', 'null');
 shouldBe('fontFaceAttributeEffect("serif,foo + foo,")', 'null');
 

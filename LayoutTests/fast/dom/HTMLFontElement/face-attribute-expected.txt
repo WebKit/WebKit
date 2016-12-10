@@ -22,13 +22,6 @@ PASS fontFaceAttributeEffect(" Serif") is "serif"
 PASS fontFaceAttributeEffect(" Serif ") is "serif"
 PASS fontFaceAttributeEffect(",Serif ") is null
 PASS fontFaceAttributeEffect("Inherited") is "Inherited"
-PASS fontFaceAttributeEffect("Initial") is "Initial"
-PASS fontFaceAttributeEffect("foo + foo") is "'foo + foo'"
-PASS fontFaceAttributeEffect(" foo + foo") is "'foo + foo'"
-PASS fontFaceAttributeEffect(" foo + foo ") is "'foo + foo'"
-PASS fontFaceAttributeEffect("foo + foo ") is "'foo + foo'"
-PASS fontFaceAttributeEffect("foo + foo,serif") is "'foo + foo', serif"
-PASS fontFaceAttributeEffect("serif,foo + foo,serif") is "serif, 'foo + foo', serif"
 PASS fontFaceAttributeEffect(",foo + foo,serif") is null
 PASS fontFaceAttributeEffect("serif,foo + foo,") is null
 PASS successfullyParsed is true

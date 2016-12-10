@@ -27,6 +27,7 @@
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSMediaRule.h"
+#include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
@@ -184,9 +185,11 @@ RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CS
         rule = WebKitCSSViewportRule::create(downcast<StyleRuleViewport>(self), parentSheet);
         break;
 #endif
+    case Namespace:
+        rule = CSSNamespaceRule::create(downcast<StyleRuleNamespace>(self), parentSheet);
+        break;
     case Unknown:
     case Charset:
-    case Namespace: // FIXME: Add support for CSSNamespaceRule.
     case Keyframe:
 #if !ENABLE(CSS_REGIONS)
     case Region:

@@ -133,12 +133,7 @@ unsigned extractCompoundFlags(const CSSParserSelector& simpleSelector, CSSParser
 {
     if (simpleSelector.match() != CSSSelector::PseudoElement)
         return 0;
-    // FIXME-NEWPARSER: These don't exist for us, so may need to revisit.
-    // if (simpleSelector.pseudoElementType() == CSSSelector::PseudoContent)
-    //    return HasContentPseudoElement;
-    // if (simpleSelector.pseudoElementType() == CSSSelector::PseudoShadow)
-    //    return 0;
-
+    
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
     // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
     // input[type="range" i]::-webkit-media-slider-container > div {
@@ -181,9 +176,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSS
             compoundFlags |= extractCompoundFlags(*end, m_context.mode);
         }
         end->setRelation(combinator);
-        // FIXME-NEWPARSER: Shadow stuff that we don't have.
-        // if (previousCompoundFlags & HasContentPseudoElement)
-        //    end->setRelationIsAffectedByPseudoContent();
         previousCompoundFlags = compoundFlags;
         end->setTagHistory(WTFMove(selector));
 
@@ -319,7 +311,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeCompoundSelector(CS
         return selector;
     }
     prependTypeSelectorIfNeeded(namespacePrefix, elementName, compoundSelector.get());
-    return splitCompoundAtImplicitShadowCrossingCombinator(WTFMove(compoundSelector));
+    return splitCompoundAtImplicitShadowCrossingCombinator(WTFMove(compoundSelector), m_context);
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeSimpleSelector(CSSParserTokenRange& range)
@@ -889,7 +881,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::addSimpleSelectorToCompoun
     return compoundSelector;
 }
 
-std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector)
+std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSParserContext& context)
 {
     // The tagHistory is a linked list that stores combinator separated compound selectors
     // from right-to-left. Yet, within a single compound selector, stores the simple selectors
@@ -904,19 +896,17 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     //
     // Example: input#x::-webkit-clear-button -> [ ::-webkit-clear-button, input, #x ]
     //
-    // Likewise, ::slotted() pseudo element has an implicit ShadowSlot combinator to its left
-    // for finding matching slot element in other TreeScope.
-    //
-    // Example: slot[name=foo]::slotted(div) -> [ ::slotted(div), slot, [name=foo] ]
     CSSParserSelector* splitAfter = compoundSelector.get();
-
     while (splitAfter->tagHistory() && !splitAfter->tagHistory()->needsImplicitShadowCombinatorForMatching())
         splitAfter = splitAfter->tagHistory();
-
+    
     if (!splitAfter || !splitAfter->tagHistory())
         return compoundSelector;
 
-    std::unique_ptr<CSSParserSelector> secondCompound = splitAfter->releaseTagHistory();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
+    // We have to recur, since we have rules in media controls like video::a::b. This should not be allowed, and
+    // we should remove this recursion once those rules are gone.
+    std::unique_ptr<CSSParserSelector> secondCompound = context.mode != UASheetMode ? splitAfter->releaseTagHistory() : splitCompoundAtImplicitShadowCrossingCombinator(splitAfter->releaseTagHistory(), context);
     secondCompound->appendTagHistory(CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
     return secondCompound;
 }

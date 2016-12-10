@@ -1,3 +1,14 @@
+2016-12-09  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove the old CSS Parser
+        https://bugs.webkit.org/show_bug.cgi?id=165645
+
+        Reviewed by Daniel Bates.
+
+        * DOM/DOMCSS.mm:
+        (kitClass):
+        * DOM/DOMCSSRule.h:
+
 2016-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag

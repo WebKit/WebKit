@@ -168,6 +168,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'CSSMediaRule').hasOwnProperty('get
 PASS Object.getOwnPropertyDescriptor(global, 'CSSMediaRule').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSMediaRule').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSMediaRule').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'CSSNamespaceRule').value is CSSNamespaceRule
+PASS Object.getOwnPropertyDescriptor(global, 'CSSNamespaceRule').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSSNamespaceRule').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSSNamespaceRule').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'CSSNamespaceRule').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CSSPageRule').value is CSSPageRule
 PASS Object.getOwnPropertyDescriptor(global, 'CSSPageRule').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CSSPageRule').hasOwnProperty('set') is false

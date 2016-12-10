@@ -26,29 +26,21 @@
 #include "config.h"
 #include "CSSFunctionValue.h"
 
-#include "CSSParserValues.h"
 #include "CSSValueList.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-CSSFunctionValue::CSSFunctionValue(CSSParserFunction* function)
+CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValueList>&& args)
     : CSSValue(FunctionClass)
-    , m_nameDeprecated(function->name)
-    , m_args(function->args ? RefPtr<CSSValueList>(CSSValueList::createFromParserValueList(*function->args)) : nullptr)
-{
-}
-
-CSSFunctionValue::CSSFunctionValue(const String& name, Ref<CSSValueList>&& args)
-    : CSSValue(FunctionClass)
-    , m_nameDeprecated(name)
+    , m_name(name)
     , m_args(WTFMove(args))
 {
 }
 
-CSSFunctionValue::CSSFunctionValue(CSSValueID keyword)
+CSSFunctionValue::CSSFunctionValue(CSSValueID name)
     : CSSValue(FunctionClass)
-    , m_name(keyword)
+    , m_name(name)
 {
 }
     
@@ -58,8 +50,7 @@ String CSSFunctionValue::customCSSText() const
     if (m_name != CSSValueInvalid) {
         result.append(getValueName(m_name));
         result.append('(');
-    } else
-        result.append(m_nameDeprecated); // Includes the '('
+    }
     if (m_args)
         result.append(m_args->cssText());
     result.append(')');
@@ -76,21 +67,6 @@ void CSSFunctionValue::append(Ref<CSSValue>&& value)
     if (!m_args)
         m_args = CSSValueList::createCommaSeparated();
     m_args->append(WTFMove(value));
-}
-    
-bool CSSFunctionValue::buildParserValueSubstitutingVariables(CSSParserValue* result, const CustomPropertyValueMap& customProperties) const
-{
-    result->id = CSSValueInvalid;
-    result->unit = CSSParserValue::Function;
-    result->function = new CSSParserFunction;
-    result->function->name.init(m_nameDeprecated);
-    bool success = true;
-    if (m_args) {
-        CSSParserValueList* argList = new CSSParserValueList;
-        success = m_args->buildParserValueListSubstitutingVariables(argList, customProperties);
-        result->function->args.reset(argList);
-    }
-    return success;
 }
 
 }

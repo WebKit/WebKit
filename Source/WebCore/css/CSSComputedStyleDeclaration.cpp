@@ -39,10 +39,10 @@
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSLineBoxContainValue.h"
-#include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
 #include "CSSShadowValue.h"
@@ -1008,7 +1008,7 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
     case FitContentTrackSizing: {
         auto fitContentTrackSize = CSSValueList::createCommaSeparated();
         fitContentTrackSize->append(zoomAdjustedPixelValueForLength(trackSize.fitContentTrackBreadth().length(), style));
-        return CSSFunctionValue::create("fit-content(", WTFMove(fitContentTrackSize));
+        return CSSFunctionValue::create(CSSValueFitContent, WTFMove(fitContentTrackSize));
     }
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
@@ -1018,7 +1018,7 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
         auto minMaxTrackBreadths = CSSValueList::createCommaSeparated();
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style));
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.maxTrackBreadth(), style));
-        return CSSFunctionValue::create("minmax(", WTFMove(minMaxTrackBreadths));
+        return CSSFunctionValue::create(CSSValueMinmax, WTFMove(minMaxTrackBreadths));
     }
 }
 

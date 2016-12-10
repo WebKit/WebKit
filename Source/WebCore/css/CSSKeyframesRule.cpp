@@ -113,8 +113,7 @@ void CSSKeyframesRule::appendRule(const String& ruleText)
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
     CSSParser parser(parserContext());
-    CSSStyleSheet* styleSheet = parentStyleSheet();
-    RefPtr<StyleKeyframe> keyframe = parser.parseKeyframeRule(styleSheet ? &styleSheet->contents() : nullptr, ruleText);
+    RefPtr<StyleKeyframe> keyframe = parser.parseKeyframeRule(ruleText);
     if (!keyframe)
         return;
 

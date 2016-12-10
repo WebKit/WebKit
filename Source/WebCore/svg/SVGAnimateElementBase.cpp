@@ -24,8 +24,8 @@
 #include "config.h"
 #include "SVGAnimateElementBase.h"
 
-#include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParser.h"
 #include "QualifiedName.h"
 #include "RenderObject.h"
 #include "SVGAnimatorFactory.h"
