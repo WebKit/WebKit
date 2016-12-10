@@ -46,7 +46,7 @@ EncodedJSValue JSC_HOST_CALL boundThisNoArgsFunctionCall(ExecState* exec)
     ExecutableBase* executable = targetFunction->executable();
     if (executable->hasJITCodeForCall()) {
         // Force the executable to cache its arity entrypoint.
-        executable->entrypointFor(CodeForCall, MustCheckArity);
+        executable->entrypointFor(CodeForCall, StackArgsMustCheckArity);
     }
     CallData callData;
     CallType callType = getCallData(targetFunction, callData);

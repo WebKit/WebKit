@@ -67,8 +67,8 @@ public:
         {
             for (unsigned i = 0; i < block->size(); i++) {
                 Node* node = block->at(i);
-                bool isPrimordialSetArgument = node->op() == SetArgument && node->local().isArgument() && node == m_graph.m_arguments[node->local().toArgument()];
-                if (node->op() == SetLocal || (node->op() == SetArgument && !isPrimordialSetArgument)) {
+                if ((node->op() == SetArgument || node->op() == SetLocal)
+                    && (!node->local().isArgument() || node != m_graph.m_argumentsOnStack[node->local().toArgument()])) {
                     VirtualRegister operand = node->local();
                     VariableAccessData* flushAccessData = currentBlockAccessData.operand(operand);
                     if (!flushAccessData)
@@ -117,7 +117,6 @@ public:
             if (initialAccessData.operand(operand))
                 continue;
 
-            DFG_ASSERT(m_graph, node, node->op() != SetLocal); // We should have inserted a Flush before this!
             initialAccessData.operand(operand) = node->variableAccessData();
             initialAccessNodes.operand(operand) = node;
         }

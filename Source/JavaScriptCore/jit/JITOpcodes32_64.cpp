@@ -46,7 +46,7 @@
 
 namespace JSC {
 
-JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
+JITEntryPointsWithRef JIT::privateCompileJITEntryNativeCall(VM* vm, NativeFunction func)
 {
     // FIXME: This should be able to log ShadowChicken prologue packets.
     // https://bugs.webkit.org/show_bug.cgi?id=155689
@@ -129,7 +129,9 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     LinkBuffer patchBuffer(*m_vm, *this, GLOBAL_THUNK_ID);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
-    return FINALIZE_CODE(patchBuffer, ("JIT CTI native call"));
+    JIT::CodeRef codeRef = FINALIZE_CODE(patchBuffer, ("JIT CTI native call"));
+    
+    return JITEntryPointsWithRef(codeRef, codeRef.code(), codeRef.code());
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)

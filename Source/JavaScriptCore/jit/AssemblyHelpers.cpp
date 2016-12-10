@@ -616,13 +616,13 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer()
 
 void AssemblyHelpers::emitDumbVirtualCall(CallLinkInfo* info)
 {
-    move(TrustedImmPtr(info), GPRInfo::regT2);
+    move(TrustedImmPtr(info), GPRInfo::nonArgGPR0);
     Call call = nearCall();
     addLinkTask(
         [=] (LinkBuffer& linkBuffer) {
-            MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&linkBuffer.vm(), *info);
-            info->setSlowStub(createJITStubRoutine(virtualThunk, linkBuffer.vm(), nullptr, true));
-            linkBuffer.link(call, CodeLocationLabel(virtualThunk.code()));
+            JITJSCallThunkEntryPointsWithRef virtualThunk = virtualThunkFor(&linkBuffer.vm(), *info);
+            info->setSlowStub(createJITStubRoutine(virtualThunk.codeRef(), linkBuffer.vm(), nullptr, true));
+            linkBuffer.link(call, CodeLocationLabel(virtualThunk.entryFor(StackArgs)));
         });
 }
 

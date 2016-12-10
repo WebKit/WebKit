@@ -63,6 +63,7 @@ namespace JSC {
         Jump emitJumpIfNotJSCell(RegisterID);
         Jump emitJumpIfNumber(RegisterID);
         Jump emitJumpIfNotNumber(RegisterID);
+        Jump emitJumpIfNotInt32(RegisterID reg);
         void emitTagInt(RegisterID src, RegisterID dest);
 #endif
 
@@ -163,12 +164,17 @@ namespace JSC {
         return branchTest64(NonZero, dst, tagMaskRegister);
     }
     
+    inline JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotInt32(RegisterID reg)
+    {
+        Jump result = branch64(Below, reg, tagTypeNumberRegister);
+        zeroExtend32ToPtr(reg, reg);
+        return result;
+    }
+
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst)
     {
         load64(addressFor(virtualRegisterIndex), dst);
-        Jump result = branch64(Below, dst, tagTypeNumberRegister);
-        zeroExtend32ToPtr(dst, dst);
-        return result;
+        return emitJumpIfNotInt32(dst);
     }
 
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch)

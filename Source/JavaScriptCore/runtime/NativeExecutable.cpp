@@ -63,8 +63,8 @@ void NativeExecutable::finishCreation(VM& vm, PassRefPtr<JITCode> callThunk, Pas
     Base::finishCreation(vm);
     m_jitCodeForCall = callThunk;
     m_jitCodeForConstruct = constructThunk;
-    m_jitCodeForCallWithArityCheck = m_jitCodeForCall->addressForCall(MustCheckArity);
-    m_jitCodeForConstructWithArityCheck = m_jitCodeForConstruct->addressForCall(MustCheckArity);
+    m_jitEntriesForCall.setEntryFor(StackArgsMustCheckArity, m_jitCodeForCall->addressForCall(StackArgsMustCheckArity));
+    m_jitEntriesForConstruct.setEntryFor(StackArgsMustCheckArity, m_jitCodeForConstruct->addressForCall(StackArgsMustCheckArity));
     m_name = name;
 }
 

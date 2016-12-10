@@ -42,10 +42,14 @@ EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void*, VM*, ProtoCallFrame*);
 
 namespace LLInt {
 
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM*);
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForRegisterCallEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForStackCallEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForRegisterConstructEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForStackConstructEntryThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForRegisterCallArityCheckThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForStackCallArityCheckThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForRegisterConstructArityCheckThunkGenerator(VM*);
+MacroAssemblerCodeRef functionForStackConstructArityCheckThunkGenerator(VM*);
 MacroAssemblerCodeRef evalEntryThunkGenerator(VM*);
 MacroAssemblerCodeRef programEntryThunkGenerator(VM*);
 MacroAssemblerCodeRef moduleProgramEntryThunkGenerator(VM*);

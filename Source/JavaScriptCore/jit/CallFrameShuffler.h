@@ -96,17 +96,37 @@ public:
     // contains information about where the
     // arguments/callee/callee-save registers are by taking into
     // account any spilling that acquireGPR() could have done.
-    CallFrameShuffleData snapshot() const
+    CallFrameShuffleData snapshot(ArgumentsLocation argumentsLocation) const
     {
         ASSERT(isUndecided());
 
         CallFrameShuffleData data;
         data.numLocals = numLocals();
-        data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
+#if USE(JSVALUE64)
+        data.argumentsInRegisters = argumentsLocation != StackArgs;
+#endif
+        if (argumentsLocation == StackArgs)
+            data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
+        else {
+            Reg reg { argumentRegisterForCallee() };
+            CachedRecovery* cachedRecovery { m_newRegisters[reg] };
+            data.callee = cachedRecovery->recovery();
+        }
         data.args.resize(argCount());
-        for (size_t i = 0; i < argCount(); ++i)
-            data.args[i] = getNew(virtualRegisterForArgument(i))->recovery();
+        for (size_t i = 0; i < argCount(); ++i) {
+            if (argumentsLocation == StackArgs || i >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
+                data.args[i] = getNew(virtualRegisterForArgument(i))->recovery();
+            else {
+                Reg reg { argumentRegisterForFunctionArgument(i) };
+                CachedRecovery* cachedRecovery { m_newRegisters[reg] };
+                data.args[i] = cachedRecovery->recovery();
+            }
+        }
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            if (reg.isGPR() && argumentsLocation != StackArgs
+                && GPRInfo::toArgumentIndex(reg.gpr()) < argumentRegisterIndexForJSFunctionArgument(argCount()))
+                continue;
+
             CachedRecovery* cachedRecovery { m_newRegisters[reg] };
             if (!cachedRecovery)
                 continue;
@@ -376,6 +396,9 @@ private:
 
     int m_alignedOldFrameSize;
     int m_alignedNewFrameSize;
+#if USE(JSVALUE64)
+    bool m_argumentsInRegisters;
+#endif
 
     // This is the distance, in slots, between the base of the new
     // frame and the base of the old frame. It could be negative when
@@ -641,9 +664,13 @@ private:
         ASSERT(jsValueRegs && !getNew(jsValueRegs));
         CachedRecovery* cachedRecovery = addCachedRecovery(recovery);
 #if USE(JSVALUE64)
-        if (cachedRecovery->wantedJSValueRegs())
-            m_newRegisters[cachedRecovery->wantedJSValueRegs().gpr()] = nullptr;
-        m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
+        if (cachedRecovery->wantedJSValueRegs()) {
+            if (recovery.isInGPR() && jsValueRegs.gpr() == recovery.gpr()) {
+                m_newRegisters[cachedRecovery->wantedJSValueRegs().gpr()] = nullptr;
+                m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
+            }
+        } else
+            m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
 #else
         if (JSValueRegs oldRegs { cachedRecovery->wantedJSValueRegs() }) {
             if (oldRegs.payloadGPR())
@@ -656,8 +683,7 @@ private:
         if (jsValueRegs.tagGPR() != InvalidGPRReg)
             m_newRegisters[jsValueRegs.tagGPR()] = cachedRecovery;
 #endif
-        ASSERT(!cachedRecovery->wantedJSValueRegs());
-        cachedRecovery->setWantedJSValueRegs(jsValueRegs);
+        cachedRecovery->addTargetJSValueRegs(jsValueRegs);
     }
 
     void addNew(FPRReg fpr, ValueRecovery recovery)
@@ -755,13 +781,23 @@ private:
         return reg <= dangerFrontier();
     }
 
+    void initDangerFrontier()
+    {
+        findDangerFrontierFrom(lastNew());
+    }
+
     void updateDangerFrontier()
+    {
+        findDangerFrontierFrom(m_dangerFrontier - 1);
+    }
+
+    void findDangerFrontierFrom(VirtualRegister nextReg)
     {
         ASSERT(!isUndecided());
 
         m_dangerFrontier = firstNew() - 1;
-        for (VirtualRegister reg = lastNew(); reg >= firstNew(); reg -= 1) {
-            if (!getNew(reg) || !isValidOld(newAsOld(reg)) || !getOld(newAsOld(reg)))
+        for (VirtualRegister reg = nextReg; reg >= firstNew(); reg -= 1) {
+            if (!isValidOld(newAsOld(reg)) || !getOld(newAsOld(reg)))
                 continue;
 
             m_dangerFrontier = reg;

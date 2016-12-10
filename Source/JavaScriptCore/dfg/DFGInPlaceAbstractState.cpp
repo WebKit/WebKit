@@ -106,11 +106,11 @@ void InPlaceAbstractState::initialize()
         if (m_graph.m_form == SSA)
             format = m_graph.m_argumentFormats[i];
         else {
-            Node* node = m_graph.m_arguments[i];
+            Node* node = m_graph.m_argumentsOnStack[i];
             if (!node)
                 format = FlushedJSValue;
             else {
-                ASSERT(node->op() == SetArgument);
+                ASSERT(node->op() == SetArgument || node->op() == SetLocal);
                 format = node->variableAccessData()->flushFormat();
             }
         }

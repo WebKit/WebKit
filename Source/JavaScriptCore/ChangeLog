@@ -1,3 +1,399 @@
+2016-12-09  Michael Saboff  <msaboff@apple.com>
+
+        JSVALUE64: Pass arguments in platform argument registers when making JavaScript calls
+        https://bugs.webkit.org/show_bug.cgi?id=160355
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements passing JavaScript function arguments in registers for 64 bit platforms.
+
+        The implemented convention follows the ABI conventions for the associated platform.
+        The first two arguments are the callee and argument count, the rest of the argument registers
+        contain "this" and following argument until all platform argument registers are exhausted.
+        Arguments beyond what fit in registers are placed on the stack in the same location as
+        before this patch.
+
+        For X86-64 non-Windows platforms, there are 6 argument registers specified in the related ABI.
+        ARM64 has had argument registers.  This allows for 4 or 6 parameter values to be placed in
+        registers on these respective platforms.  This patch doesn't implement passing arguments in
+        registers for 32 bit platform, since most platforms have at most 4 argument registers
+        specified and 32 bit platforms use two 32 bit registers/memory locations to store one JSValue.
+
+        The call frame on the stack in unchanged in format and the arguments that are passed in
+        registers use the corresponding call frame location as a spill location. Arguments can
+        also be passed on the stack. The LLInt, baseline JIT'ed code as well as the initial entry
+        from C++ code base arguments on the stack. DFG s and FTL generated code pass arguments
+        via registers. All callees can accept arguments either in registers or on the stack.
+        The callee is responsible for moving argument to its preferred location.
+
+        The multiple entry points to JavaSCript code is now handled via the JITEntryPoints class and
+        related code.  That class now has entries for StackArgsArityCheckNotRequired,
+        StackArgsMustCheckArity and for platforms that support registers arguments,
+        RegisterArgsArityCheckNotRequired, RegisterArgsMustCheckArity as well as and additional
+        RegisterArgsPossibleExtraArgs entry point when extra registers argument are passed.
+        This last case is needed to spill those extra arguments to the corresponding call frame
+        slots.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3Validate.cpp:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setUpCall):
+        (JSC::CallLinkInfo::argumentsLocation):
+        (JSC::CallLinkInfo::argumentsInRegisters):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        (JSC::DFG::CPSRethreadingPhase::specialCaseArguments):
+        (JSC::DFG::CPSRethreadingPhase::computeIsFlushed):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::initArgumentRegisterValue):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::needsFlushedThis):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInt32):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        (JSC::DFG::JITCompiler::compileEntry): Deleted.
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSDirectCall):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::JSDirectCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::hasSlowCall):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::JITFinalizer):
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlock):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRegularBlock):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRootBlock):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::accessesStack):
+        (JSC::DFG::Node::setVariableAccessData):
+        (JSC::DFG::Node::hasArgumentRegisterIndex):
+        (JSC::DFG::Node::argumentRegisterIndex):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::iterator::unlock):
+        (JSC::DFG::RegisterBank::unlockAtIndex):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::clearGenerationInfo):
+        (JSC::DFG::dumpRegisterInfo):
+        (JSC::DFG::SpeculativeJIT::dump):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::setupArgumentRegistersForEntry):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::allocate):
+        (JSC::DFG::SpeculativeJIT::spill):
+        (JSC::DFG::SpeculativeJIT::generationInfoFromVirtualRegister):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSC::DFG::JSValueOperand::gprUseSpecific):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::allocateRegister):
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::~JITCode):
+        (JSC::FTL::JITCode::initializeEntrypointThunk):
+        (JSC::FTL::JITCode::setEntryFor):
+        (JSC::FTL::JITCode::addressForCall):
+        (JSC::FTL::JITCode::executableAddressAtOffset):
+        (JSC::FTL::JITCode::initializeAddressForCall): Deleted.
+        (JSC::FTL::JITCode::initializeArityCheckEntrypoint): Deleted.
+        * ftl/FTLJITCode.h:
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArgumentRegister):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::argumentRegister):
+        (JSC::FTL::Output::argumentRegisterInt32):
+        * ftl/FTLOutput.h:
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitDumbVirtualCall):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::spillArgumentRegistersToFrameBeforePrologue):
+        (JSC::AssemblyHelpers::spillArgumentRegistersToFrame):
+        (JSC::AssemblyHelpers::fillArgumentRegistersFromFrameBeforePrologue):
+        (JSC::AssemblyHelpers::emitPutArgumentToCallFrameBeforePrologue):
+        (JSC::AssemblyHelpers::emitPutArgumentToCallFrame):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameHeaderBeforePrologue):
+        (JSC::AssemblyHelpers::emitGetFromCallFrameArgumentBeforePrologue):
+        (JSC::AssemblyHelpers::emitGetPayloadFromCallFrameHeaderBeforePrologue):
+        (JSC::AssemblyHelpers::incrementCounter):
+        * jit/CachedRecovery.cpp:
+        (JSC::CachedRecovery::addTargetJSValueRegs):
+        * jit/CachedRecovery.h:
+        (JSC::CachedRecovery::gprTargets):
+        (JSC::CachedRecovery::setWantedFPR):
+        (JSC::CachedRecovery::wantedJSValueRegs):
+        (JSC::CachedRecovery::setWantedJSValueRegs): Deleted.
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::dump):
+        (JSC::CallFrameShuffler::tryWrites):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot):
+        (JSC::CallFrameShuffler::addNew):
+        (JSC::CallFrameShuffler::initDangerFrontier):
+        (JSC::CallFrameShuffler::updateDangerFrontier):
+        (JSC::CallFrameShuffler::findDangerFrontierFrom):
+        * jit/CallFrameShuffler64.cpp:
+        (JSC::CallFrameShuffler::emitDisplace):
+        * jit/GPRInfo.h:
+        (JSC::JSValueRegs::operator==):
+        (JSC::JSValueRegs::operator!=):
+        (JSC::GPRInfo::toArgumentIndex):
+        (JSC::argumentRegisterFor):
+        (JSC::argumentRegisterForCallee):
+        (JSC::argumentRegisterForArgumentCount):
+        (JSC::argumentRegisterIndexForJSFunctionArgument):
+        (JSC::jsFunctionArgumentForArgumentRegister):
+        (JSC::argumentRegisterForFunctionArgument):
+        (JSC::numberOfRegisterArgumentsFor):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        (JSC::JIT::compileCTINativeCall): Deleted.
+        * jit/JIT.h:
+        (JSC::JIT::compileNativeCallEntryPoints):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::initializeEntryPoints):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::NativeJITCode::addressForCall):
+        (JSC::DirectJITCode::initializeCodeRef): Deleted.
+        * jit/JITCode.h:
+        (JSC::JITCode::executableAddress): Deleted.
+        * jit/JITEntryPoints.h: Added.
+        (JSC::JITEntryPoints::JITEntryPoints):
+        (JSC::JITEntryPoints::entryFor):
+        (JSC::JITEntryPoints::setEntryFor):
+        (JSC::JITEntryPoints::offsetOfEntryFor):
+        (JSC::JITEntryPoints::registerEntryTypeForArgumentCount):
+        (JSC::JITEntryPoints::registerEntryTypeForArgumentType):
+        (JSC::JITEntryPoints::clearEntries):
+        (JSC::JITEntryPoints::operator=):
+        (JSC::JITEntryPointsWithRef::JITEntryPointsWithRef):
+        (JSC::JITEntryPointsWithRef::codeRef):
+        (JSC::argumentsLocationFor):
+        (JSC::registerEntryPointTypeFor):
+        (JSC::entryPointTypeFor):
+        (JSC::thunkEntryPointTypeFor):
+        (JSC::JITJSCallThunkEntryPointsWithRef::JITJSCallThunkEntryPointsWithRef):
+        (JSC::JITJSCallThunkEntryPointsWithRef::entryFor):
+        (JSC::JITJSCallThunkEntryPointsWithRef::setEntryFor):
+        (JSC::JITJSCallThunkEntryPointsWithRef::offsetOfEntryFor):
+        (JSC::JITJSCallThunkEntryPointsWithRef::clearEntries):
+        (JSC::JITJSCallThunkEntryPointsWithRef::codeRef):
+        (JSC::JITJSCallThunkEntryPointsWithRef::operator=):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileJITEntryNativeCall):
+        (JSC::JIT::privateCompileCTINativeCall): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileJITEntryNativeCall):
+        (JSC::JIT::privateCompileCTINativeCall): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITThunks.cpp:
+        (JSC::JITThunks::jitEntryNativeCall):
+        (JSC::JITThunks::jitEntryNativeConstruct):
+        (JSC::JITThunks::jitEntryStub):
+        (JSC::JITThunks::jitCallThunkEntryStub):
+        (JSC::JITThunks::hostFunctionStub):
+        (JSC::JITThunks::ctiNativeCall): Deleted.
+        (JSC::JITThunks::ctiNativeConstruct): Deleted.
+        * jit/JITThunks.h:
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfNotInt32):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::argumentRegisters):
+        * jit/RegisterSet.h:
+        * jit/Repatch.cpp:
+        (JSC::linkSlowFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::checkJSStringArgument):
+        (JSC::SpecializedThunkJIT::linkFailureHere):
+        (JSC::SpecializedThunkJIT::finalize):
+        * jit/ThunkGenerator.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::createRegisterArgumentsSpillEntry):
+        (JSC::slowPathFor):
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkDirectCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::nativeCallGenerator):
+        (JSC::nativeTailCallGenerator):
+        (JSC::nativeTailCallWithoutSavedTagsGenerator):
+        (JSC::nativeConstructGenerator):
+        (JSC::stringCharLoadRegCall):
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+        (JSC::fromCharCodeThunkGenerator):
+        (JSC::clz32ThunkGenerator):
+        (JSC::sqrtThunkGenerator):
+        (JSC::floorThunkGenerator):
+        (JSC::ceilThunkGenerator):
+        (JSC::truncThunkGenerator):
+        (JSC::roundThunkGenerator):
+        (JSC::expThunkGenerator):
+        (JSC::logThunkGenerator):
+        (JSC::absThunkGenerator):
+        (JSC::imulThunkGenerator):
+        (JSC::randomThunkGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * jit/ThunkGenerators.h:
+        * jsc.cpp:
+        (jscmain):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::setUpCall):
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForRegisterCallEntryThunkGenerator):
+        (JSC::LLInt::functionForStackCallEntryThunkGenerator):
+        (JSC::LLInt::functionForRegisterConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForStackConstructEntryThunkGenerator):
+        (JSC::LLInt::functionForRegisterCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForStackCallArityCheckThunkGenerator):
+        (JSC::LLInt::functionForRegisterConstructArityCheckThunkGenerator):
+        (JSC::LLInt::functionForStackConstructArityCheckThunkGenerator):
+        (JSC::LLInt::functionForCallEntryThunkGenerator): Deleted.
+        (JSC::LLInt::functionForConstructEntryThunkGenerator): Deleted.
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator): Deleted.
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator): Deleted.
+        * llint/LLIntThunks.h:
+        * runtime/ArityCheckMode.h:
+        * runtime/ExecutableBase.cpp:
+        (JSC::ExecutableBase::clearCode):
+        * runtime/ExecutableBase.h:
+        (JSC::ExecutableBase::entrypointFor):
+        (JSC::ExecutableBase::offsetOfEntryFor):
+        (JSC::ExecutableBase::offsetOfJITCodeWithArityCheckFor): Deleted.
+        * runtime/JSBoundFunction.cpp:
+        (JSC::boundThisNoArgsFunctionCall):
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::thunkGeneratorForIntrinsic):
+        (JSC::VM::clearCounters):
+        (JSC::VM::dumpCounters):
+        * runtime/VM.h:
+        (JSC::VM::getJITEntryStub):
+        (JSC::VM::getJITCallThunkEntryStub):
+        (JSC::VM::addressOfCounter):
+        (JSC::VM::counterFor):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::importStubGenerator):
+
 2016-12-09  Keith Miller  <keith_miller@apple.com>
 
         Wasm should support call_indirect

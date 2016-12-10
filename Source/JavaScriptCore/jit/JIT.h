@@ -43,6 +43,7 @@
 #include "JITInlineCacheGenerator.h"
 #include "JITMathIC.h"
 #include "JSInterfaceJIT.h"
+#include "LowLevelInterpreter.h"
 #include "PCToCodeOriginMap.h"
 #include "UnusedPointer.h"
 
@@ -246,7 +247,15 @@ namespace JSC {
             jit.privateCompileHasIndexedProperty(byValInfo, returnAddress, arrayMode);
         }
 
-        static CodeRef compileCTINativeCall(VM*, NativeFunction);
+        static JITEntryPointsWithRef compileNativeCallEntryPoints(VM* vm, NativeFunction func)
+        {
+            if (!vm->canUseJIT()) {
+                CodeRef nativeCallRef = CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
+                return JITEntryPointsWithRef(nativeCallRef, nativeCallRef.code(), nativeCallRef.code());
+            }
+            JIT jit(vm, 0);
+            return jit.privateCompileJITEntryNativeCall(vm, func);
+        }
 
         static unsigned frameRegisterCountFor(CodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
@@ -266,8 +275,7 @@ namespace JSC {
 
         void privateCompileHasIndexedProperty(ByValInfo*, ReturnAddressPtr, JITArrayMode);
 
-        Label privateCompileCTINativeCall(VM*, bool isConstruct = false);
-        CodeRef privateCompileCTINativeCall(VM*, NativeFunction);
+        JITEntryPointsWithRef privateCompileJITEntryNativeCall(VM*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
         // Add a call out from JIT code, without an exception check.
@@ -949,8 +957,10 @@ namespace JSC {
         unsigned m_putByIdIndex;
         unsigned m_byValInstructionIndex;
         unsigned m_callLinkInfoIndex;
-        
-        Label m_arityCheck;
+
+        Label m_stackArgsArityOKEntry;
+        Label m_stackArgsWithArityCheck;
+        Label m_registerArgsWithArityCheck;
         std::unique_ptr<LinkBuffer> m_linkBuffer;
 
         std::unique_ptr<JITDisassembler> m_disassembler;

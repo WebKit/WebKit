@@ -101,7 +101,7 @@ public:
         {
             for (unsigned i = 0; i < block->size(); i++) {
                 Node* node = block->at(i);
-                bool isPrimordialSetArgument = node->op() == SetArgument && node->local().isArgument() && node == m_graph.m_arguments[node->local().toArgument()];
+                bool isPrimordialSetArgument = node->op() == SetArgument && node->local().isArgument() && node == m_graph.m_argumentsOnStack[node->local().toArgument()];
                 InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
                 if (inlineCallFrame)
                     seenInlineCallFrames.add(inlineCallFrame);

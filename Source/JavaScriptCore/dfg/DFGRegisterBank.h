@@ -236,6 +236,11 @@ public:
             return m_bank->isLockedAtIndex(m_index);
         }
 
+        void unlock() const
+        {
+            return m_bank->unlockAtIndex(m_index);
+        }
+        
         void release() const
         {
             m_bank->releaseAtIndex(m_index);
@@ -296,6 +301,13 @@ private:
     {
         ASSERT(index < NUM_REGS);
         return m_data[index].lockCount;
+    }
+
+    void unlockAtIndex(unsigned index)
+    {
+        ASSERT(index < NUM_REGS);
+        ASSERT(m_data[index].lockCount);
+        --m_data[index].lockCount;
     }
 
     VirtualRegister nameAtIndex(unsigned index) const

@@ -53,6 +53,7 @@ namespace JSC { namespace DFG {
     macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
     macro(GetCallee, NodeResultJS) \
     macro(GetArgumentCountIncludingThis, NodeResultInt32) \
+    macro(GetArgumentRegister, NodeResultJS /* | NodeMustGenerate */) \
     \
     /* Nodes for local variable access. These nodes are linked together using Phi nodes. */\
     /* Any two nodes that are part of the same Phi graph will share the same */\

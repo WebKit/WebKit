@@ -89,6 +89,16 @@ void Output::appendTo(LBasicBlock block)
     m_block = block;
 }
 
+LValue Output::argumentRegister(Reg reg)
+{
+    return m_block->appendNew<ArgumentRegValue>(m_proc, origin(), reg);
+}
+
+LValue Output::argumentRegisterInt32(Reg reg)
+{
+    return m_block->appendNew<ArgumentRegValue>(m_proc, origin(), reg, Int32);
+}
+
 LValue Output::framePointer()
 {
     return m_block->appendNew<B3::Value>(m_proc, B3::FramePointer, origin());

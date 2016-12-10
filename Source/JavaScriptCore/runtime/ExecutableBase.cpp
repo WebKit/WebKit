@@ -54,8 +54,8 @@ void ExecutableBase::clearCode()
 #if ENABLE(JIT)
     m_jitCodeForCall = nullptr;
     m_jitCodeForConstruct = nullptr;
-    m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
-    m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
+    m_jitEntriesForCall.clearEntries();
+    m_jitEntriesForConstruct.clearEntries();
 #endif
     m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
     m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;

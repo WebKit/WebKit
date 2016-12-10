@@ -104,6 +104,19 @@ public:
         ASSERT(format & DataFormatJS);
         initGPR(node, useCount, gpr, format);
     }
+
+    void initArgumentRegisterValue(Node* node, uint32_t useCount, GPRReg gpr, DataFormat registerFormat =  DataFormatJS)
+    {
+        m_node = node;
+        m_useCount = useCount;
+        m_registerFormat = registerFormat;
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+        u.gpr = gpr;
+        m_bornForOSR = false;
+        m_isConstant = false;
+        ASSERT(m_useCount);
+    }
 #elif USE(JSVALUE32_64)
     void initJSValue(Node* node, uint32_t useCount, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
     {

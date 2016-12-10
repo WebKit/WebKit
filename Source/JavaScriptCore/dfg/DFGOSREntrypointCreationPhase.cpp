@@ -112,16 +112,32 @@ public:
         // type checks to here.
         origin = target->at(0)->origin;
         
-        for (int argument = 0; argument < baseline->numParameters(); ++argument) {
+        for (unsigned argument = 0; argument < static_cast<unsigned>(baseline->numParameters()); ++argument) {
             Node* oldNode = target->variablesAtHead.argument(argument);
             if (!oldNode) {
-                // Just for sanity, always have a SetArgument even if it's not needed.
-                oldNode = m_graph.m_arguments[argument];
+                // Just for sanity, always have an argument node even if it's not needed.
+                oldNode = m_graph.m_argumentsForChecking[argument];
             }
-            Node* node = newRoot->appendNode(
-                m_graph, SpecNone, SetArgument, origin,
-                OpInfo(oldNode->variableAccessData()));
-            m_graph.m_arguments[argument] = node;
+            Node* node;
+            Node* stackNode;
+            if (argument < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
+                node = newRoot->appendNode(
+                    m_graph, SpecNone, GetArgumentRegister, origin,
+                    OpInfo(oldNode->variableAccessData()),
+                    OpInfo(argumentRegisterIndexForJSFunctionArgument(argument)));
+                stackNode = newRoot->appendNode(
+                    m_graph, SpecNone, SetLocal, origin,
+                    OpInfo(oldNode->variableAccessData()),
+                    Edge(node));
+            } else {
+                node = newRoot->appendNode(
+                    m_graph, SpecNone, SetArgument, origin,
+                    OpInfo(oldNode->variableAccessData()));
+                stackNode = node;
+            }
+
+            m_graph.m_argumentsForChecking[argument] = node;
+            m_graph.m_argumentsOnStack[argument] = stackNode;
         }
 
         for (int local = 0; local < baseline->m_numCalleeLocals; ++local) {

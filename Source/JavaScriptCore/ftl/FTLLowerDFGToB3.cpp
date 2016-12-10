@@ -196,6 +196,10 @@ public:
         m_proc.addFastConstant(m_tagTypeNumber->key());
         m_proc.addFastConstant(m_tagMask->key());
         
+        // Store out callee and argument count for possible OSR exit.
+        m_out.store64(m_out.argumentRegister(argumentRegisterForCallee()), addressFor(CallFrameSlot::callee));
+        m_out.store32(m_out.argumentRegisterInt32(argumentRegisterForArgumentCount()), payloadFor(CallFrameSlot::argumentCount));
+
         m_out.storePtr(m_out.constIntPtr(codeBlock()), addressFor(CallFrameSlot::codeBlock));
 
         // Stack Overflow Check.
@@ -247,20 +251,34 @@ public:
         // Check Arguments.
         availabilityMap().clear();
         availabilityMap().m_locals = Operands<Availability>(codeBlock()->numParameters(), 0);
+
+        Vector<Node*, 8> argumentNodes;
+        Vector<LValue, 8> argumentValues;
+
+        argumentNodes.resize(codeBlock()->numParameters());
+        argumentValues.resize(codeBlock()->numParameters());
+
+        m_highBlock = m_graph.block(0);
+
         for (unsigned i = codeBlock()->numParameters(); i--;) {
-            availabilityMap().m_locals.argument(i) =
-                Availability(FlushedAt(FlushedJSValue, virtualRegisterForArgument(i)));
-        }
-        m_node = nullptr;
-        m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
-        for (unsigned i = codeBlock()->numParameters(); i--;) {
-            Node* node = m_graph.m_arguments[i];
+            Node* node = m_graph.m_argumentsForChecking[i];
             VirtualRegister operand = virtualRegisterForArgument(i);
             
-            LValue jsValue = m_out.load64(addressFor(operand));
-            
+            LValue jsValue = nullptr;
+
             if (node) {
-                DFG_ASSERT(m_graph, node, operand == node->stackAccessData()->machineLocal);
+                if (i < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
+                    availabilityMap().m_locals.argument(i) = Availability(node);
+                    jsValue = m_out.argumentRegister(GPRInfo::toArgumentRegister(node->argumentRegisterIndex()));
+
+                    setJSValue(node, jsValue);
+                } else {
+                    availabilityMap().m_locals.argument(i) =
+                        Availability(FlushedAt(FlushedJSValue, operand));
+                    jsValue = m_out.load64(addressFor(virtualRegisterForArgument(i)));
+                }
+            
+                DFG_ASSERT(m_graph, node, node->hasArgumentRegisterIndex() || operand == node->stackAccessData()->machineLocal);
                 
                 // This is a hack, but it's an effective one. It allows us to do CSE on the
                 // primordial load of arguments. This assumes that the GetLocal that got put in
@@ -268,7 +286,21 @@ public:
                 // should hold true.
                 m_loadedArgumentValues.add(node, jsValue);
             }
+
+            argumentNodes[i] = node;
+            argumentValues[i] = jsValue;
+        }
+
+        m_node = nullptr;
+        m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
+        for (unsigned i = codeBlock()->numParameters(); i--;) {
+            Node* node = argumentNodes[i];
             
+            if (!node)
+                continue;
+
+            LValue jsValue = argumentValues[i];
+
             switch (m_graph.m_argumentFormats[i]) {
             case FlushedInt32:
                 speculate(BadType, jsValueValue(jsValue), node, isNotInt32(jsValue));
@@ -812,6 +844,9 @@ private:
             break;
         case GetArgumentCountIncludingThis:
             compileGetArgumentCountIncludingThis();
+            break;
+        case GetArgumentRegister:
+            compileGetArgumentRegister();
             break;
         case GetScope:
             compileGetScope();
@@ -5402,6 +5437,16 @@ private:
         setInt32(m_out.load32(payloadFor(CallFrameSlot::argumentCount)));
     }
     
+    void compileGetArgumentRegister()
+    {
+        // We might have already have a value for this node.
+        if (LValue value = m_loadedArgumentValues.get(m_node)) {
+            setJSValue(value);
+            return;
+        }
+        setJSValue(m_out.argumentRegister(GPRInfo::toArgumentRegister(m_node->argumentRegisterIndex())));
+    }
+    
     void compileGetScope()
     {
         setJSValue(m_out.loadPtr(lowCell(m_node->child1()), m_heaps.JSFunction_scope));
@@ -5814,9 +5859,10 @@ private:
         // the call.
         Vector<ConstrainedValue> arguments;
 
-        // Make sure that the callee goes into GPR0 because that's where the slow path thunks expect the
-        // callee to be.
-        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(GPRInfo::regT0)));
+        // Make sure that the callee goes into argumentRegisterForCallee() because that's where
+        // the slow path thunks expect the callee to be.
+        GPRReg calleeReg = argumentRegisterForCallee();
+        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(calleeReg)));
 
         auto addArgument = [&] (LValue value, VirtualRegister reg, int offset) {
             intptr_t offsetFromSP =
@@ -5824,10 +5870,16 @@ private:
             arguments.append(ConstrainedValue(value, ValueRep::stackArgument(offsetFromSP)));
         };
 
-        addArgument(jsCallee, VirtualRegister(CallFrameSlot::callee), 0);
-        addArgument(m_out.constInt32(numArgs), VirtualRegister(CallFrameSlot::argumentCount), PayloadOffset);
-        for (unsigned i = 0; i < numArgs; ++i)
-            addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgument(i), 0);
+        ArgumentsLocation argLocation = argumentsLocationFor(numArgs);
+        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(calleeReg)));
+        arguments.append(ConstrainedValue(m_out.constInt32(numArgs), ValueRep::reg(argumentRegisterForArgumentCount())));
+
+        for (unsigned i = 0; i < numArgs; ++i) {
+            if (i < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
+                arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 1 + i)), ValueRep::reg(argumentRegisterForFunctionArgument(i))));
+            else
+                addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgument(i), 0);
+        }
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendVector(arguments);
@@ -5856,9 +5908,11 @@ private:
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
 
+                incrementCounter(&jit, VM::FTLCaller);
+
                 CCallHelpers::DataLabelPtr targetToCheck;
                 CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
+                    CCallHelpers::NotEqual, calleeReg, targetToCheck,
                     CCallHelpers::TrustedImmPtr(0));
 
                 CCallHelpers::Call fastCall = jit.nearCall();
@@ -5866,13 +5920,13 @@ private:
 
                 slowPath.link(&jit);
 
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0);
                 CCallHelpers::Call slowCall = jit.nearCall();
                 done.link(&jit);
 
                 callLinkInfo->setUpCall(
                     node->op() == Construct ? CallLinkInfo::Construct : CallLinkInfo::Call,
-                    node->origin.semantic, GPRInfo::regT0);
+                    argLocation, node->origin.semantic, argumentRegisterForCallee());
 
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-params.proc().frameSize()),
@@ -5881,7 +5935,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            linkBuffer.vm().getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(callLinkInfo->argumentsLocation());
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
 
                         callLinkInfo->setCallLocations(
@@ -5925,20 +5979,38 @@ private:
         
         Vector<ConstrainedValue> arguments;
         
-        arguments.append(ConstrainedValue(jsCallee, ValueRep::SomeRegister));
+        // Make sure that the callee goes into argumentRegisterForCallee() because that's where
+        // the slow path thunks expect the callee to be.
+        GPRReg calleeReg = argumentRegisterForCallee();
+        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(calleeReg)));
         if (!isTail) {
             auto addArgument = [&] (LValue value, VirtualRegister reg, int offset) {
                 intptr_t offsetFromSP =
                     (reg.offset() - CallerFrameAndPC::sizeInRegisters) * sizeof(EncodedJSValue) + offset;
                 arguments.append(ConstrainedValue(value, ValueRep::stackArgument(offsetFromSP)));
             };
-            
+
+            arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(calleeReg)));
+#if ENABLE(CALLER_SPILLS_CALLEE)
             addArgument(jsCallee, VirtualRegister(CallFrameSlot::callee), 0);
+#endif
+            arguments.append(ConstrainedValue(m_out.constInt32(numPassedArgs), ValueRep::reg(argumentRegisterForArgumentCount())));
+#if ENABLE(CALLER_SPILLS_ARGCOUNT)
             addArgument(m_out.constInt32(numPassedArgs), VirtualRegister(CallFrameSlot::argumentCount), PayloadOffset);
-            for (unsigned i = 0; i < numPassedArgs; ++i)
-                addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgument(i), 0);
-            for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
-                addArgument(m_out.constInt64(JSValue::encode(jsUndefined())), virtualRegisterForArgument(i), 0);
+#endif
+            
+            for (unsigned i = 0; i < numPassedArgs; ++i) {
+                if (i < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
+                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 1 + i)), ValueRep::reg(argumentRegisterForFunctionArgument(i))));
+                else
+                    addArgument(lowJSValue(m_graph.varArgChild(node, 1 + i)), virtualRegisterForArgument(i), 0);
+            }
+            for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i) {
+                if (i < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
+                    arguments.append(ConstrainedValue(m_out.constInt64(JSValue::encode(jsUndefined())), ValueRep::reg(argumentRegisterForFunctionArgument(i))));
+                else
+                    addArgument(m_out.constInt64(JSValue::encode(jsUndefined())), virtualRegisterForArgument(i), 0);
+            }
         } else {
             for (unsigned i = 0; i < numPassedArgs; ++i)
                 arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 1 + i)), ValueRep::WarmAny));
@@ -5980,6 +6052,7 @@ private:
                     shuffleData.numLocals = state->jitCode->common.frameRegisterCount;
                     
                     RegisterSet toSave = params.unavailableRegisters();
+                    shuffleData.argumentsInRegisters = true;
                     shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatCell);
                     toSave.set(calleeGPR);
                     for (unsigned i = 0; i < numPassedArgs; ++i) {
@@ -5998,7 +6071,11 @@ private:
                     
                     CCallHelpers::PatchableJump patchableJump = jit.patchableJump();
                     CCallHelpers::Label mainPath = jit.label();
-                    
+
+                    incrementCounter(&jit, VM::FTLCaller);
+                    incrementCounter(&jit, VM::TailCall);
+                    incrementCounter(&jit, VM::DirectCall);
+
                     jit.store32(
                         CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
@@ -6019,7 +6096,7 @@ private:
                     jit.jump().linkTo(mainPath, &jit);
                     
                     callLinkInfo->setUpCall(
-                        CallLinkInfo::DirectTailCall, node->origin.semantic, InvalidGPRReg);
+                        CallLinkInfo::DirectTailCall, argumentsLocationFor(numPassedArgs), node->origin.semantic, InvalidGPRReg);
                     callLinkInfo->setExecutableDuringCompilation(executable);
                     if (numAllocatedArgs > numPassedArgs)
                         callLinkInfo->setMaxNumArguments(numAllocatedArgs);
@@ -6042,6 +6119,9 @@ private:
                 
                 CCallHelpers::Label mainPath = jit.label();
 
+                incrementCounter(&jit, VM::FTLCaller);
+                incrementCounter(&jit, VM::DirectCall);
+
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
@@ -6053,7 +6133,7 @@ private:
                 
                 callLinkInfo->setUpCall(
                     isConstruct ? CallLinkInfo::DirectConstruct : CallLinkInfo::DirectCall,
-                    node->origin.semantic, InvalidGPRReg);
+                    argumentsLocationFor(numPassedArgs), node->origin.semantic, InvalidGPRReg);
                 callLinkInfo->setExecutableDuringCompilation(executable);
                 if (numAllocatedArgs > numPassedArgs)
                     callLinkInfo->setMaxNumArguments(numAllocatedArgs);
@@ -6064,13 +6144,11 @@ private:
                         
                         CCallHelpers::Label slowPath = jit.label();
                         if (isX86())
-                            jit.pop(CCallHelpers::selectScratchGPR(calleeGPR));
-                        
-                        callOperation(
-                            *state, params.unavailableRegisters(), jit,
-                            node->origin.semantic, exceptions.get(), operationLinkDirectCall,
-                            InvalidGPRReg, CCallHelpers::TrustedImmPtr(callLinkInfo),
-                            calleeGPR).call();
+                            jit.pop(GPRInfo::nonArgGPR0);
+
+                        jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0); // Link info needs to be in nonArgGPR0
+                        CCallHelpers::Call slowCall = jit.nearCall();
+                        exceptions->append(jit.emitExceptionCheck(AssemblyHelpers::NormalExceptionCheck, AssemblyHelpers::FarJumpWidth));
                         jit.jump().linkTo(mainPath, &jit);
                         
                         jit.addLinkTask(
@@ -6079,6 +6157,9 @@ private:
                                 CodeLocationLabel slowPathLocation = linkBuffer.locationOf(slowPath);
                                 
                                 linkBuffer.link(call, slowPathLocation);
+                                MacroAssemblerCodePtr linkCall =
+                                    linkBuffer.vm().getJITCallThunkEntryStub(linkDirectCallThunkGenerator).entryFor(callLinkInfo->argumentsLocation());
+                                linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
                                 
                                 callLinkInfo->setCallLocations(
                                     CodeLocationLabel(),
@@ -6110,7 +6191,8 @@ private:
 
         Vector<ConstrainedValue> arguments;
 
-        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(GPRInfo::regT0)));
+        GPRReg calleeReg = argumentRegisterForCallee();
+        arguments.append(ConstrainedValue(jsCallee, ValueRep::reg(calleeReg)));
 
         for (unsigned i = 0; i < numArgs; ++i) {
             // Note: we could let the shuffler do boxing for us, but it's not super clear that this
@@ -6144,9 +6226,13 @@ private:
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
 
+                incrementCounter(&jit, VM::FTLCaller);
+                incrementCounter(&jit, VM::TailCall);
+
                 CallFrameShuffleData shuffleData;
+                shuffleData.argumentsInRegisters = true;
                 shuffleData.numLocals = state->jitCode->common.frameRegisterCount;
-                shuffleData.callee = ValueRecovery::inGPR(GPRInfo::regT0, DataFormatJS);
+                shuffleData.callee = ValueRecovery::inGPR(calleeReg, DataFormatJS);
 
                 for (unsigned i = 0; i < numArgs; ++i)
                     shuffleData.args.append(params[1 + i].recoveryForJSValue());
@@ -6157,7 +6243,7 @@ private:
 
                 CCallHelpers::DataLabelPtr targetToCheck;
                 CCallHelpers::Jump slowPath = jit.branchPtrWithPatch(
-                    CCallHelpers::NotEqual, GPRInfo::regT0, targetToCheck,
+                    CCallHelpers::NotEqual, calleeReg, targetToCheck,
                     CCallHelpers::TrustedImmPtr(0));
 
                 callLinkInfo->setFrameShuffleData(shuffleData);
@@ -6175,20 +6261,19 @@ private:
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallFrameShuffler slowPathShuffler(jit, shuffleData);
-                slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
                 slowPathShuffler.prepareForSlowPath();
 
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0);
                 CCallHelpers::Call slowCall = jit.nearCall();
 
                 jit.abortWithReason(JITDidReturnFromTailCall);
 
-                callLinkInfo->setUpCall(CallLinkInfo::TailCall, codeOrigin, GPRInfo::regT0);
+                callLinkInfo->setUpCall(CallLinkInfo::TailCall, argumentsLocationFor(numArgs), codeOrigin, calleeReg);
 
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            linkBuffer.vm().getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(callLinkInfo->argumentsLocation());
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
 
                         callLinkInfo->setCallLocations(
@@ -6278,6 +6363,7 @@ private:
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
+                ArgumentsLocation argumentsLocation = StackArgs;
 
                 RegisterSet usedRegisters = RegisterSet::allRegisters();
                 usedRegisters.exclude(RegisterSet::volatileRegistersForJSCall());
@@ -6427,7 +6513,7 @@ private:
                 if (isTailCall)
                     jit.emitRestoreCalleeSaves();
                 ASSERT(!usedRegisters.get(GPRInfo::regT2));
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0);
                 CCallHelpers::Call slowCall = jit.nearCall();
                 
                 if (isTailCall)
@@ -6435,7 +6521,7 @@ private:
                 else
                     done.link(&jit);
                 
-                callLinkInfo->setUpCall(callType, node->origin.semantic, GPRInfo::regT0);
+                callLinkInfo->setUpCall(callType, argumentsLocation, node->origin.semantic, GPRInfo::regT0);
 
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-originalStackHeight),
@@ -6444,7 +6530,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            linkBuffer.vm().getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(StackArgs);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
                         
                         callLinkInfo->setCallLocations(
@@ -6545,11 +6631,15 @@ private:
 
                 exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
 
+                incrementCounter(&jit, VM::FTLCaller);
+                incrementCounter(&jit, VM::CallVarargs);
+                
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
+                ArgumentsLocation argumentsLocation = StackArgs;
                 CallVarargsData* data = node->callVarargsData();
 
                 unsigned argIndex = 1;
@@ -6710,7 +6800,7 @@ private:
 
                 if (isTailCall)
                     jit.emitRestoreCalleeSaves();
-                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+                jit.move(CCallHelpers::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0);
                 CCallHelpers::Call slowCall = jit.nearCall();
                 
                 if (isTailCall)
@@ -6718,7 +6808,7 @@ private:
                 else
                     done.link(&jit);
                 
-                callLinkInfo->setUpCall(callType, node->origin.semantic, GPRInfo::regT0);
+                callLinkInfo->setUpCall(callType, argumentsLocation, node->origin.semantic, GPRInfo::regT0);
                 
                 jit.addPtr(
                     CCallHelpers::TrustedImm32(-originalStackHeight),
@@ -6727,7 +6817,7 @@ private:
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         MacroAssemblerCodePtr linkCall =
-                            linkBuffer.vm().getCTIStub(linkCallThunkGenerator).code();
+                            linkBuffer.vm().getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(StackArgs);
                         linkBuffer.link(slowCall, FunctionPtr(linkCall.executableAddress()));
                         
                         callLinkInfo->setCallLocations(
@@ -6796,13 +6886,16 @@ private:
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
                 
                 exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
-                
+
+                incrementCounter(&jit, VM::FTLCaller);
+                incrementCounter(&jit, VM::CallEval);
+
                 jit.store32(
                     CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                     CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
                 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
-                callLinkInfo->setUpCall(CallLinkInfo::Call, node->origin.semantic, GPRInfo::regT0);
+                callLinkInfo->setUpCall(CallLinkInfo::Call, StackArgs, node->origin.semantic, GPRInfo::regT0);
                 
                 jit.addPtr(CCallHelpers::TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), CCallHelpers::stackPointerRegister, GPRInfo::regT1);
                 jit.storePtr(GPRInfo::callFrameRegister, CCallHelpers::Address(GPRInfo::regT1, CallFrame::callerFrameOffset()));

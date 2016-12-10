@@ -299,14 +299,16 @@ private:
             // The rules for threaded CPS form:
             // 
             // Head variable: describes what is live at the head of the basic block.
-            // Head variable links may refer to Flush, PhantomLocal, Phi, or SetArgument.
-            // SetArgument may only appear in the root block.
+            // Head variable links may refer to Flush, PhantomLocal, Phi, GetArgumentRegister
+            // or SetArgument.
+            // GetArgumentRegister and SetArgument may only appear in the root block.
             //
             // Tail variable: the last thing that happened to the variable in the block.
-            // It may be a Flush, PhantomLocal, GetLocal, SetLocal, SetArgument, or Phi.
-            // SetArgument may only appear in the root block. Note that if there ever
-            // was a GetLocal to the variable, and it was followed by PhantomLocals and
-            // Flushes but not SetLocals, then the tail variable will be the GetLocal.
+            // It may be a Flush, PhantomLocal, GetLocal, SetLocal, GetArgumentRegister,
+            // SetArgument, or Phi. GetArgumentRegister and SetArgument may only appear
+            // in the root block. Note that if there ever was a GetLocal to the variable,
+            // and it was followed by PhantomLocals and Flushes but not SetLocals, then
+            // the tail variable will be the GetLocal.
             // This reflects the fact that you only care that the tail variable is a
             // Flush or PhantomLocal if nothing else interesting happened. Likewise, if
             // there ever was a SetLocal and it was followed by Flushes, then the tail
@@ -367,12 +369,13 @@ private:
     
     void specialCaseArguments()
     {
-        // Normally, a SetArgument denotes the start of a live range for a local's value on the stack.
-        // But those SetArguments used for the actual arguments to the machine CodeBlock get
-        // special-cased. We could have instead used two different node types - one for the arguments
-        // at the prologue case, and another for the other uses. But this seemed like IR overkill.
-        for (unsigned i = m_graph.m_arguments.size(); i--;)
-            m_graph.block(0)->variablesAtHead.setArgumentFirstTime(i, m_graph.m_arguments[i]);
+        // Normally, a SetArgument or SetLocal denotes the start of a live range for
+        // a local's value on the stack. But those SetArguments and SetLocals used
+        // for the actual arguments to the machine CodeBlock get special-cased. We could have
+        // instead used two different node types - one for the arguments at the prologue case,
+        // and another for the other uses. But this seemed like IR overkill.
+        for (unsigned i = m_graph.m_argumentsOnStack.size(); i--;)
+            m_graph.block(0)->variablesAtHead.setArgumentFirstTime(i, m_graph.m_argumentsOnStack[i]);
     }
     
     template<OperandKind operandKind>
@@ -480,6 +483,7 @@ private:
             switch (node->op()) {
             case SetLocal:
             case SetArgument:
+            case GetArgumentRegister:
                 break;
                 
             case Flush:

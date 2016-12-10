@@ -932,7 +932,7 @@ void SpeculativeJIT::emitCall(Node* node)
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
     
     CallLinkInfo* info = m_jit.codeBlock()->addCallLinkInfo();
-    info->setUpCall(callType, node->origin.semantic, calleePayloadGPR);
+    info->setUpCall(callType, StackArgs, node->origin.semantic, calleePayloadGPR);
     
     auto setResultAndResetStack = [&] () {
         GPRFlushedCallResult resultPayload(this);
@@ -1081,7 +1081,7 @@ void SpeculativeJIT::emitCall(Node* node)
             m_jit.emitRestoreCalleeSaves();
     }
 
-    m_jit.move(MacroAssembler::TrustedImmPtr(info), GPRInfo::regT2);
+    m_jit.move(MacroAssembler::TrustedImmPtr(info), GPRInfo::nonArgGPR0);
     JITCompiler::Call slowCall = m_jit.nearCall();
 
     done.link(&m_jit);
@@ -5624,6 +5624,7 @@ void SpeculativeJIT::compile(Node* node)
     case KillStack:
     case GetStack:
     case GetMyArgumentByVal:
+    case GetArgumentRegister:
     case GetMyArgumentByValOutOfBounds:
     case PhantomCreateRest:
     case PhantomSpread:

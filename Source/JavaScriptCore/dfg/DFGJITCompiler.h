@@ -217,6 +217,11 @@ public:
         m_jsDirectCalls.append(JSDirectCallRecord(call, slowPath, info));
     }
     
+    void addJSDirectCall(Call call, Call slowCall, Label slowPath, CallLinkInfo* info)
+    {
+        m_jsDirectCalls.append(JSDirectCallRecord(call, slowCall, slowPath, info));
+    }
+    
     void addJSDirectTailCall(PatchableJump patchableJump, Call call, Label slowPath, CallLinkInfo* info)
     {
         m_jsDirectTailCalls.append(JSDirectTailCallRecord(patchableJump, call, slowPath, info));
@@ -267,7 +272,6 @@ private:
     friend class OSRExitJumpPlaceholder;
     
     // Internal implementation to compile.
-    void compileEntry();
     void compileSetupRegistersForEntry();
     void compileEntryExecutionFlag();
     void compileBody();
@@ -318,7 +322,18 @@ private:
         {
         }
         
+        JSDirectCallRecord(Call call, Call slowCall, Label slowPath, CallLinkInfo* info)
+            : call(call)
+            , slowCall(slowCall)
+            , slowPath(slowPath)
+            , info(info)
+        {
+        }
+
+        bool hasSlowCall() { return slowCall.m_label.isSet(); }
+
         Call call;
+        Call slowCall;
         Label slowPath;
         CallLinkInfo* info;
     };
@@ -355,7 +370,12 @@ private:
     Vector<ExceptionHandlingOSRExitInfo> m_exceptionHandlerOSRExitCallSites;
     
     Call m_callArityFixup;
-    Label m_arityCheck;
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
+    Label m_registerArgsWithPossibleExtraArgs;
+    Label m_registerArgsWithArityCheck;
+    Label m_stackArgsArityOKEntry;
+#endif
+    Label m_stackArgsWithArityCheck;
     std::unique_ptr<SpeculativeJIT> m_speculative;
     PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 };

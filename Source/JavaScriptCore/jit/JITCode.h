@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "ArityCheckMode.h"
 #include "CallFrame.h"
 #include "CodeOrigin.h"
 #include "Disassembler.h"
+#include "JITEntryPoints.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"
@@ -173,9 +173,8 @@ public:
         return jitCode->jitType();
     }
     
-    virtual CodePtr addressForCall(ArityCheckMode) = 0;
+    virtual CodePtr addressForCall(EntryPointType) = 0;
     virtual void* executableAddressAtOffset(size_t offset) = 0;
-    void* executableAddress() { return executableAddressAtOffset(0); }
     virtual void* dataAddressAtOffset(size_t offset) = 0;
     virtual unsigned offsetOf(void* pointerIntoCode) = 0;
     
@@ -224,15 +223,15 @@ protected:
 class DirectJITCode : public JITCodeWithCodeRef {
 public:
     DirectJITCode(JITType);
-    DirectJITCode(CodeRef, CodePtr withArityCheck, JITType);
+    DirectJITCode(JITEntryPointsWithRef, JITType);
     virtual ~DirectJITCode();
     
-    void initializeCodeRef(CodeRef, CodePtr withArityCheck);
+    void initializeEntryPoints(JITEntryPointsWithRef);
 
-    CodePtr addressForCall(ArityCheckMode) override;
+    CodePtr addressForCall(EntryPointType) override;
 
 private:
-    CodePtr m_withArityCheck;
+    JITEntryPoints m_entryPoints;
 };
 
 class NativeJITCode : public JITCodeWithCodeRef {
@@ -243,7 +242,7 @@ public:
     
     void initializeCodeRef(CodeRef);
 
-    CodePtr addressForCall(ArityCheckMode) override;
+    CodePtr addressForCall(EntryPointType) override;
 };
 
 } // namespace JSC

@@ -66,14 +66,6 @@ void ctiPatchCallByReturnAddress(ReturnAddressPtr returnAddress, FunctionPtr new
         newCalleeFunction);
 }
 
-JIT::CodeRef JIT::compileCTINativeCall(VM* vm, NativeFunction func)
-{
-    if (!vm->canUseJIT())
-        return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
-    JIT jit(vm, 0);
-    return jit.privateCompileCTINativeCall(vm, func);
-}
-
 JIT::JIT(VM* vm, CodeBlock* codeBlock)
     : JSInterfaceJIT(vm, codeBlock)
     , m_interpreter(vm->interpreter)
@@ -579,6 +571,20 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     if (m_randomGenerator.getUint32() & 1)
         nop();
 
+#if USE(JSVALUE64)
+    spillArgumentRegistersToFrameBeforePrologue(static_cast<unsigned>(m_codeBlock->numParameters()));
+    incrementCounter(this, VM::RegArgsNoArity);
+#if ENABLE(VM_COUNTERS)
+    Jump continueStackEntry = jump();
+#endif
+#endif
+    m_stackArgsArityOKEntry = label();
+    incrementCounter(this, VM::StackArgsNoArity);
+
+#if USE(JSVALUE64) && ENABLE(VM_COUNTERS)
+    continueStackEntry.link(this);
+#endif
+
     emitFunctionPrologue();
     emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
@@ -635,13 +641,29 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
 
     if (m_codeBlock->codeType() == FunctionCode) {
-        m_arityCheck = label();
+        m_registerArgsWithArityCheck = label();
+
+        incrementCounter(this, VM::RegArgsArity);
+
+        spillArgumentRegistersToFrameBeforePrologue();
+
+#if ENABLE(VM_COUNTERS)
+        Jump continueStackArityEntry = jump();
+#endif
+
+        m_stackArgsWithArityCheck = label();
+        incrementCounter(this, VM::StackArgsArity);
+#if ENABLE(VM_COUNTERS)
+        continueStackArityEntry.link(this);
+#endif
         store8(TrustedImm32(0), &m_codeBlock->m_shouldAlwaysBeInlined);
         emitFunctionPrologue();
         emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
 
         load32(payloadFor(CallFrameSlot::argumentCount), regT1);
         branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
+
+        incrementCounter(this, VM::ArityFixupRequired);
 
         m_bytecodeOffset = 0;
 
@@ -778,9 +800,14 @@ CompilationResult JIT::link()
     }
     m_codeBlock->setJITCodeMap(jitCodeMapEncoder.finish());
 
-    MacroAssemblerCodePtr withArityCheck;
-    if (m_codeBlock->codeType() == FunctionCode)
-        withArityCheck = patchBuffer.locationOf(m_arityCheck);
+    MacroAssemblerCodePtr stackEntryArityOKPtr = patchBuffer.locationOf(m_stackArgsArityOKEntry);
+    
+    MacroAssemblerCodePtr registerEntryWithArityCheckPtr;
+    MacroAssemblerCodePtr stackEntryWithArityCheckPtr;
+    if (m_codeBlock->codeType() == FunctionCode) {
+        registerEntryWithArityCheckPtr = patchBuffer.locationOf(m_registerArgsWithArityCheck);
+        stackEntryWithArityCheckPtr = patchBuffer.locationOf(m_stackArgsWithArityCheck);
+    }
 
     if (Options::dumpDisassembly()) {
         m_disassembler->dump(patchBuffer);
@@ -804,8 +831,20 @@ CompilationResult JIT::link()
         static_cast<double>(m_instructions.size()));
 
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
+    JITEntryPoints entrypoints(result.code(), registerEntryWithArityCheckPtr, registerEntryWithArityCheckPtr, stackEntryArityOKPtr, stackEntryWithArityCheckPtr);
+
+    unsigned numParameters = static_cast<unsigned>(m_codeBlock->numParameters());
+    for (unsigned argCount = 1; argCount <= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argCount++) {
+        MacroAssemblerCodePtr entry;
+        if (argCount == numParameters)
+            entry = result.code();
+        else
+            entry = registerEntryWithArityCheckPtr;
+        entrypoints.setEntryFor(JITEntryPoints::registerEntryTypeForArgumentCount(argCount), entry);
+    }
+
     m_codeBlock->setJITCode(
-        adoptRef(new DirectJITCode(result, withArityCheck, JITCode::BaselineJIT)));
+        adoptRef(new DirectJITCode(JITEntryPointsWithRef(result, entrypoints), JITCode::BaselineJIT)));
 
 #if ENABLE(JIT_VERBOSE)
     dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());

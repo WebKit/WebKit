@@ -294,7 +294,6 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         for (unsigned i = 0; i < data.variants.size(); ++i)
             out.print(comma, inContext(data.variants[i], context));
     }
-    ASSERT(node->hasVariableAccessData(*this) == node->accessesStack(*this));
     if (node->hasVariableAccessData(*this)) {
         VariableAccessData* variableAccessData = node->tryGetVariableAccessData();
         if (variableAccessData) {
@@ -373,6 +372,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
             out.print(comma, inContext(data->cases[i].value, context), ":", data->cases[i].target);
         out.print(comma, "default:", data->fallThrough);
     }
+    if (node->hasArgumentRegisterIndex())
+        out.print(comma, node->argumentRegisterIndex(), "(", GPRInfo::toArgumentRegister(node->argumentRegisterIndex()), ")");
     ClobberSet reads;
     ClobberSet writes;
     addReadsAndWrites(*this, node, reads, writes);
@@ -396,7 +397,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         out.print(comma, "WasHoisted");
     out.print(")");
 
-    if (node->accessesStack(*this) && node->tryGetVariableAccessData())
+    if ((node->accessesStack(*this) || node->op() == GetArgumentRegister) && node->tryGetVariableAccessData())
         out.print("  predicting ", SpeculationDump(node->tryGetVariableAccessData()->prediction()));
     else if (node->hasHeapPrediction())
         out.print("  predicting ", SpeculationDump(node->getHeapPrediction()));
@@ -506,8 +507,10 @@ void Graph::dump(PrintStream& out, DumpContext* context)
     out.print("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
     if (m_form == SSA)
         out.print("  Argument formats: ", listDump(m_argumentFormats), "\n");
-    else
-        out.print("  Arguments: ", listDump(m_arguments), "\n");
+    else {
+        out.print("  Arguments for checking: ", listDump(m_argumentsForChecking), "\n");
+        out.print("  Arguments on stack: ", listDump(m_argumentsOnStack), "\n");
+    }
     out.print("\n");
     
     Node* lastNode = nullptr;
@@ -1620,13 +1623,13 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
         if (!currentNode || node->origin != currentNode->origin) {
             CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
 
-            if (node->accessesStack(*this)) {
+            if (node->accessesStack(*this) || node->op() == GetArgumentRegister) {
                 ValueProfile* result = [&] () -> ValueProfile* {
                     if (!node->local().isArgument())
                         return nullptr;
                     int argument = node->local().toArgument();
-                    Node* argumentNode = m_arguments[argument];
-                    if (!argumentNode)
+                    Node* argumentNode = m_argumentsOnStack[argument];
+                    if (!argumentNode || !argumentNode->accessesStack(*this))
                         return nullptr;
                     if (node->variableAccessData() != argumentNode->variableAccessData())
                         return nullptr;

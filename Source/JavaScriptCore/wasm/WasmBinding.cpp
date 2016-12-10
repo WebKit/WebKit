@@ -133,7 +133,7 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
         }
     }
 
-    GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
+    GPRReg importJSCellGPRReg = argumentRegisterForCallee();
     ASSERT(!wasmCC.m_calleeSaveRegisters.get(importJSCellGPRReg));
 
     // Each JS -> wasm entry sets the WebAssembly.Instance whose export is being called. We're calling out of this Instance, and can therefore figure out the import being called.
@@ -148,15 +148,14 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     // FIXME Tail call if the wasm return type is void and no registers were spilled. https://bugs.webkit.org/show_bug.cgi?id=165488
 
     CallLinkInfo* callLinkInfo = callLinkInfos.add();
-    callLinkInfo->setUpCall(CallLinkInfo::Call, CodeOrigin(), importJSCellGPRReg);
+    callLinkInfo->setUpCall(CallLinkInfo::Call, StackArgs, CodeOrigin(), importJSCellGPRReg);
     JIT::DataLabelPtr targetToCheck;
     JIT::TrustedImmPtr initialRightValue(0);
     JIT::Jump slowPath = jit.branchPtrWithPatch(MacroAssembler::NotEqual, importJSCellGPRReg, targetToCheck, initialRightValue);
     JIT::Call fastCall = jit.nearCall();
     JIT::Jump done = jit.jump();
     slowPath.link(&jit);
-    // Callee needs to be in regT0 here.
-    jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::regT2); // Link info needs to be in regT2.
+    jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0); // Link info needs to be in nonArgGPR0
     JIT::Call slowCall = jit.nearCall();
     done.link(&jit);
 
@@ -224,7 +223,7 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     jit.ret();
 
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-    patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
+    patchBuffer.link(slowCall, FunctionPtr(vm->getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(StackArgs).executableAddress()));
     CodeLocationLabel callReturnLocation(patchBuffer.locationOfNearCall(slowCall));
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);

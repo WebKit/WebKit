@@ -37,11 +37,12 @@
 
 namespace JSC { namespace DFG {
 
-JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, std::unique_ptr<LinkBuffer> linkBuffer, MacroAssemblerCodePtr withArityCheck)
+JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode,
+    std::unique_ptr<LinkBuffer> linkBuffer, JITEntryPoints& entrypoints)
     : Finalizer(plan)
     , m_jitCode(jitCode)
     , m_linkBuffer(WTFMove(linkBuffer))
-    , m_withArityCheck(withArityCheck)
+    , m_entrypoints(entrypoints)
 {
 }
 
@@ -56,9 +57,8 @@ size_t JITFinalizer::codeSize()
 
 bool JITFinalizer::finalize()
 {
-    m_jitCode->initializeCodeRef(
-        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data())),
-        MacroAssemblerCodePtr());
+    MacroAssemblerCodeRef codeRef = FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data()));
+    m_jitCode->initializeEntryPoints(JITEntryPointsWithRef(codeRef, m_entrypoints));
     
     m_plan.codeBlock->setJITCode(m_jitCode);
     
@@ -69,10 +69,11 @@ bool JITFinalizer::finalize()
 
 bool JITFinalizer::finalizeFunction()
 {
-    RELEASE_ASSERT(!m_withArityCheck.isEmptyValue());
-    m_jitCode->initializeCodeRef(
-        FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data())),
-        m_withArityCheck);
+    RELEASE_ASSERT(!m_entrypoints.entryFor(StackArgsMustCheckArity).isEmptyValue());
+    MacroAssemblerCodeRef codeRef = FINALIZE_DFG_CODE(*m_linkBuffer, ("DFG JIT code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::DFGJIT)).data()));
+
+    m_jitCode->initializeEntryPoints(JITEntryPointsWithRef(codeRef, m_entrypoints));
+
     m_plan.codeBlock->setJITCode(m_jitCode);
     
     finalizeCommon();

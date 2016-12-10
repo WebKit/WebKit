@@ -828,6 +828,9 @@ public:
     bool hasVariableAccessData(Graph&);
     bool accessesStack(Graph& graph)
     {
+        if (op() == GetArgumentRegister)
+            return false;
+
         return hasVariableAccessData(graph);
     }
     
@@ -844,6 +847,11 @@ public:
     VariableAccessData* variableAccessData()
     {
         return m_opInfo.as<VariableAccessData*>()->find();
+    }
+    
+    void setVariableAccessData(VariableAccessData* variable)
+    {
+        m_opInfo = variable;
     }
     
     VirtualRegister local()
@@ -1212,6 +1220,17 @@ public:
     SpeculatedType speculatedTypeForQuery()
     {
         return speculationFromJSType(queriedType());
+    }
+    
+    bool hasArgumentRegisterIndex()
+    {
+        return op() == GetArgumentRegister;
+    }
+    
+    unsigned argumentRegisterIndex()
+    {
+        ASSERT(hasArgumentRegisterIndex());
+        return m_opInfo2.as<unsigned>();
     }
     
     bool hasResult()

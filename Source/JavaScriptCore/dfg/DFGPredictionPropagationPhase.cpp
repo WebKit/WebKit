@@ -168,6 +168,16 @@ private:
             break;
         }
 
+        case GetArgumentRegister: {
+            VariableAccessData* variable = node->variableAccessData();
+            SpeculatedType prediction = variable->prediction();
+            if (!variable->couldRepresentInt52() && (prediction & SpecInt52Only))
+                prediction = (prediction | SpecAnyIntAsDouble) & ~SpecInt52Only;
+            if (prediction)
+                changed |= mergePrediction(prediction);
+            break;
+        }
+            
         case UInt32ToNumber: {
             if (node->canSpeculateInt32(m_pass))
                 changed |= mergePrediction(SpecInt32Only);
@@ -968,6 +978,7 @@ private:
 
         case GetLocal:
         case SetLocal:
+        case GetArgumentRegister:
         case UInt32ToNumber:
         case ValueAdd:
         case ArithAdd:

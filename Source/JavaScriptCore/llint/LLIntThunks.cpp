@@ -51,10 +51,19 @@ EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void* code, VM* vm, ProtoCallFram
 
 namespace LLInt {
 
-static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind)
+enum ShouldCreateRegisterEntry { CreateRegisterEntry, DontCreateRegisterEntry };
+
+static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), const char *thunkKind, ShouldCreateRegisterEntry shouldCreateRegisterEntry = DontCreateRegisterEntry)
 {
     JSInterfaceJIT jit(vm);
-    
+
+#if USE(JSVALUE64)
+    if (shouldCreateRegisterEntry == CreateRegisterEntry)
+        jit.spillArgumentRegistersToFrameBeforePrologue();
+#else
+    UNUSED_PARAM(shouldCreateRegisterEntry);
+#endif
+
     // FIXME: there's probably a better way to do it on X86, but I'm not sure I care.
     jit.move(JSInterfaceJIT::TrustedImmPtr(bitwise_cast<void*>(target)), JSInterfaceJIT::regT0);
     jit.jump(JSInterfaceJIT::regT0);
@@ -63,24 +72,44 @@ static MacroAssemblerCodeRef generateThunkWithJumpTo(VM* vm, void (*target)(), c
     return FINALIZE_CODE(patchBuffer, ("LLInt %s prologue thunk", thunkKind));
 }
 
-MacroAssemblerCodeRef functionForCallEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef functionForRegisterCallEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_prologue), "function for call");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_prologue), "function for register args call", CreateRegisterEntry);
 }
 
-MacroAssemblerCodeRef functionForConstructEntryThunkGenerator(VM* vm)
+MacroAssemblerCodeRef functionForStackCallEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_prologue), "function for construct");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_prologue), "function for stack args call");
 }
 
-MacroAssemblerCodeRef functionForCallArityCheckThunkGenerator(VM* vm)
+MacroAssemblerCodeRef functionForRegisterConstructEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_arity_check), "function for call with arity check");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_prologue), "function for register args construct", CreateRegisterEntry);
 }
 
-MacroAssemblerCodeRef functionForConstructArityCheckThunkGenerator(VM* vm)
+MacroAssemblerCodeRef functionForStackConstructEntryThunkGenerator(VM* vm)
 {
-    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_arity_check), "function for construct with arity check");
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_prologue), "function for stack args construct");
+}
+
+MacroAssemblerCodeRef functionForRegisterCallArityCheckThunkGenerator(VM* vm)
+{
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_arity_check), "function for register args call with arity check", CreateRegisterEntry);
+}
+
+MacroAssemblerCodeRef functionForStackCallArityCheckThunkGenerator(VM* vm)
+{
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_call_arity_check), "function for stack args call with arity check");
+}
+
+MacroAssemblerCodeRef functionForRegisterConstructArityCheckThunkGenerator(VM* vm)
+{
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_arity_check), "function for register args construct with arity check", CreateRegisterEntry);
+}
+
+MacroAssemblerCodeRef functionForStackConstructArityCheckThunkGenerator(VM* vm)
+{
+    return generateThunkWithJumpTo(vm, LLInt::getCodeFunctionPtr(llint_function_for_construct_arity_check), "function for stack args construct with arity check");
 }
 
 MacroAssemblerCodeRef evalEntryThunkGenerator(VM* vm)

@@ -1,3 +1,24 @@
+2016-12-09  Michael Saboff  <msaboff@apple.com>
+
+        JSVALUE64: Pass arguments in platform argument registers when making JavaScript calls
+        https://bugs.webkit.org/show_bug.cgi?id=160355
+
+        Reviewed by Filip Pizlo.
+
+        New microbenchmarks to measure call type performance.
+
+        * microbenchmarks/calling-computed-args.js: Added.
+        * microbenchmarks/calling-many-callees.js: Added.
+        * microbenchmarks/calling-one-callee-fixed.js: Added.
+        * microbenchmarks/calling-one-callee.js: Added.
+        * microbenchmarks/calling-poly-callees.js: Added.
+        * microbenchmarks/calling-poly-extra-arity-callees.js: Added.
+        * microbenchmarks/calling-tailcall.js: Added.
+        * microbenchmarks/calling-virtual-arity-fixup-callees.js: Added.
+        * microbenchmarks/calling-virtual-arity-fixup-stackargs.js: Added.
+        * microbenchmarks/calling-virtual-callees.js: Added.
+        * microbenchmarks/calling-virtual-extra-arity-callees.js: Added.
+
 2016-12-09  Keith Miller  <keith_miller@apple.com>
 
         Wasm should support call_indirect

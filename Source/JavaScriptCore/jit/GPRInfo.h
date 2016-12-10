@@ -69,8 +69,8 @@ public:
     bool operator!() const { return m_gpr == InvalidGPRReg; }
     explicit operator bool() const { return m_gpr != InvalidGPRReg; }
 
-    bool operator==(JSValueRegs other) { return m_gpr == other.m_gpr; }
-    bool operator!=(JSValueRegs other) { return !(*this == other); }
+    bool operator==(JSValueRegs other) const { return m_gpr == other.m_gpr; }
+    bool operator!=(JSValueRegs other) const { return !(*this == other); }
     
     GPRReg gpr() const { return m_gpr; }
     GPRReg tagGPR() const { return InvalidGPRReg; }
@@ -331,6 +331,7 @@ private:
 
 #if CPU(X86)
 #define NUMBER_OF_ARGUMENT_REGISTERS 0u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS 0u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
@@ -353,6 +354,7 @@ public:
     static const GPRReg argumentGPR2 = X86Registers::eax; // regT0
     static const GPRReg argumentGPR3 = X86Registers::ebx; // regT3
     static const GPRReg nonArgGPR0 = X86Registers::esi; // regT4
+    static const GPRReg nonArgGPR1 = X86Registers::edi; // regT5
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::ecx;
@@ -379,6 +381,14 @@ public:
         return result;
     }
 
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 8);
+        static const unsigned indexForArgumentRegister[8] = { 2, 0, 1, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+        return indexForArgumentRegister[reg];
+    }
+
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -399,9 +409,11 @@ public:
 #if !OS(WINDOWS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 6u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 5u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS (NUMBER_OF_ARGUMENT_REGISTERS - 2u)
 #else
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 7u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS 0u
 #endif
 
 class GPRInfo {
@@ -464,6 +476,7 @@ public:
     static const GPRReg argumentGPR3 = X86Registers::r9; // regT3
 #endif
     static const GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
+    static const GPRReg nonArgGPR1 = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR = X86Registers::eax; // regT0
     static const GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
     static const GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
@@ -508,6 +521,18 @@ public:
         return indexForRegister[reg];
     }
 
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 16);
+#if !OS(WINDOWS)
+        static const unsigned indexForArgumentRegister[16] = { InvalidIndex, 3, 2, InvalidIndex, InvalidIndex, InvalidIndex, 1, 0, 4, 5, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+#else
+        static const unsigned indexForArgumentRegister[16] = { InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 2, 3, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+#endif
+        return indexForArgumentRegister[reg];
+    }
+    
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -538,6 +563,7 @@ public:
 
 #if CPU(ARM)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS 0u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
@@ -601,6 +627,15 @@ public:
         return result;
     }
 
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(static_cast<int>(reg) < 16);
+        if (reg > argumentGPR3)
+            return InvalidIndex;
+        return (unsigned)reg;
+    }
+    
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
@@ -621,6 +656,7 @@ public:
 
 #if CPU(ARM64)
 #define NUMBER_OF_ARGUMENT_REGISTERS 8u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS (NUMBER_OF_ARGUMENT_REGISTERS - 2u)
 // Callee Saves includes x19..x28 and FP registers q8..q15
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 18u
 
@@ -698,6 +734,7 @@ public:
     COMPILE_ASSERT(ARM64Registers::q13 == 13, q13_is_13);
     COMPILE_ASSERT(ARM64Registers::q14 == 14, q14_is_14);
     COMPILE_ASSERT(ARM64Registers::q15 == 15, q15_is_15);
+
     static GPRReg toRegister(unsigned index)
     {
         return (GPRReg)index;
@@ -713,6 +750,14 @@ public:
     {
         ASSERT(index < numberOfArgumentRegisters);
         return toRegister(index);
+    }
+
+    static unsigned toArgumentIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        if (reg > argumentGPR7)
+            return InvalidIndex;
+        return (unsigned)reg;
     }
 
     static const char* debugName(GPRReg reg)
@@ -746,6 +791,7 @@ public:
 
 #if CPU(MIPS)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS 0u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
@@ -773,6 +819,7 @@ public:
     static const GPRReg argumentGPR2 = MIPSRegisters::a2;
     static const GPRReg argumentGPR3 = MIPSRegisters::a3;
     static const GPRReg nonArgGPR0 = regT4;
+    static const GPRReg nonArgGPR1 = regT5;
     static const GPRReg returnValueGPR = regT0;
     static const GPRReg returnValueGPR2 = regT1;
     static const GPRReg nonPreservedNonReturnGPR = regT2;
@@ -825,6 +872,7 @@ public:
 
 #if CPU(SH4)
 #define NUMBER_OF_ARGUMENT_REGISTERS 4u
+#define NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS 0u
 #define NUMBER_OF_CALLEE_SAVES_REGISTERS 0u
 
 class GPRInfo {
@@ -855,6 +903,7 @@ public:
     static const GPRReg argumentGPR2 = SH4Registers::r6; // regT2
     static const GPRReg argumentGPR3 = SH4Registers::r7; // regT3
     static const GPRReg nonArgGPR0 = regT4;
+    static const GPRReg nonArgGPR1 = regT5;
     static const GPRReg returnValueGPR = regT0;
     static const GPRReg returnValueGPR2 = regT1;
     static const GPRReg nonPreservedNonReturnGPR = regT2;
@@ -890,6 +939,73 @@ public:
 };
 
 #endif // CPU(SH4)
+
+inline GPRReg argumentRegisterFor(unsigned argumentIndex)
+{
+#if NUMBER_OF_ARGUMENT_REGISTERS
+    if (argumentIndex >= NUMBER_OF_ARGUMENT_REGISTERS)
+        return InvalidGPRReg;
+    return GPRInfo::toArgumentRegister(argumentIndex);
+#else
+    UNUSED_PARAM(argumentIndex);
+    RELEASE_ASSERT_NOT_REACHED();
+    return InvalidGPRReg;
+#endif
+}
+
+inline GPRReg argumentRegisterForCallee()
+{
+#if NUMBER_OF_ARGUMENT_REGISTERS
+    return argumentRegisterFor(0);
+#else
+    return GPRInfo::regT0;
+#endif
+}
+
+inline GPRReg argumentRegisterForArgumentCount()
+{
+    return argumentRegisterFor(1);
+}
+
+inline unsigned argumentRegisterIndexForJSFunctionArgument(unsigned argument)
+{
+    return argument + 2;
+}
+
+inline unsigned jsFunctionArgumentForArgumentRegisterIndex(unsigned index)
+{
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS > 0
+    ASSERT(index >= 2);
+    return index - 2;
+#else
+    UNUSED_PARAM(index);
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+#endif
+}
+
+inline unsigned jsFunctionArgumentForArgumentRegister(GPRReg gpr)
+{
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS > 0
+    unsigned argumentRegisterIndex = GPRInfo::toArgumentIndex(gpr);
+    ASSERT(argumentRegisterIndex != GPRInfo::InvalidIndex);
+    return jsFunctionArgumentForArgumentRegisterIndex(argumentRegisterIndex);
+#else
+    UNUSED_PARAM(gpr);
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+#endif
+}
+
+inline GPRReg argumentRegisterForFunctionArgument(unsigned argumentIndex)
+{
+    return argumentRegisterFor(argumentRegisterIndexForJSFunctionArgument(argumentIndex));
+}
+
+inline unsigned numberOfRegisterArgumentsFor(unsigned argumentCount)
+{
+    return std::min(argumentCount, NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS);
+}
 
 // The baseline JIT uses "accumulator" style execution with regT0 (for 64-bit)
 // and regT0 + regT1 (for 32-bit) serving as the accumulator register(s) for

@@ -91,12 +91,17 @@ void JIT::compileSetupVarargsFrame(OpcodeID opcode, Instruction* instruction, Ca
     store64(regT0, Address(regT1, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
 
     addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), regT1, stackPointerRegister);
+    incrementCounter(this, VM::BaselineCaller);
+    incrementCounter(this, VM::CallVarargs);
 }
 
 void JIT::compileCallEval(Instruction* instruction)
 {
     addPtr(TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), stackPointerRegister, regT1);
     storePtr(callFrameRegister, Address(regT1, CallFrame::callerFrameOffset()));
+
+    incrementCounter(this, VM::BaselineCaller);
+    incrementCounter(this, VM::CallEval);
 
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
@@ -113,7 +118,7 @@ void JIT::compileCallEval(Instruction* instruction)
 void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
-    info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeOffset), regT0);
+    info->setUpCall(CallLinkInfo::Call, StackArgs, CodeOrigin(m_bytecodeOffset), regT0);
 
     linkSlowCase(iter);
     int registerOffset = -instruction[4].u.operand;
@@ -154,12 +159,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     COMPILE_ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_tail_call_forward_arguments), call_and_tail_call_forward_arguments_opcodes_must_be_same_length);
 
     CallLinkInfo* info = nullptr;
+    ArgumentsLocation argumentsLocation = StackArgs;
+
     if (opcodeID != op_call_eval)
         info = m_codeBlock->addCallLinkInfo();
     if (opcodeID == op_call_varargs || opcodeID == op_construct_varargs || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         compileSetupVarargsFrame(opcodeID, instruction, info);
     else {
-        int argCount = instruction[3].u.operand;
+        unsigned argCount = instruction[3].u.unsignedValue;
         int registerOffset = -instruction[4].u.operand;
 
         if (opcodeID == op_call && shouldEmitProfiling()) {
@@ -171,15 +178,25 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         }
     
         addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
+        if (argumentsLocation != StackArgs) {
+            move(TrustedImm32(argCount), argumentRegisterForArgumentCount());
+            unsigned registerArgs = std::min(argCount, NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS);
+            for (unsigned arg = 0; arg < registerArgs; arg++)
+                load64(Address(stackPointerRegister, (CallFrameSlot::thisArgument + arg) * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)), argumentRegisterForFunctionArgument(arg));
+        }
         store32(TrustedImm32(argCount), Address(stackPointerRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
     } // SP holds newCallFrame + sizeof(CallerFrameAndPC), with ArgumentCount initialized.
+
+    incrementCounter(this, VM::BaselineCaller);
     
     uint32_t bytecodeOffset = instruction - m_codeBlock->instructions().begin();
     uint32_t locationBits = CallSiteIndex(bytecodeOffset).bits();
     store32(TrustedImm32(locationBits), Address(callFrameRegister, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + TagOffset));
 
-    emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
-    store64(regT0, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
+    GPRReg calleeRegister = argumentRegisterForCallee();
+
+    emitGetVirtualRegister(callee, calleeRegister);
+    store64(calleeRegister, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 
     if (opcodeID == op_call_eval) {
         compileCallEval(instruction);
@@ -187,16 +204,18 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     }
 
     DataLabelPtr addressOfLinkedFunctionCheck;
-    Jump slowCase = branchPtrWithPatch(NotEqual, regT0, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
+    Jump slowCase = branchPtrWithPatch(NotEqual, calleeRegister, addressOfLinkedFunctionCheck, TrustedImmPtr(0));
     addSlowCase(slowCase);
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
-    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), CodeOrigin(m_bytecodeOffset), regT0);
+    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), argumentsLocation, CodeOrigin(m_bytecodeOffset), calleeRegister);
     m_callCompilationInfo.append(CallCompilationInfo());
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
 
     if (opcodeID == op_tail_call) {
+        incrementCounter(this, VM::TailCall);
+
         CallFrameShuffleData shuffleData;
         shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
         shuffleData.numLocals =
@@ -209,7 +228,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
                     DataFormatJS);
         }
         shuffleData.callee =
-            ValueRecovery::inGPR(regT0, DataFormatJS);
+            ValueRecovery::inGPR(calleeRegister, DataFormatJS);
         shuffleData.setupCalleeSaveRegisters(m_codeBlock);
         info->setFrameShuffleData(shuffleData);
         CallFrameShuffler(*this, shuffleData).prepareForTailCall();
@@ -246,9 +265,10 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();
 
-    move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
+    CallLinkInfo* callLinkInfo = m_callCompilationInfo[callLinkInfoIndex].callLinkInfo;
+    move(TrustedImmPtr(callLinkInfo), nonArgGPR0);
 
-    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).code());
+    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(callLinkInfo->argumentsLocation()));
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
         abortWithReason(JITDidReturnFromTailCall);

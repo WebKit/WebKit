@@ -323,7 +323,8 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& cachedRecovery)
             m_jit.move(cachedRecovery.recovery().gpr(), wantedReg.gpr());
         else
             m_jit.move64ToDouble(cachedRecovery.recovery().gpr(), wantedReg.fpr());
-        RELEASE_ASSERT(cachedRecovery.recovery().dataFormat() == DataFormatJS);
+        DataFormat format = cachedRecovery.recovery().dataFormat();
+        RELEASE_ASSERT(format == DataFormatJS || format == DataFormatCell);
         updateRecovery(cachedRecovery,
             ValueRecovery::inRegister(wantedReg, DataFormatJS));
     } else {

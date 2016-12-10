@@ -76,7 +76,7 @@ bool JITFinalizer::finalizeFunction()
             dumpDisassembly, *b3CodeLinkBuffer,
             ("FTL B3 code for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
 
-    jitCode->initializeArityCheckEntrypoint(
+    jitCode->initializeEntrypointThunk(
         FINALIZE_CODE_IF(
             dumpDisassembly, *entrypointLinkBuffer,
             ("FTL entrypoint thunk for %s with B3 generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), function)));
