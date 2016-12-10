@@ -6,7 +6,7 @@ link_directories(../../WebKitLibraries)
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBKITLEGACY_DIR}"
-    ../../WebKitLibraries
+    "${CMAKE_SOURCE_DIR}/WebKitLibraries"
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES

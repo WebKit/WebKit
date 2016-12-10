@@ -1,5 +1,12 @@
 2016-12-10  Konstantin Tokarev  <annulen@yandex.ru>
 
+        Unreviewed attempt to fix cmake build of Mac port after r209665.
+
+        * PlatformMac.cmake: Avoid using relative path in
+        WebKit_INCLUDE_DIRECTORIES.
+
+2016-12-10  Konstantin Tokarev  <annulen@yandex.ru>
+
         [cmake] Include WTF, JSC, and WebCore headers automatically to targers using them
         https://bugs.webkit.org/show_bug.cgi?id=165686
 
