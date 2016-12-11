@@ -699,7 +699,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         if (target !== WebInspector.mainTarget && !target.mainResource) {
             // FIXME: <https://webkit.org/b/164427> Web Inspector: WorkerTarget's mainResource should be a Resource not a Script
             // We make the main resource of a WorkerTarget the Script instead of the Resource
-            // because the frontend may not be informed of the Resource. We should gaurantee
+            // because the frontend may not be informed of the Resource. We should guarantee
             // the frontend is informed of the Resource.
             if (script.url === target.name) {
                 target.mainResource = script;

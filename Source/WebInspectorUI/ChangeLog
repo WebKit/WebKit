@@ -1,3 +1,31 @@
+2016-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Move MainTarget and WorkerTarget to their own files
+        https://bugs.webkit.org/show_bug.cgi?id=165701
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        * UserInterface/Main.html:
+        * UserInterface/Protocol/MainTarget.js: Added.
+        (WebInspector.MainTarget):
+        (WebInspector.MainTarget.prototype.get displayName):
+        (WebInspector.MainTarget.prototype.get mainResource):
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.Target):
+        (WebInspector.MainTarget): Deleted.
+        (WebInspector.MainTarget.prototype.get displayName): Deleted.
+        (WebInspector.MainTarget.prototype.get mainResource): Deleted.
+        (WebInspector.MainTarget.prototype.initialize): Deleted.
+        (WebInspector.WorkerTarget): Deleted.
+        (WebInspector.WorkerTarget.prototype.get displayName): Deleted.
+        (WebInspector.WorkerTarget.prototype.initialize): Deleted.
+        * UserInterface/Protocol/WorkerTarget.js: Added.
+        (WebInspector.WorkerTarget):
+        (WebInspector.WorkerTarget.prototype.get displayName):
+        * UserInterface/Test.html:
+
 2016-12-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Frontend should not be resetting TypeProfiler state when switching between ContentViews

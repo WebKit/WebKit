@@ -39,8 +39,6 @@ WebInspector.Target = class Target extends WebInspector.Object
         this._extraScriptCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
 
         this._connection.target = this;
-
-        this.initialize();
     }
 
     // Agents
@@ -94,73 +92,3 @@ WebInspector.Target.Event = {
     ResourceAdded: "target-resource-added",
     ScriptAdded: "target-script-added",
 };
-
-WebInspector.MainTarget = class MainTarget extends WebInspector.Target
-{
-    constructor(connection)
-    {
-        super("main", "", WebInspector.Target.Type.Main, InspectorBackend.mainConnection);
-    }
-
-    // Protected (Target)
-
-    get displayName()
-    {
-        switch (WebInspector.debuggableType) {
-        case WebInspector.DebuggableType.Web:
-            return WebInspector.UIString("Page");
-        case WebInspector.DebuggableType.JavaScript:
-            return WebInspector.UIString("JavaScript Context");
-        default:
-            console.error("Unexpected debuggable type: ", WebInspector.debuggableType);
-            return WebInspector.UIString("Main");
-        }
-    }
-
-    get mainResource()
-    {
-        let mainFrame = WebInspector.frameResourceManager.mainFrame;
-        return mainFrame ? mainFrame.mainResource : null;
-    }
-
-    initialize()
-    {
-        let displayName = WebInspector.debuggableType === WebInspector.DebuggableType.Web ? WebInspector.UIString("Main Frame") : this.displayName;
-        this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
-    }
-}
-
-WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
-{
-    constructor(workerId, name, connection)
-    {
-        super(workerId, name, WebInspector.Target.Type.Worker, connection);
-    }
-
-    // Protected (Target)
-
-    get displayName()
-    {
-        return WebInspector.displayNameForURL(this._name);
-    }
-
-    initialize()
-    {
-        WebInspector.frameResourceManager.adoptOrphanedResourcesForTarget(this);
-
-        if (this.RuntimeAgent) {
-            this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
-            this.RuntimeAgent.enable();
-            if (WebInspector.showJavaScriptTypeInformationSetting && WebInspector.showJavaScriptTypeInformationSetting.value)
-                this.RuntimeAgent.enableTypeProfiler();
-            if (WebInspector.enableControlFlowProfilerSetting && WebInspector.enableControlFlowProfilerSetting.value)
-                this.RuntimeAgent.enableControlFlowProfiler();
-        }
-
-        if (this.DebuggerAgent)
-            WebInspector.debuggerManager.initializeTarget(this);
-
-        if (this.ConsoleAgent)
-            this.ConsoleAgent.enable();
-    }
-}
