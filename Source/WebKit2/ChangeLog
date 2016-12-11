@@ -1,3 +1,9 @@
+2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed build fix for EFL after r209665
+
+        * UIProcess/efl/TextCheckerClientEfl.h:
+
 2016-12-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Include WTF, JSC, and WebCore headers automatically to targers using them

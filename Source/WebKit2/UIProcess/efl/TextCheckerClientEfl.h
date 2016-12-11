@@ -28,9 +28,9 @@
 
 #if ENABLE(SPELLCHECK)
 
-#include "TextCheckerEnchant.h"
-#include "Timer.h"
 #include "ewk_text_checker_private.h"
+#include <WebCore/TextCheckerEnchant.h>
+#include <WebCore/Timer.h>
 #include <WebKit/WKTextChecker.h>
 
 namespace WebKit {
