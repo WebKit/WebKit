@@ -3920,6 +3920,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)
 
     target_include_directories(ANGLESupport PRIVATE
         "${THIRDPARTY_DIR}/ANGLE/include"
+        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${THIRDPARTY_DIR}/ANGLE/src"
         "${THIRDPARTY_DIR}/ANGLE/src/common/third_party/numerics"
     )

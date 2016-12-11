@@ -1,3 +1,10 @@
+2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, add KHR include dir to fix ANGLE build after r209665
+        https://bugs.webkit.org/show_bug.cgi?id=165686
+
+        * CMakeLists.txt:
+
 2016-12-10  Dave Hyatt  <hyatt@apple.com>
 
         Rolling out 165737, since it broke layout tests. I need to find a 
