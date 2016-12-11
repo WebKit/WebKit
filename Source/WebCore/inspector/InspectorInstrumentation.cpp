@@ -582,49 +582,15 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
         networkAgent->didLoadResourceFromMemoryCache(*loader, *cachedResource);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents)
+void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
-    return InspectorInstrumentationCookie(instrumentingAgents, 0);
-}
-
-void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
-{
-    if (!cookie.isValid())
-        return;
-
     if (!loader)
         return;
-
-    InstrumentingAgents& instrumentingAgents = *cookie.instrumentingAgents();
 
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
         networkAgent->didReceiveResponse(identifier, *loader, response, resourceLoader);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->didReceiveResponse(identifier, response); // This should come AFTER resource notification, front-end relies on this.
-}
-
-void InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    if (!frame)
-        return;
-
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(frame);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, &loader, r, nullptr);
-}
-
-void InspectorInstrumentation::continueAfterXFrameOptionsDeniedImpl(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
-}
-
-void InspectorInstrumentation::continueWithPolicyDownloadImpl(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
-}
-
-void InspectorInstrumentation::continueWithPolicyIgnoreImpl(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
 }
 
 void InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl(InstrumentingAgents& instrumentingAgents, DocumentThreadableLoader& documentThreadableLoader, unsigned long identifier)

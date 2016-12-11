@@ -639,7 +639,7 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
 
 void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(unsigned long identifier, const ResourceResponse& response)
 {
-    InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame, *this, identifier, response);
+    InspectorInstrumentation::continueAfterXFrameOptionsDenied(*m_frame, identifier, *this, response);
     m_frame->document()->enforceSandboxFlags(SandboxOrigin);
     if (HTMLFrameOwnerElement* ownerElement = m_frame->ownerElement())
         ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
@@ -798,7 +798,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         }
 
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
-            InspectorInstrumentation::continueWithPolicyDownload(m_frame, *this, mainResourceLoader->identifier(), m_response);
+            InspectorInstrumentation::continueWithPolicyDownload(*m_frame, mainResourceLoader->identifier(), *this, m_response);
 
         // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
         // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
@@ -821,7 +821,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
     case PolicyIgnore:
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
-            InspectorInstrumentation::continueWithPolicyIgnore(m_frame, *this, mainResourceLoader->identifier(), m_response);
+            InspectorInstrumentation::continueWithPolicyIgnore(*m_frame, mainResourceLoader->identifier(), *this, m_response);
         stopLoadingForPolicyChange();
         return;
     }

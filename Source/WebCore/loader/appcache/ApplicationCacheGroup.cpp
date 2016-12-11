@@ -492,8 +492,7 @@ RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& ur
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, ResourceResponse&& response)
 {
     ASSERT(m_frame);
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, m_currentResourceIdentifier, m_frame->loader().documentLoader(), response, 0);
+    InspectorInstrumentation::didReceiveResourceResponse(*m_frame, m_currentResourceIdentifier, m_frame->loader().documentLoader(), response, nullptr);
 
     if (handle == m_manifestHandle) {
         didReceiveManifestResponse(response);

@@ -1,3 +1,38 @@
+2016-12-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup some InspectorInstrumentation network loading notifications
+        https://bugs.webkit.org/show_bug.cgi?id=165688
+
+        Reviewed by Brian Burg.
+
+        Eliminate InspectorInstrumentation::willReceiveResourceResponse by folding
+        it into InspectorInstrumentation::didReceiveResourceResponse. Simplify other
+        related InspectorInstrumentation calls by using references and using more
+        consistent InspectorInstrumentation patterns.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponseImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl): Deleted.
+        (WebCore::InspectorInstrumentation::continueAfterXFrameOptionsDeniedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::continueWithPolicyDownloadImpl): Deleted.
+        (WebCore::InspectorInstrumentation::continueWithPolicyIgnoreImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::continueAfterXFrameOptionsDenied):
+        (WebCore::InspectorInstrumentation::continueWithPolicyDownload):
+        (WebCore::InspectorInstrumentation::continueWithPolicyIgnore):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse): Deleted.
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+
 2016-12-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Protect MediaDevicesRequest during callback

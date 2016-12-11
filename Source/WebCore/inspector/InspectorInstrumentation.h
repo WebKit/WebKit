@@ -154,15 +154,15 @@ public:
     static void continueAfterPingLoader(Frame&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCached(Page&, unsigned long identifier);
     static void didLoadResourceFromMemoryCache(Page&, DocumentLoader*, CachedResource*);
-    static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*);
-    static void didReceiveResourceResponse(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    static void continueAfterXFrameOptionsDenied(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
-    static void continueWithPolicyDownload(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
-    static void continueWithPolicyIgnore(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
+    static void didReceiveResourceResponse(Frame&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponse(DocumentThreadableLoader&, unsigned long identifier);
     static void didReceiveData(Frame*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     static void didFinishLoading(Frame*, DocumentLoader*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, DocumentLoader*, unsigned long identifier, const ResourceError&);
+    static void continueAfterXFrameOptionsDenied(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+    static void continueWithPolicyDownload(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+    static void continueWithPolicyIgnore(Frame&, unsigned long identifier, DocumentLoader&, const ResourceResponse&);
+
     static void didFinishXHRLoading(ScriptExecutionContext*, unsigned long identifier, std::optional<String> decodedText, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
@@ -324,12 +324,7 @@ private:
     static void continueAfterPingLoaderImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCachedImpl(InstrumentingAgents&, unsigned long identifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
-    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InstrumentingAgents&);
-    static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
-    static void didReceiveResourceResponseButCanceledImpl(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
-    static void continueAfterXFrameOptionsDeniedImpl(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
-    static void continueWithPolicyDownloadImpl(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
-    static void continueWithPolicyIgnoreImpl(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
+    static void didReceiveResourceResponseImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponseImpl(InstrumentingAgents&, DocumentThreadableLoader&, unsigned long identifier);
     static void didReceiveDataImpl(InstrumentingAgents&, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     static void didFinishLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, double finishTime);
@@ -850,35 +845,10 @@ inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page& page,
     didLoadResourceFromMemoryCacheImpl(instrumentingAgentsForPage(page), loader, resource);
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponse(Frame* frame)
+inline void InspectorInstrumentation::didReceiveResourceResponse(Frame& frame, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willReceiveResourceResponseImpl(*instrumentingAgents);
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didReceiveResourceResponse(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
-{
-    // Call this unconditionally so that we're able to log to console with no front-end attached.
-    didReceiveResourceResponseImpl(cookie, identifier, loader, response, resourceLoader);
-}
-
-inline void InspectorInstrumentation::continueAfterXFrameOptionsDenied(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    InspectorInstrumentation::continueAfterXFrameOptionsDeniedImpl(frame, loader, identifier, r);
-}
-
-inline void InspectorInstrumentation::continueWithPolicyDownload(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    InspectorInstrumentation::continueWithPolicyDownloadImpl(frame, loader, identifier, r);
-}
-
-inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame* frame, DocumentLoader& loader, unsigned long identifier, const ResourceResponse& r)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    InspectorInstrumentation::continueWithPolicyIgnoreImpl(frame, loader, identifier, r);
+        didReceiveResourceResponseImpl(*instrumentingAgents, identifier, loader, response, resourceLoader);
 }
 
 inline void InspectorInstrumentation::didReceiveThreadableLoaderResponse(DocumentThreadableLoader& documentThreadableLoader, unsigned long identifier)
@@ -903,6 +873,27 @@ inline void InspectorInstrumentation::didFailLoading(Frame* frame, DocumentLoade
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didFailLoadingImpl(*instrumentingAgents, identifier, loader, error);
+}
+
+inline void InspectorInstrumentation::continueAfterXFrameOptionsDenied(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)
+{
+    // Treat the same as didReceiveResponse.
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        didReceiveResourceResponseImpl(*instrumentingAgents, identifier, &loader, response, nullptr);
+}
+
+inline void InspectorInstrumentation::continueWithPolicyDownload(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)
+{
+    // Treat the same as didReceiveResponse.
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        didReceiveResourceResponseImpl(*instrumentingAgents, identifier, &loader, response, nullptr);
+}
+
+inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame& frame, unsigned long identifier, DocumentLoader& loader, const ResourceResponse& response)
+{
+    // Treat the same as didReceiveResponse.
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        didReceiveResourceResponseImpl(*instrumentingAgents, identifier, &loader, response, nullptr);
 }
 
 inline void InspectorInstrumentation::didFinishXHRLoading(ScriptExecutionContext* context, unsigned long identifier, std::optional<String> decodedText, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber)

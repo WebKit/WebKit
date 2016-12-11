@@ -147,8 +147,7 @@ void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, un
     Ref<Frame> protect(m_frame);
     m_frame.loader().client().dispatchDidReceiveResponse(loader, identifier, r);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(&m_frame);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r, resourceLoader);
+    InspectorInstrumentation::didReceiveResourceResponse(m_frame, identifier, loader, r, resourceLoader);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
