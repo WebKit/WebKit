@@ -890,14 +890,10 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     JSScope* scope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
-    MacroAssemblerCodePtr codePtr, codePtrForLinking;
+    MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction()) {
-        codePtr = executable->entrypointFor(kind, StackArgsMustCheckArity);
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        if (callLinkInfo->argumentsInRegisters())
-            codePtrForLinking = executable->entrypointFor(kind, RegisterArgsMustCheckArity);
-#endif
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -918,41 +914,17 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
                 reinterpret_cast<void*>(KeepTheFrame));
         }
         codeBlock = *codeBlockSlot;
-        EntryPointType entryType;
-        size_t callerArgumentCount = execCallee->argumentCountIncludingThis();
-        size_t calleeArgumentCount = static_cast<size_t>(codeBlock->numParameters());
-        if (callerArgumentCount < calleeArgumentCount || callLinkInfo->isVarargs()) {
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-            if (callLinkInfo->argumentsInRegisters()) {
-                codePtrForLinking = functionExecutable->entrypointFor(kind, JITEntryPoints::registerEntryTypeForArgumentCount(callerArgumentCount));
-                if (!codePtrForLinking)
-                    codePtrForLinking = functionExecutable->entrypointFor(kind, RegisterArgsMustCheckArity);
-            }
-#endif
-            entryType = StackArgsMustCheckArity;
-            (void) functionExecutable->entrypointFor(kind, entryPointTypeFor(callLinkInfo->argumentsLocation()));
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        } else if (callLinkInfo->argumentsInRegisters()) {
-            if (callerArgumentCount == calleeArgumentCount || calleeArgumentCount >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-                codePtrForLinking = functionExecutable->entrypointFor(kind, RegisterArgsArityCheckNotRequired);
-            else {
-                codePtrForLinking = functionExecutable->entrypointFor(kind, JITEntryPoints::registerEntryTypeForArgumentCount(callerArgumentCount));
-                if (!codePtrForLinking)
-                    codePtrForLinking = functionExecutable->entrypointFor(kind, RegisterArgsPossibleExtraArgs);
-            }
-            //  Prepopulate the entry points the virtual thunk might use.
-            (void) functionExecutable->entrypointFor(kind, entryPointTypeFor(callLinkInfo->argumentsLocation()));
-
-            entryType = StackArgsArityCheckNotRequired;
-#endif
-        } else
-            entryType = StackArgsArityCheckNotRequired;
-        codePtr = functionExecutable->entrypointFor(kind, entryType);
+        ArityCheckMode arity;
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo->isVarargs())
+            arity = MustCheckArity;
+        else
+            arity = ArityCheckNotRequired;
+        codePtr = functionExecutable->entrypointFor(kind, arity);
     }
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtrForLinking ? codePtrForLinking : codePtr);
+        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr);
     
     return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
@@ -987,11 +959,7 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = nullptr;
     if (executable->isHostFunction())
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        codePtr = executable->entrypointFor(kind, callLinkInfo->argumentsInRegisters() ? RegisterArgsMustCheckArity : StackArgsMustCheckArity);
-#else
-    codePtr = executable->entrypointFor(kind, StackArgsMustCheckArity);
-#endif
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1003,29 +971,13 @@ void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLi
             throwException(exec, throwScope, error);
             return;
         }
-        EntryPointType entryType;
+        ArityCheckMode arity;
         unsigned argumentStackSlots = callLinkInfo->maxNumArguments();
-        size_t codeBlockParameterCount = static_cast<size_t>(codeBlock->numParameters());
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        if (callLinkInfo->argumentsInRegisters()) {
-            // This logic could probably be simplified!
-            if (argumentStackSlots < codeBlockParameterCount)
-                entryType = entryPointTypeFor(callLinkInfo->argumentsLocation());
-            else if (argumentStackSlots > NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
-                if (codeBlockParameterCount < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-                    entryType = RegisterArgsPossibleExtraArgs;
-                else
-                    entryType = RegisterArgsArityCheckNotRequired;
-            } else
-                entryType = registerEntryPointTypeFor(argumentStackSlots);
-        } else if (argumentStackSlots < codeBlockParameterCount)
-#else
-        if (argumentStackSlots < codeBlockParameterCount)
-#endif
-            entryType = StackArgsMustCheckArity;
+        if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
+            arity = MustCheckArity;
         else
-            entryType = StackArgsArityCheckNotRequired;
-        codePtr = functionExecutable->entrypointFor(kind, entryType);
+            arity = ArityCheckNotRequired;
+        codePtr = functionExecutable->entrypointFor(kind, arity);
     }
     
     linkDirectFor(exec, *callLinkInfo, codeBlock, codePtr);
@@ -1068,17 +1020,8 @@ inline SlowPathReturnType virtualForWithFunction(
                 reinterpret_cast<void*>(KeepTheFrame));
         }
     }
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    if (callLinkInfo->argumentsInRegisters()) {
-        // Pull into the cache the arity check register entry if the caller wants a register entry.
-        // This will be used by the generic virtual call thunk.
-        (void) executable->entrypointFor(kind, RegisterArgsMustCheckArity);
-        (void) executable->entrypointFor(kind, entryPointTypeFor(callLinkInfo->argumentsLocation()));
-
-    }
-#endif
     return encodeResult(executable->entrypointFor(
-        kind, StackArgsMustCheckArity).executableAddress(),
+        kind, MustCheckArity).executableAddress(),
         reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
 }
 

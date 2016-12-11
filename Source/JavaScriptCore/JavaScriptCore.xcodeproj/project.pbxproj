@@ -1350,7 +1350,6 @@
 		65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */; };
 		65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */; };
 		65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C0285B1717966800351E35 /* ARMv7DOpcode.h */; };
-		65DBF3021D93392B003AF4B0 /* JITEntryPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 650300F21C50274600D786D7 /* JITEntryPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65FB5117184EEE7000C12B70 /* ProtoCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FB5116184EE9BC00C12B70 /* ProtoCallFrame.cpp */; };
 		65FB63A41C8EA09C0020719B /* YarrCanonicalizeUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A946141C8E9F6F00A7209A /* YarrCanonicalizeUnicode.cpp */; };
 		6AD2CB4D19B9140100065719 /* DebuggerEvalEnabler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3721,7 +3720,6 @@
 		62E3D5EF1B8D0B7300B868BB /* DataFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataFormat.cpp; sourceTree = "<group>"; };
 		62EC9BB41B7EB07C00303AD1 /* CallFrameShuffleData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallFrameShuffleData.cpp; sourceTree = "<group>"; };
 		62EC9BB51B7EB07C00303AD1 /* CallFrameShuffleData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrameShuffleData.h; sourceTree = "<group>"; };
-		650300F21C50274600D786D7 /* JITEntryPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITEntryPoints.h; sourceTree = "<group>"; };
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
 		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
 		6511230514046A4C002B101D /* testRegExp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testRegExp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5560,7 +5558,6 @@
 				0FAF7EFB165BA919000C8455 /* JITDisassembler.h */,
 				FE187A0A1C0229230038BBCA /* JITDivGenerator.cpp */,
 				FE187A0B1C0229230038BBCA /* JITDivGenerator.h */,
-				650300F21C50274600D786D7 /* JITEntryPoints.h */,
 				0F46807F14BA572700BFE272 /* JITExceptions.cpp */,
 				0F46808014BA572700BFE272 /* JITExceptions.h */,
 				0FB14E1C18124ACE009B6B4D /* JITInlineCacheGenerator.cpp */,
@@ -7717,7 +7714,6 @@
 				79B00CBD1C6AB07E0088C65D /* ProxyConstructor.h in Headers */,
 				53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */,
 				990DA67F1C8E316A00295159 /* generate_objc_protocol_type_conversions_implementation.py in Headers */,
-				65DBF3021D93392B003AF4B0 /* JITEntryPoints.h in Headers */,
 				DC17E8191C9C91DB008A6AB3 /* ShadowChickenInlines.h in Headers */,
 				DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */,
 				799EF7C41C56ED96002B0534 /* B3PCToOriginMap.h in Headers */,

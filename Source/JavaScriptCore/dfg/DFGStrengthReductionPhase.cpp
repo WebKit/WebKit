@@ -276,9 +276,6 @@ private:
             Node* setLocal = nullptr;
             VirtualRegister local = m_node->local();
             
-            if (local.isArgument() && m_graph.m_strengthReduceArguments != OptimizeArgumentFlushes)
-                break;
-
             for (unsigned i = m_nodeIndex; i--;) {
                 Node* node = m_block->at(i);
                 if (node->op() == SetLocal && node->local() == local) {

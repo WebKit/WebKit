@@ -98,8 +98,6 @@ public:
     void setOrigin(DFG::Node* node) { m_origin = node; }
     B3::Origin origin() { return B3::Origin(m_origin); }
 
-    LValue argumentRegister(Reg reg);
-    LValue argumentRegisterInt32(Reg reg);
     LValue framePointer();
 
     B3::SlotBaseValue* lockedStackSlot(size_t bytes);

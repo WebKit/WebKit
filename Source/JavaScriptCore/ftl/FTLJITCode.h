@@ -44,7 +44,7 @@ public:
     JITCode();
     ~JITCode();
 
-    CodePtr addressForCall(EntryPointType) override;
+    CodePtr addressForCall(ArityCheckMode) override;
     void* executableAddressAtOffset(size_t offset) override;
     void* dataAddressAtOffset(size_t offset) override;
     unsigned offsetOf(void* pointerIntoCode) override;
@@ -53,9 +53,9 @@ public:
 
     void initializeB3Code(CodeRef);
     void initializeB3Byproducts(std::unique_ptr<B3::OpaqueByproducts>);
-    void initializeEntrypointThunk(CodeRef);
-    void setEntryFor(EntryPointType, CodePtr);
-
+    void initializeAddressForCall(CodePtr);
+    void initializeArityCheckEntrypoint(CodeRef);
+    
     void validateReferences(const TrackedReferences&) override;
 
     RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex) override;
@@ -77,12 +77,7 @@ private:
     CodePtr m_addressForCall;
     CodeRef m_b3Code;
     std::unique_ptr<B3::OpaqueByproducts> m_b3Byproducts;
-    CodeRef m_entrypointThunk;
-    JITEntryPoints m_entrypoints;
-    CodePtr m_registerArgsPossibleExtraArgsEntryPoint;
-    CodePtr m_registerArgsCheckArityEntryPoint;
-    CodePtr m_stackArgsArityOKEntryPoint;
-    CodePtr m_stackArgsCheckArityEntrypoint;
+    CodeRef m_arityCheckEntrypoint;
 };
 
 } } // namespace JSC::FTL

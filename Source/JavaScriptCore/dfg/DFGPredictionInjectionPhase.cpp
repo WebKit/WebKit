@@ -56,7 +56,7 @@ public:
                 if (!profile)
                     continue;
             
-                m_graph.m_argumentsForChecking[arg]->variableAccessData()->predict(
+                m_graph.m_arguments[arg]->variableAccessData()->predict(
                     profile->computeUpdatedPrediction(locker));
             }
         }
@@ -74,7 +74,7 @@ public:
                 Node* node = block->variablesAtHead.operand(operand);
                 if (!node)
                     continue;
-                ASSERT(node->accessesStack(m_graph) || node->op() == GetArgumentRegister);
+                ASSERT(node->accessesStack(m_graph));
                 node->variableAccessData()->predict(
                     speculationFromValue(m_graph.m_plan.mustHandleValues[i]));
             }

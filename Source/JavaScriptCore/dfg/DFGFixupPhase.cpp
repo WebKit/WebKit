@@ -1791,7 +1791,6 @@ private:
         case DoubleConstant:
         case GetLocal:
         case GetCallee:
-        case GetArgumentRegister:
         case GetArgumentCountIncludingThis:
         case GetRestLength:
         case GetArgument:

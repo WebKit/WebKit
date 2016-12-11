@@ -74,7 +74,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_lastGeneratedNode(LastNodeType)
     , m_indexInBlock(0)
     , m_generationInfo(m_jit.graph().frameRegisterCount())
-    , m_argumentGenerationInfo(CallFrameSlot::callee + GPRInfo::numberOfArgumentRegisters)
     , m_state(m_jit.graph())
     , m_interpreter(m_jit.graph(), m_state)
     , m_stream(&jit.jitCode()->variableEventStream)
@@ -408,8 +407,6 @@ void SpeculativeJIT::clearGenerationInfo()
 {
     for (unsigned i = 0; i < m_generationInfo.size(); ++i)
         m_generationInfo[i] = GenerationInfo();
-    for (unsigned i = 0; i < m_argumentGenerationInfo.size(); ++i)
-        m_argumentGenerationInfo[i] = GenerationInfo();
     m_gprs = RegisterBank<GPRInfo>();
     m_fprs = RegisterBank<FPRInfo>();
 }
@@ -1202,25 +1199,6 @@ static const char* dataFormatString(DataFormat format)
     return strings[format];
 }
 
-static void dumpRegisterInfo(GenerationInfo& info, unsigned index)
-{
-    if (info.alive())
-        dataLogF("    % 3d:%s%s", index, dataFormatString(info.registerFormat()), dataFormatString(info.spillFormat()));
-    else
-        dataLogF("    % 3d:[__][__]", index);
-    if (info.registerFormat() == DataFormatDouble)
-        dataLogF(":fpr%d\n", info.fpr());
-    else if (info.registerFormat() != DataFormatNone
-#if USE(JSVALUE32_64)
-        && !(info.registerFormat() & DataFormatJS)
-#endif
-        ) {
-        ASSERT(info.gpr() != InvalidGPRReg);
-        dataLogF(":%s\n", GPRInfo::debugName(info.gpr()));
-    } else
-        dataLogF("\n");
-}
-
 void SpeculativeJIT::dump(const char* label)
 {
     if (label)
@@ -1230,15 +1208,25 @@ void SpeculativeJIT::dump(const char* label)
     m_gprs.dump();
     dataLogF("  fprs:\n");
     m_fprs.dump();
-
-    dataLogF("  Argument VirtualRegisters:\n");
-    for (unsigned i = 0; i < m_argumentGenerationInfo.size(); ++i)
-        dumpRegisterInfo(m_argumentGenerationInfo[i], i);
-
-    dataLogF("  Local VirtualRegisters:\n");
-    for (unsigned i = 0; i < m_generationInfo.size(); ++i)
-        dumpRegisterInfo(m_generationInfo[i], i);
-
+    dataLogF("  VirtualRegisters:\n");
+    for (unsigned i = 0; i < m_generationInfo.size(); ++i) {
+        GenerationInfo& info = m_generationInfo[i];
+        if (info.alive())
+            dataLogF("    % 3d:%s%s", i, dataFormatString(info.registerFormat()), dataFormatString(info.spillFormat()));
+        else
+            dataLogF("    % 3d:[__][__]", i);
+        if (info.registerFormat() == DataFormatDouble)
+            dataLogF(":fpr%d\n", info.fpr());
+        else if (info.registerFormat() != DataFormatNone
+#if USE(JSVALUE32_64)
+            && !(info.registerFormat() & DataFormatJS)
+#endif
+            ) {
+            ASSERT(info.gpr() != InvalidGPRReg);
+            dataLogF(":%s\n", GPRInfo::debugName(info.gpr()));
+        } else
+            dataLogF("\n");
+    }
     if (label)
         dataLogF("</%s>\n", label);
 }
@@ -1689,9 +1677,6 @@ void SpeculativeJIT::compileCurrentBlock()
     
     m_jit.blockHeads()[m_block->index] = m_jit.label();
 
-    if (!m_block->index)
-        checkArgumentTypes();
-
     if (!m_block->intersectionOfCFAHasVisited) {
         // Don't generate code for basic blocks that are unreachable according to CFA.
         // But to be sure that nobody has generated a jump to this block, drop in a
@@ -1702,9 +1687,6 @@ void SpeculativeJIT::compileCurrentBlock()
 
     m_stream->appendAndLog(VariableEvent::reset());
     
-    if (!m_block->index)
-        setupArgumentRegistersForEntry();
-    
     m_jit.jitAssertHasValidCallFrame();
     m_jit.jitAssertTagsInPlace();
     m_jit.jitAssertArgumentCountSane();
@@ -1714,21 +1696,6 @@ void SpeculativeJIT::compileCurrentBlock()
     
     for (size_t i = m_block->variablesAtHead.size(); i--;) {
         int operand = m_block->variablesAtHead.operandForIndex(i);
-        if (!m_block->index && operandIsArgument(operand)) {
-            unsigned argument = m_block->variablesAtHead.argumentForIndex(i);
-            Node* argumentNode = m_jit.graph().m_argumentsForChecking[argument];
-            
-            if (argumentNode && argumentNode->op() == GetArgumentRegister) {
-                if (!argumentNode->refCount())
-                    continue; // No need to record dead GetArgumentRegisters's.
-                m_stream->appendAndLog(
-                    VariableEvent::movHint(
-                        MinifiedID(argumentNode),
-                        argumentNode->local()));
-                continue;
-            }
-        }
-
         Node* node = m_block->variablesAtHead[i];
         if (!node)
             continue; // No need to record dead SetLocal's.
@@ -1815,15 +1782,13 @@ void SpeculativeJIT::checkArgumentTypes()
     m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
 
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
-        Node* node = m_jit.graph().m_argumentsForChecking[i];
+        Node* node = m_jit.graph().m_arguments[i];
         if (!node) {
             // The argument is dead. We don't do any checks for such arguments.
             continue;
         }
         
-        ASSERT(node->op() == SetArgument
-            || (node->op() == SetLocal && node->child1()->op() == GetArgumentRegister)
-            || node->op() == GetArgumentRegister);
+        ASSERT(node->op() == SetArgument);
         ASSERT(node->shouldGenerate());
 
         VariableAccessData* variableAccessData = node->variableAccessData();
@@ -1834,44 +1799,23 @@ void SpeculativeJIT::checkArgumentTypes()
         
         VirtualRegister virtualRegister = variableAccessData->local();
 
-        JSValueSource valueSource;
-
-#if USE(JSVALUE64)
-        GPRReg argumentRegister = InvalidGPRReg;
-
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        if (static_cast<unsigned>(i) < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
-            argumentRegister = argumentRegisterForFunctionArgument(i);
-            valueSource = JSValueSource(argumentRegister);
-        } else
-#endif
-#endif
-            valueSource = JSValueSource(JITCompiler::addressFor(virtualRegister));
-
+        JSValueSource valueSource = JSValueSource(JITCompiler::addressFor(virtualRegister));
+        
 #if USE(JSVALUE64)
         switch (format) {
         case FlushedInt32: {
-            if (argumentRegister != InvalidGPRReg)
-                speculationCheck(BadType, valueSource, node, m_jit.branch64(MacroAssembler::Below, argumentRegister, GPRInfo::tagTypeNumberRegister));
-            else
-                speculationCheck(BadType, valueSource, node, m_jit.branch64(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
+            speculationCheck(BadType, valueSource, node, m_jit.branch64(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
             break;
         }
         case FlushedBoolean: {
             GPRTemporary temp(this);
-            if (argumentRegister != InvalidGPRReg)
-                m_jit.move(argumentRegister, temp.gpr());
-            else
-                m_jit.load64(JITCompiler::addressFor(virtualRegister), temp.gpr());
+            m_jit.load64(JITCompiler::addressFor(virtualRegister), temp.gpr());
             m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), temp.gpr());
             speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, temp.gpr(), TrustedImm32(static_cast<int32_t>(~1))));
             break;
         }
         case FlushedCell: {
-            if (argumentRegister != InvalidGPRReg)
-                speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, argumentRegister, GPRInfo::tagMaskRegister));
-            else
-                speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, JITCompiler::addressFor(virtualRegister), GPRInfo::tagMaskRegister));
+            speculationCheck(BadType, valueSource, node, m_jit.branchTest64(MacroAssembler::NonZero, JITCompiler::addressFor(virtualRegister), GPRInfo::tagMaskRegister));
             break;
         }
         default:
@@ -1902,38 +1846,10 @@ void SpeculativeJIT::checkArgumentTypes()
     m_origin = NodeOrigin();
 }
 
-void SpeculativeJIT::setupArgumentRegistersForEntry()
-{
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    BasicBlock* firstBlock = m_jit.graph().block(0);
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165720
-    // We should scan m_arguemntsForChecking instead of looking for GetArgumentRegister
-    // nodes in the root block.
-    for (size_t indexInBlock = 0; indexInBlock < firstBlock->size(); ++indexInBlock) {
-        Node* node = firstBlock->at(indexInBlock);
-
-        if (node->op() == GetArgumentRegister) {
-            VirtualRegister virtualRegister = node->virtualRegister();
-            GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
-            GPRReg argumentReg = GPRInfo::toArgumentRegister(node->argumentRegisterIndex());
-            
-            ASSERT(argumentReg != InvalidGPRReg);
-            
-            ASSERT(!m_gprs.isLocked(argumentReg));
-            m_gprs.allocateSpecific(argumentReg);
-            m_gprs.retain(argumentReg, virtualRegister, SpillOrderJS);
-            info.initArgumentRegisterValue(node, node->refCount(), argumentReg, DataFormatJS);
-            info.noticeOSRBirth(*m_stream, node, virtualRegister);
-            // Don't leave argument registers locked.
-            m_gprs.unlock(argumentReg);
-        }
-    }
-#endif
-}
-
 bool SpeculativeJIT::compile()
 {
+    checkArgumentTypes();
+    
     ASSERT(!m_currentNode);
     for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().numBlocks(); ++blockIndex) {
         m_jit.setForBlockIndex(blockIndex);

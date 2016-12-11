@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CodeSpecializationKind.h"
-#include "JITEntryPoints.h"
 #include "ThunkGenerator.h"
 
 #if ENABLE(JIT)
@@ -37,35 +36,34 @@ class CallLinkInfo;
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 
 MacroAssemblerCodeRef linkCallThunk(VM*, CallLinkInfo&, CodeSpecializationKind);
-JITJSCallThunkEntryPointsWithRef linkCallThunkGenerator(VM*);
-JITJSCallThunkEntryPointsWithRef linkDirectCallThunkGenerator(VM*);
-JITJSCallThunkEntryPointsWithRef linkPolymorphicCallThunkGenerator(VM*);
+MacroAssemblerCodeRef linkCallThunkGenerator(VM*);
+MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM*);
 
-JITJSCallThunkEntryPointsWithRef virtualThunkFor(VM*, CallLinkInfo&);
+MacroAssemblerCodeRef virtualThunkFor(VM*, CallLinkInfo&);
 
-JITEntryPointsWithRef nativeCallGenerator(VM*);
-JITEntryPointsWithRef nativeConstructGenerator(VM*);
+MacroAssemblerCodeRef nativeCallGenerator(VM*);
+MacroAssemblerCodeRef nativeConstructGenerator(VM*);
 MacroAssemblerCodeRef nativeTailCallGenerator(VM*);
 MacroAssemblerCodeRef nativeTailCallWithoutSavedTagsGenerator(VM*);
 MacroAssemblerCodeRef arityFixupGenerator(VM*);
 MacroAssemblerCodeRef unreachableGenerator(VM*);
 
-JITEntryPointsWithRef charCodeAtThunkGenerator(VM*);
-JITEntryPointsWithRef charAtThunkGenerator(VM*);
-JITEntryPointsWithRef clz32ThunkGenerator(VM*);
-JITEntryPointsWithRef fromCharCodeThunkGenerator(VM*);
-JITEntryPointsWithRef absThunkGenerator(VM*);
-JITEntryPointsWithRef ceilThunkGenerator(VM*);
-JITEntryPointsWithRef expThunkGenerator(VM*);
-JITEntryPointsWithRef floorThunkGenerator(VM*);
-JITEntryPointsWithRef logThunkGenerator(VM*);
-JITEntryPointsWithRef roundThunkGenerator(VM*);
-JITEntryPointsWithRef sqrtThunkGenerator(VM*);
-JITEntryPointsWithRef imulThunkGenerator(VM*);
-JITEntryPointsWithRef randomThunkGenerator(VM*);
-JITEntryPointsWithRef truncThunkGenerator(VM*);
+MacroAssemblerCodeRef charCodeAtThunkGenerator(VM*);
+MacroAssemblerCodeRef charAtThunkGenerator(VM*);
+MacroAssemblerCodeRef clz32ThunkGenerator(VM*);
+MacroAssemblerCodeRef fromCharCodeThunkGenerator(VM*);
+MacroAssemblerCodeRef absThunkGenerator(VM*);
+MacroAssemblerCodeRef ceilThunkGenerator(VM*);
+MacroAssemblerCodeRef expThunkGenerator(VM*);
+MacroAssemblerCodeRef floorThunkGenerator(VM*);
+MacroAssemblerCodeRef logThunkGenerator(VM*);
+MacroAssemblerCodeRef roundThunkGenerator(VM*);
+MacroAssemblerCodeRef sqrtThunkGenerator(VM*);
+MacroAssemblerCodeRef imulThunkGenerator(VM*);
+MacroAssemblerCodeRef randomThunkGenerator(VM*);
+MacroAssemblerCodeRef truncThunkGenerator(VM*);
 
-JITEntryPointsWithRef boundThisNoArgsFunctionCallGenerator(VM*);
+MacroAssemblerCodeRef boundThisNoArgsFunctionCallGenerator(VM* vm);
 
 }
 #endif // ENABLE(JIT)

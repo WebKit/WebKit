@@ -80,14 +80,14 @@ void SpeculativeJIT::boxInt52(GPRReg sourceGPR, GPRReg targetGPR, DataFormat for
     unlock(fpr);
 }
 
-GPRReg SpeculativeJIT::fillJSValue(Edge edge, GPRReg gprToUse)
+GPRReg SpeculativeJIT::fillJSValue(Edge edge)
 {
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
     
     switch (info.registerFormat()) {
     case DataFormatNone: {
-        GPRReg gpr = allocate(gprToUse);
+        GPRReg gpr = allocate();
 
         if (edge->hasConstant()) {
             JSValue jsValue = edge->asJSValue();
@@ -120,12 +120,7 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge, GPRReg gprToUse)
         // If the register has already been locked we need to take a copy.
         // If not, we'll zero extend in place, so mark on the info that this is now type DataFormatInt32, not DataFormatJSInt32.
         if (m_gprs.isLocked(gpr)) {
-            GPRReg result = allocate(gprToUse);
-            m_jit.or64(GPRInfo::tagTypeNumberRegister, gpr, result);
-            return result;
-        }
-        if (gprToUse != InvalidGPRReg && gpr != gprToUse) {
-            GPRReg result = allocate(gprToUse);
+            GPRReg result = allocate();
             m_jit.or64(GPRInfo::tagTypeNumberRegister, gpr, result);
             return result;
         }
@@ -143,11 +138,6 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge, GPRReg gprToUse)
     case DataFormatJSCell:
     case DataFormatJSBoolean: {
         GPRReg gpr = info.gpr();
-        if (gprToUse != InvalidGPRReg && gpr != gprToUse) {
-            GPRReg result = allocate(gprToUse);
-            m_jit.move(gpr, result);
-            return result;
-        }
         m_gprs.lock(gpr);
         return gpr;
     }
@@ -642,7 +632,6 @@ void SpeculativeJIT::compileMiscStrictEq(Node* node)
 void SpeculativeJIT::emitCall(Node* node)
 {
     CallLinkInfo::CallType callType;
-    ArgumentsLocation argumentsLocation = StackArgs;
     bool isVarargs = false;
     bool isForwardVarargs = false;
     bool isTail = false;
@@ -725,11 +714,7 @@ void SpeculativeJIT::emitCall(Node* node)
 
     GPRReg calleeGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
-    std::optional<JSValueOperand> tailCallee;
-    std::optional<GPRTemporary> calleeGPRTemporary;
-
-    incrementCounter(&m_jit, VM::DFGCaller);
-
+    
     ExecutableBase* executable = nullptr;
     FunctionExecutable* functionExecutable = nullptr;
     if (isDirect) {
@@ -748,7 +733,6 @@ void SpeculativeJIT::emitCall(Node* node)
         GPRReg resultGPR;
         unsigned numUsedStackSlots = m_jit.graph().m_nextMachineLocal;
         
-        incrementCounter(&m_jit, VM::CallVarargs);
         if (isForwardVarargs) {
             flushRegisters();
             if (node->child3())
@@ -857,25 +841,15 @@ void SpeculativeJIT::emitCall(Node* node)
         }
 
         if (isTail) {
-            incrementCounter(&m_jit, VM::TailCall);
             Edge calleeEdge = m_jit.graph().child(node, 0);
-            // We can't get the a specific register for the callee, since that will just move
-            // from any current register.  When we silent fill in the slow path we'll fill
-            // the original register and won't have the callee in the right register.
-            // Therefore we allocate a temp register for the callee and move ourselves.
-            tailCallee.emplace(this, calleeEdge);
-            GPRReg tailCalleeGPR = tailCallee->gpr();
-            calleeGPR = argumentRegisterForCallee();
-            if (tailCalleeGPR != calleeGPR)
-                calleeGPRTemporary = GPRTemporary(this, calleeGPR);
+            JSValueOperand callee(this, calleeEdge);
+            calleeGPR = callee.gpr();
             if (!isDirect)
-                tailCallee->use();
+                callee.use();
 
-            argumentsLocation = argumentsLocationFor(numAllocatedArgs);
-            shuffleData.argumentsInRegisters = argumentsLocation != StackArgs;
             shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
             shuffleData.numLocals = m_jit.graph().frameRegisterCount();
-            shuffleData.callee = ValueRecovery::inGPR(tailCalleeGPR, DataFormatJS);
+            shuffleData.callee = ValueRecovery::inGPR(calleeGPR, DataFormatJS);
             shuffleData.args.resize(numAllocatedArgs);
 
             for (unsigned i = 0; i < numPassedArgs; ++i) {
@@ -890,8 +864,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 shuffleData.args[i] = ValueRecovery::constant(jsUndefined());
 
             shuffleData.setupCalleeSaveRegisters(m_jit.codeBlock());
-        } else if (node->op() == CallEval) {
-            // CallEval is handled with the arguments in the stack
+        } else {
             m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), JITCompiler::calleeFramePayloadSlot(CallFrameSlot::argumentCount));
 
             for (unsigned i = 0; i < numPassedArgs; i++) {
@@ -905,57 +878,15 @@ void SpeculativeJIT::emitCall(Node* node)
             
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                 m_jit.storeTrustedValue(jsUndefined(), JITCompiler::calleeArgumentSlot(i));
-
-            incrementCounter(&m_jit, VM::CallEval);
-        } else {
-            for (unsigned i = numPassedArgs; i-- > 0;) {
-                GPRReg platformArgGPR = argumentRegisterForFunctionArgument(i);
-                Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
-                JSValueOperand arg(this, argEdge, platformArgGPR);
-                GPRReg argGPR = arg.gpr();
-                ASSERT(argGPR == platformArgGPR || platformArgGPR == InvalidGPRReg);
-
-                // Only free the non-argument registers at this point.
-                if (platformArgGPR == InvalidGPRReg) {
-                    use(argEdge);
-                    m_jit.store64(argGPR, JITCompiler::calleeArgumentSlot(i));
-                }
-            }
-
-            // Use the argument edges for arguments passed in registers.
-            for (unsigned i = numPassedArgs; i-- > 0;) {
-                GPRReg argGPR = argumentRegisterForFunctionArgument(i);
-                if (argGPR != InvalidGPRReg) {
-                    Edge argEdge = m_jit.graph().m_varArgChildren[node->firstChild() + 1 + i];
-                    use(argEdge);
-                }
-            }
-
-            GPRTemporary argCount(this, argumentRegisterForArgumentCount());
-            GPRReg argCountGPR = argCount.gpr();
-            m_jit.move(TrustedImm32(numPassedArgs), argCountGPR);
-            argumentsLocation = argumentsLocationFor(numAllocatedArgs);
-
-            for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i) {
-                GPRReg platformArgGPR = argumentRegisterForFunctionArgument(i);
-
-                if (platformArgGPR == InvalidGPRReg)
-                    m_jit.storeTrustedValue(jsUndefined(), JITCompiler::calleeArgumentSlot(i));
-                else {
-                    GPRTemporary argumentTemp(this, platformArgGPR);
-                    m_jit.move(TrustedImm64(JSValue::encode(jsUndefined())), argumentTemp.gpr());
-                }
-            }
         }
     }
     
     if (!isTail || isVarargs || isForwardVarargs) {
         Edge calleeEdge = m_jit.graph().child(node, 0);
-        JSValueOperand callee(this, calleeEdge, argumentRegisterForCallee());
+        JSValueOperand callee(this, calleeEdge);
         calleeGPR = callee.gpr();
         callee.use();
-        if (argumentsLocation == StackArgs)
-            m_jit.store64(calleeGPR, JITCompiler::calleeFrameSlot(CallFrameSlot::callee));
+        m_jit.store64(calleeGPR, JITCompiler::calleeFrameSlot(CallFrameSlot::callee));
 
         flushRegisters();
     }
@@ -982,7 +913,7 @@ void SpeculativeJIT::emitCall(Node* node)
     };
     
     CallLinkInfo* callLinkInfo = m_jit.codeBlock()->addCallLinkInfo();
-    callLinkInfo->setUpCall(callType, argumentsLocation, m_currentNode->origin.semantic, calleeGPR);
+    callLinkInfo->setUpCall(callType, m_currentNode->origin.semantic, calleeGPR);
 
     if (node->op() == CallEval) {
         // We want to call operationCallEval but we don't want to overwrite the parameter area in
@@ -1023,14 +954,8 @@ void SpeculativeJIT::emitCall(Node* node)
         if (isTail) {
             RELEASE_ASSERT(node->op() == DirectTailCall);
             
-            if (calleeGPRTemporary != std::nullopt)
-                m_jit.move(tailCallee->gpr(), calleeGPRTemporary->gpr());
-
             JITCompiler::PatchableJump patchableJump = m_jit.patchableJump();
             JITCompiler::Label mainPath = m_jit.label();
-
-            incrementCounter(&m_jit, VM::TailCall);
-            incrementCounter(&m_jit, VM::DirectCall);
             
             m_jit.emitStoreCallSiteIndex(callSite);
             
@@ -1046,8 +971,6 @@ void SpeculativeJIT::emitCall(Node* node)
             callOperation(operationLinkDirectCall, callLinkInfo, calleeGPR);
             silentFillAllRegisters(InvalidGPRReg);
             m_jit.exceptionCheck();
-            if (calleeGPRTemporary != std::nullopt)
-                m_jit.move(tailCallee->gpr(), calleeGPRTemporary->gpr());
             m_jit.jump().linkTo(mainPath, &m_jit);
             
             useChildren(node);
@@ -1058,8 +981,6 @@ void SpeculativeJIT::emitCall(Node* node)
         
         JITCompiler::Label mainPath = m_jit.label();
         
-        incrementCounter(&m_jit, VM::DirectCall);
-
         m_jit.emitStoreCallSiteIndex(callSite);
         
         JITCompiler::Call call = m_jit.nearCall();
@@ -1067,25 +988,20 @@ void SpeculativeJIT::emitCall(Node* node)
         
         JITCompiler::Label slowPath = m_jit.label();
         if (isX86())
-            m_jit.pop(GPRInfo::nonArgGPR0);
+            m_jit.pop(JITCompiler::selectScratchGPR(calleeGPR));
 
-        m_jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0); // Link info needs to be in nonArgGPR0
-        JITCompiler::Call slowCall = m_jit.nearCall();
-
+        callOperation(operationLinkDirectCall, callLinkInfo, calleeGPR);
         m_jit.exceptionCheck();
         m_jit.jump().linkTo(mainPath, &m_jit);
         
         done.link(&m_jit);
         
         setResultAndResetStack();
-
-        m_jit.addJSDirectCall(call, slowCall, slowPath, callLinkInfo);
+        
+        m_jit.addJSDirectCall(call, slowPath, callLinkInfo);
         return;
     }
-
-    if (isTail && calleeGPRTemporary != std::nullopt)
-        m_jit.move(tailCallee->gpr(), calleeGPRTemporary->gpr());
-
+    
     m_jit.emitStoreCallSiteIndex(callSite);
     
     JITCompiler::DataLabelPtr targetToCheck;
@@ -1109,22 +1025,23 @@ void SpeculativeJIT::emitCall(Node* node)
 
     if (node->op() == TailCall) {
         CallFrameShuffler callFrameShuffler(m_jit, shuffleData);
-        if (argumentsLocation == StackArgs)
-            callFrameShuffler.setCalleeJSValueRegs(JSValueRegs(argumentRegisterForCallee()));
+        callFrameShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
         callFrameShuffler.prepareForSlowPath();
-    } else if (isTail)
-        m_jit.emitRestoreCalleeSaves();
+    } else {
+        m_jit.move(calleeGPR, GPRInfo::regT0); // Callee needs to be in regT0
 
-    m_jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::nonArgGPR0); // Link info needs to be in nonArgGPR0
+        if (isTail)
+            m_jit.emitRestoreCalleeSaves(); // This needs to happen after we moved calleeGPR to regT0
+    }
+
+    m_jit.move(MacroAssembler::TrustedImmPtr(callLinkInfo), GPRInfo::regT2); // Link info needs to be in regT2
     JITCompiler::Call slowCall = m_jit.nearCall();
 
     done.link(&m_jit);
 
-    if (isTail) {
-        tailCallee = std::nullopt;
-        calleeGPRTemporary = std::nullopt;
+    if (isTail)
         m_jit.abortWithReason(JITDidReturnFromTailCall);
-    } else
+    else
         setResultAndResetStack();
 
     m_jit.addJSCall(fastCall, slowCall, targetToCheck, callLinkInfo);
@@ -4249,9 +4166,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GetArgumentRegister:
-        break;
-            
     case GetRestLength: {
         compileGetRestLength(node);
         break;

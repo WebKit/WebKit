@@ -144,11 +144,6 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
 
-    case GetArgumentRegister: {
-        m_availability.m_locals.operand(node->local()).setNode(node);
-        break;
-    }
-
     case MovHint: {
         m_availability.m_locals.operand(node->unlinkedLocal()).setNode(node->child1().node());
         break;

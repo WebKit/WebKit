@@ -55,13 +55,6 @@ private:
         ASSERT(reg.isSet());
     }
 
-    ArgumentRegValue(Origin origin, Reg reg, Type type)
-        : Value(CheckedOpcode, ArgumentReg, type, origin)
-        , m_reg(reg)
-    {
-        ASSERT(reg.isSet());
-    }
-
     Reg m_reg;
 };
 

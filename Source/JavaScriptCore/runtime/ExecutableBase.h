@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ArityCheckMode.h"
 #include "CallData.h"
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
@@ -33,7 +34,6 @@
 #include "HandlerInfo.h"
 #include "InferredValue.h"
 #include "JITCode.h"
-#include "JITEntryPoints.h"
 #include "JSGlobalObject.h"
 #include "SourceCode.h"
 #include "TypeSet.h"
@@ -145,42 +145,47 @@ public:
         return generatedJITCodeForConstruct();
     }
     
-    MacroAssemblerCodePtr entrypointFor(CodeSpecializationKind kind, EntryPointType entryType)
+    MacroAssemblerCodePtr entrypointFor(CodeSpecializationKind kind, ArityCheckMode arity)
     {
         // Check if we have a cached result. We only have it for arity check because we use the
         // no-arity entrypoint in non-virtual calls, which will "cache" this value directly in
         // machine code.
-        switch (kind) {
-        case CodeForCall:
-            if (MacroAssemblerCodePtr result = m_jitEntriesForCall.entryFor(entryType))
-                return result;
-            break;
-        case CodeForConstruct:
-            if (MacroAssemblerCodePtr result = m_jitEntriesForConstruct.entryFor(entryType))
-                return result;
-            break;
+        if (arity == MustCheckArity) {
+            switch (kind) {
+            case CodeForCall:
+                if (MacroAssemblerCodePtr result = m_jitCodeForCallWithArityCheck)
+                    return result;
+                break;
+            case CodeForConstruct:
+                if (MacroAssemblerCodePtr result = m_jitCodeForConstructWithArityCheck)
+                    return result;
+                break;
+            }
         }
         MacroAssemblerCodePtr result =
-            generatedJITCodeFor(kind)->addressForCall(entryType);
-        // Cache the result; this is necessary for the JIT's virtual call optimizations.
-        switch (kind) {
-        case CodeForCall:
-            m_jitEntriesForCall.setEntryFor(entryType, result);
-            break;
-        case CodeForConstruct:
-            m_jitEntriesForConstruct.setEntryFor(entryType, result);
-            break;
+            generatedJITCodeFor(kind)->addressForCall(arity);
+        if (arity == MustCheckArity) {
+            // Cache the result; this is necessary for the JIT's virtual call optimizations.
+            switch (kind) {
+            case CodeForCall:
+                m_jitCodeForCallWithArityCheck = result;
+                break;
+            case CodeForConstruct:
+                m_jitCodeForConstructWithArityCheck = result;
+                break;
+            }
         }
         return result;
     }
 
-    static ptrdiff_t offsetOfEntryFor(CodeSpecializationKind kind, EntryPointType entryPointType)
+    static ptrdiff_t offsetOfJITCodeWithArityCheckFor(
+        CodeSpecializationKind kind)
     {
         switch (kind) {
         case CodeForCall:
-            return OBJECT_OFFSETOF(ExecutableBase, m_jitEntriesForCall) + JITEntryPoints::offsetOfEntryFor(entryPointType);
+            return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForCallWithArityCheck);
         case CodeForConstruct:
-            return OBJECT_OFFSETOF(ExecutableBase, m_jitEntriesForConstruct) + JITEntryPoints::offsetOfEntryFor(entryPointType);
+            return OBJECT_OFFSETOF(ExecutableBase, m_jitCodeForConstructWithArityCheck);
         }
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
@@ -228,8 +233,8 @@ protected:
     Intrinsic m_intrinsic;
     RefPtr<JITCode> m_jitCodeForCall;
     RefPtr<JITCode> m_jitCodeForConstruct;
-    JITEntryPoints m_jitEntriesForCall;
-    JITEntryPoints m_jitEntriesForConstruct;
+    MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
+    MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
 };
 
 } // namespace JSC

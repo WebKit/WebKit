@@ -75,9 +75,9 @@ JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 
     if (!function || !protoCallFrame->needArityCheck()) {
         ASSERT(!protoCallFrame->needArityCheck());
-        entryAddress = addressForCall(StackArgsArityCheckNotRequired).executableAddress();
+        entryAddress = executableAddress();
     } else
-        entryAddress = addressForCall(StackArgsMustCheckArity).executableAddress();
+        entryAddress = addressForCall(MustCheckArity).executableAddress();
     JSValue result = JSValue::decode(vmEntryToJavaScript(entryAddress, vm, protoCallFrame));
     return scope.exception() ? jsNull() : result;
 }
@@ -162,9 +162,9 @@ DirectJITCode::DirectJITCode(JITType jitType)
 {
 }
 
-DirectJITCode::DirectJITCode(JITEntryPointsWithRef entries, JITType jitType)
-    : JITCodeWithCodeRef(entries.codeRef(), jitType)
-    , m_entryPoints(entries)
+DirectJITCode::DirectJITCode(JITCode::CodeRef ref, JITCode::CodePtr withArityCheck, JITType jitType)
+    : JITCodeWithCodeRef(ref, jitType)
+    , m_withArityCheck(withArityCheck)
 {
 }
 
@@ -172,16 +172,25 @@ DirectJITCode::~DirectJITCode()
 {
 }
 
-void DirectJITCode::initializeEntryPoints(JITEntryPointsWithRef entries)
+void DirectJITCode::initializeCodeRef(JITCode::CodeRef ref, JITCode::CodePtr withArityCheck)
 {
     RELEASE_ASSERT(!m_ref);
-    m_ref = entries.codeRef();
-    m_entryPoints = entries;
+    m_ref = ref;
+    m_withArityCheck = withArityCheck;
 }
 
-JITCode::CodePtr DirectJITCode::addressForCall(EntryPointType type)
+JITCode::CodePtr DirectJITCode::addressForCall(ArityCheckMode arity)
 {
-    return m_entryPoints.entryFor(type);
+    switch (arity) {
+    case ArityCheckNotRequired:
+        RELEASE_ASSERT(m_ref);
+        return m_ref.code();
+    case MustCheckArity:
+        RELEASE_ASSERT(m_withArityCheck);
+        return m_withArityCheck;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return CodePtr();
 }
 
 NativeJITCode::NativeJITCode(JITType jitType)
@@ -204,7 +213,7 @@ void NativeJITCode::initializeCodeRef(CodeRef ref)
     m_ref = ref;
 }
 
-JITCode::CodePtr NativeJITCode::addressForCall(EntryPointType)
+JITCode::CodePtr NativeJITCode::addressForCall(ArityCheckMode)
 {
     RELEASE_ASSERT(!!m_ref);
     return m_ref.code();

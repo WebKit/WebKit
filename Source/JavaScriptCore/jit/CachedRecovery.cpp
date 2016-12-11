@@ -30,26 +30,6 @@
 
 namespace JSC {
 
-void CachedRecovery::addTargetJSValueRegs(JSValueRegs jsValueRegs)
-{
-    ASSERT(m_wantedFPR == InvalidFPRReg);
-    size_t existing = m_gprTargets.find(jsValueRegs);
-    if (existing == WTF::notFound) {
-#if USE(JSVALUE64)
-        if (m_gprTargets.size() > 0 && m_recovery.isSet() && m_recovery.isInGPR()) {
-            // If we are recovering to the same GPR, make that GPR the first target.
-            GPRReg sourceGPR = m_recovery.gpr();
-            if (jsValueRegs.gpr() == sourceGPR) {
-                // Append the current first GPR below.
-                jsValueRegs = JSValueRegs(m_gprTargets[0].gpr());
-                m_gprTargets[0] = JSValueRegs(sourceGPR);
-            }
-        }
-#endif
-        m_gprTargets.append(jsValueRegs);
-    }
-}
-
 // We prefer loading doubles and undetermined JSValues into FPRs
 // because it would otherwise use up GPRs.  Two in JSVALUE32_64.
 bool CachedRecovery::loadsIntoFPR() const

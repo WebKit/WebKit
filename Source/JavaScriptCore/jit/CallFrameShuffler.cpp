@@ -42,9 +42,6 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
         + roundArgumentCountToAlignFrame(jit.codeBlock()->numParameters()))
     , m_alignedNewFrameSize(CallFrame::headerSizeInRegisters
         + roundArgumentCountToAlignFrame(data.args.size()))
-#if USE(JSVALUE64)
-    , m_argumentsInRegisters(data.argumentsInRegisters)
-#endif
     , m_frameDelta(m_alignedNewFrameSize - m_alignedOldFrameSize)
     , m_lockedRegisters(RegisterSet::allRegisters())
 {
@@ -57,21 +54,11 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
     m_lockedRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
-#if USE(JSVALUE64)
-    if (data.argumentsInRegisters)
-        addNew(JSValueRegs(argumentRegisterForCallee()), data.callee);
-    else
-#endif
-        addNew(VirtualRegister(CallFrameSlot::callee), data.callee);
-    
+    addNew(VirtualRegister(CallFrameSlot::callee), data.callee);
+
     for (size_t i = 0; i < data.args.size(); ++i) {
         ASSERT(!data.args[i].isInJSStack() || data.args[i].virtualRegister().isLocal());
-#if USE(JSVALUE64)
-        if (data.argumentsInRegisters && i < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-            addNew(JSValueRegs(argumentRegisterForFunctionArgument(i)), data.args[i]);
-        else
-#endif
-            addNew(virtualRegisterForArgument(i), data.args[i]);
+        addNew(virtualRegisterForArgument(i), data.args[i]);
     }
 
 #if USE(JSVALUE64)
@@ -198,13 +185,8 @@ void CallFrameShuffler::dump(PrintStream& out) const
             }
         }
 #else
-        if (newCachedRecovery) {
+        if (newCachedRecovery)
             out.print("         ", reg, " <- ", newCachedRecovery->recovery());
-            if (newCachedRecovery->gprTargets().size() > 1) {
-                for (size_t i = 1; i < newCachedRecovery->gprTargets().size(); i++)
-                    out.print(", ", newCachedRecovery->gprTargets()[i].gpr(), " <- ", newCachedRecovery->recovery());
-            }
-        }
 #endif
         out.print("\n");
     }
@@ -514,7 +496,7 @@ bool CallFrameShuffler::tryWrites(CachedRecovery& cachedRecovery)
     ASSERT(cachedRecovery.recovery().isInRegisters()
         || cachedRecovery.recovery().isConstant());
 
-    if (verbose && cachedRecovery.targets().size())
+    if (verbose)
         dataLog("   * Storing ", cachedRecovery.recovery());
     for (size_t i = 0; i < cachedRecovery.targets().size(); ++i) {
         VirtualRegister target { cachedRecovery.targets()[i] };
@@ -523,9 +505,9 @@ bool CallFrameShuffler::tryWrites(CachedRecovery& cachedRecovery)
             dataLog(!i ? " into " : ", and ", "NEW ", target);
         emitStore(cachedRecovery, addressForNew(target));
         setNew(target, nullptr);
-        if (verbose)
-            dataLog("\n");
     }
+    if (verbose)
+        dataLog("\n");
     cachedRecovery.clearTargets();
     if (!cachedRecovery.wantedJSValueRegs() && cachedRecovery.wantedFPR() == InvalidFPRReg)
         clearCachedRecovery(cachedRecovery.recovery());
@@ -624,7 +606,7 @@ void CallFrameShuffler::prepareAny()
 {
     ASSERT(!isUndecided());
 
-    initDangerFrontier();
+    updateDangerFrontier();
 
     // First, we try to store any value that goes above the danger
     // frontier. This will never use more registers since we are only
@@ -720,9 +702,13 @@ void CallFrameShuffler::prepareAny()
         ASSERT_UNUSED(writesOK, writesOK);
     }
 
+#if USE(JSVALUE64)
+    if (m_tagTypeNumber != InvalidGPRReg && m_newRegisters[m_tagTypeNumber])
+        releaseGPR(m_tagTypeNumber);
+#endif
+
     // Handle 2) by loading all registers. We don't have to do any
     // writes, since they have been taken care of above.
-    // Note that we need m_tagTypeNumber to remain locked to box wanted registers.
     if (verbose)
         dataLog("  Loading wanted registers into registers\n");
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
@@ -756,19 +742,12 @@ void CallFrameShuffler::prepareAny()
 
     // We need to handle 4) first because it implies releasing
     // m_newFrameBase, which could be a wanted register.
-    // Note that we delay setting the argument count register as it needs to be released in step 3.
     if (verbose)
         dataLog("   * Storing the argument count into ", VirtualRegister { CallFrameSlot::argumentCount }, "\n");
-#if USE(JSVALUE64)
-    if (!m_argumentsInRegisters) {
-#endif
-        m_jit.store32(MacroAssembler::TrustedImm32(0),
-            addressForNew(VirtualRegister { CallFrameSlot::argumentCount }).withOffset(TagOffset));
-        m_jit.store32(MacroAssembler::TrustedImm32(argCount()),
-            addressForNew(VirtualRegister { CallFrameSlot::argumentCount }).withOffset(PayloadOffset));
-#if USE(JSVALUE64)
-    }
-#endif
+    m_jit.store32(MacroAssembler::TrustedImm32(0),
+        addressForNew(VirtualRegister { CallFrameSlot::argumentCount }).withOffset(TagOffset));
+    m_jit.store32(MacroAssembler::TrustedImm32(argCount()),
+        addressForNew(VirtualRegister { CallFrameSlot::argumentCount }).withOffset(PayloadOffset));
 
     if (!isSlowPath()) {
         ASSERT(m_newFrameBase != MacroAssembler::stackPointerRegister);
@@ -788,23 +767,6 @@ void CallFrameShuffler::prepareAny()
 
         emitDisplace(*cachedRecovery);
     }
-
-#if USE(JSVALUE64)
-    // For recoveries with multiple register targets, copy the contents of the first target to the
-    // remaining targets.
-    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        CachedRecovery* cachedRecovery { m_newRegisters[reg] };
-        if (!cachedRecovery || cachedRecovery->gprTargets().size() < 2)
-            continue;
-
-        GPRReg sourceGPR = cachedRecovery->gprTargets()[0].gpr();
-        for (size_t i = 1; i < cachedRecovery->gprTargets().size(); i++)
-            m_jit.move(sourceGPR, cachedRecovery->gprTargets()[i].gpr());
-    }
-
-    if (m_argumentsInRegisters)
-        m_jit.move(MacroAssembler::TrustedImm32(argCount()), argumentRegisterForArgumentCount());
-#endif
 }
 
 } // namespace JSC

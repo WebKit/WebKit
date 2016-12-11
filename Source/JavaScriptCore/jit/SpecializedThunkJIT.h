@@ -28,7 +28,6 @@
 #if ENABLE(JIT)
 
 #include "JIT.h"
-#include "JITEntryPoints.h"
 #include "JITInlines.h"
 #include "JSInterfaceJIT.h"
 #include "LinkBuffer.h"
@@ -38,43 +37,18 @@ namespace JSC {
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
         static const int ThisArgument = -1;
-        enum ArgLocation { OnStack, InRegisters };
-
-        SpecializedThunkJIT(VM* vm, int expectedArgCount, AssemblyHelpers::SpillRegisterType spillType = AssemblyHelpers::SpillExactly, ArgLocation argLocation = OnStack)
+        SpecializedThunkJIT(VM* vm, int expectedArgCount)
             : JSInterfaceJIT(vm)
         {
-#if !NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-            UNUSED_PARAM(spillType);
-            UNUSED_PARAM(argLocation);
-#else
-            if (argLocation == InRegisters) {
-                m_stackArgumentsEntry = label();
-                fillArgumentRegistersFromFrameBeforePrologue();
-                m_registerArgumentsEntry = label();
-                emitFunctionPrologue();
-                emitSaveThenMaterializeTagRegisters();
-                // Check that we have the expected number of arguments
-                m_failures.append(branch32(NotEqual, argumentRegisterForArgumentCount(), TrustedImm32(expectedArgCount + 1)));
-            } else {
-                spillArgumentRegistersToFrameBeforePrologue(expectedArgCount + 1, spillType);
-                m_stackArgumentsEntry = label();
-#endif
-                emitFunctionPrologue();
-                emitSaveThenMaterializeTagRegisters();
-                // Check that we have the expected number of arguments
-                m_failures.append(branch32(NotEqual, payloadFor(CallFrameSlot::argumentCount), TrustedImm32(expectedArgCount + 1)));
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-                }
-#endif
+            emitFunctionPrologue();
+            emitSaveThenMaterializeTagRegisters();
+            // Check that we have the expected number of arguments
+            m_failures.append(branch32(NotEqual, payloadFor(CallFrameSlot::argumentCount), TrustedImm32(expectedArgCount + 1)));
         }
         
         explicit SpecializedThunkJIT(VM* vm)
             : JSInterfaceJIT(vm)
         {
-#if USE(JSVALUE64)
-            spillArgumentRegistersToFrameBeforePrologue();
-            m_stackArgumentsEntry = Label();
-#endif
             emitFunctionPrologue();
             emitSaveThenMaterializeTagRegisters();
         }
@@ -120,26 +94,11 @@ namespace JSC {
             loadInt32Argument(argument, dst, conversionFailed);
             m_failures.append(conversionFailed);
         }
-
-        void checkJSStringArgument(VM& vm, RegisterID argument)
-        {
-            m_failures.append(emitJumpIfNotJSCell(argument));
-            m_failures.append(branchStructure(NotEqual,
-                Address(argument, JSCell::structureIDOffset()),
-                vm.stringStructure.get()));
-        }
         
         void appendFailure(const Jump& failure)
         {
             m_failures.append(failure);
         }
-
-        void linkFailureHere()
-        {
-            m_failures.link(this);
-            m_failures.clear();
-        }
-
 #if USE(JSVALUE64)
         void returnJSValue(RegisterID src)
         {
@@ -205,29 +164,13 @@ namespace JSC {
             ret();
         }
         
-        JITEntryPointsWithRef finalize(MacroAssemblerCodePtr fallback, const char* thunkKind)
+        MacroAssemblerCodeRef finalize(MacroAssemblerCodePtr fallback, const char* thunkKind)
         {
             LinkBuffer patchBuffer(*m_vm, *this, GLOBAL_THUNK_ID);
             patchBuffer.link(m_failures, CodeLocationLabel(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
-
-            MacroAssemblerCodePtr stackEntry;
-            if (m_stackArgumentsEntry.isSet())
-                stackEntry = patchBuffer.locationOf(m_stackArgumentsEntry);
-            MacroAssemblerCodePtr registerEntry;
-            if (m_registerArgumentsEntry.isSet())
-                registerEntry = patchBuffer.locationOf(m_registerArgumentsEntry);
-
-            MacroAssemblerCodeRef entry = FINALIZE_CODE(patchBuffer, ("Specialized thunk for %s", thunkKind));
-
-            if (m_stackArgumentsEntry.isSet()) {
-                if (m_registerArgumentsEntry.isSet())
-                    return JITEntryPointsWithRef(entry, registerEntry, registerEntry, registerEntry, stackEntry, stackEntry);
-                return JITEntryPointsWithRef(entry, entry.code(), entry.code(), entry.code(), stackEntry, stackEntry);
-            }
-
-            return JITEntryPointsWithRef(entry, entry.code(), entry.code());
+            return FINALIZE_CODE(patchBuffer, ("Specialized thunk for %s", thunkKind));
         }
 
         // Assumes that the target function uses fpRegister0 as the first argument
@@ -264,8 +207,6 @@ namespace JSC {
         }
         
         MacroAssembler::JumpList m_failures;
-        MacroAssembler::Label m_registerArgumentsEntry;
-        MacroAssembler::Label m_stackArgumentsEntry;
         Vector<std::pair<Call, FunctionPtr>> m_calls;
     };
 

@@ -152,8 +152,6 @@ enum StructureRegistrationResult { StructureRegisteredNormally, StructureRegiste
 
 enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointConverged };
 
-enum StrengthReduceArgumentFlushes { DontOptimizeArgumentFlushes, OptimizeArgumentFlushes };
-
 // Describes the form you can expect the entire graph to be in.
 enum GraphForm {
     // LoadStore form means that basic blocks may freely use GetLocal, SetLocal,

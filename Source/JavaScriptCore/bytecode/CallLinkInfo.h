@@ -28,7 +28,6 @@
 #include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
-#include "JITEntryPoints.h"
 #include "PolymorphicCallStubRoutine.h"
 #include "WriteBarrier.h"
 #include <wtf/SentinelLinkedList.h>
@@ -158,12 +157,9 @@ public:
     bool isLinked() { return m_stub || m_calleeOrCodeBlock; }
     void unlink(VM&);
 
-    void setUpCall(CallType callType, ArgumentsLocation argumentsLocation, CodeOrigin codeOrigin, unsigned calleeGPR)
+    void setUpCall(CallType callType, CodeOrigin codeOrigin, unsigned calleeGPR)
     {
-        ASSERT(!isVarargsCallType(callType) || (argumentsLocation == StackArgs));
-
         m_callType = callType;
-        m_argumentsLocation = static_cast<unsigned>(argumentsLocation);
         m_codeOrigin = codeOrigin;
         m_calleeGPR = calleeGPR;
     }
@@ -279,16 +275,6 @@ public:
         return static_cast<CallType>(m_callType);
     }
 
-    ArgumentsLocation argumentsLocation()
-    {
-        return static_cast<ArgumentsLocation>(m_argumentsLocation);
-    }
-
-    bool argumentsInRegisters()
-    {
-        return m_argumentsLocation != StackArgs;
-    }
-
     uint32_t* addressOfMaxNumArguments()
     {
         return &m_maxNumArguments;
@@ -353,7 +339,6 @@ private:
     bool m_hasSeenClosure : 1;
     bool m_clearedByGC : 1;
     bool m_allowStubs : 1;
-    unsigned m_argumentsLocation : 4;
     bool m_isLinked : 1;
     unsigned m_callType : 4; // CallType
     unsigned m_calleeGPR : 8;

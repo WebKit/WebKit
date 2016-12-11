@@ -39,7 +39,6 @@ public:
     ValueRecovery callee;
     Vector<ValueRecovery> args;
 #if USE(JSVALUE64)
-    bool argumentsInRegisters { false };
     RegisterMap<ValueRecovery> registers;
     GPRReg tagTypeNumber { InvalidGPRReg };
 

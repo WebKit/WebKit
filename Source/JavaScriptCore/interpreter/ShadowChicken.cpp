@@ -284,24 +284,16 @@ void ShadowChicken::update(VM&, ExecState* exec)
             bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->jsCallee(), callFrame->callerFrame());
             bool isTailDeleted = false;
             JSScope* scope = nullptr;
-            JSValue thisValue = jsUndefined();
             CodeBlock* codeBlock = callFrame->codeBlock();
-            if (codeBlock && codeBlock->wasCompiledWithDebuggingOpcodes()) {
-                if (codeBlock->scopeRegister().isValid()) {
-                    scope = callFrame->scope(codeBlock->scopeRegister().offset());
-                    RELEASE_ASSERT(scope->inherits(JSScope::info()));
-                }
-                thisValue = callFrame->thisValue();
+            if (codeBlock && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid()) {
+                scope = callFrame->scope(codeBlock->scopeRegister().offset());
+                RELEASE_ASSERT(scope->inherits(JSScope::info()));
             } else if (foundFrame) {
-                if (!scope) {
-                    scope = m_log[indexInLog].scope;
-                    if (scope)
-                        RELEASE_ASSERT(scope->inherits(JSScope::info()));
-                }
-                if (thisValue.isUndefined())
-                    thisValue = m_log[indexInLog].thisValue;
+                scope = m_log[indexInLog].scope;
+                if (scope)
+                    RELEASE_ASSERT(scope->inherits(JSScope::info()));
             }
-            toPush.append(Frame(visitor->callee(), callFrame, isTailDeleted, thisValue, scope, codeBlock, callFrame->callSiteIndex()));
+            toPush.append(Frame(visitor->callee(), callFrame, isTailDeleted, callFrame->thisValue(), scope, codeBlock, callFrame->callSiteIndex()));
 
             if (indexInLog < logCursorIndex
                 // This condition protects us from the case where advanceIndexInLogTo didn't find

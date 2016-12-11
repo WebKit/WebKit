@@ -406,7 +406,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Phi:
     case PhantomLocal:
     case SetArgument:
-    case GetArgumentRegister:
     case Jump:
     case Branch:
     case Switch:
@@ -471,7 +470,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomClonedArguments:
         // DFG backend requires that the locals that this reads are flushed. FTL backend can handle those
         // locals being promoted.
-        if (!isFTL(graph.m_plan.mode) && !node->origin.semantic.inlineCallFrame)
+        if (!isFTL(graph.m_plan.mode))
             read(Stack);
         
         // Even though it's phantom, it still has the property that one can't be replaced with another.
@@ -560,18 +559,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case TailCall:
     case DirectTailCall:
     case TailCallVarargs:
+    case TailCallForwardVarargs:
         read(World);
         write(SideState);
         return;
         
-    case TailCallForwardVarargs:
-        // We read all arguments after "this".
-        for (unsigned arg = 1; arg < graph.m_argumentsOnStack.size(); arg++)
-            read(AbstractHeap(Stack, virtualRegisterForArgument(arg)));
-        read(World);
-        write(SideState);
-        return;
-
     case GetGetter:
         read(GetterSetter_getter);
         def(HeapLocation(GetterLoc, GetterSetter_getter, node->child1()), LazyNode(node));
