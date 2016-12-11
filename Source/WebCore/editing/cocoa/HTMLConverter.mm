@@ -2236,6 +2236,7 @@ void HTMLConverter::_processText(CharacterData& characterData)
         unsigned count = originalString.length();
         bool wasLeading = true;
         StringBuilder builder;
+        LChar noBreakSpaceRepresentation = 0;
         for (unsigned i = 0; i < count; i++) {
             UChar c = originalString.at(i);
             bool isWhitespace = c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == 0xc || c == 0x200b;
@@ -2244,7 +2245,13 @@ void HTMLConverter::_processText(CharacterData& characterData)
             else {
                 if (wasSpace)
                     builder.append(' ');
-                builder.append(c);
+                if (c != noBreakSpace)
+                    builder.append(c);
+                else {
+                    if (!noBreakSpaceRepresentation)
+                        noBreakSpaceRepresentation = _caches->propertyValueForNode(characterData, CSSPropertyWebkitNbspMode) == "space" ? ' ' : noBreakSpace;
+                    builder.append(noBreakSpaceRepresentation);
+                }
                 wasSpace = false;
                 wasLeading = false;
             }
@@ -2519,7 +2526,13 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
         else
             [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
 
-        [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:it.text().createNSStringWithoutCopying().get()];
+        RetainPtr<NSString> text;
+        if (style.nbspMode() == NBNORMAL)
+            text = it.text().createNSStringWithoutCopying();
+        else
+            text = it.text().toString().replace(noBreakSpace, ' ');
+
+        [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:text.get()];
         [string setAttributes:attrs.get() range:NSMakeRange(stringLength, currentTextLength)];
         stringLength += currentTextLength;
     }

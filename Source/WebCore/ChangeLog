@@ -1,3 +1,19 @@
+2016-12-11  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] NSAttributedString representation of text copied from -webkit-nbsp-mode:space element contains non-breaking space characters, but shouldn’t
+        https://bugs.webkit.org/show_bug.cgi?id=165515
+        <rdar://problem/4108460>
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/fast/text/attributed-substring-from-range.html
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_processText): Emit a space instead of a non-breaking space if the text node
+          is styled with -webkit-nbsp-mode:space.
+        (WebCore::editingAttributedStringFromRange): Replace all non-breaking spaces with spaces if
+          they come from a text node with -webkit-nbsp-mode:space.
+
 2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, add KHR include dir to fix ANGLE build after r209665

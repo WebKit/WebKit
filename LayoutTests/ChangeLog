@@ -1,3 +1,13 @@
+2016-12-11  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] NSAttributedString representation of text copied from -webkit-nbsp-mode:space element contains non-breaking space characters, but shouldn’t
+        https://bugs.webkit.org/show_bug.cgi?id=165515
+        <rdar://problem/4108460>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/fast/text/attributed-substring-from-range-expected.txt: Updated.
+
 2016-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Support the deprecated dictionary constructor for DOMPointReadOnly and DOMPoint

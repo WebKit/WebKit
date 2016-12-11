@@ -13,9 +13,9 @@ Testing styled text (12<b>3<i>456</i></b>)
 Testing proper space runs (1._2.__3.___4_5)
 total length: 15
 one space: " "
-two spaces: "  "
-three spaces: "   "
-four spaces: "    "
+two spaces: "  "
+three spaces: "   "
+four spaces: "    "
 
 Testing space-only runs (1..2...3....4.5)
 total length: 9
