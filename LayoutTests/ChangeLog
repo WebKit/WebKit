@@ -1,3 +1,19 @@
+2016-12-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Add tests for wrap/unwrap SPKI/PKCS8 keys
+        https://bugs.webkit.org/show_bug.cgi?id=165557
+
+        Reviewed by Darin Adler.
+
+        * crypto/subtle/aes-cbc-import-key-unwrap-pkcs8-key-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-unwrap-pkcs8-key.html: Added.
+        * crypto/subtle/aes-cbc-import-key-unwrap-spki-key-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-unwrap-spki-key.html: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-pkcs8-key-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-pkcs8-key.html: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-spki-key-expected.txt: Added.
+        * crypto/subtle/aes-cbc-import-key-wrap-spki-key.html: Added.
+
 2016-12-11  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] NSAttributedString representation of text copied from -webkit-nbsp-mode:space element contains non-breaking space characters, but shouldn’t
