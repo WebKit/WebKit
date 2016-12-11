@@ -88,6 +88,7 @@ void MediaDevicesEnumerationRequest::start()
     if (!controller)
         return;
 
+    Ref<MediaDevicesEnumerationRequest> protectedThis(*this);
     controller->enumerateMediaDevices(*this);
 }
 
