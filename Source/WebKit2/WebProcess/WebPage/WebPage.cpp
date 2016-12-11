@@ -116,6 +116,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DatabaseManager.h>
@@ -2711,7 +2712,7 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     // disappear during script execution.
 
     RefPtr<SerializedScriptValue> serializedResultValue;
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     bool hadException = true;
     ExceptionDetails details;
     if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true, &details)) {
@@ -5462,12 +5463,12 @@ void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Fram
 
 void WebPage::getBytecodeProfile(uint64_t callbackID)
 {
-    if (!JSDOMWindow::commonVM().m_perBytecodeProfiler) {
+    if (!commonVM().m_perBytecodeProfiler) {
         send(Messages::WebPageProxy::StringCallback(String(), callbackID));
         return;
     }
 
-    String result = JSDOMWindow::commonVM().m_perBytecodeProfiler->toJSON();
+    String result = commonVM().m_perBytecodeProfiler->toJSON();
     ASSERT(result.length());
     send(Messages::WebPageProxy::StringCallback(result, callbackID));
 }
@@ -5475,7 +5476,7 @@ void WebPage::getBytecodeProfile(uint64_t callbackID)
 void WebPage::getSamplingProfilerOutput(uint64_t callbackID)
 {
 #if ENABLE(SAMPLING_PROFILER)
-    SamplingProfiler* samplingProfiler = JSDOMWindow::commonVM().samplingProfiler();
+    SamplingProfiler* samplingProfiler = commonVM().samplingProfiler();
     if (!samplingProfiler) {
         send(Messages::WebPageProxy::InvalidateStringCallback(callbackID));
         return;

@@ -33,6 +33,7 @@
 #include "PluginPackage.h"
 #include <WebCore/BridgeJSC.h>
 #include <WebCore/Chrome.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
@@ -236,7 +237,7 @@ bool PluginView::start()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
-        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+        JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)m_mimeType.utf8().data(), m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
         setCallingPlugin(false);
@@ -325,7 +326,7 @@ void PluginView::stop()
 
     m_isStarted = false;
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+    JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     // Unsubclass the window
@@ -428,7 +429,7 @@ void PluginView::performRequest(PluginRequest* request)
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 PluginView::setCurrentPluginView(this);
-                JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+                JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
                 setCallingPlugin(true);
                 m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.string().utf8().data(), NPRES_DONE, request->notifyData());
                 setCallingPlugin(false);
@@ -665,7 +666,7 @@ NPObject* PluginView::npObject()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
-        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+        JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginScriptableNPObject, &object);
         setCallingPlugin(false);
@@ -1382,7 +1383,7 @@ void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
         return;
 
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+    JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
     setCallingPlugin(true);
     NPBool value = privateBrowsingEnabled;
     setValue(m_instance, NPNVprivateModeBool, &value);

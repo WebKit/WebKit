@@ -370,4 +370,10 @@ inline void Heap::stopIfNecessary()
     stopIfNecessarySlow();
 }
 
+inline void Heap::writeBarrierOpaqueRoot(void* root)
+{
+    if (mutatorShouldBeFenced())
+        writeBarrierOpaqueRootSlow(root);
+}
+
 } // namespace JSC

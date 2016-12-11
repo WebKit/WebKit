@@ -21,6 +21,7 @@
 #include "config.h"
 #include "DOMWrapperWorld.h"
 
+#include "CommonVM.h"
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
@@ -69,7 +70,7 @@ DOMWrapperWorld& normalWorld(JSC::VM& vm)
 DOMWrapperWorld& mainThreadNormalWorld()
 {
     ASSERT(isMainThread());
-    static DOMWrapperWorld& cachedNormalWorld = normalWorld(JSDOMWindow::commonVM());
+    static DOMWrapperWorld& cachedNormalWorld = normalWorld(commonVM());
     return cachedNormalWorld;
 }
 

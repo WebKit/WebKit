@@ -29,6 +29,7 @@
 
 #import "NetscapePluginHostProxy.h"
 #import "ProxyRuntimeObject.h"
+#import <WebCore/CommonVM.h>
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/npruntime_impl.h>
@@ -325,7 +326,7 @@ void ProxyInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArr
 
         if (identifier->isString()) {
             const char* str = identifier->string();
-            nameArray.add(Identifier::fromString(&JSDOMWindow::commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
+            nameArray.add(Identifier::fromString(&commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str))));
         } else
             nameArray.add(Identifier::from(exec, identifier->number()));
     }

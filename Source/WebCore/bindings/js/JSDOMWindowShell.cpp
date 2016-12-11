@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSDOMWindowShell.h"
 
+#include "CommonVM.h"
 #include "Frame.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
@@ -79,7 +80,7 @@ void JSDOMWindowShell::setWindow(RefPtr<DOMWindow>&& domWindow)
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)
     
-    VM& vm = JSDOMWindow::commonVM();
+    VM& vm = commonVM();
     Structure* prototypeStructure = JSDOMWindowPrototype::createStructure(vm, 0, jsNull());
     Strong<JSDOMWindowPrototype> prototype(vm, JSDOMWindowPrototype::create(vm, 0, prototypeStructure));
 

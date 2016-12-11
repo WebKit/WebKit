@@ -34,6 +34,7 @@
 #if ENABLE(WEB_RTC)
 #include "SDPProcessor.h"
 
+#include "CommonVM.h"
 #include "Document.h"
 #include "Frame.h"
 #include "SDPProcessorScriptResource.h"
@@ -495,7 +496,7 @@ bool SDPProcessor::callScript(const String& functionName, const String& argument
         return false;
 
     if (!m_isolatedWorld)
-        m_isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM());
+        m_isolatedWorld = DOMWrapperWorld::create(commonVM());
 
     ScriptController& scriptController = document->frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(*m_isolatedWorld));

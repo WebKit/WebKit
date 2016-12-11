@@ -70,6 +70,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/DNS.h>
 #include <WebCore/DatabaseManager.h>
@@ -972,21 +973,21 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     
     // Gather JavaScript statistics.
     {
-        JSLockHolder lock(JSDOMWindow::commonVM());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptObjectsCount"), JSDOMWindow::commonVM().heap.objectCount());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptGlobalObjectsCount"), JSDOMWindow::commonVM().heap.globalObjectCount());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedObjectsCount"), JSDOMWindow::commonVM().heap.protectedObjectCount());
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedGlobalObjectsCount"), JSDOMWindow::commonVM().heap.protectedGlobalObjectCount());
+        JSLockHolder lock(commonVM());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptObjectsCount"), commonVM().heap.objectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptGlobalObjectsCount"), commonVM().heap.globalObjectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedObjectsCount"), commonVM().heap.protectedObjectCount());
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptProtectedGlobalObjectsCount"), commonVM().heap.protectedGlobalObjectCount());
         
-        std::unique_ptr<TypeCountSet> protectedObjectTypeCounts(JSDOMWindow::commonVM().heap.protectedObjectTypeCounts());
+        std::unique_ptr<TypeCountSet> protectedObjectTypeCounts(commonVM().heap.protectedObjectTypeCounts());
         fromCountedSetToHashMap(protectedObjectTypeCounts.get(), data.javaScriptProtectedObjectTypeCounts);
         
-        std::unique_ptr<TypeCountSet> objectTypeCounts(JSDOMWindow::commonVM().heap.objectTypeCounts());
+        std::unique_ptr<TypeCountSet> objectTypeCounts(commonVM().heap.objectTypeCounts());
         fromCountedSetToHashMap(objectTypeCounts.get(), data.javaScriptObjectTypeCounts);
         
-        uint64_t javaScriptHeapSize = JSDOMWindow::commonVM().heap.size();
+        uint64_t javaScriptHeapSize = commonVM().heap.size();
         data.statisticsNumbers.set(ASCIILiteral("JavaScriptHeapSize"), javaScriptHeapSize);
-        data.statisticsNumbers.set(ASCIILiteral("JavaScriptFreeSize"), JSDOMWindow::commonVM().heap.capacity() - javaScriptHeapSize);
+        data.statisticsNumbers.set(ASCIILiteral("JavaScriptFreeSize"), commonVM().heap.capacity() - javaScriptHeapSize);
     }
 
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();

@@ -23,6 +23,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -365,7 +366,7 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
 static DOMWrapperWorld& plugInImageElementIsolatedWorld()
 {
-    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM()).leakRef();
+    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(commonVM()).leakRef();
     return isolatedWorld;
 }
 

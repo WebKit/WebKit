@@ -23,6 +23,7 @@
 #include "JSDOMBinding.h"
 
 #include "CachedScript.h"
+#include "CommonVM.h"
 #include "DOMConstructorWithDocument.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
@@ -61,7 +62,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMConstructorWithDocument);
 
 void addImpureProperty(const AtomicString& propertyName)
 {
-    JSDOMWindow::commonVM().addImpureProperty(propertyName);
+    commonVM().addImpureProperty(propertyName);
 }
 
 JSValue jsOwnedStringOrNull(ExecState* exec, const String& s)

@@ -1,3 +1,125 @@
+2016-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        The DOM should have an advancing wavefront opaque root barrier
+        https://bugs.webkit.org/show_bug.cgi?id=165712
+
+        Reviewed by Yusuke Suzuki.
+
+        No new tests because this was covered by crashing tests.
+        
+        Consider these two cases:
+        
+           Removal:
+           1) DOM at start: D->X->Y
+           2) Mark X, X->visitChildren, addOpaqueRoot(D)
+           3) remove X
+           4) Y thinks it's not reachable (its opaque root, X, is not in the set).
+           
+           Insertion:
+           1) DOM at start: D, X->Y
+           2) Mark X, X->visitChildren, addOpaqueRoot(X)
+           3) insert X into D
+           4) Y thinks it's not reachable (its opaque root, D, is not in the set).
+        
+        We can fix this with two barriers:
+        
+           Removal: add X (the removed child) to the opaque root set.
+           Insertion: add D (the insertion point) to the opaque root set.
+        
+        Thanks Rysosuke for coming up with this idea!
+        
+        Both barriers advance the wavefront. We could consider retreating wavefront barriers in
+        the future (where we cause visitChildren to be called again on wrappers that belonged to
+        roots that got affected by insertion/removal) but those would probably require more
+        bookkeeping.
+        
+        To make this barrier very fast, the WebCore caches the JSC VM's barrier state in
+        its own global variable for very fast access. This variable will be false most of the
+        time. It's false when there is no VM, so triggering the barrier won't cause the VM to be
+        created. It's only true when GC is running, which is rare by design.
+        
+        To make that caching more sensible, I finally gave WebCore a central header for
+        the common VM (CommonVM.h).
+
+        * CMakeLists.txt:
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::SDPProcessor::callScript):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CommonVM.cpp: Added.
+        (WebCore::commonVMSlow):
+        (WebCore::writeBarrierOpaqueRootSlow):
+        * bindings/js/CommonVM.h: Added.
+        (WebCore::commonVM):
+        (WebCore::writeBarrierOpaqueRoot):
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::mainThreadNormalWorld):
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::garbageCollectSoon):
+        (WebCore::GCController::garbageCollectNow):
+        (WebCore::GCController::garbageCollectNowIfNotDoneRecently):
+        (WebCore::GCController::setJavaScriptGarbageCollectorTimerEnabled):
+        (WebCore::GCController::deleteAllCode):
+        (WebCore::GCController::deleteAllLinkedCode):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::addImpureProperty):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::fireFrameClearedWatchpointsForWindow):
+        (WebCore::JSDOMWindowBase::commonVM): Deleted.
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::root):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        (WebCore::ScriptCachedFrameData::clear):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::createWorld):
+        (WebCore::ScriptController::getAllWorlds):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::cacheableBindingRootObject):
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::jsObjectForPluginElement):
+        (WebCore::ScriptController::clearScriptObjects):
+        * dom/CollectionIndexCache.cpp:
+        (WebCore::reportExtraMemoryAllocatedForCollectionIndexCache):
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyChildNodeInserted):
+        (WebCore::notifyChildNodeRemoved):
+        * dom/Document.cpp:
+        (WebCore::Document::shouldBypassMainWorldContentSecurityPolicy):
+        * dom/Node.h:
+        (WebCore::Node::opaqueRoot):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::vm):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pauseAfterDetachedTask):
+        (WebCore::HTMLMediaElement::ensureIsolatedWorld):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::plugInImageElementIsolatedWorld):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::vm):
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        * page/PerformanceLogging.cpp:
+        (WebCore::PerformanceLogging::memoryUsageStatistics):
+        (WebCore::PerformanceLogging::javaScriptObjectCounts):
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::createThreadIfNeeded):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::reportApproximateMemoryCost):
+        * testing/MemoryInfo.h:
+        (WebCore::MemoryInfo::MemoryInfo):
+
 2016-12-11  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] NSAttributedString representation of text copied from -webkit-nbsp-mode:space element contains non-breaking space characters, but shouldn’t

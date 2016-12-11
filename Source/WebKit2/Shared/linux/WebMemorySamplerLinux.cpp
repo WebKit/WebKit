@@ -29,6 +29,7 @@
 #if ENABLE(MEMORY_SAMPLER)
 
 #include <JavaScriptCore/MemoryStatistics.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/CurrentProcessMemoryStatus.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/NotImplemented.h>
@@ -122,8 +123,8 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc In Use"), fastMallocBytesInUse);
     appendKeyValuePair(webKitMemoryStats, ASCIILiteral("Fast Malloc Committed Memory"), fastMallocBytesCommitted);
 
-    size_t jscHeapBytesInUse = JSDOMWindow::commonVM().heap.size();
-    size_t jscHeapBytesCommitted = JSDOMWindow::commonVM().heap.capacity();
+    size_t jscHeapBytesInUse = commonVM().heap.size();
+    size_t jscHeapBytesCommitted = commonVM().heap.capacity();
     totalBytesInUse += jscHeapBytesInUse;
     totalBytesCommitted += jscHeapBytesCommitted;
 

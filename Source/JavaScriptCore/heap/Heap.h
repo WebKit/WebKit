@@ -125,6 +125,8 @@ public:
 
     WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
     void flushWriteBarrierBuffer(JSCell*);
+    
+    void writeBarrierOpaqueRoot(void*);
 
     Heap(VM*, HeapType);
     ~Heap();
@@ -349,6 +351,8 @@ public:
     void preventCollection();
     void allowCollection();
     
+    JS_EXPORT_PRIVATE void addMutatorShouldBeFencedCache(bool&);
+    
 #if USE(CF)
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
@@ -490,6 +494,10 @@ private:
     size_t threadBytesVisited();
     
     void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
+    
+    JS_EXPORT_PRIVATE void writeBarrierOpaqueRootSlow(void*);
+    
+    void setMutatorShouldBeFenced(bool value);
 
     const HeapType m_heapType;
     const size_t m_ramSize;
@@ -549,6 +557,7 @@ private:
     WriteBarrierBuffer m_writeBarrierBuffer;
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
+    Vector<bool*> m_mutatorShouldBeFencedCaches;
 
     VM* m_vm;
     double m_lastFullGCLength;

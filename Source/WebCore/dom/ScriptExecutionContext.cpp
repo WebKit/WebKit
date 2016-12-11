@@ -29,6 +29,7 @@
 #include "ScriptExecutionContext.h"
 
 #include "CachedScript.h"
+#include "CommonVM.h"
 #include "DOMTimer.h"
 #include "DatabaseContext.h"
 #include "Document.h"
@@ -477,7 +478,7 @@ std::chrono::milliseconds ScriptExecutionContext::timerAlignmentInterval(bool) c
 JSC::VM& ScriptExecutionContext::vm()
 {
     if (is<Document>(*this))
-        return JSDOMWindow::commonVM();
+        return commonVM();
 
     return downcast<WorkerGlobalScope>(*this).script()->vm();
 }

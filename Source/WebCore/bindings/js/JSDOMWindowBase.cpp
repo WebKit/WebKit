@@ -26,6 +26,7 @@
 
 #include "ActiveDOMCallbackMicrotask.h"
 #include "Chrome.h"
+#include "CommonVM.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "InspectorController.h"
@@ -245,30 +246,6 @@ JSDOMWindowShell* JSDOMWindowBase::shell() const
     return m_shell;
 }
 
-VM& JSDOMWindowBase::commonVM()
-{
-    ASSERT(isMainThread());
-
-    static VM* vm = nullptr;
-    if (!vm) {
-        ScriptController::initializeThreading();
-        vm = &VM::createLeaked(LargeHeap).leakRef();
-        vm->heap.acquireAccess(); // At any time, we may do things that affect the GC.
-#if !PLATFORM(IOS)
-        vm->setExclusiveThread(std::this_thread::get_id());
-#else
-        vm->heap.setRunLoop(WebThreadRunLoop());
-        vm->heap.machineThreads().addCurrentThread();
-#endif
-
-        vm->setGlobalConstRedeclarationShouldThrow(Settings::globalConstRedeclarationShouldThrow());
-
-        initNormalWorldClientData(vm);
-    }
-
-    return *vm;
-}
-
 // JSDOMGlobalObject* is ignored, accessing a window in any context will
 // use that DOMWindow's prototype chain.
 JSValue toJS(ExecState* exec, JSDOMGlobalObject*, DOMWindow& domWindow)
@@ -309,7 +286,7 @@ JSDOMWindow* toJSDOMWindow(JSValue value)
 
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
 {
-    JSC::VM& vm = JSDOMWindowBase::commonVM();
+    JSC::VM& vm = commonVM();
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData);
     Vector<Ref<DOMWrapperWorld>> wrapperWorlds;
     clientData->getAllWorlds(wrapperWorlds);

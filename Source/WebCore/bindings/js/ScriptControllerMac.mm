@@ -30,6 +30,7 @@
 #import "ScriptController.h"
 
 #import "BridgeJSC.h"
+#import "CommonVM.h"
 #import "DOMWindow.h"
 #import "Frame.h"
 #import "FrameLoader.h"
@@ -100,7 +101,7 @@ WebScriptObject *ScriptController::windowScriptObject()
         return nil;
 
     if (!m_windowScriptObject) {
-        JSC::JSLockHolder lock(JSDOMWindowBase::commonVM());
+        JSC::JSLockHolder lock(commonVM());
         JSC::Bindings::RootObject* root = bindingRootObject();
         m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell(pluginWorld())) originRootObject:root rootObject:root];
     }

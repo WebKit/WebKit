@@ -29,13 +29,14 @@
 #if ENABLE(MEMORY_SAMPLER)  
 
 #import <JavaScriptCore/MemoryStatistics.h>
+#import <JavaScriptCore/VM.h>
 #import <mach/mach.h>
 #import <mach/task.h>
 #import <mach/mach_types.h>
 #import <malloc/malloc.h>
 #import <notify.h>
 #import <runtime/JSLock.h>
-#import <WebCore/JSDOMWindow.h>
+#import <WebCore/CommonVM.h>
 #import <wtf/CurrentTime.h>
 
 using namespace WebCore;
@@ -116,9 +117,9 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += fastMallocBytesInUse;
     totalBytesCommitted += fastMallocBytesCommitted;
     
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    size_t jscHeapBytesInUse = JSDOMWindow::commonVM().heap.size();
-    size_t jscHeapBytesCommitted = JSDOMWindow::commonVM().heap.capacity();
+    JSLockHolder lock(commonVM());
+    size_t jscHeapBytesInUse = commonVM().heap.size();
+    size_t jscHeapBytesCommitted = commonVM().heap.capacity();
     totalBytesInUse += jscHeapBytesInUse;
     totalBytesCommitted += jscHeapBytesCommitted;
     

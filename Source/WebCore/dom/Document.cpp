@@ -40,6 +40,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
+#include "CommonVM.h"
 #include "CompositionEvent.h"
 #include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
@@ -2365,7 +2366,7 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
 
 bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 {
-    JSC::CallFrame* callFrame = JSDOMWindow::commonVM().topCallFrame;
+    JSC::CallFrame* callFrame = commonVM().topCallFrame;
     if (callFrame == JSC::CallFrame::noCaller())
         return false;
     DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);

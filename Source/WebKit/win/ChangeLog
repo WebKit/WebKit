@@ -1,3 +1,36 @@
+2016-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The DOM should have an advancing wavefront opaque root barrier
+        https://bugs.webkit.org/show_bug.cgi?id=165712
+
+        Reviewed by Yusuke Suzuki.
+        
+        Propagate the JSDOMWindowBase::commonVM() -> commonVM() change.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::npObject):
+        (WebCore::PluginView::privateBrowsingStateChanged):
+        * Plugins/PluginViewWin.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptObjectsCount):
+        (WebCoreStatistics::javaScriptGlobalObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedGlobalObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedObjectTypeCounts):
+        (WebCoreStatistics::javaScriptObjectTypeCounts):
+        (WebCoreStatistics::shouldPrintExceptions):
+        (WebCoreStatistics::setShouldPrintExceptions):
+        (WebCoreStatistics::memoryStatistics):
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::objectCount):
+
 2016-12-09  Geoffrey Garen  <ggaren@apple.com>
 
         TextPosition and OrdinalNumber should be more like idiomatic numbers

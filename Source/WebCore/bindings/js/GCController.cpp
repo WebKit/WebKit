@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GCController.h"
 
-#include "JSDOMWindow.h"
+#include "CommonVM.h"
 #include <runtime/VM.h>
 #include <runtime/JSLock.h>
 #include <heap/Heap.h>
@@ -40,8 +40,8 @@ namespace WebCore {
 
 static void collect(void*)
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().heap.collectAllGarbage();
+    JSLockHolder lock(commonVM());
+    commonVM().heap.collectAllGarbage();
 }
 
 GCController& GCController::singleton()
@@ -61,8 +61,8 @@ void GCController::garbageCollectSoon()
     // of the garbage collector timers in JavaScriptCore. We wouldn't need this if JavaScriptCore
     // used a timer implementation from WTF like RunLoop::Timer.
 #if USE(CF) || USE(GLIB)
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().heap.reportAbandonedObjectGraph();
+    JSLockHolder lock(commonVM());
+    commonVM().heap.reportAbandonedObjectGraph();
 #else
     garbageCollectOnNextRunLoop();
 #endif
@@ -81,9 +81,9 @@ void GCController::gcTimerFired()
 
 void GCController::garbageCollectNow()
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    if (!JSDOMWindow::commonVM().heap.isCurrentThreadBusy()) {
-        JSDOMWindow::commonVM().heap.collectAllGarbage();
+    JSLockHolder lock(commonVM());
+    if (!commonVM().heap.isCurrentThreadBusy()) {
+        commonVM().heap.collectAllGarbage();
         WTF::releaseFastMallocFreeMemory();
     }
 }
@@ -91,9 +91,9 @@ void GCController::garbageCollectNow()
 void GCController::garbageCollectNowIfNotDoneRecently()
 {
 #if USE(CF) || USE(GLIB)
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    if (!JSDOMWindow::commonVM().heap.isCurrentThreadBusy())
-        JSDOMWindow::commonVM().heap.collectAllGarbageIfNotDoneRecently();
+    JSLockHolder lock(commonVM());
+    if (!commonVM().heap.isCurrentThreadBusy())
+        commonVM().heap.collectAllGarbageIfNotDoneRecently();
 #else
     garbageCollectSoon();
 #endif
@@ -113,19 +113,19 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
 
 void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 {
-    JSDOMWindow::commonVM().heap.setGarbageCollectionTimerEnabled(enable);
+    commonVM().heap.setGarbageCollectionTimerEnabled(enable);
 }
 
 void GCController::deleteAllCode(DeleteAllCodeEffort effort)
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().deleteAllCode(effort);
+    JSLockHolder lock(commonVM());
+    commonVM().deleteAllCode(effort);
 }
 
 void GCController::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    JSDOMWindow::commonVM().deleteAllLinkedCode(effort);
+    JSLockHolder lock(commonVM());
+    commonVM().deleteAllLinkedCode(effort);
 }
 
 } // namespace WebCore

@@ -28,6 +28,7 @@
 
 #if ENABLE(RESOURCE_USAGE)
 
+#include "CommonVM.h"
 #include "JSDOMWindow.h"
 #include <thread>
 #include <wtf/MainThread.h>
@@ -98,7 +99,7 @@ void ResourceUsageThread::createThreadIfNeeded()
     if (m_threadIdentifier)
         return;
 
-    m_vm = &JSDOMWindow::commonVM();
+    m_vm = &commonVM();
     m_threadIdentifier = createThread(threadCallback, this, "WebCore: ResourceUsage");
 }
 

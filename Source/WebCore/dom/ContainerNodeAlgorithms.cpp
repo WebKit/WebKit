@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ContainerNodeAlgorithms.h"
 
+#include "CommonVM.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include "NoEventDispatchAssertion.h"
@@ -33,10 +34,10 @@
 
 namespace WebCore {
 
-void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode&, NodeVector& postInsertionNotificationTargets);
-void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node&, NodeVector& postInsertionNotificationTargets);
-void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode&);
-void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node&);
+static void notifyNodeInsertedIntoTree(ContainerNode& insertionPoint, ContainerNode&, NodeVector& postInsertionNotificationTargets);
+static void notifyNodeInsertedIntoDocument(ContainerNode& insertionPoint, Node&, NodeVector& postInsertionNotificationTargets);
+static void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode&);
+static void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node&);
 
 static void notifyDescendantInsertedIntoDocument(ContainerNode& insertionPoint, ContainerNode& node, NodeVector& postInsertionNotificationTargets)
 {
@@ -101,6 +102,8 @@ void notifyChildNodeInserted(ContainerNode& insertionPoint, Node& node, NodeVect
         notifyNodeInsertedIntoDocument(insertionPoint, node, postInsertionNotificationTargets);
     else if (is<ContainerNode>(node))
         notifyNodeInsertedIntoTree(insertionPoint, downcast<ContainerNode>(node), postInsertionNotificationTargets);
+
+    writeBarrierOpaqueRoot([&insertionPoint] () -> void* { return insertionPoint.opaqueRoot(); });
 }
 
 void notifyNodeRemovedFromDocument(ContainerNode& insertionPoint, Node& node)
@@ -152,6 +155,8 @@ void notifyNodeRemovedFromTree(ContainerNode& insertionPoint, ContainerNode& nod
 
 void notifyChildNodeRemoved(ContainerNode& insertionPoint, Node& child)
 {
+    writeBarrierOpaqueRoot([&child] () -> void* { return &child; });
+
     if (!child.inDocument()) {
         if (is<ContainerNode>(child))
             notifyNodeRemovedFromTree(insertionPoint, downcast<ContainerNode>(child));

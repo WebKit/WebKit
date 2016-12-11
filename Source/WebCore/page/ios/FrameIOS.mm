@@ -28,6 +28,7 @@
 #if PLATFORM(IOS)
 
 #import "AnimationController.h"
+#import "CommonVM.h"
 #import "DOMWindow.h"
 #import "Document.h"
 #import "DocumentMarkerController.h"
@@ -46,7 +47,6 @@
 #import "HTMLObjectElement.h"
 #import "HitTestRequest.h"
 #import "HitTestResult.h"
-#import "JSDOMWindowBase.h"
 #import "MainFrame.h"
 #import "NodeRenderStyle.h"
 #import "NodeTraversal.h"
@@ -544,7 +544,7 @@ void Frame::setTimersPaused(bool paused)
 {
     if (!m_page)
         return;
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
     if (paused)
         m_page->suspendActiveDOMObjectsAndAnimations();
     else

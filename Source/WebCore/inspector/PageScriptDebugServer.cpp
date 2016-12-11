@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PageScriptDebugServer.h"
 
+#include "CommonVM.h"
 #include "Document.h"
 #include "EventLoop.h"
 #include "FrameView.h"
@@ -54,7 +55,7 @@ using namespace Inspector;
 namespace WebCore {
 
 PageScriptDebugServer::PageScriptDebugServer(Page& page)
-    : ScriptDebugServer(WebCore::JSDOMWindowBase::commonVM())
+    : ScriptDebugServer(WebCore::commonVM())
     , m_page(page)
 {
 }

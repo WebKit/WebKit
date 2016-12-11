@@ -37,6 +37,7 @@
 #include "ChromeClient.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
 #include "CookieJar.h"
@@ -849,7 +850,7 @@ void HTMLMediaElement::pauseAfterDetachedTask()
 
     size_t extraMemoryCost = m_player->extraMemoryCost();
     if (extraMemoryCost > m_reportedExtraMemoryCost) {
-        JSC::VM& vm = JSDOMWindowBase::commonVM();
+        JSC::VM& vm = commonVM();
         JSC::JSLockHolder lock(vm);
 
         size_t extraMemoryCostDelta = extraMemoryCost - m_reportedExtraMemoryCost;
@@ -6496,7 +6497,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
 DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
 {
     if (!m_isolatedWorld)
-        m_isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM());
+        m_isolatedWorld = DOMWrapperWorld::create(commonVM());
     return *m_isolatedWorld;
 }
 

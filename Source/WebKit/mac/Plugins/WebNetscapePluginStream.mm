@@ -40,6 +40,7 @@
 #import "WebResourceLoadScheduler.h"
 #import <Foundation/NSURLResponse.h>
 #import <WebCore/CFNetworkSPI.h>
+#import <WebCore/CommonVM.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
@@ -377,7 +378,7 @@ bool WebNetscapePluginStream::wantsAllStreams() const
     NPError error;
     {
         PluginStopDeferrer deferrer(m_pluginView.get());
-        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+        JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
         error = m_pluginFuncs->getvalue(m_plugin, NPPVpluginWantsAllNetworkStreams, &value);
     }
     if (error != NPERR_NO_ERROR)

@@ -33,6 +33,7 @@
 #include "InspectorController.h"
 
 #include "CommandLineAPIHost.h"
+#include "CommonVM.h"
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
 #include "InspectorApplicationCacheAgent.h"
@@ -470,7 +471,7 @@ PageScriptDebugServer& InspectorController::scriptDebugServer()
 
 JSC::VM& InspectorController::vm()
 {
-    return JSDOMWindowBase::commonVM();
+    return commonVM();
 }
 
 void InspectorController::didComposite(Frame& frame)

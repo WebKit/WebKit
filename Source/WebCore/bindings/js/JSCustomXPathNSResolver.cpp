@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCustomXPathNSResolver.h"
 
+#include "CommonVM.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -69,7 +70,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {
     ASSERT(m_customResolver);
 
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
 
     ExecState* exec = m_globalObject->globalExec();
         

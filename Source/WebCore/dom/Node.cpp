@@ -2399,6 +2399,18 @@ bool Node::inRenderedDocument() const
     return inDocument() && document().hasLivingRenderTree();
 }
 
+void* Node::opaqueRootSlow() const
+{
+    const Node* node = this;
+    for (;;) {
+        const Node* nextNode = node->parentOrShadowHostNode();
+        if (!nextNode)
+            break;
+        node = nextNode;
+    }
+    return const_cast<void*>(static_cast<const void*>(node));
+}
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

@@ -29,6 +29,7 @@
 #include "COMPropertyBag.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/GCController.h>
@@ -103,8 +104,8 @@ HRESULT WebCoreStatistics::javaScriptObjectsCount(_Out_ UINT* count)
     if (!count)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    *count = (UINT)JSDOMWindow::commonVM().heap.objectCount();
+    JSLockHolder lock(commonVM());
+    *count = (UINT)commonVM().heap.objectCount();
     return S_OK;
 }
 
@@ -113,8 +114,8 @@ HRESULT WebCoreStatistics::javaScriptGlobalObjectsCount(_Out_ UINT* count)
     if (!count)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    *count = (UINT)JSDOMWindow::commonVM().heap.globalObjectCount();
+    JSLockHolder lock(commonVM());
+    *count = (UINT)commonVM().heap.globalObjectCount();
     return S_OK;
 }
 
@@ -123,8 +124,8 @@ HRESULT WebCoreStatistics::javaScriptProtectedObjectsCount(_Out_ UINT* count)
     if (!count)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    *count = (UINT)JSDOMWindow::commonVM().heap.protectedObjectCount();
+    JSLockHolder lock(commonVM());
+    *count = (UINT)commonVM().heap.protectedObjectCount();
     return S_OK;
 }
 
@@ -133,8 +134,8 @@ HRESULT WebCoreStatistics::javaScriptProtectedGlobalObjectsCount(_Out_ UINT* cou
     if (!count)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    *count = (UINT)JSDOMWindow::commonVM().heap.protectedGlobalObjectCount();
+    JSLockHolder lock(commonVM());
+    *count = (UINT)commonVM().heap.protectedGlobalObjectCount();
     return S_OK;
 }
 
@@ -143,8 +144,8 @@ HRESULT WebCoreStatistics::javaScriptProtectedObjectTypeCounts(_COM_Outptr_opt_ 
     if (!typeNamesAndCounts)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    std::unique_ptr<TypeCountSet> jsObjectTypeNames(JSDOMWindow::commonVM().heap.protectedObjectTypeCounts());
+    JSLockHolder lock(commonVM());
+    std::unique_ptr<TypeCountSet> jsObjectTypeNames(commonVM().heap.protectedObjectTypeCounts());
     typedef TypeCountSet::const_iterator Iterator;
     Iterator end = jsObjectTypeNames->end();
     HashMap<String, int> typeCountMap;
@@ -161,8 +162,8 @@ HRESULT WebCoreStatistics::javaScriptObjectTypeCounts(_COM_Outptr_opt_ IProperty
     if (!typeNamesAndCounts)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    std::unique_ptr<TypeCountSet> jsObjectTypeNames(JSDOMWindow::commonVM().heap.objectTypeCounts());
+    JSLockHolder lock(commonVM());
+    std::unique_ptr<TypeCountSet> jsObjectTypeNames(commonVM().heap.objectTypeCounts());
     typedef TypeCountSet::const_iterator Iterator;
     Iterator end = jsObjectTypeNames->end();
     HashMap<String, int> typeCountMap;
@@ -259,14 +260,14 @@ HRESULT WebCoreStatistics::shouldPrintExceptions(_Out_ BOOL* shouldPrint)
     if (!shouldPrint)
         return E_POINTER;
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     *shouldPrint = PageConsoleClient::shouldPrintExceptions();
     return S_OK;
 }
 
 HRESULT WebCoreStatistics::setShouldPrintExceptions(BOOL print)
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     PageConsoleClient::setShouldPrintExceptions(print);
     return S_OK;
 }
@@ -290,9 +291,9 @@ HRESULT WebCoreStatistics::memoryStatistics(_COM_Outptr_opt_ IPropertyBag** stat
 
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    unsigned long long heapSize = JSDOMWindow::commonVM().heap.size();
-    unsigned long long heapFree = JSDOMWindow::commonVM().heap.capacity() - heapSize;
+    JSLockHolder lock(commonVM());
+    unsigned long long heapSize = commonVM().heap.size();
+    unsigned long long heapFree = commonVM().heap.capacity() - heapSize;
     GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
 
     HashMap<String, unsigned long long, ASCIICaseInsensitiveHash> fields;

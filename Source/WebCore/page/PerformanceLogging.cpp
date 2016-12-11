@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PerformanceLogging.h"
 
+#include "CommonVM.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "FrameLoaderClient.h"
@@ -52,7 +53,7 @@ HashMap<const char*, size_t> PerformanceLogging::memoryUsageStatistics(ShouldInc
 {
     HashMap<const char*, size_t> stats;
 
-    auto& vm = JSDOMWindow::commonVM();
+    auto& vm = commonVM();
     stats.add("javascript_gc_heap_capacity", vm.heap.capacity());
     stats.add("javascript_gc_heap_extra_memory_size", vm.heap.extraMemorySize());
 
@@ -74,7 +75,7 @@ HashMap<const char*, size_t> PerformanceLogging::memoryUsageStatistics(ShouldInc
 
 HashCountedSet<const char*> PerformanceLogging::javaScriptObjectCounts()
 {
-    return WTFMove(*JSDOMWindow::commonVM().heap.objectTypeCounts());
+    return WTFMove(*commonVM().heap.objectTypeCounts());
 }
 
 PerformanceLogging::PerformanceLogging(MainFrame& mainFrame)

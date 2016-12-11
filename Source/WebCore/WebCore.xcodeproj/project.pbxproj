@@ -496,6 +496,8 @@
 		0F5E200618E771FC003EC3E5 /* PlatformCAAnimationCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5E200518E771FC003EC3E5 /* PlatformCAAnimationCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F605AEA15F94848004DF0C0 /* ScrollingConstraints.cpp */; };
 		0F605AED15F94848004DF0C0 /* ScrollingConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F60F32B1DFBB10700416D6C /* CommonVM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F60F32A1DFBB10400416D6C /* CommonVM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F60F32C1DFBB10B00416D6C /* CommonVM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F60F3291DFBB10400416D6C /* CommonVM.cpp */; };
 		0F6383DD18615B29003E5DB5 /* ThreadedScrollingTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6383DB18615B29003E5DB5 /* ThreadedScrollingTree.cpp */; };
 		0F6383DE18615B29003E5DB5 /* ThreadedScrollingTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6383DC18615B29003E5DB5 /* ThreadedScrollingTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6A12BD1A00923700C6DE72 /* DebugPageOverlays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6A12BB1A00923700C6DE72 /* DebugPageOverlays.cpp */; };
@@ -7490,6 +7492,8 @@
 		0F5E200518E771FC003EC3E5 /* PlatformCAAnimationCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationCocoa.h; sourceTree = "<group>"; };
 		0F605AEA15F94848004DF0C0 /* ScrollingConstraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingConstraints.cpp; sourceTree = "<group>"; };
 		0F605AEB15F94848004DF0C0 /* ScrollingConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingConstraints.h; sourceTree = "<group>"; };
+		0F60F3291DFBB10400416D6C /* CommonVM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonVM.cpp; sourceTree = "<group>"; };
+		0F60F32A1DFBB10400416D6C /* CommonVM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonVM.h; sourceTree = "<group>"; };
 		0F6383DB18615B29003E5DB5 /* ThreadedScrollingTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadedScrollingTree.cpp; sourceTree = "<group>"; };
 		0F6383DC18615B29003E5DB5 /* ThreadedScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadedScrollingTree.h; sourceTree = "<group>"; };
 		0F6A12BB1A00923700C6DE72 /* DebugPageOverlays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugPageOverlays.cpp; sourceTree = "<group>"; };
@@ -21914,6 +21918,8 @@
 				E307DEC81D81E44800141CAF /* CachedModuleScriptLoaderClient.h */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
+				0F60F3291DFBB10400416D6C /* CommonVM.cpp */,
+				0F60F32A1DFBB10400416D6C /* CommonVM.h */,
 				312D67B01535691F00563D0D /* Dictionary.cpp */,
 				316023EF1532C40C00D50FF4 /* Dictionary.h */,
 				B56576E717DA94E200A56BDC /* DOMConstructorWithDocument.h */,
@@ -27521,6 +27527,7 @@
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
+				0F60F32B1DFBB10700416D6C /* CommonVM.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
@@ -31625,6 +31632,7 @@
 				A14832B3187F629100DA63A6 /* WAKClipView.m in Sources */,
 				A14832B5187F62FC00DA63A6 /* WAKResponder.m in Sources */,
 				A14832B7187F636C00DA63A6 /* WAKScrollView.mm in Sources */,
+				0F60F32C1DFBB10B00416D6C /* CommonVM.cpp in Sources */,
 				A14832B9187F63D500DA63A6 /* WAKView.mm in Sources */,
 				A14832BC187F648E00DA63A6 /* WAKWindow.mm in Sources */,
 				FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */,

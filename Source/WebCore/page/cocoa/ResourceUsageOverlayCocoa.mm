@@ -30,6 +30,7 @@
 
 #include <CoreText/CoreText.h>
 
+#include "CommonVM.h"
 #include "JSDOMWindow.h"
 #include "PlatformCALayer.h"
 #include "ResourceUsageThread.h"
@@ -204,7 +205,7 @@ static void appendDataToHistory(const ResourceUsageData& data)
 
     // FIXME: Find a way to add this to ResourceUsageData and calculate it on the resource usage sampler thread.
     {
-        JSC::VM* vm = &JSDOMWindow::commonVM();
+        JSC::VM* vm = &commonVM();
         JSC::JSLockHolder lock(vm);
         historicData.gcHeapSize.append(vm->heap.size() - vm->heap.extraMemorySize());
     }

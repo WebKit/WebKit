@@ -29,6 +29,7 @@
 #include "SVGImage.h"
 
 #include "Chrome.h"
+#include "CommonVM.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "ElementIterator.h"
@@ -397,7 +398,7 @@ void SVGImage::reportApproximateMemoryCost() const
     for (Node* node = document; node; node = NodeTraversal::next(*node))
         decodedImageMemoryCost += node->approximateMemoryCost();
 
-    JSC::VM& vm = JSDOMWindowBase::commonVM();
+    JSC::VM& vm = commonVM();
     JSC::JSLockHolder lock(vm);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595

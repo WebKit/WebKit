@@ -53,6 +53,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/ApplicationCache.h>
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
@@ -493,8 +494,8 @@ void InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebuggin
 
 size_t InjectedBundle::javaScriptObjectsCount()
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM().heap.objectCount();
+    JSLockHolder lock(commonVM());
+    return commonVM().heap.objectCount();
 }
 
 void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)

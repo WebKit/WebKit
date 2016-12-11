@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/VM.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
@@ -110,7 +111,7 @@ HRESULT WebJavaScriptCollector::objectCount(_Out_ UINT* count)
         return E_POINTER;
     }
 
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    *count = (UINT)JSDOMWindow::commonVM().heap.objectCount();
+    JSLockHolder lock(commonVM());
+    *count = (UINT)commonVM().heap.objectCount();
     return S_OK;
 }

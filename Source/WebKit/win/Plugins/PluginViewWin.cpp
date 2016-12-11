@@ -33,6 +33,7 @@
 #include <WebCore/BridgeJSC.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
+#include <WebCore/CommonVM.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Element.h>
@@ -452,7 +453,7 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
         shouldPop = true;
     }
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+    JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
     setCallingPlugin(true);
     bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &npEvent);
     setCallingPlugin(false);
@@ -595,7 +596,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     } else
         return;
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+    JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
@@ -662,7 +663,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     } else
         return;
 
-    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+    JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
     // FIXME: Consider back porting the http://webkit.org/b/58108 fix here.
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
@@ -733,7 +734,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     m_npWindow.clipRect.top = 0;
 
     if (m_plugin->pluginFuncs()->setwindow) {
-        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
+        JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);

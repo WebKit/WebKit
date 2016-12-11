@@ -26,14 +26,15 @@
 #include "config.h"
 #include "CollectionIndexCache.h"
 
+#include "CommonVM.h"
 #include "DOMWindow.h"
-#include "JSDOMWindowBase.h"
+#include "JSDOMBinding.h"
 
 namespace WebCore {
 
 void reportExtraMemoryAllocatedForCollectionIndexCache(size_t cost)
 {
-    JSC::VM& vm = JSDOMWindowBase::commonVM();
+    JSC::VM& vm = commonVM();
     JSC::JSLockHolder lock(vm);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595

@@ -23,6 +23,7 @@
 #include "HTMLImageLoader.h"
 
 #include "CachedImage.h"
+#include "CommonVM.h"
 #include "DOMWindow.h"
 #include "Element.h"
 #include "Event.h"
@@ -84,7 +85,7 @@ void HTMLImageLoader::notifyFinished(CachedResource&)
     bool loadError = cachedImage.errorOccurred() || cachedImage.response().httpStatusCode() >= 400;
     if (!loadError) {
         if (!element().inDocument()) {
-            JSC::VM& vm = JSDOMWindowBase::commonVM();
+            JSC::VM& vm = commonVM();
             JSC::JSLockHolder lock(vm);
             // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
             // https://bugs.webkit.org/show_bug.cgi?id=142595

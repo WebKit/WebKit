@@ -32,6 +32,7 @@
 #include "config.h"
 #include "ScriptCachedFrameData.h"
 
+#include "CommonVM.h"
 #include "Document.h"
 #include "Frame.h"
 #include "GCController.h"
@@ -49,7 +50,7 @@ namespace WebCore {
 
 ScriptCachedFrameData::ScriptCachedFrameData(Frame& frame)
 {
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
 
     ScriptController& scriptController = frame.script();
     Vector<JSC::Strong<JSDOMWindowShell>> windowShells = scriptController.windowShells();
@@ -71,7 +72,7 @@ ScriptCachedFrameData::~ScriptCachedFrameData()
 
 void ScriptCachedFrameData::restore(Frame& frame)
 {
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
 
     Page* page = frame.page();
     ScriptController& scriptController = frame.script();
@@ -106,7 +107,7 @@ void ScriptCachedFrameData::clear()
     if (m_windows.isEmpty())
         return;
 
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
     m_windows.clear();
     GCController::singleton().garbageCollectSoon();
 }

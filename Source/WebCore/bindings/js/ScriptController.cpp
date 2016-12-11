@@ -23,6 +23,7 @@
 
 #include "BridgeJSC.h"
 #include "CachedModuleScript.h"
+#include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentLoader.h"
 #include "Event.h"
@@ -105,7 +106,7 @@ ScriptController::~ScriptController()
     disconnectPlatformScriptObjects();
 
     if (m_cacheableBindingRootObject) {
-        JSLockHolder lock(JSDOMWindowBase::commonVM());
+        JSLockHolder lock(commonVM());
         m_cacheableBindingRootObject->invalidate();
         m_cacheableBindingRootObject = nullptr;
     }
@@ -271,7 +272,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleReco
 
 Ref<DOMWrapperWorld> ScriptController::createWorld()
 {
-    return DOMWrapperWorld::create(JSDOMWindow::commonVM());
+    return DOMWrapperWorld::create(commonVM());
 }
 
 Vector<JSC::Strong<JSDOMWindowShell>> ScriptController::windowShells()
@@ -283,7 +284,7 @@ Vector<JSC::Strong<JSDOMWindowShell>> ScriptController::windowShells()
 
 void ScriptController::getAllWorlds(Vector<Ref<DOMWrapperWorld>>& worlds)
 {
-    static_cast<JSVMClientData*>(JSDOMWindow::commonVM().clientData)->getAllWorlds(worlds);
+    static_cast<JSVMClientData*>(commonVM().clientData)->getAllWorlds(worlds);
 }
 
 void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache)
@@ -291,7 +292,7 @@ void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoP
     if (m_windowShells.isEmpty())
         return;
 
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
 
     Vector<JSC::Strong<JSDOMWindowShell>> windowShells = this->windowShells();
     for (size_t i = 0; i < windowShells.size(); ++i) {
@@ -496,7 +497,7 @@ Bindings::RootObject* ScriptController::cacheableBindingRootObject()
         return 0;
 
     if (!m_cacheableBindingRootObject) {
-        JSLockHolder lock(JSDOMWindowBase::commonVM());
+        JSLockHolder lock(commonVM());
         m_cacheableBindingRootObject = Bindings::RootObject::create(0, globalObject(pluginWorld()));
     }
     return m_cacheableBindingRootObject.get();
@@ -508,7 +509,7 @@ Bindings::RootObject* ScriptController::bindingRootObject()
         return 0;
 
     if (!m_bindingRootObject) {
-        JSLockHolder lock(JSDOMWindowBase::commonVM());
+        JSLockHolder lock(commonVM());
         m_bindingRootObject = Bindings::RootObject::create(0, globalObject(pluginWorld()));
     }
     return m_bindingRootObject.get();
@@ -539,7 +540,7 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
 NPObject* ScriptController::windowScriptNPObject()
 {
     if (!m_windowScriptNPObject) {
-        JSLockHolder lock(JSDOMWindowBase::commonVM());
+        JSLockHolder lock(commonVM());
         if (canExecuteScripts(NotAboutToExecuteScript)) {
             // JavaScript is enabled, so there is a JavaScript window object.
             // Return an NPObject bound to the window object.
@@ -574,7 +575,7 @@ JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
     if (!canExecuteScripts(NotAboutToExecuteScript))
         return 0;
 
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
 
     // Create a JSObject bound to this element
     JSDOMWindow* globalObj = globalObject(pluginWorld());
@@ -611,7 +612,7 @@ void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
 
 void ScriptController::clearScriptObjects()
 {
-    JSLockHolder lock(JSDOMWindowBase::commonVM());
+    JSLockHolder lock(commonVM());
 
     RootObjectMap::const_iterator end = m_rootObjects.end();
     for (RootObjectMap::const_iterator it = m_rootObjects.begin(); it != end; ++it)

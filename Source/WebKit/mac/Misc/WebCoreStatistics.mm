@@ -33,6 +33,7 @@
 #import "WebFrameInternal.h"
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/MemoryStatistics.h>
+#import <WebCore/CommonVM.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
@@ -58,35 +59,35 @@ using namespace WebCore;
 
 + (size_t)javaScriptObjectsCount
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM().heap.objectCount();
+    JSLockHolder lock(commonVM());
+    return commonVM().heap.objectCount();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM().heap.globalObjectCount();
+    JSLockHolder lock(commonVM());
+    return commonVM().heap.globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM().heap.protectedObjectCount();
+    JSLockHolder lock(commonVM());
+    return commonVM().heap.protectedObjectCount();
 }
 
 + (size_t)javaScriptProtectedGlobalObjectsCount
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM().heap.protectedGlobalObjectCount();
+    JSLockHolder lock(commonVM());
+    return commonVM().heap.protectedGlobalObjectCount();
 }
 
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     
     NSCountedSet *result = [NSCountedSet set];
 
-    std::unique_ptr<TypeCountSet> counts(JSDOMWindow::commonVM().heap.protectedObjectTypeCounts());
+    std::unique_ptr<TypeCountSet> counts(commonVM().heap.protectedObjectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->value; ++i)
@@ -97,11 +98,11 @@ using namespace WebCore;
 
 + (NSCountedSet *)javaScriptObjectTypeCounts
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     
     NSCountedSet *result = [NSCountedSet set];
 
-    std::unique_ptr<TypeCountSet> counts(JSDOMWindow::commonVM().heap.objectTypeCounts());
+    std::unique_ptr<TypeCountSet> counts(commonVM().heap.objectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->value; ++i)
@@ -167,13 +168,13 @@ using namespace WebCore;
 
 + (BOOL)shouldPrintExceptions
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     return PageConsoleClient::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
+    JSLockHolder lock(commonVM());
     PageConsoleClient::setShouldPrintExceptions(print);
 }
 
@@ -201,9 +202,9 @@ using namespace WebCore;
 {
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
     
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    size_t heapSize = JSDOMWindow::commonVM().heap.size();
-    size_t heapFree = JSDOMWindow::commonVM().heap.capacity() - heapSize;
+    JSLockHolder lock(commonVM());
+    size_t heapSize = commonVM().heap.size();
+    size_t heapFree = commonVM().heap.capacity() - heapSize;
     GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
     
     return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -246,8 +247,8 @@ using namespace WebCore;
 
 + (size_t)javaScriptReferencedObjectsCount
 {
-    JSLockHolder lock(JSDOMWindow::commonVM());
-    return JSDOMWindow::commonVM().heap.protectedObjectCount();
+    JSLockHolder lock(commonVM());
+    return commonVM().heap.protectedObjectCount();
 }
 
 + (NSSet *)javaScriptRootObjectClasses

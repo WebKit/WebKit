@@ -29,6 +29,7 @@
 
 #import "QuickTimePluginReplacement.h"
 
+#import "CommonVM.h"
 #import "Event.h"
 #import "HTMLPlugInElement.h"
 #import "HTMLVideoElement.h"
@@ -148,7 +149,7 @@ RenderPtr<RenderElement> QuickTimePluginReplacement::createElementRenderer(HTMLP
 
 DOMWrapperWorld& QuickTimePluginReplacement::isolatedWorld()
 {
-    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM()).leakRef();
+    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(commonVM()).leakRef();
     return isolatedWorld;
 }
 

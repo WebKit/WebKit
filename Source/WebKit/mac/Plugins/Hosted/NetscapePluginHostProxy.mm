@@ -37,6 +37,7 @@
 #import "WebHostedNetscapePluginView.h"
 #import "WebKitSystemInterface.h"
 #import <JavaScriptCore/IdentifierInlines.h>
+#import <WebCore/CommonVM.h>
 #import <WebCore/Frame.h>
 #import <WebCore/IdentifierRep.h>
 #import <WebCore/ScriptController.h>
@@ -627,7 +628,7 @@ static Identifier identifierFromIdentifierRep(IdentifierRep* identifier)
     ASSERT(identifier->isString());
   
     const char* str = identifier->string();    
-    return Identifier::fromString(&JSDOMWindow::commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str)));
+    return Identifier::fromString(&commonVM(), String::fromUTF8WithLatin1Fallback(str, strlen(str)));
 }
 
 kern_return_t WKPCInvoke(mach_port_t clientPort, uint32_t pluginID, uint32_t requestID, uint32_t objectID, uint64_t serverIdentifier,

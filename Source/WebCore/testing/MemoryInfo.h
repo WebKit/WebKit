@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "CommonVM.h"
 #include "JSDOMWindow.h"
 #include <wtf/RefCounted.h>
 
@@ -44,8 +45,8 @@ public:
 
 private:
     MemoryInfo()
-        : m_usedJSHeapSize(JSDOMWindow::commonVM().heap.size())
-        , m_totalJSHeapSize(JSDOMWindow::commonVM().heap.capacity())
+        : m_usedJSHeapSize(commonVM().heap.size())
+        , m_totalJSHeapSize(commonVM().heap.capacity())
     {
     }
 

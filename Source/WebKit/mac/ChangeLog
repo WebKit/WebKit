@@ -1,3 +1,47 @@
+2016-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The DOM should have an advancing wavefront opaque root barrier
+        https://bugs.webkit.org/show_bug.cgi?id=165712
+
+        Reviewed by Yusuke Suzuki.
+        
+        Propagate the JSDOMWindowBase::commonVM() -> commonVM() change.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics javaScriptObjectTypeCounts]):
+        (+[WebCoreStatistics shouldPrintExceptions]):
+        (+[WebCoreStatistics setShouldPrintExceptions:]):
+        (+[WebCoreStatistics memoryStatistics]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (identifierFromIdentifierRep):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::getPropertyNames):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::wantsAllStreams):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebNetscapePluginView privateBrowsingModeDidChange]):
+        (-[WebNetscapePluginView setWindowIfNecessary]):
+        (-[WebNetscapePluginView createPluginScriptableObject]):
+        (-[WebNetscapePluginView getFormValue:]):
+        (-[WebNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebNetscapePluginView loadPluginRequest:]):
+        (-[WebNetscapePluginView _printedPluginBitmap]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (-[WebPluginController stopOnePlugin:]):
+        (-[WebPluginController stopOnePluginForPageCache:]):
+        (-[WebPluginController destroyOnePlugin:]):
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController addPlugin:]):
+
 2016-12-09  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove the old CSS Parser

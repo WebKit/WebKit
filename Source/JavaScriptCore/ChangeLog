@@ -1,3 +1,27 @@
+2016-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        The DOM should have an advancing wavefront opaque root barrier
+        https://bugs.webkit.org/show_bug.cgi?id=165712
+
+        Reviewed by Yusuke Suzuki.
+        
+        This exposes the ability to fire an advancing wavefront barrier on opaque roots. It also
+        gives clients the ability to maintain their own cache of whether that barrier needs to
+        be enabled.
+        
+        The DOM uses this to enable a very cheap barrier on the DOM. This is neutral on
+        Speedometer and fixes another concurrent GC crash.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::endMarking):
+        (JSC::Heap::writeBarrierOpaqueRootSlow):
+        (JSC::Heap::addMutatorShouldBeFencedCache):
+        (JSC::Heap::setMutatorShouldBeFenced):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::writeBarrierOpaqueRoot):
+
 2016-12-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209653, r209654, r209663, and

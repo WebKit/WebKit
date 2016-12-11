@@ -815,8 +815,7 @@ void Heap::beginMarking()
         m_codeBlocks->clearMarksForFullCollection();
     m_jitStubRoutines->clearMarks();
     m_objectSpace.beginMarking();
-    m_mutatorShouldBeFenced = true;
-    m_barrierThreshold = tautologicalThreshold;
+    setMutatorShouldBeFenced(true);
     m_barriersExecuted = 0;
 }
 
@@ -943,8 +942,7 @@ void Heap::endMarking()
     m_weakReferenceHarvesters.removeAll();
     
     m_objectSpace.endMarking();
-    m_mutatorShouldBeFenced = Options::forceFencedBarrier();
-    m_barrierThreshold = Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold;
+    setMutatorShouldBeFenced(Options::forceFencedBarrier());
 }
 
 size_t Heap::objectCount()
@@ -2313,4 +2311,27 @@ void Heap::forEachSlotVisitor(const Func& func)
         func(*slotVisitor);
 }
 
+void Heap::writeBarrierOpaqueRootSlow(void* root)
+{
+    ASSERT(mutatorShouldBeFenced());
+    
+    auto locker = holdLock(m_opaqueRootsMutex);
+    m_opaqueRoots.add(root);
+}
+
+void Heap::addMutatorShouldBeFencedCache(bool& cache)
+{
+    ASSERT(hasHeapAccess());
+    cache = m_mutatorShouldBeFenced;
+    m_mutatorShouldBeFencedCaches.append(&cache);
+}
+
+void Heap::setMutatorShouldBeFenced(bool value)
+{
+    m_mutatorShouldBeFenced = value;
+    m_barrierThreshold = value ? tautologicalThreshold : blackThreshold;
+    for (bool* cache : m_mutatorShouldBeFencedCaches)
+        *cache = value;
+}
+    
 } // namespace JSC
