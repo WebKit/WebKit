@@ -1,3 +1,11 @@
+2016-12-10  Dave Hyatt  <hyatt@apple.com>
+
+        Rolling out 165737, since it broke layout tests. I need to find a 
+        different place to put the init.
+
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::isValidSelector):
+
 2016-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Support the deprecated dictionary constructor for DOMPointReadOnly and DOMPoint

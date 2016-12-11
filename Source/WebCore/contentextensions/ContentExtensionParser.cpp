@@ -186,7 +186,6 @@ static std::error_code loadTrigger(ExecState& exec, const JSObject& ruleObject, 
 
 static bool isValidSelector(const String& selector)
 {
-    AtomicString::init(); // Necessary to ensure starAtom is initialized.
     CSSParserContext context(HTMLQuirksMode);
     CSSParser parser(context);
     CSSSelectorList selectorList;
