@@ -1,3 +1,21 @@
+2016-12-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Support the deprecated dictionary constructor for DOMPointReadOnly and DOMPoint
+        https://bugs.webkit.org/show_bug.cgi?id=165732
+
+        Reviewed by Sam Weinig.
+        
+        For compatibility with other browsers, support the DOMPointInit constructor to
+        DOMPoint and DOMPointReadOnly per <https://www.w3.org/TR/geometry-1/#DOMPoint>
+
+        Extended geometry/DOMPoint-001.html to test.
+
+        * dom/DOMPoint.h:
+        * dom/DOMPoint.idl:
+        * dom/DOMPointReadOnly.h:
+        (WebCore::DOMPointReadOnly::create):
+        * dom/DOMPointReadOnly.idl:
+
 2016-12-10  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure content extensions initialize AtomicString

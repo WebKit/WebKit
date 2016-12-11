@@ -1,5 +1,15 @@
 2016-12-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Support the deprecated dictionary constructor for DOMPointReadOnly and DOMPoint
+        https://bugs.webkit.org/show_bug.cgi?id=165732
+
+        Reviewed by Sam Weinig.
+
+        * geometry/DOMPoint-001-expected.txt:
+        * geometry/DOMPoint-001.html:
+
+2016-12-10  Simon Fraser  <simon.fraser@apple.com>
+
         Animation followed by transition doesn't always fire transitionend event
         https://bugs.webkit.org/show_bug.cgi?id=165731
         rdar://problem/28471240

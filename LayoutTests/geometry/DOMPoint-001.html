@@ -35,6 +35,21 @@
         test(function() {
             checkDOMPoint(new DOMPoint(1, 2, 3, 4, 5), {x:1, y:2, z:3, w:4});
         },'testConstructor5');
+
+        // Dictionary constructors are in http://www.w3.org/TR/geometry-1 but not http://dev.w3.org/fxtf/geometry.
+        test(function() {
+            checkDOMPoint(new DOMPoint({x:1, y:2, z:3, w:4}), {x:1, y:2, z:3, w:4});
+        },'testDictionaryConstructor1');
+        test(function() {
+            checkDOMPoint(new DOMPoint({}), {x:0, y:0, z:0, w:1});
+        },'testDictionaryConstructor2');
+        test(function() {
+            checkDOMPoint(new DOMPoint({x:1}), {x:1, y:0, z:0, w:1});
+        },'testDictionaryConstructor3');
+        test(function() {
+            checkDOMPoint(new DOMPoint({y:3, w:0.5}), {x:0, y:3, z:0, w:0.5});
+        },'testDictionaryConstructor4');
+
         test(function() {
             checkDOMPoint(DOMPoint.fromPoint({}), {x:0, y:0, z:0, w:1});
         },'testConstructorDOMPointInit0');

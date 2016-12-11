@@ -7,6 +7,10 @@ PASS testConstructor2
 PASS testConstructor3 
 PASS testConstructor4 
 PASS testConstructor5 
+PASS testDictionaryConstructor1 
+PASS testDictionaryConstructor2 
+PASS testDictionaryConstructor3 
+PASS testDictionaryConstructor4 
 PASS testConstructorDOMPointInit0 
 PASS testConstructorDOMPointInit1 
 PASS testConstructorDOMPointInit2 
