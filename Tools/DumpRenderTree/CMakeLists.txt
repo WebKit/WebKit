@@ -21,8 +21,8 @@ set(DumpRenderTree_SOURCES
 )
 
 set(DumpRenderTree_LIBRARIES
-    JavaScriptCore
     WebCoreTestSupport
+    JavaScriptCore
 )
 
 set(DumpRenderTree_INCLUDE_DIRECTORIES

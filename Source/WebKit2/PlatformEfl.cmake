@@ -455,10 +455,10 @@ set(EWK2UnitTests_LIBRARIES
     ${GLIB_GTHREAD_LIBRARIES}
     ${GLIB_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
+    WebKit2
     JavaScriptCore
     WTF
     WebCore
-    WebKit2
     gtest
 )
 
