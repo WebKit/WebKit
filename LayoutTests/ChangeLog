@@ -1,3 +1,11 @@
+2016-12-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html for mac-wk1 after r209666.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
 2016-12-12  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening.
