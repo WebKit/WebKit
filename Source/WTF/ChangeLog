@@ -1,3 +1,10 @@
+2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, guarded clang pragma with COMPILER(CLANG) to fix -Werror
+
+        * wtf/PrintStream.cpp:
+        (WTF::PrintStream::printfVariableFormat):
+
 2016-12-11  Filip Pizlo  <fpizlo@apple.com>
 
         Change to use #pragma once (requested by Darin Adler).
