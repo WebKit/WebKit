@@ -1,0 +1,41 @@
+Tests for Network data with different types of Fetch requests.
+
+
+== Running test suite: Network.Fetch
+-- Running test case: Network.Fetch.ModeNoCORS.SameOrigin
+PASS: Resource should be Fetch type.
+PASS: Resource should have loaded successfully.
+PASS: MIMEType should be 'application/json'.
+PASS: Status code should be 200.
+PASS: Should be able to see X-Custom-Header.
+
+-- Running test case: Network.Fetch.ModeNoCORS.CrossOrigin
+PASS: Resource should be Fetch type.
+PASS: Resource should have failed to load.
+PASS: Load should have failed.
+PASS: Load should have canceled.
+
+-- Running test case: Network.Fetch.ModeCORS.SameOrigin
+PASS: Resource should be Fetch type.
+PASS: Resource should have loaded successfully.
+PASS: MIMEType should be 'application/json'.
+PASS: Status code should be 200.
+PASS: Should be able to see X-Custom-Header.
+
+-- Running test case: Network.Fetch.ModeCORS.CrossOrigin
+PASS: Resource should be Fetch type.
+PASS: Resource should have loaded successfully.
+PASS: MIMEType should be 'application/json'.
+PASS: Status code should be 200.
+PASS: Should be able to see X-Custom-Header which would have otherwise been filtered.
+
+-- Running test case: Network.Fetch.ModeSameOrigin.SameOrigin
+PASS: Resource should be Fetch type.
+PASS: Resource should have loaded successfully.
+PASS: MIMEType should be 'application/json'.
+PASS: Status code should be 200.
+PASS: Should be able to see X-Custom-Header.
+
+-- Running test case: Network.Fetch.ModeSameOrigin.CrossOrigin
+PASS: Should produce a TypeError.
+

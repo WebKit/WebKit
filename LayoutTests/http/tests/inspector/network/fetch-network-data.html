@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.Fetch");
+
+    function addTestCase({name, expression, loadedHandler, failedHandler}) {
+        suite.addTestCase({
+            name, test(resolve, reject) {
+                InspectorTest.evaluateInPage(expression);
+                WebInspector.Frame.awaitEvent(WebInspector.Frame.Event.ResourceWasAdded).then((event) => {
+                    let resource = event.data.resource;
+                    InspectorTest.expectEqual(resource.type, WebInspector.Resource.Type.Fetch, "Resource should be Fetch type.");
+                    if (loadedHandler) {
+                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                            .then(() => { InspectorTest.pass("Resource should have loaded successfully.") })
+                            .then(() => { loadedHandler(resource); })
+                            .then(resolve, reject);
+                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFail)
+                            .then(() => { InspectorTest.fail("Resource should not have failed to load.") })
+                            .then(reject, reject);
+                    } else if (failedHandler) {
+                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFinish)
+                            .then(() => { InspectorTest.fail("Resource should not have loaded successfully.") })
+                            .then(resolve, reject);
+                        resource.awaitEvent(WebInspector.Resource.Event.LoadingDidFail)
+                            .then(() => { InspectorTest.pass("Resource should have failed to load.") })
+                            .then(() => { failedHandler(resource); })
+                            .then(resolve, reject);
+                    }
+                });
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Network.Fetch.ModeNoCORS.SameOrigin",
+        description: "Same Origin 'no-cors' fetch => type 'basic'.",
+        expression: `fetch("http://127.0.0.1:8000/inspector/network/resources/cors-data.pl", {mode: "no-cors"})`,
+        loadedHandler(resource) {
+            InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.Fetch.ModeNoCORS.CrossOrigin",
+        description: "Same Origin 'no-cors' fetch => type 'opaque'. Produces an opaque failure.",
+        expression: `fetch("http://localhost:8000/inspector/network/resources/cors-data.pl", {mode: "no-cors"})`,
+        failedHandler(resource) {
+            InspectorTest.expectThat(resource.failed, "Load should have failed.");
+            InspectorTest.expectThat(resource.canceled, "Load should have canceled.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.Fetch.ModeCORS.SameOrigin",
+        description: "Same Origin 'cors' fetch => type 'basic'.",
+        expression: `fetch("http://127.0.0.1:8000/inspector/network/resources/cors-data.pl", {mode: "cors"})`,
+        loadedHandler(resource) {
+            InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.Fetch.ModeCORS.CrossOrigin",
+        description: "Cross Origin 'cors' fetch => type 'cors'. Produces filtered headers.",
+        expression: `fetch("http://localhost:8000/inspector/network/resources/cors-data.pl", {mode: "cors"})`,
+        loadedHandler(resource) {
+            InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header which would have otherwise been filtered.");
+        }
+    });
+
+    addTestCase({
+        name: "Network.Fetch.ModeSameOrigin.SameOrigin",
+        description: "Same Origin 'same-origin' fetch => type 'basic'.",
+        expression: `fetch("http://127.0.0.1:8000/inspector/network/resources/cors-data.pl", {mode: "same-origin"})`,
+        loadedHandler(resource) {
+            InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
+            InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
+            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.Fetch.ModeSameOrigin.CrossOrigin",
+        description: "Cross Origin 'same-origin' fetch => Error.",
+        description: "Attempting a fetch with mode: 'same-origin' will immediately TypeError for a cross origin request",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage(`
+                fetch("http://localhost:8000/inspector/network/resources/cors-data.pl", {mode: "same-origin"}).then(
+                    function success() {
+                        TestPage.log("FAIL: Should produce a TypeError.");
+                        TestPage.dispatchEventToFrontend("Completed");
+                    },
+                    function error() {
+                        TestPage.log("PASS: Should produce a TypeError.");
+                        TestPage.dispatchEventToFrontend("Completed");
+                    }
+                );
+            `);
+            InspectorTest.singleFireEventListener("Completed", () => {
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Network data with different types of Fetch requests.</p>
+</body>
+</html>
