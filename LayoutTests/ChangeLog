@@ -1,3 +1,37 @@
+2016-12-11  Darin Adler  <darin@apple.com>
+
+        Remove uses of Dictionary in WebRTC IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=165736
+
+        Reviewed by Sam Weinig.
+
+        * fast/mediastream/RTCIceCandidate-expected.txt: Regenerated; no new failures.
+        * fast/mediastream/RTCIceCandidate.html: Updated test to expect the WebIDL rules for parsing
+        unsigned short for sdpMLineIndex. The old code expected additional range checking which is
+        not expected behavior.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt: Regenerated; no new failures.
+        * fast/mediastream/RTCPeerConnection.html: Updated test to not expect an exception when
+        iceServers is entirely omitted or when it is an empty array. This is a progression and is
+        closer to the specification.
+
+        * fast/mediastream/RTCPeerConnection-getConfiguration-expected.txt: Regenerated; no new failures.
+        * fast/mediastream/RTCPeerConnection-getConfiguration.html: Updated test to expect the username
+        and credential fields to round trip as missing rather than turning from missing into empty strings.
+        Also updated the tests to pass in sequences of strings for "urls" since they expect sequences on
+        the way back out. We could also test round tripping of single strings, which should go in and come
+        back out as individual strings, but for now I did not bother adding that to this test.
+
+        * fast/mediastream/RTCSessionDescription-expected.txt: Regenerated; some exception messages are
+        now more specific than they were before.
+
+        * imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor-expected.txt:
+        Updated expected results. The new code correctly allows callers of the RTCPeerConnection constructor
+        to omit iceServers, pass undefined, or pass an empty array, as specified. Thuis change leads to
+        a couple tests that now correctly pass instead of failing. And it also leads to some other tests
+        failing that were passing before. These were passing because they expected an exception for some
+        other reason, however the exception was actually occurring because of incorrect handling of iceServers.
+
 2016-12-11  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Add tests for wrap/unwrap SPKI/PKCS8 keys

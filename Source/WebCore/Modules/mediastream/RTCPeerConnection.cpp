@@ -35,11 +35,11 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "Dictionary.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "MediaEndpointConfiguration.h"
 #include "MediaStream.h"
 #include "MediaStreamTrack.h"
 #include "RTCConfiguration.h"
@@ -77,7 +77,7 @@ RTCPeerConnection::~RTCPeerConnection()
     stop();
 }
 
-ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, const Dictionary& rtcConfiguration)
+ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, RTCConfiguration&& configuration)
 {
     if (!document.frame())
         return Exception { NOT_SUPPORTED_ERR };
@@ -85,7 +85,7 @@ ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, const Di
     if (!m_backend)
         return Exception { NOT_SUPPORTED_ERR };
 
-    return setConfiguration(rtcConfiguration);
+    return setConfiguration(WTFMove(configuration));
 }
 
 ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams)
@@ -348,25 +348,37 @@ String RTCPeerConnection::iceConnectionState() const
     return String();
 }
 
-RTCConfiguration* RTCPeerConnection::getConfiguration() const
+ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configuration)
 {
-    return m_configuration.get();
-}
-
-ExceptionOr<void> RTCPeerConnection::setConfiguration(const Dictionary& configuration)
-{
-    if (configuration.isUndefinedOrNull())
-        return Exception { TypeError };
-
     if (m_signalingState == SignalingState::Closed)
         return Exception { INVALID_STATE_ERR };
 
-    auto newConfiguration = RTCConfiguration::create(configuration);
-    if (newConfiguration.hasException())
-        return newConfiguration.releaseException();
+    Vector<MediaEndpointConfiguration::IceServerInfo> servers;
+    if (configuration.iceServers) {
+        servers.reserveInitialCapacity(configuration.iceServers->size());
+        for (auto& server : configuration.iceServers.value()) {
+            Vector<URL> serverURLs;
+            WTF::switchOn(server.urls,
+                [&serverURLs] (const String& string) {
+                    serverURLs.reserveInitialCapacity(1);
+                    serverURLs.uncheckedAppend(URL { URL { }, string });
+                },
+                [&serverURLs] (const Vector<String>& vector) {
+                    serverURLs.reserveInitialCapacity(vector.size());
+                    for (auto& string : vector)
+                        serverURLs.uncheckedAppend(URL { URL { }, string });
+                }
+            );
+            for (auto& serverURL : serverURLs) {
+                if (!(serverURL.protocolIs("turn") || serverURL.protocolIs("turns") || serverURL.protocolIs("stun")))
+                    return Exception { INVALID_ACCESS_ERR };
+            }
+            servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
+        }
+    }
 
-    m_configuration = newConfiguration.releaseReturnValue();
-    m_backend->setConfiguration(*m_configuration);
+    m_backend->setConfiguration({ WTFMove(servers), configuration.iceTransportPolicy, configuration.bundlePolicy });
+    m_configuration = WTFMove(configuration);
     return { };
 }
 

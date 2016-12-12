@@ -31,8 +31,7 @@
 
 [
     Conditional=WEB_RTC,
-    Constructor(Dictionary dictionary),
-    ConstructorMayThrowException,
+    Constructor(RTCSessionDescriptionInit descriptionInitDict),
     EnabledAtRuntime=peerConnection,
     ImplementationLacksVTable,
     PrivateIdentifier,
@@ -44,9 +43,9 @@
     serializer = {type, sdp};
 };
 
-enum RTCSdpType {
-    "offer",
-    "pranswer",
-    "answer",
-    "rollback"
+enum RTCSdpType { "offer", "pranswer", "answer", "rollback" };
+
+dictionary RTCSessionDescriptionInit {
+    required RTCSdpType type;
+    DOMString sdp = "";
 };

@@ -34,28 +34,23 @@
 
 #include "JSDOMPromise.h"
 #include "PeerConnectionStates.h"
-#include "RTCDataChannel.h"
 
 namespace WebCore {
 
-class DOMError;
-class Event;
 class MediaStream;
 class MediaStreamTrack;
 class PeerConnectionBackend;
-class RTCConfiguration;
 class RTCDataChannelHandler;
 class RTCIceCandidate;
 class RTCPeerConnection;
 class RTCRtpReceiver;
 class RTCRtpSender;
-class RTCRtpSenderClient;
-class RTCRtpTransceiver;
 class RTCSessionDescription;
 class RTCStatsResponse;
-class ScriptExecutionContext;
 
+struct MediaEndpointConfiguration;
 struct RTCAnswerOptions;
+struct RTCDataChannelInit;
 struct RTCOfferOptions;
 
 namespace PeerConnection {
@@ -63,8 +58,9 @@ using SessionDescriptionPromise = DOMPromise<IDLInterface<RTCSessionDescription>
 using StatsPromise = DOMPromise<IDLInterface<RTCStatsResponse>>;
 }
 
-typedef std::unique_ptr<PeerConnectionBackend> (*CreatePeerConnectionBackend)(RTCPeerConnection&);
+using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);
 
+// FIXME: What is the value of this abstract class? There is only one concrete class derived from it.
 class PeerConnectionBackend {
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
@@ -90,7 +86,7 @@ public:
     virtual RefPtr<RTCSessionDescription> currentRemoteDescription() const = 0;
     virtual RefPtr<RTCSessionDescription> pendingRemoteDescription() const = 0;
 
-    virtual void setConfiguration(RTCConfiguration&) = 0;
+    virtual void setConfiguration(MediaEndpointConfiguration&&) = 0;
 
     virtual void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) = 0;
 

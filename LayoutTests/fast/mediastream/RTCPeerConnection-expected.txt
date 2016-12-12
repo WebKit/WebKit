@@ -7,8 +7,8 @@ PASS new RTCPeerConnection(null); threw exception TypeError: RTCPeerConnection a
 PASS new RTCPeerConnection(undefined); threw exception TypeError: RTCPeerConnection argument must be a valid Dictionary.
 PASS new RTCPeerConnection(); threw exception TypeError: Not enough arguments.
 PASS new RTCPeerConnection(''); threw exception TypeError: RTCPeerConnection argument must be a valid Dictionary.
-PASS new RTCPeerConnection({}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
-PASS new RTCPeerConnection({iceServers:[]}); threw exception TypeError: Error creating RTCPeerConnection.
+PASS new RTCPeerConnection({}); did not throw exception.
+PASS new RTCPeerConnection({iceServers:[]}); did not throw exception.
 PASS new RTCPeerConnection({iceServers:[{url:'stun:foo.com'}]}); threw exception TypeError: Error creating RTCPeerConnection.
 PASS new RTCPeerConnection({iceServers:[{urls:'http:foo.com'}]}); threw exception TypeError: Error creating RTCPeerConnection.
 PASS new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}); did not throw exception.
@@ -43,9 +43,9 @@ PASS new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', credential:'x'},{u
 PASS new RTCPeerConnection({iceServers:[{urls:'stun:foo.com', username:'user'}], iceTransports:'all', requestIdentity:'ifconfigured'}); did not throw exception.
 PASS new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}); did not throw exception.
 PASS new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'}); did not throw exception.
-PASS new RTCPeerConnection({fooServers:[]}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
-PASS new RTCPeerConnection({iceServers:true}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
-PASS new RTCPeerConnection({iceServers:[1, 2, 3]}); threw exception TypeError: Invalid RTCPeerConnection constructor arguments.
+PASS new RTCPeerConnection({fooServers:[]}); did not throw exception.
+PASS new RTCPeerConnection({iceServers:true}); threw exception TypeError: Error creating RTCPeerConnection.
+PASS new RTCPeerConnection({iceServers:[1, 2, 3]}); threw exception TypeError: Error creating RTCPeerConnection.
 PASS new RTCPeerConnection({iceServers:[{}]}); threw exception TypeError: Error creating RTCPeerConnection.
 PASS new RTCPeerConnection({iceServers:[{urls:'foo'}]}); threw exception TypeError: Error creating RTCPeerConnection.
 PASS successfullyParsed is true

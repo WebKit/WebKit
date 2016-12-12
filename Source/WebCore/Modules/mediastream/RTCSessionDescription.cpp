@@ -34,53 +34,22 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "Dictionary.h"
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
-static bool parseTypeString(const String& string, RTCSessionDescription::SdpType& outType)
+inline RTCSessionDescription::RTCSessionDescription(SdpType type, const String& sdp)
+    : m_type(type)
+    , m_sdp(sdp)
 {
-    if (string == "offer")
-        outType = RTCSessionDescription::SdpType::Offer;
-    else if (string == "pranswer")
-        outType = RTCSessionDescription::SdpType::Pranswer;
-    else if (string == "answer")
-        outType = RTCSessionDescription::SdpType::Answer;
-    else if (string == "rollback")
-        outType = RTCSessionDescription::SdpType::Rollback;
-    else
-        return false;
-
-    return true;
 }
 
-ExceptionOr<Ref<RTCSessionDescription>> RTCSessionDescription::create(const Dictionary& dictionary)
+Ref<RTCSessionDescription> RTCSessionDescription::create(const Init& dictionary)
 {
-    String typeString;
-    // Dictionary member type is required.
-    if (!dictionary.get("type", typeString))
-        return Exception { TypeError };
-
-    SdpType type;
-    if (!parseTypeString(typeString, type))
-        return Exception { TypeError };
-
-    String sdp;
-    dictionary.get("sdp", sdp);
-
-    return adoptRef(*new RTCSessionDescription(type, sdp));
+    return create(dictionary.type, dictionary.sdp);
 }
 
 Ref<RTCSessionDescription> RTCSessionDescription::create(SdpType type, const String& sdp)
 {
     return adoptRef(*new RTCSessionDescription(type, sdp));
-}
-
-RTCSessionDescription::RTCSessionDescription(SdpType type, const String& sdp)
-    : m_type(type)
-    , m_sdp(sdp)
-{
 }
 
 } // namespace WebCore

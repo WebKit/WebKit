@@ -3,15 +3,15 @@ PASS RTCPeerConnection.length
 FAIL new RTCPeerConnection() Not enough arguments
 FAIL new RTCPeerConnection(null) RTCPeerConnection argument must be a valid Dictionary
 FAIL new RTCPeerConnection(undefined) RTCPeerConnection argument must be a valid Dictionary
-FAIL new RTCPeerConnection({}) Invalid RTCPeerConnection constructor arguments
+PASS new RTCPeerConnection({}) 
 PASS new RTCPeerConnection({ iceServers: null }) 
-FAIL new RTCPeerConnection({ iceServers: undefined }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ iceServers: [] }) Error creating RTCPeerConnection
+PASS new RTCPeerConnection({ iceServers: undefined }) 
+PASS new RTCPeerConnection({ iceServers: [] }) 
 PASS new RTCPeerConnection({ iceServers: [{}] }) 
 PASS new RTCPeerConnection({ iceServers: [null] }) 
 PASS new RTCPeerConnection({ iceServers: [undefined] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "stun:stun1.example.net" }] }) 
-FAIL new RTCPeerConnection({ iceServers: [{ urls: [] }] }) Error creating RTCPeerConnection
+PASS new RTCPeerConnection({ iceServers: [{ urls: [] }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: ["stun:stun1.example.net"] }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: ["stun:stun1.example.net", "stun:stun2.example.net"] }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", username: "user", credential: "cred" }] }) 
@@ -43,38 +43,52 @@ FAIL new RTCPeerConnection({ iceServers: [{ urls: "relative-url" }] }) assert_th
 FAIL new RTCPeerConnection({ iceServers: [{ urls: "http://example.com" }] }) assert_throws: function "function () {
         eval(expr);
       }" threw object "TypeError: Error creating RTCPeerConnection" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL new RTCPeerConnection({ iceServers: [{ urls: [], credentialType: "password" }] }) Error creating RTCPeerConnection
-FAIL new RTCPeerConnection({ iceServers: [{ urls: [], credentialType: "token" }] }) Error creating RTCPeerConnection
-PASS new RTCPeerConnection({ iceServers: [{ urls: [], credentialType: "invalid" }] }) 
+PASS new RTCPeerConnection({ iceServers: [{ urls: [], credentialType: "password" }] }) 
+PASS new RTCPeerConnection({ iceServers: [{ urls: [], credentialType: "token" }] }) 
+FAIL new RTCPeerConnection({ iceServers: [{ urls: [], credentialType: "invalid" }] }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
 PASS new RTCPeerConnection({ iceServers: [{ url: "stun:stun1.example.net" }] }) 
 PASS new RTCPeerConnection({ iceTransportPolicy: null }) 
-FAIL new RTCPeerConnection({ iceTransportPolicy: undefined }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ iceTransportPolicy: "relay" }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ iceTransportPolicy: "all" }) Invalid RTCPeerConnection constructor arguments
+PASS new RTCPeerConnection({ iceTransportPolicy: undefined }) 
+PASS new RTCPeerConnection({ iceTransportPolicy: "relay" }) 
+PASS new RTCPeerConnection({ iceTransportPolicy: "all" }) 
 PASS new RTCPeerConnection({ iceTransportPolicy: "invalid" }) 
 PASS new RTCPeerConnection({ iceTransportPolicy: "none" }) 
-FAIL new RTCPeerConnection({ iceTransports: "invalid" }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ iceTransports: "none" }) Invalid RTCPeerConnection constructor arguments
+PASS new RTCPeerConnection({ iceTransports: "invalid" }) 
+PASS new RTCPeerConnection({ iceTransports: "none" }) 
 PASS new RTCPeerConnection({ bundlePolicy: null }) 
-FAIL new RTCPeerConnection({ bundlePolicy: undefined }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ bundlePolicy: "balanced" }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ bundlePolicy: "max-compat" }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ bundlePolicy: "max-bundle" }) Invalid RTCPeerConnection constructor arguments
+PASS new RTCPeerConnection({ bundlePolicy: undefined }) 
+PASS new RTCPeerConnection({ bundlePolicy: "balanced" }) 
+PASS new RTCPeerConnection({ bundlePolicy: "max-compat" }) 
+PASS new RTCPeerConnection({ bundlePolicy: "max-bundle" }) 
 PASS new RTCPeerConnection({ bundlePolicy: "invalid" }) 
-PASS new RTCPeerConnection({ rtcpMuxPolicy: null }) 
-FAIL new RTCPeerConnection({ rtcpMuxPolicy: undefined }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ rtcpMuxPolicy: "negotiate" }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ rtcpMuxPolicy: "require" }) Invalid RTCPeerConnection constructor arguments
-PASS new RTCPeerConnection({ rtcpMuxPolicy: "invalid" }) 
+FAIL new RTCPeerConnection({ rtcpMuxPolicy: null }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
+PASS new RTCPeerConnection({ rtcpMuxPolicy: undefined }) 
+PASS new RTCPeerConnection({ rtcpMuxPolicy: "negotiate" }) 
+PASS new RTCPeerConnection({ rtcpMuxPolicy: "require" }) 
+FAIL new RTCPeerConnection({ rtcpMuxPolicy: "invalid" }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
 FAIL new RTCPeerConnection({ peerIdentity: toStringThrows }) assert_throws: function "function () {
         eval(expr);
-      }" threw object "TypeError: Invalid RTCPeerConnection constructor arguments" ("TypeError") expected object "Error" ("Error")
-PASS new RTCPeerConnection({ certificates: null }) 
-FAIL new RTCPeerConnection({ certificates: undefined }) Invalid RTCPeerConnection constructor arguments
-FAIL new RTCPeerConnection({ certificates: [] }) Invalid RTCPeerConnection constructor arguments
-PASS new RTCPeerConnection({ certificates: [null] }) 
-PASS new RTCPeerConnection({ certificates: [undefined] }) 
-PASS new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows }) 
+      }" did not throw
+FAIL new RTCPeerConnection({ certificates: null }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
+PASS new RTCPeerConnection({ certificates: undefined }) 
+PASS new RTCPeerConnection({ certificates: [] }) 
+FAIL new RTCPeerConnection({ certificates: [null] }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
+FAIL new RTCPeerConnection({ certificates: [undefined] }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
+FAIL new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows }) assert_throws: function "function () {
+        eval(expr);
+      }" did not throw
 FAIL new RTCPeerConnection({ certificates: [certificate] }) RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256" })', 'RTCPeerConnection.generateCertificate' is undefined)
 FAIL new RTCPeerConnection({ certificates: [expiredCertificate] }) RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256", expires: 0 })', 'RTCPeerConnection.generateCertificate' is undefined)
 FAIL localDescription initial value Not enough arguments

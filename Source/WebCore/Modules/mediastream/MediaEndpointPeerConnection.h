@@ -33,51 +33,43 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaEndpoint.h"
-#include "MediaEndpointSessionDescription.h"
 #include "PeerConnectionBackend.h"
+#include "RTCSessionDescription.h"
 #include <wtf/Function.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class MediaStream;
-class MediaStreamTrack;
+class MediaEndpointSessionDescription;
 class SDPProcessor;
-
-struct PeerMediaDescription;
-
-using MediaDescriptionVector = Vector<PeerMediaDescription>;
-using RtpSenderVector = Vector<RefPtr<RTCRtpSender>>;
-using RtpTransceiverVector = Vector<RefPtr<RTCRtpTransceiver>>;
 
 class MediaEndpointPeerConnection final : public PeerConnectionBackend, public MediaEndpointClient {
 public:
-    MediaEndpointPeerConnection(RTCPeerConnection&);
-
-    RefPtr<RTCSessionDescription> localDescription() const override;
-    RefPtr<RTCSessionDescription> currentLocalDescription() const override;
-    RefPtr<RTCSessionDescription> pendingLocalDescription() const override;
-
-    RefPtr<RTCSessionDescription> remoteDescription() const override;
-    RefPtr<RTCSessionDescription> currentRemoteDescription() const override;
-    RefPtr<RTCSessionDescription> pendingRemoteDescription() const override;
-
-    void setConfiguration(RTCConfiguration&) override;
-
-    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) override;
-
-    Vector<RefPtr<MediaStream>> getRemoteStreams() const override;
-
-    Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) override;
-    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) override;
-
-    bool isNegotiationNeeded() const override { return m_negotiationNeeded; };
-    void markAsNeedingNegotiation() override;
-    void clearNegotiationNeededState() override { m_negotiationNeeded = false; };
-
-    void emulatePlatformEvent(const String& action) override;
+    explicit MediaEndpointPeerConnection(RTCPeerConnection&);
 
 private:
+    RefPtr<RTCSessionDescription> localDescription() const final;
+    RefPtr<RTCSessionDescription> currentLocalDescription() const final;
+    RefPtr<RTCSessionDescription> pendingLocalDescription() const final;
+
+    RefPtr<RTCSessionDescription> remoteDescription() const final;
+    RefPtr<RTCSessionDescription> currentRemoteDescription() const final;
+    RefPtr<RTCSessionDescription> pendingRemoteDescription() const final;
+
+    void setConfiguration(MediaEndpointConfiguration&&) final;
+
+    void getStats(MediaStreamTrack*, PeerConnection::StatsPromise&&) final;
+
+    Vector<RefPtr<MediaStream>> getRemoteStreams() const final;
+
+    Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) final;
+    void replaceTrack(RTCRtpSender&, RefPtr<MediaStreamTrack>&&, DOMPromise<void>&&) final;
+
+    bool isNegotiationNeeded() const final { return m_negotiationNeeded; };
+    void markAsNeedingNegotiation() final;
+    void clearNegotiationNeededState() final { m_negotiationNeeded = false; };
+
+    void emulatePlatformEvent(const String& action) final;
+
     void runTask(Function<void ()>&&);
     void startRunningTasks();
 
@@ -106,10 +98,10 @@ private:
     RefPtr<RTCSessionDescription> createRTCSessionDescription(MediaEndpointSessionDescription*) const;
 
     // MediaEndpointClient
-    void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) override;
-    void gotIceCandidate(const String& mid, IceCandidate&&) override;
-    void doneGatheringCandidates(const String& mid) override;
-    void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) override;
+    void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) final;
+    void gotIceCandidate(const String& mid, IceCandidate&&) final;
+    void doneGatheringCandidates(const String& mid) final;
+    void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) final;
 
     std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
 

@@ -19,8 +19,14 @@
                 shouldBeEqualToString('configuration.iceTransportPolicy', iceTransportPolicy);
                 shouldBeEqualToString('configuration.bundlePolicy', bundlePolicy);
                 for (i = 0; i < iceServers.length; ++i) {
-                    shouldBeEqualToString('iceServers[i].username', serversList[i].username);
-                    shouldBeEqualToString('iceServers[i].credential', serversList[i].credential);
+                    if ("username" in serversList[i])
+                        shouldBeEqualToString('iceServers[i].username', serversList[i].username);
+                    else
+                        shouldBeFalse('"username" in iceServers[i]');
+                    if ("credential" in serversList[i])
+                        shouldBeEqualToString('iceServers[i].credential', serversList[i].credential);
+                    else
+                        shouldBeFalse('"credential" in iceServers[i]');
 
                     urls = iceServers[i].urls;
                     for (j = 0; j < urls.length; ++j)
@@ -28,62 +34,62 @@
                 }
             }
 
-            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
-            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com']}]});
+            var servers = [{urls:['stun:foo.com']}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'all', 'balanced');
 
-            pc = new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}]});
+            pc = new RTCPeerConnection({iceServers:[{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com'], username:'user2', credential:'x'}]});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'}, {urls:['stun:bar.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'all', 'balanced');
 
-            pc = new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
+            pc = new RTCPeerConnection({iceServers:[{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'all', 'balanced');
 
-            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'balanced'});
-            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com']}], iceTransportPolicy:'relay', bundlePolicy:'balanced'});
+            var servers = [{urls:['stun:foo.com']}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'relay', 'balanced');
 
-            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'max-compat'});
-            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            pc = new RTCPeerConnection({iceServers:[{urls:['stun:foo.com']}], iceTransportPolicy:'relay', bundlePolicy:'max-compat'});
+            var servers = [{urls:['stun:foo.com']}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'relay', 'max-compat');
 
-            pc = new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransportPolicy:'relay', bundlePolicy:'max-bundle'});
+            pc = new RTCPeerConnection({iceServers:[{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransportPolicy:'relay', bundlePolicy:'max-bundle'});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'relay', 'max-bundle');
 
-            pc.setConfiguration({iceServers:[{urls:'stun:foo.com'}]});
-            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            pc.setConfiguration({iceServers:[{urls:['stun:foo.com']}]});
+            var servers = [{urls:['stun:foo.com']}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'all', 'balanced');
 
-            pc.setConfiguration({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}]});
+            pc.setConfiguration({iceServers:[{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com'], username:'user2', credential:'x'}]});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'}, {urls:['stun:bar.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'all', 'balanced');
 
-            pc.setConfiguration({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
+            pc.setConfiguration({iceServers:[{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}]});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'all', 'balanced');
 
-            pc.setConfiguration({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'balanced'});
-            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            pc.setConfiguration({iceServers:[{urls:['stun:foo.com']}], iceTransportPolicy:'relay', bundlePolicy:'balanced'});
+            var servers = [{urls:['stun:foo.com']}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'relay', 'balanced');
 
-            pc.setConfiguration({iceServers:[{urls:'stun:foo.com'}], iceTransportPolicy:'relay', bundlePolicy:'max-compat'});
-            var servers = [{urls:['stun:foo.com'], username:'', credential:''}];
+            pc.setConfiguration({iceServers:[{urls:['stun:foo.com']}], iceTransportPolicy:'relay', bundlePolicy:'max-compat'});
+            var servers = [{urls:['stun:foo.com']}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'relay', 'max-compat');
 
-            pc.setConfiguration({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransportPolicy:'relay', bundlePolicy:'max-bundle'});
+            pc.setConfiguration({iceServers:[{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}], iceTransportPolicy:'relay', bundlePolicy:'max-bundle'});
             servers = [{urls:['turn:foo.com'], username:'user', credential:'x'},{urls:['stun:bar.com', 'turn:foo.com', 'turn:foo2.com'], username:'user2', credential:'x'}];
             configuration = pc.getConfiguration();
             checkConfiguration(servers, 'relay', 'max-bundle');

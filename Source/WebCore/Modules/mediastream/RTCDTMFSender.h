@@ -30,26 +30,22 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "RTCDTMFSenderHandlerClient.h"
 #include "ScriptWrappable.h"
 #include "Timer.h"
 
 namespace WebCore {
 
 class MediaStreamTrack;
-class RTCPeerConnectionHandler;
-class RTCDTMFSenderHandler;
 
-class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTargetWithInlineData, private RTCDTMFSenderHandlerClient, public ActiveDOMObject {
+class RTCDTMFSender final : public RefCounted<RTCDTMFSender>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static ExceptionOr<Ref<RTCDTMFSender>> create(ScriptExecutionContext*, RTCPeerConnectionHandler*, RefPtr<MediaStreamTrack>&&);
     virtual ~RTCDTMFSender();
 
     bool canInsertDTMF() const;
     MediaStreamTrack* track() const;
     String toneBuffer() const;
-    long duration() const { return m_duration; }
-    long interToneGap() const { return m_interToneGap; }
+    int duration() const { return m_duration; }
+    int interToneGap() const { return m_interToneGap; }
 
     ExceptionOr<void> insertDTMF(const String& tones, std::optional<int> duration, std::optional<int> interToneGap);
 
@@ -57,7 +53,7 @@ public:
     using RefCounted::deref;
 
 private:
-    RTCDTMFSender(ScriptExecutionContext&, RefPtr<MediaStreamTrack>&&, std::unique_ptr<RTCDTMFSenderHandler>);
+    RTCDTMFSender(ScriptExecutionContext&, RefPtr<MediaStreamTrack>&&);
 
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -69,16 +65,14 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    void didPlayTone(const String&) final;
+    void didPlayTone(const String&);
 
     void scheduleDispatchEvent(Ref<Event>&&);
     void scheduledEventTimerFired();
 
     RefPtr<MediaStreamTrack> m_track;
-    long m_duration;
-    long m_interToneGap;
-
-    std::unique_ptr<RTCDTMFSenderHandler> m_handler;
+    int m_duration;
+    int m_interToneGap;
 
     bool m_stopped;
 

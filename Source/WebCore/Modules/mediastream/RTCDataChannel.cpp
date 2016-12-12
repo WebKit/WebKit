@@ -23,17 +23,16 @@
  */
 
 #include "config.h"
+#include "RTCDataChannel.h"
 
 #if ENABLE(WEB_RTC)
-
-#include "RTCDataChannel.h"
 
 #include "Blob.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "MessageEvent.h"
 #include "RTCDataChannelHandler.h"
-#include "RTCPeerConnectionHandler.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>

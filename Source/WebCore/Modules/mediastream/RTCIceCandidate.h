@@ -34,16 +34,18 @@
 
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-class Dictionary;
-class RTCIceCandidateDescriptor;
-
 class RTCIceCandidate : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
 public:
-    static ExceptionOr<Ref<RTCIceCandidate>> create(const Dictionary&);
+    struct Init {
+        String candidate;
+        String sdpMid;
+        std::optional<unsigned short> sdpMLineIndex;
+    };
+
+    static ExceptionOr<Ref<RTCIceCandidate>> create(const Init&);
     static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
 
     const String& candidate() const { return m_candidate; }
@@ -51,7 +53,7 @@ public:
     std::optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
 
 private:
-    explicit RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
+    RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
 
     String m_candidate;
     String m_sdpMid;

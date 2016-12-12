@@ -32,36 +32,21 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ExceptionOr.h"
 #include "PeerConnectionStates.h"
 #include "RTCIceServer.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Dictionary;
+using RTCIceTransportPolicy = PeerConnectionStates::IceTransportPolicy;
+using RTCBundlePolicy = PeerConnectionStates::BundlePolicy;
 
-// FIXME: Why reference count this?
-class RTCConfiguration : public RefCounted<RTCConfiguration> {
-public:
-    static ExceptionOr<RefPtr<RTCConfiguration>> create(const Dictionary& configuration);
+struct RTCConfiguration {
+    using IceTransportPolicy = RTCIceTransportPolicy;
+    using BundlePolicy = RTCBundlePolicy;
 
-    using IceTransportPolicy = PeerConnectionStates::IceTransportPolicy;
-    IceTransportPolicy iceTransportPolicy() const { return m_iceTransportPolicy; }
-
-    using BundlePolicy = PeerConnectionStates::BundlePolicy;
-    BundlePolicy bundlePolicy() const { return m_bundlePolicy; }
-
-    Vector<RefPtr<RTCIceServer>> iceServers() const { return m_iceServers; }
-
-private:
-    RTCConfiguration();
-
-    ExceptionOr<void> initialize(const Dictionary& configuration);
-
-    Vector<RefPtr<RTCIceServer>> m_iceServers;
-    IceTransportPolicy m_iceTransportPolicy { IceTransportPolicy::All };
-    BundlePolicy m_bundlePolicy { BundlePolicy::Balanced };
+    std::optional<Vector<RTCIceServer>> iceServers;
+    IceTransportPolicy iceTransportPolicy;
+    BundlePolicy bundlePolicy;
 };
 
 } // namespace WebCore

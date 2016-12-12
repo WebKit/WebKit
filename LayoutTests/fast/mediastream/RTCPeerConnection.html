@@ -11,8 +11,8 @@
             shouldThrow("new RTCPeerConnection(undefined);");
             shouldThrow("new RTCPeerConnection();");
             shouldThrow("new RTCPeerConnection('');");
-            shouldThrow("new RTCPeerConnection({});");
-            shouldThrow("new RTCPeerConnection({iceServers:[]});");
+            shouldNotThrow("new RTCPeerConnection({});");
+            shouldNotThrow("new RTCPeerConnection({iceServers:[]});");
             shouldThrow("new RTCPeerConnection({iceServers:[{url:'stun:foo.com'}]});");
             shouldThrow("new RTCPeerConnection({iceServers:[{urls:'http:foo.com'}]});");
 
@@ -52,7 +52,7 @@
             shouldNotThrow("new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'});");
             shouldNotThrow("new RTCPeerConnection({iceServers:[{urls:'turn:foo.com', username:'user', credential:'x'},{urls:'stun:bar.com', username:'user2', credential:'x'}], iceTransports:'all', requestIdentity:'ifconfigured'});");
 
-            shouldThrow("new RTCPeerConnection({fooServers:[]});");
+            shouldNotThrow("new RTCPeerConnection({fooServers:[]});");
             shouldThrow("new RTCPeerConnection({iceServers:true});");
             shouldThrow("new RTCPeerConnection({iceServers:[1, 2, 3]});");
             shouldThrow("new RTCPeerConnection({iceServers:[{}]});");

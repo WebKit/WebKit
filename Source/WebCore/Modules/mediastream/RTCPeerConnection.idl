@@ -59,7 +59,7 @@ dictionary RTCDataChannelInit {
     JSBuiltinConstructor,
 ] interface RTCPeerConnection : EventTarget {
     // Private initializer
-    [PrivateIdentifier, CallWith=Document, MayThrowException] void initializeWith(Dictionary parameters);
+    [PrivateIdentifier, CallWith=Document, MayThrowException] void initializeWith(RTCConfiguration configuration);
 
     // RTP Media API extensions
     [PrivateIdentifier, PublicIdentifier] sequence<RTCRtpSender> getSenders();
@@ -119,7 +119,7 @@ dictionary RTCDataChannelInit {
     readonly attribute DOMString iceConnectionState;
 
     RTCConfiguration getConfiguration();
-    [MayThrowException] void setConfiguration(Dictionary configuration);
+    [MayThrowException] void setConfiguration(RTCConfiguration configuration);
 
     [JSBuiltin] Promise<RTCStatsReport> getStats(optional MediaStreamTrack? selector = null);
     // Legacy signature: Promise<void> getStats(MediaStreamTrack? selector

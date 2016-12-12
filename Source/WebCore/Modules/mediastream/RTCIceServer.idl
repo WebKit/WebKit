@@ -25,10 +25,9 @@
 
 [
     Conditional=WEB_RTC,
-    NoInterfaceObject,
-] interface RTCIceServer {
-    readonly attribute sequence<DOMString> urls;
-    readonly attribute DOMString username;
-    readonly attribute DOMString credential;
+    JSGenerateToJSObject,
+] dictionary RTCIceServer {
+    required (DOMString or sequence<DOMString>) urls;
+    DOMString username;
+    DOMString credential;
 };
-

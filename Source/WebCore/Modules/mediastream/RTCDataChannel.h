@@ -42,7 +42,6 @@ namespace JSC {
 namespace WebCore {
 
 class Blob;
-class Dictionary;
 class RTCPeerConnectionHandler;
 
 class RTCDataChannel final : public RefCounted<RTCDataChannel>, public EventTargetWithInlineData, public RTCDataChannelHandlerClient {

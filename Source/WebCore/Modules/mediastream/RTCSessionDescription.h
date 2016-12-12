@@ -37,18 +37,15 @@
 
 namespace WebCore {
 
-class Dictionary;
-
 class RTCSessionDescription : public RefCounted<RTCSessionDescription>, public ScriptWrappable {
 public:
-    enum class SdpType {
-        Offer,
-        Pranswer,
-        Answer,
-        Rollback
-    };
+    enum class SdpType { Offer, Pranswer, Answer, Rollback };
 
-    static ExceptionOr<Ref<RTCSessionDescription>> create(const Dictionary&);
+    struct Init {
+        SdpType type;
+        String sdp;
+    };
+    static Ref<RTCSessionDescription> create(const Init&);
     static Ref<RTCSessionDescription> create(SdpType, const String& sdp);
 
     SdpType type() const { return m_type; }

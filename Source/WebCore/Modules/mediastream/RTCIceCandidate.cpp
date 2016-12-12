@@ -35,47 +35,28 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "Dictionary.h"
 #include "ExceptionCode.h"
 
 namespace WebCore {
 
-ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const Dictionary& dictionary)
+inline RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
+    : m_candidate(candidate)
+    , m_sdpMid(sdpMid)
+    , m_sdpMLineIndex(sdpMLineIndex)
 {
-    String candidate;
-    if (!dictionary.get("candidate", candidate))
+    ASSERT(!sdpMid.isNull() || sdpMLineIndex);
+}
+
+ExceptionOr<Ref<RTCIceCandidate>> RTCIceCandidate::create(const Init& dictionary)
+{
+    if (dictionary.sdpMid.isNull() && !dictionary.sdpMLineIndex)
         return Exception { TypeError };
-
-    String sdpMid;
-    dictionary.getWithUndefinedOrNullCheck("sdpMid", sdpMid);
-
-    std::optional<unsigned short> sdpMLineIndex;
-    String sdpMLineIndexString;
-
-    if (dictionary.getWithUndefinedOrNullCheck("sdpMLineIndex", sdpMLineIndexString)) {
-        bool intConversionOk;
-        unsigned result = sdpMLineIndexString.toUIntStrict(&intConversionOk);
-        if (!intConversionOk || result > USHRT_MAX)
-            return Exception { TypeError };
-        sdpMLineIndex = result;
-    }
-
-    if (sdpMid.isNull() && !sdpMLineIndex)
-        return Exception { TypeError };
-
-    return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
+    return create(dictionary.candidate, dictionary.sdpMid, dictionary.sdpMLineIndex);
 }
 
 Ref<RTCIceCandidate> RTCIceCandidate::create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
 {
     return adoptRef(*new RTCIceCandidate(candidate, sdpMid, sdpMLineIndex));
-}
-
-RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)
-    : m_candidate(candidate)
-    , m_sdpMid(sdpMid)
-    , m_sdpMLineIndex(sdpMLineIndex)
-{
 }
 
 } // namespace WebCore

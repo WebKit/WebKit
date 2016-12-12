@@ -24,15 +24,13 @@
  */
 
 #include "config.h"
+#include "RTCDTMFSender.h"
 
 #if ENABLE(WEB_RTC)
-
-#include "RTCDTMFSender.h"
 
 #include "MediaStreamTrack.h"
 #include "RTCDTMFSenderHandler.h"
 #include "RTCDTMFToneChangeEvent.h"
-#include "RTCPeerConnectionHandler.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -43,27 +41,14 @@ static const long maxToneDurationMs = 6000;
 static const long minInterToneGapMs = 30;
 static const long defaultInterToneGapMs = 70;
 
-ExceptionOr<Ref<RTCDTMFSender>> RTCDTMFSender::create(ScriptExecutionContext* context, RTCPeerConnectionHandler* peerConnectionHandler, RefPtr<MediaStreamTrack>&& track)
-{
-    auto handler = peerConnectionHandler->createDTMFSender(&track->source());
-    if (!handler)
-        return Exception { NOT_SUPPORTED_ERR };
-
-    auto sender = adoptRef(*new RTCDTMFSender(*context, WTFMove(track), WTFMove(handler)));
-    sender->suspendIfNeeded();
-    return WTFMove(sender);
-}
-
-RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RefPtr<MediaStreamTrack>&& track, std::unique_ptr<RTCDTMFSenderHandler> handler)
+RTCDTMFSender::RTCDTMFSender(ScriptExecutionContext& context, RefPtr<MediaStreamTrack>&& track)
     : ActiveDOMObject(&context)
     , m_track(WTFMove(track))
     , m_duration(defaultToneDurationMs)
     , m_interToneGap(defaultInterToneGapMs)
-    , m_handler(WTFMove(handler))
     , m_stopped(false)
     , m_scheduledEventTimer(*this, &RTCDTMFSender::scheduledEventTimerFired)
 {
-    m_handler->setClient(this);
 }
 
 RTCDTMFSender::~RTCDTMFSender()
@@ -72,7 +57,7 @@ RTCDTMFSender::~RTCDTMFSender()
 
 bool RTCDTMFSender::canInsertDTMF() const
 {
-    return m_handler->canInsertDTMF();
+    return false;
 }
 
 MediaStreamTrack* RTCDTMFSender::track() const
@@ -82,10 +67,10 @@ MediaStreamTrack* RTCDTMFSender::track() const
 
 String RTCDTMFSender::toneBuffer() const
 {
-    return m_handler->currentToneBuffer();
+    return { };
 }
 
-ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, std::optional<int> duration, std::optional<int> interToneGap)
+ExceptionOr<void> RTCDTMFSender::insertDTMF(const String&, std::optional<int> duration, std::optional<int> interToneGap)
 {
     if (!canInsertDTMF())
         return Exception { NOT_SUPPORTED_ERR };
@@ -99,10 +84,7 @@ ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, std::optional<i
     m_duration = duration.value_or(defaultToneDurationMs);
     m_interToneGap = interToneGap.value_or(defaultInterToneGapMs);
 
-    if (!m_handler->insertDTMF(tones, m_duration, m_interToneGap))
-        return Exception { SYNTAX_ERR };
-
-    return { };
+    return Exception { SYNTAX_ERR };
 }
 
 void RTCDTMFSender::didPlayTone(const String& tone)
@@ -113,7 +95,6 @@ void RTCDTMFSender::didPlayTone(const String& tone)
 void RTCDTMFSender::stop()
 {
     m_stopped = true;
-    m_handler->setClient(nullptr);
 }
 
 const char* RTCDTMFSender::activeDOMObjectName() const

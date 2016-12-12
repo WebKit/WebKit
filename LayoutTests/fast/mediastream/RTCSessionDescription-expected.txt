@@ -15,11 +15,11 @@ PASS sessionDescription.sdp is 'foobar'
 *** Argument is mandatory
 PASS new RTCSessionDescription(); threw exception TypeError: Not enough arguments.
 *** Dictionary member type is required
-PASS new RTCSessionDescription({}); threw exception TypeError: Type error.
-PASS new RTCSessionDescription({sdp:'x'}); threw exception TypeError: Type error.
-PASS new RTCSessionDescription({foo:'bar'}); threw exception TypeError: Type error.
+PASS new RTCSessionDescription({}); threw exception TypeError: Member RTCSessionDescriptionInit.type is required and must be an instance of RTCSdpType.
+PASS new RTCSessionDescription({sdp:'x'}); threw exception TypeError: Member RTCSessionDescriptionInit.type is required and must be an instance of RTCSdpType.
+PASS new RTCSessionDescription({foo:'bar'}); threw exception TypeError: Member RTCSessionDescriptionInit.type is required and must be an instance of RTCSdpType.
 PASS new RTCSessionDescription({type:'offer'}); did not throw exception.
-PASS new RTCSessionDescription(null); threw exception TypeError: Type error.
+PASS new RTCSessionDescription(null); threw exception TypeError: Member RTCSessionDescriptionInit.type is required and must be an instance of RTCSdpType.
 PASS new RTCSessionDescription(5); threw exception TypeError: Type error.
 PASS new RTCSessionDescription('foobar'); threw exception TypeError: Type error.
 PASS new RTCSessionDescription({type:'foobar', sdp:'x'}); threw exception TypeError: Type error.

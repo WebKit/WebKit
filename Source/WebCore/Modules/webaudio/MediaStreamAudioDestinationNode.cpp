@@ -23,16 +23,14 @@
  */
 
 #include "config.h"
+#include "MediaStreamAudioDestinationNode.h"
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
-
-#include "MediaStreamAudioDestinationNode.h"
 
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "MediaStream.h"
 #include "MediaStreamAudioSource.h"
-#include "RTCPeerConnectionHandler.h"
 #include <wtf/Locker.h>
 
 namespace WebCore {

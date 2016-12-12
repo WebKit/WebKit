@@ -1,5 +1,101 @@
 2016-12-11  Darin Adler  <darin@apple.com>
 
+        Remove uses of Dictionary in WebRTC IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=165736
+
+        Reviewed by Sam Weinig.
+
+        Also removed quite a bit of unused code. There were some mocks that were out of date and
+        no longer matched the types used in the real code, that also were no longer hooked up,
+        and other types of dead code. We will have to implement anew when we want to restore tests
+        like the ones these were intended to enable.
+
+        * CMakeLists.txt: Updated for all the removed files.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp: Moved some types in here
+        that don't need to be in the header.
+        (WebCore::MediaEndpointPeerConnection::MediaEndpointPeerConnection): Use make_unique.
+        (WebCore::MediaEndpointPeerConnection::setConfiguration): Changed argument type,
+        obviating the need for most of the code that was here.
+        * Modules/mediastream/MediaEndpointPeerConnection.h: Updated for the above. Made more
+        things private and final. Marked the constructor explicit. Removed unneeded includes.
+
+        * Modules/mediastream/PeerConnectionBackend.h: Removed unneeded includes and forward
+        declarations. Changed the argument type for setConfiguration (see above).
+
+        * Modules/mediastream/RTCConfiguration.cpp: Removed.
+        None of the code here was needed except for the ICE server validation, and that was
+        moved into RTCPeerConnection::setConfiguration.
+        * Modules/mediastream/RTCConfiguration.h: Changed this from a class to a struct since
+        this is now a dictionary rather than an interface.
+        * Modules/mediastream/RTCConfiguration.idl: Changed this from an interface to a dictionary.
+
+        * Modules/mediastream/RTCDTMFSender.cpp: Removed some of the code from this file. This
+        class currently isn't implemented, but was depending on RTCPeerConnectionHandler. I removed
+        some of the dead code. Someone will have to straighten this out so we can turn it back on.
+        * Modules/mediastream/RTCDTMFSender.h: Ditto.
+
+        * Modules/mediastream/RTCDataChannel.cpp: Updated includes.
+
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::create): Removed most of the code, since this now takes
+        a structure rather than a WebCore::Dictionary, and so the bindings take care of the work.
+        * Modules/mediastream/RTCIceCandidate.h: Updated for the above.
+        * Modules/mediastream/RTCIceCandidate.idl: Changed the constructor to take a
+        RTCIceCandidateInit instead of a Dictionary.
+
+        * Modules/mediastream/RTCIceServer.h: Changed this from a class to a struct since
+        this is now a dictionary rather than an interface.
+        * Modules/mediastream/RTCIceServer.idl: Changed this from an interface to a dictionary.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::initializeWith): Take an RTCConfiguration rather than
+        a Dictionary.
+        (WebCore::RTCPeerConnection::getConfiguration): Moved to header, now an inline.
+        (WebCore::RTCPeerConnection::setConfiguration): Use the configuration dictionary now instead
+        of the configuration class. Also moved validation of server URLs here, formerly in the
+        RTCConfiguration RTCConfiguration::initialize function. Also moved code to convert from
+        RTCConfiguration to MediaEndpointConfiguration here, formerly in
+        MediaEndpointPeerConnection::setConfiguration.
+        * Modules/mediastream/RTCPeerConnection.h: Updated for the above.
+        * Modules/mediastream/RTCPeerConnection.idl: Changed argument to initializeWith and
+        setConfiguration from Dictionary to RTCConfiguration.
+
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        (WebCore::parseTypeString): Deleted.
+        (WebCore::RTCSessionDescription::create): Changed to take struct instead of Dictionary.
+        * Modules/mediastream/RTCSessionDescription.h: Added Init struct and changed create to
+        take it.
+        * Modules/mediastream/RTCSessionDescription.idl: Changed constructor argument to take
+        RTCSessionDescriptionInit dictionary instead of Dictionary.
+
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp: Updated includes.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for all the removed files.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent): Fixed convertDictionaryToJS to work with other
+        nullable types besides RefPtr.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.
+
+        * platform/mediastream/RTCConfigurationPrivate.h: Removed.
+        * platform/mediastream/RTCIceServerPrivate.h: Removed.
+        * platform/mediastream/RTCPeerConnectionHandler.cpp: Removed.
+        * platform/mediastream/RTCPeerConnectionHandler.h: Removed.
+        * platform/mock/RTCDTMFSenderHandlerMock.cpp: Removed.
+        * platform/mock/RTCDTMFSenderHandlerMock.h: Removed.
+
+        * platform/mock/RTCDataChannelHandlerMock.h: Updated includes, made more things private and final.
+
+        * platform/mock/RTCPeerConnectionHandlerMock.cpp: Removed.
+        * platform/mock/RTCPeerConnectionHandlerMock.h: Removed.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals): Removed call to enableMockRTCPeerConnectionHandler.
+        (WebCore::Internals::enableMockRTCPeerConnectionHandler): Deleted.
+
+2016-12-11  Darin Adler  <darin@apple.com>
+
         Use std::vsnprintf instead of vasprintf
         https://bugs.webkit.org/show_bug.cgi?id=165740
 

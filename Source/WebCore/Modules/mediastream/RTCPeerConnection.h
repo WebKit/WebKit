@@ -37,19 +37,15 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MediaStream.h"
+#include "RTCConfiguration.h"
 #include "RTCDataChannel.h"
 #include "RTCOfferAnswerOptions.h"
 #include "RTCRtpTransceiver.h"
-#include "ScriptWrappable.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Dictionary;
 class MediaStreamTrack;
 class PeerConnectionBackend;
-class RTCConfiguration;
 class RTCIceCandidate;
 class RTCPeerConnectionErrorCallback;
 class RTCSessionDescription;
@@ -58,14 +54,14 @@ class RTCStatsCallback;
 class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public RTCRtpSenderClient, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
-    ~RTCPeerConnection();
+    virtual ~RTCPeerConnection();
 
     using AnswerOptions = RTCAnswerOptions;
     using DataChannelInit = RTCDataChannelInit;
     using OfferAnswerOptions = RTCOfferAnswerOptions;
     using OfferOptions = RTCOfferOptions;
 
-    ExceptionOr<void> initializeWith(Document&, const Dictionary&);
+    ExceptionOr<void> initializeWith(Document&, RTCConfiguration&&);
 
     const Vector<std::reference_wrapper<RTCRtpSender>>& getSenders() const { return m_transceiverSet->senders(); }
     const Vector<std::reference_wrapper<RTCRtpReceiver>>& getReceivers() const { return m_transceiverSet->receivers(); }
@@ -107,8 +103,8 @@ public:
     String iceGatheringState() const;
     String iceConnectionState() const;
 
-    RTCConfiguration* getConfiguration() const;
-    ExceptionOr<void> setConfiguration(const Dictionary&);
+    const RTCConfiguration& getConfiguration() const { return m_configuration; }
+    ExceptionOr<void> setConfiguration(RTCConfiguration&&);
 
     void privateGetStats(MediaStreamTrack*, PeerConnection::StatsPromise&&);
 
@@ -120,8 +116,8 @@ public:
     EventTargetInterface eventTargetInterface() const final { return RTCPeerConnectionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    using RefCounted<RTCPeerConnection>::ref;
-    using RefCounted<RTCPeerConnection>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
     // Used for testing with a mock
     WEBCORE_EXPORT void emulatePlatformEvent(const String& action);
@@ -167,7 +163,7 @@ private:
 
     std::unique_ptr<PeerConnectionBackend> m_backend;
 
-    RefPtr<RTCConfiguration> m_configuration;
+    RTCConfiguration m_configuration;
 };
 
 } // namespace WebCore

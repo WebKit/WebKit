@@ -34,10 +34,10 @@ PASS candidate.sdpMLineIndex is 6
 Dictionary argument is mandatory.
 PASS new RTCIceCandidate(); threw exception TypeError: Not enough arguments.
 Dictionary member 'candidate' is required.
-PASS new RTCIceCandidate({}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({sdpMid:"bar"}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({sdpMLineIndex:6}); threw exception TypeError: Type error.
+PASS new RTCIceCandidate({}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
+PASS new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:6}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
+PASS new RTCIceCandidate({sdpMid:"bar"}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
+PASS new RTCIceCandidate({sdpMLineIndex:6}); threw exception TypeError: Member RTCIceCandidateInit.candidate is required and must be an instance of DOMString.
 
 One of the 'sdpMid' or 'sdpMLineIndex' members must be present (and not null or undefined).
 PASS new RTCIceCandidate({candidate:"foo"}); threw exception TypeError: Type error.
@@ -70,10 +70,13 @@ PASS candidate = new RTCIceCandidate({candidate:"foo", sdpMLineIndex:6}); did no
 PASS candidate.sdpMid is null
 PASS candidate.sdpMLineIndex is 6
 
+Conversion of sdpMLineIndex to unsigned short, following WebIDL rules without [Clamp] or [EnforceRange]
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:"a"})).sdpMLineIndex is 0
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:-1})).sdpMLineIndex is 65535
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65536})).sdpMLineIndex is 0
+PASS (new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65537})).sdpMLineIndex is 1
+
 Some bad input
-PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex:"a"}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex:-1}); threw exception TypeError: Type error.
-PASS new RTCIceCandidate({candidate:"foo", sdpMLineIndex:65536}); threw exception TypeError: Type error.
 PASS new RTCIceCandidate(5); threw exception TypeError: Type error.
 PASS new RTCIceCandidate("foobar"); threw exception TypeError: Type error.
 PASS new RTCIceCandidate(candidate:""); threw exception SyntaxError: Unexpected token ':'. Expected ')' to end an argument list..

@@ -6,8 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS iceServers.length is 1
 PASS configuration.iceTransportPolicy is "all"
 PASS configuration.bundlePolicy is "balanced"
-PASS iceServers[i].username is ""
-PASS iceServers[i].credential is ""
+PASS "username" in iceServers[i] is false
+PASS "credential" in iceServers[i] is false
 PASS urls[j] is "stun:foo.com"
 PASS iceServers.length is 2
 PASS configuration.iceTransportPolicy is "all"
@@ -32,14 +32,14 @@ PASS urls[j] is "turn:foo2.com"
 PASS iceServers.length is 1
 PASS configuration.iceTransportPolicy is "relay"
 PASS configuration.bundlePolicy is "balanced"
-PASS iceServers[i].username is ""
-PASS iceServers[i].credential is ""
+PASS "username" in iceServers[i] is false
+PASS "credential" in iceServers[i] is false
 PASS urls[j] is "stun:foo.com"
 PASS iceServers.length is 1
 PASS configuration.iceTransportPolicy is "relay"
 PASS configuration.bundlePolicy is "max-compat"
-PASS iceServers[i].username is ""
-PASS iceServers[i].credential is ""
+PASS "username" in iceServers[i] is false
+PASS "credential" in iceServers[i] is false
 PASS urls[j] is "stun:foo.com"
 PASS iceServers.length is 2
 PASS configuration.iceTransportPolicy is "relay"
@@ -55,8 +55,8 @@ PASS urls[j] is "turn:foo2.com"
 PASS iceServers.length is 1
 PASS configuration.iceTransportPolicy is "all"
 PASS configuration.bundlePolicy is "balanced"
-PASS iceServers[i].username is ""
-PASS iceServers[i].credential is ""
+PASS "username" in iceServers[i] is false
+PASS "credential" in iceServers[i] is false
 PASS urls[j] is "stun:foo.com"
 PASS iceServers.length is 2
 PASS configuration.iceTransportPolicy is "all"
@@ -81,14 +81,14 @@ PASS urls[j] is "turn:foo2.com"
 PASS iceServers.length is 1
 PASS configuration.iceTransportPolicy is "relay"
 PASS configuration.bundlePolicy is "balanced"
-PASS iceServers[i].username is ""
-PASS iceServers[i].credential is ""
+PASS "username" in iceServers[i] is false
+PASS "credential" in iceServers[i] is false
 PASS urls[j] is "stun:foo.com"
 PASS iceServers.length is 1
 PASS configuration.iceTransportPolicy is "relay"
 PASS configuration.bundlePolicy is "max-compat"
-PASS iceServers[i].username is ""
-PASS iceServers[i].credential is ""
+PASS "username" in iceServers[i] is false
+PASS "credential" in iceServers[i] is false
 PASS urls[j] is "stun:foo.com"
 PASS iceServers.length is 2
 PASS configuration.iceTransportPolicy is "relay"
