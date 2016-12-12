@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LockedPrintStream_h
-#define LockedPrintStream_h
+#pragma once
 
 #include <wtf/PrintStream.h>
 #include <wtf/RecursiveLockAdapter.h>
@@ -57,4 +56,3 @@ private:
 
 using WTF::LockedPrintStream;
 
-#endif // LockedPrintStream_h

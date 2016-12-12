@@ -1,3 +1,9 @@
+2016-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Change to use #pragma once (requested by Darin Adler).
+
+        * wtf/LockedPrintStream.h:
+
 2016-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
