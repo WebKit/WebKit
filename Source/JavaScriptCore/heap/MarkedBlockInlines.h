@@ -28,6 +28,7 @@
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
+#include "VM.h"
 
 namespace JSC {
 
@@ -51,6 +52,8 @@ inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion markingVer
     // back" state only makes sense when we're in a concurrent collection and have to be
     // conservative.
     ASSERT(space()->isMarking());
+    if (heap()->collectionScope() != CollectionScope::Full)
+        return false;
     return m_markingVersion == MarkedSpace::nullVersion
         || MarkedSpace::nextVersion(m_markingVersion) == markingVersion;
 }

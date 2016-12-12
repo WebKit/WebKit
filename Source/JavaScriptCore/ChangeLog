@@ -1,5 +1,59 @@
 2016-12-10  Filip Pizlo  <fpizlo@apple.com>
 
+        MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
+        https://bugs.webkit.org/show_bug.cgi?id=165741
+
+        Reviewed by Saam Barati.
+        
+        MarkedBlock::marksConveyLivenessDuringMarking thought that the off-by-one marking
+        version indicated liveness during any collection when it's just during full collection.
+        One of its users - MarkedBlock::sweep - knew this and had a special case, but the other
+        one - MarkedBlock::isLive - didn't. So, I moved the special case into
+        marksConveyLivenessDuringMarking.
+        
+        Also, this cleans up some remaining bitvector races.
+        
+        To find this bug, I significantly strengthened our assertions.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CellContainer.cpp: Added.
+        (JSC::CellContainer::isNewlyAllocated):
+        * heap/CellContainer.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        (JSC::MarkedAllocator::dumpBits):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::forEachBitVector):
+        (JSC::MarkedAllocator::forEachBitVectorWithName):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::tryCreate):
+        (JSC::MarkedBlock::Handle::~Handle):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectMarksMode):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::MarkedBlock::Handle::dumpState):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::markingVersion):
+        (JSC::MarkedBlock::isMarkedRaw):
+        (JSC::MarkedBlock::isMarked):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::marksConveyLivenessDuringMarking):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::size):
+        (JSC::StructureIDTable::get):
+
+2016-12-10  Filip Pizlo  <fpizlo@apple.com>
+
         The DOM should have an advancing wavefront opaque root barrier
         https://bugs.webkit.org/show_bug.cgi?id=165712
 

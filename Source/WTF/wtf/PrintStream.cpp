@@ -44,7 +44,27 @@ void PrintStream::printf(const char* format, ...)
     va_end(argList);
 }
 
+void PrintStream::printfVariableFormat(const char* format, ...)
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+    va_list argList;
+    va_start(argList, format);
+    vprintf(format, argList);
+    va_end(argList);
+#pragma clang diagnostic pop
+}
+
 void PrintStream::flush()
+{
+}
+
+PrintStream& PrintStream::begin()
+{
+    return *this;
+}
+
+void PrintStream::end()
 {
 }
 

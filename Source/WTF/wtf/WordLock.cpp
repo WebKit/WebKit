@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WordLock.h"
 
-#include "DataLog.h"
-#include "StringPrintStream.h"
 #include "ThreadSpecific.h"
 #include "ThreadingPrimitives.h"
 #include <condition_variable>

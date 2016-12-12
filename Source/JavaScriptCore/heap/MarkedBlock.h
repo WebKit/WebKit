@@ -187,6 +187,8 @@ public:
         void didAddToAllocator(MarkedAllocator*, size_t index);
         void didRemoveFromAllocator();
         
+        void dumpState(PrintStream&);
+        
     private:
         Handle(Heap&, void*);
         
@@ -297,6 +299,9 @@ public:
     void updateNeedsDestruction();
     
     void resetMarks();
+    
+    bool isMarkedRaw(const void* p);
+    HeapVersion markingVersion() const { return m_markingVersion; }
     
 private:
     static const size_t atomAlignmentMask = atomSize - 1;
@@ -518,9 +523,14 @@ inline void MarkedBlock::Handle::assertMarksNotStale()
     block().assertMarksNotStale();
 }
 
+inline bool MarkedBlock::isMarkedRaw(const void* p)
+{
+    return m_marks.get(atomNumber(p));
+}
+
 inline bool MarkedBlock::isMarked(HeapVersion markingVersion, const void* p)
 {
-    return areMarksStale(markingVersion) ? false : m_marks.get(atomNumber(p));
+    return areMarksStale(markingVersion) ? false : isMarkedRaw(p);
 }
 
 inline bool MarkedBlock::isMarkedConcurrently(HeapVersion markingVersion, const void* p)

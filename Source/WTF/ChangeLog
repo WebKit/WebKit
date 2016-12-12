@@ -1,3 +1,71 @@
+2016-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
+        https://bugs.webkit.org/show_bug.cgi?id=165741
+
+        Reviewed by Saam Barati.
+        
+        To find this bug, I needed to seriously beef up our logging infrastructure.
+        
+        It's now the case that:
+        
+            dataLog(...);
+        
+        will print its output atomically. This happens with some careful magic:
+        
+        - dataFile() is now a LockedPrintStream that locks around print().
+        
+        - The lock is a recursive lock via RecursiveLockAdapter<>, so if the dump methods end
+          up calling back into dataLog() then it just works. This is important: say the dump()
+          calls a getter that itself does logging, maybe because it's encountering badness and
+          wants to report it before crashing).
+        
+        - The lock is a WordLock so that ParkingLot and Lock can keep using dataLog() for
+          debugging. We probably won't need to debug WordLock anytime soon - the algorithm is
+          so simple.
+        
+        - LockedPrintStream::print(...) causes the print callbacks of its arguments to run on
+          the underlying PrintStream, so that you don't need to do recursive lock acquisition
+          on each individual argument and whatever printing it does recursively.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+        (WTF::initializeLogFile):
+        (WTF::dataFile):
+        * wtf/DataLog.h:
+        * wtf/LockedPrintStream.cpp: Added.
+        (WTF::LockedPrintStream::LockedPrintStream):
+        (WTF::LockedPrintStream::~LockedPrintStream):
+        (WTF::LockedPrintStream::vprintf):
+        (WTF::LockedPrintStream::flush):
+        (WTF::LockedPrintStream::begin):
+        (WTF::LockedPrintStream::end):
+        * wtf/LockedPrintStream.h: Added.
+        * wtf/PrintStream.cpp:
+        (WTF::PrintStream::printfVariableFormat):
+        (WTF::PrintStream::begin):
+        (WTF::PrintStream::end):
+        * wtf/PrintStream.h:
+        (WTF::PrintStream::atomically):
+        (WTF::PrintStream::print):
+        (WTF::PrintStream::println):
+        (WTF::PrintStream::printImpl):
+        (WTF::>::unpack):
+        (WTF::FormatImpl::FormatImpl):
+        (WTF::FormatImpl::dump):
+        (WTF::format):
+        (WTF::printInternal):
+        * wtf/RecursiveLockAdapter.h: Added.
+        (WTF::RecursiveLockAdapter::RecursiveLockAdapter):
+        (WTF::RecursiveLockAdapter::lock):
+        (WTF::RecursiveLockAdapter::unlock):
+        (WTF::RecursiveLockAdapter::tryLock):
+        (WTF::RecursiveLockAdapter::isLocked):
+        * wtf/WordLock.cpp:
+        * wtf/WordLock.h:
+
 2016-12-11  Darin Adler  <darin@apple.com>
 
         Use std::vsnprintf instead of vasprintf
