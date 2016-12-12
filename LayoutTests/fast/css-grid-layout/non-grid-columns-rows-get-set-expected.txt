@@ -110,8 +110,14 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is 
 PASS element.style.gridTemplateColumns is "minmax(auto, 8vh)"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "minmax(80px, auto)"
 PASS element.style.gridTemplateRows is "minmax(10vw, auto)"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "0px"
+PASS element.style.gridTemplateColumns is "0fr"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "0px"
+PASS element.style.gridTemplateRows is "0fr"
 
 Test setting grid-template-columns and grid-template-rows to bad values through JS
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"

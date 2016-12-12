@@ -124,6 +124,10 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is 
 PASS element.style.gridTemplateColumns is "3fr"
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "600px"
 PASS element.style.gridTemplateRows is "4fr"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "0px"
+PASS element.style.gridTemplateColumns is "0fr"
+PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "0px"
+PASS element.style.gridTemplateRows is "0fr"
 
 Test getting and setting grid-template-columns and grid-template-rows to calc() values through JS
 PASS getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "150px"
@@ -144,6 +148,8 @@ PASS getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "20
 PASS element.style.gridTemplateRows is "minmax(calc(25% - 50px), 200px)"
 
 Test setting grid-template-columns and grid-template-rows to bad values through JS
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
+PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-rows') is "none"
 PASS window.getComputedStyle(element, '').getPropertyValue('grid-template-columns') is "none"

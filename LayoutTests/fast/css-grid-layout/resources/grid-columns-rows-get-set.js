@@ -64,6 +64,9 @@ testGridTemplatesSetJSValues("3600Fr", "154fR", "800px", "600px", "3600fr", "154
 // A leading '+' is allowed.
 testGridTemplatesSetJSValues("+3fr", "+4fr", "800px", "600px", "3fr", "4fr");
 
+// 0fr is allowed.
+testGridTemplatesSetJSValues(".0000fr", "0fr", "0px", "0px", "0fr", "0fr");
+
 debug("");
 debug("Test getting and setting grid-template-columns and grid-template-rows to calc() values through JS");
 testGridTemplatesSetJSValues("calc(150px)", "calc(75px)", "150px", "75px");
@@ -93,6 +96,8 @@ testGridTemplatesSetBadJSValues("fit-content([a] 100px)", "fit-content(30px [b c
 
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
+// A dimension doesn't allow spaces between the number and the unit.
+testGridTemplatesSetBadJSValues("1r", "13 fr");
 
 testGridTemplatesSetBadJSValues("7.-fr", "-8,0fr");
 

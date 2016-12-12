@@ -1,3 +1,19 @@
+2016-12-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Add some test cases that were removed in r209562
+        https://bugs.webkit.org/show_bug.cgi?id=165750
+
+        Reviewed by Sergio Villar Senin.
+
+        Some valid test cases were removed in r209562, this patch adds them back.
+
+        * fast/css-grid-layout/grid-template-shorthand-get-set.html: The specified style is now preserved,
+        so we've to use a different value for it (as it doesn't merge the line names).
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js: Flexible sizes must be non-negative,
+        but 0fr should be accepted (this is new as it was not working like that with the old parser).
+        A space between the dimension and the unit is wrong for flexible sizes.
+        * fast/css-grid-layout/resources/non-grid-columns-rows-get-set.js: Ditto.
+
 2016-12-12  Zalan Bujtas  <zalan@apple.com>
 
         The CSS 'columns' property when set on the <body> element makes short columns

@@ -56,6 +56,8 @@ testNonGridTemplatesSetJSValues("3.1459fr", "2.718fr");
 // A leading '+' is allowed.
 testNonGridTemplatesSetJSValues("+3fr", "+4fr", "3fr", "4fr", "3fr", "4fr");
 testNonGridTemplatesSetJSValues("minmax(auto, 8vh)", "minmax(10vw, auto)", "minmax(auto, 48px)", "minmax(80px, auto)");
+// 0fr is allowed.
+testGridTemplatesSetJSValues(".0000fr", "0fr", "0px", "0px", "0fr", "0fr");
 
 debug("");
 debug("Test setting grid-template-columns and grid-template-rows to bad values through JS");
@@ -72,6 +74,8 @@ testGridTemplatesSetBadJSValues("minmax(1fr, 100px)", "minmax(2.5fr, 200px)");
 testGridTemplatesSetBadJSValues("-2fr", "3ffr");
 testGridTemplatesSetBadJSValues("-2.05fr", "+-3fr");
 testGridTemplatesSetBadJSValues("7.-fr", "-8,0fr");
+// A dimension doesn't allow spaces between the number and the unit.
+testGridTemplatesSetBadJSValues("1r", "13 fr");
 // Negative values are not allowed.
 testGridTemplatesSetBadJSValues("-1px", "-6em");
 testGridTemplatesSetBadJSValues("minmax(-1%, 32%)", "minmax(2vw, -6em)");
