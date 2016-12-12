@@ -33,6 +33,8 @@
 
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
+#include <wtf/StringExtras.h>
+#include <wtf/Vector.h>
 #include <wtf/unicode/Collator.h>
 
 #if OS(DARWIN) && !PLATFORM(EFL) && !PLATFORM(GTK)
@@ -51,15 +53,19 @@ void xsltTransformErrorTrampoline(xsltTransformContextPtr context, xsltStyleshee
 {
     va_list args;
     va_start(args, message);
-    char* messageWithArgs;
-    vasprintf(&messageWithArgs, message, args);
+
+    va_list preflightArgs;
+    va_copy(preflightArgs, args);
+    size_t stringLength = vsnprintf(nullptr, 0, message, preflightArgs);
+    va_end(preflightArgs);
+
+    Vector<char, 1024> buffer(stringLength + 1);
+    vsnprintf(buffer.data(), stringLength + 1, message, args);
     va_end(args);
 
     static void (*xsltTransformErrorPointer)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
         = reinterpret_cast<void (*)(xsltTransformContextPtr, xsltStylesheetPtr, xmlNodePtr, const char*, ...)>(dlsym(libxsltLibrary(), "xsltTransformError"));
-    xsltTransformErrorPointer(context, style, node, "%s", messageWithArgs);
-
-    free(messageWithArgs);
+    xsltTransformErrorPointer(context, style, node, "%s", buffer.data());
 }
 
 #define xsltTransformError xsltTransformErrorTrampoline

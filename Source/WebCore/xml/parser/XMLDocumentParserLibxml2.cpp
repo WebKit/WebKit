@@ -916,24 +916,19 @@ void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va
     if (isStopped())
         return;
 
-#if HAVE(VASPRINTF)
-    char* m;
-    if (vasprintf(&m, message, args) == -1)
-        return;
-#else
-    char m[1024];
-    vsnprintf(m, sizeof(m) - 1, message, args);
-#endif
+    va_list preflightArgs;
+    va_copy(preflightArgs, args);
+    size_t stringLength = vsnprintf(nullptr, 0, message, preflightArgs);
+    va_end(preflightArgs);
+
+    Vector<char, 1024> buffer(stringLength + 1);
+    vsnprintf(buffer.data(), stringLength + 1, message, args);
 
     TextPosition position = textPosition();
     if (m_parserPaused)
-        m_pendingCallbacks->appendErrorCallback(type, reinterpret_cast<const xmlChar*>(m), position.m_line, position.m_column);
+        m_pendingCallbacks->appendErrorCallback(type, reinterpret_cast<const xmlChar*>(buffer.data()), position.m_line, position.m_column);
     else
-        handleError(type, m, textPosition());
-
-#if HAVE(VASPRINTF)
-    free(m);
-#endif
+        handleError(type, buffer.data(), textPosition());
 }
 
 void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlChar* data)

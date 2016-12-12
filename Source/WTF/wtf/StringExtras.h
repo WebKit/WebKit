@@ -35,13 +35,17 @@
 #include <strings.h> 
 #endif 
 
-#if COMPILER(MSVC)
-// FIXME: why a COMPILER check instead of OS? also, these should be HAVE checks
+#if COMPILER(MSVC) && _MSC_VER < 1900
+
+// In versions of the Microsoft library before Visual Studio 2015, snprintf and vsnprintf
+// did not null-terminate when the result entirely filled the buffer. The following work
+// around that limitation. This means that any file using snprintf or vsnprintf needs to
+// include this header and use the global namespace style to invoke it, not the std
+// namespace style.
 
 #include <errno.h>
 
-#if _MSC_VER < 1900
-inline int snprintf(char* buffer, size_t count, const char* format, ...) 
+inline int snprintf(char* buffer, size_t count, const char* format, ...)
 {
     int result;
     va_list args;
@@ -58,7 +62,6 @@ inline int snprintf(char* buffer, size_t count, const char* format, ...)
 
     return result;
 }
-#endif
 
 inline double wtf_vsnprintf(char* buffer, size_t count, const char* format, va_list args)
 {
@@ -74,9 +77,15 @@ inline double wtf_vsnprintf(char* buffer, size_t count, const char* format, va_l
     return result;
 }
 
-// Work around a difference in Microsoft's implementation of vsnprintf, where 
+// Work around a difference in Microsoft's implementation of vsnprintf, where
 // vsnprintf does not null terminate the buffer. WebKit can rely on the null termination.
 #define vsnprintf(buffer, count, format, args) wtf_vsnprintf(buffer, count, format, args)
+
+#endif
+
+#if COMPILER(MSVC)
+
+// FIXME: We should stop using these entirely and use suitable versions of equalIgnoringASCIICase instead.
 
 inline int strncasecmp(const char* s1, const char* s2, size_t len)
 {

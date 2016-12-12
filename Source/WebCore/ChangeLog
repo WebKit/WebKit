@@ -1,5 +1,22 @@
 2016-12-11  Darin Adler  <darin@apple.com>
 
+        Use std::vsnprintf instead of vasprintf
+        https://bugs.webkit.org/show_bug.cgi?id=165740
+
+        Reviewed by Sam Weinig.
+
+        * platform/FileHandle.cpp:
+        (WebCore::FileHandle::printf): Use vsnprintf, including StringExtras.h to
+        ensure compatibility with older versions of the Visual Studio library,
+        and Vector for the buffer. Use inline capacity in the vector so we normally
+        don't need to allocate any memory on the heap.
+        * xml/XSLTUnicodeSort.cpp:
+        (xsltTransformErrorTrampoline): Ditto.
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::error): Ditto.
+
+2016-12-11  Darin Adler  <darin@apple.com>
+
         Make some refinements to HTMLPlugInImageElement
         https://bugs.webkit.org/show_bug.cgi?id=165742
 

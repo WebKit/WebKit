@@ -29,8 +29,7 @@
 #include "config.h"
 #include "FileHandle.h"
 
-#include <stdarg.h>
-#include <stdio.h>
+#include <wtf/StringExtras.h>
 
 namespace WebCore {
 
@@ -100,23 +99,20 @@ int FileHandle::write(const void* data, int length)
 
 bool FileHandle::printf(const char* format, ...)
 {
-#if OS(WINDOWS)
-    // TODO: implement this without relying on vasprintf.
-    return false;
-#else
     va_list args;
     va_start(args, format);
 
-    char* buffer = nullptr;
-    if (vasprintf(&buffer, format, args) == -1)
-        return false;
-    auto writeResult = write(buffer, strlen(buffer));
-    free(buffer);
+    va_list preflightArgs;
+    va_copy(preflightArgs, args);
+    size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
+    va_end(preflightArgs);
+
+    Vector<char, 1024> buffer(stringLength + 1);
+    vsnprintf(buffer.data(), stringLength + 1, format, args);
 
     va_end(args);
 
-    return writeResult >= 0;
-#endif
+    return write(buffer.data(), stringLength) >= 0;
 }
 
 void FileHandle::close()

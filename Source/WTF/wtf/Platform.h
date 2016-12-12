@@ -633,12 +633,6 @@
 #define USE_PTHREADS 1
 #endif /* OS(UNIX) */
 
-#if !defined(HAVE_VASPRINTF)
-#if !COMPILER(MSVC) && !COMPILER(MINGW)
-#define HAVE_VASPRINTF 1
-#endif
-#endif
-
 #if OS(DARWIN)
 #define HAVE_DISPATCH_H 1
 #define HAVE_MADV_FREE 1
