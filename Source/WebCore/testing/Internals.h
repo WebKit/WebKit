@@ -67,6 +67,7 @@ class RenderedDocumentMarker;
 class RTCPeerConnection;
 class SerializedScriptValue;
 class SourceBuffer;
+class StyleSheet;
 class TimeRanges;
 class TypeConversions;
 class XMLHttpRequest;
@@ -116,6 +117,11 @@ public:
     ExceptionOr<String> shadowRootType(const Node&) const;
     String shadowPseudoId(Element&);
     void setShadowPseudoId(Element&, const String&);
+
+    // CSS Deferred Parsing Testing
+    unsigned deferredStyleRulesCount(StyleSheet&);
+    unsigned deferredGroupRulesCount(StyleSheet&);
+    unsigned deferredKeyframesRulesCount(StyleSheet&);
 
     // DOMTimers throttling testing.
     ExceptionOr<bool> isTimerThrottled(int timeoutId);

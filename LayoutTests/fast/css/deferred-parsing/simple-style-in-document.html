@@ -1,0 +1,41 @@
+<html>
+<head id="head">
+<style>
+/* This rule should parse. */
+body {
+    color: black;
+}
+
+/* This rule should parse because it is empty. */
+.unknown {
+    
+}
+
+/* This rule should not parse. */
+div#unknown {
+    color:red;
+}
+
+/* This rule should not parse. */
+faketag {
+    color:lime;
+    background-color:blue;
+    border:10px solid white;
+}
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+document.body.offsetWidth;
+    
+description("This tests deferred parsing of CSS style rules.");
+
+debug('');
+
+if (window.internals)
+    shouldBe("internals.deferredStyleRulesCount(document.styleSheets[0])", "2");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -27,6 +27,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/TextPosition.h>
 
@@ -142,6 +143,8 @@ public:
 
     void shrinkToFit();
 
+    WeakPtr<StyleSheetContents> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
     StyleSheetContents(const StyleSheetContents&);
@@ -171,6 +174,8 @@ private:
     CSSParserContext m_parserContext;
 
     Vector<CSSStyleSheet*> m_clients;
+    
+    WeakPtrFactory<StyleSheetContents> m_weakPtrFactory { this };
 };
 
 } // namespace WebCore

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  #test {
+    font: "ahem";
+    font-size: 50px;
+    display: block;
+    color: red;
+  }
+  a:hover #test {
+    color: rgb(0, 255, 0);
+  }
+  </style>
+  <script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+  <div id="container">
+  <a href="#">
+    <span id="test">This text should be green when hovered.</span>
+  </a>
+</div>
+</body>
+
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+  if (window.testRunner) {
+    description("Test that deferred parsing doesn't parse the :hover rule until the hover happens.")
+    var test = document.getElementById('test');
+    var container = document.getElementById('container');
+    test.offsetTop;
+    if (window.internals)
+        shouldBe("internals.deferredStyleRulesCount(document.styleSheets[0])", "1");
+    eventSender.mouseMoveTo(50, container.offsetTop + 25)
+    test.offsetTop;
+    if (window.internals)
+        shouldBe("internals.deferredStyleRulesCount(document.styleSheets[0])", "0");
+    container.parentNode.removeChild(container); // clean up after ourselves.
+  }
+  successfullyParsed = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

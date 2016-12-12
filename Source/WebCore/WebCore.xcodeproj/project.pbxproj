@@ -3508,6 +3508,8 @@
 		9444CBE81D8861C20073A074 /* CSSVariableData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBDD1D8861580073A074 /* CSSVariableData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9444CBE91D8861CA0073A074 /* CSSVariableReferenceValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBDC1D8861580073A074 /* CSSVariableReferenceValue.cpp */; };
 		9444CBEA1D8861CA0073A074 /* CSSVariableReferenceValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBDB1D8861580073A074 /* CSSVariableReferenceValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		94476BDA1DFCAC0300690E23 /* CSSDeferredParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94476BD81DFCA4A700690E23 /* CSSDeferredParser.cpp */; };
+		94476BDB1DFCAC0300690E23 /* CSSDeferredParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 94476BD91DFCA4A700690E23 /* CSSDeferredParser.h */; };
 		946D372D1D6CB2940077084F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D37281D6CB28B0077084F /* CSSParser.cpp */; };
 		946D372E1D6CB2940077084F /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D37291D6CB28B0077084F /* CSSParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		946D372F1D6CB2940077084F /* CSSParserMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D372A1D6CB28B0077084F /* CSSParserMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11075,6 +11077,8 @@
 		9444CBDE1D8861580073A074 /* CSSVariableData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSVariableData.cpp; sourceTree = "<group>"; };
 		9444CBE11D8861580073A074 /* CSSCustomIdentValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCustomIdentValue.h; sourceTree = "<group>"; };
 		9444CBE21D8861580073A074 /* CSSCustomIdentValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCustomIdentValue.cpp; sourceTree = "<group>"; };
+		94476BD81DFCA4A700690E23 /* CSSDeferredParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSDeferredParser.cpp; path = parser/CSSDeferredParser.cpp; sourceTree = "<group>"; };
+		94476BD91DFCA4A700690E23 /* CSSDeferredParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSDeferredParser.h; path = parser/CSSDeferredParser.h; sourceTree = "<group>"; };
 		946D37281D6CB28B0077084F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParser.cpp; path = parser/CSSParser.cpp; sourceTree = "<group>"; };
 		946D37291D6CB28B0077084F /* CSSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParser.h; path = parser/CSSParser.h; sourceTree = "<group>"; };
 		946D372A1D6CB28B0077084F /* CSSParserMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserMode.h; path = parser/CSSParserMode.h; sourceTree = "<group>"; };
@@ -19030,6 +19034,8 @@
 			children = (
 				94DE5C7F1D7F39D000164F2A /* CSSAtRuleID.cpp */,
 				94DE5C801D7F39D000164F2A /* CSSAtRuleID.h */,
+				94476BD81DFCA4A700690E23 /* CSSDeferredParser.cpp */,
+				94476BD91DFCA4A700690E23 /* CSSDeferredParser.h */,
 				946D37281D6CB28B0077084F /* CSSParser.cpp */,
 				946D37291D6CB28B0077084F /* CSSParser.h */,
 				949C76FE1D6E1D8C00C0DE4F /* CSSParserFastPaths.cpp */,
@@ -27690,6 +27696,7 @@
 				832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,
 				B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */,
+				94476BDB1DFCAC0300690E23 /* CSSDeferredParser.h in Headers */,
 				B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */,
 				439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */,
 				08FB3F8413BC754C0099FC18 /* SVGAttributeToPropertyMap.h in Headers */,
@@ -30968,6 +30975,7 @@
 				99CC0B5718BE984A006CEBCC /* ReplayInputCreationMethods.cpp in Sources */,
 				99CC0B5818BE984A006CEBCC /* ReplayInputDispatchMethods.cpp in Sources */,
 				99CC0B5918BE984A006CEBCC /* ReplaySession.cpp in Sources */,
+				94476BDA1DFCAC0300690E23 /* CSSDeferredParser.cpp in Sources */,
 				99CC0B5B18BE984A006CEBCC /* ReplaySessionSegment.cpp in Sources */,
 				F55B3DCF1251F12D003EF269 /* ResetInputType.cpp in Sources */,
 				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,

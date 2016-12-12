@@ -195,7 +195,7 @@ ExceptionOr<void> FontFace::setVariant(const String& variant)
         return Exception { SYNTAX_ERR };
 
     auto style = MutableStyleProperties::create();
-    auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, HTMLStandardMode, nullptr);
+    auto result = CSSParser::parseValue(style, CSSPropertyFontVariant, variant, true, HTMLStandardMode);
     if (result == CSSParser::ParseResult::Error)
         return Exception { SYNTAX_ERR };
 

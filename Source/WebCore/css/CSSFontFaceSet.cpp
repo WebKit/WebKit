@@ -328,7 +328,7 @@ static HashSet<UChar32> codePointsFromString(StringView stringView)
 ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchingFaces(const String& font, const String& string)
 {
     auto style = MutableStyleProperties::create();
-    auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, HTMLStandardMode, nullptr);
+    auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, HTMLStandardMode);
     if (parseResult == CSSParser::ParseResult::Error)
         return Exception { SYNTAX_ERR };
 

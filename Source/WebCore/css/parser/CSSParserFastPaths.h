@@ -43,11 +43,11 @@ class CSSParserFastPaths {
 public:
     // Parses simple values like '10px' or 'green', but makes no guarantees
     // about handling any property completely.
-    static RefPtr<CSSValue> maybeParseValue(CSSPropertyID, const String&, CSSParserMode, StyleSheetContents*);
+    static RefPtr<CSSValue> maybeParseValue(CSSPropertyID, const String&, CSSParserMode);
 
     // Properties handled here shouldn't be explicitly handled in CSSPropertyParser
     static bool isKeywordPropertyID(CSSPropertyID);
-    static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, CSSParserMode, StyleSheetContents*);
+    static bool isValidKeywordPropertyAndValue(CSSPropertyID, CSSValueID, CSSParserMode);
 
     static RefPtr<CSSValue> parseColor(const String&, CSSParserMode);
 };

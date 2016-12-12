@@ -1917,3 +1917,7 @@ webkit.org/b/164961 [ Release ] http/tests/storage/callbacks-are-called-in-corre
 webkit.org/b/165165 [ Release ] http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html [ Pass Timeout ]
 
 webkit.org/b/165344 [ Release ] http/tests/security/module-incorrect-mime-types.html [ Pass Timeout ]
+
+# Hover test does not apply
+fast/css/deferred-parsing/hover-test.html [ Skip ]
+

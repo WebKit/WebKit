@@ -1,0 +1,36 @@
+<html>
+<head id="head">
+<style>
+/* The keyframe won't parse at all until we access its keyframes below. */
+@keyframes anim {
+    from {
+        color: green;
+    }
+}
+</style>
+</style>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body >
+<script>
+    
+document.body.offsetWidth;
+    
+description("This tests deferred parsing of CSS style rules.");
+
+debug('');
+
+if (window.internals) {
+    shouldBe("internals.deferredStyleRulesCount(document.styleSheets[0])", "0");
+    shouldBe("internals.deferredKeyframesRulesCount(document.styleSheets[0])", "1");
+}
+
+var keyframes = document.styleSheets[0].cssRules[0].keyframes
+
+if (window.internals)
+    shouldBe("internals.deferredKeyframesRulesCount(document.styleSheets[0])", "0");
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

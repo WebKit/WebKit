@@ -92,7 +92,7 @@ CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper& wrapp
     wrapper.finalizeConstruction(m_tokens.begin());
 }
 
-CSSParserTokenRange CSSTokenizer::tokenRange()
+CSSParserTokenRange CSSTokenizer::tokenRange() const
 {
     return m_tokens;
 }
