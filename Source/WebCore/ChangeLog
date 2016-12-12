@@ -1,3 +1,20 @@
+2016-12-09  Dean Jackson  <dino@apple.com>
+
+        Autoplay isn't working in iPhone MediaDocuments
+        https://bugs.webkit.org/show_bug.cgi?id=165710
+        <rdar://problems/29606761>
+
+        Reviewed by Darin Adler.
+
+        Our silent video autoplay detection disabled autoplay
+        of videos in MediaDocuments.
+
+        Test: media/ios/autoplay-only-in-main-document.html
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted):
+        Return true if we're in a top-level media document.
+
 2016-12-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Fixing build breakage in GStreamer's WebKitCommonEncryptionDecryptorGStreamer.

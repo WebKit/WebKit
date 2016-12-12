@@ -1,3 +1,16 @@
+2016-12-09  Dean Jackson  <dino@apple.com>
+
+        Autoplay isn't working in iPhone MediaDocuments
+        https://bugs.webkit.org/show_bug.cgi?id=165710
+        <rdar://problems/29606761>
+
+        Reviewed by Darin Adler.
+        
+        * media/ios/autoplay-only-in-main-document.html: Make sure that
+        an iframe pointing to media is not autoplayed.
+        * TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html as flaky on ios-simulator.

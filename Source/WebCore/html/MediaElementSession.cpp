@@ -150,6 +150,9 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
 
 bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
+    if (element.document().isMediaDocument() && !element.document().ownerElement())
+        return true;
+
     if (pageExplicitlyAllowsElementToAutoplayInline(element))
         return true;
 
