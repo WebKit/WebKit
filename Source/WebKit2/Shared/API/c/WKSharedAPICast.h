@@ -903,15 +903,15 @@ inline WebCore::PageVisibilityState toPageVisibilityState(WKPageVisibilityState 
 {
     switch (wkPageVisibilityState) {
     case kWKPageVisibilityStateVisible:
-        return WebCore::PageVisibilityStateVisible;
+        return WebCore::PageVisibilityState::Visible;
     case kWKPageVisibilityStateHidden:
-        return WebCore::PageVisibilityStateHidden;
+        return WebCore::PageVisibilityState::Hidden;
     case kWKPageVisibilityStatePrerender:
-        return WebCore::PageVisibilityStatePrerender;
+        return WebCore::PageVisibilityState::Prerender;
     }
 
     ASSERT_NOT_REACHED();
-    return WebCore::PageVisibilityStateVisible;
+    return WebCore::PageVisibilityState::Visible;
 }
 
 inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)

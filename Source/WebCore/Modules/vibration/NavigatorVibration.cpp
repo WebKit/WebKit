@@ -48,7 +48,7 @@ bool NavigatorVibration::vibrate(Navigator& navigator, const VibrationPattern& p
     if (!navigator.frame()->page())
         return false;
 
-    if (navigator.frame()->page()->visibilityState() == PageVisibilityStateHidden)
+    if (navigator.frame()->page()->visibilityState() == PageVisibilityState::Hidden)
         return false;
 
     return Vibration::from(navigator.frame()->page())->vibrate(pattern);

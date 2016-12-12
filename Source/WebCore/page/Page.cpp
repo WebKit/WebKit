@@ -1534,10 +1534,10 @@ void Page::setIsPrerender()
 PageVisibilityState Page::visibilityState() const
 {
     if (isVisible())
-        return PageVisibilityStateVisible;
+        return PageVisibilityState::Visible;
     if (m_isPrerender)
-        return PageVisibilityStatePrerender;
-    return PageVisibilityStateHidden;
+        return PageVisibilityState::Prerender;
+    return PageVisibilityState::Hidden;
 }
 
 #if ENABLE(RUBBER_BANDING)

@@ -569,11 +569,11 @@ WebLayoutMilestones kitLayoutMilestones(LayoutMilestones milestones)
 static WebPageVisibilityState kit(PageVisibilityState visibilityState)
 {
     switch (visibilityState) {
-    case PageVisibilityStateVisible:
+    case PageVisibilityState::Visible:
         return WebPageVisibilityStateVisible;
-    case PageVisibilityStateHidden:
+    case PageVisibilityState::Hidden:
         return WebPageVisibilityStateHidden;
-    case PageVisibilityStatePrerender:
+    case PageVisibilityState::Prerender:
         return WebPageVisibilityStatePrerender;
     }
 

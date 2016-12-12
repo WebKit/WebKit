@@ -6859,7 +6859,6 @@
 		FFAC30FF184FB145008C4F1E /* TrailingObjects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFAC30FD184FB145008C4F1E /* TrailingObjects.cpp */; };
 		FFB698CC1833EE0D00158A31 /* LineBreaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFB698CA1833EC3800158A31 /* LineBreaker.cpp */; };
 		FFB698CF183402BB00158A31 /* LineInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFB698CD1833F17600158A31 /* LineInfo.cpp */; };
-		FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */; };
 		FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD5B978135CC97800D5E92A /* PageVisibilityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFDBC047183D27B700407109 /* LineWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = FFDBC045183D27B700407109 /* LineWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFDBC048183D27B700407109 /* LineWidth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFDBC046183D27B700407109 /* LineWidth.cpp */; };
@@ -14921,7 +14920,6 @@
 		FFB698CB1833EC3800158A31 /* LineBreaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineBreaker.h; sourceTree = "<group>"; };
 		FFB698CD1833F17600158A31 /* LineInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineInfo.cpp; sourceTree = "<group>"; };
 		FFB698CE1833F17600158A31 /* LineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineInfo.h; sourceTree = "<group>"; };
-		FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageVisibilityState.cpp; sourceTree = "<group>"; };
 		FFD5B978135CC97800D5E92A /* PageVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageVisibilityState.h; sourceTree = "<group>"; };
 		FFDBC045183D27B700407109 /* LineWidth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineWidth.h; sourceTree = "<group>"; };
 		FFDBC046183D27B700407109 /* LineWidth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineWidth.cpp; sourceTree = "<group>"; };
@@ -17923,7 +17921,6 @@
 				2D5C9CFE19C7B52E00B3C5C1 /* PageOverlayController.h */,
 				371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */,
 				371E65CB13661EDC00BEEDB0 /* PageSerializer.h */,
-				FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */,
 				FFD5B978135CC97800D5E92A /* PageVisibilityState.h */,
 				E526AF3E1727F8F200E41781 /* Performance.cpp */,
 				8A844D0211D3C18E0014065C /* Performance.h */,
@@ -30740,7 +30737,6 @@
 				371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */,
 				E1284AEA10447DEE00EAEB52 /* PageTransitionEvent.cpp in Sources */,
 				51E1ECC20C91C90400DC255B /* PageURLRecord.cpp in Sources */,
-				FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */,
 				FD3160A212B026F700C1A359 /* Panner.cpp in Sources */,
 				FD31601912B0267600C1A359 /* PannerNode.cpp in Sources */,
 				A18890AE1AA13F250026C301 /* ParentalControlsContentFilter.mm in Sources */,

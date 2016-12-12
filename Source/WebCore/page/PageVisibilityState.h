@@ -34,14 +34,10 @@
 
 namespace WebCore {
 
-// The enum is not flag protected as it is used in the WebKit chromium API
-// without flag protection.
-enum PageVisibilityState {
-    PageVisibilityStateVisible,
-    PageVisibilityStateHidden,
-    PageVisibilityStatePrerender
+enum class PageVisibilityState {
+    Hidden,
+    Visible,
+    Prerender
 };
-
-String pageVisibilityStateString(PageVisibilityState);
 
 } // namespace WebCore

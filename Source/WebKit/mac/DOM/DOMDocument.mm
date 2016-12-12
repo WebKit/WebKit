@@ -381,7 +381,14 @@
 - (NSString *)visibilityState
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->visibilityState();
+    switch (IMPL->visibilityState()) {
+    case WebCore::Document::VisibilityState::Hidden:
+        return @"hidden";
+    case WebCore::Document::VisibilityState::Visible:
+        return @"visible";
+    case WebCore::Document::VisibilityState::Prerender:
+        return @"prerender";
+    }
 }
 
 - (BOOL)hidden

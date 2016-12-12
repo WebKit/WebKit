@@ -444,8 +444,9 @@ public:
     void setInputCursor(Ref<JSC::InputCursor>&&);
 #endif
 
+    using VisibilityState = PageVisibilityState;
+    WEBCORE_EXPORT VisibilityState visibilityState() const;
     void visibilityStateChanged();
-    WEBCORE_EXPORT String visibilityState() const;
     WEBCORE_EXPORT bool hidden() const;
 
     void setTimerThrottlingEnabled(bool);
@@ -1355,8 +1356,6 @@ private:
 
     template <typename CharacterType>
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
-
-    PageVisibilityState pageVisibilityState() const;
 
     template <CollectionType collectionType>
     Ref<HTMLCollection> ensureCachedCollection();

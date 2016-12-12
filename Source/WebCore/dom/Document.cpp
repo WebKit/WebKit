@@ -1622,25 +1622,20 @@ void Document::visibilityStateChanged()
         element->visibilityStateChanged();
 }
 
-PageVisibilityState Document::pageVisibilityState() const
+auto Document::visibilityState() const -> VisibilityState
 {
     // The visibility of the document is inherited from the visibility of the
     // page. If there is no page associated with the document, we will assume
     // that the page is hidden, as specified by the spec:
     // http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PageVisibility/Overview.html#dom-document-hidden
     if (!m_frame || !m_frame->page())
-        return PageVisibilityStateHidden;
+        return VisibilityState::Hidden;
     return m_frame->page()->visibilityState();
-}
-
-String Document::visibilityState() const
-{
-    return pageVisibilityStateString(pageVisibilityState());
 }
 
 bool Document::hidden() const
 {
-    return pageVisibilityState() != PageVisibilityStateVisible;
+    return visibilityState() != VisibilityState::Visible;
 }
 
 #if ENABLE(VIDEO)

@@ -1,3 +1,13 @@
+2016-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Document.visibilityState should use an IDL string enumeration
+        https://bugs.webkit.org/show_bug.cgi?id=165774
+
+        Reviewed by Daniel Bates.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toPageVisibilityState):
+
 2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed attempt to fix EFL and Mac/cmake builds after r209665.

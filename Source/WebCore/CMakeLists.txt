@@ -2056,7 +2056,6 @@ set(WebCore_SOURCES
     page/PageOverlay.cpp
     page/PageOverlayController.cpp
     page/PageSerializer.cpp
-    page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceEntry.cpp
     page/PerformanceLogging.cpp

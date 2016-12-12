@@ -170,8 +170,10 @@
 #endif
 
     // Page visibility API.
-    readonly attribute DOMString visibilityState;
+    readonly attribute VisibilityState visibilityState;
     readonly attribute boolean hidden;
+    // FIXME: We should implement this.
+    // attribute EventHandler onvisibilitychange;
 
     // currentscript API: http://www.whatwg.org/specs/web-apps/current-work/multipage/dom.html#dom-document-currentscript
     readonly attribute HTMLScriptElement? currentScript;
@@ -203,6 +205,12 @@
     [NotEnumerable, Conditional=CSP_NEXT] attribute EventHandler onsecuritypolicyviolation;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange;
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror;
+};
+
+enum VisibilityState {
+    "hidden",
+    "visible",
+    "prerender"
 };
 
 Document implements ParentNode;
