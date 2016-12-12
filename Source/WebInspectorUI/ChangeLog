@@ -1,5 +1,36 @@
 2016-12-12  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Cleanup HierarchicalPathComponent
+        https://bugs.webkit.org/show_bug.cgi?id=165745
+
+        Reviewed by Brian Burg.
+
+        Prefer toggle for style class names, remove single use CSS class name
+        constants, and back all properties by the model not the DOM.
+
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WebInspector.HierarchicalPathComponent):
+        (WebInspector.HierarchicalPathComponent.prototype.get element):
+        (WebInspector.HierarchicalPathComponent.prototype.get representedObject):
+        (WebInspector.HierarchicalPathComponent.prototype.get minimumWidth):
+        (WebInspector.HierarchicalPathComponent.prototype.get forcedWidth):
+        (WebInspector.HierarchicalPathComponent.prototype.set forcedWidth):
+        (WebInspector.HierarchicalPathComponent.prototype.get hidden):
+        (WebInspector.HierarchicalPathComponent.prototype.set hidden):
+        (WebInspector.HierarchicalPathComponent.prototype.get collapsed):
+        (WebInspector.HierarchicalPathComponent.prototype.set collapsed):
+        (WebInspector.HierarchicalPathComponent.prototype.get selectorArrows):
+        (WebInspector.HierarchicalPathComponent.prototype.set selectorArrows):
+        (WebInspector.HierarchicalPathComponent.prototype.get previousSibling):
+        (WebInspector.HierarchicalPathComponent.prototype.set previousSibling):
+        (WebInspector.HierarchicalPathComponent.prototype.get nextSibling):
+        (WebInspector.HierarchicalPathComponent.prototype.set nextSibling):
+        (WebInspector.HierarchicalPathComponent.prototype._updateElementTitleAndText):
+        (WebInspector.HierarchicalPathComponent.prototype._updateSelectElement.createOption):
+        (WebInspector.HierarchicalPathComponent.prototype._updateSelectElement):
+
+2016-12-12  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Allow keyboard navigation in Heap Snapshot data grids
         https://bugs.webkit.org/show_bug.cgi?id=165752
 
