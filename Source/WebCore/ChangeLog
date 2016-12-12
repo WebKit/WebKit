@@ -1,3 +1,19 @@
+2016-12-11  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r200283): Transform, overflow hidden and filter combination completely hides the element
+        https://bugs.webkit.org/show_bug.cgi?id=161509
+
+        Reviewed by David Hyatt.
+        
+        When the filter painting code needs to recompute a paintDirtyRect, it was using selfClipRect() 
+        which is obviously wrong because it returns a rect in absolute coordinates. Use code factored
+        out of localClipRect() instead, which returns a rect relative to the painting root.
+
+        Test: css3/filters/filter-on-overflow-hidden.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
 2016-12-11  Saam Barati  <sbarati@apple.com>
 
         We should be able to throw exceptions from Wasm code and when Wasm frames are on the stack

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .parent {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 100px;
+            height: 100px;
+            padding: 20px;
+            outline: 1px solid black;
+            transform: translateZ(0);
+        }
+        .box {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: green;
+            filter: blur(2px);
+        }
+        
+        .masker {
+            position: absolute;
+            top: 65px;
+            left: 65px;
+            width: 90px;
+            height: 90px;
+            border: 10px solid black;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="parent">
+        <div class="box">
+        </div>
+    </div>
+    
+    <div class="masker">
+    </div>
+</body>
+</html>

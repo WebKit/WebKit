@@ -726,6 +726,8 @@ private:
     void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
 
+    LayoutRect clipRectRelativeToAncestor(RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect) const;
+
     void clipToRect(GraphicsContext&, const LayerPaintingInfo&, const ClipRect&, BorderRadiusClippingRule = IncludeSelfForBorderRadius);
     void restoreClip(GraphicsContext&, const LayerPaintingInfo&, const ClipRect&);
 
