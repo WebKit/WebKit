@@ -869,7 +869,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     pushTDZVariables(lexicalVariables, TDZCheckOptimization::Optimize, TDZRequirement::UnderTDZ);
     bool isWithScope = false;
-    m_symbolTableStack.append(SymbolTableStackEntry { moduleEnvironmentSymbolTable, m_topMostScope, isWithScope, constantSymbolTable->index() });
+    m_lexicalScopeStack.append({ moduleEnvironmentSymbolTable, m_topMostScope, isWithScope, constantSymbolTable->index() });
     emitPrefillStackTDZVariables(lexicalVariables, moduleEnvironmentSymbolTable);
 
     // makeFunction assumes that there's correct TDZ stack entries.
@@ -1073,12 +1073,12 @@ void BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded(SymbolTable*
     }
 
     if (environment.size() > 0) {
-        size_t size = m_symbolTableStack.size();
+        size_t size = m_lexicalScopeStack.size();
         pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope, ScopeRegisterType::Block);
 
-        ASSERT_UNUSED(size, m_symbolTableStack.size() == size + 1);
+        ASSERT_UNUSED(size, m_lexicalScopeStack.size() == size + 1);
 
-        m_arrowFunctionContextLexicalEnvironmentRegister = m_symbolTableStack.last().m_scope;
+        m_arrowFunctionContextLexicalEnvironmentRegister = m_lexicalScopeStack.last().m_scope;
     }
 }
 
@@ -1124,8 +1124,8 @@ void BytecodeGenerator::initializeVarLexicalEnvironment(int symbolTableConstantI
         pushScopedControlFlowContext();
     }
     bool isWithScope = false;
-    m_symbolTableStack.append(SymbolTableStackEntry{ functionSymbolTable, m_lexicalEnvironmentRegister, isWithScope, symbolTableConstantIndex });
-    m_varScopeSymbolTableIndex = m_symbolTableStack.size() - 1;
+    m_lexicalScopeStack.append({ functionSymbolTable, m_lexicalEnvironmentRegister, isWithScope, symbolTableConstantIndex });
+    m_varScopeLexicalScopeStackIndex = m_lexicalScopeStack.size() - 1;
 }
 
 UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DestructuringPatternNode* pattern)
@@ -2071,7 +2071,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     }
 
     bool isWithScope = false;
-    m_symbolTableStack.append(SymbolTableStackEntry{ symbolTable, newScope, isWithScope, symbolTableConstantIndex });
+    m_lexicalScopeStack.append({ symbolTable, newScope, isWithScope, symbolTableConstantIndex });
     pushTDZVariables(environment, tdzCheckOptimization, tdzRequirement);
 
     if (tdzRequirement == TDZRequirement::UnderTDZ)
@@ -2114,8 +2114,8 @@ void BytecodeGenerator::initializeBlockScopedFunctions(VariableEnvironment& envi
     if (!functionStack.size())
         return;
 
-    SymbolTable* symbolTable = m_symbolTableStack.last().m_symbolTable;
-    RegisterID* scope = m_symbolTableStack.last().m_scope;
+    SymbolTable* symbolTable = m_lexicalScopeStack.last().m_symbolTable;
+    RegisterID* scope = m_lexicalScopeStack.last().m_scope;
     RefPtr<RegisterID> temp = newTemporary();
     int symbolTableIndex = constantSymbolTable ? constantSymbolTable->index() : 0;
     for (FunctionMetadataNode* function : functionStack) {
@@ -2144,9 +2144,9 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
             currentValue = emitGetFromScope(newTemporary(), scope.get(), currentFunctionVariable, DoNotThrowIfNotFound);
         }
         
-        ASSERT(m_varScopeSymbolTableIndex);
-        ASSERT(*m_varScopeSymbolTableIndex < m_symbolTableStack.size());
-        SymbolTableStackEntry& varScope = m_symbolTableStack[*m_varScopeSymbolTableIndex];
+        ASSERT(m_varScopeLexicalScopeStackIndex);
+        ASSERT(*m_varScopeLexicalScopeStackIndex < m_lexicalScopeStack.size());
+        auto& varScope = m_lexicalScopeStack[*m_varScopeLexicalScopeStackIndex];
         SymbolTable* varSymbolTable = varScope.m_symbolTable;
         ASSERT(varSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope);
         SymbolTableEntry entry = varSymbolTable->get(NoLockingNecessary, functionName.impl());
@@ -2172,7 +2172,7 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
     if (m_shouldEmitDebugHooks)
         environment.markAllVariablesAsCaptured();
 
-    SymbolTableStackEntry stackEntry = m_symbolTableStack.takeLast();
+    auto stackEntry = m_lexicalScopeStack.takeLast();
     SymbolTable* symbolTable = stackEntry.m_symbolTable;
     bool hasCapturedVariables = false;
     for (auto& entry : environment) {
@@ -2217,7 +2217,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     // activation into the new activation because each iteration of a for loop
     // gets a new activation.
 
-    SymbolTableStackEntry stackEntry = m_symbolTableStack.last();
+    auto stackEntry = m_lexicalScopeStack.last();
     SymbolTable* symbolTable = stackEntry.m_symbolTable;
     RegisterID* loopScope = stackEntry.m_scope;
     ASSERT(symbolTable->scopeSize());
@@ -2296,8 +2296,8 @@ Variable BytecodeGenerator::variable(const Identifier& property, ThisResolutionT
     //         doSomethingWith(x);
     //     }
     // }
-    for (unsigned i = m_symbolTableStack.size(); i--; ) {
-        SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
+    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
+        auto& stackEntry = m_lexicalScopeStack[i];
         if (stackEntry.m_isWithScope)
             return Variable(property);
         SymbolTable* symbolTable = stackEntry.m_symbolTable;
@@ -2392,10 +2392,10 @@ RegisterID* BytecodeGenerator::emitOverridesHasInstance(RegisterID* dst, Registe
 // will start with this ResolveType and compute the least upper bound including intercepting scopes.
 ResolveType BytecodeGenerator::resolveType()
 {
-    for (unsigned i = m_symbolTableStack.size(); i--; ) {
-        if (m_symbolTableStack[i].m_isWithScope)
+    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
+        if (m_lexicalScopeStack[i].m_isWithScope)
             return Dynamic;
-        if (m_usesNonStrictEval && m_symbolTableStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
+        if (m_usesNonStrictEval && m_lexicalScopeStack[i].m_symbolTable->scopeType() == SymbolTable::ScopeType::FunctionNameScope) {
             // We never want to assign to a FunctionNameScope. Returning Dynamic here achieves this goal.
             // If we aren't in non-strict eval mode, then NodesCodeGen needs to take care not to emit
             // a put_to_scope with the destination being the function name scope variable.
@@ -2424,8 +2424,8 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
         // don't do that already is that m_lexicalEnvironment is required by ConstDeclNode. ConstDeclNode
         // requires weird things because it is a shameful pile of nonsense, but block scoping would make
         // that code sensible and obviate the need for us to do bad things.
-        for (unsigned i = m_symbolTableStack.size(); i--; ) {
-            SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
+        for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
+            auto& stackEntry = m_lexicalScopeStack[i];
             // We should not resolve a variable to VarKind::Scope if a "with" scope lies in between the current
             // scope and the resolved scope.
             RELEASE_ASSERT(!stackEntry.m_isWithScope);
@@ -3609,7 +3609,7 @@ RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* objectScope)
     instructions().append(scopeRegister()->index());
 
     emitMove(scopeRegister(), newScope);
-    m_symbolTableStack.append(SymbolTableStackEntry{ nullptr, newScope, true, 0 });
+    m_lexicalScopeStack.append({ nullptr, newScope, true, 0 });
 
     return newScope;
 }
@@ -3632,7 +3632,7 @@ void BytecodeGenerator::emitPopWithScope()
 {
     emitPopScope(scopeRegister(), scopeRegister());
     popScopedControlFlowContext();
-    SymbolTableStackEntry stackEntry = m_symbolTableStack.takeLast();
+    auto stackEntry = m_lexicalScopeStack.takeLast();
     stackEntry.m_scope->deref();
     RELEASE_ASSERT(stackEntry.m_isWithScope);
 }
@@ -3690,7 +3690,7 @@ void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
         static_cast<unsigned>(m_forInContextStack.size()),
         static_cast<unsigned>(m_tryContextStack.size()),
         static_cast<unsigned>(m_labelScopes.size()),
-        static_cast<unsigned>(m_symbolTableStack.size()),
+        static_cast<unsigned>(m_lexicalScopeStack.size()),
         m_finallyDepth,
         m_localScopeDepth
     };
@@ -3716,7 +3716,7 @@ void BytecodeGenerator::pushIteratorCloseContext(RegisterID* iterator, Throwable
         static_cast<unsigned>(m_forInContextStack.size()),
         static_cast<unsigned>(m_tryContextStack.size()),
         static_cast<unsigned>(m_labelScopes.size()),
-        static_cast<unsigned>(m_symbolTableStack.size()),
+        static_cast<unsigned>(m_lexicalScopeStack.size()),
         m_finallyDepth,
         m_localScopeDepth
     };
@@ -3878,7 +3878,7 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
         Vector<SwitchInfo> savedSwitchContextStack;
         Vector<RefPtr<ForInContext>> savedForInContextStack;
         Vector<TryContext> poppedTryContexts;
-        Vector<SymbolTableStackEntry> savedSymbolTableStack;
+        Vector<LexicalScopeStackEntry> savedLexicalScopeStack;
         LabelScopeStore savedLabelScopes;
         while (topScope > bottomScope && topScope->isFinallyBlock) {
             RefPtr<Label> beforeFinally = emitLabel(newLabel().get());
@@ -3891,7 +3891,7 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             bool flipForIns = finallyContext.forInContextStackSize != m_forInContextStack.size();
             bool flipTries = finallyContext.tryContextStackSize != m_tryContextStack.size();
             bool flipLabelScopes = finallyContext.labelScopesSize != m_labelScopes.size();
-            bool flipSymbolTableStack = finallyContext.symbolTableStackSize != m_symbolTableStack.size();
+            bool flipLexicalScopeStack = finallyContext.lexicalScopeStackSize != m_lexicalScopeStack.size();
             int topScopeIndex = -1;
             int bottomScopeIndex = -1;
             if (flipScopes) {
@@ -3925,9 +3925,9 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
                 while (m_labelScopes.size() > finallyContext.labelScopesSize)
                     m_labelScopes.removeLast();
             }
-            if (flipSymbolTableStack) {
-                savedSymbolTableStack = m_symbolTableStack;
-                m_symbolTableStack.shrink(finallyContext.symbolTableStackSize);
+            if (flipLexicalScopeStack) {
+                savedLexicalScopeStack = m_lexicalScopeStack;
+                m_lexicalScopeStack.shrink(finallyContext.lexicalScopeStackSize);
             }
             int savedFinallyDepth = m_finallyDepth;
             m_finallyDepth = finallyContext.finallyDepth;
@@ -3966,8 +3966,8 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             }
             if (flipLabelScopes)
                 m_labelScopes = savedLabelScopes;
-            if (flipSymbolTableStack)
-                m_symbolTableStack = savedSymbolTableStack;
+            if (flipLexicalScopeStack)
+                m_lexicalScopeStack = savedLexicalScopeStack;
             m_finallyDepth = savedFinallyDepth;
             m_localScopeDepth = savedDynamicScopeDepth;
             
@@ -4035,12 +4035,12 @@ void BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* excepti
     instructions().append(thrownValueRegister->index());
 
     bool foundLocalScope = false;
-    for (unsigned i = m_symbolTableStack.size(); i--; ) {
+    for (unsigned i = m_lexicalScopeStack.size(); i--; ) {
         // Note that if we don't find a local scope in the current function/program, 
         // we must grab the outer-most scope of this bytecode generation.
-        if (m_symbolTableStack[i].m_scope) {
+        if (m_lexicalScopeStack[i].m_scope) {
             foundLocalScope = true;
-            emitMove(scopeRegister(), m_symbolTableStack[i].m_scope);
+            emitMove(scopeRegister(), m_lexicalScopeStack[i].m_scope);
             break;
         }
     }
@@ -4119,8 +4119,8 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     pushLexicalScopeInternal(nameScopeEnvironment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::FunctionNameScope, ScopeRegisterType::Var);
     ASSERT_UNUSED(numVars, m_codeBlock->m_numVars == static_cast<int>(numVars + 1)); // Should have only created one new "var" for the function name scope.
     bool shouldTreatAsLexicalVariable = isStrictMode();
-    Variable functionVar = variableForLocalEntry(property, m_symbolTableStack.last().m_symbolTable->get(NoLockingNecessary, property.impl()), m_symbolTableStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
-    emitPutToScope(m_symbolTableStack.last().m_scope, functionVar, callee, ThrowIfNotFound, InitializationMode::NotInitialization);
+    Variable functionVar = variableForLocalEntry(property, m_lexicalScopeStack.last().m_symbolTable->get(NoLockingNecessary, property.impl()), m_lexicalScopeStack.last().m_symbolTableConstantIndex, shouldTreatAsLexicalVariable);
+    emitPutToScope(m_lexicalScopeStack.last().m_scope, functionVar, callee, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
 
 void BytecodeGenerator::pushScopedControlFlowContext()

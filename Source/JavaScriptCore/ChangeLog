@@ -1,3 +1,50 @@
+2016-12-12  Mark Lam  <mark.lam@apple.com>
+
+        Rename BytecodeGenerator's m_symbolTableStack to m_lexicalScopeStack.
+        https://bugs.webkit.org/show_bug.cgi?id=165768
+
+        Reviewed by Saam Barati.
+
+        The lexical scope in "m_lexicalScopeStack" here refers to a pair of { } in the
+        source code that bounds the scope of variables.
+
+        There are 4 places in the code where we call m_symbolTableStack.append() to
+        append a new stack entry.  In only 3 of the 4 cases, a symbol table is provided
+        in the new stack entry.  In all 4 cases, a scope register is provided in the new
+        stack entry.
+
+        Also, 3 of the 4 functions that appends an entry to this stack are named:
+        1. initializeVarLexicalEnvironment()
+        2. pushLexicalScopeInternal()
+        3. emitPushWithScope()
+
+        The 4th function is the BytecodeGenerator constructor where it pushes the scope
+        for a module environment.
+
+        Based on these details, m_lexicalScopeStack is a better name for this stack than
+        m_symbolTableStack.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeArrowFunctionContextScopeIfNeeded):
+        (JSC::BytecodeGenerator::initializeVarLexicalEnvironment):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::initializeBlockScopedFunctions):
+        (JSC::BytecodeGenerator::hoistSloppyModeFunctionIfNecessary):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::resolveType):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitPopWithScope):
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::pushIteratorCloseContext):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::popTryAndEmitCatch):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        * bytecompiler/BytecodeGenerator.h:
+
 2016-12-12  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Try to fix the cloop build.

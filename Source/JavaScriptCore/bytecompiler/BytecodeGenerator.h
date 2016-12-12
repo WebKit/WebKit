@@ -89,7 +89,7 @@ namespace JSC {
         unsigned forInContextStackSize;
         unsigned tryContextStackSize;
         unsigned labelScopesSize;
-        unsigned symbolTableStackSize;
+        unsigned lexicalScopeStackSize;
         int finallyDepth;
         int dynamicScopeDepth;
     };
@@ -896,13 +896,13 @@ namespace JSC {
 
         bool m_shouldEmitDebugHooks;
 
-        struct SymbolTableStackEntry {
+        struct LexicalScopeStackEntry {
             SymbolTable* m_symbolTable;
             RegisterID* m_scope;
             bool m_isWithScope;
             int m_symbolTableConstantIndex;
         };
-        Vector<SymbolTableStackEntry> m_symbolTableStack;
+        Vector<LexicalScopeStackEntry> m_lexicalScopeStack;
         enum class TDZNecessityLevel {
             NotNeeded,
             Optimize,
@@ -910,7 +910,7 @@ namespace JSC {
         };
         typedef HashMap<RefPtr<UniquedStringImpl>, TDZNecessityLevel, IdentifierRepHash> TDZMap;
         Vector<TDZMap> m_TDZStack;
-        std::optional<size_t> m_varScopeSymbolTableIndex;
+        std::optional<size_t> m_varScopeLexicalScopeStackIndex;
         void pushTDZVariables(const VariableEnvironment&, TDZCheckOptimization, TDZRequirement);
 
         ScopeNode* const m_scopeNode;
