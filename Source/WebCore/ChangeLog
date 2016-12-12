@@ -1,3 +1,44 @@
+2016-12-11  Darin Adler  <darin@apple.com>
+
+        Make some refinements to HTMLPlugInImageElement
+        https://bugs.webkit.org/show_bug.cgi?id=165742
+
+        Reviewed by Sam Weinig.
+
+        * html/HTMLPlugInImageElement.cpp: Removed many unneeded includes.
+        (WebCore::titleText): Use HashMap::ensure, correct argument types.
+        (WebCore::subtitleText): Ditto.
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): Moved
+        initialization of most scalars to the class definition.
+        (WebCore::HTMLPlugInImageElement::isImageType): Use auto.
+        (WebCore::HTMLPlugInImageElement::wouldLoadAsPlugIn): Removed
+        unneeded local variable and if statement.
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers): Use auto.
+        (WebCore::HTMLPlugInImageElement::updateSnapshot): Do not call
+        renderer twice unnecessarily.
+        (WebCore::plugInImageElementIsolatedWorld): Use auto.
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot): Use auto.
+        (WebCore::HTMLPlugInImageElement::partOfSnapshotOverlay): Use auto.
+        (WebCore::HTMLPlugInImageElement::restartSimilarPlugIns): Got rid of
+        unnecessary typedef.
+        (WebCore::HTMLPlugInImageElement::userDidClickSnapshot): Take a
+        reference rather than PassRefPtr.
+        (WebCore::documentHadRecentUserGesture): Removed unneeded if.
+        (WebCore::HTMLPlugInImageElement::checkSizeChangeForSnapshotting): Use auto.
+        (WebCore::isSmallerThanTinySizingThreshold): Use auto.
+        (WebCore::HTMLPlugInImageElement::isTopLevelFullPagePlugin): Use auto.
+        (WebCore::HTMLPlugInImageElement::checkSnapshotStatus): Use auto.
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn): Got rid
+        of unnecessary local variable. Use auto.
+        (WebCore::HTMLPlugInImageElement::requestObject): Got rid of unnecessary
+        local variable.
+        * html/HTMLPlugInImageElement.h: Updated for the above. Removed incorrect
+        use of const. Initialized all scalars. Made function private and final.
+
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::handleEvent): Pass reference instead
+        of pointer.
+
 2016-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup some InspectorInstrumentation network loading notifications

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2011, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,26 +25,17 @@
 namespace WebCore {
 
 class HTMLImageLoader;
-class FrameLoader;
-class Image;
 class MouseEvent;
-class RenderStyle;
-class Widget;
 
-enum class CreatePlugins {
-    No,
-    Yes,
-};
+enum class CreatePlugins { No, Yes };
 
 // Base class for HTMLAppletElement, HTMLEmbedElement, and HTMLObjectElement.
-// FIXME: Should HTMLAppletElement inherit from HTMLPlugInElement directly instead?
+// FIXME: Perhaps HTMLAppletElement should inherit from HTMLPlugInElement directly instead.
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
     virtual ~HTMLPlugInImageElement();
 
     RenderEmbeddedObject* renderEmbeddedObject() const;
-
-    void setDisplayState(DisplayState) override;
 
     virtual void updateWidget(CreatePlugins) = 0;
 
@@ -52,7 +43,7 @@ public:
     const String& url() const { return m_url; }
     const URL& loadedUrl() const { return m_loadedUrl; }
 
-    const String loadedMimeType() const
+    String loadedMimeType() const
     {
         String mimeType = serviceType();
         if (mimeType.isEmpty())
@@ -64,7 +55,7 @@ public:
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
     
-    void userDidClickSnapshot(PassRefPtr<MouseEvent>, bool forwardEvent);
+    void userDidClickSnapshot(MouseEvent&, bool forwardEvent);
     void checkSnapshotStatus();
     Image* snapshotImage() const { return m_snapshotImage.get(); }
     WEBCORE_EXPORT void restartSnapshottedPlugIn();
@@ -138,21 +129,23 @@ private:
     void removeSnapshotTimerFired();
     bool isTopLevelFullPagePlugin(const RenderEmbeddedObject&) const;
 
+    void setDisplayState(DisplayState) final;
+
     URL m_loadedUrl;
-    bool m_needsWidgetUpdate;
-    bool m_needsDocumentActivationCallbacks;
+    bool m_needsWidgetUpdate { false };
+    bool m_needsDocumentActivationCallbacks { false };
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer m_simulatedMouseClickTimer;
     Timer m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
-    bool m_createdDuringUserGesture;
-    bool m_isRestartedPlugin;
-    bool m_needsCheckForSizeChange;
-    bool m_plugInWasCreated;
-    bool m_deferredPromotionToPrimaryPlugIn;
+    bool m_createdDuringUserGesture { false };
+    bool m_isRestartedPlugin { false };
+    bool m_needsCheckForSizeChange { false };
+    bool m_plugInWasCreated { false };
+    bool m_deferredPromotionToPrimaryPlugIn { false };
     IntSize m_sizeWhenSnapshotted;
-    SnapshotDecision m_snapshotDecision;
-    bool m_plugInDimensionsSpecified;
+    SnapshotDecision m_snapshotDecision { SnapshotNotYetDecided };
+    bool m_plugInDimensionsSpecified { false };
 };
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,25 +25,17 @@
 #include "ChromeClient.h"
 #include "CommonVM.h"
 #include "ContentSecurityPolicy.h"
-#include "Event.h"
-#include "EventHandler.h"
 #include "EventNames.h"
-#include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "FrameView.h"
 #include "HTMLImageLoader.h"
-#include "JSDocumentFragment.h"
+#include "JSShadowRoot.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MouseEvent.h"
-#include "NodeList.h"
-#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlugInClient.h"
 #include "PluginViewBase.h"
-#include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderSnapshottedPlugIn.h"
 #include "RenderTreeUpdater.h"
@@ -52,21 +44,11 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
 #include "TypedElementDescendantIterator.h"
-#include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSBase.h>
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
-
-using namespace HTMLNames;
-
-typedef Vector<Ref<HTMLPlugInImageElement>> HTMLPlugInImageElementList;
-typedef HashMap<String, String> MimeTypeToLocalizedStringMap;
 
 static const int sizingTinyDimensionThreshold = 40;
 static const float sizingFullPageAreaRatioThreshold = 0.96;
@@ -79,51 +61,38 @@ static const auto simulatedMouseClickTimerDelay = std::chrono::milliseconds { 75
 static const auto removeSnapshotTimerDelay = std::chrono::milliseconds { 1500 };
 #endif
 
-static const String titleText(Page* page, String mimeType)
+static const String titleText(Page& page, const String& mimeType)
 {
-    static NeverDestroyed<MimeTypeToLocalizedStringMap> mimeTypeToLabelTitleMap;
-    String titleText = mimeTypeToLabelTitleMap.get().get(mimeType);
-    if (!titleText.isEmpty())
-        return titleText;
-
-    titleText = page->chrome().client().plugInStartLabelTitle(mimeType);
-    if (titleText.isEmpty())
-        titleText = snapshottedPlugInLabelTitle();
-    mimeTypeToLabelTitleMap.get().set(mimeType, titleText);
-    return titleText;
+    // FIXME: It's not consistent to get a string from the page's chrome client, but then cache it globally.
+    // If it's global, it should come from elsewhere. If it's per-page then it should be cached per page.
+    static NeverDestroyed<HashMap<String, String>> mimeTypeToLabelTitleMap;
+    return mimeTypeToLabelTitleMap.get().ensure(mimeType, [&] {
+        auto title = page.chrome().client().plugInStartLabelTitle(mimeType);
+        if (!title.isEmpty())
+            return title;
+        return snapshottedPlugInLabelTitle();
+    }).iterator->value;
 };
 
-static const String subtitleText(Page* page, String mimeType)
+static const String subtitleText(Page& page, const String& mimeType)
 {
-    static NeverDestroyed<MimeTypeToLocalizedStringMap> mimeTypeToLabelSubtitleMap;
-    String subtitleText = mimeTypeToLabelSubtitleMap.get().get(mimeType);
-    if (!subtitleText.isEmpty())
-        return subtitleText;
-
-    subtitleText = page->chrome().client().plugInStartLabelSubtitle(mimeType);
-    if (subtitleText.isEmpty())
-        subtitleText = snapshottedPlugInLabelSubtitle();
-    mimeTypeToLabelSubtitleMap.get().set(mimeType, subtitleText);
-    return subtitleText;
+    // FIXME: It's not consistent to get a string from the page's chrome client, but then cache it globally.
+    // If it's global, it should come from elsewhere. If it's per-page then it should be cached per page.
+    static NeverDestroyed<HashMap<String, String>> mimeTypeToLabelSubtitleMap;
+    return mimeTypeToLabelSubtitleMap.get().ensure(mimeType, [&] {
+        auto subtitle = page.chrome().client().plugInStartLabelSubtitle(mimeType);
+        if (!subtitle.isEmpty())
+            return subtitle;
+        return snapshottedPlugInLabelSubtitle();
+    }).iterator->value;
 };
 
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLPlugInElement(tagName, document)
-    // m_needsWidgetUpdate(!createdByParser) allows HTMLObjectElement to delay
-    // widget updates until after all children are parsed.  For HTMLEmbedElement
-    // this delay is unnecessary, but it is simpler to make both classes share
-    // the same codepath in this class.
-    , m_needsWidgetUpdate(!createdByParser)
-    , m_needsDocumentActivationCallbacks(false)
+    , m_needsWidgetUpdate(!createdByParser) // Set true in finishParsingChildren.
     , m_simulatedMouseClickTimer(*this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_removeSnapshotTimer(*this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
-    , m_isRestartedPlugin(false)
-    , m_needsCheckForSizeChange(false)
-    , m_plugInWasCreated(false)
-    , m_deferredPromotionToPrimaryPlugIn(false)
-    , m_snapshotDecision(SnapshotNotYetDecided)
-    , m_plugInDimensionsSpecified(false)
 {
     setHasCustomStyleResolveCallbacks();
 }
@@ -151,8 +120,7 @@ void HTMLPlugInImageElement::setDisplayState(DisplayState state)
 
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
 {
-    // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers
-    // when using fallback content.
+    // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers when using fallback content.
     return is<RenderEmbeddedObject>(renderer()) ? downcast<RenderEmbeddedObject>(renderer()) : nullptr;
 }
 
@@ -161,24 +129,18 @@ bool HTMLPlugInImageElement::isImageType()
     if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
         m_serviceType = mimeTypeFromDataURL(m_url);
 
-    if (Frame* frame = document().frame()) {
-        URL completedURL = document().completeURL(m_url);
-        return frame->loader().client().objectContentType(completedURL, m_serviceType) == ObjectContentType::Image;
-    }
+    if (auto* frame = document().frame())
+        return frame->loader().client().objectContentType(document().completeURL(m_url), m_serviceType) == ObjectContentType::Image;
 
     return Image::supportsType(m_serviceType);
 }
 
-// We don't use m_url, as it may not be the final URL that the object loads,
-// depending on <param> values.
+// We don't use m_url, as it may not be the final URL that the object loads, depending on <param> values.
 bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 {
     URL completeURL = document().completeURL(url);
-
-    if (contentFrame() && protocolIsJavaScript(completeURL)
-        && !document().securityOrigin()->canAccess(contentDocument()->securityOrigin()))
+    if (contentFrame() && protocolIsJavaScript(completeURL) && !document().securityOrigin()->canAccess(contentDocument()->securityOrigin()))
         return false;
-
     return document().frame()->isURLAllowed(completeURL);
 }
 
@@ -190,11 +152,7 @@ bool HTMLPlugInImageElement::wouldLoadAsPlugIn(const String& url, const String& 
     URL completedURL;
     if (!url.isEmpty())
         completedURL = document().completeURL(url);
-
-    FrameLoader& frameLoader = document().frame()->loader();
-    if (frameLoader.client().objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn)
-        return true;
-    return false;
+    return document().frame()->loader().client().objectContentType(completedURL, serviceType) == ObjectContentType::PlugIn;
 }
 
 RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
@@ -204,7 +162,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderSty
     if (displayState() >= PreparingPluginReplacement)
         return HTMLPlugInElement::createElementRenderer(WTFMove(style), insertionPosition);
 
-    // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
+    // Once a plug-in element creates its renderer, it needs to be told when the document goes
     // inactive or reactivates so it can clear the renderer before going into the page cache.
     if (!m_needsDocumentActivationCallbacks) {
         m_needsDocumentActivationCallbacks = true;
@@ -217,9 +175,6 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderSty
         return WTFMove(renderSnapshottedPlugIn);
     }
 
-    // Fallback content breaks the DOM->Renderer class relationship of this
-    // class and all superclasses because createObject won't necessarily
-    // return a RenderEmbeddedObject or RenderWidget.
     if (useFallbackContent())
         return RenderElement::createFor(*this, WTFMove(style));
 
@@ -278,7 +233,7 @@ void HTMLPlugInImageElement::willDetachRenderers()
         setNeedsWidgetUpdate(true);
     }
 
-    Widget* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    auto* widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).willDetatchRenderer();
 
@@ -304,6 +259,8 @@ void HTMLPlugInImageElement::finishParsingChildren()
     if (useFallbackContent())
         return;
 
+    // HTMLObjectElement needs to delay widget updates until after all children are parsed,
+    // For HTMLEmbedElement this delay is unnecessary, but there is no harm in doing the same.
     setNeedsWidgetUpdate(true);
     if (inDocument())
         invalidateStyleForSubtree();
@@ -351,22 +308,22 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
     m_snapshotImage = image;
 
-    if (!renderer())
+    auto* renderer = this->renderer();
+    if (!renderer)
         return;
-    auto& renderer = *this->renderer();
 
-    if (is<RenderSnapshottedPlugIn>(renderer)) {
-        downcast<RenderSnapshottedPlugIn>(renderer).updateSnapshot(image);
+    if (is<RenderSnapshottedPlugIn>(*renderer)) {
+        downcast<RenderSnapshottedPlugIn>(*renderer).updateSnapshot(image);
         return;
     }
 
-    if (is<RenderEmbeddedObject>(renderer))
-        renderer.repaint();
+    if (is<RenderEmbeddedObject>(*renderer))
+        renderer->repaint();
 }
 
 static DOMWrapperWorld& plugInImageElementIsolatedWorld()
 {
-    static DOMWrapperWorld& isolatedWorld = DOMWrapperWorld::create(commonVM()).leakRef();
+    static auto& isolatedWorld = DOMWrapperWorld::create(commonVM()).leakRef();
     return isolatedWorld;
 }
 
@@ -376,7 +333,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     if (displayState() >= PreparingPluginReplacement)
         return;
 
-    Page* page = document().page();
+    auto* page = document().page();
     if (!page)
         return;
 
@@ -387,46 +344,46 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     
     String mimeType = loadedMimeType();
 
-    DOMWrapperWorld& isolatedWorld = plugInImageElementIsolatedWorld();
+    auto& isolatedWorld = plugInImageElementIsolatedWorld();
     document().ensurePlugInsInjectedScript(isolatedWorld);
 
-    ScriptController& scriptController = document().frame()->script();
-    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(isolatedWorld));
+    auto& scriptController = document().frame()->script();
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(isolatedWorld));
 
-    JSC::VM& vm = globalObject->vm();
+    auto& vm = globalObject.vm();
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::ExecState* exec = globalObject->globalExec();
+    auto& state = *globalObject.globalExec();
 
     JSC::MarkedArgumentBuffer argList;
-    argList.append(toJS(exec, globalObject, root));
-    argList.append(jsString(exec, titleText(page, mimeType)));
-    argList.append(jsString(exec, subtitleText(page, mimeType)));
+    argList.append(toJS(&state, &globalObject, root));
+    argList.append(jsString(&state, titleText(*page, mimeType)));
+    argList.append(jsString(&state, subtitleText(*page, mimeType)));
     
     // This parameter determines whether or not the snapshot overlay should always be visible over the plugin snapshot.
     // If no snapshot was found then we want the overlay to be visible.
     argList.append(JSC::jsBoolean(!m_snapshotImage));
 
     // It is expected the JS file provides a createOverlay(shadowRoot, title, subtitle) function.
-    JSC::JSObject* overlay = globalObject->get(exec, JSC::Identifier::fromString(exec, "createOverlay")).toObject(exec);
+    auto* overlay = globalObject.get(&state, JSC::Identifier::fromString(&state, "createOverlay")).toObject(&state);
     if (!overlay) {
         ASSERT(scope.exception());
         scope.clearException();
         return;
     }
     JSC::CallData callData;
-    JSC::CallType callType = overlay->methodTable()->getCallData(overlay, callData);
+    auto callType = overlay->methodTable()->getCallData(overlay, callData);
     if (callType == JSC::CallType::None)
         return;
 
-    JSC::call(exec, overlay, callType, callData, globalObject, argList);
+    call(&state, overlay, callType, callData, &globalObject, argList);
     scope.clearException();
 }
 
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(const Node* node) const
 {
     static NeverDestroyed<AtomicString> selector(".snapshot-overlay", AtomicString::ConstructFromLiteral);
-    ShadowRoot* shadow = userAgentShadowRoot();
+    auto* shadow = userAgentShadowRoot();
     if (!shadow)
         return false;
     if (!node)
@@ -454,7 +411,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
 
     String plugInOrigin = m_loadedUrl.host();
     String mimeType = loadedMimeType();
-    HTMLPlugInImageElementList similarPlugins;
+    Vector<Ref<HTMLPlugInImageElement>> similarPlugins;
 
     if (!document().page())
         return;
@@ -481,10 +438,10 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     }
 }
 
-void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, bool forwardEvent)
+void HTMLPlugInImageElement::userDidClickSnapshot(MouseEvent& event, bool forwardEvent)
 {
     if (forwardEvent)
-        m_pendingClickEventFromSnapshot = event;
+        m_pendingClickEventFromSnapshot = &event;
 
     String plugInOrigin = m_loadedUrl.host();
     if (document().page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document().page()->mainFrame().document()->baseURL().protocol().toStringWithoutCopying()) && document().page()->settings().autostartOriginPlugInSnapshottingEnabled())
@@ -543,14 +500,10 @@ void HTMLPlugInImageElement::simulatedMouseClickTimerFired()
 static bool documentHadRecentUserGesture(Document& document)
 {
     double lastKnownUserGestureTimestamp = document.lastHandledUserGestureTimestamp();
-
     if (document.frame() != &document.page()->mainFrame() && document.page()->mainFrame().document())
         lastKnownUserGestureTimestamp = std::max(lastKnownUserGestureTimestamp, document.page()->mainFrame().document()->lastHandledUserGestureTimestamp());
 
-    if (monotonicallyIncreasingTime() - lastKnownUserGestureTimestamp < autostartSoonAfterUserGestureThreshold)
-        return true;
-
-    return false;
+    return monotonicallyIncreasingTime() - lastKnownUserGestureTimestamp < autostartSoonAfterUserGestureThreshold;
 }
 
 void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
@@ -559,7 +512,8 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
         return;
 
     m_needsCheckForSizeChange = false;
-    LayoutRect contentBoxRect = downcast<RenderBox>(*renderer()).contentBoxRect();
+
+    auto contentBoxRect = downcast<RenderBox>(*renderer()).contentBoxRect();
     int contentWidth = contentBoxRect.width();
     int contentHeight = contentBoxRect.height();
 
@@ -569,7 +523,7 @@ void HTMLPlugInImageElement::checkSizeChangeForSnapshotting()
     LOG(Plugins, "%p Plug-in originally avoided snapshotting because it was sized %dx%d. Now it is %dx%d. Tell it to snapshot.\n", this, m_sizeWhenSnapshotted.width(), m_sizeWhenSnapshotted.height(), contentWidth, contentHeight);
     setDisplayState(WaitingForSnapshot);
     m_snapshotDecision = Snapshotted;
-    Widget* widget = pluginWidget();
+    auto* widget = pluginWidget();
     if (is<PluginViewBase>(widget))
         downcast<PluginViewBase>(*widget).beginSnapshottingRunningPlugin();
 }
@@ -581,24 +535,25 @@ static inline bool is100Percent(Length length)
     
 static inline bool isSmallerThanTinySizingThreshold(const RenderEmbeddedObject& renderer)
 {
-    LayoutRect contentRect = renderer.contentBoxRect();
+    auto contentRect = renderer.contentBoxRect();
     return contentRect.width() <= sizingTinyDimensionThreshold || contentRect.height() <= sizingTinyDimensionThreshold;
 }
     
 bool HTMLPlugInImageElement::isTopLevelFullPagePlugin(const RenderEmbeddedObject& renderer) const
 {
-    Frame& frame = *document().frame();
+    ASSERT(document().frame());
+    auto& frame = *document().frame();
     if (!frame.isMainFrame())
         return false;
     
     auto& style = renderer.style();
-    IntSize visibleSize = frame.view()->visibleSize();
-    LayoutRect contentRect = renderer.contentBoxRect();
+    auto visibleSize = frame.view()->visibleSize();
+    auto contentRect = renderer.contentBoxRect();
     float contentWidth = contentRect.width();
     float contentHeight = contentRect.height();
     return is100Percent(style.width()) && is100Percent(style.height()) && contentWidth * contentHeight > visibleSize.area().unsafeGet() * sizingFullPageAreaRatioThreshold;
 }
-    
+
 void HTMLPlugInImageElement::checkSnapshotStatus()
 {
     if (!is<RenderSnapshottedPlugIn>(*renderer())) {
@@ -609,7 +564,7 @@ void HTMLPlugInImageElement::checkSnapshotStatus()
     
     // If width and height styles were previously not set and we've snapshotted the plugin we may need to restart the plugin so that its state can be updated appropriately.
     if (!document().page()->settings().snapshotAllPlugIns() && displayState() <= DisplayingSnapshot && !m_plugInDimensionsSpecified) {
-        RenderSnapshottedPlugIn& renderer = downcast<RenderSnapshottedPlugIn>(*this->renderer());
+        auto& renderer = downcast<RenderSnapshottedPlugIn>(*this->renderer());
         if (!renderer.style().logicalWidth().isSpecified() && !renderer.style().logicalHeight().isSpecified())
             return;
         
@@ -713,7 +668,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const URL& url)
     }
     
     auto& renderer = downcast<RenderEmbeddedObject>(*this->renderer());
-    LayoutRect contentRect = renderer.contentBoxRect();
+    auto contentRect = renderer.contentBoxRect();
     int contentWidth = contentRect.width();
     int contentHeight = contentRect.height();
     
@@ -764,15 +719,12 @@ void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget& widget)
 
 void HTMLPlugInImageElement::defaultEventHandler(Event& event)
 {
-    RenderElement* r = renderer();
-    if (r && r->isEmbeddedObject()) {
-        if (displayState() == WaitingForSnapshot && is<MouseEvent>(event) && event.type() == eventNames().clickEvent) {
-            MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-            if (mouseEvent.button() == LeftButton) {
-                userDidClickSnapshot(&mouseEvent, true);
-                mouseEvent.setDefaultHandled();
-                return;
-            }
+    if (is<RenderEmbeddedObject>(renderer()) && displayState() == WaitingForSnapshot && is<MouseEvent>(event) && event.type() == eventNames().clickEvent) {
+        auto& mouseEvent = downcast<MouseEvent>(event);
+        if (mouseEvent.button() == LeftButton) {
+            userDidClickSnapshot(mouseEvent, true);
+            mouseEvent.setDefaultHandled();
+            return;
         }
     }
     HTMLPlugInElement::defaultEventHandler(event);
@@ -803,6 +755,8 @@ bool HTMLPlugInImageElement::allowedToLoadPluginContent(const String& url, const
 
 bool HTMLPlugInImageElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
+    ASSERT(document().frame());
+
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
 
@@ -814,8 +768,7 @@ bool HTMLPlugInImageElement::requestObject(const String& url, const String& mime
     if (HTMLPlugInElement::requestObject(url, mimeType, paramNames, paramValues))
         return true;
     
-    SubframeLoader& loader = document().frame()->loader().subframeLoader();
-    return loader.requestObject(*this, url, getNameAttribute(), mimeType, paramNames, paramValues);
+    return document().frame()->loader().subframeLoader().requestObject(*this, url, getNameAttribute(), mimeType, paramNames, paramValues);
 }
 
 } // namespace WebCore
