@@ -85,8 +85,6 @@ class AutoinstallImportHook(object):
             self._install_pylint()
         elif '.coverage' in fullname:
             self._install_coverage()
-        elif '.eliza' in fullname:
-            self._install_eliza()
         elif '.buildbot' in fullname:
             self._install_buildbot()
         elif '.keyring' in fullname:
@@ -146,9 +144,6 @@ class AutoinstallImportHook(object):
     def _install_coverage(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
         self._install(url="http://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
-
-    def _install_eliza(self):
-        self._install(url="http://www.adambarth.com/webkit/eliza", target_name="eliza.py")
 
     def _install_twisted(self):
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted")

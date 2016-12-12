@@ -38,10 +38,10 @@ class ThirdpartyTest(unittest.TestCase):
         class MockImportHook(AutoinstallImportHook):
             def __init__(self):
                 AutoinstallImportHook.__init__(self)
-                self.eliza_installed = False
+                self.buildbot_installed = False
 
-            def _install_eliza(self):
-                self.eliza_installed = True
+            def _install_buildbot(self):
+                self.buildbot_installed = True
 
         mock_import_hook = MockImportHook()
         try:
@@ -49,8 +49,8 @@ class ThirdpartyTest(unittest.TestCase):
             # so these modules will get installed before MockImportHook runs.
             sys.meta_path.append(mock_import_hook)
             # unused-variable, import failures - pylint: disable-msg=W0612,E0611,F0401
-            from webkitpy.thirdparty.autoinstalled import eliza
-            self.assertTrue(mock_import_hook.eliza_installed)
+            from webkitpy.thirdparty.autoinstalled import buildbot
+            self.assertTrue(mock_import_hook.buildbot_installed)
 
         finally:
             sys.meta_path.remove(mock_import_hook)
@@ -60,7 +60,6 @@ class ThirdpartyTest(unittest.TestCase):
         # unused-variable, import failures - pylint: disable-msg=W0612,E0611,F0401
         import webkitpy.thirdparty.autoinstalled.buildbot
         import webkitpy.thirdparty.autoinstalled.coverage
-        import webkitpy.thirdparty.autoinstalled.eliza
         import webkitpy.thirdparty.autoinstalled.mechanize
         import webkitpy.thirdparty.autoinstalled.pylint
         import webkitpy.thirdparty.autoinstalled.pep8
