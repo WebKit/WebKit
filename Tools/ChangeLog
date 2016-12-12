@@ -1,3 +1,13 @@
+2016-12-11  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Make sure content extensions initialize AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=165737
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::makeBackend):
+
 2016-12-08  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove the old CSS Parser
