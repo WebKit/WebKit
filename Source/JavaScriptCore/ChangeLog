@@ -1,3 +1,13 @@
+2016-12-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Re-enable concurrent GC.
+
+        Rubber stampted by Saam Barati.
+        
+        This change actually landed in r209692 by accident.
+
+        * runtime/Options.h:
+
 2016-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
