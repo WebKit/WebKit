@@ -61,6 +61,13 @@
     box-shadow: inset 0 0 2px hsl(0, 0%, 78%);
 }
 
+.breakpoint-action-block-body > .description {
+    color: var(--text-color-gray-medium);
+    text-align: right;
+    margin-top: 6px;
+    margin-right: 2px;
+}
+
 .breakpoint-action-block-body > input {
     width: 100%;
 }

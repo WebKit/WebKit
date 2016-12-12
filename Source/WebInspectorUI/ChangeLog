@@ -1,3 +1,53 @@
+2016-12-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Breakpoint Log action should support template literals
+        https://bugs.webkit.org/show_bug.cgi?id=165116
+        <rdar://problem/29464765>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New string "${expr} = expression" for breakpoint popover.
+
+        * UserInterface/Controllers/BreakpointLogMessageLexer.js: Added.
+        To support template literal placeholders in message text, it is necessary
+        to distinguish plain text parts of the message from placeholders, since
+        plain text must be escaped.
+
+        (WebInspector.BreakpointLogMessageLexer):
+        (WebInspector.BreakpointLogMessageLexer.prototype.tokenize):
+        (WebInspector.BreakpointLogMessageLexer.prototype.reset):
+        (WebInspector.BreakpointLogMessageLexer.prototype._finishPlainText):
+        (WebInspector.BreakpointLogMessageLexer.prototype._finishExpression):
+        (WebInspector.BreakpointLogMessageLexer.prototype._appendToken):
+        (WebInspector.BreakpointLogMessageLexer.prototype._consume):
+        (WebInspector.BreakpointLogMessageLexer.prototype._peek):
+        (WebInspector.BreakpointLogMessageLexer.prototype._expression):
+        (WebInspector.BreakpointLogMessageLexer.prototype._plainText):
+        (WebInspector.BreakpointLogMessageLexer.prototype._possiblePlaceholder):
+        (WebInspector.BreakpointLogMessageLexer.prototype._regExpOrStringLiteral):
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype._debuggerBreakpointOptions):
+        Build breakpoint "options" object for DebuggerAgent. If a Log action
+        contains template literal placeholders it is changed to an Evaluate
+        action, which calls console.log with a template literal.
+
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        Use converted breakpoint options.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        New file.
+
+        * UserInterface/Views/BreakpointActionView.css:
+        (.breakpoint-action-block-body > .description):
+        Styles for breakpoint Log action hint text.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._updateBody):
+        Add Log action hint text element.
+
 2016-12-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: ThreadTreeElement should have a "Resume" status button when paused

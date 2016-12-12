@@ -2,6 +2,7 @@ var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
 localizedStrings[" (line %s)"] = " (line %s)";
+localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["%.0f B"] = "%.0f B";
 localizedStrings["%.0fms"] = "%.0fms";
 localizedStrings["%.1f KB"] = "%.1f KB";

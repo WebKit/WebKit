@@ -1,3 +1,19 @@
+2016-12-12  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Breakpoint Log action should support template literals
+        https://bugs.webkit.org/show_bug.cgi?id=165116
+        <rdar://problem/29464765>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/breakpoint-action-log-expected.txt: Added.
+        * inspector/debugger/breakpoint-action-log.html: Added.
+        Check that breakpoint log actions support template literal placeholders.
+
+        * inspector/unit-tests/breakpoint-log-message-lexer-expected.txt: Added.
+        * inspector/unit-tests/breakpoint-log-message-lexer.html: Added.
+        Check that the lexer correctly scans breakpoint log action text.
+
 2016-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r200283): Transform, overflow hidden and filter combination completely hides the element

@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/script-for-breakpoint-actions.js"></script>
+<script>
+function runBreakpointActions()
+{
+    breakpointActions(42, {x:1, y:2});
+}
+
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Debugger.BreakpointLogMessageLexer");
+
+    function addTestCase({name, input, expectedTokens}) {
+        suite.addTestCase({
+            name,
+            test() {
+                let lexer = new WebInspector.BreakpointLogMessageLexer;
+                let tokens = lexer.tokenize(input);
+                InspectorTest.log("Input: " + input);
+                InspectorTest.expectShallowEqual(tokens, expectedTokens, "Token stream should match expected tokens.");
+                return true;
+            }
+        });
+    }
+
+    addTestCase({
+        name: "EmptyMessage",
+        input: "",
+        expectedTokens: []
+    });
+
+    addTestCase({
+        name: "TextOnly",
+        input: "hello world",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                data: "hello world",
+            }
+        ]
+    });
+
+    addTestCase({
+        name: "PlaceholderOnly",
+        input: "${x}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "x",
+            }
+        ]
+    });
+
+    addTestCase({
+        name: "NestedTemplateLiteral",
+        input: "${'x' + `${'y'}`}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "'x' + `${'y'}`",
+            }
+        ]
+    });
+
+    addTestCase({
+        name: "TextBeforePlaceholder",
+        input: "abc ${x}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                data: "abc ",
+            },
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "x",
+            },
+        ]
+    });
+
+    addTestCase({
+        name: "TextAfterPlaceholder",
+        input: "${x} abc",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "x",
+            },
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                data: " abc",
+            },
+        ]
+    });
+
+    addTestCase({
+        name: "PlaceholderWithNestedBraces",
+        input: "${({a: '${}'}).a}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "({a: '${}'}).a",
+            }
+        ]
+    });
+
+    addTestCase({
+        name: "PlaceholderWithRegExpLiteral",
+        input: "${/\\}/.test('${')}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "/\\}/.test('${')",
+            }
+        ]
+    });
+
+    addTestCase({
+        name: "MultiplePlaceholders",
+        input: "${1} ${2}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "1",
+            },
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                data: " ",
+            },
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "2",
+            }
+        ]
+    });
+
+    addTestCase({
+        name: "ExpressionFollowedByBraces",
+        input: "${1}{2}",
+        expectedTokens: [
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.Expression,
+                data: "1",
+            },
+            {
+                type: WebInspector.BreakpointLogMessageLexer.TokenType.PlainText,
+                data: "{2}",
+            },
+        ]
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Check that BreakpointLogMessageLexer correctly tokenizes breakpoint action log messages. Message text can include template literal placeholders.</p>
+</body>
+</html>

@@ -823,6 +823,46 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         }
     }
 
+    _debuggerBreakpointOptions(breakpoint)
+    {
+        const templatePlaceholderRegex = /\$\{.*?\}/;
+
+        let options = breakpoint.options;
+        let invalidActions = [];
+
+        for (let action of options.actions) {
+            if (action.type !== WebInspector.BreakpointAction.Type.Log)
+                continue;
+
+            if (!templatePlaceholderRegex.test(action.data))
+                continue;
+
+            let lexer = new WebInspector.BreakpointLogMessageLexer;
+            let tokens = lexer.tokenize(action.data);
+            if (!tokens) {
+                invalidActions.push(action);
+                continue;
+            }
+
+            let templateLiteral = tokens.reduce((text, token) => {
+                if (token.type === WebInspector.BreakpointLogMessageLexer.TokenType.PlainText)
+                    return text + token.data.escapeCharacters("`\\");
+                if (token.type === WebInspector.BreakpointLogMessageLexer.TokenType.Expression)
+                    return text + "${" + token.data + "}";
+                return text;
+            }, "");
+
+            action.data = "console.log(`" + templateLiteral + "`)";
+            action.type = WebInspector.BreakpointAction.Type.Evaluate;
+        }
+
+        const onlyFirst = true;
+        for (let invalidAction of invalidActions)
+            options.actions.remove(invalidAction, onlyFirst);
+
+        return options;
+    }
+
     _setBreakpoint(breakpoint, specificTarget, callback)
     {
         console.assert(!breakpoint.disabled);
@@ -867,7 +907,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         // COMPATIBILITY (iOS 7): Debugger.BreakpointActionType did not exist yet.
         let options;
         if (DebuggerAgent.BreakpointActionType) {
-            options = breakpoint.options;
+            options = this._debuggerBreakpointOptions(breakpoint);
             if (options.actions.length) {
                 for (let action of options.actions)
                     action.type = this._debuggerBreakpointActionType(action.type);

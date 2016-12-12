@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 1: `42`
+CONSOLE MESSAGE: line 1: '42'
+CONSOLE MESSAGE: line 1: abc
+CONSOLE MESSAGE: line 1: {abc}
+CONSOLE MESSAGE: line 1: {abc}
+CONSOLE MESSAGE: line 1: {abc}
+CONSOLE MESSAGE: line 1: abc
+CONSOLE MESSAGE: line 1: 137
+CONSOLE MESSAGE: line 1: close curly brace in RegExp: true
+CONSOLE MESSAGE: line 1: 42 and {"x":1,"y":2}
+Testing that "Log" breakpoint actions work correctly.
+
+inside breakpointActions a:(42) b:([object Object])
+
+== Running test suite: Debugger.BreakpointAction.Log
+-- Running test case: TemplateLiteralPlaceholders
+

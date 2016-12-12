@@ -142,6 +142,9 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
             if (!omitFocus)
                 setTimeout(function() { input.focus(); }, 0);
 
+            let descriptionElement = this._bodyElement.appendChild(document.createElement("div"));
+            descriptionElement.classList.add("description");
+            descriptionElement.textContent = WebInspector.UIString("${expr} = expression");
             break;
 
         case WebInspector.BreakpointAction.Type.Evaluate:
