@@ -689,6 +689,9 @@
 #define ENABLE_JIT 1
 #endif
 
+/* This enables per VM counters available for use by JIT'ed code. */
+#define ENABLE_VM_COUNTERS 0
+
 /* The FTL *does not* work on 32-bit platforms. Disable it even if someone asked us to enable it. */
 #if USE(JSVALUE32_64)
 #undef ENABLE_FTL_JIT

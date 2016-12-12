@@ -28,6 +28,7 @@
 namespace JSC {
 
 enum ArityCheckMode {
+    RegisterEntry,
     ArityCheckNotRequired,
     MustCheckArity
 };

@@ -96,17 +96,57 @@ public:
     // contains information about where the
     // arguments/callee/callee-save registers are by taking into
     // account any spilling that acquireGPR() could have done.
-    CallFrameShuffleData snapshot() const
+    CallFrameShuffleData snapshot(ArgumentsLocation argumentsLocation) const
     {
         ASSERT(isUndecided());
 
         CallFrameShuffleData data;
         data.numLocals = numLocals();
-        data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
+#if USE(JSVALUE64)
+        data.argumentsInRegisters = argumentsLocation != StackArgs;
+#endif
+        if (argumentsLocation == StackArgs)
+            data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
+        else {
+            Reg reg { argumentRegisterForCallee() };
+            CachedRecovery* cachedRecovery { m_newRegisters[reg] };
+            data.callee = cachedRecovery->recovery();
+        }
         data.args.resize(argCount());
-        for (size_t i = 0; i < argCount(); ++i)
-            data.args[i] = getNew(virtualRegisterForArgument(i))->recovery();
+
+        Vector<ValueRecovery> registerArgRecoveries;
+#if USE(JSVALUE64)
+        // Find cached recoveries for all argument registers.
+        // We do this here, because a cached recovery may be the source for multiple
+        // argument registers, but it is only stored in one m_newRegister index.
+        if (data.argumentsInRegisters) {
+            unsigned maxArgumentRegister = std::min(static_cast<unsigned>(argCount()), NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS);
+            registerArgRecoveries.resize(maxArgumentRegister);
+            for (size_t i = 0; i < maxArgumentRegister; ++i) {
+                Reg reg { argumentRegisterForFunctionArgument(i) };
+                CachedRecovery* cachedRecovery { m_newRegisters[reg] };
+                if (cachedRecovery) {
+                    for (auto jsValueReg : cachedRecovery->gprTargets())
+                        registerArgRecoveries[jsFunctionArgumentForArgumentRegister(jsValueReg.gpr())] = cachedRecovery->recovery();
+                }
+            }
+        }
+#endif
+        
+        for (size_t i = 0; i < argCount(); ++i) {
+            if (argumentsLocation == StackArgs || i >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
+                data.args[i] = getNew(virtualRegisterForArgument(i))->recovery();
+            else {
+                Reg reg { argumentRegisterForFunctionArgument(i) };
+                ASSERT(registerArgRecoveries[i]);
+                data.args[i] = registerArgRecoveries[i];
+            }
+        }
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            if (reg.isGPR() && argumentsLocation != StackArgs
+                && GPRInfo::toArgumentIndex(reg.gpr()) < argumentRegisterIndexForJSFunctionArgument(argCount()))
+                continue;
+
             CachedRecovery* cachedRecovery { m_newRegisters[reg] };
             if (!cachedRecovery)
                 continue;
@@ -376,6 +416,9 @@ private:
 
     int m_alignedOldFrameSize;
     int m_alignedNewFrameSize;
+#if USE(JSVALUE64)
+    bool m_argumentsInRegisters;
+#endif
 
     // This is the distance, in slots, between the base of the new
     // frame and the base of the old frame. It could be negative when
@@ -417,15 +460,22 @@ private:
     bool tryAcquireTagTypeNumber();
 #endif
 
-    // This stores, for each register, information about the recovery
-    // for the value that should eventually go into that register. The
-    // only registers that have a target recovery will be callee-save
-    // registers, as well as possibly one JSValueRegs for holding the
-    // callee.
+    // This stores information about the recovery for the value that
+    // should eventually go into that register. In some cases there
+    // are recoveries that have multiple targets. For those recoveries,
+    // only the first target register in the map has the recovery.
+    // We optimize the case where there are multiple targets for one
+    // recovery where one of those targets is also the source register.
+    // Restoring the first target becomes a nop and simplifies the logic
+    // of restoring the remaining targets.
     //
     // Once the correct value has been put into the registers, and
     // contrary to what we do with m_newFrame, we keep the entry in
     // m_newRegisters to simplify spilling.
+    //
+    // If a recovery has multiple target registers, we copy the value
+    // from the first target register to the remaining target registers
+    // at the end of the shuffling process.
     RegisterMap<CachedRecovery*> m_newRegisters;
 
     template<typename CheckFunctor>
@@ -641,9 +691,13 @@ private:
         ASSERT(jsValueRegs && !getNew(jsValueRegs));
         CachedRecovery* cachedRecovery = addCachedRecovery(recovery);
 #if USE(JSVALUE64)
-        if (cachedRecovery->wantedJSValueRegs())
-            m_newRegisters[cachedRecovery->wantedJSValueRegs().gpr()] = nullptr;
-        m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
+        if (cachedRecovery->wantedJSValueRegs()) {
+            if (recovery.isInGPR() && jsValueRegs.gpr() == recovery.gpr()) {
+                m_newRegisters[cachedRecovery->wantedJSValueRegs().gpr()] = nullptr;
+                m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
+            }
+        } else
+            m_newRegisters[jsValueRegs.gpr()] = cachedRecovery;
 #else
         if (JSValueRegs oldRegs { cachedRecovery->wantedJSValueRegs() }) {
             if (oldRegs.payloadGPR())
@@ -656,8 +710,7 @@ private:
         if (jsValueRegs.tagGPR() != InvalidGPRReg)
             m_newRegisters[jsValueRegs.tagGPR()] = cachedRecovery;
 #endif
-        ASSERT(!cachedRecovery->wantedJSValueRegs());
-        cachedRecovery->setWantedJSValueRegs(jsValueRegs);
+        cachedRecovery->addTargetJSValueRegs(jsValueRegs);
     }
 
     void addNew(FPRReg fpr, ValueRecovery recovery)
@@ -755,13 +808,23 @@ private:
         return reg <= dangerFrontier();
     }
 
+    void initDangerFrontier()
+    {
+        findDangerFrontierFrom(lastNew());
+    }
+
     void updateDangerFrontier()
+    {
+        findDangerFrontierFrom(m_dangerFrontier - 1);
+    }
+
+    void findDangerFrontierFrom(VirtualRegister nextReg)
     {
         ASSERT(!isUndecided());
 
         m_dangerFrontier = firstNew() - 1;
-        for (VirtualRegister reg = lastNew(); reg >= firstNew(); reg -= 1) {
-            if (!getNew(reg) || !isValidOld(newAsOld(reg)) || !getOld(newAsOld(reg)))
+        for (VirtualRegister reg = nextReg; reg >= firstNew(); reg -= 1) {
+            if (!isValidOld(newAsOld(reg)) || !getOld(newAsOld(reg)))
                 continue;
 
             m_dangerFrontier = reg;

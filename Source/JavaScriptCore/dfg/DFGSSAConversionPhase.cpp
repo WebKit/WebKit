@@ -73,7 +73,8 @@ public:
         }
         
         // Find all SetLocals and create Defs for them. We handle SetArgument by creating a
-        // GetLocal, and recording the flush format.
+        // GetStack, and recording the flush format. We handle GetArgumentRegister by directly
+        // adding the node to m_argumentMapping hash map.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -83,14 +84,16 @@ public:
             // assignment for every local.
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
-                if (node->op() != SetLocal && node->op() != SetArgument)
+                if (node->op() != SetLocal && node->op() != SetArgument && node->op() != GetArgumentRegister)
                     continue;
                 
                 VariableAccessData* variable = node->variableAccessData();
                 
-                Node* childNode;
+                Node* childNode = nullptr;
                 if (node->op() == SetLocal)
                     childNode = node->child1().node();
+                else if (node->op() == GetArgumentRegister)
+                    m_argumentMapping.add(node, node);
                 else {
                     ASSERT(node->op() == SetArgument);
                     childNode = m_insertionSet.insertNode(
@@ -101,9 +104,11 @@ public:
                         m_argumentGetters.add(childNode);
                     m_argumentMapping.add(node, childNode);
                 }
-                
-                m_calculator.newDef(
-                    m_ssaVariableForVariable.get(variable), block, childNode);
+
+                if (childNode) {
+                    m_calculator.newDef(
+                        m_ssaVariableForVariable.get(variable), block, childNode);
+                }
             }
             
             m_insertionSet.execute(block);
@@ -294,7 +299,13 @@ public:
                     valueForOperand.operand(variable->local()) = child;
                     break;
                 }
-                    
+
+                case GetArgumentRegister: {
+                    VariableAccessData* variable = node->variableAccessData();
+                    valueForOperand.operand(variable->local()) = node;
+                    break;
+                }
+
                 case GetStack: {
                     ASSERT(m_argumentGetters.contains(node));
                     valueForOperand.operand(node->stackAccessData()->local) = node;
@@ -382,17 +393,21 @@ public:
             block->ssa = std::make_unique<BasicBlock::SSAData>(block);
         }
         
-        m_graph.m_argumentFormats.resize(m_graph.m_arguments.size());
-        for (unsigned i = m_graph.m_arguments.size(); i--;) {
+        m_graph.m_argumentFormats.resize(m_graph.m_argumentsForChecking.size());
+        for (unsigned i = m_graph.m_argumentsForChecking.size(); i--;) {
             FlushFormat format = FlushedJSValue;
 
-            Node* node = m_argumentMapping.get(m_graph.m_arguments[i]);
+            Node* node = m_argumentMapping.get(m_graph.m_argumentsForChecking[i]);
             
             RELEASE_ASSERT(node);
-            format = node->stackAccessData()->format;
+            if (node->op() == GetArgumentRegister) {
+                VariableAccessData* variable = node->variableAccessData();
+                format = variable->flushFormat();
+            } else
+                format = node->stackAccessData()->format;
             
             m_graph.m_argumentFormats[i] = format;
-            m_graph.m_arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.
+            m_graph.m_argumentsForChecking[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.
         }
         
         m_graph.m_form = SSA;

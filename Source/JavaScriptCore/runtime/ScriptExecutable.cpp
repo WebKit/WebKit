@@ -139,12 +139,12 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     switch (kind) {
     case CodeForCall:
         m_jitCodeForCall = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
-        m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
+        m_jitEntriesForCall.clearEntries();
         m_numParametersForCall = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
         break;
     case CodeForConstruct:
         m_jitCodeForConstruct = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
-        m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
+        m_jitEntriesForConstruct.clearEntries();
         m_numParametersForConstruct = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
         break;
     }

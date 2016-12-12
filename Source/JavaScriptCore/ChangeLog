@@ -1,3 +1,24 @@
+2016-12-12  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r209653): speedometer crashes making virtual slow path tailcalls
+        https://bugs.webkit.org/show_bug.cgi?id=165748
+
+        Reviewed by Filip Pizlo.
+
+        The virtual slow path for tailcalls always passes arguments on the stack.
+        The fix here is to link to the stack argument entrypoint instead of a register
+        argument entrypoint.
+
+        While fixing this bug, I found that we weren't clearing the code origin when
+        shuffling the call frame for a register argument tailcall.
+
+        Also rolling back in r209653, r209654, r209663, and r209673.
+
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+
 2016-12-12  Mark Lam  <mark.lam@apple.com>
 
         Rename BytecodeGenerator's m_symbolTableStack to m_lexicalScopeStack.

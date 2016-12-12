@@ -29,6 +29,7 @@
 
 #include "CallData.h"
 #include "Intrinsic.h"
+#include "JITEntryPoints.h"
 #include "MacroAssemblerCodeRef.h"
 #include "ThunkGenerator.h"
 #include "Weak.h"
@@ -52,16 +53,18 @@ public:
     JITThunks();
     virtual ~JITThunks();
 
-    MacroAssemblerCodePtr ctiNativeCall(VM*);
-    MacroAssemblerCodePtr ctiNativeConstruct(VM*);
+    JITEntryPointsWithRef jitEntryNativeCall(VM*);
+    JITEntryPointsWithRef jitEntryNativeConstruct(VM*);
     MacroAssemblerCodePtr ctiNativeTailCall(VM*);    
     MacroAssemblerCodePtr ctiNativeTailCallWithoutSavedTags(VM*);    
 
     MacroAssemblerCodeRef ctiStub(VM*, ThunkGenerator);
+    JITEntryPointsWithRef jitEntryStub(VM*, JITEntryGenerator);
+    JITJSCallThunkEntryPointsWithRef jitCallThunkEntryStub(VM*, JITCallThunkEntryGenerator);
 
     NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, const String& name);
-    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
-    NativeExecutable* hostFunctionStub(VM*, NativeFunction, ThunkGenerator, Intrinsic, const String& name);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, NativeFunction constructor, JITEntryGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);
+    NativeExecutable* hostFunctionStub(VM*, NativeFunction, JITEntryGenerator, Intrinsic, const String& name);
 
     void clearHostFunctionStubs();
 
@@ -70,6 +73,10 @@ private:
     
     typedef HashMap<ThunkGenerator, MacroAssemblerCodeRef> CTIStubMap;
     CTIStubMap m_ctiStubMap;
+    typedef HashMap<JITEntryGenerator, JITEntryPointsWithRef> JITEntryStubMap;
+    JITEntryStubMap m_jitEntryStubMap;
+    typedef HashMap<JITCallThunkEntryGenerator, JITJSCallThunkEntryPointsWithRef> JITCallThunkEntryStubMap;
+    JITCallThunkEntryStubMap m_jitCallThunkEntryStubMap;
 
     typedef std::tuple<NativeFunction, NativeFunction, String> HostFunctionKey;
 

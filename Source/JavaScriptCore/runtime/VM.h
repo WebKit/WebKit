@@ -432,6 +432,16 @@ public:
     {
         return jitStubs->ctiStub(this, generator);
     }
+
+    JITEntryPointsWithRef getJITEntryStub(JITEntryGenerator generator)
+    {
+        return jitStubs->jitEntryStub(this, generator);
+    }
+
+    JITJSCallThunkEntryPointsWithRef getJITCallThunkEntryStub(JITCallThunkEntryGenerator generator)
+    {
+        return jitStubs->jitCallThunkEntryStub(this, generator);
+    }
     
     std::unique_ptr<RegisterAtOffsetList> allCalleeSaveRegisterOffsets;
     
@@ -573,6 +583,50 @@ public:
     RegExpCache* m_regExpCache;
     BumpPointerAllocator m_regExpAllocator;
     ConcurrentJSLock m_regExpAllocatorLock;
+
+    enum VMCounterType {
+        BaselineCaller,
+        DFGCaller,
+        FTLCaller,
+        CallVarargs,
+        TailCall,
+        CallEval,
+        DirectCall,
+        PolymorphicCall,
+        VirtualCall,
+        VirtualSlowCall,
+        RegArgsNoArity,
+        StackArgsNoArity,
+        RegArgsExtra,
+        RegArgsArity,
+        StackArgsArity,
+        ArityFixupRequired,
+        NumberVMCounter
+    };
+
+#if ENABLE(VM_COUNTERS)
+    size_t m_counters[NumberVMCounter];
+
+    void clearCounters();
+
+    size_t* addressOfCounter(VMCounterType counterType)
+    {
+        if (counterType >= NumberVMCounter)
+            return nullptr;
+
+        return &m_counters[counterType];
+    }
+
+    size_t counterFor(VMCounterType counterType)
+    {
+        if (counterType >= NumberVMCounter)
+            return 0;
+        
+        return m_counters[counterType];
+    }
+
+    JS_EXPORT_PRIVATE void dumpCounters();
+#endif
 
     std::unique_ptr<HasOwnPropertyCache> m_hasOwnPropertyCache;
     ALWAYS_INLINE HasOwnPropertyCache* hasOwnPropertyCache() { return m_hasOwnPropertyCache.get(); }

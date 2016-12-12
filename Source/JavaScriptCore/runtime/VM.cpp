@@ -210,6 +210,10 @@ VM::VM(VMType vmType, HeapType heapType)
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(stack.origin());
 
+#if ENABLE(VM_COUNTERS)
+    clearCounters();
+#endif
+
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
     AtomicStringTable* existingEntryAtomicStringTable = wtfThreadData().setCurrentAtomicStringTable(m_atomicStringTable);
@@ -476,7 +480,7 @@ SamplingProfiler& VM::ensureSamplingProfiler(RefPtr<Stopwatch>&& stopwatch)
 #endif // ENABLE(SAMPLING_PROFILER)
 
 #if ENABLE(JIT)
-static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
+static JITEntryGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 {
     switch (intrinsic) {
     case CharCodeAtIntrinsic:
@@ -920,6 +924,37 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
 
         RELEASE_ASSERT(!m_needExceptionCheck);
     }
+}
+#endif
+
+#if ENABLE(VM_COUNTERS)
+void VM::clearCounters()
+{
+    for (unsigned i = 0; i < NumberVMCounter; i++)
+        m_counters[i] = 0;
+}
+
+void VM::dumpCounters()
+{
+    size_t totalCalls = counterFor(BaselineCaller) + counterFor(DFGCaller) + counterFor(FTLCaller);
+    dataLog("#### VM Call counters ####\n");
+    dataLogF("%10zu Total calls\n", totalCalls);
+    dataLogF("%10zu Baseline calls\n", counterFor(BaselineCaller));
+    dataLogF("%10zu DFG calls\n", counterFor(DFGCaller));
+    dataLogF("%10zu FTL calls\n", counterFor(FTLCaller));
+    dataLogF("%10zu Vararg calls\n", counterFor(CallVarargs));
+    dataLogF("%10zu Tail calls\n", counterFor(TailCall));
+    dataLogF("%10zu Eval calls\n", counterFor(CallEval));
+    dataLogF("%10zu Direct calls\n", counterFor(DirectCall));
+    dataLogF("%10zu Polymorphic calls\n", counterFor(PolymorphicCall));
+    dataLogF("%10zu Virtual calls\n", counterFor(VirtualCall));
+    dataLogF("%10zu Virtual slow calls\n", counterFor(VirtualSlowCall));
+    dataLogF("%10zu Register args no arity\n", counterFor(RegArgsNoArity));
+    dataLogF("%10zu Stack args no arity\n", counterFor(StackArgsNoArity));
+    dataLogF("%10zu Register args extra arity\n", counterFor(RegArgsExtra));
+    dataLogF("%10zu Register args arity check\n", counterFor(RegArgsArity));
+    dataLogF("%10zu Stack args arity check\n", counterFor(StackArgsArity));
+    dataLogF("%10zu Arity fixups required\n", counterFor(ArityFixupRequired));
 }
 #endif
 

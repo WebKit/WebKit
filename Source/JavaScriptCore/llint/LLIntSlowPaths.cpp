@@ -373,9 +373,9 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* cod
     CODEBLOCK_LOG_EVENT(codeBlock, "OSR entry", ("in prologue"));
     
     if (kind == Prologue)
-        LLINT_RETURN_TWO(codeBlock->jitCode()->executableAddress(), 0);
+        LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(StackArgsArityCheckNotRequired).executableAddress(), 0);
     ASSERT(kind == ArityCheck);
-    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(MustCheckArity).executableAddress(), 0);
+    LLINT_RETURN_TWO(codeBlock->jitCode()->addressForCall(StackArgsMustCheckArity).executableAddress(), 0);
 }
 #else // ENABLE(JIT)
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char*, EntryKind)
@@ -1292,7 +1292,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction()) {
-        codePtr = executable->entrypointFor(kind, MustCheckArity);
+        codePtr = executable->entrypointFor(kind, StackArgsMustCheckArity);
     } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -1306,12 +1306,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             LLINT_CALL_THROW(exec, error);
         codeBlock = *codeBlockSlot;
         ASSERT(codeBlock);
-        ArityCheckMode arity;
+        EntryPointType entryType;
         if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
-            arity = MustCheckArity;
+            entryType = StackArgsMustCheckArity;
         else
-            arity = ArityCheckNotRequired;
-        codePtr = functionExecutable->entrypointFor(kind, arity);
+            entryType = StackArgsArityCheckNotRequired;
+        codePtr = functionExecutable->entrypointFor(kind, entryType);
     }
 
     ASSERT(!!codePtr);

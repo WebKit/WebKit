@@ -172,6 +172,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetExecutable:
     case GetScope:
     case GetCallee:
+    case GetArgumentRegister:
     case GetArgumentCountIncludingThis:
     case ToNumber:
     case ToString:

@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 
 class JITFinalizer : public Finalizer {
 public:
-    JITFinalizer(Plan&, PassRefPtr<JITCode>, std::unique_ptr<LinkBuffer>, MacroAssemblerCodePtr withArityCheck = MacroAssemblerCodePtr(MacroAssemblerCodePtr::EmptyValue));
+    JITFinalizer(Plan&, PassRefPtr<JITCode>, std::unique_ptr<LinkBuffer>, JITEntryPoints&);
     virtual ~JITFinalizer();
     
     size_t codeSize() override;
@@ -48,7 +48,7 @@ private:
     
     RefPtr<JITCode> m_jitCode;
     std::unique_ptr<LinkBuffer> m_linkBuffer;
-    MacroAssemblerCodePtr m_withArityCheck;
+    JITEntryPoints m_entrypoints;
 };
 
 } } // namespace JSC::DFG

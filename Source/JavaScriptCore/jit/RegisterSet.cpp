@@ -159,6 +159,20 @@ RegisterSet RegisterSet::calleeSaveRegisters()
     return result;
 }
 
+RegisterSet RegisterSet::argumentRegisters()
+{
+    RegisterSet result;
+#if USE(JSVALUE64)
+    for (unsigned argumentIndex = 0; argumentIndex < NUMBER_OF_ARGUMENT_REGISTERS; argumentIndex++) {
+        GPRReg argumentReg = argumentRegisterFor(argumentIndex);
+
+        if (argumentReg != InvalidGPRReg)
+            result.set(argumentReg);
+    }
+#endif
+    return result;
+}
+
 RegisterSet RegisterSet::vmCalleeSaveRegisters()
 {
     RegisterSet result;

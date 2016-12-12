@@ -133,8 +133,13 @@ void VariableEventStream::reconstruct(
     if (!index) {
         valueRecoveries = Operands<ValueRecovery>(codeBlock->numParameters(), numVariables);
         for (size_t i = 0; i < valueRecoveries.size(); ++i) {
-            valueRecoveries[i] = ValueRecovery::displacedInJSStack(
-                VirtualRegister(valueRecoveries.operandForIndex(i)), DataFormatJS);
+            if (i < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
+                valueRecoveries[i] = ValueRecovery::inGPR(
+                    argumentRegisterForFunctionArgument(i), DataFormatJS);
+            } else {
+                valueRecoveries[i] = ValueRecovery::displacedInJSStack(
+                    VirtualRegister(valueRecoveries.operandForIndex(i)), DataFormatJS);
+            }
         }
         return;
     }
@@ -161,6 +166,12 @@ void VariableEventStream::reconstruct(
             MinifiedGenerationInfo info;
             info.update(event);
             generationInfos.add(event.id(), info);
+            MinifiedNode* node = graph.at(event.id());
+            if (node && node->hasArgumentIndex()) {
+                unsigned argument = node->argumentIndex();
+                VirtualRegister argumentReg = virtualRegisterForArgument(argument);
+                operandSources.setOperand(argumentReg, ValueSource(event.id()));
+            }
             break;
         }
         case Fill:

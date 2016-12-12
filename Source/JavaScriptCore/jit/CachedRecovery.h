@@ -50,6 +50,7 @@ public:
     CachedRecovery& operator=(CachedRecovery&&) = delete;
 
     const Vector<VirtualRegister, 1>& targets() const { return m_targets; }
+    const Vector<JSValueRegs, 1>& gprTargets() const { return m_gprTargets; }
 
     void addTarget(VirtualRegister reg)
     {
@@ -68,15 +69,11 @@ public:
         m_targets.clear();
     }
 
-    void setWantedJSValueRegs(JSValueRegs jsValueRegs)
-    {
-        ASSERT(m_wantedFPR == InvalidFPRReg);
-        m_wantedJSValueRegs = jsValueRegs;
-    }
+    void addTargetJSValueRegs(JSValueRegs);
 
     void setWantedFPR(FPRReg fpr)
     {
-        ASSERT(!m_wantedJSValueRegs);
+        ASSERT(m_gprTargets.isEmpty());
         m_wantedFPR = fpr;
     }
 
@@ -119,14 +116,20 @@ public:
 
     void setRecovery(ValueRecovery recovery) { m_recovery = recovery; }
 
-    JSValueRegs wantedJSValueRegs() const { return m_wantedJSValueRegs; }
+    JSValueRegs wantedJSValueRegs() const
+    {
+        if (m_gprTargets.isEmpty())
+            return JSValueRegs();
+
+        return m_gprTargets[0];
+    }
 
     FPRReg wantedFPR() const { return m_wantedFPR; }
 private:
     ValueRecovery m_recovery;
-    JSValueRegs m_wantedJSValueRegs;
     FPRReg m_wantedFPR { InvalidFPRReg };
     Vector<VirtualRegister, 1> m_targets;
+    Vector<JSValueRegs, 1> m_gprTargets;
 };
 
 } // namespace JSC

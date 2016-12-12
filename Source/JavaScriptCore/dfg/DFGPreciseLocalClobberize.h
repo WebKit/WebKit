@@ -197,7 +197,7 @@ private:
 
             
         default: {
-            // All of the outermost arguments, except this, are definitely read.
+            // All of the outermost stack arguments, except this, are definitely read.
             for (unsigned i = m_graph.m_codeBlock->numParameters(); i-- > 1;)
                 m_read(virtualRegisterForArgument(i));
         

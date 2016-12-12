@@ -147,7 +147,7 @@ public:
             
         } while (changed);
         
-        // All of the arguments should be live at head of root. Note that we may find that some
+        // All of the stack arguments should be live at head of root. Note that we may find that some
         // locals are live at head of root. This seems wrong but isn't. This will happen for example
         // if the function accesses closure variable #42 for some other function and we either don't
         // have variable #42 at all or we haven't set it at root, for whatever reason. Basically this
@@ -157,8 +157,12 @@ public:
         //
         // For our purposes here, the imprecision in the aliasing is harmless. It just means that we
         // may not do as much Phi pruning as we wanted.
-        for (size_t i = liveAtHead.atIndex(0).numberOfArguments(); i--;)
-            DFG_ASSERT(m_graph, nullptr, liveAtHead.atIndex(0).argument(i));
+        for (size_t i = liveAtHead.atIndex(0).numberOfArguments(); i--;) {
+            if (i >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
+                // Stack arguments are live at the head of root.
+                DFG_ASSERT(m_graph, nullptr, liveAtHead.atIndex(0).argument(i));
+            }
+        }
         
         // Next identify where we would want to sink PutStacks to. We say that there is a deferred
         // flush if we had a PutStack with a given FlushFormat but it hasn't been materialized yet.
@@ -358,7 +362,8 @@ public:
             for (Node* node : *block) {
                 switch (node->op()) {
                 case PutStack:
-                    putStacksToSink.add(node);
+                    if (!m_graph.m_argumentsOnStack.contains(node))
+                        putStacksToSink.add(node);
                     ssaCalculator.newDef(
                         operandToVariable.operand(node->stackAccessData()->local),
                         block, node->child1().node());
@@ -483,11 +488,15 @@ public:
                             return;
                         }
                     
+                        Node* incoming = mapping.operand(operand);
+                        // Since we don't delete argument PutStacks, no need to add one back.
+                        if (m_graph.m_argumentsOnStack.contains(incoming))
+                            return;
+
                         // Gotta insert a PutStack.
                         if (verbose)
                             dataLog("Inserting a PutStack for ", operand, " at ", node, "\n");
 
-                        Node* incoming = mapping.operand(operand);
                         DFG_ASSERT(m_graph, node, incoming);
                     
                         insertionSet.insertNode(
@@ -538,6 +547,8 @@ public:
                     Node* incoming;
                     if (isConcrete(deferred.operand(operand))) {
                         incoming = mapping.operand(operand);
+                        if (m_graph.m_argumentsOnStack.contains(incoming))
+                            continue;
                         DFG_ASSERT(m_graph, phiNode, incoming);
                     } else {
                         // Issue a GetStack to get the value. This might introduce some redundancy

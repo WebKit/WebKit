@@ -271,7 +271,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // non-clear value.
         ASSERT(!m_state.variables().operand(node->local()).isClear());
         break;
-        
+
+    case GetArgumentRegister:
+        ASSERT(!m_state.variables().operand(node->local()).isClear());
+        if (node->variableAccessData()->flushFormat() == FlushedJSValue) {
+            forNode(node).makeBytecodeTop();
+            break;
+        }
+
+        forNode(node).setType(m_graph, typeFilterFor(node->variableAccessData()->flushFormat()));
+        break;
+
     case LoadVarargs:
     case ForwardVarargs: {
         // FIXME: ForwardVarargs should check if the count becomes known, and if it does, it should turn

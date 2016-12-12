@@ -414,6 +414,89 @@ public:
 #endif
     }
 
+    enum SpillRegisterType { SpillAll, SpillExactly };
+
+    void spillArgumentRegistersToFrameBeforePrologue(unsigned minimumArgsToSpill = 0, SpillRegisterType spillType = SpillAll)
+    {
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
+        JumpList doneStoringArgs;
+
+        emitPutToCallFrameHeaderBeforePrologue(argumentRegisterForCallee(), CallFrameSlot::callee);
+        GPRReg argCountReg = argumentRegisterForArgumentCount();
+        emitPutToCallFrameHeaderBeforePrologue(argCountReg, CallFrameSlot::argumentCount);
+
+        unsigned argIndex = 0;
+        // Always spill "this"
+        minimumArgsToSpill = std::max(minimumArgsToSpill, 1U);
+
+        for (; argIndex < minimumArgsToSpill && argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++)
+            emitPutArgumentToCallFrameBeforePrologue(argumentRegisterForFunctionArgument(argIndex), argIndex);
+
+        if (spillType == SpillAll) {
+            // Spill extra args passed to function
+            for (; argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++) {
+                doneStoringArgs.append(branch32(MacroAssembler::BelowOrEqual, argCountReg, MacroAssembler::TrustedImm32(argIndex)));
+                emitPutArgumentToCallFrameBeforePrologue(argumentRegisterForFunctionArgument(argIndex), argIndex);
+            }
+        }
+
+        doneStoringArgs.link(this);
+#else
+        UNUSED_PARAM(minimumArgsToSpill);
+        UNUSED_PARAM(spillType);
+#endif
+    }
+
+    void spillArgumentRegistersToFrame(unsigned minimumArgsToSpill = 0, SpillRegisterType spillType = SpillAll)
+    {
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
+        JumpList doneStoringArgs;
+
+        emitPutToCallFrameHeader(argumentRegisterForCallee(), CallFrameSlot::callee);
+        GPRReg argCountReg = argumentRegisterForArgumentCount();
+        emitPutToCallFrameHeader(argCountReg, CallFrameSlot::argumentCount);
+        
+        unsigned argIndex = 0;
+        // Always spill "this"
+        minimumArgsToSpill = std::max(minimumArgsToSpill, 1U);
+        
+        for (; argIndex < minimumArgsToSpill && argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++)
+            emitPutArgumentToCallFrame(argumentRegisterForFunctionArgument(argIndex), argIndex);
+        
+        if (spillType == SpillAll) {
+            // Spill extra args passed to function
+            for (; argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++) {
+                doneStoringArgs.append(branch32(MacroAssembler::BelowOrEqual, argCountReg, MacroAssembler::TrustedImm32(argIndex)));
+                emitPutArgumentToCallFrame(argumentRegisterForFunctionArgument(argIndex), argIndex);
+            }
+        }
+        
+        doneStoringArgs.link(this);
+#else
+        UNUSED_PARAM(minimumArgsToSpill);
+        UNUSED_PARAM(spillType);
+#endif
+    }
+    
+    void fillArgumentRegistersFromFrameBeforePrologue()
+    {
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
+        JumpList doneLoadingArgs;
+
+        emitGetFromCallFrameHeaderBeforePrologue(CallFrameSlot::callee, argumentRegisterForCallee());
+        GPRReg argCountReg = argumentRegisterForArgumentCount();
+        emitGetPayloadFromCallFrameHeaderBeforePrologue(CallFrameSlot::argumentCount, argCountReg);
+        
+        for (unsigned argIndex = 0; argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++) {
+            if (argIndex) // Always load "this"
+                doneLoadingArgs.append(branch32(MacroAssembler::BelowOrEqual, argCountReg, MacroAssembler::TrustedImm32(argIndex)));
+            emitGetFromCallFrameArgumentBeforePrologue(argIndex, argumentRegisterForFunctionArgument(argIndex));
+        }
+        
+        doneLoadingArgs.link(this);
+#endif
+    }
+
 #if CPU(X86_64) || CPU(X86)
     static size_t prologueStackPointerDelta()
     {
@@ -623,6 +706,31 @@ public:
     void emitPutToCallFrameHeaderBeforePrologue(GPRReg from, int entry)
     {
         storePtr(from, Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
+    }
+
+    void emitPutArgumentToCallFrameBeforePrologue(GPRReg from, unsigned argument)
+    {
+        storePtr(from, Address(stackPointerRegister, (CallFrameSlot::thisArgument + argument) * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
+    }
+
+    void emitPutArgumentToCallFrame(GPRReg from, unsigned argument)
+    {
+        emitPutToCallFrameHeader(from, CallFrameSlot::thisArgument + argument);
+    }
+
+    void emitGetFromCallFrameHeaderBeforePrologue(const int entry, GPRReg to)
+    {
+        loadPtr(Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()), to);
+    }
+    
+    void emitGetFromCallFrameArgumentBeforePrologue(unsigned argument, GPRReg to)
+    {
+        loadPtr(Address(stackPointerRegister, (CallFrameSlot::thisArgument + argument) * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()), to);
+    }
+    
+    void emitGetPayloadFromCallFrameHeaderBeforePrologue(const int entry, GPRReg to)
+    {
+        load32(Address(stackPointerRegister, entry * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)), to);
     }
 #else
     void emitPutPayloadToCallFrameHeaderBeforePrologue(GPRReg from, int entry)
@@ -1660,7 +1768,14 @@ public:
 #if USE(JSVALUE64)
     void wangsInt64Hash(GPRReg inputAndResult, GPRReg scratch);
 #endif
-    
+
+#if ENABLE(VM_COUNTERS)
+    void incrementCounter(VM::VMCounterType counterType)
+    {
+        addPtr(TrustedImm32(1), AbsoluteAddress(vm()->addressOfCounter(counterType)));
+    }
+#endif
+
 protected:
     VM* m_vm;
     CodeBlock* m_codeBlock;
@@ -1668,6 +1783,12 @@ protected:
 
     HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset>> m_decodedCodeMaps;
 };
+
+#if ENABLE(VM_COUNTERS)
+#define incrementCounter(jit, counterType) (jit)->incrementCounter(counterType)
+#else
+#define incrementCounter(jit, counterType) ((void)0)
+#endif
 
 } // namespace JSC
 

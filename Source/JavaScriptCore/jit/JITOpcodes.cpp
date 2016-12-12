@@ -49,9 +49,9 @@ namespace JSC {
 
 #if USE(JSVALUE64)
 
-JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction)
+JITEntryPointsWithRef JIT::privateCompileJITEntryNativeCall(VM* vm, NativeFunction)
 {
-    return vm->getCTIStub(nativeCallGenerator);
+    return vm->getJITEntryStub(nativeCallGenerator);
 }
 
 void JIT::emit_op_mov(Instruction* currentInstruction)

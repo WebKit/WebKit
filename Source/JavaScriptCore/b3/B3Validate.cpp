@@ -182,9 +182,12 @@ public:
             case ArgumentReg:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(!value->numChildren(), ("At ", *value));
-                VALIDATE(
-                    (value->as<ArgumentRegValue>()->argumentReg().isGPR() ? pointerType() : Double)
-                    == value->type(), ("At ", *value));
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165717
+                // We need to handle Int32 arguments and Int64 arguments
+                // for the same register distinctly.
+                VALIDATE((value->as<ArgumentRegValue>()->argumentReg().isGPR()
+                    ? (value->type() == pointerType() || value->type() == Int32)
+                    : value->type() == Double), ("At ", *value));
                 break;
             case Add:
             case Sub:

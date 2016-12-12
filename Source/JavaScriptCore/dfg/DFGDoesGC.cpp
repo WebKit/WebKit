@@ -261,6 +261,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetStack:
     case GetFromArguments:
     case PutToArguments:
+    case GetArgumentRegister:
     case GetArgument:
     case LogShadowChickenPrologue:
     case LogShadowChickenTail:

@@ -45,7 +45,8 @@ JITCode::~JITCode()
         dataLog("Destroying FTL JIT code at ");
         CommaPrinter comma;
         dataLog(comma, m_b3Code);
-        dataLog(comma, m_arityCheckEntrypoint);
+        dataLog(comma, m_registerArgsPossibleExtraArgsEntryPoint);
+        dataLog(comma, m_registerArgsCheckArityEntryPoint);
         dataLog("\n");
     }
 }
@@ -60,31 +61,30 @@ void JITCode::initializeB3Byproducts(std::unique_ptr<OpaqueByproducts> byproduct
     m_b3Byproducts = WTFMove(byproducts);
 }
 
-void JITCode::initializeAddressForCall(CodePtr address)
+void JITCode::initializeEntrypointThunk(CodeRef entrypointThunk)
 {
-    m_addressForCall = address;
+    m_entrypointThunk = entrypointThunk;
 }
 
-void JITCode::initializeArityCheckEntrypoint(CodeRef entrypoint)
+void JITCode::setEntryFor(EntryPointType type, CodePtr entry)
 {
-    m_arityCheckEntrypoint = entrypoint;
+    m_entrypoints.setEntryFor(type, entry);
 }
-
-JITCode::CodePtr JITCode::addressForCall(ArityCheckMode arityCheck)
+    
+JITCode::CodePtr JITCode::addressForCall(EntryPointType entryType)
 {
-    switch (arityCheck) {
-    case ArityCheckNotRequired:
-        return m_addressForCall;
-    case MustCheckArity:
-        return m_arityCheckEntrypoint.code();
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return CodePtr();
+    CodePtr entry = m_entrypoints.entryFor(entryType);
+    RELEASE_ASSERT(entry);
+    return entry;
 }
 
 void* JITCode::executableAddressAtOffset(size_t offset)
 {
-    return reinterpret_cast<char*>(m_addressForCall.executableAddress()) + offset;
+#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
+    return reinterpret_cast<char*>(addressForCall(RegisterArgsArityCheckNotRequired).executableAddress()) + offset;
+#else
+    return reinterpret_cast<char*>(addressForCall(StackArgsArityCheckNotRequired).executableAddress()) + offset;
+#endif
 }
 
 void* JITCode::dataAddressAtOffset(size_t)

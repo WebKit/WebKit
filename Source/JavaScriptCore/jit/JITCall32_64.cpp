@@ -203,7 +203,7 @@ void JIT::compileCallEval(Instruction* instruction)
 void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     CallLinkInfo* info = m_codeBlock->addCallLinkInfo();
-    info->setUpCall(CallLinkInfo::Call, CodeOrigin(m_bytecodeOffset), regT0);
+    info->setUpCall(CallLinkInfo::Call, StackArgs, CodeOrigin(m_bytecodeOffset), regT0);
 
     linkSlowCase(iter);
 
@@ -211,12 +211,12 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
-    move(TrustedImmPtr(info), regT2);
+    move(TrustedImmPtr(info), nonArgGPR0);
 
     emitLoad(CallFrameSlot::callee, regT1, regT0);
-    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(m_vm, *info);
-    info->setSlowStub(createJITStubRoutine(virtualThunk, *m_vm, nullptr, true));
-    emitNakedCall(virtualThunk.code());
+    JITJSCallThunkEntryPointsWithRef virtualThunk = virtualThunkFor(m_vm, *info);
+    info->setSlowStub(createJITStubRoutine(virtualThunk.codeRef(), *m_vm, nullptr, true));
+    emitNakedCall(virtualThunk.entryFor(StackArgs));
     addPtr(TrustedImm32(stackPointerOffsetFor(m_codeBlock) * sizeof(Register)), callFrameRegister, stackPointerRegister);
     checkStackPointerAlignment();
 
@@ -286,7 +286,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     addSlowCase(slowCase);
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
-    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), CodeOrigin(m_bytecodeOffset), regT0);
+    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), StackArgs, CodeOrigin(m_bytecodeOffset), regT0);
     m_callCompilationInfo.append(CallCompilationInfo());
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
@@ -317,12 +317,13 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vec
     linkSlowCase(iter);
     linkSlowCase(iter);
 
-    move(TrustedImmPtr(m_callCompilationInfo[callLinkInfoIndex].callLinkInfo), regT2);
+    CallLinkInfo* callLinkInfo = m_callCompilationInfo[callLinkInfoIndex].callLinkInfo;
+    move(TrustedImmPtr(callLinkInfo), nonArgGPR0);
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs)
         emitRestoreCalleeSaves();
 
-    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getCTIStub(linkCallThunkGenerator).code());
+    m_callCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(m_vm->getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(callLinkInfo->argumentsLocation()));
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs) {
         abortWithReason(JITDidReturnFromTailCall);
