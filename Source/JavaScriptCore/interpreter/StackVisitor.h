@@ -37,8 +37,8 @@ struct InlineCallFrame;
 
 class CodeBlock;
 class ExecState;
+class JSCell;
 class JSFunction;
-class JSObject;
 class ClonedArguments;
 class Register;
 class RegisterAtOffsetList;

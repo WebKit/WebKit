@@ -1,3 +1,11 @@
+2016-12-12  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Try to fix the cloop build.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegisters):
+        * interpreter/StackVisitor.h:
+
 2016-12-12  Michael Saboff  <msaboff@apple.com>
 
         FTL: Dumping disassembly requires that code origin is set when making polymorphic tail calls.
