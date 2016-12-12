@@ -6144,6 +6144,13 @@ private:
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 CallSiteIndex callSiteIndex = state->jitCode->common.addUniqueCallSiteIndex(codeOrigin);
 
+                // Yes, this is really necessary. You could throw an exception in a host call on the
+                // slow path. That'll route us to lookupExceptionHandler(), which unwinds starting
+                // with the call site index of our frame. Bad things happen if it's not set.
+                jit.store32(
+                    CCallHelpers::TrustedImm32(callSiteIndex.bits()),
+                    CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
+
                 CallFrameShuffleData shuffleData;
                 shuffleData.numLocals = state->jitCode->common.frameRegisterCount;
                 shuffleData.callee = ValueRecovery::inGPR(GPRInfo::regT0, DataFormatJS);
@@ -6166,13 +6173,6 @@ private:
                 CCallHelpers::Call fastCall = jit.nearTailCall();
 
                 slowPath.link(&jit);
-
-                // Yes, this is really necessary. You could throw an exception in a host call on the
-                // slow path. That'll route us to lookupExceptionHandler(), which unwinds starting
-                // with the call site index of our frame. Bad things happen if it's not set.
-                jit.store32(
-                    CCallHelpers::TrustedImm32(callSiteIndex.bits()),
-                    CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCount)));
 
                 CallFrameShuffler slowPathShuffler(jit, shuffleData);
                 slowPathShuffler.setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));

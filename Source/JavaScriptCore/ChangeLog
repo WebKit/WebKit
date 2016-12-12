@@ -1,3 +1,16 @@
+2016-12-12  Michael Saboff  <msaboff@apple.com>
+
+        FTL: Dumping disassembly requires that code origin is set when making polymorphic tail calls.
+        https://bugs.webkit.org/show_bug.cgi?id=165747
+
+        Reviewed by Filip Pizlo.
+
+        Setting the code origin needs to be done for both the fast and slow path as we might need
+        it when linking a polymorphic or virtual call stub.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+
 2016-12-11  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Try to fix the linux build.
