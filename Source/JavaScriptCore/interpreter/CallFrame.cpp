@@ -185,8 +185,11 @@ Register* CallFrame::topOfFrameInternal()
 
 JSGlobalObject* CallFrame::vmEntryGlobalObject()
 {
-    if (this == lexicalGlobalObject()->globalExec())
-        return lexicalGlobalObject();
+    if (callee()->isObject()) { 
+        if (this == lexicalGlobalObject()->globalExec())
+            return lexicalGlobalObject();
+    }
+    // If we're not an object, we're wasm, and therefore we're executing code and the below is safe.
 
     // For any ExecState that's not a globalExec, the 
     // dynamic global object must be set since code is running

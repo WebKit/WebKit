@@ -165,10 +165,10 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
 
         ASSERT(exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
 
-        StackFrame* firstNonNativeFrame = nullptr;
+        StackFrame* firstFrameWithLineAndColumnInfo = nullptr;
         for (unsigned i = 0 ; i < stackTrace.size(); ++i) {
-            firstNonNativeFrame = &stackTrace.at(i);
-            if (!firstNonNativeFrame->isNative())
+            firstFrameWithLineAndColumnInfo = &stackTrace.at(i);
+            if (firstFrameWithLineAndColumnInfo->hasLineAndColumnInfo())
                 break;
         }
 
@@ -177,16 +177,18 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
             vm.topCallFrame->iterate(functor);
             callFrame = functor.foundCallFrame();
             unsigned stackIndex = functor.index();
-            *bytecodeOffset = stackTrace.at(stackIndex).bytecodeOffset;
+            *bytecodeOffset = 0;
+            if (stackTrace.at(stackIndex).hasBytecodeOffset())
+                *bytecodeOffset = stackTrace.at(stackIndex).bytecodeOffset();
         }
         
         unsigned line;
         unsigned column;
-        firstNonNativeFrame->computeLineAndColumn(line, column);
+        firstFrameWithLineAndColumnInfo->computeLineAndColumn(line, column);
         obj->putDirect(vm, vm.propertyNames->line, jsNumber(line));
         obj->putDirect(vm, vm.propertyNames->column, jsNumber(column));
 
-        String frameSourceURL = firstNonNativeFrame->sourceURL();
+        String frameSourceURL = firstFrameWithLineAndColumnInfo->sourceURL();
         if (!frameSourceURL.isEmpty())
             obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, frameSourceURL));
 

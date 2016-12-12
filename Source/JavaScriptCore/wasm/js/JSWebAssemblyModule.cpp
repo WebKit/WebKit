@@ -58,7 +58,7 @@ JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, std::uniq
     , m_functionIndexSpace(WTFMove(functionIndexSpace))
     , m_calleeCount(calleeCount)
 {
-    memset(callees(), 0, m_calleeCount * sizeof(WriteBarrier<JSWebAssemblyCallee>));
+    memset(callees(), 0, m_calleeCount * sizeof(WriteBarrier<JSWebAssemblyCallee>) * 2);
 }
 
 void JSWebAssemblyModule::finishCreation(VM& vm, SymbolTable* exportSymbolTable)
@@ -75,17 +75,25 @@ void JSWebAssemblyModule::destroy(JSCell* cell)
 
 void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    auto* thisObject = jsCast<JSWebAssemblyModule*>(cell);
+    JSWebAssemblyModule* thisObject = jsCast<JSWebAssemblyModule*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_exportSymbolTable);
-    for (auto iter = thisObject->m_callLinkInfos.begin(); !!iter; ++iter)
-        (*iter)->visitWeak(*thisObject->vm());
-    for (unsigned i = 0; i < thisObject->m_calleeCount; i++) {
+    for (unsigned i = 0; i < thisObject->m_calleeCount * 2; i++) {
         WriteBarrier<JSWebAssemblyCallee>* callee = &thisObject->callees()[i];
         visitor.append(callee);
     }
+
+    visitor.addUnconditionalFinalizer(&thisObject->m_unconditionalFinalizer);
+}
+
+void JSWebAssemblyModule::UnconditionalFinalizer::finalizeUnconditionally()
+{
+    JSWebAssemblyModule* thisObject = bitwise_cast<JSWebAssemblyModule*>(
+        bitwise_cast<char*>(this) - OBJECT_OFFSETOF(JSWebAssemblyModule, m_unconditionalFinalizer));
+    for (auto iter = thisObject->m_callLinkInfos.begin(); !!iter; ++iter)
+        (*iter)->visitWeak(*thisObject->vm());
 }
 
 } // namespace JSC

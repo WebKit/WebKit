@@ -63,6 +63,7 @@
 #include "Register.h"
 #include "ScopedArguments.h"
 #include "StackAlignment.h"
+#include "StackFrame.h"
 #include "StackVisitor.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
@@ -466,21 +467,14 @@ public:
         }
 
         if (m_remainingCapacityForFrameCapture) {
-            if (visitor->isJSFrame()
+            if (!visitor->isWasmFrame()
+                && !!visitor->codeBlock()
                 && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
-                StackFrame s = {
-                    Strong<JSObject>(m_vm, visitor->callee()),
-                    Strong<CodeBlock>(m_vm, visitor->codeBlock()),
-                    visitor->bytecodeOffset()
-                };
-                m_results.append(s);
+                m_results.append(
+                    StackFrame(m_vm, visitor->callee(), visitor->codeBlock(), visitor->bytecodeOffset()));
             } else {
-                StackFrame s = {
-                    Strong<JSObject>(m_vm, visitor->callee()),
-                    Strong<CodeBlock>(),
-                    0 // unused value because codeBlock is null.
-                };
-                m_results.append(s);
+                m_results.append(
+                    StackFrame(m_vm,  visitor->callee()));
             }
     
             m_remainingCapacityForFrameCapture--;
@@ -608,23 +602,20 @@ public:
 
         m_handler = nullptr;
         if (!m_isTermination) {
-            if (m_codeBlock)
+            if (m_codeBlock) {
                 m_handler = findExceptionHandler(visitor, m_codeBlock, RequiredHandler::AnyHandler);
+                if (m_handler)
+                    return StackVisitor::Done;
+            }
         }
-
-        if (m_handler)
-            return StackVisitor::Done;
 
         notifyDebuggerOfUnwinding(m_callFrame);
 
-        bool shouldStopUnwinding = visitor->callerIsVMEntryFrame();
-        if (shouldStopUnwinding) {
-            copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(visitor);
-
-            return StackVisitor::Done;
-        }
-
         copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(visitor);
+
+        bool shouldStopUnwinding = visitor->callerIsVMEntryFrame();
+        if (shouldStopUnwinding)
+            return StackVisitor::Done;
 
         return StackVisitor::Continue;
     }
@@ -633,15 +624,7 @@ private:
     void copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
     {
 #if ENABLE(JIT) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-
-        if (!visitor->isJSFrame())
-            return;
-
-#if ENABLE(DFG_JIT)
-        if (visitor->inlineCallFrame())
-            return;
-#endif
-        RegisterAtOffsetList* currentCalleeSaves = m_codeBlock ? m_codeBlock->calleeSaveRegisters() : nullptr;
+        RegisterAtOffsetList* currentCalleeSaves = visitor->calleeSaveRegisters();
 
         if (!currentCalleeSaves)
             return;

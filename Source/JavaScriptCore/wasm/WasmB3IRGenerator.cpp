@@ -40,8 +40,13 @@
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "ExceptionScope.h"
+#include "FrameTracers.h"
+#include "JITExceptions.h"
+#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "JSWebAssemblyRuntimeError.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
 #include "WasmFunctionParser.h"
@@ -224,13 +229,45 @@ B3IRGenerator::B3IRGenerator(const MemoryInformation& memory, Procedure& procedu
             m_proc.pinRegister(info.sizeRegister);
 
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
             ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
-            // FIXME: This should unwind the stack and throw a JS exception. See: https://bugs.webkit.org/show_bug.cgi?id=163351
-            jit.breakpoint();
+            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
+
+            jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+            CCallHelpers::Call call = jit.call();
+            jit.jumpToExceptionHandler();
+
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                void (*throwMemoryException)(ExecState*) = [] (ExecState* exec) {
+                    VM* vm = &exec->vm();
+                    NativeCallFrameTracer tracer(vm, exec);
+
+                    {
+                        auto throwScope = DECLARE_THROW_SCOPE(*vm);
+                        JSGlobalObject* globalObject = vm->topJSWebAssemblyInstance->globalObject();
+
+                        JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(
+                            exec, globalObject->WebAssemblyRuntimeErrorStructure(), "Out of bounds memory access");
+                        throwException(exec, throwScope, error);
+                    }
+
+                    genericUnwind(vm, exec);
+                    ASSERT(!!vm->callFrameForCatch);
+                };
+
+                linkBuffer.link(call, throwMemoryException);
+            });
         });
+
+        B3::PatchpointValue* foo = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
+        foo->setGenerator(
+            [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+            });
     }
 
-    wasmCallingConvention().setupFrameInPrologue(compilation, m_proc, Origin(), m_currentBlock);
+    wasmCallingConvention().setupFrameInPrologue(&compilation->wasmCalleeMoveLocation, m_proc, Origin(), m_currentBlock);
 
     m_functionIndexSpaceValue = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), functionIndexSpace.buffer.get());
 }
@@ -718,21 +755,25 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn("\n");
 }
 
-static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signature* signature, MacroAssemblerCodePtr mainFunction, const MemoryInformation& memory)
+static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFunction& function, const Signature* signature, MacroAssemblerCodePtr mainFunction, const MemoryInformation& memory)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
 
-    // Check argument count is sane.
-    Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, Origin());
-    Value* offSetOfArgumentCount = block->appendNew<Const64Value>(proc, Origin(), CallFrameSlot::argumentCount * sizeof(Register));
-    Value* argumentCount = block->appendNew<MemoryValue>(proc, Load, Int32, Origin(),
-        block->appendNew<Value>(proc, Add, Origin(), framePointer, offSetOfArgumentCount));
+    Origin origin;
 
-    Value* expectedArgumentCount = block->appendNew<Const32Value>(proc, Origin(), signature->arguments.size());
+    jscCallingConvention().setupFrameInPrologue(&function.jsToWasmCalleeMoveLocation, proc, origin, block);
 
-    CheckValue* argumentCountCheck = block->appendNew<CheckValue>(proc, Check, Origin(),
-        block->appendNew<Value>(proc, Above, Origin(), expectedArgumentCount, argumentCount));
+    Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
+    Value* offSetOfArgumentCount = block->appendNew<Const64Value>(proc, origin, CallFrameSlot::argumentCount * sizeof(Register));
+    Value* argumentCount = block->appendNew<MemoryValue>(proc, Load, Int32, origin,
+        block->appendNew<Value>(proc, Add, origin, framePointer, offSetOfArgumentCount));
+
+    Value* expectedArgumentCount = block->appendNew<Const32Value>(proc, origin, signature->arguments.size());
+
+    CheckValue* argumentCountCheck = block->appendNew<CheckValue>(proc, Check, origin,
+        block->appendNew<Value>(proc, Above, origin, expectedArgumentCount, argumentCount));
+
     argumentCountCheck->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
         jit.breakpoint();
     });
@@ -747,19 +788,19 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signatur
             block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topWasmMemorySize));
         sizes.reserveCapacity(memory.pinnedRegisters().sizeRegisters.size());
         for (auto info : memory.pinnedRegisters().sizeRegisters) {
-            sizes.append(block->appendNew<Value>(proc, Sub, Origin(), size,
-                block->appendNew<Const32Value>(proc, Origin(), info.sizeOffset)));
+            sizes.append(block->appendNew<Value>(proc, Sub, origin, size,
+                block->appendNew<Const32Value>(proc, origin, info.sizeOffset)));
         }
     }
 
     // Get our arguments.
     Vector<Value*> arguments;
-    jscCallingConvention().loadArguments(signature->arguments, proc, block, Origin(), [&] (Value* argument, unsigned) {
+    jscCallingConvention().loadArguments(signature->arguments, proc, block, origin, [&] (Value* argument, unsigned) {
         arguments.append(argument);
     });
 
     // Move the arguments into place.
-    Value* result = wasmCallingConvention().setupCall(proc, block, Origin(), arguments, toB3Type(signature->returnType), [&] (PatchpointValue* patchpoint) {
+    Value* result = wasmCallingConvention().setupCall(proc, block, origin, arguments, toB3Type(signature->returnType), [&] (PatchpointValue* patchpoint) {
         if (!!memory) {
             ASSERT(sizes.size() == memory.pinnedRegisters().sizeRegisters.size());
             patchpoint->append(ConstrainedValue(baseMemory, ValueRep::reg(memory.pinnedRegisters().baseMemoryPointer)));
@@ -780,22 +821,24 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, const Signatur
     // Return the result, if needed.
     switch (signature->returnType) {
     case Wasm::Void:
-        block->appendNewControlValue(proc, B3::Return, Origin());
+        block->appendNewControlValue(proc, B3::Return, origin);
         break;
     case Wasm::F32:
     case Wasm::F64:
-        result = block->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+        result = block->appendNew<Value>(proc, BitwiseCast, origin, result);
         FALLTHROUGH;
     case Wasm::I32:
     case Wasm::I64:
-        block->appendNewControlValue(proc, B3::Return, Origin(), result);
+        block->appendNewControlValue(proc, B3::Return, origin, result);
         break;
     case Wasm::Func:
     case Wasm::Anyfunc:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    return std::make_unique<Compilation>(vm, proc);
+    auto jsEntrypoint = std::make_unique<Compilation>(vm, proc);
+    function.jsToWasmEntrypoint.calleeSaveRegisters = proc.calleeSaveRegisters();
+    return jsEntrypoint;
 }
 
 std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
@@ -817,8 +860,9 @@ std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* fun
     if (verbose)
         dataLog("Post SSA: ", procedure);
 
-    result->code = std::make_unique<Compilation>(vm, procedure, optLevel);
-    result->jsToWasmEntryPoint = createJSToWasmWrapper(vm, signature, result->code->code(), info.memory);
+    result->wasmEntrypoint.compilation = std::make_unique<Compilation>(vm, procedure, optLevel);
+    result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
+    result->jsToWasmEntrypoint.compilation = createJSToWasmWrapper(vm, *result, signature, result->wasmEntrypoint.compilation->code(), info.memory);
     return result;
 }
 

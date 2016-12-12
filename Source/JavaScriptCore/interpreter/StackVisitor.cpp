@@ -31,6 +31,7 @@
 #include "InlineCallFrame.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyCallee.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -38,6 +39,7 @@ namespace JSC {
 StackVisitor::StackVisitor(CallFrame* startFrame)
 {
     m_frame.m_index = 0;
+    m_frame.m_isWasmFrame = false;
     CallFrame* topFrame;
     if (startFrame) {
         m_frame.m_VMEntryFrame = startFrame->vm().topVMEntryFrame;
@@ -101,6 +103,11 @@ void StackVisitor::readFrame(CallFrame* callFrame)
         return;
     }
 
+    if (callFrame->callee()->isAnyWasmCallee()) {
+        readNonInlinedFrame(callFrame);
+        return;
+    }
+
 #if !ENABLE(DFG_JIT)
     readNonInlinedFrame(callFrame);
 
@@ -146,11 +153,23 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     m_frame.m_CallerVMEntryFrame = m_frame.m_VMEntryFrame;
     m_frame.m_callerFrame = callFrame->callerFrame(m_frame.m_CallerVMEntryFrame);
     m_frame.m_callerIsVMEntryFrame = m_frame.m_CallerVMEntryFrame != m_frame.m_VMEntryFrame;
-    m_frame.m_callee = callFrame->jsCallee();
-    m_frame.m_codeBlock = callFrame->codeBlock();
-    m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
-        : codeOrigin ? codeOrigin->bytecodeIndex
-        : callFrame->bytecodeOffset();
+    m_frame.m_isWasmFrame = false;
+
+    JSCell* callee = callFrame->callee();
+    m_frame.m_callee = callee;
+
+    if (callee->isAnyWasmCallee()) {
+        m_frame.m_isWasmFrame = true;
+        m_frame.m_codeBlock = nullptr;
+        m_frame.m_bytecodeOffset = 0;
+    } else {
+        m_frame.m_codeBlock = callFrame->codeBlock();
+        m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
+            : codeOrigin ? codeOrigin->bytecodeIndex
+            : callFrame->bytecodeOffset();
+
+    }
+
 #if ENABLE(DFG_JIT)
     m_frame.m_inlineCallFrame = 0;
 #endif
@@ -167,6 +186,7 @@ static int inlinedFrameOffset(CodeOrigin* codeOrigin)
 void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
 {
     ASSERT(codeOrigin);
+    m_frame.m_isWasmFrame = false;
 
     int frameOffset = inlinedFrameOffset(codeOrigin);
     bool isInlined = !!frameOffset;
@@ -198,9 +218,17 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
 }
 #endif // ENABLE(DFG_JIT)
 
+bool StackVisitor::Frame::isWasmFrame() const
+{
+    return m_isWasmFrame;
+}
+
 StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 {
-    if (!isJSFrame())
+    if (isWasmFrame())
+        return CodeType::Wasm;
+
+    if (!codeBlock())
         return CodeType::Native;
 
     switch (codeBlock()->codeType()) {
@@ -217,12 +245,39 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
     return CodeType::Global;
 }
 
+RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
+{
+    if (isInlinedFrame())
+        return nullptr;
+
+#if ENABLE(WEBASSEMBLY)
+    if (isWasmFrame()) {
+        if (JSCell* callee = this->callee()) {
+            if (JSWebAssemblyCallee* wasmCallee = jsDynamicCast<JSWebAssemblyCallee*>(callee))
+                return wasmCallee->calleeSaveRegisters();
+            // Other wasm callees (e.g, stubs) don't use callee save registers, so nothing needs
+            // to be restored for them.
+        }
+
+        return nullptr;
+    }
+#endif
+
+    if (CodeBlock* codeBlock = this->codeBlock())
+        return codeBlock->calleeSaveRegisters();
+
+    return nullptr;
+}
+
 String StackVisitor::Frame::functionName() const
 {
     String traceLine;
-    JSObject* callee = this->callee();
+    JSCell* callee = this->callee();
 
     switch (codeType()) {
+    case CodeType::Wasm:
+        traceLine = ASCIILiteral("wasm code");
+        break;
     case CodeType::Eval:
         traceLine = ASCIILiteral("eval code");
         break;
@@ -231,10 +286,10 @@ String StackVisitor::Frame::functionName() const
         break;
     case CodeType::Native:
         if (callee)
-            traceLine = getCalculatedDisplayName(callFrame()->vm(), callee).impl();
+            traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(callee)).impl();
         break;
     case CodeType::Function:
-        traceLine = getCalculatedDisplayName(callFrame()->vm(), callee).impl();
+        traceLine = getCalculatedDisplayName(callFrame()->vm(), jsCast<JSObject*>(callee)).impl();
         break;
     case CodeType::Global:
         traceLine = ASCIILiteral("global code");
@@ -260,6 +315,9 @@ String StackVisitor::Frame::sourceURL() const
     case CodeType::Native:
         traceLine = ASCIILiteral("[native code]");
         break;
+    case CodeType::Wasm:
+        traceLine = ASCIILiteral("[wasm code]");
+        break;
     }
     return traceLine.isNull() ? emptyString() : traceLine;
 }
@@ -274,7 +332,7 @@ String StackVisitor::Frame::toString() const
         if (!functionName.isEmpty())
             traceBuild.append('@');
         traceBuild.append(sourceURL);
-        if (isJSFrame()) {
+        if (hasLineAndColumnInfo()) {
             unsigned line = 0;
             unsigned column = 0;
             computeLineAndColumn(line, column);
@@ -314,6 +372,11 @@ ClonedArguments* StackVisitor::Frame::createArguments()
     return arguments;
 }
 
+bool StackVisitor::Frame::hasLineAndColumnInfo() const
+{
+    return !!codeBlock();
+}
+
 void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column) const
 {
     CodeBlock* codeBlock = this->codeBlock();
@@ -350,6 +413,7 @@ void StackVisitor::Frame::setToEnd()
 #if ENABLE(DFG_JIT)
     m_inlineCallFrame = 0;
 #endif
+    m_isWasmFrame = false;
 }
 
 void StackVisitor::Frame::dump(PrintStream& out, Indenter indent) const

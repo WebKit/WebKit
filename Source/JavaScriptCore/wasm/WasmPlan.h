@@ -50,7 +50,7 @@ public:
 
     JS_EXPORT_PRIVATE void run();
 
-    JS_EXPORT_PRIVATE void initializeCallees(JSGlobalObject*, std::function<void(unsigned, JSWebAssemblyCallee*)>);
+    JS_EXPORT_PRIVATE void initializeCallees(JSGlobalObject*, std::function<void(unsigned, JSWebAssemblyCallee*, JSWebAssemblyCallee*)>);
 
     bool WARN_UNUSED_RETURN failed() const { return m_failed; }
     const String& errorMessage() const
@@ -69,12 +69,6 @@ public:
     {
         RELEASE_ASSERT(!failed());
         return m_wasmInternalFunctions.size();
-    }
-
-    B3::Compilation* jsToWasmEntryPointForFunction(size_t i) const
-    {
-        ASSERT(i > m_wasmToJSStubs.size());
-        return m_wasmInternalFunctions.at(i - m_wasmToJSStubs.size())->jsToWasmEntryPoint.get();
     }
 
     std::unique_ptr<ModuleInformation>&& takeModuleInformation()

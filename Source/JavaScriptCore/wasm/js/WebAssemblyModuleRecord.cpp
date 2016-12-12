@@ -136,7 +136,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            JSWebAssemblyCallee* wasmCallee = module->calleeFromFunctionIndexSpace(exp.functionIndex);
+            JSWebAssemblyCallee* wasmCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(exp.functionIndex);
             Wasm::Signature* signature = module->signatureForFunctionIndexSpace(exp.functionIndex);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), exp.field.string(), instance, wasmCallee, signature);
             exportedValue = function;
@@ -174,7 +174,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
         // FIXME can start call imports / tables? This assumes not. https://github.com/WebAssembly/design/issues/896
         if (!m_startFunction.get()) {
             // The start function wasn't added above. It must be a purely internal function.
-            JSWebAssemblyCallee* wasmCallee = module->calleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            JSWebAssemblyCallee* wasmCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), "start", instance, wasmCallee, signature);
             m_startFunction.set(vm, this, function);
         }

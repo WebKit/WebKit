@@ -27,7 +27,9 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSCallee.h"
+#include "JSCell.h"
+#include "RegisterAtOffsetList.h"
+#include "Structure.h"
 #include "WasmFormat.h"
 
 namespace JSC {
@@ -37,10 +39,10 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static JSWebAssemblyCallee* create(VM& vm, std::unique_ptr<B3::Compilation>&& code, std::unique_ptr<B3::Compilation>&& jsToWasmEntryPoint)
+    static JSWebAssemblyCallee* create(VM& vm, Wasm::Entrypoint&& entrypoint)
     {
         JSWebAssemblyCallee* callee = new (NotNull, allocateCell<JSWebAssemblyCallee>(vm.heap)) JSWebAssemblyCallee(vm);
-        callee->finishCreation(vm, std::forward<std::unique_ptr<B3::Compilation>>(code), std::forward<std::unique_ptr<B3::Compilation>>(jsToWasmEntryPoint));
+        callee->finishCreation(vm, WTFMove(entrypoint));
         return callee;
     }
 
@@ -53,14 +55,15 @@ public:
     static const bool needsDestruction = true;
     static void destroy(JSCell*);
 
-    void* jsToWasmEntryPoint() { return m_jsToWasmEntryPoint->code().executableAddress(); }
+    void* entrypoint() { return m_entrypoint.compilation->code().executableAddress(); }
+
+    RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
 
 private:
-    void finishCreation(VM&, std::unique_ptr<B3::Compilation>&&, std::unique_ptr<B3::Compilation>&&);
+    void finishCreation(VM&, Wasm::Entrypoint&&);
     JSWebAssemblyCallee(VM&);
 
-    std::unique_ptr<B3::Compilation> m_code;
-    std::unique_ptr<B3::Compilation> m_jsToWasmEntryPoint;
+    Wasm::Entrypoint m_entrypoint;
 };
 
 } // namespace JSC

@@ -130,7 +130,7 @@ void Plan::run()
 
         unlinkedWasmToWasmCalls.uncheckedAppend(Vector<UnlinkedWasmToWasmCall>());
         m_wasmInternalFunctions.uncheckedAppend(parseAndCompile(*m_vm, functionStart, functionLength, signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace, *m_moduleInformation));
-        m_functionIndexSpace.buffer.get()[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->code->code().executableAddress();
+        m_functionIndexSpace.buffer.get()[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress();
     }
 
     // Patch the call sites for each WebAssembly function.
@@ -142,20 +142,19 @@ void Plan::run()
     m_failed = false;
 }
 
-void Plan::initializeCallees(JSGlobalObject* globalObject, std::function<void(unsigned, JSWebAssemblyCallee*)> callback)
+void Plan::initializeCallees(JSGlobalObject* globalObject, std::function<void(unsigned, JSWebAssemblyCallee*, JSWebAssemblyCallee*)> callback)
 {
     ASSERT(!failed());
     for (unsigned internalFunctionIndex = 0; internalFunctionIndex < m_wasmInternalFunctions.size(); ++internalFunctionIndex) {
         WasmInternalFunction* function = m_wasmInternalFunctions[internalFunctionIndex].get();
-        CodeLocationDataLabelPtr calleeMoveLocation = function->calleeMoveLocation;
-        JSWebAssemblyCallee* callee = JSWebAssemblyCallee::create(globalObject->vm(), WTFMove(function->code), WTFMove(function->jsToWasmEntryPoint));
 
-        MacroAssembler::repatchPointer(calleeMoveLocation, callee);
+        JSWebAssemblyCallee* jsEntrypointCallee = JSWebAssemblyCallee::create(globalObject->vm(), WTFMove(function->jsToWasmEntrypoint));
+        MacroAssembler::repatchPointer(function->jsToWasmCalleeMoveLocation, jsEntrypointCallee);
 
-        if (verbose)
-            dataLogLn("Made Wasm callee: ", RawPointer(callee));
+        JSWebAssemblyCallee* wasmEntrypointCallee = JSWebAssemblyCallee::create(globalObject->vm(), WTFMove(function->wasmEntrypoint));
+        MacroAssembler::repatchPointer(function->wasmCalleeMoveLocation, wasmEntrypointCallee);
 
-        callback(internalFunctionIndex, callee);
+        callback(internalFunctionIndex, jsEntrypointCallee, wasmEntrypointCallee);
     }
 }
 

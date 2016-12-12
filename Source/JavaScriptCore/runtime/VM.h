@@ -110,7 +110,7 @@ class ShadowChicken;
 class ScriptExecutable;
 class SourceProvider;
 class SourceProviderCache;
-struct StackFrame;
+class StackFrame;
 class Structure;
 #if ENABLE(REGEXP_TRACING)
 class RegExp;

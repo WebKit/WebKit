@@ -759,7 +759,11 @@ public:
             m_globalObject = codeBlock->globalObject();
         else {
             ASSERT(visitor->callee());
-            m_globalObject = visitor->callee()->globalObject();
+            // FIXME: Callee is not an object if the caller is Web Assembly.
+            // Figure out what to do here. We can probably get the global object
+            // from the top-most Wasm Instance. https://bugs.webkit.org/show_bug.cgi?id=165721
+            if (visitor->callee()->isObject())
+                m_globalObject = jsCast<JSObject*>(visitor->callee())->globalObject();
         }
         return StackVisitor::Done;
     }

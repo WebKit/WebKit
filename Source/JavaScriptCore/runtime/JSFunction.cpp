@@ -235,7 +235,7 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        JSObject* callee = visitor->callee();
+        JSCell* callee = visitor->callee();
         if (callee != m_targetCallee)
             return StackVisitor::Continue;
 
@@ -277,7 +277,7 @@ public:
 
     StackVisitor::Status operator()(StackVisitor& visitor) const
     {
-        JSObject* callee = visitor->callee();
+        JSCell* callee = visitor->callee();
 
         if (callee && callee->inherits(JSBoundFunction::info()))
             return StackVisitor::Continue;

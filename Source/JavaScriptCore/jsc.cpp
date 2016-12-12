@@ -2593,7 +2593,7 @@ static JSValue callWasmFunction(VM* vm, JSGlobalObject* globalObject, JSWebAssem
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(nullptr, globalObject->globalExec()->jsCallee(), firstArgument, argCount, remainingArgs);
 
-    return JSValue::decode(vmEntryToWasm(wasmCallee->jsToWasmEntryPoint(), vm, &protoCallFrame));
+    return JSValue::decode(vmEntryToWasm(wasmCallee->entrypoint(), vm, &protoCallFrame));
 }
 
 // testWasmModule(JSArrayBufferView source, number functionCount, ...[[WasmValue, [WasmValue]]]) where the ith copy of [[result, [args]]] is a list
@@ -2623,12 +2623,14 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
         CRASH();
 
     MarkedArgumentBuffer callees;
+    MarkedArgumentBuffer keepAlive;
     {
         unsigned lastIndex = UINT_MAX;
         plan.initializeCallees(exec->lexicalGlobalObject(),
-            [&] (unsigned calleeIndex, JSWebAssemblyCallee* callee) {
+            [&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
                 RELEASE_ASSERT(!calleeIndex || (calleeIndex - 1 == lastIndex));
-                callees.append(callee);
+                callees.append(jsEntrypointCallee);
+                keepAlive.append(wasmEntrypointCallee);
                 lastIndex = calleeIndex;
             });
     }
@@ -2640,6 +2642,7 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
 
     if (!!moduleInformation->memory) {
         memory = std::make_unique<Wasm::Memory>(moduleInformation->memory.initial(), moduleInformation->memory.maximum());
+        RELEASE_ASSERT(memory->isValid());
         memoryBytes = memory->memory();
         memorySize = memory->size();
     }
@@ -2657,7 +2660,12 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
             for (unsigned argIndex = 0; argIndex < arguments->length(); ++argIndex)
                 boxedArgs.append(box(exec, vm, arguments->getIndexQuickly(argIndex)));
 
-            JSValue callResult = callWasmFunction(&vm, exec->lexicalGlobalObject(), jsCast<JSWebAssemblyCallee*>(callees.at(i)), boxedArgs);
+            JSValue callResult;
+            {
+                auto scope = DECLARE_THROW_SCOPE(vm);
+                callResult = callWasmFunction(&vm, exec->lexicalGlobalObject(), jsCast<JSWebAssemblyCallee*>(callees.at(i)), boxedArgs);
+                RETURN_IF_EXCEPTION(scope, { });
+            }
             JSValue expected = box(exec, vm, result);
             if (callResult != expected) {
                 dataLog("Arguments: ");

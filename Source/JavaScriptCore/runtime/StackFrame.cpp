@@ -35,17 +35,20 @@ namespace JSC {
 
 intptr_t StackFrame::sourceID() const
 {
-    if (!codeBlock)
+    if (!m_codeBlock)
         return noSourceID;
-    return codeBlock->ownerScriptExecutable()->sourceID();
+    return m_codeBlock->ownerScriptExecutable()->sourceID();
 }
 
 String StackFrame::sourceURL() const
 {
-    if (!codeBlock)
+    if (!m_codeBlock) {
+        if (m_callee && m_callee->isAnyWasmCallee())
+            return ASCIILiteral("[wasm code]");
         return ASCIILiteral("[native code]");
+    }
 
-    String sourceURL = codeBlock->ownerScriptExecutable()->sourceURL();
+    String sourceURL = m_codeBlock->ownerScriptExecutable()->sourceURL();
     if (!sourceURL.isNull())
         return sourceURL;
     return emptyString();
@@ -53,8 +56,8 @@ String StackFrame::sourceURL() const
 
 String StackFrame::functionName(VM& vm) const
 {
-    if (codeBlock) {
-        switch (codeBlock->codeType()) {
+    if (m_codeBlock) {
+        switch (m_codeBlock->codeType()) {
         case EvalCode:
             return ASCIILiteral("eval code");
         case ModuleCode:
@@ -68,14 +71,18 @@ String StackFrame::functionName(VM& vm) const
         }
     }
     String name;
-    if (callee)
-        name = getCalculatedDisplayName(vm, callee.get()).impl();
+    if (m_callee) {
+        if (m_callee->isObject())
+            name = getCalculatedDisplayName(vm, jsCast<JSObject*>(m_callee.get())).impl();
+        else if (m_callee->isAnyWasmCallee())
+            return ASCIILiteral("<wasm>");
+    }
     return name.isNull() ? emptyString() : name;
 }
 
 void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
 {
-    if (!codeBlock) {
+    if (!m_codeBlock) {
         line = 0;
         column = 0;
         return;
@@ -84,9 +91,9 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
     int divot = 0;
     int unusedStartOffset = 0;
     int unusedEndOffset = 0;
-    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
+    m_codeBlock->expressionRangeForBytecodeOffset(m_bytecodeOffset, divot, unusedStartOffset, unusedEndOffset, line, column);
 
-    ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
+    ScriptExecutable* executable = m_codeBlock->ownerScriptExecutable();
     if (executable->hasOverrideLineNumber())
         line = executable->overrideLineNumber();
 }
@@ -101,7 +108,7 @@ String StackFrame::toString(VM& vm) const
         if (!functionName.isEmpty())
             traceBuild.append('@');
         traceBuild.append(sourceURL);
-        if (codeBlock) {
+        if (hasLineAndColumnInfo()) {
             unsigned line;
             unsigned column;
             computeLineAndColumn(line, column);

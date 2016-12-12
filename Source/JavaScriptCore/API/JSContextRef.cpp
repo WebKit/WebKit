@@ -260,7 +260,7 @@ public:
         if (m_remainingCapacityForFrameCapture) {
             // If callee is unknown, but we've not added any frame yet, we should
             // still add the frame, because something called us, and gave us arguments.
-            JSObject* callee = visitor->callee();
+            JSCell* callee = visitor->callee();
             if (!callee && visitor->index())
                 return StackVisitor::Done;
 
@@ -273,7 +273,7 @@ public:
             builder.append(visitor->functionName());
             builder.appendLiteral("() at ");
             builder.append(visitor->sourceURL());
-            if (visitor->isJSFrame()) {
+            if (visitor->hasLineAndColumnInfo()) {
                 builder.append(':');
                 unsigned lineNumber;
                 unsigned unusedColumn;

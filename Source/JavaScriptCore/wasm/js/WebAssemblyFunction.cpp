@@ -116,7 +116,8 @@ EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
 
     JSWebAssemblyInstance* prevJSWebAssemblyInstance = vm.topJSWebAssemblyInstance;
     vm.topJSWebAssemblyInstance = instance();
-    EncodedJSValue rawResult = vmEntryToWasm(webAssemblyCallee()->jsToWasmEntryPoint(), &vm, protoCallFrame);
+    ASSERT(instance());
+    EncodedJSValue rawResult = vmEntryToWasm(webAssemblyCallee()->entrypoint(), &vm, protoCallFrame);
     vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
 
     // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876

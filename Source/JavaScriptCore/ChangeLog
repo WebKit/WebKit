@@ -1,3 +1,137 @@
+2016-12-11  Saam Barati  <sbarati@apple.com>
+
+        We should be able to throw exceptions from Wasm code and when Wasm frames are on the stack
+        https://bugs.webkit.org/show_bug.cgi?id=165429
+
+        Reviewed by Keith Miller.
+
+        This patch teaches the stack walking runtime about wasm.
+        To do this, I taught StackVisitor that a callee is not
+        always an object.
+
+        To be able to unwind callee save registers properly, I've given
+        JSWebAssemblyCallee a list of RegisterAtOffsetList for the callee
+        saves that B3 saved in the prologue. Also, because we have two
+        B3Compilations per wasm function, one for wasm entrypoint, and
+        one for the JS entrypoint, I needed to create a callee for each
+        because they each might spill callee save registers.
+
+        I also fixed a bug inside the Wasm::Memory constructor where we
+        were trying to mmap the same number of bytes even after the first
+        mmap failed. We should start by trying to mmap the maximum bytes,
+        and if that fails, fall back to the specified initial bytes. However,
+        the code was just mmapping the maximum twice. I've fixed that and
+        also added a RELEASE_ASSERT_NOT_REACHED() for when the second mmap
+        fails along with a FIXME to throw an OOM error.
+
+        There was a second bug I fixed where JSModuleRecord was calling
+        visitWeak on its CallLinkInfos inside ::visitChldren(). It needs
+        to do this after marking. I changed JSModuleRecord to do what
+        CodeBlock does and call visitWeak on its CallLinkInfos inside
+        an UnconditionalFinalizer.
+
+        * API/JSContextRef.cpp:
+        (BacktraceFunctor::operator()):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptCallStackFromException):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::vmEntryGlobalObject):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::callee):
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::operator()):
+        (JSC::UnwindFunctor::operator()):
+        (JSC::UnwindFunctor::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        * interpreter/Interpreter.h:
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::StackVisitor):
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::StackVisitor::readInlinedFrame):
+        (JSC::StackVisitor::Frame::isWasmFrame):
+        (JSC::StackVisitor::Frame::codeType):
+        (JSC::StackVisitor::Frame::calleeSaveRegisters):
+        (JSC::StackVisitor::Frame::functionName):
+        (JSC::StackVisitor::Frame::sourceURL):
+        (JSC::StackVisitor::Frame::toString):
+        (JSC::StackVisitor::Frame::hasLineAndColumnInfo):
+        (JSC::StackVisitor::Frame::setToEnd):
+        * interpreter/StackVisitor.h:
+        (JSC::StackVisitor::Frame::callee):
+        (JSC::StackVisitor::Frame::isNativeFrame):
+        (JSC::StackVisitor::Frame::isJSFrame): Deleted.
+        * jsc.cpp:
+        (callWasmFunction):
+        (functionTestWasmModuleFunctions):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfoAndGetBytecodeOffset):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::isAnyWasmCallee):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::RetrieveArgumentsFunctor::operator()):
+        (JSC::RetrieveCallerFunctionFunctor::operator()):
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::sourceID):
+        (JSC::StackFrame::sourceURL):
+        (JSC::StackFrame::functionName):
+        (JSC::StackFrame::computeLineAndColumn):
+        (JSC::StackFrame::toString):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::StackFrame):
+        (JSC::StackFrame::hasLineAndColumnInfo):
+        (JSC::StackFrame::hasBytecodeOffset):
+        (JSC::StackFrame::bytecodeOffset):
+        (JSC::StackFrame::isNative): Deleted.
+        * runtime/VM.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::setupFrameInPrologue):
+        * wasm/WasmFormat.h:
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::isValid):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::run):
+        (JSC::Wasm::Plan::initializeCallees):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::jsToWasmEntryPointForFunction): Deleted.
+        * wasm/js/JSWebAssemblyCallee.cpp:
+        (JSC::JSWebAssemblyCallee::finishCreation):
+        * wasm/js/JSWebAssemblyCallee.h:
+        (JSC::JSWebAssemblyCallee::create):
+        (JSC::JSWebAssemblyCallee::entrypoint):
+        (JSC::JSWebAssemblyCallee::calleeSaveRegisters):
+        (JSC::JSWebAssemblyCallee::jsToWasmEntryPoint): Deleted.
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        (JSC::JSWebAssemblyModule::UnconditionalFinalizer::finalizeUnconditionally):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::setJSEntrypointCallee):
+        (JSC::JSWebAssemblyModule::setWasmEntrypointCallee):
+        (JSC::JSWebAssemblyModule::allocationSize):
+        (JSC::JSWebAssemblyModule::calleeFromFunctionIndexSpace): Deleted.
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::call):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
 2016-12-11  Filip Pizlo  <fpizlo@apple.com>
 
         Re-enable concurrent GC.

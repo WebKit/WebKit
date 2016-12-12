@@ -29,13 +29,14 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "JSWebAssemblyCallee.h"
+#include "UnconditionalFinalizer.h"
 #include "WasmFormat.h"
 #include <wtf/Bag.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
-class JSWebAssemblyCallee;
 class SymbolTable;
 
 class JSWebAssemblyModule : public JSDestructibleObject {
@@ -52,12 +53,32 @@ public:
     Wasm::Signature* signatureForFunctionIndexSpace(unsigned functionIndexSpace) const { ASSERT(functionIndexSpace < m_functionIndexSpace.size); return m_functionIndexSpace.buffer.get()[functionIndexSpace].signature; }
     unsigned importCount() const { return m_wasmToJSStubs.size(); }
 
-    JSWebAssemblyCallee* calleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    JSWebAssemblyCallee* jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
         RELEASE_ASSERT(functionIndexSpace >= importCount());
         unsigned calleeIndex = functionIndexSpace - importCount();
         RELEASE_ASSERT(calleeIndex < m_calleeCount);
         return callees()[calleeIndex].get();
+    }
+
+    JSWebAssemblyCallee* wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
+    {
+        RELEASE_ASSERT(functionIndexSpace >= importCount());
+        unsigned calleeIndex = functionIndexSpace - importCount();
+        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        return callees()[calleeIndex + m_calleeCount].get();
+    }
+
+    void setJSEntrypointCallee(VM& vm, unsigned calleeIndex, JSWebAssemblyCallee* callee)
+    {
+        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        callees()[calleeIndex].set(vm, this, callee);
+    }
+
+    void setWasmEntrypointCallee(VM& vm, unsigned calleeIndex, JSWebAssemblyCallee* callee)
+    {
+        RELEASE_ASSERT(calleeIndex < m_calleeCount);
+        callees()[calleeIndex + m_calleeCount].set(vm, this, callee);
     }
 
     WriteBarrier<JSWebAssemblyCallee>* callees()
@@ -81,9 +102,14 @@ private:
 
     static size_t allocationSize(unsigned numCallees)
     {
-        return offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees;
+        return offsetOfCallees() + sizeof(WriteBarrier<JSWebAssemblyCallee>) * numCallees * 2;
     }
 
+    class UnconditionalFinalizer : public JSC::UnconditionalFinalizer { 
+        void finalizeUnconditionally() override;
+    };
+
+    UnconditionalFinalizer m_unconditionalFinalizer;
     std::unique_ptr<Wasm::ModuleInformation> m_moduleInformation;
     Bag<CallLinkInfo> m_callLinkInfos;
     WriteBarrier<SymbolTable> m_exportSymbolTable;

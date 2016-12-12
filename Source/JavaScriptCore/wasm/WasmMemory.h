@@ -52,6 +52,8 @@ public:
             munmap(m_memory, m_mappedCapacity);
     }
 
+    bool isValid() const { return !!m_memory; }
+
     void* memory() const { return m_memory; }
     uint32_t size() const { return m_size; }
 

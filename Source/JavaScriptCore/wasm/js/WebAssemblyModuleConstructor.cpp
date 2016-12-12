@@ -92,8 +92,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
     unsigned calleeCount = plan.internalFunctionCount();
     JSWebAssemblyModule* result = JSWebAssemblyModule::create(vm, structure, plan.takeModuleInformation(), plan.takeCallLinkInfos(), plan.takeWasmToJSStubs(), plan.takeFunctionIndexSpace(), exportSymbolTable, calleeCount);
     plan.initializeCallees(state->jsCallee()->globalObject(), 
-        [&] (unsigned calleeIndex, JSWebAssemblyCallee* callee) {
-            result->callees()[calleeIndex].set(vm, result, callee);
+        [&] (unsigned calleeIndex, JSWebAssemblyCallee* jsEntrypointCallee, JSWebAssemblyCallee* wasmEntrypointCallee) {
+            result->setJSEntrypointCallee(vm, calleeIndex, jsEntrypointCallee);
+            result->setWasmEntrypointCallee(vm, calleeIndex, wasmEntrypointCallee);
         });
     return JSValue::encode(result);
 }

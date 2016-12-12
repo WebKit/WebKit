@@ -24,11 +24,13 @@
 #include "JSCell.h"
 
 #include "ArrayBufferView.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSObject.h"
+#include "JSWebAssemblyCallee.h"
 #include "NumberObject.h"
-#include "JSCInlines.h"
+#include "WebAssemblyToJSCallee.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -291,6 +293,16 @@ bool JSCell::setPrototype(JSObject*, ExecState*, JSValue, bool)
 JSValue JSCell::getPrototype(JSObject*, ExecState*)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+bool JSCell::isAnyWasmCallee() const
+{
+#if ENABLE(WEBASSEMBLY)
+    return inherits(JSWebAssemblyCallee::info()) || inherits(WebAssemblyToJSCallee::info());
+#else
+    return false;
+#endif
+
 }
 
 } // namespace JSC

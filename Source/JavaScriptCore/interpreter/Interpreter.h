@@ -37,7 +37,6 @@
 #include "JSObject.h"
 #include "Opcode.h"
 #include "StackAlignment.h"
-#include "StackFrame.h"
 #include <wtf/HashMap.h>
 
 #if !ENABLE(JIT)
@@ -60,6 +59,7 @@ namespace JSC {
     class ModuleProgramExecutable;
     class Register;
     class JSScope;
+    class StackFrame;
     struct CallFrameClosure;
     struct HandlerInfo;
     struct Instruction;

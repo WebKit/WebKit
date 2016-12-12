@@ -39,9 +39,12 @@ function testInvalidSize(description, propName) {
         testInvalidSize({initial: v}, "initial");
     }
 
-    // These should not throw.
-    new WebAssembly.Memory({initial: maxPageCount});
-    new WebAssembly.Memory({initial: maxPageCount, maximum: maxPageCount});
+    try {
+        new WebAssembly.Memory({initial: maxPageCount});
+        new WebAssembly.Memory({initial: maxPageCount, maximum: maxPageCount});
+    } catch(e) {
+        // These might throw, since we're asking for a lot of memory.
+    }
 
     testInvalidInitial(2**31);
     testInvalidInitial(maxPageCount + 1);

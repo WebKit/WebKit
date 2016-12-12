@@ -32,6 +32,7 @@
 #include "CodeLocation.h"
 #include "Identifier.h"
 #include "MacroAssemblerCodeRef.h"
+#include "RegisterAtOffsetList.h"
 #include "WasmMemoryInformation.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
@@ -166,10 +167,17 @@ struct UnlinkedWasmToWasmCall {
     size_t functionIndex;
 };
 
+struct Entrypoint {
+    std::unique_ptr<B3::Compilation> compilation;
+    RegisterAtOffsetList calleeSaveRegisters;
+};
+
 struct WasmInternalFunction {
-    CodeLocationDataLabelPtr calleeMoveLocation;
-    std::unique_ptr<B3::Compilation> code;
-    std::unique_ptr<B3::Compilation> jsToWasmEntryPoint;
+    CodeLocationDataLabelPtr wasmCalleeMoveLocation;
+    CodeLocationDataLabelPtr jsToWasmCalleeMoveLocation;
+
+    Entrypoint wasmEntrypoint;
+    Entrypoint jsToWasmEntrypoint;
 };
 
 typedef MacroAssemblerCodeRef WasmToJSStub;

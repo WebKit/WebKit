@@ -38,15 +38,15 @@ Memory::Memory(PageCount initial, PageCount maximum)
     , m_maximum(maximum)
     // FIXME: If we add signal based bounds checking then we need extra space for overflow on load.
     // see: https://bugs.webkit.org/show_bug.cgi?id=162693
-    , m_mappedCapacity(PageCount::max().bytes())
 {
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
 
+    m_mappedCapacity = m_capacity;
     // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
     void* result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
     if (result == MAP_FAILED) {
         // Try again with a different number.
-        m_mappedCapacity = m_capacity;
+        m_mappedCapacity = m_size;
         result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
         if (result == MAP_FAILED)
             return;
