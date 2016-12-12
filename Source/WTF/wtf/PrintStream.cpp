@@ -46,17 +46,10 @@ void PrintStream::printf(const char* format, ...)
 
 void PrintStream::printfVariableFormat(const char* format, ...)
 {
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wformat-nonliteral"
-#endif
     va_list argList;
     va_start(argList, format);
     vprintf(format, argList);
     va_end(argList);
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
 }
 
 void PrintStream::flush()

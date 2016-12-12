@@ -1,3 +1,11 @@
+2016-12-12  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, use WTF_ATTRIBUTE_PRINTF instead of clang pragma
+
+        * wtf/PrintStream.cpp:
+        (WTF::PrintStream::printfVariableFormat):
+        * wtf/PrintStream.h:
+
 2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, guarded clang pragma with COMPILER(CLANG) to fix -Werror
