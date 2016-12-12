@@ -92,12 +92,12 @@ static WKWebViewConfiguration *defaultConfiguration()
         configuration.preferences._fullScreenEnabled = YES;
         configuration.preferences._developerExtrasEnabled = YES;
 
-        if ([SettingsController shared].perWindowWebProcessesDisabled) {
-            _WKProcessPoolConfiguration *singleProcessConfiguration = [[_WKProcessPoolConfiguration alloc] init];
-            singleProcessConfiguration.maximumProcessCount = 1;
-            configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:singleProcessConfiguration] autorelease];
-            [singleProcessConfiguration release];
-        }
+        _WKProcessPoolConfiguration *processConfiguration = [[[_WKProcessPoolConfiguration alloc] init] autorelease];
+        processConfiguration.diskCacheSpeculativeValidationEnabled = ![SettingsController shared].networkCacheSpeculativeRevalidationDisabled;
+        if ([SettingsController shared].perWindowWebProcessesDisabled)
+            processConfiguration.maximumProcessCount = 1;
+        
+        configuration.processPool = [[[WKProcessPool alloc] _initWithConfiguration:processConfiguration] autorelease];
 
 #if WK_API_ENABLED
         NSArray<_WKExperimentalFeature *> *features = [WKPreferences _experimentalFeatures];

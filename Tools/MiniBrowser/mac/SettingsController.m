@@ -63,6 +63,7 @@ static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"Anima
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
 
 static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
+static NSString * const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
@@ -140,6 +141,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     [self _addItemWithTitle:@"Show Resource Usage Overlay" action:@selector(toggleShowResourceUsageOverlay:) indented:YES];
     [self _addItemWithTitle:@"Load All Site Icons Per-Page" action:@selector(toggleLoadsAllSiteIcons:) indented:YES];
     [self _addItemWithTitle:@"Use GameController.framework on macOS (Restart required)" action:@selector(toggleUsesGameControllerFramework:) indented:YES];
+    [self _addItemWithTitle:@"Disable network cache speculative revalidation" action:@selector(toggleNetworkCacheSpeculativeRevalidationDisabled:) indented:YES];
 
     NSMenuItem *debugOverlaysSubmenuItem = [[NSMenuItem alloc] initWithTitle:@"Debug Overlays" action:nil keyEquivalent:@""];
     NSMenu *debugOverlaysMenu = [[NSMenu alloc] initWithTitle:@"Debug Overlays"];
@@ -219,6 +221,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self loadsAllSiteIcons] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUsesGameControllerFramework:))
         [menuItem setState:[self usesGameControllerFramework] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:))
+        [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleUseUISideCompositing:))
         [menuItem setState:[self useUISideCompositing] ? NSOnState : NSOffState];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
@@ -384,6 +388,16 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (void)toggleUsesGameControllerFramework:(id)sender
 {
     [self _toggleBooleanDefault:UsesGameControllerFrameworkKey];
+}
+
+- (BOOL)networkCacheSpeculativeRevalidationDisabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:NetworkCacheSpeculativeRevalidationDisabledKey];
+}
+
+- (void)toggleNetworkCacheSpeculativeRevalidationDisabled:(id)sender
+{
+    [self _toggleBooleanDefault:NetworkCacheSpeculativeRevalidationDisabledKey];
 }
 
 - (BOOL)tiledScrollingIndicatorVisible

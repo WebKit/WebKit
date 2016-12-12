@@ -54,6 +54,7 @@
 @property (nonatomic, readonly) BOOL animatedImageAsyncDecodingEnabled;
 @property (nonatomic, readonly) BOOL loadsAllSiteIcons;
 @property (nonatomic, readonly) BOOL usesGameControllerFramework;
+@property (nonatomic, readonly) BOOL networkCacheSpeculativeRevalidationDisabled;
 
 @property (nonatomic, readonly) NSString *defaultURL;
 

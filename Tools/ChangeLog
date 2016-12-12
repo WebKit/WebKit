@@ -1,3 +1,21 @@
+2016-12-08  Antti Koivisto  <antti@apple.com>
+
+        Enable network cache speculative revalidation in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=165616
+
+        Reviewed by Darin Adler.
+
+        Match Safari. Also add a menu item to disable it.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (defaultConfiguration):
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController networkCacheSpeculativeRevalidationDisabled]):
+        (-[SettingsController toggleNetworkCacheSpeculativeRevalidationDisabled:]):
+
 2016-12-12  Alexey Proskuryakov  <ap@apple.com>
 
         ChangeLogs become readonly after resolving a conflict
