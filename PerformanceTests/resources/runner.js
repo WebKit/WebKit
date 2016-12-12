@@ -15,9 +15,6 @@ if (window.testRunner) {
     var jsHeapResults;
     var mallocHeapResults;
     var iterationCount = undefined;
-    var lastResponsivenessTimestamp = 0;
-    var _longestResponsivenessDelay = 0;
-    var continueCheckingResponsiveness = false;
 
     var PerfTestRunner = {};
 
@@ -326,32 +323,6 @@ if (window.testRunner) {
         return PerfTestRunner.now() - startTime;
     }
 
-    PerfTestRunner.startCheckingResponsiveness = function() {
-        lastResponsivenessTimestamp = PerfTestRunner.now();
-        _longestResponsivenessDelay = 0;
-        continueCheckingResponsiveness = true;
-
-        var timeoutFunction = function() {
-            var now = PerfTestRunner.now();
-            var delta = now - lastResponsivenessTimestamp;
-            if (delta > _longestResponsivenessDelay)
-                _longestResponsivenessDelay = delta;    
-
-            lastResponsivenessTimestamp = now;
-            if (continueCheckingResponsiveness)
-                setTimeout(timeoutFunction, 0);
-        }
-        
-        timeoutFunction();
-    }
-
-    PerfTestRunner.stopCheckingResponsiveness = function() {
-        continueCheckingResponsiveness = false;
-    }
-
-    PerfTestRunner.longestResponsivenessDelay = function() {
-        return _longestResponsivenessDelay;
-    }
 
     PerfTestRunner.measurePageLoadTime = function(test) {
         test.run = function() {
