@@ -1,3 +1,14 @@
+2016-12-12  Jer Noble  <jer.noble@apple.com>
+
+        Remove implementation of legacy Mozilla-based Fullscreen API.
+        https://bugs.webkit.org/show_bug.cgi?id=165689
+        <rdar://problem/29603053>
+
+        Reviewed by Eric Carlson.
+
+        * DOM/DOMElement.mm:
+        (-[DOMElement webkitRequestFullScreen:]):
+
 2016-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         The DOM should have an advancing wavefront opaque root barrier

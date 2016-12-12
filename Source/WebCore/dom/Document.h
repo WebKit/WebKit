@@ -1095,7 +1095,7 @@ public:
         ExemptIFrameAllowFullScreenRequirement,
     };
 
-    void requestFullScreenForElement(Element*, unsigned short flags, FullScreenCheckType);
+    void requestFullScreenForElement(Element*, FullScreenCheckType);
     WEBCORE_EXPORT void webkitCancelFullScreen();
     
     WEBCORE_EXPORT void webkitWillEnterFullScreenForElement(Element*);

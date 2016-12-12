@@ -1,3 +1,26 @@
+2016-12-12  Jer Noble  <jer.noble@apple.com>
+
+        Remove implementation of legacy Mozilla-based Fullscreen API.
+        https://bugs.webkit.org/show_bug.cgi?id=165689
+
+        Reviewed by Eric Carlson.
+
+        Alias the legacy webkitRequestFull_S_creen() function on Element to webkitRequestFull_s_creen().
+        Remove the custom behavior in Document::requestFullScreenForElement() to handle the legacy path.
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestFullScreenForElement):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRequestFullscreen):
+        (WebCore::Element::webkitRequestFullScreen): Deleted.
+        * dom/Element.h:
+        * dom/Element.idl:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+
 2016-12-12  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] MediaQueryParser should use Ref and not RefPtr

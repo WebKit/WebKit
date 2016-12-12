@@ -442,7 +442,7 @@ DOMElement *kit(Element* value)
 - (void)webkitRequestFullScreen:(unsigned short)flags
 {
     JSMainThreadNullState state;
-    unwrap(*self).webkitRequestFullScreen(flags);
+    unwrap(*self).webkitRequestFullscreen();
 }
 
 - (void)webkitRequestFullscreen

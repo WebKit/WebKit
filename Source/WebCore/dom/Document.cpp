@@ -5572,12 +5572,8 @@ bool Document::fullScreenIsAllowedForElement(Element* element) const
     return isAttributeOnAllOwners(allowfullscreenAttr, webkitallowfullscreenAttr, element->document().ownerElement());
 }
 
-void Document::requestFullScreenForElement(Element* element, unsigned short flags, FullScreenCheckType checkType)
+void Document::requestFullScreenForElement(Element* element, FullScreenCheckType checkType)
 {
-    // The Mozilla Full Screen API <https://wiki.mozilla.org/Gecko:FullScreenAPI> has different requirements
-    // for full screen mode, and do not have the concept of a full screen element stack.
-    bool inLegacyMozillaMode = (flags & Element::LEGACY_MOZILLA_REQUEST);
-
     do {
         if (!element)
             element = documentElement();
@@ -5596,9 +5592,8 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
             break;
 
         // The context object's node document fullscreen element stack is not empty and its top element
-        // is not an ancestor of the context object. (NOTE: Ignore this requirement if the request was
-        // made via the legacy Mozilla-style API.)
-        if (!m_fullScreenElementStack.isEmpty() && !m_fullScreenElementStack.last()->contains(element) && !inLegacyMozillaMode)
+        // is not an ancestor of the context object.
+        if (!m_fullScreenElementStack.isEmpty() && !m_fullScreenElementStack.last()->contains(element))
             break;
 
         // A descendant browsing context's document has a non-empty fullscreen element stack.
@@ -5609,7 +5604,7 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
                 break;
             }
         }
-        if (descendentHasNonEmptyStack && !inLegacyMozillaMode)
+        if (descendentHasNonEmptyStack)
             break;
 
         // This algorithm is not allowed to show a pop-up:
@@ -5623,14 +5618,13 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
         if (!page() || !page()->settings().fullScreenEnabled())
             break;
 
-        if (!page()->chrome().client().supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT)) {
+        bool hasKeyboardAccess = true;
+        if (!page()->chrome().client().supportsFullScreenForElement(element, hasKeyboardAccess)) {
             // The new full screen API does not accept a "flags" parameter, so fall back to disallowing
             // keyboard input if the chrome client refuses to allow keyboard input.
-            if (!inLegacyMozillaMode && flags & Element::ALLOW_KEYBOARD_INPUT) {
-                flags &= ~Element::ALLOW_KEYBOARD_INPUT;
-                if (!page()->chrome().client().supportsFullScreenForElement(element, false))
-                    break;
-            } else
+            hasKeyboardAccess = false;
+
+            if (!page()->chrome().client().supportsFullScreenForElement(element, hasKeyboardAccess))
                 break;
         }
 
@@ -5682,7 +5676,7 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
 
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
-        m_areKeysEnabledInFullScreen = flags & Element::ALLOW_KEYBOARD_INPUT;
+        m_areKeysEnabledInFullScreen = hasKeyboardAccess;
         page()->chrome().client().enterFullScreenForElement(element);
 
         // 7. Optionally, display a message indicating how the user can exit displaying the context object fullscreen.

@@ -20,16 +20,16 @@
         var spanEnteredFullScreen = function() {
             testExpected("document.webkitCurrentFullScreenElement", span);
             callback = documentEnteredFullScreen;
-            runWithKeyDown(function(){document.documentElement.webkitRequestFullScreen()});
+            endTest();
         };
     
         var documentEnteredFullScreen = function() {
             testExpected("document.webkitCurrentFullScreenElement", document.documentElement);
-            callback = null;
-            endTest();
+            callback = spanEnteredFullScreen;
+            runWithKeyDown(function(){span.webkitRequestFullScreen()});
         };
 
-        callback = spanEnteredFullScreen;
-        runWithKeyDown(function(){span.webkitRequestFullScreen()});
+        callback = documentEnteredFullScreen;
+        runWithKeyDown(function(){document.documentElement.webkitRequestFullScreen()});
     }
 </script>

@@ -1,3 +1,18 @@
+2016-12-12  Jer Noble  <jer.noble@apple.com>
+
+        Remove implementation of legacy Mozilla-based Fullscreen API.
+        https://bugs.webkit.org/show_bug.cgi?id=165689
+
+        Reviewed by Eric Carlson.
+
+        * fullscreen/full-screen-css-expected.txt:
+        * fullscreen/full-screen-css.html:
+        * fullscreen/full-screen-keyboard-disabled-expected.txt: Removed.
+        * fullscreen/full-screen-keyboard-disabled.html: Removed.
+        * fullscreen/full-screen-twice-expected.txt:
+        * fullscreen/full-screen-twice.html:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2016-12-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Add some test cases that were removed in r209562

@@ -137,7 +137,6 @@ PASS a["firstElementChild"] is null
 PASS a["lastElementChild"] is null
 PASS a["childElementCount"] is 0
 PASS a["assignedSlot"] is null
-PASS a["ALLOW_KEYBOARD_INPUT"] is 1
 PASS a["nodeName"] is A
 PASS a["nodeValue"] is null
 PASS a["nodeType"] is 1

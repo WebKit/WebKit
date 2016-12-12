@@ -113,8 +113,7 @@
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     // Mozilla version
-    const unsigned short ALLOW_KEYBOARD_INPUT = 1;
-    void webkitRequestFullScreen(optional unsigned short flags = 0);
+    [ImplementedAs=webkitRequestFullscreen] void webkitRequestFullScreen();
 
     // W3C version
     void webkitRequestFullscreen();

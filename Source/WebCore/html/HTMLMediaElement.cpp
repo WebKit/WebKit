@@ -5405,7 +5405,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 #if ENABLE(FULLSCREEN_API)
     if (document().settings()->fullScreenEnabled()) {
         if (mode == VideoFullscreenModeStandard) {
-            document().requestFullScreenForElement(this, 0, Document::ExemptIFrameAllowFullScreenRequirement);
+            document().requestFullScreenForElement(this, Document::ExemptIFrameAllowFullScreenRequirement);
             return;
         }
 
