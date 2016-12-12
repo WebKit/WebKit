@@ -3931,13 +3931,15 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
     
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     if (RenderMultiColumnFlowThread* flowThread = multiColumnFlowThread()) {
-        LogicalExtentComputedValues computedValues;
-        computeLogicalHeight(LayoutUnit(), logicalTop(), computedValues);
-        LayoutUnit columnHeight = computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight();
-        LayoutUnit oldHeightAvailable = flowThread->columnHeightAvailable();
-        flowThread->setColumnHeightAvailable(std::max<LayoutUnit>(columnHeight, 0));
-        if (oldHeightAvailable != flowThread->columnHeightAvailable())
-            relayoutChildren = true;
+        LayoutUnit newColumnHeight;
+        if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Unpaginated) {
+            LogicalExtentComputedValues computedValues;
+            computeLogicalHeight(LayoutUnit(), logicalTop(), computedValues);
+            newColumnHeight = std::max<LayoutUnit>(computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
+            if (flowThread->columnHeightAvailable() != newColumnHeight)
+                relayoutChildren = true;
+        }
+        flowThread->setColumnHeightAvailable(newColumnHeight);
     } else if (is<RenderFlowThread>(*this)) {
         RenderFlowThread& flowThread = downcast<RenderFlowThread>(*this);
 

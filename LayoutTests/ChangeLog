@@ -1,3 +1,13 @@
+2016-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        The CSS 'columns' property when set on the <body> element makes short columns
+        https://bugs.webkit.org/show_bug.cgi?id=164891
+
+        Reviewed by Darin Adler and David Hyatt.
+
+        * fast/multicol/columns-on-body-expected.html: Added.
+        * fast/multicol/columns-on-body.html: Added.
+
 2016-12-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Implement deferred parsing of properties, @media, @supports and @keyframes

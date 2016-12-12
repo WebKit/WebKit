@@ -1,3 +1,25 @@
+2016-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        The CSS 'columns' property when set on the <body> element makes short columns
+        https://bugs.webkit.org/show_bug.cgi?id=164891
+
+        Reviewed by Darin Adler and David Hyatt.
+
+        Currently when the body has auto height, we use the height of the viewport as
+        the available height for the columns defined on the body element.
+        This is the desired behaviour for paginated content.
+        However in case of a simple, non-paginated multicolumn context, we should let the columns grow beyond
+        the viewport vertically. This is also what other browsers do.
+        This patch sets the available height on columns (in non-paginated context) only if the logical height
+        is defined (we are right before layout, so applying non-defined values does not make much sense anyway).
+        The reason why it is only broken on the <body> is because it stretches to the viewport by
+        default (see stretchesToViewport()) while other block renderers do not.
+
+        Test: fast/multicol/columns-on-body.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+
 2016-12-11  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Implement deferred parsing of properties, @media, @supports and @keyframes
