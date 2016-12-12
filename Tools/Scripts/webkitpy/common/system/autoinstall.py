@@ -378,7 +378,7 @@ class AutoInstaller(object):
                            % (url, err))
                 raise IOError(message)
         code = 200
-        if hasattr(netstream, "getcode"):
+        if not url.startswith("file") and hasattr(netstream, "getcode"):
             code = netstream.getcode()
         if not 200 <= code < 300:
             raise ValueError("HTTP Error code %s" % code)

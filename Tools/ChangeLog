@@ -1,5 +1,25 @@
 2016-12-12  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Merge r209540.
+
+    2016-12-08  Chris Dumez  <cdumez@apple.com>
+
+            Support running the layout tests offline
+            https://bugs.webkit.org/show_bug.cgi?id=165534
+
+            Reviewed by Ryosuke Niwa.
+
+            * Scripts/webkitpy/common/system/autoinstall.py:
+            (AutoInstaller._download_to_stream):
+            getcode() returns None for file URLs so handle this.
+
+            * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+            (WebPlatformTestServer._install_modules):
+            Deal with local path in the json file and resolve them into file URLs
+            before using AutoInstall.
+
+2016-12-12  Ryan Haddad  <ryanhaddad@apple.com>
+
         Merge r209216. rdar://problem/29560678
 
     2016-12-01  Alexey Proskuryakov  <ap@apple.com>
