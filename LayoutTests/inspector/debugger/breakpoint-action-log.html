@@ -15,7 +15,7 @@ function test()
 
     suite.addTestCase({
         name: "TemplateLiteralPlaceholders",
-        description: ".",
+        description: "Evaluate breakpoint with logging actions that include placeholders.",
         test(resolve, reject) {
             WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
                 let scriptObject = event.data.script;
