@@ -1,3 +1,11 @@
+2016-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Re-enable collectContinuously since it doesn't crash anymore
+
+        Rubber stamped by Michael Saboff.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-12-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed attempt to fix EFL and Mac/cmake builds after r209665.

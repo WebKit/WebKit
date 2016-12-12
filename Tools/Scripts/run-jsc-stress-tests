@@ -431,9 +431,7 @@ NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100
 FTL_OPTIONS = ["--useFTLJIT=true"]
 
 def shouldCollectContinuously?
-    # FIXME: Enable this once we fix all the bugs.
-    # $buildType == :release
-    $forceCollectContinuously
+    $buildType == :release or $forceCollectContinuously
 end
 
 COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false"] : []
