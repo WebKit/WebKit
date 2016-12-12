@@ -1,3 +1,21 @@
+2016-12-11  Tim Horton  <timothy_horton@apple.com>
+
+        Quarter-second stalls scrolling images that are links because of sync getPositionInformation
+        https://bugs.webkit.org/show_bug.cgi?id=165707
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView positionInformationForActionSheetAssistant:]):
+        (-[WKContentView updatePositionInformationForActionSheetAssistant:]):
+        For now, synchronously block when presenting the action sheet if we
+        don't have a snapshot ready.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Respect includeSnapshot in another place in getPositionInformation,
+        so that many getPositionInformations don't have to do extra snapshotting work.
+
 2016-12-10  Filip Pizlo  <fpizlo@apple.com>
 
         The DOM should have an advancing wavefront opaque root barrier

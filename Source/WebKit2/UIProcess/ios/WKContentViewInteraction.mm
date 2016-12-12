@@ -3798,6 +3798,11 @@ static bool isAssistableInputType(InputType type)
 
 - (const WebKit::InteractionInformationAtPosition&)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
+    // FIXME: This should be more asynchronous, since we control the presentation of the action sheet.
+    InteractionInformationRequest request(_positionInformation.request.point);
+    request.includeSnapshot = true;
+    [self ensurePositionInformationIsUpToDate:request];
+
     return _positionInformation;
 }
 
@@ -3805,7 +3810,7 @@ static bool isAssistableInputType(InputType type)
 {
     _hasValidPositionInformation = NO;
     InteractionInformationRequest request(_positionInformation.request.point);
-    request.includeSnapshot = YES;
+    request.includeSnapshot = true;
 
     [self requestAsynchronousPositionInformationUpdate:request];
 }

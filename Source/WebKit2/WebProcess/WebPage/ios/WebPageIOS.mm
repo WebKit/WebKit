@@ -2370,17 +2370,20 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
                             if (image->width() > 1 && image->height() > 1) {
                                 info.imageURL = [(NSURL *)element->document().completeURL(renderImage.cachedImage()->url()) absoluteString];
                                 info.isAnimatedImage = image->isAnimated();
-                                FloatSize screenSizeInPixels = screenSize();
-                                screenSizeInPixels.scale(corePage()->deviceScaleFactor());
-                                FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
-                                FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
-                                // FIXME: Only select ExtendedColor on images known to need wide gamut
-                                ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
-                                flags |= screenSupportsExtendedColor() ? ShareableBitmap::SupportsExtendedColor : 0;
-                                if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), flags)) {
-                                    auto graphicsContext = sharedBitmap->createGraphicsContext();
-                                    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
-                                    info.image = sharedBitmap;
+
+                                if (request.includeSnapshot) {
+                                    FloatSize screenSizeInPixels = screenSize();
+                                    screenSizeInPixels.scale(corePage()->deviceScaleFactor());
+                                    FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
+                                    FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
+                                    // FIXME: Only select ExtendedColor on images known to need wide gamut
+                                    ShareableBitmap::Flags flags = ShareableBitmap::SupportsAlpha;
+                                    flags |= screenSupportsExtendedColor() ? ShareableBitmap::SupportsExtendedColor : 0;
+                                    if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), flags)) {
+                                        auto graphicsContext = sharedBitmap->createGraphicsContext();
+                                        graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
+                                        info.image = sharedBitmap;
+                                    }
                                 }
                             }
                         }
