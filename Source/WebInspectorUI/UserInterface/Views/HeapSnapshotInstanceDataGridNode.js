@@ -95,7 +95,6 @@ WebInspector.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGr
 
     get data() { return this._node; }
     get node() { return this._node; }
-    get selectable() { return false; }
 
     get propertyName()
     {

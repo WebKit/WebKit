@@ -1,5 +1,36 @@
 2016-12-12  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Allow keyboard navigation in Heap Snapshot data grids
+        https://bugs.webkit.org/show_bug.cgi?id=165752
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.tree-outline.dom:focus li.selected > span::after):
+        Use new color variable.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WebInspector.HeapSnapshotInstanceDataGridNode.prototype.get selectable): Deleted.
+        Should be selectable.
+
+        * UserInterface/Views/HeapSnapshotInstancesContentView.css:
+        (.heap-snapshot > .data-grid:focus tr.selected > td .sub-retained):
+        (.heap-snapshot > .data-grid:focus tr.selected .object-id,):
+        (.heap-snapshot > .data-grid:focus tr.selected .formatted-string,):
+        (.heap-snapshot > .data-grid:focus tr.selected td .location):
+        Selected row text should just be white, except for values that are usually
+        gray (object ID, object size, and sub-retained size values). These should
+        be styled like the "= $0" marker in the DOM tree outline.
+
+        (.heap-snapshot > .data-grid:matches(:focus, .force-focus) tr.selected td .location): Deleted.
+        Removed forced-focus reference. Only used by TreeOutlineDataGridSynchronizer.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Added --selected-secondary-text-color.
+
+2016-12-12  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Breakpoint Log action should support template literals
         https://bugs.webkit.org/show_bug.cgi?id=165116
         <rdar://problem/29464765>
