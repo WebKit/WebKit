@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WTF_RecursiveLockAdapter_h
-#define WTF_RecursiveLockAdapter_h
+#pragma once
 
 #include <wtf/Threading.h>
 
@@ -91,5 +90,4 @@ private:
 
 } // namespace WTF
 
-#endif // WTF_RecursiveLockAdapter_h
 
