@@ -42,6 +42,8 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
     {
         this.removeChildren();
 
+        this._updateStatus();
+
         let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
         let callFrames = targetData.callFrames;
 
@@ -111,10 +113,34 @@ WebInspector.ThreadTreeElement = class ThreadTreeElement extends WebInspector.Ge
         let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
 
         let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
-        if (DebuggerAgent.continueUntilNextRunLoop) {
-            contextMenu.appendItem(WebInspector.UIString("Resume Thread"), () => {
-                WebInspector.debuggerManager.continueUntilNextRunLoop(this._target);
-            }, !targetData.paused);
+        contextMenu.appendItem(WebInspector.UIString("Resume Thread"), () => {
+            WebInspector.debuggerManager.continueUntilNextRunLoop(this._target);
+        }, !targetData.paused);
+    }
+
+    // Private
+
+    _updateStatus()
+    {
+        this.status = null;
+
+        if (!this.element)
+            return;
+
+        let targetData = WebInspector.debuggerManager.dataForTarget(this._target);
+        if (!targetData.paused)
+            return;
+
+        if (!this._statusButton) {
+            let tooltip = WebInspector.UIString("Resume Thread");
+            this._statusButton = new WebInspector.TreeElementStatusButton(useSVGSymbol("Images/Resume.svg", "resume", tooltip));
+            this._statusButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, () => { WebInspector.debuggerManager.continueUntilNextRunLoop(this._target); });
+            this._statusButton.element.addEventListener("mousedown", (event) => {
+                // Prevent tree element from being selected.
+                event.stopPropagation();
+            });
         }
+
+        this.status = this._statusButton.element;
     }
 };

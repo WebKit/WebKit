@@ -43,6 +43,14 @@
     stroke: var(--glyph-color-active);
 }
 
+.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-pause-resume {
+    fill: none;
+    stroke: var(--glyph-color);
+}
+.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-pause-resume.activated {
+    stroke: var(--glyph-color-active);
+}
+
 .sidebar > .panel.navigation.debugger .warning-banner {
     text-align: center;
     font-size: 11px;

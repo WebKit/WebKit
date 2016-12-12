@@ -1,3 +1,39 @@
+2016-12-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: ThreadTreeElement should have a "Resume" status button when paused
+        https://bugs.webkit.org/show_bug.cgi?id=165581
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/Resume.svg:
+        Fill/stroke should be unspecified so that both can be styled in CSS.
+
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.dashboard.debugger .navigation-bar .item.debugger-dashboard-pause.activated):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-pause-resume):
+        (.sidebar > .panel.navigation.debugger > .navigation-bar .debugger-pause-resume.activated):
+        Recreate original style which relied on 'fill="none"' being specified in the SVG.
+
+        * UserInterface/Views/ThreadTreeElement.css:
+        (.tree-outline > .item.thread .icon):
+        (.tree-outline > .item.thread .status-button.resume):
+        (.tree-outline > .item.thread .status-button.resume:active):
+        (.tree-outline:matches(:focus, .force-focus) > .item.thread.selected .status-button.resume):
+        (.tree-outline > .item.thread.selected .status-button.resume,):
+        (.details-section.call-stack .thread .icon): Deleted.
+        Status button styles. Colors match those of the goto-arrow button.
+
+        * UserInterface/Views/ThreadTreeElement.js:
+        (WebInspector.ThreadTreeElement.prototype.refresh):
+        Update status icon.
+        (WebInspector.ThreadTreeElement.prototype.oncontextmenu):
+        (WebInspector.ThreadTreeElement.prototype._updateStatus):
+        Add/remove status button based on paused state.
+        Stop propagation of "mousedown" events on the status button, to
+        prevent button press from selecting the tree element.
+        (WebInspector.ThreadTreeElement):
+
 2016-12-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Move MainTarget and WorkerTarget to their own files
