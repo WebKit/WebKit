@@ -1,3 +1,21 @@
+2016-12-12  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] MediaQueryParser should use Ref and not RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=165771
+
+        Reviewed by Simon Fraser.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::create):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeImportRule):
+        (WebCore::CSSParserImpl::consumeMediaRule):
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::parseMediaQuerySet):
+        (WebCore::MediaQueryParser::parseMediaCondition):
+        (WebCore::MediaQueryParser::parseInternal):
+        * css/parser/MediaQueryParser.h:
+
 2016-12-12  Zalan Bujtas  <zalan@apple.com>
 
         The CSS 'columns' property when set on the <body> element makes short columns

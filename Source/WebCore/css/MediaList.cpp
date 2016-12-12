@@ -70,7 +70,7 @@ Ref<MediaQuerySet> MediaQuerySet::create(const String& mediaString)
     if (mediaString.isEmpty())
         return MediaQuerySet::create();
     
-    return MediaQueryParser::parseMediaQuerySet(mediaString).releaseNonNull();
+    return MediaQueryParser::parseMediaQuerySet(mediaString);
 }
 
 MediaQuerySet::MediaQuerySet()
