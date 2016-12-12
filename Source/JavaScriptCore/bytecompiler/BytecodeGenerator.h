@@ -84,7 +84,7 @@ namespace JSC {
         StatementNode* finallyBlock;
         RegisterID* iterator;
         ThrowableExpressionData* enumerationNode;
-        unsigned scopeContextStackSize;
+        unsigned controlFlowScopeStackSize;
         unsigned switchContextStackSize;
         unsigned forInContextStackSize;
         unsigned tryContextStackSize;
@@ -94,7 +94,7 @@ namespace JSC {
         int dynamicScopeDepth;
     };
 
-    struct ControlFlowContext {
+    struct ControlFlowScope {
         bool isFinallyBlock;
         FinallyContext finallyContext;
     };
@@ -700,10 +700,10 @@ namespace JSC {
 
         bool isInFinallyBlock() { return m_finallyDepth > 0; }
 
-        void pushFinallyContext(StatementNode* finallyBlock);
-        void popFinallyContext();
-        void pushIteratorCloseContext(RegisterID* iterator, ThrowableExpressionData* enumerationNode);
-        void popIteratorCloseContext();
+        void pushFinallyControlFlowScope(StatementNode* finallyBlock);
+        void popFinallyControlFlowScope();
+        void pushIteratorCloseControlFlowScope(RegisterID* iterator, ThrowableExpressionData* enumerationNode);
+        void popIteratorCloseControlFlowScope();
 
         void pushIndexedForInScope(RegisterID* local, RegisterID* index);
         void popIndexedForInScope(RegisterID* local);
@@ -797,7 +797,7 @@ namespace JSC {
 
         void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
-        void emitComplexPopScopes(RegisterID*, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
+        void emitComplexPopScopes(RegisterID*, ControlFlowScope* topScope, ControlFlowScope* bottomScope);
 
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
@@ -946,10 +946,10 @@ namespace JSC {
         const CodeType m_codeType;
 
         int localScopeDepth() const;
-        void pushScopedControlFlowContext();
-        void popScopedControlFlowContext();
+        void pushLocalControlFlowScope();
+        void popLocalControlFlowScope();
 
-        Vector<ControlFlowContext, 0, UnsafeVectorOverflow> m_scopeContextStack;
+        Vector<ControlFlowScope, 0, UnsafeVectorOverflow> m_controlFlowScopeStack;
         Vector<SwitchInfo> m_switchContextStack;
         Vector<RefPtr<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;

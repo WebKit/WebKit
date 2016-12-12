@@ -3284,7 +3284,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitLabel(tryStartLabel.get());
     
     if (m_finallyBlock)
-        generator.pushFinallyContext(m_finallyBlock);
+        generator.pushFinallyControlFlowScope(m_finallyBlock);
     TryData* tryData = generator.pushTry(tryStartLabel.get());
 
     generator.emitNode(dst, m_tryBlock);
@@ -3322,7 +3322,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     if (m_finallyBlock) {
         RefPtr<Label> preFinallyLabel = generator.emitLabel(generator.newLabel().get());
         
-        generator.popFinallyContext();
+        generator.popFinallyControlFlowScope();
 
         RefPtr<Label> finallyEndLabel = generator.newLabel();
 

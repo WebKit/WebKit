@@ -1121,7 +1121,7 @@ void BytecodeGenerator::initializeVarLexicalEnvironment(int symbolTableConstantI
         instructions().append(scopeRegister()->index());
         instructions().append(m_lexicalEnvironmentRegister->index());
 
-        pushScopedControlFlowContext();
+        pushLocalControlFlowScope();
     }
     bool isWithScope = false;
     m_lexicalScopeStack.append({ functionSymbolTable, m_lexicalEnvironmentRegister, isWithScope, symbolTableConstantIndex });
@@ -2067,7 +2067,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
 
         emitMove(scopeRegister(), newScope);
 
-        pushScopedControlFlowContext();
+        pushLocalControlFlowScope();
     }
 
     bool isWithScope = false;
@@ -2191,7 +2191,7 @@ void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment
     if (hasCapturedVariables) {
         RELEASE_ASSERT(stackEntry.m_scope);
         emitPopScope(scopeRegister(), stackEntry.m_scope);
-        popScopedControlFlowContext();
+        popLocalControlFlowScope();
         stackEntry.m_scope->deref();
     }
 
@@ -3599,7 +3599,7 @@ void BytecodeGenerator::emitGetScope()
 
 RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* objectScope)
 {
-    pushScopedControlFlowContext();
+    pushLocalControlFlowScope();
     RegisterID* newScope = newBlockScopeVariable();
     newScope->ref();
 
@@ -3631,7 +3631,7 @@ void BytecodeGenerator::emitPopScope(RegisterID* dst, RegisterID* scope)
 void BytecodeGenerator::emitPopWithScope()
 {
     emitPopScope(scopeRegister(), scopeRegister());
-    popScopedControlFlowContext();
+    popLocalControlFlowScope();
     auto stackEntry = m_lexicalScopeStack.takeLast();
     stackEntry.m_scope->deref();
     RELEASE_ASSERT(stackEntry.m_isWithScope);
@@ -3673,19 +3673,19 @@ void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
     emitDebugHook(WillLeaveCallFrame, m_scopeNode->lastLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
 }
 
-void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
+void BytecodeGenerator::pushFinallyControlFlowScope(StatementNode* finallyBlock)
 {
     // Reclaim free label scopes.
     while (m_labelScopes.size() && !m_labelScopes.last().refCount())
         m_labelScopes.removeLast();
 
-    ControlFlowContext scope;
+    ControlFlowScope scope;
     scope.isFinallyBlock = true;
     FinallyContext context = {
         finallyBlock,
         nullptr,
         nullptr,
-        static_cast<unsigned>(m_scopeContextStack.size()),
+        static_cast<unsigned>(m_controlFlowScopeStack.size()),
         static_cast<unsigned>(m_switchContextStack.size()),
         static_cast<unsigned>(m_forInContextStack.size()),
         static_cast<unsigned>(m_tryContextStack.size()),
@@ -3695,23 +3695,23 @@ void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
         m_localScopeDepth
     };
     scope.finallyContext = context;
-    m_scopeContextStack.append(scope);
+    m_controlFlowScopeStack.append(scope);
     m_finallyDepth++;
 }
 
-void BytecodeGenerator::pushIteratorCloseContext(RegisterID* iterator, ThrowableExpressionData* node)
+void BytecodeGenerator::pushIteratorCloseControlFlowScope(RegisterID* iterator, ThrowableExpressionData* node)
 {
     // Reclaim free label scopes.
     while (m_labelScopes.size() && !m_labelScopes.last().refCount())
         m_labelScopes.removeLast();
 
-    ControlFlowContext scope;
+    ControlFlowScope scope;
     scope.isFinallyBlock = true;
     FinallyContext context = {
         nullptr,
         iterator,
         node,
-        static_cast<unsigned>(m_scopeContextStack.size()),
+        static_cast<unsigned>(m_controlFlowScopeStack.size()),
         static_cast<unsigned>(m_switchContextStack.size()),
         static_cast<unsigned>(m_forInContextStack.size()),
         static_cast<unsigned>(m_tryContextStack.size()),
@@ -3721,31 +3721,31 @@ void BytecodeGenerator::pushIteratorCloseContext(RegisterID* iterator, Throwable
         m_localScopeDepth
     };
     scope.finallyContext = context;
-    m_scopeContextStack.append(scope);
+    m_controlFlowScopeStack.append(scope);
     m_finallyDepth++;
 }
 
-void BytecodeGenerator::popFinallyContext()
+void BytecodeGenerator::popFinallyControlFlowScope()
 {
-    ASSERT(m_scopeContextStack.size());
-    ASSERT(m_scopeContextStack.last().isFinallyBlock);
-    ASSERT(m_scopeContextStack.last().finallyContext.finallyBlock);
-    ASSERT(!m_scopeContextStack.last().finallyContext.iterator);
-    ASSERT(!m_scopeContextStack.last().finallyContext.enumerationNode);
+    ASSERT(m_controlFlowScopeStack.size());
+    ASSERT(m_controlFlowScopeStack.last().isFinallyBlock);
+    ASSERT(m_controlFlowScopeStack.last().finallyContext.finallyBlock);
+    ASSERT(!m_controlFlowScopeStack.last().finallyContext.iterator);
+    ASSERT(!m_controlFlowScopeStack.last().finallyContext.enumerationNode);
     ASSERT(m_finallyDepth > 0);
-    m_scopeContextStack.removeLast();
+    m_controlFlowScopeStack.removeLast();
     m_finallyDepth--;
 }
 
-void BytecodeGenerator::popIteratorCloseContext()
+void BytecodeGenerator::popIteratorCloseControlFlowScope()
 {
-    ASSERT(m_scopeContextStack.size());
-    ASSERT(m_scopeContextStack.last().isFinallyBlock);
-    ASSERT(!m_scopeContextStack.last().finallyContext.finallyBlock);
-    ASSERT(m_scopeContextStack.last().finallyContext.iterator);
-    ASSERT(m_scopeContextStack.last().finallyContext.enumerationNode);
+    ASSERT(m_controlFlowScopeStack.size());
+    ASSERT(m_controlFlowScopeStack.last().isFinallyBlock);
+    ASSERT(!m_controlFlowScopeStack.last().finallyContext.finallyBlock);
+    ASSERT(m_controlFlowScopeStack.last().finallyContext.iterator);
+    ASSERT(m_controlFlowScopeStack.last().finallyContext.enumerationNode);
     ASSERT(m_finallyDepth > 0);
-    m_scopeContextStack.removeLast();
+    m_controlFlowScopeStack.removeLast();
     m_finallyDepth--;
 }
 
@@ -3847,24 +3847,24 @@ void BytecodeGenerator::allocateAndEmitScope()
     emitMove(m_topMostScope, scopeRegister());
 }
     
-void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowContext* topScope, ControlFlowContext* bottomScope)
+void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowScope* topScope, ControlFlowScope* bottomScope)
 {
     while (topScope > bottomScope) {
         // First we count the number of dynamic scopes we need to remove to get
         // to a finally block.
-        int nNormalScopes = 0;
+        int numberOfNormalScopes = 0;
         while (topScope > bottomScope) {
             if (topScope->isFinallyBlock)
                 break;
-            ++nNormalScopes;
+            ++numberOfNormalScopes;
             --topScope;
         }
 
-        if (nNormalScopes) {
+        if (numberOfNormalScopes) {
             // We need to remove a number of dynamic scopes to get to the next
             // finally block
             RefPtr<RegisterID> parentScope = newTemporary();
-            while (nNormalScopes--) {
+            while (numberOfNormalScopes--) {
                 parentScope = emitGetParentScope(parentScope.get(), scope);
                 emitMove(scope, parentScope.get());
             }
@@ -3874,7 +3874,7 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
                 return;
         }
         
-        Vector<ControlFlowContext> savedScopeContextStack;
+        Vector<ControlFlowScope> savedControlFlowScopeStack;
         Vector<SwitchInfo> savedSwitchContextStack;
         Vector<RefPtr<ForInContext>> savedForInContextStack;
         Vector<TryContext> poppedTryContexts;
@@ -3886,7 +3886,7 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             // Save the current state of the world while instating the state of the world
             // for the finally block.
             FinallyContext finallyContext = topScope->finallyContext;
-            bool flipScopes = finallyContext.scopeContextStackSize != m_scopeContextStack.size();
+            bool flipScopes = finallyContext.controlFlowScopeStackSize != m_controlFlowScopeStack.size();
             bool flipSwitches = finallyContext.switchContextStackSize != m_switchContextStack.size();
             bool flipForIns = finallyContext.forInContextStackSize != m_forInContextStack.size();
             bool flipTries = finallyContext.tryContextStackSize != m_tryContextStack.size();
@@ -3895,10 +3895,10 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             int topScopeIndex = -1;
             int bottomScopeIndex = -1;
             if (flipScopes) {
-                topScopeIndex = topScope - m_scopeContextStack.begin();
-                bottomScopeIndex = bottomScope - m_scopeContextStack.begin();
-                savedScopeContextStack = m_scopeContextStack;
-                m_scopeContextStack.shrink(finallyContext.scopeContextStackSize);
+                topScopeIndex = topScope - m_controlFlowScopeStack.begin();
+                bottomScopeIndex = bottomScope - m_controlFlowScopeStack.begin();
+                savedControlFlowScopeStack = m_controlFlowScopeStack;
+                m_controlFlowScopeStack.shrink(finallyContext.controlFlowScopeStackSize);
             }
             if (flipSwitches) {
                 savedSwitchContextStack = m_switchContextStack;
@@ -3947,9 +3947,9 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
             
             // Restore the state of the world.
             if (flipScopes) {
-                m_scopeContextStack = savedScopeContextStack;
-                topScope = &m_scopeContextStack[topScopeIndex]; // assert it's within bounds
-                bottomScope = m_scopeContextStack.begin() + bottomScopeIndex; // don't assert, since it the index might be -1.
+                m_controlFlowScopeStack = savedControlFlowScopeStack;
+                topScope = &m_controlFlowScopeStack[topScopeIndex]; // assert it's within bounds
+                bottomScope = m_controlFlowScopeStack.begin() + bottomScopeIndex; // don't assert, since it the index might be -1.
             }
             if (flipSwitches)
                 m_switchContextStack = savedSwitchContextStack;
@@ -3981,7 +3981,7 @@ void BytecodeGenerator::emitPopScopes(RegisterID* scope, int targetScopeDepth)
     ASSERT(labelScopeDepth() - targetScopeDepth >= 0);
 
     size_t scopeDelta = labelScopeDepth() - targetScopeDepth;
-    ASSERT(scopeDelta <= m_scopeContextStack.size());
+    ASSERT(scopeDelta <= m_controlFlowScopeStack.size());
     if (!scopeDelta)
         return;
 
@@ -3994,7 +3994,7 @@ void BytecodeGenerator::emitPopScopes(RegisterID* scope, int targetScopeDepth)
         return;
     }
 
-    emitComplexPopScopes(scope, &m_scopeContextStack.last(), &m_scopeContextStack.last() - scopeDelta);
+    emitComplexPopScopes(scope, &m_controlFlowScopeStack.last(), &m_controlFlowScopeStack.last() - scopeDelta);
 }
 
 TryData* BytecodeGenerator::pushTry(Label* start)
@@ -4123,19 +4123,19 @@ void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, Re
     emitPutToScope(m_lexicalScopeStack.last().m_scope, functionVar, callee, ThrowIfNotFound, InitializationMode::NotInitialization);
 }
 
-void BytecodeGenerator::pushScopedControlFlowContext()
+void BytecodeGenerator::pushLocalControlFlowScope()
 {
-    ControlFlowContext context;
-    context.isFinallyBlock = false;
-    m_scopeContextStack.append(context);
+    ControlFlowScope scope;
+    scope.isFinallyBlock = false;
+    m_controlFlowScopeStack.append(scope);
     m_localScopeDepth++;
 }
 
-void BytecodeGenerator::popScopedControlFlowContext()
+void BytecodeGenerator::popLocalControlFlowScope()
 {
-    ASSERT(m_scopeContextStack.size());
-    ASSERT(!m_scopeContextStack.last().isFinallyBlock);
-    m_scopeContextStack.removeLast();
+    ASSERT(m_controlFlowScopeStack.size());
+    ASSERT(!m_controlFlowScopeStack.last().isFinallyBlock);
+    m_controlFlowScopeStack.removeLast();
     m_localScopeDepth--;
 }
 
@@ -4303,7 +4303,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
 
     RefPtr<Label> loopDone = newLabel();
     // RefPtr<Register> iterator's lifetime must be longer than IteratorCloseContext.
-    pushIteratorCloseContext(iterator.get(), node);
+    pushIteratorCloseControlFlowScope(iterator.get(), node);
     {
         LabelScopePtr scope = newLabelScope(LabelScope::Loop);
         RefPtr<RegisterID> value = newTemporary();
@@ -4369,7 +4369,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
     }
 
     // IteratorClose sequence for break-ed control flow.
-    popIteratorCloseContext();
+    popIteratorCloseControlFlowScope();
     emitIteratorClose(iterator.get(), node);
     emitLabel(loopDone.get());
 }

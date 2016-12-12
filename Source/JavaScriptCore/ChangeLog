@@ -1,3 +1,41 @@
+2016-12-12  Mark Lam  <mark.lam@apple.com>
+
+        Rename BytecodeGenerator's ControlFlowContext to ControlFlowScope.
+        https://bugs.webkit.org/show_bug.cgi?id=165777
+
+        Reviewed by Keith Miller.
+
+        The existing code sometimes refer to ControlFlowContext (and associated references)
+        as context, and sometimes as scope.  Let's be consistent and always call it a scope.
+
+        Also renamed push/popScopedControlFlowContext() to push/popLocalControlFlowScope()
+        because these are only used when we inc/dec the m_localScopeDepth.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeVarLexicalEnvironment):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitPopWithScope):
+        (JSC::BytecodeGenerator::pushFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::pushIteratorCloseControlFlowScope):
+        (JSC::BytecodeGenerator::popFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::popIteratorCloseControlFlowScope):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::emitPopScopes):
+        (JSC::BytecodeGenerator::pushLocalControlFlowScope):
+        (JSC::BytecodeGenerator::popLocalControlFlowScope):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::pushFinallyContext): Deleted.
+        (JSC::BytecodeGenerator::pushIteratorCloseContext): Deleted.
+        (JSC::BytecodeGenerator::popFinallyContext): Deleted.
+        (JSC::BytecodeGenerator::popIteratorCloseContext): Deleted.
+        (JSC::BytecodeGenerator::pushScopedControlFlowContext): Deleted.
+        (JSC::BytecodeGenerator::popScopedControlFlowContext): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+
 2016-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         GC scheduler should avoid consecutive pauses
