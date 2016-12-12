@@ -2749,3 +2749,5 @@ fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
 # On iOS we do not visually highlight a programmatic selection
 fast/selectors/040.html
+
+webkit.org/b/165691 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]

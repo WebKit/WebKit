@@ -1,5 +1,14 @@
 2016-12-12  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html as flaky on ios-simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=165691
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-12-12  Ryan Haddad  <ryanhaddad@apple.com>
+
         Rebaseline js/dom/global-constructors-attributes.html for mac-wk1 after r209666.
 
         Unreviewed test gardening.
