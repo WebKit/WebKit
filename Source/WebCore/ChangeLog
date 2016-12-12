@@ -1,3 +1,11 @@
+2016-12-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing build breakage in GStreamer's WebKitCommonEncryptionDecryptorGStreamer.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (webkitMediaCommonEncryptionDecryptTransformInPlace):
+        WTF::Seconds should be used instead of std::chrono::seconds.
+
 2016-12-11  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r200283): Transform, overflow hidden and filter combination completely hides the element
