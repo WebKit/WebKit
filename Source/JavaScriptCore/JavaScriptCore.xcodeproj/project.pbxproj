@@ -753,6 +753,8 @@
 		0FDDBFB51666EED800C55FEF /* DFGVariableAccessDataDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */; };
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; };
 		0FDE87F91DFD0C760064C390 /* CellContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */; };
+		0FDE87FC1DFE6E510064C390 /* SpaceTimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */; };
+		0FDE87FD1DFE6E540064C390 /* SpaceTimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */; };
 		0FDF67D21D9C6D27001B9825 /* B3Kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF67D11D9C6086001B9825 /* B3Kind.h */; };
 		0FDF67D31D9C6D2A001B9825 /* B3Kind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D01D9C6086001B9825 /* B3Kind.cpp */; };
 		0FDF67D61D9DC440001B9825 /* AirKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D41D9DC43E001B9825 /* AirKind.cpp */; };
@@ -3181,6 +3183,8 @@
 		0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableAccessDataDump.cpp; path = dfg/DFGVariableAccessDataDump.cpp; sourceTree = "<group>"; };
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
 		0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CellContainer.cpp; sourceTree = "<group>"; };
+		0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceTimeScheduler.cpp; sourceTree = "<group>"; };
+		0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceTimeScheduler.h; sourceTree = "<group>"; };
 		0FDF67D01D9C6086001B9825 /* B3Kind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Kind.cpp; path = b3/B3Kind.cpp; sourceTree = "<group>"; };
 		0FDF67D11D9C6086001B9825 /* B3Kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Kind.h; path = b3/B3Kind.h; sourceTree = "<group>"; };
 		0FDF67D41D9DC43E001B9825 /* AirKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirKind.cpp; path = b3/air/AirKind.cpp; sourceTree = "<group>"; };
@@ -5737,6 +5741,8 @@
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */,
+				0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */,
+				0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */,
 				0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */,
 				0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
@@ -8622,6 +8628,7 @@
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
 				43AB26C61C1A535900D82AE6 /* B3MathExtras.h in Headers */,
 				AD2FCBF31DB58DAD00B3E736 /* WebAssemblyInstancePrototype.h in Headers */,
+				0FDE87FC1DFE6E510064C390 /* SpaceTimeScheduler.h in Headers */,
 				BC18C4290E16F5CD00B34460 /* JSStringRefCF.h in Headers */,
 				E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */,
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
@@ -9792,6 +9799,7 @@
 				0FD8A32517D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.cpp in Sources */,
 				0FC09791146A6F7100CF2442 /* DFGOSRExit.cpp in Sources */,
 				0F235BEB17178E7300690C7F /* DFGOSRExitBase.cpp in Sources */,
+				0FDE87FD1DFE6E540064C390 /* SpaceTimeScheduler.cpp in Sources */,
 				0FC09792146A6F7300CF2442 /* DFGOSRExitCompiler.cpp in Sources */,
 				0F4DE1D11C4D764B004D6C11 /* B3OriginDump.cpp in Sources */,
 				FE3A06B11C10CB8400390FDD /* JITBitAndGenerator.cpp in Sources */,

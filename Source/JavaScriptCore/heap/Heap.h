@@ -75,6 +75,7 @@ class LLIntOffsetsExtractor;
 class MarkStackArray;
 class MarkedArgumentBuffer;
 class SlotVisitor;
+class SpaceTimeScheduler;
 class StopIfNecessaryTimer;
 class VM;
 
@@ -376,6 +377,7 @@ private:
     friend class MarkedAllocator;
     friend class MarkedBlock;
     friend class SlotVisitor;
+    friend class SpaceTimeScheduler;
     friend class IncrementalSweeper;
     friend class HeapStatistics;
     friend class VM;

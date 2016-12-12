@@ -1,3 +1,44 @@
+2016-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        GC scheduler should avoid consecutive pauses
+        https://bugs.webkit.org/show_bug.cgi?id=165758
+
+        Reviewed by Michael Saboff.
+        
+        This factors out the scheduler from lambdas in Heap::markToFixpoint to an actual class.
+        It's called the SpaceTimeScheduler because it is a linear controller that ties the
+        amount of time you spend on things to the amount of space you are using.
+        
+        This patch uses this refactoring to fix a bug where the GC would pause even though we
+        still had time during a mutator timeslice. This is a 15% improvement on
+        JetStream/splay-latency. Seems neutral on everything else. However, it's not at all
+        clear if this is the right policy or not since retreating wavefront can sometimes be so
+        sensitive to scheduling decisions. For this reason, there is a tunable option that lets
+        you decide how long the GC will sit idle before the start of its timeslice.
+        
+        So, we can revert this policy change in this patch without reverting the patch.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::markToFixpoint):
+        * heap/Heap.h:
+        * heap/SpaceTimeScheduler.cpp: Added.
+        (JSC::SpaceTimeScheduler::Decision::targetMutatorUtilization):
+        (JSC::SpaceTimeScheduler::Decision::targetCollectorUtilization):
+        (JSC::SpaceTimeScheduler::Decision::elapsedInPeriod):
+        (JSC::SpaceTimeScheduler::Decision::phase):
+        (JSC::SpaceTimeScheduler::Decision::shouldBeResumed):
+        (JSC::SpaceTimeScheduler::Decision::timeToResume):
+        (JSC::SpaceTimeScheduler::Decision::timeToStop):
+        (JSC::SpaceTimeScheduler::SpaceTimeScheduler):
+        (JSC::SpaceTimeScheduler::snapPhase):
+        (JSC::SpaceTimeScheduler::currentDecision):
+        * heap/SpaceTimeScheduler.h: Added.
+        (JSC::SpaceTimeScheduler::Decision::Decision):
+        (JSC::SpaceTimeScheduler::Decision::operator bool):
+        * runtime/Options.h:
+
 2016-12-12  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r209653): speedometer crashes making virtual slow path tailcalls

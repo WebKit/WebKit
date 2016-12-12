@@ -52,6 +52,7 @@
 #include "PreventCollectionScope.h"
 #include "SamplingProfiler.h"
 #include "ShadowChicken.h"
+#include "SpaceTimeScheduler.h"
 #include "SuperSampler.h"
 #include "StopIfNecessaryTimer.h"
 #include "TypeProfilerLog.h"
@@ -560,100 +561,11 @@ void Heap::markToFixpoint(double gcStartTime)
 
     m_collectorSlotVisitor->didStartMarking();
 
-    MonotonicTime initialTime = MonotonicTime::now();
-    
-    const Seconds period = Seconds::fromMilliseconds(Options::concurrentGCPeriodMS());
-    
-    const double bytesAllocatedThisCycleAtTheBeginning = m_bytesAllocatedThisCycle;
-    const double bytesAllocatedThisCycleAtTheEnd =
-        Options::concurrentGCMaxHeadroom() *
-        std::max(
-            bytesAllocatedThisCycleAtTheBeginning,
-            static_cast<double>(m_maxEdenSize));
-    double bytesAllocatedThisCycle;
-    MonotonicTime nowForScheduling;
-    
-    auto cacheSchedulingStats = [&] () {
-        bytesAllocatedThisCycle = m_bytesAllocatedThisCycle;
-        nowForScheduling = MonotonicTime::now();
-    };
-    
-    cacheSchedulingStats();
-    
-    auto targetMutatorUtilization = [&] () -> double {
-        double headroomFullness =
-            (bytesAllocatedThisCycle - bytesAllocatedThisCycleAtTheBeginning) /
-            (bytesAllocatedThisCycleAtTheEnd - bytesAllocatedThisCycleAtTheBeginning);
-        
-        // headroomFullness can be NaN and other interesting things if
-        // bytesAllocatedThisCycleAtTheBeginning is zero. We see that in debug tests. This code
-        // defends against all floating point dragons.
-        
-        if (!(headroomFullness >= 0))
-            headroomFullness = 0;
-        if (!(headroomFullness <= 1))
-            headroomFullness = 1;
-        
-        double mutatorUtilization = 1 - headroomFullness;
-        
-        // Scale the mutator utilization into the permitted window.
-        mutatorUtilization =
-            Options::minimumMutatorUtilization() +
-            mutatorUtilization * (
-                Options::maximumMutatorUtilization() -
-                Options::minimumMutatorUtilization());
-        
-        return mutatorUtilization;
-    };
-    
-    auto targetCollectorUtilization = [&] () -> double {
-        return 1 - targetMutatorUtilization();
-    };
-    
-    auto elapsedInPeriod = [&] () -> Seconds {
-        return (nowForScheduling - initialTime) % period;
-    };
-    
-    auto phase = [&] () -> double {
-        return elapsedInPeriod() / period;
-    };
-    
-    auto shouldBeResumed = [&] () -> bool {
-        if (Options::collectorShouldResumeFirst())
-            return phase() <= targetMutatorUtilization();
-        return phase() > targetCollectorUtilization();
-    };
-    
-    auto timeToResume = [&] () -> MonotonicTime {
-        ASSERT(!shouldBeResumed());
-        if (Options::collectorShouldResumeFirst())
-            return nowForScheduling - elapsedInPeriod() + period;
-        return nowForScheduling - elapsedInPeriod() + period * targetCollectorUtilization();
-    };
-    
-    auto timeToStop = [&] () -> MonotonicTime {
-        ASSERT(shouldBeResumed());
-        if (Options::collectorShouldResumeFirst())
-            return nowForScheduling - elapsedInPeriod() + period * targetMutatorUtilization();
-        return nowForScheduling - elapsedInPeriod() + period;
-    };
-    
-    // Adjust the target extra pause ratio as necessary.
-    double rateOfCollection =
-        (m_lastGCEndTime - m_lastGCStartTime) /
-        (m_currentGCStartTime - m_lastGCStartTime);
-    
-    if (Options::logGC())
-        dataLog("cr=", rateOfCollection, " ");
-    
-    // FIXME: Determine if this is useful or get rid of it.
-    // https://bugs.webkit.org/show_bug.cgi?id=164940
-    double extraPauseRatio = Options::initialExtraPauseRatio();
+    SpaceTimeScheduler scheduler(*this);
     
     for (unsigned iteration = 1; ; ++iteration) {
         if (Options::logGC())
             dataLog("i#", iteration, " ");
-        MonotonicTime topOfLoop = MonotonicTime::now();
         {
             TimingScope preConvergenceTimingScope(*this, "Heap::markToFixpoint conservative scan");
             m_objectSpace.prepareForConservativeScan();
@@ -716,8 +628,7 @@ void Heap::markToFixpoint(double gcStartTime)
         bool shouldTerminate = m_collectorSlotVisitor->isEmpty() && m_mutatorMarkStack->isEmpty();
         
         if (Options::logGC()) {
-            cacheSchedulingStats();
-            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + m_collectorSlotVisitor->mutatorMarkStack().size(), ", a=", m_bytesAllocatedThisCycle / 1024, " kb, b=", m_barriersExecuted, ", mu=", targetMutatorUtilization(), " ");
+            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + m_collectorSlotVisitor->mutatorMarkStack().size(), ", a=", m_bytesAllocatedThisCycle / 1024, " kb, b=", m_barriersExecuted, ", mu=", scheduler.currentDecision().targetMutatorUtilization(), " ");
         }
         
         // We want to do this to conservatively ensure that we rescan any code blocks that are
@@ -739,31 +650,31 @@ void Heap::markToFixpoint(double gcStartTime)
         if (Options::logGC() == GCLogging::Verbose)
             dataLog("Live Weak Handles:\n", *m_collectorSlotVisitor);
         
-        MonotonicTime beforeConvergence = MonotonicTime::now();
-        
         {
             TimingScope traceTimingScope(*this, "Heap::markToFixpoint tracing");
             ParallelModeEnabler enabler(*m_collectorSlotVisitor);
             
             if (Options::useCollectorTimeslicing()) {
-                // Before we yield to the mutator, we should do GC work proportional to the time we
-                // spent paused. We initialize the timeslicer to start after this "mandatory" pause
-                // completes.
+                scheduler.snapPhase();
                 
                 SlotVisitor::SharedDrainResult drainResult;
-                
-                Seconds extraPause = (beforeConvergence - topOfLoop) * extraPauseRatio;
-                initialTime = beforeConvergence + extraPause;
-                drainResult = m_collectorSlotVisitor->drainInParallel(initialTime);
-                
-                while (drainResult != SlotVisitor::SharedDrainResult::Done) {
-                    cacheSchedulingStats();
-                    if (shouldBeResumed()) {
+                do {
+                    auto decision = scheduler.currentDecision();
+                    if (decision.shouldBeResumed()) {
                         ResumeTheWorldScope resumeTheWorldScope(*this);
-                        drainResult = m_collectorSlotVisitor->drainInParallelPassively(timeToStop());
+                        drainResult = m_collectorSlotVisitor->drainInParallelPassively(decision.timeToStop());
+                        if (drainResult == SlotVisitor::SharedDrainResult::Done) {
+                            // At this point we will stop. But maybe the scheduler does not want
+                            // that.
+                            Seconds scheduledIdle = decision.timeToStop() - MonotonicTime::now();
+                            // It's totally unclear what the value of collectPermittedIdleRatio
+                            // should be, other than it should be greater than 0. You could even
+                            // argue for it being greater than 1. We should tune it.
+                            sleep(scheduledIdle * Options::collectorPermittedIdleRatio());
+                        }
                     } else
-                        drainResult = m_collectorSlotVisitor->drainInParallel(timeToResume());
-                }
+                        drainResult = m_collectorSlotVisitor->drainInParallel(decision.timeToResume());
+                } while (drainResult != SlotVisitor::SharedDrainResult::Done);
             } else {
                 // Disabling collector timeslicing is meant to be used together with
                 // --collectContinuously=true to maximize the opportunity for harmful races.
@@ -771,8 +682,6 @@ void Heap::markToFixpoint(double gcStartTime)
                 m_collectorSlotVisitor->drainInParallel();
             }
         }
-        
-        extraPauseRatio *= Options::extraPauseRatioIterationGrowthRate();
     }
 
     {
