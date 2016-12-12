@@ -448,6 +448,7 @@ sub resolveChangeLog($)
 
     if (mergeChangeLogs($fileMine, $fileOlder, $fileNewer)) {
         if ($file ne $fileNewer) {
+            chmod 0644, $fileNewer;
             unlink($file);
             rename($fileNewer, $file) or die $!;
         }

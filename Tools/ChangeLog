@@ -1,3 +1,14 @@
+2016-12-12  Alexey Proskuryakov  <ap@apple.com>
+
+        ChangeLogs become readonly after resolving a conflict
+        https://bugs.webkit.org/show_bug.cgi?id=165440
+        rdar://problem/29491002
+
+        Reviewed by Darin Adler.
+
+        * Scripts/resolve-ChangeLogs: (resolveChangeLog): Set correct permissions when
+        moving the file.
+
 2016-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         Re-enable collectContinuously since it doesn't crash anymore
