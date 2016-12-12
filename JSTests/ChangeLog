@@ -1,3 +1,15 @@
+2016-12-12  Mark Lam  <mark.lam@apple.com>
+
+        Debug JSC test timeout: stress/string-prototype-replace-should-throw-out-of-memory-error-when-using-too-much-memory.js.ftl-no-cjit.
+        https://bugs.webkit.org/show_bug.cgi?id=164630
+
+        Reviewed by Keith Miller.
+
+        Speculative fix for timeout issue.  It looks like this test just runs a bit
+        slower on debug builds.  So, we'll give it a little more time to run.
+
+        * stress/string-prototype-replace-should-throw-out-of-memory-error-when-using-too-much-memory.js:
+
 2016-12-11  Saam Barati  <sbarati@apple.com>
 
         We should be able to throw exceptions from Wasm code and when Wasm frames are on the stack
