@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Strong.h"
+#include <limits.h>
 
 namespace JSC {
 

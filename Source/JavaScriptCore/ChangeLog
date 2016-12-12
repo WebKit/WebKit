@@ -1,5 +1,11 @@
 2016-12-11  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed. Try to fix the linux build.
+
+        * runtime/StackFrame.h:
+
+2016-12-11  Saam Barati  <sbarati@apple.com>
+
         We should be able to throw exceptions from Wasm code and when Wasm frames are on the stack
         https://bugs.webkit.org/show_bug.cgi?id=165429
 
