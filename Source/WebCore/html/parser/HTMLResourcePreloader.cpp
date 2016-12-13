@@ -43,7 +43,18 @@ URL PreloadRequest::completeURL(Document& document)
 CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 {
     ASSERT(isMainThread());
-    CachedResourceRequest request(completeURL(document), CachedResourceLoader::defaultCachedResourceOptions());
+
+    bool skipContentSecurityPolicyCheck = false;
+    if (m_resourceType == CachedResource::Type::Script)
+        skipContentSecurityPolicyCheck = document.contentSecurityPolicy()->allowScriptWithNonce(m_nonceAttribute);
+    else if (m_resourceType == CachedResource::Type::CSSStyleSheet)
+        skipContentSecurityPolicyCheck = document.contentSecurityPolicy()->allowStyleWithNonce(m_nonceAttribute);
+
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    if (skipContentSecurityPolicyCheck)
+        options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
+
+    CachedResourceRequest request { completeURL(document), options };
     request.setInitiator(m_initiator);
     String crossOriginMode = m_crossOriginMode;
     if (m_moduleScript == ModuleScript::Yes) {

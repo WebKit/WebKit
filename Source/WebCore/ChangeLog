@@ -1,3 +1,40 @@
+2016-12-13  Daniel Bates  <dabates@apple.com>
+
+        CSP: Teach the preload scanner about the 'nonce' attribute
+        https://bugs.webkit.org/show_bug.cgi?id=161192
+        <rdar://problem/28010354>
+
+        Reviewed by Darin Adler.
+
+        This patch was inspired by a similar Blink change:
+        <https://chromium.googlesource.com/chromium/src/+/dde5487f380cf774e4c0e96ba7f88ea68e723907>
+
+        Preload external scripts and stylesheets whose HTML script and link elements have a nonce
+        attribute that is listed in the Content Security Policy (CSP) of the page.
+
+        Currently the preload scanner ignores the nonce attribute on HTML script and link elements.
+        So, WebKit does not preload their associated subresources unless the value of the src
+        attribute or href attribute is whitelisted in the CSP of the page for script and link
+        elements, respectively. Instead the preload scanner should recognize the nonce attribute on
+        script and link elements and query the CSP of the page with it. If the nonce attribute is
+        whitelisted then the request should be preloaded.
+
+        Tests: http/tests/loading/do-not-preload-css-blocked-by-csp.html
+               http/tests/loading/do-not-preload-script-src-blocked-by-csp.html
+               http/tests/loading/preload-css-with-csp-nonce.html
+               http/tests/loading/preload-script-src-with-csp-nonce.html
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest): Set the nonce on the
+        PreloadRequest to the nonce that we found during the scan.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): For script and link tag names,
+        save the value of the nonce attribute (if it has one).
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::resourceRequest): Skip CSP policy check if the nonce is listed in
+        the CSP of the page.
+        * html/parser/HTMLResourcePreloader.h:
+        (WebCore::PreloadRequest::setNonce): Added.
+
 2016-12-13  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Rename CSSPrimitiveValue::UnitTypes to CSSPrimitiveValue::UnitType

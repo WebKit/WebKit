@@ -53,6 +53,7 @@ public:
     const String& media() const { return m_mediaAttribute; }
     void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
     void setCrossOriginMode(const String& mode) { m_crossOriginMode = mode; }
+    void setNonce(const String& nonce) { m_nonceAttribute = nonce; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
@@ -65,6 +66,7 @@ private:
     CachedResource::Type m_resourceType;
     String m_mediaAttribute;
     String m_crossOriginMode;
+    String m_nonceAttribute;
     ModuleScript m_moduleScript;
 };
 

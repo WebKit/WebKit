@@ -1,0 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/loading/resources/zero-length.js because it does not appear in the script-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/loading/resources/zero-length.js because it does not appear in the script-src directive of the Content Security Policy.
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test makes sure that the Preload scanner does not preload a script resource that is blocked by the Content Security Policy of the page. 
+PASS
