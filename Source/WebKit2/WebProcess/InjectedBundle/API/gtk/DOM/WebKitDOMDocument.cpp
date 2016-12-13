@@ -1917,8 +1917,16 @@ gchar* webkit_dom_document_get_visibility_state(WebKitDOMDocument* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOCUMENT(self), 0);
     WebCore::Document* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->visibilityState());
-    return result;
+    switch (item->visibilityState()) {
+    case WebCore::Document::VisibilityState::Hidden:
+        return convertToUTF8String("hidden");
+    case WebCore::Document::VisibilityState::Visible:
+        return convertToUTF8String("visible");
+    case WebCore::Document::VisibilityState::Prerender:
+        return convertToUTF8String("prerender");
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 gboolean webkit_dom_document_get_hidden(WebKitDOMDocument* self)
