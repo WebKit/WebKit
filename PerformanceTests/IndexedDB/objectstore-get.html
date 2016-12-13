@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+// Delete database(s) for the test ahead of time.
+var databaseName = "objectstore-get-DB";
+indexedDB.deleteDatabase(databaseName).onsuccess = function() {
+    startIteration();
+}
+
+var testGenerator = null;
+var db = null;
+var transaction = null;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: 20,
+    unit: 'ms',
+    done: function () {
+        transaction = null;
+        db = null;
+        testGenerator = null;
+        PerfTestRunner.gc();
+    }
+});
+
+function startIteration()
+{
+    testGenerator = runIteration();
+    nextStep();
+}
+
+function nextStep()
+{
+    testGenerator.next();
+}
+
+var numberOfEntries = 5000;
+
+function *runIteration()
+{
+    var openRequest = indexedDB.open(databaseName);
+    openRequest.onupgradeneeded = function(event) {
+        db = event.target.result;
+        var objectStore = db.createObjectStore('store');
+        for (var i = 0; i < numberOfEntries; ++i)
+           objectStore.put("index" + i, i);
+    }
+    openRequest.onsuccess = nextStep;
+
+    yield;
+
+    var startTime = PerfTestRunner.now();
+
+    var objectStore = db.transaction('store').objectStore('store');
+    var completedGets = 0;
+    for (var i = 0; i < numberOfEntries; ++i)
+    {
+        
+        objectStore.get(i).onsuccess = (function (j) {
+            return function(event) {
+                if (event.target.result != ("index" + j))
+                    alert("Expected 'index" + j + "', got '" + event.target.result + "'");
+
+                if (++completedGets == numberOfEntries)
+                    nextStep();
+            }
+        })(i);
+    }
+
+    yield;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    setTimeout(startIteration, 0);
+}
+</script>
+</body>
+</html>
