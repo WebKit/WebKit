@@ -16,8 +16,6 @@ fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
 fast/media/mq-monochrome-live-update.html [ Pass ]
 fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 
-http/tests/ssl/applepay/ [ Pass ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
