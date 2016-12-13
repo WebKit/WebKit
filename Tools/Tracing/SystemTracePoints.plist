@@ -9,6 +9,18 @@
          <array>
              <dict>
                  <key>Name</key>
+                 <string>JavaScript VM</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>2501</string>
+                 <key>CodeEnd</key>
+                 <string>2502</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Document::recalcStyle()</string>
                  <key>Type</key>
                  <string>Interval</string>

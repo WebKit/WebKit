@@ -41,6 +41,8 @@ enum TracePointCode {
     WTFRange = 0,
 
     JavaScriptRange = 2500,
+    VMEntryScopeStart,
+    VMEntryScopeEnd,
 
     WebCoreRange = 5000,
     StyleRecalcStart,

@@ -1,3 +1,16 @@
+2016-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r209544.
+
+        Looks like r209489 did not cause the performance regression
+        after all
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r209489."
+        https://bugs.webkit.org/show_bug.cgi?id=165550
+        http://trac.webkit.org/changeset/209544
+
 2016-12-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209725.
