@@ -3259,9 +3259,6 @@ int jscmain(int argc, char** argv)
     int result;
     result = runJSC(vm, options);
 
-#if ENABLE(VM_COUNTERS)
-    vm->dumpCounters();
-#endif
     if (Options::gcAtEnd()) {
         // We need to hold the API lock to do a GC.
         JSLockHolder locker(vm);

@@ -30,12 +30,8 @@
 namespace JSC {
 class VM;
 class MacroAssemblerCodeRef;
-class JITEntryPointsWithRef;
-class JITJSCallThunkEntryPointsWithRef;
 
 typedef MacroAssemblerCodeRef (*ThunkGenerator)(VM*);
-typedef JITEntryPointsWithRef (*JITEntryGenerator)(VM*);
-typedef JITJSCallThunkEntryPointsWithRef (*JITCallThunkEntryGenerator)(VM*);
 
 } // namespace JSC
 

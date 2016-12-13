@@ -71,11 +71,7 @@ void* prepareOSREntry(
     if (Options::verboseOSR())
         dataLog("    Values at entry: ", values, "\n");
     
-    for (unsigned argument = values.numberOfArguments(); argument--;) {
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        if (argument < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-            break;
-#endif
+    for (int argument = values.numberOfArguments(); argument--;) {
         JSValue valueOnStack = exec->r(virtualRegisterForArgument(argument).offset()).asanUnsafeJSValue();
         JSValue reconstructedValue = values.argument(argument);
         if (valueOnStack == reconstructedValue || !argument)
@@ -103,12 +99,8 @@ void* prepareOSREntry(
     }
     
     exec->setCodeBlock(entryCodeBlock);
-
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    void* result = entryCode->addressForCall(RegisterArgsArityCheckNotRequired).executableAddress();
-#else
-    void* result = entryCode->addressForCall(StackArgsArityCheckNotRequired).executableAddress();
-#endif
+    
+    void* result = entryCode->addressForCall(ArityCheckNotRequired).executableAddress();
     if (Options::verboseOSR())
         dataLog("    Entry will succeed, going to address", RawPointer(result), "\n");
     

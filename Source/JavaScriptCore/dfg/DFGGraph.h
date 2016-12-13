@@ -859,7 +859,7 @@ public:
     bool willCatchExceptionInMachineFrame(CodeOrigin, CodeOrigin& opCatchOriginOut, HandlerInfo*& catchHandlerOut);
     
     bool needsScopeRegister() const { return m_hasDebuggerEnabled || m_codeBlock->usesEval(); }
-    bool needsFlushedThis() const { return m_hasDebuggerEnabled || m_codeBlock->usesEval(); }
+    bool needsFlushedThis() const { return m_codeBlock->usesEval(); }
 
     VM& m_vm;
     Plan& m_plan;
@@ -878,9 +878,9 @@ public:
     
     Bag<StorageAccessData> m_storageAccessData;
     
-    // In CPS, this is all of the GetArgumentRegister and SetArgument nodes for the arguments in
-    // the machine code block that survived DCE. All of them except maybe "this" will survive DCE,
-    // because of the Flush nodes.
+    // In CPS, this is all of the SetArgument nodes for the arguments in the machine code block
+    // that survived DCE. All of them except maybe "this" will survive DCE, because of the Flush
+    // nodes.
     //
     // In SSA, this is all of the GetStack nodes for the arguments in the machine code block that
     // may have some speculation in the prologue and survived DCE. Note that to get the speculation
@@ -903,8 +903,7 @@ public:
     //
     // If we DCE the ArithAdd and we remove the int check on x, then this won't do the side
     // effects.
-    Vector<Node*, 8> m_argumentsOnStack;
-    Vector<Node*, 8> m_argumentsForChecking;
+    Vector<Node*, 8> m_arguments;
     
     // In CPS, this is meaningless. In SSA, this is the argument speculation that we've locked in.
     Vector<FlushFormat> m_argumentFormats;
@@ -955,7 +954,6 @@ public:
     GraphForm m_form;
     UnificationState m_unificationState;
     PlanStage m_planStage { PlanStage::Initial };
-    StrengthReduceArgumentFlushes m_strengthReduceArguments = { StrengthReduceArgumentFlushes::DontOptimizeArgumentFlushes };
     RefCountState m_refCountState;
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };

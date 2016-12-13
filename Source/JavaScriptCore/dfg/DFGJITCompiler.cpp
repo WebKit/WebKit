@@ -99,6 +99,18 @@ void JITCompiler::linkOSRExits()
     }
 }
 
+void JITCompiler::compileEntry()
+{
+    // This code currently matches the old JIT. In the function header we need to
+    // save return address and call frame via the prologue and perform a fast stack check.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56292
+    // We'll need to convert the remaining cti_ style calls (specifically the stack
+    // check) which will be dependent on stack layout. (We'd need to account for this in
+    // both normal return code and when jumping to an exception handler).
+    emitFunctionPrologue();
+    emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
+}
+
 void JITCompiler::compileSetupRegistersForEntry()
 {
     emitSaveCalleeSaves();
@@ -265,7 +277,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         JSCallRecord& record = m_jsCalls[i];
         CallLinkInfo& info = *record.info;
-        linkBuffer.link(record.slowCall, FunctionPtr(m_vm->getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(info.argumentsLocation()).executableAddress()));
+        linkBuffer.link(record.slowCall, FunctionPtr(m_vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
         info.setCallLocations(
             CodeLocationLabel(linkBuffer.locationOfNearCall(record.slowCall)),
             CodeLocationLabel(linkBuffer.locationOf(record.targetToCheck)),
@@ -275,8 +287,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (JSDirectCallRecord& record : m_jsDirectCalls) {
         CallLinkInfo& info = *record.info;
         linkBuffer.link(record.call, linkBuffer.locationOf(record.slowPath));
-        if (record.hasSlowCall())
-            linkBuffer.link(record.slowCall, FunctionPtr(m_vm->getJITCallThunkEntryStub(linkDirectCallThunkGenerator).entryFor(info.argumentsLocation()).executableAddress()));
         info.setCallLocations(
             CodeLocationLabel(),
             linkBuffer.locationOf(record.slowPath),
@@ -344,14 +354,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
 void JITCompiler::compile()
 {
-    Label mainEntry(this);
-
     setStartOfCode();
-    emitFunctionPrologue();
-
-    Label entryPoint(this);
-    emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
-
+    compileEntry();
     m_speculative = std::make_unique<SpeculativeJIT>(*this);
 
     // Plant a check that sufficient space is available in the JSStack.
@@ -378,20 +382,6 @@ void JITCompiler::compile()
 
     m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
 
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    m_stackArgsArityOKEntry = label();
-    emitFunctionPrologue();
-
-    // Load argument values into argument registers
-    loadPtr(addressFor(CallFrameSlot::callee), argumentRegisterForCallee());
-    load32(payloadFor(CallFrameSlot::argumentCount), argumentRegisterForArgumentCount());
-    
-    for (unsigned argIndex = 0; argIndex < static_cast<unsigned>(m_codeBlock->numParameters()) && argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++)
-        load64(Address(GPRInfo::callFrameRegister, (CallFrameSlot::thisArgument + argIndex) * static_cast<int>(sizeof(Register))), argumentRegisterForFunctionArgument(argIndex));
-    
-    jump(entryPoint);
-#endif
-
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
     m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
@@ -416,87 +406,24 @@ void JITCompiler::compile()
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
     disassemble(*linkBuffer);
-
-    JITEntryPoints entrypoints;
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    entrypoints.setEntryFor(RegisterArgsArityCheckNotRequired, linkBuffer->locationOf(mainEntry));
-    entrypoints.setEntryFor(StackArgsArityCheckNotRequired, linkBuffer->locationOf(m_stackArgsArityOKEntry));
-#else
-    entrypoints.setEntryFor(StackArgsArityCheckNotRequired, linkBuffer->locationOf(mainEntry));
-#endif
-
+    
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
-        m_graph.m_plan, WTFMove(m_jitCode), WTFMove(linkBuffer), entrypoints);
+        m_graph.m_plan, WTFMove(m_jitCode), WTFMove(linkBuffer));
 }
 
 void JITCompiler::compileFunction()
 {
     setStartOfCode();
-
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    unsigned numParameters = static_cast<unsigned>(m_codeBlock->numParameters());
-    GPRReg argCountReg = argumentRegisterForArgumentCount();
-    JumpList continueRegisterEntry;
-    Label registerArgumentsEntrypoints[NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS + 1];
-
-    if (numParameters < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
-        // Spill any extra register arguments passed to function onto the stack.
-        for (unsigned extraRegisterArgumentIndex = NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS - 1;
-            extraRegisterArgumentIndex >= numParameters; extraRegisterArgumentIndex--) {
-            registerArgumentsEntrypoints[extraRegisterArgumentIndex + 1] = label();
-            emitPutArgumentToCallFrameBeforePrologue(argumentRegisterForFunctionArgument(extraRegisterArgumentIndex), extraRegisterArgumentIndex);
-        }
-    }
-    incrementCounter(this, VM::RegArgsExtra);
-
-    continueRegisterEntry.append(jump());
-
-    m_registerArgsWithArityCheck = label();
-    incrementCounter(this, VM::RegArgsArity);
-
-    Label registerArgsCheckArity(this);
-
-    Jump registerCheckArity;
-
-    if (numParameters < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-        registerCheckArity = branch32(NotEqual, argCountReg, TrustedImm32(numParameters));
-    else {
-        registerCheckArity = branch32(Below, argCountReg, TrustedImm32(numParameters));
-        m_registerArgsWithPossibleExtraArgs = label();
-    }
-    
-    Label registerEntryNoArity(this);
-
-    if (numParameters <= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-        registerArgumentsEntrypoints[numParameters] = registerEntryNoArity;
-
-    incrementCounter(this, VM::RegArgsNoArity);
-
-    continueRegisterEntry.link(this);
-#endif // NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-
-    Label mainEntry(this);
-
-    emitFunctionPrologue();
+    compileEntry();
 
     // === Function header code generation ===
     // This is the main entry point, without performing an arity check.
     // If we needed to perform an arity check we will already have moved the return address,
     // so enter after this.
     Label fromArityCheck(this);
-
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    storePtr(argumentRegisterForCallee(), addressFor(CallFrameSlot::callee));
-    store32(argCountReg, payloadFor(CallFrameSlot::argumentCount));
-
-    Label fromStackEntry(this);
-#endif
-    
-    emitPutToCallFrameHeader(m_codeBlock, CallFrameSlot::codeBlock);
-
     // Plant a check that sufficient space is available in the JSStack.
-    addPtr(TrustedImm32(virtualRegisterForLocal(m_graph.requiredRegisterCountForExecutionAndExit() - 1).offset() * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::nonArgGPR0);
-    Jump stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), GPRInfo::nonArgGPR0);
+    addPtr(TrustedImm32(virtualRegisterForLocal(m_graph.requiredRegisterCountForExecutionAndExit() - 1).offset() * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    Jump stackOverflow = branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), GPRInfo::regT1);
 
     // Move the stack pointer down to accommodate locals
     addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
@@ -525,105 +452,28 @@ void JITCompiler::compileFunction()
         addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
 
     m_speculative->callOperationWithCallFrameRollbackOnException(operationThrowStackOverflowError, m_codeBlock);
-
-    JumpList arityOK;
     
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    jump(registerArgsCheckArity);
-
-    JumpList registerArityNeedsFixup;
-    if (numParameters < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS) {
-        registerCheckArity.link(this);
-        registerArityNeedsFixup.append(branch32(Below, argCountReg, TrustedImm32(m_codeBlock->numParameters())));
-
-        // We have extra register arguments.
-
-        // The fast entry point into a function does not check that the correct number of arguments
-        // have been passed to the call (we only use the fast entry point where we can statically
-        // determine the correct number of arguments have been passed, or have already checked).
-        // In cases where an arity check is necessary, we enter here.
-        m_registerArgsWithPossibleExtraArgs = label();
-
-        incrementCounter(this, VM::RegArgsExtra);
-
-        // Spill extra args passed to function
-        for (unsigned argIndex = static_cast<unsigned>(m_codeBlock->numParameters()); argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++) {
-            branch32(MacroAssembler::BelowOrEqual, argCountReg, MacroAssembler::TrustedImm32(argIndex)).linkTo(mainEntry, this);
-            emitPutArgumentToCallFrameBeforePrologue(argumentRegisterForFunctionArgument(argIndex), argIndex);
-        }
-        jump(mainEntry);
-    }
-
-    // Fall through
-    if (numParameters > 0) {
-        // There should always be a "this" parameter.
-        unsigned registerArgumentFixupCount = std::min(numParameters - 1, NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS);
-        Label registerArgumentsNeedArityFixup = label();
-
-        for (unsigned argIndex = 1; argIndex <= registerArgumentFixupCount; argIndex++)
-            registerArgumentsEntrypoints[argIndex] = registerArgumentsNeedArityFixup;
-    }
-
-    incrementCounter(this, VM::RegArgsArity);
-
-    registerArityNeedsFixup.link(this);
-
-    if (numParameters >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-        registerCheckArity.link(this);
-
-    spillArgumentRegistersToFrameBeforePrologue();
-
-#if ENABLE(VM_COUNTERS)
-    Jump continueToStackArityFixup = jump();
-#endif
-#endif // NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-
-    m_stackArgsWithArityCheck = label();
-    incrementCounter(this, VM::StackArgsArity);
-
-#if ENABLE(VM_COUNTERS)
-    continueToStackArityFixup.link(this);
-#endif
-
-    emitFunctionPrologue();
+    // The fast entry point into a function does not check the correct number of arguments
+    // have been passed to the call (we only use the fast entry point where we can statically
+    // determine the correct number of arguments have been passed, or have already checked).
+    // In cases where an arity check is necessary, we enter here.
+    // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
+    m_arityCheck = label();
+    compileEntry();
 
     load32(AssemblyHelpers::payloadFor((VirtualRegister)CallFrameSlot::argumentCount), GPRInfo::regT1);
-    arityOK.append(branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())));
-
-    incrementCounter(this, VM::ArityFixupRequired);
-
+    branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(-maxFrameExtentForSlowPathCall), stackPointerRegister);
     m_speculative->callOperationWithCallFrameRollbackOnException(m_codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck, GPRInfo::regT0);
     if (maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-    arityOK.append(branchTest32(Zero, GPRInfo::returnValueGPR));
-
+    branchTest32(Zero, GPRInfo::returnValueGPR).linkTo(fromArityCheck, this);
     emitStoreCodeOrigin(CodeOrigin(0));
     move(GPRInfo::returnValueGPR, GPRInfo::argumentGPR0);
     m_callArityFixup = call();
-
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    Jump toFillRegisters = jump();
-
-    m_stackArgsArityOKEntry = label();
-
-    incrementCounter(this, VM::StackArgsNoArity);
-    emitFunctionPrologue();
-
-    arityOK.link(this);
-    toFillRegisters.link(this);
-
-    // Load argument values into argument registers
-    for (unsigned argIndex = 0; argIndex < static_cast<unsigned>(m_codeBlock->numParameters()) && argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++)
-        load64(Address(GPRInfo::callFrameRegister, (CallFrameSlot::thisArgument + argIndex) * static_cast<int>(sizeof(Register))), argumentRegisterForFunctionArgument(argIndex));
-
-    jump(fromStackEntry);
-#else
-    arityOK.linkTo(fromArityCheck, this);
     jump(fromArityCheck);
-#endif
     
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
@@ -652,35 +502,10 @@ void JITCompiler::compileFunction()
     
     disassemble(*linkBuffer);
 
-    JITEntryPoints entrypoints;
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-#if ENABLE(VM_COUNTERS)
-    MacroAssemblerCodePtr mainEntryCodePtr = linkBuffer->locationOf(registerEntryNoArity);
-#else
-    MacroAssemblerCodePtr mainEntryCodePtr = linkBuffer->locationOf(mainEntry);
-#endif
-    entrypoints.setEntryFor(RegisterArgsArityCheckNotRequired, mainEntryCodePtr);
-    entrypoints.setEntryFor(RegisterArgsPossibleExtraArgs, linkBuffer->locationOf(m_registerArgsWithPossibleExtraArgs));
-    entrypoints.setEntryFor(RegisterArgsMustCheckArity, linkBuffer->locationOf(m_registerArgsWithArityCheck));
-
-    for (unsigned argCount = 1; argCount <= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argCount++) {
-        MacroAssemblerCodePtr entry;
-        if (argCount == numParameters)
-            entry = mainEntryCodePtr;
-        else if (registerArgumentsEntrypoints[argCount].isSet())
-            entry = linkBuffer->locationOf(registerArgumentsEntrypoints[argCount]);
-        else
-            entry = linkBuffer->locationOf(m_registerArgsWithArityCheck);
-        entrypoints.setEntryFor(JITEntryPoints::registerEntryTypeForArgumentCount(argCount), entry);
-    }
-    entrypoints.setEntryFor(StackArgsArityCheckNotRequired, linkBuffer->locationOf(m_stackArgsArityOKEntry));
-#else
-    entrypoints.setEntryFor(StackArgsArityCheckNotRequired, linkBuffer->locationOf(mainEntry));
-#endif
-    entrypoints.setEntryFor(StackArgsMustCheckArity, linkBuffer->locationOf(m_stackArgsWithArityCheck));
+    MacroAssemblerCodePtr withArityCheck = linkBuffer->locationOf(m_arityCheck);
 
     m_graph.m_plan.finalizer = std::make_unique<JITFinalizer>(
-        m_graph.m_plan, WTFMove(m_jitCode), WTFMove(linkBuffer), entrypoints);
+        m_graph.m_plan, WTFMove(m_jitCode), WTFMove(linkBuffer), withArityCheck);
 }
 
 void JITCompiler::disassemble(LinkBuffer& linkBuffer)

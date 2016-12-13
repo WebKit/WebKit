@@ -128,7 +128,7 @@ public:
     }
     
 #if USE(JSVALUE64)
-    GPRReg fillJSValue(Edge, GPRReg gprToUse = InvalidGPRReg);
+    GPRReg fillJSValue(Edge);
 #elif USE(JSVALUE32_64)
     bool fillJSValue(Edge, GPRReg&, GPRReg&, FPRReg&);
 #endif
@@ -200,9 +200,6 @@ public:
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
         m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
 #endif
-        if (specific == InvalidGPRReg)
-            return allocate();
-
         VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
         if (spillMe.isValid()) {
 #if USE(JSVALUE32_64)
@@ -317,8 +314,6 @@ public:
     void compileCurrentBlock();
 
     void checkArgumentTypes();
-
-    void setupArgumentRegistersForEntry();
 
     void clearGenerationInfo();
 
@@ -490,9 +485,6 @@ public:
     // Spill a VirtualRegister to the JSStack.
     void spill(VirtualRegister spillMe)
     {
-        if (spillMe.isArgument() && m_block->index > 0)
-            return;
-
         GenerationInfo& info = generationInfoFromVirtualRegister(spillMe);
 
 #if USE(JSVALUE32_64)
@@ -2881,10 +2873,7 @@ public:
 
     GenerationInfo& generationInfoFromVirtualRegister(VirtualRegister virtualRegister)
     {
-        if (virtualRegister.isLocal())
-            return m_generationInfo[virtualRegister.toLocal()];
-        ASSERT(virtualRegister.isArgument());
-        return m_argumentGenerationInfo[virtualRegister.offset()];
+        return m_generationInfo[virtualRegister.toLocal()];
     }
     
     GenerationInfo& generationInfo(Node* node)
@@ -2907,7 +2896,6 @@ public:
     unsigned m_indexInBlock;
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
-    Vector<GenerationInfo, 8> m_argumentGenerationInfo;
     RegisterBank<GPRInfo> m_gprs;
     RegisterBank<FPRInfo> m_fprs;
 
@@ -3006,20 +2994,6 @@ public:
 #endif
     }
 
-#if USE(JSVALUE64)
-    explicit JSValueOperand(SpeculativeJIT* jit, Edge edge, GPRReg regToUse)
-        : m_jit(jit)
-        , m_edge(edge)
-        , m_gprOrInvalid(InvalidGPRReg)
-    {
-        ASSERT(m_jit);
-        if (!edge)
-            return;
-        if (jit->isFilled(node()) || regToUse != InvalidGPRReg)
-            gprUseSpecific(regToUse);
-    }
-#endif
-    
     ~JSValueOperand()
     {
         if (!m_edge)
@@ -3054,12 +3028,6 @@ public:
     {
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillJSValue(m_edge);
-        return m_gprOrInvalid;
-    }
-    GPRReg gprUseSpecific(GPRReg regToUse)
-    {
-        if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillJSValue(m_edge, regToUse);
         return m_gprOrInvalid;
     }
     JSValueRegs jsValueRegs()

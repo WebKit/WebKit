@@ -540,21 +540,21 @@ void repatchIn(
         ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
 }
 
-static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, JITJSCallThunkEntryPointsWithRef thunkEntryPoints)
+static void linkSlowFor(VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
 {
-    MacroAssembler::repatchNearCall(callLinkInfo.callReturnLocation(), CodeLocationLabel(thunkEntryPoints.entryFor(callLinkInfo.argumentsLocation())));
+    MacroAssembler::repatchNearCall(callLinkInfo.callReturnLocation(), CodeLocationLabel(codeRef.code()));
 }
 
-static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo, JITCallThunkEntryGenerator generator)
+static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
 {
-    linkSlowFor(vm, callLinkInfo, vm->getJITCallThunkEntryStub(generator));
+    linkSlowFor(vm, callLinkInfo, vm->getCTIStub(generator));
 }
 
 static void linkSlowFor(VM* vm, CallLinkInfo& callLinkInfo)
 {
-    JITJSCallThunkEntryPointsWithRef virtualThunk = virtualThunkFor(vm, callLinkInfo);
+    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(vm, callLinkInfo);
     linkSlowFor(vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk.codeRef(), *vm, nullptr, true));
+    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
 }
 
 static bool isWebAssemblyToJSCallee(VM& vm, JSCell* callee)
@@ -644,7 +644,7 @@ void linkSlowFor(
     linkSlowFor(vm, callLinkInfo);
 }
 
-static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, JITJSCallThunkEntryPointsWithRef codeRef)
+static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
 {
     if (callLinkInfo.isDirect()) {
         callLinkInfo.clearCodeBlock();
@@ -671,7 +671,7 @@ void unlinkFor(VM& vm, CallLinkInfo& callLinkInfo)
     if (Options::dumpDisassembly())
         dataLog("Unlinking call at ", callLinkInfo.hotPathOther(), "\n");
     
-    revertCall(&vm, callLinkInfo, vm.getJITCallThunkEntryStub(linkCallThunkGenerator));
+    revertCall(&vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator));
 }
 
 void linkVirtualFor(ExecState* exec, CallLinkInfo& callLinkInfo)
@@ -683,9 +683,9 @@ void linkVirtualFor(ExecState* exec, CallLinkInfo& callLinkInfo)
     if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking virtual call at ", *callerCodeBlock, " ", callerFrame->codeOrigin(), "\n");
 
-    JITJSCallThunkEntryPointsWithRef virtualThunk = virtualThunkFor(&vm, callLinkInfo);
+    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(&vm, callLinkInfo);
     revertCall(&vm, callLinkInfo, virtualThunk);
-    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk.codeRef(), vm, nullptr, true));
+    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, vm, nullptr, true));
 }
 
 namespace {
@@ -740,7 +740,6 @@ void linkPolymorphicCall(
         callLinkInfo.setHasSeenClosure();
     
     Vector<PolymorphicCallCase> callCases;
-    size_t callerArgumentCount = exec->argumentCountIncludingThis();
     
     // Figure out what our cases are.
     for (CallVariant variant : list) {
@@ -752,7 +751,7 @@ void linkPolymorphicCall(
             codeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
             // If we cannot handle a callee, either because we don't have a CodeBlock or because arity mismatch,
             // assume that it's better for this whole thing to be a virtual call.
-            if (!codeBlock || callerArgumentCount < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
+            if (!codeBlock || exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()) {
                 linkVirtualFor(exec, callLinkInfo);
                 return;
             }
@@ -776,10 +775,7 @@ void linkPolymorphicCall(
     }
     
     GPRReg calleeGPR = static_cast<GPRReg>(callLinkInfo.calleeGPR());
-
-    if (callLinkInfo.argumentsInRegisters())
-        ASSERT(calleeGPR == argumentRegisterForCallee());
-
+    
     CCallHelpers stubJit(&vm, callerCodeBlock);
     
     CCallHelpers::JumpList slowPath;
@@ -801,8 +797,6 @@ void linkPolymorphicCall(
         GPRReg scratchGPR;
         if (frameShuffler)
             scratchGPR = frameShuffler->acquireGPR();
-        else if (callLinkInfo.argumentsInRegisters())
-            scratchGPR = GPRInfo::nonArgGPR0;
         else
             scratchGPR = AssemblyHelpers::selectScratchGPR(calleeGPR);
         // Verify that we have a function and stash the executable in scratchGPR.
@@ -868,23 +862,13 @@ void linkPolymorphicCall(
     GPRReg fastCountsBaseGPR;
     if (frameShuffler)
         fastCountsBaseGPR = frameShuffler->acquireGPR();
-    else if (callLinkInfo.argumentsInRegisters())
-#if CPU(ARM64)
-        fastCountsBaseGPR = GPRInfo::nonArgGPR1;
-#else
-        fastCountsBaseGPR = GPRInfo::regT0;
-#endif
     else {
         fastCountsBaseGPR =
             AssemblyHelpers::selectScratchGPR(calleeGPR, comparisonValueGPR, GPRInfo::regT3);
     }
-    if (fastCounts)
-        stubJit.move(CCallHelpers::TrustedImmPtr(fastCounts.get()), fastCountsBaseGPR);
+    stubJit.move(CCallHelpers::TrustedImmPtr(fastCounts.get()), fastCountsBaseGPR);
     if (!frameShuffler && callLinkInfo.isTailCall())
         stubJit.emitRestoreCalleeSaves();
-
-    incrementCounter(&stubJit, VM::PolymorphicCall);
-
     BinarySwitch binarySwitch(comparisonValueGPR, caseValues, BinarySwitch::IntPtr);
     CCallHelpers::JumpList done;
     while (binarySwitch.advance(stubJit)) {
@@ -893,32 +877,8 @@ void linkPolymorphicCall(
         CallVariant variant = callCases[caseIndex].variant();
         
         ASSERT(variant.executable()->hasJITCodeForCall());
-
-        EntryPointType entryType = StackArgsArityCheckNotRequired;
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-        if (callLinkInfo.argumentsInRegisters()) {
-            CodeBlock* codeBlock = callCases[caseIndex].codeBlock();
-            if (codeBlock) {
-                size_t calleeArgumentCount = static_cast<size_t>(codeBlock->numParameters());
-                if (calleeArgumentCount == callerArgumentCount || calleeArgumentCount >= NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS)
-                    entryType = RegisterArgsArityCheckNotRequired;
-                else {
-                    EntryPointType entryForArgCount = JITEntryPoints::registerEntryTypeForArgumentCount(callerArgumentCount);
-                    MacroAssemblerCodePtr codePtr =
-                        variant.executable()->generatedJITCodeForCall()->addressForCall(entryForArgCount);
-                    if (codePtr)
-                        entryType = entryForArgCount;
-                    else
-                        entryType = RegisterArgsPossibleExtraArgs;
-                }
-            } else
-                entryType = RegisterArgsPossibleExtraArgs;
-        }
-#endif
-
         MacroAssemblerCodePtr codePtr =
-            variant.executable()->generatedJITCodeForCall()->addressForCall(entryType);
-        ASSERT(codePtr);
+            variant.executable()->generatedJITCodeForCall()->addressForCall(ArityCheckNotRequired);
         
         if (fastCounts) {
             stubJit.add32(
@@ -926,7 +886,7 @@ void linkPolymorphicCall(
                 CCallHelpers::Address(fastCountsBaseGPR, caseIndex * sizeof(uint32_t)));
         }
         if (frameShuffler) {
-            CallFrameShuffler(stubJit, frameShuffler->snapshot(callLinkInfo.argumentsLocation())).prepareForTailCall();
+            CallFrameShuffler(stubJit, frameShuffler->snapshot()).prepareForTailCall();
             calls[caseIndex].call = stubJit.nearTailCall();
         } else if (callLinkInfo.isTailCall()) {
             stubJit.prepareForTailCallSlow();
@@ -947,19 +907,19 @@ void linkPolymorphicCall(
 #if USE(JSVALUE32_64)
         frameShuffler->setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT1, GPRInfo::regT0));
 #else
-        if (callLinkInfo.argumentsLocation() == StackArgs)
-            frameShuffler->setCalleeJSValueRegs(JSValueRegs(argumentRegisterForCallee()));
+        frameShuffler->setCalleeJSValueRegs(JSValueRegs(GPRInfo::regT0));
 #endif
         frameShuffler->prepareForSlowPath();
     } else {
+        stubJit.move(calleeGPR, GPRInfo::regT0);
 #if USE(JSVALUE32_64)
         stubJit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
     }
-    stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.callReturnLocation().executableAddress()), GPRInfo::nonArgGPR1);
-    stubJit.restoreReturnAddressBeforeReturn(GPRInfo::nonArgGPR1);
-
-    stubJit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::nonArgGPR0);
+    stubJit.move(CCallHelpers::TrustedImmPtr(&callLinkInfo), GPRInfo::regT2);
+    stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.callReturnLocation().executableAddress()), GPRInfo::regT4);
+    
+    stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
     AssemblyHelpers::Jump slow = stubJit.jump();
         
     LinkBuffer patchBuffer(vm, stubJit, owner, JITCompilationCanFail);
@@ -980,7 +940,7 @@ void linkPolymorphicCall(
         patchBuffer.link(done, callLinkInfo.callReturnLocation().labelAtOffset(0));
     else
         patchBuffer.link(done, callLinkInfo.hotPathOther().labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(vm.getJITCallThunkEntryStub(linkPolymorphicCallThunkGenerator).entryFor(callLinkInfo.argumentsLocation())));
+    patchBuffer.link(slow, CodeLocationLabel(vm.getCTIStub(linkPolymorphicCallThunkGenerator).code()));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(

@@ -42,33 +42,7 @@ public:
         : Phase(graph, "virtual register allocation")
     {
     }
-
-    void allocateRegister(ScoreBoard& scoreBoard, Node* node)
-    {
-        // First, call use on all of the current node's children, then
-        // allocate a VirtualRegister for this node. We do so in this
-        // order so that if a child is on its last use, and a
-        // VirtualRegister is freed, then it may be reused for node.
-        if (node->flags() & NodeHasVarArgs) {
-            for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++)
-                scoreBoard.useIfHasResult(m_graph.m_varArgChildren[childIdx]);
-        } else {
-            scoreBoard.useIfHasResult(node->child1());
-            scoreBoard.useIfHasResult(node->child2());
-            scoreBoard.useIfHasResult(node->child3());
-        }
-
-        if (!node->hasResult())
-            return;
-
-        VirtualRegister virtualRegister = scoreBoard.allocate();
-        node->setVirtualRegister(virtualRegister);
-        // 'mustGenerate' nodes have their useCount artificially elevated,
-        // call use now to account for this.
-        if (node->mustGenerate())
-            scoreBoard.use(node);
-    }
-
+    
     bool run()
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == ThreadedCPS);
@@ -85,17 +59,6 @@ public:
                 // Force usage of highest-numbered virtual registers.
                 scoreBoard.sortFree();
             }
-
-            // Handle GetArgumentRegister Nodes first as the register is alive on entry
-            // to the function and may need to be spilled before any use.
-            if (!blockIndex) {
-                for (size_t indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
-                    Node* node = block->at(indexInBlock);
-                    if (node->op() == GetArgumentRegister)
-                        allocateRegister(scoreBoard, node);
-                }
-            }
-
             for (size_t indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
         
@@ -110,14 +73,32 @@ public:
                 case GetLocal:
                     ASSERT(!node->child1()->hasResult());
                     break;
-                case GetArgumentRegister:
-                    ASSERT(!blockIndex);
-                    continue;
                 default:
                     break;
                 }
+                
+                // First, call use on all of the current node's children, then
+                // allocate a VirtualRegister for this node. We do so in this
+                // order so that if a child is on its last use, and a
+                // VirtualRegister is freed, then it may be reused for node.
+                if (node->flags() & NodeHasVarArgs) {
+                    for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++)
+                        scoreBoard.useIfHasResult(m_graph.m_varArgChildren[childIdx]);
+                } else {
+                    scoreBoard.useIfHasResult(node->child1());
+                    scoreBoard.useIfHasResult(node->child2());
+                    scoreBoard.useIfHasResult(node->child3());
+                }
 
-                allocateRegister(scoreBoard, node);
+                if (!node->hasResult())
+                    continue;
+
+                VirtualRegister virtualRegister = scoreBoard.allocate();
+                node->setVirtualRegister(virtualRegister);
+                // 'mustGenerate' nodes have their useCount artificially elevated,
+                // call use now to account for this.
+                if (node->mustGenerate())
+                    scoreBoard.use(node);
             }
             scoreBoard.assertClear();
         }

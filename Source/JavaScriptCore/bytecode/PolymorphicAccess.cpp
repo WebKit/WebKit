@@ -1032,7 +1032,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             m_rareData->callLinkInfo->disallowStubs();
             
             m_rareData->callLinkInfo->setUpCall(
-                CallLinkInfo::Call, StackArgs, stubInfo.codeOrigin, loadedValueGPR);
+                CallLinkInfo::Call, stubInfo.codeOrigin, loadedValueGPR);
 
             CCallHelpers::JumpList done;
 
@@ -1105,7 +1105,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // We *always* know that the getter/setter, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::regT1);
 #endif
-            jit.move(CCallHelpers::TrustedImmPtr(m_rareData->callLinkInfo.get()), GPRInfo::nonArgGPR0);
+            jit.move(CCallHelpers::TrustedImmPtr(m_rareData->callLinkInfo.get()), GPRInfo::regT2);
             slowPathCall = jit.nearCall();
             if (m_type == Getter)
                 jit.setupResults(valueRegs);
@@ -1131,7 +1131,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
                     linkBuffer.link(
                         slowPathCall,
-                        CodeLocationLabel(vm.getJITCallThunkEntryStub(linkCallThunkGenerator).entryFor(StackArgs)));
+                        CodeLocationLabel(vm.getCTIStub(linkCallThunkGenerator).code()));
                 });
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);

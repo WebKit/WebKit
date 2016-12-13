@@ -314,9 +314,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     performCFA(dfg);
     performConstantFolding(dfg);
     bool changed = false;
-    dfg.m_strengthReduceArguments = OptimizeArgumentFlushes;
     changed |= performCFGSimplification(dfg);
-    changed |= performStrengthReduction(dfg);
     changed |= performLocalCSE(dfg);
     
     if (validationEnabled())

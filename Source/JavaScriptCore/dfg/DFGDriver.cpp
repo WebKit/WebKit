@@ -90,9 +90,8 @@ static CompilationResult compileImpl(
     // make sure that all JIT code generation does finalization on the main thread.
     vm.getCTIStub(osrExitGenerationThunkGenerator);
     vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);
-    vm.getJITCallThunkEntryStub(linkCallThunkGenerator);
-    vm.getJITCallThunkEntryStub(linkDirectCallThunkGenerator);
-    vm.getJITCallThunkEntryStub(linkPolymorphicCallThunkGenerator);
+    vm.getCTIStub(linkCallThunkGenerator);
+    vm.getCTIStub(linkPolymorphicCallThunkGenerator);
     
     if (vm.typeProfiler())
         vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for DFG compilation."));

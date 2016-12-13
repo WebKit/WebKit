@@ -1,3 +1,17 @@
+2016-12-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r209725.
+        https://bugs.webkit.org/show_bug.cgi?id=165811
+
+        "Broke ARMv7 builds" (Requested by msaboff on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION(r209653): speedometer crashes making virtual slow
+        path tailcalls"
+        https://bugs.webkit.org/show_bug.cgi?id=165748
+        http://trac.webkit.org/changeset/209725
+
 2016-12-13  JF Bastien  <jfbastien@apple.com>
 
         [WTF] Turn tryMakeString(), makeString() into variadic templates

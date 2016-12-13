@@ -3697,59 +3697,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
     if (m_currentBlock == m_graph.block(0) && !inlineCallFrame()) {
-        m_graph.m_argumentsOnStack.resize(m_numArguments);
-        m_graph.m_argumentsForChecking.resize(m_numArguments);
-        // Create all GetArgumentRegister nodes first and then the corresponding MovHint nodes,
-        // followed by the corresponding SetLocal nodes and finally any SetArgument nodes for
-        // the remaining arguments.
-        // We do this to make the exit processing correct. We start with m_exitOK = true since
-        // GetArgumentRegister nodes can exit, even though they don't. The MovHint's technically could
-        // exit but won't. The SetLocals can exit and therefore we want all the MovHints
-        // before the first SetLocal so that the register state is consistent.
-        // We do all this processing before creating any SetArgument nodes since they are
-        // morally equivalent to the SetLocals for GetArgumentRegister nodes.
+        m_graph.m_arguments.resize(m_numArguments);
+        // We will emit SetArgument nodes. They don't exit, but we're at the top of an op_enter so
+        // exitOK = true.
         m_exitOK = true;
-        
-        unsigned numRegisterArguments = std::min(m_numArguments, NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS);
-
-        Vector<Node*, NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS> getArgumentRegisterNodes;
-
-        // First create GetArgumentRegister nodes.
-        for (unsigned argument = 0; argument < numRegisterArguments; ++argument) {
-            getArgumentRegisterNodes.append(
-                addToGraph(GetArgumentRegister, OpInfo(0),
-                    OpInfo(argumentRegisterIndexForJSFunctionArgument(argument))));
-        }
-
-        // Create all the MovHint's for the GetArgumentRegister nodes created above.
-        for (unsigned i = 0; i < getArgumentRegisterNodes.size(); ++i) {
-            Node* getArgumentRegister = getArgumentRegisterNodes[i];
-            addToGraph(MovHint, OpInfo(virtualRegisterForArgument(i).offset()), getArgumentRegister);
-            // We can't exit anymore.
-            m_exitOK = false;
-        }
-
-        // Exit is now okay, but we need to fence with an ExitOK node.
-        m_exitOK = true;
-        addToGraph(ExitOK);
-
-        // Create all the SetLocals's for the GetArgumentRegister nodes created above.
-        for (unsigned i = 0; i < getArgumentRegisterNodes.size(); ++i) {
-            Node* getArgumentRegister = getArgumentRegisterNodes[i];
-            VariableAccessData* variableAccessData = newVariableAccessData(virtualRegisterForArgument(i));
-            variableAccessData->mergeStructureCheckHoistingFailed(
-                m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
-            variableAccessData->mergeCheckArrayHoistingFailed(
-                m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
-            Node* setLocal = addToGraph(SetLocal, OpInfo(variableAccessData), getArgumentRegister);
-            m_currentBlock->variablesAtTail.argument(i) = setLocal;
-            getArgumentRegister->setVariableAccessData(setLocal->variableAccessData());
-            m_graph.m_argumentsOnStack[i] = setLocal;
-            m_graph.m_argumentsForChecking[i] = getArgumentRegister;
-        }
-
-        // Finally create any SetArgument nodes.
-        for (unsigned argument = NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argument < m_numArguments; ++argument) {
+        for (unsigned argument = 0; argument < m_numArguments; ++argument) {
             VariableAccessData* variable = newVariableAccessData(
                 virtualRegisterForArgument(argument));
             variable->mergeStructureCheckHoistingFailed(
@@ -3758,8 +3710,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
             
             Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
-            m_graph.m_argumentsOnStack[argument] = setArgument;
-            m_graph.m_argumentsForChecking[argument] = setArgument;
+            m_graph.m_arguments[argument] = setArgument;
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
         }
     }
@@ -4869,10 +4820,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // We need to make sure that we don't unbox our arguments here since that won't be
             // done by the arguments object creation node as that node may not exist.
             noticeArgumentsUse();
-            Terminality terminality = handleVarargsCall(currentInstruction, TailCallForwardVarargs, CallMode::Tail);
-            // We need to insert flush nodes for our arguments after the TailCallForwardVarargs
-            // node so that they will be flushed to the stack and kept alive.
             flushForReturn();
+            Terminality terminality = handleVarargsCall(currentInstruction, TailCallForwardVarargs, CallMode::Tail);
             ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleVarargsCall, which may have inlined the callee, trashed m_currentInstruction");
             // If the call is terminal then we should not parse any further bytecodes as the TailCall will exit the function.
             // If the call is not terminal, however, then we want the subsequent op_ret/op_jump to update metadata and clean

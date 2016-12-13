@@ -130,30 +130,15 @@ MacroAssemblerCodeRef osrEntryThunkGenerator(VM* vm)
     jit.store32(GPRInfo::regT3, MacroAssembler::BaseIndex(GPRInfo::callFrameRegister, GPRInfo::regT4, MacroAssembler::TimesEight, -static_cast<intptr_t>(sizeof(Register)) + static_cast<intptr_t>(sizeof(int32_t))));
     jit.branchPtr(MacroAssembler::NotEqual, GPRInfo::regT1, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(-static_cast<intptr_t>(CallFrame::headerSizeInRegisters)))).linkTo(loop, &jit);
     
-    jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, offsetOfTargetPC), GPRInfo::nonArgGPR0);
-    MacroAssembler::Jump ok = jit.branchPtr(MacroAssembler::Above, GPRInfo::nonArgGPR0, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
+    jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, offsetOfTargetPC), GPRInfo::regT1);
+    MacroAssembler::Jump ok = jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(static_cast<intptr_t>(1000))));
     jit.abortWithReason(DFGUnreasonableOSREntryJumpDestination);
 
     ok.link(&jit);
-
-#if NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS
-    // Load argument values into argument registers
-    jit.loadPtr(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))), argumentRegisterForCallee());
-    GPRReg argCountReg = argumentRegisterForArgumentCount();
-    jit.load32(AssemblyHelpers::payloadFor(CallFrameSlot::argumentCount), argCountReg);
-    
-    MacroAssembler::JumpList doneLoadingArgs;
-    
-    for (unsigned argIndex = 0; argIndex < NUMBER_OF_JS_FUNCTION_ARGUMENT_REGISTERS; argIndex++)
-        jit.load64(MacroAssembler::Address(GPRInfo::callFrameRegister, (CallFrameSlot::thisArgument + argIndex) * static_cast<int>(sizeof(Register))), argumentRegisterForFunctionArgument(argIndex));
-    
-    doneLoadingArgs.link(&jit);
-#endif
-    
     jit.restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer();
     jit.emitMaterializeTagCheckRegisters();
 
-    jit.jump(GPRInfo::nonArgGPR0);
+    jit.jump(GPRInfo::regT1);
     
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(patchBuffer, ("DFG OSR entry thunk"));
