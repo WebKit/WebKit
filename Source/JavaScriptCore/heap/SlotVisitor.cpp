@@ -600,6 +600,9 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTi
 
 void SlotVisitor::addOpaqueRoot(void* root)
 {
+    if (!root)
+        return;
+    
     if (Options::numberOfGCMarkers() == 1) {
         // Put directly into the shared HashSet.
         m_heap.m_opaqueRoots.add(root);
@@ -625,12 +628,18 @@ void SlotVisitor::rescanAsConstraint()
 
 bool SlotVisitor::containsOpaqueRoot(void* root) const
 {
+    if (!root)
+        return false;
+    
     ASSERT(!m_isInParallelMode);
     return m_heap.m_opaqueRoots.contains(root);
 }
 
 TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
 {
+    if (!root)
+        return FalseTriState;
+    
     if (m_opaqueRoots.contains(root))
         return TrueTriState;
     std::lock_guard<Lock> lock(m_heap.m_opaqueRootsMutex);
