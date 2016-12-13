@@ -1,3 +1,24 @@
+2016-12-12  Zalan Bujtas  <zalan@apple.com>
+
+        Infinite recursion when viewport is set to the size of the content but the content overflows the viewport.
+        https://bugs.webkit.org/show_bug.cgi?id=165775
+        rdar://problem/29366628
+
+        Reviewed by Simon Fraser.
+
+        In certain cases when the viewport is sized to accomodate the content and
+        the content always overflows the viewport, we might end up in recursive FrameView::layout calls.
+        This is specific to content with viewport units, because we always invalidate elements with vw/vh units on
+        viewport size change. However if this viewport size change is in response to content size change (layout), 
+        invalidating elements could trigger synchronous layout, while we are still inside this current layout.
+        This is very similar to the m_setNeedsLayoutWasDeferred case and they should eventually be merged.
+        It also means that we might be behind by one layout on elements with vw/vh units (fixed layout only though).
+
+        Currently not testable.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::availableContentSizeChanged):
+
 2016-12-12  Keith Rollin  <krollin@apple.com>
 
         Memory warning logging appears to capture resident footprint, missing compress/swap.

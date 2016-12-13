@@ -2671,8 +2671,13 @@ bool FrameView::renderedCharactersExceed(unsigned threshold)
 
 void FrameView::availableContentSizeChanged(AvailableSizeChangeReason reason)
 {
-    if (Document* document = frame().document())
-        document->updateViewportUnitsOnResize();
+    if (Document* document = frame().document()) {
+        // FIXME: Merge this logic with m_setNeedsLayoutWasDeferred and find a more appropriate
+        // way of handling potential recursive layouts when the viewport is resized to accomodate
+        // the content but the content always overflows the viewport. See webkit.org/b/165781.
+        if (!(layoutPhase() == InViewSizeAdjust && useFixedLayout()))
+            document->updateViewportUnitsOnResize();
+    }
 
     updateLayoutViewport();
     setNeedsLayout();
