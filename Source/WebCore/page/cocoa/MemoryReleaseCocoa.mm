@@ -37,21 +37,13 @@ namespace WebCore {
 
 void platformReleaseMemory(Critical)
 {
-    {
-        MemoryPressureHandler::ReliefLogger log("Purging SQLite caches");
-        _sqlite3_purgeEligiblePagerCacheMemory();
-    }
+    _sqlite3_purgeEligiblePagerCacheMemory();
 
-    {
-        MemoryPressureHandler::ReliefLogger log("Drain LayerPools");
-        for (auto& pool : LayerPool::allLayerPools())
-            pool->drain();
-    }
+    for (auto& pool : LayerPool::allLayerPools())
+        pool->drain();
+
 #if USE(IOSURFACE)
-    {
-        MemoryPressureHandler::ReliefLogger log("Drain IOSurfacePool");
-        IOSurfacePool::sharedPool().discardAllSurfaces();
-    }
+    IOSurfacePool::sharedPool().discardAllSurfaces();
 #endif
 }
 

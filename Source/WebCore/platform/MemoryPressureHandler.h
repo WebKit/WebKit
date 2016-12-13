@@ -33,6 +33,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Optional.h>
 
 #if PLATFORM(IOS)
 #include <wtf/Lock.h>
@@ -90,34 +91,38 @@ public:
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
-#if !RELEASE_LOG_DISABLED
-            , m_initialMemory(platformMemoryUsage())
-#else
-            , m_initialMemory(s_loggingEnabled ? platformMemoryUsage() : 0)
-#endif
+            , m_initialMemory(loggingEnabled() ? platformMemoryUsage() : MemoryUsage { })
         {
         }
 
         ~ReliefLogger()
         {
-#if !RELEASE_LOG_DISABLED
-            logMemoryUsageChange();
-#else
-            if (s_loggingEnabled)
+            if (loggingEnabled())
                 logMemoryUsageChange();
-#endif
         }
+
 
         const char* logString() const { return m_logString; }
         static void setLoggingEnabled(bool enabled) { s_loggingEnabled = enabled; }
-        static bool loggingEnabled() { return s_loggingEnabled; }
+        static bool loggingEnabled()
+        {
+#if RELEASE_LOG_DISABLED
+            return s_loggingEnabled;
+#else
+            return true;
+#endif
+        }
 
     private:
-        size_t platformMemoryUsage();
+        struct MemoryUsage {
+            size_t resident { 0 };
+            size_t physical { 0 };
+        };
+        std::optional<MemoryUsage> platformMemoryUsage();
         void logMemoryUsageChange();
 
         const char* m_logString;
-        size_t m_initialMemory;
+        std::optional<MemoryUsage> m_initialMemory;
 
         WEBCORE_EXPORT static bool s_loggingEnabled;
     };

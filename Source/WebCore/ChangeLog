@@ -1,3 +1,46 @@
+2016-12-12  Keith Rollin  <krollin@apple.com>
+
+        Memory warning logging appears to capture resident footprint, missing compress/swap.
+        https://bugs.webkit.org/show_bug.cgi?id=165533
+        <rdar://problem/29318410>
+
+        Reviewed by Andreas Kling.
+
+        Have platformMemoryUsage return both resident and resident + swapped
+        values. This is now returned as a struct in a std::optional to better
+        support cases where values cannot or are not returned. Report these
+        values in logMemoryUsageChange.
+
+        Remove most of the ReliefLogger instances and their messages. We no
+        longer free up fastMalloc memory after each memory-release operation,
+        so there are no memory regions returned to the OS. Instead, we now
+        free up fastMalloc memory regions at the end of all memory-releasing
+        operations in one fell swoop and report a grand total of memory
+        returned.
+
+        No new tests -- no changes to user accessible functionality.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+        (WebCore::releaseCriticalMemory):
+        (WebCore::releaseMemory):
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        (WebCore::MemoryPressureHandler::ReliefLogger::logMemoryUsageChange):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::ReliefLogger::ReliefLogger):
+        (WebCore::MemoryPressureHandler::ReliefLogger::~ReliefLogger):
+        (WebCore::MemoryPressureHandler::ReliefLogger::loggingEnabled):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::platformReleaseMemory):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        * platform/win/MemoryPressureHandlerWin.cpp:
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage):
+
 2016-12-12  Chris Dumez  <cdumez@apple.com>
 
         Document.visibilityState should use an IDL string enumeration

@@ -61,6 +61,7 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     if (!m_lowMemoryHandler)
         return;
 
+    ReliefLogger log("Total");
     m_lowMemoryHandler(critical, synchronous);
     platformReleaseMemory(critical);
 }
@@ -75,19 +76,19 @@ void MemoryPressureHandler::ReliefLogger::logMemoryUsageChange()
 #define MEMORYPRESSURE_LOG(...) WTFLogAlways(__VA_ARGS__)
 #endif
 
-    size_t currentMemory = platformMemoryUsage();
-    if (currentMemory == static_cast<size_t>(-1) || m_initialMemory == static_cast<size_t>(-1)) {
+    auto currentMemory = platformMemoryUsage();
+    if (!currentMemory || !m_initialMemory) {
         MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": (Unable to get dirty memory information for process)", m_logString);
         return;
     }
 
-    long memoryDiff = currentMemory - m_initialMemory;
-    if (memoryDiff < 0)
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": -dirty %ld bytes (from %zu to %zu)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
-    else if (memoryDiff > 0)
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": +dirty %ld bytes (from %zu to %zu)", m_logString, memoryDiff, m_initialMemory, currentMemory);
-    else
-        MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": =dirty (at %zu bytes)", m_logString, currentMemory);
+    long residentDiff = currentMemory->resident - m_initialMemory->resident;
+    long physicalDiff = currentMemory->physical - m_initialMemory->physical;
+
+    MEMORYPRESSURE_LOG("Memory pressure relief: " STRING_SPECIFICATION ": res = %zu/%zu/%ld, res+swap = %zu/%zu/%ld",
+        m_logString,
+        m_initialMemory->resident, currentMemory->resident, residentDiff,
+        m_initialMemory->physical, currentMemory->physical, physicalDiff);
 }
 
 #if !PLATFORM(COCOA) && !OS(LINUX) && !PLATFORM(WIN)
@@ -96,7 +97,7 @@ void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
 void MemoryPressureHandler::respondToMemoryPressure(Critical, Synchronous) { }
 void MemoryPressureHandler::platformReleaseMemory(Critical) { }
-size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return 0; }
+std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage() { return std::nullopt; }
 #endif
 
 } // namespace WebCore

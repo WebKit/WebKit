@@ -292,14 +292,13 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
 void MemoryPressureHandler::platformReleaseMemory(Critical)
 {
 #ifdef __GLIBC__
-    ReliefLogger log("Run malloc_trim");
     malloc_trim(0);
 #endif
 }
 
-size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
+std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    return processMemoryUsage();
+    return MemoryUsage {processMemoryUsage(), 0};
 }
 
 void MemoryPressureHandler::setMemoryPressureMonitorHandle(int fd)

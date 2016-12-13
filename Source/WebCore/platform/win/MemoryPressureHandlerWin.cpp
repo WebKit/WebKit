@@ -124,9 +124,9 @@ void MemoryPressureHandler::respondToMemoryPressure(Critical critical, Synchrono
     releaseMemory(critical, synchronous);
 }
 
-size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
+std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHandler::ReliefLogger::platformMemoryUsage()
 {
-    return 0;
+    return std::nullopt;
 }
 
 } // namespace WebCore
