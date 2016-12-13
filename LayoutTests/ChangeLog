@@ -1,3 +1,32 @@
+2016-12-07  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Migrate some tests from webkitSubtle to subtle
+        https://bugs.webkit.org/show_bug.cgi?id=165554
+
+        Reviewed by Brent Fulgham.
+
+        To improve test coverage for subtle.
+
+        * crypto/crypto-key-algorithm-gc-expected.txt: Renamed from LayoutTests/crypto/webkitSubtle/crypto-key-algorithm-gc-expected.txt.
+        * crypto/crypto-key-algorithm-gc.html: Renamed from LayoutTests/crypto/webkitSubtle/crypto-key-algorithm-gc.html.
+        * crypto/crypto-key-usages-gc-expected.txt: Renamed from LayoutTests/crypto/webkitSubtle/crypto-key-usages-gc-expected.txt.
+        * crypto/crypto-key-usages-gc.html: Renamed from LayoutTests/crypto/webkitSubtle/crypto-key-usages-gc.html.
+        * crypto/subtle/resources/rsa-indexeddb-non-exportable.js: Added.
+        * crypto/subtle/resources/rsa-indexeddb.js: Added.
+        * crypto/subtle/rsa-indexeddb-expected.txt: Added.
+        * crypto/subtle/rsa-indexeddb-non-exportable-expected.txt: Added.
+        * crypto/subtle/rsa-indexeddb-non-exportable-private-expected.txt: Added.
+        * crypto/subtle/rsa-indexeddb-non-exportable-private.html: Added.
+        * crypto/subtle/rsa-indexeddb-non-exportable.html: Added.
+        * crypto/subtle/rsa-indexeddb-private-expected.txt: Added.
+        * crypto/subtle/rsa-indexeddb-private.html: Added.
+        * crypto/subtle/rsa-indexeddb.html: Added.
+        * crypto/subtle/rsa-oaep-plaintext-length-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-plaintext-length.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2016-12-12  Matt Baker  <mattbaker@apple.com>
 
         Unreviewed, follow-up after r209706.

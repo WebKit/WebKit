@@ -1021,6 +1021,10 @@ crypto/webkitSubtle/rsa-indexeddb-private.html
 crypto/webkitSubtle/rsa-indexeddb.html
 fast/history/page-cache-indexed-closed-db.html
 fast/history/page-cache-indexed-opened-db.html
+crypto/subtle/rsa-indexeddb-non-exportable-private.html
+crypto/subtle/rsa-indexeddb-non-exportable.html
+crypto/subtle/rsa-indexeddb-private.html
+crypto/subtle/rsa-indexeddb.html
 
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
