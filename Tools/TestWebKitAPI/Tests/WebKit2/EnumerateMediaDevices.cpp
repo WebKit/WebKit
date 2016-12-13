@@ -53,6 +53,7 @@ TEST(WebKit2, EnumerateDevices)
 
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("EnumerateDevices").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetMediaStreamEnabled(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
 
@@ -61,7 +62,7 @@ TEST(WebKit2, EnumerateDevices)
     uiClient.base.version = 6;
     uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
 
-    PlatformWebView webView(context.get());
+    PlatformWebView webView(context.get(), pageGroup.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
     auto url = adoptWK(Util::createURLForResource("enumerateMediaDevices", "html"));

@@ -3033,11 +3033,11 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    settings.setMediaStreamEnabled(store.getBoolValueForKey(WebPreferencesKey::mediaStreamEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setMediaStreamEnabled(store.getBoolValueForKey(WebPreferencesKey::mediaStreamEnabledKey()));
 #endif
 
 #if ENABLE(WEB_RTC)
-    settings.setPeerConnectionEnabled(store.getBoolValueForKey(WebPreferencesKey::peerConnectionEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setPeerConnectionEnabled(store.getBoolValueForKey(WebPreferencesKey::peerConnectionEnabledKey()));
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

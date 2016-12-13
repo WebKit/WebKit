@@ -1,3 +1,14 @@
+2016-12-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag
+        https://bugs.webkit.org/show_bug.cgi?id=165251
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKit2/EnumerateMediaDevices.cpp:
+        (TestWebKitAPI::TEST): Enable MediaStream, create web view from the page group upon which
+        the preferences have been set.
+
 2016-12-08  Antti Koivisto  <antti@apple.com>
 
         Enable network cache speculative revalidation in MiniBrowser

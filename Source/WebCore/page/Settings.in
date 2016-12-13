@@ -115,8 +115,6 @@ webAudioEnabled initial=false
 paginateDuringLayoutEnabled initial=false
 fullScreenEnabled initial=false, conditional=FULLSCREEN_API
 asynchronousSpellCheckingEnabled initial=false
-mediaStreamEnabled initial=false
-peerConnectionEnabled initial=false
 
 # This feature requires an implementation of ValidationMessageClient.
 interactiveFormValidationEnabled initial=false
