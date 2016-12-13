@@ -1,3 +1,11 @@
+2016-12-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html after r209777.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
 2016-12-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         :hover rule causes a single tap to not activate a slotted anchor element
