@@ -1,3 +1,18 @@
+2016-12-12  Chris Dumez  <cdumez@apple.com>
+
+        Add Document.onvisibilitychange event handler attribute
+        https://bugs.webkit.org/show_bug.cgi?id=165784
+
+        Reviewed by Daniel Bates.
+
+        Add Document.onvisibilitychange event handler attribute as per Page
+        Visibility Level 2 API:
+        - http://w3c.github.io/page-visibility/#onvisiblitychange-event-handler
+
+        Test: fast/events/page-visibility-onvisibilitychange.html
+
+        * dom/Document.idl:
+
 2016-12-12  Dean Jackson  <dino@apple.com>
 
         [iOS] MediaDocument "Done" button should navigate the page back

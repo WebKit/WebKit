@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("This test checks the onvisibilitychange event handler attribute on Document.");
+
+var jsTestIsAsync = true;
+
+function makePageHidden() {
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
+}
+
+function checkIsPageVisible() {
+    shouldBeEqualToString("document.visibilityState", "visible");
+    shouldBeFalse("document.hidden");
+}
+
+function checkIsPageHidden() {
+    shouldBeEqualToString("document.visibilityState", "hidden");
+    shouldBeTrue("document.hidden");
+}
+
+function startTest() {
+    document.onvisibilitychange = function() {
+        checkIsPageHidden();
+        document.onvisibilitychange = null;
+        if (window.testRunner)
+            testRunner.resetPageVisibility();
+        finishJSTest();
+    };
+    checkIsPageVisible();
+    makePageHidden();
+}
+
+startTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
