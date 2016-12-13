@@ -58,6 +58,7 @@ TEST(Fullscreen, TopContentInset)
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
     [webView _setTopContentInset:10];
+    [webView _setAutomaticallyAdjustsContentInsets:NO];
     [configuration preferences]._fullScreenEnabled = YES;
     RetainPtr<FullscreenChangeMessageHandler> handler = adoptNS([[FullscreenChangeMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"fullscreenChangeHandler"];
@@ -75,6 +76,11 @@ TEST(Fullscreen, TopContentInset)
     TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);
     ASSERT_EQ(window.get().screen.frame.size.width, webView.get().frame.size.width);
     ASSERT_EQ(window.get().screen.frame.size.height + webView.get()._topContentInset, webView.get().frame.size.height);
+
+    receivedFullscreenChangeMessage = false;
+    [webView mouseDown:event];
+    TestWebKitAPI::Util::run(&receivedFullscreenChangeMessage);
+    ASSERT_EQ(10, webView.get()._topContentInset);
 }
 
 } // namespace TestWebKitAPI

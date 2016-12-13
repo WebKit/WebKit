@@ -170,7 +170,7 @@ public:
     bool automaticallyAdjustsContentInsets() const { return m_automaticallyAdjustsContentInsets; }
     void updateContentInsetsIfAutomatic();
     void setTopContentInset(CGFloat);
-    CGFloat topContentInset() const { return m_topContentInset; }
+    CGFloat topContentInset() const;
 
     void prepareContentInRect(CGRect);
     void updateViewExposedRect();
@@ -606,7 +606,7 @@ private:
     bool m_windowOcclusionDetectionEnabled { true };
 
     bool m_automaticallyAdjustsContentInsets { false };
-    CGFloat m_topContentInset { 0 };
+    CGFloat m_pendingTopContentInset { 0 };
     bool m_didScheduleSetTopContentInset { false };
 
     CGSize m_resizeScrollOffset { 0, 0 };

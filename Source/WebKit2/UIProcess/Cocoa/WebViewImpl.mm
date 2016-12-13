@@ -1615,15 +1615,22 @@ void WebViewImpl::updateContentInsetsIfAutomatic()
     if ((window.styleMask & NSWindowStyleMaskFullSizeContentView) && !window.titlebarAppearsTransparent && ![m_view enclosingScrollView]) {
         NSRect contentLayoutRect = [m_view convertRect:window.contentLayoutRect fromView:nil];
         CGFloat newTopContentInset = NSMaxY(contentLayoutRect) - NSHeight(contentLayoutRect);
-        if (m_topContentInset != newTopContentInset)
+        if (m_page->topContentInset() != newTopContentInset)
             setTopContentInset(newTopContentInset);
     } else
         setTopContentInset(0);
 }
 
+CGFloat WebViewImpl::topContentInset() const
+{
+    if (m_didScheduleSetTopContentInset)
+        return m_pendingTopContentInset;
+    return m_page->topContentInset();
+}
+
 void WebViewImpl::setTopContentInset(CGFloat contentInset)
 {
-    m_topContentInset = contentInset;
+    m_pendingTopContentInset = contentInset;
 
     if (m_didScheduleSetTopContentInset)
         return;
@@ -1644,7 +1651,7 @@ void WebViewImpl::dispatchSetTopContentInset()
         return;
 
     m_didScheduleSetTopContentInset = false;
-    m_page->setTopContentInset(m_topContentInset);
+    m_page->setTopContentInset(m_pendingTopContentInset);
 }
 
 void WebViewImpl::prepareContentInRect(CGRect rect)

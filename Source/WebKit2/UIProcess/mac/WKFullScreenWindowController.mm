@@ -415,6 +415,7 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     [self _manager]->setAnimatingFullScreen(false);
     _page->scalePage(_savedScale, IntPoint());
     [self _manager]->restoreScrollPosition();
+    _page->setTopContentInset(_savedTopContentInset);
 
     if (_repaintCallback) {
         _repaintCallback->invalidate(WebKit::CallbackBase::Error::OwnerWasInvalidated);
