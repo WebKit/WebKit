@@ -61,8 +61,6 @@
 #include "CSSUnsetValue.h"
 #include "CSSValueList.h"
 #include "CSSVariableReferenceValue.h"
-#include "SVGColor.h"
-#include "SVGPaint.h"
 #include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -228,10 +226,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCalcValue>(*this, other);
         case ImageSetClass:
             return compareCSSValues<CSSImageSetValue>(*this, other);
-        case SVGColorClass:
-            return compareCSSValues<SVGColor>(*this, other);
-        case SVGPaintClass:
-            return compareCSSValues<SVGPaint>(*this, other);
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         case AnimationTriggerScrollClass:
             return compareCSSValues<CSSAnimationTriggerScrollValue>(*this, other);
@@ -336,10 +330,6 @@ String CSSValue::cssText() const
         return downcast<CSSCalcValue>(*this).customCSSText();
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).customCSSText();
-    case SVGColorClass:
-        return downcast<SVGColor>(*this).customCSSText();
-    case SVGPaintClass:
-        return downcast<SVGPaint>(*this).customCSSText();
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     case AnimationTriggerScrollClass:
         return downcast<CSSAnimationTriggerScrollValue>(*this).customCSSText();
@@ -476,12 +466,6 @@ void CSSValue::destroy()
     case FilterImageClass:
         delete downcast<CSSFilterImageValue>(this);
         return;
-    case SVGColorClass:
-        delete downcast<SVGColor>(this);
-        return;
-    case SVGPaintClass:
-        delete downcast<SVGPaint>(this);
-        return;
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     case AnimationTriggerScrollClass:
         delete downcast<CSSAnimationTriggerScrollValue>(this);
@@ -520,10 +504,6 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
         return downcast<WebKitCSSTransformValue>(*this).cloneForCSSOM();
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).cloneForCSSOM();
-    case SVGColorClass:
-        return downcast<SVGColor>(*this).cloneForCSSOM();
-    case SVGPaintClass:
-        return downcast<SVGPaint>(*this).cloneForCSSOM();
     default:
         ASSERT(!isSubtypeExposedToCSSOM());
         return TextCloneCSSValue::create(classType(), cssText());

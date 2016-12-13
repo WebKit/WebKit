@@ -46,16 +46,17 @@ function expectTranslationMatrix(actualMatrix, expectedE, expectedF, tolerance) 
 
 function expectColor(element, red, green, blue, property) {
     if (typeof property != "string")
-        color = getComputedStyle(element).getPropertyCSSValue("color").getRGBColorValue();
-    else {
-        fillPaint = getComputedStyle(element).getPropertyCSSValue(property);
-        color = getComputedStyle(element).getPropertyCSSValue(property).rgbColor;
-    }
-
+        color = getComputedStyle(element).getPropertyValue("color");
+    else
+        color = getComputedStyle(element).getPropertyValue(property);
+    
+    var re = new RegExp("rgba?\\(([^, ]*), ([^, ]*), ([^, ]*)(?:, )?([^, ]*)\\)");
+    colorComponents = re.exec(color);
+    
     // Allow a tolerance of 1 for color values, as they are integers.
-    shouldBeCloseEnough("color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + red, 1);
-    shouldBeCloseEnough("color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + green, 1);
-    shouldBeCloseEnough("color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + blue, 1);
+    shouldBeCloseEnough("colorComponents[1]", "" + red, 1);
+    shouldBeCloseEnough("colorComponents[2]", "" + green, 1);
+    shouldBeCloseEnough("colorComponents[3]", "" + blue, 1);
 }
 
 function expectFillColor(element, red, green, blue) {

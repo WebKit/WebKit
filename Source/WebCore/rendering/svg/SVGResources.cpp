@@ -28,7 +28,6 @@
 #include "RenderSVGRoot.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
-#include "SVGPaint.h"
 #include "SVGPatternElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
@@ -155,9 +154,9 @@ static inline String targetReferenceFromResource(SVGElement& element)
     return SVGURIReference::fragmentIdentifierFromIRIString(target, element.document());
 }
 
-static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document& document, const SVGPaint::SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)
+static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document& document, const SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)
 {
-    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && paintType != SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR && paintType != SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR)
+    if (paintType != SVG_PAINTTYPE_URI && paintType != SVG_PAINTTYPE_URI_RGBCOLOR && paintType != SVG_PAINTTYPE_URI_CURRENTCOLOR)
         return 0;
 
     id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, document);

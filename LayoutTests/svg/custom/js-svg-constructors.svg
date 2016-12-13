@@ -30,11 +30,6 @@
       expect("SVGAngle.SVG_ANGLETYPE_RAD", 3);
       expect("SVGAngle.SVG_ANGLETYPE_GRAD", 4)
 
-      expect("SVGColor.SVG_COLORTYPE_UNKNOWN", 0);
-      expect("SVGColor.SVG_COLORTYPE_RGBCOLOR", 1);
-      expect("SVGColor.SVG_COLORTYPE_RGBCOLOR_ICCCOLOR", 2);
-      expect("SVGColor.SVG_COLORTYPE_CURRENTCOLOR", 3);
-
       if (window.SVGComponentTransferFunctionElement) {
           expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN", 0);
           expect("SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY", 1);
@@ -130,17 +125,6 @@
       expect("SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN", 0);
       expect("SVGMarkerElement.SVG_MARKER_ORIENT_AUTO", 1);
       expect("SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE", 2);
-
-      expect("SVGPaint.SVG_PAINTTYPE_UNKNOWN", 0);
-      expect("SVGPaint.SVG_PAINTTYPE_RGBCOLOR", 1);
-      expect("SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR", 2);
-      expect("SVGPaint.SVG_PAINTTYPE_NONE", 101);
-      expect("SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR", 102);
-      expect("SVGPaint.SVG_PAINTTYPE_URI_NONE", 103);
-      expect("SVGPaint.SVG_PAINTTYPE_URI_CURRENTCOLOR", 104);
-      expect("SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR", 105);
-      expect("SVGPaint.SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR", 106);
-      expect("SVGPaint.SVG_PAINTTYPE_URI", 107);
 
       expect("SVGPathSeg.PATHSEG_UNKNOWN", 0);
       expect("SVGPathSeg.PATHSEG_CLOSEPATH", 1);

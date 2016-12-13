@@ -1325,13 +1325,7 @@ inline String StyleBuilderConverter::convertSVGURIReference(StyleResolver& style
 
 inline Color StyleBuilderConverter::convertSVGColor(StyleResolver& styleResolver, const CSSValue& value)
 {
-    // FIXME-NEWPARSER: Remove the code that assumes SVGColors.
-    // FIXME: What about visited link support?
-    if (is<CSSPrimitiveValue>(value))
-        return styleResolver.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
-
-    auto& svgColor = downcast<SVGColor>(value);
-    return svgColor.colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR ? styleResolver.style()->color() : svgColor.color();
+    return styleResolver.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
 }
 
 inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignmentData(StyleResolver&, const CSSValue& value)

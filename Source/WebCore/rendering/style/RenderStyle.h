@@ -43,7 +43,6 @@
 #include "Pagination.h"
 #include "RenderStyleConstants.h"
 #include "RoundedRect.h"
-#include "SVGPaint.h"
 #include "SVGRenderStyle.h"
 #include "ShadowData.h"
 #include "ShapeValue.h"
@@ -1733,15 +1732,15 @@ public:
     const SVGRenderStyle& svgStyle() const { return *m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return *m_svgStyle.access(); }
 
-    const SVGPaint::SVGPaintType& fillPaintType() const { return svgStyle().fillPaintType(); }
+    const SVGPaintType& fillPaintType() const { return svgStyle().fillPaintType(); }
     Color fillPaintColor() const { return svgStyle().fillPaintColor(); }
-    void setFillPaintColor(const Color& c) { accessSVGStyle().setFillPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
+    void setFillPaintColor(const Color& c) { accessSVGStyle().setFillPaint(SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float fillOpacity() const { return svgStyle().fillOpacity(); }
     void setFillOpacity(float f) { accessSVGStyle().setFillOpacity(f); }
 
-    const SVGPaint::SVGPaintType& strokePaintType() const { return svgStyle().strokePaintType(); }
+    const SVGPaintType& strokePaintType() const { return svgStyle().strokePaintType(); }
     Color strokePaintColor() const { return svgStyle().strokePaintColor(); }
-    void setStrokePaintColor(const Color& c) { accessSVGStyle().setStrokePaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
+    void setStrokePaintColor(const Color& c) { accessSVGStyle().setStrokePaint(SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float strokeOpacity() const { return svgStyle().strokeOpacity(); }
     void setStrokeOpacity(float f) { accessSVGStyle().setStrokeOpacity(f); }
     const Length& strokeWidth() const { return svgStyle().strokeWidth(); }

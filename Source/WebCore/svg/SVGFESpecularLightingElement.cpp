@@ -24,7 +24,6 @@
 
 #include "FilterEffect.h"
 #include "RenderStyle.h"
-#include "SVGColor.h"
 #include "SVGFELightElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"

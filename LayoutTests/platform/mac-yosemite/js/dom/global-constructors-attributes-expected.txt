@@ -1448,11 +1448,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'SVGClipPathElement').hasOwnPropert
 PASS Object.getOwnPropertyDescriptor(global, 'SVGClipPathElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGClipPathElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGClipPathElement').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SVGColor').value is SVGColor
-PASS Object.getOwnPropertyDescriptor(global, 'SVGColor').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGColor').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGColor').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGColor').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGComponentTransferFunctionElement').value is SVGComponentTransferFunctionElement
 PASS Object.getOwnPropertyDescriptor(global, 'SVGComponentTransferFunctionElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGComponentTransferFunctionElement').hasOwnProperty('set') is false
@@ -1753,11 +1748,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'SVGNumberList').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'SVGNumberList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGNumberList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGNumberList').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SVGPaint').value is SVGPaint
-PASS Object.getOwnPropertyDescriptor(global, 'SVGPaint').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGPaint').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGPaint').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGPaint').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGPathElement').value is SVGPathElement
 PASS Object.getOwnPropertyDescriptor(global, 'SVGPathElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGPathElement').hasOwnProperty('set') is false

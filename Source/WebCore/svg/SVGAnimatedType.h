@@ -19,9 +19,9 @@
 
 #pragma once
 
+#include "Color.h"
 #include "FloatRect.h"
 #include "SVGAngleValue.h"
-#include "SVGColor.h"
 #include "SVGLengthListValues.h"
 #include "SVGLengthValue.h"
 #include "SVGNumberListValues.h"

@@ -115,8 +115,6 @@ public:
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
 #endif
-    bool isSVGColor() const { return m_classType == SVGColorClass || m_classType == SVGPaintClass; }
-    bool isSVGPaint() const { return m_classType == SVGPaintClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -132,9 +130,7 @@ public:
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
     { 
-        return isPrimitiveValue() 
-            || isSVGColor()
-            || isValueList();
+        return isPrimitiveValue() || isValueList();
     }
 
     RefPtr<CSSValue> cloneForCSSOM() const;
@@ -191,9 +187,6 @@ protected:
 #if ENABLE(CSS_GRID_LAYOUT)
         GridTemplateAreasClass,
 #endif
-        SVGColorClass,
-        SVGPaintClass,
-
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         AnimationTriggerScrollClass,
 #endif

@@ -22,6 +22,7 @@
 
 #include "CSSStyleDeclaration.h"
 #include "RenderStyleConstants.h"
+#include "SVGRenderStyleDefs.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,8 +70,7 @@ private:
     Element* styledElement();
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout);
-    RefPtr<SVGPaint> adjustSVGPaintForCurrentColor(RefPtr<SVGPaint>&&, const RenderStyle*) const;
-
+    RefPtr<CSSValue> adjustSVGPaintForCurrentColor(SVGPaintType, const String& url, const Color&, const Color& currentColor) const;
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
     RefPtr<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle*, const Color&) const;
 

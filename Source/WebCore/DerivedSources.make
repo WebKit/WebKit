@@ -615,7 +615,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/svg/SVGAnimationElement.idl \
     $(WebCore)/svg/SVGCircleElement.idl \
     $(WebCore)/svg/SVGClipPathElement.idl \
-    $(WebCore)/svg/SVGColor.idl \
     $(WebCore)/svg/SVGComponentTransferFunctionElement.idl \
     $(WebCore)/svg/SVGCursorElement.idl \
     $(WebCore)/svg/SVGDefsElement.idl \
@@ -679,7 +678,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/svg/SVGMissingGlyphElement.idl \
     $(WebCore)/svg/SVGNumber.idl \
     $(WebCore)/svg/SVGNumberList.idl \
-    $(WebCore)/svg/SVGPaint.idl \
     $(WebCore)/svg/SVGPathElement.idl \
     $(WebCore)/svg/SVGPathSeg.idl \
     $(WebCore)/svg/SVGPathSegArcAbs.idl \

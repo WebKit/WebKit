@@ -7,28 +7,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Initial condition:
-PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
-PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS fillPaint.uri is ""
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS colorComponents[1] is 208
+PASS colorComponents[2] is 0
+PASS colorComponents[3] is 0
 
 Half-time condition:
-PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
-PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 104
-PASS fillPaint.uri is ""
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS colorComponents[1] is 208
+PASS colorComponents[2] is 0
+PASS colorComponents[3] is 104
 
 End condition:
-PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
-PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 208
-PASS fillPaint.uri is ""
-PASS fillPaint.paintType is SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR
-PASS fillPaint.colorType is SVGColor.SVG_COLORTYPE_CURRENTCOLOR
+PASS colorComponents[1] is 208
+PASS colorComponents[2] is 0
+PASS colorComponents[3] is 208
 PASS successfullyParsed is true
 
 TEST COMPLETE

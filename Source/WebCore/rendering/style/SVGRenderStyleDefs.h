@@ -30,12 +30,20 @@
 
 #include "Length.h"
 #include "SVGLengthValue.h"
-#include "SVGPaint.h"
 #include "ShadowData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+    enum SVGPaintType {
+        SVG_PAINTTYPE_RGBCOLOR,
+        SVG_PAINTTYPE_NONE,
+        SVG_PAINTTYPE_CURRENTCOLOR,
+        SVG_PAINTTYPE_URI_NONE,
+        SVG_PAINTTYPE_URI_CURRENTCOLOR,
+        SVG_PAINTTYPE_URI_RGBCOLOR,
+        SVG_PAINTTYPE_URI
+    };
 
     enum EBaselineShift {
         BS_BASELINE, BS_SUB, BS_SUPER, BS_LENGTH
@@ -122,10 +130,10 @@ namespace WebCore {
         }
 
         float opacity;
-        SVGPaint::SVGPaintType paintType;
+        SVGPaintType paintType;
         Color paintColor;
         String paintUri;
-        SVGPaint::SVGPaintType visitedLinkPaintType;
+        SVGPaintType visitedLinkPaintType;
         Color visitedLinkPaintColor;
         String visitedLinkPaintUri;
 
@@ -152,10 +160,10 @@ namespace WebCore {
         Length dashOffset;
         Vector<SVGLengthValue> dashArray;
 
-        SVGPaint::SVGPaintType paintType;
+        SVGPaintType paintType;
         Color paintColor;
         String paintUri;
-        SVGPaint::SVGPaintType visitedLinkPaintType;
+        SVGPaintType visitedLinkPaintType;
         Color visitedLinkPaintColor;
         String visitedLinkPaintUri;
 

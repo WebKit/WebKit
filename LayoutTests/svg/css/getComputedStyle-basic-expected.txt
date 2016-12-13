@@ -457,7 +457,7 @@ rect: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimit
 rect: style.getPropertyValue(color-rendering) : auto
 rect: style.getPropertyCSSValue(color-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(fill) : rgb(0, 0, 255)
-rect: style.getPropertyCSSValue(fill) : [object SVGPaint]
+rect: style.getPropertyCSSValue(fill) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(fill-opacity) : 1
 rect: style.getPropertyCSSValue(fill-opacity) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(fill-rule) : nonzero
@@ -471,7 +471,7 @@ rect: style.getPropertyCSSValue(marker-start) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(shape-rendering) : auto
 rect: style.getPropertyCSSValue(shape-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke) : rgb(255, 165, 0)
-rect: style.getPropertyCSSValue(stroke) : [object SVGPaint]
+rect: style.getPropertyCSSValue(stroke) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke-dasharray) : none
 rect: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(stroke-dashoffset) : 0px
@@ -965,7 +965,7 @@ g: style.getPropertyCSSValue(color-interpolation-filters) : [object CSSPrimitive
 g: style.getPropertyValue(color-rendering) : auto
 g: style.getPropertyCSSValue(color-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(fill) : rgb(0, 0, 0)
-g: style.getPropertyCSSValue(fill) : [object SVGPaint]
+g: style.getPropertyCSSValue(fill) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(fill-opacity) : 1
 g: style.getPropertyCSSValue(fill-opacity) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(fill-rule) : nonzero
@@ -979,7 +979,7 @@ g: style.getPropertyCSSValue(marker-start) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(shape-rendering) : auto
 g: style.getPropertyCSSValue(shape-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke) : rgb(255, 165, 0)
-g: style.getPropertyCSSValue(stroke) : [object SVGPaint]
+g: style.getPropertyCSSValue(stroke) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke-dasharray) : none
 g: style.getPropertyCSSValue(stroke-dasharray) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(stroke-dashoffset) : 0px

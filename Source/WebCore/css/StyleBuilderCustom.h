@@ -1177,17 +1177,6 @@ inline void StyleBuilderCustom::applyInheritFill(StyleResolver& styleResolver)
 inline void StyleBuilderCustom::applyValueFill(StyleResolver& styleResolver, CSSValue& value)
 {
     SVGRenderStyle& svgStyle = styleResolver.style()->accessSVGStyle();
-    
-    // FIXME-NEWPARSER: SVGPaint as a back-end CSSValue is bad, since it's bypassing
-    // the style resolver's colorFromPrimitiveValue code. It's also not necessary, since it's
-    // not even how we store things in the front end.
-    // Remove this block of code when the new parser is turned on.
-    if (value.isSVGPaint()) {
-        auto& svgPaint = downcast<SVGPaint>(value);
-        svgStyle.setFillPaint(svgPaint.paintType(), StyleBuilderConverter::convertSVGColor(styleResolver, svgPaint), svgPaint.uri(), styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
-        return;
-    }
-    
     const CSSPrimitiveValue* localValue = value.isPrimitiveValue() ? &downcast<CSSPrimitiveValue>(value) : nullptr;
     String url;
     if (value.isValueList()) {
@@ -1200,18 +1189,18 @@ inline void StyleBuilderCustom::applyValueFill(StyleResolver& styleResolver, CSS
         return;
     
     Color color;
-    SVGPaint::SVGPaintType paintType = SVGPaint::SVG_PAINTTYPE_RGBCOLOR;
+    SVGPaintType paintType = SVG_PAINTTYPE_RGBCOLOR;
     if (localValue->isURI()) {
-        paintType = SVGPaint::SVG_PAINTTYPE_URI;
+        paintType = SVG_PAINTTYPE_URI;
         url = downcast<CSSPrimitiveValue>(localValue)->stringValue();
     } else if (localValue->isValueID() && localValue->valueID() == CSSValueNone)
-        paintType = url.isEmpty() ? SVGPaint::SVG_PAINTTYPE_NONE : SVGPaint::SVG_PAINTTYPE_URI_NONE;
+        paintType = url.isEmpty() ? SVG_PAINTTYPE_NONE : SVG_PAINTTYPE_URI_NONE;
     else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
         color = styleResolver.style()->color();
-        paintType = url.isEmpty() ? SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR :SVGPaint:: SVG_PAINTTYPE_URI_CURRENTCOLOR;
+        paintType = url.isEmpty() ? SVG_PAINTTYPE_CURRENTCOLOR : SVG_PAINTTYPE_URI_CURRENTCOLOR;
     } else {
         color = styleResolver.colorFromPrimitiveValue(*localValue);
-        paintType = url.isEmpty() ? SVGPaint::SVG_PAINTTYPE_RGBCOLOR : SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR;
+        paintType = url.isEmpty() ? SVG_PAINTTYPE_RGBCOLOR : SVG_PAINTTYPE_URI_RGBCOLOR;
     }
     svgStyle.setFillPaint(paintType, color, url, styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
 }
@@ -1232,17 +1221,6 @@ inline void StyleBuilderCustom::applyInheritStroke(StyleResolver& styleResolver)
 inline void StyleBuilderCustom::applyValueStroke(StyleResolver& styleResolver, CSSValue& value)
 {
     SVGRenderStyle& svgStyle = styleResolver.style()->accessSVGStyle();
-    
-    // FIXME-NEWPARSER: SVGPaint as a back-end CSSValue is bad, since it's bypassing
-    // the style resolver's colorFromPrimitiveValue code. It's also not necessary, since it's
-    // not even how we store things in the front end.
-    // Remove this block of code when the new parser is turned on.
-    if (value.isSVGPaint()) {
-        auto& svgPaint = downcast<SVGPaint>(value);
-        svgStyle.setStrokePaint(svgPaint.paintType(), StyleBuilderConverter::convertSVGColor(styleResolver, svgPaint), svgPaint.uri(), styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
-        return;
-    }
-    
     const CSSPrimitiveValue* localValue = value.isPrimitiveValue() ? &downcast<CSSPrimitiveValue>(value) : nullptr;
     String url;
     if (value.isValueList()) {
@@ -1255,18 +1233,18 @@ inline void StyleBuilderCustom::applyValueStroke(StyleResolver& styleResolver, C
         return;
     
     Color color;
-    SVGPaint::SVGPaintType paintType = SVGPaint::SVG_PAINTTYPE_RGBCOLOR;
+    SVGPaintType paintType = SVG_PAINTTYPE_RGBCOLOR;
     if (localValue->isURI()) {
-        paintType = SVGPaint::SVG_PAINTTYPE_URI;
+        paintType = SVG_PAINTTYPE_URI;
         url = downcast<CSSPrimitiveValue>(localValue)->stringValue();
     } else if (localValue->isValueID() && localValue->valueID() == CSSValueNone)
-        paintType = url.isEmpty() ? SVGPaint::SVG_PAINTTYPE_NONE : SVGPaint::SVG_PAINTTYPE_URI_NONE;
+        paintType = url.isEmpty() ? SVG_PAINTTYPE_NONE : SVG_PAINTTYPE_URI_NONE;
     else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
         color = styleResolver.style()->color();
-        paintType = url.isEmpty() ? SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR :SVGPaint:: SVG_PAINTTYPE_URI_CURRENTCOLOR;
+        paintType = url.isEmpty() ? SVG_PAINTTYPE_CURRENTCOLOR : SVG_PAINTTYPE_URI_CURRENTCOLOR;
     } else {
         color = styleResolver.colorFromPrimitiveValue(*localValue);
-        paintType = url.isEmpty() ? SVGPaint::SVG_PAINTTYPE_RGBCOLOR : SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR;
+        paintType = url.isEmpty() ? SVG_PAINTTYPE_RGBCOLOR : SVG_PAINTTYPE_URI_RGBCOLOR;
     }
     svgStyle.setStrokePaint(paintType, color, url, styleResolver.applyPropertyToRegularStyle(), styleResolver.applyPropertyToVisitedLinkStyle());
 }

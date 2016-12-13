@@ -1,3 +1,81 @@
+2016-12-13  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Eliminate SVGPaint and SVGColor
+        https://bugs.webkit.org/show_bug.cgi?id=165819
+
+        Reviewed by Dean Jackson.
+
+        Remove SVGColor and SVGPaint CSS values from the tree. The new parser
+        already stopped making these values when parsing, so all that's left
+        is to make sure computed style doesn't use these values either.
+
+        We are the only browser engine to support these CSS values, they see no use
+        on the Web, and they're already gone at the parsing level, so it's time
+        to remove these interfaces from our tree.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isSubtypeExposedToCSSOM):
+        (WebCore::CSSValue::isSVGColor): Deleted.
+        (WebCore::CSSValue::isSVGPaint): Deleted.
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::adjustSVGPaintForCurrentColor):
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertSVGColor):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFill):
+        (WebCore::StyleBuilderCustom::applyValueStroke):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::PropertyWrapperSVGPaint::PropertyWrapperSVGPaint):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fillPaintType):
+        (WebCore::RenderStyle::setFillPaintColor):
+        (WebCore::RenderStyle::strokePaintType):
+        (WebCore::RenderStyle::setStrokePaintColor):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialFillPaintType):
+        (WebCore::SVGRenderStyle::initialStrokePaintType):
+        (WebCore::SVGRenderStyle::setFillPaint):
+        (WebCore::SVGRenderStyle::setStrokePaint):
+        (WebCore::SVGRenderStyle::fillPaintType):
+        (WebCore::SVGRenderStyle::strokePaintType):
+        (WebCore::SVGRenderStyle::visitedLinkFillPaintType):
+        (WebCore::SVGRenderStyle::visitedLinkStrokePaintType):
+        (WebCore::SVGRenderStyle::hasStroke):
+        (WebCore::SVGRenderStyle::hasFill):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::requestPaintingResource):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::paintingResourceFromSVGPaint):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGAnimatedColor.cpp:
+        (WebCore::SVGAnimatedColorAnimator::constructFromString):
+        (WebCore::parseColorFromString):
+        (WebCore::SVGAnimatedColorAnimator::calculateDistance):
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h:
+        * svg/SVGColor.cpp: Removed.
+        * svg/SVGColor.h: Removed.
+        * svg/SVGColor.idl: Removed.
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGPaint.cpp: Removed.
+        * svg/SVGPaint.h: Removed.
+        * svg/SVGPaint.idl: Removed.
+
 2016-12-13  Alex Christensen  <achristensen@webkit.org>
 
         Restore NSURLRequest's default time interval to match behavior before NSURLSession adoption

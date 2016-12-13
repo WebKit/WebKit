@@ -27,9 +27,6 @@ function sample1() {
     debug("Initial condition:");
 
     expectFillColor(rect, 208, 0, 0);
-    shouldBeEqualToString("fillPaint.uri", "");
-    shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
-    shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
 }
 
 function sample2() {
@@ -37,9 +34,6 @@ function sample2() {
     debug("Half-time condition:");
 
     expectFillColor(rect, 208, 0, 104);
-    shouldBeEqualToString("fillPaint.uri", "");
-    shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
-    shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
 }
 
 function sample3() {
@@ -47,9 +41,6 @@ function sample3() {
     debug("End condition:");
 
     expectFillColor(rect, 208, 0, 208);
-    shouldBeEqualToString("fillPaint.uri", "");
-    shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
-    shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
 }
 
 function executeTest() {

@@ -20,7 +20,6 @@ PASS SVGLengthList.toString() is "function SVGLengthList() {\n    [native code]\
 PASS SVGAnimatedLengthList.toString() is "function SVGAnimatedLengthList() {\n    [native code]\n}"
 PASS SVGAngle.toString() is "function SVGAngle() {\n    [native code]\n}"
 PASS SVGAnimatedAngle.toString() is "function SVGAnimatedAngle() {\n    [native code]\n}"
-PASS SVGColor.toString() is "function SVGColor() {\n    [native code]\n}"
 FAIL SVGICCColor.toString() should be function SVGICCColor() {
     [native code]
 }. Threw exception ReferenceError: Can't find variable: SVGICCColor
@@ -110,7 +109,6 @@ PASS SVGAltGlyphElement.toString() is "function SVGAltGlyphElement() {\n    [nat
 PASS SVGAltGlyphDefElement.toString() is "function SVGAltGlyphDefElement() {\n    [native code]\n}"
 PASS SVGAltGlyphItemElement.toString() is "function SVGAltGlyphItemElement() {\n    [native code]\n}"
 PASS SVGGlyphRefElement.toString() is "function SVGGlyphRefElement() {\n    [native code]\n}"
-PASS SVGPaint.toString() is "function SVGPaint() {\n    [native code]\n}"
 PASS SVGMarkerElement.toString() is "function SVGMarkerElement() {\n    [native code]\n}"
 FAIL SVGColorProfileElement.toString() should be function SVGColorProfileElement() {
     [native code]

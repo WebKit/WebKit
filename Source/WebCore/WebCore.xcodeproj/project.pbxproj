@@ -4548,8 +4548,6 @@
 		B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278060D00BF1F0071B782 /* SVGCircleElement.h */; };
 		B222799E0D00BF220071B782 /* SVGClipPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278080D00BF1F0071B782 /* SVGClipPathElement.cpp */; };
 		B222799F0D00BF220071B782 /* SVGClipPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278090D00BF1F0071B782 /* SVGClipPathElement.h */; };
-		B22279A10D00BF220071B782 /* SVGColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222780B0D00BF1F0071B782 /* SVGColor.cpp */; };
-		B22279A20D00BF220071B782 /* SVGColor.h in Headers */ = {isa = PBXBuildFile; fileRef = B222780C0D00BF1F0071B782 /* SVGColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B22279A40D00BF220071B782 /* SVGComponentTransferFunctionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222780E0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.cpp */; };
 		B22279A50D00BF220071B782 /* SVGComponentTransferFunctionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B222780F0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.h */; };
 		B22279A70D00BF220071B782 /* SVGCursorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278110D00BF1F0071B782 /* SVGCursorElement.cpp */; };
@@ -4655,8 +4653,6 @@
 		B2227A4D0D00BF220071B782 /* SVGMPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278B70D00BF200071B782 /* SVGMPathElement.cpp */; };
 		B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278B80D00BF200071B782 /* SVGMPathElement.h */; };
 		B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278BB0D00BF200071B782 /* SVGNumberList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2227A530D00BF220071B782 /* SVGPaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278BD0D00BF200071B782 /* SVGPaint.cpp */; };
-		B2227A540D00BF220071B782 /* SVGPaint.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278BE0D00BF200071B782 /* SVGPaint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227A560D00BF220071B782 /* SVGParserUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */; };
 		B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278C10D00BF200071B782 /* SVGParserUtilities.h */; };
 		B2227A580D00BF220071B782 /* SVGPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278C20D00BF200071B782 /* SVGPathElement.cpp */; };
@@ -4907,8 +4903,6 @@
 		B2FA3D590AB75A6F000E5AC4 /* JSSVGCircleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C710AB75A6E000E5AC4 /* JSSVGCircleElement.h */; };
 		B2FA3D5A0AB75A6F000E5AC4 /* JSSVGClipPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C720AB75A6E000E5AC4 /* JSSVGClipPathElement.cpp */; };
 		B2FA3D5B0AB75A6F000E5AC4 /* JSSVGClipPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C730AB75A6E000E5AC4 /* JSSVGClipPathElement.h */; };
-		B2FA3D5C0AB75A6F000E5AC4 /* JSSVGColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C740AB75A6E000E5AC4 /* JSSVGColor.cpp */; };
-		B2FA3D5D0AB75A6F000E5AC4 /* JSSVGColor.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C750AB75A6E000E5AC4 /* JSSVGColor.h */; };
 		B2FA3D5E0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C760AB75A6E000E5AC4 /* JSSVGComponentTransferFunctionElement.cpp */; };
 		B2FA3D5F0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3C770AB75A6E000E5AC4 /* JSSVGComponentTransferFunctionElement.h */; };
 		B2FA3D600AB75A6F000E5AC4 /* JSSVGCursorElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3C780AB75A6E000E5AC4 /* JSSVGCursorElement.cpp */; };
@@ -4993,8 +4987,6 @@
 		B2FA3DAF0AB75A6F000E5AC4 /* JSSVGMetadataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3CC70AB75A6E000E5AC4 /* JSSVGMetadataElement.h */; };
 		B2FA3DB00AB75A6F000E5AC4 /* JSSVGNumberList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3CC80AB75A6E000E5AC4 /* JSSVGNumberList.cpp */; };
 		B2FA3DB10AB75A6F000E5AC4 /* JSSVGNumberList.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3CC90AB75A6E000E5AC4 /* JSSVGNumberList.h */; };
-		B2FA3DB20AB75A6F000E5AC4 /* JSSVGPaint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3CCA0AB75A6E000E5AC4 /* JSSVGPaint.cpp */; };
-		B2FA3DB30AB75A6F000E5AC4 /* JSSVGPaint.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3CCB0AB75A6E000E5AC4 /* JSSVGPaint.h */; };
 		B2FA3DB40AB75A6F000E5AC4 /* JSSVGPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3CCC0AB75A6E000E5AC4 /* JSSVGPathElement.cpp */; };
 		B2FA3DB50AB75A6F000E5AC4 /* JSSVGPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3CCD0AB75A6E000E5AC4 /* JSSVGPathElement.h */; };
 		B2FA3DB60AB75A6F000E5AC4 /* JSSVGPathSeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3CCE0AB75A6E000E5AC4 /* JSSVGPathSeg.cpp */; };
@@ -12278,9 +12270,6 @@
 		B22278080D00BF1F0071B782 /* SVGClipPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGClipPathElement.cpp; sourceTree = "<group>"; };
 		B22278090D00BF1F0071B782 /* SVGClipPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGClipPathElement.h; sourceTree = "<group>"; };
 		B222780A0D00BF1F0071B782 /* SVGClipPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGClipPathElement.idl; sourceTree = "<group>"; };
-		B222780B0D00BF1F0071B782 /* SVGColor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGColor.cpp; sourceTree = "<group>"; };
-		B222780C0D00BF1F0071B782 /* SVGColor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGColor.h; sourceTree = "<group>"; };
-		B222780D0D00BF1F0071B782 /* SVGColor.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGColor.idl; sourceTree = "<group>"; };
 		B222780E0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGComponentTransferFunctionElement.cpp; sourceTree = "<group>"; };
 		B222780F0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGComponentTransferFunctionElement.h; sourceTree = "<group>"; };
 		B22278100D00BF1F0071B782 /* SVGComponentTransferFunctionElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGComponentTransferFunctionElement.idl; sourceTree = "<group>"; };
@@ -12439,9 +12428,6 @@
 		B22278B90D00BF200071B782 /* SVGNumber.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGNumber.idl; sourceTree = "<group>"; };
 		B22278BB0D00BF200071B782 /* SVGNumberList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGNumberList.h; sourceTree = "<group>"; };
 		B22278BC0D00BF200071B782 /* SVGNumberList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGNumberList.idl; sourceTree = "<group>"; };
-		B22278BD0D00BF200071B782 /* SVGPaint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPaint.cpp; sourceTree = "<group>"; };
-		B22278BE0D00BF200071B782 /* SVGPaint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGPaint.h; sourceTree = "<group>"; };
-		B22278BF0D00BF200071B782 /* SVGPaint.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGPaint.idl; sourceTree = "<group>"; };
 		B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGParserUtilities.cpp; sourceTree = "<group>"; };
 		B22278C10D00BF200071B782 /* SVGParserUtilities.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGParserUtilities.h; sourceTree = "<group>"; };
 		B22278C20D00BF200071B782 /* SVGPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathElement.cpp; sourceTree = "<group>"; };
@@ -12758,8 +12744,6 @@
 		B2FA3C710AB75A6E000E5AC4 /* JSSVGCircleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGCircleElement.h; sourceTree = "<group>"; };
 		B2FA3C720AB75A6E000E5AC4 /* JSSVGClipPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGClipPathElement.cpp; sourceTree = "<group>"; };
 		B2FA3C730AB75A6E000E5AC4 /* JSSVGClipPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGClipPathElement.h; sourceTree = "<group>"; };
-		B2FA3C740AB75A6E000E5AC4 /* JSSVGColor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGColor.cpp; sourceTree = "<group>"; };
-		B2FA3C750AB75A6E000E5AC4 /* JSSVGColor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGColor.h; sourceTree = "<group>"; };
 		B2FA3C760AB75A6E000E5AC4 /* JSSVGComponentTransferFunctionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGComponentTransferFunctionElement.cpp; sourceTree = "<group>"; };
 		B2FA3C770AB75A6E000E5AC4 /* JSSVGComponentTransferFunctionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGComponentTransferFunctionElement.h; sourceTree = "<group>"; };
 		B2FA3C780AB75A6E000E5AC4 /* JSSVGCursorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGCursorElement.cpp; sourceTree = "<group>"; };
@@ -12844,8 +12828,6 @@
 		B2FA3CC70AB75A6E000E5AC4 /* JSSVGMetadataElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGMetadataElement.h; sourceTree = "<group>"; };
 		B2FA3CC80AB75A6E000E5AC4 /* JSSVGNumberList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGNumberList.cpp; sourceTree = "<group>"; };
 		B2FA3CC90AB75A6E000E5AC4 /* JSSVGNumberList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGNumberList.h; sourceTree = "<group>"; };
-		B2FA3CCA0AB75A6E000E5AC4 /* JSSVGPaint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPaint.cpp; sourceTree = "<group>"; };
-		B2FA3CCB0AB75A6E000E5AC4 /* JSSVGPaint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGPaint.h; sourceTree = "<group>"; };
 		B2FA3CCC0AB75A6E000E5AC4 /* JSSVGPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathElement.cpp; sourceTree = "<group>"; };
 		B2FA3CCD0AB75A6E000E5AC4 /* JSSVGPathElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGPathElement.h; sourceTree = "<group>"; };
 		B2FA3CCE0AB75A6E000E5AC4 /* JSSVGPathSeg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGPathSeg.cpp; sourceTree = "<group>"; };
@@ -20073,8 +20055,6 @@
 				B2FA3C710AB75A6E000E5AC4 /* JSSVGCircleElement.h */,
 				B2FA3C720AB75A6E000E5AC4 /* JSSVGClipPathElement.cpp */,
 				B2FA3C730AB75A6E000E5AC4 /* JSSVGClipPathElement.h */,
-				B2FA3C740AB75A6E000E5AC4 /* JSSVGColor.cpp */,
-				B2FA3C750AB75A6E000E5AC4 /* JSSVGColor.h */,
 				B2FA3C760AB75A6E000E5AC4 /* JSSVGComponentTransferFunctionElement.cpp */,
 				B2FA3C770AB75A6E000E5AC4 /* JSSVGComponentTransferFunctionElement.h */,
 				B2FA3C780AB75A6E000E5AC4 /* JSSVGCursorElement.cpp */,
@@ -20195,8 +20175,6 @@
 				8574D1F40ADE6122004CBA11 /* JSSVGNumber.h */,
 				B2FA3CC80AB75A6E000E5AC4 /* JSSVGNumberList.cpp */,
 				B2FA3CC90AB75A6E000E5AC4 /* JSSVGNumberList.h */,
-				B2FA3CCA0AB75A6E000E5AC4 /* JSSVGPaint.cpp */,
-				B2FA3CCB0AB75A6E000E5AC4 /* JSSVGPaint.h */,
 				B2FA3CCC0AB75A6E000E5AC4 /* JSSVGPathElement.cpp */,
 				B2FA3CCD0AB75A6E000E5AC4 /* JSSVGPathElement.h */,
 				B2FA3CCE0AB75A6E000E5AC4 /* JSSVGPathSeg.cpp */,
@@ -20976,9 +20954,6 @@
 				B22278080D00BF1F0071B782 /* SVGClipPathElement.cpp */,
 				B22278090D00BF1F0071B782 /* SVGClipPathElement.h */,
 				B222780A0D00BF1F0071B782 /* SVGClipPathElement.idl */,
-				B222780B0D00BF1F0071B782 /* SVGColor.cpp */,
-				B222780C0D00BF1F0071B782 /* SVGColor.h */,
-				B222780D0D00BF1F0071B782 /* SVGColor.idl */,
 				B222780E0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.cpp */,
 				B222780F0D00BF1F0071B782 /* SVGComponentTransferFunctionElement.h */,
 				B22278100D00BF1F0071B782 /* SVGComponentTransferFunctionElement.idl */,
@@ -21183,9 +21158,6 @@
 				B22278BC0D00BF200071B782 /* SVGNumberList.idl */,
 				7C39C3681DDB86D300FEFB29 /* SVGNumberListValues.cpp */,
 				7C39C3691DDB86D300FEFB29 /* SVGNumberListValues.h */,
-				B22278BD0D00BF200071B782 /* SVGPaint.cpp */,
-				B22278BE0D00BF200071B782 /* SVGPaint.h */,
-				B22278BF0D00BF200071B782 /* SVGPaint.idl */,
 				B22278C00D00BF200071B782 /* SVGParserUtilities.cpp */,
 				B22278C10D00BF200071B782 /* SVGParserUtilities.h */,
 				2D3A0E3513A7D76100E85AF0 /* SVGParsingError.h */,
@@ -26414,7 +26386,6 @@
 				B2FA3D570AB75A6F000E5AC4 /* JSSVGAnimationElement.h in Headers */,
 				B2FA3D590AB75A6F000E5AC4 /* JSSVGCircleElement.h in Headers */,
 				B2FA3D5B0AB75A6F000E5AC4 /* JSSVGClipPathElement.h in Headers */,
-				B2FA3D5D0AB75A6F000E5AC4 /* JSSVGColor.h in Headers */,
 				B2FA3D5F0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.h in Headers */,
 				B2FA3D610AB75A6F000E5AC4 /* JSSVGCursorElement.h in Headers */,
 				B2FA3D630AB75A6F000E5AC4 /* JSSVGDefsElement.h in Headers */,
@@ -26476,7 +26447,6 @@
 				4496E3A0139813A5003EE32A /* JSSVGMPathElement.h in Headers */,
 				8542A7970AE5C94300DF58DF /* JSSVGNumber.h in Headers */,
 				B2FA3DB10AB75A6F000E5AC4 /* JSSVGNumberList.h in Headers */,
-				B2FA3DB30AB75A6F000E5AC4 /* JSSVGPaint.h in Headers */,
 				B2FA3DB50AB75A6F000E5AC4 /* JSSVGPathElement.h in Headers */,
 				B2FA3DB70AB75A6F000E5AC4 /* JSSVGPathSeg.h in Headers */,
 				B2FA3DB90AB75A6F000E5AC4 /* JSSVGPathSegArcAbs.h in Headers */,
@@ -27696,7 +27666,6 @@
 				08FB3F8413BC754C0099FC18 /* SVGAttributeToPropertyMap.h in Headers */,
 				B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */,
 				B222799F0D00BF220071B782 /* SVGClipPathElement.h in Headers */,
-				B22279A20D00BF220071B782 /* SVGColor.h in Headers */,
 				B22279A50D00BF220071B782 /* SVGComponentTransferFunctionElement.h in Headers */,
 				B22279A80D00BF220071B782 /* SVGCursorElement.h in Headers */,
 				B22279AE0D00BF220071B782 /* SVGDefsElement.h in Headers */,
@@ -27781,7 +27750,6 @@
 				B2A1F2B10CEF0ABF00442F6A /* SVGMissingGlyphElement.h in Headers */,
 				B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */,
 				B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */,
-				B2227A540D00BF220071B782 /* SVGPaint.h in Headers */,
 				B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */,
 				2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */,
 				84C6784D1214814700A92902 /* SVGPathBlender.h in Headers */,
@@ -30202,7 +30170,6 @@
 				B2FA3D560AB75A6F000E5AC4 /* JSSVGAnimationElement.cpp in Sources */,
 				B2FA3D580AB75A6F000E5AC4 /* JSSVGCircleElement.cpp in Sources */,
 				B2FA3D5A0AB75A6F000E5AC4 /* JSSVGClipPathElement.cpp in Sources */,
-				B2FA3D5C0AB75A6F000E5AC4 /* JSSVGColor.cpp in Sources */,
 				B2FA3D5E0AB75A6F000E5AC4 /* JSSVGComponentTransferFunctionElement.cpp in Sources */,
 				B2FA3D600AB75A6F000E5AC4 /* JSSVGCursorElement.cpp in Sources */,
 				B2FA3D620AB75A6F000E5AC4 /* JSSVGDefsElement.cpp in Sources */,
@@ -30266,7 +30233,6 @@
 				4496E3A2139813CB003EE32A /* JSSVGMPathElement.cpp in Sources */,
 				8542A7980AE5C94300DF58DF /* JSSVGNumber.cpp in Sources */,
 				B2FA3DB00AB75A6F000E5AC4 /* JSSVGNumberList.cpp in Sources */,
-				B2FA3DB20AB75A6F000E5AC4 /* JSSVGPaint.cpp in Sources */,
 				B2FA3DB40AB75A6F000E5AC4 /* JSSVGPathElement.cpp in Sources */,
 				B2FA3DB60AB75A6F000E5AC4 /* JSSVGPathSeg.cpp in Sources */,
 				B2FA3DB80AB75A6F000E5AC4 /* JSSVGPathSegArcAbs.cpp in Sources */,
@@ -31305,7 +31271,6 @@
 				08FB17C113BC7E9100040086 /* SVGAttributeToPropertyMap.cpp in Sources */,
 				B222799B0D00BF220071B782 /* SVGCircleElement.cpp in Sources */,
 				B222799E0D00BF220071B782 /* SVGClipPathElement.cpp in Sources */,
-				B22279A10D00BF220071B782 /* SVGColor.cpp in Sources */,
 				B22279A40D00BF220071B782 /* SVGComponentTransferFunctionElement.cpp in Sources */,
 				B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 				B22279A70D00BF220071B782 /* SVGCursorElement.cpp in Sources */,
@@ -31379,7 +31344,6 @@
 				B2A1F2B00CEF0ABF00442F6A /* SVGMissingGlyphElement.cpp in Sources */,
 				B2227A4D0D00BF220071B782 /* SVGMPathElement.cpp in Sources */,
 				A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */,
-				B2227A530D00BF220071B782 /* SVGPaint.cpp in Sources */,
 				B2227A560D00BF220071B782 /* SVGParserUtilities.cpp in Sources */,
 				84C6784C1214814700A92902 /* SVGPathBlender.cpp in Sources */,
 				8476C9EA11DF6A2900555B02 /* SVGPathBuilder.cpp in Sources */,

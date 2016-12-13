@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGAnimatedType.h"
 
+#include "CSSParser.h"
 #include "SVGParserUtilities.h"
 #include "SVGPathByteStream.h"
 
@@ -275,7 +276,7 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     switch (m_type) {
     case AnimatedColor:
         ASSERT(m_data.color);
-        *m_data.color = SVGColor::colorFromRGBColorString(value);
+        *m_data.color = CSSParser::parseColor(value.stripWhiteSpace());
         return true;
     case AnimatedLength:
         ASSERT(m_data.length);

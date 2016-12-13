@@ -664,7 +664,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGAnimationElement.idl
     svg/SVGCircleElement.idl
     svg/SVGClipPathElement.idl
-    svg/SVGColor.idl
     svg/SVGComponentTransferFunctionElement.idl
     svg/SVGCursorElement.idl
     svg/SVGDefsElement.idl
@@ -728,7 +727,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGMissingGlyphElement.idl
     svg/SVGNumber.idl
     svg/SVGNumberList.idl
-    svg/SVGPaint.idl
     svg/SVGPathElement.idl
     svg/SVGPathSeg.idl
     svg/SVGPathSegArcAbs.idl
@@ -2711,7 +2709,6 @@ set(WebCore_SOURCES
     svg/SVGAnimationElement.cpp
     svg/SVGCircleElement.cpp
     svg/SVGClipPathElement.cpp
-    svg/SVGColor.cpp
     svg/SVGComponentTransferFunctionElement.cpp
     svg/SVGCursorElement.cpp
     svg/SVGDefsElement.cpp
@@ -2779,7 +2776,6 @@ set(WebCore_SOURCES
     svg/SVGMetadataElement.cpp
     svg/SVGMissingGlyphElement.cpp
     svg/SVGNumberListValues.cpp
-    svg/SVGPaint.cpp
     svg/SVGParserUtilities.cpp
     svg/SVGPathBlender.cpp
     svg/SVGPathBuilder.cpp
