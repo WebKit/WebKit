@@ -73,6 +73,32 @@
                        (home-library-preferences-regex (string-append #"/ByHost/" (regex-quote domain) #"\..*\.plist$")))))
             domains))
 
+;; Remove when <rdar://problem/29646094> is fixed.
+(define (HEX-pattern-match-generator pattern-descriptor)
+    (letrec ((pattern-string ""))
+        (for-each  (lambda (repeat-count)
+            (if (zero? repeat-count)
+                (set! pattern-string (string-append  pattern-string "-"))
+                (let appender ((count repeat-count))
+                    (if (> count 0)
+                        (begin
+                            (set! pattern-string (string-append  pattern-string "[0-9A-F]"))
+                            (appender (- count 1)))))))
+            pattern-descriptor)
+    pattern-string))
+
+;; return a regex pattern matching string for 8-4-4-4-12 UUIDs:
+(define (uuid-HEX-pattern-match-string)
+    (HEX-pattern-match-generator '(8 0 4 0 4 0 4 0 12)))
+
+;; global to hold the computed UUID matching pattern.
+(define *uuid-pattern* "")
+
+(define (uuid-regex-string)
+    (if (zero? (string-length *uuid-pattern*))
+        (set! *uuid-pattern* (uuid-HEX-pattern-match-string)))
+    *uuid-pattern*)
+
 ;; WebKit2 sandbox launcher needs to define an _OS_VERSION parameter
 ;; This parameter is the major OS Version number.
 (if (not (defined? 'os-version))
@@ -162,14 +188,23 @@
 
     (subpath "/Library/ColorSync")
 
-    (home-literal "/Library/Preferences/com.apple.lookup.shared.plist")
+    (home-literal "/Library/Preferences/com.apple.lookup.shared.plist"))
 
-    ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
-    (subpath "/Library/Keychains"))
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
+;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
+;; Restrict AppSandboxed processes from creating /Library/Keychains, but allow access to the contents of /Library/Keychains:
+(allow file-read-data file-read-metadata file-write-data
+    (subpath "/Library/Keychains")
+    (home-library-subpath "/Keychains"))
+
+;; Except deny access to new-style iOS Keychain folders which are UUIDs.
+(deny file-read* file-write*
+    (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
+    (home-library-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
+#endif
 
 ;; Security framework
 (allow mach-lookup (global-name "com.apple.ocspd"))
-(allow file-read* file-write* (home-library-subpath "/Keychains"))
 (allow file-read*
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures"))
@@ -177,9 +212,6 @@
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; Read-write preferences and data
-(allow file*
-    ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
-    (home-library-subpath "/Keychains"))
 (allow system-fsctl (fsctl-command (_IO "h" 47)))
 
 ;; IOKit user clients

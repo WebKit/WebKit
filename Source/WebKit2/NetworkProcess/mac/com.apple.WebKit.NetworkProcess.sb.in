@@ -37,6 +37,32 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+;; Remove when <rdar://problem/29646094> is fixed.
+(define (HEX-pattern-match-generator pattern-descriptor)
+    (letrec ((pattern-string ""))
+        (for-each  (lambda (repeat-count)
+            (if (zero? repeat-count)
+                (set! pattern-string (string-append  pattern-string "-"))
+                (let appender ((count repeat-count))
+                    (if (> count 0)
+                        (begin
+                            (set! pattern-string (string-append  pattern-string "[0-9A-F]"))
+                            (appender (- count 1)))))))
+            pattern-descriptor)
+        pattern-string))
+
+;; return a regex pattern matching string for 8-4-4-4-12 UUIDs:
+(define (uuid-HEX-pattern-match-string)
+    (HEX-pattern-match-generator '(8 0 4 0 4 0 4 0 12)))
+
+;; global to hold the computed UUID matching pattern.
+(define *uuid-pattern* "")
+
+(define (uuid-regex-string)
+    (if (zero? (string-length *uuid-pattern*))
+        (set! *uuid-pattern* (uuid-HEX-pattern-match-string)))
+    *uuid-pattern*)
+
 ;; Read-only preferences and data
 (allow user-preference-read
     (preference-domain
@@ -110,7 +136,16 @@
        (global-name "com.apple.SecurityServer"))
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
-(allow file-read* file-write* (home-subpath "/Library/Keychains")) ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
+;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
+;; Restrict AppSandboxed processes from creating /Library/Keychains, but allow access to the contents of /Library/Keychains:
+(allow file-read-data file-read-metadata file-write-data
+    (subpath "/Library/Keychains")
+    (home-subpath "/Library/Keychains"))
+
+;; Except deny access to new-style iOS Keychain folders which are UUIDs.
+(deny file-read* file-write*
+    (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
+    (home-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
 #endif
 
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
@@ -123,9 +158,6 @@
         "com.apple.security.revocation"))
 
 (allow file-read*
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101240
-       (subpath "/Library/Keychains")
-#endif
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures")
 
