@@ -393,7 +393,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
 
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::createPtr());
-        state.style()->inheritFrom(state.parentStyle(), isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
+        state.style()->inheritFrom(*state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement());
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
@@ -605,7 +605,7 @@ std::unique_ptr<RenderStyle> StyleResolver::pseudoStyleForElement(const Element&
 
     if (m_state.parentStyle()) {
         state.setStyle(RenderStyle::createPtr());
-        state.style()->inheritFrom(m_state.parentStyle());
+        state.style()->inheritFrom(*m_state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement());
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
@@ -655,7 +655,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     m_state = State(*documentElement, m_document.renderStyle());
 
     m_state.setStyle(RenderStyle::createPtr());
-    m_state.style()->inheritFrom(m_state.rootElementStyle());
+    m_state.style()->inheritFrom(*m_state.rootElementStyle());
 
     PageRuleCollector collector(m_state, m_ruleSets);
     collector.matchAllPageRules(pageIndex);
@@ -1338,7 +1338,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
             EInsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
             // resulting style will be identical too. We copy the inherited properties over from the cache and are done.
-            state.style()->inheritFrom(cacheItem->renderStyle.get());
+            state.style()->inheritFrom(*cacheItem->renderStyle);
 
             // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
             state.style()->setInsideLink(linkStatus);

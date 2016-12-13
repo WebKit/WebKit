@@ -71,7 +71,7 @@ RenderFlowThread::RenderFlowThread(Document& document, RenderStyle&& style)
 RenderStyle RenderFlowThread::createFlowThreadStyle(const RenderStyle* parentStyle)
 {
     auto newStyle = RenderStyle::create();
-    newStyle.inheritFrom(parentStyle);
+    newStyle.inheritFrom(*parentStyle);
     newStyle.setDisplay(BLOCK);
     newStyle.setPosition(AbsolutePosition);
     newStyle.setZIndex(0);

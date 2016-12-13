@@ -6935,7 +6935,7 @@ void RenderLayer::removeReflection()
 RenderStyle RenderLayer::createReflectionStyle()
 {
     auto newStyle = RenderStyle::create();
-    newStyle.inheritFrom(&renderer().style());
+    newStyle.inheritFrom(renderer().style());
     
     // Map in our transform.
     TransformOperations transform;

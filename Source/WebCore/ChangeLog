@@ -1,3 +1,46 @@
+2016-12-13  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r198990): Cannot edit content inside <details> in wysiwyg editor
+        https://bugs.webkit.org/show_bug.cgi?id=165757
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/html/details-edit.html
+
+        -webkit-user-modify is reset on shadow boundary so it doesn't go through <details> shadow tree.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        * dom/Node.cpp:
+        (WebCore::computeEditabilityFromComputedStyle):
+        (WebCore::Node::computeEditability):
+
+            Make -webkit-user-modify (which we would want to get rid of completely eventually) have no effect in shadow trees.
+            Check for contenteditable directly instead.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createInnerTextStyle):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::createInnerTextStyle):
+        * html/shadow/TextControlInnerElements.cpp:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::createFlowThreadStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::styleDidChange):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::createAnonymousStyleWithDisplay):
+        (WebCore::RenderStyle::createStyleInheritingFromPseudoStyle):
+        (WebCore::RenderStyle::inheritFrom):
+
+            Let -webkit-user-modify inherit through shadow boundary as normal.
+
+        * rendering/style/RenderStyle.h:
+
 2016-12-12  Darin Adler  <darin@apple.com>
 
         Remove bindings generation support for legacy WebCore::Dictionary

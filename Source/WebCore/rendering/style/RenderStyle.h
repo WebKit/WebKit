@@ -510,12 +510,7 @@ public:
     StyleSelfAlignmentData resolvedJustifyItems(ItemPosition normalValueBehaviour) const;
     StyleSelfAlignmentData resolvedJustifySelf(const RenderStyle& parentStyle, ItemPosition normalValueBehaviour) const;
 
-    enum IsAtShadowBoundary {
-        AtShadowBoundary,
-        NotAtShadowBoundary,
-    };
-
-    void inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary = NotAtShadowBoundary);
+    void inheritFrom(const RenderStyle& inheritParent);
     void copyNonInheritedFrom(const RenderStyle*);
 
     PseudoId styleType() const { return noninherited_flags.styleType(); }

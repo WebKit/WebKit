@@ -112,7 +112,7 @@ std::unique_ptr<RenderStyle> RenderStyle::clonePtr(const RenderStyle& style)
 RenderStyle RenderStyle::createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, EDisplay display)
 {
     auto newStyle = create();
-    newStyle.inheritFrom(&parentStyle);
+    newStyle.inheritFrom(parentStyle);
     newStyle.inheritUnicodeBidiFrom(&parentStyle);
     newStyle.setDisplay(display);
     return newStyle;
@@ -123,7 +123,7 @@ RenderStyle RenderStyle::createStyleInheritingFromPseudoStyle(const RenderStyle&
     ASSERT(pseudoStyle.styleType() == BEFORE || pseudoStyle.styleType() == AFTER);
 
     auto style = create();
-    style.inheritFrom(&pseudoStyle);
+    style.inheritFrom(pseudoStyle);
     return style;
 }
 
@@ -267,20 +267,14 @@ ContentDistributionType RenderStyle::resolvedAlignContentDistribution(const Styl
     return resolvedContentAlignmentDistribution(alignContent(), normalValueBehavior);
 }
 
-void RenderStyle::inheritFrom(const RenderStyle* inheritParent, IsAtShadowBoundary isAtShadowBoundary)
+void RenderStyle::inheritFrom(const RenderStyle& inheritParent)
 {
-    if (isAtShadowBoundary == AtShadowBoundary) {
-        // Even if surrounding content is user-editable, shadow DOM should act as a single unit, and not necessarily be editable
-        EUserModify currentUserModify = userModify();
-        rareInheritedData = inheritParent->rareInheritedData;
-        setUserModify(currentUserModify);
-    } else
-        rareInheritedData = inheritParent->rareInheritedData;
-    inherited = inheritParent->inherited;
-    inherited_flags = inheritParent->inherited_flags;
+    rareInheritedData = inheritParent.rareInheritedData;
+    inherited = inheritParent.inherited;
+    inherited_flags = inheritParent.inherited_flags;
 
-    if (m_svgStyle != inheritParent->m_svgStyle)
-        m_svgStyle.access()->inheritFrom(inheritParent->m_svgStyle.get());
+    if (m_svgStyle != inheritParent.m_svgStyle)
+        m_svgStyle.access()->inheritFrom(inheritParent.m_svgStyle.get());
 }
 
 void RenderStyle::copyNonInheritedFrom(const RenderStyle* other)

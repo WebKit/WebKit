@@ -569,7 +569,7 @@ bool HTMLTextAreaElement::willRespondToMouseClickEvents()
 RenderStyle HTMLTextAreaElement::createInnerTextStyle(const RenderStyle& style) const
 {
     auto textBlockStyle = RenderStyle::create();
-    textBlockStyle.inheritFrom(&style);
+    textBlockStyle.inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
     textBlockStyle.setDisplay(BLOCK);
 

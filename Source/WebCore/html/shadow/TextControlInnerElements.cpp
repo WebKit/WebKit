@@ -78,7 +78,7 @@ Ref<TextControlInnerElement> TextControlInnerElement::create(Document& document)
 std::optional<ElementStyle> TextControlInnerElement::resolveCustomStyle(const RenderStyle&, const RenderStyle* shadowHostStyle)
 {
     auto innerContainerStyle = RenderStyle::createPtr();
-    innerContainerStyle->inheritFrom(shadowHostStyle);
+    innerContainerStyle->inheritFrom(*shadowHostStyle);
 
     innerContainerStyle->setFlexGrow(1);
     // min-width: 0; is needed for correct shrinking.

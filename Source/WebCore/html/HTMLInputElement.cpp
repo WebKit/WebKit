@@ -1948,7 +1948,7 @@ bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
 RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
 {
     auto textBlockStyle = RenderStyle::create();
-    textBlockStyle.inheritFrom(&style);
+    textBlockStyle.inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
 
     textBlockStyle.setWhiteSpace(PRE);

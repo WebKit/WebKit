@@ -701,7 +701,10 @@ Node::Editability Node::computeEditability(UserSelectAllTreatment treatment, Sho
     if (!document().hasLivingRenderTree() || isPseudoElement())
         return Editability::ReadOnly;
 
-    if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable() && !containingShadowRoot())
+    if (isInShadowTree())
+        return HTMLElement::editabilityFromContentEditableAttr(*this);
+
+    if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable())
         return Editability::CanEditRichly;
 
     if (shouldUpdateStyle == ShouldUpdateStyle::Update && document().needsStyleRecalc()) {
