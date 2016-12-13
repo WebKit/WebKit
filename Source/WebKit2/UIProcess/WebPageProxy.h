@@ -1176,6 +1176,8 @@ public:
 
     void clearUserMediaState();
 
+    void setShouldSkipWaitingForPaintAfterNextViewDidMoveToWindow(bool shouldSkip) { m_shouldSkipWaitingForPaintAfterNextViewDidMoveToWindow = shouldSkip; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1711,6 +1713,7 @@ private:
     bool m_maintainsInactiveSelection;
 
     bool m_waitsForPaintAfterViewDidMoveToWindow;
+    bool m_shouldSkipWaitingForPaintAfterNextViewDidMoveToWindow { false };
 
     String m_toolTip;
 

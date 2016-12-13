@@ -4835,6 +4835,12 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     });
 }
 
+- (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock
+{
+    _page->setShouldSkipWaitingForPaintAfterNextViewDidMoveToWindow(true);
+    [self _doAfterNextPresentationUpdate:updateBlock];
+}
+
 - (void)_disableBackForwardSnapshotVolatilityForTesting
 {
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);

@@ -1550,8 +1550,11 @@ void WebPageProxy::dispatchActivityStateChange()
 
     bool isNowInWindow = (changed & ActivityState::IsInWindow) && isInWindow();
     // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
-    if (m_viewWasEverInWindow && isNowInWindow && m_drawingArea->hasVisibleContent() && m_waitsForPaintAfterViewDidMoveToWindow)
-        m_activityStateChangeWantsSynchronousReply = true;
+    if (m_viewWasEverInWindow && isNowInWindow) {
+        if (m_drawingArea->hasVisibleContent() && m_waitsForPaintAfterViewDidMoveToWindow && !m_shouldSkipWaitingForPaintAfterNextViewDidMoveToWindow)
+            m_activityStateChangeWantsSynchronousReply = true;
+        m_shouldSkipWaitingForPaintAfterNextViewDidMoveToWindow = false;
+    }
 
     // Don't wait synchronously if the view state is not visible. (This matters in particular on iOS, where a hidden page may be suspended.)
     if (!(m_activityState & ActivityState::IsVisible))

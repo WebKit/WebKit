@@ -1,3 +1,34 @@
+2016-12-12  Tim Horton  <timothy_horton@apple.com>
+
+        Provide SPI to avoid blocking on painting when coming into view
+        https://bugs.webkit.org/show_bug.cgi?id=165780
+        <rdar://problem/29009559>
+
+        Reviewed by Simon Fraser.
+
+        By default, when parenting a WKWebView which was previously in-window,
+        we block on painting to ensure that we don't flash stale content.
+        We added SPI to disable this behavior to WKWebViewConfiguration, but
+        some clients might want the behavior most of the time, but sometimes
+        instead want to not block the UI process main thread, but instead do
+        their own work (e.g. removing a snapshot) when painting eventually occurs.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _doAfterNextPresentationUpdateWithoutWaitingForPainting:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        Tell WebPageProxy not to block on painting next time we are parented,
+        and use doAfterNextPresentationUpdate to call the block when the painting
+        does eventually happen. This SPI must be called before - but in the same
+        runloop cycle - the WKWebView is brought back in-window to work correctly.
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dispatchActivityStateChange):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::skipWaitingForPaintAfterNextViewDidMoveToWindow):
+        If we would block because we're coming in-window, but the bit to skip
+        blocking the next time we get brought in-window is set, reset the bit, 
+        and avoid blocking.
+
 2016-12-12  Chris Dumez  <cdumez@apple.com>
 
         Document.visibilityState should use an IDL string enumeration
