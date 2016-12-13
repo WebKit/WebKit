@@ -86,7 +86,6 @@
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"
 #define LoginWindowDidSwitchToUserNotification      @"WebLoginWindowDidSwitchToUserNotification"
 #define WKNVSupportsCompositingCoreAnimationPluginsBool 74656  /* TRUE if the browser supports hardware compositing of Core Animation plug-ins  */
-static const int WKNVSilverlightFullscreenPerformanceIssueFixed = 7288546; /* TRUE if Siverlight addressed its underlying  bug in <rdar://problem/7288546> */
 
 using namespace WebCore;
 using namespace WebKit;
@@ -2236,37 +2235,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     return NO;
 }
 
-// Work around Silverlight full screen performance issue by maintaining an accelerated GL pixel format.
-// We can safely remove it at some point in the future when both:
-// 1) Microsoft releases a genuine fix for 7288546.
-// 2) Enough Silverlight users update to the new Silverlight.
-// For now, we'll distinguish older broken versions of Silverlight by asking the plug-in if it resolved its full screen badness.
-- (void)_workaroundSilverlightFullscreenBug:(BOOL)initializedPlugin
-{
-    ASSERT(_isSilverlight);
-    NPBool isFullscreenPerformanceIssueFixed = 0;
-    NPPluginFuncs *pluginFuncs = [_pluginPackage.get() pluginFuncs];
-    if (pluginFuncs->getvalue && pluginFuncs->getvalue(plugin, static_cast<NPPVariable>(WKNVSilverlightFullscreenPerformanceIssueFixed), &isFullscreenPerformanceIssueFixed) == NPERR_NO_ERROR && isFullscreenPerformanceIssueFixed)
-        return;
-    
-    static CGLPixelFormatObj pixelFormatObject = 0;
-    static unsigned refCount = 0;
-    
-    if (initializedPlugin) {
-        refCount++;
-        if (refCount == 1) {
-            const CGLPixelFormatAttribute attributes[] = { kCGLPFAAccelerated, static_cast<CGLPixelFormatAttribute>(0) };
-            GLint npix;
-            CGLChoosePixelFormat(attributes, &pixelFormatObject, &npix);
-        }  
-    } else {
-        ASSERT(pixelFormatObject);
-        refCount--;
-        if (!refCount) 
-            CGLReleasePixelFormat(pixelFormatObject);
-    }
-}
-
 - (NPError)_createPlugin
 {
     plugin = (NPP)calloc(1, sizeof(NPP_t));
@@ -2283,17 +2251,12 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [[self class] setCurrentPluginView:self];
     NPError npErr = [_pluginPackage.get() pluginFuncs]->newp((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
-    if (_isSilverlight)
-        [self _workaroundSilverlightFullscreenBug:YES];
     LOG(Plugins, "NPP_New: %d", npErr);
     return npErr;
 }
 
 - (void)_destroyPlugin
 {
-    if (_isSilverlight)
-        [self _workaroundSilverlightFullscreenBug:NO];
-    
     NPError npErr;
     npErr = ![_pluginPackage.get() pluginFuncs]->destroy(plugin, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);

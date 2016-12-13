@@ -1,3 +1,18 @@
+2016-12-12  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused workaround for Silverlight
+        https://bugs.webkit.org/show_bug.cgi?id=165773
+
+        Reviewed by Dean Jackson.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _workaroundSilverlightFullscreenBug:]): Deleted.
+        This code was introduced in January 2010.  Microsoft fixed their bug shortly thereafter.
+        Allowing 6 years for users to update Silverlight is more than enough.
+        Safari doesn't even use WebKit1 for this any more.
+        I need this to be removed because this is the only non-WebGL code that needs to link against
+        the OpenGL framework, and I'm changing how that is done to link only through ANGLE instead.
+
 2016-12-12  Chris Dumez  <cdumez@apple.com>
 
         Document.visibilityState should use an IDL string enumeration
