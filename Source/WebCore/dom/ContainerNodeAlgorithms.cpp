@@ -224,7 +224,7 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         if (!next)
             tail = nullptr;
 
-        if (is<ContainerNode>(node))
+        if (is<ContainerNode>(*node))
             addChildNodesToDeletionQueue(head, tail, downcast<ContainerNode>(*node));
         
         delete node;
