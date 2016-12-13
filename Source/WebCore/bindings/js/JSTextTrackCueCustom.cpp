@@ -77,6 +77,8 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, TextTrackCue& cu
 
 void JSTextTrackCue::visitAdditionalChildren(SlotVisitor& visitor)
 {
+    visitor.rescanAsConstraint();
+    
     if (TextTrack* textTrack = wrapped().track())
         visitor.addOpaqueRoot(root(textTrack));
 }

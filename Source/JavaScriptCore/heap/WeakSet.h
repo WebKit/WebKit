@@ -53,7 +53,7 @@ public:
 
     bool isEmpty() const;
 
-    unsigned visit(HeapRootVisitor&);
+    size_t visit(HeapRootVisitor&);
     void reap();
     void sweep();
     void shrink();
@@ -106,13 +106,11 @@ inline void WeakSet::lastChanceToFinalize()
         block->lastChanceToFinalize();
 }
 
-inline unsigned WeakSet::visit(HeapRootVisitor& visitor)
+inline size_t WeakSet::visit(HeapRootVisitor& visitor)
 {
-    unsigned count = 0;
-    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
-        count++;
-        block->visit(visitor);
-    }
+    size_t count = 0;
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next())
+        count += block->visit(visitor);
     return count;
 }
 

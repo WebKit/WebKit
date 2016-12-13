@@ -95,14 +95,14 @@ inline void SlotVisitor::appendValuesHidden(WriteBarrierBase<Unknown>* barriers,
 
 inline void SlotVisitor::reportExtraMemoryVisited(size_t size)
 {
-    if (!m_isVisitingMutatorStack)
+    if (m_isFirstVisit)
         heap()->reportExtraMemoryVisited(size);
 }
 
 #if ENABLE(RESOURCE_USAGE)
 inline void SlotVisitor::reportExternalMemoryVisited(size_t size)
 {
-    if (!m_isVisitingMutatorStack)
+    if (m_isFirstVisit)
         heap()->reportExternalMemoryVisited(size);
 }
 #endif
@@ -127,7 +127,7 @@ inline void SlotVisitor::didNotRace(const VisitRaceKey& race)
     if (ASSERT_DISABLED)
         return;
     
-    if (!m_isVisitingMutatorStack) {
+    if (m_isFirstVisit) {
         // This is the first visit so we don't need to remove anything.
         return;
     }

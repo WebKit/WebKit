@@ -38,7 +38,6 @@ using namespace JSC;
 namespace WebCore {
 
 VM* g_commonVMOrNull;
-bool g_opaqueRootWriteBarrierEnabled;
 
 VM& commonVMSlow()
 {
@@ -56,17 +55,10 @@ VM& commonVMSlow()
 #endif
     
     g_commonVMOrNull->setGlobalConstRedeclarationShouldThrow(Settings::globalConstRedeclarationShouldThrow());
-    g_commonVMOrNull->heap.addMutatorShouldBeFencedCache(g_opaqueRootWriteBarrierEnabled);
     
     initNormalWorldClientData(g_commonVMOrNull);
     
     return *g_commonVMOrNull;
-}
-
-void writeBarrierOpaqueRootSlow(void* root)
-{
-    if (VM* vm = g_commonVMOrNull)
-        vm->heap.writeBarrierOpaqueRoot(root);
 }
 
 } // namespace WebCore

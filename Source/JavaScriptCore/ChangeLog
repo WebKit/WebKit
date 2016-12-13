@@ -1,3 +1,60 @@
+2016-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Make opaque root scanning truly constraint-based
+        https://bugs.webkit.org/show_bug.cgi?id=165760
+
+        Reviewed by Saam Barati.
+        
+        We have bugs when visitChildren() changes its mind about what opaque root to add, since
+        we don't have barriers on opaque roots. This supposedly once worked for generational GC,
+        and I started adding more barriers to support concurrent GC. But I think that the real
+        bug here is that we want the JSObject->OpaqueRoot to be evaluated as a constraint that
+        participates in the fixpoint. A constraint is different from the normal visiting in that
+        the GC will not wait for a barrier to rescan the object.
+        
+        So, it's now possible for any visitChildren() method to become a constraint by calling
+        slotVisitor.rescanAsConstraint(). Because opaque roots are constraints, addOpaqueRoot()
+        does rescanAsConstraint() for you.
+        
+        The constraint set is simply a HashSet<JSCell*> that accumulates with every
+        rescanAsConstraint() call and is only cleared at the start of full GC. This trivially
+        resolves most classes of GC bugs that would have arisen from opaque roots being changed
+        in a way that the GC did not anticipate.
+        
+        Looks like this is perf-neutral.
+        
+        * heap/Heap.cpp:
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::setMutatorShouldBeFenced):
+        (JSC::Heap::writeBarrierOpaqueRootSlow): Deleted.
+        (JSC::Heap::addMutatorShouldBeFencedCache): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::writeBarrierOpaqueRoot): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::visitWeakSets):
+        * heap/MarkedSpace.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::visitSubsequently):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::addOpaqueRoot):
+        (JSC::SlotVisitor::rescanAsConstraint):
+        (JSC::SlotVisitor::mergeIfNecessary):
+        (JSC::SlotVisitor::mergeOpaqueRootsAndConstraints):
+        (JSC::SlotVisitor::mergeOpaqueRootsIfNecessary): Deleted.
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::reportExternalMemoryVisited):
+        (JSC::SlotVisitor::didNotRace):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        (JSC::WeakBlock::visit):
+        * heap/WeakBlock.h:
+        * heap/WeakSet.h:
+        (JSC::WeakSet::visit):
+
 2016-12-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209725.

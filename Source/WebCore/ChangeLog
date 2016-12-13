@@ -1,3 +1,51 @@
+2016-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Make opaque root scanning truly constraint-based
+        https://bugs.webkit.org/show_bug.cgi?id=165760
+
+        Reviewed by Saam Barati.
+
+        No new tests yet. I think that writing tests for this is a big investigation:
+        https://bugs.webkit.org/show_bug.cgi?id=165808
+        
+        Remove the previous advancing wavefront DOM write barrier. I don't think this will scale
+        very well. It's super confusing.
+        
+        This change makes it so that visitChildren can become a GC constraint that executes as
+        part of the fixpoint. This changes all WebCore visitChildren methods that do opaque
+        roots into constraints.
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+        (WebCore::writeBarrierOpaqueRootSlow): Deleted.
+        * bindings/js/CommonVM.h:
+        (WebCore::writeBarrierOpaqueRoot): Deleted.
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::visitAdditionalChildren):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitAdditionalChildren):
+        * bindings/js/JSIDBCursorCustom.cpp:
+        (WebCore::JSIDBCursor::visitAdditionalChildren):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitAdditionalChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitAdditionalChildren):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::visitAdditionalChildren):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::JSTextTrackCue::visitAdditionalChildren):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::visitAdditionalChildren):
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::visitAdditionalChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitAdditionalChildren):
+        * bindings/js/JSXPathResultCustom.cpp:
+        (WebCore::JSXPathResult::visitAdditionalChildren):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyChildNodeInserted):
+        (WebCore::notifyChildNodeRemoved):
+
 2016-12-12  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove use of Dictionary in ApplePaySession

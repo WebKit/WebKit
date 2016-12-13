@@ -63,7 +63,7 @@ public:
     void sweep();
     SweepResult takeSweepResult();
 
-    void visit(HeapRootVisitor&);
+    size_t visit(HeapRootVisitor&);
     void reap();
 
     void lastChanceToFinalize();
@@ -73,7 +73,7 @@ private:
     static FreeCell* asFreeCell(WeakImpl*);
     
     template<typename ContainerType>
-    void specializedVisit(ContainerType&, HeapRootVisitor&);
+    size_t specializedVisit(ContainerType&, HeapRootVisitor&);
 
     explicit WeakBlock(CellContainer);
     void finalize(WeakImpl*);

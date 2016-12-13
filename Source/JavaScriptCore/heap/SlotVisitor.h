@@ -85,7 +85,18 @@ public:
     void appendUnbarrieredReadOnlyPointer(T*);
     void appendUnbarrieredReadOnlyValue(JSValue);
     
+    void visitSubsequently(JSCell*);
+    
+    // Does your visitChildren do logic that depends on non-JS-object state that can
+    // change during the course of a GC, or in between GCs? Then you should call this
+    // method! It will cause the GC to invoke your visitChildren method again just before
+    // terminating with the world stopped.
+    JS_EXPORT_PRIVATE void rescanAsConstraint();
+    
+    // Implies rescanAsConstraint, so you don't have to call rescanAsConstraint() if you
+    // call this unconditionally.
     JS_EXPORT_PRIVATE void addOpaqueRoot(void*);
+    
     JS_EXPORT_PRIVATE bool containsOpaqueRoot(void*) const;
     TriState containsOpaqueRootTriState(void*) const;
 
@@ -108,6 +119,8 @@ public:
 
     SharedDrainResult drainInParallel(MonotonicTime timeout = MonotonicTime::infinity());
     SharedDrainResult drainInParallelPassively(MonotonicTime timeout = MonotonicTime::infinity());
+    
+    void mergeIfNecessary();
 
     // This informs the GC about auxiliary of some size that we are keeping alive. If you don't do
     // this then the space will be freed at end of GC.
@@ -127,8 +140,6 @@ public:
     
     HeapVersion markingVersion() const { return m_markingVersion; }
 
-    void mergeOpaqueRootsIfNecessary();
-    
     bool mutatorIsStopped() const { return m_mutatorIsStopped; }
     
     Lock& rightToRun() { return m_rightToRun; }
@@ -167,7 +178,9 @@ private:
     
     void noteLiveAuxiliaryCell(HeapCell*);
     
-    JS_EXPORT_PRIVATE void mergeOpaqueRoots();
+    void mergeOpaqueRoots();
+    void mergeOpaqueRootsAndConstraints();
+
     void mergeOpaqueRootsIfProfitable();
 
     void visitChildren(const JSCell*);
@@ -181,6 +194,7 @@ private:
     MarkStackArray m_collectorStack;
     MarkStackArray m_mutatorStack;
     OpaqueRootSet m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
+    HashSet<JSCell*> m_constraints;
     
     size_t m_bytesVisited;
     size_t m_visitCount;
@@ -192,7 +206,7 @@ private:
 
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
-    bool m_isVisitingMutatorStack { false };
+    bool m_isFirstVisit { false };
     bool m_mutatorIsStopped { false };
     bool m_canOptimizeForStoppedMutator { false };
     Lock m_rightToRun;

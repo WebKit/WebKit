@@ -35,6 +35,7 @@ namespace WebCore {
 
 void JSAttr::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
+    visitor.rescanAsConstraint();
     if (Element* element = wrapped().ownerElement())
         visitor.addOpaqueRoot(root(element));
 }

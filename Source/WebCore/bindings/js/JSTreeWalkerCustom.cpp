@@ -27,6 +27,8 @@ namespace WebCore {
 
 void JSTreeWalker::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
+    visitor.rescanAsConstraint();
+    
     if (NodeFilter* filter = wrapped().filter())
         visitor.addOpaqueRoot(filter);
 }

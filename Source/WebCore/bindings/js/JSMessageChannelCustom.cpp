@@ -35,6 +35,8 @@ namespace WebCore {
 
 void JSMessageChannel::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
+    visitor.rescanAsConstraint();
+    
     if (MessagePort* port = wrapped().port1())
         visitor.addOpaqueRoot(port);
 
