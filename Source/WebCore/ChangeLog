@@ -1,3 +1,19 @@
+2016-12-13  Alex Christensen  <achristensen@webkit.org>
+
+        Restore NSURLRequest's default time interval to match behavior before NSURLSession adoption
+        https://bugs.webkit.org/show_bug.cgi?id=165821
+        <rdar://problem/28492939>
+
+        Reviewed by Brady Eidson.
+
+        Before adopting NSURLSession, iOS used CFURLConnection, not NSURLConnection.
+        iOS used to have a default timeout of INT_MAX and it now has a default timeout of 0, which means use the 
+        default NSURLRequest timeout, which is 60 seconds.  This is not enough for some slow mobile networks,
+        so we want to match behavior of our CFURLConnection code here.
+
+        * platform/network/ResourceRequestBase.cpp:
+        Use INT_MAX as the default timeout of requests on iOS.
+
 2016-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         Make opaque root scanning truly constraint-based
