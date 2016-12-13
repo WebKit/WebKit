@@ -1,3 +1,13 @@
+2016-12-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        [GTK] Web Inspector: Add NavigationItemCodeCoverage.svg icon
+        https://bugs.webkit.org/show_bug.cgi?id=165698
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Images/gtk/NavigationItemCodeCoverage.svg: Added.
+        Match in style the existing NavigationItemTypes.svg icon.
+
 2016-12-12  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Cleanup HierarchicalPathComponent

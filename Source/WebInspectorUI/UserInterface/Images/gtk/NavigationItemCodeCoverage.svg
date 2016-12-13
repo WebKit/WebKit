@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed under the Creative Commons Attribution-Share Alike 3.0 United States License (http://creativecommons.org/licenses/by-sa/3.0/) -->
+<svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 13 14">
+ <rect stroke="currentColor" width="12" height="12" x=".49998" y="1.0001" fill="none" stroke-width=".99996" stroke-miterlimit="10" stroke-linejoin="bevel" rx="1.2112" ry="1.2111"/>
+ <path fill="none" stroke="currentColor" stroke-width="2.4" d="M9 5.5s0-1.5-2.5-1.5C3 4 3 10 6.5 10c2.5 0 2.5-1.5 2.5-1.5"/>
+</svg>
