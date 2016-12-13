@@ -54,6 +54,5 @@ CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef iconDatabas
     for (auto nativeImage : nativeImages)
         CFArrayAppendValue(array, nativeImage.get());
     
-    return static_cast<CFArrayRef>(CFRetain(array));
+    return static_cast<CFArrayRef>(array);
 }
-
