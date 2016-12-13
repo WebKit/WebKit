@@ -95,7 +95,7 @@ Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
     return *entry.iterator->value;
 }
 
-Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitTypes type)
+Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue::UnitType type)
 {
     ASSERT(std::isfinite(value));
 

@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitTypes type, const Document& document)
+float SizesAttributeParser::computeLength(double value, CSSPrimitiveValue::UnitType type, const Document& document)
 {
     auto* renderer = document.renderView();
     if (!renderer)

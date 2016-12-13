@@ -52,7 +52,7 @@ namespace WebCore {
 static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode&, const RenderStyle&);
 static RefPtr<CSSCalcExpressionNode> createCSS(const Length&, const RenderStyle&);
 
-static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
+static CalculationCategory unitCategory(CSSPrimitiveValue::UnitType type)
 {
     switch (type) {
     case CSSPrimitiveValue::CSS_NUMBER:
@@ -90,7 +90,7 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     }
 }
 
-static bool hasDoubleValue(CSSPrimitiveValue::UnitTypes type)
+static bool hasDoubleValue(CSSPrimitiveValue::UnitType type)
 {
     switch (type) {
     case CSSPrimitiveValue::CSS_FR:
@@ -201,7 +201,7 @@ public:
         return adoptRef(*new CSSCalcPrimitiveValue(WTFMove(value), isInteger));
     }
 
-    static RefPtr<CSSCalcPrimitiveValue> create(double value, CSSPrimitiveValue::UnitTypes type, bool isInteger)
+    static RefPtr<CSSCalcPrimitiveValue> create(double value, CSSPrimitiveValue::UnitType type, bool isInteger)
     {
         if (std::isnan(value) || std::isinf(value))
             return nullptr;
@@ -281,14 +281,14 @@ private:
     }
 
     Type type() const final { return CssCalcPrimitiveValue; }
-    CSSPrimitiveValue::UnitTypes primitiveType() const final
+    CSSPrimitiveValue::UnitType primitiveType() const final
     {
-        return CSSPrimitiveValue::UnitTypes(m_value->primitiveType());
+        return CSSPrimitiveValue::UnitType(m_value->primitiveType());
     }
 
 private:
     explicit CSSCalcPrimitiveValue(Ref<CSSPrimitiveValue>&& value, bool isInteger)
-        : CSSCalcExpressionNode(unitCategory((CSSPrimitiveValue::UnitTypes)value->primitiveType()), isInteger)
+        : CSSCalcExpressionNode(unitCategory((CSSPrimitiveValue::UnitType)value->primitiveType()), isInteger)
         , m_value(WTFMove(value))
     {
     }
@@ -368,21 +368,21 @@ public:
 
         // Simplify numbers.
         if (leftCategory == CalcNumber && rightCategory == CalcNumber) {
-            CSSPrimitiveValue::UnitTypes evaluationType = CSSPrimitiveValue::CSS_NUMBER;
+            CSSPrimitiveValue::UnitType evaluationType = CSSPrimitiveValue::CSS_NUMBER;
             return CSSCalcPrimitiveValue::create(evaluateOperator(op, leftSide->doubleValue(), rightSide->doubleValue()), evaluationType, isInteger);
         }
 
         // Simplify addition and subtraction between same types.
         if (op == CalcAdd || op == CalcSubtract) {
             if (leftCategory == rightSide->category()) {
-                CSSPrimitiveValue::UnitTypes leftType = leftSide->primitiveType();
+                CSSPrimitiveValue::UnitType leftType = leftSide->primitiveType();
                 if (hasDoubleValue(leftType)) {
-                    CSSPrimitiveValue::UnitTypes rightType = rightSide->primitiveType();
+                    CSSPrimitiveValue::UnitType rightType = rightSide->primitiveType();
                     if (leftType == rightType)
                         return CSSCalcPrimitiveValue::create(evaluateOperator(op, leftSide->doubleValue(), rightSide->doubleValue()), leftType, isInteger);
                     CSSPrimitiveValue::UnitCategory leftUnitCategory = CSSPrimitiveValue::unitCategory(leftType);
                     if (leftUnitCategory != CSSPrimitiveValue::UOther && leftUnitCategory == CSSPrimitiveValue::unitCategory(rightType)) {
-                        CSSPrimitiveValue::UnitTypes canonicalType = CSSPrimitiveValue::canonicalUnitTypeForCategory(leftUnitCategory);
+                        CSSPrimitiveValue::UnitType canonicalType = CSSPrimitiveValue::canonicalUnitTypeForCategory(leftUnitCategory);
                         if (canonicalType != CSSPrimitiveValue::CSS_UNKNOWN) {
                             double leftValue = leftSide->doubleValue() * CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(leftType);
                             double rightValue = rightSide->doubleValue() * CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(rightType);
@@ -407,7 +407,7 @@ public:
             if (op == CalcDivide && !number)
                 return nullptr;
 
-            CSSPrimitiveValue::UnitTypes otherType = otherSide->primitiveType();
+            CSSPrimitiveValue::UnitType otherType = otherSide->primitiveType();
             if (hasDoubleValue(otherType))
                 return CSSCalcPrimitiveValue::create(evaluateOperator(op, otherSide->doubleValue(), number), otherType, isInteger);
         }
@@ -476,7 +476,7 @@ private:
 
     Type type() const final { return CssCalcBinaryOperation; }
 
-    CSSPrimitiveValue::UnitTypes primitiveType() const final
+    CSSPrimitiveValue::UnitType primitiveType() const final
     {
         switch (category()) {
         case CalcNumber:
@@ -488,7 +488,7 @@ private:
                 return m_rightSide->primitiveType();
             if (m_rightSide->category() == CalcNumber)
                 return m_leftSide->primitiveType();
-            CSSPrimitiveValue::UnitTypes leftType = m_leftSide->primitiveType();
+            CSSPrimitiveValue::UnitType leftType = m_leftSide->primitiveType();
             if (leftType == m_rightSide->primitiveType())
                 return leftType;
             return CSSPrimitiveValue::CSS_UNKNOWN;
@@ -593,7 +593,7 @@ private:
         if (!(token.type() == NumberToken || token.type() == PercentageToken || token.type() == DimensionToken))
             return false;
         
-        CSSPrimitiveValue::UnitTypes type = token.unitType();
+        CSSPrimitiveValue::UnitType type = token.unitType();
         if (unitCategory(type) == CalcOther)
             return false;
         

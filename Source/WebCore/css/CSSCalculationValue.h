@@ -66,7 +66,7 @@ public:
     virtual String customCSSText() const = 0;
     virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
     virtual Type type() const = 0;
-    virtual CSSPrimitiveValue::UnitTypes primitiveType() const = 0;
+    virtual CSSPrimitiveValue::UnitType primitiveType() const = 0;
 
     CalculationCategory category() const { return m_category; }
     bool isInteger() const { return m_isInteger; }

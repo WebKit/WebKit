@@ -40,7 +40,7 @@
 namespace WebCore {
 
 template<typename CharacterType>
-CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned length)
+CSSPrimitiveValue::UnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned length)
 {
     ASSERT(data);
     ASSERT(length);
@@ -48,7 +48,7 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
     case 1:
         switch (toASCIILower(data[0])) {
         case 's':
-            return CSSPrimitiveValue::UnitTypes::CSS_S;
+            return CSSPrimitiveValue::UnitType::CSS_S;
         }
         break;
     case 2:
@@ -56,55 +56,55 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
         case 'c':
             switch (toASCIILower(data[1])) {
             case 'h':
-                return CSSPrimitiveValue::UnitTypes::CSS_CHS;
+                return CSSPrimitiveValue::UnitType::CSS_CHS;
             case 'm':
-                return CSSPrimitiveValue::UnitTypes::CSS_CM;
+                return CSSPrimitiveValue::UnitType::CSS_CM;
             }
             break;
         case 'e':
             switch (toASCIILower(data[1])) {
             case 'm':
-                return CSSPrimitiveValue::UnitTypes::CSS_EMS;
+                return CSSPrimitiveValue::UnitType::CSS_EMS;
             case 'x':
-                return CSSPrimitiveValue::UnitTypes::CSS_EXS;
+                return CSSPrimitiveValue::UnitType::CSS_EXS;
             }
             break;
         case 'f':
             if (toASCIILower(data[1]) == 'r')
-                return CSSPrimitiveValue::UnitTypes::CSS_FR;
+                return CSSPrimitiveValue::UnitType::CSS_FR;
             break;
         case 'h':
             if (toASCIILower(data[1]) == 'z')
-                return CSSPrimitiveValue::UnitTypes::CSS_HZ;
+                return CSSPrimitiveValue::UnitType::CSS_HZ;
             break;
         case 'i':
             if (toASCIILower(data[1]) == 'n')
-                return CSSPrimitiveValue::UnitTypes::CSS_IN;
+                return CSSPrimitiveValue::UnitType::CSS_IN;
             break;
         case 'm':
             switch (toASCIILower(data[1])) {
             case 'm':
-                return CSSPrimitiveValue::UnitTypes::CSS_MM;
+                return CSSPrimitiveValue::UnitType::CSS_MM;
             case 's':
-                return CSSPrimitiveValue::UnitTypes::CSS_MS;
+                return CSSPrimitiveValue::UnitType::CSS_MS;
             }
             break;
         case 'p':
             switch (toASCIILower(data[1])) {
             case 'c':
-                return CSSPrimitiveValue::UnitTypes::CSS_PC;
+                return CSSPrimitiveValue::UnitType::CSS_PC;
             case 't':
-                return CSSPrimitiveValue::UnitTypes::CSS_PT;
+                return CSSPrimitiveValue::UnitType::CSS_PT;
             case 'x':
-                return CSSPrimitiveValue::UnitTypes::CSS_PX;
+                return CSSPrimitiveValue::UnitType::CSS_PX;
             }
             break;
         case 'v':
             switch (toASCIILower(data[1])) {
             case 'h':
-                return CSSPrimitiveValue::UnitTypes::CSS_VH;
+                return CSSPrimitiveValue::UnitType::CSS_VH;
             case 'w':
-                return CSSPrimitiveValue::UnitTypes::CSS_VW;
+                return CSSPrimitiveValue::UnitType::CSS_VW;
             }
             break;
         }
@@ -115,27 +115,27 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
             switch (toASCIILower(data[1])) {
             case 'e':
                 if (toASCIILower(data[2]) == 'g')
-                    return CSSPrimitiveValue::UnitTypes::CSS_DEG;
+                    return CSSPrimitiveValue::UnitType::CSS_DEG;
                 break;
             case 'p':
                 if (toASCIILower(data[2]) == 'i')
-                    return CSSPrimitiveValue::UnitTypes::CSS_DPI;
+                    return CSSPrimitiveValue::UnitType::CSS_DPI;
                 break;
             }
         break;
         case 'k':
             if (toASCIILower(data[1]) == 'h' && toASCIILower(data[2]) == 'z')
-                return CSSPrimitiveValue::UnitTypes::CSS_KHZ;
+                return CSSPrimitiveValue::UnitType::CSS_KHZ;
             break;
         case 'r':
             switch (toASCIILower(data[1])) {
             case 'a':
                 if (toASCIILower(data[2]) == 'd')
-                    return CSSPrimitiveValue::UnitTypes::CSS_RAD;
+                    return CSSPrimitiveValue::UnitType::CSS_RAD;
                 break;
             case 'e':
                 if (toASCIILower(data[2]) == 'm')
-                    return CSSPrimitiveValue::UnitTypes::CSS_REMS;
+                    return CSSPrimitiveValue::UnitType::CSS_REMS;
                 break;
             }
         break;
@@ -149,11 +149,11 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
                 switch (toASCIILower(data[2])) {
                 case 'c':
                     if (toASCIILower(data[3]) == 'm')
-                        return CSSPrimitiveValue::UnitTypes::CSS_DPCM;
+                        return CSSPrimitiveValue::UnitType::CSS_DPCM;
                     break;
                 case 'p':
                     if (toASCIILower(data[3]) == 'x')
-                        return CSSPrimitiveValue::UnitTypes::CSS_DPPX;
+                        return CSSPrimitiveValue::UnitType::CSS_DPPX;
                     break;
                 }
             break;
@@ -161,11 +161,11 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
         break;
         case 'g':
             if (toASCIILower(data[1]) == 'r' && toASCIILower(data[2]) == 'a' && toASCIILower(data[3]) == 'd')
-                return CSSPrimitiveValue::UnitTypes::CSS_GRAD;
+                return CSSPrimitiveValue::UnitType::CSS_GRAD;
             break;
         case 't':
             if (toASCIILower(data[1]) == 'u' && toASCIILower(data[2]) == 'r' && toASCIILower(data[3]) == 'n')
-                return CSSPrimitiveValue::UnitTypes::CSS_TURN;
+                return CSSPrimitiveValue::UnitType::CSS_TURN;
             break;
         case 'v':
             switch (toASCIILower(data[1])) {
@@ -173,11 +173,11 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
                 switch (toASCIILower(data[2])) {
                 case 'a':
                     if (toASCIILower(data[3]) == 'x')
-                        return CSSPrimitiveValue::UnitTypes::CSS_VMAX;
+                        return CSSPrimitiveValue::UnitType::CSS_VMAX;
                     break;
                 case 'i':
                     if (toASCIILower(data[3]) == 'n')
-                        return CSSPrimitiveValue::UnitTypes::CSS_VMIN;
+                        return CSSPrimitiveValue::UnitType::CSS_VMIN;
                     break;
                 }
                 break;
@@ -189,15 +189,15 @@ CSSPrimitiveValue::UnitTypes cssPrimitiveValueUnitFromTrie(const CharacterType* 
         switch (toASCIILower(data[0])) {
         case '_':
             if (toASCIILower(data[1]) == '_' && toASCIILower(data[2]) == 'q' && toASCIILower(data[3]) == 'e' && toASCIILower(data[4]) == 'm')
-                return CSSPrimitiveValue::UnitTypes::CSS_QUIRKY_EMS;
+                return CSSPrimitiveValue::UnitType::CSS_QUIRKY_EMS;
             break;
         }
         break;
     }
-    return CSSPrimitiveValue::UnitTypes::CSS_UNKNOWN;
+    return CSSPrimitiveValue::UnitType::CSS_UNKNOWN;
 }
 
-static CSSPrimitiveValue::UnitTypes stringToUnitType(StringView stringView)
+static CSSPrimitiveValue::UnitType stringToUnitType(StringView stringView)
 {
     if (stringView.is8Bit())
         return cssPrimitiveValueUnitFromTrie(stringView.characters8(), stringView.length());
@@ -232,7 +232,7 @@ CSSParserToken::CSSParserToken(CSSParserTokenType type, double numericValue, Num
     , m_blockType(NotBlock)
     , m_numericValueType(numericValueType)
     , m_numericSign(sign)
-    , m_unit(static_cast<unsigned>(CSSPrimitiveValue::UnitTypes::CSS_NUMBER))
+    , m_unit(static_cast<unsigned>(CSSPrimitiveValue::UnitType::CSS_NUMBER))
 {
     ASSERT(type == NumberToken);
     m_numericValue = numericValue;
@@ -267,7 +267,7 @@ void CSSParserToken::convertToPercentage()
 {
     ASSERT(m_type == NumberToken);
     m_type = PercentageToken;
-    m_unit = static_cast<unsigned>(CSSPrimitiveValue::UnitTypes::CSS_PERCENTAGE);
+    m_unit = static_cast<unsigned>(CSSPrimitiveValue::UnitType::CSS_PERCENTAGE);
 }
 
 UChar CSSParserToken::delimiter() const

@@ -1,3 +1,94 @@
+2016-12-13  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Rename CSSPrimitiveValue::UnitTypes to CSSPrimitiveValue::UnitType
+        https://bugs.webkit.org/show_bug.cgi?id=165776
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::unitCategory):
+        (WebCore::hasDoubleValue):
+        (WebCore::determineCategory):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        * css/CSSCalculationValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::CSSPrimitiveValue::unitCategory):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        (WebCore::CSSPrimitiveValue::computeNonCalcLengthDouble):
+        (WebCore::CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor):
+        (WebCore::CSSPrimitiveValue::getFloatValue):
+        (WebCore::CSSPrimitiveValue::doubleValue):
+        (WebCore::CSSPrimitiveValue::canonicalUnitTypeForCategory):
+        (WebCore::CSSPrimitiveValue::doubleValueInternal):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isFontRelativeLength):
+        (WebCore::CSSPrimitiveValue::isLength):
+        (WebCore::CSSPrimitiveValue::isResolution):
+        (WebCore::CSSPrimitiveValue::createAllowingMarginQuirk):
+        * css/CSSValue.h:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createValue):
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createValue):
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithValidDensity):
+        (WebCore::MediaQueryExpression::MediaQueryExpression):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseSimpleLength):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::parseColorIntOrPercentage):
+        (WebCore::fastParseColorInternal):
+        (WebCore::parseTransformTranslateArguments):
+        (WebCore::parseTransformNumberArguments):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::cssPrimitiveValueUnitFromTrie):
+        (WebCore::stringToUnitType):
+        (WebCore::CSSParserToken::CSSParserToken):
+        (WebCore::CSSParserToken::convertToPercentage):
+        * css/parser/CSSParserToken.h:
+        (WebCore::CSSParserToken::unitType):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTransformOrigin):
+        (WebCore::consumeCounter):
+        (WebCore::consumeAnimationName):
+        (WebCore::consumePerspective):
+        (WebCore::consumePositionLonghand):
+        (WebCore::consumeCounterContent):
+        (WebCore::consumeReflect):
+        (WebCore::consumeGridBreadth):
+        (WebCore::CSSPropertyParser::consumeFlex):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+        (WebCore::CSSPropertyParserHelpers::consumeCustomIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeString):
+        (WebCore::CSSPropertyParserHelpers::consumeUrl):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientPoint):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientColorStop):
+        (WebCore::CSSPropertyParserHelpers::consumeCrossFade):
+        (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::readFeatureValue):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::computeLength):
+        * css/parser/SizesAttributeParser.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        * svg/SVGLengthValue.cpp:
+        (WebCore::SVGLengthValue::toCSSPrimitiveValue):
+
 2016-12-13  Eric Carlson  <eric.carlson@apple.com>
 
         Annotate MediaStream and WebRTC idl with EnabledAtRuntime flag

@@ -56,7 +56,7 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature)
 
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSParserToken& token)
 {
-    if (!CSSPrimitiveValue::isResolution(static_cast<CSSPrimitiveValue::UnitTypes>(token.unitType())) || token.numericValue() <= 0)
+    if (!CSSPrimitiveValue::isResolution(static_cast<CSSPrimitiveValue::UnitType>(token.unitType())) || token.numericValue() <= 0)
         return false;
     
     return mediaFeature == MediaFeatureNames::resolution
@@ -186,7 +186,7 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, const Vector<C
                 || featureWithValidPositiveLength(m_mediaFeature, token)) {
                 // Media features that must have non-negative <density>, ie. dppx, dpi or dpcm,
                 // or Media features that must have non-negative <length> or number value.
-                m_value = CSSPrimitiveValue::create(token.numericValue(), (CSSPrimitiveValue::UnitTypes) token.unitType());
+                m_value = CSSPrimitiveValue::create(token.numericValue(), (CSSPrimitiveValue::UnitType) token.unitType());
                 m_isValid = true;
             } else if (featureWithPositiveInteger(m_mediaFeature, token)
                 || featureWithPositiveNumber(m_mediaFeature, token)
@@ -194,7 +194,7 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, const Vector<C
                 // Media features that must have non-negative integer value,
                 // or media features that must have non-negative number value,
                 // or media features that must have (0|1) value.
-                m_value = CSSPrimitiveValue::create(token.numericValue(), CSSPrimitiveValue::UnitTypes::CSS_NUMBER);
+                m_value = CSSPrimitiveValue::create(token.numericValue(), CSSPrimitiveValue::UnitType::CSS_NUMBER);
                 m_isValid = true;
             }
         }

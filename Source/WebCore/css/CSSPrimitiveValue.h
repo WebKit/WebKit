@@ -75,7 +75,7 @@ template<> inline float roundForImpreciseConversion(double value)
 
 class CSSPrimitiveValue final : public CSSValue {
 public:
-    enum UnitTypes {
+    enum UnitType {
         CSS_UNKNOWN = 0,
         CSS_NUMBER = 1,
         CSS_PERCENTAGE = 2,
@@ -164,22 +164,22 @@ public:
 #endif
         UOther
     };
-    static UnitCategory unitCategory(UnitTypes);
+    static UnitCategory unitCategory(UnitType);
 
     bool isAngle() const;
     bool isAttr() const { return m_primitiveUnitType == CSS_ATTR; }
     bool isCounter() const { return m_primitiveUnitType == CSS_COUNTER; }
     bool isFontIndependentLength() const { return m_primitiveUnitType >= CSS_PX && m_primitiveUnitType <= CSS_PC; }
-    static bool isFontRelativeLength(UnitTypes);
-    bool isFontRelativeLength() const { return isFontRelativeLength(static_cast<UnitTypes>(m_primitiveUnitType)); }
+    static bool isFontRelativeLength(UnitType);
+    bool isFontRelativeLength() const { return isFontRelativeLength(static_cast<UnitType>(m_primitiveUnitType)); }
     
-    bool isQuirkyEms() const { return primitiveType() == UnitTypes::CSS_QUIRKY_EMS; }
+    bool isQuirkyEms() const { return primitiveType() == UnitType::CSS_QUIRKY_EMS; }
 
-    static bool isViewportPercentageLength(UnitTypes type) { return type >= CSS_VW && type <= CSS_VMAX; }
-    bool isViewportPercentageLength() const { return isViewportPercentageLength(static_cast<UnitTypes>(m_primitiveUnitType)); }
+    static bool isViewportPercentageLength(UnitType type) { return type >= CSS_VW && type <= CSS_VMAX; }
+    bool isViewportPercentageLength() const { return isViewportPercentageLength(static_cast<UnitType>(m_primitiveUnitType)); }
 
-    static bool isLength(UnitTypes);
-    bool isLength() const { return isLength(static_cast<UnitTypes>(primitiveType())); }
+    static bool isLength(UnitType);
+    bool isLength() const { return isLength(static_cast<UnitType>(primitiveType())); }
     bool isNumber() const { return primitiveType() == CSS_NUMBER; }
     bool isPercentage() const { return primitiveType() == CSS_PERCENTAGE; }
     bool isPx() const { return primitiveType() == CSS_PX; }
@@ -202,8 +202,8 @@ public:
     bool isDotsPerPixel() const { return primitiveType() == CSS_DPPX; }
     bool isDotsPerCentimeter() const { return primitiveType() == CSS_DPCM; }
 
-    static bool isResolution(UnitTypes);
-    bool isResolution() const { return isResolution(static_cast<UnitTypes>(primitiveType())); }
+    static bool isResolution(UnitType);
+    bool isResolution() const { return isResolution(static_cast<UnitType>(primitiveType())); }
     bool isViewportPercentageWidth() const { return m_primitiveUnitType == CSS_VW; }
     bool isViewportPercentageHeight() const { return m_primitiveUnitType == CSS_VH; }
     bool isViewportPercentageMax() const { return m_primitiveUnitType == CSS_VMAX; }
@@ -214,8 +214,8 @@ public:
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
 
-    static Ref<CSSPrimitiveValue> create(double value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
-    static Ref<CSSPrimitiveValue> create(const String& value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
+    static Ref<CSSPrimitiveValue> create(double value, UnitType type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
+    static Ref<CSSPrimitiveValue> create(const String& value, UnitType type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
@@ -225,7 +225,7 @@ public:
     // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em.
     // When the quirky value is used, if you're in quirks mode, the margin will collapse away
     // inside a table cell.
-    static Ref<CSSPrimitiveValue> createAllowingMarginQuirk(double value, UnitTypes);
+    static Ref<CSSPrimitiveValue> createAllowingMarginQuirk(double value, UnitType);
 
     ~CSSPrimitiveValue();
 
@@ -250,16 +250,16 @@ public:
 
     bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
 
-    double doubleValue(UnitTypes) const;
+    double doubleValue(UnitType) const;
     double doubleValue() const;
 
-    template<typename T> inline T value(UnitTypes type) const { return clampTo<T>(doubleValue(type)); }
+    template<typename T> inline T value(UnitType type) const { return clampTo<T>(doubleValue(type)); }
     template<typename T> inline T value() const { return clampTo<T>(doubleValue()); }
 
-    float floatValue(UnitTypes type) const { return value<float>(type); }
+    float floatValue(UnitType type) const { return value<float>(type); }
     float floatValue() const { return value<float>(); }
 
-    int intValue(UnitTypes type) const { return value<int>(type); }
+    int intValue(UnitType type) const { return value<int>(type); }
     int intValue() const { return value<int>(); }
 
     WEBCORE_EXPORT String stringValue() const;
@@ -294,10 +294,10 @@ public:
 
     bool equals(const CSSPrimitiveValue&) const;
 
-    static UnitTypes canonicalUnitTypeForCategory(UnitCategory);
-    static double conversionToCanonicalUnitsScaleFactor(UnitTypes);
+    static UnitType canonicalUnitTypeForCategory(UnitCategory);
+    static double conversionToCanonicalUnitsScaleFactor(UnitType);
 
-    static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, UnitTypes, double value);
+    static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, UnitType, double value);
 
 #if COMPILER(MSVC)
     // FIXME: This should be private, but for some reason MSVC then fails to invoke it from LazyNeverDestroyed::construct.
@@ -314,8 +314,8 @@ private:
     CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle&);
     CSSPrimitiveValue(const LengthSize&, const RenderStyle&);
-    CSSPrimitiveValue(const String&, UnitTypes);
-    CSSPrimitiveValue(double, UnitTypes);
+    CSSPrimitiveValue(const String&, UnitType);
+    CSSPrimitiveValue(double, UnitType);
 
     template<typename T> CSSPrimitiveValue(T); // Defined in CSSPrimitiveValueMappings.h
     template<typename T> CSSPrimitiveValue(RefPtr<T>&&);
@@ -341,7 +341,7 @@ private:
     void init(RefPtr<DashboardRegion>&&); // FIXME: Dashboard region should not be a primitive value.
 #endif
 
-    std::optional<double> doubleValueInternal(UnitTypes targetUnitType) const;
+    std::optional<double> doubleValueInternal(UnitType targetUnitType) const;
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 
@@ -377,7 +377,7 @@ inline bool CSSPrimitiveValue::isAngle() const
         || m_primitiveUnitType == CSS_TURN;
 }
 
-inline bool CSSPrimitiveValue::isFontRelativeLength(UnitTypes type)
+inline bool CSSPrimitiveValue::isFontRelativeLength(UnitType type)
 {
     return type == CSS_EMS
         || type == CSS_EXS
@@ -386,7 +386,7 @@ inline bool CSSPrimitiveValue::isFontRelativeLength(UnitTypes type)
         || type == CSS_QUIRKY_EMS;
 }
 
-inline bool CSSPrimitiveValue::isLength(UnitTypes type)
+inline bool CSSPrimitiveValue::isLength(UnitType type)
 {
     return (type >= CSS_EMS && type <= CSS_PC)
         || type == CSS_REMS
@@ -395,7 +395,7 @@ inline bool CSSPrimitiveValue::isLength(UnitTypes type)
         || type == CSS_QUIRKY_EMS;
 }
 
-inline bool CSSPrimitiveValue::isResolution(UnitTypes type)
+inline bool CSSPrimitiveValue::isResolution(UnitType type)
 {
     return type >= CSS_DPPX && type <= CSS_DPCM;
 }
@@ -405,7 +405,7 @@ template<typename T> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(T&&
     return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
 }
 
-inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::createAllowingMarginQuirk(double value, UnitTypes type)
+inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::createAllowingMarginQuirk(double value, UnitType type)
 {
     auto result = adoptRef(*new CSSPrimitiveValue(value, type));
     result->m_isQuirkValue = true;
