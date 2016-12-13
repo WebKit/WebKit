@@ -1,3 +1,49 @@
+2016-12-13  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: implement the table section and table import
+        https://bugs.webkit.org/show_bug.cgi?id=165716
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (const._importMemoryContinuation):
+        (const._importTableContinuation):
+        (export.default.Builder.prototype._registerSectionBuilders.switch.case.string_appeared_here.this.section):
+        (const._importMemoryContinuation.section): Deleted.
+        (const): Deleted.
+        (const._importMemoryContinuation.assert): Deleted.
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.putResizableLimits):
+        (const.putTable):
+        (const.emitters.Import):
+        (const.emitters.Table):
+        * wasm/function-tests/call-indirect-params.js:
+        * wasm/function-tests/call-indirect.js:
+        * wasm/function-tests/table-basic-2.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        (func):
+        * wasm/function-tests/table-basic.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        * wasm/js-api/call-indirect-results.js:
+        (const.wasmModuleWhichImportJS): Deleted.
+        (MonomorphicImport): Deleted.
+        * wasm/js-api/call-indirect.js:
+        (const.wasmModuleWhichImportJS):
+        (const.makeTable):
+        (Polyphic2Import):
+        (VirtualImport):
+        (MonomorphicImport): Deleted.
+        * wasm/js-api/table.js: Added.
+        (assertBadBinary):
+        (assert.truthy):
+        (assertBadTable):
+        (assertBadTableImport):
+        (assertBadBinary.assertBadTableInstance):
+        (assertBadTableInstance):
+        (new.WebAssembly.Table):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+
 2016-12-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209725.

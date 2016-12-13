@@ -382,6 +382,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     case OpType::CallIndirect: {
+        if (!m_info.tableInformation)
+            return setErrorMessage("call_indirect is only valid when a table is defined or imported");
         uint32_t signatureIndex;
         if (!parseVarUInt32(signatureIndex))
             return false;
@@ -389,6 +391,9 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         uint8_t reserved;
         if (!parseVarUInt1(reserved))
             return false;
+
+        if (reserved != 0)
+            return setErrorMessage("call_indirect 'reserved' varuint1 must be 0x0");
 
         if (m_info.signatures.size() <= signatureIndex)
             return setErrorMessage("Tried to use a signature outside the range of valid signatures");

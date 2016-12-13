@@ -29,6 +29,28 @@ import * as WASM from 'WASM.js';
 
 const put = (bin, type, value) => bin[type](value);
 
+const putResizableLimits = (bin, initial, maximum) => {
+    assert.truthy(typeof initial === "number", "We expect 'initial' to be an integer");
+    let hasMaximum = 0;
+    if (typeof maximum === "number") {
+        hasMaximum = 1;
+    } else {
+        assert.truthy(typeof maximum === "undefined", "We expect 'maximum' to be an integer if it's defined");
+    }
+
+    put(bin, "varuint1", hasMaximum);
+    put(bin, "varuint32", initial);
+    if (hasMaximum)
+        put(bin, "varuint32", maximum);
+};
+
+const putTable = (bin, {initial, maximum, element}) => {
+    assert.truthy(WASM.isValidType(element), "We expect 'element' to be a valid type. It was: " + element);
+    put(bin, "varint7", WASM.typeValue[element]);
+
+    putResizableLimits(bin, initial, maximum);
+};
+
 const emitters = {
     Type: (section, bin) => {
         put(bin, "varuint32", section.data.length);
@@ -57,23 +79,13 @@ const emitters = {
                 put(bin, "varuint32", entry.type);
                 break;
             }
-            case "Table": throw new Error(`Not yet implemented`);
+            case "Table": {
+                putTable(bin, entry.tableDescription);
+                break;
+            }
             case "Memory": {
                 let {initial, maximum} = entry.memoryDescription;
-                assert.truthy(typeof initial === "number", "We expect 'initial' to be a number");
-                initial |= 0;
-                let hasMaximum = 0;
-                if (typeof maximum === "number") {
-                    maximum |= 0;
-                    hasMaximum = 1;
-                } else {
-                    assert.truthy(typeof maximum === "undefined", "We expect 'maximum' to be a number if it's defined");
-                }
-
-                put(bin, "varuint1", hasMaximum);
-                put(bin, "varuint32", initial);
-                if (hasMaximum)
-                    put(bin, "varuint32", maximum);
+                putResizableLimits(bin, initial, maximum);
                 break;
             };
             case "Global": throw new Error(`Not yet implemented`);
@@ -87,7 +99,12 @@ const emitters = {
             put(bin, "varuint32", signature);
     },
 
-    Table: (section, bin) => { throw new Error(`Not yet implemented`); },
+    Table: (section, bin) => {
+        put(bin, "varuint32", section.data.length);
+        for (const {tableDescription} of section.data) {
+            putTable(bin, tableDescription);
+        }
+    },
 
     Memory: (section, bin) => {
         // Flags, currently can only be [0,1]

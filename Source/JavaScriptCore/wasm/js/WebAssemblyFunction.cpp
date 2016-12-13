@@ -117,7 +117,7 @@ EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
     JSWebAssemblyInstance* prevJSWebAssemblyInstance = vm.topJSWebAssemblyInstance;
     vm.topJSWebAssemblyInstance = instance();
     ASSERT(instance());
-    EncodedJSValue rawResult = vmEntryToWasm(webAssemblyCallee()->entrypoint(), &vm, protoCallFrame);
+    EncodedJSValue rawResult = vmEntryToWasm(m_jsEntrypoint->entrypoint(), &vm, protoCallFrame);
     vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
 
     // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876
@@ -140,12 +140,12 @@ EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
     return EncodedJSValue();
 }
 
-WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* callee, Wasm::Signature* signature)
+WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
     Structure* structure = globalObject->webAssemblyFunctionStructure();
     WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm.heap)) WebAssemblyFunction(vm, globalObject, structure);
-    function->finishCreation(vm, executable, length, name, instance, callee, signature);
+    function->finishCreation(vm, executable, length, name, instance, jsEntrypoint, wasmEntrypoint, signature);
     return function;
 }
 
@@ -166,15 +166,18 @@ void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(&thisObject->m_instance);
-    visitor.append(&thisObject->m_wasmCallee);
+    visitor.append(&thisObject->m_jsEntrypoint);
+    visitor.append(&thisObject->m_wasmEntrypoint);
 }
 
-void WebAssemblyFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* wasmCallee, Wasm::Signature* signature)
+void WebAssemblyFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature* signature)
 {
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(info()));
     m_instance.set(vm, this, instance);
-    m_wasmCallee.set(vm, this, wasmCallee);
+    ASSERT(jsEntrypoint != wasmEntrypoint);
+    m_jsEntrypoint.set(vm, this, jsEntrypoint);
+    m_wasmEntrypoint.set(vm, this, wasmEntrypoint);
     m_signature = signature;
 }
 

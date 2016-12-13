@@ -78,8 +78,9 @@ for (const c in constructorProperties) {
         new WebAssembly.Memory({initial: 20});
         break;
     case "Table":
-        // FIXME Implement and test these APIs further. For now they just throw. https://bugs.webkit.org/show_bug.cgi?id=159775
-        assert.throws(() => new WebAssembly[c](), Error, `WebAssembly doesn't yet implement the ${c} constructor property`);
+        new WebAssembly.Table({initial: 20, element: "anyfunc"});
+        new WebAssembly.Table({initial: 20, maximum: 20, element: "anyfunc"});
+        new WebAssembly.Table({initial: 20, maximum: 25, element: "anyfunc"});
         break;
     case "CompileError":
     case "RuntimeError": {

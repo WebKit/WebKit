@@ -30,6 +30,7 @@
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyMemory.h"
 #include "WasmMemory.h"
 #include "WasmPageCount.h"
@@ -54,17 +55,6 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
     if (exec->argumentCount() != 1)
         return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Memory expects exactly one argument"))));
 
-    auto getUint32 = [&] (JSValue value) -> uint32_t {
-        double doubleValue = value.toInteger(exec);
-        RETURN_IF_EXCEPTION(throwScope, { });
-        if (doubleValue < 0 || doubleValue > UINT_MAX) {
-            throwException(exec, throwScope,
-                createRangeError(exec, ASCIILiteral("WebAssembly.Memory expects the 'initial' and 'maximum' properties to be integers in the range: [0, 2^32 - 1]")));
-            return 0;
-        }
-        return static_cast<uint32_t>(doubleValue);
-    };
-
     JSObject* memoryDescriptor;
     {
         JSValue argument = exec->argument(0);
@@ -78,7 +68,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         Identifier initial = Identifier::fromString(&vm, "initial");
         JSValue minSizeValue = memoryDescriptor->get(exec, initial);
         RETURN_IF_EXCEPTION(throwScope, { });
-        uint32_t size = getUint32(minSizeValue);
+        uint32_t size = toNonWrappingUint32(exec, minSizeValue);
         RETURN_IF_EXCEPTION(throwScope, { });
         if (!Wasm::PageCount::isValid(size))
             return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory 'initial' page count is too large"))));
@@ -93,10 +83,10 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         if (hasProperty) {
             JSValue maxSizeValue = memoryDescriptor->get(exec, maximum);
             RETURN_IF_EXCEPTION(throwScope, { });
-            uint32_t size = getUint32(maxSizeValue);
+            uint32_t size = toNonWrappingUint32(exec, maxSizeValue);
+            RETURN_IF_EXCEPTION(throwScope, { });
             if (!Wasm::PageCount::isValid(size))
                 return JSValue::encode(throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory 'maximum' page count is too large"))));
-            RETURN_IF_EXCEPTION(throwScope, { });
             maximumPageCount = Wasm::PageCount(size);
 
             if (initialPageCount > maximumPageCount) {

@@ -80,6 +80,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_module);
     visitor.append(&thisObject->m_moduleNamespaceObject);
     visitor.append(&thisObject->m_memory);
+    visitor.append(&thisObject->m_table);
     for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
         visitor.append(thisObject->importFunction(i));
 }

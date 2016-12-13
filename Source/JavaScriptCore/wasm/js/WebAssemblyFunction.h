@@ -28,12 +28,12 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSFunction.h"
+#include "JSWebAssemblyCallee.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
 
 class JSGlobalObject;
-class JSWebAssemblyCallee;
 struct ProtoCallFrame;
 class WebAssemblyInstance;
 
@@ -53,28 +53,29 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee*, Wasm::Signature*);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    JSWebAssemblyCallee* webAssemblyCallee() const { return m_wasmCallee.get(); }
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
-    const Wasm::Signature* signature()
+    Wasm::Signature* signature()
     { 
         ASSERT(m_signature);
         return m_signature;
     }
     EncodedJSValue call(VM&, ProtoCallFrame*);
+    void* wasmEntrypoint() { return m_wasmEntrypoint->entrypoint(); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee*, Wasm::Signature*);
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature*);
 
 private:
     WebAssemblyFunction(VM&, JSGlobalObject*, Structure*);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<JSWebAssemblyCallee> m_wasmCallee;
+    WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
+    WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
     Wasm::Signature* m_signature;
 };
 

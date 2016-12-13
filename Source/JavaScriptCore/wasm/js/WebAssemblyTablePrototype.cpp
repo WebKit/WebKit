@@ -30,6 +30,8 @@
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyTable.h"
 
 #include "WebAssemblyTablePrototype.lut.h"
 
@@ -42,10 +44,112 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table.prototy
  @end
  */
 
-WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+static ALWAYS_INLINE JSWebAssemblyTable* getTable(ExecState* exec, VM& vm, JSValue v)
+{
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(v);
+    if (!result) {
+        throwException(exec, throwScope, 
+            createTypeError(exec, ASCIILiteral("expected |this| value to be an instance of WebAssembly.Table")));
+        return nullptr;
+    }
+    return result;
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(ExecState*);
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState*);
+
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+    return JSValue::encode(jsNumber(table->size()));
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    if (!table->grow(index)) {
+        throwException(exec, throwScope,
+            createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.grow could not grow the table")));
+        return { };
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
+    RETURN_IF_EXCEPTION(throwScope, { });
+    if (index >= table->size()) {
+        throwException(exec, throwScope,
+            createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.get expects an integer less than the size of the table")));
+        return { };
+    }
+
+    if (WebAssemblyFunction* result = table->getFunction(index))
+        return JSValue::encode(result);
+    return JSValue::encode(jsNull());
+}
+
+EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    JSValue value = exec->argument(1);
+    WebAssemblyFunction* function = jsDynamicCast<WebAssemblyFunction*>(value);
+    if (!value.isNull() && !function) {
+        throwException(exec, throwScope,
+            createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function")));
+        return { };
+    }
+
+    uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    if (index >= table->size()) {
+        throwException(exec, throwScope,
+            createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.set expects an integer less than the size of the table")));
+        return { };
+    }
+
+    if (value.isNull())
+        table->clearFunction(index);
+    else {
+        ASSERT(!!function);
+        table->setFunction(vm, index, function);
+    }
+    
+    return JSValue::encode(jsUndefined());
+}
+
+WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     auto* object = new (NotNull, allocateCell<WebAssemblyTablePrototype>(vm.heap)) WebAssemblyTablePrototype(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
@@ -54,9 +158,14 @@ Structure* WebAssemblyTablePrototype::createStructure(VM& vm, JSGlobalObject* gl
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyTablePrototype::finishCreation(VM& vm)
+void WebAssemblyTablePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
+
+    JSC_NATIVE_GETTER("length", webAssemblyTableProtoFuncLength, DontEnum | Accessor);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("grow", webAssemblyTableProtoFuncGrow, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("get", webAssemblyTableProtoFuncGet, DontEnum, 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("set", webAssemblyTableProtoFuncSet, DontEnum, 2);
 }
 
 WebAssemblyTablePrototype::WebAssemblyTablePrototype(VM& vm, Structure* structure)

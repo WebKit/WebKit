@@ -103,10 +103,19 @@ const _importFunctionContinuation = (builder, section, nextBuilder) => {
 };
 
 const _importMemoryContinuation = (builder, section, nextBuilder) => {
-    return (module, field, memoryDescription) => {
-        assert.isString(module, `Import function module should be a string, got "${module}"`);
-        assert.isString(field, `Import function field should be a string, got "${field}"`);
-        section.data.push({module, field, kind: "Memory", memoryDescription});
+    return (module, field, {initial, maximum}) => {
+        assert.isString(module, `Import Memory module should be a string, got "${module}"`);
+        assert.isString(field, `Import Memory field should be a string, got "${field}"`);
+        section.data.push({module, field, kind: "Memory", memoryDescription: {initial, maximum}});
+        return nextBuilder;
+    };
+};
+
+const _importTableContinuation = (builder, section, nextBuilder) => {
+    return (module, field, {initial, maximum, element}) => {
+        assert.isString(module, `Import Table module should be a string, got "${module}"`);
+        assert.isString(field, `Import Table field should be a string, got "${field}"`);
+        section.data.push({module, field, kind: "Table", tableDescription: {initial, maximum, element}});
         return nextBuilder;
     };
 };
@@ -299,12 +308,31 @@ const _createFunction = (section, builder, previousBuilder) => {
 
         if (typeof(signature) === "undefined")
             signature = { params: [] };
-        assert.hasObjectProperty(signature, "params", `Expect function signature to be an object with a "params" field, got "${signature}"`);
-        const [params, ret] = _normalizeFunctionSignature(signature.params, signature.ret);
-        signature = { params: params, ret: ret };
+
+        let type;
+        let params;
+        if (typeof signature === "object") {
+            assert.hasObjectProperty(signature, "params", `Expect function signature to be an object with a "params" field, got "${signature}"`);
+            let ret;
+            ([params, ret] = _normalizeFunctionSignature(signature.params, signature.ret));
+            signature = {params, ret};
+            type = _maybeRegisterType(builder, signature);
+        } else {
+            assert.truthy(typeof signature === "number");
+            const typeSection = builder._getSection("Type");
+            assert.truthy(!!typeSection);
+            // FIXME: we should allow indices that exceed this to be able to
+            // test JSCs validator is correct. https://bugs.webkit.org/show_bug.cgi?id=165786
+            assert.truthy(signature < typeSection.data.length);
+            type = signature;
+            signature = typeSection.data[signature];
+            assert.hasObjectProperty(signature, "params", `Expect function signature to be an object with a "params" field, got "${signature}"`);
+            params = signature.params;
+        }
+
         const func = {
             name: functionName,
-            type: _maybeRegisterType(builder, signature),
+            type,
             signature: signature,
             locals: params.concat(locals), // Parameters are the first locals.
             parameterCount: params.length,
@@ -379,11 +407,11 @@ export default class Builder {
                     const s = this._addSection(section);
                     const importBuilder = {
                         End: () => this,
-                        Table: () => { throw new Error(`Unimplemented: import table`); },
                         Global: () => { throw new Error(`Unimplemented: import global`); },
                     };
                     importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
                     importBuilder.Memory = _importMemoryContinuation(this, s, importBuilder);
+                    importBuilder.Table = _importTableContinuation(this, s, importBuilder);
                     return importBuilder;
                 };
                 break;
@@ -400,8 +428,17 @@ export default class Builder {
                 break;
 
             case "Table":
-                // FIXME Implement table https://bugs.webkit.org/show_bug.cgi?id=164135
-                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const exportBuilder = {
+                        End: () => this,
+                        Table: ({initial, maximum, element}) => {
+                            s.data.push({tableDescription: {initial, maximum, element}});
+                            return exportBuilder;
+                        }
+                    };
+                    return exportBuilder;
+                };
                 break;
 
             case "Memory":

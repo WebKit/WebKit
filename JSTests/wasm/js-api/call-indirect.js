@@ -6,10 +6,12 @@ const wasmModuleWhichImportJS = () => {
         .Type().End()
         .Import()
             .Function("imp", "func", { params: ["i32"] })
+            .Table("imp", "table", { initial: 1, maximum: 1, element: "anyfunc"})
         .End()
         .Function().End()
         .Export()
             .Function("changeCounter")
+            .Function("callFunc")
         .End()
         .Code()
             .Function("changeCounter", { params: ["i32", "i32"] })
@@ -17,7 +19,11 @@ const wasmModuleWhichImportJS = () => {
                 .GetLocal(0)
                 .I32Add()
                 .GetLocal(1)
-                .CallIndirect(0, 0) // Calls func(param[0] + 42).
+                .CallIndirect(0, 0) // Calls table[0](param[0] + 42).
+            .End()
+            .Function("callFunc", { params: ["i32"] })
+                .GetLocal(0)
+                .Call(0) // Calls func(param[0] + 42)
             .End()
         .End();
     const bin = builder.WebAssembly().get();
@@ -25,12 +31,17 @@ const wasmModuleWhichImportJS = () => {
     return module;
 };
 
+const makeTable = () => {
+    return new WebAssembly.Table({initial: 1, maximum: 1, element: "anyfunc"});
+};
 
 (function MonomorphicImport() {
     let counter = 0;
     const counterSetter = v => counter = v;
+    const table = makeTable();
     const module = wasmModuleWhichImportJS();
-    const instance = new WebAssembly.Instance(module, { imp: { func: counterSetter } });
+    const instance = new WebAssembly.Instance(module, { imp: { func: counterSetter, table} });
+    table.set(0, instance.exports.callFunc);
     for (let i = 0; i < 4096; ++i) {
         // Invoke this a bunch of times to make sure the IC in the wasm -> JS stub works correctly.
         instance.exports.changeCounter(i, 0);
@@ -44,8 +55,14 @@ const wasmModuleWhichImportJS = () => {
     const counterASetter = v => counterA = v;
     const counterBSetter = v => counterB = { valueB: v };
     const module = wasmModuleWhichImportJS();
-    const instanceA = new WebAssembly.Instance(module, { imp: { func: counterASetter } });
-    const instanceB = new WebAssembly.Instance(module, { imp: { func: counterBSetter } });
+
+    const tableA = makeTable();
+    const instanceA = new WebAssembly.Instance(module, { imp: { func: counterASetter, table: tableA} });
+    tableA.set(0, instanceA.exports.callFunc);
+
+    const tableB = makeTable();
+    const instanceB = new WebAssembly.Instance(module, { imp: { func: counterBSetter, table: tableB} });
+    tableB.set(0, instanceB.exports.callFunc);
     for (let i = 0; i < 2048; ++i) {
         instanceA.exports.changeCounter(i, 0);
         assert.isA(counterA, "number");
@@ -57,8 +74,6 @@ const wasmModuleWhichImportJS = () => {
 })();
 
 (function VirtualImport() {
-    const num = 10; // It's definitely going virtual at 10!
-    let counters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     const counterSetters = [
         v => counters[0] = v,
         v => counters[1] = v + 1,
@@ -71,12 +86,16 @@ const wasmModuleWhichImportJS = () => {
         v => counters[8] = v + 8,
         v => counters[9] = v + 9,
     ];
+    const num = counterSetters.length;
+    let counters = counterSetters.map(() => 0);
     assert.eq(counters.length, num);
-    assert.eq(counterSetters.length, num);
     const module = wasmModuleWhichImportJS();
     let instances = [];
-    for (let i = 0; i < num; ++i)
-        instances[i] = new WebAssembly.Instance(module, { imp: { func: counterSetters[i] } });
+    for (let i = 0; i < num; ++i) {
+        let table = makeTable();
+        instances[i] = new WebAssembly.Instance(module, { imp: { func: counterSetters[i], table} });
+        table.set(0, instances[i].exports.callFunc);
+    }
     for (let i = 0; i < 2048; ++i) {
         for (let j = 0; j < num; ++j) {
             instances[j].exports.changeCounter(i, 0);

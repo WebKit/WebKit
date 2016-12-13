@@ -1,3 +1,96 @@
+2016-12-13  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: implement the table section and table import
+        https://bugs.webkit.org/show_bug.cgi?id=165716
+
+        Reviewed by Keith Miller.
+
+        This patch implements the Table space for wasm:
+        https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md#table-section
+
+        It only implements defining and importing a table. The bulk
+        of this patch is implementing the various wasm Table prototype
+        methods and the underlying Table object:
+        https://github.com/WebAssembly/design/blob/master/JS.md#webassemblytable-constructor
+
+        This patch also fixes a bug in our implementation with call_indirect.
+        We initially implemented call_indirect as a way to call functions that
+        are imported or defined in the module. This was the wrong
+        interpretation of the spec. Instead, call_indirect can only index into
+        the table index space.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::TableInformation::TableInformation):
+        (JSC::Wasm::TableInformation::operator bool):
+        (JSC::Wasm::TableInformation::isImport):
+        (JSC::Wasm::TableInformation::initial):
+        (JSC::Wasm::TableInformation::maximum):
+        (JSC::Wasm::CallableFunction::CallableFunction):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseImport):
+        (JSC::Wasm::ModuleParser::parseResizableLimits):
+        (JSC::Wasm::ModuleParser::parseTableHelper):
+        (JSC::Wasm::ModuleParser::parseTable):
+        (JSC::Wasm::ModuleParser::parseMemoryHelper):
+        (JSC::Wasm::ModuleParser::parseExport):
+        * wasm/WasmModuleParser.h:
+        * wasm/js/JSWebAssemblyHelpers.h: Added.
+        (JSC::toNonWrappingUint32):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::table):
+        (JSC::JSWebAssemblyInstance::setTable):
+        (JSC::JSWebAssemblyInstance::offsetOfTable):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::create):
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::visitChildren):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::clearFunction):
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/JSWebAssemblyTable.h:
+        (JSC::JSWebAssemblyTable::maximum):
+        (JSC::JSWebAssemblyTable::size):
+        (JSC::JSWebAssemblyTable::getFunction):
+        (JSC::JSWebAssemblyTable::offsetOfSize):
+        (JSC::JSWebAssemblyTable::offsetOfFunctions):
+        (JSC::JSWebAssemblyTable::isValidSize):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::call):
+        (JSC::WebAssemblyFunction::create):
+        (JSC::WebAssemblyFunction::visitChildren):
+        (JSC::WebAssemblyFunction::finishCreation):
+        * wasm/js/WebAssemblyFunction.h:
+        (JSC::WebAssemblyFunction::signature):
+        (JSC::WebAssemblyFunction::wasmEntrypoint):
+        (JSC::WebAssemblyFunction::webAssemblyCallee): Deleted.
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::getTable):
+        (JSC::webAssemblyTableProtoFuncLength):
+        (JSC::webAssemblyTableProtoFuncGrow):
+        (JSC::webAssemblyTableProtoFuncGet):
+        (JSC::webAssemblyTableProtoFuncSet):
+        (JSC::WebAssemblyTablePrototype::create):
+        (JSC::WebAssemblyTablePrototype::finishCreation):
+        * wasm/js/WebAssemblyTablePrototype.h:
+
 2016-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         Add null checks to opaque root APIs.

@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "IdentifierInlines.h"
+#include "JSWebAssemblyTable.h"
 #include "WasmFormat.h"
 #include "WasmMemoryInformation.h"
 #include "WasmOps.h"
@@ -250,7 +251,9 @@ bool ModuleParser::parseImport()
             break;
         }
         case External::Table: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
+            bool isImport = true;
+            if (!parseTableHelper(isImport))
+                return false;
             break;
         }
         case External::Memory: {
@@ -300,11 +303,72 @@ bool ModuleParser::parseFunction()
     return true;
 }
 
+bool ModuleParser::parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum)
+{
+    ASSERT(!maximum);
+
+    uint8_t flags;
+    if (!parseVarUInt1(flags))
+        return false;
+
+    if (!parseVarUInt32(initial))
+        return false;
+
+    if (flags) {
+        uint32_t maximumInt;
+        if (!parseVarUInt32(maximumInt))
+            return false;
+
+        if (initial > maximumInt)
+            return false;
+
+        maximum = maximumInt;
+    }
+
+    return true;
+}
+
+bool ModuleParser::parseTableHelper(bool isImport)
+{
+    // We're only allowed a total of one Table import or definition.
+    if (m_hasTable)
+        return false;
+
+    m_hasTable = true;
+
+    int8_t type;
+    if (!parseInt7(type))
+        return false;
+    if (type != Wasm::Anyfunc)
+        return false;
+
+    uint32_t initial;
+    std::optional<uint32_t> maximum;
+    if (!parseResizableLimits(initial, maximum))
+        return false;
+
+    if (!JSWebAssemblyTable::isValidSize(initial))
+        return false;
+
+    ASSERT(!maximum || *maximum >= initial);
+
+    m_module->tableInformation = TableInformation(initial, maximum, isImport);
+
+    return true;
+}
+
 bool ModuleParser::parseTable()
 {
-    // FIXME implement table https://bugs.webkit.org/show_bug.cgi?id=164135
-    RELEASE_ASSERT_NOT_REACHED();
-    return true;
+    uint32_t count;
+    if (!parseVarUInt32(count))
+        return false;
+
+    // We only allow one table for now.
+    if (count != 1)
+        return false;
+
+    bool isImport = false;
+    return parseTableHelper(isImport);
 }
 
 bool ModuleParser::parseMemoryHelper(bool isImport)
@@ -313,32 +377,27 @@ bool ModuleParser::parseMemoryHelper(bool isImport)
     if (m_module->memory)
         return false;
 
-    uint8_t flags;
-    if (!parseVarUInt1(flags))
-        return false;
-
-    uint32_t initial;
-    if (!parseVarUInt32(initial))
-        return false;
-
-    if (!PageCount::isValid(initial))
-        return false;
-
-    PageCount initialPageCount(initial);
-
+    PageCount initialPageCount;
     PageCount maximumPageCount;
-    if (flags) {
-        uint32_t maximum;
-        if (!parseVarUInt32(maximum))
+    {
+        uint32_t initial;
+        std::optional<uint32_t> maximum;
+        if (!parseResizableLimits(initial, maximum))
+            return false;
+        ASSERT(!maximum || *maximum >= initial);
+        if (!PageCount::isValid(initial))
             return false;
 
-        if (!PageCount::isValid(maximum))
-            return false;
+        initialPageCount = PageCount(initial);
 
-        maximumPageCount = PageCount(maximum);
-        if (initialPageCount > maximumPageCount)
-            return false;
+        if (maximum) {
+            if (!PageCount::isValid(*maximum))
+                return false;
+            maximumPageCount = PageCount(*maximum);
+        }
     }
+    ASSERT(initialPageCount);
+    ASSERT(!maximumPageCount || maximumPageCount >= initialPageCount);
 
     Vector<unsigned> pinnedSizes = { 0 };
     m_module->memory = MemoryInformation(initialPageCount, maximumPageCount, pinnedSizes, isImport);
@@ -397,7 +456,7 @@ bool ModuleParser::parseExport()
             break;
         }
         case External::Table: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
+            // FIXME https://bugs.webkit.org/show_bug.cgi?id=165782
             break;
         }
         case External::Memory: {

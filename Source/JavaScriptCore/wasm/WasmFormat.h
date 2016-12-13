@@ -106,7 +106,7 @@ struct Export {
     External::Kind kind;
     union {
         uint32_t functionIndex;
-        // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
+        // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=165782
         // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=165671
         // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
     };
@@ -147,17 +147,45 @@ struct Segment {
     }
 };
 
+class TableInformation {
+public:
+    TableInformation()
+    {
+        ASSERT(!*this);
+    }
+
+    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport)
+        : m_initial(initial)
+        , m_maximum(maximum)
+        , m_isImport(isImport)
+        , m_isValid(true)
+    {
+        ASSERT(*this);
+    }
+
+    explicit operator bool() const { return m_isValid; }
+    bool isImport() const { return m_isImport; }
+    uint32_t initial() const { return m_initial; }
+    std::optional<uint32_t> maximum() const { return m_maximum; }
+
+private:
+    uint32_t m_initial;
+    std::optional<uint32_t> m_maximum;
+    bool m_isImport { false };
+    bool m_isValid { false };
+};
+
 struct ModuleInformation {
     Vector<Signature> signatures;
     Vector<Import> imports;
     Vector<Signature*> importFunctions;
-    // FIXME implement import Table https://bugs.webkit.org/show_bug.cgi?id=164135
     // FIXME implement import Global https://bugs.webkit.org/show_bug.cgi?id=164133
     Vector<Signature*> internalFunctionSignatures;
     MemoryInformation memory;
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
     Vector<Segment::Ptr> data;
+    TableInformation tableInformation;
 
     ~ModuleInformation();
 };
@@ -185,13 +213,18 @@ typedef MacroAssemblerCodeRef WasmToJSStub;
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts with all imports, and then all internal functions.
 // CallableFunction and FunctionIndexSpace are only meant as fast lookup tables for these opcodes, and do not own code.
 struct CallableFunction {
-    CallableFunction(Signature* signature)
+    CallableFunction() = default;
+
+    CallableFunction(Signature* signature, void* code = nullptr)
         : signature(signature)
-        , code(nullptr)
+        , code(code)
     {
     }
-    Signature* signature; // FIXME pack this inside a (uniqued) integer (for correctness the parser should unique Signatures), and then pack that integer into the code pointer. https://bugs.webkit.org/show_bug.cgi?id=165511
-    void* code;
+
+    // FIXME pack this inside a (uniqued) integer (for correctness the parser should unique Signatures),
+    // and then pack that integer into the code pointer. https://bugs.webkit.org/show_bug.cgi?id=165511
+    Signature* signature { nullptr }; 
+    void* code { nullptr };
 };
 typedef Vector<CallableFunction> FunctionIndexSpace;
 

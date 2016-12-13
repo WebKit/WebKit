@@ -79,12 +79,15 @@ private:
 #undef WASM_SECTION_DECLARE_PARSER
 
     bool WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
+    bool WARN_UNUSED_RETURN parseTableHelper(bool isImport);
+    bool WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
 
     VM* m_vm;
     std::unique_ptr<ModuleInformation> m_module;
     FunctionIndexSpace m_functionIndexSpace;
     Vector<FunctionLocationInBinary> m_functionLocationInBinary;
     bool m_failed { true };
+    bool m_hasTable { false };
     String m_errorMessage;
 };
 

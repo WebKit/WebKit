@@ -30,6 +30,8 @@
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyHelpers.h"
+#include "JSWebAssemblyTable.h"
 #include "WebAssemblyTablePrototype.h"
 
 #include "WebAssemblyTableConstructor.lut.h"
@@ -43,12 +45,53 @@ const ClassInfo WebAssemblyTableConstructor::s_info = { "Function", &Base::s_inf
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
 {
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=164135
-    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the Table constructor property"))));
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* memoryDescriptor;
+    {
+        JSValue argument = exec->argument(0);
+        if (!argument.isObject())
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table expects its first argument to be an object"))));
+        memoryDescriptor = jsCast<JSObject*>(argument);
+    }
+
+    {
+        Identifier elementIdent = Identifier::fromString(&vm, "element");
+        JSValue elementValue = memoryDescriptor->get(exec, elementIdent);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        String elementString = elementValue.toWTFString(exec);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        if (elementString != "anyfunc")
+            return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table expects its 'element' field to be the string 'anyfunc'"))));
+    }
+
+    Identifier initialIdent = Identifier::fromString(&vm, "initial");
+    JSValue initialSizeValue = memoryDescriptor->get(exec, initialIdent);
+    RETURN_IF_EXCEPTION(throwScope, { });
+    uint32_t initial = toNonWrappingUint32(exec, initialSizeValue);
+    RETURN_IF_EXCEPTION(throwScope, { });
+
+    std::optional<uint32_t> maximum;
+    Identifier maximumIdent = Identifier::fromString(&vm, "maximum");
+    bool hasProperty = memoryDescriptor->hasProperty(exec, maximumIdent);
+    RETURN_IF_EXCEPTION(throwScope, { });
+    if (hasProperty) {
+        JSValue maxSizeValue = memoryDescriptor->get(exec, maximumIdent);
+        RETURN_IF_EXCEPTION(throwScope, { });
+        maximum = toNonWrappingUint32(exec, maxSizeValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+
+        if (initial > *maximum) {
+            return JSValue::encode(throwException(exec, throwScope,
+                createRangeError(exec, ASCIILiteral("'maximum' property must be greater than or equal to the 'initial' property"))));
+        }
+    }
+
+    throwScope.release();
+    return JSValue::encode(JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(), initial, maximum));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyTable(ExecState* state)

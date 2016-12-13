@@ -88,10 +88,10 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     // Let imports be an initially-empty list of external values.
     unsigned numImportFunctions = 0;
 
-    // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
     // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
 
     bool hasMemoryImport = false;
+    bool hasTableImport = false;
     // For each import i in module.imports:
     for (auto& import : moduleInformation.imports) {
         // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
@@ -131,12 +131,34 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             break;
         }
         case Wasm::External::Table: {
+            RELEASE_ASSERT(!hasTableImport); // This should be guaranteed by a validation failure.
             // 7. Otherwise (i is a table import):
-            // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=164135
+            hasTableImport = true;
+            JSWebAssemblyTable* table = jsDynamicCast<JSWebAssemblyTable*>(value);
             // i. If v is not a WebAssembly.Table object, throw a TypeError.
+            if (!table)
+                return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Table import is not an instance of WebAssembly.Table"))));
+
+            uint32_t expectedInitial = moduleInformation.tableInformation.initial();
+            uint32_t actualInitial = table->size();
+            if (actualInitial < expectedInitial)
+                return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Table import provided an 'initial' that is too small"))));
+
+            if (std::optional<uint32_t> expectedMaximum = moduleInformation.tableInformation.maximum()) {
+                std::optional<uint32_t> actualMaximum = table->maximum();
+                if (!actualMaximum) {
+                    return JSValue::encode(
+                        throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Table import does not have a 'maximum' but the module requires that it does"))));
+                }
+                if (*actualMaximum > *expectedMaximum) {
+                    return JSValue::encode(
+                        throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("Imported Table's 'maximum' is larger than the module's expected 'maximum'"))));
+                }
+            }
+
             // ii. Append v to tables.
             // iii. Append v.[[Table]] to imports.
-            RELEASE_ASSERT_NOT_REACHED();
+            instance->setTable(vm, table);
             break;
         }
         case Wasm::External::Memory: {
@@ -185,7 +207,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
 
     {
         if (!!moduleInformation.memory && moduleInformation.memory.isImport()) {
-            // We should either have an import or we should have thrown an exception.
+            // We should either have a Memory import or we should have thrown an exception.
             RELEASE_ASSERT(hasMemoryImport);
         }
 
@@ -197,6 +219,25 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
                 return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
             instance->setMemory(vm,
                JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));
+        }
+    }
+
+    {
+        if (!!moduleInformation.tableInformation && moduleInformation.tableInformation.isImport()) {
+            // We should either have a Table import or we should have thrown an exception.
+            RELEASE_ASSERT(hasTableImport);
+        }
+
+        if (!!moduleInformation.tableInformation && !hasTableImport) {
+            RELEASE_ASSERT(!moduleInformation.tableInformation.isImport());
+            // We create a Table when it's a Table definition.
+            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(),
+                moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
+            // We should always be able to allocate a JSWebAssemblyTable we've defined.
+            // If it's defined to be too large, we should have thrown a validation error.
+            ASSERT(!throwScope.exception());
+            ASSERT(table); 
+            instance->setTable(vm, table);
         }
     }
 

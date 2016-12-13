@@ -137,7 +137,7 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(const MemoryInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
+    B3IRGenerator(VM&, const MemoryInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
     bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -188,6 +188,7 @@ private:
     void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
     Value* zeroForType(Type);
 
+    VM& m_vm;
     const ImmutableFunctionIndexSpace& m_functionIndexSpace;
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
@@ -199,8 +200,9 @@ private:
     Value* m_functionIndexSpaceValue;
 };
 
-B3IRGenerator::B3IRGenerator(const MemoryInformation& memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
-    : m_functionIndexSpace(functionIndexSpace)
+B3IRGenerator::B3IRGenerator(VM& vm, const MemoryInformation& memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
+    : m_vm(vm)
+    , m_functionIndexSpace(functionIndexSpace)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
 {
@@ -669,27 +671,50 @@ bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
     ExpressionType calleeIndex = args.takeLast();
     ASSERT(signature->arguments.size() == args.size());
 
+    ExpressionType callableFunctionBuffer;
+    ExpressionType callableFunctionBufferSize;
+    {
+        ExpressionType topInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
+            m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), &m_vm.topJSWebAssemblyInstance));
+        ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
+            topInstance, JSWebAssemblyInstance::offsetOfTable());
+        callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
+            table, JSWebAssemblyTable::offsetOfFunctions());
+        callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, Origin(),
+            table, JSWebAssemblyTable::offsetOfSize());
+    }
+
     // Check the index we are looking for is valid.
     {
-        ExpressionType maxValidIndex = m_currentBlock->appendIntConstant(m_proc, Origin(), Int32, m_functionIndexSpace.size);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), m_zeroValues[linearizeType(I32)],
-                m_currentBlock->appendNew<Value>(m_proc, LessThan, Origin(), calleeIndex, maxValidIndex)));
+            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, Origin(), calleeIndex, callableFunctionBufferSize));
 
         check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             jit.breakpoint();
         });
     }
 
-    // Compute the offset in the function index space we are looking for.
+    // Compute the offset in the table index space we are looking for.
     ExpressionType offset = m_currentBlock->appendNew<Value>(m_proc, Mul, Origin(),
         m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), calleeIndex),
         m_currentBlock->appendIntConstant(m_proc, Origin(), pointerType(), sizeof(CallableFunction)));
-    ExpressionType callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, Origin(), m_functionIndexSpaceValue, offset);
+    ExpressionType callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, Origin(), callableFunctionBuffer, offset);
+
+    // Check that the CallableFunction is initialized. We trap if it isn't. A null Signature* indicates it's not initialized.
+    ExpressionType calleeSignature = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, signature));
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), 
+                calleeSignature, 
+                m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), 0)));
+
+        check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            jit.breakpoint();
+        });
+    }
 
     // Check the signature matches the value we expect.
     {
-        ExpressionType calleeSignature = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), callableFunction, OBJECT_OFFSETOF(CallableFunction, signature));
         ExpressionType expectedSignature = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), signature);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
             m_currentBlock->appendNew<Value>(m_proc, NotEqual, Origin(), calleeSignature, expectedSignature));
@@ -713,6 +738,7 @@ bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
                 jit.call(params[returnType == Void ? 0 : 1].gpr());
             });
         });
+
     return true;
 }
 
@@ -846,7 +872,7 @@ std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* fun
     auto result = std::make_unique<WasmInternalFunction>();
 
     Procedure procedure;
-    B3IRGenerator context(info.memory, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
+    B3IRGenerator context(vm, info.memory, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functionIndexSpace, info);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();

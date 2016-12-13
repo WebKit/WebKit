@@ -29,23 +29,54 @@
 
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "WebAssemblyFunction.h"
+#include <wtf/MallocPtr.h>
 
 namespace JSC {
+
+namespace Wasm {
+struct CallableFunction;
+}
 
 class JSWebAssemblyTable : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyTable* create(VM&, Structure*);
+    static JSWebAssemblyTable* create(ExecState*, VM&, Structure*, uint32_t initial, std::optional<uint32_t> maximum);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-protected:
-    JSWebAssemblyTable(VM&, Structure*);
+    std::optional<uint32_t> maximum() const { return m_maximum; }
+    uint32_t size() const { return m_size; }
+    bool grow(uint32_t newSize) WARN_UNUSED_RETURN;
+    WebAssemblyFunction* getFunction(uint32_t index)
+    {
+        RELEASE_ASSERT(index < m_size);
+        return m_jsFunctions.get()[index].get();
+    }
+    void clearFunction(uint32_t index);
+    void setFunction(VM&, uint32_t index, WebAssemblyFunction*);
+
+    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_size); }
+    static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(JSWebAssemblyTable, m_functions); }
+
+    static bool isValidSize(uint32_t size)
+    {
+        // This tops out at ~384 MB worth of data in this class.
+        return size < (1 << 24);
+    }
+
+private:
+    JSWebAssemblyTable(VM&, Structure*, uint32_t initial, std::optional<uint32_t> maximum);
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    MallocPtr<Wasm::CallableFunction> m_functions;
+    MallocPtr<WriteBarrier<WebAssemblyFunction>> m_jsFunctions;
+    std::optional<uint32_t> m_maximum;
+    uint32_t m_size;
 };
 
 } // namespace JSC

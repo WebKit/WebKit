@@ -30,6 +30,7 @@
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "JSWebAssemblyMemory.h"
+#include "JSWebAssemblyTable.h"
 
 namespace JSC {
 
@@ -71,10 +72,15 @@ public:
     JSWebAssemblyMemory* memory() { return m_memory.get(); }
     void setMemory(VM& vm, JSWebAssemblyMemory* memory) { m_memory.set(vm, this, memory); }
 
+    JSWebAssemblyTable* table() { return m_table.get(); }
+    void setTable(VM& vm, JSWebAssemblyTable* table) { m_table.set(vm, this, table); }
+
     static size_t offsetOfImportFunction(unsigned idx)
     {
         return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * idx;
     }
+
+    static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_table); }
 
 protected:
     JSWebAssemblyInstance(VM&, Structure*, unsigned);
@@ -96,6 +102,7 @@ private:
     WriteBarrier<JSWebAssemblyModule> m_module;
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
+    WriteBarrier<JSWebAssemblyTable> m_table;
     unsigned m_numImportFunctions;
 };
 

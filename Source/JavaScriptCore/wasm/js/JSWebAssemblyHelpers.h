@@ -27,27 +27,24 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
+#include "JSCJSValue.h"
 
 namespace JSC {
 
-class WebAssemblyTablePrototype : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+ALWAYS_INLINE uint32_t toNonWrappingUint32(ExecState* exec, JSValue value)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    double doubleValue = value.toInteger(exec);
+    RETURN_IF_EXCEPTION(throwScope, { });
+    if (doubleValue < 0 || doubleValue > UINT_MAX) {
+        throwException(exec, throwScope,
+            createRangeError(exec, ASCIILiteral("Expect an integer argument in the range: [0, 2^32 - 1]")));
+        return { };
+    }
 
-    static WebAssemblyTablePrototype* create(VM&, JSGlobalObject*, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    DECLARE_INFO;
-
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
-private:
-    WebAssemblyTablePrototype(VM&, Structure*);
-};
+    return static_cast<uint32_t>(doubleValue);
+}
 
 } // namespace JSC
 
