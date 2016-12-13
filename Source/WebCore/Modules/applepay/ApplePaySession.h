@@ -31,14 +31,13 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "PaymentRequest.h"
+#include <heap/Strong.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class ArrayValue;
 class DeferredPromise;
-class Dictionary;
 class Document;
 class Payment;
 class PaymentContact;
@@ -48,7 +47,47 @@ class URL;
 
 class ApplePaySession final : public RefCounted<ApplePaySession>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    static ExceptionOr<Ref<ApplePaySession>> create(JSC::ExecState&, Document&, unsigned version, JSC::JSValue);
+    enum class MerchantCapability { Supports3DS, SupportsEMV, SupportsCredit, SupportsDebit };
+    enum class ContactField { Email, Name, Phone, PostalAddress };
+
+    using ShippingType = WebCore::PaymentRequest::ShippingType;
+    using LineItemType = WebCore::PaymentRequest::LineItem::Type;
+
+    struct ShippingMethod {
+        String label;
+        String detail;
+        String amount;
+        String identifier;
+    };
+
+    struct LineItem {
+        LineItemType type { LineItemType::Final };
+        String label;
+        String amount;
+    };
+
+    struct PaymentRequest {
+        Vector<MerchantCapability> merchantCapabilities;
+        Vector<String> supportedNetworks;
+        String countryCode;
+        String currencyCode;
+
+        std::optional<Vector<ContactField>> requiredBillingContactFields;
+        JSC::Strong<JSC::JSObject> billingContact;
+
+        std::optional<Vector<ContactField>>  requiredShippingContactFields;
+        JSC::Strong<JSC::JSObject> shippingContact;
+
+        ShippingType shippingType { ShippingType::Shipping };
+        std::optional<Vector<ShippingMethod>> shippingMethods;
+
+        LineItem total;
+        Vector<LineItem> lineItems;
+
+        String applicationData;
+    };
+
+    static ExceptionOr<Ref<ApplePaySession>> create(JSC::ExecState&, Document&, unsigned version, PaymentRequest&&);
     virtual ~ApplePaySession();
 
     // DOM API.
@@ -68,17 +107,17 @@ public:
 
     ExceptionOr<void> begin();
     ExceptionOr<void> abort();
-    ExceptionOr<void> completeMerchantValidation(JSC::ExecState&, JSC::JSValue merchantSessionDictionary);
-    ExceptionOr<void> completeShippingMethodSelection(unsigned short status, const Dictionary& newTotal, const ArrayValue& newLineItems);
-    ExceptionOr<void> completeShippingContactSelection(unsigned short status, const ArrayValue& newShippingMethods, const Dictionary& newTotal, const ArrayValue& newLineItems);
-    ExceptionOr<void> completePaymentMethodSelection(const Dictionary& newTotal, const ArrayValue& newLineItems);
+    ExceptionOr<void> completeMerchantValidation(JSC::ExecState&, JSC::JSValue merchantSession);
+    ExceptionOr<void> completeShippingMethodSelection(unsigned short status, LineItem&& newTotal, Vector<LineItem>&& newLineItems);
+    ExceptionOr<void> completeShippingContactSelection(unsigned short status, Vector<ShippingMethod>&& newShippingMethods, LineItem&& newTotal, Vector<LineItem>&& newLineItems);
+    ExceptionOr<void> completePaymentMethodSelection(LineItem&& newTotal, Vector<LineItem>&& newLineItems);
     ExceptionOr<void> completePayment(unsigned short status);
 
-    const PaymentRequest& paymentRequest() const { return m_paymentRequest; }
+    const WebCore::PaymentRequest& paymentRequest() const { return m_paymentRequest; }
 
     void validateMerchant(const URL&);
     void didAuthorizePayment(const Payment&);
-    void didSelectShippingMethod(const PaymentRequest::ShippingMethod&);
+    void didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod&);
     void didSelectShippingContact(const PaymentContact&);
     void didSelectPaymentMethod(const PaymentMethod&);
     void didCancelPayment();
@@ -87,7 +126,7 @@ public:
     using RefCounted<ApplePaySession>::deref;
 
 private:
-    ApplePaySession(Document&, PaymentRequest&&);
+    ApplePaySession(Document&, WebCore::PaymentRequest&&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;
@@ -134,7 +173,7 @@ private:
         ValidationComplete,
     } m_merchantValidationState { MerchantValidationState::Idle };
 
-    const PaymentRequest m_paymentRequest;
+    const WebCore::PaymentRequest m_paymentRequest;
 };
 
 }

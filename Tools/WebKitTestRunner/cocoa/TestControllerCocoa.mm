@@ -59,7 +59,11 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     globalWebViewConfiguration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context);
     globalWebViewConfiguration._allowUniversalAccessFromFileURLs = YES;
 
-#if TARGET_OS_IPHONE
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+    globalWebViewConfiguration._applePayEnabled = YES;
+#endif
+
+#if PLATFORM(IOS)
     globalWebViewConfiguration.allowsInlineMediaPlayback = YES;
     globalWebViewConfiguration._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
     globalWebViewConfiguration._invisibleAutoplayNotPermitted = NO;
@@ -83,7 +87,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 {
 #if WK_API_ENABLED
     RetainPtr<WKWebViewConfiguration> copiedConfiguration = adoptNS([globalWebViewConfiguration copy]);
-#if TARGET_OS_IPHONE
+
+#if PLATFORM(IOS)
     if (options.useDataDetection)
         [copiedConfiguration setDataDetectorTypes:WKDataDetectorTypeAll];
     if (options.ignoresViewportScaleLimits)

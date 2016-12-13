@@ -26,8 +26,8 @@
 [
     ActiveDOMObject,
     Conditional=APPLE_PAY,
-    Constructor(unsigned long version, any paymentRequest),
-    ConstructorCallWith=Document&ScriptState,
+    Constructor(unsigned long version, ApplePayPaymentRequest paymentRequest),
+    ConstructorCallWith=ScriptState&Document,
     ConstructorMayThrowException,
     EnabledBySetting=ApplePay,
 ] interface ApplePaySession : EventTarget {
@@ -47,10 +47,10 @@
 
     [MayThrowException] void begin();
     [MayThrowException] void abort();
-    [CallWith=ScriptState, MayThrowException] void completeMerchantValidation(any merchantSession);
-    [Custom, MayThrowException] void completeShippingMethodSelection(unsigned short status, any newTotal, any newLineItems);
-    [Custom, MayThrowException] void completeShippingContactSelection(unsigned short status, any newShippingMethods, any newTotal, any newLineItems);
-    [Custom, MayThrowException] void completePaymentMethodSelection(any newTotal, any newLineItems);
+    [MayThrowException, CallWith=ScriptState] void completeMerchantValidation(any merchantSession);
+    [MayThrowException] void completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] void completeShippingContactSelection(unsigned short status, sequence<ApplePayShippingMethod> newShippingMethods, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
+    [MayThrowException] void completePaymentMethodSelection(ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
     [MayThrowException] void completePayment(unsigned short status);
 
     attribute EventHandler onvalidatemerchant;
@@ -59,4 +59,64 @@
     attribute EventHandler onshippingmethodselected;
     attribute EventHandler onshippingcontactselected;
     attribute EventHandler oncancel;
+};
+
+enum ApplePayMerchantCapability {
+    "supports3DS",
+    "supportsEMV",
+    "supportsCredit",
+    "supportsDebit"
+};
+
+enum ApplePayContactField {
+    "email",
+    "name",
+    "phone",
+    "postalAddress"
+};
+
+enum ApplePayShippingType {
+    "shipping",
+    "delivery",
+    "storePickup",
+    "servicePickup"
+};
+
+dictionary ApplePayShippingMethod {
+    required DOMString label;
+    required DOMString detail;
+    required DOMString amount;
+    required DOMString identifier;
+};
+
+enum ApplePayLineItemType {
+    "pending",
+    "final"
+};
+
+dictionary ApplePayLineItem {
+    ApplePayLineItemType type = "final";
+    DOMString label;
+    DOMString amount;
+};
+
+dictionary ApplePayPaymentRequest {
+    required ApplePayLineItem total;
+    sequence<ApplePayLineItem> lineItems;
+
+    required sequence<ApplePayMerchantCapability> merchantCapabilities;
+    required sequence<DOMString> supportedNetworks; // FIXME: Should this be an sequence of enums?
+    required DOMString countryCode;
+    required DOMString currencyCode;
+
+    sequence<ApplePayContactField> requiredBillingContactFields;
+    object billingContact;
+
+    sequence<ApplePayContactField> requiredShippingContactFields;
+    object shippingContact;
+
+    ApplePayShippingType shippingType = "shipping";
+    sequence<ApplePayShippingMethod> shippingMethods;
+
+    DOMString applicationData;
 };

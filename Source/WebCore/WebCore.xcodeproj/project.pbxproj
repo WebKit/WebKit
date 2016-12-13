@@ -960,7 +960,6 @@
 		1AE96A951D1A0DDD00B86768 /* JSApplePayValidateMerchantEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE96A851D1A0A8000B86768 /* JSApplePayValidateMerchantEvent.h */; };
 		1AE96A961D1A100700B86768 /* JSApplePayPaymentAuthorizedEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A741D1A04D300B86768 /* JSApplePayPaymentAuthorizedEventCustom.cpp */; };
 		1AE96A971D1A100700B86768 /* JSApplePayPaymentMethodSelectedEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A751D1A04D300B86768 /* JSApplePayPaymentMethodSelectedEventCustom.cpp */; };
-		1AE96A981D1A100700B86768 /* JSApplePaySessionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A761D1A04D300B86768 /* JSApplePaySessionCustom.cpp */; };
 		1AE96A991D1A100700B86768 /* JSApplePayShippingContactSelectedEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A771D1A04D300B86768 /* JSApplePayShippingContactSelectedEventCustom.cpp */; };
 		1AE96A9A1D1A100700B86768 /* JSApplePayShippingMethodSelectedEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE96A781D1A04D300B86768 /* JSApplePayShippingMethodSelectedEventCustom.cpp */; };
 		1AED3BDA1D3D5F260099FD78 /* PassKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AED3BD91D3D5F260099FD78 /* PassKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8008,7 +8007,6 @@
 		1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLResultSet.h; sourceTree = "<group>"; };
 		1AE96A741D1A04D300B86768 /* JSApplePayPaymentAuthorizedEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayPaymentAuthorizedEventCustom.cpp; sourceTree = "<group>"; };
 		1AE96A751D1A04D300B86768 /* JSApplePayPaymentMethodSelectedEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayPaymentMethodSelectedEventCustom.cpp; sourceTree = "<group>"; };
-		1AE96A761D1A04D300B86768 /* JSApplePaySessionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePaySessionCustom.cpp; sourceTree = "<group>"; };
 		1AE96A771D1A04D300B86768 /* JSApplePayShippingContactSelectedEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayShippingContactSelectedEventCustom.cpp; sourceTree = "<group>"; };
 		1AE96A781D1A04D300B86768 /* JSApplePayShippingMethodSelectedEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayShippingMethodSelectedEventCustom.cpp; sourceTree = "<group>"; };
 		1AE96A7A1D1A0A8000B86768 /* JSApplePayPaymentAuthorizedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayPaymentAuthorizedEvent.cpp; sourceTree = "<group>"; };
@@ -21999,7 +21997,6 @@
 				1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */,
 				1AE96A741D1A04D300B86768 /* JSApplePayPaymentAuthorizedEventCustom.cpp */,
 				1AE96A751D1A04D300B86768 /* JSApplePayPaymentMethodSelectedEventCustom.cpp */,
-				1AE96A761D1A04D300B86768 /* JSApplePaySessionCustom.cpp */,
 				1AE96A771D1A04D300B86768 /* JSApplePayShippingContactSelectedEventCustom.cpp */,
 				1AE96A781D1A04D300B86768 /* JSApplePayShippingMethodSelectedEventCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
@@ -29700,7 +29697,6 @@
 				1AE96A8C1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.cpp in Sources */,
 				1AE96A971D1A100700B86768 /* JSApplePayPaymentMethodSelectedEventCustom.cpp in Sources */,
 				1AE96A8E1D1A0DDD00B86768 /* JSApplePaySession.cpp in Sources */,
-				1AE96A981D1A100700B86768 /* JSApplePaySessionCustom.cpp in Sources */,
 				1AE96A901D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.cpp in Sources */,
 				1AE96A991D1A100700B86768 /* JSApplePayShippingContactSelectedEventCustom.cpp in Sources */,
 				1AE96A921D1A0DDD00B86768 /* JSApplePayShippingMethodSelectedEvent.cpp in Sources */,

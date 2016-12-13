@@ -28,89 +28,84 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "DOMWindow.h"
-#include "PageConsoleClient.h"
+#include "ExceptionCode.h"
 #include "PaymentRequest.h"
 #include <unicode/ucurr.h>
 #include <unicode/uloc.h>
 
 namespace WebCore {
 
-PaymentRequestValidator::PaymentRequestValidator(DOMWindow& window)
-    : m_window(window)
+static ExceptionOr<void> validateCountryCode(const String&);
+static ExceptionOr<void> validateCurrencyCode(const String&);
+static ExceptionOr<void> validateMerchantCapabilities(const PaymentRequest::MerchantCapabilities&);
+static ExceptionOr<void> validateSupportedNetworks(const Vector<String>&);
+static ExceptionOr<void> validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>&);
+static ExceptionOr<void> validateShippingMethod(const PaymentRequest::ShippingMethod&);
+
+
+ExceptionOr<void> PaymentRequestValidator::validate(const PaymentRequest& paymentRequest)
 {
+    auto validatedCountryCode = validateCountryCode(paymentRequest.countryCode());
+    if (validatedCountryCode.hasException())
+        return validatedCountryCode.releaseException();
+
+    auto validatedCurrencyCode = validateCurrencyCode(paymentRequest.currencyCode());
+    if (validatedCurrencyCode.hasException())
+        return validatedCurrencyCode.releaseException();
+
+    auto validatedSupportedNetworks = validateSupportedNetworks(paymentRequest.supportedNetworks());
+    if (validatedSupportedNetworks.hasException())
+        return validatedSupportedNetworks.releaseException();
+
+    auto validatedMerchantCapabilities = validateMerchantCapabilities(paymentRequest.merchantCapabilities());
+    if (validatedMerchantCapabilities.hasException())
+        return validatedMerchantCapabilities.releaseException();
+
+    auto validatedTotal = validateTotal(paymentRequest.total());
+    if (validatedTotal.hasException())
+        return validatedTotal.releaseException();
+
+    auto validatedShippingMethods = validateShippingMethods(paymentRequest.shippingMethods());
+    if (validatedShippingMethods.hasException())
+        return validatedShippingMethods.releaseException();
+
+    return { };
 }
 
-PaymentRequestValidator::~PaymentRequestValidator()
+ExceptionOr<void> PaymentRequestValidator::validateTotal(const PaymentRequest::LineItem& total)
 {
+    if (!total.label)
+        return Exception { TypeError, "Missing total label." };
+
+    if (!total.amount)
+        return Exception { TypeError, "Missing total amount." };
+
+    if (*total.amount <= 0) 
+        return Exception { TypeError, "Total amount must be greater than zero." };
+
+    if (*total.amount > 10000000000)
+        return Exception { TypeError, "Total amount is too big." };
+
+    return { };
 }
 
-bool PaymentRequestValidator::validate(const PaymentRequest& paymentRequest) const
+static ExceptionOr<void> validateCountryCode(const String& countryCode)
 {
-    if (!validateCountryCode(paymentRequest.countryCode()))
-        return false;
-    if (!validateCurrencyCode(paymentRequest.currencyCode()))
-        return false;
-    if (!validateSupportedNetworks(paymentRequest.supportedNetworks()))
-        return false;
-    if (!validateMerchantCapabilities(paymentRequest.merchantCapabilities()))
-        return false;
-    if (!validateTotal(paymentRequest.total()))
-        return false;
-    if (!validateShippingMethods(paymentRequest.shippingMethods()))
-        return false;
-    return true;
-}
-
-bool PaymentRequestValidator::validateTotal(const PaymentRequest::LineItem& total) const
-{
-    if (!total.label) {
-        m_window.printErrorMessage("Missing total label.");
-        return false;
-    }
-
-    if (!total.amount) {
-        m_window.printErrorMessage("Missing total amount.");
-        return false;
-    }
-
-    if (*total.amount <= 0) {
-        m_window.printErrorMessage("Total amount must be greater than zero.");
-        return false;
-    }
-
-    if (*total.amount > 10000000000) {
-        m_window.printErrorMessage("Total amount is too big.");
-        return false;
-    }
-
-    return true;
-}
-
-bool PaymentRequestValidator::validateCountryCode(const String& countryCode) const
-{
-    if (!countryCode) {
-        m_window.printErrorMessage("Missing country code.");
-        return false;
-    }
+    if (!countryCode)
+        return Exception { TypeError, "Missing country code." };
 
     for (auto *countryCodePtr = uloc_getISOCountries(); *countryCodePtr; ++countryCodePtr) {
         if (countryCode == *countryCodePtr)
-            return true;
+            return { };
     }
 
-    auto message = makeString("\"" + countryCode, "\" is not a valid country code.");
-    m_window.printErrorMessage(message);
-
-    return false;
+    return Exception { TypeError, makeString("\"" + countryCode, "\" is not a valid country code.") };
 }
 
-bool PaymentRequestValidator::validateCurrencyCode(const String& currencyCode) const
+static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 {
-    if (!currencyCode) {
-        m_window.printErrorMessage("Missing currency code.");
-        return false;
-    }
+    if (!currencyCode)
+        return Exception { TypeError, "Missing currency code." };
 
     UErrorCode errorCode = U_ZERO_ERROR;
     auto currencyCodes = std::unique_ptr<UEnumeration, void (*)(UEnumeration*)>(ucurr_openISOCurrencies(UCURR_ALL, &errorCode), uenum_close);
@@ -118,53 +113,45 @@ bool PaymentRequestValidator::validateCurrencyCode(const String& currencyCode) c
     int32_t length;
     while (auto *currencyCodePtr = uenum_next(currencyCodes.get(), &length, &errorCode)) {
         if (currencyCodePtr == currencyCode)
-            return true;
+            return { };
     }
 
-    auto message = makeString("\"" + currencyCode, "\" is not a valid currency code.");
-    m_window.printErrorMessage(message);
-
-    return false;
+    return Exception { TypeError, makeString("\"" + currencyCode, "\" is not a valid currency code.") };
 }
 
-bool PaymentRequestValidator::validateMerchantCapabilities(const PaymentRequest::MerchantCapabilities& merchantCapabilities) const
+static ExceptionOr<void> validateMerchantCapabilities(const PaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
-    if (!merchantCapabilities.supports3DS && !merchantCapabilities.supportsEMV && !merchantCapabilities.supportsCredit && !merchantCapabilities.supportsDebit) {
-        m_window.printErrorMessage("Missing merchant capabilities");
-        return false;
-    }
+    if (!merchantCapabilities.supports3DS && !merchantCapabilities.supportsEMV && !merchantCapabilities.supportsCredit && !merchantCapabilities.supportsDebit)
+        return Exception { TypeError, "Missing merchant capabilities." };
 
-    return true;
+    return { };
 }
 
-bool PaymentRequestValidator::validateShippingMethod(const PaymentRequest::ShippingMethod& shippingMethod) const
+static ExceptionOr<void> validateSupportedNetworks(const Vector<String>& supportedNetworks)
 {
-    if (shippingMethod.amount < 0) {
-        m_window.printErrorMessage("Shipping method amount must be greater than or equal to zero.");
-        return false;
-    }
+    if (supportedNetworks.isEmpty())
+        return Exception { TypeError, "Missing supported networks." };
 
-    return true;
+    return { };
 }
 
-bool PaymentRequestValidator::validateSupportedNetworks(const Vector<String>& supportedNetworks) const
+static ExceptionOr<void> validateShippingMethod(const PaymentRequest::ShippingMethod& shippingMethod)
 {
-    if (supportedNetworks.isEmpty()) {
-        m_window.printErrorMessage("Missing supported networks");
-        return false;
-    }
+    if (shippingMethod.amount < 0)
+        return Exception { TypeError, "Shipping method amount must be greater than or equal to zero." };
 
-    return true;
+    return { };
 }
 
-bool PaymentRequestValidator::validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>& shippingMethods) const
+static ExceptionOr<void> validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>& shippingMethods)
 {
     for (const auto& shippingMethod : shippingMethods) {
-        if (!validateShippingMethod(shippingMethod))
-            return false;
+        auto validatedShippingMethod = validateShippingMethod(shippingMethod);
+        if (validatedShippingMethod.hasException())
+            return validatedShippingMethod.releaseException();
     }
 
-    return true;
+    return { };
 }
 
 }

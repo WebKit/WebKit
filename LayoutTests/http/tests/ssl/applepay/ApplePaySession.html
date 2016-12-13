@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test basic creation of an ApplePaySession object.");
+
+window.jsTestIsAsync = true;
+
+function validRequest() {
+    return {
+          countryCode: 'US',
+          currencyCode: 'USD',
+          supportedNetworks: ['visa', 'masterCard'],
+          merchantCapabilities: ['supports3DS'],
+          total: { label: 'Your Label', amount: '10.00' },
+    }
+}
+
+function logAndShouldThrow(setup, test) {
+    debug("SETUP: " + setup)
+    eval(setup);
+    shouldThrow(test);
+    debug("")
+}
+
+function logAndShouldNotThrow(setup, test) {
+    debug("SETUP: " + setup)
+    eval(setup);
+    shouldNotThrow(test);
+    debug("")
+}
+
+function go() {
+    debug("Testing PaymentRequest")
+    debug("");
+    shouldThrow("new ApplePaySession(2, { })");
+    shouldNotThrow("new ApplePaySession(2, validRequest())");
+    debug("");
+    
+    debug("Testing PaymentRequest.countryCode")
+    debug("");
+    logAndShouldThrow("request = validRequest(); delete request.countryCode;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.countryCode = 'invalid';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.countryCode = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.countryCode = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.countryCode = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.countryCode = 7;", "new ApplePaySession(2, request)")
+    debug("");
+    
+    debug("Testing PaymentRequest.currencyCode")
+    debug("");
+    logAndShouldThrow("request = validRequest(); delete request.currencyCode;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.currencyCode = 'invalid';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.currencyCode = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.currencyCode = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.currencyCode = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.currencyCode = 7;", "new ApplePaySession(2, request)")
+    debug("");
+    
+    debug("Testing PaymentRequest.supportedNetworks")
+    debug("");
+    logAndShouldThrow("request = validRequest(); delete request.supportedNetworks;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = ['invalidNetwork'];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.supportedNetworks = ['invalidNetwork', 'visa'];", "new ApplePaySession(2, request)")
+    // FIXME: Should duplicate supportedNetworks be allowed?
+    logAndShouldNotThrow("request = validRequest(); request.supportedNetworks = ['visa', 'visa'];", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.merchantCapabilities")
+    debug("");
+    logAndShouldThrow("request = validRequest(); delete request.merchantCapabilities;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = ['invalidCapability'];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.merchantCapabilities = ['invalidCapability', 'supports3DS'];", "new ApplePaySession(2, request)")
+    // FIXME: Should duplicate merchantCapabilities be allowed?
+    logAndShouldNotThrow("request = validRequest(); request.merchantCapabilities = ['supports3DS', 'supports3DS'];", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.total")
+    debug("");
+    logAndShouldThrow("request = validRequest(); delete request.total;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label' };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: 'amount' };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '0' };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '-10.00' };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '10000000000.00' };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'invalid' };", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'pending' };", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.lineItems")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.lineItems = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = { };", "new ApplePaySession(2, request)")
+    // FIXME: Should we allow an empty lineItems sequence?
+    logAndShouldNotThrow("request = validRequest(); request.lineItems = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [''];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [null];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [undefined];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [{}];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [{ label: 'label' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [{ label: 'label', amount: '' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.lineItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.requiredBillingContactFields")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.requiredBillingContactFields = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = { };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [''];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [null];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [undefined];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = [{}];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredBillingContactFields = ['invalid'];", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.requiredBillingContactFields = ['email', 'name', 'phone', 'postalAddress'];", "new ApplePaySession(2, request)")
+    // FIXME: Should duplicate contactFields be allowed?
+    logAndShouldNotThrow("request = validRequest(); request.requiredBillingContactFields = ['email', 'email'];", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.billingContact")
+    debug("");
+    logAndShouldThrow("request = validRequest(); request.billingContact = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.billingContact = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.billingContact = 7;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.billingContact = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.billingContact = { };", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.requiredShippingContactFields")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.requiredShippingContactFields = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = { };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [''];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [null];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [undefined];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = [{}];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.requiredShippingContactFields = ['invalid'];", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.requiredShippingContactFields = ['email', 'name', 'phone', 'postalAddress'];", "new ApplePaySession(2, request)")
+    // FIXME: Should duplicate contactFields be allowed?
+    logAndShouldNotThrow("request = validRequest(); request.requiredShippingContactFields = ['email', 'email'];", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.shippingContact")
+    debug("");
+    logAndShouldThrow("request = validRequest(); request.shippingContact = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingContact = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingContact = 7;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingContact = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingContact = { };", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.shippingType")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.shippingType = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingType = 'shipping';", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingType = 'delivery';", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingType = 'storePickup';", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingType = 'servicePickup';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingType = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingType = 'invalid';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingType = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingType = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingType = { };", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.shippingMethods")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.shippingMethods = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = '';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = 'invalid';", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = null;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = 7;", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = { };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '', }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '', detail: '' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '', detail: '', identifier: '' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '', detail: '', identifier: '', label: '' }];", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.shippingMethods = [{ amount: '-1', detail: '', identifier: '', label: '' }];", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingMethods = [{ amount: '10.00', detail: '', identifier: '', label: '' }];", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingMethods = [{ amount: '10.00', detail: '', identifier: '', label: '' }, { amount: '10.00', detail: '', identifier: '', label: '' }];", "new ApplePaySession(2, request)")
+    
+    debug("Testing PaymentRequest.applicationData")
+    debug("");
+    logAndShouldNotThrow("request = validRequest(); request.applicationData = undefined;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.applicationData = '';", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.applicationData = 'invalid';", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.applicationData = 7;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.applicationData = null;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.applicationData = { };", "new ApplePaySession(2, request)")
+    logAndShouldThrow("request = validRequest(); request.applicationData = { toString: function() { throw '\"Error in toString\"'; } };", "new ApplePaySession(2, request)")
+
+    document.querySelector("button").remove();
+
+    finishJSTest();
+}
+
+function clickElement(element) {
+    let x = element.offsetLeft + 2;
+    let y = element.offsetTop + 2;
+
+    var supportsTouchEvents = "TouchEvent" in window;
+    if (supportsTouchEvents && window.testRunner && testRunner.runUIScript) {
+        testRunner.runUIScript(`(function() { uiController.singleTapAtPoint(${x}, ${y}, function() { }); })();`, function () { });
+    } else if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = function() {
+    clickElement(document.querySelector("button"));
+}
+
+</script>
+<button onclick='go()'>Go</button>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+Test basic creation of an ApplePaySession object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing PaymentRequest
+
+PASS new ApplePaySession(2, { }) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
+PASS new ApplePaySession(2, validRequest()) did not throw exception.
+
+Testing PaymentRequest.countryCode
+
+SETUP: request = validRequest(); delete request.countryCode;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.countryCode = 'invalid';
+PASS new ApplePaySession(2, request) threw exception TypeError: "invalid" is not a valid country code..
+
+SETUP: request = validRequest(); request.countryCode = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid country code..
+
+SETUP: request = validRequest(); request.countryCode = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: "null" is not a valid country code..
+
+SETUP: request = validRequest(); request.countryCode = undefined;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.countryCode is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.countryCode = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: "7" is not a valid country code..
+
+
+Testing PaymentRequest.currencyCode
+
+SETUP: request = validRequest(); delete request.currencyCode;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.currencyCode is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.currencyCode = 'invalid';
+PASS new ApplePaySession(2, request) threw exception TypeError: "invalid" is not a valid currency code..
+
+SETUP: request = validRequest(); request.currencyCode = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid currency code..
+
+SETUP: request = validRequest(); request.currencyCode = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: "null" is not a valid currency code..
+
+SETUP: request = validRequest(); request.currencyCode = undefined;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.currencyCode is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.currencyCode = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: "7" is not a valid currency code..
+
+
+Testing PaymentRequest.supportedNetworks
+
+SETUP: request = validRequest(); delete request.supportedNetworks;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.supportedNetworks is required and must be an instance of sequence.
+
+SETUP: request = validRequest(); request.supportedNetworks = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.supportedNetworks = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.supportedNetworks = undefined;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.supportedNetworks is required and must be an instance of sequence.
+
+SETUP: request = validRequest(); request.supportedNetworks = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.supportedNetworks = [];
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one supported network must be provided..
+
+SETUP: request = validRequest(); request.supportedNetworks = ['invalidNetwork'];
+PASS new ApplePaySession(2, request) threw exception TypeError: "invalidNetwork" is not a valid payment network..
+
+SETUP: request = validRequest(); request.supportedNetworks = ['invalidNetwork', 'visa'];
+PASS new ApplePaySession(2, request) threw exception TypeError: "invalidNetwork" is not a valid payment network..
+
+SETUP: request = validRequest(); request.supportedNetworks = ['visa', 'visa'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.merchantCapabilities
+
+SETUP: request = validRequest(); delete request.merchantCapabilities;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.merchantCapabilities is required and must be an instance of sequence.
+
+SETUP: request = validRequest(); request.merchantCapabilities = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.merchantCapabilities = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.merchantCapabilities = undefined;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.merchantCapabilities is required and must be an instance of sequence.
+
+SETUP: request = validRequest(); request.merchantCapabilities = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.merchantCapabilities = [];
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one merchant capability must be provided..
+
+SETUP: request = validRequest(); request.merchantCapabilities = ['invalidCapability'];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.merchantCapabilities = ['invalidCapability', 'supports3DS'];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.merchantCapabilities = ['supports3DS', 'supports3DS'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.total
+
+SETUP: request = validRequest(); delete request.total;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.total is required and must be an instance of ApplePayLineItem.
+
+SETUP: request = validRequest(); request.total = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.total = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.total = undefined;
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayPaymentRequest.total is required and must be an instance of ApplePayLineItem.
+
+SETUP: request = validRequest(); request.total = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.total = [];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.total = { };
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.total = { label: 'label' };
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: 'amount' };
+PASS new ApplePaySession(2, request) threw exception TypeError: "amount" is not a valid amount..
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '0' };
+PASS new ApplePaySession(2, request) threw exception TypeError: Total amount must be greater than zero..
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '-10.00' };
+PASS new ApplePaySession(2, request) threw exception TypeError: Total amount must be greater than zero..
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '10000000000.00' };
+PASS new ApplePaySession(2, request) threw exception TypeError: Total amount is too big..
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'invalid' };
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.total = { label: 'label', amount: '10.00', type: 'pending' };
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.lineItems
+
+SETUP: request = validRequest(); request.lineItems = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.lineItems = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.lineItems = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.lineItems = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.lineItems = { };
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.lineItems = [];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.lineItems = [''];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.lineItems = [null];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.lineItems = [undefined];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.lineItems = [{}];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label', amount: '' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.lineItems = [{ label: 'label', amount: '10.00', type: 'invalid' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+Testing PaymentRequest.requiredBillingContactFields
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = { };
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = [];
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one contact field must be provided..
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = [''];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = [null];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = [undefined];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = [{}];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = ['invalid'];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = ['email', 'name', 'phone', 'postalAddress'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredBillingContactFields = ['email', 'email'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.billingContact
+
+SETUP: request = validRequest(); request.billingContact = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.billingContact = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.billingContact = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.billingContact = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.billingContact = { };
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.requiredShippingContactFields
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = { };
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = [];
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one contact field must be provided..
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = [''];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = [null];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = [undefined];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = [{}];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = ['invalid'];
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = ['email', 'name', 'phone', 'postalAddress'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.requiredShippingContactFields = ['email', 'email'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.shippingContact
+
+SETUP: request = validRequest(); request.shippingContact = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingContact = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingContact = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingContact = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingContact = { };
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.shippingType
+
+SETUP: request = validRequest(); request.shippingType = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingType = 'shipping';
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingType = 'delivery';
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingType = 'storePickup';
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingType = 'servicePickup';
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingType = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingType = 'invalid';
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingType = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingType = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingType = { };
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+Testing PaymentRequest.shippingMethods
+
+SETUP: request = validRequest(); request.shippingMethods = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingMethods = '';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.shippingMethods = 'invalid';
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.shippingMethods = null;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.shippingMethods = 7;
+PASS new ApplePaySession(2, request) threw exception TypeError: Value is not a sequence.
+
+SETUP: request = validRequest(); request.shippingMethods = { };
+PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingMethods = [];
+PASS new ApplePaySession(2, request) threw exception TypeError: At least one shipping method must be provided..
+
+SETUP: request = validRequest(); request.shippingMethods = [{ }];
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayShippingMethod.amount is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '', }];
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayShippingMethod.detail is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '', detail: '' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayShippingMethod.identifier is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '', detail: '', identifier: '' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: Member ApplePayShippingMethod.label is required and must be an instance of DOMString.
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '', detail: '', identifier: '', label: '' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: "" is not a valid amount..
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '-1', detail: '', identifier: '', label: '' }];
+PASS new ApplePaySession(2, request) threw exception TypeError: Shipping method amount must be greater than or equal to zero..
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '10.00', detail: '', identifier: '', label: '' }];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.shippingMethods = [{ amount: '10.00', detail: '', identifier: '', label: '' }, { amount: '10.00', detail: '', identifier: '', label: '' }];
+PASS new ApplePaySession(2, request) did not throw exception.
+
+Testing PaymentRequest.applicationData
+
+SETUP: request = validRequest(); request.applicationData = undefined;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.applicationData = '';
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.applicationData = 'invalid';
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.applicationData = 7;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.applicationData = null;
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.applicationData = { };
+PASS new ApplePaySession(2, request) did not throw exception.
+
+SETUP: request = validRequest(); request.applicationData = { toString: function() { throw '"Error in toString"'; } };
+PASS new ApplePaySession(2, request) threw exception "Error in toString".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

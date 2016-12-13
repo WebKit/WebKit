@@ -27,30 +27,15 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ExceptionOr.h"
 #include "PaymentRequest.h"
 
 namespace WebCore {
 
-class DOMWindow;
-
 class PaymentRequestValidator {
 public:
-    explicit PaymentRequestValidator(DOMWindow&);
-    ~PaymentRequestValidator();
-
-    bool validate(const PaymentRequest&) const;
-    bool validateTotal(const PaymentRequest::LineItem&) const;
-
-private:
-    bool validateCountryCode(const String&) const;
-    bool validateCurrencyCode(const String&) const;
-    bool validateMerchantCapabilities(const PaymentRequest::MerchantCapabilities&) const;
-    bool validateSupportedNetworks(const Vector<String>&) const;
-
-    bool validateShippingMethods(const Vector<PaymentRequest::ShippingMethod>&) const;
-    bool validateShippingMethod(const PaymentRequest::ShippingMethod&) const;
-
-    DOMWindow& m_window;
+    static ExceptionOr<void> validate(const PaymentRequest&);
+    static ExceptionOr<void> validateTotal(const PaymentRequest::LineItem&);
 };
 
 }
