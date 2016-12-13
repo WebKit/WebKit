@@ -1,3 +1,10 @@
+2016-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert the collectorPermittedIdleRatio back to 0 because of 100MB
+        regression on membuster. Also, it didn't seem to help perf.
+
+        * runtime/Options.h:
+
 2016-12-13  JF Bastien  <jfbastien@apple.com>
 
         [WTF] Turn tryMakeString(), makeString() into variadic templates
