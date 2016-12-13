@@ -45,7 +45,7 @@ class UnexpectedType {
 public:
     UnexpectedType() = delete;
     constexpr explicit UnexpectedType(const E& e) : val(e) { }
-    constexpr explicit UnexpectedType(E&& e) : val(WTFMove(e)) { }
+    constexpr explicit UnexpectedType(E&& e) : val(std::forward<E>(e)) { }
     constexpr const E& value() const { return val; }
     RELAXED_CONSTEXPR E& value() { return val; }
 
@@ -104,7 +104,9 @@ union Storage {
     constexpr Storage(ValueTagType) : val() { }
     constexpr Storage(ErrorTagType) : err() { }
     constexpr Storage(ValueTagType, const ValueType& val) : val(val) { }
+    constexpr Storage(ValueTagType, ValueType&& val) : val(std::forward<ValueType>(val)) { }
     constexpr Storage(ErrorTagType, const ErrorType& err) : err(err) { }
+    constexpr Storage(ErrorTagType, ErrorType&& err) : err(std::forward<ErrorType>(err)) { }
     ~Storage() { }
 };
 
@@ -131,6 +133,7 @@ union Storage<void, E> {
     constexpr Storage(ValueTagType) : dummy() { }
     constexpr Storage(ErrorTagType) : err() { }
     constexpr Storage(ErrorTagType, const ErrorType& err) : err(err) { }
+    constexpr Storage(ErrorTagType, ErrorType&& err) : err(std::forward<ErrorType>(err)) { }
     ~Storage() { }
 };
 
@@ -158,7 +161,9 @@ struct Base {
     constexpr Base(ValueTagType tag) : s(tag), has(true) { }
     constexpr Base(ErrorTagType tag) : s(tag), has(false) { }
     constexpr Base(ValueTagType tag, const ValueType& val) : s(tag, val), has(true) { }
+    constexpr Base(ValueTagType tag, ValueType&& val) : s(tag, std::forward<ValueType>(val)), has(true) { }
     constexpr Base(ErrorTagType tag, const ErrorType& err) : s(tag, err), has(false) { }
+    constexpr Base(ErrorTagType tag, ErrorType&& err) : s(tag, std::forward<ErrorType>(err)), has(false) { }
     Base(const Base& o)
         : has(o.has)
     {
@@ -254,7 +259,7 @@ public:
     Expected(const Expected&) = default;
     Expected(Expected&&) = default;
     constexpr Expected(const ValueType& e) : base(ExpectedDetail::ValueTag, e) { }
-    constexpr Expected(ValueType&& e) : base(ExpectedDetail::ValueTag, WTFMove(e)) { }
+    constexpr Expected(ValueType&& e) : base(ExpectedDetail::ValueTag, std::forward<ValueType>(e)) { }
     // template <class... Args> constexpr explicit Expected(in_place_t, Args&&...);
     // template <class U, class... Args> constexpr explicit Expected(in_place_t, std::initializer_list<U>, Args&&...);
     constexpr Expected(UnexpectedType<ErrorType> const& u) : base(ExpectedDetail::ErrorTag, u.value()) { }

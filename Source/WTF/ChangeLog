@@ -1,3 +1,15 @@
+2016-12-13  JF Bastien  <jfbastien@apple.com>
+
+        std::expected: fix rvalue forwarding issues
+        https://bugs.webkit.org/show_bug.cgi?id=165812
+
+        Reviewed by Mark Lam.
+
+        * wtf/Expected.h:
+        (WTF::UnexpectedType::UnexpectedType):
+        (WTF::ExpectedDetail::Base::Base):
+        (WTF::Expected::Expected):
+
 2016-12-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209544.
