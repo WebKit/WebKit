@@ -337,7 +337,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 
         String tag = thisObject->methodTable(vm)->toStringName(thisObject, exec);
         RETURN_IF_EXCEPTION(scope, { });
-        String newString = WTF::tryMakeString("[object ", WTFMove(tag), "]");
+        String newString = tryMakeString("[object ", WTFMove(tag), "]");
         if (!newString)
             return throwOutOfMemoryError(exec, scope);
 

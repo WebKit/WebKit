@@ -31,7 +31,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     JSGlobalObject* globalObject = thisObject.globalObject();
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     if (value.accessorGetter()) {
-        String getterName = WTF::tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
+        String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
         if (!getterName)
             return;
         accessor->setGetter(vm, globalObject, value.attributes() & Builtin

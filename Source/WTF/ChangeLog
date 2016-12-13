@@ -1,3 +1,32 @@
+2016-12-13  JF Bastien  <jfbastien@apple.com>
+
+        [WTF] Turn tryMakeString(), makeString() into variadic templates
+        https://bugs.webkit.org/show_bug.cgi?id=147142
+
+        Reviewed by Mark Lam.
+
+        I wrote this patch while improving WebAssembly's error messages,
+        and only found this bug afterwards. My implementation does the
+        bare minimum to make this code variadic without changing
+        behavior. I think it's better to go with this baby step first, and
+        improve the code later.
+
+        Notable, for my WebAssembly patch I also taught the code to handle
+        integers and other types (including WebAssembly types). A
+        follow-up could rely on ADL magic to pretty-format these other
+        types.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::sumWithOverflow): This unconditionally does the sum for all
+        inputs, which the compiler is more likely to appreciate (because
+        it's the common case) compared to testing for overflow and bailing
+        on each addition
+        (WTF::are8Bit): are: the plural of is!
+        (WTF::makeStringAccumulator): accumulate strings
+        (WTF::tryMakeStringFromAdapters): a small helper which creates the string adapters
+        (WTF::tryMakeString): expose out of WTF, since it's part of this file's used API
+        (WTF::makeString): make it variadic
+
 2016-12-13  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, silence -Wsuggest-attribute for GCC with pragmas

@@ -1,3 +1,17 @@
+2016-12-13  JF Bastien  <jfbastien@apple.com>
+
+        [WTF] Turn tryMakeString(), makeString() into variadic templates
+        https://bugs.webkit.org/show_bug.cgi?id=147142
+
+        Reviewed by Mark Lam.
+
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString): remove WTF:: prefix, it isn't needed anymore
+        * runtime/Lookup.cpp:
+        (JSC::reifyStaticAccessor): remove WTF:: prefix, it isn't needed anymore
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString): remove WTF:: prefix, it isn't needed anymore
+
 2016-12-12  Mark Lam  <mark.lam@apple.com>
 
         Rename BytecodeGenerator's ControlFlowContext to ControlFlowScope.
