@@ -3,6 +3,7 @@
 <body>
 <p>This tests clicking on a Text node assigned to a slot inside an anchor element. The link should be activated.<br>
 To manually test, click "here" below and you should see "PASS" and the mouse cursor should indicate it's a hyperlink, not text:</p>
+<script src="../../resources/ui-helper.js"></script>
 <script>
 
 var shadowHost = document.createElement('div');
@@ -24,9 +25,7 @@ if (window.internals) {
     testRunner.dumpAsText();
     document.getElementById('activation').textContent = 'FAIL';
     document.write('<div>Cursor: <span id="cursor">FAIL<span></div>');
-    eventSender.mouseMoveTo(shadowHost.offsetLeft + 5, shadowHost.offsetTop + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    UIHelper.wait(UIHelper.activateAt(shadowHost.offsetLeft + 5, shadowHost.offsetTop + 5));
 }
 
 </script>

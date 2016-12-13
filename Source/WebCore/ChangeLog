@@ -1,3 +1,24 @@
+2016-12-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        :hover rule causes a single tap to not activate a slotted anchor element
+        https://bugs.webkit.org/show_bug.cgi?id=165551
+
+        Reviewed by Antti Koivisto.
+
+        Fixed a bug in ancestorRespondingToClickEvents that we were traversing the ancestor nodes without taking
+        shadow roots and slots into account. This prevented tapping on a text node assigned to a slot inside
+        an anchor element to activate the hyperlink on iOS.
+
+        This bug was supposed to be fixed in r206605, and it was still broken on iOS due to the bug in
+        ancestorRespondingToClickEvents. It is now tested by click-text-inside-linked-slot.html.
+
+        Tests: fast/shadow-dom/click-on-slotted-anchor-with-hover.html
+               fast/shadow-dom/click-text-inside-linked-slot.html
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::ancestorRespondingToClickEvents):
+        (WebCore::Frame::qualifyingNodeAtViewportLocation):
+
 2016-12-13  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Eliminate SVGPaint and SVGColor

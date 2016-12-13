@@ -1,3 +1,29 @@
+2016-12-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        :hover rule causes a single tap to not activate a slotted anchor element
+        https://bugs.webkit.org/show_bug.cgi?id=165551
+
+        Reviewed by Antti Koivisto.
+
+        Added a test for tapping on an anchor element assigned to a slot, which has been fixed in r209065.
+
+        Also added a new helper JS wrapepr, UIHelper, defined inside LayoutTests/resources/js-helper.js
+        to provide an abstraction around EventSender and UIScriptController.
+
+        Fixed click-text-inside-linked-slot.html on iOS using UIHelper.
+
+        * fast/shadow-dom/click-on-slotted-anchor-with-hover-expected.txt: Added.
+        * fast/shadow-dom/click-on-slotted-anchor-with-hover.html: Added.
+        * fast/shadow-dom/click-text-inside-linked-slot.html:
+        * platform/ios-simulator/fast/shadow-dom/click-text-inside-linked-slot-expected.txt: Added.
+        * resources/ui-helper.js: Added.
+        (window.UIHelper.isIOS):
+        (window.UIHelper.activateAt.return.new.Promise):
+        (window.UIHelper.activateAt):
+        (window.UIHelper.wait):
+        (window.UIHelper):
+        * platform/ios-simulator-wk2/TestExpectations: Skip the test in the open source iOS's WebKit2.
+
 2016-12-13  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Eliminate SVGPaint and SVGColor
