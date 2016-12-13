@@ -1,3 +1,10 @@
+2016-12-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed, silence -Wsuggest-attribute for GCC with pragmas
+
+        * wtf/PrintStream.cpp:
+        (WTF::PrintStream::printfVariableFormat):
+
 2016-12-12  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r209653): speedometer crashes making virtual slow path tailcalls
