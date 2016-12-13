@@ -1,3 +1,22 @@
+2016-12-13  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Implement -shouldInsertText: on WKWebProcessPlugInEditingDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=165785
+        <rdar://problem/26929398>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h: Defined
+        WKEditorInsertAction and declared
+        -_webProcessPlugInBrowserContextController:shouldInsertText:replacingRange:givenAction:.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (toWK): Added. Mapped a WebCore::EditorInsertAction to a WKEditorInsertAction.
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]): Implemented
+        EditorClient::shouldInsertText() by calling
+        -_webProcessPlugInBrowserContextController:shouldInsertText:replacingRange:givenAction: with
+        the text, wrapped range handle, and action. Added shouldInsertText to DelegateMethods and
+        initialized it according to whether the delegate responds to shouldInsertText:.
+
 2016-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         NSArray leaks seen in Safari, allocated under WKIconDatabaseTryCopyCGImageArrayForURL

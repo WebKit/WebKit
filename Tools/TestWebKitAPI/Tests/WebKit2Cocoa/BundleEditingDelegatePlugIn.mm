@@ -45,6 +45,7 @@
     RetainPtr<WKWebProcessPlugInBrowserContextController> _browserContextController;
     RetainPtr<WKWebProcessPlugInController> _plugInController;
     RetainPtr<id <BundleEditingDelegateProtocol>> _remoteObject;
+    BOOL _editingDelegateShouldInsertText;
 }
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
@@ -54,10 +55,23 @@
     _browserContextController = browserContextController;
     _plugInController = plugInController;
 
+    if (id shouldInsertText = [plugInController.parameters valueForKey:@"EditingDelegateShouldInsertText"]) {
+        ASSERT([shouldInsertText isKindOfClass:[NSNumber class]]);
+        _editingDelegateShouldInsertText = [(NSNumber *)shouldInsertText boolValue];
+    } else
+        _editingDelegateShouldInsertText = YES;
+
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleEditingDelegateProtocol)];
     _remoteObject = [browserContextController._remoteObjectRegistry remoteObjectProxyWithInterface:interface];
 
     [_browserContextController _setEditingDelegate:self];
+}
+
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldInsertText:(nonnull NSString *)text replacingRange:(nonnull WKWebProcessPlugInRangeHandle *)range givenAction:(WKEditorInsertAction)action
+{
+    JSValue *jsRange = [range.frame jsRangeForRangeHandle:range inWorld:[WKWebProcessPlugInScriptWorld normalWorld]];
+    [_remoteObject shouldInsertText:text replacingRange:[jsRange toString] givenAction:action];
+    return _editingDelegateShouldInsertText;
 }
 
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willWriteRangeToPasteboard:(WKWebProcessPlugInRangeHandle *)range

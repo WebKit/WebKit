@@ -27,8 +27,11 @@
 
 #if WK_API_ENABLED
 
+#import <WebKit/WKWebProcessPlugInEditingDelegate.h>
+
 @protocol BundleEditingDelegateProtocol <NSObject>
 
+- (void)shouldInsertText:(NSString *)text replacingRange:(NSString *)rangeAsString givenAction:(WKEditorInsertAction)action;
 - (void)willWriteToPasteboard:(NSString *)rangeAsString;
 - (void)didWriteToPasteboard;
 

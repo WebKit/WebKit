@@ -32,11 +32,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, WKEditorInsertAction) {
+    WKEditorInsertActionTyped,
+    WKEditorInsertActionPasted,
+    WKEditorInsertActionDropped,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @protocol WKWebProcessPlugInEditingDelegate <NSObject>
 
 @optional
 
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldInsertText:(NSString *)text replacingRange:(WKWebProcessPlugInRangeHandle *)range givenAction:(WKEditorInsertAction)action;
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willWriteRangeToPasteboard:(WKWebProcessPlugInRangeHandle *)range;
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range;
 - (void)_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:(WKWebProcessPlugInBrowserContextController *)controller;

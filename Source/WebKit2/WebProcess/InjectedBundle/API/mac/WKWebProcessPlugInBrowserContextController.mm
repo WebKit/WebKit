@@ -573,6 +573,18 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
     return _editingDelegate.getAutoreleased();
 }
 
+static inline WKEditorInsertAction toWK(EditorInsertAction action)
+{
+    switch (action) {
+    case EditorInsertActionTyped:
+        return WKEditorInsertActionTyped;
+    case EditorInsertActionPasted:
+        return WKEditorInsertActionPasted;
+    case EditorInsertActionDropped:
+        return WKEditorInsertActionDropped;
+    }
+}
+
 - (void)_setEditingDelegate:(id <WKWebProcessPlugInEditingDelegate>)editingDelegate
 {
     _editingDelegate = editingDelegate;
@@ -586,6 +598,14 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
         }
 
     private:
+        bool shouldInsertText(WebPage&, StringImpl* text, Range* rangeToReplace, EditorInsertAction action) final
+        {
+            if (!m_delegateMethods.shouldInsertText)
+                return true;
+
+            return [m_controller->_editingDelegate.get() _webProcessPlugInBrowserContextController:m_controller shouldInsertText:String(text) replacingRange:wrapper(*InjectedBundleRangeHandle::getOrCreate(rangeToReplace)) givenAction:toWK(action)];
+        }
+
         void willWriteToPasteboard(WebKit::WebPage&, WebCore::Range* range) final
         {
             if (!m_delegateMethods.willWriteToPasteboard)
@@ -617,12 +637,14 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
         WKWebProcessPlugInBrowserContextController *m_controller;
         const struct DelegateMethods {
             DelegateMethods(RetainPtr<id <WKWebProcessPlugInEditingDelegate>> delegate)
-                : willWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willWriteRangeToPasteboard:)])
+                : shouldInsertText([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:shouldInsertText:replacingRange:givenAction:)])
+                , willWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:willWriteRangeToPasteboard:)])
                 , getPasteboardDataForRange([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextController:pasteboardDataForRange:)])
                 , didWriteToPasteboard([delegate respondsToSelector:@selector(_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:)])
             {
             }
 
+            bool shouldInsertText;
             bool willWriteToPasteboard;
             bool getPasteboardDataForRange;
             bool didWriteToPasteboard;

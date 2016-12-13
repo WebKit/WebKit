@@ -35,11 +35,13 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <wtf/RetainPtr.h>
 
+static bool shouldInsertTextCalled;
 static bool willWriteToPasteboard;
 static bool didWriteToPasteboard;
 
@@ -47,6 +49,14 @@ static bool didWriteToPasteboard;
 @end
 
 @implementation BundleEditingDelegateRemoteObject
+
+- (void)shouldInsertText:(NSString *)text replacingRange:(NSString *)rangeAsString givenAction:(WKEditorInsertAction)action
+{
+    EXPECT_WK_STREQ("hello", text);
+    EXPECT_WK_STREQ("something", rangeAsString);
+    EXPECT_EQ(WKEditorInsertActionPasted, action);
+    shouldInsertTextCalled = true;
+}
 
 - (void)willWriteToPasteboard:(NSString *)rangeAsString
 {
@@ -64,10 +74,11 @@ static bool didWriteToPasteboard;
 TEST(WebKit2, WKWebProcessPlugInEditingDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration testwebkitapi_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
+    [[configuration processPool] _setObject:[NSNumber numberWithBool:NO] forBundleParameter:@"EditingDelegateShouldInsertText"];
     
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadHTMLString:@"Just something to copy <script> var textNode = document.body.firstChild; document.getSelection().setBaseAndExtent(textNode, 5, textNode, 14) </script>" baseURL:nil];
+    [webView loadHTMLString:@"<body style='-webkit-user-modify: read-write-plaintext-only'>Just something to copy <script> var textNode = document.body.firstChild; document.getSelection().setBaseAndExtent(textNode, 5, textNode, 14) </script>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
 
     RetainPtr<BundleEditingDelegateRemoteObject> object = adoptNS([[BundleEditingDelegateRemoteObject alloc] init]);
@@ -77,11 +88,33 @@ TEST(WebKit2, WKWebProcessPlugInEditingDelegate)
     [webView performSelector:@selector(copy:) withObject:nil];
 
     TestWebKitAPI::Util::run(&didWriteToPasteboard);
+
+    NSString *copiedString = nil;
 #if PLATFORM(MAC)
-    EXPECT_STREQ("hello", [[NSPasteboard generalPasteboard] stringForType:@"org.webkit.data"].UTF8String);
+    copiedString = [[NSPasteboard generalPasteboard] stringForType:@"org.webkit.data"];
 #elif PLATFORM(IOS)
-    EXPECT_TRUE([[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] isEqual:[@"hello" dataUsingEncoding:NSUTF8StringEncoding]]);
+    copiedString = [[[NSString alloc] initWithData:[[UIPasteboard generalPasteboard] dataForPasteboardType:@"org.webkit.data"] encoding:NSUTF8StringEncoding] autorelease];
 #endif
+    EXPECT_WK_STREQ("hello", copiedString);
+
+#if PLATFORM(MAC)
+    [[NSPasteboard generalPasteboard] setString:copiedString forType:@"public.utf8-plain-text"];
+#elif PLATFORM(IOS)
+    [[UIPasteboard generalPasteboard] setValue:copiedString forPasteboardType:@"public.utf8-plain-text"];
+#endif
+    [webView performSelector:@selector(paste:) withObject:nil];
+
+    TestWebKitAPI::Util::run(&shouldInsertTextCalled);
+
+    __block bool doneEvaluatingJavaScript = false;
+    [webView evaluateJavaScript:@"document.body.firstChild.textContent" completionHandler:^(id _Nullable value, NSError * _Nullable error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([value isKindOfClass:[NSString class]]);
+        EXPECT_WK_STREQ("Just something to copy ", (NSString *)value);
+        doneEvaluatingJavaScript = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
 }
 
 #endif
