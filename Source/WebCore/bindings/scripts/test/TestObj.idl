@@ -151,7 +151,6 @@ enum TestConfidence { "high", "kinda-low" };
     void methodWithByteStringArgTreatingNullAsEmptyString([TreatNullAs=EmptyString] ByteString str);
 
     void serializedValue(SerializedScriptValue serializedArg);
-    void optionsObject(Dictionary oo, optional Dictionary ooo);
 
     void methodWithRecord(record<DOMString, long> recordParameter);
 

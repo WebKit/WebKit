@@ -1462,18 +1462,6 @@ template<typename T> struct JSConverter<IDLSerializedScriptValue<T>> {
 };
 
 // MARK: -
-// MARK: Legacy dictionary type
-
-template<typename T> struct Converter<IDLLegacyDictionary<T>> : DefaultConverter<IDLLegacyDictionary<T>> {
-    using ReturnType = T;
-
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
-    {
-        return T(&state, value);
-    }
-};
-
-// MARK: -
 // MARK: Event Listener type
 
 template<typename T> struct Converter<IDLEventListener<T>> : DefaultConverter<IDLEventListener<T>> {

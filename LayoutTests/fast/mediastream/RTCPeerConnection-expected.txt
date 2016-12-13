@@ -3,10 +3,10 @@ Tests the RTCPeerConnection constructor.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS new RTCPeerConnection(null); threw exception TypeError: RTCPeerConnection argument must be a valid Dictionary.
-PASS new RTCPeerConnection(undefined); threw exception TypeError: RTCPeerConnection argument must be a valid Dictionary.
+PASS new RTCPeerConnection(null); threw exception TypeError: RTCPeerConnection argument must be a valid dictionary.
+PASS new RTCPeerConnection(undefined); threw exception TypeError: RTCPeerConnection argument must be a valid dictionary.
 PASS new RTCPeerConnection(); threw exception TypeError: Not enough arguments.
-PASS new RTCPeerConnection(''); threw exception TypeError: RTCPeerConnection argument must be a valid Dictionary.
+PASS new RTCPeerConnection(''); threw exception TypeError: RTCPeerConnection argument must be a valid dictionary.
 PASS new RTCPeerConnection({}); did not throw exception.
 PASS new RTCPeerConnection({iceServers:[]}); did not throw exception.
 PASS new RTCPeerConnection({iceServers:[{url:'stun:foo.com'}]}); threw exception TypeError: Error creating RTCPeerConnection.

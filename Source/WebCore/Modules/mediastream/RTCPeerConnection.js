@@ -38,7 +38,7 @@ function initializeRTCPeerConnection(configuration)
         @throwTypeError("Not enough arguments");
 
     if (!@isObject(configuration))
-        @throwTypeError("RTCPeerConnection argument must be a valid Dictionary");
+        @throwTypeError("RTCPeerConnection argument must be a valid dictionary");
 
     // FIXME: Handle errors in a better way than catching and re-throwing (http://webkit.org/b/158936)
     try {

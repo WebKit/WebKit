@@ -635,7 +635,7 @@ static bool canCallApplePaySessionAPIs(Document& document, String& errorMessage)
     return true;
 }
 
-ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, unsigned version, const Dictionary& dictionary)
+ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(JSC::ExecState& state, Document& document, unsigned version, JSC::JSValue arguments)
 {
     DOMWindow& window = *document.domWindow();
 
@@ -657,7 +657,7 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
         return Exception { INVALID_ACCESS_ERR };
     }
 
-    auto paymentRequest = createPaymentRequest(version, window, dictionary);
+    auto paymentRequest = createPaymentRequest(version, window, { &state, arguments });
     if (!paymentRequest)
         return Exception { TYPE_MISMATCH_ERR };
 
@@ -818,19 +818,19 @@ ExceptionOr<void> ApplePaySession::abort()
     return { };
 }
 
-ExceptionOr<void> ApplePaySession::completeMerchantValidation(const Dictionary& merchantSessionDictionary)
+ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::ExecState& state, JSC::JSValue merchantSessionValue)
 {
     if (!canCompleteMerchantValidation())
         return Exception { INVALID_ACCESS_ERR };
 
-    if (!merchantSessionDictionary.initializerObject())
+    if (!merchantSessionValue.isObject())
         return Exception { TypeError };
 
     auto& document = *downcast<Document>(scriptExecutionContext());
     auto& window = *document.domWindow();
 
     String errorMessage;
-    auto merchantSession = PaymentMerchantSession::fromJS(*merchantSessionDictionary.execState(), merchantSessionDictionary.initializerObject(), errorMessage);
+    auto merchantSession = PaymentMerchantSession::fromJS(state, asObject(merchantSessionValue), errorMessage);
     if (!merchantSession) {
         window.printErrorMessage(errorMessage);
         return Exception { INVALID_ACCESS_ERR };

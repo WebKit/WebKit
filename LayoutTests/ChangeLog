@@ -1,3 +1,15 @@
+2016-12-12  Darin Adler  <darin@apple.com>
+
+        Remove bindings generation support for legacy WebCore::Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=165762
+
+        Reviewed by Sam Weinig.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params-expected.txt:
+        * fast/mediastream/RTCPeerConnection-overloaded-operations-params.html:
+        Updated to expect error messages with "dictionary" with a lowercase D.
+
 2016-12-12  Chris Dumez  <cdumez@apple.com>
 
         Add Document.onvisibilitychange event handler attribute

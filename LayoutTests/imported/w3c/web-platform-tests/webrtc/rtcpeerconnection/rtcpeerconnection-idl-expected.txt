@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: line 100: TypeError: RTCPeerConnection argument must be a valid Dictionary
+CONSOLE MESSAGE: line 100: TypeError: RTCPeerConnection argument must be a valid dictionary
 Description
 
 This test verifies the availability of the RTCPeerConnection interface.
 
 
-Harness Error (FAIL), message = TypeError: RTCPeerConnection argument must be a valid Dictionary
+Harness Error (FAIL), message = TypeError: RTCPeerConnection argument must be a valid dictionary
 
 

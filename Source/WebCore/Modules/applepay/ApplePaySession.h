@@ -48,7 +48,7 @@ class URL;
 
 class ApplePaySession final : public RefCounted<ApplePaySession>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, const Dictionary&);
+    static ExceptionOr<Ref<ApplePaySession>> create(JSC::ExecState&, Document&, unsigned version, JSC::JSValue);
     virtual ~ApplePaySession();
 
     // DOM API.
@@ -68,7 +68,7 @@ public:
 
     ExceptionOr<void> begin();
     ExceptionOr<void> abort();
-    ExceptionOr<void> completeMerchantValidation(const Dictionary& merchantSessionDictionary);
+    ExceptionOr<void> completeMerchantValidation(JSC::ExecState&, JSC::JSValue merchantSessionDictionary);
     ExceptionOr<void> completeShippingMethodSelection(unsigned short status, const Dictionary& newTotal, const ArrayValue& newLineItems);
     ExceptionOr<void> completeShippingContactSelection(unsigned short status, const ArrayValue& newShippingMethods, const Dictionary& newTotal, const ArrayValue& newLineItems);
     ExceptionOr<void> completePaymentMethodSelection(const Dictionary& newTotal, const ArrayValue& newLineItems);

@@ -1,5 +1,5 @@
 
-FAIL Can send empty strings across a WebRTC data channel. RTCPeerConnection argument must be a valid Dictionary
+FAIL Can send empty strings across a WebRTC data channel. RTCPeerConnection argument must be a valid dictionary
 Messages exchanged
 
 

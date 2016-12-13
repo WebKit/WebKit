@@ -868,7 +868,6 @@ sub IsBuiltinType
     return 1 if $type->name eq "Promise";
     return 1 if $type->name eq "XPathNSResolver";    
     return 1 if $type->name eq "EventListener";    
-    return 1 if $type->name eq "Dictionary";    
     return 1 if $type->name eq "SerializedScriptValue";    
 
     return 0;

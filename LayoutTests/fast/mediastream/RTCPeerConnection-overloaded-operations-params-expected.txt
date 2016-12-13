@@ -22,8 +22,8 @@ PASS promise pc.createOffer(null, null) rejected with TypeError: Argument 1 ('su
 *** Bad input
 PASS promise pc.createOffer({}, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createOffer must be a function
 PASS promise pc.createOffer(emptyFunc, {}) rejected with TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createOffer must be a function
-PASS promise pc.createOffer(1) rejected with TypeError: Argument 1 ('options') to RTCPeerConnection.createOffer must be a Dictionary
-PASS promise pc.createOffer(emptyFunc, emptyFunc, 1) rejected with TypeError: Argument 3 ('options') to RTCPeerConnection.createOffer must be a Dictionary
+PASS promise pc.createOffer(1) rejected with TypeError: Argument 1 ('options') to RTCPeerConnection.createOffer must be a dictionary
+PASS promise pc.createOffer(emptyFunc, emptyFunc, 1) rejected with TypeError: Argument 3 ('options') to RTCPeerConnection.createOffer must be a dictionary
 
 *** Test createAnswer
 PASS promise pc.createAnswer() did not reject with TypeError.
@@ -43,8 +43,8 @@ PASS promise pc.createAnswer(null, null) rejected with TypeError: Argument 1 ('s
 *** Bad input
 PASS promise pc.createAnswer({}, emptyFunc) rejected with TypeError: Argument 1 ('successCallback') to RTCPeerConnection.createAnswer must be a function
 PASS promise pc.createAnswer(emptyFunc, {}) rejected with TypeError: Argument 2 ('errorCallback') to RTCPeerConnection.createAnswer must be a function
-PASS promise pc.createAnswer(1) rejected with TypeError: Argument 1 ('options') to RTCPeerConnection.createAnswer must be a Dictionary
-PASS promise pc.createAnswer(emptyFunc, emptyFunc, 1) rejected with TypeError: Argument 3 ('options') to RTCPeerConnection.createAnswer must be a Dictionary
+PASS promise pc.createAnswer(1) rejected with TypeError: Argument 1 ('options') to RTCPeerConnection.createAnswer must be a dictionary
+PASS promise pc.createAnswer(emptyFunc, emptyFunc, 1) rejected with TypeError: Argument 3 ('options') to RTCPeerConnection.createAnswer must be a dictionary
 
 *** Test setLocalDescription
 PASS promise pc.setLocalDescription(desc) did not reject with TypeError.

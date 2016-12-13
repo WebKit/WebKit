@@ -309,7 +309,7 @@ sub AddToIncludesForIDLType
         return;
     }
     
-    if ($type->name eq "SerializedScriptValue" || $type->name eq "Dictionary") {
+    if ($type->name eq "SerializedScriptValue") {
         AddToIncludes($type->name . ".h", $includesRef, $conditional);
         return;
     }
@@ -2151,7 +2151,7 @@ sub AreTypesDistinguishableForOverloadResolution
 
     my $isDictionary = sub {
         my $type = shift;
-        return $type->name eq "Dictionary" || $codeGenerator->IsDictionaryType($type);
+        return $codeGenerator->IsDictionaryType($type);
     };
     my $isCallbackFunctionOrDictionary = sub {
         my $type = shift;
@@ -2281,7 +2281,7 @@ sub GenerateOverloadedFunctionOrConstructor
     };
     my $isDictionaryOrRecordParameter = sub {
         my ($type, $optionality) = @_;
-        return $type->name eq "Dictionary" || $codeGenerator->IsDictionaryType($type) || $codeGenerator->IsRecordType($type);
+        return $codeGenerator->IsDictionaryType($type) || $codeGenerator->IsRecordType($type);
     };
     my $isNullableOrDictionaryOrRecordOrUnionContainingOne = sub {
         my ($type, $optionality) = @_;
@@ -4328,9 +4328,6 @@ my %automaticallyGeneratedDefaultValues = (
     "DOMString" => "\"undefined\"",
     "USVString" => "\"undefined\"",
 
-    # Dictionary(state, undefined) will construct an empty Dictionary.
-    "Dictionary" => "[]",
-
     # JSValue::toBoolean() will convert undefined to false.
     "boolean" => "false",
 
@@ -4418,7 +4415,7 @@ sub GenerateParametersCheck
 
         if ($argument->isOptional && !defined($argument->default)) {
             # As per Web IDL, optional dictionary arguments are always considered to have a default value of an empty dictionary, unless otherwise specified.
-            $argument->default("[]") if $type->name eq "Dictionary" or $codeGenerator->IsDictionaryType($type);
+            $argument->default("[]") if $codeGenerator->IsDictionaryType($type);
 
             # Treat undefined the same as an empty sequence Or frozen array.
             $argument->default("[]") if $codeGenerator->IsSequenceOrFrozenArrayType($type);
@@ -5015,7 +5012,6 @@ my %nativeType = (
     "DOMString" => "String",
     "USVString" => "String",
     "Date" => "double",
-    "Dictionary" => "Dictionary",
     "EventListener" => "RefPtr<EventListener>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "XPathNSResolver" => "RefPtr<XPathNSResolver>",
@@ -5114,7 +5110,6 @@ sub GetBaseIDLType
         # Non-WebIDL extensions
         "Date" => "IDLDate",
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
-        "Dictionary" => "IDLLegacyDictionary<Dictionary>",
         "EventListener" => "IDLEventListener<JSEventListener>",
         "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
 

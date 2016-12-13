@@ -26,8 +26,8 @@
 [
     ActiveDOMObject,
     Conditional=APPLE_PAY,
-    Constructor(unsigned long version, Dictionary paymentRequest),
-    ConstructorCallWith=Document,
+    Constructor(unsigned long version, any paymentRequest),
+    ConstructorCallWith=Document&ScriptState,
     ConstructorMayThrowException,
     EnabledBySetting=ApplePay,
 ] interface ApplePaySession : EventTarget {
@@ -47,10 +47,10 @@
 
     [MayThrowException] void begin();
     [MayThrowException] void abort();
-    [MayThrowException] void completeMerchantValidation(Dictionary merchantSession);
-    [Custom, MayThrowException] void completeShippingMethodSelection(unsigned short status, Dictionary newTotal, sequence<Dictionary> newLineItems);
-    [Custom, MayThrowException] void completeShippingContactSelection(unsigned short status, sequence<Dictionary> newShippingMethods, Dictionary newTotal, sequence<Dictionary> newLineItems);
-    [Custom, MayThrowException] void completePaymentMethodSelection(Dictionary newTotal, sequence<Dictionary> newLineItems);
+    [CallWith=ScriptState, MayThrowException] void completeMerchantValidation(any merchantSession);
+    [Custom, MayThrowException] void completeShippingMethodSelection(unsigned short status, any newTotal, any newLineItems);
+    [Custom, MayThrowException] void completeShippingContactSelection(unsigned short status, any newShippingMethods, any newTotal, any newLineItems);
+    [Custom, MayThrowException] void completePaymentMethodSelection(any newTotal, any newLineItems);
     [MayThrowException] void completePayment(unsigned short status);
 
     attribute EventHandler onvalidatemerchant;

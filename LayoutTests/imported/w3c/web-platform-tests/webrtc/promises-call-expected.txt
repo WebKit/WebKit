@@ -1,5 +1,5 @@
 
-FAIL Can set up a basic WebRTC call with only data using promises. RTCPeerConnection argument must be a valid Dictionary
+FAIL Can set up a basic WebRTC call with only data using promises. RTCPeerConnection argument must be a valid dictionary
 iceConnectionState info
 
 

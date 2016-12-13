@@ -71,11 +71,11 @@
                         return promiseShouldReject(`pc.${functionName}(emptyFunc, {})`, "reason");
                     })
                     .then(function () {
-                        reason = `TypeError: Argument 1 ('options') to RTCPeerConnection.${functionName} must be a Dictionary`;
+                        reason = `TypeError: Argument 1 ('options') to RTCPeerConnection.${functionName} must be a dictionary`;
                         return promiseShouldReject(`pc.${functionName}(1)`, "reason");
                     })
                     .then(function () {
-                        reason = `TypeError: Argument 3 ('options') to RTCPeerConnection.${functionName} must be a Dictionary`;
+                        reason = `TypeError: Argument 3 ('options') to RTCPeerConnection.${functionName} must be a dictionary`;
                         return promiseShouldReject(`pc.${functionName}(emptyFunc, emptyFunc, 1)`, "reason");
                     })
                     .then(function () {

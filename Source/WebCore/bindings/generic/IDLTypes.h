@@ -165,7 +165,6 @@ struct IDLDate : IDLType<double> {
 };
 
 template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
-template<typename T> struct IDLLegacyDictionary : IDLType<T> { };
 template<typename T> struct IDLEventListener : IDLWrapper<T> { };
 template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
 

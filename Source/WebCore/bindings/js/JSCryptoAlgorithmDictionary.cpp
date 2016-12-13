@@ -104,7 +104,7 @@ static JSValue getProperty(ExecState* exec, JSObject* object, const char* name)
 
 static bool getHashAlgorithm(Dictionary& dictionary, CryptoAlgorithmIdentifier& result, HashRequirement isRequired)
 {
-    // FXIME: Teach Dictionary how to return JSValues, and use that to get hash element value.
+    // FIXME: Teach Dictionary how to return JSValues, and use that to get hash element value.
 
     ExecState* exec = dictionary.execState();
     VM& vm = exec->vm();
