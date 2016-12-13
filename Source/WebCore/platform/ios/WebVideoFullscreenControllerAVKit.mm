@@ -179,7 +179,7 @@ private:
     // WebVideoFullscreenModel
     void addClient(WebVideoFullscreenModelClient&) override;
     void removeClient(WebVideoFullscreenModelClient&) override;
-    void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
+    void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(FloatRect) override;
     void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
     void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
@@ -444,13 +444,13 @@ void WebVideoFullscreenControllerContext::removeClient(WebVideoFullscreenModelCl
     m_fullscreenClients.remove(&client);
 }
 
-void WebVideoFullscreenControllerContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+void WebVideoFullscreenControllerContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     ASSERT(isUIThread());
     RefPtr<WebVideoFullscreenControllerContext> protectedThis(this);
-    WebThreadRun([protectedThis, this, mode] {
+    WebThreadRun([protectedThis, this, mode, finishedWithMedia] {
         if (m_fullscreenModel)
-            m_fullscreenModel->requestFullscreenMode(mode);
+            m_fullscreenModel->requestFullscreenMode(mode, finishedWithMedia);
     });
 }
 

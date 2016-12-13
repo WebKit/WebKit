@@ -133,7 +133,7 @@ protected:
     void videoDimensionsChanged(uint64_t contextId, const WebCore::FloatSize&);
 
     // Messages from WebVideoFullscreenManagerProxy
-    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia);
     void didSetupFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);

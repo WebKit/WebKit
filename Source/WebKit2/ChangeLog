@@ -1,3 +1,19 @@
+2016-12-12  Dean Jackson  <dino@apple.com>
+
+        [iOS] MediaDocument "Done" button should navigate the page back
+        https://bugs.webkit.org/show_bug.cgi?id=165779
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenModelContext::requestFullscreenMode):
+        (WebKit::WebVideoFullscreenManagerProxy::requestFullscreenMode):
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::requestFullscreenMode):
+
 2016-12-12  Tim Horton  <timothy_horton@apple.com>
 
         Provide SPI to avoid blocking on painting when coming into view

@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT void addClient(WebVideoFullscreenModelClient&) override;
     WEBCORE_EXPORT void removeClient(WebVideoFullscreenModelClient&) override;
-    WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) override;
+    WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
     WEBCORE_EXPORT void setVideoLayerGravity(VideoGravity) override;
     WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;

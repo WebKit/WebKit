@@ -291,9 +291,9 @@ void WebVideoFullscreenManager::videoDimensionsChanged(uint64_t contextId, const
 
 #pragma mark Messages from WebVideoFullscreenManagerProxy:
 
-void WebVideoFullscreenManager::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+void WebVideoFullscreenManager::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
-    ensureModel(contextId).requestFullscreenMode(mode);
+    ensureModel(contextId).requestFullscreenMode(mode, finishedWithMedia);
 }
 
 void WebVideoFullscreenManager::fullscreenModeChanged(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode)

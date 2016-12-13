@@ -43,7 +43,7 @@ public:
     virtual void addClient(WebVideoFullscreenModelClient&) = 0;
     virtual void removeClient(WebVideoFullscreenModelClient&)= 0;
 
-    virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode) = 0;
+    virtual void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) = 0;
     virtual void setVideoLayerFrame(FloatRect) = 0;
     enum VideoGravity { VideoGravityResize, VideoGravityResizeAspect, VideoGravityResizeAspectFill };
     virtual void setVideoLayerGravity(VideoGravity) = 0;

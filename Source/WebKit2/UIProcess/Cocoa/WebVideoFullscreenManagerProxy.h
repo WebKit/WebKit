@@ -79,7 +79,7 @@ private:
     // WebVideoFullscreenModel
     void addClient(WebCore::WebVideoFullscreenModelClient&) override;
     void removeClient(WebCore::WebVideoFullscreenModelClient&) override;
-    void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
+    void requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
     void setVideoLayerFrame(WebCore::FloatRect) override;
     void setVideoLayerGravity(VideoGravity) override;
     void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
@@ -147,7 +147,7 @@ private:
 #endif
 
     // Messages to WebVideoFullscreenManager
-    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
     void didSetupFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);

@@ -136,10 +136,10 @@ void WebVideoFullscreenModelContext::removeClient(WebVideoFullscreenModelClient&
     m_clients.remove(&client);
 }
 
-void WebVideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
+void WebVideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     if (m_manager)
-        m_manager->requestFullscreenMode(m_contextId, mode);
+        m_manager->requestFullscreenMode(m_contextId, mode, finishedWithMedia);
 }
 
 void WebVideoFullscreenModelContext::setVideoLayerFrame(WebCore::FloatRect frame)
@@ -435,9 +435,9 @@ void WebVideoFullscreenManagerProxy::preparedToReturnToInline(uint64_t contextId
 
 #pragma mark Messages to WebVideoFullscreenManager
 
-void WebVideoFullscreenManagerProxy::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode)
+void WebVideoFullscreenManagerProxy::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
-    m_page->send(Messages::WebVideoFullscreenManager::RequestFullscreenMode(contextId, mode), m_page->pageID());
+    m_page->send(Messages::WebVideoFullscreenManager::RequestFullscreenMode(contextId, mode, finishedWithMedia), m_page->pageID());
 }
 
 void WebVideoFullscreenManagerProxy::didSetupFullscreen(uint64_t contextId)

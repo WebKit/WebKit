@@ -1,3 +1,29 @@
+2016-12-12  Dean Jackson  <dino@apple.com>
+
+        [iOS] MediaDocument "Done" button should navigate the page back
+        https://bugs.webkit.org/show_bug.cgi?id=165779
+
+        Reviewed by Sam Weinig.
+
+        Detect if the exit from fullscreen was caused by the Done button,
+        and if so, tell the page to navigate back.
+
+        Unfortunately this is not yet testable. It's waiting on the
+        UI-based device testing in development by the media team.
+
+        * platform/cocoa/WebVideoFullscreenModel.h: Add a finishedWithMedia parameter to
+        requestFullscreenMode, to indicate if the change in mode is associated with
+        the closing of the media document.
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::requestFullscreenMode): If we're a media
+        document, and we say we're finished with the media, tell the document
+        to navigate back a page.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::requestFullscreenMode):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+
 2016-12-12  Zalan Bujtas  <zalan@apple.com>
 
         Infinite recursion when viewport is set to the size of the content but the content overflows the viewport.
