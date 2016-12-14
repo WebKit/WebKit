@@ -1,3 +1,16 @@
+2016-12-13  Keith Rollin  <krollin@apple.com>
+
+        Memory warning logging appears to capture resident footprint, missing compress/swap.
+        https://bugs.webkit.org/show_bug.cgi?id=165533
+        <rdar://problem/29318410>
+
+        Reviewed by Daniel Bates.
+
+        Fix GTK build by adding an explicit constructor.
+
+        * platform/MemoryPressureHandler.h:
+        (WebCore::MemoryPressureHandler::ReliefLogger::MemoryUsage::MemoryUsage):
+
 2016-12-13  Daniel Bates  <dabates@apple.com>
 
         CSP: ws: and wss: blocked with connect-src *

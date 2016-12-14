@@ -115,6 +115,12 @@ public:
 
     private:
         struct MemoryUsage {
+            MemoryUsage() = default;
+            MemoryUsage(size_t resident, size_t physical)
+                : resident(resident)
+                , physical(physical)
+            {
+            }
             size_t resident { 0 };
             size_t physical { 0 };
         };
