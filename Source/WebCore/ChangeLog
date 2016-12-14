@@ -1,3 +1,40 @@
+2016-12-14  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Massively speedup IDBIndex.get().
+        https://bugs.webkit.org/show_bug.cgi?id=165802
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change to Javascript, table upgrade change covered by API test).
+
+        This change upgrades the IndexRecords schema to include the ObjectStore record ID for the referenced record.
+        It also adds a SQLite Index-by-key on IndexRecords.
+        
+        This speeds up PerformanceTests/IndexedDB/index-get.html by 15-20x.
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::v3IndexRecordsTableSchema):
+        (WebCore::IDBServer::v3IndexRecordsTableSchemaAlternate):
+        (WebCore::IDBServer::v1IndexRecordsIndexSchema):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsTable):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::ensureValidIndexRecordsIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::markAsErrored):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentRecordRowID):
+
 2016-12-14  Sam Weinig  <sam@webkit.org>
 
         Actually set the shipping contact when validating the payment request

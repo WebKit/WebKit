@@ -343,6 +343,13 @@ bool SQLiteIDBCursor::advanceOnce()
     return result == AdvanceResult::Success;
 }
 
+void SQLiteIDBCursor::markAsErrored()
+{
+    m_completed = true;
+    m_errored = true;
+    m_currentRecordRowID = 0;
+}
+
 SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
 {
     ASSERT(m_transaction->sqliteTransaction());
@@ -359,42 +366,40 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
         m_currentKey = IDBKeyData();
         m_currentPrimaryKey = IDBKeyData();
         m_currentValue = nullptr;
+        m_currentRecordRowID = 0;
 
         return AdvanceResult::Success;
     }
 
     if (result != SQLITE_ROW) {
         LOG_ERROR("Error advancing cursor - (%i) %s", result, m_transaction->sqliteTransaction()->database().lastErrorMsg());
-        m_completed = true;
-        m_errored = true;
+        markAsErrored();
         return AdvanceResult::Failure;
     }
+
+    m_currentRecordRowID = m_statement->getColumnInt64(0);
+    ASSERT(m_currentRecordRowID);
 
     Vector<uint8_t> keyData;
     m_statement->getColumnBlobAsVector(1, keyData);
 
     if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentKey)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
-        m_completed = true;
-        m_errored = true;
+        markAsErrored();
         return AdvanceResult::Failure;
     }
 
     m_statement->getColumnBlobAsVector(2, keyData);
-
-    int64_t recordID = m_statement->getColumnInt64(0);
-    ASSERT(recordID);
 
     // The primaryKey of an ObjectStore cursor is the same as its key.
     if (m_indexID == IDBIndexInfo::InvalidId) {
         m_currentPrimaryKey = m_currentKey;
 
         Vector<String> blobURLs, blobFilePaths;
-        auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(recordID, blobURLs, blobFilePaths);
+        auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(m_currentRecordRowID, blobURLs, blobFilePaths);
         if (!error.isNull()) {
             LOG_ERROR("Unable to fetch blob records from database while advancing cursor");
-            m_completed = true;
-            m_errored = true;
+            markAsErrored();
             return AdvanceResult::Failure;
         }
 
@@ -403,8 +408,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     } else {
         if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentPrimaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
-            m_completed = true;
-            m_errored = true;
+            markAsErrored();
             return AdvanceResult::Failure;
         }
 
@@ -414,8 +418,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
             || objectStoreStatement.bindBlob(1, keyData.data(), keyData.size()) != SQLITE_OK
             || objectStoreStatement.bindInt64(2, m_objectStoreID) != SQLITE_OK) {
             LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", m_statement->database().lastError(), m_statement->database().lastErrorMsg());
-            m_completed = true;
-            m_errored = true;
+            markAsErrored();
             return AdvanceResult::Failure;
         }
 
@@ -430,8 +433,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
             return AdvanceResult::ShouldAdvanceAgain;
         } else {
             LOG_ERROR("Could not step index cursor statement into object store records (%i) '%s'", m_statement->database().lastError(), m_statement->database().lastErrorMsg());
-            m_completed = true;
-            m_errored = true;
+            markAsErrored();
             return AdvanceResult::Failure;
 
         }

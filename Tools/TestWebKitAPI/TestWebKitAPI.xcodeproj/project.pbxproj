@@ -119,6 +119,10 @@
 		510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */; };
 		510477771D298E72009747EB /* IDBDeleteRecovery.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477761D298E57009747EB /* IDBDeleteRecovery.html */; };
 		510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510477751D298E03009747EB /* IDBDeleteRecovery.mm */; };
+		5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */; };
+		5110FCF61E01CD83006F8D0B /* IndexUpgrade.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF31E01CD77006F8D0B /* IndexUpgrade.sqlite3 */; };
+		5110FCF91E01CD8A006F8D0B /* IndexUpgrade.blob in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */; };
+		5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */; };
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
 		515BE16F1D428BB100DD7C68 /* StoreBlobToBeDeleted.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */; };
@@ -588,6 +592,9 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				5110FCF91E01CD8A006F8D0B /* IndexUpgrade.blob in Copy Resources */,
+				5110FCF61E01CD83006F8D0B /* IndexUpgrade.sqlite3 in Copy Resources */,
+				5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */,
 				5C9E56871DF914AE00C9EE33 /* contentBlockerCheck.html in Copy Resources */,
 				07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */,
 				9B270FEE1DDC2C0B002D53F3 /* closed-shadow-tree-test.html in Copy Resources */,
@@ -917,6 +924,10 @@
 		510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-wal"; sourceTree = "<group>"; };
 		510477751D298E03009747EB /* IDBDeleteRecovery.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBDeleteRecovery.mm; sourceTree = "<group>"; };
 		510477761D298E57009747EB /* IDBDeleteRecovery.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBDeleteRecovery.html; sourceTree = "<group>"; };
+		5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBIndexUpgradeToV2.mm; sourceTree = "<group>"; };
+		5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBIndexUpgradeToV2.html; sourceTree = "<group>"; };
+		5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexUpgrade.blob; sourceTree = "<group>"; };
+		5110FCF31E01CD77006F8D0B /* IndexUpgrade.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = IndexUpgrade.sqlite3; sourceTree = "<group>"; };
 		51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic_Bundle.cpp; sourceTree = "<group>"; };
 		51393E1E1523944A005F39C5 /* DOMWindowExtensionBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionBasic.cpp; sourceTree = "<group>"; };
 		5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuCanCopyURL.mm; sourceTree = "<group>"; };
@@ -1451,6 +1462,7 @@
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
 				CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
+				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
 				51BCEE491C84F4AF0042C82E /* IndexedDBMultiProcess.mm */,
 				51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */,
@@ -1618,6 +1630,9 @@
 				5104776F1D298D85009747EB /* IDBDeleteRecovery.sqlite3 */,
 				510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */,
 				510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */,
+				5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */,
+				5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */,
+				5110FCF31E01CD77006F8D0B /* IndexUpgrade.sqlite3 */,
 				51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */,
 				51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */,
 				51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */,
@@ -2651,6 +2666,7 @@
 				7CCE7F211A411AE600447C4C /* WKPreferences.cpp in Sources */,
 				7C83E0B51D0A649300FEBCF3 /* WKRetainPtr.cpp in Sources */,
 				9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */,
+				5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */,
 				5E4B1D2E1D404C6100053621 /* WKScrollViewDelegateCrash.mm in Sources */,
 				7CCE7F221A411AE600447C4C /* WKString.cpp in Sources */,
 				7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */,

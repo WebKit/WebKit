@@ -59,6 +59,7 @@ public:
     SQLiteIDBTransaction* transaction() const { return m_transaction; }
 
     int64_t objectStoreID() const { return m_objectStoreID; }
+    int64_t currentRecordRowID() const { return m_currentRecordRowID; }
 
     const IDBKeyData& currentKey() const { return m_currentKey; }
     const IDBKeyData& currentPrimaryKey() const { return m_currentPrimaryKey; }
@@ -80,6 +81,8 @@ private:
     bool bindArguments();
 
     void resetAndRebindStatement();
+
+    void markAsErrored();
 
     enum class AdvanceResult {
         Success,
@@ -114,6 +117,7 @@ private:
     bool m_errored { false };
 
     bool m_backingStoreCursor { false };
+    int64_t m_currentRecordRowID { 0 };
 };
 
 } // namespace IDBServer
