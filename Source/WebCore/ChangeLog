@@ -1,3 +1,22 @@
+2016-12-14  Antti Koivisto  <antti@apple.com>
+
+        Make Style::Update const in RenderTreeUpdater
+        https://bugs.webkit.org/show_bug.cgi?id=165845
+
+        Reviewed by Andreas Kling.
+
+        Moving style away from unique_ptrs leaves them in weird state.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::findRenderingRoots):
+        (WebCore::RenderTreeUpdater::commit):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+
+            Clone the style instead of moving it. This is not meaningfully more expensive.
+            Remove null checks, style is never null.
+
+        * style/RenderTreeUpdater.h:
+
 2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use JSValue::toWTFString instead of calling toString(exec) and value(exec)

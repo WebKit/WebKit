@@ -93,7 +93,7 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
     return &node.document();
 }
 
-static ListHashSet<ContainerNode*> findRenderingRoots(Style::Update& update)
+static ListHashSet<ContainerNode*> findRenderingRoots(const Style::Update& update)
 {
     ListHashSet<ContainerNode*> renderingRoots;
     for (auto* root : update.roots()) {
@@ -105,7 +105,7 @@ static ListHashSet<ContainerNode*> findRenderingRoots(Style::Update& update)
     return renderingRoots;
 }
 
-void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
+void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 {
     ASSERT(&m_document == &styleUpdate->document());
 
@@ -247,7 +247,7 @@ static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newS
     return false;
 }
 
-void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUpdate& update)
+void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& update)
 {
 #if PLATFORM(IOS)
     CheckForVisibilityChange checkForVisibilityChange(element);
@@ -257,18 +257,18 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
     if (shouldTearDownRenderers)
         tearDownRenderers(element, TeardownType::KeepHoverAndActive);
 
-    bool hasDisplayContents = update.style && update.style->display() == CONTENTS;
+    bool hasDisplayContents = update.style->display() == CONTENTS;
     if (hasDisplayContents != element.hasDisplayContents()) {
         element.setHasDisplayContents(hasDisplayContents);
         // Render tree position needs to be recomputed as rendering siblings may be found from the display:contents subtree.
         renderTreePosition().invalidateNextSibling();
     }
 
-    bool shouldCreateNewRenderer = !element.renderer() && update.style && !hasDisplayContents;
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents;
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
-        createRenderer(element, WTFMove(*update.style));
+        createRenderer(element, RenderStyle::clone(*update.style));
         invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(element);
         return;
     }
@@ -278,19 +278,19 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
     auto& renderer = *element.renderer();
 
     if (update.recompositeLayer) {
-        renderer.setStyle(WTFMove(*update.style), StyleDifferenceRecompositeLayer);
+        renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceRecompositeLayer);
         return;
     }
 
     if (update.change == Style::NoChange) {
         if (pseudoStyleCacheIsInvalid(&renderer, update.style.get()) || (parent().styleChange == Style::Force && renderer.requiresForcedStyleRecalcPropagation())) {
-            renderer.setStyle(WTFMove(*update.style), StyleDifferenceEqual);
+            renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceEqual);
             return;
         }
         return;
     }
 
-    renderer.setStyle(WTFMove(*update.style), StyleDifferenceEqual);
+    renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceEqual);
 }
 
 #if ENABLE(CSS_REGIONS)

@@ -46,7 +46,7 @@ class RenderTreeUpdater {
 public:
     RenderTreeUpdater(Document&);
 
-    void commit(std::unique_ptr<Style::Update>);
+    void commit(std::unique_ptr<const Style::Update>);
 
     enum class TeardownType { Normal, KeepHoverAndActive };
     static void tearDownRenderers(Element&, TeardownType = TeardownType::Normal);
@@ -55,7 +55,7 @@ public:
 private:
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&);
-    void updateElementRenderer(Element&, Style::ElementUpdate&);
+    void updateElementRenderer(Element&, const Style::ElementUpdate&);
     void createRenderer(Element&, RenderStyle&&);
     void invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(Node&);
     void updateBeforeOrAfterPseudoElement(Element&, PseudoId);
@@ -76,7 +76,7 @@ private:
     void popParentsToDepth(unsigned depth);
 
     Document& m_document;
-    std::unique_ptr<Style::Update> m_styleUpdate;
+    std::unique_ptr<const Style::Update> m_styleUpdate;
 
     Vector<Parent> m_parentStack;
 
