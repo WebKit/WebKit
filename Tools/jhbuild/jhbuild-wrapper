@@ -24,8 +24,7 @@ import shlex
 import subprocess
 import sys
 
-# First release to support --exit-on-error option
-jhbuild_revision = 'f524fbe120ebb4b7d209ce0d035cd3d2e4a66bd4'
+jhbuild_revision = 'e58ee087e92789bd2151132cac926f31cc0102d8'
 
 def determine_platform():
     if '--efl' in sys.argv:
