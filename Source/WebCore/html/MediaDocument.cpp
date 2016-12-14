@@ -122,7 +122,7 @@ void MediaDocumentParser::createDocumentStructure()
     StringBuilder elementStyle;
     elementStyle.appendLiteral("max-width: 100%; max-height: 100%;");
 #if PLATFORM(IOS)
-    elementStyle.appendLiteral("width: 100%; height: 100%;");
+    elementStyle.appendLiteral("width: 100%; height: auto;");
 #endif
     if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
         elementStyle.appendLiteral("min-height: 50px;");
