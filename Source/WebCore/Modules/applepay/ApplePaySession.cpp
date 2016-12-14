@@ -345,7 +345,7 @@ static ExceptionOr<PaymentRequest> convertAndValidate(JSC::ExecState& state, uns
         if (!shippingContact)
             return Exception { TypeError, WTFMove(errorMessage) };
 
-        result.setBillingContact(*shippingContact);
+        result.setShippingContact(*shippingContact);
     }
 
     result.setShippingType(paymentRequest.shippingType);

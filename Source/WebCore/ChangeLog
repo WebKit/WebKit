@@ -1,3 +1,13 @@
+2016-12-14  Sam Weinig  <sam@webkit.org>
+
+        Actually set the shipping contact when validating the payment request
+
+        Reviewed by Anders Carlsson.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        Fix typo.
+
 2016-12-14  John Wilander  <wilander@apple.com>
 
         Handle key generation with empty challenge string
