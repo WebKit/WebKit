@@ -90,8 +90,6 @@ public:
     StructureID allocateID(Structure*);
 
     void flushOldTables();
-    
-    size_t size() const { return m_size; }
 
 private:
     void resize(size_t newCapacity);
@@ -123,9 +121,7 @@ private:
 inline Structure* StructureIDTable::get(StructureID structureID)
 {
 #if USE(JSVALUE64)
-    ASSERT_WITH_SECURITY_IMPLICATION(structureID);
-    ASSERT_WITH_SECURITY_IMPLICATION(!isNuked(structureID));
-    ASSERT_WITH_SECURITY_IMPLICATION(structureID < m_capacity);
+    ASSERT_WITH_SECURITY_IMPLICATION(structureID && structureID < m_capacity);
     return table()[structureID].structure;
 #else
     return structureID;

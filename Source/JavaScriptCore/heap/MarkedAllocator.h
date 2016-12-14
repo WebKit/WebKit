@@ -182,7 +182,7 @@ public:
 #undef MARKED_ALLOCATOR_BIT_ACCESSORS
 
     template<typename Func>
-    void forEachBitVector(const AbstractLocker&, const Func& func)
+    void forEachBitVector(const Func& func)
     {
 #define MARKED_ALLOCATOR_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_ ## lowerBitName);
@@ -191,7 +191,7 @@ public:
     }
     
     template<typename Func>
-    void forEachBitVectorWithName(const AbstractLocker&, const Func& func)
+    void forEachBitVectorWithName(const Func& func)
     {
 #define MARKED_ALLOCATOR_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_ ## lowerBitName, #capitalBitName);

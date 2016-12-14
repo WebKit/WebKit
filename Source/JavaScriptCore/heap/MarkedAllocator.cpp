@@ -270,7 +270,6 @@ void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
         m_blocks.append(block);
         if (m_blocks.capacity() != oldCapacity) {
             forEachBitVector(
-                NoLockingNecessary,
                 [&] (FastBitVector& vector) {
                     ASSERT_UNUSED(vector, vector.numBits() == oldCapacity);
                 });
@@ -279,7 +278,6 @@ void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
             
             LockHolder locker(m_bitvectorLock);
             forEachBitVector(
-                locker,
                 [&] (FastBitVector& vector) {
                     vector.resize(m_blocks.capacity());
                 });
@@ -291,7 +289,6 @@ void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
     }
     
     forEachBitVector(
-        NoLockingNecessary,
         [&] (FastBitVector& vector) {
             ASSERT_UNUSED(vector, !vector[index]);
         });
@@ -312,7 +309,6 @@ void MarkedAllocator::removeBlock(MarkedBlock::Handle* block)
     m_freeBlockIndices.append(block->index());
     
     forEachBitVector(
-        holdLock(m_bitvectorLock),
         [&] (FastBitVector& vector) {
             vector[block->index()] = false;
         });
@@ -471,14 +467,12 @@ void MarkedAllocator::dumpBits(PrintStream& out)
 {
     unsigned maxNameLength = 0;
     forEachBitVectorWithName(
-        NoLockingNecessary,
         [&] (FastBitVector&, const char* name) {
             unsigned length = strlen(name);
             maxNameLength = std::max(maxNameLength, length);
         });
     
     forEachBitVectorWithName(
-        NoLockingNecessary,
         [&] (FastBitVector& vector, const char* name) {
             out.print("    ", name, ": ");
             for (unsigned i = maxNameLength - strlen(name); i--;)

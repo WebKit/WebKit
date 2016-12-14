@@ -1,3 +1,45 @@
+2016-12-14  Gavin Barraclough  <barraclough@apple.com>
+
+        MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
+        https://bugs.webkit.org/show_bug.cgi?id=165741
+
+        Unreviewed rollout due to performance regression.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CellContainer.cpp: Removed.
+        * heap/CellContainer.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::addBlock):
+        (JSC::MarkedAllocator::removeBlock):
+        (JSC::MarkedAllocator::dumpBits):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::forEachBitVector):
+        (JSC::MarkedAllocator::forEachBitVectorWithName):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::tryCreate):
+        (JSC::MarkedBlock::Handle::~Handle):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectMarksMode):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::MarkedBlock::Handle::dumpState): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::markingVersion): Deleted.
+        (JSC::MarkedBlock::isMarkedRaw): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::marksConveyLivenessDuringMarking):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        * runtime/Options.h:
+        * runtime/StructureIDTable.h:
+        (JSC::StructureIDTable::get):
+        (JSC::StructureIDTable::size): Deleted.
+
 2016-12-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209792.

@@ -28,12 +28,12 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <wtf/PrintStream.h>
+#include <wtf/FilePrintStream.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE PrintStream& dataFile();
+WTF_EXPORT_PRIVATE FilePrintStream& dataFile();
 
 WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
 WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);

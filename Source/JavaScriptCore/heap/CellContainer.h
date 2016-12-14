@@ -84,8 +84,6 @@ public:
     bool isMarked(HeapCell*) const;
     bool isMarked(HeapVersion markingVersion, HeapCell*) const;
     
-    bool isNewlyAllocated(HeapCell*) const;
-    
     void noteMarked();
     void assertValidCell(VM&, HeapCell*) const;
     

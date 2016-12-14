@@ -752,7 +752,6 @@
 		0FDB2CEA174896C7007B3C1B /* ConcurrentJSLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDB2CE9174896C7007B3C1B /* ConcurrentJSLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FDDBFB51666EED800C55FEF /* DFGVariableAccessDataDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */; };
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; };
-		0FDE87F91DFD0C760064C390 /* CellContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */; };
 		0FDE87FC1DFE6E510064C390 /* SpaceTimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */; };
 		0FDE87FD1DFE6E540064C390 /* SpaceTimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */; };
 		0FDF67D21D9C6D27001B9825 /* B3Kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF67D11D9C6086001B9825 /* B3Kind.h */; };
@@ -3182,7 +3181,6 @@
 		0FDB2CE9174896C7007B3C1B /* ConcurrentJSLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcurrentJSLock.h; sourceTree = "<group>"; };
 		0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableAccessDataDump.cpp; path = dfg/DFGVariableAccessDataDump.cpp; sourceTree = "<group>"; };
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
-		0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CellContainer.cpp; sourceTree = "<group>"; };
 		0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceTimeScheduler.cpp; sourceTree = "<group>"; };
 		0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceTimeScheduler.h; sourceTree = "<group>"; };
 		0FDF67D01D9C6086001B9825 /* B3Kind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Kind.cpp; path = b3/B3Kind.cpp; sourceTree = "<group>"; };
@@ -5637,7 +5635,6 @@
 				0FA7620A1DB959F600B7A2FD /* AllocatingScope.h */,
 				0F9630351D4192C3005609D9 /* AllocatorAttributes.cpp */,
 				0F9630361D4192C3005609D9 /* AllocatorAttributes.h */,
-				0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */,
 				0F070A421D543A89006E7232 /* CellContainer.h */,
 				0F070A431D543A89006E7232 /* CellContainerInlines.h */,
 				0F1C3DD91BBCE09E00E523E4 /* CellState.h */,
@@ -10257,7 +10254,6 @@
 				0FB1058B1675483100F8AB6E /* ProfilerOSRExit.cpp in Sources */,
 				0FB1058D1675483700F8AB6E /* ProfilerOSRExitSite.cpp in Sources */,
 				0F61832B1C45BF070072450B /* AirCustom.cpp in Sources */,
-				0FDE87F91DFD0C760064C390 /* CellContainer.cpp in Sources */,
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,
 				0FD3E40D1B618B6600C80E1E /* PropertyCondition.cpp in Sources */,
 				E35CA1531DBC3A5C00F83516 /* DOMJITHeapRange.cpp in Sources */,

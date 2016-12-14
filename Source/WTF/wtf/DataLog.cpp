@@ -28,10 +28,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <wtf/FilePrintStream.h>
-#include <wtf/LockedPrintStream.h>
 #include <wtf/Threading.h>
-#include <mutex>
-#include <thread>
 
 #if OS(UNIX) || OS(DARWIN)
 #include <unistd.h>
@@ -50,14 +47,16 @@
 
 namespace WTF {
 
-static PrintStream* s_file;
+#if USE(PTHREADS)
+static pthread_once_t initializeLogFileOnceKey = PTHREAD_ONCE_INIT;
+#endif
 
-static uint64_t s_fileData[(sizeof(FilePrintStream) + 7) / 8];
+static FilePrintStream* file;
+
+static uint64_t fileData[(sizeof(FilePrintStream) + 7) / 8];
 
 static void initializeLogFileOnce()
 {
-    FilePrintStream* file = nullptr;
-    
 #if DATA_LOG_TO_FILE
     const long maxPathLength = 1024;
 
@@ -118,38 +117,29 @@ static void initializeLogFileOnce()
             WTFLogAlways("Warning: Could not open DataLog file %s for writing.\n", actualFilename);
     }
 #endif // DATA_LOG_TO_FILE
-    
-    bool wrapWithLocked = true;
-    
     if (!file) {
         // Use placement new; this makes it easier to use dataLog() to debug
         // fastMalloc.
-        file = new (s_fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
-        wrapWithLocked = false;
+        file = new (fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
     }
     
     setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
-    
-    if (wrapWithLocked)
-        s_file = new LockedPrintStream(std::unique_ptr<FilePrintStream>(file));
-    else
-        s_file = file;
 }
 
 static void initializeLogFile()
 {
-    static std::once_flag once;
-    std::call_once(
-        once,
-        [] {
-            initializeLogFileOnce();
-        });
+#if USE(PTHREADS)
+    pthread_once(&initializeLogFileOnceKey, initializeLogFileOnce);
+#else
+    if (!file)
+        initializeLogFileOnce();
+#endif
 }
 
-PrintStream& dataFile()
+FilePrintStream& dataFile()
 {
     initializeLogFile();
-    return *s_file;
+    return *file;
 }
 
 void dataLogFV(const char* format, va_list argList)

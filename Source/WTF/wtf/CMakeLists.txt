@@ -57,7 +57,6 @@ set(WTF_HEADERS
     ListHashSet.h
     Lock.h
     LockAlgorithm.h
-    LockedPrintStream.h
     Locker.h
     MD5.h
     MainThread.h
@@ -93,7 +92,6 @@ set(WTF_HEADERS
     RandomNumberSeed.h
     RangeSet.h
     RawPointer.h
-    RecursiveLockAdapter.h
     RedBlackTree.h
     Ref.h
     RefCounted.h
@@ -200,7 +198,6 @@ set(WTF_SOURCES
     GregorianDateTime.cpp
     HashTable.cpp
     Lock.cpp
-    LockedPrintStream.cpp
     MD5.cpp
     MainThread.cpp
     MediaTime.cpp
