@@ -1,3 +1,35 @@
+2016-12-14  Andy Estes  <aestes@apple.com>
+
+        EventDispatcher::dispatchEvent() should take its Node by reference
+        https://bugs.webkit.org/show_bug.cgi?id=165840
+
+        Reviewed by Andreas Kling.
+
+        No new tests. No change in behavior.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent): Dereferenced |this| when calling
+        EventDispatcher::dispatchEvent().
+        (WebCore::Element::dispatchKeyEvent): Ditto.
+        (WebCore::Element::dispatchFocusEvent): Ditto.
+        (WebCore::Element::dispatchBlurEvent): Ditto.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Changed |origin| from a Node* to a Node&, renamed
+        it to |node|, and protected it with a Ref called |protectedNode| to match our preferred
+        style.
+        * dom/EventDispatcher.h: Changed dispatchEvent's first parameter type from Node* to Node&.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchEvent): Dereferenced |this| when calling
+        EventDispatcher::dispatchEvent().
+        (WebCore::Node::dispatchTouchEvent): Ditto.
+        (WebCore::Node::dispatchUIRequestEvent): Ditto.
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::dispatchEvent): Dereferenced |node| when calling
+        EventDispatcher::dispatchEvent().
+        * dom/SimulatedClick.cpp:
+        (WebCore::simulateMouseEvent): Passed |element| as a reference to
+        EventDispatcher::dispatchEvent().
+
 2016-12-14  Chris Dumez  <cdumez@apple.com>
 
         Remove Unicode case-insensitive matching for usemap=""

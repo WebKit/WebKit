@@ -102,16 +102,15 @@ static void dispatchEventInDOM(Event& event, const EventPath& path)
     }
 }
 
-bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
+bool EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(origin);
-    RefPtr<Node> node(origin);
-    RefPtr<FrameView> view = node->document().view();
-    EventPath eventPath(*node, event);
+    Ref<Node> protectedNode(node);
+    RefPtr<FrameView> view = node.document().view();
+    EventPath eventPath(node, event);
 
     if (EventTarget* relatedTarget = event.relatedTarget())
-        eventPath.setRelatedTarget(*node, *relatedTarget);
+        eventPath.setRelatedTarget(node, *relatedTarget);
 #if ENABLE(TOUCH_EVENTS)
     if (is<TouchEvent>(event))
         eventPath.retargetTouchLists(downcast<TouchEvent>(event));
@@ -119,7 +118,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
 
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    EventTarget* target = EventPath::eventTargetRespectingTargetRules(*node);
+    EventTarget* target = EventPath::eventTargetRespectingTargetRules(node);
     event.setTarget(target);
     if (!event.target())
         return true;
@@ -127,8 +126,8 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     InputElementClickState clickHandlingState;
-    if (is<HTMLInputElement>(*node))
-        downcast<HTMLInputElement>(*node).willDispatchEvent(event, clickHandlingState);
+    if (is<HTMLInputElement>(node))
+        downcast<HTMLInputElement>(node).willDispatchEvent(event, clickHandlingState);
 
     if (!event.propagationStopped() && !eventPath.isEmpty()) {
         event.setEventPath(eventPath);
@@ -137,13 +136,13 @@ bool EventDispatcher::dispatchEvent(Node* origin, Event& event)
     }
 
     auto* finalTarget = event.target();
-    event.setTarget(EventPath::eventTargetRespectingTargetRules(*node));
+    event.setTarget(EventPath::eventTargetRespectingTargetRules(node));
     event.setCurrentTarget(nullptr);
     event.resetPropagationFlags();
     event.setEventPhase(Event::NONE);
 
     if (clickHandlingState.stateful)
-        downcast<HTMLInputElement>(*node).didDispatchClickEvent(event, clickHandlingState);
+        downcast<HTMLInputElement>(node).didDispatchClickEvent(event, clickHandlingState);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal

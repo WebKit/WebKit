@@ -2178,7 +2178,7 @@ bool Node::dispatchEvent(Event& event)
     if (is<TouchEvent>(event))
         return dispatchTouchEvent(downcast<TouchEvent>(event));
 #endif
-    return EventDispatcher::dispatchEvent(this, event);
+    return EventDispatcher::dispatchEvent(*this, event);
 }
 
 void Node::dispatchSubtreeModifiedEvent()
@@ -2209,14 +2209,14 @@ bool Node::dispatchDOMActivateEvent(int detail, Event& underlyingEvent)
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
 bool Node::dispatchTouchEvent(TouchEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, event);
+    return EventDispatcher::dispatchEvent(*this, event);
 }
 #endif
 
 #if ENABLE(INDIE_UI)
 bool Node::dispatchUIRequestEvent(UIRequestEvent& event)
 {
-    EventDispatcher::dispatchEvent(this, event);
+    EventDispatcher::dispatchEvent(*this, event);
     return event.defaultHandled() || event.defaultPrevented();
 }
 #endif

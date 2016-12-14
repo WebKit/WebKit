@@ -81,7 +81,7 @@ private:
 static void simulateMouseEvent(const AtomicString& eventType, Element& element, Event* underlyingEvent, SimulatedClickSource source)
 {
     auto event = SimulatedMouseEvent::create(eventType, element.document().defaultView(), underlyingEvent, element, source);
-    EventDispatcher::dispatchEvent(&element, event);
+    EventDispatcher::dispatchEvent(element, event);
 }
 
 void simulateClick(Element& element, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions, SimulatedClickSource creationOptions)

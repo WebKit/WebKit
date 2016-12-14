@@ -35,7 +35,7 @@ class Node;
 
 namespace EventDispatcher {
 
-bool dispatchEvent(Node*, Event&);
+bool dispatchEvent(Node&, Event&);
 void dispatchScopedEvent(Node&, Event&);
 
 }
