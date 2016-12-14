@@ -1,5 +1,13 @@
 2016-12-14  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, re-enable concurrent GC on ARM64 now that the most likely culprit of the memory
+        regressions is fixed. Lets see what the bots think!
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2016-12-14  Filip Pizlo  <fpizlo@apple.com>
+
         Devices with fewer cores should use a more aggressive GC schedule by default
         https://bugs.webkit.org/show_bug.cgi?id=165859
 

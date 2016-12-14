@@ -341,7 +341,7 @@ static void recomputeDependentOptions()
     Options::useFTLJIT() = false;
 #endif
     
-#if !CPU(X86_64)
+#if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
 #endif
     
