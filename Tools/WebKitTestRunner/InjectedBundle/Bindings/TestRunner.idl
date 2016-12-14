@@ -24,6 +24,8 @@
  */
 
 interface TestRunner {
+    readonly attribute boolean isWebKit2;
+
     // The basics.
     void dumpAsText(boolean dumpPixels);
     void dumpChildFramesAsText();

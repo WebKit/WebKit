@@ -1774,16 +1774,17 @@ fast/dom/Window/post-message-crash.html [ Pass Failure ]
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]
 
 # eventSender.mouseDown is not implemented
+fast/events/focusing-element-with-tabindex-by-tap-or-click.html [ Skip ]
 fast/loader/location-hash-user-gesture.html [ Skip ]
 imported/blink/editing/selection/selectstart-event-crash.html [ Skip ]
 fast/dom/Window/post-message-user-action.html [ Skip ]
 fast/images/image-usemap-parsing.html [ Skip ]
 fast/shadow-dom/click-on-slotted-anchor-with-hover.html [ Skip ]
 fast/shadow-dom/click-text-inside-linked-slot.html [ Skip ]
-fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html
-fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html
-fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html
-fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html
+fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Skip ]
+fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html [ Skip ]
+fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Skip ]
+fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html [ Skip ]
 
 # No touch events
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Skip ]

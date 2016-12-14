@@ -260,8 +260,6 @@ static Node* ancestorRespondingToClickEvents(const HitTestResult& hitTestResult,
 
     Node* pointerCursorNode = nullptr;
     for (Node* node = hitTestResult.innerNode(); node && node != terminationNode; node = node->parentInComposedTree()) {
-        ASSERT(!node->isInShadowTree() || node->containingShadowRoot()->mode() != ShadowRootMode::UserAgent);
-
         // We only accept pointer nodes before reaching the body tag.
         if (node->hasTagName(HTMLNames::bodyTag)) {
 #if USE(UIKIT_EDITING)
@@ -284,7 +282,7 @@ static Node* ancestorRespondingToClickEvents(const HitTestResult& hitTestResult,
         else if (pointerCursorNode)
             pointerCursorStillValid = false;
 
-        if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents()) {
+        if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents() || (is<Element>(*node) && downcast<Element>(*node).isMouseFocusable())) {
             // If we're at the body or higher, use the pointer cursor node (which may be null).
             if (bodyHasBeenReached)
                 node = pointerCursorNode;

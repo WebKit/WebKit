@@ -60,6 +60,8 @@ public:
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
+    bool isWebKit2() const { return true; }
+
     // The basics.
     WKURLRef testURL() const { return m_testURL.get(); }
     void setTestURL(WKURLRef url) { m_testURL = url; }

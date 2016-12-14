@@ -1,3 +1,18 @@
+2016-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: An element with tabindex is not focusable unless there is no mouse event handler
+        https://bugs.webkit.org/show_bug.cgi?id=165843
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by ancestorRespondingToClickEvents not checking the precense of tabindex attribute.
+        Check that condition along with event listeners.
+
+        Test: fast/events/focusing-element-with-tabindex-by-tap-or-click.html
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::ancestorRespondingToClickEvents):
+
 2016-12-14  Alex Christensen  <achristensen@webkit.org>
 
         Progress towards using ANGLE to do WebGL rendering

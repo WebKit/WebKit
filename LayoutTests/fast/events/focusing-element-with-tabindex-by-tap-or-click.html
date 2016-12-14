@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<div id="contentEditableElement" contenteditable>An element with contenteditable attribute</div>
+<section id="elementWithTabIndexAndClickHandler" onclick="false" tabindex="0">An element with click event handler and tabindex attribute</section>
+<main id="elementWithTabIndex" tabindex="0">An element with tabindex attribute</main>
+<style>
+div:focus {
+    background: #9cf;
+}
+</style>
+<script>
+
+description('This tests tapping or clicking on an element with tabindex would focus the element.<br>'
+    + 'To manually test, tap or click on each element below. Each element should be focused');
+jsTestIsAsync = true;
+
+async function runTests() {
+    await UIHelper.activateAt(contentEditableElement.offsetLeft + 5, contentEditableElement.offsetTop + 5);
+    shouldBe('"Activated contentEditableElement"; document.activeElement', 'contentEditableElement');
+
+    await UIHelper.activateAt(elementWithTabIndexAndClickHandler.offsetLeft + 5, elementWithTabIndexAndClickHandler.offsetTop + 5);
+    shouldBe('"Activated elementWithTabIndexAndClickHandler"; document.activeElement', 'elementWithTabIndexAndClickHandler');
+
+    await UIHelper.activateAt(elementWithTabIndex.offsetLeft + 5, elementWithTabIndex.offsetTop + 5);
+    shouldBe('"Activated elementWithTabIndex"; document.activeElement', 'elementWithTabIndex');
+}
+
+UIHelper.wait(runTests());
+
+</script>
+</body>
+</html>

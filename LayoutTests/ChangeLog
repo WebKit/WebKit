@@ -1,3 +1,24 @@
+2016-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: An element with tabindex is not focusable unless there is no mouse event handler
+        https://bugs.webkit.org/show_bug.cgi?id=165843
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test for focusing an element with just tabindex using UIHelper.
+
+        Also fixed UIHelper to work in iOS DumpRenderTree which was hitting an assertion
+        by explicitly checking testRunner.isWebKit2. Prior to fixing this, it was hitting
+        an assertion in RunLoop::main() which was asserting that there is a runloop,
+        which doesn't exist in DumpRenderTree.
+
+        * fast/events/focusing-element-with-tabindex-by-tap-or-click-expected.txt: Added.
+        * fast/events/focusing-element-with-tabindex-by-tap-or-click.html: Added.
+        * platform/ios-simulator-wk2/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.isWebKit2):
+        (window.UIHelper.wait): Added the support for js-test.js / js-test-pre.js style tests.
+
 2016-12-14  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Implement deferred parsing of properties, @media, @supports and @keyframes

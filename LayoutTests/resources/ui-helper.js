@@ -5,9 +5,14 @@ window.UIHelper = class UIHelper {
         return navigator.userAgent.includes('iPhone');
     }
 
+    static isWebKit2()
+    {
+        return window.testRunner.isWebKit2;
+    }
+
     static activateAt(x, y)
     {
-        if (!testRunner.runUIScript || !this.isIOS()) {
+        if (!this.isWebKit2() || !this.isIOS()) {
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();
             eventSender.mouseUp();
@@ -25,8 +30,16 @@ window.UIHelper = class UIHelper {
     static wait(promise)
     {
         testRunner.waitUntilDone();
-        return promise.then(
-            function () { testRunner.notifyDone(); },
-            function (error) { testRunner.notifyDone(); return Promise.reject(error); });
+        if (window.finishJSTest)
+            window.jsTestIsAsync = true;
+
+        let finish = () => {
+            if (window.finishJSTest)
+                finishJSTest();
+            else
+                testRunner.notifyDone();
+        }
+
+        return promise.then(finish, finish);
     }
 }
