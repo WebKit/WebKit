@@ -61,7 +61,6 @@
 #include "CSSUnsetValue.h"
 #include "CSSValueList.h"
 #include "CSSVariableReferenceValue.h"
-#include "WebKitCSSTransformValue.h"
 
 #if ENABLE(CSS_GRID_LAYOUT)
 #include "CSSGridAutoRepeatValue.h"
@@ -218,8 +217,6 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSUnicodeRangeValue>(*this, other);
         case ValueListClass:
             return compareCSSValues<CSSValueList>(*this, other);
-        case WebKitCSSTransformClass:
-            return compareCSSValues<WebKitCSSTransformValue>(*this, other);
         case LineBoxContainClass:
             return compareCSSValues<CSSLineBoxContainValue>(*this, other);
         case CalculationClass:
@@ -322,8 +319,6 @@ String CSSValue::cssText() const
         return downcast<CSSUnicodeRangeValue>(*this).customCSSText();
     case ValueListClass:
         return downcast<CSSValueList>(*this).customCSSText();
-    case WebKitCSSTransformClass:
-        return downcast<WebKitCSSTransformValue>(*this).customCSSText();
     case LineBoxContainClass:
         return downcast<CSSLineBoxContainValue>(*this).customCSSText();
     case CalculationClass:
@@ -451,9 +446,6 @@ void CSSValue::destroy()
     case ValueListClass:
         delete downcast<CSSValueList>(this);
         return;
-    case WebKitCSSTransformClass:
-        delete downcast<WebKitCSSTransformValue>(this);
-        return;
     case LineBoxContainClass:
         delete downcast<CSSLineBoxContainValue>(this);
         return;
@@ -500,8 +492,6 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
     case ImageClass:
     case CursorImageClass:
         return downcast<CSSImageValue>(*this).cloneForCSSOM();
-    case WebKitCSSTransformClass:
-        return downcast<WebKitCSSTransformValue>(*this).cloneForCSSOM();
     case ImageSetClass:
         return downcast<CSSImageSetValue>(*this).cloneForCSSOM();
     default:

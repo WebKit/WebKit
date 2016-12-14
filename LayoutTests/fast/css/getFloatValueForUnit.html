@@ -32,10 +32,6 @@ shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_IN)", "0.138889");
 shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PC)", "0.833333");
 shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_PX)", "13.333333");
 shouldBe("getFloatValue('font-size', CSSPrimitiveValue.CSS_NUMBER)", "13.333333");
-shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_DEG)", "90");
-shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_RAD)", "1.570796");
-shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_GRAD)", "100");
-shouldBe("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_NUMBER)", "90");
 shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_MS)", "200");
 shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_S)", "0.2");
 shouldBe("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_NUMBER)", "200");
@@ -45,12 +41,6 @@ shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_MS)", "invalidAcce
 shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_HZ)", "invalidAccessError");
 shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_DEG)", "invalidAccessError");
 shouldThrow("getFloatValue('font-size', CSSPrimitiveValue.CSS_RGBCOLOR)", "invalidAccessError");
-
-shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_PERCENTAGE)", "invalidAccessError");
-shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_PX)", "invalidAccessError");
-shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_MS)", "invalidAccessError");
-shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_HZ)", "invalidAccessError");
-shouldThrow("getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_RGBCOLOR)", "invalidAccessError");
 
 shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PERCENTAGE)", "invalidAccessError");
 shouldThrow("getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PX)", "invalidAccessError");

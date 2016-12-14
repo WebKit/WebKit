@@ -32,6 +32,7 @@
 #include "config.h"
 #include "TransformFunctions.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -42,35 +43,56 @@
 #include "ScaleTransformOperation.h"
 #include "SkewTransformOperation.h"
 #include "TranslateTransformOperation.h"
-#include "WebKitCSSTransformValue.h"
 
 namespace WebCore {
 
-static TransformOperation::OperationType transformOperationType(WebKitCSSTransformValue::TransformOperationType type)
+static TransformOperation::OperationType transformOperationType(CSSValueID type)
 {
     switch (type) {
-    case WebKitCSSTransformValue::ScaleTransformOperation: return TransformOperation::SCALE;
-    case WebKitCSSTransformValue::ScaleXTransformOperation: return TransformOperation::SCALE_X;
-    case WebKitCSSTransformValue::ScaleYTransformOperation: return TransformOperation::SCALE_Y;
-    case WebKitCSSTransformValue::ScaleZTransformOperation: return TransformOperation::SCALE_Z;
-    case WebKitCSSTransformValue::Scale3DTransformOperation: return TransformOperation::SCALE_3D;
-    case WebKitCSSTransformValue::TranslateTransformOperation: return TransformOperation::TRANSLATE;
-    case WebKitCSSTransformValue::TranslateXTransformOperation: return TransformOperation::TRANSLATE_X;
-    case WebKitCSSTransformValue::TranslateYTransformOperation: return TransformOperation::TRANSLATE_Y;
-    case WebKitCSSTransformValue::TranslateZTransformOperation: return TransformOperation::TRANSLATE_Z;
-    case WebKitCSSTransformValue::Translate3DTransformOperation: return TransformOperation::TRANSLATE_3D;
-    case WebKitCSSTransformValue::RotateTransformOperation: return TransformOperation::ROTATE;
-    case WebKitCSSTransformValue::RotateXTransformOperation: return TransformOperation::ROTATE_X;
-    case WebKitCSSTransformValue::RotateYTransformOperation: return TransformOperation::ROTATE_Y;
-    case WebKitCSSTransformValue::RotateZTransformOperation: return TransformOperation::ROTATE_Z;
-    case WebKitCSSTransformValue::Rotate3DTransformOperation: return TransformOperation::ROTATE_3D;
-    case WebKitCSSTransformValue::SkewTransformOperation: return TransformOperation::SKEW;
-    case WebKitCSSTransformValue::SkewXTransformOperation: return TransformOperation::SKEW_X;
-    case WebKitCSSTransformValue::SkewYTransformOperation: return TransformOperation::SKEW_Y;
-    case WebKitCSSTransformValue::MatrixTransformOperation: return TransformOperation::MATRIX;
-    case WebKitCSSTransformValue::Matrix3DTransformOperation: return TransformOperation::MATRIX_3D;
-    case WebKitCSSTransformValue::PerspectiveTransformOperation: return TransformOperation::PERSPECTIVE;
-    case WebKitCSSTransformValue::UnknownTransformOperation: return TransformOperation::NONE;
+    case CSSValueScale:
+        return TransformOperation::SCALE;
+    case CSSValueScalex:
+        return TransformOperation::SCALE_X;
+    case CSSValueScaley:
+        return TransformOperation::SCALE_Y;
+    case CSSValueScalez:
+        return TransformOperation::SCALE_Z;
+    case CSSValueScale3d:
+        return TransformOperation::SCALE_3D;
+    case CSSValueTranslate:
+        return TransformOperation::TRANSLATE;
+    case CSSValueTranslatex:
+        return TransformOperation::TRANSLATE_X;
+    case CSSValueTranslatey:
+        return TransformOperation::TRANSLATE_Y;
+    case CSSValueTranslatez:
+        return TransformOperation::TRANSLATE_Z;
+    case CSSValueTranslate3d:
+        return TransformOperation::TRANSLATE_3D;
+    case CSSValueRotate:
+        return TransformOperation::ROTATE;
+    case CSSValueRotatex:
+        return TransformOperation::ROTATE_X;
+    case CSSValueRotatey:
+        return TransformOperation::ROTATE_Y;
+    case CSSValueRotatez:
+        return TransformOperation::ROTATE_Z;
+    case CSSValueRotate3d:
+        return TransformOperation::ROTATE_3D;
+    case CSSValueSkew:
+        return TransformOperation::SKEW;
+    case CSSValueSkewx:
+        return TransformOperation::SKEW_X;
+    case CSSValueSkewy:
+        return TransformOperation::SKEW_Y;
+    case CSSValueMatrix:
+        return TransformOperation::MATRIX;
+    case CSSValueMatrix3d:
+        return TransformOperation::MATRIX_3D;
+    case CSSValuePerspective:
+        return TransformOperation::PERSPECTIVE;
+    default:
+        break;
     }
     return TransformOperation::NONE;
 }
@@ -89,10 +111,10 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
 
     TransformOperations operations;
     for (auto& currentValue : downcast<CSSValueList>(value)) {
-        if (!is<WebKitCSSTransformValue>(currentValue.get()))
+        if (!is<CSSFunctionValue>(currentValue.get()))
             continue;
 
-        auto& transformValue = downcast<WebKitCSSTransformValue>(currentValue.get());
+        auto& transformValue = downcast<CSSFunctionValue>(currentValue.get());
         if (!transformValue.length())
             continue;
 
@@ -108,17 +130,17 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
 
         auto& firstValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(0));
 
-        switch (transformValue.operationType()) {
-        case WebKitCSSTransformValue::ScaleTransformOperation:
-        case WebKitCSSTransformValue::ScaleXTransformOperation:
-        case WebKitCSSTransformValue::ScaleYTransformOperation: {
+        switch (transformValue.name()) {
+        case CSSValueScale:
+        case CSSValueScalex:
+        case CSSValueScaley: {
             double sx = 1.0;
             double sy = 1.0;
-            if (transformValue.operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
+            if (transformValue.name() == CSSValueScaley)
                 sy = firstValue.doubleValue();
             else {
                 sx = firstValue.doubleValue();
-                if (transformValue.operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
+                if (transformValue.name() != CSSValueScalex) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         sy = secondValue.doubleValue();
@@ -126,21 +148,21 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
                         sy = sx;
                 }
             }
-            operations.operations().append(ScaleTransformOperation::create(sx, sy, 1.0, transformOperationType(transformValue.operationType())));
+            operations.operations().append(ScaleTransformOperation::create(sx, sy, 1.0, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::ScaleZTransformOperation:
-        case WebKitCSSTransformValue::Scale3DTransformOperation: {
+        case CSSValueScalez:
+        case CSSValueScale3d: {
             double sx = 1.0;
             double sy = 1.0;
             double sz = 1.0;
-            if (transformValue.operationType() == WebKitCSSTransformValue::ScaleZTransformOperation)
+            if (transformValue.name() == CSSValueScalez)
                 sz = firstValue.doubleValue();
-            else if (transformValue.operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
+            else if (transformValue.name() == CSSValueScaley)
                 sy = firstValue.doubleValue();
             else {
                 sx = firstValue.doubleValue();
-                if (transformValue.operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
+                if (transformValue.name() != CSSValueScalex) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
                         sz = thirdValue.doubleValue();
@@ -152,19 +174,19 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
                         sy = sx;
                 }
             }
-            operations.operations().append(ScaleTransformOperation::create(sx, sy, sz, transformOperationType(transformValue.operationType())));
+            operations.operations().append(ScaleTransformOperation::create(sx, sy, sz, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::TranslateTransformOperation:
-        case WebKitCSSTransformValue::TranslateXTransformOperation:
-        case WebKitCSSTransformValue::TranslateYTransformOperation: {
+        case CSSValueTranslate:
+        case CSSValueTranslatex:
+        case CSSValueTranslatey: {
             Length tx = Length(0, Fixed);
             Length ty = Length(0, Fixed);
-            if (transformValue.operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
+            if (transformValue.name() == CSSValueTranslatey)
                 ty = convertToFloatLength(&firstValue, conversionData);
             else {
                 tx = convertToFloatLength(&firstValue, conversionData);
-                if (transformValue.operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
+                if (transformValue.name() != CSSValueTranslatex) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         ty = convertToFloatLength(&secondValue, conversionData);
@@ -175,21 +197,21 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             if (tx.isUndefined() || ty.isUndefined())
                 return false;
 
-            operations.operations().append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), transformOperationType(transformValue.operationType())));
+            operations.operations().append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::TranslateZTransformOperation:
-        case WebKitCSSTransformValue::Translate3DTransformOperation: {
+        case CSSValueTranslatez:
+        case CSSValueTranslate3d: {
             Length tx = Length(0, Fixed);
             Length ty = Length(0, Fixed);
             Length tz = Length(0, Fixed);
-            if (transformValue.operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
+            if (transformValue.name() == CSSValueTranslatez)
                 tz = convertToFloatLength(&firstValue, conversionData);
-            else if (transformValue.operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
+            else if (transformValue.name() == CSSValueTranslatey)
                 ty = convertToFloatLength(&firstValue, conversionData);
             else {
                 tx = convertToFloatLength(&firstValue, conversionData);
-                if (transformValue.operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
+                if (transformValue.name() != CSSValueTranslatex) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
                         tz = convertToFloatLength(&thirdValue, conversionData);
@@ -204,32 +226,32 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             if (tx.isUndefined() || ty.isUndefined() || tz.isUndefined())
                 return false;
 
-            operations.operations().append(TranslateTransformOperation::create(tx, ty, tz, transformOperationType(transformValue.operationType())));
+            operations.operations().append(TranslateTransformOperation::create(tx, ty, tz, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::RotateTransformOperation: {
+        case CSSValueRotate: {
             double angle = firstValue.computeDegrees();
-            operations.operations().append(RotateTransformOperation::create(0, 0, 1, angle, transformOperationType(transformValue.operationType())));
+            operations.operations().append(RotateTransformOperation::create(0, 0, 1, angle, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::RotateXTransformOperation:
-        case WebKitCSSTransformValue::RotateYTransformOperation:
-        case WebKitCSSTransformValue::RotateZTransformOperation: {
+        case CSSValueRotatex:
+        case CSSValueRotatey:
+        case CSSValueRotatez: {
             double x = 0;
             double y = 0;
             double z = 0;
             double angle = firstValue.computeDegrees();
 
-            if (transformValue.operationType() == WebKitCSSTransformValue::RotateXTransformOperation)
+            if (transformValue.name() == CSSValueRotatex)
                 x = 1;
-            else if (transformValue.operationType() == WebKitCSSTransformValue::RotateYTransformOperation)
+            else if (transformValue.name() == CSSValueRotatey)
                 y = 1;
             else
                 z = 1;
-            operations.operations().append(RotateTransformOperation::create(x, y, z, angle, transformOperationType(transformValue.operationType())));
+            operations.operations().append(RotateTransformOperation::create(x, y, z, angle, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::Rotate3DTransformOperation: {
+        case CSSValueRotate3d: {
             if (transformValue.length() < 4)
                 break;
             auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
@@ -239,30 +261,30 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double y = secondValue.doubleValue();
             double z = thirdValue.doubleValue();
             double angle = fourthValue.computeDegrees();
-            operations.operations().append(RotateTransformOperation::create(x, y, z, angle, transformOperationType(transformValue.operationType())));
+            operations.operations().append(RotateTransformOperation::create(x, y, z, angle, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::SkewTransformOperation:
-        case WebKitCSSTransformValue::SkewXTransformOperation:
-        case WebKitCSSTransformValue::SkewYTransformOperation: {
+        case CSSValueSkew:
+        case CSSValueSkewx:
+        case CSSValueSkewy: {
             double angleX = 0;
             double angleY = 0;
             double angle = firstValue.computeDegrees();
-            if (transformValue.operationType() == WebKitCSSTransformValue::SkewYTransformOperation)
+            if (transformValue.name() == CSSValueSkewy)
                 angleY = angle;
             else {
                 angleX = angle;
-                if (transformValue.operationType() == WebKitCSSTransformValue::SkewTransformOperation) {
+                if (transformValue.name() == CSSValueSkew) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
                         angleY = secondValue.computeDegrees();
                     }
                 }
             }
-            operations.operations().append(SkewTransformOperation::create(angleX, angleY, transformOperationType(transformValue.operationType())));
+            operations.operations().append(SkewTransformOperation::create(angleX, angleY, transformOperationType(transformValue.name())));
             break;
         }
-        case WebKitCSSTransformValue::MatrixTransformOperation: {
+        case CSSValueMatrix: {
             if (transformValue.length() < 6)
                 break;
             double a = firstValue.doubleValue();
@@ -274,7 +296,7 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
             break;
         }
-        case WebKitCSSTransformValue::Matrix3DTransformOperation: {
+        case CSSValueMatrix3d: {
             if (transformValue.length() < 16)
                 break;
             TransformationMatrix matrix(downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(0)).doubleValue(),
@@ -296,7 +318,7 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             operations.operations().append(Matrix3DTransformOperation::create(matrix));
             break;
         }
-        case WebKitCSSTransformValue::PerspectiveTransformOperation: {
+        case CSSValuePerspective: {
             Length p = Length(0, Fixed);
             if (firstValue.isLength())
                 p = convertToFloatLength(&firstValue, conversionData);
@@ -312,7 +334,7 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             operations.operations().append(PerspectiveTransformOperation::create(p));
             break;
         }
-        case WebKitCSSTransformValue::UnknownTransformOperation:
+        default:
             ASSERT_NOT_REACHED();
             break;
         }

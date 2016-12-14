@@ -31,8 +31,6 @@
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSValueList.h"
 #include "JSNode.h"
-#include "JSWebKitCSSTransformValue.h"
-#include "WebKitCSSTransformValue.h"
 
 using namespace JSC;
 
@@ -60,8 +58,6 @@ void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSValue>&& value)
 {
-    if (value->isWebKitCSSTransformValue())
-        return createWrapper<WebKitCSSTransformValue>(globalObject, WTFMove(value));
     if (value->isValueList())
         return createWrapper<CSSValueList>(globalObject, WTFMove(value));
     if (value->isPrimitiveValue())

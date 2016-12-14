@@ -1,3 +1,49 @@
+2016-12-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Remove WebkitCSSTransformValue
+        https://bugs.webkit.org/show_bug.cgi?id=165844
+
+        Reviewed by Zalan Bujtas.
+
+        Remove WebkitCSSTransformValue and just use a CSSFunctionValue instead. No other
+        browsers support it, and the information it provides is easily obtainable from cssText.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::matrixTransformValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isSpringTimingFunctionValue):
+        (WebCore::CSSValue::isWebKitCSSTransformValue): Deleted.
+        * css/StyleResolver.cpp:
+        * css/TransformFunctions.cpp:
+        (WebCore::transformOperationType):
+        (WebCore::transformsForValue):
+        * css/TransformFunctions.h:
+        * css/WebKitCSSTransformValue.cpp: Removed.
+        * css/WebKitCSSTransformValue.h: Removed.
+        * css/WebKitCSSTransformValue.idl: Removed.
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::parseTransformTranslateArguments):
+        (WebCore::parseTransformNumberArguments):
+        (WebCore::parseSimpleTransformValue):
+        (WebCore::parseSimpleTransformList):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTranslate3d):
+        (WebCore::consumeNumbers):
+        (WebCore::consumePerspective):
+        (WebCore::consumeTransformValue):
+        (WebCore::transformOperationForCSSValueID): Deleted.
+
 2016-12-14  Antti Koivisto  <antti@apple.com>
 
         Make Style::Update const in RenderTreeUpdater

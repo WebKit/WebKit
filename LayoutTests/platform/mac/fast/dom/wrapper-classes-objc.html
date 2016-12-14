@@ -6,7 +6,6 @@
     color: rgb(0, 0, 0);
     clip: rect(0, 0, 1, 1);
     content: counter(dummy, square);
-    -webkit-transform: translate(10px, 20px);
 }
 </style>
 </head>
@@ -132,8 +131,6 @@ function runTest()
     test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('clip').getRectValue()", "Rect");
     test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('content')", "CSSValueList");
     test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('content').item(0).getCounterValue()", "Counter");
-    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform')", "CSSValueList");
-    test("stylesheet.cssRules.item(0).style.getPropertyCSSValue('-webkit-transform').item(0)", "CSSValueList");
     test("stylesheet.media", "MediaList");
 
     debug('');

@@ -80,7 +80,6 @@
 #include "SVGPathUtilities.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
-#include "WebKitCSSTransformValue.h"
 #include <bitset>
 #include <memory>
 #include <wtf/text/StringBuilder.h>
@@ -1712,7 +1711,7 @@ static RefPtr<CSSPrimitiveValue> consumeColumnRuleWidth(CSSParserTokenRange& ran
     return consumeLineWidth(range, cssParserMode, UnitlessQuirk::Forbid);
 }
 
-static bool consumeTranslate3d(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<WebKitCSSTransformValue>& transformValue)
+static bool consumeTranslate3d(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<CSSFunctionValue>& transformValue)
 {
     unsigned numberOfArguments = 2;
     RefPtr<CSSValue> parsedValue;
@@ -1731,7 +1730,7 @@ static bool consumeTranslate3d(CSSParserTokenRange& args, CSSParserMode cssParse
     return true;
 }
 
-static bool consumeNumbers(CSSParserTokenRange& args, RefPtr<WebKitCSSTransformValue>& transformValue, unsigned numberOfArguments)
+static bool consumeNumbers(CSSParserTokenRange& args, RefPtr<CSSFunctionValue>& transformValue, unsigned numberOfArguments)
 {
     do {
         RefPtr<CSSPrimitiveValue> parsedValue = consumeNumber(args, ValueRangeAll);
@@ -1744,7 +1743,7 @@ static bool consumeNumbers(CSSParserTokenRange& args, RefPtr<WebKitCSSTransformV
     return true;
 }
 
-static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<WebKitCSSTransformValue>& transformValue)
+static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParserMode, RefPtr<CSSFunctionValue>& transformValue)
 {
     RefPtr<CSSPrimitiveValue> parsedValue = consumeLength(args, cssParserMode, ValueRangeNonNegative);
     if (!parsedValue) {
@@ -1759,58 +1758,6 @@ static bool consumePerspective(CSSParserTokenRange& args, CSSParserMode cssParse
     return true;
 }
 
-// FIXME-NEWPARSER: This has no reason to exist once we eliminate WebkitCSSTransformValue in favor
-// of CSSFunctionValue.
-static WebKitCSSTransformValue::TransformOperationType transformOperationForCSSValueID(CSSValueID functionId)
-{
-    switch (functionId) {
-    case CSSValueRotate:
-        return WebKitCSSTransformValue::RotateTransformOperation;
-    case CSSValueRotatex:
-        return WebKitCSSTransformValue::RotateXTransformOperation;
-    case CSSValueRotatey:
-        return WebKitCSSTransformValue::RotateYTransformOperation;
-    case CSSValueRotatez:
-        return WebKitCSSTransformValue::RotateZTransformOperation;
-    case CSSValueSkewx:
-        return WebKitCSSTransformValue::SkewXTransformOperation;
-    case CSSValueSkewy:
-        return WebKitCSSTransformValue::SkewYTransformOperation;
-    case CSSValueSkew:
-        return WebKitCSSTransformValue::SkewTransformOperation;
-    case CSSValueScalex:
-        return WebKitCSSTransformValue::ScaleXTransformOperation;
-    case CSSValueScaley:
-        return WebKitCSSTransformValue::ScaleYTransformOperation;
-    case CSSValueScalez:
-        return WebKitCSSTransformValue::ScaleZTransformOperation;
-    case CSSValueScale:
-        return WebKitCSSTransformValue::ScaleTransformOperation;
-    case CSSValuePerspective:
-        return WebKitCSSTransformValue::PerspectiveTransformOperation;
-    case CSSValueTranslatex:
-        return WebKitCSSTransformValue::TranslateXTransformOperation;
-    case CSSValueTranslatey:
-        return WebKitCSSTransformValue::TranslateYTransformOperation;
-    case CSSValueTranslate:
-        return WebKitCSSTransformValue::TranslateTransformOperation;
-    case CSSValueTranslatez:
-        return WebKitCSSTransformValue::TranslateZTransformOperation;
-    case CSSValueMatrix:
-        return WebKitCSSTransformValue::MatrixTransformOperation;
-    case CSSValueMatrix3d:
-        return WebKitCSSTransformValue::Matrix3DTransformOperation;
-    case CSSValueScale3d:
-        return WebKitCSSTransformValue::Scale3DTransformOperation;
-    case CSSValueRotate3d:
-        return WebKitCSSTransformValue::Rotate3DTransformOperation;
-    case CSSValueTranslate3d:
-        return WebKitCSSTransformValue::Translate3DTransformOperation;
-    default:
-        return WebKitCSSTransformValue::UnknownTransformOperation;
-    }
-}
-
 static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     CSSValueID functionId = range.peek().functionId();
@@ -1820,9 +1767,7 @@ static RefPtr<CSSValue> consumeTransformValue(CSSParserTokenRange& range, CSSPar
     if (args.atEnd())
         return nullptr;
     
-    // FIXME-NEWPARSER: Do we really need WebkitCSSTransformValue? A CSSFunctionValue is good
-    // enough and has the CSSValueID as the operation type. Blink has eliminated it.
-    RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(transformOperationForCSSValueID(functionId));
+    RefPtr<CSSFunctionValue> transformValue = CSSFunctionValue::create(functionId);
     RefPtr<CSSValue> parsedValue;
     switch (functionId) {
     case CSSValueRotate:

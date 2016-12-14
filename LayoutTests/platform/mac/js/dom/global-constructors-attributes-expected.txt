@@ -2393,11 +2393,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').hasOwnProper
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSRegionRule').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSTransformValue').value is WebKitCSSTransformValue
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSTransformValue').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSTransformValue').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSTransformValue').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'WebKitCSSTransformValue').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitDataCue').value is WebKitDataCue
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitDataCue').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitDataCue').hasOwnProperty('set') is false

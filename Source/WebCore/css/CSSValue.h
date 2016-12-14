@@ -105,7 +105,6 @@ public:
     bool isCubicBezierTimingFunctionValue() const { return m_classType == CubicBezierTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
     bool isSpringTimingFunctionValue() const { return m_classType == SpringTimingFunctionClass; }
-    bool isWebKitCSSTransformValue() const { return m_classType == WebKitCSSTransformClass; }
     bool isLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
     bool isCalcValue() const {return m_classType == CalculationClass; }
     bool isFilterImageValue() const { return m_classType == FilterImageClass; }
@@ -199,10 +198,11 @@ protected:
         VariableReferenceClass,
         PendingSubstitutionValueClass,
 
-        // List class types must appear after ValueListClass.
+        // List class types must appear after ValueListClass. Note CSSFunctionValue
+        // is deliberately excluded, since we don't want it exposed to the CSS OM
+        // as a list.
         ValueListClass,
         ImageSetClass,
-        WebKitCSSTransformClass,
 #if ENABLE(CSS_GRID_LAYOUT)
         GridLineNamesClass,
         GridAutoRepeatClass,

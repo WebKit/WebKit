@@ -37,7 +37,6 @@ class CSSPrimitiveValue;
 class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
-class WebKitCSSTransformValue;
 
 struct Length;
 

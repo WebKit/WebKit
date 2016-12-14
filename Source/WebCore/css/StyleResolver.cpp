@@ -134,7 +134,6 @@
 #include "ViewportStyleResolver.h"
 #include "VisitedLinkState.h"
 #include "WebKitCSSRegionRule.h"
-#include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
 #include <bitset>

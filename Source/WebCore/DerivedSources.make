@@ -296,7 +296,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSRegionRule.idl \
-    $(WebCore)/css/WebKitCSSTransformValue.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
     $(WebCore)/dom/AnimationEvent.idl \
     $(WebCore)/dom/Attr.idl \

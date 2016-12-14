@@ -1361,8 +1361,6 @@
 		314BE3A61B3103FB00141982 /* NamedImageGeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */; };
 		314BE3A71B3103FB00141982 /* NamedImageGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */; };
 		316023F01532C40C00D50FF4 /* Dictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 316023EF1532C40C00D50FF4 /* Dictionary.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */; };
-		31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E590E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h */; };
 		316FE0710E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */; };
 		316FE0720E6CCBEE00BF6088 /* JSCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */; };
 		316FE0730E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */; };
@@ -5382,8 +5380,6 @@
 		BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */; };
 		BC97E42C10915B060010D361 /* JSHTMLAllCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */; };
 		BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */; };
-		BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
 		BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA257141293C010007A263D /* VerticalPositionCache.h */; };
@@ -8485,9 +8481,6 @@
 		314BE3A41B3103FB00141982 /* NamedImageGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamedImageGeneratedImage.cpp; sourceTree = "<group>"; };
 		314BE3A51B3103FB00141982 /* NamedImageGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamedImageGeneratedImage.h; sourceTree = "<group>"; };
 		316023EF1532C40C00D50FF4 /* Dictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dictionary.h; sourceTree = "<group>"; };
-		31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSTransformValue.idl; sourceTree = "<group>"; };
-		31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSTransformValue.cpp; sourceTree = "<group>"; };
-		31611E590E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		316FE06D0E6CCBEE00BF6088 /* JSCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframeRule.cpp; sourceTree = "<group>"; };
 		316FE06E0E6CCBEE00BF6088 /* JSCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSKeyframeRule.h; sourceTree = "<group>"; };
 		316FE06F0E6CCBEE00BF6088 /* JSCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSKeyframesRule.cpp; sourceTree = "<group>"; };
@@ -13248,8 +13241,6 @@
 		BC9A6144146859D9006057FD /* make_dom_exceptions.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_dom_exceptions.pl; sourceTree = "<group>"; };
 		BC9A6145146859D9006057FD /* make_event_factory.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_event_factory.pl; sourceTree = "<group>"; };
 		BC9A6146146859D9006057FD /* make_names.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_names.pl; sourceTree = "<group>"; };
-		BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebKitCSSTransformValue.h; sourceTree = "<group>"; };
-		BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSTransformValue.cpp; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
 		BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCaptionElement.h; sourceTree = "<group>"; };
 		BCA257141293C010007A263D /* VerticalPositionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VerticalPositionCache.h; sourceTree = "<group>"; };
@@ -20365,8 +20356,6 @@
 				4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */,
 				8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */,
 				8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */,
-				31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */,
-				31611E590E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h */,
 				3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */,
 				3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */,
 			);
@@ -23550,9 +23539,6 @@
 				8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */,
 				8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */,
 				8AD0A55614C87425000D83C5 /* WebKitCSSRegionRule.idl */,
-				BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */,
-				BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */,
-				31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */,
 				3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */,
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
 				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
@@ -26556,7 +26542,6 @@
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
 				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
 				8AD0A59514C88336000D83C5 /* JSWebKitCSSRegionRule.h in Headers */,
-				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
 				3F2B33EF165AF15600E3987C /* JSWebKitCSSViewportRule.h in Headers */,
 				7CC69941191EC5F500AF2270 /* JSWebKitNamespace.h in Headers */,
 				0FDA7C271883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.h in Headers */,
@@ -28147,7 +28132,6 @@
 				976D6C7C122B8A3D001FD1F7 /* BlobBuilder.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */,
-				BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */,
 				3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */,
 				2D0621451DA639BA00A7FB26 /* WebKitMediaKeyMessageEvent.h in Headers */,
 				2D0621511DA63A9F00A7FB26 /* WebKitMediaKeyNeededEvent.h in Headers */,
@@ -30358,7 +30342,6 @@
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,
 				8AD0A59414C88336000D83C5 /* JSWebKitCSSRegionRule.cpp in Sources */,
-				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				3F2B33EE165AF15600E3987C /* JSWebKitCSSViewportRule.cpp in Sources */,
 				CDA98DA31601464100FEA3B1 /* JSWebKitMediaKeyError.cpp in Sources */,
 				CDA98DDF16026A3700FEA3B1 /* JSWebKitMediaKeyMessageEvent.cpp in Sources */,
@@ -31637,7 +31620,6 @@
 				976D6C7B122B8A3D001FD1F7 /* BlobBuilder.cpp in Sources */,
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */,
-				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
 				3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */,
 				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 				2D0621441DA639B600A7FB26 /* WebKitMediaKeyMessageEvent.cpp in Sources */,

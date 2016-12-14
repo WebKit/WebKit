@@ -371,7 +371,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/StyleSheetList.idl
     css/WebKitCSSMatrix.idl
     css/WebKitCSSRegionRule.idl
-    css/WebKitCSSTransformValue.idl
     css/WebKitCSSViewportRule.idl
 
     dom/AnimationEvent.idl
@@ -1366,7 +1365,6 @@ set(WebCore_SOURCES
     css/ViewportStyleResolver.cpp
     css/WebKitCSSMatrix.cpp
     css/WebKitCSSRegionRule.cpp
-    css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp
 
     css/parser/CSSAtRuleID.cpp
