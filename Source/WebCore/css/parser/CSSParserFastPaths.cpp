@@ -496,7 +496,7 @@ RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserM
     return CSSValuePool::singleton().createColorValue(color);
 }
 
-bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, CSSParserMode parserMode)
+bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, CSSParserMode parserMode, StyleSheetContents* styleSheetContents)
 {
     if (valueID == CSSValueInvalid || !isValueAllowedInMode(valueID, parserMode))
         return false;
@@ -751,9 +751,21 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyWebkitUserDrag: // auto | none | element
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueElement;
     case CSSPropertyWebkitUserModify: // read-only | read-write
-        return valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly;
+        if (valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly) {
+            if (styleSheetContents)
+                styleSheetContents->parserSetUsesStyleBasedEditability();
+            return true;
+        }
+        return false;
     case CSSPropertyWebkitUserSelect: // auto | none | text | all
-        return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll;
+        if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText)
+            return true;
+        if (valueID == CSSValueAll) {
+            if (styleSheetContents)
+                styleSheetContents->parserSetUsesStyleBasedEditability();
+            return true;
+        }
+        return false;
     case CSSPropertyWritingMode:
         // Note that horizontal-bt is not supported by the unprefixed version of
         // the property, only by the -webkit- version.
@@ -1014,7 +1026,7 @@ static bool isUniversalKeyword(const String& string)
     || equalLettersIgnoringASCIICase(string, "revert");
 }
 
-static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String& string, CSSParserMode parserMode)
+static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String& string, CSSParserMode parserMode, StyleSheetContents* styleSheetContents)
 {
     ASSERT(!string.isEmpty());
 
@@ -1046,7 +1058,7 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String
     if (valueID == CSSValueRevert)
         return CSSValuePool::singleton().createRevertValue();
     
-    if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, parserMode))
+    if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, parserMode, styleSheetContents))
         return CSSPrimitiveValue::createIdentifier(valueID);
     return nullptr;
 }
@@ -1260,14 +1272,14 @@ static RefPtr<CSSValue> parseSimpleTransform(CSSPropertyID propertyID, const Str
     return parseSimpleTransformList(string.characters16(), string.length());
 }
 
-RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode)
+RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode, StyleSheetContents* styleSheetContents)
 {
     RefPtr<CSSValue> result = parseSimpleLengthValue(propertyID, string, parserMode);
     if (result)
         return result;
     if (isColorPropertyID(propertyID))
         return parseColor(string, parserMode);
-    result = parseKeywordValue(propertyID, string, parserMode);
+    result = parseKeywordValue(propertyID, string, parserMode, styleSheetContents);
     if (result)
         return result;
     result = parseSimpleTransform(propertyID, string);

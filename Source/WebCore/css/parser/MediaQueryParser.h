@@ -76,9 +76,9 @@ private:
 class MediaQueryParser {
     WTF_MAKE_NONCOPYABLE(MediaQueryParser);
 public:
-    static Ref<MediaQuerySet> parseMediaQuerySet(const String&);
-    static Ref<MediaQuerySet> parseMediaQuerySet(CSSParserTokenRange);
-    static Ref<MediaQuerySet> parseMediaCondition(CSSParserTokenRange);
+    static RefPtr<MediaQuerySet> parseMediaQuerySet(const String&);
+    static RefPtr<MediaQuerySet> parseMediaQuerySet(CSSParserTokenRange);
+    static RefPtr<MediaQuerySet> parseMediaCondition(CSSParserTokenRange);
 
 private:
     enum ParserType {
@@ -89,7 +89,7 @@ private:
     MediaQueryParser(ParserType);
     virtual ~MediaQueryParser();
 
-    Ref<MediaQuerySet> parseInternal(CSSParserTokenRange);
+    RefPtr<MediaQuerySet> parseInternal(CSSParserTokenRange);
 
     void processToken(const CSSParserToken&);
 
@@ -116,7 +116,7 @@ private:
     State m_state;
     ParserType m_parserType;
     MediaQueryData m_mediaQueryData;
-    Ref<MediaQuerySet> m_querySet;
+    RefPtr<MediaQuerySet> m_querySet;
     MediaQueryBlockWatcher m_blockWatcher;
 
     const static State ReadRestrictor;

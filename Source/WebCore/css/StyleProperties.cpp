@@ -25,7 +25,6 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
-#include "CSSDeferredParser.h"
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSValueKeywords.h"
@@ -72,12 +71,12 @@ Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 }
 
 MutableStyleProperties::MutableStyleProperties(CSSParserMode cssParserMode)
-    : StyleProperties(cssParserMode, MutablePropertiesType)
+    : StyleProperties(cssParserMode)
 {
 }
 
 MutableStyleProperties::MutableStyleProperties(const CSSProperty* properties, unsigned length)
-    : StyleProperties(HTMLStandardMode, MutablePropertiesType)
+    : StyleProperties(HTMLStandardMode)
 {
     m_propertyVector.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i)
@@ -108,9 +107,8 @@ ImmutableStyleProperties::~ImmutableStyleProperties()
 }
 
 MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
-    : StyleProperties(other.cssParserMode(), MutablePropertiesType)
+    : StyleProperties(other.cssParserMode())
 {
-    ASSERT(other.type() != DeferredPropertiesType);
     if (is<MutableStyleProperties>(other))
         m_propertyVector = downcast<MutableStyleProperties>(other).m_propertyVector;
     else {
@@ -721,7 +719,7 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
     return propertyAt(foundPropertyIndex).isImplicit();
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext, StyleSheetContents* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
@@ -732,7 +730,7 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String&
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(*this, propertyID, value, important, parserContext) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseValue(*this, propertyID, value, important, parserContext, contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
 bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important)
@@ -1363,26 +1361,6 @@ String StyleProperties::PropertyReference::cssText() const
     result.append(';');
     return result.toString();
 }
-    
-Ref<DeferredStyleProperties> DeferredStyleProperties::create(const CSSParserTokenRange& tokenRange, CSSDeferredParser& parser)
-{
-    return adoptRef(*new DeferredStyleProperties(tokenRange, parser));
-}
 
-DeferredStyleProperties::DeferredStyleProperties(const CSSParserTokenRange& tokenRange, CSSDeferredParser& parser)
-    : StylePropertiesBase(parser.mode(), DeferredPropertiesType)
-    , m_range(tokenRange)
-    , m_parser(parser)
-{
-}
-    
-DeferredStyleProperties::~DeferredStyleProperties()
-{
-}
-
-Ref<ImmutableStyleProperties> DeferredStyleProperties::parseDeferredProperties()
-{
-    return m_parser->parseDeclaration(m_range);
-}
 
 } // namespace WebCore

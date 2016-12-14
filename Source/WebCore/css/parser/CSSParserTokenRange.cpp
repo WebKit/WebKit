@@ -30,7 +30,6 @@
 #include "config.h"
 #include "CSSParserTokenRange.h"
 
-#include "StyleSheetContents.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -65,27 +64,6 @@ CSSParserTokenRange CSSParserTokenRange::consumeBlock()
             nestingLevel--;
     } while (nestingLevel && m_first < m_last);
 
-    if (nestingLevel)
-        return makeSubRange(start, m_first); // Ended at EOF
-    return makeSubRange(start, m_first - 1);
-}
-
-CSSParserTokenRange CSSParserTokenRange::consumeBlockCheckingForEditability(StyleSheetContents* styleSheet)
-{
-    ASSERT(peek().getBlockType() == CSSParserToken::BlockStart);
-    const auto* start = &peek() + 1;
-    unsigned nestingLevel = 0;
-    do {
-        const auto& token = consume();
-        if (token.getBlockType() == CSSParserToken::BlockStart)
-            nestingLevel++;
-        else if (token.getBlockType() == CSSParserToken::BlockEnd)
-            nestingLevel--;
-
-        if (styleSheet && !styleSheet->usesStyleBasedEditability() && token.type() == IdentToken && equalLettersIgnoringASCIICase(token.value(), "-webkit-user-modify"))
-            styleSheet->parserSetUsesStyleBasedEditability();
-    } while (nestingLevel && m_first < m_last);
-    
     if (nestingLevel)
         return makeSubRange(start, m_first); // Ended at EOF
     return makeSubRange(start, m_first - 1);

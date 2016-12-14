@@ -484,10 +484,8 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         StyleRule* rule = ruleData.rule();
 
         // If the rule has no properties to apply, then ignore it in the non-debug mode.
-        // Note that if we get null back here, it means we have a rule with deferred properties,
-        // and that means we always have to consider it.
-        const StyleProperties* properties = rule->propertiesWithoutDeferredParsing();
-        if (properties && properties->isEmpty() && !matchRequest.includeEmptyRules)
+        const StyleProperties& properties = rule->properties();
+        if (properties.isEmpty() && !matchRequest.includeEmptyRules)
             continue;
 
         // FIXME: Exposing the non-standard getMatchedCSSRules API to web is the only reason this is needed.

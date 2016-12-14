@@ -36,17 +36,17 @@
 
 namespace WebCore {
 
-Ref<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(const String& queryString)
+RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(const String& queryString)
 {
     return parseMediaQuerySet(CSSTokenizer(queryString).tokenRange());
 }
 
-Ref<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(CSSParserTokenRange range)
+RefPtr<MediaQuerySet> MediaQueryParser::parseMediaQuerySet(CSSParserTokenRange range)
 {
     return MediaQueryParser(MediaQuerySetParser).parseInternal(range);
 }
 
-Ref<MediaQuerySet> MediaQueryParser::parseMediaCondition(CSSParserTokenRange range)
+RefPtr<MediaQuerySet> MediaQueryParser::parseMediaCondition(CSSParserTokenRange range)
 {
     return MediaQueryParser(MediaConditionParser).parseInternal(range);
 }
@@ -246,7 +246,7 @@ void MediaQueryParser::processToken(const CSSParserToken& token)
 }
 
 // The state machine loop
-Ref<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange range)
+RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange range)
 {
     while (!range.atEnd())
         processToken(range.consume());
@@ -261,7 +261,7 @@ Ref<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange range)
     } else if (m_mediaQueryData.currentMediaQueryChanged())
         commitMediaQuery();
 
-    return WTFMove(m_querySet);
+    return m_querySet;
 }
 
 MediaQueryData::MediaQueryData()

@@ -330,7 +330,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     }
 
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, CSSParser::RuleParsing::Deferred);
+    p.parseSheet(this, sheetText);
 
     if (m_parserContext.needsSiteSpecificQuirks && isStrictParserMode(m_parserContext.mode)) {
         // Work around <https://bugs.webkit.org/show_bug.cgi?id=28350>.
@@ -346,7 +346,7 @@ void StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
 bool StyleSheetContents::parseString(const String& sheetText)
 {
     CSSParser p(parserContext());
-    p.parseSheet(this, sheetText, parserContext().mode != UASheetMode ? CSSParser::RuleParsing::Deferred : CSSParser::RuleParsing::Normal);
+    p.parseSheet(this, sheetText);
     return true;
 }
 
@@ -428,22 +428,18 @@ static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rul
 {
     for (auto& rule : rules) {
         switch (rule->type()) {
-        case StyleRuleBase::Style: {
-            auto* properties = downcast<StyleRule>(*rule).propertiesWithoutDeferredParsing();
-            if (properties && properties->traverseSubresources(handler))
+        case StyleRuleBase::Style:
+            if (downcast<StyleRule>(*rule).properties().traverseSubresources(handler))
                 return true;
             break;
-        }
         case StyleRuleBase::FontFace:
             if (downcast<StyleRuleFontFace>(*rule).properties().traverseSubresources(handler))
                 return true;
             break;
-        case StyleRuleBase::Media: {
-            auto* childRules = downcast<StyleRuleMedia>(*rule).childRulesWithoutDeferredParsing();
-            if (childRules && traverseSubresourcesInRules(*childRules, handler))
+        case StyleRuleBase::Media:
+            if (traverseSubresourcesInRules(downcast<StyleRuleMedia>(*rule).childRules(), handler))
                 return true;
             break;
-        }
         case StyleRuleBase::Region:
             if (traverseSubresourcesInRules(downcast<StyleRuleRegion>(*rule).childRules(), handler))
                 return true;

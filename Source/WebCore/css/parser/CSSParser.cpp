@@ -133,9 +133,9 @@ CSSParser::~CSSParser()
 {
 }
 
-void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, RuleParsing ruleParsing)
+void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string)
 {
-    return CSSParserImpl::parseStyleSheet(string, m_context, sheet, ruleParsing);
+    return CSSParserImpl::parseStyleSheet(string, m_context, sheet);
 }
 
 void CSSParser::parseSheetForInspector(const CSSParserContext& context, StyleSheetContents* sheet, const String& string, CSSParserObserver& observer)
@@ -156,8 +156,10 @@ RefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(const String& string)
 
 bool CSSParser::parseSupportsCondition(const String& condition)
 {
-    CSSParserImpl parser(m_context, condition);
-    return CSSSupportsParser::supportsCondition(parser.tokenizer().tokenRange(), parser) == CSSSupportsParser::Supported;
+    CSSTokenizer tokenizer(condition);
+    CSSParserTokenRange range = tokenizer.tokenRange();
+    CSSParserImpl parser(m_context);
+    return CSSSupportsParser::supportsCondition(range, parser) == CSSSupportsParser::Supported;
 }
 
 Color CSSParser::parseColor(const String& string, bool strict)
@@ -200,16 +202,16 @@ RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const Str
 {
     if (string.isEmpty())
         return nullptr;
-    if (RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode))
+    if (RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode, nullptr))
         return value;
     CSSTokenizer tokenizer(string);
     return CSSPropertyParser::parseSingleValue(propertyID, tokenizer.tokenRange(), context, nullptr);
 }
 
-CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)
+CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context, StyleSheetContents* contextStyleSheet)
 {
     ASSERT(!string.isEmpty());
-    RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode);
+    RefPtr<CSSValue> value = CSSParserFastPaths::maybeParseValue(propertyID, string, context.mode, contextStyleSheet);
     if (value)
         return declaration.addParsedProperty(CSSProperty(propertyID, WTFMove(value), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
 

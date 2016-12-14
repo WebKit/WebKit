@@ -48,7 +48,7 @@ public:
     CSSTokenizer(const String&);
     CSSTokenizer(const String&, CSSParserObserverWrapper&); // For the inspector
 
-    CSSParserTokenRange tokenRange() const;
+    CSSParserTokenRange tokenRange();
     unsigned tokenCount();
 
 private:

@@ -75,7 +75,6 @@ public:
 
     // The returned range doesn't include the brackets
     CSSParserTokenRange consumeBlock();
-    CSSParserTokenRange consumeBlockCheckingForEditability(StyleSheetContents*);
 
     void consumeComponentValue();
 
