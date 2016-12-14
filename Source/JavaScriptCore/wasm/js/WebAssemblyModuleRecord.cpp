@@ -85,8 +85,8 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
             break;
         }
         case Wasm::External::Global: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
             // In the MVP, only immutable global variables can be exported.
+            addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
             break;
         }
         }
@@ -128,7 +128,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             // 1. If e is a closure c:
             //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
-            if (exp.functionIndex < importCount) {
+            if (exp.kindIndex < importCount) {
                 // FIXME Implement re-exporting an import. https://bugs.webkit.org/show_bug.cgi?id=165510
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -136,12 +136,12 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(exp.functionIndex);
-            JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(exp.functionIndex);
-            Wasm::Signature* signature = module->signatureForFunctionIndexSpace(exp.functionIndex);
+            JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+            JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
+            Wasm::Signature* signature = module->signatureForFunctionIndexSpace(exp.kindIndex);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->arguments.size(), exp.field.string(), instance, jsEntrypointCallee, wasmEntrypointCallee, signature);
             exportedValue = function;
-            if (hasStart && startFunctionIndexSpace == exp.functionIndex)
+            if (hasStart && startFunctionIndexSpace == exp.kindIndex)
                 m_startFunction.set(vm, this, function);
             break;
         }
@@ -153,9 +153,28 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
             break;
         }
+
         case Wasm::External::Global: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
-            // In the MVP, only immutable global variables can be exported.
+            // Assert: the global is immutable by MVP validation constraint.
+            const Wasm::Global& global = moduleInformation.globals[exp.kindIndex];
+            ASSERT(global.mutability == Wasm::Global::Immutable);
+            // Return ToJSValue(v).
+            switch (global.type) {
+            case Wasm::I32:
+                exportedValue = JSValue(instance->loadI32Global(exp.kindIndex));
+                break;
+
+            case Wasm::F32:
+                exportedValue = JSValue(instance->loadF32Global(exp.kindIndex));
+                break;
+
+            case Wasm::F64:
+                exportedValue = JSValue(instance->loadF64Global(exp.kindIndex));
+                break;
+
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
             break;
         }
         }

@@ -150,7 +150,7 @@ inline B3::Type toB3Type(Type type)
 }
 #undef CREATE_CASE
 
-#define CREATE_CASE(name, id, b3type, inc) case name: return "name";
+#define CREATE_CASE(name, id, b3type, inc) case name: return #name;
 inline const char* toString(Type type)
 {
     switch (type) {

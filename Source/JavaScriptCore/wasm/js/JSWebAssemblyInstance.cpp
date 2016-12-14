@@ -38,9 +38,10 @@
 
 namespace JSC {
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject, unsigned numImportFunctions)
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap, allocationSize(numImportFunctions))) JSWebAssemblyInstance(vm, structure, numImportFunctions);
+    // FIXME: These objects could be pretty big we should try to throw OOM here.
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap, allocationSize(module->moduleInformation().importFunctions.size()))) JSWebAssemblyInstance(vm, structure, module->moduleInformation().importFunctions.size());
     instance->finishCreation(vm, module, moduleNamespaceObject);
     return instance;
 }
@@ -61,6 +62,11 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+
+    const size_t extraMemorySize = module->moduleInformation().globals.size() * sizeof(Register);
+    m_globals = MallocPtr<uint64_t>::malloc(extraMemorySize);
+    heap()->reportExtraMemoryAllocated(extraMemorySize);
+
     m_module.set(vm, this, module);
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
     putDirect(vm, Identifier::fromString(&vm, "exports"), moduleNamespaceObject, None);
@@ -81,6 +87,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_moduleNamespaceObject);
     visitor.append(&thisObject->m_memory);
     visitor.append(&thisObject->m_table);
+    visitor.reportExtraMemoryVisited(thisObject->module()->moduleInformation().globals.size());
     for (unsigned i = 0; i < thisObject->m_numImportFunctions; ++i)
         visitor.append(thisObject->importFunction(i));
 }

@@ -1,3 +1,63 @@
+2016-12-14  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly JS API: implement Global
+        https://bugs.webkit.org/show_bug.cgi?id=164133
+
+        Reviewed by Saam Barati.
+
+        This patch adds support for globals. It handles imports, exports
+        and internal globals. In the MVP only internal globals are allowed
+        to be mutable. This means we can store a C-array of 64-bit slots
+        off the instance holding them. When globals are exported to JS
+        they are done so as numbers. This means that i64 globals cannot be
+        imported or exported.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::getGlobal):
+        (JSC::Wasm::B3IRGenerator::setGlobal):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmFormat.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseImport):
+        (JSC::Wasm::ModuleParser::parseGlobal):
+        (JSC::Wasm::ModuleParser::parseExport):
+        (JSC::Wasm::ModuleParser::parseElement):
+        (JSC::Wasm::ModuleParser::parseInitExpr):
+        (JSC::Wasm::ModuleParser::parseGlobalType):
+        (JSC::Wasm::ModuleParser::parseData):
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser::parseVarInt32):
+        (JSC::Wasm::Parser::parseVarInt64):
+        (JSC::Wasm::Parser::parseUInt64):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::hasMemory):
+        (JSC::Wasm::Validate::Validate):
+        (JSC::Wasm::Validate::getGlobal):
+        (JSC::Wasm::Validate::setGlobal):
+        (JSC::Wasm::validateFunction):
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::loadI32Global):
+        (JSC::JSWebAssemblyInstance::loadI64Global):
+        (JSC::JSWebAssemblyInstance::loadF32Global):
+        (JSC::JSWebAssemblyInstance::loadF64Global):
+        (JSC::JSWebAssemblyInstance::setGlobal):
+        (JSC::JSWebAssemblyInstance::offsetOfGlobals):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        (JSC::WebAssemblyModuleRecord::link):
+
 2016-12-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, re-enable concurrent GC on ARM64 now that the most likely culprit of the memory

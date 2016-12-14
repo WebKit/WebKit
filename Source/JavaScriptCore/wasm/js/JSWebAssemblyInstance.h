@@ -42,7 +42,7 @@ public:
     typedef JSDestructibleObject Base;
 
 
-    static JSWebAssemblyInstance* create(VM&, Structure*, JSWebAssemblyModule*, JSModuleNamespaceObject*, unsigned);
+    static JSWebAssemblyInstance* create(VM&, Structure*, JSWebAssemblyModule*, JSModuleNamespaceObject*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
@@ -75,15 +75,22 @@ public:
     JSWebAssemblyTable* table() { return m_table.get(); }
     void setTable(VM& vm, JSWebAssemblyTable* table) { m_table.set(vm, this, table); }
 
+    int32_t loadI32Global(unsigned i) const { return m_globals.get()[i]; }
+    int64_t loadI64Global(unsigned i) const { return m_globals.get()[i]; }
+    float loadF32Global(unsigned i) const { return bitwise_cast<float>(loadI32Global(i)); }
+    double loadF64Global(unsigned i) const { return bitwise_cast<double>(loadI64Global(i)); }
+    void setGlobal(unsigned i, int64_t bits) { m_globals.get()[i] = bits; }
+
     static size_t offsetOfImportFunction(unsigned idx)
     {
         return offsetOfImportFunctions() + sizeof(WriteBarrier<JSCell>) * idx;
     }
 
     static ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_table); }
+    static ptrdiff_t offsetOfGlobals() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_globals); }
 
 protected:
-    JSWebAssemblyInstance(VM&, Structure*, unsigned);
+    JSWebAssemblyInstance(VM&, Structure*, unsigned numImportFunctions);
     void finishCreation(VM&, JSWebAssemblyModule*, JSModuleNamespaceObject*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -103,6 +110,7 @@ private:
     WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
     WriteBarrier<JSWebAssemblyTable> m_table;
+    MallocPtr<uint64_t> m_globals;
     unsigned m_numImportFunctions;
 };
 

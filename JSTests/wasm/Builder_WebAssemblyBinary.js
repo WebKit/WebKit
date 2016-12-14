@@ -51,6 +51,40 @@ const putTable = (bin, {initial, maximum, element}) => {
     putResizableLimits(bin, initial, maximum);
 };
 
+const valueType = WASM.description.type.i32.type
+
+const putGlobalType = (bin, global) => {
+    put(bin, valueType, WASM.typeValue[global.type]);
+    put(bin, "varuint1", global.mutability);
+};
+
+const putOp = (bin, op) => {
+    put(bin, "uint8", op.value);
+    if (op.arguments.length !== 0)
+        throw new Error(`Unimplemented: arguments`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
+
+    switch (op.name) {
+    default:
+        for (let i = 0; i < op.immediates.length; ++i) {
+            const type = WASM.description.opcode[op.name].immediate[i].type
+            if (!bin[type])
+                throw new TypeError(`Unknown type: ${type} in op: ${op.name}`);
+            put(bin, type, op.immediates[i]);
+        }
+        break;
+    case "br_table":
+        put(bin, "varuint32", op.immediates.length - 1);
+        for (let imm of op.immediates)
+            put(bin, "varuint32", imm);
+        break;
+    }
+};
+
+const putInitExpr = (bin, expr) => {
+    putOp(bin, { value: WASM.description.opcode[expr.op].value, name: expr.op, immediates: [expr.initValue], arguments: [] });
+    putOp(bin, { value: WASM.description.opcode.end.value, name: "end", immediates: [], arguments: [] });
+};
+
 const emitters = {
     Type: (section, bin) => {
         put(bin, "varuint32", section.data.length);
@@ -88,7 +122,9 @@ const emitters = {
                 putResizableLimits(bin, initial, maximum);
                 break;
             };
-            case "Global": throw new Error(`Not yet implemented`);
+            case "Global":
+                putGlobalType(bin, entry.globalDescription);
+                break;
             }
         }
     },
@@ -117,7 +153,14 @@ const emitters = {
         }
     },
 
-    Global: (section, bin) => { throw new Error(`Not yet implemented`); },
+    Global: (section, bin) => {
+        put(bin, "varuint32", section.data.length);
+        for (const global of section.data) {
+            putGlobalType(bin, global);
+            putInitExpr(bin, global)
+        }
+    },
+
     Export: (section, bin) => {
         put(bin, "varuint32", section.data.length);
         for (const entry of section.data) {
@@ -125,10 +168,13 @@ const emitters = {
             put(bin, "uint8", WASM.externalKindValue[entry.kind]);
             switch (entry.kind) {
             default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
-            case "Function": put(bin, "varuint32", entry.index); break;
+            case "Global":
+            case "Function":
+                put(bin, "varuint32", entry.index);
+                break;
             case "Table": throw new Error(`Not yet implemented`);
             case "Memory": throw new Error(`Not yet implemented`);
-            case "Global": throw new Error(`Not yet implemented`);
+
             }
         }
     },
@@ -164,27 +210,9 @@ const emitters = {
                 put(funcBin, "varint7", WASM.typeValue[func.locals[i]]);
             }
 
-            for (const op of func.code) {
-                put(funcBin, "uint8", op.value);
-                if (op.arguments.length !== 0)
-                    throw new Error(`Unimplemented: arguments`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
+            for (const op of func.code)
+                putOp(funcBin, op);
 
-                switch (op.name) {
-                default:
-                    for (let i = 0; i < op.immediates.length; ++i) {
-                        const type = WASM.description.opcode[op.name].immediate[i].type
-                        if (!funcBin[type])
-                            throw new TypeError(`Unknown type: ${type} in op: ${op.name}`);
-                        put(funcBin, type, op.immediates[i]);
-                    }
-                    break;
-                case "br_table":
-                    put(funcBin, "varuint32", op.immediates.length - 1);
-                    for (let imm of op.immediates)
-                        put(funcBin, "varuint32", imm);
-                    break;
-                }
-            }
             funcBin.apply();
         }
     },

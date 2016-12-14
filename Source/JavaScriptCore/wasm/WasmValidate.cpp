@@ -86,6 +86,10 @@ public:
     bool WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     bool WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
 
+    // Globals
+    bool WARN_UNUSED_RETURN getGlobal(uint32_t index, ExpressionType& result);
+    bool WARN_UNUSED_RETURN setGlobal(uint32_t index, ExpressionType value);
+
     // Memory
     bool WARN_UNUSED_RETURN load(LoadOpType, ExpressionType pointer, ExpressionType& result, uint32_t offset);
     bool WARN_UNUSED_RETURN store(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
@@ -116,13 +120,13 @@ public:
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
-    bool hasMemory() const { return !!m_memory; }
+    bool hasMemory() const { return !!m_module.memory; }
 
     void setErrorMessage(String&& message) { ASSERT(m_errorMessage.isNull()); m_errorMessage = WTFMove(message); }
     String errorMessage() const { return m_errorMessage; }
-    Validate(ExpressionType returnType, const MemoryInformation& memory)
+    Validate(ExpressionType returnType, const ModuleInformation& module)
         : m_returnType(returnType)
-        , m_memory(memory)
+        , m_module(module)
     {
     }
 
@@ -135,7 +139,7 @@ private:
     ExpressionType m_returnType;
     Vector<Type> m_locals;
     String m_errorMessage;
-    const MemoryInformation& m_memory;
+    const ModuleInformation& m_module;
 };
 
 bool Validate::addArguments(const Vector<Type>& args)
@@ -177,6 +181,38 @@ bool Validate::setLocal(uint32_t index, ExpressionType value)
         return true;
 
     m_errorMessage = makeString("Attempt to set local with type: ", toString(localType), " with a variable of type: ", toString(value));
+    return false;
+}
+
+bool Validate::getGlobal(uint32_t index, ExpressionType& result)
+{
+    if (index < m_module.globals.size()) {
+        result = m_module.globals[index].type;
+        ASSERT(isValueType(result));
+        return true;
+    }
+    m_errorMessage = ASCIILiteral("Attempt to use unknown global.");
+    return false;
+}
+
+bool Validate::setGlobal(uint32_t index, ExpressionType value)
+{
+    if (index >= m_module.globals.size()) {
+        m_errorMessage = ASCIILiteral("Attempt to use unknown global.");
+        return false;
+    }
+
+    if (m_module.globals[index].mutability == Global::Immutable) {
+        m_errorMessage = ASCIILiteral("Attempt to store to immutable global.");
+        return false;
+    }
+
+    ExpressionType globalType = m_module.globals[index].type;
+    ASSERT(isValueType(globalType));
+    if (globalType == value)
+        return true;
+
+    m_errorMessage = makeString("Attempt to set global with type: ", toString(globalType), " with a variable of type: ", toString(value));
     return false;
 }
 
@@ -401,10 +437,10 @@ void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
     // Think of this as penance for the sin of bad error messages.
 }
 
-String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info)
+String validateFunction(const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& module)
 {
-    Validate context(signature->returnType, info.memory);
-    FunctionParser<Validate> validator(context, source, length, signature, functionIndexSpace, info);
+    Validate context(signature->returnType, module);
+    FunctionParser<Validate> validator(context, source, length, signature, functionIndexSpace, module);
 
     if (!validator.parse()) {
         // FIXME: add better location information here. see: https://bugs.webkit.org/show_bug.cgi?id=164288

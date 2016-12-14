@@ -51,8 +51,12 @@ protected:
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt8(uint8_t&);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t&);
+    bool WARN_UNUSED_RETURN parseUInt64(uint64_t&);
     bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t&);
+
+    bool WARN_UNUSED_RETURN parseVarInt32(int32_t&);
+    bool WARN_UNUSED_RETURN parseVarInt64(int64_t&);
 
     bool WARN_UNUSED_RETURN parseResultType(Type&);
     bool WARN_UNUSED_RETURN parseValueType(Type&);
@@ -124,12 +128,31 @@ ALWAYS_INLINE bool Parser::parseVarUInt64(uint64_t& result)
     return WTF::LEBDecoder::decodeUInt64(m_source, m_sourceLength, m_offset, result);
 }
 
+ALWAYS_INLINE bool Parser::parseVarInt32(int32_t& result)
+{
+    return WTF::LEBDecoder::decodeInt32(m_source, m_sourceLength, m_offset, result);
+}
+
+ALWAYS_INLINE bool Parser::parseVarInt64(int64_t& result)
+{
+    return WTF::LEBDecoder::decodeInt64(m_source, m_sourceLength, m_offset, result);
+}
+
 ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
 {
     if (length() < 4 || m_offset > length() - 4)
         return false;
     result = *reinterpret_cast<const uint32_t*>(source() + m_offset);
     m_offset += 4;
+    return true;
+}
+
+ALWAYS_INLINE bool Parser::parseUInt64(uint64_t& result)
+{
+    if (length() < 8 || m_offset > length() - 8)
+        return false;
+    result = *reinterpret_cast<const uint64_t*>(source() + m_offset);
+    m_offset += 8;
     return true;
 }
 

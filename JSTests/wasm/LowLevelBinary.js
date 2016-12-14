@@ -123,6 +123,7 @@ export default class LowLevelBinary {
         this._push8(v >>> 24);
     }
     varuint32(v) {
+        assert.isNumber(v);
         if (v < varuint32Min || varuint32Max < v)
             throw new RangeError(`Invalid varuint32 ${v} range is [${varuint32Min}, ${varuint32Max}]`);
         while (v >= 0x80) {
@@ -132,6 +133,7 @@ export default class LowLevelBinary {
         this.uint8(v);
     }
     varint32(v) {
+        assert.isNumber(v);
         if (v < varint32Min || varint32Max < v)
             throw new RangeError(`Invalid varint32 ${v} range is [${varint32Min}, ${varint32Max}]`);
         do {

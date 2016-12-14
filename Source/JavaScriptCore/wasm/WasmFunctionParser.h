@@ -351,6 +351,28 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return m_context.setLocal(index, m_expressionStack.last());
     }
 
+    case OpType::GetGlobal: {
+        uint32_t index;
+        if (!parseVarUInt32(index))
+            return false;
+        ExpressionType result;
+        if (!m_context.getGlobal(index, result))
+            return false;
+
+        m_expressionStack.append(result);
+        return true;
+    }
+
+    case OpType::SetGlobal: {
+        uint32_t index;
+        if (!parseVarUInt32(index))
+            return false;
+        ExpressionType value;
+        if (!popExpressionStack(value))
+            return false;
+        return m_context.setGlobal(index, value);
+    }
+
     case OpType::Call: {
         uint32_t functionIndex;
         if (!parseVarUInt32(functionIndex))
@@ -563,11 +585,8 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::GrowMemory:
     case OpType::CurrentMemory:
-    case OpType::GetGlobal:
-    case OpType::SetGlobal: {
         // FIXME: Not yet implemented.
         return false;
-    }
     }
 
     ASSERT_NOT_REACHED();

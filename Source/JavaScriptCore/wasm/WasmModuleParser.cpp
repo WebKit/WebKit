@@ -217,6 +217,7 @@ bool ModuleParser::parseImport()
     uint32_t importCount;
     if (!parseVarUInt32(importCount)
         || importCount == std::numeric_limits<uint32_t>::max()
+        || !m_module->globals.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
         || !m_module->imports.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
         || !m_module->importFunctions.tryReserveCapacity(importCount) // FIXME this over-allocates when we fix the FIXMEs below.
         || !m_functionIndexSpace.tryReserveCapacity(importCount)) // FIXME this over-allocates when we fix the FIXMEs below. We'll allocate some more here when we know how many functions to expect.
@@ -263,8 +264,15 @@ bool ModuleParser::parseImport()
             break;
         }
         case External::Global: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
-            // In the MVP, only immutable global variables can be imported.
+            Global global;
+            if (!parseGlobalType(global))
+                return false;
+
+            if (global.mutability == Global::Mutable)
+                return false;
+
+            imp.kindIndex = m_module->globals.size();
+            m_module->globals.uncheckedAppend(WTFMove(global));
             break;
         }
         }
@@ -272,6 +280,7 @@ bool ModuleParser::parseImport()
         m_module->imports.uncheckedAppend(imp);
     }
 
+    m_module->firstInternalGlobal = m_module->globals.size();
     return true;
 }
 
@@ -423,8 +432,52 @@ bool ModuleParser::parseMemory()
 
 bool ModuleParser::parseGlobal()
 {
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
-    RELEASE_ASSERT_NOT_REACHED();
+    uint32_t globalCount;
+    if (!parseVarUInt32(globalCount))
+        return false;
+    if (!m_module->globals.tryReserveCapacity(globalCount + m_module->firstInternalGlobal))
+        return false;
+
+    for (uint32_t globalIndex = 0; globalIndex < globalCount; ++globalIndex) {
+        Global global;
+        if (!parseGlobalType(global))
+            return false;
+
+        uint8_t initOpcode;
+        if (!parseInitExpr(initOpcode, global.initialBitsOrImportNumber))
+            return false;
+
+        global.initializationType = Global::FromExpression;
+        Type typeForInitOpcode;
+        switch (initOpcode) {
+        case I32Const:
+            typeForInitOpcode = I32;
+            break;
+        case I64Const:
+            typeForInitOpcode = I64;
+            break;
+        case F32Const:
+            typeForInitOpcode = F32;
+            break;
+        case F64Const:
+            typeForInitOpcode = F64;
+            break;
+        case GetGlobal:
+            if (global.initialBitsOrImportNumber >= m_module->firstInternalGlobal)
+                return false;
+            typeForInitOpcode = m_module->globals[global.initialBitsOrImportNumber].type;
+            global.initializationType = Global::FromGlobalImport;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        if (typeForInitOpcode != global.type)
+            return false;
+
+        m_module->globals.uncheckedAppend(WTFMove(global));
+    }
+
     return true;
 }
 
@@ -448,10 +501,12 @@ bool ModuleParser::parseExport()
         if (!parseExternalKind(exp.kind))
             return false;
 
+        if (!parseVarUInt32(exp.kindIndex))
+            return false;
+
         switch (exp.kind) {
         case External::Function: {
-            if (!parseVarUInt32(exp.functionIndex)
-                || exp.functionIndex >= m_functionIndexSpace.size())
+            if (exp.kindIndex >= m_functionIndexSpace.size())
                 return false;
             break;
         }
@@ -464,8 +519,11 @@ bool ModuleParser::parseExport()
             break;
         }
         case External::Global: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=164133
-            // In the MVP, only immutable global variables can be exported.
+            if (exp.kindIndex >= m_module->globals.size())
+                return false;
+
+            if (m_module->globals[exp.kindIndex].mutability != Global::Immutable)
+                return false;
             break;
         }
         }
@@ -509,8 +567,12 @@ bool ModuleParser::parseElement()
         if (tableIndex != 0)
             return false;
 
-        uint32_t offset;
-        if (!parseInitExpr(offset))
+        uint64_t offset;
+        uint8_t initOpcode;
+        if (!parseInitExpr(initOpcode, offset))
+            return false;
+
+        if (initOpcode != OpType::I32Const)
             return false;
 
         uint32_t indexCount;
@@ -577,19 +639,79 @@ bool ModuleParser::parseCode()
     return true;
 }
 
-bool ModuleParser::parseInitExpr(uint32_t& value)
+bool ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber)
 {
-    // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
-    // For now we only handle i32.const as offset.
-
-    uint8_t opcode;
-    uint8_t endOpcode;
-    if (!parseUInt8(opcode)
-        || opcode != Wasm::I32Const
-        || !parseVarUInt32(value)
-        || !parseUInt8(endOpcode)
-        || endOpcode != Wasm::End)
+    if (!parseUInt8(opcode))
         return false;
+
+    switch (opcode) {
+    case I32Const: {
+        int32_t constant;
+        if (!parseVarInt32(constant))
+            return false;
+        bitsOrImportNumber = static_cast<uint64_t>(constant);
+        break;
+    }
+
+    case I64Const: {
+        int64_t constant;
+        if (!parseVarInt64(constant))
+            return false;
+        bitsOrImportNumber = constant;
+        break;
+    }
+
+    case F32Const: {
+        uint32_t constant;
+        if (!parseUInt32(constant))
+            return false;
+        bitsOrImportNumber = constant;
+        break;
+    }
+
+    case F64Const: {
+        uint64_t constant;
+        if (!parseUInt64(constant))
+            return false;
+        bitsOrImportNumber = constant;
+        break;
+    }
+
+    case GetGlobal: {
+        uint32_t index;
+        if (!parseVarUInt32(index))
+            return false;
+
+        if (index >= m_module->imports.size())
+            return false;
+        const Import& import = m_module->imports[index];
+        if (m_module->imports[index].kind != External::Global
+            || import.kindIndex >= m_module->firstInternalGlobal)
+            return false;
+
+        ASSERT(m_module->globals[import.kindIndex].mutability == Global::Immutable);
+
+        bitsOrImportNumber = index;
+        break;
+    }
+
+    default:
+        return false;
+    }
+
+    uint8_t endOpcode;
+    if (!parseUInt8(endOpcode) || endOpcode != OpType::End)
+        return false;
+
+    return true;
+}
+
+bool ModuleParser::parseGlobalType(Global& global)
+{
+    uint8_t mutability;
+    if (!parseValueType(global.type) || !parseVarUInt1(mutability))
+        return false;
+    global.mutability = static_cast<Global::Mutability>(mutability);
     return true;
 }
 
@@ -607,14 +729,19 @@ bool ModuleParser::parseData()
         if (verbose)
             dataLogLn("  segment #", segmentNumber);
         uint32_t index;
-        uint32_t offset;
+        uint64_t offset;
+        uint8_t initOpcode;
         uint32_t dataByteLength;
         if (!parseVarUInt32(index)
             || index)
             return false;
 
-        if (!parseInitExpr(offset))
+        if (!parseInitExpr(initOpcode, offset))
             return false;
+
+        if (initOpcode != OpType::I32Const)
+            return false;
+
         if (verbose)
             dataLogLn("    offset: ", offset);
 

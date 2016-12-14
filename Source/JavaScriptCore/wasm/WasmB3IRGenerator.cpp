@@ -137,7 +137,7 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(VM&, const MemoryInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
+    B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
 
     bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
     bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -146,6 +146,10 @@ public:
     // Locals
     bool WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
     bool WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
+
+    // Globals
+    bool WARN_UNUSED_RETURN getGlobal(uint32_t index, ExpressionType& result);
+    bool WARN_UNUSED_RETURN setGlobal(uint32_t index, ExpressionType value);
 
     // Memory
     bool WARN_UNUSED_RETURN load(LoadOpType, ExpressionType pointer, ExpressionType& result, uint32_t offset);
@@ -190,6 +194,7 @@ private:
 
     VM& m_vm;
     const ImmutableFunctionIndexSpace& m_functionIndexSpace;
+    const ModuleInformation& m_info;
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
@@ -197,12 +202,14 @@ private:
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
     Value* m_zeroValues[numTypes];
-    Value* m_functionIndexSpaceValue;
+    Value* m_instanceValue;
+
 };
 
-B3IRGenerator::B3IRGenerator(VM& vm, const MemoryInformation& memory, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
+B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
     : m_vm(vm)
     , m_functionIndexSpace(functionIndexSpace)
+    , m_info(info)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
 {
@@ -222,13 +229,13 @@ B3IRGenerator::B3IRGenerator(VM& vm, const MemoryInformation& memory, Procedure&
         }
     }
 
-    if (!!memory) {
-        m_memoryBaseGPR = memory.pinnedRegisters().baseMemoryPointer;
+    if (!!info.memory) {
+        m_memoryBaseGPR = info.memory.pinnedRegisters().baseMemoryPointer;
         m_proc.pinRegister(m_memoryBaseGPR);
-        ASSERT(!memory.pinnedRegisters().sizeRegisters[0].sizeOffset);
-        m_memorySizeGPR = memory.pinnedRegisters().sizeRegisters[0].sizeRegister;
-        for (const PinnedSizeRegisterInfo& info : memory.pinnedRegisters().sizeRegisters)
-            m_proc.pinRegister(info.sizeRegister);
+        ASSERT(!info.memory.pinnedRegisters().sizeRegisters[0].sizeOffset);
+        m_memorySizeGPR = info.memory.pinnedRegisters().sizeRegisters[0].sizeRegister;
+        for (const PinnedSizeRegisterInfo& regInfo : info.memory.pinnedRegisters().sizeRegisters)
+            m_proc.pinRegister(regInfo.sizeRegister);
 
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -271,7 +278,8 @@ B3IRGenerator::B3IRGenerator(VM& vm, const MemoryInformation& memory, Procedure&
 
     wasmCallingConvention().setupFrameInPrologue(&compilation->wasmCalleeMoveLocation, m_proc, Origin(), m_currentBlock);
 
-    m_functionIndexSpaceValue = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), functionIndexSpace.buffer.get());
+    m_instanceValue = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), &m_vm.topJSWebAssemblyInstance));
 }
 
 Value* B3IRGenerator::zeroForType(Type type)
@@ -322,6 +330,21 @@ bool B3IRGenerator::setLocal(uint32_t index, ExpressionType value)
 {
     ASSERT(m_locals[index]);
     m_currentBlock->appendNew<VariableValue>(m_proc, B3::Set, Origin(), m_locals[index], value);
+    return true;
+}
+
+bool B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result)
+{
+    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfGlobals());
+    result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(m_info.globals[index].type), Origin(), globalsArray, index * sizeof(Register));
+    return true;
+}
+
+bool B3IRGenerator::setGlobal(uint32_t index, ExpressionType value)
+{
+    ASSERT(toB3Type(m_info.globals[index].type) == value->type());
+    Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfGlobals());
+    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, Origin(), value, globalsArray, index * sizeof(Register));
     return true;
 }
 
@@ -674,10 +697,8 @@ bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
     ExpressionType callableFunctionBuffer;
     ExpressionType callableFunctionBufferSize;
     {
-        ExpressionType topInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
-            m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), &m_vm.topJSWebAssemblyInstance));
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
-            topInstance, JSWebAssemblyInstance::offsetOfTable());
+            m_instanceValue, JSWebAssemblyInstance::offsetOfTable());
         callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
             table, JSWebAssemblyTable::offsetOfFunctions());
         callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, Origin(),
@@ -872,7 +893,7 @@ std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* fun
     auto result = std::make_unique<WasmInternalFunction>();
 
     Procedure procedure;
-    B3IRGenerator context(vm, info.memory, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
+    B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functionIndexSpace, info);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();

@@ -174,6 +174,41 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
     };
 };
 
+const _normalizeMutability = (mutability) => {
+    if (mutability === "mutable")
+        return 1;
+    else if (mutability === "immutable")
+        return 0;
+    else
+        throw new Error(`mutability should be either "mutable" or "immutable", but got ${global.mutablity}`);
+};
+
+const _exportGlobalContinuation = (builder, section, nextBuilder) => {
+    return (field, index) => {
+        assert.isNumber(index, `Global exports only support number indices right now`);
+        section.data.push({ field, kind: "Global", index });
+        return nextBuilder;
+    }
+};
+
+const _importGlobalContinuation = (builder, section, nextBuilder) => {
+    return () => {
+        const globalBuilder = {
+            End: () => nextBuilder
+        };
+        for (let op of WASM.description.value_type) {
+            globalBuilder[_toJavaScriptName(op)] = (module, field, mutability) => {
+                assert.isString(module, `Import global module should be a string, got "${module}"`);
+                assert.isString(field, `Import global field should be a string, got "${field}"`);
+                assert.isString(mutability, `Import global mutability should be a string, got "${mutability}"`);
+                section.data.push({ globalDescription: { type: op, mutability: _normalizeMutability(mutability) }, module, field, kind: "Global" });
+                return globalBuilder;
+            };
+        }
+        return globalBuilder;
+    };
+};
+
 const _checkStackArgs = (op, param) => {
     for (let expect of param) {
         if (WASM.isValidType(expect)) {
@@ -202,6 +237,7 @@ const _checkStackReturn = (op, ret) => {
         } else {
             // Handle our own meta-types.
             switch (expect) {
+            case "any": break;
             case "bool": break; // FIXME implement bool. https://bugs.webkit.org/show_bug.cgi?id=163421
             case "call": break; // FIXME implement call stack return check based on function signature. https://bugs.webkit.org/show_bug.cgi?id=163421
             case "control": break; // FIXME implement control. https://bugs.webkit.org/show_bug.cgi?id=163421
@@ -407,8 +443,8 @@ export default class Builder {
                     const s = this._addSection(section);
                     const importBuilder = {
                         End: () => this,
-                        Global: () => { throw new Error(`Unimplemented: import global`); },
                     };
+                    importBuilder.Global = _importGlobalContinuation(this, s, importBuilder);
                     importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
                     importBuilder.Memory = _importMemoryContinuation(this, s, importBuilder);
                     importBuilder.Table = _importTableContinuation(this, s, importBuilder);
@@ -456,8 +492,23 @@ export default class Builder {
                 break;
 
             case "Global":
-                // FIXME implement global https://bugs.webkit.org/show_bug.cgi?id=164133
-                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const globalBuilder = {
+                        End: () => this,
+                        GetGlobal: (type, initValue, mutability) => {
+                            s.data.push({ type, op: "get_global", mutability: _normalizeMutability(mutability), initValue });
+                            return globalBuilder;
+                        }
+                    };
+                    for (let op of WASM.description.value_type) {
+                        globalBuilder[_toJavaScriptName(op)] = (initValue, mutability) => {
+                            s.data.push({ type: op, op: op + ".const", mutability: _normalizeMutability(mutability), initValue });
+                            return globalBuilder;
+                        };
+                    }
+                    return globalBuilder;
+                };
                 break;
 
             case "Export":
@@ -467,8 +518,8 @@ export default class Builder {
                         End: () => this,
                         Table: () => { throw new Error(`Unimplemented: export table`); },
                         Memory: () => { throw new Error(`Unimplemented: export memory`); },
-                        Global: () => { throw new Error(`Unimplemented: export global`); },
                     };
+                    exportBuilder.Global = _exportGlobalContinuation(this, s, exportBuilder);
                     exportBuilder.Function = _exportFunctionContinuation(this, s, exportBuilder);
                     return exportBuilder;
                 };
@@ -508,7 +559,7 @@ export default class Builder {
                     const builder = this;
                     const codeBuilder =  {
                         End: () => {
-                            // We now have enough information to remap the export section's "type" and "index" according to the Code section we're currently ending.
+                            // We now have enough information to remap the export section's "type" and "index" according to the Code section we are currently ending.
                             const typeSection = builder._getSection("Type");
                             const importSection = builder._getSection("Import");
                             const exportSection = builder._getSection("Export");
@@ -516,6 +567,8 @@ export default class Builder {
                             const codeSection = s;
                             if (exportSection) {
                                 for (const e of exportSection.data) {
+                                    if (e.kind !== "Function" || typeof(e.type) !== "undefined")
+                                        continue;
                                     switch (typeof(e.index)) {
                                     default: throw new Error(`Unexpected export index "${e.index}"`);
                                     case "string": {

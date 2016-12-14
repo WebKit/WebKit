@@ -74,6 +74,8 @@ public:
     }
 
 private:
+    bool parseGlobalType(Global&);
+
 #define WASM_SECTION_DECLARE_PARSER(NAME, ID, DESCRIPTION) bool WARN_UNUSED_RETURN parse ## NAME();
     FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
 #undef WASM_SECTION_DECLARE_PARSER
@@ -81,7 +83,7 @@ private:
     bool WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     bool WARN_UNUSED_RETURN parseTableHelper(bool isImport);
     bool WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
-    bool WARN_UNUSED_RETURN parseInitExpr(uint32_t&);
+    bool WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&);
 
     VM* m_vm;
     std::unique_ptr<ModuleInformation> m_module;

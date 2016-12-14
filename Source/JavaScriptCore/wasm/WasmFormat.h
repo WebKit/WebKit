@@ -93,7 +93,7 @@ struct Signature {
     Type returnType;
     Vector<Type> arguments;
 };
-    
+
 struct Import {
     Identifier module;
     Identifier field;
@@ -104,12 +104,26 @@ struct Import {
 struct Export {
     Identifier field;
     External::Kind kind;
-    union {
-        uint32_t functionIndex;
-        // FIXME implement Table https://bugs.webkit.org/show_bug.cgi?id=165782
-        // FIXME implement Memory https://bugs.webkit.org/show_bug.cgi?id=165671
-        // FIXME implement Global https://bugs.webkit.org/show_bug.cgi?id=164133
+    unsigned kindIndex; // Index in the vector of the corresponding kind.
+};
+
+struct Global {
+    enum Mutability : uint8_t {
+        // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
+        Mutable = 1,
+        Immutable = 0
     };
+
+    enum InitializationType {
+        IsImport,
+        FromGlobalImport,
+        FromExpression
+    };
+
+    Mutability mutability;
+    Type type;
+    InitializationType initializationType { IsImport };
+    uint64_t initialBitsOrImportNumber { 0 };
 };
 
 struct FunctionLocationInBinary {
@@ -184,7 +198,6 @@ struct ModuleInformation {
     Vector<Signature> signatures;
     Vector<Import> imports;
     Vector<Signature*> importFunctions;
-    // FIXME implement import Global https://bugs.webkit.org/show_bug.cgi?id=164133
     Vector<Signature*> internalFunctionSignatures;
     MemoryInformation memory;
     Vector<Export> exports;
@@ -192,6 +205,8 @@ struct ModuleInformation {
     Vector<Segment::Ptr> data;
     Vector<Element> elements;
     TableInformation tableInformation;
+    Vector<Global> globals;
+    unsigned firstInternalGlobal { 0 };
 
     ~ModuleInformation();
 };
