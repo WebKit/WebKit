@@ -125,13 +125,15 @@ MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE()
 
 void MediaPlayerPrivateGStreamerMSE::load(const String& urlString)
 {
-    if (UNLIKELY(!initializeGStreamerAndRegisterWebKitMSEElement()))
-        return;
-
     if (!urlString.startsWith("mediasource")) {
-        GST_ERROR("Unsupported url: %s", urlString.utf8().data());
+        // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
+        m_networkState = MediaPlayer::FormatError;
+        m_player->networkStateChanged();
         return;
     }
+
+    if (UNLIKELY(!initializeGStreamerAndRegisterWebKitMSEElement()))
+        return;
 
     if (!m_playbackPipeline)
         m_playbackPipeline = PlaybackPipeline::create();

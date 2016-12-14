@@ -272,7 +272,9 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
 #if ENABLE(MEDIA_SOURCE)
 void MediaPlayerPrivateGStreamer::load(const String&, MediaSourcePrivateClient*)
 {
-    notImplemented();
+    // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
 }
 #endif
 
