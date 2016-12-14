@@ -1,3 +1,19 @@
+2016-12-14  Tim Horton  <timothy_horton@apple.com>
+
+        API Test Fullscreen.TopContentInset is asserting on Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=165877
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setTopContentInset):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        We don't use fences on Yosemite, but this codepath still tried to.
+        Instead of guarding with PLATFORM(COCOA), make use of the more accurate
+        HAVE(COREANIMATION_FENCES) guard.
+
 2016-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add some instrumentation to try to detect a crash on the bots
