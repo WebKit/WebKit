@@ -62,7 +62,7 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
         if (!type.isString())
             continue;
 
-        String typeString = type.toWTFString(exec);
+        String typeString = type.toString(exec)->value(exec);
         if (typeString == "separator") {
             ContextMenuItem item(SeparatorType, ContextMenuItemTagNoAction, String());
             menu.appendItem(item);
@@ -70,11 +70,11 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
             ContextMenu subMenu;
             JSArray* subItemsArray = asArray(subItems);
             populateContextMenuItems(exec, subItemsArray, subMenu);
-            ContextMenuItem item(SubmenuType, ContextMenuItemTagNoAction, label.toWTFString(exec), &subMenu);
+            ContextMenuItem item(SubmenuType, ContextMenuItemTagNoAction, label.toString(exec)->value(exec), &subMenu);
             menu.appendItem(item);
         } else {
             ContextMenuAction typedId = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id.toInt32(exec));
-            ContextMenuItem menuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, label.toWTFString(exec));
+            ContextMenuItem menuItem((typeString == "checkbox" ? CheckableActionType : ActionType), typedId, label.toString(exec)->value(exec));
             if (!enabled.isUndefined())
                 menuItem.setEnabled(enabled.toBoolean(exec));
             if (!checked.isUndefined())

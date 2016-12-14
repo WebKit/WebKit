@@ -337,7 +337,7 @@ static EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
-        String argStr = exec->uncheckedArgument(i).toWTFString(exec);
+        String argStr = exec->uncheckedArgument(i).toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         dataLog(argStr);
     }

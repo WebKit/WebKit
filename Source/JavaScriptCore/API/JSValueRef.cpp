@@ -401,7 +401,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
     JSValue jsValue = toJS(exec, value);
     
-    auto stringRef(OpaqueJSString::create(jsValue.toWTFString(exec)));
+    auto stringRef(OpaqueJSString::create(jsValue.toString(exec)->value(exec)));
     if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
         stringRef = nullptr;
     return stringRef.leakRef();

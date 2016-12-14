@@ -93,7 +93,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     if (name.isUndefined())
         nameString = ASCIILiteral("Error");
     else {
-        nameString = name.toWTFString(exec);
+        nameString = name.toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
@@ -108,7 +108,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
     if (message.isUndefined())
         messageString = String();
     else {
-        messageString = message.toWTFString(exec);
+        messageString = message.toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 

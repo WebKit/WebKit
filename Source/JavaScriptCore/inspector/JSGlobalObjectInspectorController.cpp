@@ -233,7 +233,7 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, Exce
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
-    String errorMessage = exception->value().toWTFString(exec);
+    String errorMessage = exception->value().toString(exec)->value(exec);
     scope.clearException();
 
     if (JSGlobalObjectConsoleClient::logToSystemConsole()) {

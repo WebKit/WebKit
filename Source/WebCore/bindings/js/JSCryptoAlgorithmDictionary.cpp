@@ -62,7 +62,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
     String algorithmName;
 
     if (value.isString())
-        algorithmName = value.toWTFString(exec);
+        algorithmName = value.toString(exec)->value(exec);
     else if (value.isObject()) {
         if (value.getObject()->inherits(StringObject::info()))
             algorithmName = asString(asStringObject(value)->internalValue())->value(exec);

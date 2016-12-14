@@ -193,7 +193,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     if (!nameValue)
         nameString = ASCIILiteral("Error");
     else {
-        nameString = nameValue.toWTFString(exec);
+        nameString = nameValue.toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, String());
     }
 
@@ -208,7 +208,7 @@ String ErrorInstance::sanitizedToString(ExecState* exec)
     if (!messageValue)
         messageString = String();
     else {
-        messageString = messageValue.toWTFString(exec);
+        messageString = messageValue.toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, String());
     }
 

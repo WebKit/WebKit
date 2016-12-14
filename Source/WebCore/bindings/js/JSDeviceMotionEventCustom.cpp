@@ -170,7 +170,7 @@ JSValue JSDeviceMotionEvent::initDeviceMotionEvent(ExecState& state)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const String type = state.argument(0).toWTFString(&state);
+    const String type = state.argument(0).toString(&state)->value(&state);
     bool bubbles = state.argument(1).toBoolean(&state);
     bool cancelable = state.argument(2).toBoolean(&state);
 

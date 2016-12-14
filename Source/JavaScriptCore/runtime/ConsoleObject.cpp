@@ -101,7 +101,7 @@ static String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue val
 {
     if (value.isUndefinedOrNull())
         return String();
-    return value.toWTFString(exec);
+    return value.toString(exec)->value(exec);
 }
 
 static EncodedJSValue consoleLogWithLevel(ExecState* exec, MessageLevel level)
@@ -291,7 +291,7 @@ static String valueOrDefaultLabelString(ExecState* exec, JSValue value)
 {
     if (value.isUndefined())
         return ASCIILiteral("default");
-    return value.toWTFString(exec);
+    return value.toString(exec)->value(exec);
 }
 
 static EncodedJSValue JSC_HOST_CALL consoleProtoFuncTime(ExecState* exec)

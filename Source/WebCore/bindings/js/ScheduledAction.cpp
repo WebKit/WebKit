@@ -55,7 +55,7 @@ std::unique_ptr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWra
     if (getCallData(v, callData) == CallType::None) {
         if (policy && !policy->allowEval(exec))
             return nullptr;
-        String string = v.toWTFString(exec);
+        String string = v.toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
         return std::unique_ptr<ScheduledAction>(new ScheduledAction(string, isolatedWorld));
     }

@@ -124,7 +124,7 @@ String ScriptValue::toString(ExecState* scriptState) const
     VM& vm = scriptState->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    String result = m_value.get().toWTFString(scriptState);
+    String result = m_value.get().toString(scriptState)->value(scriptState);
     // Handle the case where an exception is thrown as part of invoking toString on the object.
     if (UNLIKELY(scope.exception()))
         scope.clearException();

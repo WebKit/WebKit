@@ -160,7 +160,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             reportException(exec, exception);
         } else {
             if (!retval.isUndefinedOrNull() && is<BeforeUnloadEvent>(*event))
-                downcast<BeforeUnloadEvent>(*event).setReturnValue(retval.toWTFString(exec));
+                downcast<BeforeUnloadEvent>(*event).setReturnValue(retval.toString(exec)->value(exec));
             if (m_isAttribute) {
                 if (retval.isFalse())
                     event->preventDefault();

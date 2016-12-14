@@ -110,7 +110,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    String source = exec->argument(1).toWTFString(exec);
+    String source = exec->argument(1).toString(exec)->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     SourceCode sourceCode = makeSource(source, moduleKey.impl(), TextPosition(), SourceProviderSourceType::Module);

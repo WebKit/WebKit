@@ -74,7 +74,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
     VOID_TO_NPVARIANT(*result);
 
     if (value.isString()) {
-        String ustring = value.toWTFString(exec);
+        String ustring = value.toString(exec)->value(exec);
         CString cstring = ustring.utf8();
         NPString string = { (const NPUTF8*)cstring.data(), static_cast<uint32_t>(cstring.length()) };
         NPN_InitializeVariantWithStringCopy(result, &string);
