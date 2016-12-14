@@ -1,3 +1,19 @@
+2016-12-14  Antti Koivisto  <antti@apple.com>
+
+        WebContent crash under WebCore::CachedResource::load in WebCore::FrameLoader::outgoingReferrer const
+        https://bugs.webkit.org/show_bug.cgi?id=165852
+        <rdar://problem/27297153>
+
+        Reviewed by Chris Dumez.
+
+        There appears to be some path where we get here with a null frame.
+        No test, don't know how exactly this happens.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::outgoingReferrer):
+
+            Null check the frame.
+
 2016-12-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209766.

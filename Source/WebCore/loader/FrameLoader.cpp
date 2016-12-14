@@ -923,12 +923,14 @@ String FrameLoader::outgoingReferrer() const
     // See http://www.whatwg.org/specs/web-apps/current-work/#fetching-resources
     // for why we walk the parent chain for srcdoc documents.
     Frame* frame = &m_frame;
-    while (frame->document()->isSrcdocDocument()) {
+    while (frame && frame->document()->isSrcdocDocument()) {
         frame = frame->tree().parent();
         // Srcdoc documents cannot be top-level documents, by definition,
         // because they need to be contained in iframes with the srcdoc.
         ASSERT(frame);
     }
+    if (!frame)
+        return emptyString();
     return frame->loader().m_outgoingReferrer;
 }
 
