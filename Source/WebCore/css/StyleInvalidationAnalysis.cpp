@@ -42,7 +42,8 @@ static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
         if (is<StyleRuleMedia>(*rule)) {
-            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(*rule).childRules()))
+            const auto* childRules = downcast<StyleRuleMedia>(*rule).childRulesWithoutDeferredParsing();
+            if (childRules && shouldDirtyAllStyle(*childRules))
                 return true;
             continue;
         }

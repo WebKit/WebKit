@@ -77,7 +77,7 @@ CSSParserImpl::CSSParserImpl(const CSSParserContext& context, const String& stri
 {
     m_tokenizer = wrapper ? std::make_unique<CSSTokenizer>(string, *wrapper) : std::make_unique<CSSTokenizer>(string);
     if (context.deferredCSSParserEnabled && !wrapper && styleSheet && ruleParsing == CSSParser::RuleParsing::Deferred)
-        m_deferredParser = CSSDeferredParser::create(context, *styleSheet);
+        m_deferredParser = CSSDeferredParser::create(context, string, *styleSheet);
 }
 
 CSSParser::ParseResult CSSParserImpl::parseValue(MutableStyleProperties* declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context)

@@ -1,3 +1,25 @@
+2016-12-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Make deferred parsing retain the sheet text. Fix invalidation to avoid deferred parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=165868
+
+        Reviewed by Simon Fraser.
+
+        With this new model of token copying, the sheet text needs to be retained. The tokenizer did this,
+        but we're no longer keeping it around.
+
+        StyleInvalidation is also aggressively crawling media rules, even unsupported ones, so fix it
+        to avoid deferred parsing.
+
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::shouldDirtyAllStyle):
+        * css/parser/CSSDeferredParser.cpp:
+        (WebCore::CSSDeferredParser::CSSDeferredParser):
+        * css/parser/CSSDeferredParser.h:
+        (WebCore::CSSDeferredParser::create):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::CSSParserImpl):
+
 2016-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: An element with tabindex is not focusable unless there is no mouse event handler
