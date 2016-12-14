@@ -1,3 +1,11 @@
+2016-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix the Windows build after r209805.
+
+        Unreviewed build fix.
+
+        * css/CSSAllInOne.cpp:
+
 2016-12-14  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Remove WebkitCSSTransformValue
