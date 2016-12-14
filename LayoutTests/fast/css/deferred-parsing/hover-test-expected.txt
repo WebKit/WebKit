@@ -1,0 +1,11 @@
+Test that deferred parsing doesn't parse the :hover rule until the hover happens.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.deferredStyleRulesCount(document.styleSheets[0]) is 1
+PASS internals.deferredStyleRulesCount(document.styleSheets[0]) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

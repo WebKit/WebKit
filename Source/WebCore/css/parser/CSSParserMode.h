@@ -107,6 +107,8 @@ public:
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
     
+    bool deferredCSSParserEnabled { false };
+
     URL completeURL(const String& url) const
     {
         if (url.isNull())
@@ -147,7 +149,8 @@ struct CSSParserContextHash {
 #if ENABLE(VARIATION_FONTS)
             & key.variationFontsEnabled                     << 8
 #endif
-            & key.mode                                      << 9;
+            & key.deferredCSSParserEnabled                  << 9
+            & key.mode                                      << 10;
         hash ^= WTF::intHash(bits);
         return hash;
     }

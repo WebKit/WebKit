@@ -108,6 +108,11 @@ enum EventThrottlingBehavior {
     Node ensureUserAgentShadowRoot(Element host);
     Node shadowRoot(Element host);
 
+    // CSS Deferred Parsing Testing.
+    long deferredStyleRulesCount(StyleSheet sheet);
+    long deferredGroupRulesCount(StyleSheet sheet);
+    long deferredKeyframesRulesCount(StyleSheet sheet);
+
     [MayThrowException] DOMString shadowRootType(Node root);
     DOMString shadowPseudoId(Element element);
     void setShadowPseudoId(Element element, DOMString id);

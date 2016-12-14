@@ -98,6 +98,9 @@ public:
     ExceptionOr<void> setSystemLayoutDirection(const String&);
     ExceptionOr<bool> variationFontsEnabled();
     ExceptionOr<void> setVariationFontsEnabled(bool);
+    
+    ExceptionOr<bool> deferredCSSParserEnabled();
+    ExceptionOr<void> setDeferredCSSParserEnabled(bool);
 
     enum class ForcedAccessibilityValue { System, On, Off };
     ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue() const;
@@ -177,6 +180,7 @@ private:
 #if ENABLE(VARIATION_FONTS)
         bool m_variationFontsEnabled;
 #endif
+        bool m_deferredCSSParserEnabled;
         bool m_inputEventsEnabled;
 
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;

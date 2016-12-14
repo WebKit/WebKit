@@ -93,6 +93,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(VARIATION_FONTS)
     , m_variationFontsEnabled(settings.variationFontsEnabled())
 #endif
+    , m_deferredCSSParserEnabled(settings.deferredCSSParserEnabled())
     , m_inputEventsEnabled(settings.inputEventsEnabled())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
@@ -175,6 +176,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(VARIATION_FONTS)
     settings.setVariationFontsEnabled(m_variationFontsEnabled);
 #endif
+    settings.setDeferredCSSParserEnabled(m_deferredCSSParserEnabled);
     settings.setInputEventsEnabled(m_inputEventsEnabled);
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
@@ -752,6 +754,21 @@ ExceptionOr<void> InternalSettings::setVariationFontsEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
+    return { };
+}
+
+ExceptionOr<bool> InternalSettings::deferredCSSParserEnabled()
+{
+    if (!m_page)
+        return Exception { INVALID_ACCESS_ERR };
+    return settings().deferredCSSParserEnabled();
+}
+
+ExceptionOr<void> InternalSettings::setDeferredCSSParserEnabled(bool enabled)
+{
+    if (!m_page)
+        return Exception { INVALID_ACCESS_ERR };
+    settings().setDeferredCSSParserEnabled(enabled);
     return { };
 }
 

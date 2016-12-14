@@ -3107,7 +3107,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setSimpleLineLayoutDebugBordersEnabled(store.getBoolValueForKey(WebPreferencesKey::simpleLineLayoutDebugBordersEnabledKey()));
     
     settings.setNewBlockInsideInlineModelEnabled(store.getBoolValueForKey(WebPreferencesKey::newBlockInsideInlineModelEnabledKey()));
-    settings.setNewCSSParserEnabled(store.getBoolValueForKey(WebPreferencesKey::newCSSParserEnabledKey()));
+    settings.setDeferredCSSParserEnabled(store.getBoolValueForKey(WebPreferencesKey::deferredCSSParserEnabledKey()));
 
     settings.setSubpixelCSSOMElementMetricsEnabled(store.getBoolValueForKey(WebPreferencesKey::subpixelCSSOMElementMetricsEnabledKey()));
 

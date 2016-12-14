@@ -22,6 +22,7 @@
 #include "config.h"
 #include "StyleRule.h"
 
+#include "CSSDeferredParser.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
@@ -207,7 +208,7 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes();
 }
 
-StyleRule::StyleRule(Ref<StyleProperties>&& properties)
+StyleRule::StyleRule(Ref<StylePropertiesBase>&& properties)
     : StyleRuleBase(Style)
     , m_properties(WTFMove(properties))
 {
@@ -215,7 +216,7 @@ StyleRule::StyleRule(Ref<StyleProperties>&& properties)
 
 StyleRule::StyleRule(const StyleRule& o)
     : StyleRuleBase(o)
-    , m_properties(o.m_properties->mutableCopy())
+    , m_properties(o.properties().mutableCopy())
     , m_selectorList(o.m_selectorList)
 {
 }
@@ -224,10 +225,17 @@ StyleRule::~StyleRule()
 {
 }
 
+const StyleProperties& StyleRule::properties() const
+{
+    if (m_properties->type() == DeferredPropertiesType)
+        m_properties = downcast<DeferredStyleProperties>(m_properties.get()).parseDeferredProperties();
+    return downcast<StyleProperties>(m_properties.get());
+}
+
 MutableStyleProperties& StyleRule::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties.get()))
-        m_properties = m_properties->mutableCopy();
+        m_properties = properties().mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
@@ -256,7 +264,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
             componentsInThisSelector.append(component);
 
         if (componentsInThisSelector.size() + componentsSinceLastSplit.size() > maxCount && !componentsSinceLastSplit.isEmpty()) {
-            rules.append(create(componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
+            rules.append(create(componentsSinceLastSplit, const_cast<StyleProperties&>(properties())));
             componentsSinceLastSplit.clear();
         }
 
@@ -264,7 +272,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
     }
 
     if (!componentsSinceLastSplit.isEmpty())
-        rules.append(create(componentsSinceLastSplit, const_cast<StyleProperties&>(m_properties.get())));
+        rules.append(create(componentsSinceLastSplit, const_cast<StyleProperties&>(properties())));
 
     return rules;
 }
@@ -316,33 +324,79 @@ MutableStyleProperties& StyleRuleFontFace::mutableProperties()
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
+DeferredStyleGroupRuleList::DeferredStyleGroupRuleList(const CSSParserTokenRange& range, CSSDeferredParser& parser)
+    : m_parser(parser)
+{
+    size_t length = range.end() - range.begin();
+    m_tokens.reserveCapacity(length);
+    m_tokens.append(range.begin(), length);
+}
+
+void DeferredStyleGroupRuleList::parseDeferredRules(Vector<RefPtr<StyleRuleBase>>& childRules)
+{
+    m_parser->parseRuleList(m_tokens, childRules);
+}
+
+void DeferredStyleGroupRuleList::parseDeferredKeyframes(StyleRuleKeyframes& keyframesRule)
+{
+    m_parser->parseKeyframeList(m_tokens, keyframesRule);
+}
+    
 StyleRuleGroup::StyleRuleGroup(Type type, Vector<RefPtr<StyleRuleBase>>& adoptRule)
     : StyleRuleBase(type)
 {
     m_childRules.swap(adoptRule);
 }
 
+StyleRuleGroup::StyleRuleGroup(Type type, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+    : StyleRuleBase(type)
+    , m_deferredRules(WTFMove(deferredRules))
+{
+}
+
 StyleRuleGroup::StyleRuleGroup(const StyleRuleGroup& o)
     : StyleRuleBase(o)
 {
-    m_childRules.reserveInitialCapacity(o.m_childRules.size());
-    for (auto& childRule : o.m_childRules)
+    m_childRules.reserveInitialCapacity(o.childRules().size());
+    for (auto& childRule : o.childRules())
         m_childRules.uncheckedAppend(childRule->copy());
+}
+
+const Vector<RefPtr<StyleRuleBase>>& StyleRuleGroup::childRules() const
+{
+    parseDeferredRulesIfNeeded();
+    return m_childRules;
 }
 
 void StyleRuleGroup::wrapperInsertRule(unsigned index, Ref<StyleRuleBase>&& rule)
 {
+    parseDeferredRulesIfNeeded();
     m_childRules.insert(index, WTFMove(rule));
 }
     
 void StyleRuleGroup::wrapperRemoveRule(unsigned index)
 {
+    parseDeferredRulesIfNeeded();
     m_childRules.remove(index);
 }
 
-
+void StyleRuleGroup::parseDeferredRulesIfNeeded() const
+{
+    if (!m_deferredRules)
+        return;
+    
+    m_deferredRules->parseDeferredRules(m_childRules);
+    m_deferredRules = nullptr;
+}
+    
 StyleRuleMedia::StyleRuleMedia(Ref<MediaQuerySet>&& media, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Media, adoptRules)
+    , m_mediaQueries(WTFMove(media))
+{
+}
+
+StyleRuleMedia::StyleRuleMedia(Ref<MediaQuerySet>&& media, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+    : StyleRuleGroup(Media, WTFMove(deferredRules))
     , m_mediaQueries(WTFMove(media))
 {
 }
@@ -357,6 +411,13 @@ StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
 
 StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>& adoptRules)
     : StyleRuleGroup(Supports, adoptRules)
+    , m_conditionText(conditionText)
+    , m_conditionIsSupported(conditionIsSupported)
+{
+}
+
+StyleRuleSupports::StyleRuleSupports(const String& conditionText, bool conditionIsSupported,  std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+    : StyleRuleGroup(Supports, WTFMove(deferredRules))
     , m_conditionText(conditionText)
     , m_conditionIsSupported(conditionIsSupported)
 {
@@ -380,7 +441,7 @@ StyleRuleRegion::StyleRuleRegion(CSSSelectorList& selectors, Vector<RefPtr<Style
     , m_selectorList(WTFMove(selectors))
 {
 }
-    
+
 StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
     : StyleRuleGroup(o)
     , m_selectorList(o.m_selectorList)

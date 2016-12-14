@@ -92,6 +92,9 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] boolean variationFontsEnabled();
     [MayThrowException] void setVariationFontsEnabled(boolean enabled);
 
+    [MayThrowException] boolean deferredCSSParserEnabled();
+    [MayThrowException] void setDeferredCSSParserEnabled(boolean enabled);
+
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;

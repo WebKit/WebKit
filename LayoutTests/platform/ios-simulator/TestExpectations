@@ -2755,3 +2755,6 @@ fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 fast/selectors/040.html
 
 webkit.org/b/165691 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Pass Failure ]
+
+fast/css/deferred-parsing/hover-test.html [ Skip ]
+

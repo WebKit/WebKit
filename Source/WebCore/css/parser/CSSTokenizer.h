@@ -48,8 +48,10 @@ public:
     CSSTokenizer(const String&);
     CSSTokenizer(const String&, CSSParserObserverWrapper&); // For the inspector
 
-    CSSParserTokenRange tokenRange();
+    CSSParserTokenRange tokenRange() const;
     unsigned tokenCount();
+
+    Vector<String>&& escapedStringsForAdoption() { return WTFMove(m_stringPool); }
 
 private:
     CSSParserToken nextToken();

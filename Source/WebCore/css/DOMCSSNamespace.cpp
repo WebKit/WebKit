@@ -70,7 +70,7 @@ bool DOMCSSNamespace::supports(Document& document, const String& property, const
         return false;
 
     auto dummyStyle = MutableStyleProperties::create();
-    return CSSParser::parseValue(dummyStyle, propertyID, normalizedValue, false, document, nullptr) != CSSParser::ParseResult::Error;
+    return CSSParser::parseValue(dummyStyle, propertyID, normalizedValue, false, document) != CSSParser::ParseResult::Error;
 }
 
 bool DOMCSSNamespace::supports(Document& document, const String& conditionText)

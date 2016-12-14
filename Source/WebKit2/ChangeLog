@@ -1,3 +1,23 @@
+2016-12-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Implement deferred parsing of properties, @media, @supports and @keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=165743
+
+        Reviewed by Dean Jackson.
+
+        Repurpose the newCSSParserEnabled preference for deferred parsing. Just change the name
+        from "new" to "deferred."
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDeferredCSSParserEnabled):
+        (WKPreferencesGetDeferredCSSParserEnabled):
+        (WKPreferencesSetNewCSSParserEnabled): Deleted.
+        (WKPreferencesGetNewCSSParserEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-12-14  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r209806.

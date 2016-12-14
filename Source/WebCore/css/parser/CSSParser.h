@@ -47,10 +47,11 @@ public:
         Error
     };
 
-    WEBCORE_EXPORT CSSParser(const CSSParserContext&);
+    WEBCORE_EXPORT explicit CSSParser(const CSSParserContext&);
     WEBCORE_EXPORT ~CSSParser();
 
-    void parseSheet(StyleSheetContents*, const String&);
+    enum class RuleParsing { Normal, Deferred };
+    void parseSheet(StyleSheetContents*, const String&, RuleParsing = RuleParsing::Normal);
     
     static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
     
@@ -62,7 +63,7 @@ public:
     static void parseSheetForInspector(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserObserver&);
     static void parseDeclarationForInspector(const CSSParserContext&, const String&, CSSParserObserver&);
 
-    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&, StyleSheetContents*);
+    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&);
     static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomicString& propertyName, const String&, bool important, const CSSParserContext&);
     
     static RefPtr<CSSValue> parseFontFaceDescriptor(CSSPropertyID, const String&, const CSSParserContext&);
@@ -71,7 +72,7 @@ public:
 
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
-    
+
     void parseSelector(const String&, CSSSelectorList&);
 
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CustomPropertyValueMap& customProperties, TextDirection, WritingMode);

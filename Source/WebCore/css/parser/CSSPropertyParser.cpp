@@ -3657,7 +3657,7 @@ static RefPtr<CSSValue> consumeWebkitDashboardRegion(CSSParserTokenRange& range,
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(property, m_range.peek().id(), m_context.mode, m_styleSheetContents))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(property, m_range.peek().id(), m_context.mode))
             return nullptr;
         return consumeIdent(m_range);
     }
@@ -4202,7 +4202,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
     case CSSPropertyFontStretch:
     case CSSPropertyFontStyle: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(propId, id, m_context.mode, m_styleSheetContents))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(propId, id, m_context.mode))
             return false;
         parsedValue = CSSValuePool::singleton().createIdentifierValue(id);
         break;
@@ -4287,7 +4287,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     // FIXME-NEWPARSER: Implement. RefPtr<CSSPrimitiveValue> fontStretch;
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
-        if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode, m_styleSheetContents)) {
+        if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode)) {
             fontStyle = consumeIdent(m_range);
             continue;
         }
@@ -5292,7 +5292,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     switch (property) {
     case CSSPropertyWebkitMarginCollapse: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginBeforeCollapse, id, m_context.mode, m_styleSheetContents))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginBeforeCollapse, id, m_context.mode))
             return false;
         addProperty(CSSPropertyWebkitMarginBeforeCollapse, CSSPropertyWebkitMarginCollapse, CSSValuePool::singleton().createIdentifierValue(id), important);
         if (m_range.atEnd()) {
@@ -5300,14 +5300,14 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
             return true;
         }
         id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginAfterCollapse, id, m_context.mode, m_styleSheetContents))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginAfterCollapse, id, m_context.mode))
             return false;
         addProperty(CSSPropertyWebkitMarginAfterCollapse, CSSPropertyWebkitMarginCollapse, CSSValuePool::singleton().createIdentifierValue(id), important);
         return true;
     }
     case CSSPropertyOverflow: {
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
-        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, id, m_context.mode, m_styleSheetContents))
+        if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyOverflowY, id, m_context.mode))
             return false;
         if (!m_range.atEnd())
             return false;

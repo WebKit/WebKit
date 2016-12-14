@@ -2117,7 +2117,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
         return;
 
     auto parsedStyle = MutableStyleProperties::create();
-    CSSParser::parseValue(parsedStyle, CSSPropertyFont, newFont, true, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode), nullptr);
+    CSSParser::parseValue(parsedStyle, CSSPropertyFont, newFont, true, strictToCSSParserMode(!m_usesCSSCompatibilityParseMode));
     if (parsedStyle->isEmpty())
         return;
 

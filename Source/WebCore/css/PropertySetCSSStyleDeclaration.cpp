@@ -249,7 +249,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
     if (propertyID == CSSPropertyCustom)
         changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext());
     else
-        changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext(), contextStyleSheet());
+        changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
@@ -304,7 +304,7 @@ ExceptionOr<bool> PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropert
     if (!willMutate())
         return false;
 
-    bool changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext(), contextStyleSheet());
+    bool changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext());
 
     didMutate(changed ? PropertyChanged : NoChanges);
 

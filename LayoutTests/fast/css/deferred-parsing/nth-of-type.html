@@ -1,0 +1,46 @@
+<html>
+<head id="head">
+<script>
+if (window.internals && window.internals.settings)
+    window.internals.settings.setDeferredCSSParserEnabled(true);
+</script>
+    <style>
+        /* The red rules are invalid, leaving 4 valid rules. They should all be unparsed */
+        
+        span.c1:nth-of-type(2n + 1){ color: red; }
+        span.c1:nth-of-type(2n - 2){ color: green; }
+        span.c2:nth-of-type(odd){ color: red; }
+        span.c2:nth-of-type(even){ color: green; }
+        span.c3:nth-of-type(n3){ color: red; }
+        span.c3:nth-of-type(foo){ color: green; }
+        span.c4:nth-of-type(2n3){ color: red; }
+        span.c4:nth-of-type(foon + bar ){ color: green; }
+        
+        </style>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <span></span>
+    
+<script>
+document.body.offsetWidth;
+    
+description("This tests deferred parsing of CSS :nth-of-type style rules where some are invalid.");
+
+debug('');
+
+shouldBe("document.styleSheets[0].cssRules.length", "4");
+if (window.internals)
+    shouldBe("internals.deferredStyleRulesCount(document.styleSheets[0])", "4");
+</script>
+
+<span class="c1 c2"></span>
+
+<script>
+    document.body.offsetWidth;
+    if (window.internals)
+        shouldBe("internals.deferredStyleRulesCount(document.styleSheets[0])", "2");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

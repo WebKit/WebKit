@@ -1,3 +1,32 @@
+2016-12-14  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Implement deferred parsing of properties, @media, @supports and @keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=165743
+
+        Reviewed by Dean Jackson.
+
+        * fast/css/deferred-parsing: Added.
+        * fast/css/deferred-parsing/dynamic-external-style-expected.txt: Added.
+        * fast/css/deferred-parsing/dynamic-external-style.html: Added.
+        * fast/css/deferred-parsing/dynamic-style-in-document-expected.txt: Added.
+        * fast/css/deferred-parsing/dynamic-style-in-document.html: Added.
+        * fast/css/deferred-parsing/hover-test-expected.txt: Added.
+        * fast/css/deferred-parsing/hover-test.html: Added.
+        * fast/css/deferred-parsing/keyframes-rule-expected.txt: Added.
+        * fast/css/deferred-parsing/keyframes-rule.html: Added.
+        * fast/css/deferred-parsing/media-print-expected.txt: Added.
+        * fast/css/deferred-parsing/media-print.html: Added.
+        * fast/css/deferred-parsing/nth-of-type-expected.txt: Added.
+        * fast/css/deferred-parsing/nth-of-type.html: Added.
+        * fast/css/deferred-parsing/resources: Added.
+        * fast/css/deferred-parsing/resources/basic-sheet.css: Added.
+        * fast/css/deferred-parsing/simple-external-style-expected.txt: Added.
+        * fast/css/deferred-parsing/simple-external-style.html: Added.
+        * fast/css/deferred-parsing/simple-style-in-document-expected.txt: Added.
+        * fast/css/deferred-parsing/simple-style-in-document.html: Added.
+        * fast/css/deferred-parsing/supports-rule-expected.txt: Added.
+        * fast/css/deferred-parsing/supports-rule.html: Added.
+
 2016-12-14  Daniel Bates  <dabates@apple.com>
 
         CSP: Allow HTTPS URL to match HTTP source expression
