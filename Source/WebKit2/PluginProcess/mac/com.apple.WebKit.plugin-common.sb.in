@@ -198,12 +198,12 @@
 
 ;; Do permit creating per-user keychains
 (allow file-read* file-write*
-    (home-subpath "/Library/Keychains"))
+    (home-library-subpath "/Keychains"))
 
 ;; Except deny access to new-style iOS Keychain folders which are UUIDs.
 (deny file-read* file-write*
     (regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)"))
-    (home-library-regex (string-append "/Library/Keychains/" (uuid-regex-string) "(/|$)")))
+    (home-library-regex (string-append "/Keychains/" (uuid-regex-string) "(/|$)")))
 #endif
 
 ;; Security framework
