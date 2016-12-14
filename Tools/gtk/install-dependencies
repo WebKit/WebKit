@@ -205,7 +205,8 @@ function installDependenciesWithApt {
         x11proto-xf86dri-dev \
         xfonts-utils \
         xtrans-dev \
-        xutils-dev"
+        xutils-dev \
+        yasm"
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
@@ -343,7 +344,8 @@ function installDependenciesWithPacman {
         xorg-font-utils \
         xorg-util-macros \
         xtrans \
-        xorg-utils"
+        xorg-utils \
+        yasm"
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
@@ -459,7 +461,8 @@ function installDependenciesWithDnf {
         xorg-x11-font-utils \
         xorg-x11-proto-devel \
         xorg-x11-util-macros \
-        xorg-x11-xtrans-devel"
+        xorg-x11-xtrans-devel \
+        yasm"
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages
