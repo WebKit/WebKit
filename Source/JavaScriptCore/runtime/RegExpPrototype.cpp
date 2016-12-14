@@ -166,12 +166,12 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             return throwVMTypeError(exec, scope, ASCIILiteral("Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
-        String pattern = arg0.isUndefined() ? emptyString() : arg0.toString(exec)->value(exec);
+        String pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         RegExpFlags flags = NoFlags;
         if (!arg1.isUndefined()) {
-            flags = regExpFlags(arg1.toString(exec)->value(exec));
+            flags = regExpFlags(arg1.toWTFString(exec));
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (flags == InvalidFlags)
                 return throwVMError(exec, scope, createSyntaxError(exec, ASCIILiteral("Invalid flags supplied to RegExp constructor.")));
@@ -243,12 +243,12 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 
     JSValue sourceValue = thisObject->get(exec, vm.propertyNames->source);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    String source = sourceValue.toString(exec)->value(exec);
+    String source = sourceValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue flagsValue = thisObject->get(exec, vm.propertyNames->flags);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    String flags = flagsValue.toString(exec)->value(exec);
+    String flags = flagsValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     scope.release();

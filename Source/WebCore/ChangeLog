@@ -1,5 +1,90 @@
 2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Use JSValue::toWTFString instead of calling toString(exec) and value(exec)
+        https://bugs.webkit.org/show_bug.cgi?id=165795
+
+        Reviewed by Saam Barati.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        (WebCore::getNthValueOnKeyPath): Deleted.
+        (WebCore::internalCreateIDBKeyFromScriptValueAndKeyPath): Deleted.
+        (WebCore::ensureNthValueOnKeyPath): Deleted.
+        (WebCore::canInjectNthValueOnKeyPath): Deleted.
+        (WebCore::injectIDBKeyIntoScriptValue): Deleted.
+        (WebCore::maybeCreateIDBKeyFromScriptValueAndKeyPath): Deleted.
+        (WebCore::canInjectIDBKeyIntoScriptValue): Deleted.
+        (WebCore::deserializeIDBValueToJSValue): Deleted.
+        (WebCore::scriptValueToIDBKey): Deleted.
+        (WebCore::idbKeyDataToScriptValue): Deleted.
+        (WebCore::createKeyPathArray): Deleted.
+        (WebCore::generateIndexKeyForValue): Deleted.
+        * bindings/js/JSAudioTrackCustom.cpp:
+        (WebCore::JSAudioTrack::setKind):
+        (WebCore::JSAudioTrack::setLanguage):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::getAlgorithmIdentifier):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::JSEventListener::virtualisAttribute): Deleted.
+        (WebCore::JSEventListener::operator==): Deleted.
+        (WebCore::eventHandlerAttribute): Deleted.
+        (WebCore::createEventListenerForEventHandlerAttribute): Deleted.
+        (WebCore::setEventHandlerAttribute): Deleted.
+        (WebCore::windowEventHandlerAttribute): Deleted.
+        (WebCore::setWindowEventHandlerAttribute): Deleted.
+        (WebCore::documentEventHandlerAttribute): Deleted.
+        (WebCore::setDocumentEventHandlerAttribute): Deleted.
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::namedItem):
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        (WebCore::JSHTMLFormControlsCollection::namedItem):
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::setSelectionDirection):
+        (WebCore::JSHTMLInputElement::setSelectionRange): Deleted.
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems):
+        (WebCore::JSInspectorFrontendHost::showContextMenu): Deleted.
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSTextTrackCustom.cpp:
+        (WebCore::JSTextTrack::setLanguage):
+        * bindings/js/JSVideoTrackCustom.cpp:
+        (WebCore::JSVideoTrack::setKind):
+        (WebCore::JSVideoTrack::setLanguage):
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        (WebCore::cryptoKeyFormatFromJSValue):
+        (WebCore::cryptoKeyUsagesFromJSValue):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::responseText): Deleted.
+        (WebCore::JSXMLHttpRequest::retrieveResponse): Deleted.
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::setParameter):
+        (WebCore::JSXSLTProcessor::getParameter):
+        (WebCore::JSXSLTProcessor::removeParameter):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/testbindings.cpp:
+        (main):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+
+2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         ASSERTION FAILED: hasParserBlockingScript() seen with js/dom/modules/module-will-fire-beforeload.html
         https://bugs.webkit.org/show_bug.cgi?id=164883
 

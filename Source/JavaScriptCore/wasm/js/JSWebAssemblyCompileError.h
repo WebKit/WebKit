@@ -38,7 +38,7 @@ public:
     static JSWebAssemblyCompileError* create(ExecState*, Structure*, const String&, bool);
     static JSWebAssemblyCompileError* create(ExecState* exec, Structure* structure, JSValue message, bool useCurrentFrame)
     {
-        return create(exec, structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), useCurrentFrame);
+        return create(exec, structure, message.isUndefined() ? String() : message.toWTFString(exec), useCurrentFrame);
     }
 
     DECLARE_INFO;

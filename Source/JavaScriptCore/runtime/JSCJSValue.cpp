@@ -392,7 +392,7 @@ String JSValue::toWTFStringSlowCase(ExecState* exec) const
         return vm.propertyNames->nullKeyword.string();
     if (isUndefined())
         return vm.propertyNames->undefinedKeyword.string();
-    return toString(exec)->value(exec);
+    return toWTFString(exec);
 }
 
 } // namespace JSC

@@ -1,3 +1,88 @@
+2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use JSValue::toWTFString instead of calling toString(exec) and value(exec)
+        https://bugs.webkit.org/show_bug.cgi?id=165795
+
+        Reviewed by Saam Barati.
+
+        In old days, we frequently use the idiom like, `value.toString(exec)->value(exec)` to
+        get WTFString from the given JSValue. But now, we have better function, `toWTFString`.
+        `toWTFString` does not create intermediate JSString objects, then reduce unnecessary
+        allocations.
+
+        This patch mechanically replaces `value.toString(exec)->value(exec)` with `toWTFString(exec)`.
+
+        * API/JSValueRef.cpp:
+        (JSValueToStringCopy):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::ScriptValue::toString):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluateWithScopeExtension):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::extractSourceInformationFromException):
+        * runtime/ConsoleObject.cpp:
+        (JSC::valueToStringWithUndefinedOrNullCheck):
+        (JSC::valueOrDefaultLabelString):
+        * runtime/DateConstructor.cpp:
+        (JSC::dateParse):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/InspectorInstrumentationObject.cpp:
+        (JSC::inspectorInstrumentationObjectLog):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toWTFStringSlowCase):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::fetch):
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::regExpCreate):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::replaceUsingStringSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncLocaleCompare):
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+        (JSC::trimString):
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+        (JSC::builtinStringIncludesInternal):
+        (JSC::stringProtoFuncNormalize):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionPrint):
+        * wasm/js/JSWebAssemblyCompileError.h:
+        (JSC::JSWebAssemblyCompileError::create):
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        (JSC::JSWebAssemblyRuntimeError::create):
+
 2016-12-13  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: implement the elements section

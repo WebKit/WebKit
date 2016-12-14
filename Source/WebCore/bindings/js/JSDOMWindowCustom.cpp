@@ -389,7 +389,7 @@ void JSDOMWindow::setLocation(ExecState& state, JSValue value)
     }
 #endif
 
-    String locationString = value.toString(&state)->value(&state);
+    String locationString = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, void());
 
     if (Location* location = wrapped().location())

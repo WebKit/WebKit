@@ -50,9 +50,9 @@ JSValue JSXSLTProcessor::setParameter(ExecState& state)
 {
     if (state.argument(1).isUndefinedOrNull() || state.argument(2).isUndefinedOrNull())
         return jsUndefined(); // Throw exception?
-    String namespaceURI = state.uncheckedArgument(0).toString(&state)->value(&state);
-    String localName = state.uncheckedArgument(1).toString(&state)->value(&state);
-    String value = state.uncheckedArgument(2).toString(&state)->value(&state);
+    String namespaceURI = state.uncheckedArgument(0).toWTFString(&state);
+    String localName = state.uncheckedArgument(1).toWTFString(&state);
+    String value = state.uncheckedArgument(2).toWTFString(&state);
     wrapped().setParameter(namespaceURI, localName, value);
     return jsUndefined();
 }
@@ -61,8 +61,8 @@ JSValue JSXSLTProcessor::getParameter(ExecState& state)
 {
     if (state.argument(1).isUndefinedOrNull())
         return jsUndefined();
-    String namespaceURI = state.uncheckedArgument(0).toString(&state)->value(&state);
-    String localName = state.uncheckedArgument(1).toString(&state)->value(&state);
+    String namespaceURI = state.uncheckedArgument(0).toWTFString(&state);
+    String localName = state.uncheckedArgument(1).toWTFString(&state);
     String value = wrapped().getParameter(namespaceURI, localName);
     return jsStringOrUndefined(&state, value);
 }
@@ -71,8 +71,8 @@ JSValue JSXSLTProcessor::removeParameter(ExecState& state)
 {
     if (state.argument(1).isUndefinedOrNull())
         return jsUndefined();
-    String namespaceURI = state.uncheckedArgument(0).toString(&state)->value(&state);
-    String localName = state.uncheckedArgument(1).toString(&state)->value(&state);
+    String namespaceURI = state.uncheckedArgument(0).toWTFString(&state);
+    String localName = state.uncheckedArgument(1).toWTFString(&state);
     wrapped().removeParameter(namespaceURI, localName);
     return jsUndefined();
 }

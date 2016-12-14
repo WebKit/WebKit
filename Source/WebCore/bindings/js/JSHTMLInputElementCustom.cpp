@@ -104,7 +104,7 @@ void JSHTMLInputElement::setSelectionDirection(ExecState& state, JSValue value)
         return;
     }
 
-    input.setSelectionDirection(value.toString(&state)->value(&state));
+    input.setSelectionDirection(value.toWTFString(&state));
 }
 
 JSValue JSHTMLInputElement::setSelectionRange(ExecState& state)

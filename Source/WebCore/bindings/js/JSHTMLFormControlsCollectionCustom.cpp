@@ -62,7 +62,7 @@ JSValue JSHTMLFormControlsCollection::namedItem(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 1))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    JSValue value = namedItems(state, this, Identifier::fromString(&state, state.uncheckedArgument(0).toString(&state)->value(&state)));
+    JSValue value = namedItems(state, this, Identifier::fromString(&state, state.uncheckedArgument(0).toWTFString(&state)));
     return value.isUndefined() ? jsNull() : value;
 }
 

@@ -554,7 +554,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
-                replacements.append(jsResult.toString(exec)->value(exec));
+                replacements.append(jsResult.toWTFString(exec));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
                 lastIndex = result.end;
@@ -593,7 +593,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
-                replacements.append(jsResult.toString(exec)->value(exec));
+                replacements.append(jsResult.toWTFString(exec));
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
                 lastIndex = result.end;
@@ -635,7 +635,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 JSValue replacement = call(exec, replaceValue, callType, callData, jsUndefined(), args);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
-                String replacementString = replacement.toString(exec)->value(exec);
+                String replacementString = replacement.toWTFString(exec);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 replacements.append(replacementString);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -718,7 +718,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(VM& vm, ExecState* 
     CallData callData;
     CallType callType = getCallData(replaceValue, callData);
     if (callType == CallType::None) {
-        replacementString = replaceValue.toString(exec)->value(exec);
+        replacementString = replaceValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
@@ -732,7 +732,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingStringSearch(VM& vm, ExecState* 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const String& string = jsString->value(exec);
-    String searchString = searchValue.toString(exec)->value(exec);
+    String searchString = searchValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     size_t matchStart = string.find(searchString);
@@ -751,7 +751,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingStringSearch(VM& vm, ExecState* 
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    String replaceString = replaceValue.toString(exec)->value(exec);
+    String replaceString = replaceValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     StringImpl* stringImpl = string.impl();
@@ -1115,7 +1115,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     int len = s.length();
@@ -1183,7 +1183,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
 
     // 3. Let S be the result of calling ToString, giving it the this value as its argument.
     // 7. Let s be the number of characters in S.
-    String input = thisValue.toString(exec)->value(exec);
+    String input = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     ASSERT(!input.isNull());
 
@@ -1205,7 +1205,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
     // 9. If separator is a RegExp object (its [[Class]] is "RegExp"), let R = separator;
     //    otherwise let R = ToString(separator).
     JSValue separatorValue = exec->uncheckedArgument(0);
-    String separator = separatorValue.toString(exec)->value(exec);
+    String separator = separatorValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 10. If lim == 0, return A.
@@ -1324,7 +1324,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
         jsString = jsCast<JSString*>(thisValue.asCell());
         len = jsString->length();
     } else {
-        uString = thisValue.toString(exec)->value(exec);
+        uString = thisValue.toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         len = uString.length();
     }
@@ -1455,11 +1455,11 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
-    String str = a0.toString(exec)->value(exec);
+    String str = a0.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(jsNumber(Collator().collate(s, str)));
 }
@@ -1574,7 +1574,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncBig(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<big>", s, "</big>"));
@@ -1588,7 +1588,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSmall(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<small>", s, "</small>"));
@@ -1602,7 +1602,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncBlink(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<blink>", s, "</blink>"));
@@ -1616,7 +1616,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncBold(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<b>", s, "</b>"));
@@ -1630,7 +1630,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFixed(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<tt>", s, "</tt>"));
@@ -1644,7 +1644,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncItalics(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<i>", s, "</i>"));
@@ -1658,7 +1658,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStrike(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<strike>", s, "</strike>"));
@@ -1672,7 +1672,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSub(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<sub>", s, "</sub>"));
@@ -1686,7 +1686,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSup(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, "<sup>", s, "</sup>"));
@@ -1700,7 +1700,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontcolor(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1719,7 +1719,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncFontsize(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1774,7 +1774,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncAnchor(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1793,7 +1793,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLink(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
-    String s = thisValue.toString(exec)->value(exec);
+    String s = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1840,7 +1840,7 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
 
     if (!checkObjectCoercible(thisValue))
         return throwTypeError(exec, scope);
-    String str = thisValue.toString(exec)->value(exec);
+    String str = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned left = 0;
@@ -1898,7 +1898,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
 
-    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    String stringToSearchIn = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1907,7 +1907,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
     if (isRegularExpression)
         return throwVMTypeError(exec, scope, "Argument to String.prototype.startsWith cannot be a RegExp");
 
-    String searchString = a0.toString(exec)->value(exec);
+    String searchString = a0.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue positionArg = exec->argument(1);
@@ -1932,7 +1932,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
 
-    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    String stringToSearchIn = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1941,7 +1941,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
     if (isRegularExpression)
         return throwVMTypeError(exec, scope, "Argument to String.prototype.endsWith cannot be a RegExp");
 
-    String searchString = a0.toString(exec)->value(exec);
+    String searchString = a0.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned length = stringToSearchIn.length();
@@ -1982,7 +1982,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
     if (!checkObjectCoercible(thisValue))
         return throwVMTypeError(exec, scope);
 
-    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    String stringToSearchIn = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->argument(0);
@@ -1991,7 +1991,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
     if (isRegularExpression)
         return throwVMTypeError(exec, scope, "Argument to String.prototype.includes cannot be a RegExp");
 
-    String searchString = a0.toString(exec)->value(exec);
+    String searchString = a0.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue positionArg = exec->argument(1);
@@ -2008,11 +2008,11 @@ EncodedJSValue JSC_HOST_CALL builtinStringIncludesInternal(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     ASSERT(checkObjectCoercible(thisValue));
 
-    String stringToSearchIn = thisValue.toString(exec)->value(exec);
+    String stringToSearchIn = thisValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue a0 = exec->uncheckedArgument(0);
-    String searchString = a0.toString(exec)->value(exec);
+    String searchString = a0.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue positionArg = exec->argument(1);
@@ -2077,7 +2077,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
     UNormalizationMode form = UNORM_NFC;
     // Verify that the argument is provided and is not undefined.
     if (!exec->argument(0).isUndefined()) {
-        String formString = exec->uncheckedArgument(0).toString(exec)->value(exec);
+        String formString = exec->uncheckedArgument(0).toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         if (formString == "NFC")

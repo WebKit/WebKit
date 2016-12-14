@@ -158,7 +158,7 @@ JSInternalPromise* JSModuleLoader::fetch(ExecState* exec, JSValue key, JSValue i
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
         return globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, exec, this, key, initiator);
     JSInternalPromiseDeferred* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
-    String moduleKey = key.toString(exec)->value(exec);
+    String moduleKey = key.toWTFString(exec);
     if (UNLIKELY(scope.exception())) {
         JSValue exception = scope.exception()->value();
         scope.clearException();
