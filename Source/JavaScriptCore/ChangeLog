@@ -1,3 +1,19 @@
+2016-12-14  Mark Lam  <mark.lam@apple.com>
+
+        BytecodeBasicBlock::computeImpl() should not keep iterating blocks if all jump targets have already been found.
+        https://bugs.webkit.org/show_bug.cgi?id=165820
+
+        Reviewed by Saam Barati.
+
+        Currently, if an opcode is a branch type opcode, BytecodeBasicBlock::computeImpl()
+        will iterate over all basic blocks looking for the block containing the jump
+        target, and it will continue to do this even when all the jump targets have been
+        found.  This is wasted work, and all the more so given that most branch type
+        opcodes only have a single jump target.
+
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::BytecodeBasicBlock::computeImpl):
+
 2016-12-14  Gavin Barraclough  <barraclough@apple.com>
 
         MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
