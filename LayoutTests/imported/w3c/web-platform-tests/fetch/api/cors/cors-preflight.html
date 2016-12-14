@@ -16,6 +16,11 @@
     <script src="../resources/utils.js"></script>
     <script src="/common/get-host-info.sub.js"></script>
     <script src="/common/utils.js"></script>
+    <script>
+// To be removed, see https://bugs.webkit.org/show_bug.cgi?id=161310
+console.log("Doing some logging once")
+console.log("Doing some logging again")
+    </script>
     <script src="cors-preflight.js"></script>
   </body>
 </html>

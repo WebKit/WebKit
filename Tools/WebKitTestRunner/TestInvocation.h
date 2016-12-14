@@ -51,6 +51,7 @@ public:
 
     // Milliseconds
     void setCustomTimeout(int duration) { m_timeout = duration; }
+    void setDumpJSConsoleLogInStdErr(bool value) { m_dumpJSConsoleLogInStdErr = value; }
 
     // Seconds
     double shortTimeout() const;
@@ -102,6 +103,7 @@ private:
     std::string m_expectedPixelHash;
 
     int m_timeout { 0 };
+    bool m_dumpJSConsoleLogInStdErr { false };
 
     // Invocation state
     bool m_gotInitialResponse { false };

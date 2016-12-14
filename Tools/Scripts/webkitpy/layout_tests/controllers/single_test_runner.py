@@ -58,6 +58,7 @@ class SingleTestRunner(object):
         self._worker_name = worker_name
         self._test_name = test_input.test_name
         self._should_run_pixel_test = test_input.should_run_pixel_test
+        self._should_dump_jsconsolelog_in_stderr = test_input.should_dump_jsconsolelog_in_stderr
         self._reference_files = test_input.reference_files
         self._stop_when_done = stop_when_done
         self._timeout = test_input.timeout
@@ -89,7 +90,7 @@ class SingleTestRunner(object):
         image_hash = None
         if self._should_fetch_expected_checksum():
             image_hash = self._port.expected_checksum(self._test_name)
-        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test)
+        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr)
 
     def run(self):
         if self._reference_files:

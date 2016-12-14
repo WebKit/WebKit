@@ -1022,12 +1022,11 @@ void TestController::configureViewForTest(const TestInvocation& test)
 }
 
 struct TestCommand {
-    TestCommand() : shouldDumpPixels(false), timeout(0) { }
-
     std::string pathOrURL;
-    bool shouldDumpPixels;
+    bool shouldDumpPixels { false };
     std::string expectedPixelHash;
-    int timeout;
+    int timeout { 0 };
+    bool dumpJSConsoleLogInStdErr { false };
 };
 
 class CommandTokenizer {
@@ -1100,7 +1099,9 @@ TestCommand parseInputLine(const std::string& inputLine)
             result.shouldDumpPixels = true;
             if (tokenizer.hasNext())
                 result.expectedPixelHash = tokenizer.next();
-        } else
+        } else if (arg == std::string("--dump-jsconsolelog-in-stderr"))
+            result.dumpJSConsoleLogInStdErr = true;
+        else
             die(inputLine);
     }
     return result;
@@ -1122,6 +1123,7 @@ bool TestController::runTest(const char* inputLine)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
     if (command.timeout > 0)
         m_currentInvocation->setCustomTimeout(command.timeout);
+    m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr);
 
     platformWillRunTest(*m_currentInvocation);
 

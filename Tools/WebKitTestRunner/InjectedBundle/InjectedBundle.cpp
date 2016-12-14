@@ -155,6 +155,9 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         WKRetainPtr<WKStringRef> timeoutKey(AdoptWK, WKStringCreateWithUTF8CString("Timeout"));
         m_timeout = (int)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, timeoutKey.get())));
 
+        WKRetainPtr<WKStringRef> dumpJSConsoleLogInStdErrKey(AdoptWK, WKStringCreateWithUTF8CString("DumpJSConsoleLogInStdErr"));
+        m_dumpJSConsoleLogInStdErr = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, dumpJSConsoleLogInStdErrKey.get())));
+
         WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithUTF8CString("Ack"));
         WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
         WKBundlePagePostMessage(page, ackMessageName.get(), ackMessageBody.get());
@@ -409,6 +412,17 @@ void InjectedBundle::dumpBackForwardListsForAllPages(StringBuilder& stringBuilde
     size_t size = m_pages.size();
     for (size_t i = 0; i < size; ++i)
         m_pages[i]->dumpBackForwardList(stringBuilder);
+}
+
+void InjectedBundle::dumpToStdErr(const String& output)
+{
+    if (m_state != Testing)
+        return;
+    if (output.isEmpty())
+        return;
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("DumpToStdErr"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithUTF8CString(output.utf8().data()));
+    WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }
 
 void InjectedBundle::outputText(const String& output)

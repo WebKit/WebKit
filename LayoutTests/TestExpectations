@@ -298,6 +298,8 @@ webkit.org/b/157068 imported/w3c/web-platform-tests/fetch/nosniff/importscripts.
 webkit.org/b/157145 imported/w3c/web-platform-tests/fetch/nosniff/stylesheet.html [ Failure Pass ]
 webkit.org/b/161312 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html [ Failure Pass ]
 
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/159724 imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-post-upload.htm [ Failure Pass ]
 
 # New W3C ref tests that are failing.

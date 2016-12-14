@@ -1461,7 +1461,11 @@ void InjectedBundlePage::willAddMessageToConsole(WKStringRef message, uint32_t l
     }
     stringBuilder.append(messageString);
     stringBuilder.append('\n');
-    injectedBundle.outputText(stringBuilder.toString());
+
+    if (injectedBundle.dumpJSConsoleLogInStdErr())
+        injectedBundle.dumpToStdErr(stringBuilder.toString());
+    else
+        injectedBundle.outputText(stringBuilder.toString());
 }
 
 void InjectedBundlePage::willSetStatusbarText(WKStringRef statusbarText)

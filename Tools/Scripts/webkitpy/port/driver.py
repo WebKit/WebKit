@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
-import copy
 import logging
 import re
 import shlex
@@ -38,22 +37,22 @@ import os
 
 from webkitpy.common.system import path
 from webkitpy.common.system.profiler import ProfilerFactory
-from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer
 
 
 _log = logging.getLogger(__name__)
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, args=None):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
         self.should_run_pixel_test = should_run_pixel_test
+        self.should_dump_jsconsolelog_in_stderr = should_dump_jsconsolelog_in_stderr
         self.args = args or []
 
     def __repr__(self):
-        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test)
+        return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr)
 
 
 class DriverOutput(object):
@@ -487,6 +486,8 @@ class Driver(object):
             command += "'--timeout'%s" % driver_input.timeout
         if driver_input.should_run_pixel_test:
             command += "'--pixel-test"
+        if driver_input.should_dump_jsconsolelog_in_stderr:
+            command += "'--dump-jsconsolelog-in-stderr"
         if driver_input.image_hash:
             command += "'" + driver_input.image_hash
         return command + "\n"

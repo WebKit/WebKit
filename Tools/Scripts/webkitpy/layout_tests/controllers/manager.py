@@ -131,12 +131,16 @@ class Manager(object):
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
             self._options.slow_time_out_ms if self._test_is_slow(test_file) else self._options.time_out_ms,
-            self._is_http_test(test_file))
+            self._is_http_test(test_file),
+            should_dump_jsconsolelog_in_stderr=self._test_should_dump_jsconsolelog_in_stderr(test_file))
 
     def _test_is_slow(self, test_file):
         if self._expectations.model().has_modifier(test_file, test_expectations.SLOW):
             return True
         return "slow" in self._tests_options.get(test_file, [])
+
+    def _test_should_dump_jsconsolelog_in_stderr(self, test_file):
+        return self._expectations.model().has_modifier(test_file, test_expectations.DUMPJSCONSOLELOGINSTDERR)
 
     def needs_servers(self, test_names):
         return any(self._is_http_test(test_name) for test_name in test_names) and self._options.http

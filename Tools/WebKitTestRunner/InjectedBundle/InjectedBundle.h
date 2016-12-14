@@ -81,8 +81,10 @@ public:
 
     bool shouldDumpPixels() const { return m_dumpPixels; }
     bool useWaitToDumpWatchdogTimer() const { return m_useWaitToDumpWatchdogTimer; }
-    
+    bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; };
+
     void outputText(const String&);
+    void dumpToStdErr(const String&);
     void postNewBeforeUnloadReturnValue(bool);
     void postAddChromeInputField();
     void postRemoveChromeInputField();
@@ -180,6 +182,7 @@ private:
     bool m_useWorkQueue;
     int m_timeout;
     bool m_pixelResultIsPending { false };
+    bool m_dumpJSConsoleLogInStdErr { false };
 
     WKRetainPtr<WKDataRef> m_audioResult;
     WKRetainPtr<WKImageRef> m_pixelResult;

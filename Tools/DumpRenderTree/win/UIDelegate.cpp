@@ -507,10 +507,11 @@ HRESULT UIDelegate::webViewAddMessageToConsole(_In_opt_ IWebView* /*sender*/, _I
             newMessage = newMessage.substr(0, fileProtocol) + lastPathComponent(newMessage.substr(fileProtocol + fileURL.size()));
     }
 
-    printf("CONSOLE MESSAGE: ");
+    auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : stdout;
+    fprintf(out, "CONSOLE MESSAGE: ");
     if (lineNumber)
-        printf("line %d: ", lineNumber);
-    printf("%s\n", toUTF8(newMessage).c_str());
+        fprintf(out, "line %d: ", lineNumber);
+    fprintf(out, "%s\n", toUTF8(newMessage).c_str());
     return S_OK;
 }
 

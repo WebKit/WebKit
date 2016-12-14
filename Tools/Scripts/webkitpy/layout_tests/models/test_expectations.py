@@ -43,7 +43,7 @@ _log = logging.getLogger(__name__)
 # FIXME: range() starts with 0 which makes if expectation checks harder
 # as PASS is 0.
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO, TIMEOUT, CRASH, SKIP, WONTFIX,
- SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(16)
+ SLOW, DUMPJSCONSOLELOGINSTDERR, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(17)
 
 # FIXME: Perhas these two routines should be part of the Port instead?
 BASELINE_SUFFIX_LIST = ('png', 'wav', 'txt')
@@ -71,6 +71,7 @@ class TestExpectationParser(object):
     PASS_EXPECTATION = 'pass'
     SKIP_MODIFIER = 'skip'
     SLOW_MODIFIER = 'slow'
+    DUMPJSCONSOLELOGINSTDERR_MODIFIER = 'dumpjsconsoleloginstderr'
     WONTFIX_MODIFIER = 'wontfix'
 
     TIMEOUT_EXPECTATION = 'timeout'
@@ -319,7 +320,7 @@ class TestExpectationParser(object):
             elif state == 'configuration':
                 modifiers.append(cls._configuration_tokens.get(token, token))
             elif state == 'expectations':
-                if token in ('Rebaseline', 'Skip', 'Slow', 'WontFix'):
+                if token in ('Rebaseline', 'Skip', 'Slow', 'WontFix', 'DumpJSConsoleLogInStdErr'):
                     modifiers.append(token.upper())
                 elif token not in cls._expectation_tokens:
                     warnings.append('Unrecognized expectation "%s"' % token)
@@ -345,7 +346,8 @@ class TestExpectationParser(object):
             # FIXME: This is really a semantic warning and shouldn't be here. Remove when we drop the old syntax.
             warnings.append('A test marked Skip must not have other expectations.')
         elif not expectations:
-            if 'SKIP' not in modifiers and 'REBASELINE' not in modifiers and 'SLOW' not in modifiers:
+            # FIXME: We can probably simplify this adding 'SKIP' if modifiers is empty
+            if 'SKIP' not in modifiers and 'REBASELINE' not in modifiers and 'SLOW' not in modifiers and 'DUMPJSCONSOLELOGINSTDERR' not in modifiers:
                 modifiers.append('SKIP')
             expectations = ['PASS']
 
@@ -467,7 +469,7 @@ class TestExpectationLine(object):
             elif modifier.startswith('BUG'):
                 # FIXME: we should preserve case once we can drop the old syntax.
                 bugs.append('Bug(' + modifier[3:].lower() + ')')
-            elif modifier in ('SLOW', 'SKIP', 'REBASELINE', 'WONTFIX'):
+            elif modifier in ('SLOW', 'SKIP', 'REBASELINE', 'WONTFIX', 'DUMPJSCONSOLELOGINSTDERR'):
                 new_expectations.append(TestExpectationParser._inverted_expectation_tokens.get(modifier))
             else:
                 new_modifiers.append(TestExpectationParser._inverted_configuration_tokens.get(modifier, modifier))
@@ -786,6 +788,7 @@ class TestExpectations(object):
     MODIFIERS = {TestExpectationParser.SKIP_MODIFIER: SKIP,
                  TestExpectationParser.WONTFIX_MODIFIER: WONTFIX,
                  TestExpectationParser.SLOW_MODIFIER: SLOW,
+                 TestExpectationParser.DUMPJSCONSOLELOGINSTDERR_MODIFIER: DUMPJSCONSOLELOGINSTDERR,
                  TestExpectationParser.REBASELINE_MODIFIER: REBASELINE,
                  'none': NONE}
 

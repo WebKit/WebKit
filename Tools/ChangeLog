@@ -1,3 +1,56 @@
+2016-12-14  Youenn Fablet  <youenn@apple.com>
+
+        Test infrastructure should allow to filter out text output before doing a comparison with the baseline
+        https://bugs.webkit.org/show_bug.cgi?id=161310
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding --dump-jsconsolelog-in-stderr test option for DRT and WTR.
+        When set, WTR and DRT output JS console log in the stderr and not the test output.
+        This allows removing potentially flaky information while still being able to read it for investigation.
+
+        Updated webkitpy infrastructure to use this test option in case of DumpJSConsoleLogInStdErr modifier.
+
+        Changes are covered by updating a fetch test to output console log and set its option to --dump-jsconsolelog-in-stderr in TestExpectations.
+        This test should have this option when fetch API will start logging resource loader errors.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        (TestCommand::TestCommand): Deleted.
+        * DumpRenderTree/DumpRenderTreeCommon.cpp:
+        (parseInputLine):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::setDumpJSConsoleLogInStdErr):
+        (TestRunner::dumpJSConsoleLogInStdErr):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runTest):
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:withSource:]):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._tokenize_line):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_from_driver_input):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::dumpToStdErr):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::dumpJSConsoleLogInStdErr):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willAddMessageToConsole):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        (WTR::TestCommand::TestCommand): Deleted.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::setDumpJSConsoleLogInStdErr):
+
+
 2016-12-14  Enrique Ocaña González  <eocanha@igalia.com>
 
         REGRESSION(r207879-207891): [GStreamer] Introduced many layout test failures and crashes, bots exiting early

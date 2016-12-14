@@ -31,7 +31,7 @@
 class TestInput(object):
     """Groups information about a test for easy passing of data."""
 
-    def __init__(self, test_name, timeout=None, needs_servers=None, reference_files=None, should_run_pixel_tests=None):
+    def __init__(self, test_name, timeout=None, needs_servers=None, reference_files=None, should_run_pixel_tests=None, should_dump_jsconsolelog_in_stderr=None):
         # TestInput objects are normally constructed by the manager and passed
         # to the workers, but these some fields are set lazily in the workers where possible
         # because they require us to look at the filesystem and we want to be able to do that in parallel.
@@ -40,6 +40,7 @@ class TestInput(object):
         self.needs_servers = needs_servers
         self.reference_files = reference_files
         self.should_run_pixel_tests = should_run_pixel_tests
+        self.should_dump_jsconsolelog_in_stderr = should_dump_jsconsolelog_in_stderr
 
     def __repr__(self):
-        return "TestInput('%s', timeout=%s, needs_servers=%s, reference_files=%s, should_run_pixel_tests=%s)" % (self.test_name, self.timeout, self.needs_servers, self.reference_files, self.should_run_pixel_tests)
+        return "TestInput('%s', timeout=%s, needs_servers=%s, reference_files=%s, should_run_pixel_tests=%s, should_dump_jsconsolelog_in_stderr=%s)" % (self.test_name, self.timeout, self.needs_servers, self.reference_files, self.should_run_pixel_tests, self.should_dump_jsconsolelog_in_stderr)

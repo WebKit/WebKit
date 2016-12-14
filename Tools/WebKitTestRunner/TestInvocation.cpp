@@ -159,6 +159,10 @@ void TestInvocation::invoke()
     WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout));
     WKDictionarySetItem(beginTestMessageBody.get(), timeoutKey.get(), timeoutValue.get());
 
+    WKRetainPtr<WKStringRef> dumpJSConsoleLogInStdErrKey = adoptWK(WKStringCreateWithUTF8CString("DumpJSConsoleLogInStdErr"));
+    WKRetainPtr<WKBooleanRef> dumpJSConsoleLogInStdErrValue = adoptWK(WKBooleanCreate(m_dumpJSConsoleLogInStdErr));
+    WKDictionarySetItem(beginTestMessageBody.get(), dumpJSConsoleLogInStdErrKey.get(), dumpJSConsoleLogInStdErrValue.get());
+
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), beginTestMessageBody.get());
 
     bool shouldOpenExternalURLs = false;
@@ -368,6 +372,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef textOutput = static_cast<WKStringRef>(messageBody);
         m_textOutput.append(toWTFString(textOutput));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpToStdErr")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef textOutput = static_cast<WKStringRef>(messageBody);
+        fprintf(stderr, "%s", toWTFString(textOutput).utf8().data());
         return;
     }
 

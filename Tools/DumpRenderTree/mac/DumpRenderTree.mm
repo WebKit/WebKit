@@ -2001,6 +2001,7 @@ static void runTest(const string& inputLine)
     gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
     gTestRunner->setAllowedHosts(allowedHosts);
     gTestRunner->setCustomTimeout(command.timeout);
+    gTestRunner->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr);
     topLoadingFrame = nil;
 #if !PLATFORM(IOS)
     ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
