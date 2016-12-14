@@ -100,7 +100,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         reportException(exec, exception);
     else {
         if (!retval.isUndefinedOrNull())
-            result = retval.toString(exec)->value(exec);
+            result = retval.toWTFString(exec);
     }
 
     return result;

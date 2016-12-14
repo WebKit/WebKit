@@ -102,7 +102,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
     if (!scriptValue.isString())
         return throwTypeError(exec, scope, ASCIILiteral("InjectedScriptHost.evaluateWithScopeExtension first argument must be a string."));
 
-    String program = scriptValue.toString(exec)->value(exec);
+    String program = scriptValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     NakedPtr<Exception> exception;

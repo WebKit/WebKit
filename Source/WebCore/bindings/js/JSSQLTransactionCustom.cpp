@@ -52,7 +52,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
         return jsUndefined();
     }
 
-    String sqlStatement = state.argument(0).toString(&state)->value(&state);
+    String sqlStatement = state.argument(0).toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     // Now assemble the list of SQL arguments
@@ -79,7 +79,7 @@ JSValue JSSQLTransaction::executeSql(ExecState& state)
                 sqlValues.append(value.asNumber());
             else {
                 // Convert the argument to a string and append it
-                sqlValues.append(value.toString(&state)->value(&state));
+                sqlValues.append(value.toWTFString(&state));
                 RETURN_IF_EXCEPTION(scope, JSValue());
             }
         }

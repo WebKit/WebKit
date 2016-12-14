@@ -84,7 +84,7 @@ static bool cryptoKeyFormatFromJSValue(ExecState& state, JSValue value, CryptoKe
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String keyFormatString = value.toString(&state)->value(&state);
+    String keyFormatString = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, false);
     if (keyFormatString == "raw")
         result = CryptoKeyFormat::Raw;
@@ -116,7 +116,7 @@ static bool cryptoKeyUsagesFromJSValue(ExecState& state, JSValue value, CryptoKe
     JSArray* array = asArray(value);
     for (size_t i = 0; i < array->length(); ++i) {
         JSValue element = array->getIndex(&state, i);
-        String usageString = element.toString(&state)->value(&state);
+        String usageString = element.toWTFString(&state);
         RETURN_IF_EXCEPTION(scope, false);
         if (usageString == "encrypt")
             result |= CryptoKeyUsageEncrypt;

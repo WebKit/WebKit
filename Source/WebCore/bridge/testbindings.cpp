@@ -391,7 +391,9 @@ int main(int argc, char **argv)
                 
                 if (comp.complType() == Throw) {
                     Value exVal = comp.value();
-                    char* msg = exVal.toString(exec)->value(exec).ascii();
+                    String message = exVal.toWTFString(exec);
+                    auto cstring = msg.ascii();
+                    const char* msg = cstring.data();
                     int lineno = -1;
                     if (exVal.type() == ObjectType) {
                         Value lineVal = Object::dynamicCast(exVal).get(exec, Identifier::fromString(exec, "line"));

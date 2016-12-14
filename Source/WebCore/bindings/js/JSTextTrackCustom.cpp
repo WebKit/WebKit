@@ -47,7 +47,7 @@ void JSTextTrack::setLanguage(ExecState& state, JSValue value)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto& string = value.toString(&state)->value(&state);
+    auto string = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, void());
     wrapped().setLanguage(string);
 #else

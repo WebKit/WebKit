@@ -82,7 +82,7 @@ JSValue JSJavaScriptCallFrame::evaluateWithScopeExtension(ExecState* exec)
     if (!scriptValue.isString())
         return throwTypeError(exec, scope, ASCIILiteral("JSJavaScriptCallFrame.evaluateWithScopeExtension first argument must be a string."));
 
-    String script = scriptValue.toString(exec)->value(exec);
+    String script = scriptValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     NakedPtr<Exception> exception;

@@ -108,7 +108,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const String& typeArg = state.argument(0).toString(&state)->value(&state);
+    const String& typeArg = state.argument(0).toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     bool canBubbleArg = state.argument(1).toBoolean(&state);
@@ -122,7 +122,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     const String originArg = convert<IDLUSVString>(state, state.argument(4));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    const String lastEventIdArg = state.argument(5).toString(&state)->value(&state);
+    const String lastEventIdArg = state.argument(5).toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     auto sourceArg = convert<IDLNullable<IDLUnion<IDLInterface<DOMWindow>, IDLInterface<MessagePort>>>>(state, state.argument(6));

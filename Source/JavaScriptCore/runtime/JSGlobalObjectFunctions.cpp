@@ -666,7 +666,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
         return JSValue::encode(jsUndefined());
     }
 
-    String s = x.toString(exec)->value(exec);
+    String s = x.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (s.is8Bit()) {
