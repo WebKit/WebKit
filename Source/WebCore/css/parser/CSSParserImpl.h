@@ -48,7 +48,7 @@ class CSSParserObserver;
 class CSSParserObserverWrapper;
 class CSSSelectorList;
 class CSSTokenizer;
-class StyleKeyframe;
+class StyleRuleKeyframe;
 class StyleRule;
 class StyleRuleBase;
 class StyleRuleCharset;
@@ -142,7 +142,7 @@ private:
     // FIXME-NEWPARSER: Support "apply"
     // void consumeApplyRule(CSSParserTokenRange prelude);
 
-    RefPtr<StyleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     void consumeDeclarationList(CSSParserTokenRange, StyleRule::Type);

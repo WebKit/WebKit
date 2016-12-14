@@ -191,7 +191,7 @@ void CSSParserImpl::parseDeferredKeyframeList(CSSParserTokenRange tokenRange, CS
         return;
     CSSParserImpl parser(deferredParser);
     parser.consumeRuleList(tokenRange, KeyframesRuleList, [&keyframeRule](const RefPtr<StyleRuleBase>& keyframe) {
-        keyframeRule.parserAppendKeyframe(downcast<const StyleKeyframe>(keyframe.get()));
+        keyframeRule.parserAppendKeyframe(downcast<const StyleRuleKeyframe>(keyframe.get()));
     });
 }
 
@@ -649,7 +649,7 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
 
     RefPtr<StyleRuleKeyframes> keyframeRule = StyleRuleKeyframes::create(name);
     consumeRuleList(block, KeyframesRuleList, [keyframeRule](const RefPtr<StyleRuleBase>& keyframe) {
-        keyframeRule->parserAppendKeyframe(downcast<const StyleKeyframe>(keyframe.get()));
+        keyframeRule->parserAppendKeyframe(downcast<const StyleRuleKeyframe>(keyframe.get()));
     });
 
     // FIXME-NEWPARSER: Find out why this is done. Behavior difference when prefixed?
@@ -714,7 +714,7 @@ RefPtr<StyleRuleRegion> CSSParserImpl::consumeRegionRule(CSSParserTokenRange pre
 }
 */
     
-RefPtr<StyleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     std::unique_ptr<Vector<double>> keyList = consumeKeyframeKeyList(prelude);
     if (!keyList)
@@ -726,7 +726,7 @@ RefPtr<StyleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRang
     }
 
     consumeDeclarationList(block, StyleRule::Keyframe);
-    return StyleKeyframe::create(WTFMove(keyList), createStyleProperties(m_parsedProperties, m_context.mode));
+    return StyleRuleKeyframe::create(WTFMove(keyList), createStyleProperties(m_parsedProperties, m_context.mode));
 }
 
 static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRange selectors)

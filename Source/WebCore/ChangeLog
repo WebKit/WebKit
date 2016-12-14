@@ -1,5 +1,50 @@
 2016-12-14  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Rename StyleKeyframe to StyleRuleKeyframe
+        https://bugs.webkit.org/show_bug.cgi?id=165876
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSKeyframeRule.cpp:
+        (WebCore::StyleRuleKeyframe::StyleRuleKeyframe):
+        (WebCore::StyleRuleKeyframe::~StyleRuleKeyframe):
+        (WebCore::StyleRuleKeyframe::mutableProperties):
+        (WebCore::StyleRuleKeyframe::keyText):
+        (WebCore::StyleRuleKeyframe::setKeyText):
+        (WebCore::StyleRuleKeyframe::cssText):
+        (WebCore::CSSKeyframeRule::CSSKeyframeRule):
+        (WebCore::StyleKeyframe::StyleKeyframe): Deleted.
+        (WebCore::StyleKeyframe::~StyleKeyframe): Deleted.
+        (WebCore::StyleKeyframe::mutableProperties): Deleted.
+        (WebCore::StyleKeyframe::keyText): Deleted.
+        (WebCore::StyleKeyframe::setKeyText): Deleted.
+        (WebCore::StyleKeyframe::cssText): Deleted.
+        * css/CSSKeyframeRule.h:
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::keyframes):
+        (WebCore::StyleRuleKeyframes::parserAppendKeyframe):
+        (WebCore::StyleRuleKeyframes::wrapperAppendKeyframe):
+        (WebCore::CSSKeyframesRule::appendRule):
+        (WebCore::CSSKeyframesRule::item):
+        * css/CSSKeyframesRule.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        * css/StyleResolver.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        * css/StyleRule.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseKeyframeRule):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseDeferredKeyframeList):
+        (WebCore::CSSParserImpl::consumeKeyframesRule):
+        (WebCore::CSSParserImpl::consumeKeyframeStyleRule):
+        * css/parser/CSSParserImpl.h:
+
+2016-12-14  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Make deferred parsing retain the sheet text. Fix invalidation to avoid deferred parsing.
         https://bugs.webkit.org/show_bug.cgi?id=165868
 

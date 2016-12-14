@@ -444,7 +444,7 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
     return { state.takeStyle(), WTFMove(elementStyleRelations) };
 }
 
-std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleKeyframe* keyframe, KeyframeValue& keyframeValue)
+std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle, const StyleRuleKeyframe* keyframe, KeyframeValue& keyframeValue)
 {
     RELEASE_ASSERT(!m_isDeleted);
 
@@ -516,7 +516,7 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
     const StyleRuleKeyframes* keyframesRule = it->value.get();
 
     auto* keyframes = &keyframesRule->keyframes();
-    Vector<Ref<StyleKeyframe>> newKeyframesIfNecessary;
+    Vector<Ref<StyleRuleKeyframe>> newKeyframesIfNecessary;
 
     bool hasDuplicateKeys = false;
     HashSet<double> keyframeKeys;
@@ -535,17 +535,17 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
     // to copy the HashMap into a Vector.
     if (hasDuplicateKeys) {
         // Merge duplicate key times.
-        HashMap<double, RefPtr<StyleKeyframe>> keyframesMap;
+        HashMap<double, RefPtr<StyleRuleKeyframe>> keyframesMap;
 
         for (auto& originalKeyframe : keyframesRule->keyframes()) {
             for (auto key : originalKeyframe->keys()) {
                 if (auto keyframe = keyframesMap.get(key))
                     keyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
                 else {
-                    auto styleKeyframe = StyleKeyframe::create(MutableStyleProperties::create());
-                    styleKeyframe.ptr()->setKey(key);
-                    styleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
-                    keyframesMap.set(key, styleKeyframe.ptr());
+                    auto StyleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
+                    StyleRuleKeyframe.ptr()->setKey(key);
+                    StyleRuleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
+                    keyframesMap.set(key, StyleRuleKeyframe.ptr());
                 }
             }
         }
@@ -573,9 +573,9 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
     // If the 0% keyframe is missing, create it (but only if there is at least one other keyframe).
     int initialListSize = list.size();
     if (initialListSize > 0 && list[0].key()) {
-        static StyleKeyframe* zeroPercentKeyframe;
+        static StyleRuleKeyframe* zeroPercentKeyframe;
         if (!zeroPercentKeyframe) {
-            zeroPercentKeyframe = &StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
+            zeroPercentKeyframe = &StyleRuleKeyframe::create(MutableStyleProperties::create()).leakRef();
             zeroPercentKeyframe->setKey(0);
         }
         KeyframeValue keyframeValue(0, nullptr);
@@ -585,9 +585,9 @@ void StyleResolver::keyframeStylesForAnimation(const Element& element, const Ren
 
     // If the 100% keyframe is missing, create it (but only if there is at least one other keyframe).
     if (initialListSize > 0 && (list[list.size() - 1].key() != 1)) {
-        static StyleKeyframe* hundredPercentKeyframe;
+        static StyleRuleKeyframe* hundredPercentKeyframe;
         if (!hundredPercentKeyframe) {
-            hundredPercentKeyframe = &StyleKeyframe::create(MutableStyleProperties::create()).leakRef();
+            hundredPercentKeyframe = &StyleRuleKeyframe::create(MutableStyleProperties::create()).leakRef();
             hundredPercentKeyframe->setKey(1);
         }
         KeyframeValue keyframeValue(1, nullptr);

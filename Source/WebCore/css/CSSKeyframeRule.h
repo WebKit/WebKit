@@ -36,20 +36,18 @@ class CSSStyleDeclaration;
 class StyleRuleCSSStyleDeclaration;
 class CSSKeyframesRule;
 
-// FIXME-NEWPARSER: Rename this to StyleRuleKeyframe
-class StyleKeyframe final : public StyleRuleBase {
+class StyleRuleKeyframe final : public StyleRuleBase {
 public:
-    // FIXME-NEWPARSER: Remove this create function once we get rid of the old parser.
-    static Ref<StyleKeyframe> create(Ref<StyleProperties>&& properties)
+    static Ref<StyleRuleKeyframe> create(Ref<StyleProperties>&& properties)
     {
-        return adoptRef(*new StyleKeyframe(WTFMove(properties)));
+        return adoptRef(*new StyleRuleKeyframe(WTFMove(properties)));
     }
 
-    static Ref<StyleKeyframe> create(std::unique_ptr<Vector<double>> keys, Ref<StyleProperties>&& properties)
+    static Ref<StyleRuleKeyframe> create(std::unique_ptr<Vector<double>> keys, Ref<StyleProperties>&& properties)
     {
-        return adoptRef(*new StyleKeyframe(WTFMove(keys), WTFMove(properties)));
+        return adoptRef(*new StyleRuleKeyframe(WTFMove(keys), WTFMove(properties)));
     }
-    ~StyleKeyframe();
+    ~StyleRuleKeyframe();
 
     String keyText() const;
     bool setKeyText(const String&);
@@ -68,8 +66,8 @@ public:
     String cssText() const;
 
 private:
-    explicit StyleKeyframe(Ref<StyleProperties>&&);
-    StyleKeyframe(std::unique_ptr<Vector<double>>, Ref<StyleProperties>&&);
+    explicit StyleRuleKeyframe(Ref<StyleProperties>&&);
+    StyleRuleKeyframe(std::unique_ptr<Vector<double>>, Ref<StyleProperties>&&);
 
     Ref<StyleProperties> m_properties;
     Vector<double> m_keys;
@@ -88,11 +86,11 @@ public:
     CSSStyleDeclaration& style();
 
 private:
-    CSSKeyframeRule(StyleKeyframe&, CSSKeyframesRule* parent);
+    CSSKeyframeRule(StyleRuleKeyframe&, CSSKeyframesRule* parent);
 
     CSSRule::Type type() const final { return KEYFRAME_RULE; }
 
-    Ref<StyleKeyframe> m_keyframe;
+    Ref<StyleRuleKeyframe> m_keyframe;
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
     
     friend class CSSKeyframesRule;

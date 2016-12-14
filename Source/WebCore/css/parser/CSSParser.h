@@ -36,7 +36,7 @@ class Element;
 class ImmutableStyleProperties;
 class MutableStyleProperties;
 class StyleRuleBase;
-class StyleKeyframe;
+class StyleRuleKeyframe;
 class StyleSheetContents;
 
 class CSSParser {
@@ -55,7 +55,7 @@ public:
     
     static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&);
     
-    RefPtr<StyleKeyframe> parseKeyframeRule(const String&);
+    RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
     static std::unique_ptr<Vector<double>> parseKeyframeKeyList(const String&);
     
     bool parseSupportsCondition(const String&);

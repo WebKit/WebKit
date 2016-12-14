@@ -74,20 +74,20 @@ void StyleRuleKeyframes::parseDeferredRulesIfNeeded() const
     m_deferredRules = nullptr;
 }
 
-const Vector<Ref<StyleKeyframe>>& StyleRuleKeyframes::keyframes() const
+const Vector<Ref<StyleRuleKeyframe>>& StyleRuleKeyframes::keyframes() const
 {
     parseDeferredRulesIfNeeded();
     return m_keyframes;
 }
 
-void StyleRuleKeyframes::parserAppendKeyframe(RefPtr<StyleKeyframe>&& keyframe)
+void StyleRuleKeyframes::parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&& keyframe)
 {
     if (!keyframe)
         return;
     m_keyframes.append(keyframe.releaseNonNull());
 }
 
-void StyleRuleKeyframes::wrapperAppendKeyframe(Ref<StyleKeyframe>&& keyframe)
+void StyleRuleKeyframes::wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&& keyframe)
 {
     parseDeferredRulesIfNeeded();
     m_keyframes.append(WTFMove(keyframe));
@@ -142,7 +142,7 @@ void CSSKeyframesRule::appendRule(const String& ruleText)
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
 
     CSSParser parser(parserContext());
-    RefPtr<StyleKeyframe> keyframe = parser.parseKeyframeRule(ruleText);
+    RefPtr<StyleRuleKeyframe> keyframe = parser.parseKeyframeRule(ruleText);
     if (!keyframe)
         return;
 
@@ -215,7 +215,7 @@ CSSKeyframeRule* CSSKeyframesRule::item(unsigned index) const
     ASSERT(m_childRuleCSSOMWrappers.size() == m_keyframesRule->keyframes().size());
     RefPtr<CSSKeyframeRule>& rule = m_childRuleCSSOMWrappers[index];
     if (!rule)
-        rule = adoptRef(new CSSKeyframeRule(const_cast<StyleKeyframe&>(m_keyframesRule->keyframes()[index].get()), const_cast<CSSKeyframesRule*>(this)));
+        rule = adoptRef(new CSSKeyframeRule(const_cast<StyleRuleKeyframe&>(m_keyframesRule->keyframes()[index].get()), const_cast<CSSKeyframesRule*>(this)));
 
     return rule.get(); 
 }

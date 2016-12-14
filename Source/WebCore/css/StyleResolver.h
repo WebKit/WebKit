@@ -75,7 +75,7 @@ class Settings;
 class StyleCachedImage;
 class StyleGeneratedImage;
 class StyleImage;
-class StyleKeyframe;
+class StyleRuleKeyframe;
 class StyleProperties;
 class StyleRule;
 class StyleRuleKeyframes;
@@ -162,7 +162,7 @@ public:
     void setOverrideDocumentElementStyle(RenderStyle* style) { m_overrideDocumentElementStyle = style; }
 
 private:
-    std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleKeyframe*, KeyframeValue&);
+    std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
 
 public:
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).

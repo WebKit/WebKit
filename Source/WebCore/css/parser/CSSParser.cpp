@@ -150,10 +150,10 @@ RefPtr<StyleRuleBase> CSSParser::parseRule(const CSSParserContext& context, Styl
     return CSSParserImpl::parseRule(string, context, sheet, CSSParserImpl::AllowImportRules);
 }
 
-RefPtr<StyleKeyframe> CSSParser::parseKeyframeRule(const String& string)
+RefPtr<StyleRuleKeyframe> CSSParser::parseKeyframeRule(const String& string)
 {
     RefPtr<StyleRuleBase> keyframe = CSSParserImpl::parseRule(string, m_context, nullptr, CSSParserImpl::KeyframeRules);
-    return downcast<StyleKeyframe>(keyframe.get());
+    return downcast<StyleRuleKeyframe>(keyframe.get());
 }
 
 bool CSSParser::parseSupportsCondition(const String& condition)

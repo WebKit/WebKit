@@ -95,7 +95,7 @@ void StyleRuleBase::destroy()
         delete downcast<StyleRuleNamespace>(this);
         return;
     case Keyframe:
-        delete downcast<StyleKeyframe>(this);
+        delete downcast<StyleRuleKeyframe>(this);
         return;
     case Charset:
         delete downcast<StyleRuleCharset>(this);

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class CSSRuleList;
-class StyleKeyframe;
+class StyleRuleKeyframe;
 class CSSKeyframeRule;
 
 class StyleRuleKeyframes final : public StyleRuleBase {
@@ -44,14 +44,14 @@ public:
     
     ~StyleRuleKeyframes();
     
-    const Vector<Ref<StyleKeyframe>>& keyframes() const;
-    const Vector<Ref<StyleKeyframe>>* keyframesWithoutDeferredParsing() const
+    const Vector<Ref<StyleRuleKeyframe>>& keyframes() const;
+    const Vector<Ref<StyleRuleKeyframe>>* keyframesWithoutDeferredParsing() const
     {
         return !m_deferredRules ? &m_keyframes : nullptr;
     }
 
-    void parserAppendKeyframe(RefPtr<StyleKeyframe>&&);
-    void wrapperAppendKeyframe(Ref<StyleKeyframe>&&);
+    void parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&&);
+    void wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&&);
     void wrapperRemoveKeyframe(unsigned);
 
     const AtomicString& name() const { return m_name; }
@@ -68,7 +68,7 @@ private:
 
     void parseDeferredRulesIfNeeded() const;
     
-    mutable Vector<Ref<StyleKeyframe>> m_keyframes;
+    mutable Vector<Ref<StyleRuleKeyframe>> m_keyframes;
     AtomicString m_name;
     
     mutable std::unique_ptr<DeferredStyleGroupRuleList> m_deferredRules;

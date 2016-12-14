@@ -33,31 +33,31 @@
 
 namespace WebCore {
 
-StyleKeyframe::StyleKeyframe(Ref<StyleProperties>&& properties)
+StyleRuleKeyframe::StyleRuleKeyframe(Ref<StyleProperties>&& properties)
     : StyleRuleBase(Keyframe)
     , m_properties(WTFMove(properties))
 {
 }
 
-StyleKeyframe::StyleKeyframe(std::unique_ptr<Vector<double>> keys, Ref<StyleProperties>&& properties)
+StyleRuleKeyframe::StyleRuleKeyframe(std::unique_ptr<Vector<double>> keys, Ref<StyleProperties>&& properties)
     : StyleRuleBase(Keyframe)
     , m_properties(WTFMove(properties))
     , m_keys(*keys)
 {
 }
     
-StyleKeyframe::~StyleKeyframe()
+StyleRuleKeyframe::~StyleRuleKeyframe()
 {
 }
 
-MutableStyleProperties& StyleKeyframe::mutableProperties()
+MutableStyleProperties& StyleRuleKeyframe::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties.get()))
         m_properties = m_properties->mutableCopy();
     return downcast<MutableStyleProperties>(m_properties.get());
 }
 
-String StyleKeyframe::keyText() const
+String StyleRuleKeyframe::keyText() const
 {
     StringBuilder keyText;
 
@@ -71,7 +71,7 @@ String StyleKeyframe::keyText() const
     return keyText.toString();
 }
     
-bool StyleKeyframe::setKeyText(const String& keyText)
+bool StyleRuleKeyframe::setKeyText(const String& keyText)
 {
     ASSERT(!keyText.isNull());
     auto keys = CSSParser::parseKeyframeKeyList(keyText);
@@ -81,7 +81,7 @@ bool StyleKeyframe::setKeyText(const String& keyText)
     return true;
 }
 
-String StyleKeyframe::cssText() const
+String StyleRuleKeyframe::cssText() const
 {
     StringBuilder result;
     result.append(keyText());
@@ -94,7 +94,7 @@ String StyleKeyframe::cssText() const
     return result.toString();
 }
 
-CSSKeyframeRule::CSSKeyframeRule(StyleKeyframe& keyframe, CSSKeyframesRule* parent)
+CSSKeyframeRule::CSSKeyframeRule(StyleRuleKeyframe& keyframe, CSSKeyframesRule* parent)
     : CSSRule(0)
     , m_keyframe(keyframe)
 {
