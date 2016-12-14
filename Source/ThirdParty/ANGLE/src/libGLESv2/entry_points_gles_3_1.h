@@ -9,8 +9,8 @@
 #ifndef LIBGLESV2_ENTRYPOINTGLES31_H_
 #define LIBGLESV2_ENTRYPOINTGLES31_H_
 
-#include <GLES3/gl31.h>
-#include <export.h>
+#include <ANGLE/gl31.h>
+#include <ANGLE/export.h>
 
 // we include the platform.h header since it undefines the conflicting MemoryBarrier macro
 #include "common/platform.h"

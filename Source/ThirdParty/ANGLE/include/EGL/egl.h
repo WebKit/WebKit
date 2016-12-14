@@ -59,8 +59,8 @@ extern "C" {
 #define EGL_VERSION_1_0 1
 typedef unsigned int EGLBoolean;
 typedef void *EGLDisplay;
-#include <KHR/khrplatform.h>
-#include <EGL/eglplatform.h>
+#include <ANGLE/khrplatform.h>
+#include <ANGLE/eglplatform.h>
 typedef void *EGLConfig;
 typedef void *EGLSurface;
 typedef void *EGLContext;
@@ -313,7 +313,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitSync (EGLDisplay dpy, EGLSync sync, EGLint 
 #endif /* EGL_VERSION_1_5 */
 
 #if EGL_SOFT_LINKING
-#include <EGL/eglsoftlinking.h>
+#include <ANGLE/eglsoftlinking.h>
 #endif
 
 #ifdef __cplusplus

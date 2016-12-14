@@ -9,8 +9,8 @@
 #ifndef LIBGLESV2_ENTRYPOINTGLES30_H_
 #define LIBGLESV2_ENTRYPOINTGLES30_H_
 
-#include <GLES3/gl3.h>
-#include <export.h>
+#include <ANGLE/gl3.h>
+#include <ANGLE/export.h>
 
 namespace gl
 {

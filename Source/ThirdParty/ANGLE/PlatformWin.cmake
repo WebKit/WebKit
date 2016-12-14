@@ -39,6 +39,14 @@ list(APPEND ANGLEGLESv2_LIBRARIES
 
 list(APPEND ANGLE_SOURCES
     src/compiler/translator/ASTMetadataHLSL.cpp
+    src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
+    src/compiler/translator/OutputHLSL.cpp
+    src/compiler/translator/SeparateArrayInitialization.cpp
+    src/compiler/translator/StructureHLSL.cpp
+    src/compiler/translator/TextureFunctionHLSL.cpp
+    src/compiler/translator/TranslatorHLSL.cpp
+    src/compiler/translator/UniformHLSL.cpp
+    src/compiler/translator/UtilsHLSL.cpp
     src/compiler/translator/blocklayoutHLSL.cpp
     src/libANGLE/renderer/d3d/BufferD3D.cpp
     src/libANGLE/renderer/d3d/CompilerD3D.cpp

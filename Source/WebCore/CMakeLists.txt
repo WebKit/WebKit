@@ -3910,6 +3910,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D AND NOT WIN32)
         ANGLE_ENABLE_GLSL)
 
     target_include_directories(ANGLESupport PRIVATE
+        "${THIRDPARTY_DIR}/ANGLE"
         "${THIRDPARTY_DIR}/ANGLE/include"
         "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${THIRDPARTY_DIR}/ANGLE/src"

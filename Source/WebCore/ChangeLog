@@ -1,3 +1,18 @@
+2016-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards using ANGLE to do WebGL rendering
+        https://bugs.webkit.org/show_bug.cgi?id=165864
+
+        Reviewed by Dean Jackson.
+
+        No new tests, no change in behavior.
+        Just compile fixes for a configuration that will soon be standard
+        that can be landed now without breaking anything.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::sharedDisplay):
+        Ignore some clang warnings that will cause problems when this is compiled on Mac.
+
 2016-12-14  Dean Jackson  <dino@apple.com>
 
         [iOS] MediaDocuments have controls on the bottom of the page

@@ -1,4 +1,5 @@
 include_directories(
+    .
     src
     src/common/third_party/numerics
     include
@@ -61,7 +62,6 @@ set(ANGLE_SOURCES
     src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
     src/compiler/translator/BuiltInFunctionEmulator.cpp
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
-    src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
     src/compiler/translator/Cache.cpp
     src/compiler/translator/CallDAG.cpp
     src/compiler/translator/CodeGen.cpp
@@ -93,7 +93,6 @@ set(ANGLE_SOURCES
     src/compiler/translator/OutputESSL.cpp
     src/compiler/translator/OutputGLSL.cpp
     src/compiler/translator/OutputGLSLBase.cpp
-    src/compiler/translator/OutputHLSL.cpp
     src/compiler/translator/ParseContext.cpp
     src/compiler/translator/PoolAlloc.cpp
     src/compiler/translator/PruneEmptyDeclarations.cpp
@@ -111,26 +110,20 @@ set(ANGLE_SOURCES
     src/compiler/translator/SearchSymbol.cpp
     src/compiler/translator/SearchSymbol.cpp
     src/compiler/translator/SearchSymbol.cpp
-    src/compiler/translator/SeparateArrayInitialization.cpp
     src/compiler/translator/SeparateDeclarations.cpp
     src/compiler/translator/SeparateExpressionsReturningArrays.cpp
     src/compiler/translator/ShaderLang.cpp
     src/compiler/translator/ShaderVars.cpp
     src/compiler/translator/SimplifyLoopConditions.cpp
     src/compiler/translator/SplitSequenceOperator.cpp
-    src/compiler/translator/StructureHLSL.cpp
     src/compiler/translator/SymbolTable.cpp
-    src/compiler/translator/TextureFunctionHLSL.cpp
     src/compiler/translator/TranslatorESSL.cpp
     src/compiler/translator/TranslatorGLSL.cpp
-    src/compiler/translator/TranslatorHLSL.cpp
     src/compiler/translator/Types.cpp
     src/compiler/translator/UnfoldShortCircuitAST.cpp
     src/compiler/translator/UnfoldShortCircuitToIf.cpp
-    src/compiler/translator/UniformHLSL.cpp
     src/compiler/translator/UseInterfaceBlockFields.cpp
     src/compiler/translator/util.cpp
-    src/compiler/translator/UtilsHLSL.cpp
     src/compiler/translator/ValidateGlobalInitializer.cpp
     src/compiler/translator/ValidateLimitations.cpp
     src/compiler/translator/ValidateMaxParameters.cpp

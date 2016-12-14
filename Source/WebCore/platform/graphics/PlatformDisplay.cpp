@@ -113,7 +113,10 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 PlatformDisplay& PlatformDisplay::sharedDisplay()
 {
     static std::once_flag onceFlag;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static std::unique_ptr<PlatformDisplay> display;
+#pragma clang diagnostic pop
     std::call_once(onceFlag, []{
         display = createPlatformDisplay();
     });

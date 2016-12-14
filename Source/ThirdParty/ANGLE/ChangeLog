@@ -1,3 +1,54 @@
+2016-12-14  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards using ANGLE to do WebGL rendering
+        https://bugs.webkit.org/show_bug.cgi?id=165864
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        Compile more files, and add some more "public" headers.
+        ANGLE is not a public framework, so these headers just go in 
+        WebKitBuild/Release/usr/local/include/ANGLE to be included when compiling WebCore.
+        * ANGLE/egl.h: Added.
+        * ANGLE/eglext.h: Added.
+        * ANGLE/eglplatform.h: Added.
+        * ANGLE/entry_points_gles_2_0.h: Added.
+        * ANGLE/entry_points_gles_2_0_ext.h: Added.
+        * ANGLE/entry_points_gles_3_0.h: Added.
+        * ANGLE/export.h: Added.
+        * ANGLE/gl2.h: Added.
+        * ANGLE/gl2ext.h: Added.
+        * ANGLE/gl2platform.h: Added.
+        * ANGLE/gl3.h: Added.
+        * ANGLE/gl31.h: Added.
+        * ANGLE/gl3platform.h: Added.
+        * ANGLE/khrplatform.h: Added.
+        Add more forwarding headers.  There are already a few, but we need more.
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        Make the frameworks linked to by ANGLE be private so frameworks that link with 
+        ANGLE don't automatically link with them. This allows me to switch ANGLE from a 
+        static library to a dynamic library to make sure WebCore isn't directly using OpenGL.
+        * PlatformWin.cmake:
+        Move HLSL-specific files to only be built on Windows.
+        * include/EGL/egl.h:
+        * include/EGL/eglplatform.h:
+        * include/GLES2/gl2.h:
+        * include/GLES2/gl2platform.h:
+        * include/GLES3/gl3.h:
+        * include/GLES3/gl31.h:
+        * include/GLES3/gl32.h:
+        * include/GLES3/gl3platform.h:
+        * src/libGLESv2/entry_points_egl.h:
+        * src/libGLESv2/entry_points_egl_ext.h:
+        * src/libGLESv2/entry_points_gles_2_0.h:
+        * src/libGLESv2/entry_points_gles_2_0_ext.h:
+        * src/libGLESv2/entry_points_gles_3_0.h:
+        * src/libGLESv2/entry_points_gles_3_1.h:
+        Include ANGLE headers as #include <ANGLE/*> instead of #include <KHR/*> or #include <GLES/*>
+        This is needed to distinguish the ANGLE headers from any system OpenGL/OpenGLES headers.
+        We will eventually only include ANGLE's entry_points_*.h directly from WebCore.
+
 2016-12-07  Alex Christensen  <achristensen@webkit.org>
 
         Build more of ANGLE on Mac and Windows

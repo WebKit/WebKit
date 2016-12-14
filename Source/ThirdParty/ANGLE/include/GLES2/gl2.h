@@ -56,7 +56,7 @@ extern "C" {
 
 #ifndef GL_ES_VERSION_2_0
 #define GL_ES_VERSION_2_0 1
-#include <KHR/khrplatform.h>
+#include <ANGLE/khrplatform.h>
 typedef khronos_int8_t GLbyte;
 typedef khronos_float_t GLclampf;
 typedef khronos_int32_t GLfixed;
@@ -522,7 +522,7 @@ typedef void (GL_APIENTRYP PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint si
 typedef void (GL_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 #if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
-#include <GLES2/gl2softlinking.h>
+#include <ANGLE/gl2softlinking.h>
 #else
 
 #ifdef GL_GLEXT_PROTOTYPES
