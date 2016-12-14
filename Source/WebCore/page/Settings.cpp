@@ -83,6 +83,10 @@ bool Settings::gAVFoundationNSURLSessionEnabled = true;
 bool Settings::gQTKitEnabled = false;
 #endif
 
+#if USE(GSTREAMER)
+bool Settings::gGStreamerEnabled = true;
+#endif
+
 bool Settings::gMockScrollbarsEnabled = false;
 bool Settings::gUsesOverlayScrollbars = false;
 bool Settings::gMockScrollAnimatorEnabled = false;
@@ -578,6 +582,17 @@ void Settings::setQTKitEnabled(bool enabled)
         return;
 
     gQTKitEnabled = enabled;
+    HTMLMediaElement::resetMediaEngines();
+}
+#endif
+
+#if USE(GSTREAMER)
+void Settings::setGStreamerEnabled(bool enabled)
+{
+    if (gGStreamerEnabled == enabled)
+        return;
+
+    gGStreamerEnabled = enabled;
     HTMLMediaElement::resetMediaEngines();
 }
 #endif

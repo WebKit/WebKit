@@ -6,10 +6,6 @@ RUN(source.duration = loader.duration())
 RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(resize)
-EVENT(update)
-Append a media segment.
-RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
-EVENT(resize)
 EXPECTED (video.videoWidth == '640') OK
 EXPECTED (video.videoHeight == '480') OK
 END OF TEST

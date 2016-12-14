@@ -25,4 +25,13 @@
 
 CString getCurrentExecutablePath();
 
+// These might be added to glib in the future, but in the meantime they're defined here.
+#ifndef GULONG_TO_POINTER
+#define GULONG_TO_POINTER(ul) ((gpointer) (gulong) (ul))
+#endif
+
+#ifndef GPOINTER_TO_ULONG
+#define GPOINTER_TO_ULONG(p) ((gulong) (p))
+#endif
+
 #endif

@@ -3020,6 +3020,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setAVFoundationNSURLSessionEnabled(store.getBoolValueForKey(WebPreferencesKey::isAVFoundationNSURLSessionEnabledKey()));
 #endif
 
+#if USE(GSTREAMER)
+    settings.setGStreamerEnabled(store.getBoolValueForKey(WebPreferencesKey::isGStreamerEnabledKey()));
+#endif
+
 #if PLATFORM(COCOA)
     settings.setQTKitEnabled(store.getBoolValueForKey(WebPreferencesKey::isQTKitEnabledKey()));
 #endif

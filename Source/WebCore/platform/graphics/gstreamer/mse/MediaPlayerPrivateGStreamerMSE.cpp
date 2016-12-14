@@ -41,6 +41,7 @@
 #include "URL.h"
 #include "VideoTrackPrivateGStreamer.h"
 
+#include <fnmatch.h>
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
@@ -749,6 +750,32 @@ void MediaPlayerPrivateGStreamerMSE::trackDetected(RefPtr<AppendPipeline> append
         m_playbackPipeline->reattachTrack(appendPipeline->sourceBufferPrivate(), newTrack);
 }
 
+bool MediaPlayerPrivateGStreamerMSE::supportsCodecs(const String& codecs)
+{
+    static Vector<const char*> supportedCodecs = { "avc*", "mp4a*", "mpeg", "x-h264" };
+    Vector<String> codecEntries;
+    codecs.split(',', false, codecEntries);
+
+    for (String codec : codecEntries) {
+        bool isCodecSupported = false;
+
+        // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
+        size_t slashIndex = codec.find('/');
+        if (slashIndex != WTF::notFound)
+            codec = codec.substring(slashIndex+1);
+
+        const char* codecData = codec.utf8().data();
+        for (const auto& pattern : supportedCodecs) {
+            if (isCodecSupported = !fnmatch(pattern, codecData, 0))
+                break;
+        }
+        if (!isCodecSupported)
+            return false;
+    }
+
+    return true;
+}
+
 MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const MediaEngineSupportParameters& parameters)
 {
     MediaPlayer::SupportsType result = MediaPlayer::IsNotSupported;
@@ -766,8 +793,12 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
     }
 
     // Spec says we should not return "probably" if the codecs string is empty.
-    if (mimeTypeCache().contains(parameters.type))
-        result = parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
+    if (mimeTypeCache().contains(parameters.type)) {
+        if (parameters.codecs.isEmpty())
+            result = MediaPlayer::MayBeSupported;
+        else
+            result = supportsCodecs(parameters.codecs) ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
+    }
 
     return extendedSupportsType(parameters, result);
 }

@@ -427,7 +427,7 @@ MediaTime MediaPlayerPrivateGStreamer::durationMediaTime() const
         return { };
 
     if (m_durationAtEOS)
-        return MediaTime::createWithFloat(m_durationAtEOS);
+        return MediaTime::createWithDouble(m_durationAtEOS);
 
     // The duration query would fail on a not-prerolled pipeline.
     if (GST_STATE(m_pipeline.get()) < GST_STATE_PAUSED)

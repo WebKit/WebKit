@@ -225,15 +225,20 @@ static void buildMediaEnginesVector()
 
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
-    MediaPlayerPrivateGStreamerOwr::registerMediaEngine(addMediaEngine);
+    if (Settings::isGStreamerEnabled())
+        MediaPlayerPrivateGStreamerOwr::registerMediaEngine(addMediaEngine);
 #endif
 
 #if defined(PlatformMediaEngineClassName)
-    PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
+#if USE(GSTREAMER)
+    if (Settings::isGStreamerEnabled())
+#endif
+        PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
-    MediaPlayerPrivateGStreamerMSE::registerMediaEngine(addMediaEngine);
+    if (Settings::isGStreamerEnabled())
+        MediaPlayerPrivateGStreamerMSE::registerMediaEngine(addMediaEngine);
 #endif
 
     haveMediaEnginesVector() = true;

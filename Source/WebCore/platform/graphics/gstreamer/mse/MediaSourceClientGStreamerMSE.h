@@ -47,6 +47,7 @@ public:
 
     // From SourceBufferPrivateGStreamer.
     void abort(RefPtr<SourceBufferPrivateGStreamer>);
+    void resetParserState(RefPtr<SourceBufferPrivateGStreamer>);
     bool append(RefPtr<SourceBufferPrivateGStreamer>, const unsigned char*, unsigned);
     void removedFromMediaSource(RefPtr<SourceBufferPrivateGStreamer>);
     void flush(AtomicString);

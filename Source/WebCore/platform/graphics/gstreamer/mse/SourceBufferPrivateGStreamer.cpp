@@ -86,7 +86,7 @@ void SourceBufferPrivateGStreamer::abort()
 
 void SourceBufferPrivateGStreamer::resetParserState()
 {
-    notImplemented();
+    m_client->resetParserState(this);
 }
 
 void SourceBufferPrivateGStreamer::removedFromMediaSource()

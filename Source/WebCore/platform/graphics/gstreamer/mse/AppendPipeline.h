@@ -77,7 +77,7 @@ public:
     RefPtr<WebCore::TrackPrivateBase> track() { return m_track; }
     WebCore::MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
 
-    void disconnectDemuxerSrcPadFromAppsinkFromAnyThread();
+    void disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*);
     void connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad*);
     void connectDemuxerSrcPadToAppsink(GstPad*);
 

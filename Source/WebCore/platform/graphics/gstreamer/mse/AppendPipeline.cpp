@@ -39,6 +39,7 @@
 #include <gst/pbutils/pbutils.h>
 #include <gst/video/video.h>
 #include <wtf/Condition.h>
+#include <wtf/glib/GLibUtilities.h>
 
 namespace WebCore {
 
@@ -74,6 +75,7 @@ static GstPadProbeReturn appendPipelineAppsrcDataLeaving(GstPad*, GstPadProbeInf
 #if !LOG_DISABLED
 static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad*, GstPadProbeInfo*, struct PadProbeInformation*);
 #endif
+static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadProbeInfo*, gpointer);
 static GstFlowReturn appendPipelineAppsinkNewSample(GstElement*, AppendPipeline*);
 static void appendPipelineAppsinkEOS(GstElement*, AppendPipeline*);
 
@@ -530,7 +532,10 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
 
         const gchar* originalMediaType = gst_structure_get_string(structure, "original-media-type");
 
-        if (g_str_has_prefix(originalMediaType, "video/")) {
+        if (!MediaPlayerPrivateGStreamerMSE::supportsCodecs(originalMediaType)) {
+            m_presentationSize = WebCore::FloatSize();
+            m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Invalid;
+        } else if (g_str_has_prefix(originalMediaType, "video/")) {
             int width = 0;
             int height = 0;
             float finalHeight = 0;
@@ -560,7 +565,10 @@ void AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
         const char* structureName = gst_structure_get_name(structure);
         GstVideoInfo info;
 
-        if (g_str_has_prefix(structureName, "video/") && gst_video_info_from_caps(&info, demuxerSrcPadCaps)) {
+        if (!MediaPlayerPrivateGStreamerMSE::supportsCodecs(structureName)) {
+            m_presentationSize = WebCore::FloatSize();
+            m_streamType = WebCore::MediaSourceStreamTypeGStreamer::Invalid;
+        } else if (g_str_has_prefix(structureName, "video/") && gst_video_info_from_caps(&info, demuxerSrcPadCaps)) {
             float width, height;
 
             width = info.width;
@@ -704,8 +712,9 @@ void AppendPipeline::didReceiveInitializationSegment()
 
     WebCore::SourceBufferPrivateClient::InitializationSegment initializationSegment;
 
-    GST_DEBUG("Notifying SourceBuffer for track %s", m_track->id().string().utf8().data());
+    GST_DEBUG("Notifying SourceBuffer for track %s", (m_track) ? m_track->id().string().utf8().data() : nullptr);
     initializationSegment.duration = m_mediaSourceClient->duration();
+
     switch (m_streamType) {
     case Audio: {
         WebCore::SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
@@ -722,8 +731,7 @@ void AppendPipeline::didReceiveInitializationSegment()
         break;
     }
     default:
-        GST_ERROR("Unsupported or unknown stream type");
-        ASSERT_NOT_REACHED();
+        GST_ERROR("Unsupported stream type or codec");
         break;
     }
 
@@ -871,6 +879,13 @@ void AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread(GstPad* demuxerS
 
     GST_DEBUG("connecting to appsink");
 
+    if (m_demux->numsrcpads > 1) {
+        GST_WARNING("Only one stream per SourceBuffer is allowed! Ignoring stream %d by adding a black hole probe.", m_demux->numsrcpads);
+        gulong probeId = gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(appendPipelineDemuxerBlackHolePadProbe), nullptr, nullptr);
+        g_object_set_data(G_OBJECT(demuxerSrcPad), "blackHoleProbeId", GULONG_TO_POINTER(probeId));
+        return;
+    }
+
     GRefPtr<GstPad> appsinkSinkPad = adoptGRef(gst_element_get_static_pad(m_appsink.get(), "sink"));
 
     // Only one stream per demuxer is supported.
@@ -959,7 +974,8 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     }
 #endif
 
-    if (m_initialDuration > m_mediaSourceClient->duration())
+    if (m_initialDuration > m_mediaSourceClient->duration()
+        || (m_mediaSourceClient->duration().isInvalid() && m_initialDuration > MediaTime::zeroTime()))
         m_mediaSourceClient->durationChanged(m_initialDuration);
 
     m_oldTrack = m_track;
@@ -978,6 +994,18 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     case WebCore::MediaSourceStreamTypeGStreamer::Text:
         m_track = WebCore::InbandTextTrackPrivateGStreamer::create(id(), sinkSinkPad.get());
         break;
+    case WebCore::MediaSourceStreamTypeGStreamer::Invalid:
+        {
+            GUniquePtr<gchar> strcaps(gst_caps_to_string(caps.get()));
+            GST_DEBUG("Unsupported track codec: %s", strcaps.get());
+        }
+        // This is going to cause an error which will detach the SourceBuffer and tear down this
+        // AppendPipeline, so we need the padAddRemove lock released before continuing.
+        m_track = nullptr;
+        m_padAddRemoveCondition.notifyOne();
+        locker.unlockEarly();
+        didReceiveInitializationSegment();
+        return;
     default:
         // No useful data, but notify anyway to complete the append operation.
         GST_DEBUG("Received all pending samples (no data)");
@@ -988,11 +1016,22 @@ void AppendPipeline::connectDemuxerSrcPadToAppsink(GstPad* demuxerSrcPad)
     m_padAddRemoveCondition.notifyOne();
 }
 
-void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread()
+void AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad* demuxerSrcPad)
 {
+    // Must be done in the thread we were called from (usually streaming thread).
+    if (!gst_pad_is_linked(demuxerSrcPad)) {
+        gulong probeId = GPOINTER_TO_ULONG(g_object_get_data(G_OBJECT(demuxerSrcPad), "blackHoleProbeId"));
+        if (probeId) {
+            GST_DEBUG("Disconnecting black hole probe.");
+            g_object_set_data(G_OBJECT(demuxerSrcPad), "blackHoleProbeId", nullptr);
+            gst_pad_remove_probe(demuxerSrcPad, probeId);
+        } else
+            GST_WARNING("Not disconnecting demuxer src pad because it wasn't linked");
+        return;
+    }
+
     GST_DEBUG("Disconnecting appsink");
 
-    // Must be done in the thread we were called from (usually streaming thread).
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (m_decryptor) {
         gst_element_unlink(m_decryptor.get(), m_appsink.get());
@@ -1036,6 +1075,14 @@ static GstPadProbeReturn appendPipelinePadProbeDebugInformation(GstPad*, GstPadP
 }
 #endif
 
+static GstPadProbeReturn appendPipelineDemuxerBlackHolePadProbe(GstPad*, GstPadProbeInfo* info, gpointer)
+{
+    ASSERT(GST_PAD_PROBE_INFO_TYPE(info) & GST_PAD_PROBE_TYPE_BUFFER);
+    GstBuffer* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
+    GST_TRACE("buffer of size %" G_GSIZE_FORMAT " ignored", gst_buffer_get_size(buffer));
+    return GST_PAD_PROBE_DROP;
+}
+
 static void appendPipelineAppsrcNeedData(GstAppSrc*, guint, AppendPipeline* appendPipeline)
 {
     appendPipeline->reportAppsrcNeedDataReceived();
@@ -1046,9 +1093,9 @@ static void appendPipelineDemuxerPadAdded(GstElement*, GstPad* demuxerSrcPad, Ap
     appendPipeline->connectDemuxerSrcPadToAppsinkFromAnyThread(demuxerSrcPad);
 }
 
-static void appendPipelineDemuxerPadRemoved(GstElement*, GstPad*, AppendPipeline* appendPipeline)
+static void appendPipelineDemuxerPadRemoved(GstElement*, GstPad* demuxerSrcPad, AppendPipeline* appendPipeline)
 {
-    appendPipeline->disconnectDemuxerSrcPadFromAppsinkFromAnyThread();
+    appendPipeline->disconnectDemuxerSrcPadFromAppsinkFromAnyThread(demuxerSrcPad);
 }
 
 static GstFlowReturn appendPipelineAppsinkNewSample(GstElement* appsink, AppendPipeline* appendPipeline)

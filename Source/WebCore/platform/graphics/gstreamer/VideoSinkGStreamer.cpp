@@ -58,7 +58,6 @@ GST_DEBUG_CATEGORY_STATIC(webkitVideoSinkDebug);
 
 enum {
     REPAINT_REQUESTED,
-    DRAIN,
     LAST_SIGNAL
 };
 
@@ -355,21 +354,6 @@ static gboolean webkitVideoSinkProposeAllocation(GstBaseSink* baseSink, GstQuery
     return TRUE;
 }
 
-static gboolean webkitVideoSinkQuery(GstBaseSink* baseSink, GstQuery* query)
-{
-    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
-
-    switch (GST_QUERY_TYPE(query)) {
-    case GST_QUERY_DRAIN:
-        GST_OBJECT_LOCK(sink);
-        g_signal_emit(sink, webkitVideoSinkSignals[DRAIN], 0);
-        GST_OBJECT_UNLOCK(sink);
-        return TRUE;
-    default:
-        return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, query, (baseSink, query), TRUE);
-    }
-}
-
 static gboolean webkitVideoSinkEvent(GstBaseSink* baseSink, GstEvent* event)
 {
     switch (GST_EVENT_TYPE(event)) {
@@ -377,11 +361,7 @@ static gboolean webkitVideoSinkEvent(GstBaseSink* baseSink, GstEvent* event)
         WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(baseSink);
         sink->priv->scheduler.drain();
 
-        GST_DEBUG_OBJECT(sink, "Flush-start, emitting DRAIN signal and releasing m_sample");
-
-        GST_OBJECT_LOCK(sink);
-        g_signal_emit(sink, webkitVideoSinkSignals[DRAIN], 0);
-        GST_OBJECT_UNLOCK(sink);
+        GST_DEBUG_OBJECT(sink, "Flush-start, releasing m_sample");
         }
         FALLTHROUGH;
     default:
@@ -410,7 +390,6 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
     baseSinkClass->start = webkitVideoSinkStart;
     baseSinkClass->set_caps = webkitVideoSinkSetCaps;
     baseSinkClass->propose_allocation = webkitVideoSinkProposeAllocation;
-    baseSinkClass->query = webkitVideoSinkQuery;
     baseSinkClass->event = webkitVideoSinkEvent;
 
     webkitVideoSinkSignals[REPAINT_REQUESTED] = g_signal_new("repaint-requested",
@@ -423,16 +402,6 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
             G_TYPE_NONE, // Return type
             1, // Only one parameter
             GST_TYPE_SAMPLE);
-
-    webkitVideoSinkSignals[DRAIN] = g_signal_new("drain",
-        G_TYPE_FROM_CLASS(klass),
-        static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-        0, // Class offset.
-        0, // Accumulator.
-        0, // Accumulator data.
-        g_cclosure_marshal_generic,
-        G_TYPE_NONE, // Return type.
-        0); // No parameters.
 }
 
 

@@ -1,3 +1,13 @@
+2016-12-14  Enrique Ocaña González  <eocanha@igalia.com>
+
+        REGRESSION(r207879-207891): [GStreamer] Introduced many layout test failures and crashes, bots exiting early
+        https://bugs.webkit.org/show_bug.cgi?id=164022
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Scripts/webkitperl/FeatureList.pm:
+          Re-enable MEDIA_SOURCE for the GTK+ port.
+
 2016-12-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

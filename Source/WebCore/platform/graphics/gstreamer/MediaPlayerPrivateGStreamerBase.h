@@ -166,12 +166,9 @@ protected:
 
     virtual bool handleSyncMessage(GstMessage*);
 
-    void triggerDrain();
-
     void triggerRepaint(GstSample*);
     void repaint();
 
-    static void drainCallback(MediaPlayerPrivateGStreamerBase*);
     static void repaintCallback(MediaPlayerPrivateGStreamerBase*, GstSample*);
 
     void notifyPlayerOfVolumeChange();

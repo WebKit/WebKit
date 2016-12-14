@@ -152,6 +152,7 @@
     macro(AllowFileAccessFromFileURLs, allowFileAccessFromFileURLs, Bool, bool, false, "", "") \
     macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, true, "", "") \
     macro(AVFoundationNSURLSessionEnabled, isAVFoundationNSURLSessionEnabled, Bool, bool, true, "", "") \
+    macro(GStreamerEnabled, isGStreamerEnabled, Bool, bool, true, "", "") \
     macro(RequiresUserGestureForMediaPlayback, requiresUserGestureForMediaPlayback, Bool, bool, false, "", "") \
     macro(RequiresUserGestureForVideoPlayback, requiresUserGestureForVideoPlayback, Bool, bool, false, "", "") \
     macro(RequiresUserGestureForAudioPlayback, requiresUserGestureForAudioPlayback, Bool, bool, DEFAULT_REQUIRES_USER_GESTURE_FOR_AUDIO_PLAYBACK, "", "") \

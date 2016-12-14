@@ -2693,6 +2693,9 @@ void Internals::initializeMockMediaSource()
 #if USE(AVFOUNDATION)
     WebCore::Settings::setAVFoundationEnabled(false);
 #endif
+#if USE(GSTREAMER)
+    WebCore::Settings::setGStreamerEnabled(false);
+#endif
     MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
 }
 

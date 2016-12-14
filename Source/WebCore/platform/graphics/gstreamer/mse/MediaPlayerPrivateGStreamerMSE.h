@@ -87,6 +87,8 @@ public:
     void trackDetected(RefPtr<AppendPipeline>, RefPtr<WebCore::TrackPrivateBase> oldTrack, RefPtr<WebCore::TrackPrivateBase> newTrack);
     void notifySeekNeedsDataForTime(const MediaTime&);
 
+    static bool supportsCodecs(const String& codecs);
+
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

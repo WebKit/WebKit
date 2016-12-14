@@ -32,6 +32,7 @@
         run('source.duration = loader.duration()');
         run('sourceBuffer = source.addSourceBuffer(loader.type())');
         waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        waitForEventOnce('resize', resize);
         run('sourceBuffer.appendBuffer(loader.initSegment())');
     }
 
@@ -42,9 +43,12 @@
     }
 
     function resize() {
-        testExpected('video.videoWidth', 640);
-        testExpected('video.videoHeight', 480);
-        endTest();
+        // First resize can be 0x0 (Mac) or 640x480 (GTK+)
+        if (video.videoWidth > 0 && video.videoHeight > 0) {
+            testExpected('video.videoWidth', 640);
+            testExpected('video.videoHeight', 480);
+            endTest();
+        }
     }
     </script>
 </head>

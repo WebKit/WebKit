@@ -104,6 +104,22 @@ void MediaSourceClientGStreamerMSE::abort(RefPtr<SourceBufferPrivateGStreamer> s
     appendPipeline->abort();
 }
 
+void MediaSourceClientGStreamerMSE::resetParserState(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
+{
+    ASSERT(WTF::isMainThread());
+
+    GST_DEBUG("resetting parser state");
+
+    if (!m_playerPrivate)
+        return;
+
+    RefPtr<AppendPipeline> appendPipeline = m_playerPrivate->m_appendPipelinesMap.get(sourceBufferPrivate);
+
+    ASSERT(appendPipeline);
+
+    appendPipeline->abort();
+}
+
 bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate, const unsigned char* data, unsigned length)
 {
     ASSERT(WTF::isMainThread());
