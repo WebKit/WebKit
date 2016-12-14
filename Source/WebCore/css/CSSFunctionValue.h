@@ -25,21 +25,13 @@
 
 #pragma once
 
-#include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 
 namespace WebCore {
 
-class CSSValueList;
-
-// FIXME-NEWPARSER: This can just *be* a CSSValueList subclass.
-class CSSFunctionValue final : public CSSValue {
+class CSSFunctionValue final : public CSSValueList {
 public:
-    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValueList>&& args)
-    {
-        return adoptRef(*new CSSFunctionValue(name, WTFMove(args)));
-    }
-
     static Ref<CSSFunctionValue> create(CSSValueID name)
     {
         return adoptRef(*new CSSFunctionValue(name));
@@ -47,19 +39,18 @@ public:
     
     String customCSSText() const;
 
-    bool equals(const CSSFunctionValue&) const;
-    
     CSSValueID name() const { return m_name; }
-    CSSValueList* arguments() const { return m_args.get(); }
 
-    void append(Ref<CSSValue>&&);
+    bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && CSSValueList::equals(other); }
 
 private:
-    CSSFunctionValue(CSSValueID, Ref<CSSValueList>&&);
-    CSSFunctionValue(CSSValueID);
+    CSSFunctionValue(CSSValueID name)
+        : CSSValueList(FunctionClass, CommaSeparator)
+        , m_name(name)
+    {
+    }
 
     CSSValueID m_name { CSSValueInvalid };
-    RefPtr<CSSValueList> m_args;
 };
 
 } // namespace WebCore

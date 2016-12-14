@@ -26,47 +26,18 @@
 #include "config.h"
 #include "CSSFunctionValue.h"
 
-#include "CSSValueList.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValueList>&& args)
-    : CSSValue(FunctionClass)
-    , m_name(name)
-    , m_args(WTFMove(args))
-{
-}
-
-CSSFunctionValue::CSSFunctionValue(CSSValueID name)
-    : CSSValue(FunctionClass)
-    , m_name(name)
-{
-}
     
 String CSSFunctionValue::customCSSText() const
 {
     StringBuilder result;
-    if (m_name != CSSValueInvalid) {
-        result.append(getValueName(m_name));
-        result.append('(');
-    }
-    if (m_args)
-        result.append(m_args->cssText());
+    result.append(getValueName(m_name));
+    result.append('(');
+    result.append(CSSValueList::customCSSText());
     result.append(')');
     return result.toString();
-}
-
-bool CSSFunctionValue::equals(const CSSFunctionValue& other) const
-{
-    return m_name == other.m_name && compareCSSValuePtr(m_args, other.m_args);
-}
-
-void CSSFunctionValue::append(Ref<CSSValue>&& value)
-{
-    if (!m_args)
-        m_args = CSSValueList::createCommaSeparated();
-    m_args->append(WTFMove(value));
 }
 
 }

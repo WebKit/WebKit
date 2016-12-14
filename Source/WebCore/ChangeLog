@@ -1,3 +1,31 @@
+2016-12-13  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Make CSSFunctionValue derive from CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=165832
+
+        Reviewed by Dean Jackson.
+
+        With the old parser gone, we can now shrink CSSFunctionValue a bit by
+        having it derive from CSSValueList instead of having an extra member
+        that holds a value list of arguments. This is similar to the trick
+        already employed by WebkitCSSTransformValue.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::specifiedValueForGridTrackSize):
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::customCSSText):
+        (WebCore::CSSFunctionValue::CSSFunctionValue): Deleted.
+        (WebCore::CSSFunctionValue::equals): Deleted.
+        (WebCore::CSSFunctionValue::append): Deleted.
+        * css/CSSFunctionValue.h:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertScrollSnapPoints):
+        (WebCore::StyleBuilderConverter::createGridTrackSize):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isGridTrackFixedSized):
+
 2016-12-13  Chris Dumez  <cdumez@apple.com>
 
         Make Document a FrameDestructionObserver

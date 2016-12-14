@@ -818,7 +818,7 @@ inline std::unique_ptr<ScrollSnapPoints> StyleBuilderConverter::convertScrollSna
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         if (is<CSSFunctionValue>(currentValue.get())) {
             auto& functionValue = downcast<CSSFunctionValue>(currentValue.get());
-            points->repeatOffset = parseSnapCoordinate(styleResolver, *functionValue.arguments()->item(0));
+            points->repeatOffset = parseSnapCoordinate(styleResolver, *functionValue.item(0));
             points->hasRepeat = true;
             break;
         }
@@ -914,14 +914,14 @@ inline GridTrackSize StyleBuilderConverter::createGridTrackSize(const CSSValue& 
         return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), styleResolver));
 
     ASSERT(is<CSSFunctionValue>(value));
-    CSSValueList& arguments = *downcast<CSSFunctionValue>(value).arguments();
+    const auto& function = downcast<CSSFunctionValue>(value);
 
-    if (arguments.length() == 1)
-        return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver), FitContentTrackSizing);
+    if (function.length() == 1)
+        return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*function.itemWithoutBoundsCheck(0)), styleResolver), FitContentTrackSizing);
 
-    ASSERT_WITH_SECURITY_IMPLICATION(arguments.length() == 2);
-    GridLength minTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver));
-    GridLength maxTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(1)), styleResolver));
+    ASSERT_WITH_SECURITY_IMPLICATION(function.length() == 2);
+    GridLength minTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*function.itemWithoutBoundsCheck(0)), styleResolver));
+    GridLength maxTrackBreadth(createGridTrackBreadth(downcast<CSSPrimitiveValue>(*function.itemWithoutBoundsCheck(1)), styleResolver));
     return GridTrackSize(minTrackBreadth, maxTrackBreadth);
 }
 

@@ -3096,11 +3096,11 @@ static bool isGridTrackFixedSized(const CSSValue& value)
 
     ASSERT(value.isFunctionValue());
     auto& function = downcast<CSSFunctionValue>(value);
-    if (function.name() == CSSValueFitContent || function.arguments() == nullptr || function.arguments()->length() < 2)
+    if (function.name() == CSSValueFitContent || function.length() < 2)
         return false;
 
-    CSSValue* minPrimitiveValue = downcast<CSSPrimitiveValue>(function.arguments()->item(0));
-    CSSValue* maxPrimitiveValue = downcast<CSSPrimitiveValue>(function.arguments()->item(1));
+    const CSSValue* minPrimitiveValue = downcast<CSSPrimitiveValue>(function.item(0));
+    const CSSValue* maxPrimitiveValue = downcast<CSSPrimitiveValue>(function.item(1));
     return isGridTrackFixedSized(*minPrimitiveValue) || isGridTrackFixedSized(*maxPrimitiveValue);
 }
 

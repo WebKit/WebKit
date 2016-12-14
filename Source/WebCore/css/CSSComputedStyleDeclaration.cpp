@@ -1006,19 +1006,19 @@ static Ref<CSSValue> specifiedValueForGridTrackSize(const GridTrackSize& trackSi
     case LengthTrackSizing:
         return specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style);
     case FitContentTrackSizing: {
-        auto fitContentTrackSize = CSSValueList::createCommaSeparated();
+        auto fitContentTrackSize = CSSFunctionValue::create(CSSValueFitContent);
         fitContentTrackSize->append(zoomAdjustedPixelValueForLength(trackSize.fitContentTrackBreadth().length(), style));
-        return CSSFunctionValue::create(CSSValueFitContent, WTFMove(fitContentTrackSize));
+        return WTFMove(fitContentTrackSize);
     }
     default:
         ASSERT(trackSize.type() == MinMaxTrackSizing);
         if (trackSize.minTrackBreadth().isAuto() && trackSize.maxTrackBreadth().isFlex())
             return CSSValuePool::singleton().createValue(trackSize.maxTrackBreadth().flex(), CSSPrimitiveValue::CSS_FR);
 
-        auto minMaxTrackBreadths = CSSValueList::createCommaSeparated();
+        auto minMaxTrackBreadths = CSSFunctionValue::create(CSSValueMinmax);
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.minTrackBreadth(), style));
         minMaxTrackBreadths->append(specifiedValueForGridTrackBreadth(trackSize.maxTrackBreadth(), style));
-        return CSSFunctionValue::create(CSSValueMinmax, WTFMove(minMaxTrackBreadths));
+        return WTFMove(minMaxTrackBreadths);
     }
 }
 
