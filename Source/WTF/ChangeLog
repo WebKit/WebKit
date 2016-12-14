@@ -27,6 +27,51 @@
         MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
         https://bugs.webkit.org/show_bug.cgi?id=165741
 
+        Unreviewed, re-landing this with fix (revert erroneous change to Options).
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+        (WTF::initializeLogFile):
+        (WTF::dataFile):
+        * wtf/DataLog.h:
+        * wtf/LockedPrintStream.cpp: Added.
+        (WTF::LockedPrintStream::LockedPrintStream):
+        (WTF::LockedPrintStream::~LockedPrintStream):
+        (WTF::LockedPrintStream::vprintf):
+        (WTF::LockedPrintStream::flush):
+        (WTF::LockedPrintStream::begin):
+        (WTF::LockedPrintStream::end):
+        * wtf/LockedPrintStream.h: Added.
+        * wtf/PrintStream.cpp:
+        (WTF::PrintStream::printfVariableFormat):
+        (WTF::PrintStream::begin):
+        (WTF::PrintStream::end):
+        * wtf/PrintStream.h:
+        (WTF::PrintStream::atomically):
+        (WTF::PrintStream::print):
+        (WTF::PrintStream::println):
+        (WTF::PrintStream::printImpl):
+        (WTF::>::unpack):
+        (WTF::FormatImpl::FormatImpl):
+        (WTF::FormatImpl::dump):
+        (WTF::format):
+        (WTF::printInternal):
+        * wtf/RecursiveLockAdapter.h: Added.
+        (WTF::RecursiveLockAdapter::RecursiveLockAdapter):
+        (WTF::RecursiveLockAdapter::lock):
+        (WTF::RecursiveLockAdapter::unlock):
+        (WTF::RecursiveLockAdapter::tryLock):
+        (WTF::RecursiveLockAdapter::isLocked):
+        * wtf/WordLock.cpp:
+        * wtf/WordLock.h:
+
+2016-12-14  Gavin Barraclough  <barraclough@apple.com>
+
+        MarkedBlock::marksConveyLivenessDuringMarking should take into account collection scope
+        https://bugs.webkit.org/show_bug.cgi?id=165741
+
         Unreviewed rollout due to performance regression.
 
         * WTF.xcodeproj/project.pbxproj:
