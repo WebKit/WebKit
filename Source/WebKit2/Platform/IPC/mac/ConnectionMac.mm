@@ -32,6 +32,7 @@
 #include "MachPort.h"
 #include "MachUtilities.h"
 #include <WebCore/AXObjectCache.h>
+#include <WebKitSystemInterface.h>
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
 #include <sys/mman.h>
@@ -282,6 +283,7 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         return false;
 
     default:
+        WKSetCrashReportApplicationSpecificInformation((CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x", kr]);
         CRASH();
     }
 }
