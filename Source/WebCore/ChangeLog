@@ -1,3 +1,17 @@
+2016-12-14  Daniel Bates  <dabates@apple.com>
+
+        CSP: Allow HTTPS URL to match HTTP source expression
+        https://bugs.webkit.org/show_bug.cgi?id=159520
+        <rdar://problem/27287177>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html
+
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::schemeMatches):
+        (WebCore::ContentSecurityPolicySource::portMatches):
+
 2016-12-14  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r209776): [ios-simulator] LayoutTest http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html is timing out

@@ -550,6 +550,7 @@ fast/preloader/document-write-2.html [ Pass Failure ]
 
 # Internals.registerDefaultPortForProtocol() does not affect NetworkProcess. We should
 # look to remove it and write these test to make use of an HTTP server running on port 80.
+http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html
 http/tests/security/http-0.9/default-port-plugin-blocked.html
 http/tests/security/http-0.9/default-port-script-blocked.html
 http/tests/security/http-0.9/image-default-port-allowed.html
