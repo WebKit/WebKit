@@ -306,6 +306,15 @@ static void scaleJITPolicy()
     }
 }
 
+static void overrideDefaults()
+{
+    if (WTF::numberOfProcessorCores() < 4) {
+        Options::maximumMutatorUtilization() = 0.6;
+        Options::concurrentGCMaxHeadroom() = 1.4;
+        Options::concurrentGCPeriodMS() = 10;
+    }
+}
+
 static void recomputeDependentOptions()
 {
 #if !defined(NDEBUG)
@@ -435,6 +444,8 @@ void Options::initialize()
             name_##Default() = defaultValue_;
             JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
+
+            overrideDefaults();
                 
             // Allow environment vars to override options if applicable.
             // The evn var should be the name of the option prefixed with

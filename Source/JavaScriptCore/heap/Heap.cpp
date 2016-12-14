@@ -661,16 +661,23 @@ void Heap::markToFixpoint(double gcStartTime)
                 do {
                     auto decision = scheduler.currentDecision();
                     if (decision.shouldBeResumed()) {
-                        ResumeTheWorldScope resumeTheWorldScope(*this);
-                        drainResult = m_collectorSlotVisitor->drainInParallelPassively(decision.timeToStop());
-                        if (drainResult == SlotVisitor::SharedDrainResult::Done) {
-                            // At this point we will stop. But maybe the scheduler does not want
-                            // that.
-                            Seconds scheduledIdle = decision.timeToStop() - MonotonicTime::now();
-                            // It's totally unclear what the value of collectPermittedIdleRatio
-                            // should be, other than it should be greater than 0. You could even
-                            // argue for it being greater than 1. We should tune it.
-                            sleep(scheduledIdle * Options::collectorPermittedIdleRatio());
+                        {
+                            ResumeTheWorldScope resumeTheWorldScope(*this);
+                            drainResult = m_collectorSlotVisitor->drainInParallelPassively(decision.timeToStop());
+                            if (drainResult == SlotVisitor::SharedDrainResult::Done) {
+                                // At this point we will stop. But maybe the scheduler does not want
+                                // that.
+                                Seconds scheduledIdle = decision.timeToStop() - MonotonicTime::now();
+                                // It's totally unclear what the value of collectPermittedIdleRatio
+                                // should be, other than it should be greater than 0. You could even
+                                // argue for it being greater than 1. We should tune it.
+                                sleep(scheduledIdle * Options::collectorPermittedIdleRatio());
+                            }
+                        }
+                        if (Options::logGC()) {
+                            Seconds wakeUpLatency = MonotonicTime::now() - decision.timeToStop();
+                            if (wakeUpLatency >= 1_ms)
+                                dataLog("wul!=", wakeUpLatency.milliseconds(), " ms ");
                         }
                     } else
                         drainResult = m_collectorSlotVisitor->drainInParallel(decision.timeToResume());

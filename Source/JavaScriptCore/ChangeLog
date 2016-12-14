@@ -1,3 +1,19 @@
+2016-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Devices with fewer cores should use a more aggressive GC schedule by default
+        https://bugs.webkit.org/show_bug.cgi?id=165859
+
+        Reviewed by Mark Lam.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markToFixpoint): Log when we have an unexpected delay in wake-up.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::drainInParallelPassively): Don't drain passively if there aren't many cores.
+        * runtime/Options.cpp:
+        (JSC::overrideDefaults): Change the heuristics if we have fewer cores.
+        (JSC::Options::initialize):
+        * runtime/Options.h:
+
 2016-12-14  Mark Lam  <mark.lam@apple.com>
 
         BytecodeBasicBlock::computeImpl() should not keep iterating blocks if all jump targets have already been found.

@@ -572,13 +572,19 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTi
     
     ASSERT(Options::numberOfGCMarkers());
     
-    if (!m_heap.hasHeapAccess() || m_heap.collectorBelievesThatTheWorldIsStopped()) {
+    if (Options::numberOfGCMarkers() < 4
+        || !m_heap.hasHeapAccess()
+        || m_heap.collectorBelievesThatTheWorldIsStopped()) {
         // This is an optimization over drainInParallel() when we have a concurrent mutator but
         // otherwise it is not profitable.
         return drainInParallel(timeout);
     }
-    
+
     LockHolder locker(m_heap.m_markingMutex);
+    m_collectorStack.transferTo(*m_heap.m_sharedCollectorMarkStack);
+    m_mutatorStack.transferTo(*m_heap.m_sharedMutatorMarkStack);
+    m_heap.m_markingConditionVariable.notifyAll();
+    
     for (;;) {
         if (hasElapsed(timeout))
             return SharedDrainResult::TimedOut;
