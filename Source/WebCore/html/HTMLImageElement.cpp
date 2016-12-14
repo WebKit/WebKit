@@ -206,20 +206,13 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else if (name == srcAttr || name == srcsetAttr || name == sizesAttr)
         selectImageSource();
     else if (name == usemapAttr) {
-        if (inDocument() && !m_caseFoldedUsemap.isNull())
-            document().removeImageElementByCaseFoldedUsemap(*m_caseFoldedUsemap.impl(), *this);
+        if (inDocument() && !m_parsedUsemap.isNull())
+            document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
-        // The HTMLImageElement's useMap() value includes the '#' symbol at the beginning, which has to be stripped off.
-        // FIXME: We should check that the first character is '#'.
-        // FIXME: HTML specification says we should strip any leading string before '#'.
-        // FIXME: HTML specification says we should ignore usemap attributes without '#'.
-        if (value.length() > 1)
-            m_caseFoldedUsemap = value.string().substring(1).foldCase();
-        else
-            m_caseFoldedUsemap = nullAtom;
+        m_parsedUsemap = parseHTMLHashNameReference(value);
 
-        if (inDocument() && !m_caseFoldedUsemap.isNull())
-            document().addImageElementByCaseFoldedUsemap(*m_caseFoldedUsemap.impl(), *this);
+        if (inDocument() && !m_parsedUsemap.isNull())
+            document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     } else if (name == compositeAttr) {
         // FIXME: images don't support blend modes in their compositing attribute.
         BlendMode blendOp = BlendModeNormal;
@@ -322,8 +315,8 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
     // in callbacks back to this node.
     Node::InsertionNotificationRequest insertNotificationRequest = HTMLElement::insertedInto(insertionPoint);
 
-    if (insertionPoint.inDocument() && !m_caseFoldedUsemap.isNull())
-        document().addImageElementByCaseFoldedUsemap(*m_caseFoldedUsemap.impl(), *this);
+    if (insertionPoint.inDocument() && !m_parsedUsemap.isNull())
+        document().addImageElementByUsemap(*m_parsedUsemap.impl(), *this);
 
     if (is<HTMLPictureElement>(parentNode())) {
         setPictureElement(&downcast<HTMLPictureElement>(*parentNode()));
@@ -343,8 +336,8 @@ void HTMLImageElement::removedFrom(ContainerNode& insertionPoint)
     if (m_form)
         m_form->removeImgElement(this);
 
-    if (insertionPoint.inDocument() && !m_caseFoldedUsemap.isNull())
-        document().removeImageElementByCaseFoldedUsemap(*m_caseFoldedUsemap.impl(), *this);
+    if (insertionPoint.inDocument() && !m_parsedUsemap.isNull())
+        document().removeImageElementByUsemap(*m_parsedUsemap.impl(), *this);
     
     if (is<HTMLPictureElement>(parentNode()))
         setPictureElement(nullptr);
@@ -482,10 +475,9 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
     return HTMLElement::completeURLsInAttributeValue(base, attribute);
 }
 
-bool HTMLImageElement::matchesCaseFoldedUsemap(const AtomicStringImpl& name) const
+bool HTMLImageElement::matchesUsemap(const AtomicStringImpl& name) const
 {
-    ASSERT(String(&const_cast<AtomicStringImpl&>(name)).foldCase().impl() == &name);
-    return m_caseFoldedUsemap.impl() == &name;
+    return m_parsedUsemap.impl() == &name;
 }
 
 const AtomicString& HTMLImageElement::alt() const

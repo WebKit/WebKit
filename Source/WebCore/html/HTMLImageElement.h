@@ -60,7 +60,7 @@ public:
 
     void setLoadManually(bool loadManually) { m_imageLoader.setLoadManually(loadManually); }
 
-    bool matchesCaseFoldedUsemap(const AtomicStringImpl&) const;
+    bool matchesUsemap(const AtomicStringImpl&) const;
 
     WEBCORE_EXPORT const AtomicString& alt() const;
 
@@ -137,7 +137,7 @@ private:
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
     AtomicString m_currentSrc;
-    AtomicString m_caseFoldedUsemap;
+    AtomicString m_parsedUsemap;
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;
     bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.

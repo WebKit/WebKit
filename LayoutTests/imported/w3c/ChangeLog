@@ -1,3 +1,14 @@
+2016-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Remove Unicode case-insensitive matching for usemap=""
+        https://bugs.webkit.org/show_bug.cgi?id=163894
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/usemap-casing-expected.txt:
+
 2016-12-14  Youenn Fablet  <youenn@apple.com>
 
         Test infrastructure should allow to filter out text output before doing a comparison with the baseline

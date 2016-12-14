@@ -248,8 +248,6 @@ HTMLMapElement* TreeScope::getImageMap(const String& url) const
     String name = url.substring(hashPosition + 1);
     if (name.isEmpty())
         return nullptr;
-    if (m_rootNode.document().isHTMLDocument())
-        return m_imageMapsByName->getElementByCaseFoldedMapName(*AtomicString(name.foldCase()).impl(), *this);
     return m_imageMapsByName->getElementByMapName(*AtomicString(name).impl(), *this);
 }
 

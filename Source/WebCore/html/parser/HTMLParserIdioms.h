@@ -84,6 +84,8 @@ String parseCORSSettingsAttribute(const AtomicString&);
 
 bool threadSafeMatch(const QualifiedName&, const QualifiedName&);
 
+AtomicString parseHTMLHashNameReference(StringView);
+
 // Inline implementations of some of the functions declared above.
 
 template<typename CharacterType> inline bool isHTMLSpace(CharacterType character)

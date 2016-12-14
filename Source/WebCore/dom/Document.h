@@ -343,9 +343,9 @@ public:
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
 
-    void addImageElementByCaseFoldedUsemap(const AtomicStringImpl&, HTMLImageElement&);
-    void removeImageElementByCaseFoldedUsemap(const AtomicStringImpl&, HTMLImageElement&);
-    HTMLImageElement* imageElementByCaseFoldedUsemap(const AtomicStringImpl&) const;
+    void addImageElementByUsemap(const AtomicStringImpl&, HTMLImageElement&);
+    void removeImageElementByUsemap(const AtomicStringImpl&, HTMLImageElement&);
+    HTMLImageElement* imageElementByUsemap(const AtomicStringImpl&) const;
 
     ExceptionOr<SelectorQuery&> selectorQueryForString(const String&);
     void clearSelectorQueryCache();

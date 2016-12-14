@@ -455,4 +455,13 @@ bool parseMetaHTTPEquivRefresh(const StringView& input, double& delay, String& u
     return parseHTTPRefreshInternal(start, start + input.length(), delay, url);
 }
 
+// https://html.spec.whatwg.org/#rules-for-parsing-a-hash-name-reference
+AtomicString parseHTMLHashNameReference(StringView usemap)
+{
+    size_t numberSignIndex = usemap.find('#');
+    if (numberSignIndex == notFound)
+        return nullAtom;
+    return usemap.substring(numberSignIndex + 1).toAtomicString();
+}
+
 }

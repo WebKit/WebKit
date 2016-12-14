@@ -1,3 +1,45 @@
+2016-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Remove Unicode case-insensitive matching for usemap=""
+        https://bugs.webkit.org/show_bug.cgi?id=163894
+
+        Reviewed by Antti Koivisto.
+
+        Remove Unicode case-insensitive matching for usemap="" as this no longer
+        matches the specification [1] or Firefox. Also align our parsing logic for
+        the usemap attribute to match the specification [2].
+
+        This simplifies the code a bit, is more efficient and the compatibility
+        risk should be low based on Firefox's behavior and Chome's usage data.
+
+        [1] https://github.com/whatwg/html/commit/6acdb2122298d2bb7bb839c0a61b4e1f9b0f9bc9
+        [2] https://html.spec.whatwg.org/#rules-for-parsing-a-hash-name-reference
+
+        Test: fast/images/image-usemap-parsing.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addImageElementByUsemap):
+        (WebCore::Document::removeImageElementByUsemap):
+        (WebCore::Document::imageElementByUsemap):
+        * dom/Document.h:
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::getElementByUsemap):
+        * dom/DocumentOrderedMap.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getImageMap):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        (WebCore::HTMLImageElement::insertedInto):
+        (WebCore::HTMLImageElement::removedFrom):
+        (WebCore::HTMLImageElement::matchesUsemap):
+        * html/HTMLImageElement.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::imageElement):
+        (WebCore::HTMLMapElement::parseAttribute):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLHashNameReference):
+        * html/parser/HTMLParserIdioms.h:
+
 2016-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix the Windows build after r209805.

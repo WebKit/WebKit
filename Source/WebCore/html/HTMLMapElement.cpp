@@ -79,7 +79,7 @@ HTMLImageElement* HTMLMapElement::imageElement()
 {
     if (m_name.isEmpty())
         return nullptr;
-    return document().imageElementByCaseFoldedUsemap(*AtomicString(m_name.string().foldCase()).impl());
+    return document().imageElementByUsemap(*m_name.impl());
 }
 
 void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -99,7 +99,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         String mapName = value;
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
-        m_name = document().isHTMLDocument() ? mapName.foldCase() : mapName;
+        m_name = mapName;
         if (inDocument())
             treeScope().addImageMap(*this);
 

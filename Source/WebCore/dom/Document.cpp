@@ -749,19 +749,19 @@ void Document::invalidateAccessKeyMap()
     m_elementsByAccessKey.clear();
 }
 
-void Document::addImageElementByCaseFoldedUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
+void Document::addImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
 {
     return m_imagesByUsemap.add(name, element, *this);
 }
 
-void Document::removeImageElementByCaseFoldedUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
+void Document::removeImageElementByUsemap(const AtomicStringImpl& name, HTMLImageElement& element)
 {
     return m_imagesByUsemap.remove(name, element);
 }
 
-HTMLImageElement* Document::imageElementByCaseFoldedUsemap(const AtomicStringImpl& name) const
+HTMLImageElement* Document::imageElementByUsemap(const AtomicStringImpl& name) const
 {
-    return m_imagesByUsemap.getElementByCaseFoldedUsemap(name, *this);
+    return m_imagesByUsemap.getElementByUsemap(name, *this);
 }
 
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
