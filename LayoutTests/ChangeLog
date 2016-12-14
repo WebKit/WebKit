@@ -1,3 +1,11 @@
+2016-12-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add mac-elcapitan baseline for js/dom/global-constructors-attributes.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt: Added.
+
 2016-12-14  Chris Dumez  <cdumez@apple.com>
 
         Remove Unicode case-insensitive matching for usemap=""
