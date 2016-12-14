@@ -521,6 +521,10 @@ void HTMLDocumentParser::notifyFinished(PendingScript& pendingScript)
     // but we need to ensure it isn't deleted yet.
     Ref<HTMLDocumentParser> protectedThis(*this);
 
+    // After Document parser is stopped or detached, the parser-inserted deferred script execution should be ignored.
+    if (isStopped())
+        return;
+
     ASSERT(m_scriptRunner);
     ASSERT(!isExecutingScript());
     if (isStopping()) {

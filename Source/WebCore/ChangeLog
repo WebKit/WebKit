@@ -1,3 +1,24 @@
+2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        ASSERTION FAILED: hasParserBlockingScript() seen with js/dom/modules/module-will-fire-beforeload.html
+        https://bugs.webkit.org/show_bug.cgi?id=164883
+
+        Reviewed by Ryosuke Niwa.
+
+        This is *attempt to fix* patch since I cannot reproduce the crash reported in this issue.
+        One possible scenario of this crash is the following.
+
+        1. There is pending deferred scripts, that is not fetched yet.
+        2. Then, we start watching on the script. And stop document parser.
+        3. The document parser is stopped/detached by calling finishJSTest in beforeload.
+        4. At this critical timing, (2)'s script is fetched, and notifyFinished is called since it is watched.
+
+        In this patch, we ignore the script execution if the document parser is stopped / detached.
+        Previously, it goes into the wrong path. And it causes assertion failure.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::notifyFinished):
+
 2016-12-13  Keith Rollin  <krollin@apple.com>
 
         Memory warning logging appears to capture resident footprint, missing compress/swap.
