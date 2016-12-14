@@ -1,3 +1,10 @@
+2016-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, disable concurrent GC on ARM while we investigate a memory use regression.
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use JSValue::toWTFString instead of calling toString(exec) and value(exec)
