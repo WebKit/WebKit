@@ -431,6 +431,7 @@ HashSet<Document*>& Document::allDocuments()
 Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsigned constructionFlags)
     : ContainerNode(*this, CreateDocument)
     , TreeScope(*this)
+    , FrameDestructionObserver(frame)
 #if ENABLE(IOS_TOUCH_EVENTS)
     , m_touchEventsChangedTimer(*this, &Document::touchEventsChangedTimerFired)
 #endif
@@ -439,7 +440,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_needsNotifyRemoveAllPendingStylesheet(false)
     , m_ignorePendingStylesheets(false)
     , m_pendingSheetLayout(NoLayoutWithPendingSheets)
-    , m_frame(frame)
     , m_cachedResourceLoader(m_frame ? Ref<CachedResourceLoader>(m_frame->loader().activeDocumentLoader()->cachedResourceLoader()) : CachedResourceLoader::create(nullptr))
     , m_activeParserCount(0)
     , m_wellFormed(false)
@@ -2203,7 +2203,14 @@ void Document::didBecomeCurrentDocumentInFrame()
 
 void Document::disconnectFromFrame()
 {
-    m_frame = nullptr;
+    observeFrame(nullptr);
+}
+
+void Document::frameDestroyed()
+{
+    // disconnectFromFrame() must be called before destroying the Frame.
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_frame);
+    FrameDestructionObserver::frameDestroyed();
 }
 
 void Document::destroyRenderTree()

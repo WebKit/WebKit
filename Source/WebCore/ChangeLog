@@ -1,3 +1,26 @@
+2016-12-13  Chris Dumez  <cdumez@apple.com>
+
+        Make Document a FrameDestructionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=165810
+        <rdar://problem/29157645>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make Document a FrameDestructionObserver to make sure Document::m_frame
+        is properly nulled out when a Frame gets destroyed.
+        Document::disconnectFromFrame() is supposed to be called before the Frame
+        gets destroyed so this also adds an assertion to try and identify places
+        where we fail to call it.
+
+        No new tests, no known reproduction case.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::disconnectFromFrame):
+        (WebCore::Document::frameDestroyed):
+        * dom/Document.h:
+        (WebCore::Document::frame): Deleted.
+
 2016-12-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r204163): Web Inspector: Page crashes when Inspector tries to load insecure SourceMap

@@ -35,6 +35,7 @@
 #include "ExceptionOr.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
+#include "FrameDestructionObserver.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
@@ -286,6 +287,7 @@ class Document
     , public TreeScope
     , public ScriptExecutionContext
     , public FontSelectorClient
+    , public FrameDestructionObserver
     , public Supplementable<Document> {
 public:
     static Ref<Document> create(Frame* frame, const URL& url)
@@ -512,7 +514,6 @@ public:
     void setStateForNewFormElements(const Vector<String>&);
 
     WEBCORE_EXPORT FrameView* view() const; // can be NULL
-    Frame* frame() const { return m_frame; } // can be NULL
     WEBCORE_EXPORT Page* page() const; // can be NULL
     WEBCORE_EXPORT Settings* settings() const; // can be NULL
 
@@ -1312,6 +1313,7 @@ private:
     friend class IgnoreOpensDuringUnloadCountIncrementer;
 
     void updateTitleElement(Element* newTitleElement);
+    void frameDestroyed() final;
 
     void commonTeardown();
 
@@ -1410,7 +1412,6 @@ private:
     // do eventually load.
     PendingSheetLayout m_pendingSheetLayout;
 
-    Frame* m_frame;
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;
 
