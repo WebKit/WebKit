@@ -1,3 +1,18 @@
+2016-12-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Zooming in on the Timeline should always zoom right where the cursor is
+        https://bugs.webkit.org/show_bug.cgi?id=151118
+        <rdar://problem/23487912>
+
+        Reviewed by Timothy Hatcher.
+
+        Use correct left edge for timeline overview graph elements.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        (WebInspector.TimelineOverview._handleGestureStart):
+        (WebInspector.TimelineOverview.prototype._handleGestureChange):
+
 2016-12-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         [GTK] Web Inspector: Add NavigationItemCodeCoverage.svg icon

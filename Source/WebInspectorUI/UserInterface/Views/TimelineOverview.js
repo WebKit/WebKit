@@ -544,7 +544,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         }
 
         // Remember the mouse position in time.
-        let mouseOffset = event.pageX - this.element.totalOffsetLeft;
+        let mouseOffset = event.pageX - this._graphsContainerView.element.totalOffsetLeft;
         let mousePositionTime = this._currentSettings.scrollStartTime + (mouseOffset * this.secondsPerPixel);
         let deviceDirection = event.webkitDirectionInvertedFromDevice ? 1 : -1;
         let delta = event.deltaY * (this.secondsPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
@@ -576,7 +576,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
             return;
         }
 
-        let mouseOffset = event.pageX - this.element.totalOffsetLeft;
+        let mouseOffset = event.pageX - this._graphsContainerView.element.totalOffsetLeft;
         let mousePositionTime = this._currentSettings.scrollStartTime + (mouseOffset * this.secondsPerPixel);
 
         this._handlingGesture = true;
@@ -592,7 +592,7 @@ WebInspector.TimelineOverview = class TimelineOverview extends WebInspector.View
         // Cap zooming out at 5x.
         let scale = Math.max(1 / 5, event.scale);
 
-        let mouseOffset = event.pageX - this.element.totalOffsetLeft;
+        let mouseOffset = event.pageX - this._graphsContainerView.element.totalOffsetLeft;
         let newSecondsPerPixel = this._gestureStartDurationPerPixel / scale;
 
         this.secondsPerPixel = newSecondsPerPixel;
