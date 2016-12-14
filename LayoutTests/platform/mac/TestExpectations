@@ -1465,3 +1465,5 @@ webkit.org/b/165222 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbindex
 
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+
+webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
