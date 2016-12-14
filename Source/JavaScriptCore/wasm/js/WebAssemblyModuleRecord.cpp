@@ -209,6 +209,51 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
         }
     }
 
+    {
+        JSWebAssemblyModule* module = m_instance->module();
+        const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
+        JSWebAssemblyTable* table = m_instance->table();
+        for (const Wasm::Element& element : moduleInformation.elements) {
+            // It should be a validation error to have any elements without a table.
+            // Also, it could be that a table wasn't imported, or that the table
+            // imported wasn't compatible. However, those should error out before
+            // getting here.
+            ASSERT(!!table);
+            if (!element.functionIndices.size())
+                continue;
+
+            uint32_t tableIndex = element.offset;
+            uint64_t lastWrittenIndex = static_cast<uint64_t>(tableIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
+            if (lastWrittenIndex >= table->size())
+                return JSValue::decode(throwVMRangeError(state, scope, ASCIILiteral("Element is trying to set an out of bounds table index")));
+
+            for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
+                // FIXME: This essentially means we're exporting an import.
+                // We need a story here. We need to create a WebAssemblyFunction
+                // for the import.
+                // https://bugs.webkit.org/show_bug.cgi?id=165510
+                uint32_t functionIndex = element.functionIndices[i];
+                if (functionIndex < module->importCount()) {
+                    return JSValue::decode(
+                        throwVMRangeError(state, scope, ASCIILiteral("Element is setting the table value with an import. This is not yet implemented. FIXME.")));
+                }
+
+                JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+                JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+                Wasm::Signature* signature = module->signatureForFunctionIndexSpace(functionIndex);
+                // FIXME: Say we export local function "foo" at funciton index 0.
+                // What if we also set it to the table an Element w/ index 0.
+                // Does (new Instance(...)).exports.foo === table.get(0)?
+                // https://bugs.webkit.org/show_bug.cgi?id=165825
+                WebAssemblyFunction* function = WebAssemblyFunction::create(
+                    vm, m_instance->globalObject(), signature->arguments.size(), String(), m_instance.get(), jsEntrypointCallee, wasmEntrypointCallee, signature);
+
+                table->setFunction(vm, tableIndex, function);
+                ++tableIndex;
+            }
+        }
+    }
+
     if (WebAssemblyFunction* startFunction = m_startFunction.get()) {
         ProtoCallFrame protoCallFrame;
         protoCallFrame.init(nullptr, startFunction, JSValue(), 1, nullptr);

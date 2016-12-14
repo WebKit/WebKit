@@ -81,6 +81,7 @@ private:
     bool WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     bool WARN_UNUSED_RETURN parseTableHelper(bool isImport);
     bool WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
+    bool WARN_UNUSED_RETURN parseInitExpr(uint32_t&);
 
     VM* m_vm;
     std::unique_ptr<ModuleInformation> m_module;

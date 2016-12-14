@@ -1,3 +1,30 @@
+2016-12-13  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: implement the elements section
+        https://bugs.webkit.org/show_bug.cgi?id=165715
+
+        Reviewed by Keith Miller.
+
+        This is a straight forward implementation of the Element
+        section in the Wasm spec:
+        https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md#element-section
+        
+        There are a few ambiguities I encountered when implementing this, so I've
+        filed bugs against the Wasm design repo, and corresponding bugzilla bugs
+        for us to address after they've been discussed by the various Wasm folks:
+        - https://bugs.webkit.org/show_bug.cgi?id=165827
+        - https://bugs.webkit.org/show_bug.cgi?id=165826
+        - https://bugs.webkit.org/show_bug.cgi?id=165825
+
+        * wasm/WasmFormat.h:
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseElement):
+        (JSC::Wasm::ModuleParser::parseInitExpr):
+        (JSC::Wasm::ModuleParser::parseData):
+        * wasm/WasmModuleParser.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
 2016-12-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209544.

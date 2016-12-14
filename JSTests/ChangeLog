@@ -1,5 +1,22 @@
 2016-12-13  Saam Barati  <sbarati@apple.com>
 
+        WebAssembly: implement the elements section
+        https://bugs.webkit.org/show_bug.cgi?id=165715
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.switch.case.string_appeared_here.this.section):
+        (export.default.Builder.prototype._registerSectionBuilders.switch):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Element):
+        * wasm/function-tests/basic-element.js: Added.
+        * wasm/js-api/element.js: Added.
+        (assertBadBinary):
+        (assertBadBinary.badInstantiation):
+
+2016-12-13  Saam Barati  <sbarati@apple.com>
+
         WebAssembly: implement the table section and table import
         https://bugs.webkit.org/show_bug.cgi?id=165716
 

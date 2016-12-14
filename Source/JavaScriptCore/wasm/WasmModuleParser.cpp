@@ -492,8 +492,65 @@ bool ModuleParser::parseStart()
 
 bool ModuleParser::parseElement()
 {
-    // FIXME https://bugs.webkit.org/show_bug.cgi?id=161709
-    RELEASE_ASSERT_NOT_REACHED();
+    if (!m_hasTable)
+        return false;
+
+    uint32_t elementCount;
+    if (!parseVarUInt32(elementCount))
+        return false;
+    if (!m_module->elements.tryReserveCapacity(elementCount))
+        return false;
+
+    for (unsigned i = 0; i < elementCount; ++i) {
+        uint32_t tableIndex;
+        if (!parseVarUInt32(tableIndex))
+            return false;
+        // We only support one table for now.
+        if (tableIndex != 0)
+            return false;
+
+        uint32_t offset;
+        if (!parseInitExpr(offset))
+            return false;
+
+        uint32_t indexCount;
+        if (!parseVarUInt32(indexCount))
+            return false;
+
+        ASSERT(!!m_module->tableInformation);
+        if (std::optional<uint32_t> maximum = m_module->tableInformation.maximum()) {
+            // FIXME: should indexCount being zero be a validation error?
+            // https://bugs.webkit.org/show_bug.cgi?id=165826
+            if (indexCount) {
+                // FIXME: right now, provably out of bounds writes are validation errors.
+                // Should they be though?
+                // https://bugs.webkit.org/show_bug.cgi?id=165827
+                uint64_t lastWrittenIndex = static_cast<uint64_t>(indexCount) + static_cast<uint64_t>(offset) - 1;
+                if (lastWrittenIndex >= static_cast<uint64_t>(*maximum))
+                    return false;
+            }
+        }
+
+        Element element;
+        if (!element.functionIndices.tryReserveCapacity(indexCount))
+            return false;
+
+        element.offset = offset;
+
+        for (unsigned i = 0; i < indexCount; ++i) {
+            uint32_t functionIndex;
+            if (!parseVarUInt32(functionIndex))
+                return false;
+
+            if (functionIndex >= m_functionIndexSpace.size())
+                return false;
+
+            element.functionIndices.uncheckedAppend(functionIndex);
+        }
+
+        m_module->elements.uncheckedAppend(WTFMove(element));
+    }
+
     return true;
 }
 
@@ -520,6 +577,22 @@ bool ModuleParser::parseCode()
     return true;
 }
 
+bool ModuleParser::parseInitExpr(uint32_t& value)
+{
+    // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
+    // For now we only handle i32.const as offset.
+
+    uint8_t opcode;
+    uint8_t endOpcode;
+    if (!parseUInt8(opcode)
+        || opcode != Wasm::I32Const
+        || !parseVarUInt32(value)
+        || !parseUInt8(endOpcode)
+        || endOpcode != Wasm::End)
+        return false;
+    return true;
+}
+
 bool ModuleParser::parseData()
 {
     uint32_t segmentCount;
@@ -534,21 +607,13 @@ bool ModuleParser::parseData()
         if (verbose)
             dataLogLn("  segment #", segmentNumber);
         uint32_t index;
-        uint8_t opcode;
         uint32_t offset;
-        uint8_t endOpcode;
         uint32_t dataByteLength;
         if (!parseVarUInt32(index)
             || index)
             return false;
 
-        // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
-        // For now we only handle i32.const as offset.
-        if (!parseUInt8(opcode)
-            || opcode != Wasm::I32Const
-            || !parseVarUInt32(offset)
-            || !parseUInt8(endOpcode)
-            || endOpcode != Wasm::End)
+        if (!parseInitExpr(offset))
             return false;
         if (verbose)
             dataLogLn("    offset: ", offset);

@@ -419,39 +419,39 @@ export default class Builder {
             case "Function":
                 this[section] = function() {
                     const s = this._addSection(section);
-                    const exportBuilder = {
+                    const functionBuilder = {
                         End: () => this
                         // FIXME: add ability to add this with whatever.
                     };
-                    return exportBuilder;
+                    return functionBuilder;
                 };
                 break;
 
             case "Table":
                 this[section] = function() {
                     const s = this._addSection(section);
-                    const exportBuilder = {
+                    const tableBuilder = {
                         End: () => this,
                         Table: ({initial, maximum, element}) => {
                             s.data.push({tableDescription: {initial, maximum, element}});
-                            return exportBuilder;
+                            return tableBuilder;
                         }
                     };
-                    return exportBuilder;
+                    return tableBuilder;
                 };
                 break;
 
             case "Memory":
                 this[section] = function() {
                     const s = this._addSection(section);
-                    const exportBuilder = {
+                    const memoryBuilder = {
                         End: () => this,
                         InitialMaxPages: (initial, max) => {
                             s.data.push({ initial, max });
-                            return exportBuilder;
+                            return memoryBuilder;
                         }
                     };
-                    return exportBuilder;
+                    return memoryBuilder;
                 };
                 break;
 
@@ -488,8 +488,18 @@ export default class Builder {
                 break;
 
             case "Element":
-                // FIXME implement element https://bugs.webkit.org/show_bug.cgi?id=161709
-                this[section] = () => { throw new Error(`Unimplemented: section type "${section}"`); };
+                this[section] = function() {
+                    const s = this._addSection(section);
+                    const elementBuilder = {
+                        End: () => this,
+                        Element: ({tableIndex = 0, offset, functionIndices}) => {
+                            s.data.push({tableIndex, offset, functionIndices});
+                            return elementBuilder;
+                        }
+                    };
+
+                    return elementBuilder;
+                };
                 break;
 
             case "Code":

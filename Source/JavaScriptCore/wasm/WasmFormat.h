@@ -147,6 +147,11 @@ struct Segment {
     }
 };
 
+struct Element {
+    uint32_t offset;
+    Vector<uint32_t> functionIndices;
+};
+
 class TableInformation {
 public:
     TableInformation()
@@ -185,6 +190,7 @@ struct ModuleInformation {
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
     Vector<Segment::Ptr> data;
+    Vector<Element> elements;
     TableInformation tableInformation;
 
     ~ModuleInformation();
