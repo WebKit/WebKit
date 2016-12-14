@@ -331,7 +331,6 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
 
 bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url) const
 {
-
     if (!canRequestInContentDispositionAttachmentSandbox(type, url))
         return false;
 

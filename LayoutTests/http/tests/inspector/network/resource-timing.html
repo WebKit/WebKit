@@ -10,9 +10,10 @@ function createRequest() {
     document.body.appendChild(img);
 }
 
-function test() {
+function test()
+{
     let suite = InspectorTest.createAsyncSuite("ResourceTimingData");
-    InspectorTest.debug();
+
     suite.addTestCase({
         name: "CheckResourceTimingInformationForResource",
         description: "Check if a resource has timing information.",

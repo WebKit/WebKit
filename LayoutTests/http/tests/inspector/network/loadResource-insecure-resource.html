@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.loadResource.MixedContent");
+
+    suite.addTestCase({
+        name: "Network.loadResource.MixedContent.SecureSuccess",
+        description: "Ensure trying to load an https resource from a secure page succeeds.",
+        test(resolve, reject) {
+            const url = "https://127.0.0.1:8443/inspector/network/resources/data.json?1";
+            NetworkAgent.loadResource(WebInspector.frameResourceManager.mainFrame.id, url, (error, content, mimeType, status) => {
+                InspectorTest.expectThat(!error, "Should not be an error loading a secure resource.");
+                InspectorTest.expectEqual(status, 200, "Should be a 200 OK status.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Network.loadResource.MixedContent.InsecureFailure",
+        description: "Ensure trying to load an http resource from a secure page fails.",
+        test(resolve, reject) {
+            const url = "http://127.0.0.0:8000/inspector/network/resources/data.json?2";
+            NetworkAgent.loadResource(WebInspector.frameResourceManager.mainFrame.id, url, (error, content, mimeType, status) => {
+                InspectorTest.expectThat(error, "Should be an error loading an insecure resource.");
+                InspectorTest.pass(error);
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTestHTTPS()">
+<p>Tests loading resources on a secure page with Network.loadResource.</p>
+</body>
+</html>

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: [blocked] The page at https://127.0.0.1:8443/inspector/network/loadResource-insecure-resource.html was not allowed to display insecure content from http://127.0.0.0:8000/inspector/network/resources/data.json?2.
+
+Tests loading resources on a secure page with Network.loadResource.
+
+
+== Running test suite: Network.loadResource.MixedContent
+-- Running test case: Network.loadResource.MixedContent.SecureSuccess
+PASS: Should not be an error loading a secure resource.
+PASS: Should be a 200 OK status.
+
+-- Running test case: Network.loadResource.MixedContent.InsecureFailure
+PASS: Should be an error loading an insecure resource.
+PASS: Loading resource for inspector failed access control check
+

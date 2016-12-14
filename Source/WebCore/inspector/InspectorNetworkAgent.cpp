@@ -129,12 +129,6 @@ public:
         dispose();
     }
 
-    void didFailLoaderCreation()
-    {
-        m_callback->sendFailure(ASCIILiteral("Could not create a loader"));
-        dispose();
-    }
-
     void setLoader(RefPtr<ThreadableLoader>&& loader)
     {
         m_loader = WTFMove(loader);
@@ -683,14 +677,11 @@ void InspectorNetworkAgent::loadResource(ErrorString& errorString, const String&
     options.credentials = FetchOptions::Credentials::SameOrigin;
     options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
 
-    // InspectorThreadableLoaderClient deletes itself when the load completes.
+    // InspectorThreadableLoaderClient deletes itself when the load completes or fails.
     InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(callback.copyRef());
-
     auto loader = DocumentThreadableLoader::create(*document, *inspectorThreadableLoaderClient, WTFMove(request), options);
-    if (!loader) {
-        inspectorThreadableLoaderClient->didFailLoaderCreation();
+    if (!loader)
         return;
-    }
 
     // If the load already completed, inspectorThreadableLoaderClient will have been deleted and we will have already called the callback.
     if (!callback->isActive())
