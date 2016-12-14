@@ -1063,9 +1063,11 @@ static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsi
         double number;
         if (!parseSimpleLength(pos, argumentLength, unit, number))
             return false;
-        if (unit != CSSPrimitiveValue::UnitType::CSS_PX && (number || unit != CSSPrimitiveValue::UnitType::CSS_NUMBER))
+        if (!number && unit == CSSPrimitiveValue::CSS_NUMBER)
+            unit = CSSPrimitiveValue::UnitType::CSS_PX;
+        if (unit == CSSPrimitiveValue::UnitType::CSS_NUMBER || (unit == CSSPrimitiveValue::UnitType::CSS_PERCENTAGE && (transformValue->operationType() == WebKitCSSTransformValue::TranslateZTransformOperation || (transformValue->operationType() == WebKitCSSTransformValue::Translate3DTransformOperation && expectedCount == 1))))
             return false;
-        transformValue->append(CSSPrimitiveValue::create(number, CSSPrimitiveValue::UnitType::CSS_PX));
+        transformValue->append(CSSPrimitiveValue::create(number, unit));
         pos += argumentLength + 1;
         --expectedCount;
     }
