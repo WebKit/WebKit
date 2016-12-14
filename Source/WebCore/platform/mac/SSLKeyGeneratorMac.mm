@@ -177,7 +177,8 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
 
     ASSERT(challenge.data());
 
-    signedPublicKeyAndChallenge.publicKeyAndChallenge.challenge.Length = challenge.length();
+    // Length needs to account for the null terminator.
+    signedPublicKeyAndChallenge.publicKeyAndChallenge.challenge.Length = challenge.length() + 1;
     signedPublicKeyAndChallenge.publicKeyAndChallenge.challenge.Data = (uint8_t*)challenge.data();
 
     CSSM_DATA encodedPublicKeyAndChallenge { 0, nullptr };
@@ -220,7 +221,7 @@ void getSupportedKeySizes(Vector<String>& supportedKeySizes)
 }
 
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url)
-{   
+{
     // This switch statement must always be synced with the UI strings returned by getSupportedKeySizes.
     UInt32 keySize;
     switch (keySizeIndex) {
