@@ -39,7 +39,6 @@ namespace WebCore {
 
 void JSIDBCursor::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.rescanAsConstraint();
     auto& cursor = wrapped();
     if (auto* request = cursor.request())
         visitor.addOpaqueRoot(request);

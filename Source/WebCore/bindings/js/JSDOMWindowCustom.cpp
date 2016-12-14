@@ -51,7 +51,6 @@ EncodedJSValue JSC_HOST_CALL jsDOMWindowInstanceFunctionShowModalDialog(ExecStat
 
 void JSDOMWindow::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.rescanAsConstraint();
     if (Frame* frame = wrapped().frame())
         visitor.addOpaqueRoot(frame);
 }

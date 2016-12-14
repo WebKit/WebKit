@@ -127,6 +127,8 @@ public:
     WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
     void flushWriteBarrierBuffer(JSCell*);
     
+    void writeBarrierOpaqueRoot(void*);
+
     Heap(VM*, HeapType);
     ~Heap();
     void lastChanceToFinalize();
@@ -350,6 +352,8 @@ public:
     void preventCollection();
     void allowCollection();
     
+    JS_EXPORT_PRIVATE void addMutatorShouldBeFencedCache(bool&);
+    
 #if USE(CF)
     CFRunLoopRef runLoop() const { return m_runLoop.get(); }
     JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
@@ -493,6 +497,8 @@ private:
     
     void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
     
+    JS_EXPORT_PRIVATE void writeBarrierOpaqueRootSlow(void*);
+    
     void setMutatorShouldBeFenced(bool value);
 
     const HeapType m_heapType;
@@ -553,6 +559,7 @@ private:
     WriteBarrierBuffer m_writeBarrierBuffer;
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
+    Vector<bool*> m_mutatorShouldBeFencedCaches;
 
     VM* m_vm;
     double m_lastFullGCLength;
@@ -596,8 +603,7 @@ private:
     bool m_parallelMarkersShouldExit { false };
 
     Lock m_opaqueRootsMutex;
-    HashSet<const void*> m_opaqueRoots;
-    HashSet<JSCell*> m_constraints;
+    HashSet<void*> m_opaqueRoots;
 
     static const size_t s_blockFragmentLength = 32;
 

@@ -58,8 +58,6 @@ namespace WebCore {
 
 void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.rescanAsConstraint();
-    
     if (XMLHttpRequestUpload* upload = wrapped().optionalUpload())
         visitor.addOpaqueRoot(upload);
 

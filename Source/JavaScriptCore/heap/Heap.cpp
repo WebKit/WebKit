@@ -519,7 +519,6 @@ void Heap::markToFixpoint(double gcStartTime)
     
     if (m_collectionScope == CollectionScope::Full) {
         m_opaqueRoots.clear();
-        m_constraints.clear();
         m_collectorSlotVisitor->clearMarkStacks();
         m_mutatorMarkStack->clear();
     }
@@ -618,22 +617,18 @@ void Heap::markToFixpoint(double gcStartTime)
                 
         m_jitStubRoutines->traceMarkedStubRoutines(*m_collectorSlotVisitor);
 
-        m_collectorSlotVisitor->mergeIfNecessary();
+        m_collectorSlotVisitor->mergeOpaqueRootsIfNecessary();
         for (auto& parallelVisitor : m_parallelSlotVisitors)
-            parallelVisitor->mergeIfNecessary();
-        
-        for (JSCell* cell : m_constraints)
-            m_collectorSlotVisitor->visitSubsequently(cell);
-        m_collectorSlotVisitor->mergeIfNecessary();
+            parallelVisitor->mergeOpaqueRootsIfNecessary();
 
-        size_t weakSetCount = m_objectSpace.visitWeakSets(heapRootVisitor);
+        m_objectSpace.visitWeakSets(heapRootVisitor);
         harvestWeakReferences();
         visitCompilerWorklistWeakReferences();
         DFG::markCodeBlocks(*m_vm, *m_collectorSlotVisitor);
         bool shouldTerminate = m_collectorSlotVisitor->isEmpty() && m_mutatorMarkStack->isEmpty();
         
         if (Options::logGC()) {
-            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + m_collectorSlotVisitor->mutatorMarkStack().size(), ", a=", m_bytesAllocatedThisCycle / 1024, " kb, b=", m_barriersExecuted, ", mu=", scheduler.currentDecision().targetMutatorUtilization(), ", ws=", weakSetCount, ", cs=", m_constraints.size(), " ");
+            dataLog(m_collectorSlotVisitor->collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + m_collectorSlotVisitor->mutatorMarkStack().size(), ", a=", m_bytesAllocatedThisCycle / 1024, " kb, b=", m_barriersExecuted, ", mu=", scheduler.currentDecision().targetMutatorUtilization(), " ");
         }
         
         // We want to do this to conservatively ensure that we rescan any code blocks that are
@@ -2225,10 +2220,27 @@ void Heap::forEachSlotVisitor(const Func& func)
         func(*slotVisitor);
 }
 
+void Heap::writeBarrierOpaqueRootSlow(void* root)
+{
+    ASSERT(mutatorShouldBeFenced());
+    
+    auto locker = holdLock(m_opaqueRootsMutex);
+    m_opaqueRoots.add(root);
+}
+
+void Heap::addMutatorShouldBeFencedCache(bool& cache)
+{
+    ASSERT(hasHeapAccess());
+    cache = m_mutatorShouldBeFenced;
+    m_mutatorShouldBeFencedCaches.append(&cache);
+}
+
 void Heap::setMutatorShouldBeFenced(bool value)
 {
     m_mutatorShouldBeFenced = value;
     m_barrierThreshold = value ? tautologicalThreshold : blackThreshold;
+    for (bool* cache : m_mutatorShouldBeFencedCaches)
+        *cache = value;
 }
     
 } // namespace JSC

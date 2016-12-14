@@ -359,18 +359,16 @@ void MarkedSpace::prepareForAllocation()
     m_allocatorForEmptyAllocation = m_firstAllocator;
 }
 
-size_t MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
+void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
 {
-    size_t count = 0;
     auto visit = [&] (WeakSet* weakSet) {
-        count += weakSet->visit(heapRootVisitor);
+        weakSet->visit(heapRootVisitor);
     };
     
     m_newActiveWeakSets.forEach(visit);
     
     if (m_heap->collectionScope() == CollectionScope::Full)
         m_activeWeakSets.forEach(visit);
-    return count;
 }
 
 void MarkedSpace::reapWeakSets()

@@ -356,8 +356,8 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     
     if (false) {
         dataLog("Visiting ", RawPointer(cell));
-        if (!m_isFirstVisit)
-            dataLog(" (subsequent)");
+        if (m_isVisitingMutatorStack)
+            dataLog(" (mutator)");
         dataLog("\n");
     }
     
@@ -391,15 +391,9 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     }
     
     if (UNLIKELY(m_heapSnapshotBuilder)) {
-        if (m_isFirstVisit)
+        if (!m_isVisitingMutatorStack)
             m_heapSnapshotBuilder->appendNode(const_cast<JSCell*>(cell));
     }
-}
-
-void SlotVisitor::visitSubsequently(JSCell* cell)
-{
-    m_isFirstVisit = false;
-    visitChildren(cell);
 }
 
 void SlotVisitor::donateKnownParallel(MarkStackArray& from, MarkStackArray& to)
@@ -471,7 +465,7 @@ void SlotVisitor::drain(MonotonicTime timeout)
         updateMutatorIsStopped(locker);
         if (!m_collectorStack.isEmpty()) {
             m_collectorStack.refill();
-            m_isFirstVisit = true;
+            m_isVisitingMutatorStack = false;
             for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_collectorStack.canRemoveLast() && countdown--;)
                 visitChildren(m_collectorStack.removeLast());
         } else if (!m_mutatorStack.isEmpty()) {
@@ -479,7 +473,7 @@ void SlotVisitor::drain(MonotonicTime timeout)
             // We know for sure that we are visiting objects because of the barrier, not because of
             // marking. Marking will visit an object exactly once. The barrier will visit it
             // possibly many times, and always after it was already marked.
-            m_isFirstVisit = false;
+            m_isVisitingMutatorStack = true;
             for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_mutatorStack.canRemoveLast() && countdown--;)
                 visitChildren(m_mutatorStack.removeLast());
         }
@@ -487,7 +481,7 @@ void SlotVisitor::drain(MonotonicTime timeout)
         donateKnownParallel();
     }
     
-    mergeIfNecessary();
+    mergeOpaqueRootsIfNecessary();
 }
 
 bool SlotVisitor::didReachTermination()
@@ -606,24 +600,12 @@ void SlotVisitor::addOpaqueRoot(void* root)
     if (Options::numberOfGCMarkers() == 1) {
         // Put directly into the shared HashSet.
         m_heap.m_opaqueRoots.add(root);
-        m_heap.m_constraints.add(m_currentCell);
         return;
     }
     // Put into the local set, but merge with the shared one every once in
     // a while to make sure that the local sets don't grow too large.
     mergeOpaqueRootsIfProfitable();
     m_opaqueRoots.add(root);
-    m_constraints.add(m_currentCell);
-}
-
-void SlotVisitor::rescanAsConstraint()
-{
-    if (Options::numberOfGCMarkers() == 1) {
-        m_heap.m_constraints.add(m_currentCell);
-        return;
-    }
-    
-    m_constraints.add(m_currentCell);
 }
 
 bool SlotVisitor::containsOpaqueRoot(void* root) const
@@ -648,13 +630,13 @@ TriState SlotVisitor::containsOpaqueRootTriState(void* root) const
     return MixedTriState;
 }
 
-void SlotVisitor::mergeIfNecessary()
+void SlotVisitor::mergeOpaqueRootsIfNecessary()
 {
-    if (m_opaqueRoots.isEmpty() && m_constraints.isEmpty())
+    if (m_opaqueRoots.isEmpty())
         return;
-    mergeOpaqueRootsAndConstraints();
+    mergeOpaqueRoots();
 }
-
+    
 void SlotVisitor::mergeOpaqueRootsIfProfitable()
 {
     if (static_cast<unsigned>(m_opaqueRoots.size()) < Options::opaqueRootMergeThreshold())
@@ -685,19 +667,6 @@ void SlotVisitor::mergeOpaqueRoots()
             m_heap.m_opaqueRoots.add(root);
     }
     m_opaqueRoots.clear();
-}
-
-void SlotVisitor::mergeOpaqueRootsAndConstraints()
-{
-    {
-        std::lock_guard<Lock> lock(m_heap.m_opaqueRootsMutex);
-        for (const void* root : m_opaqueRoots)
-            m_heap.m_opaqueRoots.add(root);
-        for (JSCell* constraint : m_constraints)
-            m_heap.m_constraints.add(constraint);
-    }
-    m_opaqueRoots.clear();
-    m_constraints.clear();
 }
 
 void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)

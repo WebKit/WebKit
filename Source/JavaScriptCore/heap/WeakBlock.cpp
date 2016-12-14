@@ -97,14 +97,13 @@ void WeakBlock::sweep()
 }
 
 template<typename ContainerType>
-size_t WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heapRootVisitor)
+void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heapRootVisitor)
 {
     SlotVisitor& visitor = heapRootVisitor.visitor();
     
     HeapVersion markingVersion = visitor.markingVersion();
 
-    size_t count = weakImplCount();
-    for (size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         if (weakImpl->state() != WeakImpl::Live)
             continue;
@@ -122,22 +121,21 @@ size_t WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& he
 
         heapRootVisitor.visit(&const_cast<JSValue&>(jsValue));
     }
-    
-    return count;
 }
 
-size_t WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
+void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
 {
     // If a block is completely empty, a visit won't have any effect.
     if (isEmpty())
-        return 0;
+        return;
 
     // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
     ASSERT(m_container);
     
     if (m_container.isLargeAllocation())
-        return specializedVisit(m_container.largeAllocation(), heapRootVisitor);
-    return specializedVisit(m_container.markedBlock(), heapRootVisitor);
+        specializedVisit(m_container.largeAllocation(), heapRootVisitor);
+    else
+        specializedVisit(m_container.markedBlock(), heapRootVisitor);
 }
 
 void WeakBlock::reap()

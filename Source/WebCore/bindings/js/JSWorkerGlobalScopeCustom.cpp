@@ -36,8 +36,6 @@ namespace WebCore {
 
 void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    visitor.rescanAsConstraint();
-    
     if (auto* location = wrapped().optionalLocation())
         visitor.addOpaqueRoot(location);
     if (auto* navigator = wrapped().optionalNavigator())
