@@ -1,3 +1,13 @@
+2016-12-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r209779.
+
+        The 'Keygen' element requires the ability to create new keys in '$HOME/Library/Keychains'. Remove the
+        WebProcess and Plugin sandbox restrictions on per-user Keychain creation to support this use.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-12-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use JSValue::toWTFString instead of calling toString(exec) and value(exec)
