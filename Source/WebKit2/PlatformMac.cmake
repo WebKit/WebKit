@@ -410,6 +410,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/mac"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
+    "${DERIVED_SOURCES_WEBCORE_DIR}"
 )
 
 set(XPCService_SOURCES

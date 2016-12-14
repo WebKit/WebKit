@@ -1,7 +1,9 @@
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)
-add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks -iframework ${CORESERVICES_LIBRARY}/Frameworks)
+
+# FIXME: We shouldn't need to define NS_RETURNS_RETAINED.
+add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks -iframework ${CORESERVICES_LIBRARY}/Frameworks -DNS_RETURNS_RETAINED=)
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
