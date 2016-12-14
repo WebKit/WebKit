@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
 #include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/RecursiveLockAdapter.h>
+#include <wtf/WordLock.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE PrintStream& dataFile();
+// Makes every call to print() atomic.
+class LockedPrintStream : public PrintStream {
+public:
+    LockedPrintStream(std::unique_ptr<PrintStream> target);
+    virtual ~LockedPrintStream();
+    
+    void vprintf(const char* format, va_list) override WTF_ATTRIBUTE_PRINTF(2, 0);
+    void flush() override;
 
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
+protected:
+    PrintStream& begin() override;
+    void end() override;
 
-template<typename... Types>
-void dataLog(const Types&... values)
-{
-    dataFile().print(values...);
-}
-
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
+private:
+    // This needs to be a recursive lock because a printInternal or dump method could assert,
+    // and that assert might want to log. Better to let it. This needs to be a WordLock so that
+    // LockedPrintStream (i.e. cataLog) can be used to debug ParkingLot and Lock.
+    RecursiveLockAdapter<WordLock> m_lock;
+    std::unique_ptr<PrintStream> m_target;
+};
 
 } // namespace WTF
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
-
-#endif // DataLog_h
+using WTF::LockedPrintStream;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE PrintStream& dataFile();
-
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
-
-template<typename... Types>
-void dataLog(const Types&... values)
-{
-    dataFile().print(values...);
-}
-
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
+template<typename LockType>
+class RecursiveLockAdapter {
+public:
+    RecursiveLockAdapter()
+    {
+    }
+    
+    void lock()
+    {
+        ThreadIdentifier me = currentThread();
+        if (me == m_owner) {
+            m_recursionCount++;
+            return;
+        }
+        
+        m_lock.lock();
+        ASSERT(!m_owner);
+        ASSERT(!m_recursionCount);
+        m_owner = me;
+        m_recursionCount = 1;
+    }
+    
+    void unlock()
+    {
+        if (--m_recursionCount)
+            return;
+        m_owner = 0;
+        m_lock.unlock();
+    }
+    
+    bool tryLock()
+    {
+        ThreadIdentifier me = currentThread();
+        if (me == m_owner) {
+            m_recursionCount++;
+            return true;
+        }
+        
+        if (!m_lock.tryLock())
+            return false;
+        
+        ASSERT(!m_owner);
+        ASSERT(!m_recursionCount);
+        m_owner = me;
+        m_recursionCount = 1;
+        return true;
+    }
+    
+    bool isLocked() const
+    {
+        return m_lock.isLocked();
+    }
+    
+private:
+    ThreadIdentifier m_owner { 0 };
+    unsigned m_recursionCount { 0 };
+    LockType m_lock;
+};
 
 } // namespace WTF
 
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
-
-#endif // DataLog_h
 

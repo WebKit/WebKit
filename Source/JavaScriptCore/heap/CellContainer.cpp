@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DataLog_h
-#define DataLog_h
+#include "config.h"
+#include "CellContainer.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include "MarkedBlockInlines.h"
 
-namespace WTF {
+namespace JSC {
 
-WTF_EXPORT_PRIVATE PrintStream& dataFile();
-
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
-
-template<typename... Types>
-void dataLog(const Types&... values)
+bool CellContainer::isNewlyAllocated(HeapCell* cell) const
 {
-    dataFile().print(values...);
+    if (isLargeAllocation())
+        return largeAllocation().isNewlyAllocated();
+    MarkedBlock::Handle& handle = markedBlock().handle();
+    return !handle.isNewlyAllocatedStale()
+        && handle.isNewlyAllocated(cell);
 }
 
-template<typename... Types>
-void dataLogLn(const Types&... values)
-{
-    dataFile().print(values..., "\n");
-}
-
-} // namespace WTF
-
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
-
-#endif // DataLog_h
+} // namespace JSC
 

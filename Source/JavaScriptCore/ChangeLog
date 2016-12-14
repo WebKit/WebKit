@@ -1,3 +1,17 @@
+2016-12-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r209795.
+        https://bugs.webkit.org/show_bug.cgi?id=165853
+
+        rolled out the wrong revision (Requested by pizlo on #webkit).
+
+        Reverted changeset:
+
+        "MarkedBlock::marksConveyLivenessDuringMarking should take
+        into account collection scope"
+        https://bugs.webkit.org/show_bug.cgi?id=165741
+        http://trac.webkit.org/changeset/209795
+
 2016-12-14  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, disable concurrent GC on ARM while we investigate a memory use regression.

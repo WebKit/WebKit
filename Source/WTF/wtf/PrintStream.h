@@ -30,6 +30,7 @@
 #include <stdarg.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Optional.h>
 #include <wtf/RawPointer.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -50,33 +51,47 @@ public:
     virtual ~PrintStream();
 
     WTF_EXPORT_PRIVATE void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    WTF_EXPORT_PRIVATE void printfVariableFormat(const char* format, ...);
     virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0) = 0;
 
     // Typically a no-op for many subclasses of PrintStream, this is a hint that
     // the implementation should flush its buffers if it had not done so already.
     virtual void flush();
     
-    void print() { }
-
-    template<typename T>
-    void print(const T& value)
+    template<typename Func>
+    void atomically(const Func& func)
     {
-        printInternal(*this, value);
+        func(begin());
+        end();
     }
-
-    template<typename T, typename... Types>
-    void print(const T& value, const Types&... remainingValues)
+    
+    template<typename... Types>
+    void print(const Types&... values)
     {
-        printInternal(*this, value);
-        print(remainingValues...);
+        atomically(
+            [&] (PrintStream& out) {
+                out.printImpl(values...);
+            });
     }
     
     template<typename... Types>
     void println(const Types&... values)
     {
-        print(values...);
-        print("\n");
+        print(values..., "\n");
     }
+
+protected:
+    void printImpl() { }
+
+    template<typename T, typename... Types>
+    void printImpl(const T& value, const Types&... remainingValues)
+    {
+        printInternal(*this, value);
+        printImpl(remainingValues...);
+    }
+    
+    virtual PrintStream& begin();
+    virtual void end();
 };
 
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char*);
@@ -266,11 +281,66 @@ ValueIgnoringContext<T, U> ignoringContext(const U& value)
     return ValueIgnoringContext<T, U>(value);
 }
 
+template<unsigned index, typename... Types>
+struct FormatImplUnpacker {
+    template<typename... Args>
+    static void unpack(PrintStream& out, const std::tuple<Types...>& tuple, const Args&... values);
+};
+    
+template<typename... Types>
+struct FormatImplUnpacker<0, Types...> {
+    template<typename... Args>
+    static void unpack(PrintStream& out, const std::tuple<Types...>& tuple, const Args&... values)
+    {
+        out.printfVariableFormat(std::get<0>(tuple), values...);
+    }
+};
+    
+template<unsigned index, typename... Types>
+template<typename... Args>
+void FormatImplUnpacker<index, Types...>::unpack(PrintStream& out, const std::tuple<Types...>& tuple, const Args&... values)
+{
+    FormatImplUnpacker<index - 1, Types...>::unpack(out, tuple, std::get<index>(tuple), values...);
+}
+
+template<typename... Types>
+class FormatImpl {
+public:
+    FormatImpl(Types... values)
+        : m_values(values...)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        FormatImplUnpacker<sizeof...(Types) - 1, Types...>::unpack(out, m_values);
+    }
+
+private:
+    std::tuple<Types...> m_values;
+};
+
+template<typename... Types>
+FormatImpl<Types...> format(Types... values)
+{
+    return FormatImpl<Types...>(values...);
+}
+
+template<typename T>
+void printInternal(PrintStream& out, const std::optional<T>& value)
+{
+    if (value)
+        out.print(*value);
+    else
+        out.print("<nullopt>");
+}
+
 } // namespace WTF
 
 using WTF::CharacterDump;
 using WTF::PointerDump;
 using WTF::PrintStream;
+using WTF::format;
 using WTF::ignoringContext;
 using WTF::inContext;
 using WTF::pointerDump;

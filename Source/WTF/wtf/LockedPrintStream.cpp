@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DataLog_h
-#define DataLog_h
-
-#include <stdarg.h>
-#include <stdio.h>
-#include <wtf/PrintStream.h>
-#include <wtf/StdLibExtras.h>
+#include "config.h"
+#include "LockedPrintStream.h"
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE PrintStream& dataFile();
-
-WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogFString(const char*);
-
-template<typename... Types>
-void dataLog(const Types&... values)
+LockedPrintStream::LockedPrintStream(std::unique_ptr<PrintStream> target)
+    : m_target(WTFMove(target))
 {
-    dataFile().print(values...);
 }
 
-template<typename... Types>
-void dataLogLn(const Types&... values)
+LockedPrintStream::~LockedPrintStream()
 {
-    dataFile().print(values..., "\n");
+}
+
+void LockedPrintStream::vprintf(const char* format, va_list args)
+{
+    auto locker = holdLock(m_lock);
+    m_target->vprintf(format, args);
+}
+
+void LockedPrintStream::flush()
+{
+    auto locker = holdLock(m_lock);
+    m_target->flush();
+}
+
+PrintStream& LockedPrintStream::begin()
+{
+    m_lock.lock();
+    return *m_target;
+}
+
+void LockedPrintStream::end()
+{
+    m_lock.unlock();
 }
 
 } // namespace WTF
-
-using WTF::dataLog;
-using WTF::dataLogLn;
-using WTF::dataLogF;
-using WTF::dataLogFString;
-
-#endif // DataLog_h
 

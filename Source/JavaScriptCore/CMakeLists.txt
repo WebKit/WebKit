@@ -464,6 +464,7 @@ set(JavaScriptCore_SOURCES
     ftl/FTLValueRange.cpp
 
     heap/AllocatorAttributes.cpp
+    heap/CellContainer.cpp
     heap/CodeBlockSet.cpp
     heap/CollectionScope.cpp
     heap/ConservativeRoots.cpp

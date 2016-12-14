@@ -135,17 +135,74 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     
     ASSERT(!m_isCheckingForDefaultMarkViolation);
     
+    auto validateCell = [&] (JSCell* jsCell) {
+        StructureID structureID = jsCell->structureID();
+        
+        auto die = [&] (const char* text) {
+            WTF::dataFile().atomically(
+                [&] (PrintStream& out) {
+                    out.print(text);
+                    out.print("GC type: ", heap()->collectionScope(), "\n");
+                    out.print("Object at: ", RawPointer(jsCell), "\n");
+#if USE(JSVALUE64)
+                    out.print("Structure ID: ", structureID, " (0x", format("%x", structureID), ")\n");
+                    out.print("Structure ID table size: ", heap()->structureIDTable().size(), "\n");
+#else
+                    out.print("Structure: ", RawPointer(structureID), "\n");
+#endif
+                    out.print("Object contents:");
+                    for (unsigned i = 0; i < 2; ++i)
+                        out.print(" ", format("0x%016llx", bitwise_cast<uint64_t*>(jsCell)[i]));
+                    out.print("\n");
+                    CellContainer container = jsCell->cellContainer();
+                    out.print("Is marked: ", container.isMarked(jsCell), "\n");
+                    out.print("Is newly allocated: ", container.isNewlyAllocated(jsCell), "\n");
+                    if (container.isMarkedBlock()) {
+                        MarkedBlock& block = container.markedBlock();
+                        out.print("Block: ", RawPointer(&block), "\n");
+                        block.handle().dumpState(out);
+                        out.print("\n");
+                        out.print("Is marked raw: ", block.isMarkedRaw(jsCell), "\n");
+                        out.print("Marking version: ", block.markingVersion(), "\n");
+                        out.print("Heap marking version: ", heap()->objectSpace().markingVersion(), "\n");
+                        out.print("Is newly allocated raw: ", block.handle().isNewlyAllocated(jsCell), "\n");
+                        out.print("Newly allocated version: ", block.handle().newlyAllocatedVersion(), "\n");
+                        out.print("Heap newly allocated version: ", heap()->objectSpace().newlyAllocatedVersion(), "\n");
+                    }
+                    UNREACHABLE_FOR_PLATFORM();
+                });
+        };
+        
+        // It's not OK for the structure to be null at any GC scan point. We must not GC while
+        // an object is not fully initialized.
+        if (!structureID)
+            die("GC scan found corrupt object: structureID is zero!\n");
+        
+        // It's not OK for the structure to be nuked at any GC scan point.
+        if (isNuked(structureID))
+            die("GC scan found object in bad state: structureID is nuked!\n");
+        
+#if USE(JSVALUE64)
+        // This detects the worst of the badness.
+        if (structureID >= heap()->structureIDTable().size())
+            die("GC scan found corrupt object: structureID is out of bounds!\n");
+#endif
+    };
+    
+    // In debug mode, we validate before marking since this makes it clearer what the problem
+    // was. It's also slower, so we don't do it normally.
+    if (!ASSERT_DISABLED && heapCell->cellKind() == HeapCell::JSCell)
+        validateCell(static_cast<JSCell*>(heapCell));
+    
     if (Heap::testAndSetMarked(m_markingVersion, heapCell))
         return;
     
     switch (heapCell->cellKind()) {
     case HeapCell::JSCell: {
+        // We have ample budget to perform validation here.
+    
         JSCell* jsCell = static_cast<JSCell*>(heapCell);
-        
-        if (!jsCell->structure()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
+        validateCell(jsCell);
         
         jsCell->setCellState(CellState::Grey);
 

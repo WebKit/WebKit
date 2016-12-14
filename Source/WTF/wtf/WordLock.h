@@ -42,6 +42,10 @@ namespace WTF {
 // Lock instead. WordLock sits lower in the stack and is used to implement Lock, so Lock is the main
 // client of WordLock.
 
+// NOTE: This is also a great lock to use if you are very low in the stack. For example,
+// PrintStream uses this so that ParkingLot and Lock can use PrintStream. This means that if you
+// try to use dataLog to debug this code, you will have a bad time.
+
 struct WordLockBase {
     void lock()
     {
