@@ -1,3 +1,20 @@
+2016-12-14  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix debug build break since r207192. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=165847
+
+        No new tests, no new behaviours.
+
+        In JSDOMBinding.h, JSClass::info() returns each js class's
+        "static const JSC::ClassInfo s_info"'s address.
+        It's static variable's address, so always non-null.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::BindingCaller::callPromiseOperation):
+        (WebCore::BindingCaller::callOperation):
+        (WebCore::BindingCaller::setAttribute):
+        (WebCore::BindingCaller::attribute):
+
 2016-12-14  Enrique Ocaña González  <eocanha@igalia.com>
 
         REGRESSION(r207879-207891): [GStreamer] Introduced many layout test failures and crashes, bots exiting early

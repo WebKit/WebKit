@@ -337,10 +337,8 @@ struct BindingCaller {
         ASSERT(state);
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto* thisObject = castForOperation(*state);
-        if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject)) {
-            ASSERT(JSClass::info());
+        if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject))
             return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
-        }
         ASSERT(thisObject);
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
         // FIXME: We should refactor the binding generated code to use references for state and thisObject.
@@ -354,7 +352,6 @@ struct BindingCaller {
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto* thisObject = castForOperation(*state);
         if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject)) {
-            ASSERT(JSClass::info());
             if (shouldThrow == CastedThisErrorBehavior::Throw)
                 return throwThisTypeError(*state, throwScope, JSClass::info()->className, operationName);
             // For custom promise-returning operations
@@ -372,10 +369,8 @@ struct BindingCaller {
         ASSERT(state);
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto* thisObject = castForAttribute(*state, thisValue);
-        if (UNLIKELY(!thisObject)) {
-            ASSERT(JSClass::info());
+        if (UNLIKELY(!thisObject))
             return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(*state, throwScope, JSClass::info()->className, attributeName) : false;
-        }
         return setter(*state, *thisObject, JSC::JSValue::decode(encodedValue), throwScope);
     }
 
@@ -386,7 +381,6 @@ struct BindingCaller {
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto* thisObject = castForAttribute(*state, thisValue);
         if (UNLIKELY(!thisObject)) {
-            ASSERT(JSClass::info());
             if (shouldThrow == CastedThisErrorBehavior::Throw)
                 return throwGetterTypeError(*state, throwScope, JSClass::info()->className, attributeName);
             if (shouldThrow == CastedThisErrorBehavior::RejectPromise)
