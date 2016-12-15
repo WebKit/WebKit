@@ -13,11 +13,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         list(APPEND CMAKE_PROGRAM_PATH $ENV{SystemDrive}/cygwin/bin)
     endif ()
 
-    find_package(BISON 2.1 REQUIRED)
-    if (!APPLE)
-        find_package(FLEX 2.5.34 REQUIRED)
-    endif ()
-
     # TODO Enforce version requirement for gperf
     find_package(Gperf 3.0.1 REQUIRED)
 

@@ -1,3 +1,25 @@
+2016-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Remove flex and bison build dependencies; commit generated XPath parser
+        https://bugs.webkit.org/show_bug.cgi?id=165783
+
+        Reviewed by Brent Fulgham.
+
+        flex and bison are annoying to install and use, especially on Windows.
+        Since only XPathGrammar uses them and that's not actively developed, let's just check in the one generated file
+        and make building WebKit easier forever!
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/makegrammar.pl: Removed.
+        * xml/XPathGrammar.cpp: Added.
+        (xpathyylex):
+        (xpathyyerror):
+        (yysyntax_error):
+        * xml/XPathGrammar.h: Added.
+        * xml/XPathGrammar.y: Rename TEXT to TEXT_ to fix a build error on Windows.  TEXT is already defined.
+
 2016-12-15  Brady Eidson  <beidson@apple.com>
 
         Enhance some of the logging statements just added for IndexedDB Operation scheduling.

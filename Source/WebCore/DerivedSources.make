@@ -909,7 +909,6 @@ all : \
     MathMLElementTypeHelpers.h \
     MathMLNames.cpp \
     MathMLNames.h \
-    XPathGrammar.cpp \
 #
 
 # --------
@@ -1019,22 +1018,6 @@ HTTPHeaderNames.h : platform/network/HTTPHeaderNames.in $(WebCore)/platform/netw
 
 ColorData.cpp : platform/ColorData.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl . $(WebCore)/platform/ColorData.gperf
-
-# --------
-
-# Path to bison
-
-ifeq ($(OS),MACOS)
-BISON=$(shell xcrun -find bison)
-else
-BISON=bison
-endif
-
-# --------
-
-# XPath grammar
-XPathGrammar.cpp : xml/XPathGrammar.y $(PROJECT_FILE)
-	$(PERL) $(WebCore)/css/makegrammar.pl --outputDir . --bison "$(BISON)" --symbolsPrefix xpathyy $<
 
 # --------
 

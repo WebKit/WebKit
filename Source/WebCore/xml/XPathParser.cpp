@@ -382,7 +382,7 @@ inline Parser::Token Parser::nextTokenInternal()
         if (name == "node")
             return Token(NODE);
         if (name == "text")
-            return Token(TEXT);
+            return Token(TEXT_);
         if (name == "comment")
             return Token(COMMENT);
 
