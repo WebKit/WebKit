@@ -1,3 +1,17 @@
+2016-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Add more mach_msg logging instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=165914
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendOutgoingMessage):
+        * Platform/IPC/mac/MachMessage.h:
+        (IPC::MachMessage::messageName):
+        (IPC::MachMessage::setMessageName):
+
 2016-12-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added missing override and final specifiers
