@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: this_will_error
+
+FAIL when scripting is disabled, the handler is never compiled assert_equals: expected false but got true
+

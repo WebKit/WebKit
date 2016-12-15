@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import argparse
 import json
 import logging
@@ -73,6 +75,17 @@ def setup_action_filter():
         def __call__(self, item):
             if item["action"] in self.actions:
                 return self.inner(item)
+
+
+class TravisFold(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __enter__(self):
+        print("travis_fold:start:%s" % self.name, file=sys.stderr)
+
+    def __exit__(self, type, value, traceback):
+        print("travis_fold:end:%s" % self.name, file=sys.stderr)
 
 
 class GitHub(object):
@@ -402,6 +415,14 @@ def process_results(log, iterations):
     return results, inconsistent
 
 
+def markdown_adjust(s):
+    s = s.replace('\t', u'\\t')
+    s = s.replace('\n', u'\\n')
+    s = s.replace('\r', u'\\r')
+    s = s.replace('`',  u'\\`')
+    return s
+
+
 def table(headings, data, log):
     cols = range(len(headings))
     assert all(len(item) == len(cols) for item in data)
@@ -415,22 +436,35 @@ def table(headings, data, log):
     log("|%s|" % "|".join("-" * max_widths[i] for i in cols))
     for row in data:
         log("|%s|" % "|".join(" %s" % row[i].ljust(max_widths[i] - 1) for i in cols))
+    log("")
 
 
 def write_inconsistent(inconsistent, iterations):
     logger.error("## Unstable results ##\n")
-    strings = [(test, subtest if subtest else "", err_string(results, iterations))
+    strings = [("`%s`" % markdown_adjust(test), ("`%s`" % markdown_adjust(subtest)) if subtest else "", err_string(results, iterations))
                 for test, subtest, results in inconsistent]
     table(["Test", "Subtest", "Results"], strings, logger.error)
 
 
-def write_results(results, iterations):
+def write_results(results, iterations, comment_pr):
     logger.info("## All results ##\n")
     for test, test_results in results.iteritems():
-        logger.info("### %s ###" % test)
+        baseurl = "http://w3c-test.org/submissions"
+        if "https" in os.path.splitext(test)[0].split(".")[1:]:
+            baseurl = "https://w3c-test.org/submissions"
+        pr_number = None
+        if comment_pr:
+            try:
+                pr_number = int(comment_pr)
+            except ValueError:
+                pass
+        if pr_number:
+            logger.info("### [%s](%s/%s%s) ###" % (test, baseurl, pr_number, test))
+        else:
+            logger.info("### %s ###" % test)
         parent = test_results.pop(None)
         strings = [("", err_string(parent, iterations))]
-        strings.extend(((subtest if subtest else "", err_string(results, iterations))
+        strings.extend(((("`%s`" % markdown_adjust(subtest)) if subtest else "", err_string(results, iterations))
                         for subtest, results in test_results.iteritems()))
         table(["Subtest", "Results"], strings, logger.info)
 
@@ -477,68 +511,65 @@ def main():
         logger.warning("Can't log to GitHub")
         gh_handler = None
 
-    print >> sys.stderr, "travis_fold:start:browser_setup"
-    logger.info("# %s #" % args.browser.title())
+    with TravisFold("browser_setup"):
+        logger.info("# %s #" % args.browser.title())
 
-    browser_cls = {"firefox": Firefox,
-                   "chrome": Chrome}.get(args.browser)
-    if browser_cls is None:
-        logger.critical("Unrecognised browser %s" % args.browser)
-        return 1
+        browser_cls = {"firefox": Firefox,
+                       "chrome": Chrome}.get(args.browser)
+        if browser_cls is None:
+            logger.critical("Unrecognised browser %s" % args.browser)
+            return 1
 
-    fetch_wpt_master()
+        fetch_wpt_master()
 
-    head_sha1 = get_sha1()
-    logger.info("Testing revision %s" % head_sha1)
+        head_sha1 = get_sha1()
+        logger.info("Testing revision %s" % head_sha1)
 
-    # For now just pass the whole list of changed files to wptrunner and
-    # assume that it will run everything that's actually a test
-    files_changed = get_files_changed()
+        # For now just pass the whole list of changed files to wptrunner and
+        # assume that it will run everything that's actually a test
+        files_changed = get_files_changed()
 
-    if not files_changed:
-        logger.info("No files changed")
-        return 0
+        if not files_changed:
+            logger.info("No files changed")
+            return 0
 
-    build_manifest()
-    install_wptrunner()
-    do_delayed_imports()
+        build_manifest()
+        install_wptrunner()
+        do_delayed_imports()
 
-    logger.debug("Files changed:\n%s" % "".join(" * %s\n" % item for item in files_changed))
+        logger.debug("Files changed:\n%s" % "".join(" * %s\n" % item for item in files_changed))
 
-    browser = browser_cls(args.gh_token)
+        browser = browser_cls(args.gh_token)
 
-    browser.install()
-    browser.install_webdriver()
+        browser.install()
+        browser.install_webdriver()
 
-    kwargs = wptrunner_args(args.root,
-                            files_changed,
-                            args.iterations,
-                            browser)
+        kwargs = wptrunner_args(args.root,
+                                files_changed,
+                                args.iterations,
+                                browser)
 
-    print >> sys.stderr, "travis_fold:end:browser_setup"
-    print >> sys.stderr, "travis_fold:start:running_tests"
-    logger.info("Starting %i test iterations" % args.iterations)
-    with open("raw.log", "wb") as log:
-        wptrunner.setup_logging(kwargs,
-                                {"raw": log})
-        # Setup logging for wptrunner that keeps process output and
-        # warning+ level logs only
-        wptrunner.logger.add_handler(
-            LogActionFilter(
-                LogLevelFilter(
-                    StreamHandler(
-                        sys.stdout,
-                        TbplFormatter()
-                    ),
-                    "WARNING"),
-                ["log", "process_output"]))
+    with TravisFold("running_tests"):
+        logger.info("Starting %i test iterations" % args.iterations)
+        with open("raw.log", "wb") as log:
+            wptrunner.setup_logging(kwargs,
+                                    {"raw": log})
+            # Setup logging for wptrunner that keeps process output and
+            # warning+ level logs only
+            wptrunner.logger.add_handler(
+                LogActionFilter(
+                    LogLevelFilter(
+                        StreamHandler(
+                            sys.stdout,
+                            TbplFormatter()
+                        ),
+                        "WARNING"),
+                    ["log", "process_output"]))
 
-        wptrunner.run_tests(**kwargs)
+            wptrunner.run_tests(**kwargs)
 
-    with open("raw.log", "rb") as log:
-        results, inconsistent = process_results(log, args.iterations)
-
-    print >> sys.stderr, "travis_fold:end:running_tests"
+        with open("raw.log", "rb") as log:
+            results, inconsistent = process_results(log, args.iterations)
 
     if results:
         if inconsistent:
@@ -546,9 +577,8 @@ def main():
             retcode = 2
         else:
             logger.info("All results were stable\n")
-        print >> sys.stderr, "travis_fold:start:full_results"
-        write_results(results, args.iterations)
-        print >> sys.stderr, "travis_fold:end:full_results"
+        with TravisFold("full_results"):
+            write_results(results, args.iterations, args.comment_pr)
     else:
         logger.info("No tests run.")
 

@@ -22,5 +22,4 @@ PASS Bad redirect init parameter value
 PASS Request with cache mode: only-if-cached and fetch mode: same-origin 
 PASS Request with cache mode: only-if-cached and fetch mode: cors 
 PASS Request with cache mode: only-if-cached and fetch mode: no-cors 
-PASS Request should not get its content-type from the init request if init headers are provided 
 

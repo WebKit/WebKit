@@ -52,6 +52,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_plus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero-1.html

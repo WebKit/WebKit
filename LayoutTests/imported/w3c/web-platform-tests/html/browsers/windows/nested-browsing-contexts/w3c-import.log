@@ -17,7 +17,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/MANIFEST
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/contains.json
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/frameElement.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/test.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/testcase3.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/window-top-001.html

@@ -6,8 +6,6 @@ PASS URL interface object length
 PASS URL interface object name 
 PASS URL interface: existence and properties of interface prototype object 
 PASS URL interface: existence and properties of interface prototype object's "constructor" property 
-FAIL URL interface: operation domainToASCII(USVString) assert_own_property: interface object missing static operation expected property "domainToASCII" missing
-FAIL URL interface: operation domainToUnicode(USVString) assert_own_property: interface object missing static operation expected property "domainToUnicode" missing
 PASS URL interface: attribute href 
 FAIL URL interface: stringifier assert_true: property is not enumerable expected true got false
 PASS URL interface: attribute origin 
@@ -23,22 +21,18 @@ PASS URL interface: attribute searchParams
 PASS URL interface: attribute hash 
 PASS URL must be primary interface of new URL("http://foo") 
 PASS Stringification of new URL("http://foo") 
-PASS URL interface: new URL("http://foo") must inherit property "domainToASCII" with the proper type (0) 
-PASS URL interface: calling domainToASCII(USVString) on new URL("http://foo") with too few arguments must throw TypeError 
-PASS URL interface: new URL("http://foo") must inherit property "domainToUnicode" with the proper type (1) 
-PASS URL interface: calling domainToUnicode(USVString) on new URL("http://foo") with too few arguments must throw TypeError 
-PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type (2) 
-PASS URL interface: new URL("http://foo") must inherit property "origin" with the proper type (3) 
-PASS URL interface: new URL("http://foo") must inherit property "protocol" with the proper type (4) 
-PASS URL interface: new URL("http://foo") must inherit property "username" with the proper type (5) 
-PASS URL interface: new URL("http://foo") must inherit property "password" with the proper type (6) 
-PASS URL interface: new URL("http://foo") must inherit property "host" with the proper type (7) 
-PASS URL interface: new URL("http://foo") must inherit property "hostname" with the proper type (8) 
-PASS URL interface: new URL("http://foo") must inherit property "port" with the proper type (9) 
-PASS URL interface: new URL("http://foo") must inherit property "pathname" with the proper type (10) 
-PASS URL interface: new URL("http://foo") must inherit property "search" with the proper type (11) 
-PASS URL interface: new URL("http://foo") must inherit property "searchParams" with the proper type (12) 
-PASS URL interface: new URL("http://foo") must inherit property "hash" with the proper type (13) 
+PASS URL interface: new URL("http://foo") must inherit property "href" with the proper type (0) 
+PASS URL interface: new URL("http://foo") must inherit property "origin" with the proper type (1) 
+PASS URL interface: new URL("http://foo") must inherit property "protocol" with the proper type (2) 
+PASS URL interface: new URL("http://foo") must inherit property "username" with the proper type (3) 
+PASS URL interface: new URL("http://foo") must inherit property "password" with the proper type (4) 
+PASS URL interface: new URL("http://foo") must inherit property "host" with the proper type (5) 
+PASS URL interface: new URL("http://foo") must inherit property "hostname" with the proper type (6) 
+PASS URL interface: new URL("http://foo") must inherit property "port" with the proper type (7) 
+PASS URL interface: new URL("http://foo") must inherit property "pathname" with the proper type (8) 
+PASS URL interface: new URL("http://foo") must inherit property "search" with the proper type (9) 
+PASS URL interface: new URL("http://foo") must inherit property "searchParams" with the proper type (10) 
+PASS URL interface: new URL("http://foo") must inherit property "hash" with the proper type (11) 
 PASS URLSearchParams interface: existence and properties of interface object 
 PASS URLSearchParams interface object length 
 PASS URLSearchParams interface object name 

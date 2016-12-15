@@ -27,7 +27,7 @@
     </script>
     <script>
       var idlsArray = new IdlArray();
-      var idl = document.getElementById("headers-idl").innerHTML
+      var idl = document.getElementById("headers-idl").textContent
       idlsArray.add_idls(idl);
       idlsArray.add_objects({ Headers: ['new Headers()'] });
       idlsArray.test();

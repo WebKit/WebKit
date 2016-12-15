@@ -15,11 +15,17 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/all
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/all.headers
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/document-without-browsing-context.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rellist.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/style.css
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-empty-href-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-empty-href.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet.css

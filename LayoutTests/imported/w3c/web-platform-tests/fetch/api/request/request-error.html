@@ -119,14 +119,6 @@
       testOnlyIfCachedMode("cors", false);
       testOnlyIfCachedMode("no-cors", false);
 
-      test(function() {
-        var initialHeaders = new Headers([["Content-Type", "potato"]]);
-        var initialRequest = new Request("", {"headers" : initialHeaders});
-        var headers = new Headers([]);
-        var request = new Request(initialRequest, {"headers" : headers});
-        assert_false(request.headers.has("Content-Type"));
-      }, "Request should not get its content-type from the init request if init headers are provided");
-
     </script>
   </body>
 </html>

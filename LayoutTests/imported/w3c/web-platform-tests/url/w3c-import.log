@@ -17,6 +17,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/url/README.md
+/LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/url/a-element-origin.js
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element.html
 /LayoutTests/imported/w3c/web-platform-tests/url/a-element.js
@@ -25,11 +28,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/url/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/url/setters_tests.json
 /LayoutTests/imported/w3c/web-platform-tests/url/url-constructor.html
-/LayoutTests/imported/w3c/web-platform-tests/url/url-domainToUnicode.html
+/LayoutTests/imported/w3c/web-platform-tests/url/url-origin.html
 /LayoutTests/imported/w3c/web-platform-tests/url/url-setters.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-append.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-delete.html
+/LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-foreach.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-get.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-getall.html
 /LayoutTests/imported/w3c/web-platform-tests/url/urlsearchparams-has.html

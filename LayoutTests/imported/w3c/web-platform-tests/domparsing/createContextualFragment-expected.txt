@@ -9,6 +9,8 @@ PASS <html> and <body> must work the same, 2
 PASS Implicit <body> creation 
 PASS Namespace generally shouldn't matter 
 PASS <html> in a different namespace shouldn't be special 
+PASS SVG namespace shouldn't be special 
 PASS null should be stringified 
 PASS undefined should be stringified 
+PASS Text nodes shouldn't be special 
 

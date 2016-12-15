@@ -44,7 +44,7 @@ function runTest(config) {
           '<\/script>';
 
         // Verify that this page can create a MediaKeys first.
-        navigator.requestMediaKeySystemAccess(config.keysystem, [{
+        return navigator.requestMediaKeySystemAccess(config.keysystem, [{
             initDataTypes: [config.initDataType],
             audioCapabilities: [
                 {contentType: config.audioType},
@@ -53,7 +53,7 @@ function runTest(config) {
             return access.createMediaKeys();
         }).then(function (mediaKeys) {
             // Success, so now create the iframe and try there.
-            return load_iframe(script, 'allow-scripts')
+            return load_iframe(script, 'allow-scripts');
         }).then(function (iframe) {
             iframe.contentWindow.postMessage({}, '*');
             return wait_for_message();

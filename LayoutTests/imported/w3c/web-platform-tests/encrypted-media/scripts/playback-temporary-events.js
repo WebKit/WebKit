@@ -38,7 +38,7 @@ function runTest(config,qualifier) {
                 waitForEventAndRunStep('keystatuseschange', _mediaKeySession, onKeyStatusesChange, test);
                 return _mediaKeySession.update( response );
             }).then(function() {
-                _events.push('updated');
+                _events.push('update-resolved');
             }).catch(onFailure);
         }
 
@@ -80,11 +80,11 @@ function runTest(config,qualifier) {
             setTimeout(test.step_func(function() {
                 checkEventSequence( _events,
                                     ['generaterequest',
-                                        ['license-request', 'license-request-response', 'updated'], // potentially repeating
+                                        ['license-request', 'license-request-response', 'update-resolved'], // potentially repeating
                                         'allkeysusable',
                                         'playing',
                                         'closed-attribute-resolved',
-                                        'closed-method-promise-resolved',
+                                        'close-promise-resolved',
                                         'emptykeyslist']);
                 test.done();
             } ), 0);
@@ -97,7 +97,7 @@ function runTest(config,qualifier) {
 
                 _mediaKeySession.closed.then(test.step_func(onClosed));
                 _mediaKeySession.close().then(function() {
-                    _events.push('closed-method-promise-resolved');
+                    _events.push('close-promise-resolved');
                 }).catch(onFailure);
             }
         }

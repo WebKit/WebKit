@@ -162,23 +162,11 @@ FAIL svgevents should be an alias for Event. The operation is not supported.
 FAIL createEvent('svgevents') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
 FAIL SVGEVENTS should be an alias for Event. The operation is not supported.
 FAIL createEvent('SVGEVENTS') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL SVGZoomEvent should be an alias for SVGZoomEvent. The operation is not supported.
-FAIL createEvent('SVGZoomEvent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL svgzoomevent should be an alias for SVGZoomEvent. The operation is not supported.
-FAIL createEvent('svgzoomevent') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-FAIL SVGZOOMEVENT should be an alias for SVGZoomEvent. The operation is not supported.
-FAIL createEvent('SVGZOOMEVENT') should be initialized correctly. undefined is not an object (evaluating 'ev.type')
-PASS SVGZoomEvents should be an alias for SVGZoomEvent. 
-PASS createEvent('SVGZoomEvents') should be initialized correctly. 
-PASS svgzoomevents should be an alias for SVGZoomEvent. 
-PASS createEvent('svgzoomevents') should be initialized correctly. 
-PASS SVGZOOMEVENTS should be an alias for SVGZoomEvent. 
-PASS createEvent('SVGZOOMEVENTS') should be initialized correctly. 
-FAIL TextEvent should be an alias for CompositionEvent. assert_true: expected true got false
+FAIL TextEvent should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEventPrototype]" but got object "[object TextEventPrototype]"
 PASS createEvent('TextEvent') should be initialized correctly. 
-FAIL textevent should be an alias for CompositionEvent. assert_true: expected true got false
+FAIL textevent should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEventPrototype]" but got object "[object TextEventPrototype]"
 PASS createEvent('textevent') should be initialized correctly. 
-FAIL TEXTEVENT should be an alias for CompositionEvent. assert_true: expected true got false
+FAIL TEXTEVENT should be an alias for CompositionEvent. assert_equals: expected object "[object CompositionEventPrototype]" but got object "[object TextEventPrototype]"
 PASS createEvent('TEXTEVENT') should be initialized correctly. 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized legacy event interface "TextEvents" 
 FAIL TouchEvent should be an alias for TouchEvent. The operation is not supported.
@@ -322,6 +310,9 @@ PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "R
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ResourceProgressEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ResourceProgressEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SVGEvent" 
+PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SVGZoomEvent" 
+FAIL Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "SVGZoomEvents" assert_throws: function "function () {
+        var evt = document.createEvent(even..." did not throw
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ScrollAreaEvent" 
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ScrollAreaEvents" 
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SecurityPolicyViolationEvent" 

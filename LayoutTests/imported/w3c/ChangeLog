@@ -1,3 +1,272 @@
+2016-12-15  Youenn Fablet  <youenn@apple.com>
+
+        Sync web-platform-tests up to revision a4c2b37
+        https://bugs.webkit.org/show_bug.cgi?id=165041
+
+        Reviewed by Alex Christensen.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * resources/resource-files.json:
+        * web-platform-tests/IndexedDB/historical-expected.txt: Added.
+        * web-platform-tests/IndexedDB/historical.html: Added.
+        * web-platform-tests/IndexedDB/interfaces-expected.txt:
+        * web-platform-tests/IndexedDB/interfaces.html:
+        * web-platform-tests/IndexedDB/interfaces.idl:
+        * web-platform-tests/IndexedDB/interfaces.worker-expected.txt:
+        * web-platform-tests/IndexedDB/interfaces.worker.js:
+        (async_test):
+        (request.onload): Deleted.
+        * web-platform-tests/IndexedDB/name-scopes-expected.txt: Added.
+        * web-platform-tests/IndexedDB/name-scopes.html: Added.
+        * web-platform-tests/IndexedDB/support-promises.js:
+        (const.databaseName):
+        (const.requestWatcher):
+        (const.migrateDatabase):
+        (const.migrateNamedDatabase):
+        (const.createDatabase):
+        (const.createNamedDatabase):
+        (const.openDatabase):
+        (const.openNamedDatabase):
+        (const.createBooksStore):
+        (const.checkStoreIndexes):
+        (const.checkStoreGenerator):
+        (const.checkStoreContents):
+        (const.checkAuthorIndexContents):
+        (const.checkTitleIndexContents):
+        * web-platform-tests/IndexedDB/w3c-import.log:
+        * web-platform-tests/README.md:
+        * web-platform-tests/XMLHttpRequest/event-readystatechange-loaded-expected.txt:
+        * web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm:
+        * web-platform-tests/check_stability.py:
+        (TravisFold):
+        (TravisFold.__init__):
+        (TravisFold.__enter__):
+        (TravisFold.__exit__):
+        (markdown_adjust):
+        (table):
+        (write_inconsistent):
+        (write_results):
+        (main):
+        * web-platform-tests/common/dummy.xhtml: Added.
+        * web-platform-tests/common/dummy.xml: Added.
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/config.default.json:
+        * web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt:
+        * web-platform-tests/dom/events/ProgressEvent-expected.txt:
+        * web-platform-tests/dom/events/ProgressEvent.html:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument-expected.txt:
+        * web-platform-tests/dom/nodes/DOMImplementation-createDocument.html:
+        * web-platform-tests/dom/nodes/Document-createElement-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElement.html:
+        * web-platform-tests/dom/nodes/Document-createElementNS-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createElementNS.html:
+        * web-platform-tests/dom/nodes/Document-createElementNS.js:
+        * web-platform-tests/dom/nodes/Document-createEvent-expected.txt:
+        * web-platform-tests/dom/nodes/Document-createEvent.html:
+        * web-platform-tests/dom/nodes/Document-createEvent.js:
+        * web-platform-tests/dom/nodes/Element-closest-expected.txt:
+        * web-platform-tests/dom/nodes/Element-closest.html:
+        * web-platform-tests/domparsing/OWNERS:
+        * web-platform-tests/domparsing/createContextualFragment-expected.txt:
+        * web-platform-tests/domparsing/createContextualFragment.html:
+        * web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.html:
+        * web-platform-tests/encrypted-media/content/video_512x288_h264-360k_multikey_key1_dashinit.mp4: Added.
+        * web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.html:
+        * web-platform-tests/encrypted-media/scripts/playback-persistent-license-events.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-persistent-usage-record-events.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-temporary-events.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/playback-temporary-multikey-sequential.js:
+        (runTest):
+        * web-platform-tests/encrypted-media/scripts/unique-origin.js:
+        (runTest.):
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-idl.html:
+        * web-platform-tests/fetch/api/headers/headers-normalize-expected.txt:
+        * web-platform-tests/fetch/api/headers/headers-normalize.html:
+        * web-platform-tests/fetch/api/redirect/redirect-count.js:
+        (redirectCount):
+        * web-platform-tests/fetch/api/request/request-error-expected.txt:
+        * web-platform-tests/fetch/api/request/request-error.html:
+        * web-platform-tests/fetch/api/request/request-idl.html:
+        * web-platform-tests/fetch/api/resources/redirect.py:
+        (main):
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume.html:
+        * web-platform-tests/fetch/api/response/response-idl.html:
+        * web-platform-tests/fonts/math/mathvariant-bold-fraktur.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-bold-italic.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-bold-sans-serif.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-bold-script.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-bold.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-double-struck.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-fraktur.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-initial.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-italic.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-looped.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-monospace.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-sans-serif-bold-italic.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-sans-serif-italic.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-sans-serif.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-script.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-stretched.woff: Added.
+        * web-platform-tests/fonts/math/mathvariant-tailed.woff: Added.
+        * web-platform-tests/fonts/math/w3c-import.log:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/014.html:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-return-value-handling.html:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function-src.html:
+        * web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/source/navigate-child-function.html:
+        * web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri-1.html: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html: Added.
+        * web-platform-tests/html/browsers/history/the-history-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/location_reload-iframe.html:
+        * web-platform-tests/html/browsers/history/the-location-interface/location_reload.html:
+        * web-platform-tests/html/browsers/the-window-object/support/noopener-target.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/w3c-import.log.
+        * web-platform-tests/html/browsers/the-window-object/w3c-import.log:
+        * web-platform-tests/html/browsers/the-window-object/window-open-noopener-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/window-open-noopener.html: Added.
+        * web-platform-tests/html/browsers/windows/nested-browsing-contexts/w3c-import.log:
+        * web-platform-tests/html/browsers/windows/support-open-cross-origin.sub.html: Added.
+        * web-platform-tests/html/browsers/windows/targeting-multiple-cross-origin-manual.sub.html: Added.
+        * web-platform-tests/html/browsers/windows/w3c-import.log:
+        * web-platform-tests/html/dom/interfaces.html:
+        * web-platform-tests/html/dom/new-harness.js:
+        (ReflectionHarness.test):
+        (ReflectionHarness.run): Deleted.
+        (ReflectionHarness.testException): Deleted.
+        * web-platform-tests/html/dom/original-harness.js:
+        (ReflectionHarness.test):
+        (ReflectionHarness.assertEquals):
+        (ReflectionHarness.assertThrows):
+        (ReflectionHarness.testWrapper): Deleted.
+        (ReflectionHarness.run): Deleted.
+        (ReflectionHarness.testException): Deleted.
+        * web-platform-tests/html/dom/reflection.js:
+        (ReflectionTests.reflects):
+        (ReflectionTests.doReflects): Deleted.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/all: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/all.headers: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/resources/empty-href.css: Added.
+        (body):
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/resources/w3c-import.log:
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-empty-href-expected.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-empty-href.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media-expected.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media.html: Added.
+        * web-platform-tests/html/semantics/document-metadata/the-link-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/historical-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/historical.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-embed-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/historical-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/historical.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-object-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-event.html: Added.
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-form-expected.txt:
+        * web-platform-tests/html/semantics/forms/resetting-a-form/reset-form.html:
+        * web-platform-tests/html/semantics/forms/resetting-a-form/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/HTMLFieldSetElement-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-fieldset-element/HTMLFieldSetElement.html:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-action-url-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/form-action-url.html: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/resources/form-action-url-iframe.html: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/resources/target/form-action-url-target.html: Added.
+        * web-platform-tests/html/semantics/forms/the-form-element/resources/target/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/w3c-import.log.
+        * web-platform-tests/html/semantics/forms/the-form-element/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/resetting-a-form/w3c-import.log.
+        * web-platform-tests/html/semantics/forms/the-form-element/w3c-import.log:
+        * web-platform-tests/html/semantics/forms/the-input-element/radio.html:
+        * web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-add-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-add.html: Added.
+        * web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection.html:
+        * web-platform-tests/html/semantics/forms/the-select-element/selected-index-expected.txt: Added.
+        * web-platform-tests/html/semantics/forms/the-select-element/selected-index.html: Added.
+        * web-platform-tests/html/semantics/forms/the-select-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-001.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-002-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-002.html:
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-display-list-item-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-display-list-item.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-mixed-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-mixed.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-not-dir-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-not-dir.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-ol-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-ol.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-parent-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-parent.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-ul-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-ul.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-not-being-rendered-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-not-being-rendered.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-li-element/w3c-import.log:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-rev-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-rev-reftest-001.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-001.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-002-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-start-reftest-002.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-001-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-001.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-002-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-002.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-003-expected.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol-type-reftest-003.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1e-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1e.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/node-document-changes.html:
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/uncompiled_event_handler_with_scripting_disabled-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/uncompiled_event_handler_with_scripting_disabled.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/w3c-import.log:
+        * web-platform-tests/lint.whitelist:
+        * web-platform-tests/media-source/OWNERS:
+        * web-platform-tests/serve.py:
+        * web-platform-tests/shadow-dom/OWNERS:
+        * web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.js:
+        (promise_test):
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt: Added.
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt: Added.
+        * web-platform-tests/url/a-element-origin-xhtml.xhtml: Added.
+        * web-platform-tests/url/a-element-origin.html: Added.
+        * web-platform-tests/url/a-element-origin.js: Added.
+        (setup.async_test.string_appeared_here.setup.step):
+        (setBase):
+        (bURL):
+        (runURLTests):
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/historical-expected.txt:
+        * web-platform-tests/url/historical.html:
+        * web-platform-tests/url/historical.worker-expected.txt:
+        * web-platform-tests/url/historical.worker.js:
+        (test):
+        * web-platform-tests/url/interfaces-expected.txt:
+        * web-platform-tests/url/interfaces.html:
+        * web-platform-tests/url/setters_tests.json:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt: Added.
+        * web-platform-tests/url/url-origin.html: Added.
+        * web-platform-tests/url/urlsearchparams-foreach-expected.txt: Added.
+        * web-platform-tests/url/urlsearchparams-foreach.html: Added.
+        * web-platform-tests/url/urltestdata.json:
+        * web-platform-tests/url/w3c-import.log:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor-expected.txt:
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor.html:
+        * web-platform-tests/webrtc/simplecall-expected.txt:
+        * web-platform-tests/webrtc/simplecall.html:
+
 2016-12-14  Chris Dumez  <cdumez@apple.com>
 
         Remove Unicode case-insensitive matching for usemap=""

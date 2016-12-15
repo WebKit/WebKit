@@ -69,6 +69,8 @@ PASS Parsing: <http://2001::1> against <http://example.org/foo/bar>
 PASS Parsing: <http://2001::1]> against <http://example.org/foo/bar> 
 PASS Parsing: <http://2001::1]:80> against <http://example.org/foo/bar> 
 PASS Parsing: <http://[2001::1]> against <http://example.org/foo/bar> 
+PASS Parsing: <http://[::127.0.0.1]> against <http://example.org/foo/bar> 
+PASS Parsing: <http://[0:0:0:0:0:0:13.1.68.3]> against <http://example.org/foo/bar> 
 PASS Parsing: <http://[2001::1]:80> against <http://example.org/foo/bar> 
 PASS Parsing: <http:/example.com/> against <http://example.org/foo/bar> 
 PASS Parsing: <ftp:/example.com/> against <http://example.org/foo/bar> 

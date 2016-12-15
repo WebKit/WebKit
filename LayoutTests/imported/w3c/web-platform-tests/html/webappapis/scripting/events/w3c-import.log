@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-once.html
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/messageevent-constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/onerroreventhandler.html
+/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/events/uncompiled_event_handler_with_scripting_disabled.html

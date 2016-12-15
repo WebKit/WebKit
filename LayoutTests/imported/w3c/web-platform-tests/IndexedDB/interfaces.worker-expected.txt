@@ -1,8 +1,123 @@
 
-FAIL WorkerGlobalScope interface: existence and properties of interface object assert_false: expected false got true
-FAIL Event interface: existence and properties of interface object assert_false: expected false got true
-FAIL EventTarget interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBKeyRange interface: existence and properties of interface object assert_false: expected false got true
+PASS Untitled 
+PASS WorkerGlobalScope interface: attribute indexedDB 
+PASS IDBRequest interface: existence and properties of interface object 
+PASS IDBRequest interface object length 
+PASS IDBRequest interface object name 
+PASS IDBRequest interface: existence and properties of interface prototype object 
+PASS IDBRequest interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBRequest interface: attribute result 
+PASS IDBRequest interface: attribute error 
+PASS IDBRequest interface: attribute source 
+PASS IDBRequest interface: attribute transaction 
+PASS IDBRequest interface: attribute readyState 
+PASS IDBRequest interface: attribute onsuccess 
+PASS IDBRequest interface: attribute onerror 
+PASS IDBOpenDBRequest interface: existence and properties of interface object 
+PASS IDBOpenDBRequest interface object length 
+PASS IDBOpenDBRequest interface object name 
+PASS IDBOpenDBRequest interface: existence and properties of interface prototype object 
+PASS IDBOpenDBRequest interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBOpenDBRequest interface: attribute onblocked 
+PASS IDBOpenDBRequest interface: attribute onupgradeneeded 
+PASS IDBVersionChangeEvent interface: existence and properties of interface object 
+PASS IDBVersionChangeEvent interface object length 
+PASS IDBVersionChangeEvent interface object name 
+PASS IDBVersionChangeEvent interface: existence and properties of interface prototype object 
+PASS IDBVersionChangeEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBVersionChangeEvent interface: attribute oldVersion 
+PASS IDBVersionChangeEvent interface: attribute newVersion 
+PASS IDBVersionChangeEvent must be primary interface of new IDBVersionChangeEvent('foo') 
+PASS Stringification of new IDBVersionChangeEvent('foo') 
+PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent('foo') must inherit property "oldVersion" with the proper type (0) 
+PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent('foo') must inherit property "newVersion" with the proper type (1) 
+PASS IDBFactory interface: existence and properties of interface object 
+PASS IDBFactory interface object length 
+PASS IDBFactory interface object name 
+PASS IDBFactory interface: existence and properties of interface prototype object 
+PASS IDBFactory interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBFactory interface: operation open(DOMString,unsigned long long) 
+PASS IDBFactory interface: operation deleteDatabase(DOMString) 
+PASS IDBFactory interface: operation cmp(any,any) 
+PASS IDBFactory must be primary interface of self.indexedDB 
+PASS Stringification of self.indexedDB 
+PASS IDBFactory interface: self.indexedDB must inherit property "open" with the proper type (0) 
+PASS IDBFactory interface: calling open(DOMString,unsigned long long) on self.indexedDB with too few arguments must throw TypeError 
+PASS IDBFactory interface: self.indexedDB must inherit property "deleteDatabase" with the proper type (1) 
+PASS IDBFactory interface: calling deleteDatabase(DOMString) on self.indexedDB with too few arguments must throw TypeError 
+PASS IDBFactory interface: self.indexedDB must inherit property "cmp" with the proper type (2) 
+PASS IDBFactory interface: calling cmp(any,any) on self.indexedDB with too few arguments must throw TypeError 
+PASS IDBDatabase interface: existence and properties of interface object 
+PASS IDBDatabase interface object length 
+PASS IDBDatabase interface object name 
+PASS IDBDatabase interface: existence and properties of interface prototype object 
+PASS IDBDatabase interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBDatabase interface: attribute name 
+PASS IDBDatabase interface: attribute version 
+PASS IDBDatabase interface: attribute objectStoreNames 
+PASS IDBDatabase interface: operation transaction([object Object],[object Object],IDBTransactionMode) 
+PASS IDBDatabase interface: operation close() 
+PASS IDBDatabase interface: operation createObjectStore(DOMString,IDBObjectStoreParameters) 
+PASS IDBDatabase interface: operation deleteObjectStore(DOMString) 
+PASS IDBDatabase interface: attribute onabort 
+PASS IDBDatabase interface: attribute onclose 
+PASS IDBDatabase interface: attribute onerror 
+PASS IDBDatabase interface: attribute onversionchange 
+PASS IDBObjectStore interface: existence and properties of interface object 
+PASS IDBObjectStore interface object length 
+PASS IDBObjectStore interface object name 
+PASS IDBObjectStore interface: existence and properties of interface prototype object 
+PASS IDBObjectStore interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBObjectStore interface: attribute name 
+PASS IDBObjectStore interface: attribute keyPath 
+PASS IDBObjectStore interface: attribute indexNames 
+PASS IDBObjectStore interface: attribute transaction 
+PASS IDBObjectStore interface: attribute autoIncrement 
+PASS IDBObjectStore interface: operation put(any,any) 
+PASS IDBObjectStore interface: operation add(any,any) 
+PASS IDBObjectStore interface: operation delete(any) 
+PASS IDBObjectStore interface: operation clear() 
+PASS IDBObjectStore interface: operation get(any) 
+PASS IDBObjectStore interface: operation getKey(any) 
+PASS IDBObjectStore interface: operation getAll(any,unsigned long) 
+PASS IDBObjectStore interface: operation getAllKeys(any,unsigned long) 
+PASS IDBObjectStore interface: operation count(any) 
+PASS IDBObjectStore interface: operation openCursor(any,IDBCursorDirection) 
+PASS IDBObjectStore interface: operation openKeyCursor(any,IDBCursorDirection) 
+PASS IDBObjectStore interface: operation index(DOMString) 
+PASS IDBObjectStore interface: operation createIndex(DOMString,[object Object],[object Object],IDBIndexParameters) 
+PASS IDBObjectStore interface: operation deleteIndex(DOMString) 
+PASS IDBIndex interface: existence and properties of interface object 
+PASS IDBIndex interface object length 
+PASS IDBIndex interface object name 
+PASS IDBIndex interface: existence and properties of interface prototype object 
+PASS IDBIndex interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBIndex interface: attribute name 
+PASS IDBIndex interface: attribute objectStore 
+PASS IDBIndex interface: attribute keyPath 
+PASS IDBIndex interface: attribute multiEntry 
+PASS IDBIndex interface: attribute unique 
+PASS IDBIndex interface: operation get(any) 
+PASS IDBIndex interface: operation getKey(any) 
+PASS IDBIndex interface: operation getAll(any,unsigned long) 
+PASS IDBIndex interface: operation getAllKeys(any,unsigned long) 
+PASS IDBIndex interface: operation count(any) 
+PASS IDBIndex interface: operation openCursor(any,IDBCursorDirection) 
+PASS IDBIndex interface: operation openKeyCursor(any,IDBCursorDirection) 
+PASS IDBKeyRange interface: existence and properties of interface object 
+PASS IDBKeyRange interface object length 
+PASS IDBKeyRange interface object name 
+PASS IDBKeyRange interface: existence and properties of interface prototype object 
+PASS IDBKeyRange interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBKeyRange interface: attribute lower 
+PASS IDBKeyRange interface: attribute upper 
+PASS IDBKeyRange interface: attribute lowerOpen 
+PASS IDBKeyRange interface: attribute upperOpen 
+PASS IDBKeyRange interface: operation only(any) 
+PASS IDBKeyRange interface: operation lowerBound(any,boolean) 
+PASS IDBKeyRange interface: operation upperBound(any,boolean) 
+PASS IDBKeyRange interface: operation bound(any,any,boolean,boolean) 
+PASS IDBKeyRange interface: operation includes(any) 
 PASS IDBKeyRange must be primary interface of IDBKeyRange.only(0) 
 PASS Stringification of IDBKeyRange.only(0) 
 PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lower" with the proper type (0) 
@@ -17,26 +132,41 @@ PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upperBoun
 PASS IDBKeyRange interface: calling upperBound(any,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
 PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "bound" with the proper type (7) 
 PASS IDBKeyRange interface: calling bound(any,any,boolean,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
-FAIL IDBRequest interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBOpenDBRequest interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBVersionChangeEvent interface: existence and properties of interface object assert_false: expected false got true
-PASS IDBVersionChangeEvent must be primary interface of new IDBVersionChangeEvent('foo') 
-PASS Stringification of new IDBVersionChangeEvent('foo') 
-PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent('foo') must inherit property "oldVersion" with the proper type (0) 
-PASS IDBVersionChangeEvent interface: new IDBVersionChangeEvent('foo') must inherit property "newVersion" with the proper type (1) 
-FAIL IDBFactory interface: existence and properties of interface object assert_false: expected false got true
-PASS IDBFactory must be primary interface of self.indexedDB 
-PASS Stringification of self.indexedDB 
-PASS IDBFactory interface: self.indexedDB must inherit property "open" with the proper type (0) 
-PASS IDBFactory interface: calling open(DOMString,unsigned long long) on self.indexedDB with too few arguments must throw TypeError 
-PASS IDBFactory interface: self.indexedDB must inherit property "deleteDatabase" with the proper type (1) 
-PASS IDBFactory interface: calling deleteDatabase(DOMString) on self.indexedDB with too few arguments must throw TypeError 
-PASS IDBFactory interface: self.indexedDB must inherit property "cmp" with the proper type (2) 
-PASS IDBFactory interface: calling cmp(any,any) on self.indexedDB with too few arguments must throw TypeError 
-FAIL IDBDatabase interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBObjectStore interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBIndex interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBCursor interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBCursorWithValue interface: existence and properties of interface object assert_false: expected false got true
-FAIL IDBTransaction interface: existence and properties of interface object assert_false: expected false got true
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "includes" with the proper type (8) 
+PASS IDBKeyRange interface: calling includes(any) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
+PASS IDBCursor interface: existence and properties of interface object 
+PASS IDBCursor interface object length 
+PASS IDBCursor interface object name 
+PASS IDBCursor interface: existence and properties of interface prototype object 
+PASS IDBCursor interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBCursor interface: attribute source 
+PASS IDBCursor interface: attribute direction 
+PASS IDBCursor interface: attribute key 
+PASS IDBCursor interface: attribute primaryKey 
+PASS IDBCursor interface: operation advance(unsigned long) 
+PASS IDBCursor interface: operation continue(any) 
+PASS IDBCursor interface: operation continuePrimaryKey(any,any) 
+PASS IDBCursor interface: operation update(any) 
+PASS IDBCursor interface: operation delete() 
+PASS IDBCursorWithValue interface: existence and properties of interface object 
+PASS IDBCursorWithValue interface object length 
+PASS IDBCursorWithValue interface object name 
+PASS IDBCursorWithValue interface: existence and properties of interface prototype object 
+PASS IDBCursorWithValue interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBCursorWithValue interface: attribute value 
+PASS IDBTransaction interface: existence and properties of interface object 
+PASS IDBTransaction interface object length 
+PASS IDBTransaction interface object name 
+PASS IDBTransaction interface: existence and properties of interface prototype object 
+PASS IDBTransaction interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBTransaction interface: attribute objectStoreNames 
+PASS IDBTransaction interface: attribute mode 
+PASS IDBTransaction interface: attribute db 
+PASS IDBTransaction interface: attribute error 
+PASS IDBTransaction interface: operation objectStore(DOMString) 
+PASS IDBTransaction interface: operation abort() 
+PASS IDBTransaction interface: attribute onabort 
+PASS IDBTransaction interface: attribute oncomplete 
+PASS IDBTransaction interface: attribute onerror 
+PASS DOMStringList interface: existence and properties of interface object 
 

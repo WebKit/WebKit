@@ -23,6 +23,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.css
 /LayoutTests/imported/w3c/web-platform-tests/common/canvas-tests.js
 /LayoutTests/imported/w3c/web-platform-tests/common/css-red.txt
+/LayoutTests/imported/w3c/web-platform-tests/common/dummy.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/common/dummy.xml
 /LayoutTests/imported/w3c/web-platform-tests/common/entities.json
 /LayoutTests/imported/w3c/web-platform-tests/common/form-submission.py
 /LayoutTests/imported/w3c/web-platform-tests/common/get-host-info.sub.js

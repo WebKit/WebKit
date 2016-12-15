@@ -22,7 +22,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-close.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-named-null-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-nested-browsing-contexts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-open-cross-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-opener-null.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-post-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/support-window-name-echo.html
-/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/windows/targeting-multiple-cross-origin-manual.sub.html

@@ -24,8 +24,14 @@ PASS Element.closest with context node 'test10' and selector ':empty'
 PASS Element.closest with context node 'test11' and selector ':last-child' 
 PASS Element.closest with context node 'test12' and selector ':first-child' 
 PASS Element.closest with context node 'test11' and selector ':invalid' 
-PASS Element.closest with context node 'test4' and selector ':scope' 
-PASS Element.closest with context node 'test4' and selector 'select > :scope' 
-PASS Element.closest with context node 'test4' and selector 'div > :scope' 
-FAIL Element.closest with context node 'test4' and selector ':has(> :scope)' The string did not match the expected pattern.
+FAIL Element.closest with context node 'test4' and selector ':scope' should throw assert_throws: function "function () {
+      el.closest(aSelector);
+    }" did not throw
+FAIL Element.closest with context node 'test4' and selector 'select > :scope' should throw assert_throws: function "function () {
+      el.closest(aSelector);
+    }" did not throw
+FAIL Element.closest with context node 'test4' and selector 'div > :scope' should throw assert_throws: function "function () {
+      el.closest(aSelector);
+    }" did not throw
+PASS Element.closest with context node 'test4' and selector ':has(> :scope)' should throw 
 

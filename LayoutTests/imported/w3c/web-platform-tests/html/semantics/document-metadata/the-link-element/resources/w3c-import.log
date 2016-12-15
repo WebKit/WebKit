@@ -15,4 +15,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/resources/empty-href.css
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/resources/stylesheet.css

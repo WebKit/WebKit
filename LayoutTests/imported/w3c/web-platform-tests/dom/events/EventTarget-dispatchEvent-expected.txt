@@ -25,8 +25,6 @@ PASS If the event's initialized flag is not set, an InvalidStateError must be th
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (ProgressEvent). The operation is not supported.
 PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (StorageEvent). 
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (SVGEvents). The operation is not supported.
-FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (SVGZoomEvent). The operation is not supported.
-PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (SVGZoomEvents). 
 PASS If the event's initialized flag is not set, an InvalidStateError must be thrown (TextEvent). 
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TouchEvent). The operation is not supported.
 FAIL If the event's initialized flag is not set, an InvalidStateError must be thrown (TrackEvent). The operation is not supported.

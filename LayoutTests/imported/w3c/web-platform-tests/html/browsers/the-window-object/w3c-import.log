@@ -21,5 +21,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-named-properties.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-prototype-chain.html

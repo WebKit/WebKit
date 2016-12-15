@@ -15,6 +15,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-handler.html

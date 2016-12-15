@@ -176,6 +176,9 @@
     "imported/w3c/web-platform-tests/dom/traversal/TreeWalker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.html": [
         "slow"
     ],
@@ -195,6 +198,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-license.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-encrypted-clear-sources.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.html": [

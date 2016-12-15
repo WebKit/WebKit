@@ -16,6 +16,8 @@ PASS new RTCPeerConnection({ iceServers: [{ urls: ["stun:stun1.example.net"] }] 
 PASS new RTCPeerConnection({ iceServers: [{ urls: ["stun:stun1.example.net", "stun:stun2.example.net"] }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", username: "user", credential: "cred" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "turn:turn.example.net", username: "user", credential: "cred" }] }) 
+PASS new RTCPeerConnection({ iceServers: [{ urls: "turns:turn.example.org", username: "", credential: "" }] }) 
+PASS new RTCPeerConnection({ iceServers: [{ urls: "turn:turn.example.net", username: "", credential: "" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: ["turns:turn.example.org", "turn:turn.example.net"], username: "user", credential: "cred" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "stun:stun1.example.net", credentialType: "password" }] }) 
 PASS new RTCPeerConnection({ iceServers: [{ urls: "stun:stun1.example.net", credentialType: "token" }] }) 

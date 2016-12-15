@@ -5,4 +5,6 @@ PASS searchParams on area element
 FAIL Setting URL's href attribute and base URLs assert_throws: function "function () {
     url.href = "./bar";
   }" did not throw
+PASS URL.domainToASCII should be undefined 
+PASS URL.domainToUnicode should be undefined 
 

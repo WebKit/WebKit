@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/close-in-upgradeneeded.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/cursor-overloads.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb_binary_key_conversion.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idb_webworkers.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm
@@ -278,6 +279,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/list_ordering.htm
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/name-scopes.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/objectstore_keyorder.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm

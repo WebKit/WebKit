@@ -1,6 +1,4 @@
 The feature(s) tested here are known to have been made available via vendor prefixes; you can run this test with vendor prefixes enabled.
 
-FAIL Can set up a basic WebRTC call. navigator.getUserMedia is not a function. (In 'navigator.getUserMedia({ video: true, audio: true },
-        getUserMediaOkCallback,
-        failed('getUserMedia'))', 'navigator.getUserMedia' is undefined)
+TIMEOUT Can set up a basic WebRTC call. Test timed out
   

@@ -1,4 +1,3 @@
 
 PASS Default event values. 
-FAIL document.createEvent() should work with ProgressEvent. The operation is not supported.
 

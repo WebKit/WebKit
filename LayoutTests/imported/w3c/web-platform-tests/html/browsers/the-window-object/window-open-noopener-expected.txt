@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 67: TypeError: undefined is not an object (evaluating 'w1.close')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'w1.close')
+
+FAIL window.open() with 'noopener' should not reuse existing target Can't find variable: BroadcastChannel
+

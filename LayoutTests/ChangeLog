@@ -1,3 +1,15 @@
+2016-12-15  Youenn Fablet  <youennf@gmail.com>
+
+        Sync web-platform-tests up to revision a4c2b37
+        https://bugs.webkit.org/show_bug.cgi?id=165041
+
+        Reviewed by Alex Christensen.
+
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-expected.txt: Added.
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+        * platform/ios-simulator-wk2/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt: Added.
+        * tests-options.json:
+
 2016-12-15  Alejandro G. Castro  <alex@igalia.com>
 
         [OWR] Unskip fast/mediastream/MediaStream-video-element-track-stop.html

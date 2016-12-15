@@ -37,6 +37,8 @@ const testArgs = {
   // username and password required for turn: and turns:
   '{ iceServers: [{ urls: "turns:turn.example.org", username: "user", credential: "cred" }] }': false,
   '{ iceServers: [{ urls: "turn:turn.example.net", username: "user", credential: "cred" }] }': false,
+  '{ iceServers: [{ urls: "turns:turn.example.org", username: "", credential: "" }] }': false,
+  '{ iceServers: [{ urls: "turn:turn.example.net", username: "", credential: "" }] }': false,
   '{ iceServers: [{ urls: ["turns:turn.example.org", "turn:turn.example.net"], username: "user", credential: "cred" }] }': false,
   '{ iceServers: [{ urls: "stun:stun1.example.net", credentialType: "password" }] }': false,
   '{ iceServers: [{ urls: "stun:stun1.example.net", credentialType: "token" }] }': false,

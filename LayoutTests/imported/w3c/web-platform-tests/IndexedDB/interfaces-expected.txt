@@ -1,34 +1,8 @@
 IndexedDB IDL tests
 
 
+PASS IndexedDB IDL tests 
 PASS Window interface: attribute indexedDB 
-PASS IDBKeyRange interface: existence and properties of interface object 
-PASS IDBKeyRange interface object length 
-PASS IDBKeyRange interface object name 
-PASS IDBKeyRange interface: existence and properties of interface prototype object 
-PASS IDBKeyRange interface: existence and properties of interface prototype object's "constructor" property 
-PASS IDBKeyRange interface: attribute lower 
-PASS IDBKeyRange interface: attribute upper 
-PASS IDBKeyRange interface: attribute lowerOpen 
-PASS IDBKeyRange interface: attribute upperOpen 
-PASS IDBKeyRange interface: operation only(any) 
-PASS IDBKeyRange interface: operation lowerBound(any,boolean) 
-PASS IDBKeyRange interface: operation upperBound(any,boolean) 
-PASS IDBKeyRange interface: operation bound(any,any,boolean,boolean) 
-PASS IDBKeyRange must be primary interface of IDBKeyRange.only(0) 
-PASS Stringification of IDBKeyRange.only(0) 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lower" with the proper type (0) 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upper" with the proper type (1) 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lowerOpen" with the proper type (2) 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upperOpen" with the proper type (3) 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "only" with the proper type (4) 
-PASS IDBKeyRange interface: calling only(any) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lowerBound" with the proper type (5) 
-PASS IDBKeyRange interface: calling lowerBound(any,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upperBound" with the proper type (6) 
-PASS IDBKeyRange interface: calling upperBound(any,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
-PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "bound" with the proper type (7) 
-PASS IDBKeyRange interface: calling bound(any,any,boolean,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
 PASS IDBRequest interface: existence and properties of interface object 
 PASS IDBRequest interface object length 
 PASS IDBRequest interface object name 
@@ -83,10 +57,10 @@ PASS IDBDatabase interface: existence and properties of interface prototype obje
 PASS IDBDatabase interface: attribute name 
 PASS IDBDatabase interface: attribute version 
 PASS IDBDatabase interface: attribute objectStoreNames 
-PASS IDBDatabase interface: operation createObjectStore(DOMString,IDBObjectStoreParameters) 
-PASS IDBDatabase interface: operation deleteObjectStore(DOMString) 
 PASS IDBDatabase interface: operation transaction([object Object],[object Object],IDBTransactionMode) 
 PASS IDBDatabase interface: operation close() 
+PASS IDBDatabase interface: operation createObjectStore(DOMString,IDBObjectStoreParameters) 
+PASS IDBDatabase interface: operation deleteObjectStore(DOMString) 
 PASS IDBDatabase interface: attribute onabort 
 PASS IDBDatabase interface: attribute onclose 
 PASS IDBDatabase interface: attribute onerror 
@@ -104,13 +78,17 @@ PASS IDBObjectStore interface: attribute autoIncrement
 PASS IDBObjectStore interface: operation put(any,any) 
 PASS IDBObjectStore interface: operation add(any,any) 
 PASS IDBObjectStore interface: operation delete(any) 
-PASS IDBObjectStore interface: operation get(any) 
 PASS IDBObjectStore interface: operation clear() 
-PASS IDBObjectStore interface: operation openCursor(any,IDBCursorDirection) 
-PASS IDBObjectStore interface: operation createIndex(DOMString,[object Object],[object Object],IDBIndexParameters) 
-PASS IDBObjectStore interface: operation index(DOMString) 
-PASS IDBObjectStore interface: operation deleteIndex(DOMString) 
+PASS IDBObjectStore interface: operation get(any) 
+PASS IDBObjectStore interface: operation getKey(any) 
+PASS IDBObjectStore interface: operation getAll(any,unsigned long) 
+PASS IDBObjectStore interface: operation getAllKeys(any,unsigned long) 
 PASS IDBObjectStore interface: operation count(any) 
+PASS IDBObjectStore interface: operation openCursor(any,IDBCursorDirection) 
+PASS IDBObjectStore interface: operation openKeyCursor(any,IDBCursorDirection) 
+PASS IDBObjectStore interface: operation index(DOMString) 
+PASS IDBObjectStore interface: operation createIndex(DOMString,[object Object],[object Object],IDBIndexParameters) 
+PASS IDBObjectStore interface: operation deleteIndex(DOMString) 
 PASS IDBIndex interface: existence and properties of interface object 
 PASS IDBIndex interface object length 
 PASS IDBIndex interface object name 
@@ -121,11 +99,43 @@ PASS IDBIndex interface: attribute objectStore
 PASS IDBIndex interface: attribute keyPath 
 PASS IDBIndex interface: attribute multiEntry 
 PASS IDBIndex interface: attribute unique 
-PASS IDBIndex interface: operation openCursor(any,IDBCursorDirection) 
-PASS IDBIndex interface: operation openKeyCursor(any,IDBCursorDirection) 
 PASS IDBIndex interface: operation get(any) 
 PASS IDBIndex interface: operation getKey(any) 
+PASS IDBIndex interface: operation getAll(any,unsigned long) 
+PASS IDBIndex interface: operation getAllKeys(any,unsigned long) 
 PASS IDBIndex interface: operation count(any) 
+PASS IDBIndex interface: operation openCursor(any,IDBCursorDirection) 
+PASS IDBIndex interface: operation openKeyCursor(any,IDBCursorDirection) 
+PASS IDBKeyRange interface: existence and properties of interface object 
+PASS IDBKeyRange interface object length 
+PASS IDBKeyRange interface object name 
+PASS IDBKeyRange interface: existence and properties of interface prototype object 
+PASS IDBKeyRange interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBKeyRange interface: attribute lower 
+PASS IDBKeyRange interface: attribute upper 
+PASS IDBKeyRange interface: attribute lowerOpen 
+PASS IDBKeyRange interface: attribute upperOpen 
+PASS IDBKeyRange interface: operation only(any) 
+PASS IDBKeyRange interface: operation lowerBound(any,boolean) 
+PASS IDBKeyRange interface: operation upperBound(any,boolean) 
+PASS IDBKeyRange interface: operation bound(any,any,boolean,boolean) 
+PASS IDBKeyRange interface: operation includes(any) 
+PASS IDBKeyRange must be primary interface of IDBKeyRange.only(0) 
+PASS Stringification of IDBKeyRange.only(0) 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lower" with the proper type (0) 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upper" with the proper type (1) 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lowerOpen" with the proper type (2) 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upperOpen" with the proper type (3) 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "only" with the proper type (4) 
+PASS IDBKeyRange interface: calling only(any) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "lowerBound" with the proper type (5) 
+PASS IDBKeyRange interface: calling lowerBound(any,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "upperBound" with the proper type (6) 
+PASS IDBKeyRange interface: calling upperBound(any,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "bound" with the proper type (7) 
+PASS IDBKeyRange interface: calling bound(any,any,boolean,boolean) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
+PASS IDBKeyRange interface: IDBKeyRange.only(0) must inherit property "includes" with the proper type (8) 
+PASS IDBKeyRange interface: calling includes(any) on IDBKeyRange.only(0) with too few arguments must throw TypeError 
 PASS IDBCursor interface: existence and properties of interface object 
 PASS IDBCursor interface object length 
 PASS IDBCursor interface object name 
@@ -135,9 +145,10 @@ PASS IDBCursor interface: attribute source
 PASS IDBCursor interface: attribute direction 
 PASS IDBCursor interface: attribute key 
 PASS IDBCursor interface: attribute primaryKey 
-PASS IDBCursor interface: operation update(any) 
 PASS IDBCursor interface: operation advance(unsigned long) 
 PASS IDBCursor interface: operation continue(any) 
+PASS IDBCursor interface: operation continuePrimaryKey(any,any) 
+PASS IDBCursor interface: operation update(any) 
 PASS IDBCursor interface: operation delete() 
 PASS IDBCursorWithValue interface: existence and properties of interface object 
 PASS IDBCursorWithValue interface object length 
@@ -150,6 +161,7 @@ PASS IDBTransaction interface object length
 PASS IDBTransaction interface object name 
 PASS IDBTransaction interface: existence and properties of interface prototype object 
 PASS IDBTransaction interface: existence and properties of interface prototype object's "constructor" property 
+PASS IDBTransaction interface: attribute objectStoreNames 
 PASS IDBTransaction interface: attribute mode 
 PASS IDBTransaction interface: attribute db 
 PASS IDBTransaction interface: attribute error 
@@ -158,4 +170,12 @@ PASS IDBTransaction interface: operation abort()
 PASS IDBTransaction interface: attribute onabort 
 PASS IDBTransaction interface: attribute oncomplete 
 PASS IDBTransaction interface: attribute onerror 
+PASS DOMStringList interface: existence and properties of interface object 
+PASS DOMStringList interface object length 
+PASS DOMStringList interface object name 
+PASS DOMStringList interface: existence and properties of interface prototype object 
+PASS DOMStringList interface: existence and properties of interface prototype object's "constructor" property 
+PASS DOMStringList interface: attribute length 
+PASS DOMStringList interface: operation item(unsigned long) 
+PASS DOMStringList interface: operation contains(DOMString) 
 
