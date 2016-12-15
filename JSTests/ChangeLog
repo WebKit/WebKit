@@ -1,3 +1,20 @@
+2016-12-15  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly API: improve data section errors
+        https://bugs.webkit.org/show_bug.cgi?id=165733
+
+        Reviewed by Keith Miller.
+
+        * wasm/js-api/element-data.js: Added.
+        (ElementBeforeData.set const):
+        (ElementBeforeData): check the order of initialization, which is observable on failure
+        * wasm/js-api/test_Data.js:
+        (DataSectionWithoutMemory):
+        (DataSectionOffTheEnd): Deleted.
+        (DataSectionPartlyOffTheEnd): Deleted.
+        (DataSectionEmptyOffTheEnd): Deleted.
+        (DataSectionSeenByStart): Deleted.
+
 2016-12-15  Keith Miller  <keith_miller@apple.com>
 
         Fix 64-bit shift family Wasm opcodes

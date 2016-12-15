@@ -194,27 +194,16 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     m_moduleEnvironment.set(vm, this, moduleEnvironment);
 }
 
+template <typename Scope, typename N, typename ...Args>
+NEVER_INLINE static JSValue dataSegmentFail(ExecState* state, Scope& scope, N memorySize, N segmentSize, N offset, Args... args)
+{
+    return throwException(state, scope, createRangeError(state, makeString(ASCIILiteral("Invalid data segment initialization: segment of "), String::number(segmentSize), ASCIILiteral(" bytes memory of "), String::number(memorySize), ASCIILiteral(" bytes, at offset "), String::number(offset), args...)));
+}
+
 JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (JSWebAssemblyMemory* jsMemory = m_instance->memory()) {
-        uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory()->memory());
-        auto sizeInBytes = jsMemory->memory()->size();
-        if (memory) {
-            const Vector<Wasm::Segment::Ptr>& data = m_instance->module()->moduleInformation().data;
-            for (auto& segment : data) {
-                if (segment->sizeInBytes) {
-                    if (sizeInBytes < segment->sizeInBytes
-                        || segment->offset > sizeInBytes
-                        || segment->offset > sizeInBytes - segment->sizeInBytes)
-                        return throwException(state, scope, createRangeError(state, ASCIILiteral("Data segment initializes memory out of range")));
-                    memcpy(memory + segment->offset, &segment->byte(0), segment->sizeInBytes);
-                }
-            }
-        }
-    }
 
     {
         JSWebAssemblyModule* module = m_instance->module();
@@ -261,12 +250,33 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
         }
     }
 
+    {
+        const Vector<Wasm::Segment::Ptr>& data = m_instance->module()->moduleInformation().data;
+        JSWebAssemblyMemory* jsMemory = m_instance->memory();
+        if (!data.isEmpty()) {
+            RELEASE_ASSERT(jsMemory); // It is a validation error for a Data section to exist without a Memory section or import.
+            uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory()->memory());
+            RELEASE_ASSERT(memory);
+            auto sizeInBytes = jsMemory->memory()->size();
+            for (auto& segment : data) {
+                if (segment->sizeInBytes) {
+                    if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
+                        return dataSegmentFail(state, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment is too big"));
+                    if (UNLIKELY(segment->offset > sizeInBytes - segment->sizeInBytes))
+                        return dataSegmentFail(state, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment writes outside of memory"));
+                    memcpy(memory + segment->offset, &segment->byte(0), segment->sizeInBytes);
+                }
+            }
+        }
+    }
+
     if (WebAssemblyFunction* startFunction = m_startFunction.get()) {
         ProtoCallFrame protoCallFrame;
         protoCallFrame.init(nullptr, startFunction, JSValue(), 1, nullptr);
         startFunction->call(vm, &protoCallFrame);
         RETURN_IF_EXCEPTION(scope, { });
     }
+
     return jsUndefined();
 }
 

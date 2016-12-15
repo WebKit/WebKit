@@ -4,8 +4,17 @@ import Builder from '../Builder.js';
 const memSizeInPages = 1;
 const pageSizeInBytes = 64 * 1024;
 const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
+const emptyMemory = { initial: 0, maximum: 2 };
 
 // FIXME Some corner cases are ill-specified: https://github.com/WebAssembly/design/issues/897
+
+const assertMemoryAllZero = memory => {
+    const buffer = new Uint8Array(memory.buffer);
+    for (let idx = 0; idx < buffer.length; ++idx) {
+        const value = buffer[idx];
+        assert.eq(value, 0x00);
+    }
+};
 
 (function DataSection() {
     const builder = (new Builder())
@@ -36,6 +45,40 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
     }
 })();
 
+(function DataSectionWithoutMemory() {
+    const builder = (new Builder())
+        .Type().End()
+        .Data()
+          .Segment([0xff]).Offset(0).End()
+        .End();
+    const bin = builder.WebAssembly().get();
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `couldn't parse section Data: Data segments (evaluating 'new WebAssembly.Module(bin)')`);
+})();
+
+(function EmptyDataSectionWithoutMemory() {
+    const builder = (new Builder())
+        .Type().End()
+        .Data()
+          .Segment([]).Offset(0).End()
+        .End();
+    const bin = builder.WebAssembly().get();
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `couldn't parse section Data: Data segments (evaluating 'new WebAssembly.Module(bin)')`);
+})();
+
+(function DataSectionBiggerThanMemory() {
+    const builder = (new Builder())
+        .Type().End()
+        .Import().Memory("imp", "memory", memoryDescription).End()
+        .Data()
+          .Segment(Array(memSizeInPages * pageSizeInBytes + 1).fill(0xff)).Offset(0).End()
+        .End();
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    const memory = new WebAssembly.Memory(memoryDescription);
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), RangeError, `Invalid data segment initialization: segment of 65537 bytes memory of 65536 bytes, at offset 0, segment is too big`);
+    assertMemoryAllZero(memory);
+})();
+
 (function DataSectionOffTheEnd() {
     const builder = (new Builder())
         .Type().End()
@@ -46,12 +89,8 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), RangeError, `Data segment initializes memory out of range`);
-    const buffer = new Uint8Array(memory.buffer);
-    for (let idx = 0; idx < memSizeInPages * pageSizeInBytes; ++idx) {
-        const value = buffer[idx];
-        assert.eq(value, 0x00);
-    }
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), RangeError, `Invalid data segment initialization: segment of 1 bytes memory of 65536 bytes, at offset 65536, segment writes outside of memory`);
+    assertMemoryAllZero(memory);
 })();
 
 (function DataSectionPartlyOffTheEnd() {
@@ -64,12 +103,8 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
     const bin = builder.WebAssembly().get();
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), RangeError, `Data segment initializes memory out of range`);
-    const buffer = new Uint8Array(memory.buffer);
-    for (let idx = 0; idx < memSizeInPages * pageSizeInBytes; ++idx) {
-        const value = buffer[idx];
-        assert.eq(value, 0x00);
-    }
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { memory: memory } }), RangeError, `Invalid data segment initialization: segment of 2 bytes memory of 65536 bytes, at offset 65535, segment writes outside of memory`);
+    assertMemoryAllZero(memory);
 })();
 
 (function DataSectionEmptyOffTheEnd() {
@@ -83,11 +118,21 @@ const memoryDescription = { initial: memSizeInPages, maximum: memSizeInPages };
     const module = new WebAssembly.Module(bin);
     const memory = new WebAssembly.Memory(memoryDescription);
     const instance = new WebAssembly.Instance(module, { imp: { memory: memory } });
-    const buffer = new Uint8Array(memory.buffer);
-    for (let idx = 0; idx < memSizeInPages * pageSizeInBytes; ++idx) {
-        const value = buffer[idx];
-        assert.eq(value, 0x00);
-    }
+    assertMemoryAllZero(memory);
+})();
+
+(function DataSectionEmptyOffTheEndWithEmptyMemory() {
+    const builder = (new Builder())
+        .Type().End()
+        .Import().Memory("imp", "memory", emptyMemory).End()
+        .Data()
+          .Segment([]).Offset(memSizeInPages * pageSizeInBytes).End()
+        .End();
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    const memory = new WebAssembly.Memory(emptyMemory);
+    const instance = new WebAssembly.Instance(module, { imp: { memory: memory } });
+    assertMemoryAllZero(memory);
 })();
 
 (function DataSectionSeenByStart() {

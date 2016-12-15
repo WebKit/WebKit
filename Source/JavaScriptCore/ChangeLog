@@ -1,3 +1,16 @@
+2016-12-15  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly API: improve data section errors, initialize after Element
+        https://bugs.webkit.org/show_bug.cgi?id=165733
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseData): Data section without Memory section or import is a validation error
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::dataSegmentFail):
+        (JSC::WebAssemblyModuleRecord::evaluate): tighten checks (though the spec isn't fully baked), and move after Element initialization
+
 2016-12-15  Keith Miller  <keith_miller@apple.com>
 
         Turn on WebAssembly by default

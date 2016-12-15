@@ -724,6 +724,8 @@ bool ModuleParser::parseGlobalType(Global& global)
 bool ModuleParser::parseData()
 {
     uint32_t segmentCount;
+    if (!m_module->memory)
+        return false;
     if (!parseVarUInt32(segmentCount)
         || segmentCount == std::numeric_limits<uint32_t>::max()
         || !m_module->data.tryReserveCapacity(segmentCount))
