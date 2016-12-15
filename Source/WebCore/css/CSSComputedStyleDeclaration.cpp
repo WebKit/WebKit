@@ -2144,6 +2144,8 @@ static Ref<CSSValue> fontSynthesisFromStyle(const RenderStyle& style)
         list.get().append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
     if (style.fontDescription().fontSynthesis() & FontSynthesisWeight)
         list.get().append(CSSValuePool::singleton().createIdentifierValue(CSSValueWeight));
+    if (style.fontDescription().fontSynthesis() & FontSynthesisSmallCaps)
+        list.get().append(CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps));
     return Ref<CSSValue>(list.get());
 }
 

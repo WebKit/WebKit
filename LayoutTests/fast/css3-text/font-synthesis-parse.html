@@ -14,7 +14,7 @@
       shouldBe("declaration.length", "0");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight small-caps");
       stylesheet.deleteRule(0);
     }
 
@@ -25,7 +25,7 @@
       shouldBe("declaration.length", "1");
       shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "initial");
       computedStyle = window.getComputedStyle(target, null);
-      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight small-caps");
       stylesheet.deleteRule(0);
     }
 

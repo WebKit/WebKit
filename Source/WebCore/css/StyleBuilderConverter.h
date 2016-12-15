@@ -1441,6 +1441,9 @@ inline FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&,
         case CSSValueStyle:
             result |= FontSynthesisStyle;
             break;
+        case CSSValueSmallCaps:
+            result |= FontSynthesisSmallCaps;
+            break;
         default:
             ASSERT_NOT_REACHED();
             break;

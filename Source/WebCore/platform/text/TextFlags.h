@@ -60,10 +60,11 @@ typedef unsigned ExpansionBehavior;
 enum FontSynthesisValues {
     FontSynthesisNone = 0x0,
     FontSynthesisWeight = 0x1,
-    FontSynthesisStyle = 0x2
+    FontSynthesisStyle = 0x2,
+    FontSynthesisSmallCaps = 0x4
 };
 typedef unsigned FontSynthesis;
-const unsigned FontSynthesisWidth = 2;
+const unsigned FontSynthesisWidth = 3;
 
 enum class FontVariantLigatures {
     Normal,

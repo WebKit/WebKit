@@ -143,7 +143,7 @@ private:
     unsigned m_renderingMode : 1; // Used to switch between CG and GDI text on Windows.
     unsigned m_textRendering : 2; // TextRenderingMode
     unsigned m_script : 7; // Used to help choose an appropriate font for generic font families.
-    unsigned m_fontSynthesis : 2; // FontSynthesis type
+    unsigned m_fontSynthesis : 3; // FontSynthesis type
     unsigned m_variantCommonLigatures : 2; // FontVariantLigatures
     unsigned m_variantDiscretionaryLigatures : 2; // FontVariantLigatures
     unsigned m_variantHistoricalLigatures : 2; // FontVariantLigatures
@@ -265,7 +265,7 @@ public:
     static Kerning initialKerning() { return Kerning::Auto; }
     static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
     static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
-    static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle; }
+    static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle | FontSynthesisSmallCaps; }
     static FontVariantPosition initialVariantPosition() { return FontVariantPosition::Normal; }
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }

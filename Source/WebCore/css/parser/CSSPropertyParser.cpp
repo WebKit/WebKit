@@ -948,14 +948,14 @@ static RefPtr<CSSValueList> consumeFontFamilyDescriptor(CSSParserTokenRange& ran
 
 static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
 {
-    // none | [ weight || style ]
+    // none | [ weight || style || small-caps ]
     CSSValueID id = range.peek().id();
     if (id == CSSValueNone)
         return consumeIdent(range);
     
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     while (true) {
-        auto ident = consumeIdent<CSSValueWeight, CSSValueStyle>(range);
+        auto ident = consumeIdent<CSSValueWeight, CSSValueStyle, CSSValueSmallCaps>(range);
         if (!ident)
             break;
         if (list->hasValue(ident.get()))
