@@ -3217,8 +3217,12 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
             }
 
             ASSERT(maybeGetterSetter);
-            getterSetter = jsCast<CustomGetterSetter*>(maybeGetterSetter);
+            getterSetter = jsDynamicCast<CustomGetterSetter*>(maybeGetterSetter);
         }
+        ASSERT(getterSetter);
+        if (!getterSetter)
+            return false;
+
         if (getterSetter->getter())
             descriptor.setGetter(getCustomGetterSetterFunctionForGetterSetter(exec, propertyName, getterSetter, JSCustomGetterSetterFunction::Type::Getter));
         if (getterSetter->setter())
