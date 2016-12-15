@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,10 @@ namespace JSC {
 struct CallFrameShuffleData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    unsigned numLocals;
+    unsigned numLocals { UINT_MAX };
     ValueRecovery callee;
     Vector<ValueRecovery> args;
+    unsigned numPassedArgs { UINT_MAX };
 #if USE(JSVALUE64)
     RegisterMap<ValueRecovery> registers;
     GPRReg tagTypeNumber { InvalidGPRReg };

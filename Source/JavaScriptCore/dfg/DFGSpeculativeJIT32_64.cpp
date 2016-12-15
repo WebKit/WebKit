@@ -879,6 +879,7 @@ void SpeculativeJIT::emitCall(Node* node)
             shuffleData.numLocals = m_jit.graph().frameRegisterCount();
             shuffleData.callee = ValueRecovery::inPair(calleeTagGPR, calleePayloadGPR);
             shuffleData.args.resize(numAllocatedArgs);
+            shuffleData.numPassedArgs = numPassedArgs;
 
             for (unsigned i = 0; i < numPassedArgs; ++i) {
                 Edge argEdge = m_jit.graph().varArgChild(node, i + 1);

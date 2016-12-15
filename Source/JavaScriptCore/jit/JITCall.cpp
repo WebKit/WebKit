@@ -198,6 +198,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
 
     if (opcodeID == op_tail_call) {
         CallFrameShuffleData shuffleData;
+        shuffleData.numPassedArgs = instruction[3].u.operand;
         shuffleData.tagTypeNumber = GPRInfo::tagTypeNumberRegister;
         shuffleData.numLocals =
             instruction[4].u.operand - sizeof(CallerFrameAndPC) / sizeof(Register);

@@ -5992,6 +5992,7 @@ private:
                     }
                     for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                         shuffleData.args.append(ValueRecovery::constant(jsUndefined()));
+                    shuffleData.numPassedArgs = numPassedArgs;
                     shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
                     
                     CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();
@@ -6158,6 +6159,8 @@ private:
                 for (unsigned i = 0; i < numArgs; ++i)
                     shuffleData.args.append(params[1 + i].recoveryForJSValue());
 
+                shuffleData.numPassedArgs = numArgs;
+                
                 shuffleData.setupCalleeSaveRegisters(jit.codeBlock());
 
                 CallLinkInfo* callLinkInfo = jit.codeBlock()->addCallLinkInfo();

@@ -102,6 +102,7 @@ public:
 
         CallFrameShuffleData data;
         data.numLocals = numLocals();
+        data.numPassedArgs = m_numPassedArgs;
         data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
         data.args.resize(argCount());
         for (size_t i = 0; i < argCount(); ++i)
@@ -794,6 +795,8 @@ private:
     // It returns false if it was unable to perform some safe writes
     // due to high register pressure.
     bool performSafeWrites();
+    
+    unsigned m_numPassedArgs { UINT_MAX };
 };
 
 } // namespace JSC

@@ -1,3 +1,33 @@
+2016-12-14  Filip Pizlo  <fpizlo@apple.com>
+
+        DirectTailCall implementation needs to tell the shuffler what to put into the ArgumentCount explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=165882
+
+        Reviewed by Mark Lam.
+        
+        The CallFrameShuffler was assuming that the ArgumentCount that it should store into the
+        callee frame is simply the size of the args vector.
+        
+        That's not true for DirectTailCall, which will pad the args vector with undefined if we
+        are optimizing an arity mismatch. We need to pass the ArgumentCount explicitly in this
+        case.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        * jit/CallFrameShuffleData.h:
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::CallFrameShuffler):
+        (JSC::CallFrameShuffler::prepareAny):
+        * jit/CallFrameShuffler.h:
+        (JSC::CallFrameShuffler::snapshot):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+
 2016-12-14  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly JS API: implement Global
