@@ -1,3 +1,73 @@
+2016-12-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: console search bar jumps, behaves poorly at narrow widths
+        https://bugs.webkit.org/show_bug.cgi?id=164047
+        <rdar://problem/29055582>
+
+        Reviewed by Timothy Hatcher.
+
+        At narrow widths the find banner behaves poorly in the split console
+        toolbar. It should work like the main content browser, appearing below
+        the toolbar when Command-F is pressed and either the split console or
+        quick console prompt has the focus.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Enable split content browser find banner.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype.showFindBanner):
+        Check for custom find banner support at runtime.
+        (WebInspector.ContentBrowser.prototype._findBannerDidShow):
+        (WebInspector.ContentBrowser.prototype._findBannerDidHide):
+        Refresh search results when banner is shown/hidden, instead of relying
+        on toggling the "showing-find-banner" class name for everything.
+
+        (WebInspector.ContentBrowser.prototype.handleFindEvent): Deleted.
+        Renamed `showFindBanner`.
+
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.prototype.get supportsCustomFindBanner):
+        (WebInspector.ContentView.prototype.showCustomFindBanner):
+        Custom find banner support (used by LogContentView).
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype.get supportsSearch):
+        (WebInspector.LogContentView.prototype.get numberOfSearchResults):
+        (WebInspector.LogContentView.prototype.get hasPerformedSearch):
+        Cleanup.
+        (WebInspector.LogContentView.prototype.get supportsCustomFindBanner):
+        Use toolbar item find banner when showing Console tab.
+        (WebInspector.LogContentView.prototype.findBannerRevealPreviousResult):
+        (WebInspector.LogContentView.prototype.findBannerRevealNextResult):
+        (WebInspector.LogContentView.prototype._isMessageVisible):
+        (WebInspector.LogContentView.prototype._visibleMessageElements):
+        (WebInspector.LogContentView.prototype._logCleared):
+        (WebInspector.LogContentView.prototype._filterMessageElements):
+        (WebInspector.LogContentView.prototype.findBannerPerformSearch):
+        (WebInspector.LogContentView.prototype.findBannerSearchCleared):
+        (WebInspector.LogContentView.prototype.performSearch):
+        Support both the standard and custom (toolbar item) find banners.
+        (WebInspector.LogContentView.prototype.searchCleared):
+        Refresh search results.
+        (WebInspector.LogContentView.prototype._highlightRanges):
+        Correct spelling: _selectedSearchMathIsValid -> _selectedSearchMatchIsValid.
+        (WebInspector.LogContentView.prototype.get searchInProgress): Deleted.
+        Override ContentView.prototype.hasPerformedSearch instead.
+        (WebInspector.LogContentView.prototype.handleFindEvent): Deleted.
+        Replaced by `showCustomFindBanner`.
+        (WebInspector.LogContentView.prototype.highlightPreviousSearchMatch): Deleted.
+        Absorbed by findBannerRevealPreviousResult.
+        (WebInspector.LogContentView.prototype.highlightNextSearchMatch): Deleted.
+        Absorbed by findBannerRevealNextResult.
+        (WebInspector.LogContentView.prototype._performSearch): Deleted.
+        Override ContentView.prototype.performSearch instead.
+
+        * UserInterface/Views/Main.css:
+        (#split-content-browser > .navigation-bar :matches(.find-banner, .find-banner + .divider)):
+        Hide the toolbar banner and divider.
+
 2016-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Web Inspector: Jumping to the definition of a custom elements is broken

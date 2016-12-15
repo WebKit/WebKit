@@ -197,7 +197,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         // so it does not need to be called here.
     }
 
-    handleFindEvent(event)
+    showFindBanner()
     {
         if (!this._findBanner)
             return;
@@ -206,9 +206,8 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         if (!currentContentView || !currentContentView.supportsSearch)
             return;
 
-        // LogContentView has custom search handling.
-        if (typeof currentContentView.handleFindEvent === "function") {
-            currentContentView.handleFindEvent(event);
+        if (currentContentView.supportsCustomFindBanner) {
+            currentContentView.showCustomFindBanner();
             return;
         }
 
@@ -295,6 +294,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             return;
 
         currentContentView.automaticallyRevealFirstSearchResult = true;
+        currentContentView.performSearch(this._findBanner.searchQuery);
     }
 
     _findBannerDidHide(event)
@@ -304,6 +304,7 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             return;
 
         currentContentView.automaticallyRevealFirstSearchResult = false;
+        currentContentView.searchCleared();
     }
 
     _contentViewNumberOfSearchResultsDidChange(event)

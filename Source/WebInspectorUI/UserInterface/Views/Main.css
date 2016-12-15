@@ -156,6 +156,10 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
     background-color: var(--panel-background-color);
 }
 
+#split-content-browser > .navigation-bar :matches(.find-banner, .find-banner + .divider) {
+    display: none;
+}
+
 #split-content-browser > .navigation-bar .item {
     height: 100%;
 }

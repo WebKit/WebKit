@@ -366,6 +366,17 @@ WebInspector.ContentView = class ContentView extends WebInspector.View
         return false;
     }
 
+    get supportsCustomFindBanner()
+    {
+        // Implemented by subclasses.
+        return false;
+    }
+
+    showCustomFindBanner()
+    {
+        // Implemented by subclasses.
+    }
+
     get numberOfSearchResults()
     {
         // Implemented by subclasses.
