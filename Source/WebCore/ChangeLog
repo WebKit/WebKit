@@ -1,3 +1,23 @@
+2016-12-14  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (204679): Google notifications never load (expecting DOMStringList rather than JS array for Location.ancestorOrigins)
+        <rdar://problem/29573563>
+        https://bugs.webkit.org/show_bug.cgi?id=165872
+
+        Reviewed by Chris Dumez.
+
+        Revert the Location.ancestorOrigins part of r204679 because google.com is relying on
+        it returning a DOMStringList (or at least something with a .item() function), rather
+        than a frozen javascript array.
+        
+        Spec changes are tracked with https://github.com/whatwg/html/issues/2179.
+
+        * page/Location.cpp:
+        (WebCore::Location::ancestorOrigins):
+        * page/Location.h:
+        * page/Location.idl:
+        Change Location.ancestorOrigins back to returning a DOMStringList.
+
 2016-12-14  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Rename StyleKeyframe to StyleRuleKeyframe

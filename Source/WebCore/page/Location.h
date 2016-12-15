@@ -68,7 +68,7 @@ public:
 
     String toString() const { return href(); }
 
-    Vector<String> ancestorOrigins() const;
+    Ref<DOMStringList> ancestorOrigins() const;
 
 private:
     explicit Location(Frame*);

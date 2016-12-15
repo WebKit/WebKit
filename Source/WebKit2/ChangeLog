@@ -1,3 +1,13 @@
+2016-12-04  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for converting dictionaries to JS
+        https://bugs.webkit.org/show_bug.cgi?id=165367
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        Add missing directories to look in for headers.
+
 2016-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add WKContextRefreshPlugIns

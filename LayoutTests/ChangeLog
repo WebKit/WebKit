@@ -1,3 +1,15 @@
+2016-12-14  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (204679): Google notifications never load (expecting DOMStringList rather than JS array for Location.ancestorOrigins)
+        <rdar://problem/29573563>
+        https://bugs.webkit.org/show_bug.cgi?id=165872
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/Window/Location/ancestor-origins-expected.txt:
+        * fast/dom/Window/Location/ancestor-origins.html:
+        Change back to test that Location.ancestorOrigins returns a DOMStringList.
+
 2016-12-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking streams/pipe-to.html as flaky on macOS debug.

@@ -3,11 +3,9 @@ Test the Location object's ancestorOrigins property.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.location.ancestorOrigins is an instance of Array
+PASS window.location.ancestorOrigins is an instance of DOMStringList
 PASS window.location.ancestorOrigins.length is 0
-PASS Object.isFrozen(window.location.ancestorOrigins) is true
 PASS window.location.ancestorOrigins === window.location.ancestorOrigins is true
-PASS subframeOrigins is an instance of Array
 PASS subframeOrigins.length is 1
 PASS subframeOrigins[0] is 'file://'
 PASS successfullyParsed is true
