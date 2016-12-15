@@ -31,6 +31,39 @@ using namespace JSC;
 
 namespace WebCore {
 
+template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    bool isNullOrUndefined = value.isUndefinedOrNull();
+    auto* object = isNullOrUndefined ? nullptr : value.getObject();
+    if (UNLIKELY(!isNullOrUndefined && !object)) {
+        throwTypeError(&state, throwScope);
+        return { };
+    }
+    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
+        throwTypeError(&state, throwScope);
+        return { };
+    }
+    DictionaryImplName result;
+    JSValue boolMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "boolMember"));
+    if (!boolMemberValue.isUndefined()) {
+        result.boolMember = convert<IDLBoolean>(state, boolMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    JSValue enumMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumMember"));
+    if (!enumMemberValue.isUndefined()) {
+        result.enumMember = convert<IDLEnumeration<TestEnumInStandaloneDictionaryFile>>(state, enumMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    JSValue stringMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringMember"));
+    if (!stringMemberValue.isUndefined()) {
+        result.stringMember = convert<IDLDOMString>(state, stringMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    return result;
+}
+
 template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -68,39 +101,6 @@ template<> TestStandaloneDictionary::EnumInStandaloneDictionaryFile convertEnume
 template<> const char* expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>()
 {
     return "\"enumValue1\", \"enumValue2\"";
-}
-
-template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& state, JSValue value)
-{
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    bool isNullOrUndefined = value.isUndefinedOrNull();
-    auto* object = isNullOrUndefined ? nullptr : value.getObject();
-    if (UNLIKELY(!isNullOrUndefined && !object)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    DictionaryImplName result;
-    JSValue boolMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "boolMember"));
-    if (!boolMemberValue.isUndefined()) {
-        result.boolMember = convert<IDLBoolean>(state, boolMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
-    JSValue enumMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumMember"));
-    if (!enumMemberValue.isUndefined()) {
-        result.enumMember = convert<IDLEnumeration<TestEnumInStandaloneDictionaryFile>>(state, enumMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
-    JSValue stringMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringMember"));
-    if (!stringMemberValue.isUndefined()) {
-        result.stringMember = convert<IDLDOMString>(state, stringMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
-    return result;
 }
 
 } // namespace WebCore

@@ -1,3 +1,12 @@
+2016-12-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r209864.
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+
 2016-12-15  Andreas Kling  <akling@apple.com>
 
         Always clear RenderLayer backing stores when going into page cache.
