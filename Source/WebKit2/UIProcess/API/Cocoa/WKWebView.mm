@@ -2025,8 +2025,13 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             _page->setViewportConfigurationMinimumLayoutSize(WebCore::FloatSize(bounds.size));
         if (!_overridesMaximumUnobscuredSize)
             _page->setMaximumUnobscuredSize(WebCore::FloatSize(bounds.size));
+        
+        BOOL sizeChanged = NO;
         if (auto drawingArea = _page->drawingArea())
-            drawingArea->setSize(WebCore::IntSize(bounds.size), WebCore::IntSize(), WebCore::IntSize());
+            sizeChanged = drawingArea->setSize(WebCore::IntSize(bounds.size), WebCore::IntSize(), WebCore::IntSize());
+        
+        if (sizeChanged & [self usesStandardContentView])
+            [_contentView setSizeChangedSinceLastVisibleContentRectUpdate:YES];
     }
 
     [_customContentView web_setMinimumSize:bounds.size];
@@ -2105,7 +2110,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
     }
 
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing
-        || _needsResetViewStateAfterCommitLoadForMainFrame
+        || (_needsResetViewStateAfterCommitLoadForMainFrame && ![_contentView sizeChangedSinceLastVisibleContentRectUpdate])
         || [_scrollView isZoomBouncing]
         || _currentlyAdjustingScrollViewInsetsForKeyboard)
         return;

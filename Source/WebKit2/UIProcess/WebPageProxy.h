@@ -1655,15 +1655,15 @@ private:
 #endif
 #if PLATFORM(IOS)
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
-    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad;
-    uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad;
-    int32_t m_deviceOrientation;
-    bool m_dynamicViewportSizeUpdateWaitingForTarget;
-    bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit;
-    uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID;
-    uint64_t m_layerTreeTransactionIdAtLastTouchStart;
+    bool m_hasReceivedLayerTreeTransactionAfterDidCommitLoad { true };
+    uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad { 0 };
+    int32_t m_deviceOrientation { 0 };
+    bool m_dynamicViewportSizeUpdateWaitingForTarget { false };
+    bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit { false };
+    uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID { 0 };
+    uint64_t m_layerTreeTransactionIdAtLastTouchStart { 0 };
     uint64_t m_currentDynamicViewportSizeUpdateID { 0 };
-    bool m_hasNetworkRequestsOnSuspended;
+    bool m_hasNetworkRequestsOnSuspended { false };
     bool m_isKeyboardAnimatingIn { false };
     bool m_isScrollingOrZooming { false };
 #endif
