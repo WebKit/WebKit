@@ -130,7 +130,6 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     auto clonedMediaStreamTrackPrivate = create(m_source.copyRef());
     clonedMediaStreamTrackPrivate->m_isEnabled = this->m_isEnabled;
     clonedMediaStreamTrackPrivate->m_isEnded = this->m_isEnded;
-    clonedMediaStreamTrackPrivate->m_constraints = this->m_constraints;
 
     return clonedMediaStreamTrackPrivate;
 }
@@ -138,11 +137,6 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
 RealtimeMediaSource::Type MediaStreamTrackPrivate::type() const
 {
     return m_source->type();
-}
-
-RefPtr<MediaConstraints> MediaStreamTrackPrivate::constraints() const
-{
-    return m_constraints;
 }
 
 const RealtimeMediaSourceSettings& MediaStreamTrackPrivate::settings() const

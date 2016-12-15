@@ -28,6 +28,7 @@ package CodeGenerator;
 
 use strict;
 
+use File::Basename;
 use File::Find;
 use Carp qw<longmess>;
 use Data::Dumper;
@@ -203,11 +204,24 @@ sub ProcessDocument
 
     my $dictionaries = $useDocument->dictionaries;
     if (@$dictionaries) {
-        die "Multiple standalone dictionaries per document are not supported" if @$dictionaries > 1;
+        my $dictionary;
+        my $otherDictionaries;
+        if (@$dictionaries == 1) {
+            $dictionary = @$dictionaries[0];
+        } else {
+            my $primaryDictionaryName = fileparse($targetIdlFilePath, ".idl");
+            for my $candidate (@$dictionaries) {
+                if ($candidate->type->name eq $primaryDictionaryName) {
+                    $dictionary = $candidate;
+                } else {
+                    push @$otherDictionaries, $candidate;
+                }
+            }
+            die "Multiple dictionaries per document are only supported if one matches the filename" unless $dictionary;
+        }
 
-        my $dictionary = @$dictionaries[0];
         print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->type->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations);
+        $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations, $otherDictionaries);
         $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
         return;
     }

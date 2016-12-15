@@ -34,6 +34,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "Document.h"
+#include "MediaConstraintsImpl.h"
 #include "MediaDevicesRequest.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "RealtimeMediaSourceCenter.h"
@@ -56,12 +57,24 @@ Document* MediaDevices::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-ExceptionOr<void> MediaDevices::getUserMedia(Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, Promise&& promise) const
+static Ref<MediaConstraintsImpl> createMediaConstraintsImpl(const Variant<bool, MediaTrackConstraints>& constraints)
+{
+    return WTF::switchOn(constraints,
+        [&] (bool constraints) {
+            return MediaConstraintsImpl::create({ }, { }, constraints);
+        },
+        [&] (const MediaTrackConstraints& constraints) {
+            return createMediaConstraintsImpl(constraints);
+        }
+    );
+}
+
+ExceptionOr<void> MediaDevices::getUserMedia(const StreamConstraints& constraints, Promise&& promise) const
 {
     auto* document = this->document();
     if (!document)
         return Exception { INVALID_STATE_ERR };
-    return UserMediaRequest::start(*document, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise));
+    return UserMediaRequest::start(*document, createMediaConstraintsImpl(constraints.audio), createMediaConstraintsImpl(constraints.video), WTFMove(promise));
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const

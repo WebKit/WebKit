@@ -35,20 +35,18 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
-#include "Document.h"
-#include "MediaConstraintsImpl.h"
-#include "MediaDevices.h"
+#include "JSDOMPromise.h"
 
 namespace WebCore {
 
-class MediaConstraints;
-class MediaStreamPrivate;
-class UserMediaController;
+class MediaConstraintsImpl;
+class MediaStream;
 class SecurityOrigin;
+class UserMediaController;
 
 class UserMediaRequest : public RefCounted<UserMediaRequest>, private ContextDestructionObserver {
 public:
-    static ExceptionOr<void> start(Document&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&);
+    static ExceptionOr<void> start(Document&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromise<IDLInterface<MediaStream>>&&);
 
     virtual ~UserMediaRequest();
 
@@ -74,7 +72,7 @@ public:
     WEBCORE_EXPORT Document* document() const;
 
 private:
-    UserMediaRequest(Document&, UserMediaController&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&);
+    UserMediaRequest(Document&, UserMediaController&, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromise<IDLInterface<MediaStream>>&&);
 
     void contextDestroyed() final;
     
@@ -88,7 +86,7 @@ private:
     String m_allowedAudioDeviceUID;
 
     UserMediaController* m_controller;
-    MediaDevices::Promise m_promise;
+    DOMPromise<IDLInterface<MediaStream>> m_promise;
     RefPtr<UserMediaRequest> m_protector;
 };
 

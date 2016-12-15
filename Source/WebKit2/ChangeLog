@@ -1,3 +1,14 @@
+2016-12-15  Darin Adler  <darin@apple.com>
+
+        Remove custom binding for MediaDevices
+        https://bugs.webkit.org/show_bug.cgi?id=165894
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        Added include of MediaConstraintsImpl.h, now needed because we
+        removed some unneeded includes from the WebCore headers.
+
 2016-12-15  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Enable CSS Deferred Parsing

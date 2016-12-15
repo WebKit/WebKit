@@ -152,6 +152,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediastream/MediaStreamEvent.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrack.idl \
     $(WebCore)/Modules/mediastream/MediaStreamTrackEvent.idl \
+    $(WebCore)/Modules/mediastream/MediaTrackConstraints.idl \
     $(WebCore)/Modules/mediastream/MediaTrackSupportedConstraints.idl \
     $(WebCore)/Modules/mediastream/NavigatorMediaDevices.idl \
     $(WebCore)/Modules/mediastream/NavigatorUserMedia.idl \
@@ -254,6 +255,9 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/CryptoKeyPair.idl \
     $(WebCore)/crypto/CryptoKeyUsage.idl \
     $(WebCore)/crypto/JsonWebKey.idl \
+    $(WebCore)/crypto/RsaOtherPrimesInfo.idl \
+    $(WebCore)/crypto/SubtleCrypto.idl \
+    $(WebCore)/crypto/WebKitSubtleCrypto.idl \
     $(WebCore)/crypto/parameters/AesCbcParams.idl \
     $(WebCore)/crypto/parameters/AesKeyGenParams.idl \
     $(WebCore)/crypto/parameters/HmacKeyParams.idl \
@@ -261,16 +265,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/crypto/parameters/RsaHashedKeyGenParams.idl \
     $(WebCore)/crypto/parameters/RsaKeyGenParams.idl \
     $(WebCore)/crypto/parameters/RsaOaepParams.idl \
-    $(WebCore)/crypto/RsaOtherPrimesInfo.idl \
-    $(WebCore)/crypto/SubtleCrypto.idl \
-    $(WebCore)/crypto/WebKitSubtleCrypto.idl \
     $(WebCore)/css/CSSFontFaceLoadEvent.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
     $(WebCore)/css/CSSKeyframeRule.idl \
     $(WebCore)/css/CSSKeyframesRule.idl \
     $(WebCore)/css/CSSMediaRule.idl \
-	$(WebCore)/css/CSSNamespaceRule.idl \
+    $(WebCore)/css/CSSNamespaceRule.idl \
     $(WebCore)/css/CSSPageRule.idl \
     $(WebCore)/css/CSSPrimitiveValue.idl \
     $(WebCore)/css/CSSRule.idl \
@@ -307,8 +308,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/ChildNode.idl \
     $(WebCore)/dom/ClientRect.idl \
     $(WebCore)/dom/ClientRectList.idl \
-    $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/ClipboardEvent.idl \
+    $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \

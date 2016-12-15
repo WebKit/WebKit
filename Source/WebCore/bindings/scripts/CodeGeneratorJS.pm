@@ -50,7 +50,6 @@ my @implContent = ();
 my %implIncludes = ();
 my @depsContent = ();
 my $numCachedAttributes = 0;
-my $currentCachedAttribute = 0;
 
 my $beginAppleCopyrightForHeaderFiles = <<END;
 // ------- Begin Apple Copyright -------
@@ -143,11 +142,11 @@ sub GenerateEnumeration
 
 sub GenerateDictionary
 {
-    my ($object, $dictionary, $enumerations) = @_;
+    my ($object, $dictionary, $enumerations, $otherDictionaries) = @_;
 
     my $className = GetDictionaryClassName($dictionary->type);
-    $object->GenerateDictionaryHeader($dictionary, $className, $enumerations);
-    $object->GenerateDictionaryImplementation($dictionary, $className, $enumerations);
+    $object->GenerateDictionaryHeader($dictionary, $className, $enumerations, $otherDictionaries);
+    $object->GenerateDictionaryImplementation($dictionary, $className, $enumerations, $otherDictionaries);
 }
 
 sub GenerateCallbackFunction
@@ -1224,7 +1223,7 @@ sub GenerateDictionariesHeaderContent
 
     my $result = "";
     foreach my $dictionary (@$allDictionaries) {
-        $headerIncludes{$interface->type->name . ".h"} = 1;
+        $headerIncludes{$interface->type->name . ".h"} = 1 if $interface;
         my $className = GetDictionaryClassName($dictionary->type, $interface);
         my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
         $result .= GenerateDictionaryHeaderContent($dictionary, $className, $conditionalString);
@@ -3398,10 +3397,7 @@ sub GenerateImplementation
                     push(@implContent, "    return JS" . $constructorType . "::getConstructor(state.vm(), thisObject.globalObject());\n");
                 }
             } else {
-                my $cacheIndex = 0;
                 if ($attribute->extendedAttributes->{CachedAttribute}) {
-                    $cacheIndex = $currentCachedAttribute;
-                    $currentCachedAttribute++;
                     push(@implContent, "    if (JSValue cachedValue = thisObject.m_" . $attribute->name . ".get())\n");
                     push(@implContent, "        return cachedValue;\n");
                 }
@@ -4537,7 +4533,7 @@ sub GenerateParametersCheck
 
 sub GenerateDictionaryHeader
 {
-    my ($object, $dictionary, $className, $enumerations) = @_;
+    my ($object, $dictionary, $className, $enumerations, $otherDictionaries) = @_;
 
     # - Add default header template and header protection.
     push(@headerContentHeader, GenerateHeaderContentHeader($dictionary));
@@ -4548,6 +4544,7 @@ sub GenerateDictionaryHeader
     push(@headerContent, "\nnamespace WebCore {\n\n");
     push(@headerContent, GenerateDictionaryHeaderContent($dictionary, $className));
     push(@headerContent, GenerateEnumerationsHeaderContent($dictionary, $enumerations));
+    push(@headerContent, GenerateDictionariesHeaderContent(undef, $otherDictionaries)) if $otherDictionaries;
     push(@headerContent, "} // namespace WebCore\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
@@ -4570,15 +4567,16 @@ sub GenerateDictionaryHeader
 
 sub GenerateDictionaryImplementation
 {
-    my ($object, $dictionary, $className, $enumerations) = @_;
+    my ($object, $dictionary, $className, $enumerations, $otherDictionaries) = @_;
 
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($dictionary));
 
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
-    push(@implContent, GenerateEnumerationsImplementationContent($dictionary, $enumerations));
     push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
+    push(@implContent, GenerateEnumerationsImplementationContent($dictionary, $enumerations));
+    push(@implContent, GenerateDictionariesImplementationContent(undef, $otherDictionaries)) if $otherDictionaries;
     push(@implContent, "} // namespace WebCore\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
@@ -5603,10 +5601,9 @@ sub WriteData
     my $outputDir = shift;
 
     my $name = $interface->type->name;
-    my $prefix = FileNamePrefix;
-    my $headerFileName = "$outputDir/$prefix$name.h";
-    my $implFileName = "$outputDir/$prefix$name.cpp";
-    my $depsFileName = "$outputDir/$prefix$name.dep";
+    my $headerFileName = "$outputDir/JS$name.h";
+    my $implFileName = "$outputDir/JS$name.cpp";
+    my $depsFileName = "$outputDir/JS$name.dep";
 
     # Update a .cpp file if the contents are changed.
     my $contents = join "", @implContentHeader;
@@ -5659,7 +5656,7 @@ sub WriteData
     }
     foreach my $include (sort @includes) {
         # "JSClassName.h" is already included right after config.h.
-        next if $include eq "\"$prefix$name.h\"";
+        next if $include eq "\"JS$name.h\"";
         $contents .= "#include $include\n";
     }
 

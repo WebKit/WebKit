@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS typeof navigator.mediaDevices.webkitGetUserMedia is 'undefined'
 PASS navigator.mediaDevices.getUserMedia({audio:true}).then(gotStream1); did not throw exception.
-PASS navigator.mediaDevices.getUserMedia() rejected with error: TypeError: Not enough arguments
+PASS navigator.mediaDevices.getUserMedia() rejected with error: TypeError: Type error
 PASS navigator.mediaDevices.getUserMedia({}) rejected with error: TypeError: Type error
 PASS navigator.mediaDevices.getUserMedia.apply(undefined) rejected with error: TypeError: Can only call MediaDevices.getUserMedia on instances of MediaDevices
 PASS Stream generated.

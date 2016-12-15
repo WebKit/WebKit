@@ -158,49 +158,40 @@ RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrack::getCapabilities() cons
     return m_private->capabilities();
 }
 
-void MediaStreamTrack::applyConstraints(Ref<MediaConstraints>&& constraints, DOMPromise<void>&& promise)
+static Ref<MediaConstraintsImpl> createMediaConstraintsImpl(const std::optional<MediaTrackConstraints>& constraints)
 {
-    if (!constraints->isValid()) {
-        promise.reject(TypeError);
-        return;
-    }
+    if (!constraints)
+        return MediaConstraintsImpl::create({ }, { }, true);
+    return createMediaConstraintsImpl(constraints.value());
+}
 
-    m_constraints = WTFMove(constraints);
+void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromise<void>&& promise)
+{
     m_promise = WTFMove(promise);
 
-    applyConstraints(*m_constraints);
-}
-
-void MediaStreamTrack::applyConstraints(const MediaConstraints& constraints)
-{
     auto weakThis = createWeakPtr();
-    std::function<void(const String&, const String&)> failureHandler = [weakThis](const String& failedConstraint, const String& message) {
+    auto failureHandler = [weakThis] (const String& failedConstraint, const String& message) {
         if (!weakThis || !weakThis->m_promise)
             return;
-
         weakThis->m_promise->rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(failedConstraint, message).get());
     };
-
-    std::function<void()> successHandler = [weakThis]() {
+    auto successHandler = [weakThis, constraints] () {
         if (!weakThis || !weakThis->m_promise)
             return;
-
         weakThis->m_promise->resolve();
+        weakThis->m_constraints = constraints.value_or(MediaTrackConstraints { });
     };
-
-    m_private->applyConstraints(constraints, successHandler, failureHandler);
+    m_private->applyConstraints(createMediaConstraintsImpl(constraints), successHandler, failureHandler);
 }
 
-void MediaStreamTrack::addObserver(MediaStreamTrack::Observer* observer)
+void MediaStreamTrack::addObserver(Observer& observer)
 {
-    m_observers.append(observer);
+    m_observers.append(&observer);
 }
 
-void MediaStreamTrack::removeObserver(MediaStreamTrack::Observer* observer)
+void MediaStreamTrack::removeObserver(Observer& observer)
 {
-    size_t pos = m_observers.find(observer);
-    if (pos != notFound)
-        m_observers.remove(pos);
+    m_observers.removeFirst(&observer);
 }
 
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)

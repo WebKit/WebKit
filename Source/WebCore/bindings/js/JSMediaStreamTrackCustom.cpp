@@ -31,8 +31,6 @@
 #include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
-#include "JSMediaDevicesCustom.h"
-#include "MediaConstraintsImpl.h"
 #include "MediaSourceSettings.h"
 #include "MediaStreamTrack.h"
 #include "WebCoreJSClientData.h"
@@ -164,40 +162,6 @@ JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
     
 
     return object;
-}
-
-JSValue JSMediaStreamTrack::applyConstraints(ExecState& state)
-{
-    MediaTrackConstraintSetMap mandatoryConstraints;
-    Vector<MediaTrackConstraintSetMap> advancedConstraints;
-    bool valid = false;
-
-    if (state.argumentCount() >= 1) {
-        JSValue argument = state.uncheckedArgument(0);
-
-        JSVMClientData& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
-        putDirect(state.vm(), clientData.builtinNames().mediaStreamTrackConstraintsPrivateName(), argument, DontEnum);
-
-        auto constraintsDictionary = Dictionary(&state, argument);
-        if (!constraintsDictionary.isUndefinedOrNull())
-            parseMediaConstraintsDictionary(constraintsDictionary, mandatoryConstraints, advancedConstraints);
-        valid = !advancedConstraints.isEmpty() || !mandatoryConstraints.isEmpty();
-    }
-
-    auto deferredPromise = createDeferredPromise(state, domWindow());
-    auto promise = deferredPromise->promise();
-
-    auto constraints = MediaConstraintsImpl::create(WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), valid);
-    wrapped().applyConstraints(WTFMove(constraints), WTFMove(deferredPromise));
-
-    return promise;
-}
-
-JSValue JSMediaStreamTrack::getConstraints(ExecState& state)
-{
-    JSVMClientData& clientData = *static_cast<JSVMClientData*>(state.vm().clientData);
-    JSValue result = getDirect(state.vm(), clientData.builtinNames().mediaStreamTrackConstraintsPrivateName());
-    return !result.isEmpty() ? result : jsUndefined();
 }
 
 } // namespace WebCore

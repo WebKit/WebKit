@@ -47,11 +47,10 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     MediaStreamTrack clone();
     [ImplementedAs=stopProducingData] void stop();
 
-    [Custom] MediaTrackConstraints getConstraints();
+    MediaTrackConstraints getConstraints();
     [Custom] MediaSourceSettings getSettings();
     [Custom] MediaTrackCapabilities getCapabilities();
-    [Custom] Promise<void> applyConstraints(optional MediaTrackConstraints constraints);
+    Promise<void> applyConstraints(optional MediaTrackConstraints constraints);
 
     attribute EventHandler onoverconstrained;
 };
-

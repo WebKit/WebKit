@@ -82,7 +82,7 @@ $targetIdlFile = Cwd::realpath($targetIdlFile);
 if ($verbose) {
     print "$generator: $targetIdlFile\n";
 }
-my $targetInterfaceName = fileparse(basename($targetIdlFile), ".idl");
+my $targetInterfaceName = fileparse($targetIdlFile, ".idl");
 
 my $idlFound = 0;
 my @supplementedIdlFiles;
@@ -100,7 +100,7 @@ if ($supplementalDependencyFile) {
     open FH, "< $supplementalDependencyFile" or die "Cannot open $supplementalDependencyFile\n";
     while (my $line = <FH>) {
         my ($idlFile, @followingIdlFiles) = split(/\s+/, $line);
-        if ($idlFile and basename($idlFile) eq basename($targetIdlFile)) {
+        if ($idlFile and fileparse($idlFile) eq fileparse($targetIdlFile)) {
             $idlFound = 1;
             @supplementedIdlFiles = sort @followingIdlFiles;
         }
@@ -112,7 +112,7 @@ if ($supplementalDependencyFile) {
     # dependency file) but should generate .h and .cpp files.
     if (!$idlFound and $additionalIdlFiles) {
         my @idlFiles = shellwords($additionalIdlFiles);
-        $idlFound = grep { $_ and basename($_) eq basename($targetIdlFile) } @idlFiles;
+        $idlFound = grep { $_ and fileparse($_) eq fileparse($targetIdlFile) } @idlFiles;
     }
 
     if (!$idlFound) {
@@ -130,13 +130,13 @@ my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocesso
 
 if ($idlAttributesFile) {
     my $idlAttributes = loadIDLAttributes($idlAttributesFile);
-    checkIDLAttributes($idlAttributes, $targetDocument, basename($targetIdlFile));
+    checkIDLAttributes($idlAttributes, $targetDocument, fileparse($targetIdlFile));
 }
 
 foreach my $idlFile (@supplementedIdlFiles) {
     next if $idlFile eq $targetIdlFile;
 
-    my $interfaceName = fileparse(basename($idlFile), ".idl");
+    my $interfaceName = fileparse($idlFile, ".idl");
     my $parser = IDLParser->new(!$verbose);
     my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
@@ -271,7 +271,7 @@ sub loadIDLAttributes
                 $idlAttributes{$name}{"VALUE_IS_MISSING"} = 1;
             }
         } else {
-            die "The format of " . basename($idlAttributesFile) . " is wrong: line $.\n";
+            die "The format of " . fileparse($idlAttributesFile) . " is wrong: line $.\n";
         }
     }
     close FH;

@@ -33,19 +33,15 @@
 #include "EventTarget.h"
 #include "JSDOMPromise.h"
 #include "MediaStreamTrackPrivate.h"
-#include "RealtimeMediaSource.h"
-#include "ScriptWrappable.h"
-#include <wtf/Optional.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
+#include "MediaTrackConstraints.h"
 
 namespace WebCore {
 
 class AudioSourceProvider;
 class MediaConstraints;
 class MediaSourceSettings;
+
+struct MediaTrackConstraints;
 
 class MediaStreamTrack final : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, private MediaStreamTrackPrivate::Observer {
 public:
@@ -80,23 +76,19 @@ public:
     RefPtr<MediaSourceSettings> getSettings() const;
     RefPtr<RealtimeMediaSourceCapabilities> getCapabilities() const;
 
-    void applyConstraints(Ref<MediaConstraints>&&, DOMPromise<void>&&);
-    void applyConstraints(const MediaConstraints&);
+    const MediaTrackConstraints& getConstraints() const { return m_constraints; }
+    void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromise<void>&&);
 
     RealtimeMediaSource& source() { return m_private->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
 
     AudioSourceProvider* audioSourceProvider();
 
-    void addObserver(Observer*);
-    void removeObserver(Observer*);
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
 
-    // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return MediaStreamTrackEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-
-    using RefCounted<MediaStreamTrack>::ref;
-    using RefCounted<MediaStreamTrack>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
@@ -112,6 +104,8 @@ private:
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return MediaStreamTrackEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     // MediaStreamTrackPrivate::Observer
     void trackEnded(MediaStreamTrackPrivate&) override;
@@ -124,7 +118,7 @@ private:
     Vector<Observer*> m_observers;
     Ref<MediaStreamTrackPrivate> m_private;
 
-    RefPtr<MediaConstraints> m_constraints;
+    MediaTrackConstraints m_constraints;
     std::optional<DOMPromise<void>> m_promise;
     WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
 

@@ -29,18 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaConstraints_h
-#define MediaConstraints_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <cstdlib>
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -495,7 +489,6 @@ public:
 
     void appendExact(const String& value)
     {
-        m_exact.clear();
         m_exact.append(value);
     }
 
@@ -813,5 +806,3 @@ SPECIALIZE_TYPE_TRAITS_MEDIACONSTRAINT(StringConstraint, isString())
 SPECIALIZE_TYPE_TRAITS_MEDIACONSTRAINT(BooleanConstraint, isBoolean())
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaConstraints_h

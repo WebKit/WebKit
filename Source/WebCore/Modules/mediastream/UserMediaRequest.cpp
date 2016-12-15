@@ -36,24 +36,20 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "ExceptionCode.h"
-#include "Frame.h"
 #include "JSMediaStream.h"
 #include "JSOverconstrainedError.h"
 #include "MainFrame.h"
-#include "MediaStream.h"
-#include "MediaStreamPrivate.h"
-#include "OverconstrainedError.h"
+#include "MediaConstraintsImpl.h"
 #include "RealtimeMediaSourceCenter.h"
-#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserMediaController.h"
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise)
+ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromise<IDLInterface<MediaStream>>&& promise)
 {
     auto* userMedia = UserMediaController::from(document.page());
     if (!userMedia)
@@ -68,7 +64,7 @@ ExceptionOr<void> UserMediaRequest::start(Document& document, Ref<MediaConstrain
     return { };
 }
 
-UserMediaRequest::UserMediaRequest(Document& document, UserMediaController& controller, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&& promise)
+UserMediaRequest::UserMediaRequest(Document& document, UserMediaController& controller, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, DOMPromise<IDLInterface<MediaStream>>&& promise)
     : ContextDestructionObserver(&document)
     , m_audioConstraints(WTFMove(audioConstraints))
     , m_videoConstraints(WTFMove(videoConstraints))
@@ -85,7 +81,6 @@ SecurityOrigin* UserMediaRequest::userMediaDocumentOrigin() const
 {
     if (!m_scriptExecutionContext)
         return nullptr;
-
     return m_scriptExecutionContext->securityOrigin();
 }
 
@@ -93,19 +88,15 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
 {
     if (!m_scriptExecutionContext)
         return nullptr;
-
     return m_scriptExecutionContext->topOrigin();
 }
 
 static bool isSecure(DocumentLoader& documentLoader)
 {
-    if (!documentLoader.response().url().protocolIs("https"))
-        return false;
-
-    if (!documentLoader.response().certificateInfo() || documentLoader.response().certificateInfo()->containsNonRootSHA1SignedCertificate())
-        return false;
-
-    return true;
+    auto& response = documentLoader.response();
+    return response.url().protocolIs("https")
+        && response.certificateInfo()
+        && !response.certificateInfo()->containsNonRootSHA1SignedCertificate();
 }
 
 static bool canCallGetUserMedia(Document& document, String& errorMessage)
@@ -149,14 +140,13 @@ void UserMediaRequest::start()
     }
 
     Document& document = downcast<Document>(*m_scriptExecutionContext);
-    DOMWindow& window = *document.domWindow();
 
     // 10.2 - 6.3 Optionally, e.g., based on a previously-established user preference, for security reasons,
     // or due to platform limitations, jump to the step labeled Permission Failure below.
     String errorMessage;
     if (!canCallGetUserMedia(document, errorMessage)) {
         deny(MediaAccessDenialReason::PermissionDenied, emptyString());
-        window.printErrorMessage(errorMessage);
+        document.domWindow()->printErrorMessage(errorMessage);
         return;
     }
 
@@ -230,7 +220,6 @@ void UserMediaRequest::contextDestroyed()
 {
     ContextDestructionObserver::contextDestroyed();
     Ref<UserMediaRequest> protectedThis(*this);
-
     if (m_controller) {
         m_controller->cancelUserMediaAccessRequest(*this);
         m_controller = nullptr;
@@ -239,9 +228,6 @@ void UserMediaRequest::contextDestroyed()
 
 Document* UserMediaRequest::document() const
 {
-    if (!m_scriptExecutionContext)
-        return nullptr;
-
     return downcast<Document>(m_scriptExecutionContext);
 }
 
