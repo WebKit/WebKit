@@ -1,5 +1,11 @@
 2016-12-14  Keith Miller  <keith_miller@apple.com>
 
+        Unreviewed, fix test.
+
+        * wasm/function-tests/i32-const.js:
+
+2016-12-14  Keith Miller  <keith_miller@apple.com>
+
         Wasm should decode constants correctly
         https://bugs.webkit.org/show_bug.cgi?id=165886
 
