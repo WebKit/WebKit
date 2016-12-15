@@ -1,0 +1,73 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        body {
+            width: 1000px;
+            height: 2000px;
+        }
+        .fixed {
+            position: fixed;
+            background-color: silver;
+            top: 10px;
+            padding: 10px;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+
+        function getScrollDownUIScript()
+        {
+            return `(function() {
+                uiController.immediateScrollToOffset(0, 800);
+            })();`;
+        }
+        
+        function getFocusInputUIScript(x, y)
+        {
+            return `(function() {
+                uiController.didShowKeyboardCallback = function() {
+                    uiController.uiScriptComplete();
+                }
+                
+                uiController.singleTapAtPoint(${x}, ${y}, function() {});
+            })();`;
+        }
+
+        function runTest()
+        {
+            if (!window.testRunner || !testRunner.runUIScript)
+                return;
+
+            testRunner.runUIScript(getScrollDownUIScript(), function() {
+                window.setTimeout(function() {
+                    var rect = document.getElementById('input').getBoundingClientRect();
+                    // singleTapAtPoint takes document coordinates, so add scrollTop to clientRect.top.
+                    testRunner.runUIScript(getFocusInputUIScript(rect.left, rect.top + document.scrollingElement.scrollTop), function() {
+
+                        if (window.internals) {
+                            var output = 'Layout viewport: ' + JSON.stringify(internals.layoutViewportRect()) + '\nVisual viewport: ' + JSON.stringify(internals.visualViewportRect()) + '\n';
+                            document.getElementById('results').innerText = output;
+                        }
+
+                        testRunner.notifyDone();
+                    });
+                }, 0);
+            });
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+<pre id="results"></pre>
+<div class="fixed">
+    <input id="input" type="text">
+</div>
+</body>
+</html>

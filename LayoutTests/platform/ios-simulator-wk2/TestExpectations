@@ -8,6 +8,7 @@
 
 fast/scrolling/ios [ Pass ]
 fast/viewport/ios [ Pass ]
+fast/visual-viewport/ios/ [ Pass ]
 scrollingcoordinator/ios [ Pass ]
 editing/selection/character-granularity-rect.html [ Pass ]
 

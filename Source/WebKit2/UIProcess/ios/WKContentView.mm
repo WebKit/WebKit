@@ -577,10 +577,11 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     return [_webView _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance];
 }
 
-- (void)_zoomToFocusRect:(CGRect)rectToFocus selectionRect:(CGRect)selectionRect fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
+- (void)_zoomToFocusRect:(CGRect)rectToFocus selectionRect:(CGRect)selectionRect insideFixed:(BOOL)insideFixed fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll
 {
     [_webView _zoomToFocusRect:rectToFocus
                  selectionRect:selectionRect
+                   insideFixed:insideFixed
                       fontSize:fontSize
                   minimumScale:minimumScale
                   maximumScale:maximumScale

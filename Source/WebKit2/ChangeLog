@@ -1,3 +1,37 @@
+2016-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Don't disable position:fixed when a form element has focus
+        https://bugs.webkit.org/show_bug.cgi?id=165891
+        rdar://problem/29271694
+
+        Reviewed by Wenson Hsieh.
+
+        Before visual viewports, we had to lay out position:fixed relative to the document rect (effectively
+        disabling position:fixed) when a form element was focused, to ensure that we could scroll to inputs
+        inside position:Fixed.
+
+        When visual viewports are enabled, we can do a better job of this, and keep position:fixed active.
+        
+        Test: fast/visual-viewport/ios/zoomed-focus-in-fixed.html
+
+        * UIProcess/API/Cocoa/WKWebView.mm: 
+        (-[WKWebView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Soon this will use
+        insideFixed to have better scroll-into-view behavior.
+        (-[WKWebView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _zoomToFocusRect:selectionRect:insideFixed:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+        (-[WKContentView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _displayFormNodeInputView]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect): Don't fall back to using the documentRect as the fixed
+        position rect if visual viewports are enabled.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation): Don't reset the customtFixedPositionRect around computing element
+        coordinates if visual viewports are enabled.
+
 2016-12-15  Andreas Kling  <akling@apple.com>
 
         Always clear RenderLayer backing stores when going into page cache.

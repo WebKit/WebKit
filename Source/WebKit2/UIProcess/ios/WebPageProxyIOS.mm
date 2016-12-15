@@ -225,7 +225,7 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
     FloatRect constrainedUnobscuredRect = unobscuredContentRect;
     FloatRect documentRect = m_pageClient.documentRect();
 
-    if (m_pageClient.isAssistingNode())
+    if (!visualViewportEnabled && m_pageClient.isAssistingNode())
         return documentRect;
 
     if (constraint == UnobscuredRectConstraint::ConstrainedToDocumentRect)

@@ -2553,9 +2553,9 @@ void WebPage::getAssistedNodeInformation(AssistedNodeInformation& information)
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->style().direction() == RTL;
-        
-        if (inFixed && elementFrame.isMainFrame()) {
-            FrameView* frameView = elementFrame.view();
+
+        FrameView* frameView = elementFrame.view();
+        if (inFixed && elementFrame.isMainFrame() && !frameView->frame().settings().visualViewportEnabled()) {
             IntRect currentFixedPositionRect = frameView->customFixedPositionLayoutRect();
             frameView->setCustomFixedPositionLayoutRect(frameView->renderView()->documentRect());
             information.elementRect = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
