@@ -1,3 +1,19 @@
+2016-12-14  Andreas Kling  <akling@apple.com>
+
+        Only send Messages::WebPageProxy::DidSaveToPageCache once when entering page cache.
+        <https://webkit.org/b/165887>
+
+        Reviewed by Brady Eidson.
+
+        We were sending one of these IPC messages per frame when a page enters the page cache,
+        and we really only need one, so only do it for the main frame.
+
+        (This message is used to adopt the page cache on the UI process side, in case another
+        web process currently owns the cache. That happens in WebProcessPool::processDidCachePage().)
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didSaveToPageCache):
+
 2016-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fix cause of viewport-related flakiness in iOS tests

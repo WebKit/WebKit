@@ -1370,7 +1370,8 @@ void WebFrameLoaderClient::didSaveToPageCache()
     if (!webPage)
         return;
 
-    webPage->send(Messages::WebPageProxy::DidSaveToPageCache());
+    if (m_frame->isMainFrame())
+        webPage->send(Messages::WebPageProxy::DidSaveToPageCache());
 }
 
 void WebFrameLoaderClient::didRestoreFromPageCache()
