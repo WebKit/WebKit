@@ -32,6 +32,7 @@
 //    2. Loader.fetch
 //    3. Loader.instantiate
 
+@globalPrivate
 function setStateToMax(entry, newState)
 {
     // https://whatwg.github.io/loader/#set-state-to-max
@@ -42,6 +43,7 @@ function setStateToMax(entry, newState)
         entry.state = newState;
 }
 
+@globalPrivate
 function newRegistryEntry(key)
 {
     // https://whatwg.github.io/loader/#registry
@@ -111,7 +113,7 @@ function ensureRegistered(key)
     if (entry)
         return entry;
 
-    entry = this.newRegistryEntry(key);
+    entry = @newRegistryEntry(key);
     this.registry.@set(key, entry);
 
     return entry;
@@ -134,7 +136,7 @@ function fulfillFetch(entry, payload)
     if (!entry.fetch)
         entry.fetch = @newPromiseCapability(@InternalPromise).@promise;
     this.forceFulfillPromise(entry.fetch, payload);
-    this.setStateToMax(entry, @ModuleInstantiate);
+    @setStateToMax(entry, @ModuleInstantiate);
 }
 
 function fulfillInstantiate(entry, optionalInstance, source)
@@ -180,13 +182,13 @@ function commitInstantiated(entry, optionalInstance, source)
             key: depKey,
             value: @undefined
         };
-        dependencies.@push(pair);
+        @putByValDirect(dependencies, dependencies.length, pair);
         dependenciesMap.@set(depKey, pair);
     }
     entry.dependencies = dependencies;
     entry.dependenciesMap = dependenciesMap;
     entry.module = moduleRecord;
-    this.setStateToMax(entry, @ModuleSatisfy);
+    @setStateToMax(entry, @ModuleSatisfy);
 }
 
 function instantiation(result, source, entry)
@@ -219,7 +221,7 @@ function requestFetch(key, initiator)
     //     For example, JavaScriptCore shell can provide the hook fetching the resource
     //     from the local file system.
     var fetchPromise = this.fetch(key, initiator).then((payload) => {
-        this.setStateToMax(entry, @ModuleInstantiate);
+        @setStateToMax(entry, @ModuleInstantiate);
         return payload;
     });
     entry.fetch = fetchPromise;
@@ -297,11 +299,11 @@ function requestSatisfy(key, initiator)
                     return entry;
                 });
             });
-            depLoads.@push(promise);
+            @putByValDirect(depLoads, depLoads.length, promise);
         }
 
         return @InternalPromise.internalAll(depLoads).then((modules) => {
-            this.setStateToMax(entry, @ModuleLink);
+            @setStateToMax(entry, @ModuleLink);
             return entry;
         });
     });
@@ -363,7 +365,7 @@ function link(entry, initiator)
 
     if (entry.state === @ModuleReady)
         return;
-    this.setStateToMax(entry, @ModuleReady);
+    @setStateToMax(entry, @ModuleReady);
 
     // Since we already have the "dependencies" field,
     // we can call moduleDeclarationInstantiation with the correct order

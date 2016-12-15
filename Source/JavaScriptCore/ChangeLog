@@ -1,3 +1,26 @@
+2016-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Update ModuleLoader code by using the latest builtin primitives
+        https://bugs.webkit.org/show_bug.cgi?id=165851
+
+        Reviewed by Sam Weinig.
+
+        Update the module loader code,
+
+        1. Use @globalPrivate for the utilities, instead of setting them as the member of ModuleLoader.
+        2. Use @putByValDirect instead of @push. @push is user-observable since it uses Set() operation
+           and it can be observed by defining indexed setters in Array.prototype.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (ensureRegistered):
+        (fulfillFetch):
+        (commitInstantiated):
+        (requestFetch):
+        (requestSatisfy):
+        (setStateToMax): Deleted.
+        (newRegistryEntry): Deleted.
+        * runtime/ModuleLoaderPrototype.cpp:
+
 2016-12-14  Michael Saboff  <msaboff@apple.com>
 
         The stress GC bot crashes in JavaScriptCore beneath ShadowChicken::update and Inspector::jsToInspectorValue

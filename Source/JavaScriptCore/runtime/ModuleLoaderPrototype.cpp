@@ -65,8 +65,6 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
 
 /* Source for ModuleLoaderPrototype.lut.h
 @begin moduleLoaderPrototypeTable
-    setStateToMax                  JSBuiltin                                           DontEnum|Function 2
-    newRegistryEntry               JSBuiltin                                           DontEnum|Function 1
     ensureRegistered               JSBuiltin                                           DontEnum|Function 1
     forceFulfillPromise            JSBuiltin                                           DontEnum|Function 2
     fulfillFetch                   JSBuiltin                                           DontEnum|Function 2
