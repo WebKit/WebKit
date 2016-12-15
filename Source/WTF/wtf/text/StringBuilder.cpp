@@ -386,46 +386,58 @@ void StringBuilder::shrinkToFit()
 }
 
 template <typename OutputCharacterType, typename InputCharacterType>
+static void appendQuotedJSONStringInternalSlow(OutputCharacterType*& output, const InputCharacterType character)
+{
+    switch (character) {
+    case '\t':
+        *output++ = '\\';
+        *output++ = 't';
+        break;
+    case '\r':
+        *output++ = '\\';
+        *output++ = 'r';
+        break;
+    case '\n':
+        *output++ = '\\';
+        *output++ = 'n';
+        break;
+    case '\f':
+        *output++ = '\\';
+        *output++ = 'f';
+        break;
+    case '\b':
+        *output++ = '\\';
+        *output++ = 'b';
+        break;
+    default:
+        ASSERT(!(character & 0xFF00));
+        *output++ = '\\';
+        *output++ = 'u';
+        *output++ = '0';
+        *output++ = '0';
+        *output++ = upperNibbleToLowercaseASCIIHexDigit(character);
+        *output++ = lowerNibbleToLowercaseASCIIHexDigit(character);
+        break;
+    }
+}
+
+template <typename OutputCharacterType, typename InputCharacterType>
 static void appendQuotedJSONStringInternal(OutputCharacterType*& output, const InputCharacterType* input, unsigned length)
 {
     for (const InputCharacterType* end = input + length; input != end; ++input) {
-        if (LIKELY(*input > 0x1F)) {
-            if (*input == '"' || *input == '\\')
-                *output++ = '\\';
-            *output++ = *input;
+        const InputCharacterType character = *input;
+        if (LIKELY(character != '"' && character != '\\' && character > 0x1F)) {
+            *output++ = character;
             continue;
         }
-        switch (*input) {
-        case '\t':
+
+        if (character == '"' || character == '\\') {
             *output++ = '\\';
-            *output++ = 't';
-            break;
-        case '\r':
-            *output++ = '\\';
-            *output++ = 'r';
-            break;
-        case '\n':
-            *output++ = '\\';
-            *output++ = 'n';
-            break;
-        case '\f':
-            *output++ = '\\';
-            *output++ = 'f';
-            break;
-        case '\b':
-            *output++ = '\\';
-            *output++ = 'b';
-            break;
-        default:
-            ASSERT((*input & 0xFF00) == 0);
-            *output++ = '\\';
-            *output++ = 'u';
-            *output++ = '0';
-            *output++ = '0';
-            *output++ = upperNibbleToLowercaseASCIIHexDigit(*input);
-            *output++ = lowerNibbleToLowercaseASCIIHexDigit(*input);
-            break;
+            *output++ = character;
+            continue;
         }
+
+        appendQuotedJSONStringInternalSlow(output, character);
     }
 }
 
