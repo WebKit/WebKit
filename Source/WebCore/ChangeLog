@@ -1,3 +1,65 @@
+2016-12-15  Brady Eidson  <beidson@apple.com>
+
+        Add a new Logging Channel for IndexedDB Operation scheduling.
+        https://bugs.webkit.org/show_bug.cgi?id=165912
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change).
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::internalAbort):
+        (WebCore::IDBTransaction::commit):
+        (WebCore::IDBTransaction::createObjectStore):
+        (WebCore::IDBTransaction::renameObjectStore):
+        (WebCore::IDBTransaction::createIndex):
+        (WebCore::IDBTransaction::renameIndex):
+        (WebCore::IDBTransaction::doRequestOpenCursor):
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::requestGetAllIndexRecords):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestCount):
+        (WebCore::IDBTransaction::requestDeleteRecord):
+        (WebCore::IDBTransaction::requestClearObjectStore):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        (WebCore::IDBTransaction::deleteObjectStore):
+        (WebCore::IDBTransaction::deleteIndex):
+        
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::loggingString):
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.cpp:
+        (WebCore::IDBGetAllRecordsData::loggingString):
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h:
+        
+        * Modules/indexeddb/shared/IDBGetRecordData.cpp:
+        (WebCore::IDBGetRecordData::loggingString):
+        * Modules/indexeddb/shared/IDBGetRecordData.h:
+        
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::condensedLoggingString):
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp:
+        (WebCore::IDBIterateCursorData::loggingString):
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::condensedLoggingString):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        
+        * platform/Logging.h:
+
 2016-12-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added missing override and final specifiers

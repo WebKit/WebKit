@@ -150,6 +150,12 @@ String IDBObjectStoreInfo::loggingString(int indent) const
 
     return builder.toString();
 }
+
+String IDBObjectStoreInfo::condensedLoggingString() const
+{
+    return String::format("<OS: %s (%" PRIu64 ")>", m_name.utf8().data(), m_identifier);
+}
+
 #endif
 
 } // namespace WebCore

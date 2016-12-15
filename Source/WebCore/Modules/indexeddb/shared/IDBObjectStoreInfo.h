@@ -67,6 +67,7 @@ public:
 
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;
+    String condensedLoggingString() const;
 #endif
 
 private:

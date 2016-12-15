@@ -55,6 +55,7 @@ namespace WebCore {
     M(IconDatabase) \
     M(Images) \
     M(IndexedDB) \
+    M(IndexedDBOperations) \
     M(Layers) \
     M(Layout) \
     M(Loading) \

@@ -53,6 +53,7 @@ public:
 
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;
+    String condensedLoggingString() const;
 #endif
 
     // FIXME: Remove the need for this.

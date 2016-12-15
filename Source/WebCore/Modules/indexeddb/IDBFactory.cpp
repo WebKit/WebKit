@@ -100,6 +100,8 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionConte
     if (!databaseIdentifier.isValid())
         return Exception { TypeError, ASCIILiteral("IDBFactory.open() called with an invalid security origin") };
 
+    LOG(IndexedDBOperations, "IDB opening database: %s %" PRIu64, name.utf8().data(), version);
+
     return m_connectionProxy->openDatabase(context, databaseIdentifier, version);
 }
 
@@ -118,6 +120,8 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionCon
     IDBDatabaseIdentifier databaseIdentifier(name, *context.securityOrigin(), *context.topOrigin());
     if (!databaseIdentifier.isValid())
         return Exception { TypeError, ASCIILiteral("IDBFactory.deleteDatabase() called with an invalid security origin") };
+
+    LOG(IndexedDBOperations, "IDB deleting database: %s", name.utf8().data());
 
     return m_connectionProxy->deleteDatabase(context, databaseIdentifier);
 }

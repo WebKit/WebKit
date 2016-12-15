@@ -35,6 +35,13 @@ IDBIterateCursorData IDBIterateCursorData::isolatedCopy() const
     return { keyData.isolatedCopy(), primaryKeyData.isolatedCopy(), count };
 }
 
+#if !LOG_DISABLED
+String IDBIterateCursorData::loggingString() const
+{
+    return String::format("<Itr8Crsr: key %s, primaryKey %s, count %u", keyData.loggingString().utf8().data(), primaryKeyData.loggingString().utf8().data(), count);
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

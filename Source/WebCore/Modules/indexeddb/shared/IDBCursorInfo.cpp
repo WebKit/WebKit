@@ -99,6 +99,16 @@ IDBCursorInfo IDBCursorInfo::isolatedCopy() const
     return { m_cursorIdentifier.isolatedCopy(), m_transactionIdentifier.isolatedCopy(), m_objectStoreIdentifier, m_sourceIdentifier, m_range.isolatedCopy(), m_source, m_direction, m_type };
 }
 
+#if !LOG_DISABLED
+String IDBCursorInfo::loggingString() const
+{
+    if (m_source == IndexedDB::CursorSource::Index)
+        return String::format("<Crsr: Idx %" PRIu64 ", OS %" PRIu64 ", tx %s>", m_sourceIdentifier, m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
+
+    return String::format("<Crsr: OS %" PRIu64 ", tx %s>", m_objectStoreIdentifier, m_transactionIdentifier.loggingString().utf8().data());
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

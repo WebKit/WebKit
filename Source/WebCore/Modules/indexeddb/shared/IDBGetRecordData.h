@@ -42,6 +42,10 @@ struct IDBGetRecordData {
 
     IDBGetRecordData isolatedCopy() const;
 
+#if !LOG_DISABLED
+    String loggingString() const;
+#endif
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBGetRecordData&);
 };
