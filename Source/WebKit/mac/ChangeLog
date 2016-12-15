@@ -1,3 +1,13 @@
+2016-12-15  Andreas Kling  <akling@apple.com>
+
+        Always clear RenderLayer backing stores when going into page cache.
+        <https://webkit.org/b/165901>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2016-12-12  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused workaround for Silverlight

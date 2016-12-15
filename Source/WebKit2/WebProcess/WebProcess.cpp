@@ -203,10 +203,6 @@ WebProcess::WebProcess()
     RuntimeEnabledFeatures::sharedFeatures().setWebkitIndexedDBEnabled(true);
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(GTK)
-    PageCache::singleton().setShouldClearBackingStores(true);
-#endif
-
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStorage.copyRef());
     m_resourceLoadStatisticsStorage->setNotificationCallback([this] {
         if (m_statisticsChangedTimer.isActive())
