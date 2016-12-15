@@ -1,3 +1,18 @@
+2016-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Support latest SubtleCrypto HMAC APIs
+        https://bugs.webkit.org/show_bug.cgi?id=165863
+
+        Reviewed by Sam Weinig.
+
+        SubtleCrypto spec is updated, and new delegate implementations are required to support these interfaces.
+        This patch implements platformSign and platformVerify with WorkQueues for gcrypt backend.
+
+        * crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp:
+        (WebCore::calculateSignature):
+        (WebCore::CryptoAlgorithmHMAC::platformSign):
+        (WebCore::CryptoAlgorithmHMAC::platformVerify):
+
 2016-12-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r209415.

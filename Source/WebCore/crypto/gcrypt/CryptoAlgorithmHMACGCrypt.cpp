@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
  * Copyright (C) 2016 SoftAtHome
+ * Copyright (C) 2016 Apple Inc.
+ * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +34,7 @@
 #include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
-#include "NotImplemented.h"
+#include "ScriptExecutionContext.h"
 #include <gcrypt.h>
 #include <wtf/CryptographicUtilities.h>
 
@@ -56,7 +58,7 @@ static int getGCryptDigestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
     }
 }
 
-static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
+static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
 {
     size_t digestLength = gcry_mac_get_algo_maclen(algorithm);
     const void* keyData = key.data() ? key.data() : reinterpret_cast<const uint8_t*>("");
@@ -75,7 +77,7 @@ static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Ve
     if (err)
         goto cleanup;
 
-    err = gcry_mac_write(hd, data.first, data.second);
+    err = gcry_mac_write(hd, data, dataLength);
     if (err)
         goto cleanup;
 
@@ -97,14 +99,61 @@ cleanup:
     return WTFMove(signature);
 }
 
-void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<uint8_t>& key, const CryptoOperationData& data)
 {
-    notImplemented();
+    return calculateSignature(algorithm, key, data.first, data.second);
 }
 
-void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&&, Vector<uint8_t>&&, Vector<uint8_t>&&, BoolCallback&&, ExceptionCallback&&, ScriptExecutionContext&, WorkQueue&)
+void CryptoAlgorithmHMAC::platformSign(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    notImplemented();
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
+        auto algorithm = getGCryptDigestAlgorithm(hmacKey.hashAlgorithmIdentifier());
+        if (algorithm != GCRY_MAC_NONE) {
+            auto result = calculateSignature(algorithm, hmacKey.key(), data.data(), data.size());
+            if (result) {
+                // We should only dereference callbacks after being back to the Document/Worker threads.
+                context.postTask([callback = WTFMove(callback), result = WTFMove(*result), exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                    callback(result);
+                    context.deref();
+                });
+                return;
+            }
+        }
+        // We should only dereference callbacks after being back to the Document/Worker threads.
+        context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
+            exceptionCallback(OperationError);
+            context.deref();
+        });
+    });
+}
+
+void CryptoAlgorithmHMAC::platformVerify(Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
+{
+    context.ref();
+    workQueue.dispatch([key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), &context]() mutable {
+        auto& hmacKey = downcast<CryptoKeyHMAC>(key.get());
+        auto algorithm = getGCryptDigestAlgorithm(hmacKey.hashAlgorithmIdentifier());
+        if (algorithm != GCRY_MAC_NONE) {
+            auto expectedSignature = calculateSignature(algorithm, hmacKey.key(), data.data(), data.size());
+            if (expectedSignature) {
+                // Using a constant time comparison to prevent timing attacks.
+                bool result = signature.size() == expectedSignature->size() && !constantTimeMemcmp(expectedSignature->data(), signature.data(), expectedSignature->size());
+                // We should only dereference callbacks after being back to the Document/Worker threads.
+                context.postTask([callback = WTFMove(callback), result, exceptionCallback = WTFMove(exceptionCallback)](ScriptExecutionContext& context) {
+                    callback(result);
+                    context.deref();
+                });
+                return;
+            }
+        }
+        // We should only dereference callbacks after being back to the Document/Worker threads.
+        context.postTask([exceptionCallback = WTFMove(exceptionCallback), callback = WTFMove(callback)](ScriptExecutionContext& context) {
+            exceptionCallback(OperationError);
+            context.deref();
+        });
+    });
 }
 
 ExceptionOr<void> CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback)

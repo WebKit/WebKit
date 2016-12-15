@@ -1,3 +1,14 @@
+2016-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Support latest SubtleCrypto HMAC APIs
+        https://bugs.webkit.org/show_bug.cgi?id=165863
+
+        Reviewed by Sam Weinig.
+
+        Enable HMAC tests.
+
+        * platform/gtk/TestExpectations:
+
 2016-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         Fix cause of viewport-related flakiness in iOS tests
