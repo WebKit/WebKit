@@ -58,6 +58,7 @@ messages -> WebProcess LegacyReceiver {
     ResetPlugInAutoStartOriginHashes(HashMap<WebCore::SessionID, HashMap<uint32_t,double>> hashes)
     SetPluginLoadClientPolicy(uint8_t policy, String host, String bundleIdentifier, String versionString)
     ClearPluginClientPolicies()
+    RefreshPlugins()
 
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
     void StopMemorySampler();

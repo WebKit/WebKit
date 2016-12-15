@@ -181,6 +181,7 @@ public:
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void setAdditionalPluginsDirectory(const String&);
+    void refreshPlugins();
 
     PluginInfoStore& pluginInfoStore() { return m_pluginInfoStore; }
 

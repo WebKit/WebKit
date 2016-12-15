@@ -866,6 +866,13 @@ void WebProcessPool::setAdditionalPluginsDirectory(const String& directory)
 
     m_pluginInfoStore.setAdditionalPluginsDirectories(directories);
 }
+
+void WebProcessPool::refreshPlugins()
+{
+    m_pluginInfoStore.refresh();
+    sendToAllProcesses(Messages::WebProcess::RefreshPlugins());
+}
+
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 pid_t WebProcessPool::networkProcessIdentifier()

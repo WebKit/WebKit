@@ -353,6 +353,15 @@ void WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef
 #endif
 }
 
+void WKContextRefreshPlugIns(WKContextRef context)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    toImpl(context)->refreshPlugins();
+#else
+    UNUSED_PARAM(context);
+#endif
+}
+
 void WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
 {
     toImpl(contextRef)->registerURLSchemeAsEmptyDocument(toImpl(urlScheme)->string());

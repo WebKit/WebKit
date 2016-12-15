@@ -922,6 +922,13 @@ void WebProcess::clearPluginClientPolicies()
 #endif
 }
 
+void WebProcess::refreshPlugins()
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    WebPluginInfoProvider::singleton().refreshPlugins();
+#endif
+}
+
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)
 {
     TypeCountSet::const_iterator end = countedSet->end();

@@ -1,3 +1,23 @@
+2016-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WKContextRefreshPlugIns
+        https://bugs.webkit.org/show_bug.cgi?id=165879
+        rdar://problem/29602414
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextRefreshPlugIns):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::refreshPlugins):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::refreshPlugins):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2016-12-14  Tim Horton  <timothy_horton@apple.com>
 
         API Test Fullscreen.TopContentInset is asserting on Yosemite
