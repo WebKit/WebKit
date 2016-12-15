@@ -31,5 +31,5 @@ import Builder from '../Builder.js';
         .Start(0).End() // Invalid index.
         .Code().End();
     const bin = b.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), Error, `couldn't parse section Start: Start function declaration (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.throws(() => new WebAssembly.Module(bin), Error, `WebAssembly.Module doesn't parse at byte 17 / 20: Start index 0 exceeds function index space 0 (evaluating 'new WebAssembly.Module(bin)')`);
 })();

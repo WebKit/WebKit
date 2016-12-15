@@ -1,5 +1,85 @@
 2016-12-15  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: improve compilation error messages
+        https://bugs.webkit.org/show_bug.cgi?id=163919
+
+        Reviewed by Saam Barati.
+
+        The error handling messages were underwhelming because most
+        locations merely returned `false` on failure. This patch uses
+        std::expected to denote that failure isn't expected. Doing this
+        makes it almost impossible to mess up the code: either a function
+        returns a result (or a partial result for internal helpers) or an
+        error. We're not synchronizing the error string with the m_failed
+        bool anymore, and the caller will abort if they try to get a
+        result but the outcome was an error.
+
+        This also shortens the code significantly using macros, while also
+        judiciously preventing inlining of error handling code and biasing
+        towards success using UNLIKELY. This means that the generated code
+        should be more efficient (no string formatting on success, and
+        regalloc can avoid these unlikely paths).
+
+        The patch adds a few missing checks as well, especially related to
+        count limits and memory allocation failure.
+
+        As a follow-up I'd like to improve WTF::makeString further, so it
+        does coercions to string and understands ADL as I did in this
+        patch.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::fail):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValidExternalKind):
+        (JSC::Wasm::makeString):
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmModuleParser.cpp:
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmParser.h:
+        (JSC::Wasm::FailureHelper::makeString):
+        (JSC::Wasm::Parser::fail):
+        (JSC::Wasm::Parser<SuccessType>::Parser):
+        (JSC::Wasm::Parser<SuccessType>::consumeCharacter):
+        (JSC::Wasm::Parser<SuccessType>::consumeString):
+        (JSC::Wasm::Parser<SuccessType>::consumeUTF8String):
+        (JSC::Wasm::Parser<SuccessType>::parseVarUInt32):
+        (JSC::Wasm::Parser<SuccessType>::parseVarUInt64):
+        (JSC::Wasm::Parser<SuccessType>::parseVarInt32):
+        (JSC::Wasm::Parser<SuccessType>::parseVarInt64):
+        (JSC::Wasm::Parser<SuccessType>::parseUInt32):
+        (JSC::Wasm::Parser<SuccessType>::parseUInt64):
+        (JSC::Wasm::Parser<SuccessType>::parseUInt8):
+        (JSC::Wasm::Parser<SuccessType>::parseInt7):
+        (JSC::Wasm::Parser<SuccessType>::parseUInt7):
+        (JSC::Wasm::Parser<SuccessType>::parseVarUInt1):
+        (JSC::Wasm::Parser<SuccessType>::parseResultType):
+        (JSC::Wasm::Parser<SuccessType>::parseValueType):
+        (JSC::Wasm::Parser<SuccessType>::parseExternalKind):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::run):
+        * wasm/WasmSections.h:
+        (JSC::Wasm::isValidSection):
+        (JSC::Wasm::validateOrder):
+        (JSC::Wasm::makeString):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::fail):
+        (JSC::Wasm::Validate::addUnreachable):
+        (JSC::Wasm::validateFunction):
+        * wasm/WasmValidate.h:
+        * wasm/generateWasmB3IRGeneratorInlinesHeader.py:
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/generateWasmValidateInlinesHeader.py:
+        (loadMacro):
+        (storeMacro):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+
+2016-12-15  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly API: improve data section errors, initialize after Element
         https://bugs.webkit.org/show_bug.cgi?id=165733
 

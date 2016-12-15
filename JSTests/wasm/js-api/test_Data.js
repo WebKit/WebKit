@@ -52,7 +52,7 @@ const assertMemoryAllZero = memory => {
           .Segment([0xff]).Offset(0).End()
         .End();
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `couldn't parse section Data: Data segments (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 13 / 20: Data section cannot exist without a Memory section or Import (evaluating 'new WebAssembly.Module(bin)')`);
 })();
 
 (function EmptyDataSectionWithoutMemory() {
@@ -62,7 +62,7 @@ const assertMemoryAllZero = memory => {
           .Segment([]).Offset(0).End()
         .End();
     const bin = builder.WebAssembly().get();
-    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `couldn't parse section Data: Data segments (evaluating 'new WebAssembly.Module(bin)')`);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, `WebAssembly.Module doesn't parse at byte 13 / 19: Data section cannot exist without a Memory section or Import (evaluating 'new WebAssembly.Module(bin)')`);
 })();
 
 (function DataSectionBiggerThanMemory() {

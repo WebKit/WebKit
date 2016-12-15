@@ -23,14 +23,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
-    try {
-        const module = new WebAssembly.Module(bin.get());
-    } catch (e) {
-        if (e.message === "couldn't parse section Global: Global declarations (evaluating 'new WebAssembly.Module(bin.get())')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 26 / 59: get_global's index 0 exceeds the number of imports 0 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 
@@ -59,14 +52,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
-    try {
-        const module = new WebAssembly.Module(bin.get());
-    } catch (e) {
-        if (e.message === "couldn't parse section Import: Import declarations (evaluating 'new WebAssembly.Module(bin.get())')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 32 / 76: Mutable Globals aren't supported (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
@@ -91,14 +77,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
-    try {
-        const module = new WebAssembly.Module(bin.get());
-    } catch (e) {
-        if (e.message === "couldn't parse section Export: Exports (evaluating 'new WebAssembly.Module(bin.get())')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 51 / 59: 1th Export isn't immutable, named 'global' (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 {
@@ -124,14 +103,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
-    try {
-        const module = new WebAssembly.Module(bin.get());
-    } catch (e) {
-        if (e.message === "Attempt to store to immutable global. (evaluating 'new WebAssembly.Module(bin.get())')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_global 0 is immutable (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 
@@ -158,14 +130,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
-    try {
-        const module = new WebAssembly.Module(bin.get());
-    } catch (e) {
-        if (e.message === "Attempt to use unknown global. (evaluating 'new WebAssembly.Module(bin.get())')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_global 1 of unknown global, limit is 1 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 
@@ -191,14 +156,7 @@ import Builder from '../Builder.js';
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
-    try {
-        const module = new WebAssembly.Module(bin.get());
-    } catch (e) {
-        if (e.message === "Attempt to set global with type: F32 with a variable of type: I32 (evaluating 'new WebAssembly.Module(bin.get())')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Module(bin.get()), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: set_global 0 with type F32 with a variable of type I32 (evaluating 'new WebAssembly.Module(bin.get())')");
 }
 
 for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
@@ -226,13 +184,6 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
     const bin = builder.WebAssembly();
     bin.trim();
 
-    let passed = false;
     const module = new WebAssembly.Module(bin.get());
-    try {
-        new WebAssembly.Instance(module, { imp: { global: imp } });
-    } catch (e) {
-        if (e.message === "imported global must be a number (evaluating 'new WebAssembly.Instance(module, { imp: { global: imp } })')")
-            passed = true;
-    }
-    assert.truthy(passed);
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: imp } }), TypeError, "imported global must be a number (evaluating 'new WebAssembly.Instance(module, { imp: { global: imp } })')");
 }

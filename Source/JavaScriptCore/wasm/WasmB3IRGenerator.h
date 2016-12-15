@@ -30,6 +30,7 @@
 #include "B3Compilation.h"
 #include "VM.h"
 #include "WasmFormat.h"
+#include <wtf/Expected.h>
 
 extern "C" void dumpProcedure(void*);
 
@@ -37,7 +38,7 @@ namespace JSC { namespace Wasm {
 
 class MemoryInformation;
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM&, const uint8_t*, size_t, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&, const ModuleInformation&, unsigned optLevel = 1);
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM&, const uint8_t*, size_t, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&, const ModuleInformation&, unsigned optLevel = 1);
 
 } } // namespace JSC::Wasm
 

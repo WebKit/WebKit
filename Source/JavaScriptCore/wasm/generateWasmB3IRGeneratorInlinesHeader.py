@@ -189,10 +189,10 @@ def generateSimpleCode(op):
     args = ["ExpressionType arg" + str(param) for param in range(len(opcode["parameter"]))]
     args.append("ExpressionType& result")
     return """
-template<> bool B3IRGenerator::addOp<OpType::""" + wasm.toCpp(op["name"]) + ">(" + ", ".join(args) + """)
+template<> auto B3IRGenerator::addOp<OpType::""" + wasm.toCpp(op["name"]) + ">(" + ", ".join(args) + """) -> PartialResult
 {
 """ + generateB3Code(opcode, b3op) + """;
-    return true;
+    return { };
 }
 """
 

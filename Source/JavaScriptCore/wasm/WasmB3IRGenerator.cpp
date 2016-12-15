@@ -137,52 +137,65 @@ public:
 
     static constexpr ExpressionType emptyExpression = nullptr;
 
+    typedef String ErrorType;
+    typedef UnexpectedType<ErrorType> UnexpectedResult;
+    typedef Expected<std::unique_ptr<WasmInternalFunction>, ErrorType> Result;
+    typedef Expected<void, ErrorType> PartialResult;
+    template <typename ...Args>
+    NEVER_INLINE UnexpectedResult WARN_UNUSED_RETURN fail(Args... args) const
+    {
+        using namespace FailureHelper; // See ADL comment in WasmParser.h.
+        return UnexpectedResult(makeString(ASCIILiteral("WebAssembly.Module failed compiling: "), makeString(args)...));
+    }
+#define WASM_COMPILE_FAIL_IF(condition, ...) do { \
+        if (UNLIKELY(condition))                  \
+            return fail(__VA_ARGS__);             \
+    } while (0)
+
     B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
 
-    bool WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
-    bool WARN_UNUSED_RETURN addLocal(Type, uint32_t);
+    PartialResult WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
+    PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
 
     // Locals
-    bool WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
-    bool WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN getLocal(uint32_t index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN setLocal(uint32_t index, ExpressionType value);
 
     // Globals
-    bool WARN_UNUSED_RETURN getGlobal(uint32_t index, ExpressionType& result);
-    bool WARN_UNUSED_RETURN setGlobal(uint32_t index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN getGlobal(uint32_t index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN setGlobal(uint32_t index, ExpressionType value);
 
     // Memory
-    bool WARN_UNUSED_RETURN load(LoadOpType, ExpressionType pointer, ExpressionType& result, uint32_t offset);
-    bool WARN_UNUSED_RETURN store(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN load(LoadOpType, ExpressionType pointer, ExpressionType& result, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN store(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
 
     // Basic operators
     template<OpType>
-    bool WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
     template<OpType>
-    bool WARN_UNUSED_RETURN addOp(ExpressionType left, ExpressionType right, ExpressionType& result);
-    bool WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addOp(ExpressionType left, ExpressionType right, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
     ControlData WARN_UNUSED_RETURN addBlock(Type signature);
     ControlData WARN_UNUSED_RETURN addLoop(Type signature);
-    bool WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
-    bool WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
-    bool WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
+    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
+    PartialResult WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
+    PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
-    bool WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
-    bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
-    bool WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const ExpressionList& expressionStack);
-    bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
-    bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
+    PartialResult WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
+    PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
+    PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const ExpressionList& expressionStack);
+    PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
+    PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
     // Calls
-    bool WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
-    bool WARN_UNUSED_RETURN addCallIndirect(const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
-    void addUnreachable();
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addUnreachable();
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
-
-    void setErrorMessage(String&&) { UNREACHABLE_FOR_PLATFORM(); }
 
 private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -291,24 +304,22 @@ Value* B3IRGenerator::zeroForType(Type type)
     return zeroValue;
 }
 
-bool B3IRGenerator::addLocal(Type type, uint32_t count)
+auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
 {
-    if (!m_locals.tryReserveCapacity(m_locals.size() + count))
-        return false;
+    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(m_locals.size() + count), "can't allocate memory for ", m_locals.size() + count, " locals");
 
     for (uint32_t i = 0; i < count; ++i) {
         Variable* local = m_proc.addVariable(toB3Type(type));
         m_locals.uncheckedAppend(local);
         m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, zeroForType(type));
     }
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addArguments(const Vector<Type>& types)
+auto B3IRGenerator::addArguments(const Vector<Type>& types) -> PartialResult
 {
     ASSERT(!m_locals.size());
-    if (!m_locals.tryReserveCapacity(types.size()))
-        return false;
+    WASM_COMPILE_FAIL_IF(!m_locals.tryReserveCapacity(types.size()), "can't allocate memory for ", types.size(), " arguments");
 
     m_locals.grow(types.size());
     wasmCallingConvention().loadArguments(types, m_proc, m_currentBlock, Origin(),
@@ -317,45 +328,46 @@ bool B3IRGenerator::addArguments(const Vector<Type>& types)
             m_locals[i] = argumentVariable;
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), argumentVariable, argument);
         });
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::getLocal(uint32_t index, ExpressionType& result)
+auto B3IRGenerator::getLocal(uint32_t index, ExpressionType& result) -> PartialResult
 {
     ASSERT(m_locals[index]);
     result = m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, Origin(), m_locals[index]);
-    return true;
+    return { };
 }
 
-void B3IRGenerator::addUnreachable()
+auto B3IRGenerator::addUnreachable() -> PartialResult
 {
     B3::PatchpointValue* unreachable = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
     unreachable->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         jit.breakpoint();
     });
     unreachable->effects.terminal = true;
+    return { };
 }
 
-bool B3IRGenerator::setLocal(uint32_t index, ExpressionType value)
+auto B3IRGenerator::setLocal(uint32_t index, ExpressionType value) -> PartialResult
 {
     ASSERT(m_locals[index]);
     m_currentBlock->appendNew<VariableValue>(m_proc, B3::Set, Origin(), m_locals[index], value);
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result)
+auto B3IRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> PartialResult
 {
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfGlobals());
     result = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(m_info.globals[index].type), Origin(), globalsArray, index * sizeof(Register));
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::setGlobal(uint32_t index, ExpressionType value)
+auto B3IRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialResult
 {
     ASSERT(toB3Type(m_info.globals[index].type) == value->type());
     Value* globalsArray = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfGlobals());
     m_currentBlock->appendNew<MemoryValue>(m_proc, Store, Origin(), value, globalsArray, index * sizeof(Register));
-    return true;
+    return { };
 }
 
 inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation)
@@ -465,12 +477,12 @@ inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, Origin origin, Expression
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool B3IRGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t offset)
+auto B3IRGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t offset) -> PartialResult
 {
     ASSERT(pointer->type() == Int32);
 
     result = emitLoadOp(op, Origin(), emitCheckAndPreparePointer(pointer, offset, sizeOfLoadOp(op)), offset);
-    return true;
+    return { };
 }
 
 inline uint32_t sizeOfStoreOp(StoreOpType op)
@@ -527,18 +539,18 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Origin origin, Expression
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool B3IRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t offset)
+auto B3IRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t offset) -> PartialResult
 {
     ASSERT(pointer->type() == Int32);
 
     emitStoreOp(op, Origin(), emitCheckAndPreparePointer(pointer, offset, sizeOfStoreOp(op)), value, offset);
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result)
+auto B3IRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> PartialResult
 {
     result = m_currentBlock->appendNew<Value>(m_proc, B3::Select, Origin(), condition, nonZero, zero);
-    return true;
+    return { };
 }
 
 B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t value)
@@ -576,7 +588,7 @@ B3IRGenerator::ControlData B3IRGenerator::addLoop(Type signature)
     return ControlData(m_proc, signature, BlockType::Loop, continuation, body);
 }
 
-bool B3IRGenerator::addIf(ExpressionType condition, Type signature, ControlType& result)
+auto B3IRGenerator::addIf(ExpressionType condition, Type signature, ControlType& result) -> PartialResult
 {
     // FIXME: This needs to do some kind of stack passing.
 
@@ -591,35 +603,35 @@ bool B3IRGenerator::addIf(ExpressionType condition, Type signature, ControlType&
 
     m_currentBlock = taken;
     result = ControlData(m_proc, signature, BlockType::If, continuation, notTaken);
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addElse(ControlData& data, const ExpressionList& currentStack)
+auto B3IRGenerator::addElse(ControlData& data, const ExpressionList& currentStack) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data.result);
     m_currentBlock->appendNewControlValue(m_proc, Jump, Origin(), data.continuation);
     return addElseToUnreachable(data);
 }
 
-bool B3IRGenerator::addElseToUnreachable(ControlData& data)
+auto B3IRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 {
     ASSERT(data.type() == BlockType::If);
     m_currentBlock = data.special;
     data.convertIfToBlock();
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addReturn(const ExpressionList& returnValues)
+auto B3IRGenerator::addReturn(const ExpressionList& returnValues) -> PartialResult
 {
     ASSERT(returnValues.size() <= 1);
     if (returnValues.size())
         m_currentBlock->appendNewControlValue(m_proc, B3::Return, Origin(), returnValues[0]);
     else
         m_currentBlock->appendNewControlValue(m_proc, B3::Return, Origin());
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const ExpressionList& returnValues)
+auto B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const ExpressionList& returnValues) -> PartialResult
 {
     if (data.type() != BlockType::Loop)
         unifyValuesWithBlock(returnValues, data.result);
@@ -637,10 +649,10 @@ bool B3IRGenerator::addBranch(ControlData& data, ExpressionType condition, const
         target->addPredecessor(m_currentBlock);
     }
 
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack)
+auto B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack) -> PartialResult
 {
     for (size_t i = 0; i < targets.size(); ++i)
         unifyValuesWithBlock(expressionStack, targets[i]->result);
@@ -651,10 +663,10 @@ bool B3IRGenerator::addSwitch(ExpressionType condition, const Vector<ControlData
     for (size_t i = 0; i < targets.size(); ++i)
         switchValue->appendCase(SwitchCase(i, FrequentedBlock(targets[i]->targetBlockForBranch())));
 
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::endBlock(ControlEntry& entry, ExpressionList& expressionStack)
+auto B3IRGenerator::endBlock(ControlEntry& entry, ExpressionList& expressionStack) -> PartialResult
 {
     ControlData& data = entry.controlData;
 
@@ -666,7 +678,7 @@ bool B3IRGenerator::endBlock(ControlEntry& entry, ExpressionList& expressionStac
 }
 
 
-bool B3IRGenerator::addEndToUnreachable(ControlEntry& entry)
+auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry) -> PartialResult
 {
     ControlData& data = entry.controlData;
     m_currentBlock = data.continuation;
@@ -679,10 +691,10 @@ bool B3IRGenerator::addEndToUnreachable(ControlEntry& entry)
     for (Variable* result : data.result)
         entry.enclosedExpressionStack.append(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, Origin(), result));
 
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result)
+auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
 {
     ASSERT(signature->arguments.size() == args.size());
 
@@ -705,10 +717,10 @@ bool B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
                 });
             });
         });
-    return true;
+    return { };
 }
 
-bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result)
+auto B3IRGenerator::addCallIndirect(const Signature* signature, Vector<ExpressionType>& args, ExpressionType& result) -> PartialResult
 {
     ExpressionType calleeIndex = args.takeLast();
     ASSERT(signature->arguments.size() == args.size());
@@ -779,7 +791,7 @@ bool B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
             });
         });
 
-    return true;
+    return { };
 }
 
 void B3IRGenerator::unify(Variable* variable, ExpressionType source)
@@ -907,15 +919,14 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFu
     return jsEntrypoint;
 }
 
-std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
     Procedure procedure;
     B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
     FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functionIndexSpace, info);
-    if (!parser.parse())
-        RELEASE_ASSERT_NOT_REACHED();
+    WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     procedure.resetReachability();
     validate(procedure, "After parsing:\n");
@@ -929,13 +940,13 @@ std::unique_ptr<WasmInternalFunction> parseAndCompile(VM& vm, const uint8_t* fun
     result->wasmEntrypoint.compilation = std::make_unique<Compilation>(vm, procedure, optLevel);
     result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
     result->jsToWasmEntrypoint.compilation = createJSToWasmWrapper(vm, *result, signature, result->wasmEntrypoint.compilation->code(), info.memory);
-    return result;
+    return WTFMove(result);
 }
 
 // Custom wasm ops. These are the ones too messy to do in wasm.json.
 
 template<>
-bool B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -944,11 +955,11 @@ bool B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType arg, ExpressionType& re
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -957,33 +968,33 @@ bool B3IRGenerator::addOp<OpType::I64Ctz>(ExpressionType arg, ExpressionType& re
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I32Popcnt>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     // FIXME: This should use the popcnt instruction if SSE4 is available but we don't have code to detect SSE4 yet.
     // see: https://bugs.webkit.org/show_bug.cgi?id=165363
     uint32_t (*popcount)(int32_t) = [] (int32_t value) -> uint32_t { return __builtin_popcount(value); };
     Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), bitwise_cast<void*>(popcount));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, Origin(), Effects::none(), funcAddress, arg);
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I64Popcnt>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     // FIXME: This should use the popcnt instruction if SSE4 is available but we don't have code to detect SSE4 yet.
     // see: https://bugs.webkit.org/show_bug.cgi?id=165363
     uint64_t (*popcount)(int64_t) = [] (int64_t value) -> uint64_t { return __builtin_popcountll(value); };
     Value* funcAddress = m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), bitwise_cast<void*>(popcount));
     result = m_currentBlock->appendNew<CCallValue>(m_proc, Int64, Origin(), Effects::none(), funcAddress, arg);
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
     if (isX86())
@@ -999,11 +1010,11 @@ bool B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& re
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     if (isX86())
@@ -1019,11 +1030,11 @@ bool B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expression
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1032,11 +1043,11 @@ bool B3IRGenerator::addOp<OpType::F64Nearest>(ExpressionType arg, ExpressionType
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1045,11 +1056,11 @@ bool B3IRGenerator::addOp<OpType::F32Nearest>(ExpressionType arg, ExpressionType
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1058,11 +1069,11 @@ bool B3IRGenerator::addOp<OpType::F64Trunc>(ExpressionType arg, ExpressionType& 
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1071,11 +1082,11 @@ bool B3IRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType& 
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -static_cast<double>(std::numeric_limits<int32_t>::min()));
     Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int32_t>::min()));
@@ -1094,11 +1105,11 @@ bool B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -static_cast<float>(std::numeric_limits<int32_t>::min()));
     Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int32_t>::min()));
@@ -1117,12 +1128,12 @@ bool B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 
 template<>
-bool B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0);
     Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -1.0);
@@ -1141,11 +1152,11 @@ bool B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int32_t>::min()) * -2.0);
     Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -1.0);
@@ -1164,11 +1175,11 @@ bool B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -static_cast<double>(std::numeric_limits<int64_t>::min()));
     Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int64_t>::min()));
@@ -1187,11 +1198,11 @@ bool B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0);
     Value* min = m_currentBlock->appendNew<ConstDoubleValue>(m_proc, Origin(), -1.0);
@@ -1229,11 +1240,11 @@ bool B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -static_cast<float>(std::numeric_limits<int64_t>::min()));
     Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int64_t>::min()));
@@ -1252,11 +1263,11 @@ bool B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 template<>
-bool B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionType& result)
+auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
     Value* max = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), static_cast<float>(std::numeric_limits<int64_t>::min()) * -2.0);
     Value* min = m_currentBlock->appendNew<ConstFloatValue>(m_proc, Origin(), -1.0);
@@ -1294,7 +1305,7 @@ bool B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionTy
     });
     patchpoint->effects = Effects::none();
     result = patchpoint;
-    return true;
+    return { };
 }
 
 } } // namespace JSC::Wasm

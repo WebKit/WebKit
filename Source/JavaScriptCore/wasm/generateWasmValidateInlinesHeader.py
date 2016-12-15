@@ -60,15 +60,13 @@ def toCpp(name):
 def unaryMacro(name):
     op = opcodes[name]
     return """
-template<> bool Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType value, ExpressionType& result)
+template<> auto Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType value, ExpressionType& result) -> Result
 {
-    if (value != """ + cppType(op["parameter"][0]) + """) {
-        m_errorMessage = makeString(\"""" + name + """ expects the value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(value));
-        return false;
-    }
+    if (UNLIKELY(value != """ + cppType(op["parameter"][0]) + """))
+        return UnexpectedType<Result::ErrorType>("validation failed: """ + name + """ value type mismatch");
 
     result = """ + cppType(op["return"][0]) + """;
-    return true;
+    return { };
 }
 """
 
@@ -76,20 +74,16 @@ template<> bool Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType 
 def binaryMacro(name):
     op = opcodes[name]
     return """
-template<> bool Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType left, ExpressionType right, ExpressionType& result)
+template<> auto Validate::addOp<OpType::""" + toCpp(name) + """>(ExpressionType left, ExpressionType right, ExpressionType& result) -> Result
 {
-    if (left != """ + cppType(op["parameter"][0]) + """) {
-        m_errorMessage = makeString(\"""" + name + """ expects the left value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(left));
-        return false;
-    }
+    if (UNLIKELY(left != """ + cppType(op["parameter"][0]) + """))
+        return UnexpectedType<Result::ErrorType>("validation failed: """ + name + """ left value type mismatch");
 
-    if (right != """ + cppType(op["parameter"][1]) + """) {
-        m_errorMessage = makeString(\"""" + name + """ expects the right value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(right));
-        return false;
-    }
+    if (UNLIKELY(right != """ + cppType(op["parameter"][1]) + """))
+        return UnexpectedType<Result::ErrorType>("validation failed: """ + name + """ right value type mismatch");
 
     result = """ + cppType(op["return"][0]) + """;
-    return true;
+    return { };
 }
 """
 
@@ -97,13 +91,11 @@ def loadMacro(name):
     op = opcodes[name]
     return """
     case LoadOpType::""" + toCpp(name) + """: {
-        if (pointer != """ + cppType(op["parameter"][0]) + """) {
-            m_errorMessage = makeString(\"""" + name + """ expects the pointer to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(pointer));
-            return false;
-        }
+        if (UNLIKELY(pointer != """ + cppType(op["parameter"][0]) + """))
+            return UnexpectedType<Result::ErrorType>("validation failed: """ + name + """ pointer type mismatch");
 
         result = """ + cppType(op["return"][0]) + """;
-        return true;
+        return { };
     }"""
 
 
@@ -111,17 +103,13 @@ def storeMacro(name):
     op = opcodes[name]
     return """
     case StoreOpType::""" + toCpp(name) + """: {
-        if (pointer != """ + cppType(op["parameter"][0]) + """) {
-            m_errorMessage = makeString(\"""" + name + """ expects the pointer to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(pointer));
-            return false;
-        }
+        if (UNLIKELY(pointer != """ + cppType(op["parameter"][0]) + """))
+            return UnexpectedType<Result::ErrorType>("validation failed: """ + name + """ pointer type mismatch");
 
-        if (value != """ + cppType(op["parameter"][1]) + """) {
-            m_errorMessage = makeString(\"""" + name + """ expects the value to be of type: ", toString(""" + cppType(op["parameter"][0]) + """), " but got a value with type: ", toString(value));
-            return false;
-        }
+        if (UNLIKELY(value != """ + cppType(op["parameter"][1]) + """))
+            return UnexpectedType<Result::ErrorType>("validation failed: """ + name + """ value type mismatch");
 
-        return true;
+        return { };
     }"""
 
 
@@ -141,20 +129,20 @@ namespace JSC { namespace Wasm {
 
 """ + unarySpecializations + binarySpecializations + """
 
-bool Validate::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t)
+auto Validate::load(LoadOpType op, ExpressionType pointer, ExpressionType& result, uint32_t) -> Result
 {
-    if (!hasMemory())
-        return false;
+    if (UNLIKELY(!hasMemory()))
+        return UnexpectedType<Result::ErrorType>("validation failed: load instruction without memory");
 
     switch (op) {
 """ + loadCases + """
     }
 }
 
-bool Validate::store(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t)
+auto Validate::store(StoreOpType op, ExpressionType pointer, ExpressionType value, uint32_t) -> Result
 {
-    if (!hasMemory())
-        return false;
+    if (UNLIKELY(!hasMemory()))
+        return UnexpectedType<Result::ErrorType>("validation failed: store instruction without memory");
 
     switch (op) {
 """ + storeCases + """

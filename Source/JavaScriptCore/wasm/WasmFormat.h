@@ -61,33 +61,44 @@ inline bool isValueType(Type type)
     return false;
 }
     
-struct External {
-    enum Kind : uint8_t {
-        // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
-        Function = 0,
-        Table = 1,
-        Memory = 2,
-        Global = 3,
-    };
-    template<typename Int>
-    static bool isValid(Int val)
-    {
-        switch (val) {
-        case Function:
-        case Table:
-        case Memory:
-        case Global:
-            return true;
-        default:
-            return false;
-        }
-    }
-    
-    static_assert(Function == 0, "Wasm needs Function to have the value 0");
-    static_assert(Table    == 1, "Wasm needs Table to have the value 1");
-    static_assert(Memory   == 2, "Wasm needs Memory to have the value 2");
-    static_assert(Global   == 3, "Wasm needs Global to have the value 3");
+enum class ExternalKind : uint8_t {
+    // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
+    Function = 0,
+    Table = 1,
+    Memory = 2,
+    Global = 3,
 };
+
+template<typename Int>
+static bool isValidExternalKind(Int val)
+{
+    switch (val) {
+    case static_cast<Int>(ExternalKind::Function):
+    case static_cast<Int>(ExternalKind::Table):
+    case static_cast<Int>(ExternalKind::Memory):
+    case static_cast<Int>(ExternalKind::Global):
+        return true;
+    default:
+        return false;
+    }
+}
+
+static_assert(static_cast<int>(ExternalKind::Function) == 0, "Wasm needs Function to have the value 0");
+static_assert(static_cast<int>(ExternalKind::Table)    == 1, "Wasm needs Table to have the value 1");
+static_assert(static_cast<int>(ExternalKind::Memory)   == 2, "Wasm needs Memory to have the value 2");
+static_assert(static_cast<int>(ExternalKind::Global)   == 3, "Wasm needs Global to have the value 3");
+
+static inline const char* makeString(ExternalKind kind)
+{
+    switch (kind) {
+    case ExternalKind::Function: return "Function";
+    case ExternalKind::Table: return "Table";
+    case ExternalKind::Memory: return "Memory";
+    case ExternalKind::Global: return "Global";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return "?";
+}
 
 struct Signature {
     Type returnType;
@@ -97,13 +108,13 @@ struct Signature {
 struct Import {
     Identifier module;
     Identifier field;
-    External::Kind kind;
+    ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 
 struct Export {
     Identifier field;
-    External::Kind kind;
+    ExternalKind kind;
     unsigned kindIndex; // Index in the vector of the corresponding kind.
 };
 

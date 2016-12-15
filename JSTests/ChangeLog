@@ -1,5 +1,33 @@
 2016-12-15  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly: improve compilation error messages
+        https://bugs.webkit.org/show_bug.cgi?id=163919
+
+        Reviewed by Saam Barati.
+
+        Update error messages in these tests.
+        Use the assert.throws facility in many of them which weren't already.
+
+        * wasm/js-api/element.js:
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly):
+        (assert.throws):
+        * wasm/js-api/global-error.js:
+        (assert.throws.new.WebAssembly.Module.bin):
+        (assert.throws):
+        (new.Number):
+        * wasm/js-api/table.js:
+        (assert.throws.new.WebAssembly.Module.builder.WebAssembly):
+        (assert.throws):
+        (assertBadTableImport):
+        * wasm/js-api/test_Data.js:
+        (DataSectionWithoutMemory):
+        * wasm/js-api/test_Start.js:
+        (InvalidStartFunctionIndex):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+
+2016-12-15  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly API: improve data section errors
         https://bugs.webkit.org/show_bug.cgi?id=165733
 

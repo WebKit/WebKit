@@ -151,7 +151,7 @@ inline B3::Type toB3Type(Type type)
 #undef CREATE_CASE
 
 #define CREATE_CASE(name, id, b3type, inc) case name: return #name;
-inline const char* toString(Type type)
+inline const char* makeString(Type type)
 {
     switch (type) {
     FOR_EACH_WASM_TYPE(CREATE_CASE)

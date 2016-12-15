@@ -106,7 +106,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
         RETURN_IF_EXCEPTION(throwScope, { });
 
         switch (import.kind) {
-        case Wasm::External::Function: {
+        case Wasm::ExternalKind::Function: {
             // 4. If i is a function import:
             // i. If IsCallable(v) is false, throw a TypeError.
             if (!value.isFunction())
@@ -129,7 +129,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             // v. Append closure to imports.
             break;
         }
-        case Wasm::External::Table: {
+        case Wasm::ExternalKind::Table: {
             RELEASE_ASSERT(!hasTableImport); // This should be guaranteed by a validation failure.
             // 7. Otherwise (i is a table import):
             hasTableImport = true;
@@ -160,7 +160,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             instance->setTable(vm, table);
             break;
         }
-        case Wasm::External::Memory: {
+        case Wasm::ExternalKind::Memory: {
             // 6. If i is a memory import:
             RELEASE_ASSERT(!hasMemoryImport); // This should be guaranteed by a validation failure.
             RELEASE_ASSERT(moduleInformation.memory);
@@ -192,7 +192,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
             instance->setMemory(vm, memory);
             break;
         }
-        case Wasm::External::Global: {
+        case Wasm::ExternalKind::Global: {
             // 5. If i is a global import:
             // i. If i is not an immutable global, throw a TypeError.
             ASSERT(moduleInformation.globals[import.kindIndex].mutability == Wasm::Global::Immutable);

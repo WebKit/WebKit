@@ -1,21 +1,6 @@
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 
-function assertBadBinary(builder, str) {
-    const bin = builder.WebAssembly().get();
-    let threw = false;
-    try {
-        new WebAssembly.Module(bin);
-    } catch(e) {
-        threw = true;
-        assert.truthy(e.toString().indexOf(str) !== -1);
-        assert.truthy(e instanceof WebAssembly.CompileError);
-    }
-    assert.truthy(threw);
-}
-
-const badElementSectionString = "couldn't parse section Element";
-
 {
     // Bad element section b/c no Table section/import.
     const builder = new Builder()
@@ -33,7 +18,7 @@ const badElementSectionString = "couldn't parse section Element";
             .End()
         .End();
 
-    assertBadBinary(builder, badElementSectionString);
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 22 / 41: Element section expects a Table to be present (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -56,7 +41,7 @@ const badElementSectionString = "couldn't parse section Element";
             .End()
         .End();
 
-    assertBadBinary(builder, badElementSectionString);
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 30 / 47: Element section can only have one Table for now (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -79,7 +64,7 @@ const badElementSectionString = "couldn't parse section Element";
             .End()
         .End();
 
-    assertBadBinary(builder, badElementSectionString);
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 35 / 49: Element section's 0th element writes to index 20 which exceeds the maximum 20 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -102,7 +87,7 @@ const badElementSectionString = "couldn't parse section Element";
             .End()
         .End();
 
-    assertBadBinary(builder, badElementSectionString);
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 35 / 48: Element section's 0th element writes to index 20 which exceeds the maximum 20 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -125,7 +110,7 @@ const badElementSectionString = "couldn't parse section Element";
             .End()
         .End();
 
-    assertBadBinary(builder, badElementSectionString);
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 38 / 50: Element section's 0th element's 2th index is 1 which exceeds the function index space size of 1 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {

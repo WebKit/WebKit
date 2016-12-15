@@ -105,7 +105,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     for (const auto& exp : moduleInformation.exports) {
         JSValue exportedValue;
         switch (exp.kind) {
-        case Wasm::External::Function: {
+        case Wasm::ExternalKind::Function: {
             // 1. If e is a closure c:
             //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
@@ -126,7 +126,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
                 m_startFunction.set(vm, this, function);
             break;
         }
-        case Wasm::External::Table: {
+        case Wasm::ExternalKind::Table: {
             // This should be guaranteed by module verification.
             RELEASE_ASSERT(instance->table()); 
             ASSERT(exp.kindIndex == 0);
@@ -134,7 +134,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             exportedValue = instance->table();
             break;
         }
-        case Wasm::External::Memory: {
+        case Wasm::ExternalKind::Memory: {
             // This should be guaranteed by module verification.
             RELEASE_ASSERT(instance->memory()); 
             ASSERT(exp.kindIndex == 0);
@@ -142,7 +142,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             exportedValue = instance->memory();
             break;
         }
-        case Wasm::External::Global: {
+        case Wasm::ExternalKind::Global: {
             // Assert: the global is immutable by MVP validation constraint.
             const Wasm::Global& global = moduleInformation.globals[exp.kindIndex];
             ASSERT(global.mutability == Wasm::Global::Immutable);

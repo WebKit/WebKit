@@ -42,20 +42,43 @@ namespace JSC { namespace Wasm {
     macro(Code,    10, "Function bodies (code)") \
     macro(Data,    11, "Data segments")
 
-struct Sections {
-    enum Section : uint8_t {
+enum class Section : uint8_t {
 #define DEFINE_WASM_SECTION_ENUM(NAME, ID, DESCRIPTION) NAME = ID,
-        FOR_EACH_WASM_SECTION(DEFINE_WASM_SECTION_ENUM)
+    FOR_EACH_WASM_SECTION(DEFINE_WASM_SECTION_ENUM)
 #undef DEFINE_WASM_SECTION_ENUM
-        Unknown
-    };
-    static bool validateOrder(Section previous, Section next)
-    {
-        if (previous == Unknown)
-            return true;
-        return previous < next;
-    }
+    Unknown
 };
+
+template<typename Int>
+static inline bool isValidSection(Int section)
+{
+    switch (section) {
+#define VALIDATE_SECTION(NAME, ID, DESCRIPTION) case static_cast<Int>(Section::NAME): return true;
+        FOR_EACH_WASM_SECTION(VALIDATE_SECTION)
+#undef VALIDATE_SECTION
+    default:
+        return false;
+    }
+}
+
+static inline bool validateOrder(Section previous, Section next)
+{
+    if (previous == Section::Unknown)
+        return true;
+    return static_cast<uint8_t>(previous) < static_cast<uint8_t>(next);
+}
+
+static inline const char* makeString(Section section)
+{
+    switch (section) {
+#define STRINGIFY_SECTION_NAME(NAME, ID, DESCRIPTION) case Section::NAME: return #NAME;
+        FOR_EACH_WASM_SECTION(STRINGIFY_SECTION_NAME)
+#undef STRINGIFY_SECTION_NAME
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return "?";
+    }
+}
 
 } } // namespace JSC::Wasm
 
