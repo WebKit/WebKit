@@ -1,3 +1,20 @@
+2016-12-15  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r204664.
+
+    2016-08-19  Dean Jackson  <dino@apple.com>
+
+            Implement preferLowPowerToHighPerformance for WebGL
+            https://bugs.webkit.org/show_bug.cgi?id=161017
+            <rdar://problem/26819135>
+
+            Reviewed by Myles Maxfield.
+
+            Now that we implement preferLowPowerToHighPerformance we can
+            retain its value in the context creation attributes object.
+
+            * fast/canvas/webgl/context-creation-attributes-expected.txt:
+
 2016-12-01  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r209149. rdar://problem/29404230
