@@ -864,7 +864,7 @@ void IDBTransaction::iterateCursor(IDBCursor& cursor, const IDBIterateCursorData
 
     addRequest(*cursor.request());
 
-    LOG(IndexedDBOperations, "IDB iterate cursor operation: %s", data.loggingString().utf8().data());
+    LOG(IndexedDBOperations, "IDB iterate cursor operation: %s %s", cursor.info().loggingString().utf8().data(), data.loggingString().utf8().data());
     scheduleOperation(IDBClient::createTransactionOperation(*this, *cursor.request(), &IDBTransaction::didIterateCursorOnServer, &IDBTransaction::iterateCursorOnServer, data));
 }
 
@@ -970,7 +970,7 @@ Ref<IDBRequest> IDBTransaction::requestGetRecord(ExecState& state, IDBObjectStor
     auto request = IDBRequest::createObjectStoreGet(*scriptExecutionContext(), objectStore, type, *this);
     addRequest(request.get());
 
-    LOG(IndexedDBOperations, "IDB get record operation: %s", getRecordData.loggingString().utf8().data());
+    LOG(IndexedDBOperations, "IDB get record operation: %s %s", objectStore.info().condensedLoggingString().utf8().data(), getRecordData.loggingString().utf8().data());
     scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, getRecordData));
 
     return request;
@@ -1006,7 +1006,7 @@ Ref<IDBRequest> IDBTransaction::requestIndexRecord(ExecState& state, IDBIndex& i
 
     IDBGetRecordData getRecordData = { range, IDBGetRecordDataType::KeyAndValue };
 
-    LOG(IndexedDBOperations, "IDB get index record operation: %s", getRecordData.loggingString().utf8().data());
+    LOG(IndexedDBOperations, "IDB get index record operation: %s %s", index.info().condensedLoggingString().utf8().data(), getRecordData.loggingString().utf8().data());
     scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didGetRecordOnServer, &IDBTransaction::getRecordOnServer, getRecordData));
 
     return request;
@@ -1189,7 +1189,7 @@ Ref<IDBRequest> IDBTransaction::requestPutOrAdd(ExecState& state, IDBObjectStore
     auto request = IDBRequest::create(*scriptExecutionContext(), objectStore, *this);
     addRequest(request.get());
 
-    LOG(IndexedDBOperations, "IDB putOrAdd operation: %s", key ? key->loggingString().utf8().data() : "<null key>");
+    LOG(IndexedDBOperations, "IDB putOrAdd operation: %s key: %s", objectStore.info().condensedLoggingString().utf8().data(), key ? key->loggingString().utf8().data() : "<null key>");
     scheduleOperation(IDBClient::createTransactionOperation(*this, request.get(), &IDBTransaction::didPutOrAddOnServer, &IDBTransaction::putOrAddOnServer, key, &value, overwriteMode));
 
     return request;

@@ -1,3 +1,23 @@
+2016-12-15  Brady Eidson  <beidson@apple.com>
+
+        Enhance some of the logging statements just added for IndexedDB Operation scheduling.
+
+        Rubberstamped by Tim Horton.
+
+        No new tests (No behavior change).
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::iterateCursor):
+        (WebCore::IDBTransaction::requestGetRecord):
+        (WebCore::IDBTransaction::requestIndexRecord):
+        (WebCore::IDBTransaction::requestPutOrAdd):
+        
+        * Modules/indexeddb/shared/IDBCursorInfo.cpp:
+        (WebCore::IDBCursorInfo::loggingString):
+        
+        * Modules/indexeddb/shared/IDBIterateCursorData.cpp:
+        (WebCore::IDBIterateCursorData::loggingString):
+
 2016-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Implement font-synthesis: small-caps
