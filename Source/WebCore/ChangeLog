@@ -1,3 +1,22 @@
+2016-12-14  Dean Jackson  <dino@apple.com>
+
+        Update prefers-reduced-motion syntax
+        https://bugs.webkit.org/show_bug.cgi?id=165880
+        <rdar://problems/29671807>
+
+        Reviewed by Sam Weinig.
+
+        After discussion in:
+        https://github.com/w3c/csswg-drafts/issues/442
+        ... the syntax of prefers-reduced-motion was changed
+        to accept "reduce" or "no-preference".
+
+        Updated the tests in fast/media.
+
+        * css/CSSValueKeywords.in: Add no-preference keyword.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersReducedMotionEvaluate):
+
 2016-12-14  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (204679): Google notifications never load (expecting DOMStringList rather than JS array for Location.ancestorOrigins)

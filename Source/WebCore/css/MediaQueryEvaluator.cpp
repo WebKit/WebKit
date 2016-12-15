@@ -699,7 +699,7 @@ static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConve
     if (!value)
         return userPrefersReducedMotion;
 
-    return downcast<CSSPrimitiveValue>(*value).valueID() == (userPrefersReducedMotion ? CSSValueReduce : CSSValueDefault);
+    return downcast<CSSPrimitiveValue>(*value).valueID() == (userPrefersReducedMotion ? CSSValueReduce : CSSValueNoPreference);
 }
 
 // Use this function instead of calling add directly to avoid inlining.
