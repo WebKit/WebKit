@@ -25,6 +25,7 @@
 
 import * as assert from 'assert.js';
 import * as BuildWebAssembly from 'Builder_WebAssemblyBinary.js';
+import * as LLB from 'LowLevelBinary.js';
 import * as WASM from 'WASM.js';
 
 const _toJavaScriptName = name => {
@@ -36,7 +37,7 @@ const _toJavaScriptName = name => {
 const _isValidValue = (value, type) => {
     switch (type) {
     // We allow both signed and unsigned numbers.
-    case "i32": return -(2 ** 31) <= value && value < 2 ** 32;
+    case "i32": return Math.round(value) === value && LLB.varint32Min <= value && value <= LLB.varuint32Max;
     case "i64": throw new Error(`Unimplemented: value check for ${type}`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=163420 64-bit values
     case "f32": return typeof(value) === "number" && isFinite(value);
     case "f64": return typeof(value) === "number" && isFinite(value);
@@ -279,7 +280,7 @@ const _checkImms = (op, imms, expectedImms, ret) => {
         const expect = expectedImms[idx];
         switch (expect.name) {
         case "function_index":
-            assert.truthy(_isValidValue(got, "i32"), `Invalid value on ${op}: got "${got}", expected i32`);
+            assert.truthy(_isValidValue(got, "i32") && got >= 0, `Invalid value on ${op}: got "${got}", expected non-negative i32`);
             // FIXME check function indices. https://bugs.webkit.org/show_bug.cgi?id=163421
             break;
         case "local_index": break; // improve checking https://bugs.webkit.org/show_bug.cgi?id=163421

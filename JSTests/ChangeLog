@@ -1,5 +1,16 @@
 2016-12-14  Keith Miller  <keith_miller@apple.com>
 
+        WebAssembly: test_BuilderJSON.js is broken
+        https://bugs.webkit.org/show_bug.cgi?id=165893
+
+        Reviewed by Michael Saboff.
+
+        * wasm/Builder.js:
+        (const._isValidValue):
+        * wasm/self-test/test_BuilderJSON.js:
+
+2016-12-14  Keith Miller  <keith_miller@apple.com>
+
         Unreviewed, fix test.
 
         * wasm/function-tests/i32-const.js:

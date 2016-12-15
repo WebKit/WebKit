@@ -482,11 +482,11 @@ const assertOpThrows = (opFn, message) => {
 
 (function CallInvalid() {
     for (let c of [-1, 0x100000000, "0", {}, Infinity, -Infinity, NaN, -NaN, null])
-        assertOpThrows(f => f.Call(c), `Expected truthy: Invalid value on call: got "${c}", expected i32`);
+        assertOpThrows(f => f.Call(c), `Expected truthy: Invalid value on call: got "${c}", expected non-negative i32`);
 })();
 
 (function I32ConstValid() {
-    for (let c of [0, 1, 2, 42, 1337, 0xFF, 0xFFFF, 0x7FFFFFFF, 0xFFFFFFFE, 0xFFFFFFFF]) {
+    for (let c of [-100, -1, 0, 1, 2, 42, 1337, 0xFF, 0xFFFF, 0x7FFFFFFF, 0xFFFFFFFE, 0xFFFFFFFF]) {
         const b = (new Builder()).Type().End().Code().Function().I32Const(c).Return().End().End();
         const j = JSON.parse(b.json());
         assert.eq(j.section[1].data[0].code[0].name, "i32.const");
@@ -497,7 +497,7 @@ const assertOpThrows = (opFn, message) => {
 })();
 
 (function I32ConstInvalid() {
-    for (let c of [-1, 0x100000000, 0.1, -0.1, "0", {}, Infinity, null])
+    for (let c of [0x100000000, 0.1, -0.1, "0", {}, Infinity, null])
         assertOpThrows(f => f.I32Const(c), `Expected truthy: Invalid value on i32.const: got "${c}", expected i32`);
 })();
 
