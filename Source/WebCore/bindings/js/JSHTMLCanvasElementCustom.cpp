@@ -62,8 +62,7 @@ static void get3DContextAttributes(ExecState& state, RefPtr<CanvasContextAttribu
     dictionary.tryGetProperty("antialias", graphicsAttrs.antialias);
     dictionary.tryGetProperty("premultipliedAlpha", graphicsAttrs.premultipliedAlpha);
     dictionary.tryGetProperty("preserveDrawingBuffer", graphicsAttrs.preserveDrawingBuffer);
-    dictionary.tryGetProperty("preferLowPowerToHighPerformance", graphicsAttrs.preferLowPowerToHighPerformance);
-
+    
     attrs = WebGLContextAttributes::create(graphicsAttrs);
 }
 #endif
