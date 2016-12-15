@@ -191,6 +191,22 @@ const _exportGlobalContinuation = (builder, section, nextBuilder) => {
     }
 };
 
+const _exportMemoryContinuation = (builder, section, nextBuilder) => {
+    return (field, index) => {
+        assert.isNumber(index, `Memory exports only support number indices`);
+        section.data.push({field, kind: "Memory", index});
+        return nextBuilder;
+    }
+};
+
+const _exportTableContinuation = (builder, section, nextBuilder) => {
+    return (field, index) => {
+        assert.isNumber(index, `Table exports only support number indices`);
+        section.data.push({field, kind: "Table", index});
+        return nextBuilder;
+    }
+};
+
 const _importGlobalContinuation = (builder, section, nextBuilder) => {
     return () => {
         const globalBuilder = {
@@ -516,11 +532,11 @@ export default class Builder {
                     const s = this._addSection(section);
                     const exportBuilder = {
                         End: () => this,
-                        Table: () => { throw new Error(`Unimplemented: export table`); },
-                        Memory: () => { throw new Error(`Unimplemented: export memory`); },
                     };
                     exportBuilder.Global = _exportGlobalContinuation(this, s, exportBuilder);
                     exportBuilder.Function = _exportFunctionContinuation(this, s, exportBuilder);
+                    exportBuilder.Memory = _exportMemoryContinuation(this, s, exportBuilder);
+                    exportBuilder.Table = _exportTableContinuation(this, s, exportBuilder);
                     return exportBuilder;
                 };
                 break;

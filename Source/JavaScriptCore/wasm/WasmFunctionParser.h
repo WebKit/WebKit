@@ -566,6 +566,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 
     case OpType::Unreachable: {
+        m_context.addUnreachable();
         m_unreachableBlocks = 1;
         return true;
     }

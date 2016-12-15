@@ -1,3 +1,25 @@
+2016-12-14  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Add various low hanging fruit that will allow us to run the LLVM torture tests in Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=165883
+
+        Reviewed by Keith Miller.
+
+        * wasm/Builder.js:
+        (export.default.Builder.prototype._registerSectionBuilders.switch.case.string_appeared_here.this.section):
+        * wasm/Builder_WebAssemblyBinary.js:
+        (const.emitters.Export):
+        * wasm/js-api/table.js:
+        (assertBadBinary):
+        (assertBadTable):
+        (assert.truthy):
+        * wasm/js-api/test_memory.js:
+        (binaryShouldNotParse):
+        (test):
+        (test.testMemImportError):
+        (assert.truthy):
+        (assert): Deleted.
+
 2016-12-14  Filip Pizlo  <fpizlo@apple.com>
 
         DirectTailCall implementation needs to tell the shuffler what to put into the ArgumentCount explicitly

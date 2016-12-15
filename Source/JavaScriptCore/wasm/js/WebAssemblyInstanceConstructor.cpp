@@ -245,7 +245,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
         if (!!moduleInformation.tableInformation && !hasTableImport) {
             RELEASE_ASSERT(!moduleInformation.tableInformation.isImport());
             // We create a Table when it's a Table definition.
-            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(),
+            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(),
                 moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
             // We should always be able to allocate a JSWebAssemblyTable we've defined.
             // If it's defined to be too large, we should have thrown a validation error.

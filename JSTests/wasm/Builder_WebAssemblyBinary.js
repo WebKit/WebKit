@@ -167,14 +167,13 @@ const emitters = {
             put(bin, "string", entry.field);
             put(bin, "uint8", WASM.externalKindValue[entry.kind]);
             switch (entry.kind) {
-            default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
             case "Global":
             case "Function":
+            case "Memory":
+            case "Table":
                 put(bin, "varuint32", entry.index);
                 break;
-            case "Table": throw new Error(`Not yet implemented`);
-            case "Memory": throw new Error(`Not yet implemented`);
-
+            default: throw new Error(`Implementation problem: unexpected kind ${entry.kind}`);
             }
         }
     },

@@ -1,3 +1,32 @@
+2016-12-14  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Add various low hanging fruit that will allow us to run the LLVM torture tests in Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=165883
+
+        Reviewed by Keith Miller.
+
+        This patch implements some low hanging fruit:
+        - Exporting Table
+        - Exporting Memory
+        - Load16 with zero extension to both 32 and 64 bit values.
+        - Fixes Unreachable to emit code that will prevent B3 from having a validation error.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addUnreachable):
+        (JSC::Wasm::sizeOfLoadOp):
+        (JSC::Wasm::B3IRGenerator::emitLoadOp):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parseExport):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::addUnreachable):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::finishCreation):
+        (JSC::WebAssemblyModuleRecord::link):
+
 2016-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Update ModuleLoader code by using the latest builtin primitives

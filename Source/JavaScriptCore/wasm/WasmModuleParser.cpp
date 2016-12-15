@@ -511,11 +511,17 @@ bool ModuleParser::parseExport()
             break;
         }
         case External::Table: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=165782
+            if (!m_hasTable)
+                return false;
+            if (exp.kindIndex != 0)
+                return false;
             break;
         }
         case External::Memory: {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
+            if (!m_module->memory)
+                return false;
+            if (exp.kindIndex != 0)
+                return false;
             break;
         }
         case External::Global: {

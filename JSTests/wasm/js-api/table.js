@@ -1,19 +1,13 @@
 import Builder from '../Builder.js';
 import * as assert from '../assert.js';
 
-const badTableString = "couldn't parse section Table";
-const badImportString = "couldn't parse section Import";
+const badTableString = "couldn't parse section Table: Indirect function table and other tables (evaluating 'new WebAssembly.Module(bin)')";
+const badImportString = "couldn't parse section Import: Import declarations (evaluating 'new WebAssembly.Module(bin)')";
+const badExportString = "couldn't parse section Export: Exports (evaluating 'new WebAssembly.Module(bin)')";
+
 function assertBadBinary(builder, str) {
     const bin = builder.WebAssembly().get();
-    let threw = false;
-    try {
-        new WebAssembly.Module(bin);
-    } catch(e) {
-        threw = true;
-        assert.truthy(e.toString().indexOf(str) !== -1);
-        assert.truthy(e instanceof WebAssembly.CompileError);
-    }
-    assert.truthy(threw);
+    assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, str);
 }
 
 {
@@ -57,7 +51,7 @@ function assertBadBinary(builder, str) {
                 .CallIndirect(0, 0)
             .End()
         .End();
-    assertBadBinary(builder, "call_indirect is only valid when a table is defined or imported");
+    assertBadBinary(builder, "call_indirect is only valid when a table is defined or imported (evaluating 'new WebAssembly.Module(bin)')");
 }
 
 {
@@ -76,7 +70,36 @@ function assertBadBinary(builder, str) {
                 .CallIndirect(0, 1)
             .End()
         .End();
-    assertBadBinary(builder, "call_indirect 'reserved' varuint1 must be 0x0");
+    assertBadBinary(builder, "call_indirect 'reserved' varuint1 must be 0x0 (evaluating 'new WebAssembly.Module(bin)')");
+}
+
+{
+    // Can't export an undefined table
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Export()
+            .Table("foo", 0)
+        .End()
+        .Code()
+        .End();
+    assertBadBinary(builder, badExportString);
+}
+
+{
+    // Can't export a table at index 1.
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Table()
+            .Table({initial: 20, maximum: 30, element: "anyfunc"})
+        .End()
+        .Export()
+            .Table("foo", 1)
+        .End()
+        .Code()
+        .End();
+    assertBadBinary(builder, badExportString);
 }
 
 function assertBadTable(tableDescription) {
@@ -227,4 +250,44 @@ function assertBadTableImport(tableDescription) {
     assertBadTable(new Object);
     assertBadTable([]);
     assertBadTable(new WebAssembly.Memory({initial:1}));
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Import()
+            .Table("imp", "table", {initial: 25, element: "anyfunc"})
+        .End()
+        .Function().End()
+        .Export()
+            .Table("table", 0)
+            .Table("table2", 0)
+        .End()
+        .Code().End();
+
+    const module = new WebAssembly.Module(builder.WebAssembly().get());
+    const table = new WebAssembly.Table({element: "anyfunc", initial: 25});
+    const instance = new WebAssembly.Instance(module, {imp: {table}});
+    assert.truthy(table === instance.exports.table);
+    assert.truthy(table === instance.exports.table2);
+}
+
+{
+    const builder = new Builder()
+        .Type().End()
+        .Function().End()
+        .Table()
+            .Table({initial: 20, maximum: 30, element: "anyfunc"})
+        .End()
+        .Export()
+            .Table("table", 0)
+            .Table("table2", 0)
+        .End()
+        .Code().End();
+
+    const module = new WebAssembly.Module(builder.WebAssembly().get());
+    const instance = new WebAssembly.Instance(module);
+    assert.eq(instance.exports.table, instance.exports.table2);
+    assert.eq(instance.exports.table.length, 20);
+    assert.truthy(instance.exports.table instanceof WebAssembly.Table);
 }

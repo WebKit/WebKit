@@ -114,6 +114,8 @@ public:
     bool WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     bool WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
 
+    void addUnreachable() { }
+
     // Calls
     bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);
     bool WARN_UNUSED_RETURN addCallIndirect(const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);

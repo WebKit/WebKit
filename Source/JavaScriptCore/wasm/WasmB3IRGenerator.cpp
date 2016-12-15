@@ -178,6 +178,7 @@ public:
     // Calls
     bool WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
     bool WARN_UNUSED_RETURN addCallIndirect(const Signature*, Vector<ExpressionType>& args, ExpressionType& result);
+    void addUnreachable();
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
@@ -326,6 +327,15 @@ bool B3IRGenerator::getLocal(uint32_t index, ExpressionType& result)
     return true;
 }
 
+void B3IRGenerator::addUnreachable()
+{
+    B3::PatchpointValue* unreachable = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
+    unreachable->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        jit.breakpoint();
+    });
+    unreachable->effects.terminal = true;
+}
+
 bool B3IRGenerator::setLocal(uint32_t index, ExpressionType value)
 {
     ASSERT(m_locals[index]);
@@ -367,6 +377,8 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
         return 1;
     case LoadOpType::I32Load16S:
     case LoadOpType::I64Load16S:
+    case LoadOpType::I32Load16U:
+    case LoadOpType::I64Load16U:
         return 2;
     case LoadOpType::I32Load:
     case LoadOpType::I64Load32S:
@@ -376,9 +388,6 @@ inline uint32_t sizeOfLoadOp(LoadOpType op)
     case LoadOpType::I64Load:
     case LoadOpType::F64Load:
         return 8;
-    case LoadOpType::I32Load16U:
-    case LoadOpType::I64Load16U:
-        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -438,10 +447,20 @@ inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, Origin origin, Expression
         return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Double, origin, pointer);
     }
 
-    // B3 doesn't support Load16Z yet.
-    case LoadOpType::I32Load16U:
-    case LoadOpType::I64Load16U:
-        break;
+    // FIXME: B3 doesn't support Load16Z yet. We should lower to that value when
+    // it's added. https://bugs.webkit.org/show_bug.cgi?id=165884
+    case LoadOpType::I32Load16U: {
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load16S, origin, pointer, offset);
+        return m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(), value,
+                m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), 0x0000ffff));
+    }
+    case LoadOpType::I64Load16U: {
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load16S, origin, pointer, offset);
+        Value* partialResult = m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(), value,
+                m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), 0x0000ffff));
+
+        return m_currentBlock->appendNew<Value>(m_proc, ZExt32, Origin(), partialResult);
+    }
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -70,27 +70,8 @@ void WebAssemblyModuleRecord::finishCreation(ExecState* exec, VM& vm, const Wasm
 {
     Base::finishCreation(exec, vm);
     ASSERT(inherits(info()));
-    for (const auto& exp : moduleInformation.exports) {
-        switch (exp.kind) {
-        case Wasm::External::Function: {
-            addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
-            break;
-        }
-        case Wasm::External::Table: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=165782
-            break;
-        }
-        case Wasm::External::Memory: {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
-            break;
-        }
-        case Wasm::External::Global: {
-            // In the MVP, only immutable global variables can be exported.
-            addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
-            break;
-        }
-        }
-    }
+    for (const auto& exp : moduleInformation.exports)
+        addExportEntry(ExportEntry::createLocal(exp.field, exp.field));
 }
 
 void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -146,14 +127,21 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             break;
         }
         case Wasm::External::Table: {
-            // FIXME https://bugs.webkit.org/show_bug.cgi?id=165782
+            // This should be guaranteed by module verification.
+            RELEASE_ASSERT(instance->table()); 
+            ASSERT(exp.kindIndex == 0);
+
+            exportedValue = instance->table();
             break;
         }
         case Wasm::External::Memory: {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=165671
+            // This should be guaranteed by module verification.
+            RELEASE_ASSERT(instance->memory()); 
+            ASSERT(exp.kindIndex == 0);
+
+            exportedValue = instance->memory();
             break;
         }
-
         case Wasm::External::Global: {
             // Assert: the global is immutable by MVP validation constraint.
             const Wasm::Global& global = moduleInformation.globals[exp.kindIndex];
