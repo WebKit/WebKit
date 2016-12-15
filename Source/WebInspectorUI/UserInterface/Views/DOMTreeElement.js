@@ -1509,7 +1509,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                         return;
 
                     let location = response.location;
-                    let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId);
+                    let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, WebInspector.mainTarget);
                     if (!sourceCode)
                         return;
 

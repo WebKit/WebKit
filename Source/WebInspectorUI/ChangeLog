@@ -1,3 +1,16 @@
+2016-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Web Inspector: Jumping to the definition of a custom elements is broken
+        https://bugs.webkit.org/show_bug.cgi?id=165890
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix the regression from https://trac.webkit.org/changeset/208304.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._showCustomElementDefinition): Use the main target
+        since a custom element definition can never come from a worker.
+
 2016-12-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Zooming in on the Timeline should always zoom right where the cursor is
