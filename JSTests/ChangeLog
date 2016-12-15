@@ -1,3 +1,24 @@
+2016-12-15  Keith Miller  <keith_miller@apple.com>
+
+        Fix 64-bit shift family Wasm opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=165902
+
+        Reviewed by Geoffrey Garen.
+
+        Add tests for shift family of instructions. Since
+        we can't generate i64 values to pass to wasm we only compile
+        the code for those functions. Attempting to generate any i64
+        code using these instructions would have been enough to cause
+        the B3 Validation error anyway.
+
+        * wasm/assert.js:
+        * wasm/function-tests/rotl.js: Added.
+        * wasm/function-tests/rotr.js: Added.
+        * wasm/function-tests/shl.js: Added.
+        * wasm/function-tests/shr-s.js: Added.
+        * wasm/function-tests/shr-u.js: Added.
+        * wasm/wasm.json:
+
 2016-12-14  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: test_BuilderJSON.js is broken

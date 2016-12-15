@@ -79,6 +79,16 @@ export const eq = (lhs, rhs, msg) => {
         _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
 };
 
+const canonicalizeI32 = (number) => {
+    if (Math.round(number) === number && number >= 2 ** 31)
+        number = number - 2 ** 32;
+    return number;
+}
+
+export const eqI32 = (lhs, rhs, msg) => {
+    return eq(canonicalizeI32(lhs), canonicalizeI32(rhs), msg);
+};
+
 export const ge = (lhs, rhs, msg) => {
     isNotUndef(lhs);
     isNotUndef(rhs);
