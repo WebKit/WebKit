@@ -1381,6 +1381,7 @@ private:
     void wheelEventHandlersChanged();
 
     HttpEquivPolicy httpEquivPolicy() const;
+    AXObjectCache* existingAXObjectCacheSlow() const;
 
     // DOM Cookies caching.
     const String& cachedDOMCookies() const { return m_cachedDOMCookies; }
@@ -1764,6 +1765,8 @@ private:
 #if ENABLE(WEB_SOCKETS)
     RefPtr<SocketProvider> m_socketProvider;
 #endif
+
+    static bool hasEverCreatedAnAXObjectCache;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()
@@ -1782,6 +1785,13 @@ inline TextEncoding Document::textEncoding() const
 inline const Document* Document::templateDocument() const
 {
     return m_templateDocumentHost ? this : m_templateDocument.get();
+}
+
+inline AXObjectCache* Document::existingAXObjectCache() const
+{
+    if (!hasEverCreatedAnAXObjectCache)
+        return nullptr;
+    return existingAXObjectCacheSlow();
 }
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.

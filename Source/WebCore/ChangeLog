@@ -1,3 +1,19 @@
+2016-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Inline Document::existingAXObjectCache()
+        https://bugs.webkit.org/show_bug.cgi?id=165906
+
+        Reviewed by Darin Adler.
+
+        Inline Document::existingAXObjectCache() to avoid paying function call
+        cost in the common case where AX is disabled.
+
+        * dom/Document.cpp:
+        (WebCore::Document::existingAXObjectCacheSlow):
+        (WebCore::Document::existingAXObjectCache): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::existingAXObjectCache):
+
 2016-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r209864.

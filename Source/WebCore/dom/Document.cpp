@@ -275,6 +275,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static const unsigned cMaxWriteRecursionDepth = 21;
+bool Document::hasEverCreatedAnAXObjectCache = false;
 
 // DOM Level 2 says (letters added):
 //
@@ -2416,13 +2417,9 @@ void Document::clearAXObjectCache()
     m_axObjectCache = nullptr;
 }
 
-static bool hasEverCreatedAnAXObjectCache = false;
-
-AXObjectCache* Document::existingAXObjectCache() const
+AXObjectCache* Document::existingAXObjectCacheSlow() const
 {
-    if (!hasEverCreatedAnAXObjectCache)
-        return nullptr;
-
+    ASSERT(hasEverCreatedAnAXObjectCache);
     Document& topDocument = this->topDocument();
     if (!topDocument.hasLivingRenderTree())
         return nullptr;
