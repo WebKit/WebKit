@@ -1,3 +1,33 @@
+2016-12-15  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Enable CSS Deferred Parsing
+        https://bugs.webkit.org/show_bug.cgi?id=165869
+
+        Reviewed by Sam Weinig.
+
+        Enable CSS deferred parsing once again. It's now behind a pref,
+        so it's easy to flip off and on.
+
+        To address the memory regression that caused the previous rollout,
+        the tokenizer is no longer retained. Instead the sheet text and escaped
+        strings are retained by CSSDeferredParser, and then DeferredStyleProperties
+        and DeferredStyleGroupRuleList make copies of the tokens from the original
+        tokenization process. As the rules get parsed, these tokens get thrown
+        away.
+
+        This means that instead of the entire set of tokens staying in memory
+        as long as even one unparsed rule remained, now only the tokens that
+        still need parsing will remain alive.
+
+        Unparsed rules will consume slightly more memory than parsed rules, but
+        the more unparsed rules you have, the bigger the performance win as
+        well, so this is a tradeoff. Given that the parsing speed is going up
+        by anywhere from 25-40% on cold loads of pages (where all stylesheets
+        have to parse), this seems worth it to me.
+
+        * css/parser/CSSParserMode.h:
+        * page/Settings.in:
+
 2016-12-15  Alejandro G. Castro  <alex@igalia.com>
 
         [OWR] Unskip fast/mediastream/MediaStream-video-element-track-stop.html

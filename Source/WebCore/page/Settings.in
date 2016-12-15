@@ -249,7 +249,7 @@ attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT
 
 newBlockInsideInlineModelEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
-deferredCSSParserEnabled initial=false
+deferredCSSParserEnabled initial=true
 
 httpEquivEnabled initial=true
 
