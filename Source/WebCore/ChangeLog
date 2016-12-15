@@ -1,3 +1,10 @@
+2016-12-14  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed build fix after r209832
+
+        * platform/graphics/PlatformDisplay.cpp: 
+        (WebCore::PlatformDisplay::sharedDisplay): Added the guard for the clang
+
 2016-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] Support latest SubtleCrypto HMAC APIs
