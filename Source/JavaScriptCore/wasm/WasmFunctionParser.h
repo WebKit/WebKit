@@ -302,19 +302,33 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     }
 #undef CREATE_CASE
 
-    case OpType::F32Const:
-    case OpType::I32Const: {
+    case OpType::F32Const: {
         uint32_t constant;
-        if (!parseVarUInt32(constant))
+        if (!parseUInt32(constant))
+            return false;
+        m_expressionStack.append(m_context.addConstant(F32, constant));
+        return true;
+    }
+
+    case OpType::I32Const: {
+        int32_t constant;
+        if (!parseVarInt32(constant))
             return false;
         m_expressionStack.append(m_context.addConstant(I32, constant));
         return true;
     }
 
-    case OpType::F64Const:
-    case OpType::I64Const: {
+    case OpType::F64Const: {
         uint64_t constant;
-        if (!parseVarUInt64(constant))
+        if (!parseUInt64(constant))
+            return false;
+        m_expressionStack.append(m_context.addConstant(F64, constant));
+        return true;
+    }
+
+    case OpType::I64Const: {
+        int64_t constant;
+        if (!parseVarInt64(constant))
             return false;
         m_expressionStack.append(m_context.addConstant(I64, constant));
         return true;

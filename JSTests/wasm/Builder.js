@@ -35,7 +35,8 @@ const _toJavaScriptName = name => {
 
 const _isValidValue = (value, type) => {
     switch (type) {
-    case "i32": return ((value & 0xFFFFFFFF) >>> 0) === value;
+    // We allow both signed and unsigned numbers.
+    case "i32": return -(2 ** 31) <= value && value < 2 ** 32;
     case "i64": throw new Error(`Unimplemented: value check for ${type}`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=163420 64-bit values
     case "f32": return typeof(value) === "number" && isFinite(value);
     case "f64": return typeof(value) === "number" && isFinite(value);

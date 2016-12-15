@@ -1,3 +1,17 @@
+2016-12-14  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should decode constants correctly
+        https://bugs.webkit.org/show_bug.cgi?id=165886
+
+        Reviewed by Saam Barati.
+
+        This patch fixes how we decode the constant part of i32, i64, f32,
+        and f64.const opcodes.
+
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        * wasm/wasm.json:
+
 2016-12-14  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Add various low hanging fruit that will allow us to run the LLVM torture tests in Wasm

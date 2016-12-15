@@ -122,6 +122,30 @@ export default class LowLevelBinary {
         this._push8(v >>> 16);
         this._push8(v >>> 24);
     }
+    float(v) {
+        if (isNaN(v))
+            throw new RangeError("unimplemented, NaNs");
+        // Unfortunately, we cannot just view the actual buffer as a Float32Array since it needs to be 4 byte aligned
+        let buffer = new ArrayBuffer(4);
+        let floatView = new Float32Array(buffer);
+        let int8View = new Uint8Array(buffer);
+        floatView[0] = v;
+        for (let byte of int8View)
+            this._push8(byte);
+    }
+
+    double(v) {
+        if (isNaN(v))
+            throw new RangeError("unimplemented, NaNs");
+        // Unfortunately, we cannot just view the actual buffer as a Float64Array since it needs to be 4 byte aligned
+        let buffer = new ArrayBuffer(8);
+        let floatView = new Float64Array(buffer);
+        let int8View = new Uint8Array(buffer);
+        floatView[0] = v;
+        for (let byte of int8View)
+            this._push8(byte);
+    }
+
     varuint32(v) {
         assert.isNumber(v);
         if (v < varuint32Min || varuint32Max < v)

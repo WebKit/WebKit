@@ -72,6 +72,15 @@ const putOp = (bin, op) => {
             put(bin, type, op.immediates[i]);
         }
         break;
+    case "i32.const": {
+        assert.eq(op.immediates.length, 1);
+        let imm = op.immediates[0];
+        // Do a static cast to make large int32s signed.
+        if (imm >= 2 ** 31)
+            imm = imm - (2 ** 32);
+        put(bin, "varint32", imm);
+        break;
+    }
     case "br_table":
         put(bin, "varuint32", op.immediates.length - 1);
         for (let imm of op.immediates)
