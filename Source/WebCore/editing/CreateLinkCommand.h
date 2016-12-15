@@ -36,13 +36,13 @@ public:
         return adoptRef(*new CreateLinkCommand(document, linkURL));
     }
 
-    bool isCreateLinkCommand() const { return true; }
+    bool isCreateLinkCommand() const override { return true; }
 
 private:
     CreateLinkCommand(Document&, const String& linkURL);
 
-    virtual void doApply();
-    virtual EditAction editingAction() const { return EditActionCreateLink; }
+    void doApply() override;
+    EditAction editingAction() const override { return EditActionCreateLink; }
 
     String m_url;
 };

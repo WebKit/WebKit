@@ -39,7 +39,7 @@ public:
 private:
     SplitTextNodeContainingElementCommand(PassRefPtr<Text>, int offset);
 
-    virtual void doApply();
+    void doApply() override;
 
     RefPtr<Text> m_text;
     int m_offset;

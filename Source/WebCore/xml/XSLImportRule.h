@@ -48,7 +48,7 @@ public:
     void loadSheet();
     
 private:
-    virtual void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet);
+    void setXSLStyleSheet(const String& href, const URL& baseURL, const String& sheet) override;
     
     XSLStyleSheet* m_parentStyleSheet;
     String m_strHref;

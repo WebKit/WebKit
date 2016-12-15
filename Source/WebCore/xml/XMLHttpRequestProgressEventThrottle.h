@@ -57,7 +57,7 @@ public:
 private:
     static const double minimumProgressEventDispatchingIntervalInSeconds;
 
-    virtual void fired();
+    void fired() override;
     void dispatchDeferredEvents();
     void flushProgressEvent();
     void dispatchEvent(Event&);

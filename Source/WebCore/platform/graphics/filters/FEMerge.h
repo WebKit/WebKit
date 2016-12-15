@@ -31,10 +31,10 @@ class FEMerge : public FilterEffect {
 public:
     static Ref<FEMerge> create(Filter&);
 
-    virtual void platformApplySoftware();
-    virtual void dump();
+    void platformApplySoftware() override;
+    void dump() override;
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+    TextStream& externalRepresentation(TextStream&, int indention) const override;
 
 private:
     FEMerge(Filter&);

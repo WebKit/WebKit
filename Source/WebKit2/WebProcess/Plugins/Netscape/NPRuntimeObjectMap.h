@@ -90,7 +90,7 @@ public:
 
 private:
     // WeakHandleOwner
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+    void finalize(JSC::Handle<JSC::Unknown>, void* context) override;
     void addToInvalidationQueue(NPObject*);
     void invalidateQueuedObjects();
 

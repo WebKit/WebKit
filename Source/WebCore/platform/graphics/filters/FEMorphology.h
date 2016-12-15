@@ -46,12 +46,12 @@ public:
     float radiusY() const { return m_radiusY; }
     bool setRadiusY(float);
 
-    virtual void platformApplySoftware();
-    virtual void dump();
+    void platformApplySoftware() override;
+    void dump() override;
 
-    virtual void determineAbsolutePaintRect();
+    void determineAbsolutePaintRect() override;
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+    TextStream& externalRepresentation(TextStream&, int indention) const override;
 
     struct PaintingData {
         Uint8ClampedArray* srcPixelArray;

@@ -142,7 +142,7 @@ public:
         }
 
     private:
-        virtual void fired() { (m_object->*m_function)(); }
+        void fired() override { (m_object->*m_function)(); }
 
         TimerFiredClass* m_object;
         TimerFiredFunction m_function;

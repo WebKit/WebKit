@@ -43,8 +43,8 @@ public:
     }
 
 private:
-    virtual bool isRenderFullScreenPlaceholder() const { return true; }
-    virtual void willBeDestroyed();
+    bool isRenderFullScreenPlaceholder() const override { return true; }
+    void willBeDestroyed() override;
     RenderFullScreen& m_owner;
 };
 

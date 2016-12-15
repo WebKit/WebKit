@@ -1,3 +1,83 @@
+2016-12-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added missing override and final specifiers
+        https://bugs.webkit.org/show_bug.cgi?id=165903
+
+        Reviewed by Darin Adler.
+
+        No new tests needed.
+
+        * Modules/mediastream/OverconstrainedErrorEvent.h:
+        * bindings/js/JSCallbackData.h:
+        * bindings/js/JSCustomXPathNSResolver.h:
+        * bindings/js/JSErrorHandler.h:
+        * css/StyleRuleImport.h:
+        * dom/SecurityPolicyViolationEvent.h:
+        * editing/CreateLinkCommand.h:
+        * editing/DeleteSelectionCommand.h:
+        * editing/DictationCommand.h:
+        * editing/Editor.cpp:
+        * editing/FormatBlockCommand.h:
+        * editing/IndentOutdentCommand.h:
+        * editing/InsertLineBreakCommand.h:
+        * editing/InsertParagraphSeparatorCommand.h:
+        * editing/ModifySelectionListLevel.h:
+        * editing/MoveSelectionCommand.h:
+        * editing/RemoveFormatCommand.h:
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        * editing/ReplaceSelectionCommand.h:
+        * editing/SimplifyMarkupCommand.h:
+        * editing/SplitTextNodeContainingElementCommand.h:
+        * editing/UnlinkCommand.h:
+        * fileapi/FileReaderLoader.h:
+        * html/canvas/ANGLEInstancedArrays.h:
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        * loader/SinkDocument.h:
+        * loader/archive/mhtml/MHTMLArchive.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        * platform/audio/MultiChannelResampler.cpp:
+        * platform/audio/SincResampler.cpp:
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.h:
+        * platform/graphics/TextTrackRepresentation.cpp:
+        * platform/graphics/displaylists/DisplayListItems.h:
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * platform/graphics/filters/FEDiffuseLighting.h:
+        * platform/graphics/filters/FEDropShadow.h:
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMerge.h:
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FEOffset.h:
+        * platform/graphics/filters/FESpecularLighting.h:
+        * platform/graphics/filters/FETile.h:
+        * platform/graphics/filters/FETurbulence.h:
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+        * platform/mock/GeolocationClientMock.h:
+        * platform/text/TextCodecICU.h:
+        * platform/text/TextCodecLatin1.h:
+        * platform/text/TextCodecUTF16.h:
+        * platform/text/TextCodecUTF8.h:
+        * platform/text/TextCodecUserDefined.h:
+        * rendering/RenderFullScreen.cpp:
+        * storage/StorageEvent.h:
+        * svg/properties/SVGListProperty.h:
+        * svg/properties/SVGStaticListPropertyTearOff.h:
+        * svg/properties/SVGStaticPropertyTearOff.h:
+        * xml/NativeXPathNSResolver.h:
+        * xml/XMLHttpRequestProgressEvent.h:
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+        * xml/XPathVariableReference.h:
+        * xml/XSLImportRule.h:
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Inline Document::existingAXObjectCache()

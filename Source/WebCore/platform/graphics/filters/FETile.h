@@ -31,14 +31,14 @@ class FETile : public FilterEffect {
 public:
     static Ref<FETile> create(Filter&);
 
-    virtual void platformApplySoftware();
-    virtual void dump();
+    void platformApplySoftware() override;
+    void dump() override;
 
-    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
-    virtual FilterEffectType filterEffectType() const { return FilterEffectTypeTile; }
+    FilterEffectType filterEffectType() const override { return FilterEffectTypeTile; }
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+    TextStream& externalRepresentation(TextStream&, int indention) const override;
 
 private:
     FETile(Filter&);

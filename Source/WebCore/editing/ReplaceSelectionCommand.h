@@ -60,7 +60,7 @@ private:
     String inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
     bool willApplyCommand() final;
-    virtual void doApply();
+    void doApply() override;
 
     class InsertedNodes {
     public:

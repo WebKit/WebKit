@@ -52,7 +52,7 @@ public:
 private:
     WebFrameNetworkingContext(WebFrame*);
 
-    virtual WebCore::NetworkStorageSession& storageSession() const;
+    WebCore::NetworkStorageSession& storageSession() const override;
 };
 
 }

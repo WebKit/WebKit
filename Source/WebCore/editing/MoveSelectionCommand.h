@@ -41,8 +41,8 @@ public:
 private:
     MoveSelectionCommand(PassRefPtr<DocumentFragment>, const Position&, bool smartInsert, bool smartDelete);
 
-    virtual void doApply();
-    virtual EditAction editingAction() const;
+    void doApply() override;
+    EditAction editingAction() const override;
     bool shouldDispatchInputEvents() const final { return false; }
     
     RefPtr<DocumentFragment> m_fragment;

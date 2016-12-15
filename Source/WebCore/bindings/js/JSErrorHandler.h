@@ -45,7 +45,7 @@ public:
 
 private:
     JSErrorHandler(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
+    void handleEvent(ScriptExecutionContext*, Event*) final;
 };
 
 // Creates a JS EventListener for "onerror" event handler in worker context. It has custom implementation because

@@ -146,7 +146,7 @@ public:
     static void CreateAndApply(const RefPtr<Frame> frame);
     
 private:
-    virtual EditAction editingAction() const;
+    EditAction editingAction() const override;
 };
 
 ClearTextCommand::ClearTextCommand(Document& document)

@@ -49,7 +49,7 @@ namespace WebCore {
         
         virtual ~JSCustomXPathNSResolver();
 
-        virtual String lookupNamespaceURI(const String& prefix);
+        String lookupNamespaceURI(const String& prefix) override;
 
     private:
         JSCustomXPathNSResolver(JSC::ExecState*, JSC::JSObject*, JSDOMWindow*);

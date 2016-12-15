@@ -85,7 +85,7 @@ public:
 
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, VAOType);
-    virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) = 0;
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override = 0;
     
     VAOType m_type;
     bool m_hasEverBeenBound;

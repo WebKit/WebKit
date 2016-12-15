@@ -55,7 +55,7 @@ public:
     void deleteAllMediaKeyEntries();
 
 private:
-    virtual void initialize(const WebProcessCreationParameters&);
+    void initialize(const WebProcessCreationParameters&) override;
 
     String m_mediaKeyStorageDirectory;
 };

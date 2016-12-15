@@ -175,7 +175,7 @@ public:
     virtual std::optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
 
 private:
-    virtual bool isDrawingItem() const { return true; }
+    bool isDrawingItem() const override { return true; }
 
     std::optional<FloatRect> m_extent; // In base coordinates, taking shadows and transforms into account.
 };

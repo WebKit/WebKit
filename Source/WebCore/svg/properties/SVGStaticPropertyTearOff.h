@@ -41,7 +41,7 @@ public:
         return adoptRef(*new Self(contextElement, value, update));
     }
 
-    virtual void commitChange() { (m_contextElement.get()->*m_update)(); }
+    void commitChange() final { (m_contextElement.get()->*m_update)(); }
 
 private:
     SVGStaticPropertyTearOff(ContextElement& contextElement, PropertyType& value, UpdateMethod update)

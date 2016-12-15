@@ -40,7 +40,7 @@ public:
     unsigned long long position() const { return loaded(); }
     unsigned long long totalSize() const { return total(); }
 
-    virtual EventInterface eventInterface() const { return XMLHttpRequestProgressEventInterfaceType; }
+    EventInterface eventInterface() const override { return XMLHttpRequestProgressEventInterfaceType; }
 
 private:
     XMLHttpRequestProgressEvent(const AtomicString& type, bool lengthComputable, unsigned long long loaded, unsigned long long total)

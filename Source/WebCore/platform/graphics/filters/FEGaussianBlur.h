@@ -41,14 +41,14 @@ public:
     EdgeModeType edgeMode() const;
     void setEdgeMode(EdgeModeType);
 
-    virtual void platformApplySoftware();
-    virtual void dump();
+    void platformApplySoftware() override;
+    void dump() override;
 
-    virtual void determineAbsolutePaintRect();
+    void determineAbsolutePaintRect() override;
     static IntSize calculateKernelSize(const Filter&, const FloatPoint& stdDeviation);
     static IntSize calculateUnscaledKernelSize(const FloatPoint& stdDeviation);
 
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
+    TextStream& externalRepresentation(TextStream&, int indention) const override;
 
 private:
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs

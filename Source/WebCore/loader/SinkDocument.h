@@ -38,8 +38,8 @@ public:
 
 private:
     SinkDocument(Frame*, const URL&);
-    
-    virtual Ref<DocumentParser> createParser();
+
+    Ref<DocumentParser> createParser() final;
 };
 
 }; // namespace WebCore

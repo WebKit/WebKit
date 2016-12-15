@@ -42,8 +42,8 @@ private:
     WebKitGeolocationProvider(WebGeolocationManagerProxy*);
 
     // GeolocationProviderGeoclueClient interface.
-    virtual void notifyPositionChanged(int, double, double, double, double, double);
-    virtual void notifyErrorOccurred(const char*);
+    void notifyPositionChanged(int, double, double, double, double, double) override;
+    void notifyErrorOccurred(const char*) override;
 
     RefPtr<WebGeolocationManagerProxy> m_geolocationManager;
     WebCore::GeolocationProviderGeoclue m_provider;

@@ -470,7 +470,7 @@ protected:
             delete m_values;
     }
 
-    virtual void commitChange() = 0;
+    void commitChange() override = 0;
     virtual void commitChange(ListModification)
     {
         commitChange();

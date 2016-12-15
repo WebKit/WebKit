@@ -82,24 +82,24 @@ protected:
     {
     }
 
-    virtual bool isReadOnly() const
+    bool isReadOnly() const override
     {
         return m_role == AnimValRole;
     }
 
-    virtual void commitChange()
+    void commitChange() override
     {
         ASSERT(m_values);
         m_values->commitChange(m_contextElement);
     }
 
-    virtual bool processIncomingListItemValue(const ListItemType&, unsigned*)
+    bool processIncomingListItemValue(const ListItemType&, unsigned*) override
     {
         // no-op for static lists
         return true;
     }
 
-    virtual bool processIncomingListItemWrapper(Ref<ListItemTearOff>&, unsigned*)
+    bool processIncomingListItemWrapper(Ref<ListItemTearOff>&, unsigned*) override
     {
         ASSERT_NOT_REACHED();
         return true;

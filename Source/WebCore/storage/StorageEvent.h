@@ -59,7 +59,7 @@ public:
     // Needed once we support init<blank>EventNS
     // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, Storage storageAreaArg);
 
-    virtual EventInterface eventInterface() const;
+    EventInterface eventInterface() const override;
 
 private:
     StorageEvent();

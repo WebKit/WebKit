@@ -53,7 +53,7 @@ public:
 
     // provideInput() will be called once for each channel, starting with the first channel.
     // Each time it's called, it will provide the next channel of data.
-    virtual void provideInput(AudioBus* bus, size_t framesToProcess)
+    void provideInput(AudioBus* bus, size_t framesToProcess) override
     {
         bool isBusGood = bus && bus->numberOfChannels() == 1;
         ASSERT(isBusGood);

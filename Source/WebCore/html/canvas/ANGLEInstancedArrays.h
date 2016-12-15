@@ -36,7 +36,7 @@ public:
     explicit ANGLEInstancedArrays(WebGLRenderingContextBase&);
     virtual ~ANGLEInstancedArrays();
 
-    virtual ExtensionName getName() const;
+    ExtensionName getName() const final;
 
     static bool supported(WebGLRenderingContextBase&);
 

@@ -1,3 +1,14 @@
+2016-12-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added missing override and final specifiers
+        https://bugs.webkit.org/show_bug.cgi?id=165903
+
+        Reviewed by Darin Adler.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * jsc.cpp:
+        * parser/Nodes.h:
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Harden JSObject::getOwnPropertyDescriptor()

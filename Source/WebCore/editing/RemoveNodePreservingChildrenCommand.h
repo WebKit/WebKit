@@ -39,7 +39,7 @@ public:
 private:
     explicit RemoveNodePreservingChildrenCommand(PassRefPtr<Node>, ShouldAssumeContentIsAlwaysEditable, EditAction);
 
-    virtual void doApply();
+    void doApply() override;
 
     RefPtr<Node> m_node;
     ShouldAssumeContentIsAlwaysEditable m_shouldAssumeContentIsAlwaysEditable;

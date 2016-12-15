@@ -68,10 +68,10 @@ public:
     void cancel();
 
     // ThreadableLoaderClient
-    virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
-    virtual void didReceiveData(const char*, int);
-    virtual void didFinishLoading(unsigned long, double);
-    virtual void didFail(const ResourceError&);
+    void didReceiveResponse(unsigned long, const ResourceResponse&) override;
+    void didReceiveData(const char*, int) override;
+    void didFinishLoading(unsigned long, double) override;
+    void didFail(const ResourceError&) override;
 
     String stringResult();
     RefPtr<JSC::ArrayBuffer> arrayBufferResult() const;

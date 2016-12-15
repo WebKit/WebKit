@@ -73,10 +73,10 @@ public:
 
 private:
     // PageOverlay::Client.
-    virtual void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*);
-    virtual void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*);
-    virtual bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&);
-    virtual void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
+    bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
+    void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
 
     Vector<WebCore::IntRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
     bool updateFindIndicator(WebCore::Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);

@@ -39,9 +39,9 @@ public:
     virtual ~WebPlugInClient();
 
 private:
-    virtual void pageDestroyed();
-    virtual bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
-    virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID);
+    void pageDestroyed() override;
+    bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) override;
+    void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID) override;
 
     WebPage& m_webPage;
 };

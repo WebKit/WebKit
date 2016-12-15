@@ -70,7 +70,7 @@ public:
     int lineNumber() const { return m_lineNumber; }
     int columnNumber() const { return m_columnNumber; }
 
-    virtual EventInterface eventInterface() const { return SecurityPolicyViolationEventInterfaceType; }
+    EventInterface eventInterface() const final { return SecurityPolicyViolationEventInterfaceType; }
 
 private:
     SecurityPolicyViolationEvent()

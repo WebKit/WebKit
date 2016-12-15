@@ -39,33 +39,33 @@ public:
     virtual ~Extensions3DOpenGLCommon();
 
     // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual bool isEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
+    bool supports(const String&) override;
+    void ensureEnabled(const String&) override;
+    bool isEnabled(const String&) override;
+    int getGraphicsResetStatusARB() override;
 
-    virtual Platform3DObject createVertexArrayOES() = 0;
-    virtual void deleteVertexArrayOES(Platform3DObject) = 0;
-    virtual GC3Dboolean isVertexArrayOES(Platform3DObject) = 0;
-    virtual void bindVertexArrayOES(Platform3DObject) = 0;
+    Platform3DObject createVertexArrayOES() override = 0;
+    void deleteVertexArrayOES(Platform3DObject) override = 0;
+    GC3Dboolean isVertexArrayOES(Platform3DObject) override = 0;
+    void bindVertexArrayOES(Platform3DObject) override = 0;
 
-    virtual void drawBuffersEXT(GC3Dsizei, const GC3Denum*) = 0;
+    void drawBuffersEXT(GC3Dsizei, const GC3Denum*) override = 0;
 
-    virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
+    String getTranslatedShaderSourceANGLE(Platform3DObject) override;
 
     // EXT Robustness - uses getGraphicsResetStatusARB()
-    virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
-    virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params);
-    virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params);
+    void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) override;
+    void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params) override;
+    void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params) override;
 
-    virtual bool isNVIDIA() { return m_isNVIDIA; }
-    virtual bool isAMD() { return m_isAMD; }
-    virtual bool isIntel() { return m_isIntel; }
-    virtual bool isImagination() { return m_isImagination; }
-    virtual String vendor() { return m_vendor; }
+    bool isNVIDIA() override { return m_isNVIDIA; }
+    bool isAMD() override { return m_isAMD; }
+    bool isIntel() override { return m_isIntel; }
+    bool isImagination() override { return m_isImagination; }
+    String vendor() override { return m_vendor; }
 
-    virtual bool requiresBuiltInFunctionEmulation() { return m_requiresBuiltInFunctionEmulation; }
-    virtual bool requiresRestrictedMaximumTextureSize() { return m_requiresRestrictedMaximumTextureSize; }
+    bool requiresBuiltInFunctionEmulation() override { return m_requiresBuiltInFunctionEmulation; }
+    bool requiresRestrictedMaximumTextureSize() override { return m_requiresRestrictedMaximumTextureSize; }
 
 protected:
     friend class Extensions3DOpenGLES;

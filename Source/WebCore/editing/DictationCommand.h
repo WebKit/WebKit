@@ -34,7 +34,7 @@ class DictationCommand : public TextInsertionBaseCommand {
     friend class DictationCommandLineOperation;
 public:
     static void insertText(Document&, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
-    virtual bool isDictationCommand() const { return true; }
+    bool isDictationCommand() const override { return true; }
 private:
     static Ref<DictationCommand> create(Document& document, const String& text, const Vector<DictationAlternative>& alternatives)
     {
@@ -43,7 +43,7 @@ private:
 
     DictationCommand(Document&, const String& text, const Vector<DictationAlternative>& alternatives);
     
-    virtual void doApply();
+    void doApply() override;
 
     void insertTextRunWithoutNewlines(size_t lineStart, size_t lineLength);
     void insertParagraphSeparator();

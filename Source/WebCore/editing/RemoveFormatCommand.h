@@ -39,8 +39,8 @@ public:
 private:
     explicit RemoveFormatCommand(Document&);
 
-    virtual void doApply();
-    virtual EditAction editingAction() const { return EditActionUnspecified; }
+    void doApply() override;
+    EditAction editingAction() const override { return EditActionUnspecified; }
 };
 
 } // namespace WebCore

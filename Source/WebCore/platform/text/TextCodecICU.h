@@ -46,8 +46,8 @@ namespace WebCore {
         virtual ~TextCodecICU();
 
     private:
-        virtual String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError);
-        virtual CString encode(const UChar*, size_t length, UnencodableHandling);
+        String decode(const char*, size_t length, bool flush, bool stopOnError, bool& sawError) override;
+        CString encode(const UChar*, size_t length, UnencodableHandling) override;
 
         void createICUConverter() const;
         void releaseICUConverter() const;

@@ -41,7 +41,7 @@ public:
 private:
     InsertParagraphSeparatorCommand(Document&, bool useDefaultParagraphElement, bool pasteBlockqutoeIntoUnquotedArea, EditAction);
 
-    virtual void doApply();
+    void doApply() override;
 
     void calculateStyleBeforeInsertion(const Position&);
     void applyStyleAfterInsertion(Node* originalEnclosingBlock);
@@ -50,7 +50,7 @@ private:
 
     bool shouldUseDefaultParagraphElement(Node*) const;
 
-    virtual bool preservesTypingStyle() const;
+    bool preservesTypingStyle() const override;
 
     RefPtr<EditingStyle> m_style;
 

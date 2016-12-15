@@ -42,7 +42,7 @@ class SharedBuffer;
 
 class MHTMLArchive : public Archive {
 public:
-    virtual Type type() const { return MHTML; }
+    Type type() const override { return MHTML; }
 
     static Ref<MHTMLArchive> create();
     static RefPtr<MHTMLArchive> create(const URL&, SharedBuffer&);

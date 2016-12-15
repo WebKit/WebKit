@@ -40,8 +40,8 @@ public:
 
     void configureAudioBin(GstElement* audioBin, GstElement* teePredecessor);
 
-    void provideInput(AudioBus*, size_t framesToProcess);
-    void setClient(AudioSourceProviderClient*);
+    void provideInput(AudioBus*, size_t framesToProcess) override;
+    void setClient(AudioSourceProviderClient*) override;
     const AudioSourceProviderClient* client() const { return m_client; }
 
     void handleNewDeinterleavePad(GstPad*);

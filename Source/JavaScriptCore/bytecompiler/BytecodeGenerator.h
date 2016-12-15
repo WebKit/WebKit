@@ -139,7 +139,7 @@ namespace JSC {
         {
         }
 
-        virtual ForInContextType type() const
+        ForInContextType type() const override
         {
             return StructureForInContextType;
         }
@@ -162,7 +162,7 @@ namespace JSC {
         {
         }
 
-        virtual ForInContextType type() const
+        ForInContextType type() const override
         {
             return IndexedForInContextType;
         }

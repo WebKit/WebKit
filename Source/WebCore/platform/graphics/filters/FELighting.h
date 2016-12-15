@@ -43,9 +43,9 @@ struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
 public:
-    virtual void platformApplySoftware();
+    void platformApplySoftware() override;
 
-    virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
+    void determineAbsolutePaintRect() override { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
 protected:
     static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs

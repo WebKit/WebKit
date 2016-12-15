@@ -55,7 +55,7 @@ public:
     }
 
     OverconstrainedError* error() const { return m_error.get(); }
-    virtual EventInterface eventInterface() const { return OverconstrainedErrorEventInterfaceType; }
+    EventInterface eventInterface() const override { return OverconstrainedErrorEventInterfaceType; }
 
 private:
     explicit OverconstrainedErrorEvent(const AtomicString& type, bool canBubble, bool cancelable, OverconstrainedError* error)
