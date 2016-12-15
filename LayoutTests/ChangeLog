@@ -1,3 +1,15 @@
+2016-12-15  Alejandro G. Castro  <alex@igalia.com>
+
+        [OWR] Unskip fast/mediastream/MediaStream-video-element-track-stop.html
+        https://bugs.webkit.org/show_bug.cgi?id=165316
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/TestExpectations: Unskipped the test and moved the
+        stop one, now it does not timeout because we correctly handle the
+        ended value but still fails, we need more features in the mock
+        classes for owr.
+
 2016-12-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] Support latest SubtleCrypto HMAC APIs
