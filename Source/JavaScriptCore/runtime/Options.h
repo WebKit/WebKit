@@ -416,7 +416,7 @@ typedef const char* optionString;
     v(bool, useSourceProviderCache, true, Normal, "If false, the parser will not use the source provider cache. It's good to verify everything works when this is false. Because the cache is so successful, it can mask bugs.") \
     v(bool, useCodeCache, true, Normal, "If false, the unlinked byte code cache will not be used.") \
     \
-    v(bool, useWebAssembly, false, Normal, "Expose the WebAssembly global object.") \
+    v(bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
 
 enum OptionEquivalence {
     SameOption,
