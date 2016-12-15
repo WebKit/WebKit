@@ -1,3 +1,17 @@
+2016-12-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r209415.
+
+        This workaround is no longer needed now that
+        <rdar://problem/29518605> has been fixed
+
+        Reverted changeset:
+
+        "Add HTML interactive form validation blacklist for some
+        WebKit-specific sites"
+        https://bugs.webkit.org/show_bug.cgi?id=165470
+        http://trac.webkit.org/changeset/209415
+
 2016-12-14  Dean Jackson  <dino@apple.com>
 
         Update prefers-reduced-motion syntax
