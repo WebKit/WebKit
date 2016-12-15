@@ -522,7 +522,7 @@ typedef void (GL_APIENTRYP PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint si
 typedef void (GL_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
 
 #if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
-#include <ANGLE/gl2softlinking.h>
+#include <GLES2/gl2softlinking.h>
 #else
 
 #ifdef GL_GLEXT_PROTOTYPES

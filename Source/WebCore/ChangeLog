@@ -1,3 +1,9 @@
+2016-12-15  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows WebGL build after r209832
+
+        * CMakeLists.txt:
+
 2016-12-14  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed build fix after r209832

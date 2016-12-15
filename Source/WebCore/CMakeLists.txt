@@ -788,8 +788,10 @@ set(WebCore_SVG_IDL_FILES
 
 if (WIN32 AND INTERNAL_BUILD)
     set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore/Scripts")
+    set(ANGLE_FORWARDING_HEADERS_DIR "${CMAKE_BINARY_DIR}/../include/private/ANGLE")
 else ()
     set(JavaScriptCore_SCRIPTS_DIR "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/Scripts")
+    set(ANGLE_FORWARDING_HEADERS_DIR "${DERIVED_SOURCES_DIR}/ForwardingHeaders/ANGLE")
 endif ()
 
 set(WebCore_SOURCES
@@ -3269,6 +3271,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     endif ()
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${ANGLE_FORWARDING_HEADERS_DIR}"
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
 

@@ -313,7 +313,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitSync (EGLDisplay dpy, EGLSync sync, EGLint 
 #endif /* EGL_VERSION_1_5 */
 
 #if EGL_SOFT_LINKING
-#include <ANGLE/eglsoftlinking.h>
+#include <EGL/eglsoftlinking.h>
 #endif
 
 #ifdef __cplusplus
