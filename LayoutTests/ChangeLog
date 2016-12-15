@@ -1,3 +1,64 @@
+2016-12-12  Jon Lee  <jonlee@apple.com>
+
+        Full Pass CSS Variables Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=150183
+
+        Reviewed by Simon Fraser.
+
+        The new CSS parser progresses these tests. Move them out of the failures/ sub-directory.
+        One of the tests needs the Ahem font, which was not available when put in the sub-directory.
+
+        * fast/css/variables/test-suite/024-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/024-expected.html.
+        * fast/css/variables/test-suite/024.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/024.html.
+        * fast/css/variables/test-suite/025-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/025-expected.html.
+        * fast/css/variables/test-suite/025.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/025.html.
+        * fast/css/variables/test-suite/026-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/026-expected.html.
+        * fast/css/variables/test-suite/026.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/026.html.
+        * fast/css/variables/test-suite/028-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/028-expected.html.
+        * fast/css/variables/test-suite/028.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/028.html.
+        * fast/css/variables/test-suite/030-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/030-expected.html.
+        * fast/css/variables/test-suite/030.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/030.html.
+        * fast/css/variables/test-suite/054-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/054-expected.html.
+        * fast/css/variables/test-suite/054.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/054.html.
+        * fast/css/variables/test-suite/055-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/055-expected.html.
+        * fast/css/variables/test-suite/055.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/055.html.
+        * fast/css/variables/test-suite/056-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/056-expected.html.
+        * fast/css/variables/test-suite/056.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/056.html.
+        * fast/css/variables/test-suite/058-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/058-expected.html.
+        * fast/css/variables/test-suite/058.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/058.html.
+        * fast/css/variables/test-suite/071-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/071-expected.html.
+        * fast/css/variables/test-suite/071.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/071.html.
+        * fast/css/variables/test-suite/081-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/081-expected.html.
+        * fast/css/variables/test-suite/081.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/081.html.
+        * fast/css/variables/test-suite/082-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/082-expected.html.
+        * fast/css/variables/test-suite/082.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/082.html.
+        * fast/css/variables/test-suite/085-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/085-expected.html.
+        * fast/css/variables/test-suite/085.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/085.html.
+        * fast/css/variables/test-suite/086-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/086-expected.html.
+        * fast/css/variables/test-suite/086.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/086.html.
+        * fast/css/variables/test-suite/087-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/087-expected.html.
+        * fast/css/variables/test-suite/087.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/087.html.
+        * fast/css/variables/test-suite/091-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/091-expected.html.
+        * fast/css/variables/test-suite/091.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/091.html.
+        * fast/css/variables/test-suite/103-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/103-expected.html.
+        * fast/css/variables/test-suite/103.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/103.html.
+        * fast/css/variables/test-suite/111-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/111-expected.html.
+        * fast/css/variables/test-suite/111.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/111.html.
+        * fast/css/variables/test-suite/115-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/115-expected.html.
+        * fast/css/variables/test-suite/115.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/115.html.
+        * fast/css/variables/test-suite/126-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/126-expected.html.
+        * fast/css/variables/test-suite/126.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/126.html.
+        * fast/css/variables/test-suite/152-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/152-expected.html.
+        * fast/css/variables/test-suite/152.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/152.html.
+        * fast/css/variables/test-suite/159-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/159-expected.html.
+        * fast/css/variables/test-suite/159.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/159.html.
+        * fast/css/variables/test-suite/161-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/161-expected.html.
+        * fast/css/variables/test-suite/161.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/161.html.
+        * fast/css/variables/test-suite/163-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/163-expected.html.
+        * fast/css/variables/test-suite/163.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/163.html.
+        * fast/css/variables/test-suite/169-expected.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/169-expected.html.
+        * fast/css/variables/test-suite/169.html: Renamed from LayoutTests/fast/css/variables/test-suite/failures/169.html.
+
 2016-12-14  Dean Jackson  <dino@apple.com>
 
         Update prefers-reduced-motion syntax
