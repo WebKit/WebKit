@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WTFStringUtilities_h
-#define WTFStringUtilities_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
@@ -45,4 +44,12 @@ inline std::ostream& operator<<(std::ostream& os, const String& string)
 
 }
 
-#endif // WTFStringUtilities_h
+template<size_t length>
+static String utf16String(const char16_t (&url)[length])
+{
+    StringBuilder builder;
+    builder.reserveCapacity(length - 1);
+    for (size_t i = 0; i < length - 1; ++i)
+        builder.append(static_cast<UChar>(url[i]));
+    return builder.toString();
+}

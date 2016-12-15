@@ -44,6 +44,8 @@ public:
     }
 };
 
+const char16_t bidirectionalDomain[28] = u"bidirectional\u0786\u07AE\u0782\u07B0\u0795\u07A9\u0793\u07A6\u0783\u07AA.com";
+
 TEST_F(PublicSuffix, IsPublicSuffix)
 {
     EXPECT_TRUE(isPublicSuffix("com"));
@@ -55,10 +57,17 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_FALSE(isPublicSuffix("bl.uk"));
     EXPECT_FALSE(isPublicSuffix("test.co.uk"));
     EXPECT_TRUE(isPublicSuffix("xn--zf0ao64a.tw"));
+    EXPECT_FALSE(isPublicSuffix("r4---asdf.test.com"));
+    EXPECT_FALSE(isPublicSuffix(utf16String(bidirectionalDomain)));
+    EXPECT_TRUE(isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
 }
 
 TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
 {
+    EXPECT_EQ(utf16String(u"\u6803\u6728.jp"), topPrivatelyControlledDomain(utf16String(u"\u6803\u6728.jp")));
+    EXPECT_EQ(String(utf16String(u"example.\u6803\u6728.jp")), topPrivatelyControlledDomain(utf16String(u"example.\u6803\u6728.jp")));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain(String()));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain(""));
     EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("test.com"));
     EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("com.test.com"));
     EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("subdomain.test.com"));
@@ -72,6 +81,11 @@ TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
     EXPECT_EQ(String("127.0.0.1"), topPrivatelyControlledDomain("127.0.0.1"));
     EXPECT_EQ(String(), topPrivatelyControlledDomain("1"));
     EXPECT_EQ(String(), topPrivatelyControlledDomain("com"));
+    EXPECT_EQ(String("test.com"), topPrivatelyControlledDomain("r4---asdf.test.com"));
+    EXPECT_EQ(String("r4---asdf.com"), topPrivatelyControlledDomain("r4---asdf.com"));
+    EXPECT_EQ(String(), topPrivatelyControlledDomain("r4---asdf"));
+    EXPECT_EQ(utf16String(bidirectionalDomain), utf16String(bidirectionalDomain));
+    
 }
 
 }

@@ -1,5 +1,25 @@
 2016-12-15  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION (r208902) Null pointer dereference in wkIsPublicSuffix
+        https://bugs.webkit.org/show_bug.cgi?id=165885
+        <rdar://problem/29476917>
+
+        Reviewed by Darin Adler.
+
+        wkIsPublicSuffix crashes if you give it a nil NSString*.
+        This was possible before IDN2008 adoption, but it's more common now
+        because domains like "r4---asdf.example.com" fail in uidna_nameToASCII but not in uidna_IDNToASCII.
+        decodeHostName can return a nil NSString.  We can't use it unchecked, so instead we use an algorithm that allows
+        for decoding failures while still finding top privately controlled domains correctly.
+
+        Tested by new API tests which crash before this change and verify the behavior matches behavior before r208902.
+
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::isPublicSuffix):
+        (WebCore::topPrivatelyControlledDomain):
+
+2016-12-15  Alex Christensen  <achristensen@webkit.org>
+
         Fix Windows WebGL build after r209832
 
         * CMakeLists.txt:

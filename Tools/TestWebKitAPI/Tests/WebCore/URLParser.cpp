@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "WTFStringUtilities.h"
 #include <WebCore/URLParser.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringBuilder.h>
@@ -323,16 +324,6 @@ static void checkURL(const String& urlString, const String& baseURLString, const
             parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
             TestTabs::No);
     }
-}
-
-template<size_t length>
-static String utf16String(const char16_t (&url)[length])
-{
-    StringBuilder builder;
-    builder.reserveCapacity(length - 1);
-    for (size_t i = 0; i < length - 1; ++i)
-        builder.append(static_cast<UChar>(url[i]));
-    return builder.toString();
 }
 
 TEST_F(URLParserTest, Basic)

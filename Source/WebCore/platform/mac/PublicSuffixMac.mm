@@ -39,39 +39,21 @@ namespace WebCore {
 
 bool isPublicSuffix(const String& domain)
 {
-    return wkIsPublicSuffix(decodeHostName(domain));
+    NSString *host = decodeHostName(domain);
+    return host && wkIsPublicSuffix(host);
 }
 
 String topPrivatelyControlledDomain(const String& domain)
 {
-    if (domain.isNull() || domain.isEmpty())
-        return String();
-
-    NSString *host = decodeHostName(domain);
-
-    if ([host _web_looksLikeIPAddress])
+    if ([domain _web_looksLikeIPAddress])
         return domain;
 
-    // Match the longest possible suffix.
-    bool hasTopLevelDomain = false;
-    NSCharacterSet *dot = [[NSCharacterSet characterSetWithCharactersInString:@"."] retain];
-    NSRange nextDot = NSMakeRange(0, [host length]);
-    for (NSRange previousDot = [host rangeOfCharacterFromSet:dot]; previousDot.location != NSNotFound; nextDot = previousDot, previousDot = [host rangeOfCharacterFromSet:dot options:0 range:NSMakeRange(previousDot.location + previousDot.length, [host length] - (previousDot.location + previousDot.length))]) {
-        NSString *substring = [host substringFromIndex:previousDot.location + previousDot.length];
-        if (wkIsPublicSuffix(substring)) {
-            hasTopLevelDomain = true;
-            break;
-        }
+    size_t separatorPosition;
+    for (unsigned labelStart = 0; (separatorPosition = domain.find('.', labelStart)) != notFound; labelStart = separatorPosition + 1) {
+        if (isPublicSuffix(domain.substring(separatorPosition + 1)))
+            return domain.substring(labelStart);
     }
-
-    [dot release];
-    if (!hasTopLevelDomain)
-        return String();
-
-    if (!nextDot.location)
-        return domain;
-
-    return encodeHostName([host substringFromIndex:nextDot.location + nextDot.length]);
+    return String();
 }
 
 }
