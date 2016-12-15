@@ -197,6 +197,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     allocateAndEmitScope();
 
+    emitWatchdog();
+
     const FunctionStack& functionStack = programNode->functionStack();
 
     for (size_t i = 0; i < functionStack.size(); ++i) {
@@ -330,6 +332,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     allocateAndEmitScope();
 
+    emitWatchdog();
+    
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
         ASSERT(parseMode != SourceParseMode::GeneratorBodyMode);
         ASSERT(!isAsyncFunctionBodyParseMode(parseMode));
@@ -756,6 +760,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     allocateAndEmitScope();
 
+    emitWatchdog();
+    
     const DeclarationStacks::FunctionStack& functionStack = evalNode->functionStack();
     for (size_t i = 0; i < functionStack.size(); ++i)
         m_codeBlock->addFunctionDecl(makeFunction(functionStack[i]));
@@ -839,6 +845,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     allocateAndEmitScope();
 
+    emitWatchdog();
+    
     m_calleeRegister.setIndex(CallFrameSlot::callee);
 
     m_codeBlock->setNumParameters(1); // Allocate space for "this"
@@ -1249,7 +1257,6 @@ UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 void BytecodeGenerator::emitEnter()
 {
     emitOpcode(op_enter);
-    emitWatchdog();
 }
 
 void BytecodeGenerator::emitLoopHint()

@@ -1,3 +1,39 @@
+2016-12-14  Michael Saboff  <msaboff@apple.com>
+
+        The stress GC bot crashes in JavaScriptCore beneath ShadowChicken::update and Inspector::jsToInspectorValue
+        https://bugs.webkit.org/show_bug.cgi?id=165871
+
+        Reviewed by Mark Lam.
+
+        This fixes two issues with the VM watch dog timer firing in a worker.
+
+        The first issue has to do with bytecode ordering.  Prior to this change, the first few opcodes
+        generated when the watch dog is enabled are:
+                op_enter
+                op_watchdog
+                op_get_scope
+        When the watchdog fires, the function will get an exception at op_watchdog.  In processing that exception,
+        we'll try to update the ShadowChicken shadow stack.  That update assumes that if there is a scope 
+        VirtualRegister allocated, then the slot contains a valid JSScope.  With the current bytecode ordering,
+        this is not true at op_watchdog as op_enter will put JSUndefined in the scope slot.  It isn't until the
+        op_get_scope gets processed that we'll have a valid scope in the slot.  The fix for this issue is to 
+        ensure that op_get_scope happens before the op_watchdog.
+
+        The second issue is that ScriptFunctionCall::call() will not tell its caller that a terminated
+        execution exception happened.  Instead call() returns an empty JSValue.  InjectedScript::wrapCallFrames()
+        wasn't checking for an empty JSValue, but was passing it to another function.  Added a short circuit
+        return when call returns an empty JSValue.
+
+        Added <https://bugs.webkit.org/show_bug.cgi?id=165875> to fix other callers of ScriptFunctionCall::call()
+        to check for an empty JSValue return value.
+        Also tracked with <rdar://problem/29671015>.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitEnter):
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::wrapCallFrames):
+
 2016-12-14  Filip Pizlo  <fpizlo@apple.com>
 
         DirectTailCall implementation needs to tell the shuffler what to put into the ArgumentCount explicitly

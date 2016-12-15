@@ -219,6 +219,8 @@ Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFra
 
     bool hadException = false;
     auto callFramesValue = callFunctionWithEvalEnabled(function, hadException);
+    if (!callFramesValue)
+        return Array<Inspector::Protocol::Debugger::CallFrame>::create();
     ASSERT(!hadException);
     RefPtr<InspectorValue> result = toInspectorValue(*scriptState(), callFramesValue);
     if (result->type() == InspectorValue::Type::Array)
