@@ -1,3 +1,56 @@
+2016-12-16  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: WasmB3IRGenerator should throw exceptions instead of crash
+        https://bugs.webkit.org/show_bug.cgi?id=165834
+
+        Reviewed by Keith Miller.
+
+        This patch generalizes how we throw exceptions in the Wasm::B3IRGenerator.
+        There are still places where we need to throw exceptions and we don't, but
+        this patch removes most of those places inside the IR generator. There are
+        still a few places we need to throw exceptions inside the IR generator, like
+        div/mod by 0. Those will be done in a separate patch. Also, there are
+        still some stubs we need to throw exceptions from; those will also be
+        done in a separate patch.
+
+        All exceptions thrown from Wasm share a common stub. The ABI for the stub
+        is to move the Wasm::ExceptionType into argGPR1 and jump to the stub.
+        The stub will then throw an exception with an error message tailored
+        to the particular Wasm::ExceptionType failure.
+
+        This patch also refactors B3::Compilation. Before, B3::Compilation(VM, Procedure)
+        constructor would compile a B3 function. This patch makes B3::Compilation a simple 
+        tuple that keeps the necessary bits of B3 function alive in order to be runnable.
+        There is a new function that actually does the compilation for you. It is:
+        Compilation B3::compile(VM&, Procedure&)
+        The reason for this change is that I'm now using B3::Compilation(CodeRef, OpaqueByproducts)
+        constructor in Wasm code. It is weird to have a class both have a
+        constructor that instantiates the tuple, and another that performs the
+        compilation and then instantiates the tuple. It's more straight
+        forward if Compilation's job wasn't to actually do the compilation
+        but just to hold the necessary bits to keep a compiled B3 alive.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Compilation.cpp:
+        (JSC::B3::Compilation::Compilation):
+        * b3/B3Compilation.h:
+        * b3/B3Compile.cpp: Added.
+        (JSC::B3::compile):
+        * b3/B3Compile.h: Added.
+        * b3/testb3.cpp:
+        (JSC::B3::compile):
+        * jit/ThunkGenerators.cpp:
+        (JSC::throwExceptionFromWasmThunkGenerator):
+        * jit/ThunkGenerators.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::emitExceptionCheck):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmExceptionType.h: Added.
+        (JSC::Wasm::errorMessageForExceptionType):
+
 2016-12-16  Keith Miller  <keith_miller@apple.com>
 
         i64.eqz should use an Int64 zero

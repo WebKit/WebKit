@@ -1,3 +1,15 @@
+2016-12-16  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: WasmB3IRGenerator should throw exceptions instead of crash
+        https://bugs.webkit.org/show_bug.cgi?id=165834
+
+        Reviewed by Keith Miller.
+
+        * wasm/function-tests/exceptions.js: Added.
+        (import.Builder.from.string_appeared_here.import.as.assert.from.string_appeared_here.makeInstance):
+        * wasm/function-tests/table-basic.js:
+        (i.i.42.throw.new.Error):
+
 2016-12-16  Keith Miller  <keith_miller@apple.com>
 
         i64.eqz should use an Int64 zero

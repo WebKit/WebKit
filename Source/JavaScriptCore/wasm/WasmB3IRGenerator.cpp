@@ -30,8 +30,10 @@
 
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
+#include "B3Compile.h"
 #include "B3ConstPtrValue.h"
 #include "B3FixSSA.h"
+#include "B3Generate.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3Validate.h"
@@ -40,15 +42,13 @@
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
-#include "ExceptionScope.h"
-#include "FrameTracers.h"
-#include "JITExceptions.h"
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "VirtualRegister.h"
 #include "WasmCallingConvention.h"
+#include "WasmExceptionType.h"
 #include "WasmFunctionParser.h"
 #include "WasmMemory.h"
 #include <wtf/Optional.h>
@@ -197,6 +197,8 @@ public:
 
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
 
+    void emitExceptionCheck(CCallHelpers&, ExceptionType);
+
 private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     ExpressionType emitLoadOp(LoadOpType, Origin, ExpressionType pointer, uint32_t offset);
@@ -217,7 +219,6 @@ private:
     GPRReg m_memorySizeGPR;
     Value* m_zeroValues[numTypes];
     Value* m_instanceValue;
-
 };
 
 B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
@@ -254,33 +255,7 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
-            jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer();
-
-            jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-
-            CCallHelpers::Call call = jit.call();
-            jit.jumpToExceptionHandler();
-
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                void (*throwMemoryException)(ExecState*) = [] (ExecState* exec) {
-                    VM* vm = &exec->vm();
-                    NativeCallFrameTracer tracer(vm, exec);
-
-                    {
-                        auto throwScope = DECLARE_THROW_SCOPE(*vm);
-                        JSGlobalObject* globalObject = vm->topJSWebAssemblyInstance->globalObject();
-
-                        JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(
-                            exec, globalObject->WebAssemblyRuntimeErrorStructure(), "Out of bounds memory access");
-                        throwException(exec, throwScope, error);
-                    }
-
-                    genericUnwind(vm, exec);
-                    ASSERT(!!vm->callFrameForCatch);
-                };
-
-                linkBuffer.link(call, throwMemoryException);
-            });
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
 
         B3::PatchpointValue* foo = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
@@ -294,6 +269,17 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
 
     m_instanceValue = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), &m_vm.topJSWebAssemblyInstance));
+}
+
+void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
+{
+    jit.move(CCallHelpers::TrustedImm32(static_cast<uint32_t>(type)), GPRInfo::argumentGPR1);
+    auto jumpToExceptionStub = jit.jump();
+
+    VM* vm = &m_vm;
+    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        linkBuffer.link(jumpToExceptionStub, CodeLocationLabel(vm->getCTIStub(throwExceptionFromWasmThunkGenerator).code()));
+    });
 }
 
 Value* B3IRGenerator::zeroForType(Type type)
@@ -739,8 +725,8 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
             m_currentBlock->appendNew<Value>(m_proc, AboveEqual, Origin(), calleeIndex, callableFunctionBufferSize));
 
-        check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            jit.breakpoint();
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsCallIndirect);
         });
     }
 
@@ -758,8 +744,8 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
                 calleeSignature, 
                 m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), 0)));
 
-        check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            jit.breakpoint();
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
         });
     }
 
@@ -769,8 +755,8 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, Vector<Expressio
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
             m_currentBlock->appendNew<Value>(m_proc, NotEqual, Origin(), calleeSignature, expectedSignature));
 
-        check->setGenerator([] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            jit.breakpoint();
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::BadSignature);
         });
     }
 
@@ -831,7 +817,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn("\n");
 }
 
-static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFunction& function, const Signature* signature, MacroAssemblerCodePtr mainFunction, const MemoryInformation& memory)
+static std::unique_ptr<B3::Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFunction& function, const Signature* signature, MacroAssemblerCodePtr mainFunction, const MemoryInformation& memory)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
@@ -840,19 +826,23 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFu
 
     jscCallingConvention().setupFrameInPrologue(&function.jsToWasmCalleeMoveLocation, proc, origin, block);
 
-    Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
-    Value* offSetOfArgumentCount = block->appendNew<Const64Value>(proc, origin, CallFrameSlot::argumentCount * sizeof(Register));
-    Value* argumentCount = block->appendNew<MemoryValue>(proc, Load, Int32, origin,
-        block->appendNew<Value>(proc, Add, origin, framePointer, offSetOfArgumentCount));
+    if (!ASSERT_DISABLED) {
+        // This should be guaranteed by our JS wrapper that handles calls to us.
+        // Just prevent against crazy when ASSERT is enabled.
+        Value* framePointer = block->appendNew<B3::Value>(proc, B3::FramePointer, origin);
+        Value* offSetOfArgumentCount = block->appendNew<Const64Value>(proc, origin, CallFrameSlot::argumentCount * sizeof(Register));
+        Value* argumentCount = block->appendNew<MemoryValue>(proc, Load, Int32, origin,
+            block->appendNew<Value>(proc, Add, origin, framePointer, offSetOfArgumentCount));
 
-    Value* expectedArgumentCount = block->appendNew<Const32Value>(proc, origin, signature->arguments.size());
+        Value* expectedArgumentCount = block->appendNew<Const32Value>(proc, origin, signature->arguments.size());
 
-    CheckValue* argumentCountCheck = block->appendNew<CheckValue>(proc, Check, origin,
-        block->appendNew<Value>(proc, Above, origin, expectedArgumentCount, argumentCount));
+        CheckValue* argumentCountCheck = block->appendNew<CheckValue>(proc, Check, origin,
+            block->appendNew<Value>(proc, Above, origin, expectedArgumentCount, argumentCount));
 
-    argumentCountCheck->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
-    });
+        argumentCountCheck->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            jit.breakpoint();
+        });
+    }
 
     // Move memory values to the approriate places, if needed.
     Value* baseMemory = nullptr;
@@ -912,7 +902,7 @@ static std::unique_ptr<Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFu
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    auto jsEntrypoint = std::make_unique<Compilation>(vm, proc);
+    auto jsEntrypoint = std::make_unique<Compilation>(B3::compile(vm, proc));
     function.jsToWasmEntrypoint.calleeSaveRegisters = proc.calleeSaveRegisters();
     return jsEntrypoint;
 }
@@ -935,8 +925,9 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     if (verbose)
         dataLog("Post SSA: ", procedure);
 
-    result->wasmEntrypoint.compilation = std::make_unique<Compilation>(vm, procedure, optLevel);
+    result->wasmEntrypoint.compilation = std::make_unique<B3::Compilation>(B3::compile(vm, procedure, optLevel));
     result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
+
     result->jsToWasmEntrypoint.compilation = createJSToWasmWrapper(vm, *result, signature, result->wasmEntrypoint.compilation->code(), info.memory);
     return WTFMove(result);
 }
@@ -1093,8 +1084,8 @@ auto B3IRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1116,8 +1107,8 @@ auto B3IRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1140,8 +1131,8 @@ auto B3IRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1163,8 +1154,8 @@ auto B3IRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1186,8 +1177,8 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1209,8 +1200,8 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
     Value* constant;
@@ -1251,8 +1242,8 @@ auto B3IRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterEqual, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, Origin());
     patchpoint->append(arg, ValueRep::SomeRegister);
@@ -1274,8 +1265,8 @@ auto B3IRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionTy
         m_currentBlock->appendNew<Value>(m_proc, GreaterThan, Origin(), arg, min));
     outOfBounds = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), outOfBounds, zeroForType(I32));
     CheckValue* trap = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(), outOfBounds);
-    trap->setGenerator([] (CCallHelpers& jit, const StackmapGenerationParams&) {
-        jit.breakpoint();
+    trap->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
     Value* constant;

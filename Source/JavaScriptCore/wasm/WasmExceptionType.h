@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,48 +20,43 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#if ENABLE(B3_JIT)
-
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 
-class VM;
+namespace Wasm {
 
-namespace B3 {
+#define FOR_EACH_EXCEPTION(macro) \
+    macro(OutOfBoundsMemoryAccess,  "Out of bounds memory access") \
+    macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect") \
+    macro(NullTableEntry,  "call_indirect to a null table entry") \
+    macro(BadSignature, "call_indirect to a signature that does not match") \
+    macro(OutOfBoundsTrunc, "Out of bounds Trunc operation") \
 
-class OpaqueByproducts;
-class Procedure;
-
-// This class is a way to keep the result of a B3 compilation alive
-// and runnable.
-
-class Compilation {
-    WTF_MAKE_NONCOPYABLE(Compilation);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef, std::unique_ptr<OpaqueByproducts>);
-    JS_EXPORT_PRIVATE Compilation(Compilation&&);
-    JS_EXPORT_PRIVATE ~Compilation();
-
-    MacroAssemblerCodePtr code() const { return m_codeRef.code(); }
-    MacroAssemblerCodeRef codeRef() const { return m_codeRef; }
-    
-    CString disassembly() const { return m_codeRef.disassembly(); }
-
-private:
-    MacroAssemblerCodeRef m_codeRef;
-    std::unique_ptr<OpaqueByproducts> m_byproducts;
+enum class ExceptionType : uint32_t {
+#define MAKE_ENUM(enumName, error) enumName,
+    FOR_EACH_EXCEPTION(MAKE_ENUM)
+#undef MAKE_ENUM
 };
 
-} } // namespace JSC::B3
+ALWAYS_INLINE const char* errorMessageForExceptionType(ExceptionType type)
+{
+    switch (type) {
+#define SWITCH_CASE(enumName, error) \
+    case ExceptionType::enumName: return error;
 
-#endif // ENABLE(B3_JIT)
+    FOR_EACH_EXCEPTION(SWITCH_CASE)
+#undef SWITCH_CASE
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#include "B3Compilation.h"
 
 namespace JSC {
 
@@ -37,30 +35,17 @@ class VM;
 
 namespace B3 {
 
-class OpaqueByproducts;
 class Procedure;
 
-// This class is a way to keep the result of a B3 compilation alive
-// and runnable.
+// This is a fool-proof API for compiling a Procedure to code and then running that code. You compile
+// a Procedure using this API by doing:
+//
+// Compilation compilation = B3::compile(vm, proc);
+//
+// Then you keep the Compilation object alive for as long as you want to be able to run the code.
+// If this API feels too high-level, you can use B3::generate() directly.
 
-class Compilation {
-    WTF_MAKE_NONCOPYABLE(Compilation);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef, std::unique_ptr<OpaqueByproducts>);
-    JS_EXPORT_PRIVATE Compilation(Compilation&&);
-    JS_EXPORT_PRIVATE ~Compilation();
-
-    MacroAssemblerCodePtr code() const { return m_codeRef.code(); }
-    MacroAssemblerCodeRef codeRef() const { return m_codeRef; }
-    
-    CString disassembly() const { return m_codeRef.disassembly(); }
-
-private:
-    MacroAssemblerCodeRef m_codeRef;
-    std::unique_ptr<OpaqueByproducts> m_byproducts;
-};
+JS_EXPORT_PRIVATE Compilation compile(VM&, Procedure&, unsigned optLevel = 1);
 
 } } // namespace JSC::B3
 

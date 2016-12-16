@@ -28,33 +28,20 @@
 
 #if ENABLE(B3_JIT)
 
-#include "B3Generate.h"
 #include "B3OpaqueByproducts.h"
-#include "B3Procedure.h"
-#include "B3TimingScope.h"
 #include "CCallHelpers.h"
-#include "JSCInlines.h"
-#include "LinkBuffer.h"
 
 namespace JSC { namespace B3 {
-
-Compilation::Compilation(VM& vm, Procedure& proc, unsigned optLevel)
-{
-    TimingScope timingScope("Compilation");
-    
-    prepareForGeneration(proc, optLevel);
-    
-    CCallHelpers jit(&vm);
-    generate(proc, jit);
-    LinkBuffer linkBuffer(vm, jit, nullptr);
-
-    m_codeRef = FINALIZE_CODE(linkBuffer, ("B3::Compilation"));
-    m_byproducts = proc.releaseByproducts();
-}
 
 Compilation::Compilation(MacroAssemblerCodeRef codeRef, std::unique_ptr<OpaqueByproducts> byproducts)
     : m_codeRef(codeRef)
     , m_byproducts(WTFMove(byproducts))
+{
+}
+
+Compilation::Compilation(Compilation&& other)
+    : m_codeRef(WTFMove(other.m_codeRef))
+    , m_byproducts(WTFMove(other.m_byproducts))
 {
 }
 

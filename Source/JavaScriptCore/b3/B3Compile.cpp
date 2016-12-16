@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "B3Compile.h"
 
 #if ENABLE(B3_JIT)
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#include "B3Generate.h"
+#include "B3OpaqueByproducts.h"
+#include "B3Procedure.h"
+#include "B3TimingScope.h"
+#include "CCallHelpers.h"
+#include "JSCInlines.h"
+#include "LinkBuffer.h"
 
-namespace JSC {
+namespace JSC { namespace B3 {
 
-class VM;
-
-namespace B3 {
-
-class OpaqueByproducts;
-class Procedure;
-
-// This class is a way to keep the result of a B3 compilation alive
-// and runnable.
-
-class Compilation {
-    WTF_MAKE_NONCOPYABLE(Compilation);
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    JS_EXPORT_PRIVATE Compilation(MacroAssemblerCodeRef, std::unique_ptr<OpaqueByproducts>);
-    JS_EXPORT_PRIVATE Compilation(Compilation&&);
-    JS_EXPORT_PRIVATE ~Compilation();
-
-    MacroAssemblerCodePtr code() const { return m_codeRef.code(); }
-    MacroAssemblerCodeRef codeRef() const { return m_codeRef; }
+Compilation compile(VM& vm, Procedure& proc, unsigned optLevel)
+{
+    TimingScope timingScope("Compilation");
     
-    CString disassembly() const { return m_codeRef.disassembly(); }
+    prepareForGeneration(proc, optLevel);
+    
+    CCallHelpers jit(&vm);
+    generate(proc, jit);
+    LinkBuffer linkBuffer(vm, jit, nullptr);
 
-private:
-    MacroAssemblerCodeRef m_codeRef;
-    std::unique_ptr<OpaqueByproducts> m_byproducts;
-};
+    return Compilation(FINALIZE_CODE(linkBuffer, ("B3::Compilation")), proc.releaseByproducts());
+}
 
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
+

@@ -116,6 +116,7 @@ set(JavaScriptCore_SOURCES
     b3/B3CheckValue.cpp
     b3/B3Common.cpp
     b3/B3Commutativity.cpp
+    b3/B3Compile.cpp
     b3/B3Compilation.cpp
     b3/B3Const32Value.cpp
     b3/B3Const64Value.cpp

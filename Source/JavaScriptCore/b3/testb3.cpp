@@ -33,6 +33,7 @@
 #include "B3BasicBlockInlines.h"
 #include "B3CCallValue.h"
 #include "B3Compilation.h"
+#include "B3Compile.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Const32Value.h"
 #include "B3ConstPtrValue.h"
@@ -118,7 +119,7 @@ VM* vm;
 
 std::unique_ptr<Compilation> compile(Procedure& procedure, unsigned optLevel = 1)
 {
-    return std::make_unique<Compilation>(*vm, procedure, optLevel);
+    return std::make_unique<Compilation>(B3::compile(*vm, procedure, optLevel));
 }
 
 template<typename T, typename... Arguments>
