@@ -1788,6 +1788,7 @@ fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Skip ]
 fast/shadow-dom/fullscreen-in-slot-webkitCurrentFullScreenElement.html [ Skip ]
 
 # No touch events
+fast/visual-viewport/ios/zoomed-focus-in-fixed.html [ Skip ]
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-always.html [ Skip ]
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-default.html [ Skip ]
 http/tests/contentdispositionattachmentsandbox/referer-header-stripped-with-meta-referer-never.html [ Skip ]

@@ -1,3 +1,12 @@
+2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move the skip expectation for fast/visual-viewport/ios/zoomed-focus-in-fixed.html to ios-simulator-wk2.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-16  Andreas Kling  <akling@apple.com>
 
         Subframes going into page cache don't need to resetScrollbars().
