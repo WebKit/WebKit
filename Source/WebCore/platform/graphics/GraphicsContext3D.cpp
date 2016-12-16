@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2010 Mozilla Corporation. All rights reserved.
  *
@@ -329,7 +329,7 @@ GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum ty
     if (width < 0 || height < 0)
         return GraphicsContext3D::INVALID_VALUE;
     unsigned int bytesPerComponent, componentsPerPixel;
-    if (!computeFormatAndTypeParameters(format, type, &bytesPerComponent, &componentsPerPixel))
+    if (!computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent))
         return GraphicsContext3D::INVALID_ENUM;
     if (!width || !height) {
         *imageSizeInBytes = 0;

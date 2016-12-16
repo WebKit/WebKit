@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -50,7 +51,7 @@ void decidePolicyForUserMediaPermissionRequestCallBack(WKPageRef, WKFrameRef, WK
         else
             audioDeviceUID = WKStringCreateWithUTF8CString("");
 
-        WKUserMediaPermissionRequestAllow(permissionRequest, videoDeviceUID.get(), audioDeviceUID.get());
+        WKUserMediaPermissionRequestAllow(permissionRequest, audioDeviceUID.get(), videoDeviceUID.get());
     }
 
     done = true;

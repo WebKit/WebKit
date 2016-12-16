@@ -1,3 +1,17 @@
+2016-12-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Arguments called in wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=165923
+
+        Reviewed by Simon Fraser.
+
+        The 'audioDeviceUIDs' array is being passed to the argument that expects video devices,
+        and the 'videoDeviceUIDs' array is being passed to the audo device argument. Fix this.
+
+        * TestWebKitAPI/Tests/WebKit2/UserMedia.cpp:
+        (TestWebKitAPI::decidePolicyForUserMediaPermissionRequestCallBack): The
+        order of arguments to WKUserMediaPermissionRequestAllow are flipped.
+
 2016-12-16  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL] Disable non-srcdir builds for failing libraries

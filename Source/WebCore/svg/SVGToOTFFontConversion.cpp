@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -733,7 +733,7 @@ Glyph SVGToOTFFontConverter::firstGlyph(const Vector<Glyph, 1>& v, UChar32 codep
     auto codePoints = StringView(m_glyphs[v[0]].codepoints).codePoints();
     auto codePointsIterator = codePoints.begin();
     ASSERT(codePointsIterator != codePoints.end());
-    ASSERT(codepoint = *codePointsIterator);
+    ASSERT(codepoint == *codePointsIterator);
 #endif
     return v[0];
 }

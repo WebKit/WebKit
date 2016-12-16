@@ -1,3 +1,28 @@
+2016-12-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Arguments called in wrong order
+        https://bugs.webkit.org/show_bug.cgi?id=165923
+
+        Reviewed by Simon Fraser.
+
+        Correct the ordering of several function calls.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): The 'nearestToPresentationStartTime'
+        argument is being checked for validity, but 'nearestToPresentationEndTime' is being used in the
+        calculation. This seems like a copy/paste error.
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::outputLinkedDestinations): FloatPoint::expandedTo returns a new object that
+        has been expanded. This code continued using the 'unexpanded' point.
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeImageSizeInBytes): The 'bytesPerComponent' and 'componentsPerPixel'
+        variables were being passed in the wrong order.
+        * platform/network/CacheValidation.cpp: The 'last-modified' header string was being concatenated with
+        the following string, resulting in an incorrect 'last-modifiedproxy-authenticate' string value.
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::firstGlyph): The ASSERT was assigning to the (by-value) input
+        parameter 'codePoint', rather than comparing it to the firstGlyph value's codePoint.
+
 2016-12-16  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Improve resource loading console logging
