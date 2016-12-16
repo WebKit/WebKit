@@ -145,8 +145,7 @@ test(function() {
         });
 }, "Calling close() after calling error() should throw a TypeError");
 
-const test2 = async_test("Calling read() on a reader associated to a controller that has been errored should fail with provided error");
-test2.step(function() {
+promise_test(function(test) {
     let controller;
 
     const rs = new ReadableStream({
@@ -155,22 +154,13 @@ test2.step(function() {
         },
         type: "bytes"
     });
-    const myError = "my error";
+    const myError = new Error("my error");
     controller.error(myError);
 
-    rs.getReader().read().then(
-        test2.step_func(function() {
-            assert_unreached('read() should reject on an errored stream');
-        }),
-        test2.step_func(function(err) {
-            assert_equals(myError, err);
-            test2.done();
-        })
-    );
-});
+    return promise_rejects(test, myError, rs.getReader().read());
+}, "Calling read() on a reader associated to a controller that has been errored should fail with provided error");
 
-const test3 = async_test("Calling read() on a reader associated to a controller that has been closed should not be rejected");
-test3.step(function() {
+promise_test(function() {
     let controller;
 
     const rs = new ReadableStream({
@@ -182,19 +172,14 @@ test3.step(function() {
 
     controller.close();
 
-    rs.getReader().read().then(
-        test3.step_func(function(res) {
+    return rs.getReader().read().then(
+        function(res) {
             assert_object_equals(res, {value: undefined, done: true});
-            test3.done();
-        }),
-        test3.step_func(function(err) {
-            assert_unreached("read() should be fulfilled  on a closed stream");
-        })
+        }
     );
-});
+}, "Calling read() on a reader associated to a controller that has been closed should not be rejected");
 
-const test4 = async_test("Calling read() after a chunk has been enqueued should result in obtaining said chunk");
-test4.step(function() {
+promise_test(function() {
     let controller;
 
     const rs = new ReadableStream({
@@ -206,16 +191,12 @@ test4.step(function() {
 
     controller.enqueue("test");
 
-    rs.getReader().read().then(
-        test4.step_func(function(res) {
+    return rs.getReader().read().then(
+        function(res) {
             assert_object_equals(res, {value: "test", done: false});
-            test4.done();
-        }),
-        test4.step_func(function(err) {
-            assert_unreached("read() should be fulfilled after enqueue");
-        })
+        }
     );
-});
+}, "Calling read() after a chunk has been enqueued should result in obtaining said chunk");
 
 test(function() {
     let controller;
@@ -229,5 +210,17 @@ test(function() {
 
     assert_equals(controller.desiredSize, 1, "by default initial value of desiredSize should be 1");
 }, "By default initial value of desiredSize should be 1");
+
+promise_test(function() {
+    const rs = new ReadableStream({
+        type: "bytes"
+    });
+
+    return rs.cancel().then(
+        function(res) {
+            assert_object_equals(res, undefined);
+        }
+    );
+}, "Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined");
 
 done();

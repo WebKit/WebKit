@@ -1,3 +1,21 @@
+2016-12-16  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableByteStreamController cancel internal method
+        https://bugs.webkit.org/show_bug.cgi?id=165798
+
+        Reviewed by Youenn Fablet.
+
+        Implemented cancel method of ReadableByteStreamController.
+        Also fixed small inconsistency in readableByteStreamControllerClose.
+
+        Added one test to check cancel behaviour. More tests may be added as the API is implemented.
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableByteStreamController): Define cancel internal method.
+        (readableByteStreamControllerCancel): Added.
+        (readableByteStreamControllerClose): Fixed behaviour (no value should be dequeued).
+        * bindings/js/WebCoreBuiltinNames.h: Removed bytesFilled (previous addition was not needed).
+
 2016-12-16  Youenn Fablet  <youennf@gmail.com>
 
         svg/as-image/svg-image-with-data-uri-use-data-uri.svg is flaky after r207754

@@ -71,7 +71,8 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
         // FIXME: Implement readableByteStreamControllerError.
     });
 
-    // FIXME: Implement cancel and pull.
+    this.@cancel = @readableByteStreamControllerCancel;
+    // FIXME: Implement pull.
 
     return this;
 }
@@ -83,6 +84,17 @@ function isReadableByteStreamController(controller)
     // Same test mechanism as in isReadableStreamDefaultController (ReadableStreamInternals.js).
     // See corresponding function for explanations.
     return @isObject(controller) && !!controller.@underlyingByteSource;
+}
+
+function readableByteStreamControllerCancel(controller, reason)
+{
+    "use strict";
+
+    if (controller.@pendingPullIntos.content.length > 0)
+        controller.@pendingPullIntos[0].bytesFilled = 0;
+    controller.@queue = @newQueue();
+    controller.@totalQueuedBytes = 0;
+    return @promiseInvokeOrNoop(controller.@underlyingByteSource, "cancel", [reason]);
 }
 
 function readableByteStreamControllerError(controller, e)
@@ -108,8 +120,7 @@ function readableByteStreamControllerClose(controller)
     }
 
     if (controller.@pendingPullIntos.content.length > 0) {
-        const firstPendingPullInto = @dequeueValue(controller.@pendingPullIntos);
-        if (firstPendingPullInto.@bytesFilled > 0) {
+        if (controller.@pendingPullIntos[0].bytesFilled > 0) {
             const e = new @TypeError("Close requested while there remain pending bytes");
             @readableByteStreamControllerError(controller, e);
             throw e;
