@@ -136,7 +136,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             m_context.dump(m_controlStack, m_expressionStack);
         }
 
-        if (op == OpType::End && !m_controlStack.size()) {
+        if (op == End && !m_controlStack.size()) {
             if (m_unreachableBlocks)
                 return { };
             return addReturn();
@@ -201,32 +201,14 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
 {
     switch (op) {
 #define CREATE_CASE(name, id, b3op, inc) case OpType::name: return binaryCase<OpType::name>();
-    FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
+    FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
-    case OpType::F32ConvertUI64: return unaryCase<OpType::F32ConvertUI64>();
-    case OpType::F64ConvertUI64: return unaryCase<OpType::F64ConvertUI64>();
-    case OpType::F32Nearest: return unaryCase<OpType::F32Nearest>();
-    case OpType::F64Nearest: return unaryCase<OpType::F64Nearest>();
-    case OpType::F32Trunc: return unaryCase<OpType::F32Trunc>();
-    case OpType::F64Trunc: return unaryCase<OpType::F64Trunc>();
-    case OpType::I32Ctz: return unaryCase<OpType::I32Ctz>();
-    case OpType::I64Ctz: return unaryCase<OpType::I64Ctz>();
-    case OpType::I32Popcnt: return unaryCase<OpType::I32Popcnt>();
-    case OpType::I64Popcnt: return unaryCase<OpType::I64Popcnt>();
-    case OpType::I32TruncSF32: return unaryCase<OpType::I32TruncSF32>();
-    case OpType::I32TruncUF32: return unaryCase<OpType::I32TruncUF32>();
-    case OpType::I32TruncSF64: return unaryCase<OpType::I32TruncSF64>();
-    case OpType::I32TruncUF64: return unaryCase<OpType::I32TruncUF64>();
-    case OpType::I64TruncSF32: return unaryCase<OpType::I64TruncSF32>();
-    case OpType::I64TruncUF32: return unaryCase<OpType::I64TruncUF32>();
-    case OpType::I64TruncSF64: return unaryCase<OpType::I64TruncSF64>();
-    case OpType::I64TruncUF64: return unaryCase<OpType::I64TruncUF64>();
 #define CREATE_CASE(name, id, b3op, inc) case OpType::name: return unaryCase<OpType::name>();
-    FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
+    FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
 #undef CREATE_CASE
 
-    case OpType::Select: {
+    case Select: {
         ExpressionType condition;
         ExpressionType zero;
         ExpressionType nonZero;
@@ -270,35 +252,35 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     }
 #undef CREATE_CASE
 
-    case OpType::F32Const: {
+    case F32Const: {
         uint32_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt32(constant), "can't parse 32-bit floating-point constant");
         m_expressionStack.append(m_context.addConstant(F32, constant));
         return { };
     }
 
-    case OpType::I32Const: {
+    case I32Const: {
         int32_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt32(constant), "can't parse 32-bit constant");
         m_expressionStack.append(m_context.addConstant(I32, constant));
         return { };
     }
 
-    case OpType::F64Const: {
+    case F64Const: {
         uint64_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt64(constant), "can't parse 64-bit floating-point constant");
         m_expressionStack.append(m_context.addConstant(F64, constant));
         return { };
     }
 
-    case OpType::I64Const: {
+    case I64Const: {
         int64_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt64(constant), "can't parse 64-bit constant");
         m_expressionStack.append(m_context.addConstant(I64, constant));
         return { };
     }
 
-    case OpType::GetLocal: {
+    case GetLocal: {
         uint32_t index;
         ExpressionType result;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for get_local");
@@ -307,7 +289,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::SetLocal: {
+    case SetLocal: {
         uint32_t index;
         ExpressionType value;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for set_local");
@@ -316,7 +298,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::TeeLocal: {
+    case TeeLocal: {
         uint32_t index;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for tee_local");
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack");
@@ -324,7 +306,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::GetGlobal: {
+    case GetGlobal: {
         uint32_t index;
         ExpressionType result;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get get_global's index");
@@ -333,7 +315,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::SetGlobal: {
+    case SetGlobal: {
         uint32_t index;
         ExpressionType value;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get set_global's index");
@@ -342,7 +324,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return m_context.setGlobal(index, value);
     }
 
-    case OpType::Call: {
+    case Call: {
         uint32_t functionIndex;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse call's function index");
         WASM_PARSER_FAIL_IF(functionIndex >= m_functionIndexSpace.size, "call function index ", functionIndex, " exceeds function index space ", m_functionIndexSpace.size);
@@ -366,7 +348,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
             return { };
     }
 
-    case OpType::CallIndirect: {
+    case CallIndirect: {
         uint32_t signatureIndex;
         uint8_t reserved;
         WASM_PARSER_FAIL_IF(!m_info.tableInformation, "call_indirect is only valid when a table is defined or imported");
@@ -395,7 +377,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::Block: {
+    case Block: {
         Type inlineSignature;
         WASM_PARSER_FAIL_IF(!parseResultType(inlineSignature), "can't get block's inline signature");
         m_controlStack.append({ WTFMove(m_expressionStack), m_context.addBlock(inlineSignature) });
@@ -403,7 +385,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::Loop: {
+    case Loop: {
         Type inlineSignature;
         WASM_PARSER_FAIL_IF(!parseResultType(inlineSignature), "can't get loop's inline signature");
         m_controlStack.append({ WTFMove(m_expressionStack), m_context.addLoop(inlineSignature) });
@@ -411,7 +393,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::If: {
+    case If: {
         Type inlineSignature;
         ExpressionType condition;
         ControlType control;
@@ -423,20 +405,20 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::Else: {
+    case Else: {
         WASM_PARSER_FAIL_IF(m_controlStack.isEmpty(), "can't use else block at the top-level of a function");
         WASM_TRY_ADD_TO_CONTEXT(addElse(m_controlStack.last().controlData, m_expressionStack));
         m_expressionStack.shrink(0);
         return { };
     }
 
-    case OpType::Br:
-    case OpType::BrIf: {
+    case Br:
+    case BrIf: {
         uint32_t target;
         ExpressionType condition = Context::emptyExpression;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get br / br_if's target");
         WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br / br_if's target ", target, " exceeds control stack size ", m_controlStack.size());
-        if (op == OpType::BrIf)
+        if (op == BrIf)
             WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br / br_if condition");
         else
             m_unreachableBlocks = 1;
@@ -447,7 +429,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::BrTable: {
+    case BrTable: {
         uint32_t numberOfTargets;
         ExpressionType condition;
         uint32_t defaultTarget;
@@ -472,11 +454,11 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::Return: {
+    case Return: {
         return addReturn();
     }
 
-    case OpType::End: {
+    case End: {
         ControlEntry data = m_controlStack.takeLast();
         // FIXME: This is a little weird in that it will modify the expressionStack for the result of the block.
         // That's a little too effectful for me but I don't have a better API right now.
@@ -486,26 +468,26 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case OpType::Unreachable: {
+    case Unreachable: {
         WASM_TRY_ADD_TO_CONTEXT(addUnreachable());
         m_unreachableBlocks = 1;
         return { };
     }
 
-    case OpType::Drop: {
+    case Drop: {
         WASM_PARSER_FAIL_IF(!m_expressionStack.size(), "can't drop on empty stack");
         m_expressionStack.takeLast();
         return { };
     }
 
-    case OpType::Nop: {
+    case Nop: {
         return { };
     }
 
-    case OpType::GrowMemory:
+    case GrowMemory:
         return fail("not yet implemented: grow_memory"); // FIXME: Not yet implemented.
 
-    case OpType::CurrentMemory:
+    case CurrentMemory:
         return fail("not yet implemented: current_memory"); // FIXME: Not yet implemented.
 
     }
@@ -513,12 +495,14 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     ASSERT_NOT_REACHED();
 }
 
+// FIXME: We should try to use the same decoder function for both unreachable and reachable code. https://bugs.webkit.org/show_bug.cgi?id=165965
 template<typename Context>
 auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialResult
 {
     ASSERT(m_unreachableBlocks);
+#define CREATE_CASE(name, id, b3op, inc) case OpType::name:
     switch (op) {
-    case OpType::Else: {
+    case Else: {
         if (m_unreachableBlocks > 1)
             return { };
 
@@ -529,7 +513,7 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
-    case OpType::End: {
+    case End: {
         if (m_unreachableBlocks == 1) {
             ControlEntry data = m_controlStack.takeLast();
             WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(data));
@@ -539,38 +523,72 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
-    case OpType::Loop:
-    case OpType::If:
-    case OpType::Block: {
+    case Loop:
+    case If:
+    case Block: {
         m_unreachableBlocks++;
+        int8_t unused;
+        WASM_PARSER_FAIL_IF(!parseInt7(unused), "can't get inline type for ", op, " in unreachable context");
         return { };
     }
 
-    // two immediate cases
-    case OpType::Br:
-    case OpType::BrIf: {
+    case BrTable: {
+        uint32_t numberOfTargets;
         uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get br / br_if in unreachable context");
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get br / br_if in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfTargets), "can't get the number of targets for br_table in unreachable context");
+        WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big ", numberOfTargets);
+
+        for (uint32_t i = 0; i < numberOfTargets; ++i)
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get ", i, "th target for br_table in unreachable context");
+
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get default target for br_table in unreachable context");
+        return { };
+    }
+
+
+    // two immediate cases
+    FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
+    FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
+    case Br:
+    case BrIf:
+    case CallIndirect: {
+        uint32_t unused;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for ", op, " in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for ", op, " in unreachable context");
         return { };
     }
 
     // one immediate cases
-    case OpType::F32Const:
-    case OpType::I32Const:
-    case OpType::F64Const:
-    case OpType::I64Const:
-    case OpType::SetLocal:
-    case OpType::GetLocal: {
+    case F32Const:
+    case I32Const:
+    case F64Const:
+    case I64Const:
+    case SetLocal:
+    case GetLocal:
+    case TeeLocal:
+    case GetGlobal:
+    case SetGlobal:
+    case Call: {
         uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get const / local in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", op, " in unreachable context");
         return { };
     }
 
-    default:
-        break;
+    // no immediate cases
+    FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
+    FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
+    case Unreachable:
+    case Nop:
+    case Return:
+    case Select:
+    case Drop:
+    case GrowMemory:
+    case CurrentMemory: {
+        return { };
     }
-    return { };
+    }
+#undef CREATE_CASE
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::Wasm

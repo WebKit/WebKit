@@ -1,3 +1,17 @@
+2016-12-16  Keith Miller  <keith_miller@apple.com>
+
+        Add missing cases to parseUnreachableExpression and cleanup FunctionParser
+        https://bugs.webkit.org/show_bug.cgi?id=165966
+
+        Reviewed by Saam Barati.
+
+        This patch adds a number of missing cases to the Wasm FunctionParser's unreachable
+        code decoder. It also, removes unneeded OpType namespaces where they were not
+        needed and has the unary / binary macros cover all the cases rather than
+        just the simple cases.
+
+        * wasm/WasmFunctionParser.h:
+
 2016-12-16  Mark Lam  <mark.lam@apple.com>
 
         Add predecessor info to dumps from JSC_dumpBytecodeLivenessResults=true.
