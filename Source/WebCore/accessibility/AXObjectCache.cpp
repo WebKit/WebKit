@@ -703,6 +703,8 @@ void AXObjectCache::remove(RenderObject* renderer)
     AXID axID = m_renderObjectMapping.get(renderer);
     remove(axID);
     m_renderObjectMapping.remove(renderer);
+    if (is<RenderBlock>(*renderer))
+        m_deferredIsIgnoredChangeList.remove(downcast<RenderBlock>(renderer));
 }
 
 void AXObjectCache::remove(Node* node)
@@ -2609,6 +2611,18 @@ bool AXObjectCache::nodeIsTextControl(const Node* node)
     return axObject && axObject->isTextControl();
 }
     
+void AXObjectCache::performDeferredIsIgnoredChange()
+{
+    for (auto* renderer : m_deferredIsIgnoredChangeList)
+        recomputeIsIgnored(renderer);
+    m_deferredIsIgnoredChangeList.clear();
+}
+
+void AXObjectCache::recomputeDeferredIsIgnored(RenderBlock& renderer)
+{
+    m_deferredIsIgnoredChangeList.add(&renderer);
+}
+
 bool isNodeAriaVisible(Node* node)
 {
     if (!node)
