@@ -34,6 +34,7 @@
 #if ENABLE(SPELLCHECK)
 #include "TextCheckerClientEfl.h"
 #include "WebTextChecker.h"
+#include <unicode/ubrk.h>
 #include <wtf/text/TextBreakIterator.h>
 #endif
 
@@ -139,7 +140,7 @@ static unsigned nextWordOffset(StringView text, unsigned currentOffset)
     //        or after "offset" (ubrk_isBoundary side effect).
     //        For many word separators, the method doesn't properly determine the boundaries
     //        without resetting the iterator.
-    TextBreakIterator* textIterator = wordBreakIterator(text);
+    UBreakIterator* textIterator = wordBreakIterator(text);
     if (!textIterator)
         return currentOffset;
 
@@ -167,7 +168,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
     Vector<TextCheckingResult> paragraphCheckingResult;
 #if ENABLE(SPELLCHECK)
     if (checkingTypes & TextCheckingTypeSpelling) {
-        TextBreakIterator* textIterator = wordBreakIterator(text);
+        UBreakIterator* textIterator = wordBreakIterator(text);
         if (!textIterator)
             return paragraphCheckingResult;
 
