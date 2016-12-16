@@ -21,7 +21,6 @@
 #include "config.h"
 #include "ArgList.h"
 
-#include "HeapRootVisitor.h"
 #include "JSCJSValue.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
@@ -54,13 +53,13 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
     result.m_argCount =  m_argCount - startIndex;
 }
 
-void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootVisitor, ListSet& markSet)
+void MarkedArgumentBuffer::markLists(SlotVisitor& visitor, ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedArgumentBuffer* list = *it;
         for (int i = 0; i < list->m_size; ++i)
-            heapRootVisitor.visit(reinterpret_cast<JSValue*>(&list->slotFor(i)));
+            visitor.appendUnbarriered(JSValue::decode(list->slotFor(i)));
     }
 }
 

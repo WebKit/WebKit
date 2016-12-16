@@ -183,7 +183,7 @@ public:
         Element* thisObject = jsCast<Element*>(cell);
         ASSERT_GC_OBJECT_INHERITS(thisObject, info());
         Base::visitChildren(thisObject, visitor);
-        visitor.append(&thisObject->m_root);
+        visitor.append(thisObject->m_root);
     }
 
     static ElementHandleOwner* handleOwner();
@@ -330,7 +330,7 @@ public:
     {
         Base::visitChildren(cell, visitor);
         ImpureGetter* thisObject = jsCast<ImpureGetter*>(cell);
-        visitor.append(&thisObject->m_delegate);
+        visitor.append(thisObject->m_delegate);
     }
 
     void setDelegate(VM& vm, JSObject* delegate)
@@ -521,7 +521,7 @@ public:
         SimpleObject* thisObject = jsCast<SimpleObject*>(cell);
         ASSERT_GC_OBJECT_INHERITS(thisObject, info());
         Base::visitChildren(thisObject, visitor);
-        visitor.append(&thisObject->m_hiddenValue);
+        visitor.append(thisObject->m_hiddenValue);
     }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -216,7 +216,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     } }
 }
 
-void SlotVisitor::append(JSValue value)
+void SlotVisitor::appendUnbarriered(JSValue value)
 {
     if (!value || !value.isCell())
         return;

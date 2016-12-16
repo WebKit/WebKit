@@ -51,7 +51,7 @@ void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (WriteBarrier<Structure>* vector = thisObject->m_vector.get()) {
         size_t i = 0;
         while (vector[i])
-            visitor.append(&vector[i++]);
+            visitor.append(vector[i++]);
     }
 }
 

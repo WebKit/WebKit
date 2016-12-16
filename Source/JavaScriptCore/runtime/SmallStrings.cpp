@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SmallStrings.h"
 
-#include "HeapRootVisitor.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSCInlines.h"
@@ -93,15 +92,15 @@ void SmallStrings::initializeCommonStrings(VM& vm)
 void SmallStrings::visitStrongReferences(SlotVisitor& visitor)
 {
     m_needsToBeVisited = false;
-    visitor.appendUnbarrieredPointer(&m_emptyString);
+    visitor.appendUnbarriered(m_emptyString);
     for (unsigned i = 0; i <= maxSingleCharacterString; ++i)
-        visitor.appendUnbarrieredPointer(m_singleCharacterStrings + i);
-#define JSC_COMMON_STRINGS_ATTRIBUTE_VISIT(name) visitor.appendUnbarrieredPointer(&m_##name);
+        visitor.appendUnbarriered(m_singleCharacterStrings[i]);
+#define JSC_COMMON_STRINGS_ATTRIBUTE_VISIT(name) visitor.appendUnbarriered(m_##name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_VISIT)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_VISIT
-    visitor.appendUnbarrieredPointer(&m_objectStringStart);
-    visitor.appendUnbarrieredPointer(&m_nullObjectString);
-    visitor.appendUnbarrieredPointer(&m_undefinedObjectString);
+    visitor.appendUnbarriered(m_objectStringStart);
+    visitor.appendUnbarriered(m_nullObjectString);
+    visitor.appendUnbarriered(m_undefinedObjectString);
 }
 
 SmallStrings::~SmallStrings()

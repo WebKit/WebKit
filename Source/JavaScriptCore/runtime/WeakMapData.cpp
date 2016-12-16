@@ -112,7 +112,7 @@ void WeakMapData::DeadKeyCleaner::visitWeakReferences(SlotVisitor& visitor)
         if (!Heap::isMarked(it->key))
             continue;
         m_liveKeyCount++;
-        visitor.append(&it->value);
+        visitor.append(it->value);
     }
     RELEASE_ASSERT(m_liveKeyCount <= m_target->m_map.size());
 }

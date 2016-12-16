@@ -45,8 +45,8 @@ void JSMapIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSMapIterator* thisObject = jsCast<JSMapIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_map);
-    visitor.append(&thisObject->m_iter);
+    visitor.append(thisObject->m_map);
+    visitor.append(thisObject->m_iter);
 }
 
 JSValue JSMapIterator::createPair(CallFrame* callFrame, JSValue key, JSValue value)

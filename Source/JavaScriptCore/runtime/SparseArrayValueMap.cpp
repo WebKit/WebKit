@@ -202,7 +202,7 @@ void SparseArrayValueMap::visitChildren(JSCell* thisObject, SlotVisitor& visitor
     auto locker = holdLock(*thisMap);
     iterator end = thisMap->m_map.end();
     for (iterator it = thisMap->m_map.begin(); it != end; ++it)
-        visitor.append(&it->value);
+        visitor.append(it->value);
 }
 
 } // namespace JSC

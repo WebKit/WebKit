@@ -44,7 +44,7 @@ void JSScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSScope* thisObject = jsCast<JSScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_next);
+    visitor.append(thisObject->m_next);
 }
 
 // Returns true if we found enough information to terminate optimization.

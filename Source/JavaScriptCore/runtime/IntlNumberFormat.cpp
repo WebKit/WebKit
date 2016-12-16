@@ -84,7 +84,7 @@ void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_boundFormat);
+    visitor.append(thisObject->m_boundFormat);
 }
 
 static Vector<String> localeData(const String& locale, size_t keyIndex)

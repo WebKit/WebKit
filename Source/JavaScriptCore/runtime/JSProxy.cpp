@@ -41,7 +41,7 @@ void JSProxy::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSProxy* thisObject = jsCast<JSProxy*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_target);
+    visitor.append(thisObject->m_target);
 }
 
 void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)

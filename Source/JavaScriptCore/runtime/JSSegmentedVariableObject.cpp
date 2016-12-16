@@ -70,7 +70,7 @@ void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& slotVis
     // relatively easily.
     auto locker = holdLock(thisObject->m_lock);
     for (unsigned i = thisObject->m_variables.size(); i--;)
-        slotVisitor.appendHidden(&thisObject->m_variables[i]);
+        slotVisitor.appendHidden(thisObject->m_variables[i]);
 }
 
 void JSSegmentedVariableObject::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)

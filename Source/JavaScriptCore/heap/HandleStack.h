@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 namespace JSC {
 
 class LocalScope;
-class HeapRootVisitor;
+class SlotVisitor;
 
 class HandleStack {
 public:
@@ -49,7 +49,7 @@ public:
 
     HandleSlot push();
 
-    void visit(HeapRootVisitor&);
+    void visit(SlotVisitor&);
 
 private:
     JS_EXPORT_PRIVATE void grow();

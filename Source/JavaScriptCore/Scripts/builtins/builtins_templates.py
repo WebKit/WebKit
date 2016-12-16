@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
+# Copyright (c) 2014-2016 Apple Inc. All rights reserved.
 # Copyright (C) 2015 Canon Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -205,7 +205,7 @@ inline void ${objectName}BuiltinFunctions::init(JSC::JSGlobalObject& globalObjec
 
 inline void ${objectName}BuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 {
-#define VISIT_FUNCTION(name) visitor.append(&m_##name##Function);
+#define VISIT_FUNCTION(name) visitor.append(m_##name##Function);
     ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_FUNCTION_NAME(VISIT_FUNCTION)
 #undef VISIT_FUNCTION
 }

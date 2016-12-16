@@ -58,7 +58,7 @@ void NativeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
     NativeErrorConstructor* thisObject = jsCast<NativeErrorConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_errorStructure);
+    visitor.append(thisObject->m_errorStructure);
 }
 
 EncodedJSValue JSC_HOST_CALL Interpreter::constructWithNativeErrorConstructor(ExecState* exec)

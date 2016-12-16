@@ -519,7 +519,7 @@ void SamplingProfiler::visit(SlotVisitor& slotVisitor)
 {
     RELEASE_ASSERT(m_lock.isLocked());
     for (JSCell* cell : m_liveCellPointers)
-        slotVisitor.appendUnbarrieredReadOnlyPointer(cell);
+        slotVisitor.appendUnbarriered(cell);
 }
 
 void SamplingProfiler::shutdown()

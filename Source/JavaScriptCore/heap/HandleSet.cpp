@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "HandleBlock.h"
 #include "HandleBlockInlines.h"
-#include "HeapRootVisitor.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include <wtf/DataLog.h>
@@ -59,14 +58,14 @@ void HandleSet::grow()
     }
 }
 
-void HandleSet::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
+void HandleSet::visitStrongHandles(SlotVisitor& visitor)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
 #if ENABLE(GC_VALIDATION)
         RELEASE_ASSERT(isLiveNode(node));
 #endif
-        heapRootVisitor.visit(node->slot());
+        visitor.appendUnbarriered(*node->slot());
     }
 }
 

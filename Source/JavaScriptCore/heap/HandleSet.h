@@ -36,9 +36,9 @@
 namespace JSC {
 
 class HandleSet;
-class HeapRootVisitor;
 class VM;
 class JSValue;
+class SlotVisitor;
 
 class HandleNode {
 public:
@@ -73,7 +73,7 @@ public:
     HandleSlot allocate();
     void deallocate(HandleSlot);
 
-    void visitStrongHandles(HeapRootVisitor&);
+    void visitStrongHandles(SlotVisitor&);
 
     JS_EXPORT_PRIVATE void writeBarrier(HandleSlot, const JSValue&);
 

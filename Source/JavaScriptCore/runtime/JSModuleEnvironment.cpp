@@ -74,7 +74,7 @@ void JSModuleEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.appendValues(thisObject->variables(), thisObject->symbolTable()->scopeSize());
-    visitor.append(&thisObject->moduleRecordSlot());
+    visitor.append(thisObject->moduleRecordSlot());
 }
 
 bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)

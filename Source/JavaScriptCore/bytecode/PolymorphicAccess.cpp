@@ -575,7 +575,7 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
     switch (m_type) {
     case Transition:
         if (Heap::isMarkedConcurrently(m_structure->previousID()))
-            visitor.appendUnbarrieredReadOnlyPointer(m_structure.get());
+            visitor.appendUnbarriered(m_structure.get());
         else
             result = false;
         break;

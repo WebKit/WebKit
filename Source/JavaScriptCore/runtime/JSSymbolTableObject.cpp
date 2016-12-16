@@ -41,7 +41,7 @@ void JSSymbolTableObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSSymbolTableObject* thisObject = jsCast<JSSymbolTableObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_symbolTable);
+    visitor.append(thisObject->m_symbolTable);
 }
 
 bool JSSymbolTableObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)

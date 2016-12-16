@@ -99,7 +99,7 @@ public:
     bool isSuspended() { return !m_deferred || !canInvokeCallback(); } // The wrapper world has gone away or active DOM objects have been suspended.
     JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
 
-    void visitAggregate(JSC::SlotVisitor& visitor) { visitor.appendUnbarrieredWeak(&m_deferred); }
+    void visitAggregate(JSC::SlotVisitor& visitor) { visitor.append(m_deferred); }
 
 private:
     DeferredPromise(JSDOMGlobalObject&, JSC::JSPromiseDeferred&);

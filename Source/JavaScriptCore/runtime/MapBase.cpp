@@ -35,7 +35,7 @@ void MapBase<HashMapBucketType>::visitChildren(JSCell* cell, SlotVisitor& visito
 {
     MapBase* thisObject = static_cast<MapBase*>(cell);
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_map);
+    visitor.append(thisObject->m_map);
 }
 
 template <typename HashMapBucketType>

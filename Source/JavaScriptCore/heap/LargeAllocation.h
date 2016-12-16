@@ -30,6 +30,8 @@
 
 namespace JSC {
 
+class SlotVisitor;
+
 // WebKit has a good malloc that already knows what to do for large allocations. The GC shouldn't
 // have to think about such things. That's where LargeAllocation comes in. We will allocate large
 // objects directly using malloc, and put the LargeAllocation header just before them. We can detect
@@ -62,7 +64,7 @@ public:
     
     void shrink();
     
-    void visitWeakSet(HeapRootVisitor&);
+    void visitWeakSet(SlotVisitor&);
     void reapWeakSet();
     
     void clearNewlyAllocated() { m_isNewlyAllocated = false; }

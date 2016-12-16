@@ -121,9 +121,9 @@ void JSPromiseDeferred::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_promise);
-    visitor.append(&thisObject->m_resolve);
-    visitor.append(&thisObject->m_reject);
+    visitor.append(thisObject->m_promise);
+    visitor.append(thisObject->m_resolve);
+    visitor.append(thisObject->m_reject);
 }
 
 } // namespace JSC

@@ -359,10 +359,10 @@ void MarkedSpace::prepareForAllocation()
     m_allocatorForEmptyAllocation = m_firstAllocator;
 }
 
-void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
+void MarkedSpace::visitWeakSets(SlotVisitor& visitor)
 {
     auto visit = [&] (WeakSet* weakSet) {
-        weakSet->visit(heapRootVisitor);
+        weakSet->visit(visitor);
     };
     
     m_newActiveWeakSets.forEach(visit);

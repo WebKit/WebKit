@@ -89,8 +89,8 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         codeBlockForCall->visitWeakly(visitor);
     if (FunctionCodeBlock* codeBlockForConstruct = thisObject->m_codeBlockForConstruct.get())
         codeBlockForConstruct->visitWeakly(visitor);
-    visitor.append(&thisObject->m_unlinkedExecutable);
-    visitor.append(&thisObject->m_singletonFunction);
+    visitor.append(thisObject->m_unlinkedExecutable);
+    visitor.append(thisObject->m_singletonFunction);
 }
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(

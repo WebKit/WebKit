@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,66 +31,52 @@
 
 namespace JSC {
 
-template<typename T>
-inline void SlotVisitor::appendUnbarrieredPointer(T** slot)
+inline void SlotVisitor::appendUnbarriered(JSValue* slot, size_t count)
 {
-    ASSERT(slot);
-    append(*slot);
+    for (size_t i = count; i--;)
+        appendUnbarriered(slot[i]);
+}
+
+inline void SlotVisitor::appendUnbarriered(JSCell* cell)
+{
+    appendUnbarriered(JSValue(cell));
 }
 
 template<typename T>
-inline void SlotVisitor::appendUnbarrieredReadOnlyPointer(T* cell)
+inline void SlotVisitor::append(const Weak<T>& weak)
 {
-    append(cell);
-}
-
-inline void SlotVisitor::appendUnbarrieredValue(JSValue* slot)
-{
-    ASSERT(slot);
-    append(*slot);
-}
-
-inline void SlotVisitor::appendUnbarrieredReadOnlyValue(JSValue value)
-{
-    append(value);
+    appendUnbarriered(weak.get());
 }
 
 template<typename T>
-inline void SlotVisitor::appendUnbarrieredWeak(Weak<T>* weak)
+inline void SlotVisitor::append(const WriteBarrierBase<T>& slot)
 {
-    ASSERT(weak);
-    append(weak->get());
+    appendUnbarriered(slot.get());
 }
 
 template<typename T>
-inline void SlotVisitor::append(WriteBarrierBase<T>* slot)
+inline void SlotVisitor::appendHidden(const WriteBarrierBase<T>& slot)
 {
-    append(slot->get());
-}
-
-template<typename T>
-inline void SlotVisitor::appendHidden(WriteBarrierBase<T>* slot)
-{
-    appendHidden(slot->get());
+    appendHidden(slot.get());
 }
 
 template<typename Iterator>
 inline void SlotVisitor::append(Iterator begin, Iterator end)
 {
     for (auto it = begin; it != end; ++it)
-        append(&*it);
+        append(*it);
 }
 
-inline void SlotVisitor::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
+inline void SlotVisitor::appendValues(const WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
-        append(&barriers[i]);
+        append(barriers[i]);
 }
 
-inline void SlotVisitor::appendValuesHidden(WriteBarrierBase<Unknown>* barriers, size_t count)
+inline void SlotVisitor::appendValuesHidden(const WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     for (size_t i = 0; i < count; ++i)
-        appendHidden(&barriers[i]);
+        appendHidden(barriers[i]);
 }
 
 inline void SlotVisitor::reportExtraMemoryVisited(size_t size)

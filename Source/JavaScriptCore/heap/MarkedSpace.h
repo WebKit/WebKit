@@ -129,7 +129,7 @@ public:
     
     void prepareForAllocation();
 
-    void visitWeakSets(HeapRootVisitor&);
+    void visitWeakSets(SlotVisitor&);
     void reapWeakSets();
 
     MarkedBlockSet& blocks() { return m_blocks; }

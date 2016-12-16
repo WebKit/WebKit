@@ -78,8 +78,8 @@ void WebAssemblyModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     WebAssemblyModuleRecord* thisObject = jsCast<WebAssemblyModuleRecord*>(cell);
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_instance);
-    visitor.append(&thisObject->m_startFunction);
+    visitor.append(thisObject->m_instance);
+    visitor.append(thisObject->m_startFunction);
 }
 
 void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* instance)

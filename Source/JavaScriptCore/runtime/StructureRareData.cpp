@@ -67,9 +67,9 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     JSCell::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_previous);
-    visitor.append(&thisObject->m_objectToStringValue);
-    visitor.append(&thisObject->m_cachedPropertyNameEnumerator);
+    visitor.append(thisObject->m_previous);
+    visitor.append(thisObject->m_objectToStringValue);
+    visitor.append(thisObject->m_cachedPropertyNameEnumerator);
 }
 
 JSPropertyNameEnumerator* StructureRareData::cachedPropertyNameEnumerator() const

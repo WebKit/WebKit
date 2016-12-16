@@ -149,7 +149,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
             if (butterfly->arrayStorage()->m_sparseMap)
-                visitor.append(&butterfly->arrayStorage()->m_sparseMap);
+                visitor.append(butterfly->arrayStorage()->m_sparseMap);
             break;
         default:
             break;
@@ -411,7 +411,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
         default: // ALL_ARRAY_STORAGE_INDEXING_TYPES
             visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
             if (butterfly->arrayStorage()->m_sparseMap)
-                visitor.append(&butterfly->arrayStorage()->m_sparseMap);
+                visitor.append(butterfly->arrayStorage()->m_sparseMap);
             break;
         }
         break;

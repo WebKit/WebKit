@@ -104,11 +104,11 @@ void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 void JSRopeString::visitFibers(SlotVisitor& visitor)
 {
     if (isSubstring()) {
-        visitor.append(&substringBase());
+        visitor.append(substringBase());
         return;
     }
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i)
-        visitor.append(&fiber(i));
+        visitor.append(fiber(i));
 }
 
 static const unsigned maxLengthForOnStackResolve = 2048;

@@ -1157,8 +1157,8 @@ void ProxyObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_target);
-    visitor.append(&thisObject->m_handler);
+    visitor.append(thisObject->m_target);
+    visitor.append(thisObject->m_handler);
 }
 
 } // namespace JSC

@@ -157,7 +157,7 @@ inline void xmlCasingTestBuiltinFunctions::init(JSC::JSGlobalObject& globalObjec
 
 inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 {
-#define VISIT_FUNCTION(name) visitor.append(&m_##name##Function);
+#define VISIT_FUNCTION(name) visitor.append(m_##name##Function);
     WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_FUNCTION_NAME(VISIT_FUNCTION)
 #undef VISIT_FUNCTION
 }

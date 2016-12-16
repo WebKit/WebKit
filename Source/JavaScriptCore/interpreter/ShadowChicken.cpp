@@ -408,23 +408,23 @@ void ShadowChicken::visitChildren(SlotVisitor& visitor)
     for (unsigned i = m_logCursor - m_log; i--;) {
         JSObject* callee = m_log[i].callee;
         if (callee != Packet::tailMarker() && callee != Packet::throwMarker())
-            visitor.appendUnbarrieredReadOnlyPointer(callee);
+            visitor.appendUnbarriered(callee);
         if (callee != Packet::throwMarker())
-            visitor.appendUnbarrieredReadOnlyPointer(m_log[i].scope);
+            visitor.appendUnbarriered(m_log[i].scope);
         if (callee == Packet::tailMarker()) {
-            visitor.appendUnbarrieredValue(&m_log[i].thisValue);
-            visitor.appendUnbarrieredReadOnlyPointer(m_log[i].codeBlock);
+            visitor.appendUnbarriered(m_log[i].thisValue);
+            visitor.appendUnbarriered(m_log[i].codeBlock);
         }
     }
     
     for (unsigned i = m_stack.size(); i--; ) {
         Frame& frame = m_stack[i];
-        visitor.appendUnbarrieredValue(&frame.thisValue);
-        visitor.appendUnbarrieredReadOnlyPointer(frame.callee);
+        visitor.appendUnbarriered(frame.thisValue);
+        visitor.appendUnbarriered(frame.callee);
         if (frame.scope)
-            visitor.appendUnbarrieredReadOnlyPointer(frame.scope);
+            visitor.appendUnbarriered(frame.scope);
         if (frame.codeBlock)
-            visitor.appendUnbarrieredReadOnlyPointer(frame.codeBlock);
+            visitor.appendUnbarriered(frame.codeBlock);
     }
 }
 

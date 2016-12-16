@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HandleStack.h"
 
-#include "HeapRootVisitor.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
 
@@ -40,7 +39,7 @@ HandleStack::HandleStack()
     grow();
 }
 
-void HandleStack::visit(HeapRootVisitor& heapRootVisitor)
+void HandleStack::visit(SlotVisitor& visitor)
 {
     const Vector<HandleSlot>& blocks = m_blockStack.blocks();
     size_t blockLength = m_blockStack.blockLength;
@@ -48,10 +47,10 @@ void HandleStack::visit(HeapRootVisitor& heapRootVisitor)
     int end = blocks.size() - 1;
     for (int i = 0; i < end; ++i) {
         HandleSlot block = blocks[i];
-        heapRootVisitor.visit(block, blockLength);
+        visitor.appendUnbarriered(block, blockLength);
     }
     HandleSlot block = blocks[end];
-    heapRootVisitor.visit(block, m_frame.m_next - block);
+    visitor.appendUnbarriered(block, m_frame.m_next - block);
 }
 
 void HandleStack::grow()

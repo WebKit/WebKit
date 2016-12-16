@@ -73,7 +73,7 @@ void JSModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSModuleRecord* thisObject = jsCast<JSModuleRecord*>(cell);
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_moduleProgramExecutable);
+    visitor.append(thisObject->m_moduleProgramExecutable);
 }
 
 void JSModuleRecord::link(ExecState* exec)

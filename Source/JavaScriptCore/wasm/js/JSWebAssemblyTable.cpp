@@ -91,7 +91,7 @@ void JSWebAssemblyTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     for (unsigned i = 0; i < thisObject->m_size; ++i)
-        visitor.append(&thisObject->m_jsFunctions.get()[i]);
+        visitor.append(thisObject->m_jsFunctions.get()[i]);
 }
 
 bool JSWebAssemblyTable::grow(uint32_t newSize)

@@ -60,7 +60,7 @@ void InferredTypeTable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         if (!entry.value)
             continue;
         if (entry.value->isRelevant())
-            visitor.append(&entry.value);
+            visitor.append(entry.value);
         else
             entry.value.clear();
     }

@@ -161,7 +161,7 @@ void IntlNumberFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& visit
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_numberFormatStructure);
+    visitor.append(thisObject->m_numberFormatStructure);
 }
 
 } // namespace JSC

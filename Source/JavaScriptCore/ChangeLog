@@ -1,3 +1,250 @@
+2016-12-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of HeapRootVisitor and make SlotVisitor less painful to use
+        https://bugs.webkit.org/show_bug.cgi?id=165911
+
+        Reviewed by Geoffrey Garen.
+        
+        Previously we had two ways of adding a raw pointer to the GC's mark stack:
+        
+        - SlotVisitor::appendUnbarrieredXYZ() methods
+        - HeapRootVisitor::visit() methods
+        
+        HeapRootVisitor existed only to prevent you from calling its non-WriteBarrier<> methods
+        unless you had permission. But SlotVisitor would let you do it anyway, because that was
+        a lot more practical.
+        
+        I think that we should just have one way to do it. This removes HeapRootVisitor. It
+        also renames appendUnbarrieredXYZ to appendUnbarriered, and it removes the use of extra
+        indirection (so you now pass const WriteBarrier<>& instead of WriteBarrier<>*).
+
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObjectData::JSPrivatePropertyMap::visitChildren):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/builtins/builtins_templates.py:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitWeakly):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::visitOSRExitTargets):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        * bytecode/DirectEvalCodeCache.cpp:
+        (JSC::DirectEvalCodeCache::visitAggregate):
+        * bytecode/InternalFunctionAllocationProfile.h:
+        (JSC::InternalFunctionAllocationProfile::visitAggregate):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::visitAggregate):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::propagateTransitions):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildren):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::visitChildren):
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::visitChildren):
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::visitChildren):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::visitChildren):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::markCodeBlocks):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        * heap/HandleSet.cpp:
+        (JSC::HandleSet::visitStrongHandles):
+        * heap/HandleSet.h:
+        * heap/HandleStack.cpp:
+        (JSC::HandleStack::visit):
+        * heap/HandleStack.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::markToFixpoint):
+        * heap/Heap.h:
+        * heap/HeapRootVisitor.h: Removed.
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::visitWeakSet):
+        * heap/LargeAllocation.h:
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::visitWeakSet):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::visitWeakSets):
+        * heap/MarkedSpace.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendUnbarriered):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::appendUnbarriered):
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendHidden):
+        (JSC::SlotVisitor::appendValues):
+        (JSC::SlotVisitor::appendValuesHidden):
+        (JSC::SlotVisitor::appendUnbarrieredPointer): Deleted.
+        (JSC::SlotVisitor::appendUnbarrieredReadOnlyPointer): Deleted.
+        (JSC::SlotVisitor::appendUnbarrieredValue): Deleted.
+        (JSC::SlotVisitor::appendUnbarrieredReadOnlyValue): Deleted.
+        (JSC::SlotVisitor::appendUnbarrieredWeak): Deleted.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::specializedVisit):
+        (JSC::WeakBlock::visit):
+        * heap/WeakBlock.h:
+        * heap/WeakSet.h:
+        (JSC::WeakSet::visit):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::visitChildren):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::MarkingGCAwareJITStubRoutine::markRequiredObjectsInternal):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::markRequiredObjectsInternal):
+        * jsc.cpp:
+        (WTF::Element::visitChildren):
+        (WTF::ImpureGetter::visitChildren):
+        (WTF::SimpleObject::visitChildren):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::visitChildren):
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        * runtime/ArgList.h:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::visitChildren):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::visitChildren):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        * runtime/Exception.cpp:
+        (JSC::Exception::visitChildren):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/FunctionRareData.cpp:
+        (JSC::FunctionRareData::visitChildren):
+        * runtime/GetterSetter.cpp:
+        (JSC::GetterSetter::visitChildren):
+        * runtime/HashMapImpl.cpp:
+        (JSC::HashMapBucket<Data>::visitChildren):
+        (JSC::HashMapImpl<HashMapBucket>::visitChildren):
+        * runtime/InferredTypeTable.cpp:
+        (JSC::InferredTypeTable::visitChildren):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::visitChildren):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::visitChildren):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::visitChildren):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::visitChildren):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::visitChildren):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::visitChildren):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::visitChildren):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::visitChildren):
+        * runtime/JSCallee.cpp:
+        (JSC::JSCallee::visitChildren):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::visitChildren):
+        * runtime/JSCustomGetterSetterFunction.cpp:
+        (JSC::JSCustomGetterSetterFunction::visitChildren):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::visitChildren):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSMapIterator.cpp:
+        (JSC::JSMapIterator::visitChildren):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::visitChildren):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::visitChildren):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::visitChildren):
+        * runtime/JSNativeStdFunction.cpp:
+        (JSC::JSNativeStdFunction::visitChildren):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::visitChildren):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::visitChildren):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::visitChildren):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::visitChildren):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::visitChildren):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        * runtime/JSSetIterator.cpp:
+        (JSC::JSSetIterator::visitChildren):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::visitFibers):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::visitChildren):
+        * runtime/JSWeakMap.cpp:
+        (JSC::JSWeakMap::visitChildren):
+        * runtime/JSWeakSet.cpp:
+        (JSC::JSWeakSet::visitChildren):
+        * runtime/JSWithScope.cpp:
+        (JSC::JSWithScope::visitChildren):
+        * runtime/JSWrapperObject.cpp:
+        (JSC::JSWrapperObject::visitChildren):
+        * runtime/LazyClassStructure.cpp:
+        (JSC::LazyClassStructure::visit):
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::visit):
+        * runtime/MapBase.cpp:
+        (JSC::MapBase<HashMapBucketType>::visitChildren):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildren):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::visitChildren):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::visitChildren):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::visitChildren):
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::visitChildren):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::visitChildren):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::visitChildren):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::visitChildren):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::visit):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::visitChildren):
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::visitStrongReferences):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::visitChildren):
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::markIfCheap):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::visitChildren):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::visitChildren):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::visit):
+        * runtime/WeakMapData.cpp:
+        (JSC::WeakMapData::DeadKeyCleaner::visitWeakReferences):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::visitChildren):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::visitChildren):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::visitChildren):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::visitChildren):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::visitChildren):
+
 2016-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Sort Xcode project files

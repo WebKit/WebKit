@@ -92,7 +92,7 @@ public:
         return JSValue::decode(slotFor(m_size - 1));
     }
         
-    static void markLists(HeapRootVisitor&, ListSet&);
+    static void markLists(SlotVisitor&, ListSet&);
 
 private:
     void expandCapacity();

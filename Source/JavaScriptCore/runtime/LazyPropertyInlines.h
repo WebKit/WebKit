@@ -69,7 +69,7 @@ template<typename OwnerType, typename ElementType>
 void LazyProperty<OwnerType, ElementType>::visit(SlotVisitor& visitor)
 {
     if (m_pointer && !(m_pointer & lazyTag))
-        visitor.appendUnbarrieredReadOnlyPointer(bitwise_cast<ElementType*>(m_pointer));
+        visitor.appendUnbarriered(bitwise_cast<ElementType*>(m_pointer));
 }
 
 template<typename OwnerType, typename ElementType>

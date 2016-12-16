@@ -160,7 +160,7 @@ void IntlCollatorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_collatorStructure);
+    visitor.append(thisObject->m_collatorStructure);
 }
 
 } // namespace JSC

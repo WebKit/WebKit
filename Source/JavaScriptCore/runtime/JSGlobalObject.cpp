@@ -1159,111 +1159,111 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_globalThis);
+    visitor.append(thisObject->m_globalThis);
 
-    visitor.append(&thisObject->m_globalLexicalEnvironment);
-    visitor.append(&thisObject->m_globalScopeExtension);
-    visitor.append(&thisObject->m_globalCallee);
-    visitor.append(&thisObject->m_regExpConstructor);
-    visitor.append(&thisObject->m_errorConstructor);
-    visitor.append(&thisObject->m_nativeErrorPrototypeStructure);
-    visitor.append(&thisObject->m_nativeErrorStructure);
+    visitor.append(thisObject->m_globalLexicalEnvironment);
+    visitor.append(thisObject->m_globalScopeExtension);
+    visitor.append(thisObject->m_globalCallee);
+    visitor.append(thisObject->m_regExpConstructor);
+    visitor.append(thisObject->m_errorConstructor);
+    visitor.append(thisObject->m_nativeErrorPrototypeStructure);
+    visitor.append(thisObject->m_nativeErrorStructure);
     thisObject->m_evalErrorConstructor.visit(visitor);
-    visitor.append(&thisObject->m_rangeErrorConstructor);
+    visitor.append(thisObject->m_rangeErrorConstructor);
     thisObject->m_referenceErrorConstructor.visit(visitor);
     thisObject->m_syntaxErrorConstructor.visit(visitor);
-    visitor.append(&thisObject->m_typeErrorConstructor);
+    visitor.append(thisObject->m_typeErrorConstructor);
     thisObject->m_URIErrorConstructor.visit(visitor);
-    visitor.append(&thisObject->m_objectConstructor);
-    visitor.append(&thisObject->m_promiseConstructor);
+    visitor.append(thisObject->m_objectConstructor);
+    visitor.append(thisObject->m_promiseConstructor);
 
-    visitor.append(&thisObject->m_nullGetterFunction);
-    visitor.append(&thisObject->m_nullSetterFunction);
+    visitor.append(thisObject->m_nullGetterFunction);
+    visitor.append(thisObject->m_nullSetterFunction);
 
-    visitor.append(&thisObject->m_parseIntFunction);
-    visitor.append(&thisObject->m_evalFunction);
-    visitor.append(&thisObject->m_callFunction);
-    visitor.append(&thisObject->m_applyFunction);
-    visitor.append(&thisObject->m_throwTypeErrorFunction);
+    visitor.append(thisObject->m_parseIntFunction);
+    visitor.append(thisObject->m_evalFunction);
+    visitor.append(thisObject->m_callFunction);
+    visitor.append(thisObject->m_applyFunction);
+    visitor.append(thisObject->m_throwTypeErrorFunction);
     thisObject->m_arrayProtoToStringFunction.visit(visitor);
     thisObject->m_arrayProtoValuesFunction.visit(visitor);
     thisObject->m_initializePromiseFunction.visit(visitor);
     thisObject->m_iteratorProtocolFunction.visit(visitor);
-    visitor.append(&thisObject->m_newPromiseCapabilityFunction);
-    visitor.append(&thisObject->m_functionProtoHasInstanceSymbolFunction);
+    visitor.append(thisObject->m_newPromiseCapabilityFunction);
+    visitor.append(thisObject->m_functionProtoHasInstanceSymbolFunction);
     thisObject->m_throwTypeErrorGetterSetter.visit(visitor);
-    visitor.append(&thisObject->m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter);
-    visitor.append(&thisObject->m_moduleLoader);
+    visitor.append(thisObject->m_throwTypeErrorArgumentsCalleeAndCallerGetterSetter);
+    visitor.append(thisObject->m_moduleLoader);
 
-    visitor.append(&thisObject->m_objectPrototype);
-    visitor.append(&thisObject->m_functionPrototype);
-    visitor.append(&thisObject->m_arrayPrototype);
-    visitor.append(&thisObject->m_errorPrototype);
-    visitor.append(&thisObject->m_iteratorPrototype);
-    visitor.append(&thisObject->m_generatorFunctionPrototype);
-    visitor.append(&thisObject->m_generatorPrototype);
-    visitor.append(&thisObject->m_asyncFunctionPrototype);
-    visitor.append(&thisObject->m_moduleLoaderPrototype);
+    visitor.append(thisObject->m_objectPrototype);
+    visitor.append(thisObject->m_functionPrototype);
+    visitor.append(thisObject->m_arrayPrototype);
+    visitor.append(thisObject->m_errorPrototype);
+    visitor.append(thisObject->m_iteratorPrototype);
+    visitor.append(thisObject->m_generatorFunctionPrototype);
+    visitor.append(thisObject->m_generatorPrototype);
+    visitor.append(thisObject->m_asyncFunctionPrototype);
+    visitor.append(thisObject->m_moduleLoaderPrototype);
 
     thisObject->m_debuggerScopeStructure.visit(visitor);
     thisObject->m_withScopeStructure.visit(visitor);
-    visitor.append(&thisObject->m_strictEvalActivationStructure);
-    visitor.append(&thisObject->m_lexicalEnvironmentStructure);
+    visitor.append(thisObject->m_strictEvalActivationStructure);
+    visitor.append(thisObject->m_lexicalEnvironmentStructure);
     thisObject->m_moduleEnvironmentStructure.visit(visitor);
-    visitor.append(&thisObject->m_directArgumentsStructure);
-    visitor.append(&thisObject->m_scopedArgumentsStructure);
-    visitor.append(&thisObject->m_clonedArgumentsStructure);
-    visitor.append(&thisObject->m_objectStructureForObjectConstructor);
+    visitor.append(thisObject->m_directArgumentsStructure);
+    visitor.append(thisObject->m_scopedArgumentsStructure);
+    visitor.append(thisObject->m_clonedArgumentsStructure);
+    visitor.append(thisObject->m_objectStructureForObjectConstructor);
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
-        visitor.append(&thisObject->m_originalArrayStructureForIndexingShape[i]);
+        visitor.append(thisObject->m_originalArrayStructureForIndexingShape[i]);
     for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
-        visitor.append(&thisObject->m_arrayStructureForIndexingShapeDuringAllocation[i]);
+        visitor.append(thisObject->m_arrayStructureForIndexingShapeDuringAllocation[i]);
     thisObject->m_callbackConstructorStructure.visit(visitor);
     thisObject->m_callbackFunctionStructure.visit(visitor);
     thisObject->m_callbackObjectStructure.visit(visitor);
-    visitor.append(&thisObject->m_propertyNameIteratorStructure);
+    visitor.append(thisObject->m_propertyNameIteratorStructure);
 #if JSC_OBJC_API_ENABLED
     thisObject->m_objcCallbackFunctionStructure.visit(visitor);
     thisObject->m_objcWrapperObjectStructure.visit(visitor);
 #endif
     thisObject->m_nullPrototypeObjectStructure.visit(visitor);
-    visitor.append(&thisObject->m_errorStructure);
-    visitor.append(&thisObject->m_calleeStructure);
-    visitor.append(&thisObject->m_functionStructure);
+    visitor.append(thisObject->m_errorStructure);
+    visitor.append(thisObject->m_calleeStructure);
+    visitor.append(thisObject->m_functionStructure);
     thisObject->m_customGetterSetterFunctionStructure.visit(visitor);
     thisObject->m_boundFunctionStructure.visit(visitor);
-    visitor.append(&thisObject->m_getterSetterStructure);
+    visitor.append(thisObject->m_getterSetterStructure);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
     thisObject->m_namedFunctionStructure.visit(visitor);
-    visitor.append(&thisObject->m_symbolObjectStructure);
-    visitor.append(&thisObject->m_regExpStructure);
-    visitor.append(&thisObject->m_generatorFunctionStructure);
-    visitor.append(&thisObject->m_asyncFunctionStructure);
-    visitor.append(&thisObject->m_iteratorResultObjectStructure);
-    visitor.append(&thisObject->m_regExpMatchesArrayStructure);
-    visitor.append(&thisObject->m_moduleRecordStructure);
-    visitor.append(&thisObject->m_moduleNamespaceObjectStructure);
-    visitor.append(&thisObject->m_dollarVMStructure);
-    visitor.append(&thisObject->m_proxyObjectStructure);
-    visitor.append(&thisObject->m_callableProxyObjectStructure);
-    visitor.append(&thisObject->m_proxyRevokeStructure);
-    visitor.append(&thisObject->m_moduleLoaderStructure);
+    visitor.append(thisObject->m_symbolObjectStructure);
+    visitor.append(thisObject->m_regExpStructure);
+    visitor.append(thisObject->m_generatorFunctionStructure);
+    visitor.append(thisObject->m_asyncFunctionStructure);
+    visitor.append(thisObject->m_iteratorResultObjectStructure);
+    visitor.append(thisObject->m_regExpMatchesArrayStructure);
+    visitor.append(thisObject->m_moduleRecordStructure);
+    visitor.append(thisObject->m_moduleNamespaceObjectStructure);
+    visitor.append(thisObject->m_dollarVMStructure);
+    visitor.append(thisObject->m_proxyObjectStructure);
+    visitor.append(thisObject->m_callableProxyObjectStructure);
+    visitor.append(thisObject->m_proxyRevokeStructure);
+    visitor.append(thisObject->m_moduleLoaderStructure);
     
-    visitor.append(&thisObject->m_arrayBufferPrototype);
-    visitor.append(&thisObject->m_arrayBufferStructure);
-    visitor.append(&thisObject->m_sharedArrayBufferPrototype);
-    visitor.append(&thisObject->m_sharedArrayBufferStructure);
+    visitor.append(thisObject->m_arrayBufferPrototype);
+    visitor.append(thisObject->m_arrayBufferStructure);
+    visitor.append(thisObject->m_sharedArrayBufferPrototype);
+    visitor.append(thisObject->m_sharedArrayBufferStructure);
 
 #define VISIT_SIMPLE_TYPE(CapitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
-    visitor.append(&thisObject->m_ ## lowerName ## Prototype); \
-    visitor.append(&thisObject->m_ ## properName ## Structure); \
+    visitor.append(thisObject->m_ ## lowerName ## Prototype); \
+    visitor.append(thisObject->m_ ## properName ## Structure); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(VISIT_SIMPLE_TYPE)
     
 #if ENABLE(WEBASSEMBLY)
-    visitor.append(&thisObject->m_webAssemblyStructure);
-    visitor.append(&thisObject->m_webAssemblyModuleRecordStructure);
-    visitor.append(&thisObject->m_webAssemblyFunctionStructure);
+    visitor.append(thisObject->m_webAssemblyStructure);
+    visitor.append(thisObject->m_webAssemblyModuleRecordStructure);
+    visitor.append(thisObject->m_webAssemblyFunctionStructure);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_SIMPLE_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 
@@ -1280,7 +1280,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     for (unsigned i = NUMBER_OF_TYPED_ARRAY_TYPES; i--;)
         thisObject->lazyTypedArrayStructure(indexToTypedArrayType(i)).visit(visitor);
     
-    visitor.append(&thisObject->m_speciesGetterSetter);
+    visitor.append(thisObject->m_speciesGetterSetter);
     thisObject->m_typedArrayProto.visit(visitor);
     thisObject->m_typedArraySuperConstructor.visit(visitor);
 }

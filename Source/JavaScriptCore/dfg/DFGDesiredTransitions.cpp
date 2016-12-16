@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,9 +53,9 @@ void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
 
 void DesiredTransition::visitChildren(SlotVisitor& visitor)
 {
-    visitor.appendUnbarrieredPointer(&m_codeOriginOwner);
-    visitor.appendUnbarrieredPointer(&m_oldStructure);
-    visitor.appendUnbarrieredPointer(&m_newStructure);
+    visitor.appendUnbarriered(m_codeOriginOwner);
+    visitor.appendUnbarriered(m_oldStructure);
+    visitor.appendUnbarriered(m_newStructure);
 }
 
 DesiredTransitions::DesiredTransitions()

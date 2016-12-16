@@ -52,7 +52,6 @@ class SlotVisitor {
     WTF_MAKE_FAST_ALLOCATED;
 
     friend class SetCurrentCellScope;
-    friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
     friend class Heap;
 
 public:
@@ -70,20 +69,27 @@ public:
 
     void append(ConservativeRoots&);
     
-    template<typename T> void append(WriteBarrierBase<T>*);
-    template<typename T> void appendHidden(WriteBarrierBase<T>*);
+    template<typename T> void append(const WriteBarrierBase<T>&);
+    template<typename T> void appendHidden(const WriteBarrierBase<T>&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
-    void appendValues(WriteBarrierBase<Unknown>*, size_t count);
-    void appendValuesHidden(WriteBarrierBase<Unknown>*, size_t count);
+    void appendValues(const WriteBarrierBase<Unknown>*, size_t count);
+    void appendValuesHidden(const WriteBarrierBase<Unknown>*, size_t count);
+    
+    // These don't require you to prove that you have a WriteBarrier<>. That makes sense
+    // for:
+    //
+    // - roots.
+    // - sophisticated data structures that barrier through other means (like DFG::Plan and
+    //   friends).
+    //
+    // If you are not a root and you don't know what kind of barrier you have, then you
+    // shouldn't call these methods.
+    JS_EXPORT_PRIVATE void appendUnbarriered(JSValue);
+    void appendUnbarriered(JSValue*, size_t);
+    void appendUnbarriered(JSCell*);
     
     template<typename T>
-    void appendUnbarrieredPointer(T**);
-    void appendUnbarrieredValue(JSValue*);
-    template<typename T>
-    void appendUnbarrieredWeak(Weak<T>*);
-    template<typename T>
-    void appendUnbarrieredReadOnlyPointer(T*);
-    void appendUnbarrieredReadOnlyValue(JSValue);
+    void append(const Weak<T>& weak);
     
     JS_EXPORT_PRIVATE void addOpaqueRoot(void*);
     JS_EXPORT_PRIVATE bool containsOpaqueRoot(void*) const;
@@ -149,7 +155,6 @@ public:
 private:
     friend class ParallelModeEnabler;
     
-    JS_EXPORT_PRIVATE void append(JSValue); // This is private to encourage clients to use WriteBarrier<T>.
     void appendJSCellOrAuxiliary(HeapCell*);
     void appendHidden(JSValue);
 

@@ -161,7 +161,7 @@ void IntlDateTimeFormatConstructor::visitChildren(JSCell* cell, SlotVisitor& vis
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_dateTimeFormatStructure);
+    visitor.append(thisObject->m_dateTimeFormatStructure);
 }
 
 } // namespace JSC

@@ -92,8 +92,8 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
     auto locker = holdLock(*thisObject);
     for (unsigned i = 0; i < thisObject->m_propertyNames.size(); ++i)
-        visitor.append(&thisObject->m_propertyNames[i]);
-    visitor.append(&thisObject->m_prototypeChain);
+        visitor.append(thisObject->m_propertyNames[i]);
+    visitor.append(thisObject->m_prototypeChain);
 }
 
 } // namespace JSC

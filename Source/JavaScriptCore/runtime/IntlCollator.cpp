@@ -91,7 +91,7 @@ void IntlCollator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_boundCompare);
+    visitor.append(thisObject->m_boundCompare);
 }
 
 static Vector<String> sortLocaleData(const String& locale, size_t keyIndex)

@@ -127,8 +127,8 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_unlinkedCodeBlockForCall);
-    visitor.append(&thisObject->m_unlinkedCodeBlockForConstruct);
+    visitor.append(thisObject->m_unlinkedCodeBlockForCall);
+    visitor.append(thisObject->m_unlinkedCodeBlockForConstruct);
 }
 
 FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& passedParentSource, std::optional<int> overrideLineNumber, Intrinsic intrinsic)

@@ -207,8 +207,8 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_executable);
-    visitor.append(&thisObject->m_rareData);
+    visitor.append(thisObject->m_executable);
+    visitor.append(thisObject->m_rareData);
 }
 
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)

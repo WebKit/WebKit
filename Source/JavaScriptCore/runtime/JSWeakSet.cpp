@@ -43,7 +43,7 @@ void JSWeakSet::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
     JSWeakSet* thisObj = jsCast<JSWeakSet*>(cell);
-    visitor.append(&thisObj->m_weakMapData);
+    visitor.append(thisObj->m_weakMapData);
 }
 
 String JSWeakSet::toStringName(const JSC::JSObject*, ExecState*)

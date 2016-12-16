@@ -70,7 +70,7 @@ void JSEventListener::visitJSFunction(SlotVisitor& visitor)
     if (!m_wrapper)
         return;
 
-    visitor.appendUnbarrieredWeak(&m_jsFunction);
+    visitor.append(m_jsFunction);
 }
 
 void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)

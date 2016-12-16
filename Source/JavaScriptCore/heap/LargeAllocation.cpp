@@ -65,7 +65,7 @@ void LargeAllocation::shrink()
     m_weakSet.shrink();
 }
 
-void LargeAllocation::visitWeakSet(HeapRootVisitor& visitor)
+void LargeAllocation::visitWeakSet(SlotVisitor& visitor)
 {
     m_weakSet.visit(visitor);
 }

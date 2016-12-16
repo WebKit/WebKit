@@ -104,10 +104,10 @@ void TypeProfilerLog::processLogEntries(const String& reason)
 void TypeProfilerLog::visit(SlotVisitor& visitor)
 {
     for (LogEntry* entry = m_logStartPtr; entry != m_currentLogEntryPtr; ++entry) {
-        visitor.appendUnbarrieredReadOnlyValue(entry->value);
+        visitor.appendUnbarriered(entry->value);
         if (StructureID id = entry->structureID) {
             Structure* structure = visitor.heap()->structureIDTable().get(id); 
-            visitor.appendUnbarrieredReadOnlyPointer(structure);
+            visitor.appendUnbarriered(structure);
         }
     }
 }

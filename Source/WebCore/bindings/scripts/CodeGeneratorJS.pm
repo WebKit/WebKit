@@ -3977,7 +3977,7 @@ END
             foreach (@{$interface->attributes}) {
                 my $attribute = $_;
                 if ($attribute->extendedAttributes->{CachedAttribute}) {
-                    push(@implContent, "    visitor.append(&thisObject->m_" . $attribute->name . ");\n");
+                    push(@implContent, "    visitor.append(thisObject->m_" . $attribute->name . ");\n");
                 }
             }
         }

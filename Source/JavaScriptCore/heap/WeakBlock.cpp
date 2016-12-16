@@ -28,7 +28,6 @@
 
 #include "CellContainerInlines.h"
 #include "Heap.h"
-#include "HeapRootVisitor.h"
 #include "JSCInlines.h"
 #include "JSObject.h"
 #include "WeakHandleOwner.h"
@@ -97,10 +96,8 @@ void WeakBlock::sweep()
 }
 
 template<typename ContainerType>
-void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heapRootVisitor)
+void WeakBlock::specializedVisit(ContainerType& container, SlotVisitor& visitor)
 {
-    SlotVisitor& visitor = heapRootVisitor.visitor();
-    
     HeapVersion markingVersion = visitor.markingVersion();
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
@@ -112,18 +109,18 @@ void WeakBlock::specializedVisit(ContainerType& container, HeapRootVisitor& heap
         if (!weakHandleOwner)
             continue;
 
-        const JSValue& jsValue = weakImpl->jsValue();
+        JSValue jsValue = weakImpl->jsValue();
         if (container.isMarkedConcurrently(markingVersion, jsValue.asCell()))
             continue;
         
         if (!weakHandleOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(&const_cast<JSValue&>(jsValue)), weakImpl->context(), visitor))
             continue;
 
-        heapRootVisitor.visit(&const_cast<JSValue&>(jsValue));
+        visitor.appendUnbarriered(jsValue);
     }
 }
 
-void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
+void WeakBlock::visit(SlotVisitor& visitor)
 {
     // If a block is completely empty, a visit won't have any effect.
     if (isEmpty())
@@ -133,9 +130,9 @@ void WeakBlock::visit(HeapRootVisitor& heapRootVisitor)
     ASSERT(m_container);
     
     if (m_container.isLargeAllocation())
-        specializedVisit(m_container.largeAllocation(), heapRootVisitor);
+        specializedVisit(m_container.largeAllocation(), visitor);
     else
-        specializedVisit(m_container.markedBlock(), heapRootVisitor);
+        specializedVisit(m_container.markedBlock(), visitor);
 }
 
 void WeakBlock::reap()

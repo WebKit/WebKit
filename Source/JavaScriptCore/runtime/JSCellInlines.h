@@ -117,8 +117,7 @@ ALWAYS_INLINE Structure* JSCell::structure(VM& vm) const
 
 inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    Structure* structure = cell->structure(visitor.vm());
-    visitor.appendUnbarrieredPointer(&structure);
+    visitor.appendUnbarriered(cell->structure(visitor.vm()));
 }
 
 ALWAYS_INLINE VM& ExecState::vm() const

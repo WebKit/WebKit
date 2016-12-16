@@ -40,6 +40,7 @@ class Heap;
 class JSCell;
 class MarkedAllocator;
 class MarkedSpace;
+class SlotVisitor;
 
 typedef uintptr_t Bits;
 typedef uint32_t HeapVersion;
@@ -132,7 +133,7 @@ public:
         
         void shrink();
             
-        unsigned visitWeakSet(HeapRootVisitor&);
+        unsigned visitWeakSet(SlotVisitor&);
         void reapWeakSet();
             
         // While allocating from a free list, MarkedBlock temporarily has bogus
@@ -431,9 +432,9 @@ inline void MarkedBlock::Handle::shrink()
     m_weakSet.shrink();
 }
 
-inline unsigned MarkedBlock::Handle::visitWeakSet(HeapRootVisitor& heapRootVisitor)
+inline unsigned MarkedBlock::Handle::visitWeakSet(SlotVisitor& visitor)
 {
-    return m_weakSet.visit(heapRootVisitor);
+    return m_weakSet.visit(visitor);
 }
 
 inline void MarkedBlock::Handle::reapWeakSet()

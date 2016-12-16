@@ -97,7 +97,7 @@ void DirectArguments::visitChildren(JSCell* thisCell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     
     visitor.appendValues(thisObject->storage(), std::max(thisObject->m_length, thisObject->m_minCapacity));
-    visitor.append(&thisObject->m_callee);
+    visitor.append(thisObject->m_callee);
 
     if (bool* override = thisObject->m_overrides.get())
         visitor.markAuxiliary(override);

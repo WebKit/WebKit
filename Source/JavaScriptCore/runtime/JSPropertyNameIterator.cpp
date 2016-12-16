@@ -82,8 +82,8 @@ void JSPropertyNameIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSPropertyNameIterator* thisObject = jsCast<JSPropertyNameIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_iteratedObject);
-    visitor.append(&thisObject->m_propertyNameEnumerator);
+    visitor.append(thisObject->m_iteratedObject);
+    visitor.append(thisObject->m_propertyNameEnumerator);
 }
 
 bool JSPropertyNameIterator::next(ExecState* exec, JSValue& output)

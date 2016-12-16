@@ -33,7 +33,7 @@
 namespace JSC {
 
 class Heap;
-class HeapRootVisitor;
+class SlotVisitor;
 
 class WeakBlock : public DoublyLinkedListNode<WeakBlock> {
 public:
@@ -63,7 +63,7 @@ public:
     void sweep();
     SweepResult takeSweepResult();
 
-    void visit(HeapRootVisitor&);
+    void visit(SlotVisitor&);
     void reap();
 
     void lastChanceToFinalize();
@@ -73,7 +73,7 @@ private:
     static FreeCell* asFreeCell(WeakImpl*);
     
     template<typename ContainerType>
-    void specializedVisit(ContainerType&, HeapRootVisitor&);
+    void specializedVisit(ContainerType&, SlotVisitor&);
 
     explicit WeakBlock(CellContainer);
     void finalize(WeakImpl*);

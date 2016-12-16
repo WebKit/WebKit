@@ -79,11 +79,9 @@ void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_exportSymbolTable);
-    for (unsigned i = 0; i < thisObject->m_calleeCount * 2; i++) {
-        WriteBarrier<JSWebAssemblyCallee>* callee = &thisObject->callees()[i];
-        visitor.append(callee);
-    }
+    visitor.append(thisObject->m_exportSymbolTable);
+    for (unsigned i = 0; i < thisObject->m_calleeCount * 2; i++)
+        visitor.append(thisObject->callees()[i]);
 
     visitor.addUnconditionalFinalizer(&thisObject->m_unconditionalFinalizer);
 }

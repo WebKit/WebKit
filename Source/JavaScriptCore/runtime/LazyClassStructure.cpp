@@ -90,7 +90,7 @@ void LazyClassStructure::Initializer::setConstructor(JSObject* constructor)
 void LazyClassStructure::visit(SlotVisitor& visitor)
 {
     m_structure.visit(visitor);
-    visitor.append(&m_constructor);
+    visitor.append(m_constructor);
 }
 
 void LazyClassStructure::dump(PrintStream& out) const

@@ -94,15 +94,15 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
     auto locker = holdLock(*thisObject);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionDecls.begin(), end = thisObject->m_functionDecls.end(); ptr != end; ++ptr)
-        visitor.append(ptr);
+        visitor.append(*ptr);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
-        visitor.append(ptr);
+        visitor.append(*ptr);
     visitor.appendValues(thisObject->m_constantRegisters.data(), thisObject->m_constantRegisters.size());
     if (thisObject->m_unlinkedInstructions)
         visitor.reportExtraMemoryVisited(thisObject->m_unlinkedInstructions->sizeInBytes());
     if (thisObject->m_rareData) {
         for (size_t i = 0, end = thisObject->m_rareData->m_regexps.size(); i != end; i++)
-            visitor.append(&thisObject->m_rareData->m_regexps[i]);
+            visitor.append(thisObject->m_rareData->m_regexps[i]);
     }
 }
 

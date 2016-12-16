@@ -165,9 +165,9 @@ void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     WebAssemblyFunction* thisObject = jsCast<WebAssemblyFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_instance);
-    visitor.append(&thisObject->m_jsEntrypoint);
-    visitor.append(&thisObject->m_wasmEntrypoint);
+    visitor.append(thisObject->m_instance);
+    visitor.append(thisObject->m_jsEntrypoint);
+    visitor.append(thisObject->m_wasmEntrypoint);
 }
 
 void WebAssemblyFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature* signature)

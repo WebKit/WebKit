@@ -38,7 +38,7 @@ public:
     Structure* createAllocationStructureFromBase(VM&, JSCell* owner, JSObject* prototype, Structure* base);
 
     void clear() { m_structure.clear(); }
-    void visitAggregate(SlotVisitor& visitor) { visitor.append(&m_structure); }
+    void visitAggregate(SlotVisitor& visitor) { visitor.append(m_structure); }
 
 private:
     WriteBarrier<Structure> m_structure;

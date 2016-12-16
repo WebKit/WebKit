@@ -33,7 +33,7 @@ void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSWrapperObject* thisObject = jsCast<JSWrapperObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     JSObject::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_internalValue);
+    visitor.append(thisObject->m_internalValue);
 }
 
 } // namespace JSC

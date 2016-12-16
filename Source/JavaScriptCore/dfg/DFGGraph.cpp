@@ -1410,8 +1410,8 @@ void Graph::registerFrozenValues()
 void Graph::visitChildren(SlotVisitor& visitor)
 {
     for (FrozenValue* value : m_frozenValues) {
-        visitor.appendUnbarrieredReadOnlyValue(value->value());
-        visitor.appendUnbarrieredReadOnlyPointer(value->structure());
+        visitor.appendUnbarriered(value->value());
+        visitor.appendUnbarriered(value->structure());
     }
     
     for (BlockIndex blockIndex = numBlocks(); blockIndex--;) {
@@ -1425,28 +1425,26 @@ void Graph::visitChildren(SlotVisitor& visitor)
             switch (node->op()) {
             case CheckStructure:
                 for (unsigned i = node->structureSet().size(); i--;)
-                    visitor.appendUnbarrieredReadOnlyPointer(node->structureSet()[i]);
+                    visitor.appendUnbarriered(node->structureSet()[i]);
                 break;
                 
             case NewObject:
             case ArrayifyToStructure:
             case NewStringObject:
-                visitor.appendUnbarrieredReadOnlyPointer(node->structure());
+                visitor.appendUnbarriered(node->structure());
                 break;
                 
             case PutStructure:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
-                visitor.appendUnbarrieredReadOnlyPointer(
-                    node->transition()->previous);
-                visitor.appendUnbarrieredReadOnlyPointer(
-                    node->transition()->next);
+                visitor.appendUnbarriered(node->transition()->previous);
+                visitor.appendUnbarriered(node->transition()->next);
                 break;
                 
             case MultiGetByOffset:
                 for (const MultiGetByOffsetCase& getCase : node->multiGetByOffsetData().cases) {
                     for (Structure* structure : getCase.set())
-                        visitor.appendUnbarrieredReadOnlyPointer(structure);
+                        visitor.appendUnbarriered(structure);
                 }
                 break;
                     
@@ -1455,9 +1453,9 @@ void Graph::visitChildren(SlotVisitor& visitor)
                     PutByIdVariant& variant = node->multiPutByOffsetData().variants[i];
                     const StructureSet& set = variant.oldStructure();
                     for (unsigned j = set.size(); j--;)
-                        visitor.appendUnbarrieredReadOnlyPointer(set[j]);
+                        visitor.appendUnbarriered(set[j]);
                     if (variant.kind() == PutByIdVariant::Transition)
-                        visitor.appendUnbarrieredReadOnlyPointer(variant.newStructure());
+                        visitor.appendUnbarriered(variant.newStructure());
                 }
                 break;
                 

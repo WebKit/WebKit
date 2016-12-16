@@ -88,7 +88,7 @@ void JSWebAssemblyMemory::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_bufferWrapper);
+    visitor.append(thisObject->m_bufferWrapper);
 }
 
 } // namespace JSC

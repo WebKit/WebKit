@@ -63,7 +63,6 @@ class GCActivityCallback;
 class GCAwareJITStubRoutine;
 class Heap;
 class HeapProfiler;
-class HeapRootVisitor;
 class HeapVerifier;
 class HelpingGCScope;
 class IncrementalSweeper;
@@ -459,7 +458,6 @@ private:
     void visitConservativeRoots(ConservativeRoots&);
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
-    void markToFixpoint(HeapRootVisitor&);
     void updateObjectCounts(double gcStartTime);
     void endMarking();
 

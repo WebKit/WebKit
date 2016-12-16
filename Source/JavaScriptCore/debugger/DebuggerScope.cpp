@@ -61,8 +61,8 @@ void DebuggerScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
     DebuggerScope* thisObject = jsCast<DebuggerScope*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     JSObject::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_scope);
-    visitor.append(&thisObject->m_next);
+    visitor.append(thisObject->m_scope);
+    visitor.append(thisObject->m_next);
 }
 
 String DebuggerScope::className(const JSObject* object)

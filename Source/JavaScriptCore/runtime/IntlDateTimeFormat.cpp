@@ -90,7 +90,7 @@ void IntlDateTimeFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_boundFormat);
+    visitor.append(thisObject->m_boundFormat);
 }
 
 void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)

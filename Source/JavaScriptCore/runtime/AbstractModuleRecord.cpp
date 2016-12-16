@@ -68,9 +68,9 @@ void AbstractModuleRecord::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     AbstractModuleRecord* thisObject = jsCast<AbstractModuleRecord*>(cell);
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_moduleEnvironment);
-    visitor.append(&thisObject->m_moduleNamespaceObject);
-    visitor.append(&thisObject->m_dependenciesMap);
+    visitor.append(thisObject->m_moduleEnvironment);
+    visitor.append(thisObject->m_moduleNamespaceObject);
+    visitor.append(thisObject->m_dependenciesMap);
 }
 
 void AbstractModuleRecord::appendRequestedModule(const Identifier& moduleName)

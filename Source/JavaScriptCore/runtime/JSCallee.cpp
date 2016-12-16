@@ -60,7 +60,7 @@ void JSCallee::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_scope);
+    visitor.append(thisObject->m_scope);
 }
 
 } // namespace JSC

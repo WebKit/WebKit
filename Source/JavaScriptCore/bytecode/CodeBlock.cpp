@@ -2461,7 +2461,7 @@ void CodeBlock::visitWeakly(SlotVisitor& visitor)
         return;
 
     if (shouldVisitStrongly(locker)) {
-        visitor.appendUnbarrieredReadOnlyPointer(this);
+        visitor.appendUnbarriered(this);
         return;
     }
     
@@ -2476,7 +2476,7 @@ void CodeBlock::visitWeakly(SlotVisitor& visitor)
 
     // If we jettison ourselves we'll install our alternative, so make sure that it
     // survives GC even if we don't.
-    visitor.append(&m_alternative);
+    visitor.append(m_alternative);
     
     // There are two things that we use weak reference harvesters for: DFG fixpoint for
     // jettisoning, and trying to find structures that would be live based on some
@@ -2528,7 +2528,7 @@ void CodeBlock::visitChildren(SlotVisitor& visitor)
     visitor.addUnconditionalFinalizer(&m_unconditionalFinalizer);
 
     if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
-        visitor.appendUnbarrieredReadOnlyPointer(otherBlock);
+        visitor.appendUnbarriered(otherBlock);
 
     if (m_jitCode)
         visitor.reportExtraMemoryVisited(m_jitCode->size());
@@ -2654,7 +2654,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 Structure* newStructure =
                     m_vm->heap.structureIDTable().get(newStructureID);
                 if (Heap::isMarkedConcurrently(oldStructure))
-                    visitor.appendUnbarrieredReadOnlyPointer(newStructure);
+                    visitor.appendUnbarriered(newStructure);
                 else
                     allAreMarkedSoFar = false;
                 break;
@@ -2699,7 +2699,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 // to mark (i.e. its global object and prototype are both already
                 // live).
                 
-                visitor.append(&dfgCommon->transitions[i].m_to);
+                visitor.append(dfgCommon->transitions[i].m_to);
             } else
                 allAreMarkedSoFar = false;
         }
@@ -2747,7 +2747,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
     // All weak references are live. Record this information so we don't
     // come back here again, and scan the strong references.
     dfgCommon->livenessHasBeenProved = true;
-    visitor.appendUnbarrieredReadOnlyPointer(this);
+    visitor.appendUnbarriered(this);
 #endif // ENABLE(DFG_JIT)
 }
 
@@ -3045,14 +3045,14 @@ void CodeBlock::visitOSRExitTargets(const ConcurrentJSLocker&, SlotVisitor& visi
     // guaranteeing that it matches the details of the CodeBlock we compiled
     // the OSR exit against.
 
-    visitor.append(&m_alternative);
+    visitor.append(m_alternative);
 
 #if ENABLE(DFG_JIT)
     DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
     if (dfgCommon->inlineCallFrames) {
         for (auto* inlineCallFrame : *dfgCommon->inlineCallFrames) {
             ASSERT(inlineCallFrame->baselineCodeBlock);
-            visitor.append(&inlineCallFrame->baselineCodeBlock);
+            visitor.append(inlineCallFrame->baselineCodeBlock);
         }
     }
 #endif
@@ -3062,22 +3062,22 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
 {
     UNUSED_PARAM(locker);
     
-    visitor.append(&m_globalObject);
-    visitor.append(&m_ownerExecutable);
-    visitor.append(&m_unlinkedCode);
+    visitor.append(m_globalObject);
+    visitor.append(m_ownerExecutable);
+    visitor.append(m_unlinkedCode);
     if (m_rareData)
         m_rareData->m_directEvalCodeCache.visitAggregate(visitor);
     visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
-        visitor.append(&m_functionExprs[i]);
+        visitor.append(m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
-        visitor.append(&m_functionDecls[i]);
+        visitor.append(m_functionDecls[i]);
     for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
         m_objectAllocationProfiles[i].visitAggregate(visitor);
 
 #if ENABLE(JIT)
     for (ByValInfo* byValInfo : m_byValInfos)
-        visitor.append(&byValInfo->cachedSymbol);
+        visitor.append(byValInfo->cachedSymbol);
 #endif
 
 #if ENABLE(DFG_JIT)
@@ -3098,16 +3098,16 @@ void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisit
 
     for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
         if (!!dfgCommon->transitions[i].m_codeOrigin)
-            visitor.append(&dfgCommon->transitions[i].m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
-        visitor.append(&dfgCommon->transitions[i].m_from);
-        visitor.append(&dfgCommon->transitions[i].m_to);
+            visitor.append(dfgCommon->transitions[i].m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
+        visitor.append(dfgCommon->transitions[i].m_from);
+        visitor.append(dfgCommon->transitions[i].m_to);
     }
     
     for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i)
-        visitor.append(&dfgCommon->weakReferences[i]);
+        visitor.append(dfgCommon->weakReferences[i]);
 
     for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i)
-        visitor.append(&dfgCommon->weakStructureReferences[i]);
+        visitor.append(dfgCommon->weakStructureReferences[i]);
 
     dfgCommon->livenessHasBeenProved = true;
 #endif    

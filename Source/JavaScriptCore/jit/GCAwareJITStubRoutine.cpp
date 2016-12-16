@@ -98,7 +98,7 @@ MarkingGCAwareJITStubRoutine::~MarkingGCAwareJITStubRoutine()
 void MarkingGCAwareJITStubRoutine::markRequiredObjectsInternal(SlotVisitor& visitor)
 {
     for (auto& entry : m_cells)
-        visitor.append(&entry);
+        visitor.append(entry);
 }
 
 

@@ -1013,7 +1013,7 @@ void DOMConstructorJSBuiltinObject::visitChildren(JSC::JSCell* cell, JSC::SlotVi
     auto* thisObject = jsCast<DOMConstructorJSBuiltinObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_initializeFunction);
+    visitor.append(thisObject->m_initializeFunction);
 }
 
 static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)

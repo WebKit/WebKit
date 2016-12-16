@@ -1202,7 +1202,6 @@
 		14E9D17B107EC469004DDA21 /* JSGlobalObjectFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */; };
 		14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */; };
 		14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F7256414EE265E00B1652B /* WeakHandleOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F97446138C853E00DA1C67 /* HeapRootVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A8826B1653C4CD1A642983B /* TemplateRegistryKeyTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8B47F234366C4B72AC852A7E /* TemplateRegistryKeyTable.cpp */; };
 		1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACF7376171CA6FB00C9BB1E /* Weak.cpp */; };
@@ -3579,7 +3578,6 @@
 		14F252560D08DD8D004ECFFF /* JSEnvironmentRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEnvironmentRecord.h; sourceTree = "<group>"; };
 		14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHandleOwner.cpp; sourceTree = "<group>"; };
 		14F7256414EE265E00B1652B /* WeakHandleOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHandleOwner.h; sourceTree = "<group>"; };
-		14F97446138C853E00DA1C67 /* HeapRootVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapRootVisitor.h; sourceTree = "<group>"; };
 		169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefinePropertyAttributes.h; sourceTree = "<group>"; };
 		1879510614C540FFB561C124 /* JSModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleLoader.cpp; sourceTree = "<group>"; };
 		1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringRefPrivate.h; sourceTree = "<group>"; };
@@ -5693,7 +5691,6 @@
 				A5339EC81BB4B4510054F005 /* HeapObserver.h */,
 				A5398FA91C750D950060A963 /* HeapProfiler.cpp */,
 				A5398FAA1C750D950060A963 /* HeapProfiler.h */,
-				14F97446138C853E00DA1C67 /* HeapRootVisitor.h */,
 				A54C2AAE1C6544D100A18D78 /* HeapSnapshot.cpp */,
 				A54C2AAF1C6544D100A18D78 /* HeapSnapshot.h */,
 				A5311C341C77CEAC00E6B1B6 /* HeapSnapshotBuilder.cpp */,
@@ -8366,7 +8363,6 @@
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
 				A5339EC91BB4B4600054F005 /* HeapObserver.h in Headers */,
 				A5398FAB1C750DA40060A963 /* HeapProfiler.h in Headers */,
-				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				A54C2AB11C6544F200A18D78 /* HeapSnapshot.h in Headers */,
 				A5311C361C77CEC500E6B1B6 /* HeapSnapshotBuilder.h in Headers */,
 				C24D31E3161CD695002AA4DB /* HeapStatistics.h in Headers */,

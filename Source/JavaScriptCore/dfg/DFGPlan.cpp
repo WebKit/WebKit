@@ -619,10 +619,10 @@ void Plan::markCodeBlocks(SlotVisitor& slotVisitor)
     // an explicit barrier. So, we need to be pessimistic and assume that
     // all our CodeBlocks must be visited during GC.
 
-    slotVisitor.appendUnbarrieredReadOnlyPointer(codeBlock);
-    slotVisitor.appendUnbarrieredReadOnlyPointer(codeBlock->alternative());
+    slotVisitor.appendUnbarriered(codeBlock);
+    slotVisitor.appendUnbarriered(codeBlock->alternative());
     if (profiledDFGCodeBlock)
-        slotVisitor.appendUnbarrieredReadOnlyPointer(profiledDFGCodeBlock);
+        slotVisitor.appendUnbarriered(profiledDFGCodeBlock);
 }
 
 void Plan::rememberCodeBlocks(VM& vm)
@@ -647,16 +647,16 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
 
     cleanMustHandleValuesIfNecessary();
     for (unsigned i = mustHandleValues.size(); i--;)
-        visitor.appendUnbarrieredValue(&mustHandleValues[i]);
+        visitor.appendUnbarriered(mustHandleValues[i]);
 
-    visitor.appendUnbarrieredReadOnlyPointer(codeBlock);
-    visitor.appendUnbarrieredReadOnlyPointer(codeBlock->alternative());
-    visitor.appendUnbarrieredReadOnlyPointer(profiledDFGCodeBlock);
+    visitor.appendUnbarriered(codeBlock);
+    visitor.appendUnbarriered(codeBlock->alternative());
+    visitor.appendUnbarriered(profiledDFGCodeBlock);
 
     if (inlineCallFrames) {
         for (auto* inlineCallFrame : *inlineCallFrames) {
             ASSERT(inlineCallFrame->baselineCodeBlock.get());
-            visitor.appendUnbarrieredReadOnlyPointer(inlineCallFrame->baselineCodeBlock.get());
+            visitor.appendUnbarriered(inlineCallFrame->baselineCodeBlock.get());
         }
     }
 

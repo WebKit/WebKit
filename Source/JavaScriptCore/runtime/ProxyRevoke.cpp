@@ -81,7 +81,7 @@ void ProxyRevoke::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    visitor.append(&thisObject->m_proxy);
+    visitor.append(thisObject->m_proxy);
 }
 
 } // namespace JSC

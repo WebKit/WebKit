@@ -57,7 +57,7 @@ void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     
-    visitor.append(&thisObject->m_originalName);
+    visitor.append(thisObject->m_originalName);
 }
 
 const String& InternalFunction::name()

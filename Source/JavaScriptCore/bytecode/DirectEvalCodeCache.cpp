@@ -47,7 +47,7 @@ void DirectEvalCodeCache::visitAggregate(SlotVisitor& visitor)
     LockHolder locker(m_lock);
     EvalCacheMap::iterator end = m_cacheMap.end();
     for (EvalCacheMap::iterator ptr = m_cacheMap.begin(); ptr != end; ++ptr)
-        visitor.append(&ptr->value);
+        visitor.append(ptr->value);
 }
 
 } // namespace JSC

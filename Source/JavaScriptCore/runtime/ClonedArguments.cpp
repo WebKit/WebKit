@@ -273,7 +273,7 @@ void ClonedArguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ClonedArguments* thisObject = jsCast<ClonedArguments*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_callee);
+    visitor.append(thisObject->m_callee);
 }
 
 } // namespace JSC
