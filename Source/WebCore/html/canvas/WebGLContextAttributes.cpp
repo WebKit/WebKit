@@ -117,6 +117,26 @@ void WebGLContextAttributes::setPreserveDrawingBuffer(bool preserveDrawingBuffer
     m_attrs.preserveDrawingBuffer = preserveDrawingBuffer;
 }
 
+bool WebGLContextAttributes::preferLowPowerToHighPerformance() const
+{
+    return m_attrs.preferLowPowerToHighPerformance;
+}
+
+void WebGLContextAttributes::setPreferLowPowerToHighPerformance(bool preferLowPower)
+{
+    m_attrs.preferLowPowerToHighPerformance = preferLowPower;
+}
+
+bool WebGLContextAttributes::failIfMajorPerformanceCaveat() const
+{
+    return m_attrs.failIfMajorPerformanceCaveat;
+}
+
+void WebGLContextAttributes::setFailIfMajorPerformanceCaveat(bool fail)
+{
+    m_attrs.failIfMajorPerformanceCaveat = fail;
+}
+
 GraphicsContext3D::Attributes WebGLContextAttributes::attributes() const
 {
     return m_attrs;

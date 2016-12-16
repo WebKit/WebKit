@@ -42,32 +42,42 @@ class WebGLContextAttributes final : public CanvasContextAttributes {
     // Create a new attributes object initialized with preexisting attributes
     static Ref<WebGLContextAttributes> create(GraphicsContext3D::Attributes);
 
-    // Whether or not the drawing buffer has an alpha channel; default=true
+    // Whether or not the drawing buffer has an alpha channel. Default is true.
     bool alpha() const;
     void setAlpha(bool alpha);
 
-    // Whether or not the drawing buffer has a depth buffer; default=true
+    // Whether or not the drawing buffer has a depth buffer. Default is true.
     bool depth() const;
     void setDepth(bool depth);
 
-    // Whether or not the drawing buffer has a stencil buffer; default=true
+    // Whether or not the drawing buffer has a stencil buffer. Default is true.
     bool stencil() const;
     void setStencil(bool stencil);
 
-    // Whether or not the drawing buffer is antialiased; default=true
+    // Whether or not the drawing buffer is antialiased. Default is true.
     bool antialias() const;
     void setAntialias(bool antialias);
 
     // Whether or not to treat the values in the drawing buffer as
     // though their alpha channel has already been multiplied into the
-    // color channels; default=true
+    // color channels. Default is true.
     bool premultipliedAlpha() const;
     void setPremultipliedAlpha(bool premultipliedAlpha);
 
     // Whether or not to preserve the drawing buffer after presentation to the
-    // screen; default=false
+    // screen. Default is false.
     bool preserveDrawingBuffer() const;
     void setPreserveDrawingBuffer(bool);
+
+    // Whether or not to attempt to use a lower-power GPU if it is available.
+    // Default is false.
+    bool preferLowPowerToHighPerformance() const;
+    void setPreferLowPowerToHighPerformance(bool);
+
+    // Whether or not to immediately fail if a performant GPU is not available.
+    // Default is false.
+    bool failIfMajorPerformanceCaveat() const;
+    void setFailIfMajorPerformanceCaveat(bool);
 
     // Fetches a copy of the attributes stored in this object in a
     // form that can be used to initialize a GraphicsContext3D.

@@ -1,0 +1,38 @@
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+function describe(object) {
+    result = {};
+    if (typeof object === "function")
+        object = object.prototype;
+    for (let o = object; o; o = o.__proto__) {
+        for (let name of Object.getOwnPropertyNames(o)) {
+            result[name] = object[name];
+        }
+    }
+    return result;
+}
+
+function testContextCreation(parameters)
+{
+    var canvas = document.createElement("canvas");
+    var gl = canvas.getContext("webgl", parameters || {});
+    var attributes = gl.getContextAttributes();
+    var result = document.createElement("pre");
+    result.textContent = JSON.stringify(describe(attributes));
+    document.body.appendChild(result);
+}
+
+function run() {
+    testContextCreation({});
+    testContextCreation({stencil: true});
+    testContextCreation({preferLowPowerToHighPerformance: true});
+    testContextCreation({failIfMajorPerformanceCaveat: true});
+}
+
+window.addEventListener("load", run, false);
+</script>
+<p>
+    Note that some of the values tested here might not be supported, and thus should return the default values.
+</p>
