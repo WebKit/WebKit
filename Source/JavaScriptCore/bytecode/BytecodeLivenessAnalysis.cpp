@@ -142,14 +142,43 @@ void BytecodeLivenessAnalysis::dumpResults()
     Interpreter* interpreter = codeBlock->vm()->interpreter;
     Instruction* instructionsBegin = codeBlock->instructions().begin();
     unsigned i = 0;
+
+    unsigned numberOfBlocks = m_graph.size();
+    Vector<FastBitVector> predecessors(numberOfBlocks);
+    for (BytecodeBasicBlock* block : m_graph)
+        predecessors[block->index()].resize(numberOfBlocks);
+    for (BytecodeBasicBlock* block : m_graph) {
+        for (unsigned j = 0; j < block->successors().size(); j++) {
+            unsigned blockIndex = block->index();
+            unsigned successorIndex = block->successors()[j]->index();
+            predecessors[successorIndex][blockIndex] = true;
+        }
+    }
+
+    auto dumpBitVector = [] (FastBitVector& bits) {
+        for (unsigned j = 0; j < bits.numBits(); j++) {
+            if (bits[j])
+                dataLogF(" %u", j);
+        }
+    };
+
     for (BytecodeBasicBlock* block : m_graph) {
         dataLogF("\nBytecode basic block %u: %p (offset: %u, length: %u)\n", i++, block, block->leaderOffset(), block->totalLength());
-        dataLogF("Successors: ");
+
+        dataLogF("Predecessors:");
+        dumpBitVector(predecessors[block->index()]);
+        dataLogF("\n");
+
+        dataLogF("Successors:");
+        FastBitVector successors;
+        successors.resize(numberOfBlocks);
         for (unsigned j = 0; j < block->successors().size(); j++) {
             BytecodeBasicBlock* successor = block->successors()[j];
-            dataLogF("%p ", successor);
+            successors[successor->index()] = true;
         }
+        dumpBitVector(successors); // Dump in sorted order.
         dataLogF("\n");
+
         if (block->isEntryBlock()) {
             dataLogF("Entry block %p\n", block);
             continue;
@@ -161,12 +190,9 @@ void BytecodeLivenessAnalysis::dumpResults()
         for (unsigned bytecodeOffset = block->leaderOffset(); bytecodeOffset < block->leaderOffset() + block->totalLength();) {
             const Instruction* currentInstruction = &instructionsBegin[bytecodeOffset];
 
-            dataLogF("Live variables: ");
+            dataLogF("Live variables:");
             FastBitVector liveBefore = getLivenessInfoAtBytecodeOffset(bytecodeOffset);
-            for (unsigned j = 0; j < liveBefore.numBits(); j++) {
-                if (liveBefore[j])
-                    dataLogF("%u ", j);
-            }
+            dumpBitVector(liveBefore);
             dataLogF("\n");
             codeBlock->dumpBytecode(WTF::dataFile(), codeBlock->globalObject()->globalExec(), instructionsBegin, currentInstruction);
 
@@ -175,12 +201,9 @@ void BytecodeLivenessAnalysis::dumpResults()
             bytecodeOffset += opcodeLength;
         }
 
-        dataLogF("Live variables: ");
+        dataLogF("Live variables:");
         FastBitVector liveAfter = block->out();
-        for (unsigned j = 0; j < liveAfter.numBits(); j++) {
-            if (liveAfter[j])
-                dataLogF("%u ", j);
-        }
+        dumpBitVector(liveAfter);
         dataLogF("\n");
     }
 }

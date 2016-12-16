@@ -1,3 +1,17 @@
+2016-12-16  Mark Lam  <mark.lam@apple.com>
+
+        Add predecessor info to dumps from JSC_dumpBytecodeLivenessResults=true.
+        https://bugs.webkit.org/show_bug.cgi?id=165958
+
+        Reviewed by Saam Barati.
+
+        Also:
+        1. refactored the code to use a common lambda function to dump FastBitVectors.
+        2. list successors by their block index instead of pointers.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::dumpResults):
+
 2016-12-16  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: WasmB3IRGenerator should throw exceptions instead of crash
