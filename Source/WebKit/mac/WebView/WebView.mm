@@ -3286,6 +3286,8 @@ static inline IMP getMethod(id o, SEL s)
         [self _didChangeValueForKey: _WebIsLoadingKey];
 
         [self _willChangeValueForKey: _WebMainFrameURLKey];
+
+        [self hideFormValidationMessage];
     }
 
     [NSApp setWindowsNeedUpdate:YES];

@@ -1,3 +1,16 @@
+2016-12-16  Chris Dumez  <cdumez@apple.com>
+
+        HTML form validation bubble should be dismissed on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165960
+        <rdar://problem/29668086>
+
+        Reviewed by Simon Fraser.
+
+        Dismiss HTML form validation bubble on top-level navigation on Mac WK1.
+
+        * WebView/WebView.mm:
+        (-[WebView _didStartProvisionalLoadForFrame:]):
+
 2016-12-15  Darin Adler  <darin@apple.com>
 
         Use asString instead of toWTFString, toString, or getString when we already checked isString

@@ -1,0 +1,24 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function getValidationBubbleContents()
+{
+    return `
+    (function() {
+        return JSON.stringify(uiController.contentsOfUserInterfaceItem('validationBubble'));
+    })();`
+}
+testRunner.runUIScript(getValidationBubbleContents(), function(result) {
+    validationBubbleContents = JSON.parse(result).validationBubble;
+    if (validationBubbleContents.message === "")
+        document.body.innerHTML = "PASS: The HTML validation bubble is no longer visible after navigating";
+    else
+        document.body.innerHTML = "FAIL: The HTML validation bubble is still visible after navigating";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>

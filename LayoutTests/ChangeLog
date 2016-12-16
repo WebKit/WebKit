@@ -1,3 +1,17 @@
+2016-12-16  Chris Dumez  <cdumez@apple.com>
+
+        HTML form validation bubble should be dismissed on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165960
+        <rdar://problem/29668086>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * http/tests/navigation/navigation-dismisses-validation-bubbles-expected.txt: Added.
+        * http/tests/navigation/navigation-dismisses-validation-bubbles.html: Added.
+        * http/tests/navigation/resources/check-validation-bubble-not-visible.html: Added.
+
 2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move the skip expectation for fast/visual-viewport/ios/zoomed-focus-in-fixed.html to ios-simulator-wk2.
