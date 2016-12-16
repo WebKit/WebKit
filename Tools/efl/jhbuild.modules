@@ -77,7 +77,7 @@
     </branch>
   </autotools>
 
-  <autotools id="fonts"
+  <autotools id="fonts" supports-non-srcdir-builds="no"
              skip-autogen="true">
     <branch module="mrobinson/webkitgtk-test-fonts/archive/0.0.5.tar.gz" version="0.0.5"
             checkoutdir="webkitgtk-test-fonts"
@@ -87,7 +87,7 @@
     </branch>
   </autotools>
 
-  <autotools id="dicts"
+  <autotools id="dicts" supports-non-srcdir-builds="no"
              skip-autogen="true">
     <branch module="mrobinson/webkitgtk-test-dicts/archive/0.0.1.zip" version="0.0.1"
             checkoutdir="webkitgtk-test-dicts"
@@ -275,13 +275,13 @@
     </dependencies>
   </autotools>
 
-  <autotools id="libusrsctp" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
+  <autotools id="libusrsctp" supports-non-srcdir-builds="no" autogen-sh="./bootstrap; ./configure --disable-warnings-as-errors">
     <branch repo="github.com" module="sctplab/usrsctp/archive/078ff3252f73327e0ac11d6fd5eff62011f6646e.tar.gz" version="078ff3252f73327e0ac11d6fd5eff62011f6646e" checkoutdir="libusrsctp"
             hash="sha256:175938887dc7554e000152055c818bdd15dd0e4ccc94ef93e38e9f952ea82edc" size="648925">
     </branch>
   </autotools>
 
-  <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" autogen-sh="./autogen.sh; ./configure">
+  <autotools id="gst-plugins-openwebrtc" supports-parallel-builds="no" supports-non-srcdir-builds="no" autogen-sh="./autogen.sh; ./configure">
     <dependencies>
       <dep package="gst-plugins-base"/>
       <dep package="libusrsctp"/>
@@ -293,7 +293,7 @@
    </branch>
   </autotools>
 
-  <autotools id="libnice">
+  <autotools id="libnice" supports-non-srcdir-builds="no">
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
