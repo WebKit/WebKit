@@ -1,3 +1,11 @@
+2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Yet another attempt to fix the Windows build after r209936.
+
+        Unreviewed build fix.
+
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h:
+
 2016-12-16  Alex Christensen  <achristensen@webkit.org>
 
         Use initEvent quirk added in r207908 for Flipboard
