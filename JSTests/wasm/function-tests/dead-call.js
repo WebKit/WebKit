@@ -14,8 +14,12 @@ const builder = (new Builder())
 
           .Function("dead-call", { params: [], ret: "i32" })
               .I32Const(0)
-              .If("i32", b => b.Call(0).Return())
-              .I32Const(1)
+              .If("i32", b =>
+                  b.Call(0)
+                  .Return()
+                  .Else()
+                  .I32Const(1)
+                 )
           .End()
 
       .End();

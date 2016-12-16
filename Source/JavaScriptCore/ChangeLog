@@ -1,3 +1,16 @@
+2016-12-15  Keith Miller  <keith_miller@apple.com>
+
+        Fix validation of non-void if blocks with no else
+        https://bugs.webkit.org/show_bug.cgi?id=165938
+
+        Reviewed by Saam Barati.
+
+        We should not have been allowing non-void if-blocks that don't
+        have an else. Since this causes a value to be placed on the
+        stack that only appears under some control flow and not another.
+
+        * wasm/WasmValidate.cpp:
+
 2016-12-15  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of HeapRootVisitor and make SlotVisitor less painful to use

@@ -290,6 +290,7 @@ auto Validate::endBlock(ControlEntry& entry, ExpressionList& stack) -> Result
     if (block.signature() == Void)
         return { };
 
+    WASM_VALIDATOR_FAIL_IF(block.type() == BlockType::If, "If-block had a non-void result type: ", block.signature(), " but had no else-block");
     WASM_VALIDATOR_FAIL_IF(stack.isEmpty(), "typed block falls through on empty stack");
     WASM_VALIDATOR_FAIL_IF(block.signature() != stack.last(), "block fallthrough doesn't match its declared type");
 
@@ -299,8 +300,11 @@ auto Validate::endBlock(ControlEntry& entry, ExpressionList& stack) -> Result
 
 auto Validate::addEndToUnreachable(ControlEntry& entry) -> Result
 {
-    if (entry.controlData.signature() != Void)
-        entry.enclosedExpressionStack.append(entry.controlData.signature());
+    auto block = entry.controlData;
+    if (block.signature() != Void) {
+        WASM_VALIDATOR_FAIL_IF(block.type() == BlockType::If, "If-block had a non-void result type: ", block.signature(), " but had no else-block");
+        entry.enclosedExpressionStack.append(block.signature());
+    }
     return { };
 }
 
