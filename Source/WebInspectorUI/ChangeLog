@@ -1,5 +1,17 @@
 2016-12-16  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: REGRESSION (r209882): Opening find banner in editor causes UI to hang
+        https://bugs.webkit.org/show_bug.cgi?id=165967
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._findBannerDidShow):
+        Showing the find banner should cause search results to be refreshed only
+        if it contains query text.
+
+2016-12-16  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Modernize find banner UI
         https://bugs.webkit.org/show_bug.cgi?id=165939
 

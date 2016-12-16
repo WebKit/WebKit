@@ -294,7 +294,8 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
             return;
 
         currentContentView.automaticallyRevealFirstSearchResult = true;
-        currentContentView.performSearch(this._findBanner.searchQuery);
+        if (this._findBanner.searchQuery !== "")
+            currentContentView.performSearch(this._findBanner.searchQuery);
     }
 
     _findBannerDidHide(event)
