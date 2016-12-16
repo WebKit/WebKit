@@ -1,5 +1,13 @@
 2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Fix the Windows build.
+
+        Unreviewed build fix.
+
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+
+2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
         Yet another attempt to fix the Windows build after r209936.
 
         Unreviewed build fix.
