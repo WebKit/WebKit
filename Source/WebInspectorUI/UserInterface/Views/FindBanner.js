@@ -39,28 +39,6 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
         this._resultCountLabel = document.createElement("label");
         this.element.appendChild(this._resultCountLabel);
 
-        this._previousResultButton = document.createElement("button");
-        this._previousResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
-        this._previousResultButton.classList.add(WebInspector.FindBanner.LeftSegmentButtonStyleClassName);
-        this._previousResultButton.disabled = true;
-        this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
-        this.element.appendChild(this._previousResultButton);
-
-        var previousResultButtonGlyphElement = document.createElement("div");
-        previousResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
-        this._previousResultButton.appendChild(previousResultButtonGlyphElement);
-
-        this._nextResultButton = document.createElement("button");
-        this._nextResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
-        this._nextResultButton.classList.add(WebInspector.FindBanner.RightSegmentButtonStyleClassName);
-        this._nextResultButton.disabled = true;
-        this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
-        this.element.appendChild(this._nextResultButton);
-
-        var nextResultButtonGlyphElement = document.createElement("div");
-        nextResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
-        this._nextResultButton.appendChild(nextResultButtonGlyphElement);
-
         this._inputField = document.createElement("input");
         this._inputField.type = "search";
         this._inputField.spellcheck = false;
@@ -71,6 +49,28 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
         this._inputField.addEventListener("keyup", this._inputFieldKeyUp.bind(this), false);
         this._inputField.addEventListener("search", this._inputFieldSearch.bind(this), false);
         this.element.appendChild(this._inputField);
+
+        this._previousResultButton = document.createElement("button");
+        this._previousResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
+        this._previousResultButton.classList.add(WebInspector.FindBanner.LeftSegmentButtonStyleClassName);
+        this._previousResultButton.disabled = true;
+        this._previousResultButton.addEventListener("click", this._previousResultButtonClicked.bind(this));
+        this.element.appendChild(this._previousResultButton);
+
+        let previousResultButtonGlyphElement = document.createElement("div");
+        previousResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
+        this._previousResultButton.appendChild(previousResultButtonGlyphElement);
+
+        this._nextResultButton = document.createElement("button");
+        this._nextResultButton.classList.add(WebInspector.FindBanner.SegmentedButtonStyleClassName);
+        this._nextResultButton.classList.add(WebInspector.FindBanner.RightSegmentButtonStyleClassName);
+        this._nextResultButton.disabled = true;
+        this._nextResultButton.addEventListener("click", this._nextResultButtonClicked.bind(this));
+        this.element.appendChild(this._nextResultButton);
+
+        let nextResultButtonGlyphElement = document.createElement("div");
+        nextResultButtonGlyphElement.classList.add(WebInspector.FindBanner.SegmentGlyphStyleClassName);
+        this._nextResultButton.appendChild(nextResultButtonGlyphElement);
 
         if (fixed)
             this._clearAndBlurKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Escape, this._clearAndBlur.bind(this), this.element);
@@ -97,35 +97,12 @@ WebInspector.FindBanner = class FindBanner extends WebInspector.NavigationItem
 
     // Public
 
-    get delegate()
-    {
-        return this._delegate;
-    }
-
-    set delegate(newDelegate)
-    {
-        this._delegate = newDelegate || null;
-    }
-
-    get inputField()
-    {
-        return this._inputField;
-    }
-
-    get searchQuery()
-    {
-        return this._inputField.value || "";
-    }
-
-    set searchQuery(query)
-    {
-        this._inputField.value = query || "";
-    }
-
-    get numberOfResults()
-    {
-        return this._numberOfResults;
-    }
+    get delegate() { return this._delegate; }
+    set delegate(newDelegate) { this._delegate = newDelegate || null; }
+    get inputField() { return this._inputField; }
+    get searchQuery() { return this._inputField.value || ""; }
+    set searchQuery(query) { this._inputField.value = query || ""; }
+    get numberOfResults() { return this._numberOfResults; }
 
     set numberOfResults(numberOfResults)
     {

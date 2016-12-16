@@ -1,3 +1,47 @@
+2016-12-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Modernize find banner UI
+        https://bugs.webkit.org/show_bug.cgi?id=165939
+
+        Reviewed by Timothy Hatcher.
+
+        The find banner should have a modern appearance, matching Xcode.
+
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner > input[type="search"]):
+        (.find-banner > button):
+        Use standard border colors.
+        (.find-banner > button:disabled > .glyph):
+        Disabled previous / next glyphs should be lighter.
+        (.find-banner > button:active:not(:disabled)):
+        Update depressed button style: flat colors, no text color change.
+        (.find-banner > button.segmented):
+        (.find-banner > button.segmented.left):
+        (.find-banner > button:not(:active).segmented.right:before):
+        (.find-banner > button.segmented.left:active + button.segmented.right,):
+        (.find-banner > button.segmented.left:active + button.segmented.right:before):
+        (.find-banner > button.segmented.right):
+        (.find-banner.console-find-banner > input[type="search"]):
+        (.find-banner.console-find-banner > :matches(input[type="search"], button)):
+        (.find-banner > button:disabled): Deleted.
+        (.find-banner > button.segmented:active): Deleted.
+        Overlapping button borders are no longer an issue.
+
+        * UserInterface/Views/FindBanner.js:
+        (WebInspector.FindBanner):
+        Insert previous / next buttons after the input field in the DOM.
+        (WebInspector.FindBanner.prototype.get delegate):
+        (WebInspector.FindBanner.prototype.set delegate):
+        (WebInspector.FindBanner.prototype.get inputField):
+        (WebInspector.FindBanner.prototype.get searchQuery):
+        (WebInspector.FindBanner.prototype.set searchQuery):
+        (WebInspector.FindBanner.prototype.get numberOfResults):
+        Inline simple getters and setters.
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add button colors.
+
 2016-12-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: console search bar jumps, behaves poorly at narrow widths

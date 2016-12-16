@@ -48,6 +48,10 @@
 
     --border-color: hsl(0, 0%, 70%);
     --border-color-dark: hsl(0, 0%, 57%);
+
+    --button-background-color: white;
+    --button-background-color-pressed: hsl(0, 0%, 85%);
+
     --panel-background-color: hsl(0, 0%, 94%);
     --panel-background-color-light: hsl(0, 0%, 96%);
 
