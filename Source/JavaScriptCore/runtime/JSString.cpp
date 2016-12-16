@@ -52,8 +52,7 @@ void JSRopeString::RopeBuilder::expand()
 
 void JSString::destroy(JSCell* cell)
 {
-    JSString* thisObject = static_cast<JSString*>(cell);
-    thisObject->JSString::~JSString();
+    static_cast<JSString*>(cell)->JSString::~JSString();
 }
 
 void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
@@ -84,7 +83,7 @@ bool JSString::equalSlowCase(ExecState* exec, JSString* other) const
 
 size_t JSString::estimatedSize(JSCell* cell)
 {
-    JSString* thisObject = jsCast<JSString*>(cell);
+    JSString* thisObject = asString(cell);
     if (thisObject->isRope())
         return Base::estimatedSize(cell);
     return Base::estimatedSize(cell) + thisObject->m_value.impl()->costDuringGC();
@@ -92,7 +91,7 @@ size_t JSString::estimatedSize(JSCell* cell)
 
 void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSString* thisObject = jsCast<JSString*>(cell);
+    JSString* thisObject = asString(cell);
     Base::visitChildren(thisObject, visitor);
     
     if (thisObject->isRope())
@@ -421,7 +420,7 @@ JSValue JSString::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
 {
     if (ecmaMode == StrictMode)
         return cell;
-    return StringObject::create(exec->vm(), exec->lexicalGlobalObject(), jsCast<JSString*>(cell));
+    return StringObject::create(exec->vm(), exec->lexicalGlobalObject(), asString(cell));
 }
 
 bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

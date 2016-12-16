@@ -72,7 +72,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState& exec)
     if (exec.argumentCount() > 3) {
         if (!exec.uncheckedArgument(3).isString())
             return throwArgumentTypeError(exec, scope, 3, "type", "DataCue", nullptr, "DOMString");
-        type = exec.uncheckedArgument(3).getString(&exec);
+        type = asString(exec.uncheckedArgument(3))->value(&exec);
     }
 #endif
 

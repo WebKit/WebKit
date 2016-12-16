@@ -62,7 +62,7 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
         if (!type.isString())
             continue;
 
-        String typeString = type.toWTFString(exec);
+        String typeString = asString(type)->value(exec);
         if (typeString == "separator") {
             ContextMenuItem item(SeparatorType, ContextMenuItemTagNoAction, String());
             menu.appendItem(item);

@@ -1320,7 +1320,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
 
     if (value.isString()) {
         [array addObject:[NSNumber numberWithInt:StringValueType]];
-        [array addObject:value.toWTFString(exec)];
+        [array addObject:asString(value)->value(exec)];
     } else if (value.isNumber()) {
         [array addObject:[NSNumber numberWithInt:DoubleValueType]];
         [array addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];

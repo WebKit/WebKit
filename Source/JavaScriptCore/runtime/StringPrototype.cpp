@@ -810,7 +810,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeatCharacter(ExecState* exec)
     ASSERT(exec->argumentCount() == 2);
 
     ASSERT(exec->uncheckedArgument(0).isString());
-    JSString* string = jsCast<JSString*>(exec->uncheckedArgument(0));
+    JSString* string = asString(exec->uncheckedArgument(0));
     ASSERT(string->length() == 1);
 
     JSValue repeatCountValue = exec->uncheckedArgument(1);
@@ -1321,7 +1321,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     JSString* jsString = 0;
     String uString;
     if (thisValue.isString()) {
-        jsString = jsCast<JSString*>(thisValue.asCell());
+        jsString = asString(thisValue);
         len = jsString->length();
     } else {
         uString = thisValue.toWTFString(exec);
@@ -1360,10 +1360,7 @@ EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(ExecState* exec)
     // guarantee that we only pass it a string thisValue. As a result, stringProtoFuncSubstr
     // will not need to call toString() on the thisValue, and there will be no observable
     // side-effects.
-#if !ASSERT_DISABLED
-    JSValue thisValue = exec->thisValue();
-    ASSERT(thisValue.isString());
-#endif
+    ASSERT(exec->thisValue().isString());
     return stringProtoFuncSubstr(exec);
 }
 

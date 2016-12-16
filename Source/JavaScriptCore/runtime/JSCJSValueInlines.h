@@ -662,7 +662,7 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(ExecState* exec, JSValue 
         return NoPreference;
     }
 
-    StringImpl* hintString = jsCast<JSString*>(value)->value(exec).impl();
+    StringImpl* hintString = asString(value)->value(exec).impl();
     RETURN_IF_EXCEPTION(scope, NoPreference);
 
     if (WTF::equal(hintString, "default"))

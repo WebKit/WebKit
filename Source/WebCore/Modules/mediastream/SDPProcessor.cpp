@@ -538,7 +538,7 @@ bool SDPProcessor::callScript(const String& functionName, const String& argument
     if (!result.isString())
         return false;
 
-    outResult = result.getString(exec);
+    outResult = asString(result)->value(exec);
     return true;
 }
 

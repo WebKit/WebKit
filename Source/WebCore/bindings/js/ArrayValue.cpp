@@ -93,7 +93,7 @@ bool ArrayValue::get(size_t index, String& value) const
     if (indexedValue.isUndefinedOrNull() || !indexedValue.isString())
         return false;
 
-    value = indexedValue.toWTFString(m_exec);
+    value = asString(indexedValue)->value(m_exec);
     RETURN_IF_EXCEPTION(scope, false);
 
     return true;

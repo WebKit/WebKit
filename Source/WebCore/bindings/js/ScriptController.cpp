@@ -355,7 +355,7 @@ static Identifier jsValueToModuleKey(ExecState* exec, JSValue value)
     if (value.isSymbol())
         return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
     ASSERT(value.isString());
-    return Identifier::fromString(exec, jsCast<JSString*>(value)->value(exec));
+    return asString(value)->toIdentifier(exec);
 }
 
 void ScriptController::setupModuleScriptHandlers(CachedModuleScript& moduleScriptRef, JSInternalPromise& promise, DOMWrapperWorld& world)

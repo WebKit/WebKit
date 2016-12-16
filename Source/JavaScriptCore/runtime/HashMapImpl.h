@@ -240,17 +240,14 @@ ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");
 
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     if (value.isString()) {
-        JSString* string = asString(value);
-        const String& wtfString = string->value(exec);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        const String& wtfString = asString(value)->value(exec);
         RETURN_IF_EXCEPTION(scope, UINT_MAX);
         return wtfString.impl()->hash();
     }
 
-    uint64_t rawValue = JSValue::encode(value);
-    return wangsInt64Hash(rawValue);
+    return wangsInt64Hash(JSValue::encode(value));
 }
 
 ALWAYS_INLINE std::optional<uint32_t> concurrentJSMapHash(JSValue key)

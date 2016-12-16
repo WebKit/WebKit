@@ -1,3 +1,44 @@
+2016-12-15  Darin Adler  <darin@apple.com>
+
+        Use asString instead of toWTFString, toString, or getString when we already checked isString
+        https://bugs.webkit.org/show_bug.cgi?id=165895
+
+        Reviewed by Yusuke Suzuki.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract): Use asString/value instead of toWTFString.
+
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::SDPProcessor::callScript): Use asString/value instead of getString.
+
+        * bindings/js/ArrayValue.cpp:
+        (WebCore::ArrayValue::get): Use asString/value instead of toWTFString.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::get): Use asString/length instead of toString/length.
+        (WebCore::createIDBKeyFromValue): Use asString/value instead of toWTFString.
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::getAlgorithmIdentifier): Ditto.
+        * bindings/js/JSDataCueCustom.cpp:
+        (WebCore::constructJSDataCue): Use asString/value instead of getString.
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems): Use asString/value instead of toWTFString.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::jsValueToModuleKey): Use asString/toIdentifier instead of
+        jsCast<JSString*>/value/Identifier::fromString.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal): Streamline by getting rid of local variable.
+
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getDomainList): Use asString instead of jsCast<JSString*>.
+        (WebCore::ContentExtensions::loadTrigger): Use asString/value instead of toWTFString.
+        (WebCore::ContentExtensions::loadAction): Ditto.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create): Use asString/value instead of getString.
+
 2016-12-15  Zalan Bujtas  <zalan@apple.com>
 
         Change ::computeLogicalHeight's computedValues out argument to the return value.

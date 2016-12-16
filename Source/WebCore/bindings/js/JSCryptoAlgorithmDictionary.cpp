@@ -66,7 +66,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState& state, JSVal
     String algorithmName;
 
     if (value.isString()) {
-        algorithmName = value.toWTFString(&state);
+        algorithmName = asString(value)->value(&state);
         RETURN_IF_EXCEPTION(scope, false);
     } else if (value.isObject()) {
         if (asObject(value)->inherits(StringObject::info())) {

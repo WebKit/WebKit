@@ -326,7 +326,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
             if (stringTag.isString()) {
                 JSRopeString::RopeBuilder ropeBuilder(vm);
                 ropeBuilder.append(vm.smallStrings.objectStringStart());
-                ropeBuilder.append(jsCast<JSString*>(stringTag));
+                ropeBuilder.append(asString(stringTag));
                 ropeBuilder.append(vm.smallStrings.singleCharacterString(']'));
                 JSString* result = ropeBuilder.release();
 

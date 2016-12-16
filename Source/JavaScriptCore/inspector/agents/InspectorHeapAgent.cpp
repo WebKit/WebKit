@@ -251,7 +251,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     // String preview.
     JSCell* cell = optionalNode->cell;
     if (cell->isString()) {
-        *resultString = cell->getString(nullptr);
+        *resultString = asString(cell)->tryGetValue();
         return;
     }
 

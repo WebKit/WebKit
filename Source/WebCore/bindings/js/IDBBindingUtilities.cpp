@@ -56,7 +56,7 @@ namespace WebCore {
 static bool get(ExecState& exec, JSValue object, const String& keyPathElement, JSValue& result)
 {
     if (object.isString() && keyPathElement == "length") {
-        result = jsNumber(object.toString(&exec)->length());
+        result = jsNumber(asString(object)->length());
         return true;
     }
     if (!object.isObject())
@@ -148,7 +148,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value, Vect
         return IDBKey::createNumber(value.toNumber(&exec));
 
     if (value.isString())
-        return IDBKey::createString(value.toWTFString(&exec));
+        return IDBKey::createString(asString(value)->value(&exec));
 
     if (value.inherits(DateInstance::info()) && !std::isnan(valueToDate(&exec, value)))
         return IDBKey::createDate(valueToDate(&exec, value));

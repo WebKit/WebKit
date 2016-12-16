@@ -1876,10 +1876,8 @@ static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState* exec)
     if (!property.isString())
         return JSValue::encode(jsUndefined());
 
-    Identifier ident = Identifier::fromString(&exec->vm(), property.toWTFString(exec));
-
     PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry);
-    value.getPropertySlot(exec, ident, slot);
+    value.getPropertySlot(exec, asString(property)->toIdentifier(exec), slot);
 
     JSValue result;
     if (slot.isCacheableGetter())
@@ -2104,7 +2102,7 @@ EncodedJSValue JSC_HOST_CALL functionIsRope(ExecState* exec)
     JSValue argument = exec->argument(0);
     if (!argument.isString())
         return JSValue::encode(jsBoolean(false));
-    const StringImpl* impl = jsCast<JSString*>(argument)->tryGetValueImpl();
+    const StringImpl* impl = asString(argument)->tryGetValueImpl();
     return JSValue::encode(jsBoolean(!impl));
 }
 
@@ -2282,7 +2280,7 @@ EncodedJSValue JSC_HOST_CALL functionFindTypeForExpression(ExecState* exec)
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(exec->argument(1).isString());
-    String substring = exec->argument(1).getString(exec);
+    String substring = asString(exec->argument(1))->value(exec);
     String sourceCodeText = executable->source().view().toString();
     unsigned offset = static_cast<unsigned>(sourceCodeText.find(substring) + executable->source().startOffset());
     
@@ -2320,7 +2318,7 @@ EncodedJSValue JSC_HOST_CALL functionHasBasicBlockExecuted(ExecState* exec)
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(exec->argument(1).isString());
-    String substring = exec->argument(1).getString(exec);
+    String substring = asString(exec->argument(1))->value(exec);
     String sourceCodeText = executable->source().view().toString();
     RELEASE_ASSERT(sourceCodeText.contains(substring));
     int offset = sourceCodeText.find(substring) + executable->source().startOffset();
@@ -2338,7 +2336,7 @@ EncodedJSValue JSC_HOST_CALL functionBasicBlockExecutionCount(ExecState* exec)
     FunctionExecutable* executable = (jsDynamicCast<JSFunction*>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(exec->argument(1).isString());
-    String substring = exec->argument(1).getString(exec);
+    String substring = asString(exec->argument(1))->value(exec);
     String sourceCodeText = executable->source().view().toString();
     RELEASE_ASSERT(sourceCodeText.contains(substring));
     int offset = sourceCodeText.find(substring) + executable->source().startOffset();
@@ -2403,7 +2401,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     if (exec->argumentCount() < 1 || !exec->argument(0).isString())
         return JSValue::encode(jsUndefined());
 
-    String functionText = exec->argument(0).toWTFString(exec);
+    String functionText = asString(exec->argument(0))->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     const SourceCode& source = makeSource(functionText);
@@ -2510,7 +2508,7 @@ EncodedJSValue JSC_HOST_CALL functionMaxArguments(ExecState*)
 
 static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, JSValue wasmValue)
 {
-    JSString* type = jsCast<JSString*>(wasmValue.get(exec, makeIdentifier(vm, "type")));
+    JSString* type = asString(wasmValue.get(exec, makeIdentifier(vm, "type")));
 
     const String& typeString = type->value(exec);
     if (typeString == "i64" || typeString == "i32")
@@ -2523,14 +2521,14 @@ static CString valueWithTypeOfWasmValue(ExecState* exec, VM& vm, JSValue value, 
 static JSValue box(ExecState* exec, VM& vm, JSValue wasmValue)
 {
 
-    JSString* type = jsCast<JSString*>(wasmValue.get(exec, makeIdentifier(vm, "type")));
+    JSString* type = asString(wasmValue.get(exec, makeIdentifier(vm, "type")));
     JSValue value = wasmValue.get(exec, makeIdentifier(vm, "value"));
 
     auto unboxString = [&] (const char* hexFormat, const char* decFormat, auto& result) {
         if (!value.isString())
             return false;
 
-        const char* str = toCString(jsCast<JSString*>(value)->value(exec)).data();
+        const char* str = toCString(asString(value)->value(exec)).data();
         int scanResult;
         int length = std::strlen(str);
         if ((length > 2 && (str[0] == '0' && str[1] == 'x'))

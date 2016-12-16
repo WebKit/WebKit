@@ -539,7 +539,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
     double x;
     JSValue thisValue = exec->thisValue();
     if (!toThisNumber(thisValue, x))
-        return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", jsCast<JSString*>(jsTypeStringForValue(exec, thisValue))->value(exec)));
+        return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", asString(jsTypeStringForValue(exec, thisValue))->value(exec)));
     return JSValue::encode(jsNumber(x));
 }
 

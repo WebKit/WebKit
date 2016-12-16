@@ -85,7 +85,7 @@ JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
 {
     if (v.isString())
-        return jsNontrivialString(exec, makeString('"',  asString(v)->value(exec), '"'));
+        return jsNontrivialString(exec, makeString('"', asString(v)->value(exec), '"'));
     if (v.isSymbol())
         return jsNontrivialString(exec, asSymbol(v)->descriptiveString());
     if (v.isObject()) {

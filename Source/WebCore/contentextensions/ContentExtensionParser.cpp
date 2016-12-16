@@ -75,7 +75,7 @@ static std::error_code getDomainList(ExecState& exec, const JSObject* arrayObjec
             return ContentExtensionError::JSONInvalidDomainList;
         
         // Domains should be punycode encoded lower case.
-        const String& domain = jsCast<JSString*>(value)->value(&exec);
+        const String& domain = asString(value)->value(&exec);
         if (domain.isEmpty())
             return ContentExtensionError::JSONInvalidDomainList;
         if (!containsOnlyASCIIWithNoUppercase(domain))
@@ -130,7 +130,7 @@ static std::error_code loadTrigger(ExecState& exec, const JSObject& ruleObject, 
     if (!urlFilterObject || scope.exception() || !urlFilterObject.isString())
         return ContentExtensionError::JSONInvalidURLFilterInTrigger;
 
-    String urlFilter = urlFilterObject.toWTFString(&exec);
+    String urlFilter = asString(urlFilterObject)->value(&exec);
     if (urlFilter.isEmpty())
         return ContentExtensionError::JSONInvalidURLFilterInTrigger;
 
@@ -207,7 +207,7 @@ static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, A
     if (!typeObject || scope.exception() || !typeObject.isString())
         return ContentExtensionError::JSONInvalidActionType;
 
-    String actionType = typeObject.toWTFString(&exec);
+    String actionType = asString(typeObject)->value(&exec);
 
     if (actionType == "block")
         action = ActionType::BlockLoad;
@@ -220,13 +220,13 @@ static std::error_code loadAction(ExecState& exec, const JSObject& ruleObject, A
         if (!selector || scope.exception() || !selector.isString())
             return ContentExtensionError::JSONInvalidCSSDisplayNoneActionType;
 
-        String s = selector.toWTFString(&exec);
-        if (!isValidSelector(s)) {
+        String selectorString = asString(selector)->value(&exec);
+        if (!isValidSelector(selectorString)) {
             // Skip rules with invalid selectors to be backwards-compatible.
             validSelector = false;
             return { };
         }
-        action = Action(ActionType::CSSDisplayNoneSelector, s);
+        action = Action(ActionType::CSSDisplayNoneSelector, selectorString);
     } else if (actionType == "make-https") {
         action = ActionType::MakeHTTPS;
     } else

@@ -247,7 +247,7 @@ void JSValue::dumpInContextAssumingStructure(
 #endif
     } else if (isCell()) {
         if (structure->classInfo()->isSubClassOf(JSString::info())) {
-            JSString* string = jsCast<JSString*>(asCell());
+            JSString* string = asString(asCell());
             out.print("String");
             if (string->isRope())
                 out.print(" (rope)");
@@ -299,7 +299,7 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
         out.printf("%lf", asDouble());
     else if (isCell()) {
         if (asCell()->inherits(JSString::info())) {
-            JSString* string = jsCast<JSString*>(asCell());
+            JSString* string = asString(asCell());
             const StringImpl* impl = string->tryGetValueImpl();
             if (impl)
                 out.print("\"", impl, "\"");

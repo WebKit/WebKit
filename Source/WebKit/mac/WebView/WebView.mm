@@ -7369,7 +7369,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     if (jsValue.isBoolean())
         return [NSAppleEventDescriptor descriptorWithBoolean:jsValue.asBoolean()];
     if (jsValue.isString())
-        return [NSAppleEventDescriptor descriptorWithString:jsValue.getString(exec)];
+        return [NSAppleEventDescriptor descriptorWithString:asString(jsValue)->value(exec)];
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
         int intValue = value;

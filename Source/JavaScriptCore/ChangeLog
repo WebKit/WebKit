@@ -1,3 +1,74 @@
+2016-12-15  Darin Adler  <darin@apple.com>
+
+        Use asString instead of toWTFString, toString, or getString when we already checked isString
+        https://bugs.webkit.org/show_bug.cgi?id=165895
+
+        Reviewed by Yusuke Suzuki.
+
+        Once we have called isString, we should always use asString and value rather than using
+        functions that have to deal with non-JSString objects. This leads to slightly fewer branches,
+        slightly less reference count churn, since the string is stored right inside the JSString,
+        and obviates the need for exception handling.
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue): Use asString/value instead of getString.
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationMapHash): Call jsMapHash with its new arguments.
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension): Use asString/value instead
+        of toWTFString.
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::JSJavaScriptCallFrame::evaluateWithScopeExtension): Ditto.
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::getPreview): Use asString/tryGetValue, instead of the
+        peculiar getString(nullptr) that was here before.
+        * jsc.cpp:
+        (functionGetGetterSetter): Use asString/toIdentifier instead of the much less efficient
+        toWTFString/Identifier::fromString.
+        (functionIsRope): Use asString instead of jsCast<JSString*>; same thing, but we should
+        prefer the asString function, since it exists.
+        (functionFindTypeForExpression): Use asString/value instead of getString.
+        (functionHasBasicBlockExecuted): Ditto.
+        (functionBasicBlockExecutionCount): Ditto.
+        (functionCreateBuiltin): Use asString/value instead of toWTFString and removed
+        unneeded RETURN_IF_EXCEPTION.
+        (valueWithTypeOfWasmValue): Use asString instead of jsCast<String*>.
+        (box): Ditto.
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate): Use asString/values instead of getString.
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue): Tweaked formatting.
+
+        * runtime/HashMapImpl.h:
+        (JSC::jsMapHash): Changed this function to use asString/value.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dumpInContextAssumingStructure): Use asString instead of
+        jsCast<JSString*>.
+        (JSC::JSValue::dumpForBacktrace): Ditto.
+        * runtime/JSCJSValueInlines.h:
+        (JSC::toPreferredPrimitiveType): Ditto.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval): Use asString/value instead of toWTFString.
+
+        * runtime/JSString.cpp:
+        (JSC::JSString::destroy): Streamlined by removing local variable.
+        (JSC::JSString::estimatedSize): Use asString instead of jsCast<JSString*>.
+        (JSC::JSString::visitChildren): Ditto.
+        (JSC::JSString::toThis): Ditto.
+        * runtime/JSString.h:
+        (JSC::JSValue::toString): Ditto.
+        (JSC::JSValue::toStringOrNull): Ditto.
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncValueOf): Ditto.
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncToString): Ditto.
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncRepeatCharacter): Ditto.
+        (JSC::stringProtoFuncSubstr): Ditto.
+        (JSC::builtinStringSubstrInternal): Simplified assertion by removing local variable.
+
 2016-12-15  Keith Miller  <keith_miller@apple.com>
 
         Fix validation of non-void if blocks with no else

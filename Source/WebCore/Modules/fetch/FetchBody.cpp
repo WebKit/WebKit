@@ -62,7 +62,7 @@ std::optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC
     }
     if (value.isString()) {
         contentType = HTTPHeaderValues::textPlainContentType();
-        return FetchBody(value.toWTFString(&state));
+        return FetchBody(String { asString(value)->value(&state) });
     }
     if (value.inherits(JSURLSearchParams::info())) {
         contentType = HTTPHeaderValues::formURLEncodedContentType();

@@ -61,7 +61,7 @@ static RefPtr<InspectorValue> jsToInspectorValue(ExecState& scriptState, JSValue
     if (value.isNumber() && value.isAnyInt())
         return InspectorValue::create(static_cast<int>(value.asAnyInt()));
     if (value.isString())
-        return InspectorValue::create(value.getString(&scriptState));
+        return InspectorValue::create(asString(value)->value(&scriptState));
 
     if (value.isObject()) {
         if (isJSArray(value)) {

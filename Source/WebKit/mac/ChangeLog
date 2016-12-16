@@ -1,3 +1,16 @@
+2016-12-15  Darin Adler  <darin@apple.com>
+
+        Use asString instead of toWTFString, toString, or getString when we already checked isString
+        https://bugs.webkit.org/show_bug.cgi?id=165895
+
+        Reviewed by Yusuke Suzuki.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray): Use asString/value instead of
+        toWTFString.
+        * WebView/WebView.mm:
+        (aeDescFromJSValue): Use asString/value instead of getString.
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Make sure HTML validation bubble's state is updated after layout

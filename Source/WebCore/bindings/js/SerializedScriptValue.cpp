@@ -749,8 +749,7 @@ private:
         }
 
         if (value.isString()) {
-            String str = asString(value)->value(m_exec);
-            dumpString(str);
+            dumpString(asString(value)->value(m_exec));
             return true;
         }
 

@@ -1,3 +1,13 @@
+2016-12-15  Darin Adler  <darin@apple.com>
+
+        Use asString instead of toWTFString, toString, or getString when we already checked isString
+        https://bugs.webkit.org/show_bug.cgi?id=165895
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant): Use asString/value instead of toWTFString.
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Make sure HTML validation bubble's state is updated after layout

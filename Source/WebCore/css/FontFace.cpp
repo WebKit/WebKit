@@ -57,7 +57,7 @@ ExceptionOr<Ref<FontFace>> FontFace::create(JSC::ExecState& state, Document& doc
         return setFamilyResult.releaseException();
 
     if (source.isString()) {
-        auto value = FontFace::parseString(source.getString(&state), CSSPropertySrc);
+        auto value = FontFace::parseString(asString(source)->value(&state), CSSPropertySrc);
         if (!is<CSSValueList>(value.get()))
             return Exception { SYNTAX_ERR };
         CSSFontFace::appendSources(result->backing(), downcast<CSSValueList>(*value), &document, false);
