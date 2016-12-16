@@ -1,3 +1,19 @@
+2016-12-16  Andy Estes  <aestes@apple.com>
+
+        Add a setting to suppress keyboard input during provisional navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165830
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/navigation/keyboard-events-during-provisional-navigation-expected.txt: Added.
+        * http/tests/navigation/keyboard-events-during-provisional-navigation.html: Added.
+        * http/tests/navigation/resources/keyboard-events-after-navigation.html: Added.
+        * http/tests/navigation/resources/keyboard-events-test.js: Added.
+        (runTest.eventHandler):
+        (runTest):
+        * http/tests/navigation/resources/never-respond.php: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-16  Chris Dumez  <cdumez@apple.com>
 
         HTML form validation bubble should be dismissed on navigation

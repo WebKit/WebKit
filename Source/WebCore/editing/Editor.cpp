@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2008, 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -573,6 +573,9 @@ bool Editor::tryDHTMLPaste()
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
+    if (m_frame.loader().shouldSuppressKeyboardInput() && action == EditorInsertActionTyped)
+        return false;
+
     return client() && client()->shouldInsertText(text, range, action);
 }
 

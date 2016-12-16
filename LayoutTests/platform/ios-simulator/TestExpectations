@@ -355,6 +355,7 @@ fast/shadow-dom/activate-over-slotted-content.html [ Skip ]
 fast/shadow-dom/hover-over-slotted-content.html [ Skip ]
 fast/events/keyboardevent-key.html [ Skip ]
 fast/events/keyboardevent-code.html [ Skip ]
+http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]

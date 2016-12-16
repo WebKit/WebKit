@@ -48,8 +48,6 @@ public:
     InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow*, const String& data, RefPtr<DataTransfer>&&, const Vector<RefPtr<StaticRange>>& targetRanges, int detail);
     InputEvent(const AtomicString& eventType, const Init&, IsTrusted);
 
-    virtual ~InputEvent() { }
-
     bool isInputEvent() const override { return true; }
     EventInterface eventInterface() const final { return InputEventInterfaceType; }
     const String& inputType() const { return m_inputType; }
@@ -65,3 +63,5 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_EVENT(InputEvent)

@@ -491,4 +491,6 @@ enum EventThrottlingBehavior {
 
     [Conditional=POINTER_LOCK] boolean pageHasPendingPointerLock();
     [Conditional=POINTER_LOCK] boolean pageHasPointerLock();
+
+    sequence<DOMString> accessKeyModifiers();
 };

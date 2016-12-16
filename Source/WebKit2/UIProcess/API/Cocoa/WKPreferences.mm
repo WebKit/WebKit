@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -505,6 +505,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 #if ENABLE(APPLE_PAY)
     _preferences->setApplePayCapabilityDisclosureAllowed(applePayCapabilityDisclosureAllowed);
 #endif
+}
+
+- (BOOL)_shouldSuppressKeyboardInputDuringProvisionalNavigation
+{
+    return _preferences->shouldSuppressKeyboardInputDuringProvisionalNavigation();
+}
+
+- (void)_setShouldSuppressKeyboardInputDuringProvisionalNavigation:(BOOL)shouldSuppress
+{
+    _preferences->setShouldSuppressKeyboardInputDuringProvisionalNavigation(shouldSuppress);
 }
 
 @end

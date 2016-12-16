@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPreferencesDefinitions_h
-#define WebPreferencesDefinitions_h
+#pragma once
 
 #if PLATFORM(GTK)
 #define DEFAULT_WEBKIT_TABSTOLINKS_ENABLED true
@@ -248,6 +247,7 @@
     macro(EncryptedMediaAPIEnabled, encryptedMediaAPIEnabled, Bool, bool, false, "", "") \
     macro(IntersectionObserverEnabled, intersectionObserverEnabled, Bool, bool, false, "Intersection Observer", "Enable Intersection Observer support") \
     macro(InteractiveFormValidationEnabled, interactiveFormValidationEnabled, Bool, bool, DEFAULT_HTML_INTERACTIVE_FORM_VALIDATION_ENABLED, "HTML Interactive Form Validation", "HTML interactive form validation") \
+    macro(ShouldSuppressKeyboardInputDuringProvisionalNavigation, shouldSuppressKeyboardInputDuringProvisionalNavigation, Bool, bool, false, "", "") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
@@ -382,5 +382,3 @@
     FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE(macro) \
     \
 
-
-#endif // WebPreferencesDefinitions_h

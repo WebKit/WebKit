@@ -453,6 +453,10 @@ WK_EXPORT bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetSubtleCryptoEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetSubtleCryptoEnabled(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

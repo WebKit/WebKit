@@ -519,6 +519,8 @@ public:
     bool pageHasPointerLock() const;
 #endif
 
+    Vector<String> accessKeyModifiers() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

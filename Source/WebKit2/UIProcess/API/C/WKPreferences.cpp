@@ -1630,3 +1630,13 @@ bool WKPreferencesGetSubtleCryptoEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->subtleCryptoEnabled();
 }
+
+void WKPreferencesSetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setShouldSuppressKeyboardInputDuringProvisionalNavigation(flag);
+}
+
+bool WKPreferencesGetShouldSuppressKeyboardInputDuringProvisionalNavigation(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldSuppressKeyboardInputDuringProvisionalNavigation();
+}

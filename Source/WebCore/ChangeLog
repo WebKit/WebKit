@@ -1,3 +1,49 @@
+2016-12-16  Andy Estes  <aestes@apple.com>
+
+        Add a setting to suppress keyboard input during provisional navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165830
+
+        Reviewed by Brent Fulgham.
+
+        Added a setting that suppresses keyboard input during provisional navigation. When the
+        setting is enabled, DOM propogation of keyboard input events (KeyboardEvents,
+        CompositionEvents, InputEvents, and some TextEvents) is suppressed, and text insertion is
+        disabled in the editor.
+
+        Non-editing default event handling still occurs, for instance keyboard scrolling, access
+        keys, and focus navigation.
+
+        Test: http/tests/navigation/keyboard-events-during-provisional-navigation.html
+
+        * dom/CompositionEvent.h: Added a type trait specialization.
+        * dom/EventDispatcher.cpp:
+        (WebCore::shouldSuppressEventDispatchInDOM): Added. Returns true if the event is trusted,
+        FrameLoader::shouldSuppressKeyboardInput() returns true, and the event is a
+        CompositionEvent, InputEvent, KeyboardEvent, or keyboard/composition TextEvent.
+        (WebCore::EventDispatcher::dispatchEvent): Called stopPropogation() on the event if
+        shouldSuppressEventDispatchInDOM() returns true.
+        * dom/InputEvent.h: Removed the inline no-op destructor so that DataTransfer does not need
+        to be a complete type in every translation unit that includes this header. Added a type
+        trait specialization.
+        * dom/TextEvent.h: Added isKeyboard() to determine if m_inputType is TextEventInputKeyboard.
+        * editing/Editor.cpp:
+        (WebCore::Editor::shouldInsertText): Returned false if
+        FrameLoader::shouldSuppressKeyboardInput() returns true and the action is
+        EditorInsertActionTyped.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldSuppressKeyboardInput): Added. Returns true if
+        Settings::shouldSuppressKeyboardInputDuringProvisionalNavigation() returns true and the
+        state is FrameStateProvisional.
+        * loader/FrameLoader.h: Declared shouldSuppressKeyboardInput().
+        * page/EventHandler.h: Exported accessKeyModifiers().
+        * page/Settings.in: Defined shouldSuppressKeyboardInputDuringProvisionalNavigation with an
+        initial value of false.
+        * testing/Internals.cpp:
+        (WebCore::Internals::accessKeyModifiers): Added. Returns a vector of strings representing
+        the access key modifiers.
+        * testing/Internals.h: Declared accessKeyModifiers().
+        * testing/Internals.idl: Exposed accessKeyModifiers() on the internals object.
+
 2016-12-16  Brady Eidson  <beidson@apple.com>
 
         More SQLiteIDBCursor refactoring.

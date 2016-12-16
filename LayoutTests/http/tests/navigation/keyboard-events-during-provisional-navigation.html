@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <a href="resources/keyboard-events-after-navigation.html" accesskey="z"></a>
+    <script src="resources/keyboard-events-test.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            internals.settings.setShouldSuppressKeyboardInputDuringProvisionalNavigation(true);
+        }
+
+        function waitForProvisionalNavigation(completionHandler)
+        {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState !== this.DONE)
+                    return;
+                window.setTimeout(function() {
+                    completionHandler();
+                }, 0);
+            };
+            xhr.open("GET", "resources/never-respond.php");
+            xhr.send();
+
+            window.location = "resources/never-respond.php";
+        }
+
+        waitForProvisionalNavigation(function() {
+            console.log("Provisional navigation started.");
+            console.log("No trusted events should be logged and the input element should have the value \"\".");
+            runTest();
+
+            console.log("Pressing \"z\" with access key modifiers should navigate to resources/keyboard-events-after-navigation.html.");
+            eventSender.keyDown("z", internals.accessKeyModifiers());
+        });
+    </script>
+</body>
+</html>

@@ -3717,4 +3717,9 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
     return frame;
 }
 
+bool FrameLoader::shouldSuppressKeyboardInput() const
+{
+    return m_frame.settings().shouldSuppressKeyboardInputDuringProvisionalNavigation() && m_state == FrameStateProvisional;
+}
+
 } // namespace WebCore

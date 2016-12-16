@@ -3534,5 +3534,31 @@ bool Internals::pageHasPointerLock() const
 }
 #endif
 
+Vector<String> Internals::accessKeyModifiers() const
+{
+    Vector<String> accessKeyModifierStrings;
+
+    for (auto modifier : EventHandler::accessKeyModifiers()) {
+        switch (modifier) {
+        case PlatformEvent::Modifier::AltKey:
+            accessKeyModifierStrings.append(ASCIILiteral("altKey"));
+            break;
+        case PlatformEvent::Modifier::CtrlKey:
+            accessKeyModifierStrings.append(ASCIILiteral("ctrlKey"));
+            break;
+        case PlatformEvent::Modifier::MetaKey:
+            accessKeyModifierStrings.append(ASCIILiteral("metaKey"));
+            break;
+        case PlatformEvent::Modifier::ShiftKey:
+            accessKeyModifierStrings.append(ASCIILiteral("shiftKey"));
+            break;
+        case PlatformEvent::Modifier::CapsLockKey:
+            accessKeyModifierStrings.append(ASCIILiteral("capsLockKey"));
+            break;
+        }
+    }
+
+    return accessKeyModifierStrings;
+}
 
 } // namespace WebCore

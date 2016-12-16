@@ -1,3 +1,25 @@
+2016-12-16  Andy Estes  <aestes@apple.com>
+
+        Add a setting to suppress keyboard input during provisional navigation
+        https://bugs.webkit.org/show_bug.cgi?id=165830
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPreferencesDefinitions.h: Defined
+        shouldSuppressKeyboardDOMEventsDuringProvisionalNavigation.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetShouldSuppressKeyboardInputDuringProvisionalNavigation): Added.
+        (WKPreferencesGetShouldSuppressKeyboardInputDuringProvisionalNavigation): Added.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h: Declared a getter and setter for the new
+        preference.
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _shouldSuppressKeyboardInputDuringProvisionalNavigation]): Added.
+        (-[WKPreferences _setShouldSuppressKeyboardInputDuringProvisionalNavigation:]): Added.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Declared a property for the new preference.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Mapped the new preference to its corresponding
+        WebCore::Setting.
+
 2016-12-16  Chris Dumez  <cdumez@apple.com>
 
         HTML form validation bubble should be dismissed on navigation

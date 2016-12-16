@@ -60,6 +60,7 @@ namespace WebCore {
         bool isDrop() const { return m_inputType == TextEventInputDrop; }
         bool isDictation() const { return m_inputType == TextEventInputDictation; }
         bool isAutocompletion() const { return m_inputType == TextEventInputAutocompletion; }
+        bool isKeyboard() const { return m_inputType == TextEventInputKeyboard; }
 
         bool shouldSmartReplace() const { return m_shouldSmartReplace; }
         bool shouldMatchStyle() const { return m_shouldMatchStyle; }
