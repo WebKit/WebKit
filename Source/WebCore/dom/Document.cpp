@@ -4593,8 +4593,7 @@ void Document::suspend(ActiveDOMObject::ReasonForSuspension reason)
             view->compositor().cancelCompositingLayerUpdate();
     }
 
-    suspendScriptedAnimationControllerCallbacks();
-    suspendActiveDOMObjects(reason);
+    suspendScheduledTasks(reason);
 
     ASSERT(m_frame);
     m_frame->clearTimers();
@@ -4625,8 +4624,7 @@ void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
     m_frame->loader().client().dispatchDidBecomeFrameset(isFrameSet());
     m_frame->animation().resumeAnimationsForDocument(this);
 
-    resumeActiveDOMObjects(reason);
-    resumeScriptedAnimationControllerCallbacks();
+    resumeScheduledTasks(reason);
 
     m_visualUpdatesAllowed = true;
 

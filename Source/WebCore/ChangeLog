@@ -1,3 +1,20 @@
+2016-12-15  Keith Rollin  <krollin@apple.com>
+
+        Refactor Document::suspend/resume
+        https://bugs.webkit.org/show_bug.cgi?id=165921
+
+        Reviewed by Chris Dumez.
+
+        Update Document::suspend to call Document::suspendScheduledTasks
+        rather than duplicating the latter's code within itself. Similar
+        treatment of Document::resume and Document::resumeScheduledTasks.
+
+        No new tests -- no new functionality, just refactoring existing code.
+
+        * dom/Document.cpp:
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+
 2016-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove flex and bison build dependencies; commit generated XPath parser
