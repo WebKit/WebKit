@@ -176,7 +176,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         auto sessionID = _session->sessionID();
         auto challengeCompletionHandler = [completionHandlerCopy, sessionID, authenticationChallenge, taskIdentifier](WebKit::AuthenticationChallengeDisposition disposition, const WebCore::Credential& credential)
         {
-            LOG(NetworkSession, "%llu didReceiveChallenge completionHandler", taskIdentifier);
+            LOG(NetworkSession, "%llu didReceiveChallenge completionHandler %d", taskIdentifier, disposition);
 #if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
             UNUSED_PARAM(sessionID);
             UNUSED_PARAM(authenticationChallenge);
@@ -207,7 +207,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
-    LOG(NetworkSession, "%llu didCompleteWithError", task.taskIdentifier);
+    LOG(NetworkSession, "%llu didCompleteWithError %@", task.taskIdentifier, error);
     auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
     if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials))
         networkDataTask->didCompleteWithError(error);
@@ -253,7 +253,7 @@ static NSURLSessionAuthChallengeDisposition toNSURLSessionAuthChallengeDispositi
         copyTimingData([dataTask _timingData], resourceResponse.networkLoadTiming());
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), [completionHandlerCopy, taskIdentifier](WebCore::PolicyAction policyAction) {
-            LOG(NetworkSession, "%llu didReceiveResponse completionHandler (cancel)", taskIdentifier);
+            LOG(NetworkSession, "%llu didReceiveResponse completionHandler (%d)", taskIdentifier, policyAction);
             completionHandlerCopy(toNSURLSessionResponseDisposition(policyAction));
             Block_release(completionHandlerCopy);
         });
