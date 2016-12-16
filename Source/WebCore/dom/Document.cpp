@@ -4540,8 +4540,7 @@ void Document::setPageCacheState(PageCacheState state)
                 v->resetScrollbarsAndClearContentsSize();
                 if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                     scrollingCoordinator->clearStateTree();
-            } else
-                v->resetScrollbars();
+            }
         }
 
 #if ENABLE(POINTER_LOCK)

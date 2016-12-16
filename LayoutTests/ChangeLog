@@ -1,3 +1,20 @@
+2016-12-16  Andreas Kling  <akling@apple.com>
+
+        Subframes going into page cache don't need to resetScrollbars().
+        <https://webkit.org/b/163750>
+        <rdar://problem/29273020>
+
+        Reviewed by Antti Koivisto.
+
+        Unskip compositing/iframes/page-cache-layer-tree.html on mac-wk1 and fix up the
+        result now that WK2 behaves correctly as well.
+
+        Both DRT and WTR run with scrollbars in "always on" mode, so the correct dimensions
+        for the 300x150 iframe layers here are 285x135.
+
+        * compositing/iframes/page-cache-layer-tree-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+
 2016-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Visual viewports: carets and selection UI are incorrectly positioned when editing fixed elements

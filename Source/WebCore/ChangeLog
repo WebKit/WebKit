@@ -1,3 +1,25 @@
+2016-12-16  Andreas Kling  <akling@apple.com>
+
+        Subframes going into page cache don't need to resetScrollbars().
+        <https://webkit.org/b/163750>
+        <rdar://problem/29273020>
+
+        Reviewed by Antti Koivisto.
+
+        The main frame is the only frame that switches its FrameView when using the page cache,
+        subframes just suspend their DOM and wait around to be either killed or restored.
+
+        Thus there is no reason for subframes to reset their FrameView's scrollbars when going
+        into page cache, since nothing affects them while cached, and their layout should end up
+        identical when restoring.
+
+        This was causing some flakiness with subframe scrollbars jumping between different sizes
+        in when restoring from page cache in macOS/WK1. This change makes the behavior consistent
+        in both WK1 and WK2, and removes the flakiness.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setPageCacheState):
+
 2016-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Visual viewports: carets and selection UI are incorrectly positioned when editing fixed elements
