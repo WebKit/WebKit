@@ -39,7 +39,7 @@ public:
 
 private:
     void updateLogicalWidth() override;
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     const char* renderName() const override { return "RenderMeter"; }
     bool isMeter() const override { return true; }

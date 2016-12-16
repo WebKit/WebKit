@@ -499,11 +499,10 @@ void RenderMultiColumnFlowThread::flowThreadDescendantBoxLaidOut(RenderBox* desc
     }
 }
 
-void RenderMultiColumnFlowThread::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderMultiColumnFlowThread::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     // We simply remain at our intrinsic height.
-    computedValues.m_extent = logicalHeight;
-    computedValues.m_position = logicalTop;
+    return { logicalHeight, logicalTop, ComputedMarginValues() };
 }
 
 LayoutUnit RenderMultiColumnFlowThread::initialLogicalWidth() const

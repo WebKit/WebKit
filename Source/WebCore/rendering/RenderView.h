@@ -57,7 +57,7 @@ public:
 
     void layout() override;
     void updateLogicalWidth() override;
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const override;
 

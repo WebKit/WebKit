@@ -402,10 +402,9 @@ void RenderMultiColumnSet::layout()
     }
 }
 
-void RenderMultiColumnSet::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderMultiColumnSet::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
-    computedValues.m_extent = m_availableColumnHeight;
-    computedValues.m_position = logicalTop;
+    return { m_availableColumnHeight, logicalTop, ComputedMarginValues() };
 }
 
 LayoutUnit RenderMultiColumnSet::calculateMaxColumnHeight() const

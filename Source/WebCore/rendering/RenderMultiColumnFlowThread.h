@@ -113,7 +113,7 @@ private:
     void flowThreadDescendantInserted(RenderObject&) override;
     void flowThreadRelativeWillBeRemoved(RenderObject&) override;
     void flowThreadDescendantBoxLaidOut(RenderBox*) override;
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
     LayoutUnit initialLogicalWidth() const override;
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;

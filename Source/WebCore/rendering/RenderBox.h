@@ -335,25 +335,12 @@ public:
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const;
 
     struct ComputedMarginValues {
-        ComputedMarginValues()
-            : m_before(0)
-            , m_after(0)
-            , m_start(0)
-            , m_end(0)
-        {
-        }
         LayoutUnit m_before;
         LayoutUnit m_after;
         LayoutUnit m_start;
         LayoutUnit m_end;
     };
     struct LogicalExtentComputedValues {
-        LogicalExtentComputedValues()
-            : m_extent(0)
-            , m_position(0)
-        {
-        }
-
         LayoutUnit m_extent;
         LayoutUnit m_position;
         ComputedMarginValues m_margins;
@@ -399,7 +386,7 @@ public:
 
     virtual void updateLogicalWidth();
     virtual void updateLogicalHeight();
-    virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const;
+    virtual LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const;
 
     RenderBoxRegionInfo* renderBoxRegionInfo(RenderRegion*, RenderBoxRegionInfoFlags = CacheRenderBoxRegionInfo) const;
     void computeLogicalWidthInRegion(LogicalExtentComputedValues&, RenderRegion* = nullptr) const;

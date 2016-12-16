@@ -57,10 +57,9 @@ void RenderProgress::updateFromElement()
     RenderBlockFlow::updateFromElement();
 }
 
-void RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
-    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
-
+    auto computedValues = RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
     LayoutRect frame = frameRect();
     if (isHorizontalWritingMode())
         frame.setHeight(computedValues.m_extent);
@@ -68,6 +67,7 @@ void RenderProgress::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit l
         frame.setWidth(computedValues.m_extent);
     IntSize frameSize = theme().progressBarRectForBounds(*this, snappedIntRect(frame)).size();
     computedValues.m_extent = isHorizontalWritingMode() ? frameSize.height() : frameSize.width();
+    return computedValues;
 }
 
 double RenderProgress::animationProgress() const

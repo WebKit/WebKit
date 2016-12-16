@@ -442,12 +442,11 @@ LayoutUnit RenderFlexibleBox::crossAxisContentExtent() const
 LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHeight)
 {
     if (isColumnFlow()) {
-        LogicalExtentComputedValues computedValues;
         LayoutUnit borderPaddingAndScrollbar = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         if (contentLogicalHeight > LayoutUnit::max() - borderPaddingAndScrollbar)
             contentLogicalHeight -= borderPaddingAndScrollbar;
         LayoutUnit borderBoxLogicalHeight = contentLogicalHeight + borderPaddingAndScrollbar;
-        computeLogicalHeight(borderBoxLogicalHeight, logicalTop(), computedValues);
+        auto computedValues = computeLogicalHeight(borderBoxLogicalHeight, logicalTop());
         if (computedValues.m_extent == LayoutUnit::max())
             return computedValues.m_extent;
         return std::max(LayoutUnit::fromPixel(0), computedValues.m_extent - borderPaddingAndScrollbar);

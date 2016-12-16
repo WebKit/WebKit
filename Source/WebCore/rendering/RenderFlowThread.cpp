@@ -344,8 +344,9 @@ void RenderFlowThread::updateLogicalWidth()
     }
 }
 
-void RenderFlowThread::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderFlowThread::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
+    LogicalExtentComputedValues computedValues;
     computedValues.m_position = logicalTop;
     computedValues.m_extent = 0;
 
@@ -358,8 +359,9 @@ void RenderFlowThread::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, L
 
         // If we reached the maximum size there's no point in going further.
         if (computedValues.m_extent == maxFlowSize)
-            return;
+            return computedValues;
     }
+    return computedValues;
 }
 
 bool RenderFlowThread::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

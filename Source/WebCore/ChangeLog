@@ -1,3 +1,62 @@
+2016-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        Change ::computeLogicalHeight's computedValues out argument to the return value.
+        https://bugs.webkit.org/show_bug.cgi?id=165789
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::computeLogicalHeight):
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp:
+        (WebCore::RenderImageControlsButton::computeLogicalHeight):
+        * html/shadow/mac/ImageControlsRootElementMac.cpp:
+        (WebCore::RenderImageControls::computeLogicalHeight):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        (WebCore::RenderBlock::estimateRegionRangeForBoxChild):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::ComputedMarginValues::ComputedMarginValues): Deleted.
+        (WebCore::RenderBox::LogicalExtentComputedValues::LogicalExtentComputedValues): Deleted.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::computeLogicalHeight):
+        * rendering/RenderMeter.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::computeLogicalHeight):
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::computeLogicalHeight):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::computeLogicalHeight):
+        * rendering/RenderProgress.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeLogicalHeight):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::computeLogicalHeight):
+        * rendering/svg/RenderSVGForeignObject.h:
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Make sure HTML validation bubble's state is updated after layout

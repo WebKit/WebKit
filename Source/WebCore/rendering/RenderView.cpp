@@ -212,9 +212,9 @@ bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& l
     return resultLayer;
 }
 
-void RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit) const
 {
-    computedValues.m_extent = !shouldUsePrintingLayout() ? LayoutUnit(viewLogicalHeight()) : logicalHeight;
+    return { !shouldUsePrintingLayout() ? LayoutUnit(viewLogicalHeight()) : logicalHeight, LayoutUnit(), ComputedMarginValues() };
 }
 
 void RenderView::updateLogicalWidth()

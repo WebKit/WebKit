@@ -43,7 +43,7 @@ public:
 
 private:
     void updateLogicalWidth() override;
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     const char* renderName() const override { return "RenderImageControls"; }
     bool requiresForcedStyleRecalcPropagation() const override { return true; }
@@ -69,15 +69,15 @@ void RenderImageControls::updateLogicalWidth()
     setLogicalWidth(downcast<RenderImage>(*renderer).logicalWidth());
 }
 
-void RenderImageControls::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderImageControls::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
-    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
-
+    auto computedValues = RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
     RenderElement* renderer = element()->shadowHost()->renderer();
     if (!is<RenderImage>(*renderer))
-        return;
+        return computedValues;
 
     computedValues.m_extent = downcast<RenderImage>(*renderer).logicalHeight();
+    return computedValues;
 }
 
 RefPtr<ImageControlsRootElement> ImageControlsRootElement::tryCreate(Document& document)

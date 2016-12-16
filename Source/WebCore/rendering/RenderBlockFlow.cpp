@@ -3933,8 +3933,7 @@ void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildr
     if (RenderMultiColumnFlowThread* flowThread = multiColumnFlowThread()) {
         LayoutUnit newColumnHeight;
         if (hasDefiniteLogicalHeight() || view().frameView().pagination().mode != Pagination::Unpaginated) {
-            LogicalExtentComputedValues computedValues;
-            computeLogicalHeight(LayoutUnit(), logicalTop(), computedValues);
+            auto computedValues = computeLogicalHeight(LayoutUnit(), logicalTop());
             newColumnHeight = std::max<LayoutUnit>(computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(), 0);
             if (flowThread->columnHeightAvailable() != newColumnHeight)
                 relayoutChildren = true;

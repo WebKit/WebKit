@@ -2778,23 +2778,22 @@ static bool shouldFlipBeforeAfterMargins(const RenderStyle& containingBlockStyle
 
 void RenderBox::updateLogicalHeight()
 {
-    LogicalExtentComputedValues computedValues;
-    computeLogicalHeight(logicalHeight(), logicalTop(), computedValues);
-
+    auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
     setLogicalHeight(computedValues.m_extent);
     setLogicalTop(computedValues.m_position);
     setMarginBefore(computedValues.m_margins.m_before);
     setMarginAfter(computedValues.m_margins.m_after);
 }
 
-void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
+    LogicalExtentComputedValues computedValues;
     computedValues.m_extent = logicalHeight;
     computedValues.m_position = logicalTop;
 
     // Cell height is managed by the table and inline non-replaced elements do not support a height property.
     if (isTableCell() || (isInline() && !isReplaced()))
-        return;
+        return computedValues;
 
     Length h;
     if (isOutOfFlowPositioned())
@@ -2818,7 +2817,7 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_after : computedValues.m_margins.m_before,
                     shouldFlipBeforeAfter ? computedValues.m_margins.m_before : computedValues.m_margins.m_after);
             }
-            return;
+            return computedValues;
         }
 
         // FIXME: Account for block-flow in flexible boxes.
@@ -2902,6 +2901,7 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
             computedValues.m_extent = std::max(computedValues.m_extent, visibleHeight - marginsBordersPadding);
         }
     }
+    return computedValues;
 }
 
 std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
@@ -3039,8 +3039,7 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length
     } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
         // Don't allow this to affect the block' height() member variable, since this
         // can get called while the block is still laying out its kids.
-        LogicalExtentComputedValues computedValues;
-        cb->computeLogicalHeight(cb->logicalHeight(), 0, computedValues);
+        auto computedValues = cb->computeLogicalHeight(cb->logicalHeight(), 0);
         availableHeight = computedValues.m_extent - cb->borderAndPaddingLogicalHeight() - cb->scrollbarLogicalHeight();
     } else if (cb->isRenderView())
         availableHeight = view().pageOrViewLogicalHeight();
@@ -3160,8 +3159,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
                 && !(container->style().top().isAuto() || container->style().bottom().isAuto())) {
                 ASSERT_WITH_SECURITY_IMPLICATION(container->isRenderBlock());
                 auto& block = downcast<RenderBlock>(*container);
-                LogicalExtentComputedValues computedValues;
-                block.computeLogicalHeight(block.logicalHeight(), 0, computedValues);
+                auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
                 LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
                 LayoutUnit newHeight = block.adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
                 return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newHeight));
@@ -3233,8 +3231,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     // https://bugs.webkit.org/show_bug.cgi?id=46500
     if (is<RenderBlock>(*this) && isOutOfFlowPositioned() && style().height().isAuto() && !(style().top().isAuto() || style().bottom().isAuto())) {
         RenderBlock& block = const_cast<RenderBlock&>(downcast<RenderBlock>(*this));
-        LogicalExtentComputedValues computedValues;
-        block.computeLogicalHeight(block.logicalHeight(), 0, computedValues);
+        auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
         LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
         return adjustContentBoxLogicalHeightForBoxSizing(newContentHeight);
     }

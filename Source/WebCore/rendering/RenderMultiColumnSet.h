@@ -135,7 +135,7 @@ private:
     bool isRenderMultiColumnSet() const override { return true; }
     void layout() override;
 
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     void paintObject(PaintInfo&, const LayoutPoint&) override { }
 

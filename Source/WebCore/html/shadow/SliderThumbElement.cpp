@@ -119,14 +119,14 @@ public:
     }
 
 public:
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    RenderBox::LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
 private:
     void layout() override;
     bool isFlexibleBoxImpl() const override { return true; }
 };
 
-void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {
     ASSERT(element()->shadowHost());
     auto& input = downcast<HTMLInputElement>(*element()->shadowHost());
@@ -146,13 +146,12 @@ void RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, Layou
         if (zoomFactor != 1.0)
             trackHeight *= zoomFactor;
 
-        RenderBox::computeLogicalHeight(trackHeight, logicalTop, computedValues);
-        return;
+        return RenderBox::computeLogicalHeight(trackHeight, logicalTop);
     }
 #endif
     if (isVertical)
         logicalHeight = RenderSlider::defaultTrackLength;
-    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
+    return RenderBox::computeLogicalHeight(logicalHeight, logicalTop);
 }
 
 void RenderSliderContainer::layout()

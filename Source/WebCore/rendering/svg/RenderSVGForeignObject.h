@@ -62,7 +62,7 @@ private:
     const char* renderName() const override { return "RenderSVGForeignObject"; }
 
     void updateLogicalWidth() override;
-    void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     const AffineTransform& localToParentTransform() const override;
     AffineTransform localTransform() const override { return m_localTransform; }

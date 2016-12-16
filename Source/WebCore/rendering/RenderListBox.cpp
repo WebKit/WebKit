@@ -258,10 +258,10 @@ LayoutUnit RenderListBox::listHeight() const
     return itemHeight() * numItems() - rowSpacing;
 }
 
-void RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
     LayoutUnit height = itemHeight() * size() - rowSpacing + verticalBorderAndPaddingExtent();
-    RenderBox::computeLogicalHeight(height, logicalTop, computedValues);
+    return RenderBox::computeLogicalHeight(height, logicalTop);
 }
 
 int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const

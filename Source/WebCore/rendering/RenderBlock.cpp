@@ -2793,9 +2793,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         LayoutUnit childMinPreferredLogicalWidth, childMaxPreferredLogicalWidth;
         if (is<RenderBox>(*child) && child->isHorizontalWritingMode() != isHorizontalWritingMode()) {
             auto& childBox = downcast<RenderBox>(*child);
-            LogicalExtentComputedValues computedValues;
-            childBox.computeLogicalHeight(childBox.borderAndPaddingLogicalHeight(), 0, computedValues);
-            childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth = computedValues.m_extent;
+            childMinPreferredLogicalWidth = childMaxPreferredLogicalWidth = childBox.computeLogicalHeight(childBox.borderAndPaddingLogicalHeight(), 0).m_extent;
         } else {
             childMinPreferredLogicalWidth = child->minPreferredLogicalWidth();
             childMaxPreferredLogicalWidth = child->maxPreferredLogicalWidth();
@@ -3639,9 +3637,7 @@ void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
         return;
     }
 
-    LogicalExtentComputedValues estimatedValues;
-    box.computeLogicalHeight(RenderFlowThread::maxLogicalHeight(), logicalTopForChild(box), estimatedValues);
-
+    auto estimatedValues = box.computeLogicalHeight(RenderFlowThread::maxLogicalHeight(), logicalTopForChild(box));
     LayoutUnit offsetFromLogicalTopOfFirstRegion = box.offsetFromLogicalTopOfFirstPage();
     RenderRegion* startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
     RenderRegion* endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + estimatedValues.m_extent, true);

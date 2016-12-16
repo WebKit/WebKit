@@ -122,13 +122,12 @@ void RenderSVGForeignObject::updateLogicalWidth()
     setWidth(static_cast<int>(roundf(m_viewport.width())));
 }
 
-void RenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+RenderBox::LogicalExtentComputedValues RenderSVGForeignObject::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop) const
 {
     // FIXME: Investigate in size rounding issues
     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     // FIXME: Is this correct for vertical writing mode?
-    computedValues.m_extent = static_cast<int>(roundf(m_viewport.height()));
-    computedValues.m_position = logicalTop;
+    return { static_cast<int>(roundf(m_viewport.height())), logicalTop, ComputedMarginValues() };
 }
 
 void RenderSVGForeignObject::layout()
