@@ -9,5 +9,5 @@ layer at (0,0) size 800x52
         RenderInline {SPAN} at (0,0) size 21x18
           RenderText {#text} at (151,0) size 21x18
             text run at (151,0) width 21: "not"
-        RenderText {#text} at (0,18) size 134x18
-          text run at (0,18) width 134: "even be tolerated."
+        RenderText {#text} at (0,18) size 154x18
+          text run at (0,18) width 154: "even be tolerated."

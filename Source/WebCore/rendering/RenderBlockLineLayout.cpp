@@ -486,9 +486,9 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     
     // Since we don't cache glyph overflows, we need to re-measure the run if
     // the style is linebox-contain: glyph.
-    
     if (!lineBox->fitsToGlyphs() && canUseSimpleFontCodePath) {
         unsigned lastEndOffset = run->m_start;
+        bool atFirstWordMeasurement = true;
         for (size_t i = 0, size = wordMeasurements.size(); i < size && lastEndOffset < run->m_stop; ++i) {
             WordMeasurement& wordMeasurement = wordMeasurements[i];
             if (wordMeasurement.width <= 0 || wordMeasurement.startOffset == wordMeasurement.endOffset)
@@ -503,10 +503,13 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
                 measuredWidth += renderer.width(wordMeasurement.startOffset, wordLength, xPos + measuredWidth, lineInfo.isFirstLine(),
                     &wordMeasurement.fallbackFonts, &overflow);
                 UChar c = renderer.characterAt(wordMeasurement.startOffset);
-                if (i > 0 && wordLength == 1 && (c == ' ' || c == '\t'))
+                // renderer.width() omits word-spacing value for leading whitespace, so let's just add it back here.
+                if (!atFirstWordMeasurement && (c == ' ' || c == '\t'))
                     measuredWidth += renderer.style().fontCascade().wordSpacing();
             } else
                 measuredWidth += wordMeasurement.width;
+            atFirstWordMeasurement = false;
+
             if (!wordMeasurement.fallbackFonts.isEmpty()) {
                 HashSet<const Font*>::const_iterator end = wordMeasurement.fallbackFonts.end();
                 for (HashSet<const Font*>::const_iterator it = wordMeasurement.fallbackFonts.begin(); it != end; ++it)

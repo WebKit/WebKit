@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 14x18
           RenderText {#text} at (125,1) size 14x18
             text run at (125,1) width 14: "ab"
-        RenderText {#text} at (138,1) size 32x18
-          text run at (138,1) width 32: "c abc"
+        RenderText {#text} at (138,1) size 132x18
+          text run at (138,1) width 132: "c abc"
       RenderBlock {P} at (0,186) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "
@@ -32,8 +32,8 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 7x18
           RenderText {#text} at (132,1) size 7x18
             text run at (132,1) width 7: "b"
-        RenderText {#text} at (138,1) size 32x18
-          text run at (138,1) width 32: "c abc"
+        RenderText {#text} at (138,1) size 132x18
+          text run at (138,1) width 132: "c abc"
       RenderBlock {P} at (0,224) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "
@@ -48,24 +48,24 @@ layer at (0,0) size 800x600
         RenderText {#text} at (244,1) size 26x18
           text run at (244,1) width 26: " abc"
       RenderBlock {P} at (0,262) size 784x20
-        RenderText {#text} at (0,1) size 33x18
-          text run at (0,1) width 33: "abc a"
+        RenderText {#text} at (0,1) size 133x18
+          text run at (0,1) width 133: "abc a"
         RenderInline {SPAN} at (0,0) size 7x18
-          RenderText {#text} at (32,1) size 7x18
-            text run at (32,1) width 7: "b"
+          RenderText {#text} at (132,1) size 7x18
+            text run at (132,1) width 7: "b"
         RenderInline {SPAN} at (0,0) size 7x18
-          RenderText {#text} at (38,1) size 7x18
-            text run at (38,1) width 7: "c"
-        RenderText {#text} at (144,1) size 26x18
-          text run at (144,1) width 26: " abc"
+          RenderText {#text} at (138,1) size 7x18
+            text run at (138,1) width 7: "c"
+        RenderText {#text} at (244,1) size 26x18
+          text run at (244,1) width 26: " abc"
       RenderBlock {P} at (0,300) size 784x20
-        RenderText {#text} at (0,1) size 33x18
-          text run at (0,1) width 33: "abc a"
+        RenderText {#text} at (0,1) size 133x18
+          text run at (0,1) width 133: "abc a"
         RenderInline {SPAN} at (0,0) size 7x18
-          RenderText {#text} at (32,1) size 7x18
-            text run at (32,1) width 7: "b"
-        RenderText {#text} at (38,1) size 32x18
-          text run at (38,1) width 32: "c abc"
+          RenderText {#text} at (132,1) size 7x18
+            text run at (132,1) width 7: "b"
+        RenderText {#text} at (138,1) size 132x18
+          text run at (138,1) width 132: "c abc"
       RenderBlock {P} at (0,338) size 784x20
         RenderText {#text} at (0,1) size 126x18
           text run at (0,1) width 126: "abc "

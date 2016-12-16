@@ -47,11 +47,11 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 12x18
           RenderText {#text} at (3,3) size 12x18
             text run at (3,3) width 12: "A"
-        RenderText {#text} at (64,3) size 55x18
-          text run at (64,3) width 55: " "
+        RenderText {#text} at (64,3) size 5x18
+          text run at (64,3) width 5: " "
         RenderInline {SPAN} at (0,0) size 12x18
-          RenderText {#text} at (118,3) size 12x18
-            text run at (118,3) width 12: "B"
+          RenderText {#text} at (68,3) size 12x18
+            text run at (68,3) width 12: "B"
       RenderBlock (floating) {DIV} at (0,230) size 83x24 [border: (3px solid #000000)]
         RenderInline {SPAN} at (0,0) size 12x18
           RenderText {#text} at (3,3) size 12x18

@@ -1,3 +1,24 @@
+2016-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        text-align: justify and word-spacing combine to overflow column
+        https://bugs.webkit.org/show_bug.cgi?id=165796
+        rdar://problem/29672168
+
+        Reviewed by Myles C. Maxfield.
+
+        The value of the word-spacing property is not applied on the inline-tree boxes (normal line layout)
+        with kerning enabled. It causes hittest failures and selection/rendering glitches.
+        We normally use the pre-computed 'WordMeasurements' values to figure out the run widths. However
+        with kerning on, in some cases we need to re-measure a certain part of the text by calling RenderText::width().
+        This function omits the word-spacing value for leading whitespace, so when this text fragment starts with a whitespace,
+        (while it's not at the beginning of the run) we have to manually add the word-spacing value back.
+        r146087 added this logic with the restriction of applying it only to whitespace-only runs.
+
+        Test: fast/css/word-spacing-with-normal-layout.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+
 2016-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Stop reinterpret_casting UBreakIterators to the undefined type TextBreakIterator

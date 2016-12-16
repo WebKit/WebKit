@@ -1,3 +1,22 @@
+2016-12-15  Zalan Bujtas  <zalan@apple.com>
+
+        text-align: justify and word-spacing combine to overflow column
+        https://bugs.webkit.org/show_bug.cgi?id=165796
+        rdar://problem/29672168
+
+        Reviewed by Myles C. Maxfield.
+
+        These are progressions.
+
+        * fast/css/word-spacing-with-normal-layout-expected.html: Added.
+        * fast/css/word-spacing-with-normal-layout.html: Added.
+        * platform/mac/css1/text_properties/word_spacing-expected.txt:
+        * platform/mac/fast/css/word-space-extra-expected.txt:
+        * platform/mac/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/mac/fast/text/word-space-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.txt:
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Make sure HTML validation bubble's state is updated after layout
