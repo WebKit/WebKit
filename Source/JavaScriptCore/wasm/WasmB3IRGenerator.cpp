@@ -700,8 +700,6 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
 
     Type returnType = signature->returnType;
 
-    size_t callIndex = m_unlinkedWasmToWasmCalls.size();
-    m_unlinkedWasmToWasmCalls.grow(callIndex + 1);
     result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(returnType),
         [&] (PatchpointValue* patchpoint) {
             patchpoint->effects.writesPinned = true;
@@ -713,7 +711,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
                 CCallHelpers::Call call = jit.call();
 
                 jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    m_unlinkedWasmToWasmCalls[callIndex] = { linkBuffer.locationOf(call), functionIndex };
+                    m_unlinkedWasmToWasmCalls.append({ linkBuffer.locationOf(call), functionIndex });
                 });
             });
         });

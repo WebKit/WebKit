@@ -1,3 +1,16 @@
+2016-12-15  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should not create empty unlinked callsites
+        https://bugs.webkit.org/show_bug.cgi?id=165933
+
+        Reviewed by Mark Lam.
+
+        Wasm would create holes in the unlinked callsite vector if B3 was able to
+        eliminate the callsite.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCall):
+
 2016-12-15  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: improve compilation error messages
