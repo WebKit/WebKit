@@ -23,48 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSApplePayShippingMethodSelectedEvent.h"
+#pragma once
 
 #if ENABLE(APPLE_PAY)
 
-#include <runtime/JSCInlines.h>
-#include <runtime/ObjectConstructor.h>
-#include <wtf/text/StringBuilder.h>
-
-using namespace JSC;
+#include <wtf/Optional.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static JSValue toJS(ExecState& state, const PaymentRequest::ShippingMethod& shippingMethod)
-{
-    JSObject* object = constructEmptyObject(&state);
-
-    object->putDirect(state.vm(), Identifier::fromString(&state, "label"), jsString(&state, shippingMethod.label));
-    object->putDirect(state.vm(), Identifier::fromString(&state, "detail"), jsString(&state, shippingMethod.detail));
-
-    StringBuilder amountString;
-    amountString.appendNumber(shippingMethod.amount / 100);
-    amountString.appendLiteral(".");
-
-    unsigned decimals = shippingMethod.amount % 100;
-    if (decimals < 10)
-        amountString.appendLiteral("0");
-    amountString.appendNumber(decimals);
-    object->putDirect(state.vm(), Identifier::fromString(&state, "amount"), jsString(&state, amountString.toString()));
-
-    object->putDirect(state.vm(), Identifier::fromString(&state, "identifier"), jsString(&state, shippingMethod.identifier));
-
-    return object;
-}
-
-JSValue JSApplePayShippingMethodSelectedEvent::shippingMethod(ExecState& exec) const
-{
-    if (!m_shippingMethod)
-        m_shippingMethod.set(exec.vm(), this, toJS(exec, wrapped().shippingMethod()));
-
-    return m_shippingMethod.get();
-}
+struct ApplePayPaymentContact {
+    String phoneNumber;
+    String emailAddress;
+    String givenName;
+    String familyName;
+    std::optional<Vector<String>> addressLines;
+    String locality;
+    String postalCode;
+    String administrativeArea;
+    String country;
+    String countryCode;
+};
 
 }
 

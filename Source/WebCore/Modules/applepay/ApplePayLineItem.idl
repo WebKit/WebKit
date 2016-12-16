@@ -23,26 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSApplePayPaymentMethodSelectedEvent.h"
+[
+    Conditional=APPLE_PAY,
+] enum ApplePayLineItemType {
+    "pending",
+    "final"
+};
 
-#if ENABLE(APPLE_PAY)
-
-#include <heap/HeapInlines.h>
-#include <runtime/JSCJSValueInlines.h>
-
-using namespace JSC;
-
-namespace WebCore {
-
-JSValue JSApplePayPaymentMethodSelectedEvent::paymentMethod(ExecState& exec) const
-{
-    if (!m_paymentMethod)
-        m_paymentMethod.set(exec.vm(), this, wrapped().paymentMethod().toJS(exec));
-
-    return m_paymentMethod.get();
-}
-
-}
-
-#endif
+[
+    Conditional=APPLE_PAY,
+] dictionary ApplePayLineItem {
+    ApplePayLineItemType type = "final";
+    DOMString label;
+    DOMString amount;
+};

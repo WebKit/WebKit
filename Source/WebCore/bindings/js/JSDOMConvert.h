@@ -28,6 +28,7 @@
 #include "BufferSource.h"
 #include "IDLTypes.h"
 #include "JSDOMBinding.h"
+#include <runtime/JSONObject.h>
 
 namespace WebCore {
 
@@ -1512,6 +1513,26 @@ template<typename T> struct JSConverter<IDLXPathNSResolver<T>> {
     static JSC::JSValue convertNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
     {
         return toJSNewlyCreated(&state, &globalObject, std::forward<U>(value));
+    }
+};
+
+// MARK: -
+// MARK: IDLJSON type
+
+template<> struct Converter<IDLJSON> : DefaultConverter<IDLJSON> {
+    static String convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        return JSC::JSONStringify(&state, value, 0);
+    }
+};
+
+template<> struct JSConverter<IDLJSON> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    {
+        return JSC::JSONParse(&state, value);
     }
 };
 

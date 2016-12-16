@@ -53,7 +53,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     }
     JSValue enumMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumMember"));
     if (!enumMemberValue.isUndefined()) {
-        result.enumMember = convert<IDLEnumeration<TestEnumInStandaloneDictionaryFile>>(state, enumMemberValue);
+        result.enumMember = convert<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(state, enumMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     JSValue stringMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringMember"));

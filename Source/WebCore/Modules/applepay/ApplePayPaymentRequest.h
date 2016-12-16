@@ -23,23 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSApplePayPaymentAuthorizedEvent.h"
+#pragma once
 
 #if ENABLE(APPLE_PAY)
 
-#include <heap/HeapInlines.h>
-#include <runtime/JSCJSValueInlines.h>
+#include "ApplePayLineItem.h"
+#include "ApplePayPaymentContact.h"
+#include "ApplePayShippingMethod.h"
+#include "PaymentRequest.h"
+#include <heap/Strong.h>
 
 namespace WebCore {
 
-JSC::JSValue JSApplePayPaymentAuthorizedEvent::payment(JSC::ExecState& exec) const
-{
-    if (!m_payment)
-        m_payment.set(exec.vm(), this, wrapped().payment().toJS(exec));
+struct ApplePayPaymentRequest {
+    enum class MerchantCapability { Supports3DS, SupportsEMV, SupportsCredit, SupportsDebit };
+    enum class ContactField { Email, Name, Phone, PostalAddress };
 
-    return m_payment.get();
-}
+    using ShippingType = PaymentRequest::ShippingType;
+
+    Vector<MerchantCapability> merchantCapabilities;
+    Vector<String> supportedNetworks;
+    String countryCode;
+    String currencyCode;
+
+    std::optional<Vector<ContactField>> requiredBillingContactFields;
+    std::optional<ApplePayPaymentContact> billingContact;
+
+    std::optional<Vector<ContactField>>  requiredShippingContactFields;
+    std::optional<ApplePayPaymentContact> shippingContact;
+
+    ShippingType shippingType { ShippingType::Shipping };
+    std::optional<Vector<ApplePayShippingMethod>> shippingMethods;
+
+    ApplePayLineItem total;
+    Vector<ApplePayLineItem> lineItems;
+
+    String applicationData;
+};
 
 }
 

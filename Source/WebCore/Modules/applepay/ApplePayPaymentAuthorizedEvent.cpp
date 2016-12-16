@@ -28,11 +28,13 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "Payment.h"
+
 namespace WebCore {
 
 ApplePayPaymentAuthorizedEvent::ApplePayPaymentAuthorizedEvent(const AtomicString& type, const Payment& payment)
     : Event(type, false, false)
-    , m_payment(payment)
+    , m_payment(payment.toApplePayPayment())
 {
 }
 

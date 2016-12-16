@@ -28,9 +28,12 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayLineItem.h"
 #include "ApplePayPaymentAuthorizedEvent.h"
 #include "ApplePayPaymentMethodSelectedEvent.h"
+#include "ApplePayPaymentRequest.h"
 #include "ApplePayShippingContactSelectedEvent.h"
+#include "ApplePayShippingMethod.h"
 #include "ApplePayShippingMethodSelectedEvent.h"
 #include "ApplePayValidateMerchantEvent.h"
 #include "Document.h"
@@ -159,7 +162,7 @@ static std::optional<int64_t> parseAmount(const String& amountString)
     return amount;
 }
 
-static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePaySession::LineItem&& lineItem)
+static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePayLineItem&& lineItem)
 {
     auto amount = parseAmount(lineItem.amount);
     if (!amount)
@@ -173,7 +176,7 @@ static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePaySession:
     return WTFMove(result);
 }
 
-static ExceptionOr<Vector<PaymentRequest::LineItem>> convertAndValidate(Vector<ApplePaySession::LineItem>&& lineItems)
+static ExceptionOr<Vector<PaymentRequest::LineItem>> convertAndValidate(Vector<ApplePayLineItem>&& lineItems)
 {
     Vector<PaymentRequest::LineItem> result;
     result.reserveInitialCapacity(lineItems.size());
@@ -188,7 +191,7 @@ static ExceptionOr<Vector<PaymentRequest::LineItem>> convertAndValidate(Vector<A
     return WTFMove(result);
 }
 
-static ExceptionOr<PaymentRequest::MerchantCapabilities> convertAndValidate(Vector<ApplePaySession::MerchantCapability>&& merchantCapabilities)
+static ExceptionOr<PaymentRequest::MerchantCapabilities> convertAndValidate(Vector<ApplePayPaymentRequest::MerchantCapability>&& merchantCapabilities)
 {
     if (merchantCapabilities.isEmpty())
         return Exception { TypeError, "At least one merchant capability must be provided." };
@@ -197,16 +200,16 @@ static ExceptionOr<PaymentRequest::MerchantCapabilities> convertAndValidate(Vect
 
     for (auto& merchantCapability : merchantCapabilities) {
         switch (merchantCapability) {
-        case ApplePaySession::MerchantCapability::Supports3DS:
+        case ApplePayPaymentRequest::MerchantCapability::Supports3DS:
             result.supports3DS = true;
             break;
-        case ApplePaySession::MerchantCapability::SupportsEMV:
+        case ApplePayPaymentRequest::MerchantCapability::SupportsEMV:
             result.supportsEMV = true;
             break;
-        case ApplePaySession::MerchantCapability::SupportsCredit:
+        case ApplePayPaymentRequest::MerchantCapability::SupportsCredit:
             result.supportsCredit = true;
             break;
-        case ApplePaySession::MerchantCapability::SupportsDebit:
+        case ApplePayPaymentRequest::MerchantCapability::SupportsDebit:
             result.supportsDebit = true;
             break;
         }
@@ -228,7 +231,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, Vector<S
     return WTFMove(supportedNetworks);
 }
 
-static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<ApplePaySession::ContactField>&& contactFields)
+static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<ApplePayPaymentRequest::ContactField>&& contactFields)
 {
     if (contactFields.isEmpty())
         return Exception { TypeError, "At least one contact field must be provided." };
@@ -237,16 +240,16 @@ static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<Appl
 
     for (auto& contactField : contactFields) {
         switch (contactField) {
-        case ApplePaySession::ContactField::Email:
+        case ApplePayPaymentRequest::ContactField::Email:
             result.email = true;
             break;
-        case ApplePaySession::ContactField::Name:
+        case ApplePayPaymentRequest::ContactField::Name:
             result.name = true;
             break;
-        case ApplePaySession::ContactField::Phone:
+        case ApplePayPaymentRequest::ContactField::Phone:
             result.phone = true;
             break;
-        case ApplePaySession::ContactField::PostalAddress:
+        case ApplePayPaymentRequest::ContactField::PostalAddress:
             result.postalAddress = true;
             break;
         }
@@ -255,7 +258,7 @@ static ExceptionOr<PaymentRequest::ContactFields> convertAndValidate(Vector<Appl
     return WTFMove(result);
 }
 
-static ExceptionOr<PaymentRequest::ShippingMethod> convertAndValidate(ApplePaySession::ShippingMethod&& shippingMethod)
+static ExceptionOr<PaymentRequest::ShippingMethod> convertAndValidate(ApplePayShippingMethod&& shippingMethod)
 {
     auto amount = parseAmount(shippingMethod.amount);
     if (!amount)
@@ -270,7 +273,7 @@ static ExceptionOr<PaymentRequest::ShippingMethod> convertAndValidate(ApplePaySe
     return WTFMove(result);
 }
 
-static ExceptionOr<Vector<PaymentRequest::ShippingMethod>> convertAndValidate(Vector<ApplePaySession::ShippingMethod>&& shippingMethods)
+static ExceptionOr<Vector<PaymentRequest::ShippingMethod>> convertAndValidate(Vector<ApplePayShippingMethod>&& shippingMethods)
 {
     if (shippingMethods.isEmpty())
         return Exception { TypeError, "At least one shipping method must be provided." };
@@ -288,7 +291,7 @@ static ExceptionOr<Vector<PaymentRequest::ShippingMethod>> convertAndValidate(Ve
     return WTFMove(result);
 }
 
-static ExceptionOr<PaymentRequest> convertAndValidate(JSC::ExecState& state, unsigned version, ApplePaySession::PaymentRequest&& paymentRequest)
+static ExceptionOr<PaymentRequest> convertAndValidate(unsigned version, ApplePayPaymentRequest&& paymentRequest)
 {
     PaymentRequest result;
 
@@ -323,14 +326,8 @@ static ExceptionOr<PaymentRequest> convertAndValidate(JSC::ExecState& state, uns
         result.setRequiredBillingContactFields(requiredBillingContactFields.releaseReturnValue());
     }
 
-    if (paymentRequest.billingContact) {
-        String errorMessage;
-        auto billingContact = PaymentContact::fromJS(state, paymentRequest.billingContact.get(), errorMessage);
-        if (!billingContact)
-            return Exception { TypeError, WTFMove(errorMessage) };
-
-        result.setBillingContact(*billingContact);
-    }
+    if (paymentRequest.billingContact)
+        result.setBillingContact(PaymentContact::fromApplePayPaymentContact(paymentRequest.billingContact.value()));
 
     if (paymentRequest.requiredShippingContactFields) {
         auto requiredShippingContactFields = convertAndValidate(WTFMove(*paymentRequest.requiredShippingContactFields));
@@ -339,14 +336,8 @@ static ExceptionOr<PaymentRequest> convertAndValidate(JSC::ExecState& state, uns
         result.setRequiredShippingContactFields(requiredShippingContactFields.releaseReturnValue());
     }
 
-    if (paymentRequest.shippingContact) {
-        String errorMessage;
-        auto shippingContact = PaymentContact::fromJS(state, paymentRequest.shippingContact.get(), errorMessage);
-        if (!shippingContact)
-            return Exception { TypeError, WTFMove(errorMessage) };
-
-        result.setShippingContact(*shippingContact);
-    }
+    if (paymentRequest.shippingContact)
+        result.setShippingContact(PaymentContact::fromApplePayPaymentContact(paymentRequest.shippingContact.value()));
 
     result.setShippingType(paymentRequest.shippingType);
 
@@ -402,7 +393,7 @@ static ExceptionOr<void> canCallApplePaySessionAPIs(Document& document)
     return { };
 }
 
-ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(JSC::ExecState& state, Document& document, unsigned version, ApplePaySession::PaymentRequest&& paymentRequest)
+ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, unsigned version, ApplePayPaymentRequest&& paymentRequest)
 {
     auto canCall = canCallApplePaySessionAPIs(document);
     if (canCall.hasException())
@@ -416,14 +407,14 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(JSC::ExecState& state,
     if (!version || !paymentCoordinator.supportsVersion(version))
         return Exception { INVALID_ACCESS_ERR, makeString("\"" + String::number(version), "\" is not a supported version.") };
 
-    auto convertedPaymentRequest = convertAndValidate(state, version, WTFMove(paymentRequest));
+    auto convertedPaymentRequest = convertAndValidate(version, WTFMove(paymentRequest));
     if (convertedPaymentRequest.hasException())
         return convertedPaymentRequest.releaseException();
 
     return adoptRef(*new ApplePaySession(document, convertedPaymentRequest.releaseReturnValue()));
 }
 
-ApplePaySession::ApplePaySession(Document& document, WebCore::PaymentRequest&& paymentRequest)
+ApplePaySession::ApplePaySession(Document& document, PaymentRequest&& paymentRequest)
     : ActiveDOMObject(&document)
     , m_paymentRequest(WTFMove(paymentRequest))
 {
@@ -609,7 +600,7 @@ static std::optional<PaymentAuthorizationStatus> toPaymentAuthorizationStatus(un
     }
 }
 
-ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned short status, LineItem&& newTotal, Vector<LineItem>&& newLineItems)
+ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned short status, ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems)
 {
     if (!canCompleteShippingMethodSelection())
         return Exception { INVALID_ACCESS_ERR };
@@ -622,7 +613,7 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
 
-    WebCore::PaymentRequest::TotalAndLineItems totalAndLineItems;
+    PaymentRequest::TotalAndLineItems totalAndLineItems;
     totalAndLineItems.total = convertedNewTotal.releaseReturnValue();
 
     // FIXME: Merge this validation into the validation we are doing above.
@@ -642,7 +633,7 @@ ExceptionOr<void> ApplePaySession::completeShippingMethodSelection(unsigned shor
     return { };
 }
 
-ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned short status, Vector<ShippingMethod>&& newShippingMethods, LineItem&& newTotal, Vector<LineItem>&& newLineItems)
+ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned short status, Vector<ApplePayShippingMethod>&& newShippingMethods, ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems)
 {
     if (!canCompleteShippingContactSelection())
         return Exception { INVALID_ACCESS_ERR };
@@ -659,7 +650,7 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
 
-    WebCore::PaymentRequest::TotalAndLineItems totalAndLineItems;
+    PaymentRequest::TotalAndLineItems totalAndLineItems;
     totalAndLineItems.total = convertedNewTotal.releaseReturnValue();
 
     // FIXME: Merge this validation into the validation we are doing above.
@@ -679,7 +670,7 @@ ExceptionOr<void> ApplePaySession::completeShippingContactSelection(unsigned sho
     return { };
 }
 
-ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(LineItem&& newTotal, Vector<LineItem>&& newLineItems)
+ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(ApplePayLineItem&& newTotal, Vector<ApplePayLineItem>&& newLineItems)
 {
     if (!canCompletePaymentMethodSelection())
         return Exception { INVALID_ACCESS_ERR };
@@ -688,7 +679,7 @@ ExceptionOr<void> ApplePaySession::completePaymentMethodSelection(LineItem&& new
     if (convertedNewTotal.hasException())
         return convertedNewTotal.releaseException();
 
-    WebCore::PaymentRequest::TotalAndLineItems totalAndLineItems;
+    PaymentRequest::TotalAndLineItems totalAndLineItems;
     totalAndLineItems.total = convertedNewTotal.releaseReturnValue();
 
     // FIXME: Merge this validation into the validation we are doing above.
@@ -761,7 +752,7 @@ void ApplePaySession::didAuthorizePayment(const Payment& payment)
     dispatchEvent(event.get());
 }
 
-void ApplePaySession::didSelectShippingMethod(const WebCore::PaymentRequest::ShippingMethod& shippingMethod)
+void ApplePaySession::didSelectShippingMethod(const PaymentRequest::ShippingMethod& shippingMethod)
 {
     ASSERT(m_state == State::Active);
 

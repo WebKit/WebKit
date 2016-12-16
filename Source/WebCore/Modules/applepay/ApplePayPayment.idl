@@ -23,26 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSApplePayShippingContactSelectedEvent.h"
+[
+    Conditional=APPLE_PAY,
+    JSGenerateToJSObject
+] dictionary ApplePayPayment {
+    required ApplePayPaymentToken token;
+    ApplePayPaymentContact billingContact;
+    ApplePayPaymentContact shippingContact;
+};
 
-#if ENABLE(APPLE_PAY)
-
-#include <heap/HeapInlines.h>
-#include <runtime/JSCJSValueInlines.h>
-
-using namespace JSC;
-
-namespace WebCore {
-
-JSValue JSApplePayShippingContactSelectedEvent::shippingContact(ExecState& exec) const
-{
-    if (!m_shippingContact)
-        m_shippingContact.set(exec.vm(), this, wrapped().shippingContact().toJS(exec));
-
-    return m_shippingContact.get();
-}
-
-}
-
-#endif
+[
+    Conditional=APPLE_PAY,
+    JSGenerateToJSObject
+] dictionary ApplePayPaymentToken {
+    required ApplePayPaymentMethod paymentMethod;
+    DOMString transactionIdentifier;
+    JSON paymentData;
+};

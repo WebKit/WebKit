@@ -1149,7 +1149,7 @@ sub GetDictionaryClassName
 
 sub GenerateDefaultValue
 {
-    my ($interface, $context, $type, $defaultValue) = @_;
+    my ($typeScope, $context, $type, $defaultValue) = @_;
 
     if ($codeGenerator->IsStringType($type)) {
         my $useAtomicString = $context->extendedAttributes->{AtomicString};
@@ -1165,7 +1165,7 @@ sub GenerateDefaultValue
     if ($codeGenerator->IsEnumType($type)) {
         # FIXME: Would be nice to report an error if the value does not have quote marks around it.
         # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
-        my $className = GetEnumerationClassName($type, $interface);
+        my $className = GetEnumerationClassName($type, $typeScope);
         my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
         return $className . "::" . $enumerationValueName;
     }
@@ -1173,7 +1173,7 @@ sub GenerateDefaultValue
         if ($type->isUnion) {
             return "std::nullopt" if $type->isNullable;
 
-            my $IDLType = GetIDLType($interface, $type);
+            my $IDLType = GetIDLType($typeScope, $type);
             return "convert<${IDLType}>(state, jsNull());";
         }
 
@@ -1184,10 +1184,10 @@ sub GenerateDefaultValue
     }
 
     if ($defaultValue eq "[]") {
-        my $IDLType = GetIDLType($interface, $type);
+        my $IDLType = GetIDLType($typeScope, $type);
         return "Converter<${IDLType}>::ReturnType{ }" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
 
-        my $nativeType = GetNativeType($interface, $type);
+        my $nativeType = GetNativeType($typeScope, $type);
         return "$nativeType()"
     }
 
@@ -1215,7 +1215,7 @@ sub GenerateDictionaryHeaderContent
 
 sub GenerateDictionariesHeaderContent
 {
-    my ($interface, $allDictionaries) = @_;
+    my ($typeScope, $allDictionaries) = @_;
 
     return "" unless @$allDictionaries;
 
@@ -1223,8 +1223,8 @@ sub GenerateDictionariesHeaderContent
 
     my $result = "";
     foreach my $dictionary (@$allDictionaries) {
-        $headerIncludes{$interface->type->name . ".h"} = 1 if $interface;
-        my $className = GetDictionaryClassName($dictionary->type, $interface);
+        $headerIncludes{$typeScope->type->name . ".h"} = 1 if $typeScope;
+        my $className = GetDictionaryClassName($dictionary->type, $typeScope);
         my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
         $result .= GenerateDictionaryHeaderContent($dictionary, $className, $conditionalString);
     }
@@ -1238,6 +1238,7 @@ sub GenerateDictionaryImplementationContent
     my $result = "";
 
     my $name = $dictionary->type->name;
+    my $typeScope = $interface || $dictionary;
 
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
@@ -1299,7 +1300,7 @@ sub GenerateDictionaryImplementationContent
             # 5.2. Let value be an ECMAScript value, depending on Type(V):
             $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
 
-            my $IDLType = GetIDLType($interface, $type);
+            my $IDLType = GetIDLType($typeScope, $type);
 
             # 5.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
@@ -1310,7 +1311,7 @@ sub GenerateDictionaryImplementationContent
             # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if (!$member->isRequired && defined $member->default) {
                 $result .= "    } else\n";
-                $result .= "        result.$key = " . GenerateDefaultValue($interface, $member, $member->type, $member->default) . ";\n";
+                $result .= "        result.$key = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
             } elsif ($member->isRequired) {
                 # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
@@ -1344,7 +1345,7 @@ sub GenerateDictionaryImplementationContent
             my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
             foreach my $member (@sortedMembers) {
                 my $key = $member->name;
-                my $IDLType = GetIDLType($interface, $member->type);
+                my $IDLType = GetIDLType($typeScope, $member->type);
 
                 # 1. Let key be the identifier of member.
                 # 2. If the dictionary member named key is present in V, then:
@@ -1374,13 +1375,13 @@ sub GenerateDictionaryImplementationContent
 
 sub GenerateDictionariesImplementationContent
 {
-    my ($interface, $allDictionaries) = @_;
+    my ($typeScope, $allDictionaries) = @_;
 
     my $result = "";
     foreach my $dictionary (@$allDictionaries) {
-        my $className = GetDictionaryClassName($dictionary->type, $interface);
+        my $className = GetDictionaryClassName($dictionary->type, $typeScope);
         my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
-        $result .= GenerateDictionaryImplementationContent($dictionary, $className, $interface, $conditionalString);
+        $result .= GenerateDictionaryImplementationContent($dictionary, $className, $typeScope, $conditionalString);
     }
     return $result;
 }
@@ -4544,7 +4545,7 @@ sub GenerateDictionaryHeader
     push(@headerContent, "\nnamespace WebCore {\n\n");
     push(@headerContent, GenerateDictionaryHeaderContent($dictionary, $className));
     push(@headerContent, GenerateEnumerationsHeaderContent($dictionary, $enumerations));
-    push(@headerContent, GenerateDictionariesHeaderContent(undef, $otherDictionaries)) if $otherDictionaries;
+    push(@headerContent, GenerateDictionariesHeaderContent($dictionary, $otherDictionaries)) if $otherDictionaries;
     push(@headerContent, "} // namespace WebCore\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
@@ -4576,7 +4577,7 @@ sub GenerateDictionaryImplementation
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
     push(@implContent, GenerateEnumerationsImplementationContent($dictionary, $enumerations));
-    push(@implContent, GenerateDictionariesImplementationContent(undef, $otherDictionaries)) if $otherDictionaries;
+    push(@implContent, GenerateDictionariesImplementationContent($dictionary, $otherDictionaries)) if $otherDictionaries;
     push(@implContent, "} // namespace WebCore\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
@@ -5110,6 +5111,7 @@ sub GetBaseIDLType
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
         "EventListener" => "IDLEventListener<JSEventListener>",
         "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
+        "JSON" => "IDLJSON",
 
         # Convenience type aliases
         "BufferSource" => "IDLBufferSource",
@@ -5334,6 +5336,7 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $type->name eq "Date";
     return 1 if $type->name eq "SerializedScriptValue";
     return 1 if $type->name eq "XPathNSResolver";
+    return 1 if $type->name eq "JSON";
 
     return 0;
 }

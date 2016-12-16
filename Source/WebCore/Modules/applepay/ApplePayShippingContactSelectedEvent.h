@@ -27,10 +27,12 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayPaymentContact.h"
 #include "Event.h"
-#include "PaymentContact.h"
 
 namespace WebCore {
+
+class PaymentContact;
 
 class ApplePayShippingContactSelectedEvent final : public Event {
 public:
@@ -41,7 +43,7 @@ public:
 
     virtual ~ApplePayShippingContactSelectedEvent();
 
-    const PaymentContact& shippingContact() const { return m_shippingContact; }
+    const ApplePayPaymentContact& shippingContact() const { return m_shippingContact; }
 
 private:
     ApplePayShippingContactSelectedEvent(const AtomicString& type, const PaymentContact&);
@@ -49,7 +51,7 @@ private:
     // Event.
     EventInterface eventInterface() const override;
 
-    const PaymentContact m_shippingContact;
+    const ApplePayPaymentContact m_shippingContact;
 };
 
 }

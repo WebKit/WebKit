@@ -23,36 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(APPLE_PAY)
-
-#include "ApplePayShippingMethod.h"
-#include "Event.h"
-#include "PaymentRequest.h"
-
-namespace WebCore {
-
-class ApplePayShippingMethodSelectedEvent final : public Event {
-public:
-    static Ref<ApplePayShippingMethodSelectedEvent> create(const AtomicString& type, const PaymentRequest::ShippingMethod& shippingMethod)
-    {
-        return adoptRef(*new ApplePayShippingMethodSelectedEvent(type, shippingMethod));
-    }
-
-    virtual ~ApplePayShippingMethodSelectedEvent();
-
-    const ApplePayShippingMethod& shippingMethod() const { return m_shippingMethod; }
-
-private:
-    ApplePayShippingMethodSelectedEvent(const AtomicString& type, const PaymentRequest::ShippingMethod&);
-
-    // Event.
-    EventInterface eventInterface() const override;
-
-    const ApplePayShippingMethod m_shippingMethod;
+[
+    Conditional=APPLE_PAY,
+] enum ApplePayMerchantCapability {
+    "supports3DS",
+    "supportsEMV",
+    "supportsCredit",
+    "supportsDebit"
 };
 
-}
+[
+    Conditional=APPLE_PAY,
+] enum ApplePayContactField {
+    "email",
+    "name",
+    "phone",
+    "postalAddress"
+};
 
-#endif
+[
+    Conditional=APPLE_PAY,
+] enum ApplePayShippingType {
+    "shipping",
+    "delivery",
+    "storePickup",
+    "servicePickup"
+};
+
+[
+    Conditional=APPLE_PAY,
+] dictionary ApplePayPaymentRequest {
+    required ApplePayLineItem total;
+    sequence<ApplePayLineItem> lineItems;
+
+    required sequence<ApplePayMerchantCapability> merchantCapabilities;
+    required sequence<DOMString> supportedNetworks; // FIXME: Should this be an sequence of enums?
+    required DOMString countryCode;
+    required DOMString currencyCode;
+
+    sequence<ApplePayContactField> requiredBillingContactFields;
+    ApplePayPaymentContact billingContact;
+
+    sequence<ApplePayContactField> requiredShippingContactFields;
+    ApplePayPaymentContact shippingContact;
+
+    ApplePayShippingType shippingType = "shipping";
+    sequence<ApplePayShippingMethod> shippingMethods;
+
+    DOMString applicationData;
+};

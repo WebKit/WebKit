@@ -29,15 +29,11 @@
 
 #include <wtf/RetainPtr.h>
 
-namespace JSC {
-class ExecState;
-class JSValue;
-}
-
-OBJC_CLASS NSDictionary;
 OBJC_CLASS PKPaymentMethod;
 
 namespace WebCore {
+
+struct ApplePayPaymentMethod;
 
 class PaymentMethod {
 public:
@@ -50,15 +46,13 @@ public:
     {
     }
 
-    JSC::JSValue toJS(JSC::ExecState&) const;
+    ApplePayPaymentMethod toApplePayPaymentMethod() const;
 
     PKPaymentMethod *pkPaymentMethod() const { return m_pkPaymentMethod.get(); }
 
 private:
     RetainPtr<PKPaymentMethod> m_pkPaymentMethod;
 };
-
-RetainPtr<NSDictionary> toDictionary(PKPaymentMethod *);
 
 }
 

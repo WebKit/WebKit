@@ -27,5 +27,5 @@
     Conditional=APPLE_PAY,
     NoInterfaceObject,
 ] interface ApplePayPaymentMethodSelectedEvent : Event {
-    [CachedAttribute, CustomGetter] readonly attribute Object paymentMethod;
+    [CachedAttribute] readonly attribute ApplePayPaymentMethod paymentMethod;
 };

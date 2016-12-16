@@ -28,51 +28,48 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "ApplePayPayment.h"
 #import "PassKitSPI.h"
 #import "PaymentContact.h"
 #import "PaymentMethod.h"
-#import <runtime/JSONObject.h>
 
 namespace WebCore {
 
-static RetainPtr<NSDictionary> toDictionary(PKPaymentToken *paymentToken)
+static ApplePayPayment::Token convert(PKPaymentToken *paymentToken)
 {
-    auto result = adoptNS([[NSMutableDictionary alloc] init]);
+    ASSERT(paymentToken);
 
-    [result setObject:toDictionary(paymentToken.paymentMethod).get() forKey:@"paymentMethod"];
+    ApplePayPayment::Token result;
+
+    result.paymentMethod = PaymentMethod(paymentToken.paymentMethod).toApplePayPaymentMethod();
 
     if (NSString *transactionIdentifier = paymentToken.transactionIdentifier)
-        [result setObject:transactionIdentifier forKey:@"transactionIdentifier"];
-
-    if (id paymentData = [NSJSONSerialization JSONObjectWithData:paymentToken.paymentData options:0 error:nullptr])
-        [result setObject:paymentData forKey:@"paymentData"];
+        result.transactionIdentifier = transactionIdentifier;
+    if (NSData *paymentData = paymentToken.paymentData)
+        result.paymentData = String::fromUTF8((const char*)paymentData.bytes, paymentData.length);
 
     return result;
 }
 
-static RetainPtr<NSDictionary> toDictionary(PKPayment *payment)
+static ApplePayPayment convert(PKPayment *payment)
 {
     ASSERT(payment);
 
-    auto result = adoptNS([[NSMutableDictionary alloc] init]);
+    ApplePayPayment result;
 
-    [result setObject:toDictionary(payment.token).get() forKey:@"token"];
+    result.token = convert(payment.token);
 
     if (payment.billingContact)
-        [result setObject:toDictionary(payment.billingContact).get() forKey:@"billingContact"];
+        result.billingContact = PaymentContact(payment.billingContact).toApplePayPaymentContact();
     if (payment.shippingContact)
-        [result setObject:toDictionary(payment.shippingContact).get() forKey:@"shippingContact"];
+        result.shippingContact = PaymentContact(payment.shippingContact).toApplePayPaymentContact();
 
     return result;
 }
 
-JSC::JSValue Payment::toJS(JSC::ExecState& exec) const
+ApplePayPayment Payment::toApplePayPayment() const
 {
-    auto dictionary = toDictionary(m_pkPayment.get());
-
-    // FIXME: Don't round-trip using NSString.
-    auto jsonString = adoptNS([[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:dictionary.get() options:0 error:nullptr] encoding:NSUTF8StringEncoding]);
-    return JSONParse(&exec, jsonString.get());
+    return convert(m_pkPayment.get());
 }
 
 }

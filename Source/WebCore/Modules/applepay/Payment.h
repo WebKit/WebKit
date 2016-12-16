@@ -29,14 +29,11 @@
 
 #include <wtf/RetainPtr.h>
 
-namespace JSC {
-class ExecState;
-class JSValue;
-}
-
 OBJC_CLASS PKPayment;
 
 namespace WebCore {
+
+struct ApplePayPayment;
 
 class Payment {
 public:
@@ -53,7 +50,7 @@ public:
     {
     }
 
-    JSC::JSValue toJS(JSC::ExecState&) const;
+    ApplePayPayment toApplePayPayment() const;
 
     PKPayment *pkPayment() const { return m_pkPayment.get(); }
 

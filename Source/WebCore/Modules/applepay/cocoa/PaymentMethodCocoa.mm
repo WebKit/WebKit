@@ -28,88 +28,83 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import "ApplePayPaymentMethod.h"
 #import "PassKitSPI.h"
-#import <runtime/JSONObject.h>
 
 namespace WebCore {
 
-static NSString *toString(PKPaymentPassActivationState paymentPassActivationState)
+static ApplePayPaymentPass::ActivationState convert(PKPaymentPassActivationState paymentPassActivationState)
 {
     switch (paymentPassActivationState) {
     case PKPaymentPassActivationStateActivated:
-        return @"activated";
+        return ApplePayPaymentPass::ActivationState::Activated;
     case PKPaymentPassActivationStateRequiresActivation:
-        return @"requiresActivation";
+        return ApplePayPaymentPass::ActivationState::RequiresActivation;
     case PKPaymentPassActivationStateActivating:
-        return @"activating";
+        return ApplePayPaymentPass::ActivationState::Activating;
     case PKPaymentPassActivationStateSuspended:
-        return @"suspended";
+        return ApplePayPaymentPass::ActivationState::Suspended;
     case PKPaymentPassActivationStateDeactivated:
-        return @"deactivated";
-    default:
-        return nil;
+        return ApplePayPaymentPass::ActivationState::Deactivated;
     }
 }
 
-static RetainPtr<NSDictionary> toDictionary(PKPaymentPass *paymentPass)
+static std::optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
 {
-    auto result = adoptNS([[NSMutableDictionary alloc] init]);
+    if (!paymentPass)
+        return std::nullopt;
 
-    [result setObject:paymentPass.primaryAccountIdentifier forKey:@"primaryAccountIdentifier"];
-    [result setObject:paymentPass.primaryAccountNumberSuffix forKey:@"primaryAccountNumberSuffix"];
+    ApplePayPaymentPass result;
+
+    result.primaryAccountIdentifier = paymentPass.primaryAccountIdentifier;
+    result.primaryAccountNumberSuffix = paymentPass.primaryAccountNumberSuffix;
+
     if (NSString *deviceAccountIdentifier = paymentPass.deviceAccountIdentifier)
-        [result setObject:deviceAccountIdentifier forKey:@"deviceAccountIdentifier"];
+        result.deviceAccountIdentifier = deviceAccountIdentifier;
     if (NSString *deviceAccountNumberSuffix = paymentPass.deviceAccountNumberSuffix)
-        [result setObject:deviceAccountNumberSuffix forKey:@"deviceAccountNumberSuffix"];
-    if (NSString *activationState = toString(paymentPass.activationState))
-        [result setObject:activationState forKey:@"activationState"];
+        result.deviceAccountNumberSuffix = deviceAccountNumberSuffix;
+
+    result.activationState = convert(paymentPass.activationState);
 
     return result;
 }
 
-static NSString *toString(PKPaymentMethodType paymentMethodType)
+static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType paymentMethodType)
 {
     switch (paymentMethodType) {
     case PKPaymentMethodTypeDebit:
-        return @"debit";
+        return ApplePayPaymentMethod::Type::Debit;
     case PKPaymentMethodTypeCredit:
-        return @"credit";
+        return ApplePayPaymentMethod::Type::Credit;
     case PKPaymentMethodTypePrepaid:
-        return @"prepaid";
+        return ApplePayPaymentMethod::Type::Prepaid;
     case PKPaymentMethodTypeStore:
-        return @"store";
-    default:
-        return nil;
+        return ApplePayPaymentMethod::Type::Store;
+    case PKPaymentMethodTypeUnknown:
+        return std::nullopt;
     }
 }
 
-RetainPtr<NSDictionary> toDictionary(PKPaymentMethod *paymentMethod)
+static ApplePayPaymentMethod convert(PKPaymentMethod *paymentMethod)
 {
-    auto result = adoptNS([[NSMutableDictionary alloc] init]);
-
+    ApplePayPaymentMethod result;
+    
     if (NSString *displayName = paymentMethod.displayName)
-        [result setObject:displayName forKey:@"displayName"];
-
+        result.displayName = displayName;
     if (NSString *network = paymentMethod.network)
-        [result setObject:network forKey:@"network"];
+        result.network = network;
 
-    if (NSString *paymentMethodType = toString(paymentMethod.type))
-        [result setObject:paymentMethodType forKey:@"type"];
-
-    if (PKPaymentPass *paymentPass = paymentMethod.paymentPass)
-        [result setObject:toDictionary(paymentPass).get() forKey:@"paymentPass"];
+    result.type = convert(paymentMethod.type);
+    result.paymentPass = convert(paymentMethod.paymentPass);
 
     return result;
 }
 
-JSC::JSValue PaymentMethod::toJS(JSC::ExecState& exec) const
+ApplePayPaymentMethod PaymentMethod::toApplePayPaymentMethod() const
 {
-    auto dictionary = toDictionary(m_pkPaymentMethod.get());
-
-    // FIXME: Don't round-trip using NSString.
-    auto jsonString = adoptNS([[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:dictionary.get() options:0 error:nullptr] encoding:NSUTF8StringEncoding]);
-    return JSONParse(&exec, jsonString.get());
+    return convert(m_pkPaymentMethod.get());
 }
 
 }
+
 #endif

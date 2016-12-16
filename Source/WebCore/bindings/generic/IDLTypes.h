@@ -174,6 +174,14 @@ template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
 template<typename T> struct IDLEventListener : IDLWrapper<T> { };
 template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
 
+struct IDLJSON : IDLType<String> { 
+    using ParameterType = const String&;
+
+    using NullableType = String;
+    static String nullValue() { return String(); }
+    static bool isNullValue(const String& value) { return value.isNull(); }
+    template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
+};
 
 // Non-WebIDL convenience type aliases
 

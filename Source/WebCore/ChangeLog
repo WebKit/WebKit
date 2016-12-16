@@ -1,3 +1,105 @@
+2016-12-14  Sam Weinig  <sam@webkit.org>
+
+        [ApplePay] Remove remaining custom bindings from the ApplePay code
+        https://bugs.webkit.org/show_bug.cgi?id=165860
+
+        Reviewed by Darin Adler.
+
+        * DerivedSources.make:
+        Add new IDL files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add/remove files.
+
+        * bindings/js/JSApplePayPaymentAuthorizedEventCustom.cpp: Removed.
+        * bindings/js/JSApplePayPaymentMethodSelectedEventCustom.cpp: Removed.
+        * bindings/js/JSApplePayShippingContactSelectedEventCustom.cpp: Removed.
+        * bindings/js/JSApplePayShippingMethodSelectedEventCustom.cpp: Removed.
+        Remove custom bindings.
+
+        * Modules/applepay/ApplePayLineItem.h: Added.
+        * Modules/applepay/ApplePayLineItem.idl: Added.
+        * Modules/applepay/ApplePayPayment.h: Added.
+        * Modules/applepay/ApplePayPayment.idl: Added.
+        * Modules/applepay/ApplePayPaymentContact.h: Added.
+        * Modules/applepay/ApplePayPaymentContact.idl: Added.
+        * Modules/applepay/ApplePayPaymentMethod.h: Added.
+        * Modules/applepay/ApplePayPaymentMethod.idl: Added.
+        * Modules/applepay/ApplePayPaymentPass.h: Added.
+        * Modules/applepay/ApplePayPaymentPass.idl: Added.
+        * Modules/applepay/ApplePayPaymentRequest.h: Added.
+        * Modules/applepay/ApplePayPaymentRequest.idl: Added.
+        * Modules/applepay/ApplePayShippingMethod.h: Added.
+        * Modules/applepay/ApplePayShippingMethod.idl: Added.
+        Split out dictionaries and enums into separate files where needed.
+
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp:
+        (WebCore::ApplePayPaymentAuthorizedEvent::ApplePayPaymentAuthorizedEvent):
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.h:
+        * Modules/applepay/ApplePayPaymentAuthorizedEvent.idl:
+        Convert the 'payment' property to return an ApplePayPayment dictionary, removing
+        the need for custom bindings.
+
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.cpp:
+        (WebCore::ApplePayPaymentMethodSelectedEvent::ApplePayPaymentMethodSelectedEvent):
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.h:
+        * Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl:
+        Convert the 'paymentMethod' property to return an ApplePayPaymentMethod dictionary, removing
+        the need for custom bindings.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        (WebCore::ApplePaySession::create):
+        (WebCore::ApplePaySession::ApplePaySession):
+        (WebCore::ApplePaySession::completeShippingMethodSelection):
+        (WebCore::ApplePaySession::completeShippingContactSelection):
+        (WebCore::ApplePaySession::completePaymentMethodSelection):
+        (WebCore::ApplePaySession::didSelectShippingMethod):
+        * Modules/applepay/ApplePaySession.h:
+        Update for new names, remove need for ExecState in the create function, and simplify
+        billingContact and shippingContact now that they are strongly typed.
+
+        * Modules/applepay/ApplePaySession.idl:
+        Move dictionaries and enums to their own files.
+
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.cpp:
+        (WebCore::ApplePayShippingContactSelectedEvent::ApplePayShippingContactSelectedEvent):
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.h:
+        * Modules/applepay/ApplePayShippingContactSelectedEvent.idl:
+        Convert the 'shippingContact' property to return an ApplePayPaymentContact dictionary, removing
+        the need for custom bindings.
+
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.cpp:
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.h:
+        * Modules/applepay/ApplePayShippingMethodSelectedEvent.idl:
+        Convert the 'shippingMethod' property to return an ApplePayShippingMethod dictionary, removing
+        the need for custom bindings.
+
+        * Modules/applepay/Payment.h:
+        * Modules/applepay/PaymentContact.h:
+        * Modules/applepay/PaymentMethod.h:
+        * Modules/applepay/cocoa/PaymentCocoa.mm:
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        * Modules/applepay/cocoa/PaymentMethodCocoa.mm:
+        Replace toJS/fromJS functions with ones that convert to/from the associated dictionary type.
+
+        * bindings/generic/IDLTypes.h:
+        (WebCore::IDLJSON::nullValue):
+        (WebCore::IDLJSON::isNullValue):
+        (WebCore::IDLJSON::extractValueFromNullable):
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLJSON>::convert):
+        (WebCore::JSConverter<IDLJSON>::convert):
+        Add a new custom type, JSON, which converts from a String to a JS object.
+
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add support for the new JSON type, and improve scoped naming to allow for enums
+        in dictionary only IDL files.
+
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        Update test result for improved scoped naming.
+
 2016-12-16  Zalan Bujtas  <zalan@apple.com>
 
         Defer certain accessibility callbacks until after layout is finished.

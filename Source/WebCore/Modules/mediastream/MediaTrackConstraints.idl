@@ -31,6 +31,7 @@
 
 [
     JSGenerateToJSObject,
+    ImplementedAs=MediaTrackConstraintSet
 ] dictionary MediaTrackConstraintSet {
     ConstrainLong width;
     ConstrainLong height;
@@ -54,6 +55,7 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 
 [
     JSGenerateToJSObject,
+    ImplementedAs=ConstrainBooleanParameters
 ] dictionary ConstrainBooleanParameters {
     boolean exact;
     boolean ideal;
@@ -61,6 +63,7 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 
 [
     JSGenerateToJSObject,
+    ImplementedAs=ConstrainDOMStringParameters
 ] dictionary ConstrainDOMStringParameters {
     (DOMString or sequence<DOMString>) exact;
     (DOMString or sequence<DOMString>) ideal;
@@ -68,6 +71,7 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 
 [
     JSGenerateToJSObject,
+    ImplementedAs=ConstrainDoubleRange
 ] dictionary ConstrainDoubleRange : DoubleRange {
     double exact;
     double ideal;
@@ -75,17 +79,22 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 
 [
     JSGenerateToJSObject,
+    ImplementedAs=ConstrainLongRange
 ] dictionary ConstrainLongRange : LongRange {
     long exact;
     long ideal;
 };
 
-dictionary DoubleRange {
+[
+    ImplementedAs=DoubleRange
+] dictionary DoubleRange {
     double max;
     double min;
 };
 
-dictionary LongRange {
+[
+    ImplementedAs=LongRange
+] dictionary LongRange {
     long max;
     long min;
 };
