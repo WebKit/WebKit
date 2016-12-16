@@ -1,3 +1,17 @@
+2016-12-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WK2] SharedMemory: include cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=165950
+
+        Reviewed by Žan Doberšek.
+
+        The WTFString include is not needed in the header, so move to the
+        Unix file. Use the existing UNIX_DOMAIN_SOCKETS define. Also
+        include the WTFOptional header where needed.
+
+        * Platform/SharedMemory.h:
+        * Platform/unix/SharedMemoryUnix.cpp:
+
 2016-12-16  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix build break since r209907. Unreviewed.

@@ -43,6 +43,7 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
