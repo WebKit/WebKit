@@ -1,5 +1,22 @@
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
+        Make sure HTML validation bubble's state is updated after layout
+        https://bugs.webkit.org/show_bug.cgi?id=165922
+        <rdar://problem/29694730>
+
+        Reviewed by Simon Fraser.
+
+        Add several layout tests to cover this.
+
+        * fast/forms/validation-bubble-disappears-when-input-detached-expected.txt: Added.
+        * fast/forms/validation-bubble-disappears-when-input-detached.html: Added.
+        * fast/forms/validation-bubble-disappears-when-input-moved-expected.txt: Added.
+        * fast/forms/validation-bubble-disappears-when-input-moved.html: Added.
+        * fast/forms/validation-bubble-disappears-when-input-no-longer-visible-expected.txt: Added.
+        * fast/forms/validation-bubble-disappears-when-input-no-longer-visible.html: Added.
+
+2016-12-15  Chris Dumez  <cdumez@apple.com>
+
         Move charCode / keyCode / which attributes from UIEvent to KeyboardEvent
         https://bugs.webkit.org/show_bug.cgi?id=165904
 

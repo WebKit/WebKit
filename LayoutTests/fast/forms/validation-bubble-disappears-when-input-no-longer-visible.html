@@ -8,7 +8,7 @@
 <div id="description"></div>
 <div id="console"></div>
 <script>
-description("Tests that the custom validation message set by JavaScript is displayed on UI side.");
+description("Tests that the HTML form validation bubble disappears when its associated element is no longer visible.");
 jsTestIsAsync = true;
 
 function getValidationBubbleContents()
@@ -21,21 +21,21 @@ function getValidationBubbleContents()
 
 onload = function() {
     input = document.getElementById("required_text_input");
-    input.setCustomValidity("This is a custom validity message.");
     submit = document.getElementById("required_text_input_submit");
     submit.click();
 
     testRunner.runUIScript(getValidationBubbleContents(), function(result) {
         validationBubbleContents = JSON.parse(result).validationBubble;
-        shouldBeEqualToString("validationBubbleContents.message", "This is a custom validity message.");
+        shouldBeEqualToString("validationBubbleContents.message", "Fill out this field");
 
-        // Reset the validity message to the default one.
-        input.setCustomValidity("");
-        submit.click();
+        // Hide input element.
+        input.setAttribute("style", "display: none");
+        // Force layout.
+        input.offsetTop;
 
         testRunner.runUIScript(getValidationBubbleContents(), function(result) {
             validationBubbleContents = JSON.parse(result).validationBubble;
-            shouldBeEqualToString("validationBubbleContents.message", "Fill out this field");
+            shouldBeEqualToString("validationBubbleContents.message", ""); // No longer visible.
             finishJSTest();
         });
     });

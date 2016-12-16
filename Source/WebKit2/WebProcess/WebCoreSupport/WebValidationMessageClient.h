@@ -41,10 +41,12 @@ public:
     void showValidationMessage(const WebCore::Element& anchor, const String& message) final;
     void hideValidationMessage(const WebCore::Element& anchor) final;
     bool isValidationMessageVisible(const WebCore::Element& anchor) final;
+    void updateValidationBubbleStateIfNeeded() final;
 
 private:
     WebPage& m_page;
     const WebCore::Element* m_currentAnchor { nullptr };
+    WebCore::IntRect m_currentAnchorRect;
 };
 
 }

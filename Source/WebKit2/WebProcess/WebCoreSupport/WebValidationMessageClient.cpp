@@ -52,7 +52,8 @@ void WebValidationMessageClient::showValidationMessage(const Element& anchor, co
         hideValidationMessage(*m_currentAnchor);
 
     m_currentAnchor = &anchor;
-    m_page.send(Messages::WebPageProxy::ShowValidationMessage(anchor.clientRect(), message));
+    m_currentAnchorRect = anchor.clientRect();
+    m_page.send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, message));
 }
 
 void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
@@ -61,12 +62,24 @@ void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
         return;
 
     m_currentAnchor = nullptr;
+    m_currentAnchorRect = { };
     m_page.send(Messages::WebPageProxy::HideValidationMessage());
 }
 
 bool WebValidationMessageClient::isValidationMessageVisible(const Element& anchor)
 {
     return m_currentAnchor == &anchor;
+}
+
+void WebValidationMessageClient::updateValidationBubbleStateIfNeeded()
+{
+    if (!m_currentAnchor)
+        return;
+
+    // We currently hide the validation bubble if its position is outdated instead of trying
+    // to update its position.
+    if (m_currentAnchorRect != m_currentAnchor->clientRect())
+        hideValidationMessage(*m_currentAnchor);
 }
 
 } // namespace WebKit

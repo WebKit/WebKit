@@ -215,7 +215,9 @@ public:
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
 #endif
+
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
+    void updateValidationBubbleStateIfNeeded();
 
     WEBCORE_EXPORT ScrollingCoordinator* scrollingCoordinator();
 

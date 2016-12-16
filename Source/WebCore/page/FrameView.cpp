@@ -2127,6 +2127,9 @@ void FrameView::viewportContentsChanged()
         return;
     }
 
+    if (auto* page = frame().page())
+        page->updateValidationBubbleStateIfNeeded();
+
     // When the viewport contents changes (scroll, resize, style recalc, layout, ...),
     // check if we should resume animated images or unthrottle DOM timers.
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {

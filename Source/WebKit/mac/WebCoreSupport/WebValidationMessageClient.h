@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <WebCore/IntRect.h>
 #import <WebCore/ValidationMessageClient.h>
 
 namespace WebCore {
@@ -42,8 +43,10 @@ public:
     void showValidationMessage(const WebCore::Element& anchor, const String& message) final;
     void hideValidationMessage(const WebCore::Element& anchor) final;
     bool isValidationMessageVisible(const WebCore::Element& anchor) final;
+    void updateValidationBubbleStateIfNeeded() final;
 
 private:
     WebView* m_view;
     const WebCore::Element* m_currentAnchor { nullptr };
+    WebCore::IntRect m_currentAnchorRect;
 };

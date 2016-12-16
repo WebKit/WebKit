@@ -47,6 +47,8 @@ public:
     // Returns true if the validation message for the specified anchor element
     // is visible.
     virtual bool isValidationMessageVisible(const Element& anchor) = 0;
+
+    virtual void updateValidationBubbleStateIfNeeded() = 0;
 };
 
 } // namespace WebCore

@@ -1,3 +1,21 @@
+2016-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Make sure HTML validation bubble's state is updated after layout
+        https://bugs.webkit.org/show_bug.cgi?id=165922
+        <rdar://problem/29694730>
+
+        Reviewed by Simon Fraser.
+
+        Make sure HTML validation bubble's state is updated after layout.
+        In particular, if the validation bubble's associated element has
+        moved or is no longer visible, we now hide the bubble.
+
+        * WebProcess/WebCoreSupport/WebValidationMessageClient.cpp:
+        (WebKit::WebValidationMessageClient::showValidationMessage):
+        (WebKit::WebValidationMessageClient::hideValidationMessage):
+        (WebKit::WebValidationMessageClient::updateValidationBubbleStateIfNeeded):
+        * WebProcess/WebCoreSupport/WebValidationMessageClient.h:
+
 2016-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Improve NetworkSession logging

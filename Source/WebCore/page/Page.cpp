@@ -135,6 +135,12 @@ void Page::forEachPage(std::function<void(Page&)> function)
         function(*page);
 }
 
+void Page::updateValidationBubbleStateIfNeeded()
+{
+    if (auto* client = validationMessageClient())
+        client->updateValidationBubbleStateIfNeeded();
+}
+
 static void networkStateChanged(bool isOnLine)
 {
     Vector<Ref<Frame>> frames;
