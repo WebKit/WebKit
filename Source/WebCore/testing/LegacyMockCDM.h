@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,31 @@
 
 #pragma once
 
-#include "CDMSession.h"
-#include <wtf/HashMap.h>
-
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
+#include "LegacyCDMPrivate.h"
 
 namespace WebCore {
 
-class CDMSessionClearKey : public CDMSession {
-public:
-    CDMSessionClearKey(CDMSessionClient*);
-    virtual ~CDMSessionClearKey();
+class CDM;
 
-    // CDMSessionPrivate
-    CDMSessionType type() override { return CDMSessionTypeClearKey; }
-    void setClient(CDMSessionClient* client) override { m_client = client; }
-    const String& sessionId() const override { return m_sessionId; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
-    void releaseKeys() override;
-    bool update(Uint8Array*, RefPtr<Uint8Array>&, unsigned short&, uint32_t&) override;
-    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
+class MockCDM : public CDMPrivateInterface {
+public:
+    explicit MockCDM(CDM* cdm)
+        : m_cdm(cdm)
+    { }
+
+    // CDMFactory support:
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+
+    virtual ~MockCDM() { }
+
+    bool supportsMIMEType(const String& mimeType) override;
+    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
 
 protected:
-    CDMSessionClient* m_client;
-    RefPtr<Uint8Array> m_initData;
-    HashMap<String, Vector<uint8_t>> m_cachedKeys;
-    String m_sessionId;
+    CDM* m_cdm;
 };
 
 } // namespace WebCore

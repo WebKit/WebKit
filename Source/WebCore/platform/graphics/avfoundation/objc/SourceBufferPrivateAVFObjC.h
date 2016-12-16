@@ -156,7 +156,9 @@ private:
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
     SourceBufferPrivateClient* m_client;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     CDMSessionMediaSourceAVFObjC* m_session { nullptr };
+#endif
 
     std::optional<FloatSize> m_cachedSize;
     FloatSize m_currentSize;

@@ -27,11 +27,11 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "CDM.h"
+#include "LegacyCDM.h"
 
-#include "CDMPrivateClearKey.h"
-#include "CDMPrivateMediaPlayer.h"
-#include "CDMSession.h"
+#include "LegacyCDMPrivateClearKey.h"
+#include "LegacyCDMPrivateMediaPlayer.h"
+#include "LegacyCDMSession.h"
 #include "MediaPlayer.h"
 #include "WebKitMediaKeys.h"
 #include <wtf/NeverDestroyed.h>

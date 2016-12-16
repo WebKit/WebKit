@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- *
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -23,35 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "LegacyCDMPrivateClearKey.h"
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "CDMPrivate.h"
+#include "LegacyCDM.h"
+#include "LegacyCDMSessionClearKey.h"
+#include "ContentType.h"
+#include "MediaPlayer.h"
 
 namespace WebCore {
 
-class CDM;
+bool CDMPrivateClearKey::supportsKeySystem(const String& keySystem)
+{
+    if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
+        return false;
 
-class MockCDM : public CDMPrivateInterface {
-public:
-    explicit MockCDM(CDM* cdm)
-        : m_cdm(cdm)
-    { }
+    // The MediaPlayer must also support the key system:
+    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
+}
 
-    // CDMFactory support:
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+bool CDMPrivateClearKey::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+{
+    if (!equalLettersIgnoringASCIICase(keySystem, "org.w3c.clearkey"))
+        return false;
 
-    virtual ~MockCDM() { }
+    // The MediaPlayer must also support the key system:
+    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
+}
 
-    bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
+bool CDMPrivateClearKey::supportsMIMEType(const String& mimeType)
+{
+    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
+}
 
-protected:
-    CDM* m_cdm;
-};
+std::unique_ptr<CDMSession> CDMPrivateClearKey::createSession(CDMSessionClient* client)
+{
+    return std::make_unique<CDMSessionClearKey>(client);
+}
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#endif

@@ -28,7 +28,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
-#include "CDMPrivate.h"
+#include "LegacyCDMPrivate.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

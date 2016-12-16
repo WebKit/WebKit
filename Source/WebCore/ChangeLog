@@ -1,3 +1,93 @@
+2016-12-13  Jer Noble  <jer.noble@apple.com>
+
+        Move existing CDM* implementations into modules/encryptedmedia/legacy
+        https://bugs.webkit.org/show_bug.cgi?id=165823
+
+        Rubber-stamped by Sam Weinig.
+
+        * Modules/encryptedmedia/legacy/LegacyCDM.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/CDM.cpp.
+        (WebCore::CDMFactory::CDMFactory):
+        (WebCore::installedCDMFactories):
+        (WebCore::CDM::registerCDMFactory):
+        (WebCore::CDMFactoryForKeySystem):
+        (WebCore::CDM::supportsKeySystem):
+        (WebCore::CDM::keySystemSupportsMimeType):
+        (WebCore::CDM::create):
+        (WebCore::CDM::CDM):
+        (WebCore::CDM::~CDM):
+        (WebCore::CDM::supportsMIMEType):
+        (WebCore::CDM::createSession):
+        (WebCore::CDM::mediaPlayer):
+        * Modules/encryptedmedia/legacy/LegacyCDM.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDM.h.
+        (WebCore::CDMClient::~CDMClient):
+        (WebCore::CDM::keySystem):
+        (WebCore::CDM::client):
+        (WebCore::CDM::setClient):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivate.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivate.h.
+        (WebCore::CDMPrivateInterface::CDMPrivateInterface):
+        (WebCore::CDMPrivateInterface::~CDMPrivateInterface):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateClearKey.cpp.
+        (WebCore::CDMPrivateClearKey::supportsKeySystem):
+        (WebCore::CDMPrivateClearKey::supportsKeySystemAndMimeType):
+        (WebCore::CDMPrivateClearKey::supportsMIMEType):
+        (WebCore::CDMPrivateClearKey::createSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateClearKey.h.
+        (WebCore::CDMPrivateClearKey::CDMPrivateClearKey):
+        (WebCore::CDMPrivateClearKey::~CDMPrivateClearKey):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp.
+        (WebCore::CDMPrivateMediaPlayer::supportsKeySystem):
+        (WebCore::CDMPrivateMediaPlayer::supportsKeySystemAndMimeType):
+        (WebCore::CDMPrivateMediaPlayer::supportsMIMEType):
+        (WebCore::CDMPrivateMediaPlayer::createSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivateMediaPlayer.h.
+        (WebCore::CDMPrivateMediaPlayer::CDMPrivateMediaPlayer):
+        (WebCore::CDMPrivateMediaPlayer::~CDMPrivateMediaPlayer):
+        (WebCore::CDMPrivateMediaPlayer::cdm):
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/CDMSessionClearKey.cpp.
+        (WebCore::clearKeyVM):
+        (WebCore::CDMSessionClearKey::CDMSessionClearKey):
+        (WebCore::CDMSessionClearKey::~CDMSessionClearKey):
+        (WebCore::CDMSessionClearKey::generateKeyRequest):
+        (WebCore::CDMSessionClearKey::releaseKeys):
+        (WebCore::CDMSessionClearKey::update):
+        (WebCore::CDMSessionClearKey::cachedKeyForKeyID):
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMSessionClearKey.h.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/LegacyCDMSession.h: Renamed from Source/WebCore/platform/graphics/CDMSession.h.
+        (WebCore::CDMSessionClient::~CDMSessionClient):
+        (WebCore::CDMSession::CDMSession):
+        (WebCore::CDMSession::~CDMSession):
+        (WebCore::CDMSession::type):
+        (WebCore::CDMSession::cachedKeyForKeyID):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * testing/Internals.cpp:
+        * testing/LegacyMockCDM.cpp: Renamed from Source/WebCore/testing/MockCDM.cpp.
+        (WebCore::MockCDMSession::~MockCDMSession):
+        (WebCore::MockCDM::supportsKeySystem):
+        (WebCore::MockCDM::supportsKeySystemAndMimeType):
+        (WebCore::MockCDM::supportsMIMEType):
+        (WebCore::MockCDM::createSession):
+        (WebCore::initDataPrefix):
+        (WebCore::keyPrefix):
+        (WebCore::keyRequest):
+        (WebCore::generateSessionId):
+        (WebCore::MockCDMSession::MockCDMSession):
+        (WebCore::MockCDMSession::generateKeyRequest):
+        (WebCore::MockCDMSession::releaseKeys):
+        (WebCore::MockCDMSession::update):
+        * testing/LegacyMockCDM.h: Renamed from Source/WebCore/testing/MockCDM.h.
+        (WebCore::MockCDM::MockCDM):
+        (WebCore::MockCDM::~MockCDM):
+
 2016-12-16  Andreas Kling  <akling@apple.com>
 
         Subframes going into page cache don't need to resetScrollbars().

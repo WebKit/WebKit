@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CDMSessionClearKey.h"
+#include "LegacyCDMSessionClearKey.h"
 
 #include "ArrayValue.h"
 #include "Dictionary.h"

@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "MockCDM.h"
+#include "LegacyMockCDM.h"
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "CDM.h"
-#include "CDMSession.h"
+#include "LegacyCDM.h"
+#include "LegacyCDMSession.h"
 #include "WebKitMediaKeyError.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>

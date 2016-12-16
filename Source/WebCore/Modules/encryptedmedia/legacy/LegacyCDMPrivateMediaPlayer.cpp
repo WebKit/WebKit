@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "LegacyCDMPrivateMediaPlayer.h"
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "LegacyCDM.h"
-#include "ExceptionOr.h"
-#include <runtime/Uint8Array.h>
-#include <wtf/Vector.h>
+#include "LegacyCDMSession.h"
+#include "ContentType.h"
+#include "MediaPlayer.h"
+
+#if PLATFORM(IOS)
+#include "SoftLinking.h"
+#endif
 
 namespace WebCore {
 
-class HTMLMediaElement;
-class ScriptExecutionContext;
-class WebKitMediaKeySession;
+bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
+{
+    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
+}
 
-class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private CDMClient {
-public:
-    static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);
-    virtual ~WebKitMediaKeys();
+bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+{
+    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
+}
 
-    ExceptionOr<Ref<WebKitMediaKeySession>> createSession(ScriptExecutionContext&, const String& mimeType, Ref<Uint8Array>&& initData);
-    static bool isTypeSupported(const String& keySystem, const String& mimeType);
-    const String& keySystem() const { return m_keySystem; }
+bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
+{
+    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
+}
 
-    CDM& cdm() { ASSERT(m_cdm); return *m_cdm; }
+std::unique_ptr<CDMSession> CDMPrivateMediaPlayer::createSession(CDMSessionClient* client)
+{
+    MediaPlayer* mediaPlayer = m_cdm->mediaPlayer();
+    if (!mediaPlayer)
+        return nullptr;
 
-    void setMediaElement(HTMLMediaElement*);
-
-    void keyAdded();
-    RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
-
-private:
-    MediaPlayer* cdmMediaPlayer(const CDM*) const final;
-
-    WebKitMediaKeys(const String& keySystem, std::unique_ptr<CDM>&&);
-
-    Vector<Ref<WebKitMediaKeySession>> m_sessions;
-    HTMLMediaElement* m_mediaElement { nullptr };
-    String m_keySystem;
-    std::unique_ptr<CDM> m_cdm;
-};
+    return mediaPlayer->createSession(m_cdm->keySystem(), client);
+}
 
 }
 
-#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#endif

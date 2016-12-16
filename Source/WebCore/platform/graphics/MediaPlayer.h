@@ -30,7 +30,7 @@
 #include "GraphicsTypes3D.h"
 
 #include "AudioTrackPrivate.h"
-#include "CDMSession.h"
+#include "LegacyCDMSession.h"
 #include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
 #include "URL.h"

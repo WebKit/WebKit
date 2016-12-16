@@ -25,31 +25,32 @@
 
 #pragma once
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include "LegacyCDMSession.h"
+#include <wtf/HashMap.h>
 
-#include "CDMPrivate.h"
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 namespace WebCore {
 
-class CDM;
-
-class CDMPrivateClearKey : public CDMPrivateInterface {
+class CDMSessionClearKey : public CDMSession {
 public:
-    explicit CDMPrivateClearKey(CDM* cdm)
-        : m_cdm(cdm)
-    {
-    }
+    CDMSessionClearKey(CDMSessionClient*);
+    virtual ~CDMSessionClearKey();
 
-    virtual ~CDMPrivateClearKey() { }
-
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
-
-    bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
+    // CDMSessionPrivate
+    CDMSessionType type() override { return CDMSessionTypeClearKey; }
+    void setClient(CDMSessionClient* client) override { m_client = client; }
+    const String& sessionId() const override { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array*, String&, unsigned short&, uint32_t&) override;
+    void releaseKeys() override;
+    bool update(Uint8Array*, RefPtr<Uint8Array>&, unsigned short&, uint32_t&) override;
+    RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 
 protected:
-    CDM* m_cdm;
+    CDMSessionClient* m_client;
+    RefPtr<Uint8Array> m_initData;
+    HashMap<String, Vector<uint8_t>> m_cachedKeys;
+    String m_sessionId;
 };
 
 } // namespace WebCore

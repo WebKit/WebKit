@@ -26,7 +26,7 @@
 #ifndef CDMSessionAVFoundationObjC_h
 #define CDMSessionAVFoundationObjC_h
 
-#include "CDMSession.h"
+#include "LegacyCDMSession.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 

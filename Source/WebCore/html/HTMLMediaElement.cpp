@@ -156,6 +156,10 @@
 #include <bindings/ScriptObject.h>
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "NotImplemented.h"
+#endif
+
 namespace WebCore {
 
 static const double SeekRepeatDelay = 0.1;

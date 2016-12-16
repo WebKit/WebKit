@@ -29,7 +29,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(MEDIA_SOURCE)
 
 #import "AVFoundationSPI.h"
-#import "CDM.h"
+#import "LegacyCDM.h"
 #import "CDMPrivateMediaSourceAVFObjC.h"
 #import "FileSystem.h"
 #import "Logging.h"

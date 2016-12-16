@@ -158,8 +158,8 @@
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#include "CDM.h"
-#include "MockCDM.h"
+#include "LegacyCDM.h"
+#include "LegacyMockCDM.h"
 #endif
 
 #if ENABLE(VIDEO_TRACK)

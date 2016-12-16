@@ -23,46 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CDMPrivateMediaPlayer.h"
+#pragma once
+
+#include "LegacyCDMPrivate.h"
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "CDM.h"
-#include "CDMSession.h"
-#include "ContentType.h"
-#include "MediaPlayer.h"
-
-#if PLATFORM(IOS)
-#include "SoftLinking.h"
-#endif
-
 namespace WebCore {
 
-bool CDMPrivateMediaPlayer::supportsKeySystem(const String& keySystem)
-{
-    return MediaPlayer::supportsKeySystem(keySystem, emptyString());
-}
+class CDM;
 
-bool CDMPrivateMediaPlayer::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
-{
-    return MediaPlayer::supportsKeySystem(keySystem, mimeType);
-}
+class CDMPrivateMediaPlayer : public CDMPrivateInterface {
+public:
+    explicit CDMPrivateMediaPlayer(CDM* cdm)
+        : m_cdm(cdm)
+    { }
 
-bool CDMPrivateMediaPlayer::supportsMIMEType(const String& mimeType)
-{
-    return MediaPlayer::supportsKeySystem(m_cdm->keySystem(), mimeType);
-}
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
-std::unique_ptr<CDMSession> CDMPrivateMediaPlayer::createSession(CDMSessionClient* client)
-{
-    MediaPlayer* mediaPlayer = m_cdm->mediaPlayer();
-    if (!mediaPlayer)
-        return nullptr;
+    virtual ~CDMPrivateMediaPlayer() { }
 
-    return mediaPlayer->createSession(m_cdm->keySystem(), client);
-}
+    bool supportsMIMEType(const String& mimeType) override;
+    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
 
-}
+    CDM* cdm() const { return m_cdm; }
 
-#endif
+protected:
+    CDM* m_cdm;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)

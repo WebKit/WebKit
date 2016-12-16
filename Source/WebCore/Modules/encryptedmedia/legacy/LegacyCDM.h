@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,57 @@
 
 #pragma once
 
-#include "CDMPrivate.h"
-
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
+#include "LegacyCDMSession.h"
+#include <runtime/Uint8Array.h>
+#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CDM;
+class CDMPrivateInterface;
+class MediaPlayer;
 
-class CDMPrivateMediaPlayer : public CDMPrivateInterface {
+typedef std::function<std::unique_ptr<CDMPrivateInterface> (CDM*)> CreateCDM;
+typedef bool (*CDMSupportsKeySystem)(const String&);
+typedef bool (*CDMSupportsKeySystemAndMimeType)(const String&, const String&);
+
+class CDMClient {
 public:
-    explicit CDMPrivateMediaPlayer(CDM* cdm)
-        : m_cdm(cdm)
-    { }
+    virtual ~CDMClient() { }
 
-    static bool supportsKeySystem(const String&);
-    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
-
-    virtual ~CDMPrivateMediaPlayer() { }
-
-    bool supportsMIMEType(const String& mimeType) override;
-    std::unique_ptr<CDMSession> createSession(CDMSessionClient*) override;
-
-    CDM* cdm() const { return m_cdm; }
-
-protected:
-    CDM* m_cdm;
+    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const = 0;
 };
 
-} // namespace WebCore
+class CDM {
+public:
+    explicit CDM(const String& keySystem);
+
+    enum CDMErrorCode { NoError, UnknownError, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
+    static bool supportsKeySystem(const String&);
+    static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
+    static std::unique_ptr<CDM> create(const String& keySystem);
+    WEBCORE_EXPORT static void registerCDMFactory(CreateCDM, CDMSupportsKeySystem, CDMSupportsKeySystemAndMimeType);
+    ~CDM();
+
+    bool supportsMIMEType(const String&) const;
+    std::unique_ptr<CDMSession> createSession(CDMSessionClient&);
+
+    const String& keySystem() const { return m_keySystem; }
+
+    CDMClient* client() const { return m_client; }
+    void setClient(CDMClient* client) { m_client = client; }
+
+    MediaPlayer* mediaPlayer() const;
+
+private:
+    String m_keySystem;
+    std::unique_ptr<CDMPrivateInterface> m_private;
+    CDMClient* m_client;
+};
+
+}
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)

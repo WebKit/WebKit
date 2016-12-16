@@ -26,7 +26,7 @@
 #ifndef CDMSessionMediaSourceAVFObjC_h
 #define CDMSessionMediaSourceAVFObjC_h
 
-#include "CDMSession.h"
+#include "LegacyCDMSession.h"
 #include "SourceBufferPrivateAVFObjC.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>

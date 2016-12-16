@@ -607,6 +607,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 #else
     UNUSED_PARAM(initData);
+    UNUSED_PARAM(hasSessionSemaphore);
 #endif
 }
 
@@ -680,8 +681,10 @@ void SourceBufferPrivateAVFObjC::resetParserState()
 
 void SourceBufferPrivateAVFObjC::destroyParser()
 {
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (m_mediaSource && m_mediaSource->player()->hasStreamSession())
         [m_mediaSource->player()->streamSession() removeStreamDataParser:m_parser.get()];
+#endif
 
     [m_delegate invalidate];
     m_delegate = nullptr;
@@ -801,6 +804,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
 
 void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* session)
 {
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (session == m_session)
         return;
 
@@ -827,6 +831,9 @@ void SourceBufferPrivateAVFObjC::setCDMSession(CDMSessionMediaSourceAVFObjC* ses
             });
         }
     }
+#else
+    UNUSED_PARAM(session);
+#endif
 }
 
 void SourceBufferPrivateAVFObjC::flush()

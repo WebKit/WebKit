@@ -28,7 +28,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "ActiveDOMObject.h"
-#include "CDMSession.h"
+#include "LegacyCDMSession.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "GenericEventQueue.h"
