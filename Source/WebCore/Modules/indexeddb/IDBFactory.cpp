@@ -86,7 +86,7 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& cont
     return openInternal(context, name, version.value_or(0));
 }
 
-ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version)
+ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, uint64_t version)
 {
     if (name.isNull())
         return Exception { TypeError, ASCIILiteral("IDBFactory.open() called without a database name") };

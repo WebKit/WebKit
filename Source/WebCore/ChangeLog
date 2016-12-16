@@ -1,3 +1,16 @@
+2016-12-15  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Fix debug build break since r209873. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=165945
+
+        No new tests, no new behaviours.
+
+        Use Primitive System Data Type uint64_t instead of unsigned long long.
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        * Modules/indexeddb/IDBFactory.h:
+
 2016-12-15  Zalan Bujtas  <zalan@apple.com>
 
         text-align: justify and word-spacing combine to overflow column

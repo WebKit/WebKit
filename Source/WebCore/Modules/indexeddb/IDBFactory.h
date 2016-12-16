@@ -64,7 +64,7 @@ public:
 private:
     explicit IDBFactory(IDBClient::IDBConnectionProxy&);
 
-    ExceptionOr<Ref<IDBOpenDBRequest>> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version);
+    ExceptionOr<Ref<IDBOpenDBRequest>> openInternal(ScriptExecutionContext&, const String& name, uint64_t version);
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };
