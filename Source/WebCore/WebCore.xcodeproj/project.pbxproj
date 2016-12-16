@@ -1817,8 +1817,6 @@
 		49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AE2D95134EE5F90072920A /* CalculationValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */; };
-		49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B3760A15C6C6840059131D /* ArrayValue.cpp */; };
-		49B3760D15C6C6840059131D /* ArrayValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B3760B15C6C6840059131D /* ArrayValue.h */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */; };
 		49C7B9971042D2D30009D447 /* JSWebGLFramebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9841042D2D30009D447 /* JSWebGLFramebuffer.cpp */; };
@@ -9015,8 +9013,6 @@
 		49AE2D95134EE5F90072920A /* CalculationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculationValue.h; sourceTree = "<group>"; };
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
-		49B3760A15C6C6840059131D /* ArrayValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayValue.cpp; sourceTree = "<group>"; };
-		49B3760B15C6C6840059131D /* ArrayValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayValue.h; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLBuffer.h; sourceTree = "<group>"; };
 		49C7B9841042D2D30009D447 /* JSWebGLFramebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLFramebuffer.cpp; sourceTree = "<group>"; };
@@ -21930,8 +21926,6 @@
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
-				49B3760A15C6C6840059131D /* ArrayValue.cpp */,
-				49B3760B15C6C6840059131D /* ArrayValue.h */,
 				2DFA488E1DB541C200362B99 /* BufferSource.h */,
 				E307DEC91D81E46E00141CAF /* CachedModuleScript.cpp */,
 				E307DECA1D81E46E00141CAF /* CachedModuleScript.h */,
@@ -24864,7 +24858,6 @@
 				512DD8FD0D91E6AF000F89EE /* ArchiveFactory.h in Headers */,
 				512DD8FC0D91E6AF000F89EE /* ArchiveResource.h in Headers */,
 				512DD8F80D91E6AF000F89EE /* ArchiveResourceCollection.h in Headers */,
-				49B3760D15C6C6840059131D /* ArrayValue.h in Headers */,
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */,
@@ -28752,7 +28745,6 @@
 				512DD8FA0D91E6AF000F89EE /* ArchiveFactory.cpp in Sources */,
 				512DD8FB0D91E6AF000F89EE /* ArchiveResource.cpp in Sources */,
 				512DD8F70D91E6AF000F89EE /* ArchiveResourceCollection.cpp in Sources */,
-				49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */,
 				FD5686C913AC180200B69C68 /* AsyncAudioDecoder.cpp in Sources */,
 				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,
 				0FFD4D6018651FA300512F6E /* AsyncScrollingCoordinator.cpp in Sources */,

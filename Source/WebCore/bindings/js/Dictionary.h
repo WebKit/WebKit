@@ -42,8 +42,6 @@ class JSValue;
 
 namespace WebCore {
 
-class ArrayValue;
-
 class Dictionary {
 public:
     Dictionary();
@@ -85,7 +83,6 @@ private:
     static void convertValue(JSC::ExecState&, JSC::JSValue, String& result);
     static void convertValue(JSC::ExecState&, JSC::JSValue, Vector<String>& result);
     static void convertValue(JSC::ExecState&, JSC::JSValue, Dictionary& result);
-    static void convertValue(JSC::ExecState&, JSC::JSValue, ArrayValue& result);
 
     JSC::ExecState* m_state { nullptr };
     JSC::Strong<JSC::JSObject> m_initializerObject;

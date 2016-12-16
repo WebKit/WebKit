@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Dictionary.h"
 
-#include "ArrayValue.h"
 #include "JSDOMConvert.h"
 
 using namespace JSC;
@@ -123,13 +122,6 @@ void Dictionary::convertValue(ExecState& state, JSValue value, Vector<String>& r
 void Dictionary::convertValue(ExecState& state, JSValue value, Dictionary& result)
 {
     result = Dictionary(&state, value);
-}
-
-void Dictionary::convertValue(ExecState& state, JSValue value, ArrayValue& result)
-{
-    if (value.isUndefinedOrNull())
-        return;
-    result = ArrayValue(&state, value);
 }
 
 }

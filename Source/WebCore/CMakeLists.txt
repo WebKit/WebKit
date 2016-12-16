@@ -1071,7 +1071,6 @@ set(WebCore_SOURCES
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
-    bindings/js/ArrayValue.cpp
     bindings/js/CachedModuleScript.cpp
     bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CallbackFunction.cpp

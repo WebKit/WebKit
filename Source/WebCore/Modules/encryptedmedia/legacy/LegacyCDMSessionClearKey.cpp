@@ -26,8 +26,6 @@
 #include "config.h"
 #include "LegacyCDMSessionClearKey.h"
 
-#include "ArrayValue.h"
-#include "Dictionary.h"
 #include "JSMainThreadExecState.h"
 #include "Logging.h"
 #include "TextEncoding.h"
@@ -99,66 +97,86 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
     ASSERT(rawKeysData);
 
     do {
-        String rawKeysString = String::fromUTF8(rawKeysData->data(), rawKeysData->length());
+        auto rawKeysString = String::fromUTF8(rawKeysData->data(), rawKeysData->length());
         if (rawKeysString.isEmpty())  {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: empty message", this);
             continue;
         }
 
-        VM& vm = clearKeyVM();
+        auto& vm = clearKeyVM();
         JSLockHolder lock(vm);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        JSGlobalObject* globalObject = JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
-        ExecState* exec = globalObject->globalExec();
+        auto* globalObject = JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
+        auto& state = *globalObject->globalExec();
 
-        JSLockHolder locker(clearKeyVM());
-        JSValue keysDataObject = JSONParse(exec, rawKeysString);
-        if (scope.exception() || !keysDataObject) {
+        auto keysDataValue = JSONParse(&state, rawKeysString);
+        if (scope.exception() || !keysDataValue.isObject()) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: invalid JSON", this);
             break;
         }
-        Dictionary keysDataDictionary(exec, keysDataObject);
-        ArrayValue keysArray;
-        size_t length;
-        if (!keysDataDictionary.get("keys", keysArray) || keysArray.isUndefinedOrNull() || !keysArray.length(length) || !length) {
+
+        auto keysArrayValue = asObject(keysDataValue)->get(&state, Identifier::fromString(&state, "keys"));
+        if (scope.exception() || !isJSArray(keysArrayValue)) {
+            LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
+            break;
+        }
+
+        auto keysArray = asArray(keysArrayValue);
+        auto length = keysArray->length();
+        if (!length) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;
         }
 
         bool foundValidKey = false;
-        for (size_t i = 0; i < length; ++i) {
-            Dictionary keyDictionary;
-            if (!keysArray.get(i, keyDictionary) || keyDictionary.isUndefinedOrNull()) {
+        for (unsigned i = 0; i < length; ++i) {
+            auto keyValue = keysArray->getIndex(&state, i);
+
+            if (scope.exception() || !keyValue.isObject()) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: null keyDictionary", this);
                 continue;
             }
 
-            String algorithm;
-            if (!keyDictionary.get("alg", algorithm) || !equalLettersIgnoringASCIICase(algorithm, "a128kw")) {
+            auto keyObject = asObject(keyValue);
+
+            auto getStringProperty = [&scope, &state, &keyObject](const char* name) -> String {
+                auto value = keyObject->get(&state, Identifier::fromString(&state, name));
+                if (scope.exception() || !value.isString())
+                    return { };
+
+                auto string = asString(value)->value(&state);
+                if (scope.exception())
+                    return { };
+                
+                return string;
+            };
+
+            auto algorithm = getStringProperty("alg");
+            if (!equalLettersIgnoringASCIICase(algorithm, "a128kw")) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: algorithm unsupported", this);
                 continue;
             }
 
-            String keyType;
-            if (!keyDictionary.get("kty", keyType) || !equalLettersIgnoringASCIICase(keyType, "oct")) {
+            auto keyType = getStringProperty("kty");
+            if (!equalLettersIgnoringASCIICase(keyType, "oct")) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyType unsupported", this);
                 continue;
             }
 
-            String keyId;
-            if (!keyDictionary.get("kid", keyId) || keyId.isEmpty()) {
+            auto keyId = getStringProperty("kid");
+            if (keyId.isEmpty()) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyId missing or empty", this);
                 continue;
             }
 
-            String rawKeyData;
-            if (!keyDictionary.get("k", rawKeyData) || rawKeyData.isEmpty())  {
+            auto rawKeyData = getStringProperty("k");
+            if (rawKeyData.isEmpty())  {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: key missing or empty", this);
                 continue;
             }
 
             Vector<uint8_t> keyData;
-            if (!base64Decode(rawKeyData, keyData) ||  keyData.isEmpty()) {
+            if (!base64Decode(rawKeyData, keyData) || keyData.isEmpty()) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: unable to base64 decode key", this);
                 continue;
             }
