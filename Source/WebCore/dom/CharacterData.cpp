@@ -33,8 +33,8 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
+#include <unicode/ubrk.h>
 #include <wtf/Ref.h>
-#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
@@ -86,8 +86,8 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     // We need at least two characters look-ahead to account for UTF-16 surrogates.
     if (characterLengthLimit < characterLength) {
         NonSharedCharacterBreakIterator it(StringView(string).substring(offset, (characterLengthLimit + 2 > characterLength) ? characterLength : characterLengthLimit + 2));
-        if (!isTextBreak(it, characterLengthLimit))
-            characterLengthLimit = textBreakPreceding(it, characterLengthLimit);
+        if (!ubrk_isBoundary(it, characterLengthLimit))
+            characterLengthLimit = ubrk_preceding(it, characterLengthLimit);
     }
 
     if (!characterLengthLimit)

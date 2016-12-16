@@ -32,6 +32,7 @@
 #include "FontCascade.h"
 #include <wtf/text/TextBreakIterator.h>
 #include "TextRun.h"
+#include <unicode/ubrk.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
@@ -43,19 +44,19 @@ namespace WebCore {
 
 typedef unsigned TruncationFunction(const String&, unsigned length, unsigned keepCount, UChar* buffer, bool shouldInsertEllipsis);
 
-static inline int textBreakAtOrPreceding(TextBreakIterator* it, int offset)
+static inline int textBreakAtOrPreceding(UBreakIterator* it, int offset)
 {
-    if (isTextBreak(it, offset))
+    if (ubrk_isBoundary(it, offset))
         return offset;
 
-    int result = textBreakPreceding(it, offset);
-    return result == TextBreakDone ? 0 : result;
+    int result = ubrk_preceding(it, offset);
+    return result == UBRK_DONE ? 0 : result;
 }
 
-static inline int boundedTextBreakFollowing(TextBreakIterator* it, int offset, int length)
+static inline int boundedTextBreakFollowing(UBreakIterator* it, int offset, int length)
 {
-    int result = textBreakFollowing(it, offset);
-    return result == TextBreakDone ? length : result;
+    int result = ubrk_following(it, offset);
+    return result == UBRK_DONE ? length : result;
 }
 
 static unsigned centerTruncateToBuffer(const String& string, unsigned length, unsigned keepCount, UChar* buffer, bool shouldInsertEllipsis)
@@ -146,7 +147,7 @@ static unsigned rightClipToWordBuffer(const String& string, unsigned length, uns
     ASSERT(keepCount < length);
     ASSERT(keepCount < STRING_BUFFER_SIZE);
 
-    TextBreakIterator* it = wordBreakIterator(StringView(string).substring(0, length));
+    UBreakIterator* it = wordBreakIterator(StringView(string).substring(0, length));
     unsigned keepLength = textBreakAtOrPreceding(it, keepCount);
     StringView(string).substring(0, keepLength).getCharactersWithUpconvert(buffer);
 

@@ -60,11 +60,11 @@ public:
         return locale;
     }
 
-    TextBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
+    UBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
     {
         auto localeWithOptionalBreakKeyword = makeLocaleWithBreakKeyword(locale, mode);
 
-        TextBreakIterator* iterator = nullptr;
+        UBreakIterator* iterator = nullptr;
         for (size_t i = 0; i < m_pool.size(); ++i) {
             if (m_pool[i].first == localeWithOptionalBreakKeyword) {
                 iterator = m_pool[i].second;
@@ -84,7 +84,7 @@ public:
         return iterator;
     }
 
-    void put(TextBreakIterator* iterator)
+    void put(UBreakIterator* iterator)
     {
         ASSERT(m_vendedIterators.contains(iterator));
         if (m_pool.size() == capacity) {
@@ -97,8 +97,8 @@ public:
 private:
     static constexpr size_t capacity = 4;
 
-    Vector<std::pair<AtomicString, TextBreakIterator*>, capacity> m_pool;
-    HashMap<TextBreakIterator*, AtomicString> m_vendedIterators;
+    Vector<std::pair<AtomicString, UBreakIterator*>, capacity> m_pool;
+    HashMap<UBreakIterator*, AtomicString> m_vendedIterators;
 
     friend WTF::ThreadSpecific<LineBreakIteratorPool>::operator LineBreakIteratorPool*();
 };

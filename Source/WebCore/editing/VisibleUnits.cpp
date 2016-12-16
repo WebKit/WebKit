@@ -37,9 +37,10 @@
 #include "RenderedPosition.h"
 #include "Text.h"
 #include "TextBoundaries.h"
-#include <wtf/text/TextBreakIterator.h>
 #include "TextIterator.h"
 #include "VisibleSelection.h"
+#include <unicode/ubrk.h>
+#include <wtf/text/TextBreakIterator.h>
 #include "htmlediting.h"
 
 namespace WebCore {
@@ -285,7 +286,7 @@ static const InlineBox* logicallyNextBox(const VisiblePosition& visiblePosition,
     return 0;
 }
 
-static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
+static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
     int& previousBoxLength, bool& previousBoxInDifferentBlock, Vector<UChar, 1024>& string, CachedLogicallyOrderedLeafBoxes& leafBoxes)
 {
     previousBoxInDifferentBlock = false;
@@ -305,7 +306,7 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     return wordBreakIterator(StringView(string.data(), string.size()));
 }
 
-static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
+static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
     bool& nextBoxInDifferentBlock, Vector<UChar, 1024>& string, CachedLogicallyOrderedLeafBoxes& leafBoxes)
 {
     nextBoxInDifferentBlock = false;
@@ -323,20 +324,20 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
     return wordBreakIterator(StringView(string.data(), string.size()));
 }
 
-static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+static bool isLogicalStartOfWord(UBreakIterator* iter, int position, bool hardLineBreak)
 {
-    bool boundary = hardLineBreak ? true : isTextBreak(iter, position);
+    bool boundary = hardLineBreak ? true : ubrk_isBoundary(iter, position);
     if (!boundary)
         return false;
 
-    textBreakFollowing(iter, position);
+    ubrk_following(iter, position);
     // isWordTextBreak returns true after moving across a word and false after moving across a punctuation/space.
     return isWordTextBreak(iter);
 }
 
-static bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+static bool islogicalEndOfWord(UBreakIterator* iter, int position, bool hardLineBreak)
 {
-    bool boundary = isTextBreak(iter, position);
+    bool boundary = ubrk_isBoundary(iter, position);
     return (hardLineBreak || boundary) && isWordTextBreak(iter);
 }
 
@@ -351,7 +352,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
     InlineBox* previouslyVisitedBox = nullptr;
     VisiblePosition current = visiblePosition;
-    TextBreakIterator* iter = nullptr;
+    UBreakIterator* iter = nullptr;
 
     CachedLogicallyOrderedLeafBoxes leafBoxes;
     Vector<UChar, 1024> string;
@@ -390,7 +391,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         if (!iter)
             break;
 
-        textBreakFirst(iter);
+        ubrk_first(iter);
         int offsetInIterator = offsetInBox - textBox.start() + previousBoxLength;
 
         bool isWordBreak;
@@ -1109,7 +1110,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
 unsigned startSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)
 {
     // FIXME: The following function can return -1; we don't handle that.
-    return textBreakPreceding(sentenceBreakIterator(text), text.length());
+    return ubrk_preceding(sentenceBreakIterator(text), text.length());
 }
 
 VisiblePosition startOfSentence(const VisiblePosition& position)
@@ -1119,7 +1120,7 @@ VisiblePosition startOfSentence(const VisiblePosition& position)
 
 unsigned endSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)
 {
-    return textBreakNext(sentenceBreakIterator(text));
+    return ubrk_next(sentenceBreakIterator(text));
 }
 
 VisiblePosition endOfSentence(const VisiblePosition& position)
@@ -1132,7 +1133,7 @@ static unsigned previousSentencePositionBoundary(StringView text, unsigned, Boun
 {
     // FIXME: This is identical to startSentenceBoundary. I'm pretty sure that's not right.
     // FIXME: The following function can return -1; we don't handle that.
-    return textBreakPreceding(sentenceBreakIterator(text), text.length());
+    return ubrk_preceding(sentenceBreakIterator(text), text.length());
 }
 
 VisiblePosition previousSentencePosition(const VisiblePosition& position)
@@ -1144,7 +1145,7 @@ static unsigned nextSentencePositionBoundary(StringView text, unsigned, Boundary
 {
     // FIXME: This is identical to endSentenceBoundary.
     // That isn't right. This function needs to move to the equivalent position in the following sentence.
-    return textBreakFollowing(sentenceBreakIterator(text), 0);
+    return ubrk_following(sentenceBreakIterator(text), 0);
 }
 
 VisiblePosition nextSentencePosition(const VisiblePosition& position)

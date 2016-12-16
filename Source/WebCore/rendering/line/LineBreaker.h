@@ -28,7 +28,6 @@
 #include "LineInfo.h"
 #include "LineInlineHeaders.h"
 #include <wtf/Vector.h>
-#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 

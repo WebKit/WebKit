@@ -102,10 +102,10 @@ inline unsigned nextBreakablePositionNonLoosely(LazyLineBreakIterator& lazyBreak
             if (!nextBreak || nextBreak.value() < i) {
                 // Don't break if positioned at start of primary context and there is no prior context.
                 if (i || priorContextLength) {
-                    TextBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
+                    UBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
                     if (breakIterator) {
-                        int candidate = textBreakFollowing(breakIterator, i - 1 + priorContextLength);
-                        if (candidate == TextBreakDone)
+                        int candidate = ubrk_following(breakIterator, i - 1 + priorContextLength);
+                        if (candidate == UBRK_DONE)
                             nextBreak = std::nullopt;
                         else {
                             unsigned result = candidate;
@@ -147,11 +147,11 @@ static inline unsigned nextBreakablePositionLoosely(LazyLineBreakIterator& lazyB
         if (!nextBreak || nextBreak.value() < i) {
             // Don't break if positioned at start of primary context and there is no prior context.
             if (i || priorContextLength) {
-                TextBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
+                UBreakIterator* breakIterator = lazyBreakIterator.get(priorContextLength);
                 if (breakIterator) {
                     ASSERT(i + priorContextLength >= 1);
-                    int candidate = textBreakFollowing(breakIterator, i + priorContextLength - 1);
-                    if (candidate == TextBreakDone)
+                    int candidate = ubrk_following(breakIterator, i + priorContextLength - 1);
+                    if (candidate == UBRK_DONE)
                         nextBreak = std::nullopt;
                     else {
                         unsigned result = candidate;

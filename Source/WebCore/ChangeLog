@@ -1,3 +1,55 @@
+2016-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Stop reinterpret_casting UBreakIterators to the undefined type TextBreakIterator
+        https://bugs.webkit.org/show_bug.cgi?id=165931
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there is no behavior change.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::findMisspellings):
+        * editing/VisibleUnits.cpp:
+        (WebCore::wordBreakIteratorForMinOffsetBoundary):
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary):
+        (WebCore::isLogicalStartOfWord):
+        (WebCore::islogicalEndOfWord):
+        (WebCore::visualWordPosition):
+        (WebCore::startSentenceBoundary):
+        (WebCore::endSentenceBoundary):
+        (WebCore::previousSentencePositionBoundary):
+        (WebCore::nextSentencePositionBoundary):
+        * html/HTMLInputElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * html/InputType.cpp:
+        * html/TextFieldInputType.cpp:
+        * html/TextInputType.cpp:
+        * platform/graphics/StringTruncator.cpp:
+        (WebCore::textBreakAtOrPreceding):
+        (WebCore::boundedTextBreakFollowing):
+        (WebCore::rightClipToWordBuffer):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        * platform/text/TextBoundaries.cpp:
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+        (WebCore::findEndWordBoundary):
+        * platform/text/mac/TextBoundaries.mm:
+        (WebCore::findNextWordFromIndex):
+        * rendering/BreakLines.h:
+        (WebCore::nextBreakablePositionNonLoosely):
+        (WebCore::nextBreakablePositionLoosely):
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderText.cpp:
+        (WebCore::makeCapitalized):
+        (WebCore::RenderText::previousOffset):
+        (WebCore::RenderText::previousOffsetForBackwardDeletion):
+        (WebCore::RenderText::nextOffset):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        * rendering/line/LineBreaker.h:
+
 2016-12-15  Darin Adler  <darin@apple.com>
 
         Use asString instead of toWTFString, toString, or getString when we already checked isString

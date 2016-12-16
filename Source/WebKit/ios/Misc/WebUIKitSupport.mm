@@ -40,7 +40,6 @@
 #import <WebCore/WebCoreSystemInterface.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/spi/darwin/dyldSPI.h>
-#import <wtf/text/TextBreakIterator.h>
 
 #import <runtime/InitializeThreading.h>
 

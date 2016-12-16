@@ -30,10 +30,11 @@
 #include "FontCascade.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
-#include <wtf/text/TextBreakIterator.h>
 #include "TextRun.h"
+#include <unicode/ubrk.h>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS)
@@ -176,21 +177,21 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 // could use the glyph's "ligature carets". This is available in CoreText via CTFontGetLigatureCaretPositions().
                 CFIndex hitIndex = hitGlyphStart + (hitGlyphEnd - hitGlyphStart) * (m_run.ltr() ? x / adjustedAdvance : 1 - x / adjustedAdvance);
                 int stringLength = complexTextRun.stringLength();
-                TextBreakIterator* cursorPositionIterator = cursorMovementIterator(StringView(complexTextRun.characters(), stringLength));
+                UBreakIterator* cursorPositionIterator = cursorMovementIterator(StringView(complexTextRun.characters(), stringLength));
                 int clusterStart;
-                if (isTextBreak(cursorPositionIterator, hitIndex))
+                if (ubrk_isBoundary(cursorPositionIterator, hitIndex))
                     clusterStart = hitIndex;
                 else {
-                    clusterStart = textBreakPreceding(cursorPositionIterator, hitIndex);
-                    if (clusterStart == TextBreakDone)
+                    clusterStart = ubrk_preceding(cursorPositionIterator, hitIndex);
+                    if (clusterStart == UBRK_DONE)
                         clusterStart = 0;
                 }
 
                 if (!includePartialGlyphs)
                     return complexTextRun.stringLocation() + clusterStart;
 
-                int clusterEnd = textBreakFollowing(cursorPositionIterator, hitIndex);
-                if (clusterEnd == TextBreakDone)
+                int clusterEnd = ubrk_following(cursorPositionIterator, hitIndex);
+                if (clusterEnd == UBRK_DONE)
                     clusterEnd = stringLength;
 
                 CGFloat clusterWidth;

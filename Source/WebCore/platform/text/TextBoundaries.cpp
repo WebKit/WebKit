@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextBoundaries.h"
 
+#include <unicode/ubrk.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/TextBreakIterator.h>
 
@@ -62,27 +63,27 @@ unsigned startOfLastWordBoundaryContext(StringView text)
 
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {
-    TextBreakIterator* it = wordBreakIterator(text);
+    UBreakIterator* it = wordBreakIterator(text);
 
     if (forward) {
-        position = textBreakFollowing(it, position);
-        while (position != TextBreakDone) {
+        position = ubrk_following(it, position);
+        while (position != UBRK_DONE) {
             // We stop searching when the character preceeding the break is alphanumeric.
             if (static_cast<unsigned>(position) < text.length() && u_isalnum(text[position - 1]))
                 return position;
 
-            position = textBreakFollowing(it, position);
+            position = ubrk_following(it, position);
         }
 
         return text.length();
     } else {
-        position = textBreakPreceding(it, position);
-        while (position != TextBreakDone) {
+        position = ubrk_preceding(it, position);
+        while (position != UBRK_DONE) {
             // We stop searching when the character following the break is alphanumeric.
             if (position && u_isalnum(text[position]))
                 return position;
 
-            position = textBreakPreceding(it, position);
+            position = ubrk_preceding(it, position);
         }
 
         return 0;
@@ -91,19 +92,19 @@ int findNextWordFromIndex(StringView text, int position, bool forward)
 
 void findWordBoundary(StringView text, int position, int* start, int* end)
 {
-    TextBreakIterator* it = wordBreakIterator(text);
-    *end = textBreakFollowing(it, position);
+    UBreakIterator* it = wordBreakIterator(text);
+    *end = ubrk_following(it, position);
     if (*end < 0)
-        *end = textBreakLast(it);
-    *start = textBreakPrevious(it);
+        *end = ubrk_last(it);
+    *start = ubrk_previous(it);
 }
 
 void findEndWordBoundary(StringView text, int position, int* end)
 {
-    TextBreakIterator* it = wordBreakIterator(text);
-    *end = textBreakFollowing(it, position);
+    UBreakIterator* it = wordBreakIterator(text);
+    *end = ubrk_following(it, position);
     if (*end < 0)
-        *end = textBreakLast(it);
+        *end = ubrk_last(it);
 }
 
 #endif // !PLATFORM(COCOA)

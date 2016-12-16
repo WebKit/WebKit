@@ -33,12 +33,13 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "Settings.h"
-#include <wtf/text/TextBreakIterator.h>
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
+#include <unicode/ubrk.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
@@ -76,11 +77,11 @@ static void findGrammaticalErrors(TextCheckerClient& client, StringView text, Ve
 
 static void findMisspellings(TextCheckerClient& client, StringView text, Vector<TextCheckingResult>& results)
 {
-    TextBreakIterator* iterator = wordBreakIterator(text);
+    UBreakIterator* iterator = wordBreakIterator(text);
     if (!iterator)
         return;
-    for (int wordStart = textBreakCurrent(iterator); wordStart >= 0; ) {
-        int wordEnd = textBreakNext(iterator);
+    for (int wordStart = ubrk_current(iterator); wordStart >= 0; ) {
+        int wordEnd = ubrk_next(iterator);
         if (wordEnd < 0)
             break;
 

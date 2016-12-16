@@ -28,6 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "StringView.h"
 
 #include <mutex>
+#include <unicode/ubrk.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -131,7 +132,7 @@ public:
             return 0;
         if (m_index == m_stringView.length())
             return m_index;
-        return textBreakFollowing(m_iterator.value(), m_index);
+        return ubrk_following(m_iterator.value(), m_index);
     }
 
 private:
