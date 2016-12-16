@@ -2,5 +2,5 @@ Note that some of the values tested here might not be supported, and thus should
 
 {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}
 {"alpha":true,"depth":true,"stencil":true,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}
-{"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}
+{"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":true,"failIfMajorPerformanceCaveat":false}
 {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"preferLowPowerToHighPerformance":false,"failIfMajorPerformanceCaveat":false}

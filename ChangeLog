@@ -1,5 +1,24 @@
 2016-12-15  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r204664.
+
+    2016-08-19  Dean Jackson  <dino@apple.com>
+
+            Implement preferLowPowerToHighPerformance for WebGL
+            https://bugs.webkit.org/show_bug.cgi?id=161017
+            <rdar://problem/26819135>
+
+            Reviewed by Myles Maxfield.
+
+            A manual test that creates contexts with and without preferLowPowerToHighPerformance
+            to see what is used. This has to be manual because it depends on the hardware
+            configuration, and we don't have a way to detect it up-front. Also, if the
+            code was failing, it would be the same result as on a single GPU system.
+
+            * ManualTests/webgl-preferLowPowerToHighPerformance.html: Added.
+
+2016-12-15  Babak Shafiei  <bshafiei@apple.com>
+
         Roll out r204664.
 
 2016-12-15  Babak Shafiei  <bshafiei@apple.com>
