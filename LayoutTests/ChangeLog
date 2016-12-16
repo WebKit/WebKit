@@ -1,3 +1,14 @@
+2016-12-16  Youenn Fablet  <youennf@gmail.com>
+
+        svg/as-image/svg-image-with-data-uri-use-data-uri.svg is flaky after r207754
+        https://bugs.webkit.org/show_bug.cgi?id=163887
+        <rdar://problem/29266436>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/security/cross-origin-cached-images-with-memory-pressure-expected.txt: Added.
+        * http/tests/security/cross-origin-cached-images-with-memory-pressure.html: Added.
+
 2016-12-15  Zalan Bujtas  <zalan@apple.com>
 
         text-align: justify and word-spacing combine to overflow column

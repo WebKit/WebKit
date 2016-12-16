@@ -43,7 +43,7 @@ class SecurityOrigin;
 
 struct Length;
 
-class CachedImage final : public CachedResource, public ImageObserver {
+class CachedImage final : public CachedResource {
     friend class MemoryCache;
 
 public:
@@ -116,16 +116,42 @@ private:
 
     bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
-    // ImageObserver
-    bool allowSubsampling() const override { return m_allowSubsampling; }
-    bool allowLargeImageAsyncDecoding() const override { return m_allowLargeImageAsyncDecoding; }
-    bool allowAnimatedImageAsyncDecoding() const override { return m_allowAnimatedImageAsyncDecoding; }
-    bool showDebugBackground() const override { return m_showDebugBackground; }
-    void decodedSizeChanged(const Image*, long long delta) override;
-    void didDraw(const Image*) override;
+    class CachedImageObserver final : public RefCounted<CachedImageObserver>, public ImageObserver {
+    public:
+        static Ref<CachedImageObserver> create(CachedImage& image) { return adoptRef(*new CachedImageObserver(image)); }
+        void add(CachedImage& image) { m_cachedImages.append(&image); }
+        void remove(CachedImage& image) { m_cachedImages.removeFirst(&image); }
 
-    void animationAdvanced(const Image*) override;
-    void changedInRect(const Image*, const IntRect* changeRect = nullptr) override;
+    private:
+        explicit CachedImageObserver(CachedImage&);
+
+        // ImageObserver API
+        bool allowSubsampling() const final { return m_allowSubsampling; }
+        bool allowLargeImageAsyncDecoding() const override { return m_allowLargeImageAsyncDecoding; }
+        bool allowAnimatedImageAsyncDecoding() const override { return m_allowAnimatedImageAsyncDecoding; }
+        bool showDebugBackground() const final { return m_showDebugBackground; }
+        void decodedSizeChanged(const Image*, long long delta) final;
+        void didDraw(const Image*) final;
+
+        void animationAdvanced(const Image*) final;
+        void changedInRect(const Image*, const IntRect*) final;
+
+        Vector<CachedImage*> m_cachedImages;
+        // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
+#if PLATFORM(IOS)
+        bool m_allowSubsampling { true };
+#else
+        bool m_allowSubsampling { false };
+#endif
+        bool m_allowLargeImageAsyncDecoding { true };
+        bool m_allowAnimatedImageAsyncDecoding { true };
+        bool m_showDebugBackground { false };
+    };
+
+    void decodedSizeChanged(const Image*, long long delta);
+    void didDraw(const Image*);
+    void animationAdvanced(const Image*);
+    void changedInRect(const Image*, const IntRect*);
 
     void addIncrementalDataBuffer(SharedBuffer&);
 
@@ -135,20 +161,11 @@ private:
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
     ContainerSizeRequests m_pendingContainerSizeRequests;
 
+    RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;
     std::unique_ptr<SVGImageCache> m_svgImageCache;
     bool m_isManuallyCached { false };
     bool m_shouldPaintBrokenImage { true };
-
-    // The default value of m_allowSubsampling should be the same as defaultImageSubsamplingEnabled in Settings.cpp
-#if PLATFORM(IOS)
-    bool m_allowSubsampling { true };
-#else
-    bool m_allowSubsampling { false };
-#endif
-    bool m_allowLargeImageAsyncDecoding { true };
-    bool m_allowAnimatedImageAsyncDecoding { true };
-    bool m_showDebugBackground { false };
 };
 
 } // namespace WebCore
