@@ -34,6 +34,7 @@
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_FRAMEWORK(UIKit);
+SOFT_LINK_CLASS(UIKit, UIFont);
 SOFT_LINK_CLASS(UIKit, UILabel);
 SOFT_LINK_CLASS(UIKit, UIPopoverPresentationController);
 SOFT_LINK_CLASS(UIKit, UITapGestureRecognizer);
@@ -92,8 +93,8 @@ SOFT_LINK_CLASS(UIKit, UIViewController);
 
 namespace WebCore {
 
-static const CGFloat horizontalPadding = 8;
-static const CGFloat verticalPadding = 8;
+static const CGFloat horizontalPadding = 17;
+static const CGFloat verticalPadding = 9;
 static const CGFloat maxLabelWidth = 300;
 
 ValidationBubble::ValidationBubble(UIView* view, const String& message)
@@ -109,6 +110,7 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message)
 
     RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
     [label setText:message];
+    [label setFont:[getUIFontClass() systemFontOfSize:14.0]];
     [label setLineBreakMode:NSLineBreakByWordWrapping];
     [label setNumberOfLines:4];
     [popoverView addSubview:label.get()];

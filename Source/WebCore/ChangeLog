@@ -1,3 +1,17 @@
+2016-12-16  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Align HTML from validation popover style with Copy/Paste callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=165973
+        <rdar://problem/29336638>
+
+        Reviewed by Simon Fraser.
+
+        Tweak font size and padding of the HTML from validation popover to
+        match the style of the Copy/Paste callout bar on iOS.
+
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+
 2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Another attempt to fix the Windows build after r209936.
