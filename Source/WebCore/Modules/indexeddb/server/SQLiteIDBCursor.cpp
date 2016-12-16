@@ -107,7 +107,7 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result)
         return;
     }
 
-    result = { m_currentKey, m_currentPrimaryKey, m_currentValue ? *m_currentValue : IDBValue() };
+    result = { m_currentRecord.key, m_currentRecord.primaryKey, m_currentRecord.value ? *m_currentRecord.value : IDBValue() };
 }
 
 static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)
@@ -223,21 +223,21 @@ void SQLiteIDBCursor::resetAndRebindStatement()
     m_statementNeedsReset = false;
 
     // If this cursor never fetched any records, we don't need to reset the statement.
-    if (m_currentKey.isNull())
+    if (m_currentRecord.key.isNull())
         return;
 
     // Otherwise update the lower key or upper key used for the cursor range.
     // This is so the cursor can pick up where we left off.
     // We might also have to change the statement from closed to open so we don't refetch the current key a second time.
     if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
-        m_currentLowerKey = m_currentKey;
+        m_currentLowerKey = m_currentRecord.key;
         if (!m_keyRange.lowerOpen) {
             m_keyRange.lowerOpen = true;
             m_keyRange.lowerKey = m_currentLowerKey;
             m_statement = nullptr;
         }
     } else {
-        m_currentUpperKey = m_currentKey;
+        m_currentUpperKey = m_currentRecord.key;
         if (!m_keyRange.upperOpen) {
             m_keyRange.upperOpen = true;
             m_keyRange.upperKey = m_currentUpperKey;
@@ -316,14 +316,14 @@ bool SQLiteIDBCursor::advance(uint64_t count)
 
 bool SQLiteIDBCursor::advanceUnique()
 {
-    IDBKeyData currentKey = m_currentKey;
+    IDBKeyData currentKey = m_currentRecord.key;
 
     while (!m_completed) {
         if (!advanceOnce())
             return false;
 
         // If the new current key is different from the old current key, we're done.
-        if (currentKey.compare(m_currentKey))
+        if (currentKey.compare(m_currentRecord.key))
             return true;
     }
 
@@ -356,16 +356,14 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     ASSERT(m_statement);
     ASSERT(!m_completed);
 
-    m_currentValue = nullptr;
+    m_currentRecord.value = nullptr;
 
     int result = m_statement->step();
     if (result == SQLITE_DONE) {
         m_completed = true;
 
         // When a cursor reaches its end, that is indicated by having undefined keys/values
-        m_currentKey = IDBKeyData();
-        m_currentPrimaryKey = IDBKeyData();
-        m_currentValue = nullptr;
+        m_currentRecord = { };
         m_currentRecordRowID = 0;
 
         return AdvanceResult::Success;
@@ -383,7 +381,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
     Vector<uint8_t> keyData;
     m_statement->getColumnBlobAsVector(1, keyData);
 
-    if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentKey)) {
+    if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentRecord.key)) {
         LOG_ERROR("Unable to deserialize key data from database while advancing cursor");
         markAsErrored();
         return AdvanceResult::Failure;
@@ -393,7 +391,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
 
     // The primaryKey of an ObjectStore cursor is the same as its key.
     if (m_indexID == IDBIndexInfo::InvalidId) {
-        m_currentPrimaryKey = m_currentKey;
+        m_currentRecord.primaryKey = m_currentRecord.key;
 
         Vector<String> blobURLs, blobFilePaths;
         auto error = m_transaction->backingStore().getBlobRecordsForObjectStoreRecord(m_currentRecordRowID, blobURLs, blobFilePaths);
@@ -404,9 +402,9 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
         }
 
         if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
-            m_currentValue = std::make_unique<IDBValue>(ThreadSafeDataBuffer::adoptVector(keyData), blobURLs, blobFilePaths);
+            m_currentRecord.value = std::make_unique<IDBValue>(ThreadSafeDataBuffer::adoptVector(keyData), blobURLs, blobFilePaths);
     } else {
-        if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentPrimaryKey)) {
+        if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentRecord.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
             markAsErrored();
             return AdvanceResult::Failure;
@@ -426,7 +424,7 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
 
         if (result == SQLITE_ROW) {
             objectStoreStatement.getColumnBlobAsVector(0, keyData);
-            m_currentValue = std::make_unique<IDBValue>(ThreadSafeDataBuffer::adoptVector(keyData));
+            m_currentRecord.value = std::make_unique<IDBValue>(ThreadSafeDataBuffer::adoptVector(keyData));
         } else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.
@@ -459,24 +457,24 @@ bool SQLiteIDBCursor::iterate(const IDBKeyData& targetKey, const IDBKeyData& tar
 
         // Search for the next key >= the target if the cursor is a Next cursor, or the next key <= if the cursor is a Previous cursor.
         if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
-            if (m_currentKey.compare(targetKey) >= 0)
+            if (m_currentRecord.key.compare(targetKey) >= 0)
                 break;
-        } else if (m_currentKey.compare(targetKey) <= 0)
+        } else if (m_currentRecord.key.compare(targetKey) <= 0)
             break;
 
         result = advance(1);
     }
 
     if (targetPrimaryKey.isValid()) {
-        while (!m_completed && !m_currentKey.compare(targetKey)) {
+        while (!m_completed && !m_currentRecord.key.compare(targetKey)) {
             if (!result)
                 return false;
 
             // Search for the next primary key >= the primary target if the cursor is a Next cursor, or the next key <= if the cursor is a Previous cursor.
             if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
-                if (m_currentPrimaryKey.compare(targetPrimaryKey) >= 0)
+                if (m_currentRecord.primaryKey.compare(targetPrimaryKey) >= 0)
                     break;
-            } else if (m_currentPrimaryKey.compare(targetPrimaryKey) <= 0)
+            } else if (m_currentRecord.primaryKey.compare(targetPrimaryKey) <= 0)
                 break;
 
             result = advance(1);

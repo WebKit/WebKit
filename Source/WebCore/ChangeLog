@@ -1,3 +1,30 @@
+2016-12-15  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB: Add an "IDBCursorRecord" struct.
+        https://bugs.webkit.org/show_bug.cgi?id=165929
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no behavior change).
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentData):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::advanceUnique):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        (WebCore::IDBServer::SQLiteIDBCursor::iterate):
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentPrimaryKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValue):
+
+        * Modules/indexeddb/shared/IDBCursorRecord.h: Added.
+        (WebCore::IDBCursorRecord::encode):
+        (WebCore::IDBCursorRecord::decode):
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-12-15  Keith Rollin  <krollin@apple.com>
 
         Refactor Document::suspend/resume

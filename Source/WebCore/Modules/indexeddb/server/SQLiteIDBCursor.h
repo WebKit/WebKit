@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorRecord.h"
 #include "IDBIndexInfo.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
@@ -61,9 +62,9 @@ public:
     int64_t objectStoreID() const { return m_objectStoreID; }
     int64_t currentRecordRowID() const { return m_currentRecordRowID; }
 
-    const IDBKeyData& currentKey() const { return m_currentKey; }
-    const IDBKeyData& currentPrimaryKey() const { return m_currentPrimaryKey; }
-    IDBValue* currentValue() const { return m_currentValue.get(); }
+    const IDBKeyData& currentKey() const { return m_currentRecord.key; }
+    const IDBKeyData& currentPrimaryKey() const { return m_currentRecord.primaryKey; }
+    IDBValue* currentValue() const { return m_currentRecord.value.get(); }
 
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey, const IDBKeyData& targetPrimaryKey);
@@ -105,9 +106,7 @@ private:
     IDBKeyData m_currentLowerKey;
     IDBKeyData m_currentUpperKey;
 
-    IDBKeyData m_currentKey;
-    IDBKeyData m_currentPrimaryKey;
-    std::unique_ptr<IDBValue> m_currentValue;
+    IDBCursorRecord m_currentRecord;
 
     std::unique_ptr<SQLiteStatement> m_statement;
     bool m_statementNeedsReset { false };

@@ -1992,6 +1992,7 @@
 		510D4A36103165EE0049EA54 /* SocketStreamHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */; };
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5110FCFC1E03641D006F8D0B /* IDBCursorRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */; };
 		511EC1271C50AACA0032F983 /* IDBSerialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1251C50AA570032F983 /* IDBSerialization.cpp */; };
 		511EC1281C50AACA0032F983 /* IDBSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 511EC1261C50AA570032F983 /* IDBSerialization.h */; };
 		511EC12B1C50ABBF0032F983 /* SQLiteIDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */; };
@@ -9184,6 +9185,7 @@
 		510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandle.cpp; sourceTree = "<group>"; };
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
 		510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandleClient.h; sourceTree = "<group>"; };
+		5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorRecord.h; sourceTree = "<group>"; };
 		511EC1251C50AA570032F983 /* IDBSerialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBSerialization.cpp; sourceTree = "<group>"; };
 		511EC1261C50AA570032F983 /* IDBSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBSerialization.h; sourceTree = "<group>"; };
 		511EC1291C50ABBA0032F983 /* SQLiteIDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteIDBTransaction.cpp; sourceTree = "<group>"; };
@@ -17004,6 +17006,7 @@
 			children = (
 				517138F91BF3ADAC000D5F01 /* IDBCursorInfo.cpp */,
 				517138FA1BF3ADAC000D5F01 /* IDBCursorInfo.h */,
+				5110FCFB1E0362A5006F8D0B /* IDBCursorRecord.h */,
 				51BA4AC11BBB5CBF00DF3D6D /* IDBDatabaseInfo.cpp */,
 				51BA4AC21BBB5CBF00DF3D6D /* IDBDatabaseInfo.h */,
 				5148453C1BB9D076006A72ED /* IDBError.cpp */,
@@ -27205,6 +27208,7 @@
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
 				31955A88160D199200858025 /* RenderSnapshottedPlugIn.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
+				5110FCFC1E03641D006F8D0B /* IDBCursorRecord.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
 				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
 				436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */,
