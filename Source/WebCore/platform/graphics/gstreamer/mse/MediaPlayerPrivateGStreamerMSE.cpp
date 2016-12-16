@@ -766,7 +766,8 @@ bool MediaPlayerPrivateGStreamerMSE::supportsCodecs(const String& codecs)
 
         const char* codecData = codec.utf8().data();
         for (const auto& pattern : supportedCodecs) {
-            if (isCodecSupported = !fnmatch(pattern, codecData, 0))
+            isCodecSupported = !fnmatch(pattern, codecData, 0);
+            if (isCodecSupported)
                 break;
         }
         if (!isCodecSupported)
