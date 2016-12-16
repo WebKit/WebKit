@@ -1,3 +1,26 @@
+2016-12-16  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Improve resource loading console logging
+        https://bugs.webkit.org/show_bug.cgi?id=160546
+
+        Reviewed by Alex Christensen.
+
+        Rebasing since error logging is happening for fetch API.
+
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-about-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-others-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-basic-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-cookies-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-multiple-origins-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-origin-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-preflight.html:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-location-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-schemes-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-to-dataurl-expected.txt:
+
 2016-12-15  Chris Dumez  <cdumez@apple.com>
 
         Move charCode / keyCode / which attributes from UIEvent to KeyboardEvent

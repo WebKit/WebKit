@@ -85,6 +85,8 @@ namespace WebCore {
         void ref() { refThreadableLoader(); }
         void deref() { derefThreadableLoader(); }
 
+        static void logError(ScriptExecutionContext&, const ResourceError&, const String&);
+
     protected:
         ThreadableLoader() { }
         virtual ~ThreadableLoader() { }

@@ -31,8 +31,10 @@
 #include "config.h"
 #include "ThreadableLoader.h"
 
+#include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "DocumentThreadableLoader.h"
+#include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
@@ -74,6 +76,43 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext& context
     else
         DocumentThreadableLoader::loadResourceSynchronously(downcast<Document>(context), WTFMove(request), client, options);
     context.didLoadResourceSynchronously();
+}
+
+void ThreadableLoader::logError(ScriptExecutionContext& context, const ResourceError& error, const String& initiator)
+{
+    // FIXME: extend centralized logging to other clients than fetch, at least XHR and EventSource.
+    if (initiator != cachedResourceRequestInitiators().fetch)
+        return;
+
+    if (error.isCancellation())
+        return;
+
+    // FIXME: Some errors are returned with null URLs. This leads to poor console messages. We should do better for these errors.
+    if (error.failingURL().isNull())
+        return;
+
+    // We further reduce logging to some errors.
+    // FIXME: Log more errors when making so do not make some layout tests flaky.
+    if (error.domain() != errorDomainWebKitInternal && !error.isAccessControl())
+        return;
+
+    const char* messageStart;
+    if (initiator == cachedResourceRequestInitiators().fetch)
+        messageStart = "Fetch API cannot load ";
+    else
+        messageStart = "Cannot load ";
+
+    const char* messageMiddle = ". ";
+    String description = error.localizedDescription();
+    if (description.isEmpty()) {
+        // FIXME: We should probably define default description error message for all error types.
+        if (error.isAccessControl())
+            messageMiddle = ASCIILiteral(" due to access control checks.");
+        else
+            messageMiddle = ".";
+    }
+
+    context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString(messageStart, error.failingURL().string(), messageMiddle, description));
 }
 
 } // namespace WebCore

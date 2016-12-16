@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: Fetch API cannot load blob:http://www.localhost:8800/. Cross origin requests are only supported for HTTP.
 
 PASS Fetching [GET] URL.createObjectURL(blob) is OK 
 PASS Fetching [GET] blob:http://www.localhost:8800/ is KO 

@@ -1,9 +1,15 @@
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fexample.com%2C%20http%3A%2F%2Flocalhost%3A8800. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Fexample.com%2C%20*. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%22%22%2C%20http%3A%2F%2Flocalhost%3A8800%2C%20http%3A%2F%2Flocalhost%3A8800. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=*%2C%20http%3A%2F%2Fexample.com%2C%20*. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=*%2C%20http%3A%2F%2Fexample.com%2C%20http%3A%2F%2Flocalhost%3A8800. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Fetch API cannot load http://localhost:8801/fetch/api/resources/preflight.py?origin=%2C%20http%3A%2F%2Fexample.com%2C%20https%3A%2F%2Fexample2.com. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
 
 FAIL 3 origins allowed, match the 3rd (http://localhost:8800) promise_test: Unhandled rejection with value: object "TypeError: Type error"
 FAIL 3 origins allowed, match the 3rd ("*") promise_test: Unhandled rejection with value: object "TypeError: Type error"

@@ -1,3 +1,53 @@
+2016-12-16  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Improve resource loading console logging
+        https://bugs.webkit.org/show_bug.cgi?id=160546
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        Adding support for logging of resource loading failures in ThreadableLoader.
+        This will allow doing consistent logging for clients such as fetch, XHR, event source...
+
+        Doing logging for Fetch API only at the moment in ThreadableLoader.
+        Future patches should migrate XHR to this logging system.
+
+        Logging routine is implemented in ThreadableLoader.
+        It is used directly by DocumentThreadableLoader before calling didFail client callback.
+        DocumentThreadableLoader has a new option to not log errors, in the case the client is WorkerThreadableLoader::MainBridge.
+        In that case, the logging is done in the worker context within WorkerThreadableLoader::MainBridge::didFail
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously): Enable logging.
+        (WebCore::DocumentThreadableLoader::create): Passing logging parameter to constructor.
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Adding initialization of logging parameter.
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest): Making use of the new logErrorAndFail helper routine.
+        (WebCore::DocumentThreadableLoader::cancel): No need to log error if it is being cancelled.
+        (WebCore::DocumentThreadableLoader::redirectReceived): Made the reportXX routines methods of DocumentThreadableLoaders and using logErrorAndFail internally.
+        (WebCore::DocumentThreadableLoader::didFail): Wrapper around logErrorAndFail since cancel is not calling it anymore.
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        (WebCore::DocumentThreadableLoader::reportRedirectionWithBadScheme):
+        (WebCore::DocumentThreadableLoader::reportContentSecurityPolicyError):
+        (WebCore::DocumentThreadableLoader::reportCrossOriginResourceSharingError):
+        (WebCore::DocumentThreadableLoader::logErrorAndFail):
+        (WebCore::reportContentSecurityPolicyError): Deleted.
+        (WebCore::reportCrossOriginResourceSharingError): Deleted.
+        (WebCore::reportRedirectionWithBadScheme): Deleted.
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoader::logError):
+        * loader/ThreadableLoader.h:
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::create):
+        (WebCore::ThreadableLoaderClientWrapper::initiator):
+        (WebCore::ThreadableLoaderClientWrapper::ThreadableLoaderClientWrapper):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didFail):
+
 2016-12-16  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] Fix build warning in MediaPlayerPrivateGStreamer.cpp using gcc 6.2
