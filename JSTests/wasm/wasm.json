@@ -147,7 +147,7 @@
         "i64.clz":             { "category": "arithmetic", "value": 121, "return": ["i64"],      "parameter": ["i64"],                  "immediate": [], "b3op": "Clz"          },
         "i64.ctz":             { "category": "arithmetic", "value": 122, "return": ["i64"],      "parameter": ["i64"],                  "immediate": []                         },
         "i64.popcnt":          { "category": "arithmetic", "value": 123, "return": ["i64"],      "parameter": ["i64"],                  "immediate": []                         },
-        "i64.eqz":             { "category": "comparison", "value":  80, "return": ["bool"],     "parameter": ["i64"],                  "immediate": [], "b3op": "Equal(i32(0), @0)" },
+        "i64.eqz":             { "category": "comparison", "value":  80, "return": ["bool"],     "parameter": ["i64"],                  "immediate": [], "b3op": "Equal(i64(0), @0)" },
         "f32.add":             { "category": "arithmetic", "value": 146, "return": ["f32"],      "parameter": ["f32", "f32"],           "immediate": [], "b3op": "Add"          },
         "f32.sub":             { "category": "arithmetic", "value": 147, "return": ["f32"],      "parameter": ["f32", "f32"],           "immediate": [], "b3op": "Sub"          },
         "f32.mul":             { "category": "arithmetic", "value": 148, "return": ["f32"],      "parameter": ["f32", "f32"],           "immediate": [], "b3op": "Mul"          },

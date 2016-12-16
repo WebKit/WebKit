@@ -1,3 +1,18 @@
+2016-12-16  Keith Miller  <keith_miller@apple.com>
+
+        i64.eqz should use an Int64 zero
+        https://bugs.webkit.org/show_bug.cgi?id=165942
+
+        Reviewed by Mark Lam.
+
+        This patch fixes i64.eqz, which was using an Int32 zero
+        for the comparison previously. This patch also, adds
+        printing opcodes names in verbose mode.
+
+        * wasm/WasmFunctionParser.h:
+        * wasm/generateWasmOpsHeader.py:
+        * wasm/wasm.json:
+
 2016-12-15  Darin Adler  <darin@apple.com>
 
         Use asString instead of toWTFString, toString, or getString when we already checked isString

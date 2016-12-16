@@ -264,6 +264,17 @@ inline bool isSimple(BinaryOpType op)
     return false;
 }
 
+#define CREATE_CASE(name, id, b3type, inc) case name: return #name;
+inline const char* makeString(OpType op)
+{
+    switch (op) {
+    FOR_EACH_WASM_OP(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#undef CREATE_CASE
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

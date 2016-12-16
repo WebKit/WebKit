@@ -132,7 +132,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
 
         if (verbose) {
-            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
+            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
             m_context.dump(m_controlStack, m_expressionStack);
         }
 
