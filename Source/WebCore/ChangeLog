@@ -1,3 +1,18 @@
+2016-12-16  Alex Christensen  <achristensen@webkit.org>
+
+        Use initEvent quirk added in r207908 for Flipboard
+        https://bugs.webkit.org/show_bug.cgi?id=165974
+        <rdar://problem/28264190>
+
+        Reviewed by Chris Dumez.
+
+        * dom/Event.cpp:
+        (WebCore::Event::initEventForBindings):
+        * platform/RuntimeApplicationChecks.h:
+        * platform/RuntimeApplicationChecks.mm:
+        (WebCore::IOSApplication::isFlipboard):
+        Flipboard also has JavaScript content that calls initEvent with not enough arguments.
+
 2016-12-16  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Align HTML from validation popover style with Copy/Paste callout bar

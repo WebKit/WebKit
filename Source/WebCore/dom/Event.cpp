@@ -94,7 +94,8 @@ ExceptionOr<void> Event::initEventForBindings(ScriptExecutionContext& scriptExec
 {
 #if PLATFORM(IOS)
     // FIXME: Temporary quirk for Baidu Nuomi App which calls initEvent() with too few parameters (rdar://problem/28707838).
-    if (IOSApplication::isBaiduNuomi()) {
+    // FIXME: Quirk also needed for Flipboard for same reason (rdar://problem/28264190).
+    if (IOSApplication::isBaiduNuomi() || IOSApplication::isFlipboard()) {
         scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Calling Event.prototype.initEvent() with less than 3 parameters is deprecated."));
         initEvent(type, bubbles, false);
         return { };
