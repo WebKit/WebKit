@@ -1,3 +1,17 @@
+2016-12-15  Daniel Bates  <dabates@apple.com>
+
+        check-style should not complain about code in icu directories
+        https://bugs.webkit.org/show_bug.cgi?id=53929
+
+        Reviewed by Darin Adler.
+
+        Skip style checking of imported ICU headers to avoid a deluge of style issues
+        as they do not conform to the WebKit Code Style guideline. We want to preserve
+        the formatting of these headers so as to make it straightforward to merge
+        changes to them, if necessary.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2016-12-15  Alexey Proskuryakov  <ap@apple.com>
 
         Move JSC testers from Yosemite to Sierra
