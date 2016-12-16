@@ -1860,8 +1860,8 @@
 		25A8176801B5474B0ECA149E /* History */ = {
 			isa = PBXGroup;
 			children = (
-				1A9119F41DB0470A0087D1FD /* BackForwardList.mm */,
 				1A9119F51DB0470A0087D1FD /* BackForwardList.h */,
+				1A9119F41DB0470A0087D1FD /* BackForwardList.mm */,
 				1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */,
 				1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */,
 				1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */,
@@ -2734,6 +2734,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */,
 				1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */,
 				9398106A0824BF01008DF038 /* CarbonUtils.h in Headers */,
 				939810650824BF01008DF038 /* CarbonWindowAdapter.h in Headers */,
@@ -2743,7 +2744,6 @@
 				93D4364D1D57ABEE00AB85EA /* DOM.h in Headers */,
 				93D4364F1D57ABEE00AB85EA /* DOMAbstractView.h in Headers */,
 				93D436511D57ABEE00AB85EA /* DOMAbstractViewFrame.h in Headers */,
-				F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */,
 				93D436521D57ABEE00AB85EA /* DOMAbstractViewInternal.h in Headers */,
 				93D436531D57ABEE00AB85EA /* DOMAttr.h in Headers */,
 				93D436551D57ABEE00AB85EA /* DOMAttrInternal.h in Headers */,
@@ -2774,7 +2774,6 @@
 				93D4367D1D57ABEE00AB85EA /* DOMCSSStyleRule.h in Headers */,
 				93D4367F1D57ABEE00AB85EA /* DOMCSSStyleSheet.h in Headers */,
 				93D436811D57ABEE00AB85EA /* DOMCSSStyleSheetInternal.h in Headers */,
-				F4C98E5D1DD6476F0012FDEC /* DOMHTMLElementPrivate.h in Headers */,
 				93D436821D57ABEE00AB85EA /* DOMCSSUnknownRule.h in Headers */,
 				93D436841D57ABEE00AB85EA /* DOMCSSValue.h in Headers */,
 				93D436861D57ABEE00AB85EA /* DOMCSSValueInternal.h in Headers */,
@@ -2828,6 +2827,7 @@
 				93D436D31D57ABEE00AB85EA /* DOMHTMLDocumentInternal.h in Headers */,
 				93D436D41D57ABEE00AB85EA /* DOMHTMLElement.h in Headers */,
 				93D436D61D57ABEE00AB85EA /* DOMHTMLElementInternal.h in Headers */,
+				F4C98E5D1DD6476F0012FDEC /* DOMHTMLElementPrivate.h in Headers */,
 				93D436D71D57ABEE00AB85EA /* DOMHTMLEmbedElement.h in Headers */,
 				93D436D91D57ABEE00AB85EA /* DOMHTMLFieldSetElement.h in Headers */,
 				93D436DB1D57ABEE00AB85EA /* DOMHTMLFontElement.h in Headers */,
@@ -2915,7 +2915,6 @@
 				93D437651D57ABEF00AB85EA /* DOMProcessingInstructionInternal.h in Headers */,
 				93D437661D57ABEF00AB85EA /* DOMProgressEvent.h in Headers */,
 				93D437681D57ABEF00AB85EA /* DOMRange.h in Headers */,
-				1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */,
 				93D4376A1D57ABEF00AB85EA /* DOMRangeException.h in Headers */,
 				93D4376B1D57ABEF00AB85EA /* DOMRangeInternal.h in Headers */,
 				93D4376C1D57ABEF00AB85EA /* DOMRanges.h in Headers */,
@@ -2981,6 +2980,7 @@
 				9398109A0824BF01008DF038 /* WebArchive.h in Headers */,
 				44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */,
 				939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */,
+				F4F665C21DD67672007714B4 /* WebAutocapitalizeTypes.h in Headers */,
 				939810110824BF01008DF038 /* WebBackForwardList.h in Headers */,
 				51C714FB0B20F79F00E5E33C /* WebBackForwardListInternal.h in Headers */,
 				22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */,
@@ -3172,7 +3172,6 @@
 				E4AEF97C1C0DF4BC00B01727 /* WebResourceLoadScheduler.h in Headers */,
 				939810890824BF01008DF038 /* WebResourcePrivate.h in Headers */,
 				7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */,
-				4618DFF81DEF760A0033C3AA /* WebValidationMessageClient.h in Headers */,
 				C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */,
 				C0B1F7E810AC8E3100C925D9 /* WebScriptWorld.h in Headers */,
 				C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */,
@@ -3199,6 +3198,7 @@
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
 				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
 				070F549B17F1E42B00169E04 /* WebUserMediaClient.h in Headers */,
+				4618DFF81DEF760A0033C3AA /* WebValidationMessageClient.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
 				BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */,
 				1430C12D1B2C5DF700DEA01D /* WebViewGroup.h in Headers */,
@@ -3401,6 +3401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */,
 				1A60519117502A5D00BC62F5 /* BinaryPropertyList.cpp in Sources */,
 				939811010824BF01008DF038 /* CarbonUtils.m in Sources */,
 				939810FD0824BF01008DF038 /* CarbonWindowAdapter.mm in Sources */,
@@ -3434,7 +3435,6 @@
 				93D4368C1D57ABEE00AB85EA /* DOMDocument.mm in Sources */,
 				93D4368E1D57ABEE00AB85EA /* DOMDocumentFragment.mm in Sources */,
 				93D436941D57ABEE00AB85EA /* DOMDocumentType.mm in Sources */,
-				4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */,
 				93D436971D57ABEE00AB85EA /* DOMDOMImplementation.mm in Sources */,
 				93D4369A1D57ABEE00AB85EA /* DOMDOMTokenList.mm in Sources */,
 				93D4369D1D57ABEE00AB85EA /* DOMElement.mm in Sources */,
@@ -3562,7 +3562,6 @@
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,
 				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
-				1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,
@@ -3711,6 +3710,7 @@
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 				070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */,
+				4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				1430C12C1B2C5DF700DEA01D /* WebViewGroup.cpp in Sources */,
