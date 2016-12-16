@@ -1,3 +1,14 @@
+2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline bindings tests after r209897.
+
+        Unreviewed test gardening.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::visitChildren):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::visitChildren):
+
 2016-12-15  Brent Fulgham  <bfulgham@apple.com>
 
         Arguments called in wrong order
