@@ -26,11 +26,12 @@
     // FIXME: Using "undefined" as default parameter value is wrong.
     void initUIEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false, optional DOMWindow? view = null, optional long detail = 0);
 
-    readonly attribute long keyCode;
-    readonly attribute long charCode;
     readonly attribute long layerX;
     readonly attribute long layerY;
     readonly attribute long pageX;
     readonly attribute long pageY;
+
+    // FIXME: This should be on KeyboardEvent only as per the specification but Firefox and Chrome
+    // still have this attribute on UIEvent as of December 2016.
     readonly attribute long which;
 };

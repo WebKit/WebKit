@@ -55,9 +55,6 @@ public:
 
     EventInterface eventInterface() const override;
 
-    virtual int keyCode() const;
-    virtual int charCode() const;
-
     virtual int layerX();
     virtual int layerY();
 

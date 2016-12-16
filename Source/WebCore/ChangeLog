@@ -1,3 +1,53 @@
+2016-12-15  Chris Dumez  <cdumez@apple.com>
+
+        Move charCode / keyCode / which attributes from UIEvent to KeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=165904
+
+        Reviewed by Sam Weinig.
+
+        Move 'charCode' / 'keyCode' attributes from UIEvent to KeyboardEvent and add
+        'which' to KeyboardEvent to match the specification:
+        - https://w3c.github.io/uievents/#legacy-interface-KeyboardEvent
+
+        We keep a 'which' attribute on UIEvent even though the specification does
+        not say we should because Firefox and Chrome have 'which' on UIEvent still.
+
+        Specification:
+        - 'charCode' / 'keyCode' / 'which' on KeyboardEvent only
+
+        Firefox:
+        - 'charCode' / 'keyCode' on KeyboardEvent only
+        - 'which' on UIEvent only
+
+        Chrome:
+        - 'charCode' / 'keyCode' / 'which' on KeyboardEvent
+        - 'which' on UIEvent as well
+
+        Old WebKit behavior:
+        - 'charCode' / 'keyCode' / 'which' on UIEvent only
+
+        New WebKit behavior:
+        - 'charCode' / 'keyCode' / 'which' on KeyboardEvent
+        - 'which' on UIEvent as well
+
+        Our new behavior is identical to Chrome, much closer to the specification,
+        and closer to Firefox as well.
+
+        No new tests, updated / rebaselined existing tests.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::keyCode):
+        (WebCore::KeyboardEvent::charCode):
+        (WebCore::KeyboardEvent::which):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::which):
+        * dom/UIEvent.cpp:
+        * dom/UIEvent.h:
+        * dom/UIEvent.idl:
+
 2016-12-15  Brady Eidson  <beidson@apple.com>
 
         IndexedDB: Add an "IDBCursorRecord" struct.

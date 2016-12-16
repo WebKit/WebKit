@@ -45,7 +45,9 @@ function eventInfo(event, where) {
             + ' - ' + event.keyIdentifier
             + ' - ' + (event.location === undefined ? "undefined" : locationName(event.location))
             + ' - ' + event.keyCode
-            + ' - ' + event.charCode;
+            + ' - ' + event.charCode
+            + ' - ' + event.keyCode
+            + ' - ' + event.which;
 
     } catch (ex) {
         alert(ex);
@@ -57,7 +59,9 @@ log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
         + ' - ' + "keyIdentifier"
         + ' - ' + "location"
         + ' - ' + "keyCode"
-        + ' - ' + "charCode");
+        + ' - ' + "charCode"
+        + ' - ' + "keyCode"
+        + ' - ' + "which");
 
 if (window.testRunner) {
     testRunner.dumpAsText();

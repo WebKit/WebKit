@@ -28,9 +28,10 @@
 #import "DOMAbstractViewInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
-#import <WebCore/DOMWindow.h>
 #import "ExceptionHandlers.h"
+#import <WebCore/DOMWindow.h>
 #import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/KeyboardEvent.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/UIEvent.h>
 #import <WebCore/URL.h>
@@ -56,13 +57,17 @@
 - (int)keyCode
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->keyCode();
+    if (is<WebCore::KeyboardEvent>(*IMPL))
+        return downcast<WebCore::KeyboardEvent>(*IMPL).keyCode();
+    return 0;
 }
 
 - (int)charCode
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->charCode();
+    if (is<WebCore::KeyboardEvent>(*IMPL))
+        return downcast<WebCore::KeyboardEvent>(*IMPL).charCode();
+    return 0;
 }
 
 - (int)layerX

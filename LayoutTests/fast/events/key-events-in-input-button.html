@@ -27,7 +27,8 @@ function eventInfo(event, where) {
             + ' - ' + event.code
             + ' - ' + event.keyIdentifier
             + ' - ' + event.keyCode
-            + ' - ' + event.charCode;
+            + ' - ' + event.charCode
+            + ' - ' + event.which;
     else if (event.type == "mousedown" || event.type == "click" || event.type == "mouseup")
         return (where ? "(" + where + ") " : "") + target.tagName + " - " + event.type;
 
@@ -40,7 +41,8 @@ log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
         + ' - ' + "code"
         + ' - ' + "keyIdentifier"
         + ' - ' + "keyCode"
-        + ' - ' + "charCode");
+        + ' - ' + "charCode"
+        + ' - ' + "which");
 
 if (document.getElementsByTagName("input")[0].addEventListener)
     document.getElementsByTagName("input")[0].addEventListener('textInput', function(e) {log(eventInfo(e));}, false);

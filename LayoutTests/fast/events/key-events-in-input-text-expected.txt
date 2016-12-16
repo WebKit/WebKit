@@ -1,18 +1,18 @@
 To test manually, press keys and compare results to other browsers.
 
   
-target - type - ctrlKey,altKey,shiftKey,metaKey - key - code - keyIdentifier - keyCode - charCode
+target - type - ctrlKey,altKey,shiftKey,metaKey - key - code - keyIdentifier - keyCode - charCode - which
 Space:
-INPUT - keydown - false,false,false,false - - Space - U+0020 - 32 - 0. Value: "".
-INPUT - keypress - false,false,false,false - - Space - - 32 - 32. Value: "".
+INPUT - keydown - false,false,false,false - - Space - U+0020 - 32 - 0 - 32. Value: "".
+INPUT - keypress - false,false,false,false - - Space - - 32 - 32 - 32. Value: "".
 INPUT - textInput - . Value: "".
-INPUT - keyup - false,false,false,false - - Space - U+0020 - 32 - 0. Value: " ".
+INPUT - keyup - false,false,false,false - - Space - U+0020 - 32 - 0 - 32. Value: " ".
 Backspace:
-INPUT - keydown - false,false,false,false - Backspace - Backspace - U+0008 - 8 - 0. Value: " ".
-INPUT - keyup - false,false,false,false - Backspace - Backspace - U+0008 - 8 - 0. Value: "".
+INPUT - keydown - false,false,false,false - Backspace - Backspace - U+0008 - 8 - 0 - 8. Value: " ".
+INPUT - keyup - false,false,false,false - Backspace - Backspace - U+0008 - 8 - 0 - 8. Value: "".
 Left Arrow:
-INPUT - keydown - false,false,false,false - ArrowLeft - ArrowLeft - Left - 37 - 0. Value: "".
-INPUT - keyup - false,false,false,false - ArrowLeft - ArrowLeft - Left - 37 - 0. Value: "".
+INPUT - keydown - false,false,false,false - ArrowLeft - ArrowLeft - Left - 37 - 0 - 37. Value: "".
+INPUT - keyup - false,false,false,false - ArrowLeft - ArrowLeft - Left - 37 - 0 - 37. Value: "".
 Tab:
-INPUT - keydown - false,false,false,false - Tab - Tab - U+0009 - 9 - 0. Value: "".
+INPUT - keydown - false,false,false,false - Tab - Tab - U+0009 - 9 - 0 - 9. Value: "".
 

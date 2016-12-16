@@ -86,8 +86,8 @@ PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, document').fromElement is document
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').toElement is null
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').dataTransfer is null
-PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').keyCode is 0
-PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').charCode is 0
+PASS 'keyCode' in testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null') is false
+PASS 'charCode' in testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null') is false
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').layerX is 1004
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').layerY is 1005
 PASS testInitEvent('Mouse', '"a", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').pageX is 1004
@@ -133,8 +133,8 @@ PASS testInitEvent('Text', '"a", false, false, null, "b"').view is null
 PASS testInitEvent('Text', '"a", false, false, window, "b"').data is 'b'
 PASS testInitEvent('Text', '"a", false, false, window, null').data is 'null'
 PASS testInitEvent('Text', '"a", false, false, window, "b"').detail is 0
-PASS testInitEvent('Text', '"a", false, false, window, "b"').keyCode is 0
-PASS testInitEvent('Text', '"a", false, false, window, "b"').charCode is 0
+PASS 'keyCode' in testInitEvent('Text', '"a", false, false, window, "b"') is false
+PASS 'charCode' in testInitEvent('Text', '"a", false, false, window, "b"') is false
 PASS testInitEvent('Text', '"a", false, false, window, "b"').layerX is 0
 PASS testInitEvent('Text', '"a", false, false, window, "b"').layerY is 0
 PASS testInitEvent('Text', '"a", false, false, window, "b"').pageX is 0
@@ -149,8 +149,8 @@ PASS testInitEvent('UI', '"a", false, true, window, 1001').cancelable is true
 PASS testInitEvent('UI', '"a", false, false, window, 1001').view is window
 PASS testInitEvent('UI', '"a", false, false, null, 1001').view is null
 PASS testInitEvent('UI', '"a", false, false, window, 1001').detail is 1001
-PASS testInitEvent('UI', '"a", false, false, window, 1001').keyCode is 0
-PASS testInitEvent('UI', '"a", false, false, window, 1001').charCode is 0
+PASS 'keyCode' in testInitEvent('UI', '"a", false, false, window, 1001') is false
+PASS 'charCode' in testInitEvent('UI', '"a", false, false, window, 1001') is false
 PASS testInitEvent('UI', '"a", false, false, window, 1001').layerX is 0
 PASS testInitEvent('UI', '"a", false, false, window, 1001').layerY is 0
 PASS testInitEvent('UI', '"a", false, false, window, 1001').pageX is 0

@@ -34,7 +34,7 @@ PASS KeyboardEvent constructor (undefined argument)
 PASS KeyboardEvent constructor (null argument) 
 PASS KeyboardEvent constructor (empty argument) 
 PASS KeyboardEvent constructor (argument with default values) 
-FAIL KeyboardEvent constructor (argument with non-default values) assert_equals: The value of the charCode property should be 7 expected 7 but got 0
+PASS KeyboardEvent constructor (argument with non-default values) 
 PASS CompositionEvent constructor (no argument) 
 PASS CompositionEvent constructor (undefined argument) 
 PASS CompositionEvent constructor (null argument) 

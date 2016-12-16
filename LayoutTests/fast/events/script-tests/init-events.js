@@ -106,8 +106,8 @@ shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003,
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, document').fromElement", "document");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').toElement", "null");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').dataTransfer", "null");
-shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').keyCode", "0");
-shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').charCode", "0");
+shouldBeFalse("'keyCode' in testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null')");
+shouldBeFalse("'charCode' in testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null')");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').layerX", "1004");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').layerY", "1005");
 shouldBe("testInitEvent('Mouse', '\"a\", false, false, window, 1001, 1002, 1003, 1004, 1005, false, false, false, false, 1006, null').pageX", "1004");
@@ -156,8 +156,8 @@ shouldBe("testInitEvent('Text', '\"a\", false, false, null, \"b\"').view", "null
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').data", "'b'");
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, null').data", "'null'");
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').detail", "0");
-shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').keyCode", "0");
-shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').charCode", "0");
+shouldBeFalse("'keyCode' in testInitEvent('Text', '\"a\", false, false, window, \"b\"')");
+shouldBeFalse("'charCode' in testInitEvent('Text', '\"a\", false, false, window, \"b\"')");
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').layerX", "0");
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').layerY", "0");
 shouldBe("testInitEvent('Text', '\"a\", false, false, window, \"b\"').pageX", "0");
@@ -173,8 +173,8 @@ shouldBe("testInitEvent('UI', '\"a\", false, true, window, 1001').cancelable", "
 shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').view", "window");
 shouldBe("testInitEvent('UI', '\"a\", false, false, null, 1001').view", "null");
 shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').detail", "1001");
-shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').keyCode", "0");
-shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').charCode", "0");
+shouldBeFalse("'keyCode' in testInitEvent('UI', '\"a\", false, false, window, 1001')");
+shouldBeFalse("'charCode' in testInitEvent('UI', '\"a\", false, false, window, 1001')");
 shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').layerX", "0");
 shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').layerY", "0");
 shouldBe("testInitEvent('UI', '\"a\", false, false, window, 1001').pageX", "0");

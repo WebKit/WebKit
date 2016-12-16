@@ -78,16 +78,6 @@ EventInterface UIEvent::eventInterface() const
     return UIEventInterfaceType;
 }
 
-int UIEvent::keyCode() const
-{
-    return 0;
-}
-
-int UIEvent::charCode() const
-{
-    return 0;
-}
-
 int UIEvent::layerX()
 {
     return 0;

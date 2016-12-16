@@ -26,6 +26,7 @@
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
+#include <WebCore/KeyboardEvent.h>
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMPrivate.h"
@@ -229,7 +230,7 @@ glong webkit_dom_ui_event_get_key_code(WebKitDOMUIEvent* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_UI_EVENT(self), 0);
     WebCore::UIEvent* item = WebKit::core(self);
-    glong result = item->keyCode();
+    glong result = is<WebCore::KeyboardEvent>(*item) ? downcast<WebCore::KeyboardEvent>(*item).keyCode() : 0;
     return result;
 }
 
@@ -238,7 +239,7 @@ glong webkit_dom_ui_event_get_char_code(WebKitDOMUIEvent* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_UI_EVENT(self), 0);
     WebCore::UIEvent* item = WebKit::core(self);
-    glong result = item->charCode();
+    glong result = is<WebCore::KeyboardEvent>(*item) ? downcast<WebCore::KeyboardEvent>(*item).charCode() : 0;
     return result;
 }
 

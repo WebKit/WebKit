@@ -63,6 +63,9 @@ public:
         // Legacy.
         String keyIdentifier;
         std::optional<unsigned> keyLocation;
+        unsigned charCode;
+        unsigned keyCode;
+        unsigned which;
     };
 
     static Ref<KeyboardEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
@@ -98,8 +101,8 @@ public:
     
     const PlatformKeyboardEvent* keyEvent() const { return m_keyEvent.get(); }
 
-    WEBCORE_EXPORT int keyCode() const final; // key code for keydown and keyup, character for keypress
-    WEBCORE_EXPORT int charCode() const final; // character code for keypress, 0 for keydown and keyup
+    WEBCORE_EXPORT int keyCode() const; // key code for keydown and keyup, character for keypress
+    WEBCORE_EXPORT int charCode() const; // character code for keypress, 0 for keydown and keyup
 
     EventInterface eventInterface() const final;
     bool isKeyboardEvent() const final;
@@ -134,6 +137,9 @@ private:
     unsigned m_location { DOM_KEY_LOCATION_STANDARD };
     bool m_repeat { false };
     bool m_isComposing { false };
+    std::optional<unsigned> m_charCode;
+    std::optional<unsigned> m_keyCode;
+    std::optional<unsigned> m_which;
 
 #if PLATFORM(COCOA)
     // Commands that were sent by AppKit when interpreting the event. Doesn't include input method commands.

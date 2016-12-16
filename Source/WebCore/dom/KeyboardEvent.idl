@@ -45,6 +45,9 @@
     readonly attribute DOMString keyIdentifier;
     [ImplementedAs=location] readonly attribute unsigned long keyLocation;
     readonly attribute boolean altGraphKey;
+    readonly attribute unsigned long charCode;
+    readonly attribute unsigned long keyCode;
+    readonly attribute unsigned long which;
 
     // FIXME: this does not match the version in the DOM spec.
     // FIXME: Using "undefined" as default parameter value is wrong.
@@ -64,4 +67,7 @@ dictionary KeyboardEventInit : EventModifierInit {
     // attributes we still support on KeyboardEvent for backward compatibility.
     DOMString keyIdentifier = "";
     unsigned long keyLocation;
+    unsigned long charCode = 0;
+    unsigned long keyCode = 0;
+    unsigned long which = 0;
 };
