@@ -140,6 +140,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements
 # No touch events
 fast/events/touch [ Skip ]
 fast/shadow-dom/touch-event-ios.html [ Skip ]
+fast/visual-viewport/ios/zoomed-focus-in-fixed.html [ Skip ]
 http/tests/quicklook/at-import-stylesheet-blocked.html [ Skip ]
 http/tests/quicklook/base-url-blocked.html [ Skip ]
 http/tests/quicklook/cross-origin-iframe-blocked.html [ Skip ]

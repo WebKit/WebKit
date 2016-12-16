@@ -1,5 +1,13 @@
 2016-12-15  Simon Fraser  <simon.fraser@apple.com>
 
+        fast/visual-viewport/ios/zoomed-focus-in-fixed.html always times out
+
+        Skip this test, which relies on touch events.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-12-15  Simon Fraser  <simon.fraser@apple.com>
+
         Fix flakiness of fast/visual-viewport/ios/zoomed-focus-in-fixed.html
         https://bugs.webkit.org/show_bug.cgi?id=165930
 
