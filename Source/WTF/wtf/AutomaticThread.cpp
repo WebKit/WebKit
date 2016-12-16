@@ -47,22 +47,33 @@ AutomaticThreadCondition::~AutomaticThreadCondition()
 
 void AutomaticThreadCondition::notifyOne(const LockHolder& locker)
 {
-    if (m_condition.notifyOne())
-        return;
-    
-    if (m_threads.isEmpty())
-        return;
-    
-    m_threads.takeLast()->start(locker);
+    for (AutomaticThread* thread : m_threads) {
+        if (thread->isWaiting(locker)) {
+            thread->notify(locker);
+            return;
+        }
+    }
+
+    for (AutomaticThread* thread : m_threads) {
+        if (!thread->hasUnderlyingThread(locker)) {
+            thread->start(locker);
+            return;
+        }
+    }
+
+    m_condition.notifyOne();
 }
 
 void AutomaticThreadCondition::notifyAll(const LockHolder& locker)
 {
     m_condition.notifyAll();
-    
-    for (AutomaticThread* thread : m_threads)
-        thread->start(locker);
-    m_threads.clear();
+
+    for (AutomaticThread* thread : m_threads) {
+        if (thread->isWaiting(locker))
+            thread->notify(locker);
+        else if (!thread->hasUnderlyingThread(locker))
+            thread->start(locker);
+    }
 }
 
 void AutomaticThreadCondition::wait(Lock& lock)
@@ -117,6 +128,18 @@ bool AutomaticThread::tryStop(const LockHolder&)
     return true;
 }
 
+bool AutomaticThread::isWaiting(const LockHolder& locker)
+{
+    return hasUnderlyingThread(locker) && m_isWaiting;
+}
+
+bool AutomaticThread::notify(const LockHolder& locker)
+{
+    ASSERT_UNUSED(locker, hasUnderlyingThread(locker));
+    m_isWaiting = false;
+    return m_waitCondition.notifyOne();
+}
+
 void AutomaticThread::join()
 {
     LockHolder locker(*m_lock);
@@ -161,7 +184,7 @@ void AutomaticThread::start(const LockHolder&)
             
             if (!ASSERT_DISABLED) {
                 LockHolder locker(*m_lock);
-                ASSERT(!m_condition->contains(locker, this));
+                ASSERT(m_condition->contains(locker, this));
             }
             
             auto stop = [&] (const LockHolder&) {
@@ -180,12 +203,15 @@ void AutomaticThread::start(const LockHolder&)
                             return stop(locker);
                         RELEASE_ASSERT(result == PollResult::Wait);
                         // Shut the thread down after one second.
+                        m_isWaiting = true;
                         bool awokenByNotify =
-                            m_condition->m_condition.waitFor(*m_lock, 1_s);
-                        if (!awokenByNotify) {
+                            m_waitCondition.waitFor(*m_lock, 1_s);
+                        if (verbose && !awokenByNotify && !m_isWaiting)
+                            dataLog(RawPointer(this), ": waitFor timed out, but notified via m_isWaiting flag!\n");
+                        if (m_isWaiting) {
+                            m_isWaiting = false;
                             if (verbose)
                                 dataLog(RawPointer(this), ": Going to sleep!\n");
-                            m_condition->add(locker, this);
                             return;
                         }
                     }

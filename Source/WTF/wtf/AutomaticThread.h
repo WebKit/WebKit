@@ -120,7 +120,11 @@ public:
     // thread is to first try this, and if that doesn't work, to tell the thread using your own
     // mechanism (set some flag and then notify the condition).
     bool tryStop(const LockHolder&);
-    
+
+    bool isWaiting(const LockHolder&);
+
+    bool notify(const LockHolder&);
+
     void join();
     
 protected:
@@ -177,7 +181,9 @@ private:
     Box<Lock> m_lock;
     RefPtr<AutomaticThreadCondition> m_condition;
     bool m_isRunning { true };
+    bool m_isWaiting { false };
     bool m_hasUnderlyingThread { false };
+    Condition m_waitCondition;
     Condition m_isRunningCondition;
 };
 
