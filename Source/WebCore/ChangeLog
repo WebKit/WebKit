@@ -1,3 +1,11 @@
+2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Another attempt to fix the Windows build after r209936.
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt:
+
 2016-12-16  Andy Estes  <aestes@apple.com>
 
         Add a setting to suppress keyboard input during provisional navigation

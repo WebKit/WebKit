@@ -3018,10 +3018,10 @@ set(WebCore_LIBRARIES
 
 if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
-        Modules/encryptedmedia/CDM.cpp
-        Modules/encryptedmedia/CDMPrivateClearKey.cpp
-        Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp
-        Modules/encryptedmedia/CDMSessionClearKey.cpp
+        Modules/encryptedmedia/legacy/LegacyCDM.cpp
+        Modules/encryptedmedia/legacy/LegacyCDMPrivateClearKey.cpp
+        Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp
+        Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp
 
         Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp
         Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp
