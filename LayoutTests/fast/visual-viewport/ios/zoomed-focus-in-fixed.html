@@ -31,7 +31,7 @@
         function getFocusInputUIScript(x, y)
         {
             return `(function() {
-                uiController.didShowKeyboardCallback = function() {
+                uiController.didEndZoomingCallback = function() {
                     uiController.uiScriptComplete();
                 }
                 
