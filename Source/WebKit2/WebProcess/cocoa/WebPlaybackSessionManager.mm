@@ -213,26 +213,14 @@ void WebPlaybackSessionManager::removeContext(uint64_t contextId)
 
 void WebPlaybackSessionManager::addClientForContext(uint64_t contextId)
 {
-    auto addResult = m_clientCounts.add(contextId, 1);
-    if (!addResult.isNewEntry)
-        addResult.iterator->value++;
+    m_clientCounts.add(contextId);
 }
 
 void WebPlaybackSessionManager::removeClientForContext(uint64_t contextId)
 {
     ASSERT(m_clientCounts.contains(contextId));
-
-    int clientCount = m_clientCounts.get(contextId);
-    ASSERT(clientCount > 0);
-    clientCount--;
-
-    if (clientCount <= 0) {
-        m_clientCounts.remove(contextId);
+    if (m_clientCounts.remove(contextId))
         removeContext(contextId);
-        return;
-    }
-
-    m_clientCounts.set(contextId, clientCount);
 }
 
 void WebPlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)

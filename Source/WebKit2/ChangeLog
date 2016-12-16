@@ -1,3 +1,19 @@
+2016-12-16  Jer Noble  <jer.noble@apple.com>
+
+        Small refactor: Use HashCountedSet rather than HashMap<..., int> to store client counts in WebPlaybackSessionManager{,Proxy}.
+        https://bugs.webkit.org/show_bug.cgi?id=165807
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionManagerProxy::addClientForContext):
+        (WebKit::WebPlaybackSessionManagerProxy::removeClientForContext):
+        * WebProcess/cocoa/WebPlaybackSessionManager.h:
+        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
+        (WebKit::WebPlaybackSessionManager::addClientForContext):
+        (WebKit::WebPlaybackSessionManager::removeClientForContext):
+
 2016-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Visual viewports: carets and selection UI are incorrectly positioned when editing fixed elements

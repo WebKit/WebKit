@@ -32,6 +32,7 @@
 #include <WebCore/PlatformView.h>
 #include <WebCore/TimeRanges.h>
 #include <WebCore/WebPlaybackSessionModel.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -203,7 +204,7 @@ private:
     WebPageProxy* m_page;
     HashMap<uint64_t, ModelInterfaceTuple> m_contextMap;
     uint64_t m_controlsManagerContextId { 0 };
-    HashMap<uint64_t, int> m_clientCounts;
+    HashCountedSet<uint64_t> m_clientCounts;
 };
 
 } // namespace WebKit

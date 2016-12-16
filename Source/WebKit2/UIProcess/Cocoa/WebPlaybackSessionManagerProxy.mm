@@ -281,31 +281,16 @@ PlatformWebPlaybackSessionInterface& WebPlaybackSessionManagerProxy::ensureInter
 
 void WebPlaybackSessionManagerProxy::addClientForContext(uint64_t contextId)
 {
-    auto addResult = m_clientCounts.add(contextId, 1);
-    if (!addResult.isNewEntry)
-        addResult.iterator->value++;
+    m_clientCounts.add(contextId);
 }
 
 void WebPlaybackSessionManagerProxy::removeClientForContext(uint64_t contextId)
 {
-    ASSERT(m_clientCounts.contains(contextId));
-
-    int clientCount = m_clientCounts.get(contextId);
-    ASSERT(clientCount > 0);
-    clientCount--;
-
-    if (clientCount <= 0) {
-        m_clientCounts.remove(contextId);
-
-        RefPtr<WebPlaybackSessionModelContext> model;
-        RefPtr<PlatformWebPlaybackSessionInterface> interface;
-        std::tie(model, interface) = ensureModelAndInterface(contextId);
-        interface->invalidate();
-        m_contextMap.remove(contextId);
+    if (!m_clientCounts.remove(contextId))
         return;
-    }
 
-    m_clientCounts.set(contextId, clientCount);
+    ensureInterface(contextId).invalidate();
+    m_contextMap.remove(contextId);
 }
 
 #pragma mark Messages from WebPlaybackSessionManager
