@@ -1,0 +1,85 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        input {
+            width: 100%;
+            height: 50px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        div {
+            background-image: linear-gradient(blue, red);
+            height: 4000px;
+        }
+    </style>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function tapInInputScript(tapX, tapY)
+    {
+        return `(function() {
+            uiController.didShowKeyboardCallback = function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
+                });
+            };
+            uiController.singleTapAtPoint(${tapX}, ${tapY}, function() { });
+        })()`;
+    }
+
+    function simulateScrollingScript(distance)
+    {
+        return `(function() {
+            uiController.stableStateOverride = false;
+            uiController.immediateScrollToOffset(0, ${distance});
+            uiController.stableStateOverride = true;
+            uiController.doAfterNextStablePresentationUpdate(function() {
+                uiController.uiScriptComplete(JSON.stringify(uiController.textSelectionCaretRect));
+            });
+        })()`;
+    }
+
+    function toString(rect)
+    {
+        return `[${rect.left} ${rect.top} ; ${rect.width} ${rect.height}]`;
+    }
+
+    function run()
+    {
+        if (!window.testRunner || !testRunner.runUIScript) {
+            description("To manually test, tap this input field and scroll up. The text caret should not end up outside of the input.");
+            return;
+        }
+
+        testRunner.runUIScript(tapInInputScript(window.innerWidth / 2, 30), initialCaretRect => {
+            initialCaretRect = JSON.parse(initialCaretRect);
+            window.initialCaretRect = initialCaretRect;
+            debug(`The initial caret rect is: ${toString(initialCaretRect)}`);
+            testRunner.runUIScript(simulateScrollingScript(1000), finalCaretRect => {
+                finalCaretRect = JSON.parse(finalCaretRect);
+                window.finalCaretRect = finalCaretRect;
+                debug(`The caret rect after scrolling 1000px down is: ${toString(finalCaretRect)}`);
+                shouldBe("finalCaretRect.top - initialCaretRect.top", "1000");
+                testRunner.notifyDone();
+            });
+        });
+    }
+    </script>
+</head>
+<body onload=run()>
+    <input></input>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+
+</html>

@@ -125,6 +125,8 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << twoCharacterBeforeSelection;
     encoder << isReplaceAllowed;
     encoder << hasContent;
+    encoder << isStableStateUpdate;
+    encoder << insideFixedPosition;
 #endif
 #if PLATFORM(MAC)
     encoder << candidateRequestStartPosition;
@@ -169,6 +171,10 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.isReplaceAllowed))
         return false;
     if (!decoder.decode(result.hasContent))
+        return false;
+    if (!decoder.decode(result.isStableStateUpdate))
+        return false;
+    if (!decoder.decode(result.insideFixedPosition))
         return false;
 #endif
 #if PLATFORM(MAC)

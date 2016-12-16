@@ -54,6 +54,11 @@ void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
     return doAsyncTask(callback);
 }
 
+void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback)
+{
+    doAsyncTask(callback);
+}
+
 void UIScriptController::zoomToScale(double scale, JSValueRef callback)
 {
     RefPtr<UIScriptController> protectedThis(this);
@@ -257,6 +262,11 @@ void UIScriptController::platformClearAllCallbacks()
 }
 
 JSObjectRef UIScriptController::selectionRangeViewRects() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::textSelectionCaretRect() const
 {
     return nullptr;
 }

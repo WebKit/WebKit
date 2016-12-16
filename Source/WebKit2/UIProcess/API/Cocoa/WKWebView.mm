@@ -272,6 +272,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     BOOL _hadDelayedUpdateVisibleContentRects;
 
     Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
+    RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
 #endif
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -1296,6 +1297,13 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     _viewportMetaTagWidthWasExplicit = layerTreeTransaction.viewportMetaTagWidthWasExplicit();
     _viewportMetaTagCameFromImageDocument = layerTreeTransaction.viewportMetaTagCameFromImageDocument();
     _initialScaleFactor = layerTreeTransaction.initialScaleFactor();
+    if (_page->inStableState() && layerTreeTransaction.isInStableState() && [_stableStatePresentationUpdateCallbacks count]) {
+        for (dispatch_block_t action in _stableStatePresentationUpdateCallbacks.get())
+            action();
+
+        [_stableStatePresentationUpdateCallbacks removeAllObjects];
+        _stableStatePresentationUpdateCallbacks = nil;
+    }
 
     BOOL needUpdateVisbleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
 
@@ -4736,9 +4744,20 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     // For subclasses to override.
 }
 
-- (NSArray<UIView *> *)_uiTextSelectionRectViews
+- (CGRect)_uiTextCaretRect
 {
-    return [_contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.m_rectViews"];
+    // Force the selection view to update if needed.
+    [_contentView _updateChangedSelection];
+
+    return [[_contentView valueForKeyPath:@"interactionAssistant.selectionView.selection.caretRect"] CGRectValue];
+}
+
+- (NSArray<NSValue *> *)_uiTextSelectionRects
+{
+    // Force the selection view to update if needed.
+    [_contentView _updateChangedSelection];
+
+    return [_contentView _uiTextSelectionRects];
 }
 
 - (NSString *)_scrollingTreeAsText
@@ -4754,6 +4773,27 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     // For subclasses to override.
     return nil;
+}
+
+- (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock
+{
+    updateBlock = Block_copy(updateBlock);
+    if (_stableStatePresentationUpdateCallbacks)
+        [_stableStatePresentationUpdateCallbacks addObject:updateBlock];
+    else {
+        _stableStatePresentationUpdateCallbacks = adoptNS([[NSMutableArray alloc] initWithObjects:Block_copy(updateBlock), nil]);
+        [self _firePresentationUpdateForPendingStableStatePresentationCallbacks];
+    }
+    Block_release(updateBlock);
+}
+
+- (void)_firePresentationUpdateForPendingStableStatePresentationCallbacks
+{
+    RetainPtr<WKWebView> strongSelf = self;
+    [self _doAfterNextPresentationUpdate:^() {
+        if ([strongSelf->_stableStatePresentationUpdateCallbacks count])
+            [strongSelf _firePresentationUpdateForPendingStableStatePresentationCallbacks];
+    }];
 }
 
 #endif // PLATFORM(IOS)

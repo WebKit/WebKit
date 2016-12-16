@@ -166,8 +166,12 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     auto& postLayoutData = result.postLayoutData();
     FrameView* view = frame.view();
     const VisibleSelection& selection = frame.selection().selection();
+    postLayoutData.isStableStateUpdate = m_isInStableState;
+    bool startNodeIsInsideFixedPosition = false;
+    bool endNodeIsInsideFixedPosition = false;
     if (selection.isCaret()) {
-        postLayoutData.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds());
+        postLayoutData.caretRectAtStart = view->contentsToRootView(frame.selection().absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        endNodeIsInsideFixedPosition = startNodeIsInsideFixedPosition;
         postLayoutData.caretRectAtEnd = postLayoutData.caretRectAtStart;
         // FIXME: The following check should take into account writing direction.
         postLayoutData.isReplaceAllowed = result.isContentEditable && atBoundaryOfGranularity(selection.start(), WordGranularity, DirectionForward);
@@ -178,8 +182,8 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
             postLayoutData.hasContent = root && root->hasChildNodes() && !isEndOfEditableOrNonEditableContent(firstPositionInNode(root));
         }
     } else if (selection.isRange()) {
-        postLayoutData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds());
-        postLayoutData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds());
+        postLayoutData.caretRectAtStart = view->contentsToRootView(VisiblePosition(selection.start()).absoluteCaretBounds(&startNodeIsInsideFixedPosition));
+        postLayoutData.caretRectAtEnd = view->contentsToRootView(VisiblePosition(selection.end()).absoluteCaretBounds(&endNodeIsInsideFixedPosition));
         RefPtr<Range> selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
@@ -194,6 +198,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
         // FIXME: We should disallow replace when the string contains only CJ characters.
         postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnlyWhitespace();
     }
+    postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
         if (m_assistedNode && m_assistedNode->renderer())
             postLayoutData.selectionClipRect = view->contentsToRootView(m_assistedNode->renderer()->absoluteBoundingBoxRect());
@@ -3081,9 +3086,14 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     frameView.setScrollVelocity(horizontalVelocity, verticalVelocity, scaleChangeRate, visibleContentRectUpdateInfo.timestamp());
 
     if (m_isInStableState) {
-        if (frameView.frame().settings().visualViewportEnabled())
+        if (frameView.frame().settings().visualViewportEnabled()) {
             frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
-        else
+            const auto& state = editorState();
+            if (!state.isMissingPostLayoutData && state.postLayoutData().insideFixedPosition) {
+                frameView.frame().selection().setCaretRectNeedsUpdate();
+                send(Messages::WebPageProxy::EditorStateChanged(state));
+            }
+        } else
             frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(visibleContentRectUpdateInfo.customFixedPositionRect()));
     }
 

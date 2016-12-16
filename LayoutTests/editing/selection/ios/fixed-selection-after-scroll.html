@@ -1,0 +1,93 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #fixed {
+            width: 100vw;
+            height: 50px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            font-size: 100px;
+        }
+
+        #content {
+            background-image: linear-gradient(blue, red);
+            height: 4000px;
+        }
+    </style>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function toString(rect)
+    {
+        return `[${rect.left} ${rect.top} ; ${rect.width} ${rect.height}]`;
+    }
+
+    function selectFixedTextScript(tapX, tapY)
+    {
+        return `
+        (function() {
+            uiController.longPressAtPoint(${tapX}, ${tapY}, function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
+                });
+            });
+        })();`;
+    }
+
+    function simulateScrollingScript(distance)
+    {
+        return `(function() {
+            uiController.stableStateOverride = false;
+            uiController.immediateScrollToOffset(0, ${distance});
+            uiController.stableStateOverride = true;
+            uiController.doAfterNextStablePresentationUpdate(function() {
+                uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
+            });
+        })()`;
+    }
+
+    function toString(rect)
+    {
+        return `[${rect.left} ${rect.top} ; ${rect.width} ${rect.height}]`;
+    }
+
+    function run()
+    {
+        if (!window.testRunner || !testRunner.runUIScript) {
+            description("To manually test, long press this text and scroll up. The selection rect should be in the expected place (in the fixed div) after scrolling.");
+            return;
+        }
+
+        testRunner.runUIScript(selectFixedTextScript(50, 50), initialSelectionRects => {
+            initialSelectionRects = JSON.parse(initialSelectionRects);
+            window.initialSelectionRects = initialSelectionRects;
+            debug(`After long pressing, the selection rects are: ${initialSelectionRects.map(toString)}`);
+            testRunner.runUIScript(simulateScrollingScript(1000), finalSelectionRects => {
+                finalSelectionRects = JSON.parse(finalSelectionRects);
+                window.finalSelectionRects = finalSelectionRects;
+                debug(`After scrolling 1000px down, the selection rects are: ${finalSelectionRects.map(toString)}`);
+                shouldBe("initialSelectionRects.length", "1");
+                shouldBe("finalSelectionRects.length", "1");
+                shouldBe("finalSelectionRects[0].top - initialSelectionRects[0].top", "1000");
+                testRunner.notifyDone();
+            });
+        });
+    }
+    </script>
+</head>
+<body onload=run()>
+    <div id="fixed">WebKit</div>
+    <div id="content"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

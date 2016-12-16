@@ -362,6 +362,16 @@ private:
     [_fixedClippingView setBounds:clippingBounds];
 }
 
+- (void)_didExitStableState
+{
+    _needsDeferredEndScrollingSelectionUpdate = self.shouldHideSelectionWhenScrolling;
+    if (!_needsDeferredEndScrollingSelectionUpdate)
+        return;
+
+    [_textSelectionAssistant deactivateSelection];
+    [[_webSelectionAssistant selectionView] setHidden:YES];
+}
+
 - (void)didUpdateVisibleRect:(CGRect)visibleContentRect
     unobscuredRect:(CGRect)unobscuredContentRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
@@ -405,6 +415,7 @@ private:
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
+    bool wasStableState = _page->inStableState();
     _page->updateVisibleContentRects(visibleContentRectUpdateInfo);
 
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
@@ -415,6 +426,9 @@ private:
     drawingArea->updateDebugIndicator();
     
     [self updateFixedClippingView:fixedPositionRect];
+
+    if (wasStableState && !isStableState)
+        [self _didExitStableState];
 }
 
 - (void)didFinishScrolling

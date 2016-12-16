@@ -1,0 +1,10 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The initial caret rect is: [6 17 ; 3 15]
+The caret rect after scrolling 1000px down is: [6 17 ; 3 15]
+PASS finalCaretRect.top is initialCaretRect.top
+PASS finalCaretRect.left is initialCaretRect.left
+PASS finalCaretRect.width is initialCaretRect.width
+PASS finalCaretRect.height is initialCaretRect.height
+

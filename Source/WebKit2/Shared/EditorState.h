@@ -99,6 +99,8 @@ struct EditorState {
         UChar32 twoCharacterBeforeSelection { 0 };
         bool isReplaceAllowed { false };
         bool hasContent { false };
+        bool isStableStateUpdate { false };
+        bool insideFixedPosition { false };
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

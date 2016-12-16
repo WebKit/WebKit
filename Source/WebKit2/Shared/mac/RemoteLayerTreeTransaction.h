@@ -249,6 +249,9 @@ public:
     bool viewportMetaTagCameFromImageDocument() const { return m_viewportMetaTagCameFromImageDocument; }
     void setViewportMetaTagCameFromImageDocument(bool cameFromImageDocument) { m_viewportMetaTagCameFromImageDocument = cameFromImageDocument; }
 
+    bool isInStableState() const { return m_isInStableState; }
+    void setIsInStableState(bool isInStableState) { m_isInStableState = isInStableState; }
+
     bool allowsUserScaling() const { return m_allowsUserScaling; }
     void setAllowsUserScaling(bool allowsUserScaling) { m_allowsUserScaling = allowsUserScaling; }
 
@@ -295,6 +298,7 @@ private:
     bool m_allowsUserScaling { false };
     bool m_viewportMetaTagWidthWasExplicit { false };
     bool m_viewportMetaTagCameFromImageDocument { false };
+    bool m_isInStableState { false };
 };
 
 } // namespace WebKit

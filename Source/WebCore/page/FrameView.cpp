@@ -1849,8 +1849,7 @@ void FrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rect)
 
     LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.value());
 
-    // FIXME: do we need to also do this if the origin changes?
-    if (oldRect.size() != layoutViewportRect().size())
+    if (oldRect != layoutViewportRect())
         setViewportConstrainedObjectsNeedLayout();
 }
 

@@ -1,0 +1,10 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+After long pressing, the selection rects are: [0 0 ; 309 114]
+After scrolling 1000px down, the selection rects are: [0 1000 ; 309 114]
+PASS initialSelectionRects.length is 1
+PASS finalSelectionRects.length is 1
+PASS finalSelectionRects[0].top - initialSelectionRects[0].top is 1000
+WebKit
+

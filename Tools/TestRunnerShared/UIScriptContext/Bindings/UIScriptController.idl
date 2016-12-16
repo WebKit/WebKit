@@ -27,6 +27,7 @@ interface UIScriptController {
 
     void doAsyncTask(object callback); // Used to test the harness.
     void doAfterPresentationUpdate(object callback); // Call the callback after sending a message to the WebProcess and receiving a subsequent update.
+    void doAfterNextStablePresentationUpdate(object callback);
 
     void simulateAccessibilitySettingsChangeNotification(object callback);
 
@@ -204,6 +205,7 @@ interface UIScriptController {
     readonly attribute object contentVisibleRect; // Returned object has 'left', 'top', 'width', 'height' properties.
 
     readonly attribute object selectionRangeViewRects; // An array of objects with 'left', 'top', 'width', and 'height' properties.
+    readonly attribute object textSelectionCaretRect; // An object with 'left', 'top', 'width', 'height' properties.
 
     void insertText(DOMString text, long location, long length);
     void removeAllDynamicDictionaries();

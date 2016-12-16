@@ -1,3 +1,99 @@
+2016-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Visual viewports: carets and selection UI are incorrectly positioned when editing fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=165767
+        <rdar://problem/29602382>
+
+        Reviewed by Simon Fraser.
+
+        When focusing an input, the position of the caret on iOS is determined by the overridden layout viewport rect in
+        the web process. However, this rect is not updated until the end the scroll gesture. Whereas this is fine for
+        non-fixed inputs since their document location does not change, fixed inputs effectively change their position
+        in the document as the user scrolls. This causes the caret to be 'left behind' in the document position it was
+        in at the start of the scroll. To fix this, we deactivate the selection when exiting stable state if the
+        assisted node is in a fixed position container, and reenable it upon receiving the next stable state EditorState
+        update (as indicated by postLayoutData().isStableStateUpdate). Additionally, we apply similar treatment to the
+        web selection assistant -- this time, we need to force the selection view to hide (analagous to deactivating
+        the text selection assistant) and show it again upon receiving the next selection change update when the WebPage
+        (in the web process) is stable.
+
+        Furthermore, adds test support for querying text caret and selection rects, as well as perform a callback after
+        the WebPage has indicated that it is stable, both as SPI on the WKWebView.
+
+        Covered by 4 new layout tests in fast/editing/caret/ios and fast/editing/selection/ios.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Introduce isStableStateUpdate, which is true when the WebPage is known to be in stable state, as well as
+        insideFixedPosition, which is true when the current selection is inside a fixed position container.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::isInStableState):
+        (WebKit::RemoteLayerTreeTransaction::setIsInStableState):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::description):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _uiTextCaretRect]):
+
+        Introduced a new SPI method for fetching the current rect of the text assistant's caret view, at keyPath
+        "selectionView.selection.caretRect".
+
+        (-[WKWebView _uiTextSelectionRects]):
+
+        Renamed (and refactored) from _uiTextSelectionRectViews, which was previously fetching an array of UIViews. I
+        found this to cause character-granularity-rect.html to fail due to the array of UIViews here being empty, so I
+        refactored this to simply return an array of rects from the keyPath "selectionView.selection.selectionRects" for
+        the text selection assistant and @"selectionView.selectionRects" for the web selection assistant.
+
+        (-[WKWebView _doAfterNextStablePresentationUpdate:]):
+
+        Runs the given block after both the UI process and web processes agree that the visible content rect state is 
+        stable. To do this, we fire presentation updates until the UI process (via RemoteLayerTreeTransactions)
+        discovers that the web page is in stable state. This is used solely for testing purposes.
+
+        (-[WKWebView _firePresentationUpdateForPendingStableStatePresentationCallbacks]):
+        (-[WKWebView _uiTextSelectionRectViews]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::inStableState):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didExitStableState]):
+
+        Deactivate the text selection if the assisted node is inside a fixed container.
+
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView shouldHideSelectionWhenScrolling]):
+        (-[WKContentView _uiTextSelectionRects]):
+        (-[WKContentView _didEndScrollingOrZooming]):
+        (-[WKContentView _updateChangedSelection:]):
+
+        If the EditorState was created after a stable state update, reactivate the text selection assistant if it exists.
+        Additionally, if we are deferring the end scrolling selection update until after the first stable editor state
+        update arrives from the web process, we need to also call [_textSelectionAssistant didEndScrollingOverflow]
+        and [_webSelectionAssistant didEndScrollingOrZoomingPage] here instead of doing so immediately after scrolling
+        finishes. This ensures that selection UI (the callout and selection highlights) do not flicker from their old
+        position to the new position when scrolling finishes.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState):
+        (WebKit::WebPage::updateVisibleContentRects):
+
+        When updating the layout viewport override rect, also recompute the caret if needed and send an updated
+        EditorState over to the UI process.
+
 2016-12-16  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WK2] SharedMemory: include cleanups

@@ -1,3 +1,27 @@
+2016-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Visual viewports: carets and selection UI are incorrectly positioned when editing fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=165767
+        <rdar://problem/29602382>
+
+        Reviewed by Simon Fraser.
+
+        Adds new layout tests verifying that scrolling selected text (non-editable) and a text caret (in editable
+        content) results in the selection/caret rects having the correct location relative to the document, in both
+        cases where the selected/focused element has fixed position or absolute position. For fixed position elements,
+        this means that the rects must "move" down in the document as the document is scrolled, but for absolute
+        elements, these rects must remain in place.
+
+        * TestExpectations:
+        * editing/caret/ios/absolute-caret-position-after-scroll-expected.txt: Added.
+        * editing/caret/ios/absolute-caret-position-after-scroll.html: Added.
+        * editing/caret/ios/fixed-caret-position-after-scroll-expected.txt: Added.
+        * editing/caret/ios/fixed-caret-position-after-scroll.html: Added.
+        * editing/selection/ios/absolute-selection-after-scroll-expected.txt: Added.
+        * editing/selection/ios/absolute-selection-after-scroll.html: Added.
+        * editing/selection/ios/fixed-selection-after-scroll-expected.txt: Added.
+        * editing/selection/ios/fixed-selection-after-scroll.html: Added.
+
 2016-12-16  Zalan Bujtas  <zalan@apple.com>
 
         Defer certain accessibility callbacks until after layout is finished.

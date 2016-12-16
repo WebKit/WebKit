@@ -64,6 +64,10 @@ void simulateAccessibilitySettingsChangeNotification(JSValueRef)
 void UIScriptController::doAfterPresentationUpdate(JSValueRef)
 {
 }
+
+void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef)
+{
+}
 #endif
 
 void UIScriptController::setDidStartFormControlInteractionCallback(JSValueRef callback)
@@ -303,6 +307,11 @@ JSObjectRef UIScriptController::contentVisibleRect() const
 }
 
 JSObjectRef UIScriptController::selectionRangeViewRects() const
+{
+    return nullptr;
+}
+
+JSObjectRef UIScriptController::textSelectionCaretRect() const
 {
     return nullptr;
 }

@@ -54,6 +54,11 @@ void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
     return doAsyncTask(callback);
 }
 
+void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback)
+{
+    doAsyncTask(callback);
+}
+
 void UIScriptController::insertText(JSStringRef, int, int)
 {
 }

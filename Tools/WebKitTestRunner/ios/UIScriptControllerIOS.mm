@@ -44,6 +44,16 @@
 
 namespace WTR {
 
+static NSDictionary *toNSDictionary(CGRect rect)
+{
+    return @{
+        @"left": @(rect.origin.x),
+        @"top": @(rect.origin.y),
+        @"width": @(rect.size.width),
+        @"height": @(rect.size.height)
+    };
+}
+
 void UIScriptController::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
@@ -64,6 +74,17 @@ void UIScriptController::doAfterPresentationUpdate(JSValueRef callback)
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::doAfterNextStablePresentationUpdate(JSValueRef callback)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView _doAfterNextStablePresentationUpdate:^() {
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
     }];
 }
 
@@ -462,19 +483,16 @@ JSObjectRef UIScriptController::contentVisibleRect() const
 JSObjectRef UIScriptController::selectionRangeViewRects() const
 {
     NSMutableArray *selectionRects = [[NSMutableArray alloc] init];
-    for (UIView *rectView in TestController::singleton().mainWebView()->platformView()._uiTextSelectionRectViews) {
-        if (rectView.hidden)
-            continue;
+    NSArray *rects = TestController::singleton().mainWebView()->platformView()._uiTextSelectionRects;
+    for (NSValue *rect in rects)
+        [selectionRects addObject:toNSDictionary([rect CGRectValue])];
 
-        CGRect frame = rectView.frame;
-        [selectionRects addObject:@{
-            @"left": @(frame.origin.x),
-            @"top": @(frame.origin.y),
-            @"width": @(frame.size.width),
-            @"height": @(frame.size.height),
-        }];
-    }
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptController::textSelectionCaretRect() const
+{
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(TestController::singleton().mainWebView()->platformView()._uiTextCaretRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 void UIScriptController::removeAllDynamicDictionaries()

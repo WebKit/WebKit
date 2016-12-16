@@ -553,6 +553,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
     encoder << m_viewportMetaTagWidthWasExplicit;
     encoder << m_viewportMetaTagCameFromImageDocument;
 
+    encoder << m_isInStableState;
+
     encoder << m_callbackIDs;
 }
 
@@ -658,6 +660,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     if (!decoder.decode(result.m_viewportMetaTagCameFromImageDocument))
+        return false;
+
+    if (!decoder.decode(result.m_isInStableState))
         return false;
 
     if (!decoder.decode(result.m_callbackIDs))
@@ -873,6 +878,7 @@ CString RemoteLayerTreeTransaction::description() const
     ts.dumpProperty("viewportMetaTagWidth", m_viewportMetaTagWidth);
     ts.dumpProperty("viewportMetaTagWidthWasExplicit", m_viewportMetaTagWidthWasExplicit);
     ts.dumpProperty("viewportMetaTagCameFromImageDocument", m_viewportMetaTagCameFromImageDocument);
+    ts.dumpProperty("isInStableState", m_isInStableState);
     ts.dumpProperty("renderTreeSize", m_renderTreeSize);
 
     ts << "root-layer " << m_rootLayerID << ")";

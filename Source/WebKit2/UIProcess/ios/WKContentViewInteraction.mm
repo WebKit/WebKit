@@ -589,6 +589,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _potentialTapInProgress = NO;
     _isDoubleTapPending = NO;
     _showDebugTapHighlightsForFastClicking = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitShowFastClickDebugTapHighlights"];
+    _needsDeferredEndScrollingSelectionUpdate = NO;
 }
 
 - (void)cleanupInteraction
@@ -599,6 +600,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     _smartMagnificationController = nil;
     _didAccessoryTabInitiateFocus = NO;
     _isExpectingFastSingleTapCommit = NO;
+    _needsDeferredEndScrollingSelectionUpdate = NO;
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
@@ -763,6 +765,15 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
 - (CGPoint)lastInteractionLocation
 {
     return _lastInteractionLocation;
+}
+
+- (BOOL)shouldHideSelectionWhenScrolling
+{
+    if (_isEditable)
+        return _assistedNodeInformation.insideFixedPosition;
+
+    auto& editorState = _page->editorState();
+    return !editorState.isMissingPostLayoutData && editorState.postLayoutData().insideFixedPosition;
 }
 
 - (BOOL)isEditable
@@ -1261,6 +1272,21 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 }
 #endif
 
+- (NSArray<NSValue *> *)_uiTextSelectionRects
+{
+    NSMutableArray *textSelectionRects = [NSMutableArray array];
+
+    if (_textSelectionAssistant) {
+        for (WKTextSelectionRect *selectionRect in [_textSelectionAssistant valueForKeyPath:@"selectionView.selection.selectionRects"])
+            [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.webRect.rect]];
+    } else if (_webSelectionAssistant) {
+        for (WebSelectionRect *selectionRect in [_webSelectionAssistant valueForKeyPath:@"selectionView.selectionRects"])
+            [textSelectionRects addObject:[NSValue valueWithCGRect:selectionRect.rect]];
+    }
+
+    return textSelectionRects;
+}
+
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     CGPoint point = [gestureRecognizer locationInView:self];
@@ -1642,8 +1668,10 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_didEndScrollingOrZooming
 {
-    [_webSelectionAssistant didEndScrollingOrZoomingPage];
-    [_textSelectionAssistant didEndScrollingOverflow];
+    if (!_needsDeferredEndScrollingSelectionUpdate) {
+        [_webSelectionAssistant didEndScrollingOrZoomingPage];
+        [_textSelectionAssistant didEndScrollingOverflow];
+    }
     _page->setIsScrollingOrZooming(false);
 }
 
@@ -3735,25 +3763,37 @@ static bool isAssistableInputType(InputType type)
         return;
 
     WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
-    if (!force && selectionDrawingInfo == _lastSelectionDrawingInfo)
-        return;
+    if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
+        LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
 
-    LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
+        _lastSelectionDrawingInfo = selectionDrawingInfo;
 
-    _lastSelectionDrawingInfo = selectionDrawingInfo;
+        // FIXME: We need to figure out what to do if the selection is changed by Javascript.
+        if (_textSelectionAssistant) {
+            _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
+            if (!_showingTextStyleOptions)
+                [_textSelectionAssistant selectionChanged];
+        } else if (!_page->editorState().isContentEditable)
+            [_webSelectionAssistant selectionChanged];
 
-    // FIXME: We need to figure out what to do if the selection is changed by Javascript.
-    if (_textSelectionAssistant) {
-        _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
-        if (!_showingTextStyleOptions)
-            [_textSelectionAssistant selectionChanged];
-    } else if (!_page->editorState().isContentEditable)
-        [_webSelectionAssistant selectionChanged];
-    _selectionNeedsUpdate = NO;
-    if (_shouldRestoreSelection) {
-        [_webSelectionAssistant didEndScrollingOverflow];
+        _selectionNeedsUpdate = NO;
+        if (_shouldRestoreSelection) {
+            [_webSelectionAssistant didEndScrollingOverflow];
+            [_textSelectionAssistant didEndScrollingOverflow];
+            _shouldRestoreSelection = NO;
+        }
+    }
+
+    auto& state = _page->editorState();
+    if (!state.isMissingPostLayoutData && state.postLayoutData().isStableStateUpdate && _needsDeferredEndScrollingSelectionUpdate && _page->inStableState()) {
+        [[self selectionInteractionAssistant] showSelectionCommands];
+        [_webSelectionAssistant didEndScrollingOrZoomingPage];
+        [[_webSelectionAssistant selectionView] setHidden:NO];
+
+        [_textSelectionAssistant activateSelection];
         [_textSelectionAssistant didEndScrollingOverflow];
-        _shouldRestoreSelection = NO;
+
+        _needsDeferredEndScrollingSelectionUpdate = NO;
     }
 }
 
