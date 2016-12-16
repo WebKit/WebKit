@@ -203,13 +203,39 @@ void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, fl
         m_context->asyncTaskComplete(callbackID);
     }];
 }
+    
+void convertCoordinates(NSMutableDictionary *event)
+{
+    if (event[HIDEventTouchesKey]) {
+        for (NSMutableDictionary *touch in event[HIDEventTouchesKey]) {
+            auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), (long)[touch[HIDEventXKey] doubleValue], (long)[touch[HIDEventYKey]doubleValue]);
+            touch[HIDEventXKey] = @(location.x);
+            touch[HIDEventYKey] = @(location.y);
+        }
+    }
+}
 
 void UIScriptController::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
     String jsonString = eventsJSON->string();
-    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
+    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers | NSJSONReadingMutableLeaves error:nil]);
+    
+    for (NSMutableDictionary *event in eventInfo[TopLevelEventInfoKey]) {
+        if (![event[HIDEventCoordinateSpaceKey] isEqualToString:HIDEventCoordinateSpaceTypeContent])
+            continue;
+        
+        if (event[HIDEventStartEventKey])
+            convertCoordinates(event[HIDEventStartEventKey]);
+        
+        if (event[HIDEventEndEventKey])
+            convertCoordinates(event[HIDEventEndEventKey]);
+        
+        if (event[HIDEventTouchesKey])
+            convertCoordinates(event);
+    }
+    
     if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
         WTFLogAlways("JSON is not convertible to a dictionary");
         return;

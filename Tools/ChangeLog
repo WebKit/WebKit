@@ -1,3 +1,20 @@
+2016-12-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Add coordinate space to event streams and streamline tests
+        https://bugs.webkit.org/show_bug.cgi?id=165119
+
+        Reviewed by Simon Fraser.
+
+        Update event streams to allow for both content and global coordinate space.
+        Update example script to more accurately show all the available options.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::convertCoordinates):
+        (WTR::UIScriptController::sendEventStream):
+
 2016-12-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Ensure gst* docs are not built with update-webkitgtk-libs

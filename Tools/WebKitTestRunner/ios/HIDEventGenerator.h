@@ -31,7 +31,13 @@
 extern NSString* const TopLevelEventInfoKey;
 extern NSString* const HIDEventInputType;
 extern NSString* const HIDEventTimeOffsetKey;
+extern NSString* const HIDEventTouchesKey;
 extern NSString* const HIDEventPhaseKey;
+extern NSString* const HIDEventInterpolateKey;
+extern NSString* const HIDEventTimestepKey;
+extern NSString* const HIDEventCoordinateSpaceKey;
+extern NSString* const HIDEventStartEventKey;
+extern NSString* const HIDEventEndEventKey;
 extern NSString* const HIDEventTouchIDKey;
 extern NSString* const HIDEventPressureKey;
 extern NSString* const HIDEventXKey;
@@ -39,12 +45,18 @@ extern NSString* const HIDEventYKey;
 extern NSString* const HIDEventTwistKey;
 extern NSString* const HIDEventMajorRadiusKey;
 extern NSString* const HIDEventMinorRadiusKey;
-extern NSString* const HIDEventTouchesKey;
 
 // Values for HIDEventInputType.
 extern NSString* const HIDEventInputTypeHand;
 extern NSString* const HIDEventInputTypeFinger;
 extern NSString* const HIDEventInputTypeStylus;
+
+// Values for HIDEventCoordinateSpaceKey.
+extern NSString* const HIDEventCoordinateSpaceTypeGlobal;
+extern NSString* const HIDEventCoordinateSpaceTypeContent;
+
+extern NSString* const HIDEventInterpolationTypeLinear;
+extern NSString* const HIDEventInterpolationTypeSimpleCurve;
 
 // Values for HIDEventPhaseKey.
 extern NSString* const HIDEventPhaseBegan;

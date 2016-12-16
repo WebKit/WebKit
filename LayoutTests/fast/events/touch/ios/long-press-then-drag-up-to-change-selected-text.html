@@ -18,7 +18,7 @@
             })();`
         }
     
-        function getDragUpOneScript()
+        function getDragScript(startX, startY, endX, endY)
         {
             return `
             (function() {
@@ -27,6 +27,7 @@
                 {
                 interpolate : "linear",
                 timestep: 0.1,
+                coordinateSpace : "content",
                 startEvent : {
                     inputType : "hand",
                     timeOffset : 0,
@@ -35,8 +36,8 @@
                         inputType : "finger",
                         phase : "began",
                         id : 1,
-                        x : 56,
-                        y : 109,
+                        x : ${startX},
+                        y : ${startY},
                         pressure : 0
                         }
                     ]
@@ -49,8 +50,8 @@
                         inputType : "finger",
                         phase : "moved",
                         id : 1,
-                        x : 56,
-                        y : 103,
+                        x : ${endX},
+                        y : ${endY},
                         pressure : 0
                         }
                     ]
@@ -62,179 +63,6 @@
             })();`
         }
     
-        function getDragUpTwoScript()
-        {
-            return `
-            (function() {
-             var eventStream = {
-             events : [
-                 {
-                 interpolate : "linear",
-                 timestep: 0.1,
-                 startEvent : {
-                     inputType : "hand",
-                     timeOffset : 0,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "began",
-                         id : 1,
-                         x : 56,
-                         y : 103,
-                         pressure : 0
-                         }
-                     ]
-                 },
-                 endEvent : {
-                     inputType : "hand",
-                     timeOffset : 0.5,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "moved",
-                         id : 1,
-                         x : 56,
-                         y : 84,
-                         pressure : 0
-                         }
-                     ]
-                 }
-             }]};
-             
-             uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                 uiController.uiScriptComplete();
-             })();`
-        }
-        function getDragDownOneScript()
-        {
-            return `
-            (function() {
-             var eventStream = {
-             events : [
-                 {
-                 interpolate : "linear",
-                 timestep: 0.1,
-                 startEvent : {
-                     inputType : "hand",
-                     timeOffset : 0,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "began",
-                         id : 1,
-                         x : 56,
-                         y : 84,
-                         pressure : 0
-                         }
-                     ]
-                 },
-                 endEvent : {
-                     inputType : "hand",
-                     timeOffset : 0.5,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "moved",
-                         id : 1,
-                         x : 56,
-                         y : 103,
-                         pressure : 0
-                         }
-                     ]
-                 }
-             }]};
-             
-             uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                 uiController.uiScriptComplete();
-             })();`
-        }
-        function getDragDownTwoScript()
-        {
-            return `
-            (function() {
-             var eventStream = {
-             events : [
-                 {
-                 interpolate : "linear",
-                 timestep: 0.1,
-                 startEvent : {
-                     inputType : "hand",
-                     timeOffset : 0,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "began",
-                         id : 1,
-                         x : 56,
-                         y : 103,
-                         pressure : 0
-                         }
-                     ]
-                 },
-                 endEvent : {
-                     inputType : "hand",
-                     timeOffset : 0.5,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "moved",
-                         id : 1,
-                         x : 56,
-                         y : 112,
-                         pressure : 0
-                         }
-                     ]
-                 }
-             }]};
-             
-             uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                 uiController.uiScriptComplete();
-             })();`
-        }
-        function getDragDownPastScript()
-        {
-            return `
-            (function() {
-             var eventStream = {
-             events : [
-                 {
-                 interpolate : "linear",
-                 timestep: 0.1,
-                 startEvent : {
-                     inputType : "hand",
-                     timeOffset : 0,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "began",
-                         id : 1,
-                         x : 56,
-                         y : 112,
-                         pressure : 0
-                         }
-                     ]
-                 },
-                 endEvent : {
-                     inputType : "hand",
-                     timeOffset : 0.5,
-                     touches : [
-                         {
-                         inputType : "finger",
-                         phase : "moved",
-                         id : 1,
-                         x : 56,
-                         y : 140,
-                         pressure : 0
-                         }
-                     ]
-                 }
-             }]};
-             
-             uiController.sendEventStream(JSON.stringify(eventStream), function() {});
-                 uiController.uiScriptComplete();
-             })();`
-        }
-
         function runTest()
         {
             if (!testRunner.runUIScript)
@@ -251,35 +79,35 @@
                         output += 'FAIL: failed to select a word as a result of a long press';
                     output += '<br>';
 
-                    testRunner.runUIScript(getDragUpOneScript(), function(result) {
+                    testRunner.runUIScript(getDragScript(56, 89, 56, 74), function(result) {
                         if (document.getSelection().toString() == "e et dolore magna aliqua. Ut")
                             output += 'PASS: Correct Selection';
                         else
                             output += 'FAIL: failed to select additional line after a drag.' + document.getSelection().toString()
                         output += '<br>';
                                           
-                        testRunner.runUIScript(getDragUpTwoScript(), function(result) {
+                        testRunner.runUIScript(getDragScript(56, 74, 56, 55), function(result) {
                             if (document.getSelection().toString() == "mod tempor incididunt ut labore et dolore magna aliqua. Ut")
                                 output += 'PASS: Correct Selection';
                             else
                                 output += 'FAIL: failed to select additional line after a drag.' + document.getSelection().toString()
                             output += '<br>';
 
-                            testRunner.runUIScript(getDragDownOneScript(), function(result) {
+                            testRunner.runUIScript(getDragScript(56, 55, 56, 74), function(result) {
                                 if (document.getSelection().toString() == "e et dolore magna aliqua. Ut")
                                     output += 'PASS: Correct Selection';
                                 else
                                     output += 'FAIL: failed to deselect line after a drag.' + document.getSelection().toString()
                                 output += '<br>';
 
-                                testRunner.runUIScript(getDragDownTwoScript(), function(result) {
+                                testRunner.runUIScript(getDragScript(56, 74, 56, 92), function(result) {
                                     if (document.getSelection().toString() == "Ut")
                                         output += 'PASS: Correct Selection';
                                     else
                                         output += 'FAIL: failed to deselect line after a drag.' + document.getSelection().toString()
                                     output += '<br>';
                             
-                                    testRunner.runUIScript(getDragDownPastScript(), function(result) {
+                                    testRunner.runUIScript(getDragScript(56, 92, 56, 120), function(result) {
                                         if (document.getSelection().toString() == "t")
                                             output += 'PASS: Correct Selection';
                                         else
@@ -287,7 +115,7 @@
                                         output += '<br>';
                                         output += result;
                                         document.getElementById('target').innerHTML = output;
-                                        //testRunner.notifyDone();
+                                        testRunner.notifyDone();
                                     });
                                 });
                             });

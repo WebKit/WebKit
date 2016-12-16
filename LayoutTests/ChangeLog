@@ -1,3 +1,16 @@
+2016-12-15  Megan Gardner  <megan_gardner@apple.com>
+
+        Add coordinate space to event streams and streamline tests
+        https://bugs.webkit.org/show_bug.cgi?id=165119
+
+        Reviewed by Simon Fraser.
+
+        Streamline tests. Make them more readable and only use one function for drags.
+        Update for new content coordinate space.
+
+        * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html:
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html:
+
 2016-12-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking js/dom/global-constructors-attributes.html as failing on ElCapitan WK1.
