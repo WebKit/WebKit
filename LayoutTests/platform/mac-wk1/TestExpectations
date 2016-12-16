@@ -264,7 +264,7 @@ webkit.org/b/105870 [ Debug ] webaudio/audionode-connect-order.html [ Pass Crash
 
 webkit.org/b/160227 [ ElCapitan Debug ] inspector/memory/tracking.html [ Pass Crash ]
 
-[ Yosemite ] js/dom/global-constructors-attributes.html [ Failure ]
+webkit.org/b/165934 [ ElCapitan Yosemite ] js/dom/global-constructors-attributes.html [ Failure ]
 
 # rdar://problem/27723718
 [ Sierra+ ] imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
