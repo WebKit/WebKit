@@ -1,3 +1,10 @@
+2016-12-16  Jer Noble  <jer.noble@apple.com>
+
+        Follow-up build fix after r209936; also rename MockCDM -> LegacyMockCDM in
+        CMakeLists.txt.
+
+        * CMakeLists.txt:
+
 2016-12-16  Sam Weinig  <sam@webkit.org>
 
         [Bindings] Remove use of Dictionary/ArrayValue in CDMSessionClearKey

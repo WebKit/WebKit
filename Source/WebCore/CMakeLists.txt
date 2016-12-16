@@ -3029,7 +3029,7 @@ if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
         Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp
     )
     list(APPEND WebCoreTestSupport_SOURCES
-        testing/MockCDM.cpp
+        testing/LegacyMockCDM.cpp
     )
     list(APPEND WebCore_IDL_FILES
         Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl
