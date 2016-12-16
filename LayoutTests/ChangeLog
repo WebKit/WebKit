@@ -1,3 +1,11 @@
+2016-12-16  Sam Weinig  <sam@webkit.org>
+
+        Fix failing test.
+
+        * http/tests/ssl/applepay/ApplePaySession-expected.txt:
+        * http/tests/ssl/applepay/ApplePaySession.html:
+        Update results to match latest IDL.
+
 2016-12-16  Andy Estes  <aestes@apple.com>
 
         Add a setting to suppress keyboard input during provisional navigation

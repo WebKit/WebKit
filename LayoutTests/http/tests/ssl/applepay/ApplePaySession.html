@@ -142,8 +142,8 @@ function go() {
     debug("Testing PaymentRequest.billingContact")
     debug("");
     logAndShouldThrow("request = validRequest(); request.billingContact = '';", "new ApplePaySession(2, request)")
-    logAndShouldThrow("request = validRequest(); request.billingContact = null;", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.billingContact = 7;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.billingContact = null;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.billingContact = undefined;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.billingContact = { };", "new ApplePaySession(2, request)")
     
@@ -167,8 +167,8 @@ function go() {
     debug("Testing PaymentRequest.shippingContact")
     debug("");
     logAndShouldThrow("request = validRequest(); request.shippingContact = '';", "new ApplePaySession(2, request)")
-    logAndShouldThrow("request = validRequest(); request.shippingContact = null;", "new ApplePaySession(2, request)")
     logAndShouldThrow("request = validRequest(); request.shippingContact = 7;", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.shippingContact = null;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.shippingContact = undefined;", "new ApplePaySession(2, request)")
     logAndShouldNotThrow("request = validRequest(); request.shippingContact = { };", "new ApplePaySession(2, request)")
     

@@ -239,11 +239,11 @@ Testing PaymentRequest.billingContact
 SETUP: request = validRequest(); request.billingContact = '';
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
-SETUP: request = validRequest(); request.billingContact = null;
-PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
-
 SETUP: request = validRequest(); request.billingContact = 7;
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.billingContact = null;
+PASS new ApplePaySession(2, request) did not throw exception.
 
 SETUP: request = validRequest(); request.billingContact = undefined;
 PASS new ApplePaySession(2, request) did not throw exception.
@@ -297,11 +297,11 @@ Testing PaymentRequest.shippingContact
 SETUP: request = validRequest(); request.shippingContact = '';
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
 
-SETUP: request = validRequest(); request.shippingContact = null;
-PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
-
 SETUP: request = validRequest(); request.shippingContact = 7;
 PASS new ApplePaySession(2, request) threw exception TypeError: Type error.
+
+SETUP: request = validRequest(); request.shippingContact = null;
+PASS new ApplePaySession(2, request) did not throw exception.
 
 SETUP: request = validRequest(); request.shippingContact = undefined;
 PASS new ApplePaySession(2, request) did not throw exception.
