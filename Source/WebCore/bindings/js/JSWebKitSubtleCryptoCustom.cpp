@@ -68,7 +68,7 @@ static RefPtr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState& state, JSVa
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     CryptoAlgorithmIdentifier algorithmIdentifier;
-    auto success = JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(&state, value, algorithmIdentifier);
+    auto success = JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(state, value, algorithmIdentifier);
     ASSERT_UNUSED(scope, scope.exception() || success);
     if (!success)
         return nullptr;
@@ -151,7 +151,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(&state, algorithm->identifier(), state.uncheckedArgument(0));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(state, algorithm->identifier(), state.uncheckedArgument(0));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
@@ -167,7 +167,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
     }
 
     CryptoOperationData data;
-    auto success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(2), data);
+    auto success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(2), data);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -203,7 +203,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(&state, algorithm->identifier(), state.uncheckedArgument(0));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(state, algorithm->identifier(), state.uncheckedArgument(0));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
@@ -219,7 +219,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
     }
 
     CryptoOperationData data;
-    auto success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(2), data);
+    auto success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(2), data);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -255,7 +255,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForSign(&state, algorithm->identifier(), state.uncheckedArgument(0));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForSign(state, algorithm->identifier(), state.uncheckedArgument(0));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
@@ -271,7 +271,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
     }
 
     CryptoOperationData data;
-    auto success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(2), data);
+    auto success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(2), data);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -307,7 +307,7 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForVerify(&state, algorithm->identifier(), state.uncheckedArgument(0));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForVerify(state, algorithm->identifier(), state.uncheckedArgument(0));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
@@ -323,13 +323,13 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
     }
 
     CryptoOperationData signature;
-    auto success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(2), signature);
+    auto success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(2), signature);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
 
     CryptoOperationData data;
-    success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(3), data);
+    success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(3), data);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -365,13 +365,13 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForDigest(&state, algorithm->identifier(), state.uncheckedArgument(0));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForDigest(state, algorithm->identifier(), state.uncheckedArgument(0));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
 
     CryptoOperationData data;
-    auto success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(1), data);
+    auto success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(1), data);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -407,7 +407,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForGenerateKey(&state, algorithm->identifier(), state.uncheckedArgument(0));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForGenerateKey(state, algorithm->identifier(), state.uncheckedArgument(0));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
@@ -521,7 +521,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
         return jsUndefined();
 
     CryptoOperationData data;
-    success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(1), data);
+    success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(1), data);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -534,7 +534,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
         if (!algorithm)
             return jsUndefined();
 
-        parameters = JSCryptoAlgorithmDictionary::createParametersForImportKey(&state, algorithm->identifier(), state.uncheckedArgument(2));
+        parameters = JSCryptoAlgorithmDictionary::createParametersForImportKey(state, algorithm->identifier(), state.uncheckedArgument(2));
         ASSERT(scope.exception() || parameters);
         if (!parameters)
             return jsUndefined();
@@ -669,7 +669,7 @@ JSValue JSWebKitSubtleCrypto::wrapKey(ExecState& state)
     if (!algorithm)
         return jsUndefined();
 
-    auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(&state, algorithm->identifier(), state.uncheckedArgument(3));
+    auto parameters = JSCryptoAlgorithmDictionary::createParametersForEncrypt(state, algorithm->identifier(), state.uncheckedArgument(3));
     ASSERT(scope.exception() || parameters);
     if (!parameters)
         return jsUndefined();
@@ -715,7 +715,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         return jsUndefined();
 
     CryptoOperationData wrappedKeyData;
-    success = cryptoOperationDataFromJSValue(&state, state.uncheckedArgument(1), wrappedKeyData);
+    success = cryptoOperationDataFromJSValue(state, state.uncheckedArgument(1), wrappedKeyData);
     ASSERT(scope.exception() || success);
     if (!success)
         return jsUndefined();
@@ -734,7 +734,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
     ASSERT(scope.exception() || unwrapAlgorithm);
     if (!unwrapAlgorithm)
         return jsUndefined();
-    auto unwrapAlgorithmParameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(&state, unwrapAlgorithm->identifier(), state.uncheckedArgument(3));
+    auto unwrapAlgorithmParameters = JSCryptoAlgorithmDictionary::createParametersForDecrypt(state, unwrapAlgorithm->identifier(), state.uncheckedArgument(3));
     ASSERT(scope.exception() || unwrapAlgorithmParameters);
     if (!unwrapAlgorithmParameters)
         return jsUndefined();
@@ -747,7 +747,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         if (!unwrappedKeyAlgorithm)
             return jsUndefined();
 
-        unwrappedKeyAlgorithmParameters = JSCryptoAlgorithmDictionary::createParametersForImportKey(&state, unwrappedKeyAlgorithm->identifier(), state.uncheckedArgument(4));
+        unwrappedKeyAlgorithmParameters = JSCryptoAlgorithmDictionary::createParametersForImportKey(state, unwrappedKeyAlgorithm->identifier(), state.uncheckedArgument(4));
         ASSERT(scope.exception() || unwrappedKeyAlgorithmParameters);
         if (!unwrappedKeyAlgorithmParameters)
             return jsUndefined();

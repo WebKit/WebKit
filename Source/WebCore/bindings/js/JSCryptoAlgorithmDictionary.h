@@ -41,18 +41,18 @@ class CryptoAlgorithmParametersDeprecated;
 
 class JSCryptoAlgorithmDictionary {
 public:
-    static bool getAlgorithmIdentifier(JSC::ExecState*, JSC::JSValue, CryptoAlgorithmIdentifier&);
+    static bool getAlgorithmIdentifier(JSC::ExecState&, JSC::JSValue, CryptoAlgorithmIdentifier&);
 
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForEncrypt(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDecrypt(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForSign(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForVerify(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDigest(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForGenerateKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDeriveKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDeriveBits(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForImportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
-    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForExportKey(JSC::ExecState*, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForEncrypt(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDecrypt(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForSign(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForVerify(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDigest(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForGenerateKey(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDeriveKey(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForDeriveBits(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForImportKey(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
+    static RefPtr<CryptoAlgorithmParametersDeprecated> createParametersForExportKey(JSC::ExecState&, CryptoAlgorithmIdentifier, JSC::JSValue);
 };
 
 } // namespace WebCore

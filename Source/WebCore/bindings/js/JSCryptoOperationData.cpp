@@ -34,17 +34,16 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool cryptoOperationDataFromJSValue(ExecState* exec, JSValue value, CryptoOperationData& result)
+bool cryptoOperationDataFromJSValue(ExecState& state, JSValue value, CryptoOperationData& result)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_THROW_SCOPE(state.vm());
 
     if (ArrayBuffer* buffer = toUnsharedArrayBuffer(value))
         result = std::make_pair(static_cast<uint8_t*>(buffer->data()), buffer->byteLength());
     else if (RefPtr<ArrayBufferView> bufferView = toUnsharedArrayBufferView(value))
         result = std::make_pair(static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength());
     else {
-        throwTypeError(exec, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));
+        throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as CryptoOperationData"));
         return false;
     }
     return true;

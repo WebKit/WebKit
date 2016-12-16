@@ -1,3 +1,18 @@
+2016-12-15  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove use of Dictionary from JSCryptoAlgorithmDictionary
+        https://bugs.webkit.org/show_bug.cgi?id=165919
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        * bindings/js/JSCryptoAlgorithmDictionary.h:
+        * bindings/js/JSCryptoOperationData.cpp:
+        * bindings/js/JSCryptoOperationData.h:
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        Replace simplistic use of Dictionary with simplistic use of direct JSObject
+        functions. Also, pass the ExecState by reference.
+
 2016-12-15  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of HeapRootVisitor and make SlotVisitor less painful to use

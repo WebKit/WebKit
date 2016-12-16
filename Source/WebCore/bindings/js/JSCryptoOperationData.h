@@ -36,7 +36,7 @@ namespace WebCore {
 
 typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
-bool cryptoOperationDataFromJSValue(JSC::ExecState*, JSC::JSValue, CryptoOperationData&);
+bool cryptoOperationDataFromJSValue(JSC::ExecState&, JSC::JSValue, CryptoOperationData&);
 
 } // namespace WebCore
 
