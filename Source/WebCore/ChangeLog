@@ -1,3 +1,32 @@
+2016-12-16  Brady Eidson  <beidson@apple.com>
+
+        More SQLiteIDBCursor refactoring.
+        https://bugs.webkit.org/show_bug.cgi?id=165956
+
+        Reviewed by Tim Horton.
+
+        No new tests (No behavior change).
+        
+        This is a simple patch that encapsulates the current state of the cursor in one structure
+        which will allow for storing multiple-such states in the future (to support prefetching).
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentData):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::advance):
+        (WebCore::IDBServer::SQLiteIDBCursor::advanceUnique):
+        (WebCore::IDBServer::SQLiteIDBCursor::markAsErrored):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce):
+        (WebCore::IDBServer::SQLiteIDBCursor::iterate):
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentRecordRowID):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentPrimaryKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValue):
+        (WebCore::IDBServer::SQLiteIDBCursor::didComplete):
+        (WebCore::IDBServer::SQLiteIDBCursor::didError):
+
 2016-12-16  Jer Noble  <jer.noble@apple.com>
 
         Follow-up build fix after r209936; also rename MockCDM -> LegacyMockCDM in

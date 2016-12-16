@@ -60,17 +60,17 @@ public:
     SQLiteIDBTransaction* transaction() const { return m_transaction; }
 
     int64_t objectStoreID() const { return m_objectStoreID; }
-    int64_t currentRecordRowID() const { return m_currentRecordRowID; }
+    int64_t currentRecordRowID() const { return m_currentRecord.rowID; }
 
-    const IDBKeyData& currentKey() const { return m_currentRecord.key; }
-    const IDBKeyData& currentPrimaryKey() const { return m_currentRecord.primaryKey; }
-    IDBValue* currentValue() const { return m_currentRecord.value.get(); }
+    const IDBKeyData& currentKey() const { return m_currentRecord.record.key; }
+    const IDBKeyData& currentPrimaryKey() const { return m_currentRecord.record.primaryKey; }
+    IDBValue* currentValue() const { return m_currentRecord.record.value.get(); }
 
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey, const IDBKeyData& targetPrimaryKey);
 
-    bool didComplete() const { return m_completed; }
-    bool didError() const { return m_errored; }
+    bool didComplete() const { return m_currentRecord.completed; }
+    bool didError() const { return m_currentRecord.errored; }
 
     void objectStoreRecordsChanged();
 
@@ -106,17 +106,20 @@ private:
     IDBKeyData m_currentLowerKey;
     IDBKeyData m_currentUpperKey;
 
-    IDBCursorRecord m_currentRecord;
+    struct SQLiteCursorRecord {
+        IDBCursorRecord record;
+        bool completed { false };
+        bool errored { false };
+        int64_t rowID { 0 };
+    };
+
+    SQLiteCursorRecord m_currentRecord;
 
     std::unique_ptr<SQLiteStatement> m_statement;
     bool m_statementNeedsReset { false };
     int64_t m_boundID { 0 };
 
-    bool m_completed { false };
-    bool m_errored { false };
-
     bool m_backingStoreCursor { false };
-    int64_t m_currentRecordRowID { 0 };
 };
 
 } // namespace IDBServer
