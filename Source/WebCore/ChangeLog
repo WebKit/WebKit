@@ -1,3 +1,28 @@
+2016-12-16  Zalan Bujtas  <zalan@apple.com>
+
+        Defer certain accessibility callbacks until after layout is finished.
+        https://bugs.webkit.org/show_bug.cgi?id=165861
+        rdar://problem/29646301
+
+        Reviewed by Chris Fleizach.
+
+        Currently with certain AXObjectCache callbacks, we can end up in a layout while the render tree is being mutated.  
+        This patch ensures that such callbacks are deferred until after tree mutation/layout is finished.
+
+        Test: accessibility/accessibility-crash-with-dynamic-inline-content.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::performDeferredIsIgnoredChange):
+        (WebCore::AXObjectCache::insertDeferredIsIgnoredChange):
+        * accessibility/AXObjectCache.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLines):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::createAndAppendRootInlineBox):
+
 2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline bindings tests after r209897.
