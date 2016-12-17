@@ -46,7 +46,7 @@ public:
         u.fields.indexingTypeIncludingHistory = indexingTypeIncludingHistory;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
-        u.fields.defaultCellState = CellState::NewWhite;
+        u.fields.defaultCellState = CellState::DefinitelyNewAndWhite;
     }
 
     void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }

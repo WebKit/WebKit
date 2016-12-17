@@ -1,3 +1,45 @@
+2016-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        CellState should have members with accurate names
+        https://bugs.webkit.org/show_bug.cgi?id=165969
+
+        Reviewed by Mark Lam.
+        
+        This once again renames the members in CellState. I wanted to convey the following
+        pieces of information in the names:
+        
+        - What does the state mean for Generational GC?
+        - What does the state mean for Concurrent GC?
+        - Does the state guarantee what it means, or is there some contingency?
+        
+        The names I came up with are:
+        
+        PossiblyOldOrBlack: An object in this state may be old, or may be black, depending on
+            other things. If the mark bit is set then the object is either black or being
+            blackened as we speak. It's going to survive the GC, so it will be old, but may be
+            new now. In between GCs, objects in this state are definitely old. If the mark bit
+            is not set, then the object is actually old and white.
+        
+        DefinitelyNewAndWhite: The object was just allocated so it is white (not marked) and
+            new.
+        
+        DefinitelyGrey: The object is definitely grey - it will be rescanned in the future. It
+            may be new or old depending on other things.
+
+        * heap/CellState.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::writeBarrierSlowPath):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::StructureIDBlob):
+
 2016-12-16  Saam Barati  <sbarati@apple.com>
 
         B3::DoubleToFloatReduction will accidentally convince itself it converted a Phi from Double to Float and then convert uses of that Phi into a use of FloatToDouble(@Phi)

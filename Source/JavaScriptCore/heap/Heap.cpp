@@ -1011,11 +1011,11 @@ void Heap::addToRememberedSet(const JSCell* cell)
         return;
     }
     // It could be that the object was *just* marked. This means that the collector may set the
-    // state to Grey and then to AnthraciteOrBlack at any time. It's OK for us to race with the
-    // collector here. If we win then this is accurate because the object _will_ get scanned again.
-    // If we lose then someone else will barrier the object again. That would be unfortunate but not
-    // the end of the world.
-    cell->setCellState(CellState::Grey);
+    // state to DefinitelyGrey and then to PossiblyOldOrBlack at any time. It's OK for us to
+    // race with the collector here. If we win then this is accurate because the object _will_
+    // get scanned again. If we lose then someone else will barrier the object again. That would
+    // be unfortunate but not the end of the world.
+    cell->setCellState(CellState::DefinitelyGrey);
     m_mutatorMarkStack->append(cell);
 }
 
@@ -2016,7 +2016,7 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
         // In this case, the barrierThreshold is the tautological threshold, so from could still be
         // not black. But we can't know for sure until we fire off a fence.
         WTF::storeLoadFence();
-        if (from->cellState() != CellState::AnthraciteOrBlack)
+        if (from->cellState() != CellState::PossiblyOldOrBlack)
             return;
     }
     

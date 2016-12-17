@@ -41,7 +41,7 @@
 namespace JSC {
 
 inline JSCell::JSCell(CreatingEarlyCellTag)
-    : m_cellState(CellState::NewWhite)
+    : m_cellState(CellState::DefinitelyNewAndWhite)
 {
     ASSERT(!isCompilationThread());
 }
@@ -51,7 +51,7 @@ inline JSCell::JSCell(VM&, Structure* structure)
     , m_indexingTypeAndMisc(structure->indexingTypeIncludingHistory())
     , m_type(structure->typeInfo().type())
     , m_flags(structure->typeInfo().inlineTypeFlags())
-    , m_cellState(CellState::NewWhite)
+    , m_cellState(CellState::DefinitelyNewAndWhite)
 {
     ASSERT(!isCompilationThread());
 }

@@ -204,7 +204,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         JSCell* jsCell = static_cast<JSCell*>(heapCell);
         validateCell(jsCell);
         
-        jsCell->setCellState(CellState::Grey);
+        jsCell->setCellState(CellState::DefinitelyGrey);
 
         appendToMarkStack(jsCell);
         return;
@@ -266,7 +266,7 @@ ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& con
     // Indicate that the object is grey and that:
     // In case of concurrent GC: it's the first time it is grey in this GC cycle.
     // In case of eden collection: it's a new object that became grey rather than an old remembered object.
-    cell->setCellState(CellState::Grey);
+    cell->setCellState(CellState::DefinitelyGrey);
     
     appendToMarkStack(container, cell);
 }
@@ -284,7 +284,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
 {
     ASSERT(Heap::isMarkedConcurrently(cell));
     ASSERT(!cell->isZapped());
-    ASSERT(cell->cellState() == CellState::Grey);
+    ASSERT(cell->cellState() == CellState::DefinitelyGrey);
     
     container.noteMarked();
     
@@ -366,7 +366,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     // not clear to me that it would be correct or profitable to bail here if the object is already
     // black.
     
-    cell->setCellState(CellState::AnthraciteOrBlack);
+    cell->setCellState(CellState::PossiblyOldOrBlack);
     
     WTF::storeLoadFence();
     

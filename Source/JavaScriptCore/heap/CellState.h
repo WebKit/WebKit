@@ -30,21 +30,19 @@
 namespace JSC {
 
 enum class CellState : uint8_t {
-    // The object is either currently being scanned (anthracite) or it has finished being scanned
-    // (black). It could be scanned for the first time this GC, or the Nth time - if it's anthracite
-    // then the SlotVisitor knows. We explicitly say "anthracite or black" to emphasize the fact that
-    // this is no guarantee that we have finished scanning the object, unless you also know that all
-    // SlotVisitors are done.
-    AnthraciteOrBlack = 0,
+    // The object is either currently being scanned, or it has finished being scanned, or this
+    // is a full collection and it's actually a white object (you'd know because its mark bit
+    // would be clear).
+    PossiblyOldOrBlack = 0,
     
     // The object is in eden. During GC, this means that the object has not been marked yet.
-    NewWhite = 1,
+    DefinitelyNewAndWhite = 1,
 
     // The object is grey - i.e. it will be scanned.
-    Grey = 2,
+    DefinitelyGrey = 2,
 };
 
-static const unsigned blackThreshold = 0; // x <= blackThreshold means x is AnthraciteOrBlack.
+static const unsigned blackThreshold = 0; // x <= blackThreshold means x is PossiblyOldOrBlack.
 static const unsigned tautologicalThreshold = 100; // x <= tautologicalThreshold is always true.
 
 inline bool isWithinThreshold(CellState cellState, unsigned threshold)
