@@ -25,19 +25,19 @@
 
 #import "DOMRectInternal.h"
 
-#import <WebCore/CSSPrimitiveValue.h>
 #import "DOMCSSPrimitiveValueInternal.h"
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/DeprecatedCSSOMPrimitiveValue.h>
+#import <WebCore/DeprecatedCSSOMRect.h>
 #import <WebCore/JSMainThreadExecState.h>
-#import <WebCore/Rect.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::Rect*>(_internal)
+#define IMPL reinterpret_cast<WebCore::DeprecatedCSSOMRect*>(_internal)
 
 @implementation DOMRect
 
@@ -77,7 +77,7 @@
 
 @end
 
-DOMRect *kit(WebCore::Rect* value)
+DOMRect *kit(WebCore::DeprecatedCSSOMRect* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

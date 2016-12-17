@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Google, Inc.  All rights reserved.
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,28 +25,40 @@
 
 #pragma once
 
-#include "Color.h"
-#include <wtf/RefCounted.h>
+#include "CSSValueList.h"
+#include "DeprecatedCSSOMValue.h"
 
 namespace WebCore {
-
-class CSSPrimitiveValue;
-
-class RGBColor final : public RefCounted<RGBColor> {
+    
+class DeprecatedCSSOMValueList : public DeprecatedCSSOMValue {
 public:
-    static Ref<RGBColor> create(unsigned rgbColor);
-
-    Color color() const { return Color(m_rgbColor); }
-
-    RGBA32 rgbColor() const { return m_rgbColor; }
-
-private:
-    RGBColor(unsigned rgbColor)
-        : m_rgbColor(rgbColor)
+    static Ref<DeprecatedCSSOMValueList> create(const CSSValueList& value)
     {
+        return adoptRef(*new DeprecatedCSSOMValueList(value));
     }
+    
+    bool equals(const DeprecatedCSSOMValueList& other) const;
+    unsigned cssValueType() const { return CSS_VALUE_LIST; }
+    String cssText() const;
+    
+    size_t length() const { return m_values.size(); }
+    DeprecatedCSSOMValue* item(size_t index) { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
+    const DeprecatedCSSOMValue* item(size_t index) const { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
 
-    RGBA32 m_rgbColor;
+protected:
+    DeprecatedCSSOMValueList(const CSSValueList& value)
+        : DeprecatedCSSOMValue(DeprecatedValueListClass)
+    {
+        m_valueListSeparator = value.separator();
+        m_values.reserveInitialCapacity(value.length());
+        for (unsigned i = 0, size = value.length(); i < size; ++i)
+            m_values.uncheckedAppend(value.itemWithoutBoundsCheck(i)->createDeprecatedCSSOMWrapper());
+    }
+    
+private:
+    Vector<Ref<DeprecatedCSSOMValue>, 4> m_values;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSSOM_VALUE(DeprecatedCSSOMValueList, isValueList())

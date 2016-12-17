@@ -27,6 +27,7 @@
 #include "SVGElement.h"
 
 #include "CSSPropertyParser.h"
+#include "DeprecatedCSSOMValue.h"
 #include "Document.h"
 #include "ElementIterator.h"
 #include "Event.h"
@@ -1023,7 +1024,7 @@ void SVGElement::childrenChanged(const ChildChange& change)
     invalidateInstances();
 }
 
-RefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
+RefPtr<DeprecatedCSSOMValue> SVGElement::getPresentationAttribute(const String& name)
 {
     if (!hasAttributesWithoutUpdate())
         return 0;
@@ -1036,8 +1037,10 @@ RefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)
     RefPtr<MutableStyleProperties> style = MutableStyleProperties::create(SVGAttributeMode);
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(attribute->name());
     style->setProperty(propertyID, attribute->value());
-    RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(propertyID);
-    return cssValue ? cssValue->cloneForCSSOM() : nullptr;
+    auto cssValue = style->getPropertyCSSValue(propertyID);
+    if (!cssValue)
+        return nullptr;
+    return cssValue->createDeprecatedCSSOMWrapper();
 }
 
 bool SVGElement::instanceUpdatesBlocked() const

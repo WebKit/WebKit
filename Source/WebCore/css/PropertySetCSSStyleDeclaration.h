@@ -36,6 +36,7 @@ namespace WebCore {
 class CSSRule;
 class CSSProperty;
 class CSSValue;
+class DeprecatedCSSOMValue;
 class MutableStyleProperties;
 class StyleSheetContents;
 class StyledElement;
@@ -54,7 +55,7 @@ protected:
     virtual CSSParserContext cssParserContext() const;
 
     MutableStyleProperties* m_propertySet;
-    std::unique_ptr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
+    std::unique_ptr<HashMap<CSSValue*, RefPtr<DeprecatedCSSOMValue>>> m_cssomValueWrappers;
 
 private:
     void ref() override;
@@ -63,7 +64,7 @@ private:
     CSSRule* parentRule() const override { return nullptr; }
     unsigned length() const final;
     String item(unsigned index) const final;
-    RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) final;
+    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
     String getPropertyValue(const String& propertyName) final;
     String getPropertyPriority(const String& propertyName) final;
     String getPropertyShorthand(const String& propertyName) final;
@@ -78,7 +79,7 @@ private:
     
     Ref<MutableStyleProperties> copyProperties() const final;
 
-    CSSValue* cloneAndCacheForCSSOM(CSSValue*);
+    DeprecatedCSSOMValue* wrapForDeprecatedCSSOM(CSSValue*);
     
     virtual bool willMutate() WARN_UNUSED_RETURN { return true; }
     virtual void didMutate(MutationType) { }

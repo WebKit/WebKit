@@ -45,8 +45,6 @@ public:
 
     String customCSSText() const;
 
-    Ref<CSSGridLineNamesValue> cloneForCSSOM() const;
-
 private:
     CSSGridLineNamesValue();
 };

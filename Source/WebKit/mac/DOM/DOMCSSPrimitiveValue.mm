@@ -25,8 +25,10 @@
 
 #import "DOMCSSPrimitiveValueInternal.h"
 
-#import <WebCore/CSSPrimitiveValue.h>
-#import <WebCore/Counter.h>
+#import <WebCore/DeprecatedCSSOMCounter.h>
+#import <WebCore/DeprecatedCSSOMPrimitiveValue.h>
+#import <WebCore/DeprecatedCSSOMRGBColor.h>
+#import <WebCore/DeprecatedCSSOMRect.h>
 #import "DOMCSSValueInternal.h"
 #import "DOMCounterInternal.h"
 #import "DOMNodeInternal.h"
@@ -34,14 +36,12 @@
 #import "DOMRectInternal.h"
 #import "ExceptionHandlers.h"
 #import <WebCore/JSMainThreadExecState.h>
-#import <WebCore/RGBColor.h>
-#import <WebCore/Rect.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::CSSPrimitiveValue*>(reinterpret_cast<WebCore::CSSValue*>(_internal))
+#define IMPL static_cast<WebCore::DeprecatedCSSOMPrimitiveValue*>(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal))
 
 @implementation DOMCSSPrimitiveValue
 
@@ -78,13 +78,13 @@
 - (DOMCounter *)getCounterValue
 {
     WebCore::JSMainThreadNullState state;
-    return kit(&raiseOnDOMError(IMPL->getCounterValue()));
+    return kit(raiseOnDOMError(IMPL->getCounterValue()).ptr());
 }
 
 - (DOMRect *)getRectValue
 {
     WebCore::JSMainThreadNullState state;
-    return kit(&raiseOnDOMError(IMPL->getRectValue()));
+    return kit(raiseOnDOMError(IMPL->getRectValue()).ptr());
 }
 
 - (DOMRGBColor *)getRGBColorValue
@@ -109,8 +109,8 @@
 
 @end
 
-DOMCSSPrimitiveValue *kit(WebCore::CSSPrimitiveValue* value)
+DOMCSSPrimitiveValue *kit(WebCore::DeprecatedCSSOMPrimitiveValue* value)
 {
     WebCoreThreadViolationCheckRoundOne();
-    return static_cast<DOMCSSPrimitiveValue*>(kit(static_cast<WebCore::CSSValue*>(value)));
+    return static_cast<DOMCSSPrimitiveValue*>(kit(static_cast<WebCore::DeprecatedCSSOMValue*>(value)));
 }

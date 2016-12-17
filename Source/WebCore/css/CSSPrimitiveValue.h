@@ -38,6 +38,7 @@ class CSSCalcValue;
 class CSSToLengthConversionData;
 class Counter;
 class DashboardRegion;
+class DeprecatedCSSOMPrimitiveValue;
 class LengthRepeat;
 class Pair;
 class Quad;
@@ -289,15 +290,14 @@ public:
     // FIXME-NEWPARSER: Can ditch the boolean and just use the unit type once old parser is gone.
     bool isQuirkValue() const { return m_isQuirkValue || primitiveType() == CSS_QUIRKY_EMS; }
 
-    Ref<CSSPrimitiveValue> cloneForCSSOM() const;
-    void setCSSOMSafe() { m_isCSSOMSafe = true; }
-
     bool equals(const CSSPrimitiveValue&) const;
 
     static UnitType canonicalUnitTypeForCategory(UnitCategory);
     static double conversionToCanonicalUnitsScaleFactor(UnitType);
 
     static double computeNonCalcLengthDouble(const CSSToLengthConversionData&, UnitType, double value);
+
+    Ref<DeprecatedCSSOMPrimitiveValue> createDeprecatedCSSOMPrimitiveWrapper() const;
 
 #if COMPILER(MSVC)
     // FIXME: This should be private, but for some reason MSVC then fails to invoke it from LazyNeverDestroyed::construct.

@@ -20,7 +20,8 @@
 [
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-] interface Counter {
+    InterfaceName=Counter
+] interface DeprecatedCSSOMCounter {
     readonly attribute DOMString identifier;
     readonly attribute DOMString listStyle;
     readonly attribute DOMString separator;

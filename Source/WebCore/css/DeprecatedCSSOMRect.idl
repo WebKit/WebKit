@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,10 +20,10 @@
 [
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-] interface RGBColor {
-    readonly attribute CSSPrimitiveValue red;
-    readonly attribute CSSPrimitiveValue green;
-    readonly attribute CSSPrimitiveValue blue;
-
-    readonly attribute CSSPrimitiveValue alpha;
+    InterfaceName=Rect
+] interface DeprecatedCSSOMRect {
+    readonly attribute DeprecatedCSSOMPrimitiveValue top;
+    readonly attribute DeprecatedCSSOMPrimitiveValue right;
+    readonly attribute DeprecatedCSSOMPrimitiveValue bottom;
+    readonly attribute DeprecatedCSSOMPrimitiveValue left;
 };

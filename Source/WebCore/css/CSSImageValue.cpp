@@ -30,6 +30,7 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
 #include "CrossOriginAccessControl.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
 #include "MemoryCache.h"
@@ -98,12 +99,10 @@ String CSSImageValue::customCSSText() const
     return serializeURL(m_url);
 }
 
-Ref<CSSValue> CSSImageValue::cloneForCSSOM() const
+Ref<DeprecatedCSSOMValue> CSSImageValue::createDeprecatedCSSOMWrapper() const
 {
     // NOTE: We expose CSSImageValues as URI primitive values in CSSOM to maintain old behavior.
-    Ref<CSSPrimitiveValue> uriValue = CSSPrimitiveValue::create(m_url, CSSPrimitiveValue::CSS_URI);
-    uriValue->setCSSOMSafe();
-    return WTFMove(uriValue);
+    return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(m_url, CSSPrimitiveValue::CSS_URI));
 }
 
 bool CSSImageValue::knownToBeOpaque(const RenderElement* renderer) const

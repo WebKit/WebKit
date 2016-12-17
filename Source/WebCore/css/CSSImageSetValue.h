@@ -55,8 +55,6 @@ public:
 
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
 
-    Ref<CSSImageSetValue> cloneForCSSOM() const;
-
     void updateDeviceScaleFactor(const Document&);
 
 protected:
@@ -64,7 +62,6 @@ protected:
 
 private:
     CSSImageSetValue();
-    CSSImageSetValue(const CSSImageSetValue& cloneFrom);
 
     void fillImageSet();
     static inline bool compareByScaleFactor(ImageWithScale first, ImageWithScale second) { return first.scaleFactor < second.scaleFactor; }

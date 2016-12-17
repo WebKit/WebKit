@@ -1,3 +1,20 @@
+2016-12-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Values] Make separate wrapper classes for the deprecated CSS Values OM
+        https://bugs.webkit.org/show_bug.cgi?id=165968
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapCSSValue):
+        (webkit_dom_css_value_constructor):
+        (webkit_dom_css_value_get_css_text):
+        (webkit_dom_css_value_set_css_text):
+        (webkit_dom_css_value_get_css_value_type):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValuePrivate.h:
+
 2016-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Visual viewports: bottom fixed elements disappear behind the keyboard

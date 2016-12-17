@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/DOMCSSValue.h>
+#pragma once
+
+#include "Counter.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
+#include <wtf/RefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-class DeprecatedCSSOMValue;
-}
 
-DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue*);
-Class kitClass(WebCore::DeprecatedCSSOMValue*);
+class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
+public:
+    static Ref<DeprecatedCSSOMCounter> create(const Counter& counter) { return adoptRef(*new DeprecatedCSSOMCounter(counter)); }
+
+    String identifier() const { return m_identifier->stringValue(); }
+    String listStyle() const { return m_listStyle->stringValue(); }
+    String separator() const { return m_separator->stringValue(); }
+    
+private:
+    DeprecatedCSSOMCounter(const Counter& counter)
+        : m_identifier(counter.identifierValue().createDeprecatedCSSOMPrimitiveWrapper())
+        , m_listStyle(counter.listStyleValue().createDeprecatedCSSOMPrimitiveWrapper())
+        , m_separator(counter.separatorValue().createDeprecatedCSSOMPrimitiveWrapper())
+    {
+    }
+    
+    Ref<DeprecatedCSSOMPrimitiveValue> m_identifier;
+    Ref<DeprecatedCSSOMPrimitiveValue> m_listStyle;
+    Ref<DeprecatedCSSOMPrimitiveValue> m_separator;
+};
+
+} // namespace WebCore

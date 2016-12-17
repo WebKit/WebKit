@@ -116,7 +116,6 @@
 #include "JSComment.cpp"
 #include "JSCompositionEvent.cpp"
 #include "JSCoordinates.cpp"
-#include "JSCounter.cpp"
 #include "JSCrypto.cpp"
 #if ENABLE(FONT_LOAD_EVENTS)
 #include "JSCSSFontFaceLoadEvent.cpp"
@@ -127,7 +126,6 @@
 #include "JSCSSKeyframesRule.cpp"
 #include "JSCSSMediaRule.cpp"
 #include "JSCSSPageRule.cpp"
-#include "JSCSSPrimitiveValue.cpp"
 #include "JSCSSRule.cpp"
 #include "JSCSSRuleList.cpp"
 #include "JSCSSStyleDeclaration.cpp"
@@ -135,8 +133,6 @@
 #include "JSCSSStyleSheet.cpp"
 #include "JSCSSSupportsRule.cpp"
 #include "JSCSSUnknownRule.cpp"
-#include "JSCSSValue.cpp"
-#include "JSCSSValueList.cpp"
 #include "JSClipboardEvent.cpp"
 #include "JSCustomElementRegistry.cpp"
 #include "JSCustomEvent.cpp"
@@ -149,6 +145,12 @@
 #if ENABLE(WEB_AUDIO)
 #include "JSDelayNode.cpp"
 #endif
+#include "JSDeprecatedCSSOMCounter.cpp"
+#include "JSDeprecatedCSSOMPrimitiveValue.cpp"
+#include "JSDeprecatedCSSOMRGBColor.cpp"
+#include "JSDeprecatedCSSOMRect.cpp"
+#include "JSDeprecatedCSSOMValue.cpp"
+#include "JSDeprecatedCSSOMValueList.cpp"
 #if ENABLE(DEVICE_ORIENTATION)
 #include "JSDeviceMotionEvent.h"
 #include "JSDeviceOrientationEvent.cpp"
@@ -401,9 +403,7 @@
 #include "JSReadableStream.cpp"
 #include "JSReadableStreamDefaultController.cpp"
 #include "JSReadableStreamDefaultReader.cpp"
-#include "JSRect.cpp"
 #include "JSRequestAnimationFrameCallback.cpp"
-#include "JSRGBColor.cpp"
 #include "JSRTCConfiguration.cpp"
 #include "JSRTCDataChannel.cpp"
 #include "JSRTCDataChannelEvent.cpp"

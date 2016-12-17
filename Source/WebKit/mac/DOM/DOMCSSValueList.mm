@@ -25,17 +25,16 @@
 
 #import "DOMCSSValueList.h"
 
-#import <WebCore/CSSValue.h>
-#import <WebCore/CSSValueList.h>
 #import "DOMCSSValueInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/DeprecatedCSSOMValueList.h>
 #import <WebCore/JSMainThreadExecState.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::CSSValueList*>(reinterpret_cast<WebCore::CSSValue*>(_internal))
+#define IMPL static_cast<WebCore::DeprecatedCSSOMValueList*>(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal))
 
 @implementation DOMCSSValueList
 

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class AffineTransform;
 class CSSStyleDeclaration;
-class CSSValue;
+class DeprecatedCSSOMValue;
 class Document;
 class SVGAttributeToPropertyMap;
 class SVGDocumentExtensions;
@@ -57,7 +57,7 @@ public:
     static bool isAnimatableCSSProperty(const QualifiedName&);
     bool isPresentationAttributeWithSVGDOM(const QualifiedName&);
     bool isKnownAttribute(const QualifiedName&);
-    RefPtr<CSSValue> getPresentationAttribute(const String& name);
+    RefPtr<DeprecatedCSSOMValue> getPresentationAttribute(const String& name);
     virtual bool supportsMarkers() const { return false; }
     bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.isEmpty(); }
     virtual bool needsPendingResourceHandling() const { return true; }

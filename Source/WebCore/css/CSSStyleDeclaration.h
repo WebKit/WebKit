@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
+#include "DeprecatedCSSOMValue.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
@@ -49,7 +50,7 @@ public:
     virtual ExceptionOr<void> setCssText(const String&) = 0;
     virtual unsigned length() const = 0;
     virtual String item(unsigned index) const = 0;
-    virtual RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) = 0;
+    virtual RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) = 0;
     virtual String getPropertyValue(const String& propertyName) = 0;
     virtual String getPropertyPriority(const String& propertyName) = 0;
     virtual String getPropertyShorthand(const String& propertyName) = 0;

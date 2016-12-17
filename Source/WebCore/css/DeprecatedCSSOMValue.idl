@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,11 +19,20 @@
  */
 
 [
+    CustomIsReachable,
+    CustomToJSObject,
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-] interface Rect {
-    readonly attribute CSSPrimitiveValue top;
-    readonly attribute CSSPrimitiveValue right;
-    readonly attribute CSSPrimitiveValue bottom;
-    readonly attribute CSSPrimitiveValue left;
+    JSCustomFinalize,
+    InterfaceName=CSSValue
+] interface DeprecatedCSSOMValue {
+    // UnitTypes
+    const unsigned short CSS_INHERIT = 0;
+    const unsigned short CSS_PRIMITIVE_VALUE = 1;
+    const unsigned short CSS_VALUE_LIST = 2;
+    const unsigned short CSS_CUSTOM = 3;
+
+    [SetterMayThrowException] attribute DOMString? cssText;
+
+    readonly attribute unsigned short cssValueType;
 };

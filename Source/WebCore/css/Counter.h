@@ -36,6 +36,10 @@ public:
     String listStyle() const { return m_listStyle->stringValue(); }
     String separator() const { return m_separator->stringValue(); }
 
+    const CSSPrimitiveValue& identifierValue() const { return m_identifier; }
+    const CSSPrimitiveValue& listStyleValue() const { return m_listStyle; }
+    const CSSPrimitiveValue& separatorValue() const { return m_separator; }
+    
     CSSValueID listStyleIdent() const { return m_listStyle->valueID(); }
 
     void setIdentifier(Ref<CSSPrimitiveValue>&& identifier) { m_identifier = WTFMove(identifier); }
@@ -47,11 +51,6 @@ public:
         return identifier() == other.identifier()
             && listStyle() == other.listStyle()
             && separator() == other.separator();
-    }
-    
-    Ref<Counter> cloneForCSSOM() const
-    {
-        return create(m_identifier->cloneForCSSOM(), m_listStyle->cloneForCSSOM(), m_separator->cloneForCSSOM());
     }
 
 private:

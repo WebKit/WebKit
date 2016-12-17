@@ -19,7 +19,8 @@
 
 [
     ImplementationLacksVTable,
-] interface CSSPrimitiveValue : CSSValue {
+    InterfaceName=CSSPrimitiveValue
+] interface DeprecatedCSSOMPrimitiveValue : DeprecatedCSSOMValue {
     // UnitTypes
     const unsigned short CSS_UNKNOWN = 0;
     const unsigned short CSS_NUMBER = 1;
@@ -60,7 +61,7 @@
     [MayThrowException] void setStringValue(optional unsigned short stringType = 0, optional DOMString stringValue);
     [MayThrowException] DOMString getStringValue();
 
-    [MayThrowException] Counter getCounterValue();
-    [MayThrowException] Rect getRectValue();
-    [MayThrowException] RGBColor getRGBColorValue();
+    [MayThrowException] DeprecatedCSSOMCounter getCounterValue();
+    [MayThrowException] DeprecatedCSSOMRect getRectValue();
+    [MayThrowException] DeprecatedCSSOMRGBColor getRGBColorValue();
 };

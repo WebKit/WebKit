@@ -25,7 +25,7 @@
 
 #import "DOMCounterInternal.h"
 
-#import <WebCore/Counter.h>
+#import <WebCore/DeprecatedCSSOMCounter.h>
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -36,7 +36,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::Counter*>(_internal)
+#define IMPL reinterpret_cast<WebCore::DeprecatedCSSOMCounter*>(_internal)
 
 @implementation DOMCounter
 
@@ -70,7 +70,7 @@
 
 @end
 
-DOMCounter *kit(WebCore::Counter* value)
+DOMCounter *kit(WebCore::DeprecatedCSSOMCounter* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

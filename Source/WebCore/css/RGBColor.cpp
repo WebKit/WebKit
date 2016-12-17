@@ -35,37 +35,5 @@ Ref<RGBColor> RGBColor::create(unsigned rgbColor)
     return adoptRef(*new RGBColor(rgbColor));
 }
 
-Ref<CSSPrimitiveValue> RGBColor::red()
-{
-    unsigned value = (m_rgbColor >> 16) & 0xFF;
-    Ref<CSSPrimitiveValue> result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-    result->setCSSOMSafe();
-    return result;
-}
-
-Ref<CSSPrimitiveValue> RGBColor::green()
-{
-    unsigned value = (m_rgbColor >> 8) & 0xFF;
-    Ref<CSSPrimitiveValue> result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-    result->setCSSOMSafe();
-    return result;
-}
-
-Ref<CSSPrimitiveValue> RGBColor::blue()
-{
-    unsigned value = m_rgbColor & 0xFF;
-    Ref<CSSPrimitiveValue> result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-    result->setCSSOMSafe();
-    return result;
-}
-
-Ref<CSSPrimitiveValue> RGBColor::alpha()
-{
-    float value = static_cast<float>((m_rgbColor >> 24) & 0xFF) / 0xFF;
-    Ref<CSSPrimitiveValue> result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-    result->setCSSOMSafe();
-    return result;
-}
-
 } // namespace WebCore
 

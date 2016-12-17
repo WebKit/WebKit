@@ -282,7 +282,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSMediaRule.idl \
     $(WebCore)/css/CSSNamespaceRule.idl \
     $(WebCore)/css/CSSPageRule.idl \
-    $(WebCore)/css/CSSPrimitiveValue.idl \
     $(WebCore)/css/CSSRule.idl \
     $(WebCore)/css/CSSRuleList.idl \
     $(WebCore)/css/CSSStyleDeclaration.idl \
@@ -290,17 +289,18 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/CSSStyleSheet.idl \
     $(WebCore)/css/CSSSupportsRule.idl \
     $(WebCore)/css/CSSUnknownRule.idl \
-    $(WebCore)/css/CSSValue.idl \
-    $(WebCore)/css/CSSValueList.idl \
-    $(WebCore)/css/Counter.idl \
+    $(WebCore)/css/DeprecatedCSSOMCounter.idl \
+	$(WebCore)/css/DeprecatedCSSOMPrimitiveValue.idl \
+	$(WebCore)/css/DeprecatedCSSOMRGBColor.idl \
+	$(WebCore)/css/DeprecatedCSSOMRect.idl \
+	$(WebCore)/css/DeprecatedCSSOMValue.idl \
+    $(WebCore)/css/DeprecatedCSSOMValueList.idl \
     $(WebCore)/css/DOMCSSNamespace.idl \
     $(WebCore)/css/FontFace.idl \
     $(WebCore)/css/FontFaceSet.idl \
     $(WebCore)/css/MediaList.idl \
     $(WebCore)/css/MediaQueryList.idl \
     $(WebCore)/css/MediaQueryListListener.idl \
-    $(WebCore)/css/RGBColor.idl \
-    $(WebCore)/css/Rect.idl \
     $(WebCore)/css/StyleMedia.idl \
     $(WebCore)/css/StyleSheet.idl \
     $(WebCore)/css/StyleSheetList.idl \

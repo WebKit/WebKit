@@ -35,7 +35,8 @@
     attribute long tabIndex;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    CSSValue getPresentationAttribute(optional DOMString name = "undefined");
+    // This method is deprecated, and we'd like to remove it someday.
+    DeprecatedCSSOMValue getPresentationAttribute(optional DOMString name = "undefined");
 
     void focus();
     void blur();

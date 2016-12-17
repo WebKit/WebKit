@@ -25,7 +25,7 @@
 
 #import "DOMCSSValueInternal.h"
 
-#import <WebCore/CSSValue.h>
+#import <WebCore/DeprecatedCSSOMValue.h>
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -36,7 +36,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::CSSValue*>(_internal)
+#define IMPL reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal)
 
 @implementation DOMCSSValue
 
@@ -70,7 +70,7 @@
 
 @end
 
-DOMCSSValue *kit(WebCore::CSSValue* value)
+DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

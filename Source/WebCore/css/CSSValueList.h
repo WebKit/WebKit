@@ -69,12 +69,11 @@ public:
     bool equals(const CSSValue&) const;
 
     bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
-    
-    Ref<CSSValueList> cloneForCSSOM() const;
+
+    unsigned separator() const { return m_valueListSeparator; }
 
 protected:
     CSSValueList(ClassType, ValueListSeparator);
-    CSSValueList(const CSSValueList& cloneFrom);
 
 private:
     explicit CSSValueList(ValueListSeparator);

@@ -26,7 +26,7 @@
 #import <WebKitLegacy/DOMRect.h>
 
 namespace WebCore {
-class Rect;
+class DeprecatedCSSOMRect;
 }
 
-DOMRect *kit(WebCore::Rect*);
+DOMRect *kit(WebCore::DeprecatedCSSOMRect*);

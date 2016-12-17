@@ -26,17 +26,16 @@
 #include "config.h"
 #include "JSCSSStyleDeclarationCustom.h"
 
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
 #include "CSSRule.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
-#include "CSSValue.h"
 #include "CustomElementReactionQueue.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
 #include "HashTools.h"
 #include "JSCSSStyleDeclaration.h"
-#include "JSCSSValue.h"
+#include "JSDeprecatedCSSOMValue.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
 #include "RuntimeEnabledFeatures.h"
@@ -365,7 +364,7 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState& state)
     if (!value)
         return jsNull();
 
-    globalObject()->world().m_cssValueRoots.add(value.get(), root(&wrapped())); // Balanced by JSCSSValueOwner::finalize().
+    globalObject()->world().m_deprecatedCSSOMValueRoots.add(value.get(), root(&wrapped())); // Balanced by JSDeprecatedCSSOMValueOwner::finalize().
     return toJS(&state, globalObject(), *value);
 }
 

@@ -50,10 +50,12 @@
 #import <WebCore/JSCSSRule.h>
 #import <WebCore/JSCSSRuleList.h>
 #import <WebCore/JSCSSStyleDeclaration.h>
-#import <WebCore/JSCSSValue.h>
-#import <WebCore/JSCounter.h>
 #import <WebCore/JSDOMImplementation.h>
 #import <WebCore/JSDOMWindowShell.h>
+#import <WebCore/JSDeprecatedCSSOMCounter.h>
+#import <WebCore/JSDeprecatedCSSOMRGBColor.h>
+#import <WebCore/JSDeprecatedCSSOMRect.h>
+#import <WebCore/JSDeprecatedCSSOMValue.h>
 #import <WebCore/JSEvent.h>
 #import <WebCore/JSHTMLCollection.h>
 #import <WebCore/JSHTMLOptionsCollection.h>
@@ -62,9 +64,7 @@
 #import <WebCore/JSNode.h>
 #import <WebCore/JSNodeIterator.h>
 #import <WebCore/JSNodeList.h>
-#import <WebCore/JSRGBColor.h>
 #import <WebCore/JSRange.h>
-#import <WebCore/JSRect.h>
 #import <WebCore/JSStyleSheet.h>
 #import <WebCore/JSStyleSheetList.h>
 #import <WebCore/JSTreeWalker.h>
@@ -81,8 +81,8 @@ static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
     WRAP(CSSRule)
     WRAP(CSSRuleList)
     WRAP(CSSStyleDeclaration)
-    WRAP(CSSValue)
-    WRAP(Counter)
+    WRAP(DeprecatedCSSOMValue)
+    WRAP(DeprecatedCSSOMCounter)
     WRAP(DOMImplementation)
     WRAP(DOMWindowShell)
     WRAP(Event)
@@ -92,9 +92,9 @@ static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)
     WRAP(Node)
     WRAP(NodeIterator)
     WRAP(NodeList)
-    WRAP(RGBColor)
+    WRAP(DeprecatedCSSOMRGBColor)
     WRAP(Range)
-    WRAP(Rect)
+    WRAP(DeprecatedCSSOMRect)
     WRAP(StyleSheet)
     WRAP(StyleSheetList)
     WRAP(TreeWalker)

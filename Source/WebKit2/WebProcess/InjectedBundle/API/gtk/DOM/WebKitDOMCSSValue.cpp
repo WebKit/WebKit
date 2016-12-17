@@ -35,12 +35,12 @@
 #define WEBKIT_DOM_CSS_VALUE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_CSS_VALUE, WebKitDOMCSSValuePrivate)
 
 typedef struct _WebKitDOMCSSValuePrivate {
-    RefPtr<WebCore::CSSValue> coreObject;
+    RefPtr<WebCore::DeprecatedCSSOMValue> coreObject;
 } WebKitDOMCSSValuePrivate;
 
 namespace WebKit {
 
-WebKitDOMCSSValue* kit(WebCore::CSSValue* obj)
+WebKitDOMCSSValue* kit(WebCore::DeprecatedCSSOMValue* obj)
 {
     if (!obj)
         return 0;
@@ -51,12 +51,12 @@ WebKitDOMCSSValue* kit(WebCore::CSSValue* obj)
     return wrapCSSValue(obj);
 }
 
-WebCore::CSSValue* core(WebKitDOMCSSValue* request)
+WebCore::DeprecatedCSSOMValue* core(WebKitDOMCSSValue* request)
 {
-    return request ? static_cast<WebCore::CSSValue*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
+    return request ? static_cast<WebCore::DeprecatedCSSOMValue*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
-WebKitDOMCSSValue* wrapCSSValue(WebCore::CSSValue* coreObject)
+WebKitDOMCSSValue* wrapCSSValue(WebCore::DeprecatedCSSOMValue* coreObject)
 {
     ASSERT(coreObject);
     return WEBKIT_DOM_CSS_VALUE(g_object_new(WEBKIT_DOM_TYPE_CSS_VALUE, "core-object", coreObject, nullptr));
@@ -118,7 +118,7 @@ static GObject* webkit_dom_css_value_constructor(GType type, guint constructProp
     GObject* object = G_OBJECT_CLASS(webkit_dom_css_value_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
 
     WebKitDOMCSSValuePrivate* priv = WEBKIT_DOM_CSS_VALUE_GET_PRIVATE(object);
-    priv->coreObject = static_cast<WebCore::CSSValue*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    priv->coreObject = static_cast<WebCore::DeprecatedCSSOMValue*>(WEBKIT_DOM_OBJECT(object)->coreObject);
     WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
 
     return object;
@@ -165,7 +165,7 @@ gchar* webkit_dom_css_value_get_css_text(WebKitDOMCSSValue* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_VALUE(self), 0);
-    WebCore::CSSValue* item = WebKit::core(self);
+    WebCore::DeprecatedCSSOMValue* item = WebKit::core(self);
     gchar* result = convertToUTF8String(item->cssText());
     return result;
 }
@@ -176,7 +176,7 @@ void webkit_dom_css_value_set_css_text(WebKitDOMCSSValue* self, const gchar* val
     g_return_if_fail(WEBKIT_DOM_IS_CSS_VALUE(self));
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
-    WebCore::CSSValue* item = WebKit::core(self);
+    WebCore::DeprecatedCSSOMValue* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     auto result = item->setCssText(convertedValue);
     if (result.hasException()) {
@@ -189,7 +189,7 @@ gushort webkit_dom_css_value_get_css_value_type(WebKitDOMCSSValue* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_VALUE(self), 0);
-    WebCore::CSSValue* item = WebKit::core(self);
+    WebCore::DeprecatedCSSOMValue* item = WebKit::core(self);
     gushort result = item->cssValueType();
     return result;
 }

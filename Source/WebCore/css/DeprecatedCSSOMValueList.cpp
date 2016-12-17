@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKitLegacy/DOMCSSValue.h>
+#include "config.h"
+#include "DeprecatedCSSOMValueList.h"
+
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-class DeprecatedCSSOMValue;
+
+bool DeprecatedCSSOMValueList::equals(const DeprecatedCSSOMValueList& other) const
+{
+    if (m_valueListSeparator != other.m_valueListSeparator)
+        return false;
+    
+    if (m_values.size() != other.m_values.size())
+        return false;
+    
+    for (unsigned i = 0, size = m_values.size(); i < size; ++i) {
+        if (!m_values[i].get().equals(other.m_values[i]))
+            return false;
+    }
+    return true;
 }
 
-DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue*);
-Class kitClass(WebCore::DeprecatedCSSOMValue*);
+String DeprecatedCSSOMValueList::cssText() const
+{
+    StringBuilder result;
+    String separator;
+    switch (m_valueListSeparator) {
+    case CSSValue::SpaceSeparator:
+        separator = ASCIILiteral(" ");
+        break;
+    case CSSValue::CommaSeparator:
+        separator = ASCIILiteral(", ");
+        break;
+    case CSSValue::SlashSeparator:
+        separator = ASCIILiteral(" / ");
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
+    for (auto& value : m_values) {
+        if (!result.isEmpty())
+            result.append(separator);
+        result.append(value.get().cssText());
+    }
+    
+    return result.toString();
+}
+
+}

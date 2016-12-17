@@ -24,6 +24,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSPrimitiveValue.h"
+#include "DeprecatedCSSOMValue.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -142,20 +143,6 @@ bool CSSValueList::traverseSubresources(const std::function<bool (const CachedRe
             return true;
     }
     return false;
-}
-
-CSSValueList::CSSValueList(const CSSValueList& cloneFrom)
-    : CSSValue(cloneFrom.classType(), /* isCSSOMSafe */ true)
-{
-    m_valueListSeparator = cloneFrom.m_valueListSeparator;
-    m_values.reserveInitialCapacity(cloneFrom.m_values.size());
-    for (unsigned i = 0, size = cloneFrom.m_values.size(); i < size; ++i)
-        m_values.uncheckedAppend(*cloneFrom.m_values[i]->cloneForCSSOM());
-}
-
-Ref<CSSValueList> CSSValueList::cloneForCSSOM() const
-{
-    return adoptRef(*new CSSValueList(*this));
 }
 
 } // namespace WebCore

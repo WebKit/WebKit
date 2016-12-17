@@ -26,7 +26,7 @@
 #import <WebKitLegacy/DOMCSSPrimitiveValue.h>
 
 namespace WebCore {
-class CSSPrimitiveValue;
+class DeprecatedCSSOMPrimitiveValue;
 }
 
-DOMCSSPrimitiveValue *kit(WebCore::CSSPrimitiveValue*);
+DOMCSSPrimitiveValue *kit(WebCore::DeprecatedCSSOMPrimitiveValue*);

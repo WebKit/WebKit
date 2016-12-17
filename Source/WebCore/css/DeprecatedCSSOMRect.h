@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Google, Inc.  All rights reserved.
- * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,28 +25,39 @@
 
 #pragma once
 
-#include "Color.h"
-#include <wtf/RefCounted.h>
+#include "DeprecatedCSSOMPrimitiveValue.h"
+#include "Rect.h"
+#include <wtf/RefPtr.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
-class RGBColor final : public RefCounted<RGBColor> {
+class DeprecatedCSSOMRect final : public RefCounted<DeprecatedCSSOMRect> {
 public:
-    static Ref<RGBColor> create(unsigned rgbColor);
+    static Ref<DeprecatedCSSOMRect> create(const Rect& rect) { return adoptRef(*new DeprecatedCSSOMRect(rect)); }
 
-    Color color() const { return Color(m_rgbColor); }
-
-    RGBA32 rgbColor() const { return m_rgbColor; }
-
+    DeprecatedCSSOMPrimitiveValue* top() const { return m_top.get(); }
+    DeprecatedCSSOMPrimitiveValue* right() const { return m_right.get(); }
+    DeprecatedCSSOMPrimitiveValue* bottom() const { return m_bottom.get(); }
+    DeprecatedCSSOMPrimitiveValue* left() const { return m_left.get(); }
+    
 private:
-    RGBColor(unsigned rgbColor)
-        : m_rgbColor(rgbColor)
+    DeprecatedCSSOMRect(const Rect& rect)
     {
+        if (rect.top())
+            m_top = rect.top()->createDeprecatedCSSOMPrimitiveWrapper();
+        if (rect.right())
+            m_right = rect.right()->createDeprecatedCSSOMPrimitiveWrapper();
+        if (rect.bottom())
+            m_bottom = rect.bottom()->createDeprecatedCSSOMPrimitiveWrapper();
+        if (rect.left())
+            m_left = rect.left()->createDeprecatedCSSOMPrimitiveWrapper();
     }
-
-    RGBA32 m_rgbColor;
+    
+    RefPtr<DeprecatedCSSOMPrimitiveValue> m_top;
+    RefPtr<DeprecatedCSSOMPrimitiveValue> m_right;
+    RefPtr<DeprecatedCSSOMPrimitiveValue> m_bottom;
+    RefPtr<DeprecatedCSSOMPrimitiveValue> m_left;
 };
 
 } // namespace WebCore

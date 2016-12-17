@@ -53,6 +53,7 @@
 #include "ContentData.h"
 #include "CounterContent.h"
 #include "CursorList.h"
+#include "DeprecatedCSSOMValue.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "FontTaggedSettings.h"
@@ -4118,16 +4119,22 @@ CSSRule* CSSComputedStyleDeclaration::parentRule() const
     return nullptr;
 }
 
-RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
+RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
-    if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
+    if (isCustomPropertyName(propertyName)) {
+        auto value = ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
+        if (!value)
+            return nullptr;
+        return value->createDeprecatedCSSOMWrapper();
+    }
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
         return nullptr;
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
-    return value ? value->cloneForCSSOM() : nullptr;
+    if (!value)
+        return nullptr;
+    return value->createDeprecatedCSSOMWrapper();
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)

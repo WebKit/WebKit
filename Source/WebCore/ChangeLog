@@ -1,3 +1,154 @@
+2016-12-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Values] Make separate wrapper classes for the deprecated CSS Values OM
+        https://bugs.webkit.org/show_bug.cgi?id=165968
+
+        Reviewed by Andreas Kling.
+
+        This patch changes the CSS OM for values to use distinct wrapper
+        classes instead of cloning the existing classes. By actually wrapping
+        values instead of cloning, we are freed up to change our CSS value hierarchy
+        however we'd like (such as changing to match the new CSS Values OM that
+        is coming soon).
+
+        All of the CSS Values wrapper classes are prefixed with "DeprecatedCSSOM"
+        to reflect our desire (ultimately) to remove this API from our tree. We're
+        the only ones that support it, and it's not used on the Web, but it is part
+        of the WebKitLegacy API and might be used internally.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMWrapperWorld.h:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSDeprecatedCSSOMValueOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSCSSValueOwner::isReachableFromOpaqueRoots): Deleted.
+        (WebCore::JSCSSValueOwner::finalize): Deleted.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSGridLineNamesValue.cpp:
+        (WebCore::CSSGridLineNamesValue::cloneForCSSOM): Deleted.
+        * css/CSSGridLineNamesValue.h:
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::cloneForCSSOM): Deleted.
+        * css/CSSImageSetValue.h:
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::createDeprecatedCSSOMWrapper):
+        (WebCore::CSSImageValue::cloneForCSSOM): Deleted.
+        * css/CSSImageValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createDeprecatedCSSOMPrimitiveWrapper):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM): Deleted.
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValue.idl: Removed.
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::traverseSubresources):
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::createDeprecatedCSSOMWrapper):
+        (): Deleted.
+        (WebCore::CSSValue::cloneForCSSOM): Deleted.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::CSSValue):
+        (WebCore::CSSValue::setCssText): Deleted.
+        (WebCore::CSSValue::isCSSOMSafe): Deleted.
+        (WebCore::CSSValue::isSubtypeExposedToCSSOM): Deleted.
+        * css/CSSValue.idl: Removed.
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::cloneForCSSOM): Deleted.
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::separator):
+        * css/CSSValueList.idl: Removed.
+        * css/Counter.h:
+        * css/Counter.idl: Removed.
+        * css/DeprecatedCSSOMCounter.h: Added.
+        * css/DeprecatedCSSOMCounter.idl: Copied from Source/WebCore/css/Counter.idl.
+        * css/DeprecatedCSSOMPrimitiveValue.cpp: Added.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getCounterValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getRectValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getRGBColorValue):
+        * css/DeprecatedCSSOMPrimitiveValue.h: Added.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::create):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::equals):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::cssValueType):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::cssText):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setFloatValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setStringValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getStringValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::stringValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::DeprecatedCSSOMPrimitiveValue):
+        * css/DeprecatedCSSOMPrimitiveValue.idl: Copied from Source/WebCore/css/CSSPrimitiveValue.idl.
+        * css/DeprecatedCSSOMRGBColor.h: Added.
+        * css/DeprecatedCSSOMRGBColor.idl: Copied from Source/WebCore/css/RGBColor.idl.
+        * css/DeprecatedCSSOMRect.h: Added.
+        * css/DeprecatedCSSOMRect.idl: Copied from Source/WebCore/css/Rect.idl.
+        * css/DeprecatedCSSOMValue.cpp: Added.
+        (WebCore::compareCSSOMValues):
+        (WebCore::DeprecatedCSSOMValue::equals):
+        (WebCore::DeprecatedCSSOMValue::destroy):
+        (WebCore::DeprecatedCSSOMValue::cssValueType):
+        (WebCore::DeprecatedCSSOMValue::cssText):
+        * css/DeprecatedCSSOMValue.h: Added.
+        (WebCore::DeprecatedCSSOMValue::deref):
+        (WebCore::DeprecatedCSSOMValue::setCssText):
+        (WebCore::DeprecatedCSSOMValue::operator==):
+        (WebCore::DeprecatedCSSOMValue::isComplexValue):
+        (WebCore::DeprecatedCSSOMValue::isPrimitiveValue):
+        (WebCore::DeprecatedCSSOMValue::isValueList):
+        (WebCore::DeprecatedCSSOMValue::classType):
+        (WebCore::DeprecatedCSSOMValue::DeprecatedCSSOMValue):
+        (WebCore::DeprecatedCSSOMValue::~DeprecatedCSSOMValue):
+        (WebCore::DeprecatedCSSOMComplexValue::create):
+        (WebCore::DeprecatedCSSOMComplexValue::equals):
+        (WebCore::DeprecatedCSSOMComplexValue::cssText):
+        (WebCore::DeprecatedCSSOMComplexValue::cssValueType):
+        (WebCore::DeprecatedCSSOMComplexValue::DeprecatedCSSOMComplexValue):
+        * css/DeprecatedCSSOMValue.idl: Copied from Source/WebCore/css/CSSValue.idl.
+        * css/DeprecatedCSSOMValueList.cpp: Added.
+        (WebCore::DeprecatedCSSOMValueList::equals):
+        (WebCore::DeprecatedCSSOMValueList::cssText):
+        * css/DeprecatedCSSOMValueList.h: Added.
+        (WebCore::DeprecatedCSSOMValueList::create):
+        (WebCore::DeprecatedCSSOMValueList::cssValueType):
+        (WebCore::DeprecatedCSSOMValueList::length):
+        (WebCore::DeprecatedCSSOMValueList::item):
+        (WebCore::DeprecatedCSSOMValueList::DeprecatedCSSOMValueList):
+        * css/DeprecatedCSSOMValueList.idl: Copied from Source/WebCore/css/CSSValueList.idl.
+        * css/LengthRepeat.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+        (WebCore::PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM):
+        (WebCore::StyleRuleCSSStyleDeclaration::didMutate):
+        (WebCore::InlineCSSStyleDeclaration::didMutate):
+        (WebCore::PropertySetCSSStyleDeclaration::cloneAndCacheForCSSOM): Deleted.
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/RGBColor.cpp:
+        (WebCore::RGBColor::red): Deleted.
+        (WebCore::RGBColor::green): Deleted.
+        (WebCore::RGBColor::blue): Deleted.
+        (WebCore::RGBColor::alpha): Deleted.
+        * css/RGBColor.h:
+        * css/RGBColor.idl: Removed.
+        * css/Rect.h:
+        (WebCore::RectBase::RectBase):
+        * css/Rect.idl: Removed.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::getPresentationAttribute):
+        * svg/SVGElement.h:
+        * svg/SVGElement.idl:
+
 2016-12-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rollout r209860 OWR player shouldn't be selected for normal video playback

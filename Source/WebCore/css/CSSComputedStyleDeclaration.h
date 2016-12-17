@@ -104,7 +104,7 @@ private:
     CSSRule* parentRule() const final;
     unsigned length() const final;
     String item(unsigned index) const final;
-    RefPtr<CSSValue> getPropertyCSSValue(const String& propertyName) final;
+    RefPtr<DeprecatedCSSOMValue> getPropertyCSSValue(const String& propertyName) final;
     String getPropertyValue(const String& propertyName) final;
     String getPropertyPriority(const String& propertyName) final;
     String getPropertyShorthand(const String& propertyName) final;

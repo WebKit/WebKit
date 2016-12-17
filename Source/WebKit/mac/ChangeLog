@@ -1,3 +1,34 @@
+2016-12-16  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Values] Make separate wrapper classes for the deprecated CSS Values OM
+        https://bugs.webkit.org/show_bug.cgi?id=165968
+
+        Reviewed by Andreas Kling.
+
+        * DOM/DOMCSS.mm:
+        (kitClass):
+        * DOM/DOMCSSPrimitiveValue.mm:
+        (-[DOMCSSPrimitiveValue getCounterValue]):
+        (-[DOMCSSPrimitiveValue getRectValue]):
+        (kit):
+        * DOM/DOMCSSPrimitiveValueInternal.h:
+        * DOM/DOMCSSStyleDeclaration.mm:
+        * DOM/DOMCSSValue.mm:
+        (kit):
+        * DOM/DOMCSSValueInternal.h:
+        * DOM/DOMCSSValueList.mm:
+        * DOM/DOMCounter.mm:
+        (kit):
+        * DOM/DOMCounterInternal.h:
+        * DOM/DOMRGBColor.mm:
+        (kit):
+        * DOM/DOMRGBColorInternal.h:
+        * DOM/DOMRect.mm:
+        (kit):
+        * DOM/DOMRectInternal.h:
+        * DOM/DOMUtility.mm:
+        (createDOMWrapper):
+
 2016-12-16  Chris Dumez  <cdumez@apple.com>
 
         HTML form validation bubble should be dismissed on navigation

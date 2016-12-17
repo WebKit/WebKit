@@ -25,13 +25,13 @@
 
 #import "DOMRGBColorInternal.h"
 
-#import <WebCore/CSSPrimitiveValue.h>
 #import "DOMCSSPrimitiveValueInternal.h"
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/DeprecatedCSSOMPrimitiveValue.h>
+#import <WebCore/DeprecatedCSSOMRGBColor.h>
 #import <WebCore/JSMainThreadExecState.h>
-#import <WebCore/RGBColor.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -43,7 +43,7 @@
 #import <WebCore/ColorSpace.h>
 #endif
 
-#define IMPL reinterpret_cast<WebCore::RGBColor*>(_internal)
+#define IMPL reinterpret_cast<WebCore::DeprecatedCSSOMRGBColor*>(_internal)
 
 @implementation DOMRGBColor
 
@@ -97,7 +97,7 @@
 
 @end
 
-DOMRGBColor *kit(WebCore::RGBColor* value)
+DOMRGBColor *kit(WebCore::DeprecatedCSSOMRGBColor* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

@@ -26,7 +26,7 @@
 #import <WebKitLegacy/DOMCounter.h>
 
 namespace WebCore {
-class Counter;
+class DeprecatedCSSOMCounter;
 }
 
-DOMCounter *kit(WebCore::Counter*);
+DOMCounter *kit(WebCore::DeprecatedCSSOMCounter*);

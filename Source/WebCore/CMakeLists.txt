@@ -350,7 +350,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSMediaRule.idl
     css/CSSNamespaceRule.idl
     css/CSSPageRule.idl
-    css/CSSPrimitiveValue.idl
     css/CSSRule.idl
     css/CSSRuleList.idl
     css/CSSStyleDeclaration.idl
@@ -358,17 +357,18 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSStyleSheet.idl
     css/CSSSupportsRule.idl
     css/CSSUnknownRule.idl
-    css/CSSValue.idl
-    css/CSSValueList.idl
-    css/Counter.idl
+    css/DeprecatedCSSOMCounter.idl
+    css/DeprecatedCSSOMPrimitiveValue.idl
+    css/DeprecatedCSSOMRGBColor.idl
+    css/DeprecatedCSSOMRect.idl
+    css/DeprecatedCSSOMValue.idl
+    css/DeprecatedCSSOMValueList.idl
     css/DOMCSSNamespace.idl
     css/FontFace.idl
     css/FontFaceSet.idl
     css/MediaList.idl
     css/MediaQueryList.idl
     css/MediaQueryListListener.idl
-    css/RGBColor.idl
-    css/Rect.idl
     css/StyleMedia.idl
     css/StyleSheet.idl
     css/StyleSheetList.idl
@@ -1329,6 +1329,9 @@ set(WebCore_SOURCES
     css/CSSVariableData.cpp
     css/CSSVariableReferenceValue.cpp
     css/DOMCSSNamespace.cpp
+    css/DeprecatedCSSOMPrimitiveValue.cpp
+    css/DeprecatedCSSOMValue.cpp
+    css/DeprecatedCSSOMValueList.cpp
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
     css/FontVariantBuilder.cpp

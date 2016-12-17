@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -19,19 +19,13 @@
  */
 
 [
-    CustomIsReachable,
-    CustomToJSObject,
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-    JSCustomFinalize,
-] interface CSSValue {
-    // UnitTypes
-    const unsigned short CSS_INHERIT = 0;
-    const unsigned short CSS_PRIMITIVE_VALUE = 1;
-    const unsigned short CSS_VALUE_LIST = 2;
-    const unsigned short CSS_CUSTOM = 3;
+    InterfaceName=RGBColor
+] interface DeprecatedCSSOMRGBColor {
+    readonly attribute DeprecatedCSSOMPrimitiveValue red;
+    readonly attribute DeprecatedCSSOMPrimitiveValue green;
+    readonly attribute DeprecatedCSSOMPrimitiveValue blue;
 
-    [SetterMayThrowException] attribute DOMString? cssText;
-
-    readonly attribute unsigned short cssValueType;
+    readonly attribute DeprecatedCSSOMPrimitiveValue alpha;
 };

@@ -36,8 +36,6 @@ class LengthRepeat final : public RefCounted<LengthRepeat> {
 public:
     static Ref<LengthRepeat> create(PassRefPtr<CSSValue> interval) { return adoptRef(*new LengthRepeat(interval)); }
 
-    Ref<LengthRepeat> cloneForCSSOM() const { return create(interval()); }
-
     CSSValue* interval() const { return m_interval.get(); }
 
     void setInterval(PassRefPtr<CSSValue> interval) { m_interval = interval; }

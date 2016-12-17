@@ -28,7 +28,7 @@
 #import <WebCore/CSSImportRule.h>
 #import <WebCore/CSSRule.h>
 #import <WebCore/CSSStyleDeclaration.h>
-#import <WebCore/CSSValue.h>
+#import <WebCore/DeprecatedCSSOMValue.h>
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMInternal.h"

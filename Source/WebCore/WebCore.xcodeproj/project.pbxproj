@@ -629,8 +629,6 @@
 		14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14993BE30B2F2B1C0050497F /* FocusController.cpp */; };
 		14993BE60B2F2B1C0050497F /* FocusController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14993BE40B2F2B1C0050497F /* FocusController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C9A5EA0B3D105F005A0232 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14C9A5E90B3D105F005A0232 /* Settings.cpp */; };
-		14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */; };
-		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */; };
 		14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D64B5A134A5B6B00E58FDA /* TreeScope.cpp */; };
@@ -3241,10 +3239,6 @@
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		930705D809E0C9B700B17FE4 /* JSCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930705D709E0C9B700B17FE4 /* JSCounter.cpp */; };
-		930705DA09E0C9BF00B17FE4 /* JSCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 930705D909E0C9BF00B17FE4 /* JSCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		930705E909E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */; };
-		930705EB09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */; };
 		9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */; };
 		9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 9307F1D60AF2D59000DBA31A /* HitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */ = {isa = PBXBuildFile; fileRef = 930841331CDDB15500B0958C /* JSDOMConvert.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3540,6 +3534,27 @@
 		946D374A1D6D06280077084F /* CSSMarkup.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D37481D6D060C0077084F /* CSSMarkup.h */; };
 		946D374D1D6D08A60077084F /* CSSParserTokenRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 946D374B1D6D07F50077084F /* CSSParserTokenRange.cpp */; };
 		946D374E1D6D08AA0077084F /* CSSParserTokenRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 946D374C1D6D07F50077084F /* CSSParserTokenRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949241E0308A400018D85 /* DeprecatedCSSOMValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 947949221E02F90B00018D85 /* DeprecatedCSSOMValue.cpp */; };
+		947949251E0308AF00018D85 /* DeprecatedCSSOMValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949231E02F90B00018D85 /* DeprecatedCSSOMValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9479492E1E0457BA00018D85 /* DeprecatedCSSOMValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9479492D1E04578D00018D85 /* DeprecatedCSSOMValueList.cpp */; };
+		9479492F1E0459EB00018D85 /* JSDeprecatedCSSOMCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 947949181E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.cpp */; };
+		947949301E0459EE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9479491A1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.cpp */; };
+		947949311E0459FA00018D85 /* JSDeprecatedCSSOMCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949191E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949321E0459FA00018D85 /* JSDeprecatedCSSOMPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9479491B1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949331E0459FA00018D85 /* JSDeprecatedCSSOMRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9479491C1E02F6DE00018D85 /* JSDeprecatedCSSOMRect.cpp */; };
+		947949341E0459FA00018D85 /* JSDeprecatedCSSOMRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 9479491D1E02F6DE00018D85 /* JSDeprecatedCSSOMRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949351E0459FA00018D85 /* JSDeprecatedCSSOMRGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9479491E1E02F6DE00018D85 /* JSDeprecatedCSSOMRGBColor.cpp */; };
+		947949361E0459FA00018D85 /* JSDeprecatedCSSOMRGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 9479491F1E02F6DE00018D85 /* JSDeprecatedCSSOMRGBColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949371E0459FA00018D85 /* JSDeprecatedCSSOMValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 947949201E02F6DE00018D85 /* JSDeprecatedCSSOMValue.cpp */; };
+		947949381E0459FA00018D85 /* JSDeprecatedCSSOMValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949211E02F6DE00018D85 /* JSDeprecatedCSSOMValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949391E0459FA00018D85 /* JSDeprecatedCSSOMValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9479492B1E033B2800018D85 /* JSDeprecatedCSSOMValueList.cpp */; };
+		9479493A1E0459FA00018D85 /* JSDeprecatedCSSOMValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9479492C1E033B2800018D85 /* JSDeprecatedCSSOMValueList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9479493C1E045CF300018D85 /* DeprecatedCSSOMPrimitiveValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9479493B1E045CE100018D85 /* DeprecatedCSSOMPrimitiveValue.cpp */; };
+		9479493D1E0463B600018D85 /* DeprecatedCSSOMValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949271E03132000018D85 /* DeprecatedCSSOMValueList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9479493E1E0463BE00018D85 /* DeprecatedCSSOMRGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949291E032D5800018D85 /* DeprecatedCSSOMRGBColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9479493F1E0463C600018D85 /* DeprecatedCSSOMRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949281E032AE900018D85 /* DeprecatedCSSOMRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949401E0463CE00018D85 /* DeprecatedCSSOMPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 947949261E03132000018D85 /* DeprecatedCSSOMPrimitiveValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		947949411E0463D400018D85 /* DeprecatedCSSOMCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9479492A1E032EDB00018D85 /* DeprecatedCSSOMCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9493B6BE1D74B4120088E780 /* MediaQueryBlockWatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9493B6B61D74B3950088E780 /* MediaQueryBlockWatcher.cpp */; };
 		9493B6BF1D74B4120088E780 /* MediaQueryBlockWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 9493B6B71D74B3950088E780 /* MediaQueryBlockWatcher.h */; };
 		9493B6C01D74B4120088E780 /* MediaQueryParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9493B6B81D74B3950088E780 /* MediaQueryParser.cpp */; };
@@ -4353,8 +4368,6 @@
 		A8CFF7AB0A156978000A4234 /* HTMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF7A10A156978000A4234 /* HTMLAnchorElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8D05FA70A23B301005E7203 /* JSCSSRuleList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */; };
 		A8D05FA80A23B301005E7203 /* JSCSSRuleList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A8D05FAB0A23B30F005E7203 /* JSCSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */; };
-		A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */; };
 		A8D064FB0A23C0CC005E7203 /* JSHTMLFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */; };
 		A8D064FC0A23C0CC005E7203 /* JSHTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */; };
 		A8D065AE0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */; };
@@ -5342,8 +5355,6 @@
 		BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6E2509AF943500F59759 /* ScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC74DA371013F3F7007987AD /* RGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC74DA351013F3F7007987AD /* RGBColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC74DA381013F3F7007987AD /* RGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC74DA361013F3F7007987AD /* RGBColor.cpp */; };
-		BC74DA481013F468007987AD /* JSRGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC74DA461013F468007987AD /* JSRGBColor.cpp */; };
-		BC74DA491013F468007987AD /* JSRGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC74DA471013F468007987AD /* JSRGBColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */; };
 		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */; };
@@ -5562,8 +5573,6 @@
 		BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF48CE61370D114004E87D6 /* AdjustViewSizeOrNot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFA930710333193007B25D1 /* RenderOverflow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFB2E5E0979E46400BA703D /* CachedResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFE2F0F0C1B58370020235F /* JSRect.cpp */; };
-		BCFE2F120C1B58380020235F /* JSRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFE2F100C1B58370020235F /* JSRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFF64900EAD15C200C1D6F7 /* LengthSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BE16C59217CFE17200852C04 /* InbandGenericTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE16C58E17CFE17200852C04 /* InbandGenericTextTrack.cpp */; };
@@ -7658,9 +7667,7 @@
 		14A98E05136386A200C9FED2 /* Blob.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Blob.idl; sourceTree = "<group>"; };
 		14BDF59A1365399100148393 /* FileReader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileReader.idl; sourceTree = "<group>"; };
 		14C9A5E90B3D105F005A0232 /* Settings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Settings.cpp; sourceTree = "<group>"; };
-		14CF787109F587CA00EB3665 /* CSSValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValue.idl; sourceTree = "<group>"; };
-		14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValue.cpp; sourceTree = "<group>"; };
-		14CF78A509F58CD800EB3665 /* JSCSSValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSValue.h; sourceTree = "<group>"; };
+		14CF787109F587CA00EB3665 /* DeprecatedCSSOMValue.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DeprecatedCSSOMValue.idl; sourceTree = "<group>"; };
 		14CF7A7009F5CF9A00EB3665 /* CSSRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSRule.idl; sourceTree = "<group>"; };
 		14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRule.cpp; sourceTree = "<group>"; };
 		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRule.h; sourceTree = "<group>"; };
@@ -10738,7 +10745,7 @@
 		8574D1F60ADE6122004CBA11 /* JSSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = JSSVGPoint.h; sourceTree = "<group>"; };
 		8574D1F70ADE6122004CBA11 /* JSSVGRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGRect.cpp; sourceTree = "<group>"; };
 		8574D1F80ADE6122004CBA11 /* JSSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = JSSVGRect.h; sourceTree = "<group>"; };
-		858C38EF0AA8FDD100B187A4 /* RGBColor.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = RGBColor.idl; sourceTree = "<group>"; };
+		858C38EF0AA8FDD100B187A4 /* DeprecatedCSSOMRGBColor.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DeprecatedCSSOMRGBColor.idl; sourceTree = "<group>"; };
 		858C39100AA8FF0000B187A4 /* CSSStyleSheet.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSStyleSheet.idl; sourceTree = "<group>"; };
 		859128790AB222EC00202265 /* HTMLEmbedElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLEmbedElement.idl; sourceTree = "<group>"; };
 		85ACA9F90A9B631000671E90 /* NamedNodeMap.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = NamedNodeMap.idl; sourceTree = "<group>"; };
@@ -10831,12 +10838,8 @@
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
-		9307059009E0C75800B17FE4 /* CSSPrimitiveValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSPrimitiveValue.idl; sourceTree = "<group>"; };
-		930705C709E0C95F00B17FE4 /* Counter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Counter.idl; sourceTree = "<group>"; };
-		930705D709E0C9B700B17FE4 /* JSCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCounter.cpp; sourceTree = "<group>"; };
-		930705D909E0C9BF00B17FE4 /* JSCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCounter.h; sourceTree = "<group>"; };
-		930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSPrimitiveValue.cpp; sourceTree = "<group>"; };
-		930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSPrimitiveValue.h; sourceTree = "<group>"; };
+		9307059009E0C75800B17FE4 /* DeprecatedCSSOMPrimitiveValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeprecatedCSSOMPrimitiveValue.idl; sourceTree = "<group>"; };
+		930705C709E0C95F00B17FE4 /* DeprecatedCSSOMCounter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DeprecatedCSSOMCounter.idl; sourceTree = "<group>"; };
 		9307061309E0CA8200B17FE4 /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
 		9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestResult.cpp; sourceTree = "<group>"; };
 		9307F1D60AF2D59000DBA31A /* HitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HitTestResult.h; sourceTree = "<group>"; };
@@ -11136,6 +11139,27 @@
 		946D37481D6D060C0077084F /* CSSMarkup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSMarkup.h; sourceTree = "<group>"; };
 		946D374B1D6D07F50077084F /* CSSParserTokenRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CSSParserTokenRange.cpp; path = parser/CSSParserTokenRange.cpp; sourceTree = "<group>"; };
 		946D374C1D6D07F50077084F /* CSSParserTokenRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSSParserTokenRange.h; path = parser/CSSParserTokenRange.h; sourceTree = "<group>"; };
+		947949181E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMCounter.cpp; sourceTree = "<group>"; };
+		947949191E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeprecatedCSSOMCounter.h; sourceTree = "<group>"; };
+		9479491A1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMPrimitiveValue.cpp; sourceTree = "<group>"; };
+		9479491B1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeprecatedCSSOMPrimitiveValue.h; sourceTree = "<group>"; };
+		9479491C1E02F6DE00018D85 /* JSDeprecatedCSSOMRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMRect.cpp; sourceTree = "<group>"; };
+		9479491D1E02F6DE00018D85 /* JSDeprecatedCSSOMRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeprecatedCSSOMRect.h; sourceTree = "<group>"; };
+		9479491E1E02F6DE00018D85 /* JSDeprecatedCSSOMRGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMRGBColor.cpp; sourceTree = "<group>"; };
+		9479491F1E02F6DE00018D85 /* JSDeprecatedCSSOMRGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeprecatedCSSOMRGBColor.h; sourceTree = "<group>"; };
+		947949201E02F6DE00018D85 /* JSDeprecatedCSSOMValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMValue.cpp; sourceTree = "<group>"; };
+		947949211E02F6DE00018D85 /* JSDeprecatedCSSOMValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeprecatedCSSOMValue.h; sourceTree = "<group>"; };
+		947949221E02F90B00018D85 /* DeprecatedCSSOMValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedCSSOMValue.cpp; sourceTree = "<group>"; };
+		947949231E02F90B00018D85 /* DeprecatedCSSOMValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMValue.h; sourceTree = "<group>"; };
+		947949261E03132000018D85 /* DeprecatedCSSOMPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMPrimitiveValue.h; sourceTree = "<group>"; };
+		947949271E03132000018D85 /* DeprecatedCSSOMValueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMValueList.h; sourceTree = "<group>"; };
+		947949281E032AE900018D85 /* DeprecatedCSSOMRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMRect.h; sourceTree = "<group>"; };
+		947949291E032D5800018D85 /* DeprecatedCSSOMRGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMRGBColor.h; sourceTree = "<group>"; };
+		9479492A1E032EDB00018D85 /* DeprecatedCSSOMCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedCSSOMCounter.h; sourceTree = "<group>"; };
+		9479492B1E033B2800018D85 /* JSDeprecatedCSSOMValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDeprecatedCSSOMValueList.cpp; sourceTree = "<group>"; };
+		9479492C1E033B2800018D85 /* JSDeprecatedCSSOMValueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDeprecatedCSSOMValueList.h; sourceTree = "<group>"; };
+		9479492D1E04578D00018D85 /* DeprecatedCSSOMValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedCSSOMValueList.cpp; sourceTree = "<group>"; };
+		9479493B1E045CE100018D85 /* DeprecatedCSSOMPrimitiveValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeprecatedCSSOMPrimitiveValue.cpp; sourceTree = "<group>"; };
 		9493B6B61D74B3950088E780 /* MediaQueryBlockWatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaQueryBlockWatcher.cpp; path = parser/MediaQueryBlockWatcher.cpp; sourceTree = "<group>"; };
 		9493B6B71D74B3950088E780 /* MediaQueryBlockWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaQueryBlockWatcher.h; path = parser/MediaQueryBlockWatcher.h; sourceTree = "<group>"; };
 		9493B6B81D74B3950088E780 /* MediaQueryParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaQueryParser.cpp; path = parser/MediaQueryParser.cpp; sourceTree = "<group>"; };
@@ -11841,7 +11865,7 @@
 		A80E6E0D0A19911C007FB8C5 /* CSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSStyleDeclaration.h; sourceTree = "<group>"; };
 		A80E73480A199C77007FB8C5 /* CSSSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSelector.cpp; sourceTree = "<group>"; };
 		A80E734B0A199C77007FB8C5 /* CSSSelector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSSelector.h; sourceTree = "<group>"; };
-		A80E79960A19BD21007FB8C5 /* Rect.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Rect.idl; sourceTree = "<group>"; };
+		A80E79960A19BD21007FB8C5 /* DeprecatedCSSOMRect.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DeprecatedCSSOMRect.idl; sourceTree = "<group>"; };
 		A80E79FC0A19C307007FB8C5 /* HTMLMetaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLMetaElement.idl; sourceTree = "<group>"; };
 		A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMetaElement.cpp; sourceTree = "<group>"; };
 		A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLMetaElement.h; sourceTree = "<group>"; };
@@ -12069,13 +12093,11 @@
 		A8CFF7A10A156978000A4234 /* HTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLAnchorElement.h; sourceTree = "<group>"; };
 		A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleList.cpp; sourceTree = "<group>"; };
 		A8D05FA60A23B301005E7203 /* JSCSSRuleList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRuleList.h; sourceTree = "<group>"; };
-		A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueList.cpp; sourceTree = "<group>"; };
-		A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSValueList.h; sourceTree = "<group>"; };
 		A8D064EF0A23BFEA005E7203 /* HTMLFormElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLFormElement.idl; sourceTree = "<group>"; };
 		A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormElement.cpp; sourceTree = "<group>"; };
 		A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormElement.h; sourceTree = "<group>"; };
 		A8D0651B0A23C1FE005E7203 /* CSSRuleList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSRuleList.idl; sourceTree = "<group>"; };
-		A8D0651C0A23C1FE005E7203 /* CSSValueList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSValueList.idl; sourceTree = "<group>"; };
+		A8D0651C0A23C1FE005E7203 /* DeprecatedCSSOMValueList.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DeprecatedCSSOMValueList.idl; sourceTree = "<group>"; };
 		A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormElementCustom.cpp; sourceTree = "<group>"; };
 		A8D06B370A265DCD005E7203 /* HTMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLNames.h; sourceTree = "<group>"; };
 		A8D06B380A265DCD005E7203 /* HTMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNames.cpp; sourceTree = "<group>"; };
@@ -13234,8 +13256,6 @@
 		BC6D6E2509AF943500F59759 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScrollView.h; sourceTree = "<group>"; };
 		BC74DA351013F3F7007987AD /* RGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGBColor.h; sourceTree = "<group>"; };
 		BC74DA361013F3F7007987AD /* RGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGBColor.cpp; sourceTree = "<group>"; };
-		BC74DA461013F468007987AD /* JSRGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRGBColor.cpp; sourceTree = "<group>"; };
-		BC74DA471013F468007987AD /* JSRGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRGBColor.h; sourceTree = "<group>"; };
 		BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserUtilities.h; sourceTree = "<group>"; };
 		BC772B360C4EA91E0083285F /* CSSHelper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSHelper.h; sourceTree = "<group>"; };
 		BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequest.cpp; sourceTree = "<group>"; };
@@ -13483,8 +13503,6 @@
 		BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceClient.h; sourceTree = "<group>"; };
 		BCFB45F317D8E39200444446 /* RenderBlockFlow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderBlockFlow.h; sourceTree = "<group>"; };
 		BCFB45F417D8E49400444446 /* RenderBlockFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBlockFlow.cpp; sourceTree = "<group>"; };
-		BCFE2F0F0C1B58370020235F /* JSRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRect.cpp; sourceTree = "<group>"; };
-		BCFE2F100C1B58370020235F /* JSRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRect.h; sourceTree = "<group>"; };
 		BCFF648F0EAD15C200C1D6F7 /* LengthBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthBox.h; sourceTree = "<group>"; };
 		BCFF64900EAD15C200C1D6F7 /* LengthSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthSize.h; sourceTree = "<group>"; };
 		BE16C58E17CFE17200852C04 /* InbandGenericTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandGenericTextTrack.cpp; sourceTree = "<group>"; };
@@ -20429,8 +20447,6 @@
 				BCC065840F3CE2A700CD2D87 /* JSClientRect.h */,
 				BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */,
 				BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */,
-				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
-				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
 				BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */,
 				BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */,
 				BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */,
@@ -20445,8 +20461,6 @@
 				94E839541DFB2BA6007BC6A7 /* JSCSSNamespaceRule.h */,
 				BC46C1F80C0DDC8F0020CFC3 /* JSCSSPageRule.cpp */,
 				BC46C1F90C0DDC8F0020CFC3 /* JSCSSPageRule.h */,
-				930705E809E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp */,
-				930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */,
 				14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */,
 				14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */,
 				A8D05FA50A23B301005E7203 /* JSCSSRuleList.cpp */,
@@ -20459,10 +20473,18 @@
 				BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */,
 				FD677736195CAB7D0072E0D3 /* JSCSSSupportsRule.cpp */,
 				FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */,
-				14CF78A309F58CBF00EB3665 /* JSCSSValue.cpp */,
-				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
-				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
-				A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */,
+				947949181E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.cpp */,
+				947949191E02F6DE00018D85 /* JSDeprecatedCSSOMCounter.h */,
+				9479491A1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.cpp */,
+				9479491B1E02F6DE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.h */,
+				9479491C1E02F6DE00018D85 /* JSDeprecatedCSSOMRect.cpp */,
+				9479491D1E02F6DE00018D85 /* JSDeprecatedCSSOMRect.h */,
+				9479491E1E02F6DE00018D85 /* JSDeprecatedCSSOMRGBColor.cpp */,
+				9479491F1E02F6DE00018D85 /* JSDeprecatedCSSOMRGBColor.h */,
+				947949201E02F6DE00018D85 /* JSDeprecatedCSSOMValue.cpp */,
+				947949211E02F6DE00018D85 /* JSDeprecatedCSSOMValue.h */,
+				9479492B1E033B2800018D85 /* JSDeprecatedCSSOMValueList.cpp */,
+				9479492C1E033B2800018D85 /* JSDeprecatedCSSOMValueList.h */,
 				FD677737195CAB7D0072E0D3 /* JSDOMCSSNamespace.cpp */,
 				FC9E0E4B16419C1E00392BE3 /* JSDOMCSSNamespace.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
@@ -20471,10 +20493,6 @@
 				D3A94A43122DC40F00A37BBC /* JSMediaQueryList.h */,
 				7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */,
 				7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */,
-				BCFE2F0F0C1B58370020235F /* JSRect.cpp */,
-				BCFE2F100C1B58370020235F /* JSRect.h */,
-				BC74DA461013F468007987AD /* JSRGBColor.cpp */,
-				BC74DA471013F468007987AD /* JSRGBColor.h */,
 				0FF50267102BA9430066F39A /* JSStyleMedia.cpp */,
 				0FF50268102BA9430066F39A /* JSStyleMedia.h */,
 				BCE013980C0BEF180043860A /* JSStyleSheet.cpp */,
@@ -23378,7 +23396,6 @@
 				FBD6AF8415EF21D4008B7110 /* BasicShapeFunctions.cpp */,
 				FBD6AF8515EF21D4008B7110 /* BasicShapeFunctions.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
-				930705C709E0C95F00B17FE4 /* Counter.idl */,
 				31BC742B1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp */,
 				31BC742C1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h */,
 				CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */,
@@ -23483,7 +23500,6 @@
 				9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */,
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
 				A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */,
-				9307059009E0C75800B17FE4 /* CSSPrimitiveValue.idl */,
 				E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */,
 				A80E6CCD0A1989CA007FB8C5 /* CSSProperty.cpp */,
 				A80E6CD50A1989CA007FB8C5 /* CSSProperty.h */,
@@ -23534,11 +23550,9 @@
 				BC7D8FEE1BD03B6400FFE540 /* CSSUnsetValue.h */,
 				AD03AAF81468453900A39B5B /* CSSValue.cpp */,
 				A80E6CC40A1989CA007FB8C5 /* CSSValue.h */,
-				14CF787109F587CA00EB3665 /* CSSValue.idl */,
 				BCEA478C097CAAC80094C9E4 /* CSSValueKeywords.in */,
 				A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */,
 				A80E6CBF0A1989CA007FB8C5 /* CSSValueList.h */,
-				A8D0651C0A23C1FE005E7203 /* CSSValueList.idl */,
 				E49BDA0A131FD3E5003C56F0 /* CSSValuePool.cpp */,
 				E49BD9F9131FD2ED003C56F0 /* CSSValuePool.h */,
 				9444CBDE1D8861580073A074 /* CSSVariableData.cpp */,
@@ -23546,6 +23560,21 @@
 				9444CBDC1D8861580073A074 /* CSSVariableReferenceValue.cpp */,
 				9444CBDB1D8861580073A074 /* CSSVariableReferenceValue.h */,
 				A80E6CE10A1989CA007FB8C5 /* DashboardRegion.h */,
+				9479492A1E032EDB00018D85 /* DeprecatedCSSOMCounter.h */,
+				930705C709E0C95F00B17FE4 /* DeprecatedCSSOMCounter.idl */,
+				9479493B1E045CE100018D85 /* DeprecatedCSSOMPrimitiveValue.cpp */,
+				947949261E03132000018D85 /* DeprecatedCSSOMPrimitiveValue.h */,
+				9307059009E0C75800B17FE4 /* DeprecatedCSSOMPrimitiveValue.idl */,
+				947949281E032AE900018D85 /* DeprecatedCSSOMRect.h */,
+				A80E79960A19BD21007FB8C5 /* DeprecatedCSSOMRect.idl */,
+				947949291E032D5800018D85 /* DeprecatedCSSOMRGBColor.h */,
+				858C38EF0AA8FDD100B187A4 /* DeprecatedCSSOMRGBColor.idl */,
+				947949221E02F90B00018D85 /* DeprecatedCSSOMValue.cpp */,
+				947949231E02F90B00018D85 /* DeprecatedCSSOMValue.h */,
+				14CF787109F587CA00EB3665 /* DeprecatedCSSOMValue.idl */,
+				9479492D1E04578D00018D85 /* DeprecatedCSSOMValueList.cpp */,
+				947949271E03132000018D85 /* DeprecatedCSSOMValueList.h */,
+				A8D0651C0A23C1FE005E7203 /* DeprecatedCSSOMValueList.idl */,
 				4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */,
 				4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */,
 				FD677735195CAB200072E0D3 /* DOMCSSNamespace.cpp */,
@@ -23601,10 +23630,8 @@
 				E4BBED0D14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
 				BC4368E70C226E32005EFB5F /* Rect.h */,
-				A80E79960A19BD21007FB8C5 /* Rect.idl */,
 				BC74DA361013F3F7007987AD /* RGBColor.cpp */,
 				BC74DA351013F3F7007987AD /* RGBColor.h */,
-				858C38EF0AA8FDD100B187A4 /* RGBColor.idl */,
 				A79BAD9D161E7F3F00C2E652 /* RuleFeature.cpp */,
 				A79BAD9E161E7F3F00C2E652 /* RuleFeature.h */,
 				A79BAD9F161E7F3F00C2E652 /* RuleSet.cpp */,
@@ -25102,6 +25129,7 @@
 				14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */,
 				E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */,
 				8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */,
+				947949401E0463CE00018D85 /* DeprecatedCSSOMPrimitiveValue.h in Headers */,
 				BCC0657E0F3CE1B700CD2D87 /* ClientRect.h in Headers */,
 				BCC065810F3CE1B700CD2D87 /* ClientRectList.h in Headers */,
 				7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */,
@@ -25328,6 +25356,7 @@
 				A80E6D0C0A1989CA007FB8C5 /* CSSStyleRule.h in Headers */,
 				A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */,
 				94DE5C921D83011D00164F2A /* CSSSupportsParser.h in Headers */,
+				9479493D1E0463B600018D85 /* DeprecatedCSSOMValueList.h in Headers */,
 				FC54D05716A7673100575E4D /* CSSSupportsRule.h in Headers */,
 				BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */,
 				946D373A1D6CDFC00077084F /* CSSTokenizer.h in Headers */,
@@ -26005,6 +26034,7 @@
 				D07DEABA0A36554A00CA30F8 /* InsertListCommand.h in Headers */,
 				93309DEE099E64920056E581 /* InsertNodeBeforeCommand.h in Headers */,
 				93309DF0099E64920056E581 /* InsertParagraphSeparatorCommand.h in Headers */,
+				947949311E0459FA00018D85 /* JSDeprecatedCSSOMCounter.h in Headers */,
 				93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */,
 				B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
@@ -26106,7 +26136,6 @@
 				79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */,
 				FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
-				930705DA09E0C9BF00B17FE4 /* JSCounter.h in Headers */,
 				14DCF3B31B6BE2080062D4C2 /* JSCountQueuingStrategy.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
 				E157A8F118185425009F821D /* JSCryptoAlgorithmBuilder.h in Headers */,
@@ -26126,7 +26155,6 @@
 				BC46C2010C0DDC8F0020CFC3 /* JSCSSMediaRule.h in Headers */,
 				94E839561DFB2BC4007BC6A7 /* JSCSSNamespaceRule.h in Headers */,
 				BC46C2030C0DDC8F0020CFC3 /* JSCSSPageRule.h in Headers */,
-				930705EB09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h in Headers */,
 				14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */,
 				AD726FEF16DA11F5003A4E6D /* JSCSSRuleCustom.h in Headers */,
 				A8D05FA80A23B301005E7203 /* JSCSSRuleList.h in Headers */,
@@ -26135,8 +26163,6 @@
 				BC46C2070C0DDCA10020CFC3 /* JSCSSStyleRule.h in Headers */,
 				BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */,
 				FC54D05816A7676E00575E4D /* JSCSSSupportsRule.h in Headers */,
-				14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */,
-				A8D05FAC0A23B30F005E7203 /* JSCSSValueList.h in Headers */,
 				9BD4E9171C462872005065BC /* JSCustomElementInterface.h in Headers */,
 				9BE6710C1D5AEB2500345514 /* JSCustomElementRegistry.h in Headers */,
 				E4778B80115A581A00B5D372 /* JSCustomEvent.h in Headers */,
@@ -26284,6 +26310,7 @@
 				A80E7E990A1A83E3007FB8C5 /* JSHTMLOptionElement.h in Headers */,
 				448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */,
 				4AD0173D127E82860015035F /* JSHTMLOutputElement.h in Headers */,
+				947949341E0459FA00018D85 /* JSDeprecatedCSSOMRect.h in Headers */,
 				1AE2ABA70A1CE90500B42B25 /* JSHTMLParagraphElement.h in Headers */,
 				1AE2ABA90A1CE90500B42B25 /* JSHTMLParamElement.h in Headers */,
 				BC3D85BC1C0E2E7A00D3B610 /* JSHTMLPictureElement.h in Headers */,
@@ -26420,10 +26447,9 @@
 				7C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultReader.h in Headers */,
 				4129DF861BB5B80C00322A16 /* JSReadableStreamPrivateConstructors.h in Headers */,
 				7E4C96DD1AD4483500365A51 /* JSReadableStreamSource.h in Headers */,
-				BCFE2F120C1B58380020235F /* JSRect.h in Headers */,
 				4998AECE13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h in Headers */,
-				BC74DA491013F468007987AD /* JSRGBColor.h in Headers */,
 				57E233711DCD468F00F28D01 /* JSRsaHashedImportParams.h in Headers */,
+				947949321E0459FA00018D85 /* JSDeprecatedCSSOMPrimitiveValue.h in Headers */,
 				5768E4341DB7524500D0A4F7 /* JSRsaHashedKeyGenParams.h in Headers */,
 				57FEDD411DB6D73A00EB96F5 /* JSRsaKeyGenParams.h in Headers */,
 				5706A6981DDE5E4600A03B14 /* JSRsaOaepParams.h in Headers */,
@@ -26868,6 +26894,7 @@
 				C96F5EC81B5872260091EA9D /* MediaSessionInterruptionProvider.h in Headers */,
 				C96F5EC51B5872260091EA9D /* MediaSessionInterruptionProviderMac.h in Headers */,
 				C90F65561B2253BE002163A1 /* MediaSessionManager.h in Headers */,
+				9479493F1E0463C600018D85 /* DeprecatedCSSOMRect.h in Headers */,
 				07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */,
 				C9D851F01B39DC780085062E /* MediaSessionMetadata.h in Headers */,
 				CD3A495F17A9D01B00274E42 /* MediaSource.h in Headers */,
@@ -27283,6 +27310,7 @@
 				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
+				9479493A1E0459FA00018D85 /* JSDeprecatedCSSOMValueList.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
 				A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */,
@@ -27293,6 +27321,7 @@
 				439046DC12DA25E800AF80A2 /* RenderMathMLFraction.h in Headers */,
 				439046DE12DA25E800AF80A2 /* RenderMathMLMath.h in Headers */,
 				439046E012DA25E800AF80A2 /* RenderMathMLOperator.h in Headers */,
+				9479493E1E0463BE00018D85 /* DeprecatedCSSOMRGBColor.h in Headers */,
 				439046E212DA25E800AF80A2 /* RenderMathMLRoot.h in Headers */,
 				439046E412DA25E800AF80A2 /* RenderMathMLRow.h in Headers */,
 				439046E812DA25E800AF80A2 /* RenderMathMLScripts.h in Headers */,
@@ -27661,6 +27690,7 @@
 				93F1996308245E59001E9ABC /* SSLKeyGenerator.h in Headers */,
 				26B999911803B3C900D01121 /* StackAllocator.h in Headers */,
 				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,
+				947949251E0308AF00018D85 /* DeprecatedCSSOMValue.h in Headers */,
 				F433E9031DBBDBA200EF0D14 /* StaticPasteboard.h in Headers */,
 				F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */,
 				A5AFB350115151A700B045CB /* StepRange.h in Headers */,
@@ -27774,6 +27804,7 @@
 				085A15931289A8DD002710E3 /* SVGAnimatedTransformListPropertyTearOff.h in Headers */,
 				439D334313A6911C00C20F4F /* SVGAnimatedType.h in Headers */,
 				439D334413A6911C00C20F4F /* SVGAnimatedTypeAnimator.h in Headers */,
+				947949381E0459FA00018D85 /* JSDeprecatedCSSOMValue.h in Headers */,
 				B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */,
 				832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,
@@ -27849,6 +27880,7 @@
 				0854B01F1255E4E600B9CDD0 /* SVGInlineFlowBox.h in Headers */,
 				0854B0211255E4E600B9CDD0 /* SVGInlineTextBox.h in Headers */,
 				B2227A300D00BF220071B782 /* SVGLangSpace.h in Headers */,
+				947949361E0459FA00018D85 /* JSDeprecatedCSSOMRGBColor.h in Headers */,
 				7134496E146941B300720312 /* SVGLengthContext.h in Headers */,
 				B2227A360D00BF220071B782 /* SVGLengthList.h in Headers */,
 				7C39C3651DDA865200FEFB29 /* SVGLengthListValues.h in Headers */,
@@ -28103,6 +28135,7 @@
 				2D232C001A326F02006BF2DB /* TUCallSPI.h in Headers */,
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 				E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */,
+				947949411E0463D400018D85 /* DeprecatedCSSOMCounter.h in Headers */,
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
 				7C6523181E00DBB500677F22 /* JSApplePayPaymentMethod.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
@@ -29356,6 +29389,7 @@
 				CDF4B72B1E03C63E00E235A2 /* JSMediaKeysRequirement.cpp in Sources */,
 				84730D7E1248F0B300D3A9C9 /* FEFlood.cpp in Sources */,
 				84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */,
+				947949301E0459EE00018D85 /* JSDeprecatedCSSOMPrimitiveValue.cpp in Sources */,
 				84730D801248F0B300D3A9C9 /* FELighting.cpp in Sources */,
 				84730D821248F0B300D3A9C9 /* FEMerge.cpp in Sources */,
 				84730D841248F0B300D3A9C9 /* FEMorphology.cpp in Sources */,
@@ -29621,6 +29655,7 @@
 				977B3877122883E900B81FF8 /* HTMLTokenizer.cpp in Sources */,
 				0707568B142262D600414161 /* HTMLTrackElement.cpp in Sources */,
 				977B37251228721700B81FF8 /* HTMLTreeBuilder.cpp in Sources */,
+				947949241E0308A400018D85 /* DeprecatedCSSOMValue.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
 				E44613AA0CD6331000FADA75 /* HTMLVideoElement.cpp in Sources */,
 				839AAFEC1A0C0C8D00605F99 /* HTMLWBRElement.cpp in Sources */,
@@ -29800,6 +29835,7 @@
 				FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */,
 				FDA15EB512B03EE1003A583A /* JSAudioProcessingEvent.cpp in Sources */,
 				BE8EF042171C8FF9009B48C3 /* JSAudioTrack.cpp in Sources */,
+				947949371E0459FA00018D85 /* JSDeprecatedCSSOMValue.cpp in Sources */,
 				BE6DF711171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp in Sources */,
 				BE8EF044171C8FF9009B48C3 /* JSAudioTrackList.cpp in Sources */,
 				BE6DF713171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp in Sources */,
@@ -29833,7 +29869,6 @@
 				79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */,
 				FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
-				930705D809E0C9B700B17FE4 /* JSCounter.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp in Sources */,
 				975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */,
 				E157A8F018185425009F821D /* JSCryptoAlgorithmBuilder.cpp in Sources */,
@@ -29854,7 +29889,6 @@
 				BC46C2000C0DDC8F0020CFC3 /* JSCSSMediaRule.cpp in Sources */,
 				94E839551DFB2BC4007BC6A7 /* JSCSSNamespaceRule.cpp in Sources */,
 				BC46C2020C0DDC8F0020CFC3 /* JSCSSPageRule.cpp in Sources */,
-				930705E909E0C9F000B17FE4 /* JSCSSPrimitiveValue.cpp in Sources */,
 				14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */,
 				BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */,
 				A8D05FA70A23B301005E7203 /* JSCSSRuleList.cpp in Sources */,
@@ -29864,9 +29898,7 @@
 				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
 				BCC5BE000C0E93110011C2DB /* JSCSSStyleSheet.cpp in Sources */,
 				FD67773A195CB14A0072E0D3 /* JSCSSSupportsRule.cpp in Sources */,
-				14CF78A409F58CBF00EB3665 /* JSCSSValue.cpp in Sources */,
 				BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */,
-				A8D05FAB0A23B30F005E7203 /* JSCSSValueList.cpp in Sources */,
 				9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */,
 				9BE6710B1D5AEB2100345514 /* JSCustomElementRegistry.cpp in Sources */,
 				9BC5F9E01D5AAF6B002B749D /* JSCustomElementRegistryCustom.cpp in Sources */,
@@ -29903,6 +29935,7 @@
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,
 				7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */,
 				65DF31F709D1CC60000BE325 /* JSDOMImplementation.cpp in Sources */,
+				9479493C1E045CF300018D85 /* DeprecatedCSSOMPrimitiveValue.cpp in Sources */,
 				4138F8571D253F08001CB61E /* JSDOMIterator.cpp in Sources */,
 				A9D248060D757E7D00FDF959 /* JSDOMMimeType.cpp in Sources */,
 				A9D248080D757E7D00FDF959 /* JSDOMMimeTypeArray.cpp in Sources */,
@@ -29943,6 +29976,7 @@
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
 				BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */,
 				836D032F1DA8A13A00FFD96B /* JSEventInit.cpp in Sources */,
+				947949351E0459FA00018D85 /* JSDeprecatedCSSOMRGBColor.cpp in Sources */,
 				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
 				E0FEF372B47C53EAC1C1FBEE /* JSEventSource.cpp in Sources */,
 				C6A703325C9D0B6CDCBC4D77 /* JSEventTarget.cpp in Sources */,
@@ -30211,9 +30245,7 @@
 				4129DF851BB5B80700322A16 /* JSReadableStreamPrivateConstructors.cpp in Sources */,
 				7E4C96DC1AD4483500365A51 /* JSReadableStreamSource.cpp in Sources */,
 				418C39601C8F0AAE0051C8A3 /* JSReadableStreamSourceCustom.cpp in Sources */,
-				BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */,
 				4998AECD13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.cpp in Sources */,
-				BC74DA481013F468007987AD /* JSRGBColor.cpp in Sources */,
 				57E233731DCD46B600F28D01 /* JSRsaHashedImportParams.cpp in Sources */,
 				5768E4361DB7527400D0A4F7 /* JSRsaHashedKeyGenParams.cpp in Sources */,
 				57FEDD431DB6D76000EB96F5 /* JSRsaKeyGenParams.cpp in Sources */,
@@ -30521,6 +30553,7 @@
 				1ACE53F60A8D19470022947D /* JSXMLSerializer.cpp in Sources */,
 				1A762C730A074F2600989F5B /* JSXPathEvaluator.cpp in Sources */,
 				BC60DB490D2A3D1E00B9918F /* JSXPathException.cpp in Sources */,
+				9479492E1E0457BA00018D85 /* DeprecatedCSSOMValueList.cpp in Sources */,
 				1A762C750A074F2600989F5B /* JSXPathExpression.cpp in Sources */,
 				1A762C770A074F2600989F5B /* JSXPathNSResolver.cpp in Sources */,
 				836C14431CDEAFD80073493F /* JSXPathNSResolverCustom.cpp in Sources */,
@@ -30614,6 +30647,7 @@
 				7C6579F11E00856600E3A27A /* JSApplePayPaymentRequest.cpp in Sources */,
 				439176DF12DA25E17BAF80A2 /* MathMLStyle.cpp in Sources */,
 				FA654A6B1108ABED002615E0 /* MathMLTokenElement.cpp in Sources */,
+				947949391E0459FA00018D85 /* JSDeprecatedCSSOMValueList.cpp in Sources */,
 				FA654A6B1108ABED002626F1 /* MathMLUnderOverElement.cpp in Sources */,
 				439046E912DA25E812AF80AC /* MathOperator.cpp in Sources */,
 				49D5DC2B0F423A73008F20FD /* Matrix3DTransformOperation.cpp in Sources */,
@@ -31160,6 +31194,7 @@
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
 				1AA84F04143BA7BD0051D153 /* ScrollController.mm in Sources */,
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
+				9479492F1E0459EB00018D85 /* JSDeprecatedCSSOMCounter.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				0FC4E40E187F82E10045882C /* ScrollingCoordinatorIOS.mm in Sources */,
 				1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */,
@@ -31527,6 +31562,7 @@
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
 				442ABCD617D9262F00D30715 /* SynchronousLoaderClientCFNet.cpp in Sources */,
+				947949331E0459FA00018D85 /* JSDeprecatedCSSOMRect.cpp in Sources */,
 				26FAE4CE1852E3A5004C8C46 /* SynchronousResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				E45390AE0EAFF4B5003695C8 /* SystemMemoryIOS.cpp in Sources */,
 				CDA07FBD18E0A16A004699FA /* SystemSleepListener.cpp in Sources */,

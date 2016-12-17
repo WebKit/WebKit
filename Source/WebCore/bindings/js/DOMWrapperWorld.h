@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class CSSValue;
+class DeprecatedCSSOMValue;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
@@ -50,7 +50,7 @@ public:
 
     // FIXME: can we make this private?
     DOMObjectWrapperMap m_wrappers;
-    HashMap<CSSValue*, void*> m_cssValueRoots;
+    HashMap<DeprecatedCSSOMValue*, void*> m_deprecatedCSSOMValueRoots;
 
     bool isNormal() const { return m_isNormal; }
 

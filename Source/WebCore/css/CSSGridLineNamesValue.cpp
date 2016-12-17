@@ -44,11 +44,6 @@ CSSGridLineNamesValue::CSSGridLineNamesValue()
 {
 }
 
-Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::cloneForCSSOM() const
-{
-    return adoptRef(*new CSSGridLineNamesValue(*this));
-}
-
 }
 
 #endif

@@ -159,15 +159,4 @@ bool CSSImageSetValue::traverseSubresources(const std::function<bool (const Cach
     return handler(*m_cachedImage);
 }
 
-CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)
-    : CSSValueList(cloneFrom)
-{
-    // Non-CSSValueList data is not accessible through CSS OM, no need to clone.
-}
-
-Ref<CSSImageSetValue> CSSImageSetValue::cloneForCSSOM() const
-{
-    return adoptRef(*new CSSImageSetValue(*this));
-}
-
 } // namespace WebCore

@@ -20,13 +20,13 @@
 #ifndef WebKitDOMCSSValuePrivate_h
 #define WebKitDOMCSSValuePrivate_h
 
-#include <WebCore/CSSValue.h>
+#include <WebCore/DeprecatedCSSOMValue.h>
 #include <webkitdom/WebKitDOMCSSValue.h>
 
 namespace WebKit {
-WebKitDOMCSSValue* wrapCSSValue(WebCore::CSSValue*);
-WebKitDOMCSSValue* kit(WebCore::CSSValue*);
-WebCore::CSSValue* core(WebKitDOMCSSValue*);
+WebKitDOMCSSValue* wrapCSSValue(WebCore::DeprecatedCSSOMValue*);
+WebKitDOMCSSValue* kit(WebCore::DeprecatedCSSOMValue*);
+WebCore::DeprecatedCSSOMValue* core(WebKitDOMCSSValue*);
 } // namespace WebKit
 
 #endif /* WebKitDOMCSSValuePrivate_h */

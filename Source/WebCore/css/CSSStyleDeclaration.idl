@@ -31,7 +31,9 @@
     [CEReactions, SetterMayThrowException] attribute DOMString cssText;
 
     DOMString getPropertyValue(DOMString propertyName);
-    [Custom] CSSValue? getPropertyCSSValue(DOMString propertyName);
+
+    // This method is deprecated, and we would like to drop support for it someday
+    [Custom] DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
 
     [CEReactions, MayThrowException] DOMString removeProperty(DOMString propertyName);
     DOMString? getPropertyPriority(DOMString propertyName);

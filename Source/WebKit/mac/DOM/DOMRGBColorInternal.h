@@ -26,7 +26,7 @@
 #import <WebKitLegacy/DOMRGBColor.h>
 
 namespace WebCore {
-class RGBColor;
+class DeprecatedCSSOMRGBColor;
 }
 
-DOMRGBColor *kit(WebCore::RGBColor*);
+DOMRGBColor *kit(WebCore::DeprecatedCSSOMRGBColor*);
