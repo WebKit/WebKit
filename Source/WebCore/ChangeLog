@@ -1,3 +1,47 @@
+2016-12-16  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB: Refactor SQLiteIDBCursor to prepare for cursor prefetching.
+        https://bugs.webkit.org/show_bug.cgi?id=165978
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Refactor, no behavior change).
+        
+        In preparation for cursor prefetching, we need to shift the cursor off of keeping "the current record"
+        and onto keeping "a deque of fetched records", the first of which is "the current record".
+        
+        This patch does just that, but with no behavior change; The deque only ever holds 0 or 1 records.
+
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentData):
+        (WebCore::IDBServer::SQLiteIDBCursor::objectStoreRecordsChanged):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindStatement):
+        (WebCore::IDBServer::SQLiteIDBCursor::prefetch):
+        (WebCore::IDBServer::SQLiteIDBCursor::advance):
+        (WebCore::IDBServer::SQLiteIDBCursor::fetch):
+        (WebCore::IDBServer::SQLiteIDBCursor::fetchNextRecord):
+        (WebCore::IDBServer::SQLiteIDBCursor::markAsErrored):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        (WebCore::IDBServer::SQLiteIDBCursor::iterate):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentPrimaryKey):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValue):
+        (WebCore::IDBServer::SQLiteIDBCursor::didComplete):
+        (WebCore::IDBServer::SQLiteIDBCursor::didError):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentRecordRowID):
+        (WebCore::IDBServer::SQLiteIDBCursor::advanceUnique): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::advanceOnce): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::internalAdvanceOnce): Deleted.
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        (WebCore::IDBServer::SQLiteIDBCursor::SQLiteCursorRecord::isTerminalRecord):
+        (WebCore::IDBServer::SQLiteIDBCursor::currentRecordRowID): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::currentKey): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::currentPrimaryKey): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::currentValue): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::didComplete): Deleted.
+        (WebCore::IDBServer::SQLiteIDBCursor::didError): Deleted.
+
 2016-12-16  Darin Adler  <darin@apple.com>
 
         Remove all custom bindings from media streams, using dictionaries instead
