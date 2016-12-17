@@ -29,7 +29,6 @@
 #include "CachedModuleScriptLoader.cpp"
 #include "CallbackFunction.cpp"
 #include "DOMWrapperWorld.cpp"
-#include "Dictionary.cpp"
 #include "GCController.cpp"
 #include "JSAnimationTimelineCustom.cpp"
 #include "JSAttrCustom.cpp"

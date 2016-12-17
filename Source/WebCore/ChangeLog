@@ -1,3 +1,16 @@
+2016-12-17  Darin Adler  <darin@apple.com>
+
+        Remove WebCore::Dictionary, which is now unused
+        https://bugs.webkit.org/show_bug.cgi?id=165988
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt: Removed the files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/Dictionary.cpp: Removed.
+        * bindings/js/Dictionary.h: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp: Removed include of Dictionary.cpp.
+
 2016-12-17  Youenn Fablet  <youenn@apple.com>
 
         Cloned CachedResource should not have an empty response
