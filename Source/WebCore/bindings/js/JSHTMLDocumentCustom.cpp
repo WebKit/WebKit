@@ -55,7 +55,7 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLDocument& do
 bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
     auto& thisObject = *jsCast<JSHTMLDocument*>(object);
-    ASSERT_GC_OBJECT_INHERITS((&thisObject), info());
+    ASSERT_GC_OBJECT_INHERITS(object, info());
 
     if (propertyName == "open") {
         if (Base::getOwnPropertySlot(&thisObject, state, propertyName, slot))

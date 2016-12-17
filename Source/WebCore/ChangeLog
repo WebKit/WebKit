@@ -1,3 +1,17 @@
+2016-12-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        warning: the compiler can assume that the address of 'thisObject' will always evaluate to 'true' [-Waddress] in WebCore::JSHTMLDocument::getOwnPropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=165987
+
+        Reviewed by Mark Lam.
+
+        Work around the warning by passing the JSObject pointer this function receives directly to
+        ASSERT_GC_OBJECT_INHERITS, instead of casting it to a reference and then taking the address
+        of that, to avoid the -Waddress warning.
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+
 2016-12-17  Jer Noble  <jer.noble@apple.com>
 
         Add implementation for navigator.requestMediaKeySystemAccess()
