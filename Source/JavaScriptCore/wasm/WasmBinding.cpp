@@ -78,8 +78,9 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
         case Func:
         case Anyfunc:
         case I64:
-            // For the JavaScript embedding, imports with these types in their signature arguments are a WebAssembly.Module validation error.
-            RELEASE_ASSERT_NOT_REACHED();
+            // FIXME: Figure out the correct behavior here. I suspect we want such a stub to throw an exception immediately
+            // if called. https://bugs.webkit.org/show_bug.cgi?id=165991
+            jit.breakpoint();
             break;
         case I32: {
             GPRReg gprReg;
