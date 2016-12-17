@@ -1,3 +1,17 @@
+2016-12-16  Mark Lam  <mark.lam@apple.com>
+
+        Add predecessor info to dumps from JSC_dumpBytecodeLivenessResults=true.
+        https://bugs.webkit.org/show_bug.cgi?id=165958
+
+        Reviewed by Keith Miller.
+
+        Added some methods to bring SegmentedVector closer to parity with Vector.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::first):
+        (WTF::SegmentedVector::last):
+        (WTF::SegmentedVector::takeLast):
+
 2016-12-16  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: HipChat and Mail sometimes hang beneath JSC::Heap::lastChanceToFinalize()
