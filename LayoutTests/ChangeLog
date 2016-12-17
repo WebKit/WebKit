@@ -1,3 +1,23 @@
+2016-12-17  Youenn Fablet  <youenn@apple.com>
+
+        Cloned CachedResource should not have an empty response
+        https://bugs.webkit.org/show_bug.cgi?id=165947
+
+        Reviewed by Sam Weinig.
+
+        This new test is working as follow:
+        - A first frame is loaded. As part of it, it will load an absolute URL CSS stylesheet that contains a relative URL to import a CSS stylesheet.
+        This second stylesheet will make the background as green.
+        - Once done, a second frame is loaded (same HTML but from a different domain) with the same absolute URL CSS stylesheet.
+        The relative URL stylesheet should use the absolute URL of the CSS stylesheet as base.
+        If it is using the frame as base, the loaded CSS will change background to red.
+
+        * http/tests/loading/resources/cached-stylesheet-from-different-domain-frame.css.php: Added.
+        * http/tests/loading/resources/cached-stylesheet-from-different-domain-frame.html: Added.
+        * http/tests/loading/resources/imported-stylesheet-varying-according-domain.css.php: Added.
+        * http/tests/loading/reusing-cached-stylesheet-from-different-domain-expected.html: Added.
+        * http/tests/loading/reusing-cached-stylesheet-from-different-domain.html: Added.
+
 2016-12-16  Darin Adler  <darin@apple.com>
 
         Remove all custom bindings from media streams, using dictionaries instead

@@ -1,3 +1,16 @@
+2016-12-17  Youenn Fablet  <youenn@apple.com>
+
+        Cloned CachedResource should not have an empty response
+        https://bugs.webkit.org/show_bug.cgi?id=165947
+
+        Reviewed by Sam Weinig.
+
+        Test: http/tests/loading/reusing-cached-stylesheet-from-different-domain.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setBodyDataFrom): Copying the response to the cloned resource.
+        Even though the issue is appearing for stylesheets only, it is safer to do that for all cloned ressources.
+
 2016-12-16  Brady Eidson  <beidson@apple.com>
 
         IndexedDB: Refactor SQLiteIDBCursor to prepare for cursor prefetching.
