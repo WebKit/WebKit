@@ -26,7 +26,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Optional.h>
+#include "DoubleRange.h"
+#include "LongRange.h"
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -34,16 +35,6 @@
 namespace WebCore {
 
 class MediaConstraintsImpl;
-
-struct DoubleRange {
-    std::optional<double> min;
-    std::optional<double> max;
-};
-
-struct LongRange {
-    std::optional<int> max;
-    std::optional<int> min;
-};
 
 struct ConstrainBooleanParameters {
     std::optional<bool> exact;
@@ -80,8 +71,6 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainLong> sampleRate;
     std::optional<ConstrainLong> sampleSize;
     std::optional<ConstrainBoolean> echoCancellation;
-    std::optional<ConstrainDouble> latency;
-    std::optional<ConstrainLong> channelCount;
     std::optional<ConstrainDOMString> deviceId;
     std::optional<ConstrainDOMString> groupId;
 };

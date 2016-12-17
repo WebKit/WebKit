@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,16 +30,16 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "DoubleRange.h"
 #include "EventTarget.h"
 #include "JSDOMPromise.h"
+#include "LongRange.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaTrackConstraints.h"
 
 namespace WebCore {
 
 class AudioSourceProvider;
-class MediaConstraints;
-class MediaSourceSettings;
 
 struct MediaTrackConstraints;
 
@@ -73,8 +73,35 @@ public:
     Ref<MediaStreamTrack> clone();
     void stopProducingData();
 
-    RefPtr<MediaSourceSettings> getSettings() const;
-    RefPtr<RealtimeMediaSourceCapabilities> getCapabilities() const;
+    struct TrackSettings {
+        std::optional<int> width;
+        std::optional<int> height;
+        std::optional<double> aspectRatio;
+        std::optional<double> frameRate;
+        String facingMode;
+        std::optional<double> volume;
+        std::optional<int> sampleRate;
+        std::optional<int> sampleSize;
+        std::optional<bool> echoCancellation;
+        String deviceId;
+        String groupId;
+    };
+    TrackSettings getSettings() const;
+
+    struct TrackCapabilities {
+        std::optional<LongRange> width;
+        std::optional<LongRange> height;
+        std::optional<DoubleRange> aspectRatio;
+        std::optional<DoubleRange> frameRate;
+        std::optional<Vector<String>> facingMode;
+        std::optional<DoubleRange> volume;
+        std::optional<LongRange> sampleRate;
+        std::optional<LongRange> sampleSize;
+        std::optional<Vector<bool>> echoCancellation;
+        String deviceId;
+        String groupId;
+    };
+    TrackCapabilities getCapabilities() const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromise<void>&&);

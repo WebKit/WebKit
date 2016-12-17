@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@
 #include "EventNames.h"
 #include "JSOverconstrainedError.h"
 #include "MediaConstraintsImpl.h"
-#include "MediaSourceSettings.h"
 #include "MediaStream.h"
 #include "MediaStreamPrivate.h"
 #include "NotImplemented.h"
@@ -148,14 +147,120 @@ void MediaStreamTrack::stopProducingData()
     m_private->endTrack();
 }
 
-RefPtr<MediaSourceSettings> MediaStreamTrack::getSettings() const
+MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
 {
-    return MediaSourceSettings::create(m_private->settings());
+    auto& settings = m_private->settings();
+    TrackSettings result;
+    if (settings.supportsWidth())
+        result.width = settings.width();
+    if (settings.supportsHeight())
+        result.height = settings.height();
+    if (settings.supportsAspectRatio() && settings.aspectRatio()) // FIXME: Why the check for zero here?
+        result.aspectRatio = settings.aspectRatio();
+    if (settings.supportsFrameRate())
+        result.frameRate = settings.frameRate();
+    if (settings.supportsFacingMode())
+        result.facingMode = RealtimeMediaSourceSettings::facingMode(settings.facingMode());
+    if (settings.supportsVolume())
+        result.volume = settings.volume();
+    if (settings.supportsSampleRate())
+        result.sampleRate = settings.sampleRate();
+    if (settings.supportsSampleSize())
+        result.sampleSize = settings.sampleSize();
+    if (settings.supportsEchoCancellation())
+        result.echoCancellation = settings.echoCancellation();
+    if (settings.supportsDeviceId())
+        result.deviceId = settings.deviceId();
+    if (settings.supportsGroupId())
+        result.groupId = settings.groupId();
+    return result;
 }
 
-RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrack::getCapabilities() const
+static DoubleRange capabilityDoubleRange(const CapabilityValueOrRange& value)
 {
-    return m_private->capabilities();
+    DoubleRange range;
+    switch (value.type()) {
+    case CapabilityValueOrRange::Double:
+        range.min = value.value().asDouble;
+        range.max = range.min;
+        break;
+    case CapabilityValueOrRange::DoubleRange:
+        range.min = value.rangeMin().asDouble;
+        range.max = value.rangeMax().asDouble;
+        break;
+    case CapabilityValueOrRange::Undefined:
+    case CapabilityValueOrRange::ULong:
+    case CapabilityValueOrRange::ULongRange:
+        ASSERT_NOT_REACHED();
+    }
+    return range;
+}
+
+static LongRange capabilityIntRange(const CapabilityValueOrRange& value)
+{
+    LongRange range;
+    switch (value.type()) {
+    case CapabilityValueOrRange::ULong:
+        range.min = value.value().asInt;
+        range.max = range.min;
+        break;
+    case CapabilityValueOrRange::ULongRange:
+        range.min = value.rangeMin().asInt;
+        range.max = value.rangeMax().asInt;
+        break;
+    case CapabilityValueOrRange::Undefined:
+    case CapabilityValueOrRange::Double:
+    case CapabilityValueOrRange::DoubleRange:
+        ASSERT_NOT_REACHED();
+    }
+    return range;
+}
+
+static Vector<String> capabilityStringVector(const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& modes)
+{
+    Vector<String> result;
+    result.reserveCapacity(modes.size());
+    for (auto& mode : modes)
+        result.uncheckedAppend(RealtimeMediaSourceSettings::facingMode(mode));
+    return result;
+}
+
+static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::EchoCancellation cancellation)
+{
+    Vector<bool> result;
+    result.reserveCapacity(2);
+    result.uncheckedAppend(true);
+    result.uncheckedAppend(cancellation == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite);
+    return result;
+}
+
+MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
+{
+    auto capabilities = m_private->capabilities();
+    TrackCapabilities result;
+    if (capabilities->supportsWidth())
+        result.width = capabilityIntRange(capabilities->width());
+    if (capabilities->supportsHeight())
+        result.height = capabilityIntRange(capabilities->height());
+    if (capabilities->supportsAspectRatio())
+        result.aspectRatio = capabilityDoubleRange(capabilities->aspectRatio());
+    if (capabilities->supportsFrameRate())
+        result.frameRate = capabilityDoubleRange(capabilities->frameRate());
+    if (capabilities->supportsFacingMode())
+        result.facingMode = capabilityStringVector(capabilities->facingMode());
+    if (capabilities->supportsVolume())
+        result.volume = capabilityDoubleRange(capabilities->volume());
+    if (capabilities->supportsSampleRate())
+        result.sampleRate = capabilityIntRange(capabilities->sampleRate());
+    if (capabilities->supportsSampleSize())
+        result.sampleSize = capabilityIntRange(capabilities->sampleSize());
+    if (capabilities->supportsEchoCancellation())
+        result.echoCancellation = capabilityBooleanVector(capabilities->echoCancellation());
+    if (capabilities->supportsDeviceId())
+        result.deviceId = capabilities->deviceId();
+    if (capabilities->supportsGroupId())
+        result.groupId = capabilities->groupId();
+    return result;
 }
 
 static Ref<MediaConstraintsImpl> createMediaConstraintsImpl(const std::optional<MediaTrackConstraints>& constraints)

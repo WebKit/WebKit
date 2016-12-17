@@ -212,7 +212,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasource/VideoPlaybackQuality.idl
 
     Modules/mediastream/DOMURLMediaStream.idl
+    Modules/mediastream/DoubleRange.idl
     Modules/mediastream/HTMLMediaElementMediaStream.idl
+    Modules/mediastream/LongRange.idl
     Modules/mediastream/MediaDeviceInfo.idl
     Modules/mediastream/MediaDevices.idl
     Modules/mediastream/MediaStream.idl
@@ -902,7 +904,6 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaDevicesRequest.cpp
     Modules/mediastream/MediaEndpointPeerConnection.cpp
     Modules/mediastream/MediaEndpointSessionDescription.cpp
-    Modules/mediastream/MediaSourceSettings.cpp
     Modules/mediastream/MediaStream.cpp
     Modules/mediastream/MediaStreamEvent.cpp
     Modules/mediastream/MediaStreamRegistry.cpp
@@ -1165,8 +1166,6 @@ set(WebCore_SOURCES
     bindings/js/JSMainThreadExecState.cpp
     bindings/js/JSMediaKeySessionCustom.cpp
     bindings/js/JSMediaKeySystemAccessCustom.cpp
-    bindings/js/JSMediaStreamTrackCustom.cpp
-    bindings/js/JSMediaTrackSupportedConstraintsCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp

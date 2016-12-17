@@ -85,9 +85,22 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
     MediaDevicesRequest::create(*document, WTFMove(promise))->start();
 }
 
-RefPtr<MediaTrackSupportedConstraints> MediaDevices::getSupportedConstraints()
+MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
 {
-    return MediaTrackSupportedConstraints::create(RealtimeMediaSourceCenter::singleton().supportedConstraints());
+    auto& supported = RealtimeMediaSourceCenter::singleton().supportedConstraints();
+    MediaTrackSupportedConstraints result;
+    result.width = supported.supportsWidth();
+    result.height = supported.supportsHeight();
+    result.aspectRatio = supported.supportsAspectRatio();
+    result.frameRate = supported.supportsFrameRate();
+    result.facingMode = supported.supportsFacingMode();
+    result.volume = supported.supportsVolume();
+    result.sampleRate = supported.supportsSampleRate();
+    result.sampleSize = supported.supportsSampleSize();
+    result.echoCancellation = supported.supportsEchoCancellation();
+    result.deviceId = supported.supportsDeviceId();
+    result.groupId = supported.supportsGroupId();
+    return result;
 }
 
 } // namespace WebCore

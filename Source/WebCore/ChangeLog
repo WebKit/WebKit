@@ -1,3 +1,67 @@
+2016-12-16  Darin Adler  <darin@apple.com>
+
+        Remove all custom bindings from media streams, using dictionaries instead
+        https://bugs.webkit.org/show_bug.cgi?id=165943
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Added and removed files.
+        * DerivedSources.make: Ditto.
+
+        * Modules/mediastream/DoubleRange.h: Added. Moved dictionary here so it can be shared
+        by both MediaStreamTrack and MediaTrackSupportedConstraints.
+        * Modules/mediastream/DoubleRange.idl: Ditto.
+        * Modules/mediastream/LongRange.h: Ditto.
+        * Modules/mediastream/LongRange.idl: Ditto.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::getSupportedConstraints): Changed to return a struct instead
+        of a reference counted object.
+        * Modules/mediastream/MediaDevices.h: Updated for the above.
+        * Modules/mediastream/MediaDevices.idl: Added a conditional on the dictionary in this
+        file; not needed because the conditional on the interface automatically affects the
+        entire fiel, but for now the style seems to be to put these on all the dictionaries.
+
+        * Modules/mediastream/MediaSourceSettings.cpp: Removed.
+        * Modules/mediastream/MediaSourceSettings.h: Removed.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getSettings): Changed to return a struct instead of a
+        reference counted object.
+        (WebCore::capabilityDoubleRange): Added. Helper for getCapabilities.
+        (WebCore::capabilityIntRange): Ditto.
+        (WebCore::capabilityStringVector): Ditto.
+        (WebCore::capabilityBooleanVector): Ditto.
+        (WebCore::MediaStreamTrack::getCapabilities): Changed to return a struct instead
+        of a reference counted object.
+        * Modules/mediastream/MediaStreamTrack.h: Updated for the above changes. Also
+        defined the structs here in the class.
+        * Modules/mediastream/MediaStreamTrack.idl: Defined the two dictionaries here and
+        changed the functions to return them and not use [Custom] any more.
+
+        * Modules/mediastream/MediaTrackConstraints.h: Moved DoubleRange and LongRange out
+        of this file and into their own headers. Also removed the currently unimplemented
+        latency and channelCount; there are FIXME comments in the IDL file about eventually
+        adding these to match the specification.
+        * Modules/mediastream/MediaTrackConstraints.idl: Added conditionals, and removed
+        the unimplemented latency and channelCount.
+        style of marking everything consistently.
+
+        * Modules/mediastream/MediaTrackSupportedConstraints.h: Replaced this class with
+        a struct.
+        * Modules/mediastream/MediaTrackSupportedConstraints.idl: Replaced this interface
+        with a dictionary.
+
+        * WebCore.xcodeproj/project.pbxproj: Added and removed files.
+
+        * bindings/js/JSMediaStreamTrackCustom.cpp: Removed.
+        * bindings/js/JSMediaTrackSupportedConstraintsCustom.cpp: Removed.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp: Removed include of the
+        MediaSourceSettings.h header.
+        * platform/mediastream/MediaStreamTrackPrivate.h: Removed forward declaration of
+        the MediaSourceSettings class.
+
 2016-12-16  Zalan Bujtas  <zalan@apple.com>
 
         Possible nullptr dereference when applying pagination to viewport

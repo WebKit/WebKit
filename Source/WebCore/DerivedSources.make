@@ -145,14 +145,14 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/mediasource/DOMURLMediaSource.idl \
     $(WebCore)/Modules/mediasource/MediaSource.idl \
     $(WebCore)/Modules/mediasource/SourceBuffer.idl \
-    $(WebCore)/Modules/mediasource/SourceBuffer.idl \
-    $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/mediasource/SourceBufferList.idl \
     $(WebCore)/Modules/mediasource/TextTrackMediaSource.idl \
     $(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
     $(WebCore)/Modules/mediasource/VideoTrackMediaSource.idl \
     $(WebCore)/Modules/mediastream/DOMURLMediaStream.idl \
+    $(WebCore)/Modules/mediastream/DoubleRange.idl \
     $(WebCore)/Modules/mediastream/HTMLMediaElementMediaStream.idl \
+    $(WebCore)/Modules/mediastream/LongRange.idl \
     $(WebCore)/Modules/mediastream/MediaDeviceInfo.idl \
     $(WebCore)/Modules/mediastream/MediaDevices.idl \
     $(WebCore)/Modules/mediastream/MediaStream.idl \

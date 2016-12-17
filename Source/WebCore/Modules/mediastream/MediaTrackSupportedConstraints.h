@@ -32,38 +32,20 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "RealtimeMediaSourceSupportedConstraints.h"
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class MediaTrackSupportedConstraints : public RefCounted<MediaTrackSupportedConstraints>, public ScriptWrappable {
-public:
-    static Ref<MediaTrackSupportedConstraints> create(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
-    {
-        return adoptRef(*new MediaTrackSupportedConstraints(supportedConstraints));
-    }
-
-    bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
-    bool supportsHeight() const { return m_supportedConstraints.supportsHeight(); }
-    bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
-    bool supportsFrameRate() const { return m_supportedConstraints.supportsFrameRate(); }
-    bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
-    bool supportsVolume() const { return m_supportedConstraints.supportsVolume(); }
-    bool supportsSampleRate() const { return m_supportedConstraints.supportsSampleRate(); }
-    bool supportsSampleSize() const { return m_supportedConstraints.supportsSampleSize(); }
-    bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
-    bool supportsDeviceId() const { return m_supportedConstraints.supportsDeviceId(); }
-    bool supportsGroupId() const { return m_supportedConstraints.supportsGroupId(); }
-
-private:
-    explicit MediaTrackSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& supportedConstraints)
-        : m_supportedConstraints(supportedConstraints)
-    {
-    }
-
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
+struct MediaTrackSupportedConstraints {
+    bool width;
+    bool height;
+    bool aspectRatio;
+    bool frameRate;
+    bool facingMode;
+    bool volume;
+    bool sampleRate;
+    bool sampleSize;
+    bool echoCancellation;
+    bool deviceId;
+    bool groupId;
 };
 
 } // namespace WebCore

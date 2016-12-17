@@ -35,7 +35,6 @@ namespace WebCore {
 class AudioSourceProvider;
 class GraphicsContext;
 class MediaSample;
-class MediaSourceSettings;
 class RealtimeMediaSourceCapabilities;
 
 class MediaStreamTrackPrivate : public RefCounted<MediaStreamTrackPrivate>, public RealtimeMediaSource::Observer {

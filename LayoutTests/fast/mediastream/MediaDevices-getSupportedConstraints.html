@@ -18,8 +18,17 @@
             debug("");
             evalAndLog("supportedConstraints = navigator.mediaDevices.getSupportedConstraints()");
             debug("");
-            for (var constraint in supportedConstraints)
-                shouldBeTrue(`supportedConstraints.${constraint}`);
+            shouldBeTrue("supportedConstraints.aspectRatio");
+            shouldBeTrue("supportedConstraints.deviceId");
+            shouldBeFalse("supportedConstraints.echoCancellation");
+            shouldBeTrue("supportedConstraints.facingMode");
+            shouldBeTrue("supportedConstraints.frameRate");
+            shouldBeFalse("supportedConstraints.groupId");
+            shouldBeTrue("supportedConstraints.height");
+            shouldBeFalse("supportedConstraints.sampleRate");
+            shouldBeFalse("supportedConstraints.sampleSize");
+            shouldBeTrue("supportedConstraints.volume");
+            shouldBeTrue("supportedConstraints.width");
             debug("");
 
 

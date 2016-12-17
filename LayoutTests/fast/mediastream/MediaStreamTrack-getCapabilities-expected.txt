@@ -4,18 +4,18 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 video track capabilities:
-  capabilities.width = { min: 320, max: 1920 }
-  capabilities.height = { min: 240, max: 1080 }
-  capabilities.aspectRatio = { min: 1.333, max: 1.778 }
-  capabilities.frameRate = { min: 15, max: 60 }
-  capabilities.facingMode = [ user, environment ]
+  capabilities.aspectRatio = { max: 1.778, min: 1.333 }
   capabilities.deviceId = <UUID>
+  capabilities.facingMode = [ user, environment ]
+  capabilities.frameRate = { max: 60, min: 15 }
+  capabilities.height = { max: 1080, min: 240 }
+  capabilities.width = { max: 1920, min: 320 }
 
 audio track capabilities:
-  capabilities.volume = { min: 0, max: 1 }
-  capabilities.sampleRate = { min: 44100, max: 44100 }
-  capabilities.echoCancellation = [ true, true ]
   capabilities.deviceId = <UUID>
+  capabilities.echoCancellation = [ true, true ]
+  capabilities.sampleRate = { max: 44100, min: 44100 }
+  capabilities.volume = { max: 1, min: 0 }
 
 PASS successfullyParsed is true
 

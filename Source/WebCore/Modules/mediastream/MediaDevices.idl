@@ -38,7 +38,9 @@
     Promise<sequence<MediaDeviceInfo>> enumerateDevices();
 };
 
-dictionary MediaStreamConstraints {
+[
+    Conditional=MEDIA_STREAM,
+] dictionary MediaStreamConstraints {
     (boolean or MediaTrackConstraints) video = false;
     (boolean or MediaTrackConstraints) audio = false;
 };

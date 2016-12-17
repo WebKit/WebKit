@@ -42,7 +42,8 @@ namespace WebCore {
 class Document;
 class MediaDeviceInfo;
 class MediaStream;
-class MediaTrackSupportedConstraints;
+
+struct MediaTrackSupportedConstraints;
 
 class MediaDevices : public ScriptWrappable, public RefCounted<MediaDevices>, public ContextDestructionObserver {
 public:
@@ -59,7 +60,7 @@ public:
     };
     ExceptionOr<void> getUserMedia(const StreamConstraints&, Promise&&) const;
     void enumerateDevices(EnumerateDevicesPromise&&) const;
-    RefPtr<MediaTrackSupportedConstraints> getSupportedConstraints();
+    MediaTrackSupportedConstraints getSupportedConstraints();
 
 private:
     explicit MediaDevices(Document&);

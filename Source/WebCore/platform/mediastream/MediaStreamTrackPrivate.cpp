@@ -32,7 +32,6 @@
 #include "AudioSourceProvider.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "MediaSourceSettings.h"
 #include "UUID.h"
 
 namespace WebCore {

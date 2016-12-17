@@ -8,13 +8,17 @@ PASS navigator.mediaDevices.getSupportedConstraints is an instance of Function
 
 supportedConstraints = navigator.mediaDevices.getSupportedConstraints()
 
-PASS supportedConstraints.width is true
-PASS supportedConstraints.height is true
 PASS supportedConstraints.aspectRatio is true
-PASS supportedConstraints.frameRate is true
-PASS supportedConstraints.facingMode is true
-PASS supportedConstraints.volume is true
 PASS supportedConstraints.deviceId is true
+PASS supportedConstraints.echoCancellation is false
+PASS supportedConstraints.facingMode is true
+PASS supportedConstraints.frameRate is true
+PASS supportedConstraints.groupId is false
+PASS supportedConstraints.height is true
+PASS supportedConstraints.sampleRate is false
+PASS supportedConstraints.sampleSize is false
+PASS supportedConstraints.volume is true
+PASS supportedConstraints.width is true
 
 PASS successfullyParsed is true
 

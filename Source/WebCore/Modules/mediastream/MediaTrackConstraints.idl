@@ -30,6 +30,7 @@
 };
 
 [
+    Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     ImplementedAs=MediaTrackConstraintSet
 ] dictionary MediaTrackConstraintSet {
@@ -42,8 +43,8 @@
     ConstrainLong sampleRate;
     ConstrainLong sampleSize;
     ConstrainBoolean echoCancellation;
-    ConstrainDouble latency;
-    ConstrainLong channelCount;
+    // FIXME: add latency
+    // FIXME: add channelCount
     ConstrainDOMString deviceId;
     ConstrainDOMString groupId;
 };
@@ -54,6 +55,7 @@ typedef (boolean or ConstrainBooleanParameters) ConstrainBoolean;
 typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) ConstrainDOMString;
 
 [
+    Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     ImplementedAs=ConstrainBooleanParameters
 ] dictionary ConstrainBooleanParameters {
@@ -62,6 +64,7 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 };
 
 [
+    Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     ImplementedAs=ConstrainDOMStringParameters
 ] dictionary ConstrainDOMStringParameters {
@@ -70,6 +73,7 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 };
 
 [
+    Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     ImplementedAs=ConstrainDoubleRange
 ] dictionary ConstrainDoubleRange : DoubleRange {
@@ -78,23 +82,10 @@ typedef (DOMString or sequence<DOMString> or ConstrainDOMStringParameters) Const
 };
 
 [
+    Conditional=MEDIA_STREAM,
     JSGenerateToJSObject,
     ImplementedAs=ConstrainLongRange
 ] dictionary ConstrainLongRange : LongRange {
     long exact;
     long ideal;
-};
-
-[
-    ImplementedAs=DoubleRange
-] dictionary DoubleRange {
-    double max;
-    double min;
-};
-
-[
-    ImplementedAs=LongRange
-] dictionary LongRange {
-    long max;
-    long min;
 };

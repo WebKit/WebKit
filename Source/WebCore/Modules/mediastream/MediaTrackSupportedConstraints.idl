@@ -30,10 +30,17 @@
 
 [
     Conditional=MEDIA_STREAM,
-    NoInterfaceObject,
-    ImplementationLacksVTable,
-    JSCustomGetOwnPropertySlotAndDescriptor,
-    CustomEnumerateProperty,
-] interface MediaTrackSupportedConstraints {
+    JSGenerateToJSObject,
+] dictionary MediaTrackSupportedConstraints {
+    boolean width = true;
+    boolean height = true;
+    boolean aspectRatio = true;
+    boolean frameRate = true;
+    boolean facingMode = true;
+    boolean volume = true;
+    boolean sampleRate = true;
+    boolean sampleSize = true;
+    boolean echoCancellation = true;
+    boolean deviceId = true;
+    boolean groupId = true;
 };
-
