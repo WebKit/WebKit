@@ -73,22 +73,13 @@ RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const S
     }
 
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override { return m_capabilities; }
-    const RealtimeMediaSourceSettings& settings() const override;
+    const RealtimeMediaSourceSettings& settings() const override { return m_currentSettings; }
 
     OwrMediaSource* mediaSource() const { return m_mediaSource; }
 
-protected:
-    virtual void initializeSettings() { };
-    virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) { };
-    RealtimeMediaSourceSupportedConstraints& supportedConstraints();
-
-    RealtimeMediaSourceSettings m_currentSettings;
-
 private:
-
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
-
+    RealtimeMediaSourceSettings m_currentSettings;
     OwrMediaSource* m_mediaSource;
 };
 

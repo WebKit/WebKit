@@ -39,8 +39,7 @@
 #include "OpenWebRTCUtilities.h"
 #include "PeerConnectionStates.h"
 #include "RTCDataChannelHandler.h"
-#include "RealtimeAudioSourceOwr.h"
-#include "RealtimeVideoSourceOwr.h"
+#include "RealtimeMediaSourceOwr.h"
 #include <owr/owr.h>
 #include <owr/owr_audio_payload.h>
 #include <owr/owr_crypto_utils.h>
@@ -351,21 +350,15 @@ Ref<RealtimeMediaSource> MediaEndpointOwr::createMutedRemoteSource(const String&
 {
     String name;
     String id("not used");
-    RefPtr<RealtimeMediaSourceOwr> source;
 
     switch (type) {
-    case RealtimeMediaSource::Audio:
-        name = "remote audio";
-        source = adoptRef(new RealtimeAudioSourceOwr(nullptr, id, type, name));
-        break;
-    case RealtimeMediaSource::Video:
-        name = "remote video";
-        source = adoptRef(new RealtimeVideoSourceOwr(nullptr, id, type, name));
-        break;
+    case RealtimeMediaSource::Audio: name = "remote audio"; break;
+    case RealtimeMediaSource::Video: name = "remote video"; break;
     case RealtimeMediaSource::None:
         ASSERT_NOT_REACHED();
     }
 
+    RefPtr<RealtimeMediaSourceOwr> source = adoptRef(new RealtimeMediaSourceOwr(nullptr, id, type, name));
     m_mutedRemoteSources.set(mid, source);
 
     return *source;

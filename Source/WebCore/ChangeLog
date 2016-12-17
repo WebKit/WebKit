@@ -1,3 +1,27 @@
+2016-12-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rollout r209860 OWR player shouldn't be selected for normal video playback
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::play):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::pause):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::load):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::stop):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnded):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnabledChanged):
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setSize):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h:
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::createMutedRemoteSource):
+        * platform/mediastream/openwebrtc/RealtimeAudioSourceOwr.h: Removed.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable):
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.cpp: Removed.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+        * platform/mediastream/openwebrtc/RealtimeVideoSourceOwr.h: Removed.
+
 2016-12-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         warning: the compiler can assume that the address of 'thisObject' will always evaluate to 'true' [-Waddress] in WebCore::JSHTMLDocument::getOwnPropertySlot

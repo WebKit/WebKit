@@ -1,3 +1,9 @@
+2016-12-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rollout r209860 OWR player shouldn't be selected for normal video playback
+
+        * platform/gtk/TestExpectations:
+
 2016-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Visual viewports: bottom fixed elements disappear behind the keyboard

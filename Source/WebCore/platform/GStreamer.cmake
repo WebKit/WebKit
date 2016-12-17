@@ -16,7 +16,6 @@ if (ENABLE_MEDIA_STREAM)
 
         platform/mediastream/openwebrtc/MediaEndpointOwr.cpp
         platform/mediastream/openwebrtc/OpenWebRTCUtilities.cpp
-        platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.cpp
         platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp
     )
 endif ()

@@ -314,6 +314,7 @@ webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html 
 webkit.org/b/79203 webaudio/mediastreamaudiodestinationnode.html [ Skip ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Skip ]
+webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Skip ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-remove-tracks.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/mock-media-source.html [ Skip ]
@@ -322,7 +323,6 @@ webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disa
 webkit.org/b/160996 fast/mediastream/apply-constraints-advanced.html [ Skip ]
 webkit.org/b/160996 fast/mediastream/apply-constraints-audio.html [ Skip ]
 webkit.org/b/160996 fast/mediastream/apply-constraints-video.html [ Skip ]
-webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Skip ]
 
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
@@ -820,6 +820,8 @@ webkit.org/b/153692 imported/blink/fast/css/first-letter-float-block.html [ Cras
 webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout Pass Crash ]
 
 webkit.org/b/153937 http/tests/misc/detach-during-notifyDone.html [ Crash Pass ]
+
+webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Timeout ]
 
 webkit.org/b/131546 media/track/track-in-band.html [ Crash Timeout Failure ]
 

@@ -22,10 +22,8 @@
 
 #if ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER) && USE(OPENWEBRTC)
 
-#include "AudioTrackPrivateMediaStream.h"
 #include "MediaPlayerPrivateGStreamerBase.h"
 #include "MediaStreamTrackPrivate.h"
-#include "VideoTrackPrivateMediaStream.h"
 
 typedef struct _OwrGstVideoRenderer OwrGstVideoRenderer;
 typedef struct _OwrGstAudioRenderer OwrGstAudioRenderer;
@@ -43,8 +41,6 @@ public:
     static void registerMediaEngine(MediaEngineRegistrar);
 
     void setSize(const IntSize&) final;
-
-    FloatSize naturalSize() const final;
 
 private:
     GstElement* createVideoSink() final;
@@ -91,7 +87,6 @@ private:
 
     bool canLoadPoster() const final { return false; }
     void setPoster(const String&) final { }
-    bool ended() const final { return m_ended; }
 
     // MediaStreamTrackPrivate::Observer implementation.
     void trackEnded(MediaStreamTrackPrivate&) final;
@@ -106,19 +101,14 @@ private:
     void loadingFailed(MediaPlayer::NetworkState error);
     void stop();
     void maybeHandleChangeMutedState(MediaStreamTrackPrivate&);
-    void disableMediaTracks();
 
     bool m_paused { true };
-    bool m_ended { false };
     RefPtr<MediaStreamTrackPrivate> m_videoTrack;
     RefPtr<MediaStreamTrackPrivate> m_audioTrack;
     GRefPtr<GstElement> m_audioSink;
     RefPtr<MediaStreamPrivate> m_streamPrivate;
     GRefPtr<OwrGstVideoRenderer> m_videoRenderer;
     GRefPtr<OwrGstAudioRenderer> m_audioRenderer;
-
-    HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;
-    HashMap<String, RefPtr<VideoTrackPrivateMediaStream>> m_videoTrackMap;
 };
 
 } // namespace WebCore
