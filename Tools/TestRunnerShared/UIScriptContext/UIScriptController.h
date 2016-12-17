@@ -130,6 +130,7 @@ public:
     
     JSObjectRef selectionRangeViewRects() const;
     JSObjectRef textSelectionCaretRect() const;
+    JSObjectRef inputViewBounds() const;
 
     void insertText(JSStringRef, int location, int length);
     void removeAllDynamicDictionaries();

@@ -45,12 +45,13 @@ public:
     VisibleContentRectUpdateInfo() = default;
 
     VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect,
-        const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& customFixedPositionRect,
+        const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& customFixedPositionRect,
         const WebCore::FloatSize& obscuredInset, double scale, bool inStableState, bool isFirstUpdateForNewViewSize, bool isChangingObscuredInsetsInteractively, bool allowShrinkToFit, bool enclosedInScrollableAncestorView,
         MonotonicTime timestamp, double horizontalVelocity, double verticalVelocity, double scaleChangeRate, uint64_t lastLayerTreeTransactionId)
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
         , m_unobscuredRectInScrollViewCoordinates(unobscuredRectInScrollViewCoordinates)
+        , m_unobscuredContentRectRespectingInputViewBounds(unobscuredContentRectRespectingInputViewBounds)
         , m_customFixedPositionRect(customFixedPositionRect)
         , m_obscuredInset(obscuredInset)
         , m_lastLayerTreeTransactionID(lastLayerTreeTransactionId)
@@ -70,6 +71,7 @@ public:
     const WebCore::FloatRect& exposedContentRect() const { return m_exposedContentRect; }
     const WebCore::FloatRect& unobscuredContentRect() const { return m_unobscuredContentRect; }
     const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
+    const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const { return m_unobscuredContentRectRespectingInputViewBounds; }
     const WebCore::FloatRect& customFixedPositionRect() const { return m_customFixedPositionRect; }
     const WebCore::FloatSize obscuredInset() const { return m_obscuredInset; }
 
@@ -96,6 +98,7 @@ private:
     WebCore::FloatRect m_exposedContentRect;
     WebCore::FloatRect m_unobscuredContentRect;
     WebCore::FloatRect m_unobscuredRectInScrollViewCoordinates;
+    WebCore::FloatRect m_unobscuredContentRectRespectingInputViewBounds;
     WebCore::FloatRect m_customFixedPositionRect; // When visual viewports are enabled, this is the layout viewport.
     WebCore::FloatSize m_obscuredInset;
     uint64_t m_lastLayerTreeTransactionID { 0 };

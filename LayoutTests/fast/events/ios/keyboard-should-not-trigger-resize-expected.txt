@@ -2,6 +2,6 @@
 PASS successfullyParsed is true
 
 TEST COMPLETE
-After showing the keyboard, window.innerHeight = 568
-After hiding the keyboard, window.innerHeight = 568
+After showing the keyboard, window.innerHeight = 548
+After hiding the keyboard, window.innerHeight = 548
 

@@ -220,7 +220,7 @@ static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRe
 }
 
 // FIXME: rename this when visual viewports are the default.
-WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect& unobscuredContentRect, const FloatRect& currentCustomFixedPositionRect, double displayedContentScale, UnobscuredRectConstraint constraint, bool visualViewportEnabled) const
+WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect& unobscuredContentRect, const FloatRect& unobscuredContentRectRespectingInputViewBounds, const FloatRect& currentCustomFixedPositionRect, double displayedContentScale, UnobscuredRectConstraint constraint, bool visualViewportEnabled) const
 {
     FloatRect constrainedUnobscuredRect = unobscuredContentRect;
     FloatRect documentRect = m_pageClient.documentRect();
@@ -232,8 +232,8 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
         constrainedUnobscuredRect.intersect(documentRect);
 
     double minimumScale = m_pageClient.minimumZoomScale();
-    
-    if (displayedContentScale < minimumScale) {
+    bool isBelowMinimumScale = displayedContentScale < minimumScale;
+    if (isBelowMinimumScale) {
         const CGFloat slope = 12;
         CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
             
@@ -243,22 +243,36 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
         constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
     }
     
-    if (visualViewportEnabled) {
-        FloatRect layoutViewportRect = currentCustomFixedPositionRect;
-        
-        // The layout viewport is never smaller than m_baseLayoutViewportSize, and never be smaller than the constrainedUnobscuredRect.
-        FloatSize constrainedSize = m_baseLayoutViewportSize;
+    if (!visualViewportEnabled)
+        return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), LayoutSize(documentRect.size()), displayedContentScale, false, StickToViewportBounds);
+
+    FloatRect layoutViewportRect = currentCustomFixedPositionRect;
+
+    // The layout viewport is never smaller than m_baseLayoutViewportSize, and never be smaller than the constrainedUnobscuredRect.
+    FloatSize constrainedSize = m_baseLayoutViewportSize;
+    if (isBelowMinimumScale)
         layoutViewportRect.setSize(constrainedSize.expandedTo(constrainedUnobscuredRect.size()));
+    else
+        layoutViewportRect.setSize(constrainedSize.expandedTo(unobscuredContentRect.size()));
 
-        LayoutPoint layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(constrainedUnobscuredRect), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect));
-        layoutViewportRect.setLocation(layoutViewportOrigin);
+    LayoutPoint layoutViewportOrigin;
+    if (isBelowMinimumScale)
+        layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(constrainedUnobscuredRect), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect));
+    else
+        layoutViewportOrigin = FrameView::computeLayoutViewportOrigin(enclosingLayoutRect(unobscuredContentRectRespectingInputViewBounds), m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, enclosingLayoutRect(layoutViewportRect));
 
-        if (layoutViewportRect != currentCustomFixedPositionRect)
-            LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeCustomFixedPositionRect: new layout viewport  " << layoutViewportRect);
-        return layoutViewportRect;
+    if (constraint == UnobscuredRectConstraint::ConstrainedToDocumentRect) {
+        // The max stable layout viewport origin really depends on the size of the layout viewport itself, so we need to adjust the location of the layout viewport one final time to make sure it does not end up out of bounds of the document.
+        // Without this adjustment (and with using the non-constrained unobscuredContentRect's size as the size of the layout viewport) the layout viewport can be pushed past the bounds of the document during rubber-banding, and cannot be pushed
+        // back in until the user scrolls back in the other direction.
+        layoutViewportOrigin.setX(clampTo<float>(layoutViewportOrigin.x(), 0, documentRect.width() - layoutViewportRect.width()));
+        layoutViewportOrigin.setY(clampTo<float>(layoutViewportOrigin.y(), 0, documentRect.height() - layoutViewportRect.height()));
     }
+    layoutViewportRect.setLocation(layoutViewportOrigin);
     
-    return FrameView::rectForViewportConstrainedObjects(enclosingLayoutRect(constrainedUnobscuredRect), LayoutSize(documentRect.size()), displayedContentScale, false, StickToViewportBounds);
+    if (layoutViewportRect != currentCustomFixedPositionRect)
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeCustomFixedPositionRect: new layout viewport  " << layoutViewportRect);
+    return layoutViewportRect;
 }
 
 void WebPageProxy::overflowScrollViewWillStartPanGesture()

@@ -5,12 +5,12 @@ After focus first field
 
 tap location	{ x: 38.000, y: 446.000 }
 scale	0.749
-visibleRect	{ left: 0.000, top: 279.552, width: 427.000, height: 757.925 }
+visibleRect	{ left: 0.000, top: 279.552, width: 427.000, height: 731.237 }
 After move to second field
 
 scale	0.749
-visibleRect	{ left: 0.000, top: 700.547, width: 427.000, height: 757.925 }
+visibleRect	{ left: 0.000, top: 700.547, width: 427.000, height: 731.237 }
 After move to first field
 
 scale	0.749
-visibleRect	{ left: 0.000, top: 279.552, width: 427.000, height: 757.925 }
+visibleRect	{ left: 0.000, top: 279.552, width: 427.000, height: 731.237 }

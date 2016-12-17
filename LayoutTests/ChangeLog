@@ -1,3 +1,49 @@
+2016-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Visual viewports: bottom fixed elements disappear behind the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=165983
+        <rdar://problem/29409852>
+
+        Reviewed by Simon Fraser.
+
+        Tweaked fixed-caret-position-after-scroll.html to account for the keyboard height, and also added a new layout
+        test, fixed-element-on-bottom-with-keyboard.html, which checks that the layout viewport does not change before
+        and after showing the keyboard, and that scrolling past the end of the document does not bump the layout
+        viewport past document bounds.
+
+        The rest of the changes here involve rebaselining existing tests to account for the height of the web view no
+        longer being equal to the height of the window.
+
+        * editing/caret/ios/absolute-caret-position-after-scroll-expected.txt:
+        * editing/caret/ios/absolute-caret-position-after-scroll.html:
+        * editing/caret/ios/fixed-caret-position-after-scroll-expected.txt:
+        * editing/caret/ios/fixed-caret-position-after-scroll.html:
+        * editing/selection/ios/absolute-selection-after-scroll.html:
+        * editing/selection/ios/fixed-selection-after-scroll.html:
+        * fast/events/ios/keyboard-scrolling-distance-expected.txt:
+        * fast/events/ios/keyboard-should-not-trigger-resize-expected.txt:
+        * fast/events/ios/viewport-zooms-from-element-to-initial-scale-expected.txt:
+        * fast/forms/ios/accessory-bar-navigation-expected.txt:
+        * fast/forms/ios/focus-input-in-fixed-expected.txt:
+        * fast/forms/ios/focus-input-in-iframe-expected.txt:
+        * fast/forms/ios/focus-input-via-button-expected.txt:
+        * fast/forms/ios/focus-input-via-button-no-scaling-expected.txt:
+        * fast/forms/ios/focus-long-textarea-expected.txt:
+        * fast/forms/ios/zoom-after-input-tap-expected.txt:
+        * fast/forms/ios/zoom-after-input-tap-wide-input-expected.txt:
+        * fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt:
+        * fast/viewport/ios/width-is-device-width-expected.txt:
+        * fast/visual-viewport/ios/fixed-element-on-bottom-with-keyboard-expected.txt: Added.
+        * fast/visual-viewport/ios/fixed-element-on-bottom-with-keyboard.html: Added.
+        * fast/visual-viewport/ios/zoomed-focus-in-fixed-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt:
+        * platform/ios-simulator/fast/scrolling/ios/touch-stacking-expected.txt:
+        * scrollingcoordinator/ios/non-stable-viewport-scroll-expected.txt:
+        * scrollingcoordinator/ios/ui-scrolling-tree-expected.txt:
+
 2016-12-17  Jer Noble  <jer.noble@apple.com>
 
         Add implementation for navigator.requestMediaKeySystemAccess()

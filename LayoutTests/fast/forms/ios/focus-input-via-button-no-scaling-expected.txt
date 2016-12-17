@@ -4,4 +4,4 @@ Click to focus input
 
 tap location	{ x: 20.000, y: 62.000 }
 scale	0.749
-visibleRect	{ left: 0.000, top: 717.227, width: 427.000, height: 757.925 }
+visibleRect	{ left: 0.000, top: 717.227, width: 427.000, height: 731.237 }

@@ -2162,6 +2162,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         unobscuredRect:unobscuredRectInContentCoordinates
         unobscuredRectInScrollViewCoordinates:unobscuredRect
         obscuredInset:CGSizeMake(_obscuredInsets.left, _obscuredInsets.top)
+        inputViewBounds:_inputViewBounds
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
         inStableState:inStableState
         isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
@@ -4750,6 +4751,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView _updateChangedSelection];
 
     return [[_contentView valueForKeyPath:@"interactionAssistant.selectionView.selection.caretRect"] CGRectValue];
+}
+
+- (CGRect)_inputViewBounds
+{
+    return _inputViewBounds;
 }
 
 - (NSArray<NSValue *> *)_uiTextSelectionRects

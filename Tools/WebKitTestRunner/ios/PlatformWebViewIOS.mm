@@ -109,10 +109,15 @@ static Vector<WebKitTestRunnerWindow*> allWindows;
 
 namespace WTR {
 
-static CGRect viewRectForWindowRect(CGRect windowRect)
+enum class WebViewSizingMode {
+    Default,
+    HeightRespectsStatusBar
+};
+
+static CGRect viewRectForWindowRect(CGRect windowRect, WebViewSizingMode mode)
 {
     CGFloat statusBarBottom = CGRectGetMaxY([[UIApplication sharedApplication] statusBarFrame]);
-    return CGRectMake(windowRect.origin.x, windowRect.origin.y + statusBarBottom, windowRect.size.width, windowRect.size.height);
+    return CGRectMake(windowRect.origin.x, windowRect.origin.y + statusBarBottom, windowRect.size.width, windowRect.size.height - (mode == WebViewSizingMode::HeightRespectsStatusBar ? statusBarBottom : 0));
 }
 
 PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const TestOptions& options)
@@ -129,7 +134,7 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     [m_window setRootViewController:viewController];
     [viewController release];
 
-    m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect) configuration:configuration];
+    m_view = [[TestRunnerWKWebView alloc] initWithFrame:viewRectForWindowRect(rect, WebViewSizingMode::Default) configuration:configuration];
 
     [m_window.rootViewController.view addSubview:m_view];
     [m_window makeKeyAndVisible];
@@ -195,7 +200,7 @@ WKRect PlatformWebView::windowFrame()
 void PlatformWebView::setWindowFrame(WKRect frame)
 {
     [m_window setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
-    [platformView() setFrame:viewRectForWindowRect(CGRectMake(0, 0, frame.size.width, frame.size.height))];
+    [platformView() setFrame:viewRectForWindowRect(CGRectMake(0, 0, frame.size.width, frame.size.height), WebViewSizingMode::HeightRespectsStatusBar)];
 }
 
 void PlatformWebView::didInitializeClients()

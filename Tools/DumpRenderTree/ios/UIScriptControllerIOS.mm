@@ -271,6 +271,11 @@ JSObjectRef UIScriptController::textSelectionCaretRect() const
     return nullptr;
 }
 
+JSObjectRef UIScriptController::inputViewBounds() const
+{
+    return nullptr;
+}
+
 void UIScriptController::removeAllDynamicDictionaries()
 {
 }

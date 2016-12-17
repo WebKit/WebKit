@@ -1,3 +1,32 @@
+2016-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Visual viewports: bottom fixed elements disappear behind the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=165983
+        <rdar://problem/29409852>
+
+        Reviewed by Simon Fraser.
+
+        Add support for UIScriptController.inputViewBounds, which UI-side scripts may use to fetch the bounding rect of
+        the keyboard when it is up.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::inputViewBounds):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::inputViewBounds):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::viewRectForWindowRect):
+
+        Previously, we accounted for the status bar height by translating the entire web view down by the height of the
+        status bar. However, we did not shrink the height of the web view itself, which means that for tests which
+        involve scrolling past the end of the document, the bottom strip of the web view is out of bounds of the window.
+
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::setWindowFrame):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::inputViewBounds):
+
 2016-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deleting a character converted from pinyin after an image causes a Safari crash

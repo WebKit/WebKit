@@ -2,5 +2,5 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 Before pressing the spacebar, window.scrollY = 0
-After pressing the spacebar, window.scrollY = 302
+After pressing the spacebar, window.scrollY = 291
 

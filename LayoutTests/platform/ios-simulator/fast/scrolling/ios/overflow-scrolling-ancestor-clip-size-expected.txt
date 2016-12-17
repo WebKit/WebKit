@@ -1,9 +1,9 @@
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 330.00 568.00)
+  (bounds 330.00 548.00)
   (children 1
     (GraphicsLayer
-      (bounds 330.00 568.00)
+      (bounds 330.00 548.00)
       (contentsOpaque 1)
       (children 1
         (GraphicsLayer

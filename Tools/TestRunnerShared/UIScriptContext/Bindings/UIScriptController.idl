@@ -206,6 +206,7 @@ interface UIScriptController {
 
     readonly attribute object selectionRangeViewRects; // An array of objects with 'left', 'top', 'width', and 'height' properties.
     readonly attribute object textSelectionCaretRect; // An object with 'left', 'top', 'width', 'height' properties.
+    readonly attribute object inputViewBounds;
 
     void insertText(DOMString text, long location, long length);
     void removeAllDynamicDictionaries();

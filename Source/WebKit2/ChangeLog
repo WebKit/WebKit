@@ -1,3 +1,58 @@
+2016-12-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Visual viewports: bottom fixed elements disappear behind the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=165983
+        <rdar://problem/29409852>
+
+        Reviewed by Simon Fraser.
+
+        Accounts for input view bounds in WebPageProxy::computeCustomFixedPositionRect. To do this, we introduce and
+        pass unobscuredContentRectRespectingInputViewBounds along with the regular unobscuredContentRect (which does not
+        respect the obscuring keyboard rect). This unobscuredContentRectRespectingInputViewBounds is then used when
+        computing the origin of the updated layout viewport rect (and also, when we are _not_ below minimum scale),
+        
+        Additionally, the size is computed using the (unconstrained) unobscured rect. This is because we previously
+        would use the document-constrained version of the unobscured rect, which caused the layout viewport to shrink
+        when approaching the max scroll extents of the document while the keyboard is up, since the unobscured rect
+        would spill out of the document rect. However, using this unconstrained rect's size also means that if the user
+        rubber-bands out of the document rect, we would end up pushing the layout viewport rect out of the document,
+        with no way of adjusting it back in without the user scrolling to push the layout viewport into back document
+        bounds. To address this, we move the layout rect to be within document bounds after computing its size and
+        location.
+
+        Added a new layout test: fast/visual-viewport/ios/fixed-element-on-bottom-with-keyboard.html, and also tweaked
+        fixed-caret-position-after-scroll.html to cover these changes.
+
+        * Shared/VisibleContentRectUpdateInfo.cpp:
+        (WebKit::operator<<):
+        * Shared/VisibleContentRectUpdateInfo.h:
+        (WebKit::VisibleContentRectUpdateInfo::VisibleContentRectUpdateInfo):
+        (WebKit::VisibleContentRectUpdateInfo::unobscuredContentRectRespectingInputViewBounds):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateContentRectsWithState:]):
+        (-[WKWebView _inputViewBounds]):
+
+        Returns the current bounds of the input view. For testing purposes.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::unobscuredContentRectRespectingInputViewBounds):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::customFixedPositionRect):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect:inputViewBounds:scale:]):
+
+        Helper to compute the unobscured rect, accounting for the bounds of the current input view.
+
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:inputViewBounds:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]):
+        (-[WKContentView _didCommitLayerTree:]):
+        (-[WKContentView didUpdateVisibleRect:unobscuredRect:unobscuredRectInScrollViewCoordinates:obscuredInset:scale:minimumScale:inStableState:isChangingObscuredInsetsInteractively:enclosedInScrollableAncestorView:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
 2016-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deleting a character converted from pinyin after an image causes a Safari crash

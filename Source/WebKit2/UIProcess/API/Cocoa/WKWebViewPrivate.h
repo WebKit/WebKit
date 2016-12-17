@@ -291,6 +291,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 
 @property (nonatomic, readonly) NSArray<NSValue *> *_uiTextSelectionRects WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readonly) CGRect _uiTextCaretRect WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) CGRect _inputViewBounds WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
