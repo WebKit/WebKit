@@ -55,14 +55,6 @@ function isUInt32(obj)
     return "" + (obj >>> 0) === obj;
 }
 
-function endsWith(str, suffix)
-{
-    var position = str.length - suffix.length;
-    if (position < 0)
-        return false;
-    return str.indexOf(suffix, position) === position;
-}
-
 function isSymbol(obj)
 {
     return typeof obj === "symbol";
@@ -653,7 +645,7 @@ InjectedScript.prototype = {
                 }
 
                 if (nativeGettersAsValues) {
-                    if (endsWith(String(descriptor.get), "[native code]\n}") || (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
+                    if (String(descriptor.get).endsWith("[native code]\n}") || (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
                         // Developers may create such a descriptor, so we should be resilient:
                         // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
                         var fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);
@@ -815,7 +807,7 @@ InjectedScript.prototype = {
 
         // NodeList in JSC is a function, check for array prior to this.
         if (typeof obj === "function")
-            return toString(obj);
+            return obj.toString();
 
         // If Object, try for a better name from the constructor.
         if (className === "Object") {

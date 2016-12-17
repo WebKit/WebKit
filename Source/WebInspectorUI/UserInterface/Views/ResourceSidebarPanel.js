@@ -320,7 +320,8 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             }
         }
 
-        parentFolderTreeElement.representedObject.add(script);
+        if (parentFolderTreeElement)
+            parentFolderTreeElement.representedObject.add(script);
 
         var scriptTreeElement = new WebInspector.ScriptTreeElement(script);
 

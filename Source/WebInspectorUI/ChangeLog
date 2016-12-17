@@ -1,3 +1,20 @@
+2016-12-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JSContext Inspector: Avoid some possible exceptions inspecting a JSContext
+        https://bugs.webkit.org/show_bug.cgi?id=165986
+        <rdar://problem/29551379>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        There will not be a main frame if we are debugging a JSContext.
+        In those cases do not change the title.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype._scriptWasAdded):
+        There may not be a parent folder in JavaScript inspection. In that case
+        ScriptTreeElements are added to the Top Level, not folders.
+
 2016-12-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r209882): Opening find banner in editor causes UI to hang

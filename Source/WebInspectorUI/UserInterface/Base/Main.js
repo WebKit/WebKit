@@ -692,7 +692,8 @@ WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBro
 WebInspector.updateWindowTitle = function()
 {
     var mainFrame = this.frameResourceManager.mainFrame;
-    console.assert(mainFrame);
+    if (!mainFrame)
+        return;
 
     var urlComponents = mainFrame.mainResource.urlComponents;
 
