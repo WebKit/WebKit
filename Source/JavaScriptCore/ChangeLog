@@ -1,3 +1,17 @@
+2016-12-16  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: We still have some incorrect parsing productions inside unreachable code
+        https://bugs.webkit.org/show_bug.cgi?id=165981
+
+        Reviewed by Keith Miller.
+
+        This hardens our parsing for CallIndirect and Loop/Block/If to be exactly like their reachable variant.
+        
+        It also fixes a more nefarious bug in which we were decoding an extra varuint32
+        for Br/BrIf inside unreachable code.
+
+        * wasm/WasmFunctionParser.h:
+
 2016-12-16  Filip Pizlo  <fpizlo@apple.com>
 
         CellState should have members with accurate names

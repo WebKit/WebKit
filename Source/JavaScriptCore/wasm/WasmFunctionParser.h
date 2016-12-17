@@ -527,8 +527,8 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     case If:
     case Block: {
         m_unreachableBlocks++;
-        int8_t unused;
-        WASM_PARSER_FAIL_IF(!parseInt7(unused), "can't get inline type for ", op, " in unreachable context");
+        Type unused;
+        WASM_PARSER_FAIL_IF(!parseResultType(unused), "can't get inline type for ", op, " in unreachable context");
         return { };
     }
 
@@ -545,13 +545,17 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
+    case CallIndirect: {
+        uint32_t unused;
+        uint8_t unused2;
+        WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get call_indirect's signature index in unreachable context");
+        WASM_PARSER_FAIL_IF(!parseVarUInt1(unused2), "can't get call_indirect's reserved byte in unreachable context");
+        return { };
+    }
 
     // two immediate cases
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
-    FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
-    case Br:
-    case BrIf:
-    case CallIndirect: {
+    FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get first immediate for ", op, " in unreachable context");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get second immediate for ", op, " in unreachable context");
@@ -568,6 +572,8 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     case TeeLocal:
     case GetGlobal:
     case SetGlobal:
+    case Br:
+    case BrIf:
     case Call: {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", op, " in unreachable context");
