@@ -747,27 +747,28 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 
 void FrameView::applyPaginationToViewport()
 {
-    Document* document = frame().document();
-    auto* documentElement = document->documentElement();
-    RenderElement* documentRenderer = documentElement ? documentElement->renderer() : nullptr;
-    RenderElement* documentOrBodyRenderer = documentRenderer;
-    auto* body = document->body();
-    if (body && body->renderer())
-        documentOrBodyRenderer = documentRenderer->style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(*documentElement) ? body->renderer() : documentRenderer;
-
-    Pagination pagination;
-
-    if (!documentOrBodyRenderer) {
-        setPagination(pagination);
+    auto* document = frame().document();
+    auto* documentElement = document ? document->documentElement() : nullptr;
+    if (!documentElement || !documentElement->renderer()) {
+        setPagination(Pagination());
         return;
     }
 
+    auto& documentRenderer = *documentElement->renderer();
+    auto* documentOrBodyRenderer = &documentRenderer;
+
+    auto* body = document->body();
+    if (body && body->renderer()) {
+        documentOrBodyRenderer = documentRenderer.style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(*documentElement) ?
+            body->renderer() : &documentRenderer;
+    }
+
+    Pagination pagination;
     EOverflow overflowY = documentOrBodyRenderer->style().overflowY();
     if (overflowY == OPAGEDX || overflowY == OPAGEDY) {
         pagination.mode = WebCore::paginationModeForRenderStyle(documentOrBodyRenderer->style());
         pagination.gap = static_cast<unsigned>(documentOrBodyRenderer->style().columnGap());
     }
-
     setPagination(pagination);
 }
 

@@ -1,3 +1,15 @@
+2016-12-16  Zalan Bujtas  <zalan@apple.com>
+
+        Possible nullptr dereference when applying pagination to viewport
+        https://bugs.webkit.org/show_bug.cgi?id=165926
+
+        Reviewed by Simon Fraser.
+
+        Static analysis found a code path where a null dereference could occur.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyPaginationToViewport):
+
 2016-12-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix the Windows build.
