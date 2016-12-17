@@ -4799,7 +4799,7 @@ bool BytecodeGenerator::emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, La
     size_t scopeDelta = labelScopeDepth() - targetLabelScopeDepth;
     ASSERT(scopeDelta <= m_controlFlowScopeStack.size());
     if (!scopeDelta)
-        return nullptr; // No finallys to thread through.
+        return false; // No finallys to thread through.
 
     ControlFlowScope* topScope = &m_controlFlowScopeStack.last();
     ControlFlowScope* bottomScope = &m_controlFlowScopeStack.last() - scopeDelta;

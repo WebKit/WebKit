@@ -1,3 +1,12 @@
+2016-12-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix GCC 6 build failure after r209952
+
+        Return false, not nullptr, in function returning bool.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpViaFinallyIfNeeded):
+
 2016-12-16  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: We still have some incorrect parsing productions inside unreachable code
