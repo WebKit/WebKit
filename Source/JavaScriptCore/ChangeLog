@@ -1,5 +1,17 @@
 2016-12-17  Saam Barati  <sbarati@apple.com>
 
+        WebAssembly: WasmB3IRGenerator uses WarmAny as a ValueRep but expects the incoming value to be a register
+        https://bugs.webkit.org/show_bug.cgi?id=165989
+
+        Reviewed by Mark Lam.
+
+        The input should be constrained to a register to match what
+        the patchpoint code expects.
+
+        * wasm/WasmB3IRGenerator.cpp:
+
+2016-12-17  Saam Barati  <sbarati@apple.com>
+
         WebAssembly: Change a RELEASE_ASSERT_NOT_REACHED to a jit.breakpoint() for now to allow us to run some wasm benchmarks
         https://bugs.webkit.org/show_bug.cgi?id=165990
 

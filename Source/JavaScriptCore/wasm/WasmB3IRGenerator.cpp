@@ -988,7 +988,7 @@ auto B3IRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& re
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, Origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
+    patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -1008,7 +1008,7 @@ auto B3IRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expression
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, Origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->append(ConstrainedValue(arg, ValueRep::WarmAny));
+    patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
