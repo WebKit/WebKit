@@ -1164,7 +1164,6 @@ set(WebCore_SOURCES
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp
     bindings/js/JSMediaKeySessionCustom.cpp
-    bindings/js/JSMediaKeySystemAccessCustom.cpp
     bindings/js/JSMessageChannelCustom.cpp
     bindings/js/JSMessageEventCustom.cpp
     bindings/js/JSMessagePortCustom.cpp
@@ -3041,6 +3040,7 @@ endif ()
 
 if (ENABLE_ENCRYPTED_MEDIA)
     list(APPEND WebCore_SOURCES
+        Modules/encryptedmedia/CDM.cpp
         Modules/encryptedmedia/MediaKeyMessageEvent.cpp
         Modules/encryptedmedia/MediaKeySession.cpp
         Modules/encryptedmedia/MediaKeyStatusMap.cpp
@@ -3055,11 +3055,13 @@ if (ENABLE_ENCRYPTED_MEDIA)
     list(APPEND WebCore_IDL_FILES
         Modules/encryptedmedia/MediaKeyMessageEvent.idl
         Modules/encryptedmedia/MediaKeySession.idl
+        Modules/encryptedmedia/MediaKeySessionType.idl
         Modules/encryptedmedia/MediaKeyStatusMap.idl
         Modules/encryptedmedia/MediaKeySystemAccess.idl
         Modules/encryptedmedia/MediaKeySystemConfiguration.idl
         Modules/encryptedmedia/MediaKeySystemMediaCapability.idl
         Modules/encryptedmedia/MediaKeys.idl
+        Modules/encryptedmedia/MediaKeysRequirement.idl
         Modules/encryptedmedia/NavigatorEME.idl
 
         html/MediaEncryptedEvent.idl
@@ -3453,6 +3455,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/Internals.idl
     testing/MallocStatistics.idl
     testing/MemoryInfo.idl
+    testing/MockCDMFactory.idl
     testing/MockContentFilterSettings.idl
     testing/MockPageOverlay.idl
     testing/TypeConversions.idl
@@ -3469,6 +3472,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/GCObservation.cpp
     testing/InternalSettings.cpp
     testing/Internals.cpp
+    testing/MockCDMFactory.cpp
     testing/MockGamepad.cpp
     testing/MockGamepadProvider.cpp
     testing/MockPageOverlay.cpp

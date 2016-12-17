@@ -1,3 +1,111 @@
+2016-12-17  Jer Noble  <jer.noble@apple.com>
+
+        Add implementation for navigator.requestMediaKeySystemAccess()
+        https://bugs.webkit.org/show_bug.cgi?id=165850
+
+        Reviewed by Eric Carlson.
+
+        Test: media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html
+
+        Add an implementation of NavigatorEME::requestMediaKeySystemAccess() as well as the CDM
+        object on which it depends.
+
+        * Modules/encryptedmedia/CDM.cpp: Added.
+        (WebCore::cdmFactories):
+        (WebCore::createCDMPrivateForKeySystem):
+        (WebCore::CDM::registerCDMFactory):
+        (WebCore::CDM::unregisterCDMFactory):
+        (WebCore::CDM::supportsKeySystem):
+        (WebCore::CDM::create):
+        (WebCore::CDM::CDM):
+        (WebCore::CDM::getSupportedConfiguration):
+        (WebCore::CDM::doSupportedConfigurationStep):
+        (WebCore::CDM::isPersistentType):
+        (WebCore::CDM::getSupportedCapabilitiesForAudioVideoType):
+        (WebCore::CDM::getConsentStatus):
+        * Modules/encryptedmedia/CDM.h: Added.
+        (WebCore::CDMFactory::~CDMFactory):
+        (WebCore::CDM::keySystem):
+        (WebCore::CDM::createWeakPtr):
+        * Modules/encryptedmedia/CDMPrivate.h: Added.
+        (WebCore::CDMPrivate::~CDMPrivate):
+        * Modules/encryptedmedia/NavigatorEME.cpp:
+        (WebCore::NavigatorEME::requestMediaKeySystemAccess):
+        (WebCore::tryNextSupportedConfiguration):
+        * Modules/encryptedmedia/NavigatorEME.h:
+        * Modules/encryptedmedia/NavigatorEME.idl:
+
+        To aid in testing, a new Internals object is added, MockCDMFactory, which can be
+        controlled by LayoutTests to change the behavior of the Mock objects it creates.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::registerMockCDM):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/MockCDMFactory.cpp: Added.
+        (WebCore::MockCDMFactory::MockCDMFactory):
+        (WebCore::MockCDMFactory::~MockCDMFactory):
+        (WebCore::MockCDMFactory::unregister):
+        (WebCore::MockCDMFactory::supportsKeySystem):
+        (WebCore::MockCDMFactory::createCDM):
+        (WebCore::MockCDM::MockCDM):
+        (WebCore::MockCDM::supportsInitDataType):
+        (WebCore::MockCDM::supportsConfiguration):
+        (WebCore::MockCDM::supportsConfigurationWithRestrictions):
+        (WebCore::MockCDM::supportsSessionTypeWithConfiguration):
+        (WebCore::MockCDM::supportsRobustness):
+        (WebCore::MockCDM::distinctiveIdentifiersRequirement):
+        (WebCore::MockCDM::persistentStateRequirement):
+        (WebCore::MockCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable):
+        * testing/MockCDMFactory.h: Added.
+        (WebCore::MockCDMFactory::create):
+        (WebCore::MockCDMFactory::supportedDataTypes):
+        (WebCore::MockCDMFactory::setSupportedDataTypes):
+        (WebCore::MockCDMFactory::supportedRobustness):
+        (WebCore::MockCDMFactory::setSupportedRobustness):
+        (WebCore::MockCDMFactory::distinctiveIdentifiersRequirement):
+        (WebCore::MockCDMFactory::setDistinctiveIdentifiersRequirement):
+        (WebCore::MockCDMFactory::persistentStateRequirement):
+        (WebCore::MockCDMFactory::setPersistentStateRequirement):
+        * testing/MockCDMFactory.idl: Added.
+
+        Move the MediaKeySessionType definition out of the MediaKeys.idl file and into its own.
+        Move the MediaKeysRequiriment definition out of the MediaKeySystemConfiguration.idl file
+        and into its own. Generally fix up the .idl files so that they properly work with their
+        implementation files.
+
+        * Modules/encryptedmedia/MediaKeySessionType.idl: Added.
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        (WebCore::MediaKeySystemAccess::create):
+        (WebCore::MediaKeySystemAccess::MediaKeySystemAccess):
+        (WebCore::MediaKeySystemAccess::keySystem): Deleted.
+        (WebCore::MediaKeySystemAccess::getConfiguration): Deleted.
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+        (WebCore::MediaKeySystemAccess::keySystem):
+        (WebCore::MediaKeySystemAccess::getConfiguration):
+        (WebCore::MediaKeySystemAccess::create): Deleted.
+        * Modules/encryptedmedia/MediaKeySystemAccess.idl:
+        * Modules/encryptedmedia/MediaKeySystemConfiguration.h:
+        * Modules/encryptedmedia/MediaKeySystemConfiguration.idl:
+        * Modules/encryptedmedia/MediaKeySystemMediaCapability.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/encryptedmedia/MediaKeysRequirement.idl: Added.
+        * Modules/encryptedmedia/MediaKeysRestrictions.h: Added.
+        * bindings/js/JSMediaKeySystemAccessCustom.cpp: Removed.
+
+        As some of these enums are referenced in the Internals project, they need to be exported
+        from WebCore correctly. Teach the code generator how to export the symbols generated by
+        enums.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationHeaderContent):
+
+        Add new files to the project.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-12-17  Darin Adler  <darin@apple.com>
 
         Remove WebCore::Dictionary, which is now unused

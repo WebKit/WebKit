@@ -31,26 +31,25 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDM.h"
 #include "MediaKeySystemConfiguration.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-MediaKeySystemAccess::MediaKeySystemAccess() = default;
+Ref<MediaKeySystemAccess> MediaKeySystemAccess::create(const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
+{
+    return adoptRef(*new MediaKeySystemAccess(keySystem, WTFMove(configuration), WTFMove(implementation)));
+}
+
+MediaKeySystemAccess::MediaKeySystemAccess(const String& keySystem, MediaKeySystemConfiguration&& configuration, Ref<CDM>&& implementation)
+    : m_keySystem(keySystem)
+    , m_configuration(new MediaKeySystemConfiguration(WTFMove(configuration)))
+    , m_implementation(WTFMove(implementation))
+{
+}
 
 MediaKeySystemAccess::~MediaKeySystemAccess() = default;
-
-const String& MediaKeySystemAccess::keySystem() const
-{
-    notImplemented();
-    return m_keySystem;
-}
-
-const MediaKeySystemConfiguration& MediaKeySystemAccess::getConfiguration() const
-{
-    notImplemented();
-    return m_configuration;
-}
 
 void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&&)
 {

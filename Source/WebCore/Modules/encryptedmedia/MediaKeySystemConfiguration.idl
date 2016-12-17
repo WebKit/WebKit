@@ -26,14 +26,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum MediaKeysRequirement {
-    "required",
-    "optional",
-    "not-allowed"
-};
-
 [
-    Conditional=ENCRYPTED_MEDIA
+    Conditional=ENCRYPTED_MEDIA,
+    JSGenerateToJSObject
 ] dictionary MediaKeySystemConfiguration {
     DOMString label = "";
     sequence<DOMString> initDataTypes = [];
@@ -41,5 +36,5 @@ enum MediaKeysRequirement {
     sequence<MediaKeySystemMediaCapability> videoCapabilities = [];
     MediaKeysRequirement distinctiveIdentifier = "optional";
     MediaKeysRequirement persistentState = "optional";
-    sequence<DOMString> sessionTypes;
+    sequence<MediaKeySessionType> sessionTypes;
 };

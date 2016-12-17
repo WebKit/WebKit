@@ -162,6 +162,10 @@
 #include "LegacyMockCDM.h"
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+#include "MockCDMFactory.h"
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 #include "CaptionUserPreferences.h"
 #include "PageGroup.h"
@@ -2608,6 +2612,14 @@ void Internals::initializeMockCDM()
         MockCDM::supportsKeySystem, MockCDM::supportsKeySystemAndMimeType);
 }
 #endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+Ref<MockCDMFactory> Internals::registerMockCDM()
+{
+    return MockCDMFactory::create();
+}
+#endif
+
 
 String Internals::markerTextForListItem(Element& element)
 {

@@ -1,3 +1,15 @@
+2016-12-17  Jer Noble  <jer.noble@apple.com>
+
+        Add implementation for navigator.requestMediaKeySystemAccess()
+        https://bugs.webkit.org/show_bug.cgi?id=165850
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess-expected.txt: Added.
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-12-17  Youenn Fablet  <youenn@apple.com>
 
         Cloned CachedResource should not have an empty response

@@ -31,13 +31,78 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDM.h"
+#include "Document.h"
+#include "JSMediaKeySystemAccess.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-void NavigatorEME::requestMediaKeySystemAccess(Navigator&, const String&, Vector<MediaKeySystemConfiguration>&&, Ref<DeferredPromise>&&)
+static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&&);
+
+void NavigatorEME::requestMediaKeySystemAccess(Navigator&, Document& document, const String& keySystem, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, Ref<DeferredPromise>&& promise)
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#dom-navigator-requestmediakeysystemaccess
+    // W3C Editor's Draft 09 November 2016
+
+    // When this method is invoked, the user agent must run the following steps:
+    // 1. If keySystem is the empty string, return a promise rejected with a newly created TypeError.
+    // 2. If supportedConfigurations is empty, return a promise rejected with a newly created TypeError.
+    if (keySystem.isEmpty() || supportedConfigurations.isEmpty()) {
+        promise->reject(TypeError);
+        return;
+    }
+
+    document.postTask([keySystem, supportedConfigurations = WTFMove(supportedConfigurations), promise = WTFMove(promise), &document] (ScriptExecutionContext&) mutable {
+        // 3. Let document be the calling context's Document.
+        // 4. Let origin be the origin of document.
+        // 5. Let promise be a new promise.
+        // 6. Run the following steps in parallel:
+        // 6.1. If keySystem is not one of the Key Systems supported by the user agent, reject promise with a NotSupportedError.
+        //      String comparison is case-sensitive.
+        if (!CDM::supportsKeySystem(keySystem)) {
+            promise->reject(NOT_SUPPORTED_ERR);
+            return;
+        }
+
+        // 6.2. Let implementation be the implementation of keySystem.
+        RefPtr<CDM> implementation = CDM::create(document, keySystem);
+        tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise));
+    });
+}
+
+static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<MediaKeySystemConfiguration>&& supportedConfigurations, RefPtr<DeferredPromise>&& promise)
+{
+    // 6.3. For each value in supportedConfigurations:
+    if (!supportedConfigurations.isEmpty()) {
+        // 6.3.1. Let candidate configuration be the value.
+        // 6.3.2. Let supported configuration be the result of executing the Get Supported Configuration
+        //        algorithm on implementation, candidate configuration, and origin.
+        MediaKeySystemConfiguration candidateCofiguration = WTFMove(supportedConfigurations.first());
+        supportedConfigurations.remove(0);
+
+        CDM::SupportedConfigurationCallback callback = [implementation = implementation, supportedConfigurations = WTFMove(supportedConfigurations), promise] (std::optional<MediaKeySystemConfiguration> supportedConfiguration) mutable {
+            // 6.3.3. If supported configuration is not NotSupported, run the following steps:
+            if (supportedConfiguration) {
+                // 6.3.3.1. Let access be a new MediaKeySystemAccess object, and initialize it as follows:
+                // 6.3.3.1.1. Set the keySystem attribute to keySystem.
+                // 6.3.3.1.2. Let the configuration value be supported configuration.
+                // 6.3.3.1.3. Let the cdm implementation value be implementation.
+                auto access = MediaKeySystemAccess::create(implementation->keySystem(), WTFMove(supportedConfiguration.value()), implementation.releaseNonNull());
+                // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.
+                promise->resolve<IDLInterface<MediaKeySystemAccess>>(access.get());
+                return;
+            }
+
+            tryNextSupportedConfiguration(WTFMove(implementation), WTFMove(supportedConfigurations), WTFMove(promise));
+        };
+        implementation->getSupportedConfiguration(WTFMove(candidateCofiguration), WTFMove(callback));
+        return;
+    }
+
+
+    // 6.4. Reject promise with a NotSupportedError.
+    promise->reject(NOT_SUPPORTED_ERR);
 }
 
 } // namespace WebCore

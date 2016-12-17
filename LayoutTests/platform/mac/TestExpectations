@@ -1467,3 +1467,6 @@ webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled
 webkit.org/b/165530 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 
 webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
+
+# New Encrypted Media API not enabled on Mac
+media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]

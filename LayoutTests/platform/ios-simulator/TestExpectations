@@ -2759,3 +2759,5 @@ webkit.org/b/165691 http/tests/security/contentSecurityPolicy/block-all-mixed-co
 
 fast/css/deferred-parsing/hover-test.html [ Skip ]
 
+# New Encrypted Media API not enabled on iOS
+media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]

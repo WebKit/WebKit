@@ -31,32 +31,31 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "JSDOMPromise.h"
-#include "MediaKeySystemConfiguration.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CDM;
 class MediaKeys;
+
+struct MediaKeySystemConfiguration;
 
 class MediaKeySystemAccess : public RefCounted<MediaKeySystemAccess> {
 public:
-    static Ref<MediaKeySystemAccess> create()
-    {
-        return adoptRef(*new MediaKeySystemAccess);
-    }
+    static Ref<MediaKeySystemAccess> create(const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
+    ~MediaKeySystemAccess();
 
-    virtual ~MediaKeySystemAccess();
-
-    const String& keySystem() const;
-    const MediaKeySystemConfiguration& getConfiguration() const;
+    const String& keySystem() const { return m_keySystem; }
+    const MediaKeySystemConfiguration& getConfiguration() const { return *m_configuration; }
     void createMediaKeys(Ref<DeferredPromise>&&);
 
 private:
-    MediaKeySystemAccess();
+    MediaKeySystemAccess(const String& keySystem, MediaKeySystemConfiguration&&, Ref<CDM>&&);
 
     String m_keySystem;
-    MediaKeySystemConfiguration m_configuration;
+    std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
+    Ref<CDM> m_implementation;
 };
 
 } // namespace WebCore

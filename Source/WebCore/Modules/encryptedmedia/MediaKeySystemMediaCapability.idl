@@ -27,7 +27,8 @@
  */
 
 [
-    Conditional=ENCRYPTED_MEDIA
+    Conditional=ENCRYPTED_MEDIA,
+    JSGenerateToJSObject,
 ] dictionary MediaKeySystemMediaCapability {
     DOMString contentType = "";
     DOMString robustness = "";

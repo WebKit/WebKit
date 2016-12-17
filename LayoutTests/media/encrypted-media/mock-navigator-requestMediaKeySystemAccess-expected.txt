@@ -1,0 +1,89 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["mock"])
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.keySystem == 'org.webkit.mock') OK
+EXPECTED (access.getConfiguration().initDataTypes.length == '1') OK
+EXPECTED (access.getConfiguration().initDataTypes[0] == 'mock') OK
+EXPECTED (access.getConfiguration().sessionTypes.length == '1') OK
+EXPECTED (access.getConfiguration().sessionTypes[0] == 'temporary') OK
+EXPECTED (access.getConfiguration().distinctiveIdentifier == 'not-allowed') OK
+EXPECTED (access.getConfiguration().persistentState == 'not-allowed') OK
+
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "unknown/mime; codecs=\"unknown\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+SET capabilities = '[ { "initDataTypes": [ "unknownType" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.supportedRobustness = ["high"])
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"", "robustness": "high" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().videoCapabilities.length == '1') OK
+EXPECTED (access.getConfiguration().videoCapabilities[0].robustness == 'high') OK
+
+RUN(mock.supportedRobustness = ["high"])
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"", "robustness": "low" } ] } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.distinctiveIdentifierRequirement = "not-allowed")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "distinctiveIdentifier": "optional" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().distinctiveIdentifier == 'not-allowed') OK
+
+RUN(mock.distinctiveIdentifiersRequirement = "required")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "distinctiveIdentifier": "optional" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().distinctiveIdentifier == 'required') OK
+
+RUN(mock.distinctiveIdentifiersRequirement = "not-allowed")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "distinctiveIdentifier": "required" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.distinctiveIdentifiersRequirement = "not-allowed")
+SET capabilities = '[ { "label": "distinctive-identifiers-required", "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "distinctiveIdentifier": "required" }, { "label": "distinctive-identifiers-not-required", "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "distinctiveIdentifier": "optional" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().label == 'distinctive-identifiers-not-required') OK
+EXPECTED (access.getConfiguration().distinctiveIdentifier == 'not-allowed') OK
+
+RUN(mock.persistentStateRequirement = "required")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "optional" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().persistentState == 'required') OK
+
+RUN(mock.persistentStateRequirement = "not-allowed")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "optional" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().persistentState == 'not-allowed') OK
+
+RUN(mock.persistentStateRequirement = "not-allowed")
+SET capabilities = '[ { "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "required" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise rejected correctly OK
+EXPECTED (exceptionCode.name == 'NotSupportedError') OK
+
+RUN(mock.persistentStateRequirement = "not-allowed")
+SET capabilities = '[ { "label": "persistent-state-required", "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "required" }, { "label": "persistent-state-not-required", "initDataTypes": [ "mock" ], "videoCapabilities": [ { "contentType": "video/mock; codecs=\"mock\"" } ], "persistentState": "optional" } ]'
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities))
+Promise resolved OK
+EXPECTED (access.getConfiguration().label == 'persistent-state-not-required') OK
+EXPECTED (access.getConfiguration().persistentState == 'not-allowed') OK
+END OF TEST
+

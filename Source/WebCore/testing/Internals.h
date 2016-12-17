@@ -58,6 +58,7 @@ class InternalSettings;
 class MallocStatistics;
 class MediaSession;
 class MemoryInfo;
+class MockCDMFactory;
 class MockContentFilterSettings;
 class MockPageOverlay;
 class NodeList;
@@ -370,6 +371,10 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void initializeMockCDM();
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+    Ref<MockCDMFactory> registerMockCDM();
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)

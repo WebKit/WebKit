@@ -1243,7 +1243,6 @@
 		2D9BF7461DBFDC47007A7D99 /* MediaKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7331DBFDC0F007A7D99 /* MediaKeys.cpp */; };
 		2D9BF7471DBFDC49007A7D99 /* MediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */; };
 		2D9BF74A1DBFDDFF007A7D99 /* JSMediaKeySessionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */; };
-		2D9BF74B1DBFDE02007A7D99 /* JSMediaKeySystemAccessCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BF7491DBFDDF8007A7D99 /* JSMediaKeySystemAccessCustom.cpp */; };
 		2D9F0E1314FF1CBF00BA0FF7 /* linearSRGB.icc in Resources */ = {isa = PBXBuildFile; fileRef = 2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */; };
 		2DB9C4AA1B3231F40070F27F /* NSEventSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB9C4A91B3231F40070F27F /* NSEventSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DC4CF791D2DD98900ECCC94 /* DataDetectorsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC4CF781D2DD98900ECCC94 /* DataDetectorsUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5910,6 +5909,22 @@
 		CDF2B0171820540700F2B424 /* MockSourceBufferPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */; };
 		CDF2B0191820540700F2B424 /* MockTracks.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B00F1820540600F2B424 /* MockTracks.h */; };
 		CDF4B7121E0087AE00E235A2 /* LegacyCDMSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDE02E918B3DFC700CF7FF1 /* LegacyCDMSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDF4B7151E00B7E500E235A2 /* CDM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7131E00B7E500E235A2 /* CDM.cpp */; };
+		CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7141E00B7E500E235A2 /* CDM.h */; };
+		CDF4B7181E01CB9100E235A2 /* MediaKeysRestrictions.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */; };
+		CDF4B71A1E01D3D000E235A2 /* MediaKeySessionType.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */; };
+		CDF4B71D1E01E11A00E235A2 /* JSMediaKeySessionType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B71B1E01E11A00E235A2 /* JSMediaKeySessionType.cpp */; };
+		CDF4B71E1E01E11A00E235A2 /* JSMediaKeySessionType.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */; };
+		CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */; };
+		CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */; };
+		CDF4B7261E03C15B00E235A2 /* CDMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */; };
+		CDF4B7281E03C57300E235A2 /* MediaKeysRequirement.idl in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B7271E03C57300E235A2 /* MediaKeysRequirement.idl */; };
+		CDF4B72B1E03C63E00E235A2 /* JSMediaKeysRequirement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7291E03C63E00E235A2 /* JSMediaKeysRequirement.cpp */; };
+		CDF4B72C1E03C63E00E235A2 /* JSMediaKeysRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B72A1E03C63E00E235A2 /* JSMediaKeysRequirement.h */; };
+		CDF4B7301E03CA4A00E235A2 /* JSMockCDMFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF4B72E1E03CA4A00E235A2 /* JSMockCDMFactory.h */; };
+		CDF4B7311E03D00700E235A2 /* MockCDMFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7211E03BF8100E235A2 /* MockCDMFactory.cpp */; };
+		CDF4B7321E03D06000E235A2 /* JSMockCDMFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B72D1E03CA4A00E235A2 /* JSMockCDMFactory.cpp */; };
+		CDF4B7331E03D14900E235A2 /* JSMediaKeysRequirement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF4B7291E03C63E00E235A2 /* JSMediaKeysRequirement.cpp */; };
 		CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD27F6E4145767870078207D /* MediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF7483E18FEBCEC0006ECC0 /* GridPositionsResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */; };
@@ -8374,7 +8389,6 @@
 		2D9BF7401DBFDC0F007A7D99 /* NavigatorEME.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorEME.cpp; sourceTree = "<group>"; };
 		2D9BF7411DBFDC0F007A7D99 /* NavigatorEME.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorEME.h; sourceTree = "<group>"; };
 		2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySessionCustom.cpp; sourceTree = "<group>"; };
-		2D9BF7491DBFDDF8007A7D99 /* JSMediaKeySystemAccessCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySystemAccessCustom.cpp; sourceTree = "<group>"; };
 		2D9F0E1214FF1CBF00BA0FF7 /* linearSRGB.icc */ = {isa = PBXFileReference; lastKnownFileType = file; path = linearSRGB.icc; sourceTree = "<group>"; };
 		2DAAE32C19DCAF6000E002D2 /* MockPageOverlayClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockPageOverlayClient.cpp; sourceTree = "<group>"; };
 		2DAAE32D19DCAF6000E002D2 /* MockPageOverlayClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPageOverlayClient.h; sourceTree = "<group>"; };
@@ -13878,6 +13892,21 @@
 		CDF2B00D1820540600F2B424 /* MockSourceBufferPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockSourceBufferPrivate.h; sourceTree = "<group>"; };
 		CDF2B00F1820540600F2B424 /* MockTracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTracks.h; sourceTree = "<group>"; };
 		CDF419991AB0DA14004E64E1 /* missingImage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "missingImage@3x.png"; sourceTree = "<group>"; };
+		CDF4B7131E00B7E500E235A2 /* CDM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDM.cpp; sourceTree = "<group>"; };
+		CDF4B7141E00B7E500E235A2 /* CDM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDM.h; sourceTree = "<group>"; };
+		CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeysRestrictions.h; sourceTree = "<group>"; };
+		CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeySessionType.idl; sourceTree = "<group>"; };
+		CDF4B71B1E01E11A00E235A2 /* JSMediaKeySessionType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeySessionType.cpp; sourceTree = "<group>"; };
+		CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeySessionType.h; sourceTree = "<group>"; };
+		CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MockCDMFactory.idl; sourceTree = "<group>"; };
+		CDF4B7211E03BF8100E235A2 /* MockCDMFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MockCDMFactory.cpp; sourceTree = "<group>"; };
+		CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockCDMFactory.h; sourceTree = "<group>"; };
+		CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMPrivate.h; sourceTree = "<group>"; };
+		CDF4B7271E03C57300E235A2 /* MediaKeysRequirement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaKeysRequirement.idl; sourceTree = "<group>"; };
+		CDF4B7291E03C63E00E235A2 /* JSMediaKeysRequirement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeysRequirement.cpp; sourceTree = "<group>"; };
+		CDF4B72A1E03C63E00E235A2 /* JSMediaKeysRequirement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeysRequirement.h; sourceTree = "<group>"; };
+		CDF4B72D1E03CA4A00E235A2 /* JSMockCDMFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMockCDMFactory.cpp; sourceTree = "<group>"; };
+		CDF4B72E1E03CA4A00E235A2 /* JSMockCDMFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMockCDMFactory.h; sourceTree = "<group>"; };
 		CDF65CC9145B43A700C4C7AA /* MediaControllerInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControllerInterface.h; sourceTree = "<group>"; };
 		CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMediaElementCustom.cpp; sourceTree = "<group>"; };
 		CDF7483C18FEBCEC0006ECC0 /* GridPositionsResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridPositionsResolver.cpp; sourceTree = "<group>"; };
@@ -16564,6 +16593,9 @@
 				A7BF7EDC14C9175A0014489D /* InternalSettings.cpp */,
 				A7BF7EDD14C9175A0014489D /* InternalSettings.h */,
 				A7BF7EDE14C9175A0014489D /* InternalSettings.idl */,
+				CDF4B71F1E03BF6F00E235A2 /* MockCDMFactory.idl */,
+				CDF4B7211E03BF8100E235A2 /* MockCDMFactory.cpp */,
+				CDF4B7221E03BF8100E235A2 /* MockCDMFactory.h */,
 				A7BE7EDD14C9175A0014489D /* MallocStatistics.h */,
 				A7BE7EDE14C9175A0014489D /* MallocStatistics.idl */,
 				CD5393CB175DCCE600C07123 /* MemoryInfo.h */,
@@ -16606,6 +16638,8 @@
 				A7B4EA6914C9348400C8F5BF /* JSMallocStatistics.h */,
 				CD5393D1175E018600C07123 /* JSMemoryInfo.cpp */,
 				CD5393D2175E018600C07123 /* JSMemoryInfo.h */,
+				CDF4B72D1E03CA4A00E235A2 /* JSMockCDMFactory.cpp */,
+				CDF4B72E1E03CA4A00E235A2 /* JSMockCDMFactory.h */,
 				A19AEA1D1AAA806E00B52B25 /* JSMockContentFilterSettings.cpp */,
 				A19AEA1E1AAA806E00B52B25 /* JSMockContentFilterSettings.h */,
 				2D6F3E921C1F85550061DBD4 /* JSMockPageOverlay.cpp */,
@@ -21995,7 +22029,6 @@
 				8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */,
 				B56576E417DA599F00A56BDC /* JSMainThreadExecStateInstrumentation.h */,
 				2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */,
-				2D9BF7491DBFDDF8007A7D99 /* JSMediaKeySystemAccessCustom.cpp */,
 				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
 				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
@@ -22762,6 +22795,9 @@
 			isa = PBXGroup;
 			children = (
 				2D0621461DA639EC00A7FB26 /* legacy */,
+				CDF4B7131E00B7E500E235A2 /* CDM.cpp */,
+				CDF4B7141E00B7E500E235A2 /* CDM.h */,
+				CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */,
 				2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */,
 				2D9BF7301DBFDC0F007A7D99 /* MediaKeyMessageEvent.h */,
 				2D9BF6F51DBFB71F007A7D99 /* MediaKeyMessageEvent.idl */,
@@ -22774,7 +22810,10 @@
 				2D9BF7361DBFDC0F007A7D99 /* MediaKeySession.h */,
 				2D9BF6F71DBFB71F007A7D99 /* MediaKeySession.idl */,
 				2D9BF7371DBFDC0F007A7D99 /* MediaKeySessionType.h */,
+				CDF4B7191E01D3D000E235A2 /* MediaKeySessionType.idl */,
 				2D9BF7381DBFDC0F007A7D99 /* MediaKeysRequirement.h */,
+				CDF4B7271E03C57300E235A2 /* MediaKeysRequirement.idl */,
+				CDF4B7171E01CB9100E235A2 /* MediaKeysRestrictions.h */,
 				2D9BF7391DBFDC0F007A7D99 /* MediaKeyStatus.h */,
 				2D9BF73A1DBFDC0F007A7D99 /* MediaKeyStatusMap.cpp */,
 				2D9BF73B1DBFDC0F007A7D99 /* MediaKeyStatusMap.h */,
@@ -22802,6 +22841,8 @@
 				2D9BF7161DBFDAB1007A7D99 /* JSMediaKeys.h */,
 				2D9BF7171DBFDAB1007A7D99 /* JSMediaKeySession.cpp */,
 				2D9BF7181DBFDAB1007A7D99 /* JSMediaKeySession.h */,
+				CDF4B71B1E01E11A00E235A2 /* JSMediaKeySessionType.cpp */,
+				CDF4B71C1E01E11A00E235A2 /* JSMediaKeySessionType.h */,
 				2D9BF7191DBFDAB1007A7D99 /* JSMediaKeyStatusMap.cpp */,
 				2D9BF71A1DBFDAB1007A7D99 /* JSMediaKeyStatusMap.h */,
 				2D9BF71B1DBFDAB1007A7D99 /* JSMediaKeySystemAccess.cpp */,
@@ -22810,6 +22851,8 @@
 				2D9BF71E1DBFDAB1007A7D99 /* JSMediaKeySystemConfiguration.h */,
 				2D9BF71F1DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.cpp */,
 				2D9BF7201DBFDAB1007A7D99 /* JSMediaKeySystemMediaCapability.h */,
+				CDF4B7291E03C63E00E235A2 /* JSMediaKeysRequirement.cpp */,
+				CDF4B72A1E03C63E00E235A2 /* JSMediaKeysRequirement.h */,
 				CDA98D9B160128A500FEA3B1 /* JSWebKitMediaKeyError.cpp */,
 				CDA98D9C160128A500FEA3B1 /* JSWebKitMediaKeyError.h */,
 				CDA98DDB16026A1800FEA3B1 /* JSWebKitMediaKeyMessageEvent.cpp */,
@@ -25451,6 +25494,7 @@
 				76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */,
 				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
 				CD9DE18217AAD6A400EA386D /* DOMURLMediaSource.h in Headers */,
+				CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */,
 				15FCC9FE1B4DF85E00E72326 /* DOMURLMediaStream.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
@@ -25646,6 +25690,7 @@
 				FD31600D12B0267600C1A359 /* GainNode.h in Headers */,
 				51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */,
 				51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */,
+				CDF4B71E1E01E11A00E235A2 /* JSMediaKeySessionType.h in Headers */,
 				516C62211950D48700337E75 /* GamepadEvent.h in Headers */,
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
 				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,
@@ -25783,6 +25828,7 @@
 				A8DF3FD4097FA0FC0052981B /* HTMLNameCollection.h in Headers */,
 				A871D45A0A127CBC00B12A68 /* HTMLObjectElement.h in Headers */,
 				A8EA79F10A1916DF00A8EF5F /* HTMLOListElement.h in Headers */,
+				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,
 				A81369DE097374F600D74463 /* HTMLOptGroupElement.h in Headers */,
 				A81369DC097374F600D74463 /* HTMLOptionElement.h in Headers */,
 				A81369DA097374F600D74463 /* HTMLOptionsCollection.h in Headers */,
@@ -26015,6 +26061,7 @@
 				3198480C1A1E6CE800A13318 /* JSAnimationEvent.h in Headers */,
 				1221E06D1C03D224006A1A00 /* JSAnimationTimeline.h in Headers */,
 				1AE96A8B1D1A0DDD00B86768 /* JSApplePayPaymentAuthorizedEvent.h in Headers */,
+				CDF4B7301E03CA4A00E235A2 /* JSMockCDMFactory.h in Headers */,
 				1AE96A8D1D1A0DDD00B86768 /* JSApplePayPaymentMethodSelectedEvent.h in Headers */,
 				1AE96A8F1D1A0DDD00B86768 /* JSApplePaySession.h in Headers */,
 				1AE96A911D1A0DDD00B86768 /* JSApplePayShippingContactSelectedEvent.h in Headers */,
@@ -26461,6 +26508,7 @@
 				B266CD4E0C3AEC6500EB08D2 /* JSSVGException.h in Headers */,
 				B2FA3D6B0AB75A6F000E5AC4 /* JSSVGFEBlendElement.h in Headers */,
 				B2FA3D6D0AB75A6F000E5AC4 /* JSSVGFEColorMatrixElement.h in Headers */,
+				CDF4B7261E03C15B00E235A2 /* CDMPrivate.h in Headers */,
 				B2FA3D6F0AB75A6F000E5AC4 /* JSSVGFEComponentTransferElement.h in Headers */,
 				B2FA3D710AB75A6F000E5AC4 /* JSSVGFECompositeElement.h in Headers */,
 				19BFF64F11C0F2AC00B8C04D /* JSSVGFEConvolveMatrixElement.h in Headers */,
@@ -26600,6 +26648,7 @@
 				49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */,
 				7EA30F6A16DFFE7500257D0B /* JSWebGLCompressedTextureATC.h in Headers */,
 				7EA30F6A17EFFE7500257D0B /* JSWebGLCompressedTexturePVRTC.h in Headers */,
+				CDF4B7281E03C57300E235A2 /* MediaKeysRequirement.idl in Headers */,
 				6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextureS3TC.h in Headers */,
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
 				BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */,
@@ -26699,6 +26748,7 @@
 				FFDBC047183D27B700407109 /* LineWidth.h in Headers */,
 				A7AD2F880EC89D07008AB002 /* LinkHash.h in Headers */,
 				5143B2631DDD15200014FAC6 /* LinkIcon.h in Headers */,
+				CDF4B72C1E03C63E00E235A2 /* JSMediaKeysRequirement.h in Headers */,
 				1A4DA4221CDD3A8300F4473C /* LinkIconCollector.h in Headers */,
 				1A250E0D1CDD632000D0BE63 /* LinkIconType.h in Headers */,
 				98CE432A129E00E5005821DC /* LinkLoader.h in Headers */,
@@ -26844,6 +26894,7 @@
 				51E1BAC31BD8064E0055D81F /* MemoryBackingStoreTransaction.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
 				517139081BF64DEF000D5F01 /* MemoryCursor.h in Headers */,
+				CDF4B71A1E01D3D000E235A2 /* MediaKeySessionType.idl in Headers */,
 				51BA4ACB1BBC5BD900DF3D6D /* MemoryIDBBackingStore.h in Headers */,
 				518F97031BE94C630023187C /* MemoryIndex.h in Headers */,
 				519755FA1BFD7DC3003DE980 /* MemoryIndexCursor.h in Headers */,
@@ -28059,6 +28110,7 @@
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
 				A1ED778F1BE4291800DC1791 /* UIKitSPI.h in Headers */,
 				AA4739D21757AFEC00E76767 /* UIRequestEvent.h in Headers */,
+				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
 				9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */,
 				A863E2011343412000274926 /* UnicodeBidi.h in Headers */,
 				518864E11BBAF57400E540C9 /* UniqueIDBDatabase.h in Headers */,
@@ -28357,6 +28409,7 @@
 				1AB7FC7D0A8B92EC00D9D37B /* XPathPredicate.h in Headers */,
 				1AB7FC7F0A8B92EC00D9D37B /* XPathResult.h in Headers */,
 				1AB7FC820A8B92EC00D9D37B /* XPathStep.h in Headers */,
+				CDF4B7181E01CB9100E235A2 /* MediaKeysRestrictions.h in Headers */,
 				1AB7FC840A8B92EC00D9D37B /* XPathUtil.h in Headers */,
 				1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */,
 				1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */,
@@ -28661,6 +28714,7 @@
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,
 				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
+				CDF4B7331E03D14900E235A2 /* JSMediaKeysRequirement.cpp in Sources */,
 				CD5393D3175E018600C07123 /* JSMemoryInfo.cpp in Sources */,
 				A19AEA221AAA808A00B52B25 /* JSMockContentFilterSettings.cpp in Sources */,
 				A1E5B31F1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp in Sources */,
@@ -28671,7 +28725,9 @@
 				A1B5B29E1AAA846E008B6042 /* MockContentFilterSettings.cpp in Sources */,
 				51058ADB1D6792C1009A538C /* MockGamepad.cpp in Sources */,
 				51058ADD1D6792C1009A538C /* MockGamepadProvider.cpp in Sources */,
+				CDF4B7311E03D00700E235A2 /* MockCDMFactory.cpp in Sources */,
 				2D6F3E901C1ECB270061DBD4 /* MockPageOverlay.cpp in Sources */,
+				CDF4B7321E03D06000E235A2 /* JSMockCDMFactory.cpp in Sources */,
 				2D97F04719DD413C001EE9C3 /* MockPageOverlayClient.cpp in Sources */,
 				AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
@@ -28777,6 +28833,7 @@
 				FD31601512B0267600C1A359 /* AudioNodeInput.cpp in Sources */,
 				FD31601712B0267600C1A359 /* AudioNodeOutput.cpp in Sources */,
 				FD31601C12B0267600C1A359 /* AudioParam.cpp in Sources */,
+				CDF4B7151E00B7E500E235A2 /* CDM.cpp in Sources */,
 				FD35918F138DB22000E1EBEC /* AudioParamTimeline.cpp in Sources */,
 				FD31601F12B0267600C1A359 /* AudioProcessingEvent.cpp in Sources */,
 				FD31608512B026F700C1A359 /* AudioResampler.cpp in Sources */,
@@ -29296,6 +29353,7 @@
 				84730D7A1248F0B300D3A9C9 /* FEDiffuseLighting.cpp in Sources */,
 				84730D7C1248F0B300D3A9C9 /* FEDisplacementMap.cpp in Sources */,
 				4358E8801360A31700E4748C /* FEDropShadow.cpp in Sources */,
+				CDF4B72B1E03C63E00E235A2 /* JSMediaKeysRequirement.cpp in Sources */,
 				84730D7E1248F0B300D3A9C9 /* FEFlood.cpp in Sources */,
 				84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */,
 				84730D801248F0B300D3A9C9 /* FELighting.cpp in Sources */,
@@ -30066,7 +30124,6 @@
 				2D9BF74A1DBFDDFF007A7D99 /* JSMediaKeySessionCustom.cpp in Sources */,
 				2D9BF7241DBFDAD0007A7D99 /* JSMediaKeyStatusMap.cpp in Sources */,
 				2D9BF7251DBFDAD3007A7D99 /* JSMediaKeySystemAccess.cpp in Sources */,
-				2D9BF74B1DBFDE02007A7D99 /* JSMediaKeySystemAccessCustom.cpp in Sources */,
 				2D9BF7261DBFDAD5007A7D99 /* JSMediaKeySystemConfiguration.cpp in Sources */,
 				2D9BF7271DBFDAD8007A7D99 /* JSMediaKeySystemMediaCapability.cpp in Sources */,
 				BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */,
@@ -31388,6 +31445,7 @@
 				B2227A260D00BF220071B782 /* SVGGElement.cpp in Sources */,
 				B2A1F2AD0CEF0ABF00442F6A /* SVGGlyphElement.cpp in Sources */,
 				24D912BD13CA9A9700D21915 /* SVGGlyphRefElement.cpp in Sources */,
+				CDF4B71D1E01E11A00E235A2 /* JSMediaKeySessionType.cpp in Sources */,
 				B2227A290D00BF220071B782 /* SVGGradientElement.cpp in Sources */,
 				B2227AB50D00BF220071B782 /* SVGGraphicsElement.cpp in Sources */,
 				650FBF2A0D9AF047008FC292 /* SVGHKernElement.cpp in Sources */,

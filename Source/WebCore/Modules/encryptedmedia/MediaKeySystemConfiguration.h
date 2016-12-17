@@ -30,6 +30,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "MediaKeySessionType.h"
 #include "MediaKeySystemMediaCapability.h"
 #include "MediaKeysRequirement.h"
 #include <wtf/Vector.h>
@@ -46,7 +47,7 @@ struct MediaKeySystemConfiguration {
     Vector<MediaKeySystemMediaCapability> videoCapabilities;
     MediaKeysRequirement distinctiveIdentifier;
     MediaKeysRequirement persistentState;
-    Vector<String> sessionTypes;
+    Vector<MediaKeySessionType> sessionTypes;
 };
 
 } // namespace WebCore
