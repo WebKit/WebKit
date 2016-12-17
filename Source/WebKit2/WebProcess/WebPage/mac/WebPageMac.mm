@@ -362,7 +362,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    result.string = editingAttributedStringFromRange(*range);
+    result.string = editingAttributedStringFromRange(*range, IncludeImagesInAttributedString::No);
     NSAttributedString* attributedString = result.string.get();
     
     // WebCore::editingAttributedStringFromRange() insists on inserting a trailing

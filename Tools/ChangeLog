@@ -1,3 +1,23 @@
+2016-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deleting a character converted from pinyin after an image causes a Safari crash
+        https://bugs.webkit.org/show_bug.cgi?id=165839
+        <rdar://problem/27951933>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a WebKit API test to call attributedSubstringForProposedRange on a WKWebView
+        while the proposed range contains an image. This should not cause a WebProcess to crash
+        or send an invalid message to the UIProcess.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/chinese-character-with-image.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/mac/AttributedSubstringForProposedRangeWithImage.mm: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::processDidCrash):
+        (TestWebKitAPI::invalidMessageFunction):
+        (TestWebKitAPI::WebKit2.AttributedSubstringForProposedRangeWithImage):
+
 2016-12-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Visual viewports: carets and selection UI are incorrectly positioned when editing fixed elements
