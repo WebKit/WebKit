@@ -4535,6 +4535,61 @@ void testDoubleToFloatThroughPhi(float value)
     CHECK(isIdentical(invoke<float>(*code, 0, bitwise_cast<int32_t>(value)), static_cast<float>(M_PI)));
 }
 
+void testReduceFloatToDoubleValidates()
+{
+    // Simple case of:
+    //     f = DoubleToFloat(Bitcast(argGPR0))
+    //     if (a) {
+    //         x = FloatConst()
+    //     else
+    //         x = FloatConst()
+    //     p = Phi(x)
+    //     a = Mul(p, p)
+    //     b = Add(a, f)
+    //     c = Add(p, b)
+    //     Return(c)
+    //
+    // This should not crash in the validator after ReduceFloatToDouble.
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* thenCase = proc.addBlock();
+    BasicBlock* elseCase = proc.addBlock();
+    BasicBlock* tail = proc.addBlock();
+
+    Value* condition = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* thingy = root->appendNew<Value>(proc, BitwiseCast, Origin(), condition);
+    thingy = root->appendNew<Value>(proc, DoubleToFloat, Origin(), thingy); // Make the phase think it has work to do.
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        condition,
+        FrequentedBlock(thenCase), FrequentedBlock(elseCase));
+
+    UpsilonValue* thenValue = thenCase->appendNew<UpsilonValue>(proc, Origin(),
+        thenCase->appendNew<ConstFloatValue>(proc, Origin(), 11.5));
+    thenCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(tail));
+
+    UpsilonValue* elseValue = elseCase->appendNew<UpsilonValue>(proc, Origin(), 
+        elseCase->appendNew<ConstFloatValue>(proc, Origin(), 10.5));
+    elseCase->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(tail));
+
+    Value* phi =  tail->appendNew<Value>(proc, Phi, Float, Origin());
+    thenValue->setPhi(phi);
+    elseValue->setPhi(phi);
+    Value* result = tail->appendNew<Value>(proc, Mul, Origin(), 
+            phi, phi);
+    result = tail->appendNew<Value>(proc, Add, Origin(), 
+            result,
+            thingy);
+    result = tail->appendNew<Value>(proc, Add, Origin(), 
+            phi,
+            result);
+    tail->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compile(proc);
+    CHECK(isIdentical(invoke<float>(*code, 1), 11.5f * 11.5f + static_cast<float>(bitwise_cast<double>(static_cast<uint64_t>(1))) + 11.5f));
+    CHECK(isIdentical(invoke<float>(*code, 0), 10.5f * 10.5f + static_cast<float>(bitwise_cast<double>(static_cast<uint64_t>(0))) + 10.5f));
+}
+
 void testDoubleProducerPhiToFloatConversion(float value)
 {
     Procedure proc;
@@ -14628,6 +14683,7 @@ void run(const char* filter)
     RUN_BINARY(testCompareOneFloatToDouble, floatingPointOperands<float>(), floatingPointOperands<double>());
     RUN_BINARY(testCompareFloatToDoubleThroughPhi, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_UNARY(testDoubleToFloatThroughPhi, floatingPointOperands<float>());
+    RUN(testReduceFloatToDoubleValidates());
     RUN_UNARY(testDoubleProducerPhiToFloatConversion, floatingPointOperands<float>());
     RUN_UNARY(testDoubleProducerPhiToFloatConversionWithDoubleConsumer, floatingPointOperands<float>());
     RUN_BINARY(testDoubleProducerPhiWithNonFloatConst, floatingPointOperands<float>(), floatingPointOperands<double>());

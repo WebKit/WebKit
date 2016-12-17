@@ -231,7 +231,9 @@ private:
             return insertionSet.insert<ConstFloatValue>(valueIndex, value->origin(), static_cast<float>(value->asDouble()));
 
         if (value->opcode() == Phi) {
-            convertPhi(value);
+            ASSERT(value->type() == Double || value->type() == Float);
+            if (value->type() == Double)
+                convertPhi(value);
             return value;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -241,6 +243,7 @@ private:
     void convertPhi(Value* phi)
     {
         ASSERT(phi->opcode() == Phi);
+        ASSERT(phi->type() == Double);
         phi->setType(Float);
         m_convertedPhis.add(phi);
     }

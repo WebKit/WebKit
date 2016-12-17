@@ -1,3 +1,25 @@
+2016-12-16  Saam Barati  <sbarati@apple.com>
+
+        B3::DoubleToFloatReduction will accidentally convince itself it converted a Phi from Double to Float and then convert uses of that Phi into a use of FloatToDouble(@Phi)
+        https://bugs.webkit.org/show_bug.cgi?id=165946
+
+        Reviewed by Keith Miller.
+
+        This was happening because the phase will convert some Phi nodes
+        from Double to Float. However, one place that did this conversion
+        forgot to first check if the Phi was already a Float. If it's already
+        a Float, a later part of the phase will be buggy if the phase claims that it has
+        converted it from Double->Float. The reason is that at the end of the
+        phase, we'll look for all uses of former Double Phi nodes and make them
+        be a use of ConvertFloatToDouble on the Phi, instead of a use of the Phi itself.
+        This is clearly wrong if the Phi were Float to begin with (and
+        therefore, the uses were Float uses to begin with).
+
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testReduceFloatToDoubleValidates):
+        (JSC::B3::run):
+
 2016-12-16  Mark Lam  <mark.lam@apple.com>
 
         De-duplicate finally blocks.
