@@ -1,3 +1,13 @@
+2016-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline these tests after r209967, since they are now affected by status bar height.
+
+        * fast/viewport/ios/ipad/width-is-device-width-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-expected.txt:
+        * fast/viewport/ios/width-is-device-width-overflowing-no-shrink-to-fit-expected.txt:
+
 2016-12-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rollout r209860 OWR player shouldn't be selected for normal video playback
