@@ -1,3 +1,12 @@
+2016-12-17  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] bump EFL version to 1.18.4
+        https://bugs.webkit.org/show_bug.cgi?id=166004
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake: Use efl-1.18.4 instead of 1.18.1.
+
 2016-12-15  Alex Christensen  <achristensen@webkit.org>
 
         Remove flex and bison build dependencies; commit generated XPath parser
