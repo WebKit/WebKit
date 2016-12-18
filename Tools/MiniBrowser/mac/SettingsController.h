@@ -40,6 +40,7 @@
 @property (nonatomic, readonly) BOOL simpleLineLayoutDebugBordersEnabled;
 @property (nonatomic, readonly) BOOL incrementalRenderingSuppressed;
 @property (nonatomic, readonly) BOOL tiledScrollingIndicatorVisible;
+@property (nonatomic, readonly, getter=isSpaceReservedForBanners) BOOL spaceReservedForBanners;
 @property (nonatomic, readonly) BOOL resourceUsageOverlayVisible;
 @property (nonatomic, readonly) BOOL nonFastScrollableRegionOverlayVisible;
 @property (nonatomic, readonly) BOOL wheelEventHandlerRegionOverlayVisible;

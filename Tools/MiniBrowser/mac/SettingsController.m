@@ -40,6 +40,8 @@ static NSString * const UseWebKit2ByDefaultPreferenceKey = @"UseWebKit2ByDefault
 static NSString * const LayerBordersVisiblePreferenceKey = @"LayerBordersVisible";
 static NSString * const SimpleLineLayoutDebugBordersEnabledPreferenceKey = @"SimpleLineLayoutDebugBordersEnabled";
 static NSString * const TiledScrollingIndicatorVisiblePreferenceKey = @"TiledScrollingIndicatorVisible";
+static NSString * const ReserveSpaceForBannersPreferenceKey = @"ReserveSpaceForBanners";
+
 static NSString * const ResourceUsageOverlayVisiblePreferenceKey = @"ResourceUsageOverlayVisible";
 static NSString * const LoadsAllSiteIconsKey = @"LoadsAllSiteIcons";
 static NSString * const UsesGameControllerFrameworkKey = @"UsesGameControllerFramework";
@@ -135,6 +137,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 
     [self _addHeaderWithTitle:@"WebKit2-only Settings"];
 
+    [self _addItemWithTitle:@"Reserve Space For Banners" action:@selector(toggleReserveSpaceForBanners:) indented:YES];
     [self _addItemWithTitle:@"Show Tiled Scrolling Indicator" action:@selector(toggleShowTiledScrollingIndicator:) indented:YES];
     [self _addItemWithTitle:@"Use UI-Side Compositing" action:@selector(toggleUseUISideCompositing:) indented:YES];
     [self _addItemWithTitle:@"Disable Per-Window Web Processes" action:@selector(togglePerWindowWebProcessesDisabled:) indented:YES];
@@ -213,6 +216,8 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
         [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSOnState : NSOffState];
     else if (action == @selector(toggleVisualViewportEnabled:))
         [menuItem setState:[self visualViewportEnabled] ? NSOnState : NSOffState];
+    else if (action == @selector(toggleReserveSpaceForBanners:))
+        [menuItem setState:[self isSpaceReservedForBanners] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
         [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
     else if (action == @selector(toggleShowResourceUsageOverlay:))
@@ -360,6 +365,11 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     return [[NSUserDefaults standardUserDefaults] boolForKey:DisplayListDrawingEnabledPreferenceKey];
 }
 
+- (void)toggleReserveSpaceForBanners:(id)sender
+{
+    [self _toggleBooleanDefault:ReserveSpaceForBannersPreferenceKey];
+}
+
 - (void)toggleShowTiledScrollingIndicator:(id)sender
 {
     [self _toggleBooleanDefault:TiledScrollingIndicatorVisiblePreferenceKey];
@@ -398,6 +408,11 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
 - (void)toggleNetworkCacheSpeculativeRevalidationDisabled:(id)sender
 {
     [self _toggleBooleanDefault:NetworkCacheSpeculativeRevalidationDisabledKey];
+}
+
+- (BOOL)isSpaceReservedForBanners
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:ReserveSpaceForBannersPreferenceKey];
 }
 
 - (BOOL)tiledScrollingIndicatorVisible

@@ -475,6 +475,8 @@ public:
     void hidePageBanners();
     void showPageBanners();
     
+    void setHeaderBannerHeightForTesting(int);
+    void setFooterBannerHeightForTesting(int);
 #endif // !PLATFORM(IOS)
 
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&);

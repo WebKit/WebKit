@@ -4863,6 +4863,17 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     [self insertText:string replacementRange:replacementRange];
 }
+
+- (void)_setHeaderBannerHeight:(int)height
+{
+    _page->setHeaderBannerHeightForTesting(height);
+}
+
+- (void)_setFooterBannerHeight:(int)height
+{
+    _page->setFooterBannerHeightForTesting(height);
+}
+
 #endif // PLATFORM(MAC)
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin

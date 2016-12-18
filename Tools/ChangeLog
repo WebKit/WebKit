@@ -1,3 +1,32 @@
+2016-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose a way for MiniBrowser to simulate header and footer banners
+        https://bugs.webkit.org/show_bug.cgi?id=166005
+
+        Reviewed by Wenson Hsieh.
+        
+        Add a MiniBrowser menu item and setting to toggle adding space for header and footer
+        banners. This only works in WebKit2.
+        
+        We need to reset these on each navigation, since newly created FrameViews
+        don't re-fetch the header and footer height stored on Page.
+        
+        Also fix the signature of webView:didFinishNavigation: to follow API changes,
+        as well as fixing webViewWebContentProcessDidTerminate:
+
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleReserveSpaceForBanners:]):
+        (-[SettingsController isSpaceReservedForBanners]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController didChangeSettings]):
+        (-[WK2BrowserWindowController webView:didFinishNavigation:]):
+        (-[WK2BrowserWindowController webViewWebContentProcessDidTerminate:]):
+        (-[WK2BrowserWindowController webView:didFinishLoadingNavigation:]): Deleted.
+        (-[WK2BrowserWindowController _webViewWebProcessDidCrash:]): Deleted.
+
 2016-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix iOS test results after r209967.

@@ -416,11 +416,16 @@ messages -> WebPage LegacyReceiver {
     ImmediateActionDidUpdate()
     ImmediateActionDidCancel()
     ImmediateActionDidComplete()
+
     DataDetectorsDidPresentUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
     DataDetectorsDidChangeUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
     DataDetectorsDidHideUI(WebCore::PageOverlay::PageOverlayID pageOverlay)
+
     HandleAcceptedCandidate(struct WebCore::TextCheckingResult acceptedCandidate)
     RequestActiveNowPlayingSessionInfo()
+
+    SetHeaderBannerHeightForTesting(int height);
+    SetFooterBannerHeightForTesting(int height);
 #endif
 
     SetShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)

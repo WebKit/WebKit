@@ -43,6 +43,8 @@
 #import <WebKit/_WKUserInitiatedAction.h>
 
 static void* keyValueObservingContext = &keyValueObservingContext;
+static const int testHeaderBannerHeight = 42;
+static const int testFooterBannerHeight = 58;
 
 @interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate>
 @end
@@ -408,6 +410,9 @@ static BOOL areEssentiallyEqual(double a, double b)
         visibleOverlayRegions |= _WKWheelEventHandlerRegion;
     
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
+
+    [_webView _setHeaderBannerHeight:[settings isSpaceReservedForBanners] ? testHeaderBannerHeight : 0];
+    [_webView _setFooterBannerHeight:[settings isSpaceReservedForBanners] ? testFooterBannerHeight : 0];
 }
 
 - (void)updateTitle:(NSString *)title
@@ -617,9 +622,15 @@ static NSSet *dataTypes()
     [self updateTitle:nil];
 }
 
-- (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    LOG(@"didFinishLoadingNavigation: %@", navigation);
+    LOG(@"didFinishNavigation: %@", navigation);
+    
+    // Banner heights don't persist across page loads (oddly, since Page stores them), so reset on every page load.
+    if ([[SettingsController shared] isSpaceReservedForBanners]) {
+        [_webView _setHeaderBannerHeight:testHeaderBannerHeight];
+        [_webView _setFooterBannerHeight:testFooterBannerHeight];
+    }
 }
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *__nullable credential))completionHandler
@@ -633,7 +644,7 @@ static NSSet *dataTypes()
     LOG(@"didFailNavigation: %@, error %@", navigation, error);
 }
 
-- (void)_webViewWebProcessDidCrash:(WKWebView *)webView
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
     NSLog(@"WebContent process crashed; reloading");
     [self reload:nil];

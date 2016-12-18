@@ -1,3 +1,28 @@
+2016-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Expose a way for MiniBrowser to simulate header and footer banners
+        https://bugs.webkit.org/show_bug.cgi?id=166005
+
+        Reviewed by Wenson Hsieh.
+        
+        Expose testing SPI that allows a client to simulate the presence of header
+        and footer banners. These are simply plumbed through to set FrameView's
+        m_headerHeight and m_footerHeight.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setHeaderBannerHeightForTesting:]):
+        (-[WKWebView _setFooterBannerHeightForTesting:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setHeaderBannerHeightForTesting):
+        (WebKit::WebPageProxy::setFooterBannerHeightForTesting):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setHeaderBannerHeightForTesting):
+        (WebKit::WebPage::setFooterBannerHeightForTesting):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-12-16  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Values] Make separate wrapper classes for the deprecated CSS Values OM
