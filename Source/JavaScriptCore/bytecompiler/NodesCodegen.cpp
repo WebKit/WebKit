@@ -3287,7 +3287,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     // optimizer knows they may be jumped to from anywhere.
 
     ASSERT(m_catchBlock || m_finallyBlock);
-    BytecodeGenerator::FinallyRegistersScope finallyRegistersScope(generator, m_finallyBlock);
+    BytecodeGenerator::CompletionRecordScope completionRecordScope(generator, m_finallyBlock);
 
     RefPtr<Label> catchLabel;
     RefPtr<Label> catchEndLabel;
@@ -3316,7 +3316,6 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     generator.emitNode(dst, m_tryBlock);
 
-    // The finallyActionRegister is an empty value by default, which implies CompletionType::Normal.
     if (m_finallyBlock)
         generator.emitJump(finallyLabel.get());
     else
@@ -3351,7 +3350,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitPopCatchScope(m_lexicalVariables);
 
         if (m_finallyBlock) {
-            generator.emitSetFinallyActionToNormalCompletion();
+            generator.emitSetCompletionType(CompletionType::Normal);
             generator.emitJump(finallyLabel.get());
             generator.popTry(tryData, finallyViaThrowLabel.get());
         }
@@ -3366,8 +3365,8 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         // Entry to the finally block for CompletionType::Throw.
         generator.emitLabel(finallyViaThrowLabel.get());
         RegisterID* unused = generator.newTemporary();
-        generator.emitCatch(generator.finallyActionRegister(), unused);
-        // Setting the finallyActionRegister to the caught exception here implies CompletionType::Throw.
+        generator.emitCatch(generator.completionValueRegister(), unused);
+        generator.emitSetCompletionType(CompletionType::Throw);
 
         // Entry to the finally block for CompletionTypes other than Throw.
         generator.emitLabel(finallyLabel.get());

@@ -1,3 +1,76 @@
+2016-12-18  Mark Lam  <mark.lam@apple.com>
+
+        Rename finallyActionRegister to completionTypeRegister and only store int JSValues in it.
+        https://bugs.webkit.org/show_bug.cgi?id=165979
+
+        Reviewed by Saam Barati.
+
+        This patch makes it so that we only store int JSValues in the finallyActionRegister
+        thereby making type prediction on this register more successful for JITs.  In so
+        doing, we are able to get some additional benefits:
+
+        1. Renamed the following:
+           FinallyRegistersScope => CompletionRecordScope
+           finallyActionRegister => completionTypeRegister
+           finallyReturnValueRegister => completionValueRegister
+
+           These new names are more in line with the ES spec, which describes these
+           values as the completion record and its type and value properties.
+           https://tc39.github.io/ecma262/#sec-completion-record-specification-type
+
+        2. We now think of the Break and Continue jumpIDs as encodings of CompletionType
+           (in our implementation of completion type).  As a result, we only need one of
+           each of the emitter methods for getting, setting, and compare-and-jump on the
+           completion type.  The code using these methods also reads much clearer now.  
+
+        3. Finally blocks' op_catch should now always pop the caught Exception object into
+           the completionValueRegister instead of the completionTypeRegister (formerly
+           finallyActionRegister). 
+
+        Also removed the restoreScopeRegister() call in the IteratorClose catch block
+        because that is an implementation specific synthesized catch block, and we
+        can guarantee that it never needs to resolve any symbols from the scope.  Hence,
+        there is no need to restore the scope register.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitJumpViaFinallyIfNeeded):
+        (JSC::BytecodeGenerator::emitReturnViaFinallyIfNeeded):
+        (JSC::BytecodeGenerator::emitFinallyCompletion):
+        (JSC::BytecodeGenerator::allocateCompletionRecordRegisters):
+        (JSC::BytecodeGenerator::releaseCompletionRecordRegisters):
+        (JSC::BytecodeGenerator::emitJumpIfCompletionType):
+        (JSC::BytecodeGenerator::allocateFinallyRegisters): Deleted.
+        (JSC::BytecodeGenerator::releaseFinallyRegisters): Deleted.
+        (JSC::BytecodeGenerator::emitCompareFinallyActionAndJumpIf): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::bytecodeOffsetToJumpID):
+        (JSC::FinallyJump::FinallyJump):
+        (JSC::FinallyContext::registerJump):
+        (JSC::BytecodeGenerator::CompletionRecordScope::CompletionRecordScope):
+        (JSC::BytecodeGenerator::CompletionRecordScope::~CompletionRecordScope):
+        (JSC::BytecodeGenerator::completionTypeRegister):
+        (JSC::BytecodeGenerator::completionValueRegister):
+        (JSC::BytecodeGenerator::emitSetCompletionType):
+        (JSC::BytecodeGenerator::emitSetCompletionValue):
+        (JSC::BytecodeGenerator::FinallyRegistersScope::FinallyRegistersScope): Deleted.
+        (JSC::BytecodeGenerator::FinallyRegistersScope::~FinallyRegistersScope): Deleted.
+        (JSC::BytecodeGenerator::finallyActionRegister): Deleted.
+        (JSC::BytecodeGenerator::finallyReturnValueRegister): Deleted.
+        (JSC::BytecodeGenerator::emitSetFinallyActionToNormalCompletion): Deleted.
+        (JSC::BytecodeGenerator::emitSetFinallyActionToReturnCompletion): Deleted.
+        (JSC::BytecodeGenerator::emitSetFinallyActionToJumpID): Deleted.
+        (JSC::BytecodeGenerator::emitSetFinallyReturnValueRegister): Deleted.
+        (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNormalCompletion): Deleted.
+        (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNotJump): Deleted.
+        (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsReturnCompletion): Deleted.
+        (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNotReturnCompletion): Deleted.
+        (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNotThrowCompletion): Deleted.
+        (JSC::BytecodeGenerator::emitJumpIfCompletionTypeIsThrow): Deleted.
+        (JSC::BytecodeGenerator::bytecodeOffsetToJumpID): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::TryNode::emitBytecode):
+
 2016-12-17  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: WasmB3IRGenerator uses WarmAny as a ValueRep but expects the incoming value to be a register
