@@ -67,11 +67,17 @@ public:
     PlatformWKView platformView() { return m_view; }
     PlatformWindow platformWindow() { return m_window; }
     static PlatformWindow keyWindow();
-    void resizeTo(unsigned width, unsigned height);
+
+    enum class WebViewSizingMode {
+        Default,
+        HeightRespectsStatusBar
+    };
+
+    void resizeTo(unsigned width, unsigned height, WebViewSizingMode = WebViewSizingMode::Default);
     void focus();
 
     WKRect windowFrame();
-    void setWindowFrame(WKRect);
+    void setWindowFrame(WKRect, WebViewSizingMode = WebViewSizingMode::Default);
 
     void didInitializeClients();
     

@@ -114,10 +114,10 @@ enum class WebViewSizingMode {
     HeightRespectsStatusBar
 };
 
-static CGRect viewRectForWindowRect(CGRect windowRect, WebViewSizingMode mode)
+static CGRect viewRectForWindowRect(CGRect windowRect, PlatformWebView::WebViewSizingMode mode)
 {
     CGFloat statusBarBottom = CGRectGetMaxY([[UIApplication sharedApplication] statusBarFrame]);
-    return CGRectMake(windowRect.origin.x, windowRect.origin.y + statusBarBottom, windowRect.size.width, windowRect.size.height - (mode == WebViewSizingMode::HeightRespectsStatusBar ? statusBarBottom : 0));
+    return CGRectMake(windowRect.origin.x, windowRect.origin.y + statusBarBottom, windowRect.size.width, windowRect.size.height - (mode == PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar ? statusBarBottom : 0));
 }
 
 PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const TestOptions& options)
@@ -166,12 +166,12 @@ void PlatformWebView::setWindowIsKey(bool isKey)
         [m_window makeKeyWindow];
 }
 
-void PlatformWebView::resizeTo(unsigned width, unsigned height)
+void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode viewSizingMode)
 {
     WKRect frame = windowFrame();
     frame.size.width = width;
     frame.size.height = height;
-    setWindowFrame(frame);
+    setWindowFrame(frame, viewSizingMode);
 }
 
 WKPageRef PlatformWebView::page()
@@ -197,10 +197,10 @@ WKRect PlatformWebView::windowFrame()
     return wkFrame;
 }
 
-void PlatformWebView::setWindowFrame(WKRect frame)
+void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode viewSizingMode)
 {
     [m_window setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
-    [platformView() setFrame:viewRectForWindowRect(CGRectMake(0, 0, frame.size.width, frame.size.height), WebViewSizingMode::HeightRespectsStatusBar)];
+    [platformView() setFrame:viewRectForWindowRect(CGRectMake(0, 0, frame.size.width, frame.size.height), viewSizingMode)];
 }
 
 void PlatformWebView::didInitializeClients()

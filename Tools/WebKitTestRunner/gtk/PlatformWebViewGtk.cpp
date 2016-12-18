@@ -64,12 +64,12 @@ void PlatformWebView::setWindowIsKey(bool isKey)
     m_windowIsKey = isKey;
 }
 
-void PlatformWebView::resizeTo(unsigned width, unsigned height)
+void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode sizingMode)
 {
     WKRect frame = windowFrame();
     frame.size.width = width;
     frame.size.height = height;
-    setWindowFrame(frame);
+    setWindowFrame(frame, sizingMode);
 }
 
 WKPageRef PlatformWebView::page()
@@ -97,7 +97,7 @@ WKRect PlatformWebView::windowFrame()
     return frame;
 }
 
-void PlatformWebView::setWindowFrame(WKRect frame)
+void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode)
 {
     gdk_window_move_resize(gtk_widget_get_window(GTK_WIDGET(m_window)),
         frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);

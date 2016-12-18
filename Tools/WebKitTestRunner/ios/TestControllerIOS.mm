@@ -97,7 +97,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
 {
     if (test.options().useFlexibleViewport) {
         CGRect screenBounds = [UIScreen mainScreen].bounds;
-        mainWebView()->resizeTo(screenBounds.size.width, screenBounds.size.height);
+        mainWebView()->resizeTo(screenBounds.size.width, screenBounds.size.height, PlatformWebView::WebViewSizingMode::HeightRespectsStatusBar);
         // We also pass data to InjectedBundle::beginTesting() to have it call
         // WKBundlePageSetUseTestingViewportConfiguration(false).
     }

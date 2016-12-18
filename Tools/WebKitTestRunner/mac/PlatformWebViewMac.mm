@@ -164,12 +164,12 @@ void PlatformWebView::setWindowIsKey(bool isKey)
     m_windowIsKey = isKey;
 }
 
-void PlatformWebView::resizeTo(unsigned width, unsigned height)
+void PlatformWebView::resizeTo(unsigned width, unsigned height, WebViewSizingMode sizingMode)
 {
     WKRect frame = windowFrame();
     frame.size.width = width;
     frame.size.height = height;
-    setWindowFrame(frame);
+    setWindowFrame(frame, sizingMode);
 }
 
 PlatformWebView::~PlatformWebView()
@@ -219,7 +219,7 @@ WKRect PlatformWebView::windowFrame()
     return wkFrame;
 }
 
-void PlatformWebView::setWindowFrame(WKRect frame)
+void PlatformWebView::setWindowFrame(WKRect frame, WebViewSizingMode)
 {
     [m_window setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
     [platformView() setFrame:NSMakeRect(0, 0, frame.size.width, frame.size.height)];

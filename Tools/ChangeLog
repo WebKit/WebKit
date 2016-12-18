@@ -1,3 +1,30 @@
+2016-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix iOS test results after r209967.
+        
+        Subtracting out the status bar height was erroneously happening for all tests,
+        not just for flexible viewport tests.
+        
+        Fix by plumbing WebViewSizingMode through resizeTo() and setWindowFrame().
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::setWindowFrame):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::setWindowFrame):
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::setWindowFrame):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::setWindowFrame):
+
 2016-12-17  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] bump EFL version to 1.18.4

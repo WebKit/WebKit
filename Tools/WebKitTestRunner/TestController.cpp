@@ -762,7 +762,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     WKPageClearWheelEventTestTrigger(m_mainWebView->page());
 
 #if PLATFORM(EFL)
-    // EFL use a real window while other ports such as Qt don't.
+    // EFL uses a real window while other ports such as Qt don't.
     // In EFL, we need to resize the window to the original size after calls to window.resizeTo.
     WKRect rect = m_mainWebView->windowFrame();
     m_mainWebView->setWindowFrame(WKRectMake(rect.origin.x, rect.origin.y, TestController::viewWidth, TestController::viewHeight));
