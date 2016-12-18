@@ -37,6 +37,32 @@ namespace WebCore {
 // such as StyleCounterValue, StyleRectValue, and StyleColorValue, these methods will get
 // more complicated.
 
+
+unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
+{
+    return m_value->primitiveType();
+}
+
+ExceptionOr<void> DeprecatedCSSOMPrimitiveValue::setFloatValue(unsigned short unitType, double floatValue)
+{
+    return m_value->setFloatValue(unitType, floatValue);
+}
+
+ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short unitType) const
+{
+    return m_value->getFloatValue(unitType);
+}
+
+ExceptionOr<void> DeprecatedCSSOMPrimitiveValue::setStringValue(unsigned short stringType, const String& stringValue)
+{
+    return m_value->setStringValue(stringType, stringValue);
+}
+
+ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
+{
+    return m_value->getStringValue();
+}
+
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
     ExceptionOr<Counter&> counter = m_value->getCounterValue();

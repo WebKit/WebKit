@@ -1,3 +1,20 @@
+2016-12-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix: linking WebCore was failing: you can't export inline functions.
+
+        * css/DeprecatedCSSOMPrimitiveValue.cpp:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setFloatValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setStringValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getStringValue):
+        * css/DeprecatedCSSOMPrimitiveValue.h:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType): Deleted.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setFloatValue): Deleted.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue): Deleted.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setStringValue): Deleted.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getStringValue): Deleted.
+
 2016-12-16  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Values] Make separate wrapper classes for the deprecated CSS Values OM

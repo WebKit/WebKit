@@ -81,11 +81,11 @@ public:
     
     // FIXME: Eventually these will contain more code and not just call through to
     // CSSPrimitiveValue.
-    WEBCORE_EXPORT unsigned short primitiveType() const { return m_value->primitiveType(); }
-    WEBCORE_EXPORT ExceptionOr<void> setFloatValue(unsigned short unitType, double floatValue) { return m_value->setFloatValue(unitType, floatValue); }
-    WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const { return m_value->getFloatValue(unitType); }
-    WEBCORE_EXPORT ExceptionOr<void> setStringValue(unsigned short stringType, const String& stringValue) { return m_value->setStringValue(stringType, stringValue); }
-    WEBCORE_EXPORT ExceptionOr<String> getStringValue() const { return m_value->getStringValue(); }
+    WEBCORE_EXPORT unsigned short primitiveType() const;
+    WEBCORE_EXPORT ExceptionOr<void> setFloatValue(unsigned short unitType, double);
+    WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const;
+    WEBCORE_EXPORT ExceptionOr<void> setStringValue(unsigned short stringType, const String&);
+    WEBCORE_EXPORT ExceptionOr<String> getStringValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMCounter>> getCounterValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRect>> getRectValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> getRGBColorValue() const;
