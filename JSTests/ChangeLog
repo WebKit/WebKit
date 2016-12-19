@@ -1,3 +1,17 @@
+2016-12-18  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Implement the WebAssembly.compile and WebAssembly.validate
+        https://bugs.webkit.org/show_bug.cgi?id=165936
+
+        Reviewed by Mark Lam.
+
+        * wasm/js-api/Module-compile.js: Added.
+        (async.testPromiseAPI):
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch):
+        * wasm/js-api/validate.js: Added.
+        (assert.truthy.WebAssembly.validate.builder.WebAssembly):
+
 2016-12-16  Mark Lam  <mark.lam@apple.com>
 
         De-duplicate finally blocks.

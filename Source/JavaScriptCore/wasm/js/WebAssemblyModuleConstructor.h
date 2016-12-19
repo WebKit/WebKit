@@ -44,6 +44,8 @@ public:
 
     DECLARE_INFO;
 
+    static JSValue createModule(ExecState*, Structure*);
+
 protected:
     void finishCreation(VM&, WebAssemblyModulePrototype*);
 
