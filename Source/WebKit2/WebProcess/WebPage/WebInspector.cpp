@@ -79,9 +79,11 @@ void WebInspector::openFrontendConnection(bool underTest)
 #elif OS(DARWIN)
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
     IPC::Connection::Identifier connectionIdentifier(listeningPort);
-    IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MOVE_SEND);
+
 #else
     notImplemented();
     return;
