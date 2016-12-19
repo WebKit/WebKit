@@ -1,3 +1,27 @@
+2016-12-19  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make running Wasm tests take less time by reducing some tests' iteration count and by splitting some tests into different files
+        https://bugs.webkit.org/show_bug.cgi?id=166017
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/function-tests/trap-load-2.js: Added.
+        (assert):
+        (wasmFrameCountFromError):
+        (continuation):
+        (i.catch):
+        * wasm/function-tests/trap-load.js:
+        (assert.continuation): Deleted.
+        * wasm/function-tests/trap-store-2.js: Added.
+        (import.Builder.from.string_appeared_here.assert):
+        (continuation):
+        (i.catch):
+        * wasm/function-tests/trap-store.js:
+        (assert.continuation): Deleted.
+        (assert): Deleted.
+        * wasm/js-api/test_memory.js:
+        (test):
+
 2016-12-18  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Implement the WebAssembly.compile and WebAssembly.validate

@@ -136,7 +136,7 @@ function test(f) {
 }
 
 test(function() {
-    const memoryDescription = {initial: 20, maximum: 20};
+    const memoryDescription = {initial: 2, maximum: 2};
     const builder = (new Builder())
         .Type().End()
         .Import().Memory("imp", "memory", memoryDescription).End()
@@ -175,7 +175,7 @@ test(function() {
 });
 
 test(function() {
-    const memoryDescription = {initial: 20, maximum: 20};
+    const memoryDescription = {initial: 2, maximum: 2};
     const builder = (new Builder())
         .Type().End()
         .Import().Memory("imp", "memory", memoryDescription).End()
@@ -215,7 +215,7 @@ test(function() {
 });
 
 test(function() {
-    const memoryDescription = {initial: 20, maximum: 20};
+    const memoryDescription = {initial: 2, maximum: 2};
     const builder = (new Builder())
         .Type().End()
         .Import().Memory("imp", "memory", memoryDescription).End()
@@ -256,7 +256,7 @@ test(function() {
 });
 
 test(function() {
-    const memoryDescription = {initial: 20, maximum: 20};
+    const memoryDescription = {initial: 2, maximum: 2};
     const builder = (new Builder())
         .Type().End()
         .Import().Memory("imp", "memory", memoryDescription).End()

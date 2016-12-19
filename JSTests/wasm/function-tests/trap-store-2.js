@@ -1,0 +1,63 @@
+import Builder from '../Builder.js'
+
+function assert(b) {
+    if (!b)
+        throw new Error("Bad")
+}
+
+const pageSize = 64 * 1024;
+const numPages = 10;
+
+{
+    const builder = (new Builder())
+        .Type().End()
+        .Import()
+            .Memory("imp", "mem", {initial: numPages})
+            .Function("imp", "func", { params: ["i32"] })
+        .End()
+        .Function().End()
+        .Export().Function("foo").End()
+        .Code()
+            .Function("foo", {params: ["i32", "i32"]})
+                .GetLocal(0)
+                .I32Const(0)
+                .I32Eq()
+                .If("void", b =>
+                    b.GetLocal(1)
+                    .GetLocal(0)
+                    .I32Store(2, 0)
+                    .Br(0)
+                    .Else()
+                        .GetLocal(0)
+                        .Call(0)
+                    .Br(0)
+                   )
+            .End()
+        .End();
+
+    const bin = builder.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    const imp = {
+        imp: {
+            mem: new WebAssembly.Memory({initial: numPages}),
+            func: continuation
+        }
+    };
+    const foo = new WebAssembly.Instance(module, imp).exports.foo;
+    const address = numPages*pageSize + 1;
+    function continuation(x) {
+        foo(x - 1, address);
+    }
+
+    for (let i = 0; i < 5000; i++) {
+        let threw = false;
+        try {
+            foo(6, address);
+        } catch(e) {
+            assert(e instanceof WebAssembly.RuntimeError);
+            assert(e.message === "Out of bounds memory access");
+            threw = true;
+        }
+        assert(threw);
+    }
+}
