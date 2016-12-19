@@ -1,3 +1,44 @@
+2016-12-18  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Prefetch cursor records in the server.
+        https://bugs.webkit.org/show_bug.cgi?id=166014
+
+        Reviewed by Andy Estes.
+
+        No new tests (Covered by existing LayoutTests and PerformanceTests).
+
+        This patch implements the followng:
+        1 - After a backing store cursor completes a fetch in the server, it will schedule the next fetch 
+            even before the client requests one. It will do this up to a limited number of prefetches.
+        2 - Once a client request to advance the cursor comes in, we'll work our way through prefetched
+            records instead of reading anything from disk, which might then cause us to continue prefetch.
+        3 - If any changes to the object store occur, it will throw away all previously fetched records
+            (There's room for future improvement here)
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::postDatabaseTask):
+        
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::prefetchCursor):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::objectStoreRecordsChanged):
+        (WebCore::IDBServer::SQLiteIDBCursor::prefetch):
+        (WebCore::IDBServer::SQLiteIDBCursor::advance):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performIterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTask):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2016-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Changing text direction fires input events with null inputTypes and no data

@@ -1232,7 +1232,19 @@ void UniqueIDBDatabase::performIterateCursor(uint64_t callbackIdentifier, const 
     IDBGetResult result;
     IDBError error = m_backingStore->iterateCursor(transactionIdentifier, cursorIdentifier, data, result);
 
+    if (error.isNull())
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
+
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformIterateCursor, callbackIdentifier, error, result));
+}
+
+void UniqueIDBDatabase::performPrefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performPrefetchCursor");
+
+    if (m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
+        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
 }
 
 void UniqueIDBDatabase::didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
@@ -1685,7 +1697,6 @@ void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction
 
 void UniqueIDBDatabase::postDatabaseTask(CrossThreadTask&& task)
 {
-    ASSERT(isMainThread());
     m_databaseQueue.append(WTFMove(task));
     ++m_queuedTaskCount;
 

@@ -69,7 +69,7 @@ public:
 
     bool advance(uint64_t count);
     bool iterate(const IDBKeyData& targetKey, const IDBKeyData& targetPrimaryKey);
-    void prefetch();
+    bool prefetch();
 
     bool didComplete() const;
     bool didError() const;

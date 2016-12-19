@@ -42,6 +42,8 @@
 namespace WebCore {
 namespace IDBServer {
 
+static const size_t prefetchLimit = 8;
+
 std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreate(SQLiteIDBTransaction& transaction, const IDBCursorInfo& info)
 {
     auto cursor = std::make_unique<SQLiteIDBCursor>(transaction, info);
@@ -235,6 +237,8 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
         }
     }
 
+    m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;
+
     m_fetchedRecords.clear();
 }
 
@@ -291,18 +295,22 @@ bool SQLiteIDBCursor::bindArguments()
     return true;
 }
 
-void SQLiteIDBCursor::prefetch()
+bool SQLiteIDBCursor::prefetch()
 {
-    ASSERT(!m_fetchedRecords.isEmpty());
-    if (m_fetchedRecords.last().errored || m_fetchedRecords.last().completed)
-        return;
+    LOG(IndexedDB, "SQLiteIDBCursor::prefetch() - Cursor already has %zu fetched records", m_fetchedRecords.size());
+
+    if (m_fetchedRecords.isEmpty() || m_fetchedRecords.size() >= prefetchLimit || m_fetchedRecords.last().isTerminalRecord())
+        return false;
 
     m_currentKeyForUniqueness = m_fetchedRecords.last().record.key;
     fetch();
+
+    return m_fetchedRecords.size() < prefetchLimit;
 }
 
 bool SQLiteIDBCursor::advance(uint64_t count)
 {
+    LOG(IndexedDB, "SQLiteIDBCursor::advance() - Count %" PRIu64 ", %zu fetched records", count, m_fetchedRecords.size());
     ASSERT(count);
 
     if (!m_fetchedRecords.isEmpty() && m_fetchedRecords.first().isTerminalRecord()) {
@@ -314,7 +322,8 @@ bool SQLiteIDBCursor::advance(uint64_t count)
         m_currentKeyForUniqueness = m_fetchedRecords.last().record.key;
 
     // Drop already-fetched records up to `count` to see if we've already fetched the record we're looking for.
-    for (size_t i = 0; i < count && !m_fetchedRecords.isEmpty(); ++i) {
+    bool hadCurrentRecord = !m_fetchedRecords.isEmpty();
+    for (; count && !m_fetchedRecords.isEmpty(); --count) {
         if (m_fetchedRecords.first().isTerminalRecord())
             break;
 
@@ -323,11 +332,16 @@ bool SQLiteIDBCursor::advance(uint64_t count)
 
     // If we still have any records left, the first record is our new current record.
     if (!m_fetchedRecords.isEmpty())
-        return !m_fetchedRecords.first().isTerminalRecord();
+        return true;
 
     ASSERT(m_fetchedRecords.isEmpty());
 
-    for (uint64_t i = 0; i < count; ++i) {
+    // If we started out with a current record, we burnt a count on removing it.
+    // Replace that count now.
+    if (hadCurrentRecord)
+        ++count;
+
+    for (; count; --count) {
         if (!m_fetchedRecords.isEmpty()) {
             ASSERT(m_fetchedRecords.size() == 1);
             m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;

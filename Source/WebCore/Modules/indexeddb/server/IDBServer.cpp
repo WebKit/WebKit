@@ -481,7 +481,6 @@ void IDBServer::didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint
 
 void IDBServer::postDatabaseTask(CrossThreadTask&& task)
 {
-    ASSERT(isMainThread());
     m_databaseQueue.append(WTFMove(task));
 }
 

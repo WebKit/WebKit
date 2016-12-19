@@ -1606,6 +1606,8 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
             return error;
         }
 
+        transaction->notifyCursorsOfChanges(objectStoreID);
+
         return { };
     }
 
@@ -2487,6 +2489,22 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
 
     cursor->currentData(result);
     return { };
+}
+
+bool SQLiteIDBBackingStore::prefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::prefetchCursor");
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* cursor = m_cursors.get(cursorIdentifier);
+    if (!cursor || !cursor->transaction() || !cursor->transaction()->inProgress())
+        return false;
+
+    ASSERT_UNUSED(transactionIdentifier, cursor->transaction()->transactionIdentifier() == transactionIdentifier);
+
+    return cursor->prefetch();
 }
 
 IDBObjectStoreInfo* SQLiteIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)
