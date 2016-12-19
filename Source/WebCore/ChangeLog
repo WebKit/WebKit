@@ -1,3 +1,13 @@
+2016-12-19  Gavin Barraclough  <barraclough@apple.com>
+
+        [CSS Parser] Enable CSS Deferred Parsing
+        https://bugs.webkit.org/show_bug.cgi?id=165869
+
+        Unreviewed rollout – looks like this regressed performance.
+
+        * css/parser/CSSParserMode.h:
+        * page/Settings.in:
+
 2016-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         Side effects while restting form elements

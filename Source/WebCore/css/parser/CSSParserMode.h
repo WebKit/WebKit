@@ -107,7 +107,7 @@ public:
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
     
-    bool deferredCSSParserEnabled { true };
+    bool deferredCSSParserEnabled { false };
 
     URL completeURL(const String& url) const
     {
