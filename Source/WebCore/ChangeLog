@@ -1,3 +1,26 @@
+2016-12-19  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] GLXBadFBConfig error when creating an OpenGL context
+        https://bugs.webkit.org/show_bug.cgi?id=165200
+
+        Reviewed by Carlos Garcia Campos.
+
+        glXCreateContextAttribsARB causes a GLXBadFBConfig X error when it's not able to provide the
+        OpenGL version >= 3.2 we are requesting. Due to this, the app crashes instead of falling back to
+        the legacy path.
+        The patch modifies GLX context creation using a XErrorTrapper, so the first time a context is created
+        we don't crash if OpenGL >= 3.2 is not available.
+        If the gotten context is not valid, we fall back to whatever version glXCreateContextAttribsARB is
+        able to provide.
+        The legacy glXCreateContext is only used if the GLX_ARB_create_context extension is not available.
+
+        Covered by existent tests.
+
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::tryCreateGLXARBContext):
+        (WebCore::GLContextGLX::createWindowContext):
+        (WebCore::GLContextGLX::createPbufferContext):
+
 2016-12-18  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Prefetch cursor records in the server.
