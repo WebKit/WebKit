@@ -57,6 +57,9 @@ public:
 
     void didDestroyListMarker() { m_marker = nullptr; }
 
+#if !ASSERT_DISABLED
+    bool inLayout() const { return m_inLayout; }
+#endif
 private:
     const char* renderName() const override { return "RenderListItem"; }
 
@@ -84,7 +87,9 @@ private:
     int m_explicitValue;
     RenderListMarker* m_marker;
     mutable int m_value;
-
+#if !ASSERT_DISABLED
+    bool m_inLayout { false };
+#endif
     bool m_hasExplicitValue : 1;
     mutable bool m_isValueUpToDate : 1;
     bool m_notInList : 1;

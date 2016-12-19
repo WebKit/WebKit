@@ -56,6 +56,9 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
+#if !ASSERT_DISABLED
+#include "RenderListMarker.h"
+#endif
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTableCaption.h"
@@ -641,6 +644,11 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
+#if !ASSERT_DISABLED
+    // Check if the marker gets detached while laying out the list item.
+    if (is<RenderListMarker>(oldChild))
+        ASSERT(m_reparentingChild || !downcast<RenderListMarker>(oldChild).listItem().inLayout());
+#endif
 }
 
 RenderBlock* RenderElement::containingBlockForFixedPosition() const

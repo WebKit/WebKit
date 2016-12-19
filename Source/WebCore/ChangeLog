@@ -1,3 +1,28 @@
+2016-12-19  Zalan Bujtas  <zalan@apple.com>
+
+        Do not position detached list item marker.
+        https://bugs.webkit.org/show_bug.cgi?id=166035
+        <rdar://problem/29175235>
+
+        Reviewed by Simon Fraser.
+
+        In certain (non-reproducible) cases, the list item marker can get detached from the tree
+        during layout and when in RenderListItem::positionListMarker() we dereference the marker's parent, we crash.
+        In addition to the null check, this patch adds an ASSERTION to catch such cases early on.
+
+        Unable to reproduce.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeChildInternal):
+        * rendering/RenderElement.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.h:
+
 2016-12-19  Gavin Barraclough  <barraclough@apple.com>
 
         [CSS Parser] Enable CSS Deferred Parsing

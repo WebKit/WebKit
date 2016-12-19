@@ -44,6 +44,10 @@ public:
 
     void updateMarginsAndContent();
 
+#if !ASSERT_DISABLED
+    RenderListItem& listItem() const { return m_listItem; }
+#endif
+
 private:
     void element() const = delete;
 

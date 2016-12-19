@@ -273,6 +273,9 @@ protected:
 
     void removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState);
     void adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
+#if !ASSERT_DISABLED
+    bool m_reparentingChild { false };
+#endif
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
