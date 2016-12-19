@@ -130,6 +130,8 @@ static String inputEventDataForEditingStyleAndAction(const StyleProperties* styl
     switch (action) {
     case EditActionSetColor:
         return style->getPropertyValue(CSSPropertyColor);
+    case EditActionSetWritingDirection:
+        return style->getPropertyValue(CSSPropertyDirection);
     default:
         return { };
     }
@@ -829,14 +831,15 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
         return;
 
     String inputTypeName = inputTypeNameForEditingAction(editingAction);
+    String inputEventData = inputEventDataForEditingStyleAndAction(style, editingAction);
     RefPtr<Element> element = m_frame.selection().selection().rootEditableElement();
-    if (element && !dispatchBeforeInputEvent(*element, inputTypeName))
+    if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
         return;
 
     applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
     client()->didApplyStyle();
     if (element)
-        dispatchInputEvent(*element, inputTypeName);
+        dispatchInputEvent(*element, inputTypeName, inputEventData);
 }
 
 void Editor::applyStyleToSelection(StyleProperties* style, EditAction editingAction)
@@ -1586,8 +1589,15 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
     if (is<HTMLTextFormControlElement>(focusedElement)) {
         if (direction == NaturalWritingDirection)
             return;
-        downcast<HTMLTextFormControlElement>(*focusedElement).setAttributeWithoutSynchronization(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
-        focusedElement->dispatchInputEvent();
+
+        auto& focusedFormElement = downcast<HTMLTextFormControlElement>(*focusedElement);
+        auto directionValue = direction == LeftToRightWritingDirection ? "ltr" : "rtl";
+        auto writingDirectionInputTypeName = inputTypeNameForEditingAction(EditActionSetWritingDirection);
+        if (!dispatchBeforeInputEvent(focusedFormElement, writingDirectionInputTypeName, directionValue))
+            return;
+
+        focusedFormElement.setAttributeWithoutSynchronization(dirAttr, directionValue);
+        dispatchInputEvent(focusedFormElement, writingDirectionInputTypeName, directionValue);
         document().updateStyleIfNeeded();
         return;
     }

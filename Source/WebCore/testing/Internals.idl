@@ -70,6 +70,12 @@ enum UserInterfaceLayoutDirection {
     "RTL"
 };
 
+enum BaseWritingDirection {
+    "Natural",
+    "Ltr",
+    "Rtl"
+};
+
 enum EventThrottlingBehavior {
     "responsive",
     "unresponsive"
@@ -485,6 +491,7 @@ enum EventThrottlingBehavior {
     GCObservation observeGC(any observed);
 
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
+    void setBaseWritingDirection(BaseWritingDirection direction);
 
     boolean userPrefersReducedMotion();
     

@@ -1,3 +1,17 @@
+2016-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Changing text direction fires input events with null inputTypes and no data
+        https://bugs.webkit.org/show_bug.cgi?id=166007
+        <rdar://problem/29557205>
+
+        Reviewed by Sam Weinig.
+
+        Verifies that changing text direction causes beforeinput and input events with appropriate inputType and data to
+        be dispatched, and that preventing this beforeinput event causes no change in text direction.
+
+        * fast/events/before-input-events-prevent-text-direction-expected.txt: Added.
+        * fast/events/before-input-events-prevent-text-direction.html: Added.
+
 2016-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline these tests after r209967, since they are now affected by status bar height.

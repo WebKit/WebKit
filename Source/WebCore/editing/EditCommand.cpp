@@ -110,6 +110,8 @@ String inputTypeNameForEditingAction(EditAction action)
         return ASCIILiteral("formatIndent");
     case EditActionOutdent:
         return ASCIILiteral("formatOutdent");
+    case EditActionSetWritingDirection:
+        return ASCIILiteral("formatSetInlineTextDirection");
     default:
         return emptyString();
     }

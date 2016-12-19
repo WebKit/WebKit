@@ -134,6 +134,7 @@
 #include "ViewportArguments.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerThread.h"
+#include "WritingDirection.h"
 #include "XMLHttpRequest.h"
 #include <bytecode/CodeBlock.h>
 #include <inspector/InspectorAgentBase.h>
@@ -3515,6 +3516,25 @@ bool Internals::userPrefersReducedMotion() const
 void Internals::reportBacktrace()
 {
     WTFReportBacktrace();
+}
+
+void Internals::setBaseWritingDirection(BaseWritingDirection direction)
+{
+    if (auto* document = contextDocument()) {
+        if (auto* frame = document->frame()) {
+            switch (direction) {
+            case BaseWritingDirection::Ltr:
+                frame->editor().setBaseWritingDirection(LeftToRightWritingDirection);
+                break;
+            case BaseWritingDirection::Rtl:
+                frame->editor().setBaseWritingDirection(RightToLeftWritingDirection);
+                break;
+            case BaseWritingDirection::Natural:
+                frame->editor().setBaseWritingDirection(NaturalWritingDirection);
+                break;
+            }
+        }
+    }
 }
 
 #if ENABLE(POINTER_LOCK)

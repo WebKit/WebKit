@@ -519,6 +519,9 @@ public:
     
     void reportBacktrace();
 
+    enum class BaseWritingDirection { Natural, Ltr, Rtl };
+    void setBaseWritingDirection(BaseWritingDirection);
+
 #if ENABLE(POINTER_LOCK)
     bool pageHasPendingPointerLock() const;
     bool pageHasPointerLock() const;

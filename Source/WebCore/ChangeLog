@@ -1,3 +1,43 @@
+2016-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Changing text direction fires input events with null inputTypes and no data
+        https://bugs.webkit.org/show_bug.cgi?id=166007
+        <rdar://problem/29557205>
+
+        Reviewed by Sam Weinig.
+
+        Adds support for the "formatSetInlineTextDirection" input type, triggered when using the context menu on Mac in
+        an editable area (for both plain and rich text cases) to change paragraph direction. To do this, we add cases
+        for EditActionSetWritingDirection in inputTypeNameForEditingAction and inputEventDataForEditingStyleAndAction.
+
+        When changing text direction for a plaintext editable element, we have logic in Editor::setBaseWritingDirection
+        that sets the focused element's dir attribute to the requested value (ltr or rtl). We add similar hooks here to
+        dispatch input events and handle preventing default.
+
+        Test: fast/events/before-input-events-prevent-text-direction.html
+
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction):
+
+        Handle the EditActionSetWritingDirection case.
+
+        * editing/Editor.cpp:
+        (WebCore::inputEventDataForEditingStyleAndAction):
+        (WebCore::Editor::applyParagraphStyle):
+
+        Include input event data when dispatching an input event here.
+
+        (WebCore::Editor::setBaseWritingDirection):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setBaseWritingDirection):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Introduce an internal testing support hook for setting base writing direction (the same codepath taken when
+        using the context menu to change paragraph direction). Currently, using testRunner.execCommand creates and
+        applies style with an additional `unicode-bidi` attribute, and appears to also be intentionally disabled for
+        plaintext editable elements.
+
 2016-12-17  Simon Fraser  <simon.fraser@apple.com>
 
         Build fix: linking WebCore was failing: you can't export inline functions.
