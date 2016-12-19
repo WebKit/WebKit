@@ -1,5 +1,15 @@
 2016-12-19  Dean Jackson  <dino@apple.com>
 
+        Another feature toggle for rdar://problem/29466493.
+
+    2016-12-19  Dean Jackson  <dino@apple.com>
+
+            Enable Gamepad by default.
+
+            * Shared/WebPreferencesDefinitions.h:
+
+2016-12-19  Dean Jackson  <dino@apple.com>
+
         Merge another patch for rdar://problem/29466493.
 
     2016-12-19  Dean Jackson  <dino@apple.com>

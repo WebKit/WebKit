@@ -317,7 +317,7 @@
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
-    macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Gamepads", "Web Gamepad API support") \
+    macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, true, "Gamepads", "Web Gamepad API support") \
     macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, false, "Modern Media Controls", "Use modern media controls look") \
     macro(VariationFontsEnabled, variationFontsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Variation Fonts", "Enable variation fonts") \
     macro(SubtleCryptoEnabled, subtleCryptoEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubtleCrypto", "Enable SubtleCrypto support") \
