@@ -204,7 +204,7 @@ if (ENABLE_WEBKIT2)
         ${TESTWEBKITAPI_DIR}/TestsController.cpp
     )
 
-    target_link_libraries(TestWebKitAPIBase ${test_webkit2_api_LIBRARIES})
+    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit2 gtest)
 
     add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 

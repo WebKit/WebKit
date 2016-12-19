@@ -1,5 +1,16 @@
 2016-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] TestWebKitAPIBase links to itself
+        https://bugs.webkit.org/show_bug.cgi?id=165985
+
+        Reviewed by Alex Christensen.
+
+        Fix CMake warning about a target linking to itself, which makes no sense.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
+2016-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] GtkDoc build should be quieter
         https://bugs.webkit.org/show_bug.cgi?id=165994
 
