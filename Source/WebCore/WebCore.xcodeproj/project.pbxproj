@@ -5347,8 +5347,6 @@
 		BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */; };
 		BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */; };
 		BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */; };
-		BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */; };
 		BC6D44BE0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */; };
 		BC6D44EC0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D44EA0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp */; };
 		BC6D44ED0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */; };
@@ -13248,8 +13246,6 @@
 		BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontSelector.h; sourceTree = "<group>"; };
 		BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowBase.cpp; sourceTree = "<group>"; };
 		BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowBase.h; sourceTree = "<group>"; };
-		BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageConstructor.cpp; sourceTree = "<group>"; };
-		BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageConstructor.h; sourceTree = "<group>"; };
 		BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLEmbedElementCustom.cpp; sourceTree = "<group>"; };
 		BC6D44EA0C07F2ED0072D2C9 /* JSHTMLEmbedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLEmbedElement.cpp; sourceTree = "<group>"; };
 		BC6D44EB0C07F2ED0072D2C9 /* JSHTMLEmbedElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLEmbedElement.h; sourceTree = "<group>"; };
@@ -22510,8 +22506,6 @@
 			isa = PBXGroup;
 			children = (
 				CE261694187E6469007955F3 /* ios */,
-				BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */,
-				BC6C49F20D7DBA0500FFA558 /* JSImageConstructor.h */,
 			);
 			name = Constructors;
 			sourceTree = "<group>";
@@ -26348,7 +26342,6 @@
 				B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */,
 				838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,
-				BC6C49F40D7DBA0500FFA558 /* JSImageConstructor.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
@@ -30129,7 +30122,6 @@
 				51E269331DD3BC4E006B6A58 /* JSIDBTransactionCustom.cpp in Sources */,
 				838EF53B1DC14A7C008F0C39 /* JSIDBTransactionMode.cpp in Sources */,
 				511EF2CB17F0FD3500E4FA16 /* JSIDBVersionChangeEvent.cpp in Sources */,
-				BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
 				A86629D409DA2B48009633A6 /* JSInputEvent.cpp in Sources */,

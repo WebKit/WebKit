@@ -31,7 +31,6 @@
 #include "JSHTMLCollection.h"
 #include "JSHTMLOptionElement.h"
 #include "JSIDBFactory.h"
-#include "JSImageConstructor.h"
 #include "JSWorker.h"
 #include "Location.h"
 #include "RuntimeEnabledFeatures.h"
@@ -401,11 +400,6 @@ JSValue JSDOMWindow::event(ExecState& state) const
     if (!event)
         return jsUndefined();
     return toJS(&state, const_cast<JSDOMWindow*>(this), event);
-}
-
-JSValue JSDOMWindow::image(ExecState& state) const
-{
-    return createImageConstructor(state.vm(), *this);
 }
 
 // Custom functions

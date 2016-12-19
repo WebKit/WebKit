@@ -1,3 +1,26 @@
+2016-12-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom binding for the named Image constructor
+        https://bugs.webkit.org/show_bug.cgi?id=166023
+
+        Reviewed by Alex Christensen.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove JSImageConstructor.
+
+        * bindings/js/JSImageConstructor.cpp: Removed.
+        * bindings/js/JSImageConstructor.h: Removed.
+        
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::image): Deleted.
+        * page/DOMWindow.idl:
+        Remove custom getter for the constructor.
+
+        * html/HTMLImageElement.idl:
+        Add NamedConstructor annotation.
+
 2016-12-19  Antti Koivisto  <antti@apple.com>
 
         Remove RenderObject::requiresForcedStyleRecalcPropagation

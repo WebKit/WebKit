@@ -167,7 +167,6 @@
     void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
     void releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
 
-    [CustomGetter, CustomConstructor] attribute HTMLImageElementNamedConstructor Image;
     attribute XMLDocumentConstructor SVGDocument;
 
     attribute DOMURLConstructor webkitURL; // FIXME: Deprecate this.

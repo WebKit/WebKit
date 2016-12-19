@@ -91,7 +91,6 @@
 #include "JSHTMLSelectElementCustom.cpp"
 #include "JSHTMLTemplateElementCustom.cpp"
 #include "JSHistoryCustom.cpp"
-#include "JSImageConstructor.cpp"
 #include "JSImageDataCustom.cpp"
 #include "JSInspectorFrontendHostCustom.cpp"
 #include "JSLazyEventListener.cpp"
