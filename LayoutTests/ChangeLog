@@ -1,3 +1,12 @@
+2016-12-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/text/emoji.html for macOS.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/fast/text/emoji-expected.txt: Copied from LayoutTests/platform/mac/fast/text/emoji-expected.txt.
+        * platform/mac/fast/text/emoji-expected.txt:
+
 2016-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, mark fixed-element-on-bottom-with-keyboard.html as skip for OpenSource iOS WK2
