@@ -1,5 +1,13 @@
 2016-12-19  Sam Weinig  <sam@webkit.org>
 
+        Move custom files / callback objects into their respective groups.
+
+        Rubber-stamped by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2016-12-19  Sam Weinig  <sam@webkit.org>
+
         [WebIDL] Remove custom binding for the named Image constructor
         https://bugs.webkit.org/show_bug.cgi?id=166023
 
