@@ -139,7 +139,7 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
             skipOverSubselectors = true;
             break;
         case CSSSelector::DescendantSpace:
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::DescendantDoubleChild:
 #endif
         case CSSSelector::Child:
