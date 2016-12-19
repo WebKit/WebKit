@@ -1,3 +1,19 @@
+2016-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] GtkDoc build should be quieter
+        https://bugs.webkit.org/show_bug.cgi?id=165994
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make it not print by default.
+
+        * gtk/generate-gtkdoc:
+        (get_generator_for_config):
+        (generate_doc):
+        * gtk/gtkdoc.py:
+        (GTKDoc._run_command):
+        (GTKDoc._copy_doc_files_to_output_dir):
+
 2016-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Expose a way for MiniBrowser to simulate header and footer banners

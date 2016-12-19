@@ -129,14 +129,12 @@ def get_generator_for_config(config_file, virtual_root, cross_reference_deps = [
     })
 
 def generate_doc(generator, skip_html):
-    print("\nGenerating {0} documentation...".format(generator.module_name))
     generator.generate(not skip_html)
     if generator.saw_warnings:
         print_missing_api(generator)
     return generator.saw_warnings
 
 def rebase_doc(generator):
-    print("\nRebasing {0} documentation...".format(generator.module_name))
     try:
         generator.rebase_installed_docs()
     except Exception:

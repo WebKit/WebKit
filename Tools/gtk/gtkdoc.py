@@ -182,7 +182,7 @@ class GTKDoc(object):
             answer = raw_input(question).lower()
         return answer == 'y'
 
-    def _run_command(self, args, env=None, cwd=None, print_output=True, ignore_warnings=False):
+    def _run_command(self, args, env=None, cwd=None, print_output=False, ignore_warnings=False):
         if print_output:
             self.logger.info("Running %s", args[0])
         self.logger.debug("Full command args: %s", str(args))
@@ -243,14 +243,14 @@ class GTKDoc(object):
                 copy_file_replacing_existing(os.path.join(src, path),
                                              os.path.join(dest, path))
 
-        self.logger.info('Copying template files to output directory...')
+        self.logger.debug('Copying template files to output directory...')
         self._create_directory_if_nonexistent(self.output_dir)
         copy_all_files_in_directory(self.doc_dir, self.output_dir)
 
         if not html:
             return
 
-        self.logger.info('Copying HTML files to output directory...')
+        self.logger.debug('Copying HTML files to output directory...')
         html_src_dir = os.path.join(self.doc_dir, 'html')
         html_dest_dir = os.path.join(self.output_dir, 'html')
         self._create_directory_if_nonexistent(html_dest_dir)
