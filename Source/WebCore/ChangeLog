@@ -1,3 +1,26 @@
+2016-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+        Side effects while restting form elements
+        https://bugs.webkit.org/show_bug.cgi?id=165959
+        <rdar://problem/29705967>
+
+        Reviewed by Anders Carlsson.
+
+        JavaScript logic can run while resetting FormElement objects. This can
+        lead to unintended side-effets and other unwanted behavior. We should
+        protect these elements during the reset.
+
+        Test: fast/html/form-mutate.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement): Switch to C++11 initialization.
+        (WebCore::HTMLFormElement::reset): Protect elements until the reset
+        operation is finished.
+        (WebCore::HTMLFormElement::resetAssociatedFormControlElements): Added to share
+        code with 'resumeFromDocument'.
+        (WebCore::HTMLFormElement::resumeFromDocument): Protect elements until the
+        reset operation is finished.
+
 2016-12-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r209983.
