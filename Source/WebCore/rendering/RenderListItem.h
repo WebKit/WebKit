@@ -73,8 +73,6 @@ private:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    bool requiresForcedStyleRecalcPropagation() const override { return true; }
-
     void addOverflowFromChildren() override;
     void computePreferredLogicalWidths() override;
 

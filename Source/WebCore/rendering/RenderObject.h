@@ -327,8 +327,6 @@ public:
     FlowThreadState flowThreadState() const { return m_bitfields.flowThreadState(); }
     void setFlowThreadState(FlowThreadState state) { m_bitfields.setFlowThreadState(state); }
 
-    virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
-
 #if ENABLE(MATHML)
     virtual bool isRenderMathMLBlock() const { return false; }
     virtual bool isRenderMathMLTable() const { return false; }

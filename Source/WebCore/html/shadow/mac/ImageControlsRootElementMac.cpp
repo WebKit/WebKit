@@ -46,7 +46,6 @@ private:
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     const char* renderName() const override { return "RenderImageControls"; }
-    bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
 RenderImageControls::RenderImageControls(HTMLElement& element, RenderStyle&& style)

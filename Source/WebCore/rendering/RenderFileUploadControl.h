@@ -52,8 +52,6 @@ private:
     void computePreferredLogicalWidths() override;
     void paintObject(PaintInfo&, const LayoutPoint&) override;
 
-    bool requiresForcedStyleRecalcPropagation() const override { return true; }
-
     int maxFilenameWidth() const;
     
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;

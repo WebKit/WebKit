@@ -71,8 +71,6 @@ private:
 
     bool hasLineIfEmpty() const override;
 
-    bool requiresForcedStyleRecalcPropagation() const override { return true; }
-
     bool isFlexibleBoxImpl() const override { return true; }
 
     RenderTextFragment* m_buttonText;

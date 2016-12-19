@@ -43,7 +43,6 @@ private:
 
     const char* renderName() const override { return "RenderMeter"; }
     bool isMeter() const override { return true; }
-    bool requiresForcedStyleRecalcPropagation() const override { return true; }
 };
 
 } // namespace WebCore

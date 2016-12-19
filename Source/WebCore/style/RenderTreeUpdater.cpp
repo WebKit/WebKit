@@ -283,7 +283,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     }
 
     if (update.change == Style::NoChange) {
-        if (pseudoStyleCacheIsInvalid(&renderer, update.style.get()) || (parent().styleChange == Style::Force && renderer.requiresForcedStyleRecalcPropagation())) {
+        if (pseudoStyleCacheIsInvalid(&renderer, update.style.get())) {
             renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceEqual);
             return;
         }
