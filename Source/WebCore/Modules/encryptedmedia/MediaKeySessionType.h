@@ -34,7 +34,6 @@ namespace WebCore {
 
 enum class MediaKeySessionType {
     Temporary,
-    PersistentUsageRecord,
     PersistentLicense
 };
 

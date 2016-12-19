@@ -176,7 +176,6 @@ bool CDM::isPersistentType(MediaKeySessionType sessionType)
         // ↳ "temporary"
         return false;
     case MediaKeySessionType::PersistentLicense:
-    case MediaKeySessionType::PersistentUsageRecord:
         // ↳ "persistent-license"
         return true;
     }

@@ -1,3 +1,23 @@
+2016-12-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Remove MediaKeySessionType::persistent-usage-record
+        https://bugs.webkit.org/show_bug.cgi?id=166012
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Remove the "persistent-usage-record" value from the MediaKeySessionType.
+        This was removed from the spec as an at-risk feature.
+        https://github.com/w3c/encrypted-media/issues/353
+
+        No non-imported tests need to be updated. This is still present in the
+        tests imported from the W3C's web-platform-tests repository, but the
+        tests haven't yet been updated upstream.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::isPersistentType):
+        * Modules/encryptedmedia/MediaKeySessionType.h:
+        * Modules/encryptedmedia/MediaKeySessionType.idl:
+
 2016-12-19  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] GLXBadFBConfig error when creating an OpenGL context
