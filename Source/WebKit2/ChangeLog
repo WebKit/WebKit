@@ -1,3 +1,20 @@
+2016-12-19  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for rdar://problem/29466493.
+
+    2016-12-19  Dean Jackson  <dino@apple.com>
+
+            Disable some features on the safari-603-branch.
+            <rdar://problem/29466493>
+
+            - Force the default state of experimental features to off.
+            - Move some experimental features that should be enabled on this
+              branch into the general feature list, so they can't be disabled.
+            - Disable some features that are not ready.
+
+            * Configurations/FeatureDefines.xcconfig:
+            * Shared/WebPreferencesDefinitions.h:
+
 2016-12-18  Simon Fraser  <simon.fraser@apple.com>
 
         Expose a way for MiniBrowser to simulate header and footer banners

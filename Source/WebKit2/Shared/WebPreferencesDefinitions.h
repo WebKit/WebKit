@@ -248,6 +248,9 @@
     macro(IntersectionObserverEnabled, intersectionObserverEnabled, Bool, bool, false, "Intersection Observer", "Enable Intersection Observer support") \
     macro(InteractiveFormValidationEnabled, interactiveFormValidationEnabled, Bool, bool, DEFAULT_HTML_INTERACTIVE_FORM_VALIDATION_ENABLED, "HTML Interactive Form Validation", "HTML interactive form validation") \
     macro(ShouldSuppressKeyboardInputDuringProvisionalNavigation, shouldSuppressKeyboardInputDuringProvisionalNavigation, Bool, bool, false, "", "") \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, true, "CSS Grid", "CSS Grid Layout Module support") \
+    macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, true, "Input Events", "Enable InputEvents support") \
+    macro(ES6ModulesEnabled, es6ModulesEnabled, Bool, bool, true, "ES6 Modules", "Enable ES6 Modules support") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
@@ -298,7 +301,7 @@
 // Our XCode build system does not currently have any concept of DEVELOPER_MODE.
 // Cocoa ports must disable experimental features on release branches for now.
 #if ENABLE(DEVELOPER_MODE) || PLATFORM(COCOA)
-#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
+#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
 #else
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
 #endif
@@ -313,15 +316,12 @@
 //   wider testing).
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Grid", "CSS Grid Layout Module support") \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Gamepads", "Web Gamepad API support") \
     macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, false, "Modern Media Controls", "Use modern media controls look") \
     macro(VariationFontsEnabled, variationFontsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Variation Fonts", "Enable variation fonts") \
-    macro(InputEventsEnabled, inputEventsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Input Events", "Enable InputEvents support") \
     macro(SubtleCryptoEnabled, subtleCryptoEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubtleCrypto", "Enable SubtleCrypto support") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "WebGL 2.0", "WebGL 2 prototype") \
-    macro(ES6ModulesEnabled, es6ModulesEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "ES6 Modules", "Enable ES6 Modules support") \
     \
 
 #if PLATFORM(COCOA)
