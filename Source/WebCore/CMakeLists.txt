@@ -197,8 +197,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
 
-    Modules/indieui/UIRequestEvent.idl
-
     Modules/mediacontrols/MediaControlsHost.idl
 
     Modules/mediasession/HTMLMediaElementMediaSession.idl

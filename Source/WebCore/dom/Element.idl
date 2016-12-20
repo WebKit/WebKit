@@ -119,10 +119,6 @@
     void webkitRequestFullscreen();
 #endif
 
-#if defined(ENABLE_INDIE_UI) && ENABLE_INDIE_UI
-    [CEReactions, Reflect] attribute DOMString uiactions;
-#endif
-
     [CEReactions, MayThrowException] Element? insertAdjacentElement(DOMString where, Element element);
     [CEReactions, MayThrowException] void insertAdjacentHTML(DOMString where, DOMString html);
     [MayThrowException] void insertAdjacentText(DOMString where, DOMString text);

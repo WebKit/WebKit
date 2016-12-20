@@ -1878,11 +1878,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').hasOwnProperty('get') is
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'UIEvent').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'UIRequestEvent').value is UIRequestEvent
-PASS Object.getOwnPropertyDescriptor(global, 'UIRequestEvent').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'UIRequestEvent').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'UIRequestEvent').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'UIRequestEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'URL').value is URL
 PASS Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'URL').hasOwnProperty('set') is false

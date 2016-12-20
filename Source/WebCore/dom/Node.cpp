@@ -80,10 +80,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(INDIE_UI)
-#include "UIRequestEvent.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -2213,14 +2209,6 @@ bool Node::dispatchTouchEvent(TouchEvent& event)
 }
 #endif
 
-#if ENABLE(INDIE_UI)
-bool Node::dispatchUIRequestEvent(UIRequestEvent& event)
-{
-    EventDispatcher::dispatchEvent(*this, event);
-    return event.defaultHandled() || event.defaultPrevented();
-}
-#endif
-    
 bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 {
     if (!document().hasListenerType(Document::BEFORELOAD_LISTENER))
