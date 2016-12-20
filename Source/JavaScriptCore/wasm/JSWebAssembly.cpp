@@ -49,7 +49,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     JSPromiseDeferred* promise = JSPromiseDeferred::create(exec, exec->lexicalGlobalObject());
-    RETURN_IF_EXCEPTION(catchScope, { });
+    RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
 
     // FIXME: Make this truly asynchronous:
     // https://bugs.webkit.org/show_bug.cgi?id=166016
@@ -72,7 +72,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
     size_t byteOffset;
     size_t byteSize;
     uint8_t* base = getWasmBufferFromValue(exec, exec->argument(0), byteOffset, byteSize);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     Wasm::Plan plan(&vm, base + byteOffset, byteSize);
     // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
     // https://bugs.webkit.org/show_bug.cgi?id=166015
