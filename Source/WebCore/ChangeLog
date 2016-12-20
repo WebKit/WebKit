@@ -1,3 +1,40 @@
+2016-12-20  Sam Weinig  <sam@webkit.org>
+
+        [DataCue] Un-prefix DataCue and remove custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=166087
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDataCueCustom.cpp: Removed.
+        Remove JSDataCueCustom.cpp
+
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        Remove out of date comment.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        Update constructor generation code to use JSDOMConvert.
+
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::DataCue):
+        (WebCore::DataCue::~DataCue):
+        (WebCore::DataCue::data):
+        (WebCore::DataCue::setData):
+        (WebCore::DataCue::cueContentsMatch):
+        (WebCore::DataCue::value):
+        (WebCore::DataCue::setValue):
+        (WebCore::DataCue::valueOrNull):
+        * html/track/DataCue.h:
+        * html/track/DataCue.idl:
+        * platform/SerializedPlatformRepresentation.h:
+        Remove DATACUE_VALUE define from web exposed classes, so the interface can
+        be the same on all platforms. Platforms that don't support DATACUE_VALUE will
+        just never have any value. Also remove custom annotations.
+
 2016-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement the updated port/area-based Scroll Snap Module Level 1 Spec

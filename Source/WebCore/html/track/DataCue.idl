@@ -23,21 +23,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 [
     Conditional=VIDEO_TRACK,
-    CustomConstructor,
-#if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
-    CustomConstructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type),
-    InterfaceName=WebKitDataCue,
-#else
-    CustomConstructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
-#endif
-    ConstructorMayThrowException,
+    Constructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
+    Constructor(unrestricted double startTime, unrestricted double endTime, any value, optional DOMString type),
+    ConstructorCallWith=ScriptExecutionContext
 ] interface DataCue : TextTrackCue {
     attribute ArrayBuffer data;
 
-#if defined(ENABLE_DATACUE_VALUE) && ENABLE_DATACUE_VALUE
-    [CustomGetter, CustomSetter] attribute any value;
+    // Proposed extensions.
+    [CallWith=ScriptState] attribute any value;
     readonly attribute DOMString type;
-#endif
 };

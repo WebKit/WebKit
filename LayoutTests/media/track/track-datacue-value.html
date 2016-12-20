@@ -9,7 +9,7 @@
             function loaded()
             {
                 consoleWrite("<br>*** Initialize with string.");
-                run("cue = new WebKitDataCue(2, 6, 'test')");
+                run("cue = new DataCue(2, 6, 'test')");
                 testExpected("cue.id", "");
                 testExpected("cue.startTime", 2);
                 testExpected("cue.endTime", 6);
@@ -20,7 +20,7 @@
                 testExpected("cue.type", '');
 
                 consoleWrite("<br>*** Initialize with an object.");
-                run("cue = new WebKitDataCue(9, 16, { data: [1, 2, 3] }, 'org.test')");
+                run("cue = new DataCue(9, 16, { data: [1, 2, 3] }, 'org.test')");
                 testExpected("cue.id", "");
                 testExpected("cue.startTime", 9);
                 testExpected("cue.endTime", 16);
@@ -45,6 +45,6 @@
         </script>
     </head>
     <body onload="loaded()">
-        <p>Tests WebKitDataCue.value</p>
+        <p>Tests DataCue.value</p>
     </body>
 </html>

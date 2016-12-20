@@ -1,8 +1,8 @@
-Tests WebKitDataCue.value
+Tests DataCue.value
 
 
 *** Initialize with string.
-RUN(cue = new WebKitDataCue(2, 6, 'test'))
+RUN(cue = new DataCue(2, 6, 'test'))
 EXPECTED (cue.id == '') OK
 EXPECTED (cue.startTime == '2') OK
 EXPECTED (cue.endTime == '6') OK
@@ -13,7 +13,7 @@ EXPECTED (cue.data == 'null') OK
 EXPECTED (cue.type == '') OK
 
 *** Initialize with an object.
-RUN(cue = new WebKitDataCue(9, 16, { data: [1, 2, 3] }, 'org.test'))
+RUN(cue = new DataCue(9, 16, { data: [1, 2, 3] }, 'org.test'))
 EXPECTED (cue.id == '') OK
 EXPECTED (cue.startTime == '9') OK
 EXPECTED (cue.endTime == '16') OK

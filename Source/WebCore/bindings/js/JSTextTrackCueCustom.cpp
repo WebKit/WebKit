@@ -57,7 +57,6 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<TextTrackCue>&& cue)
 {
-    // This switch will make more sense once we support DataCue
     switch (cue->cueType()) {
     case TextTrackCue::Data:
         return createWrapper<DataCue>(globalObject, WTFMove(cue));

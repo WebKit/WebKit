@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SerializedPlatformRepresentation_h
-#define SerializedPlatformRepresentation_h
+#pragma once
 
-#if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE)
+#if ENABLE(VIDEO)
 
 #include <runtime/JSCInlines.h>
 #include <wtf/RefCounted.h>
@@ -38,7 +37,7 @@ public:
     virtual ~SerializedPlatformRepresentation() { }
 
     virtual JSC::JSValue deserialize(JSC::ExecState*) const = 0;
-    virtual RefPtr<ArrayBuffer> data() const = 0;
+    virtual RefPtr<JSC::ArrayBuffer> data() const = 0;
     virtual bool isEqual(const SerializedPlatformRepresentation&) const = 0;
 
     enum PlatformType {
@@ -53,5 +52,3 @@ protected:
 } // namespace WebCore
 
 #endif
-#endif // SerializedPlatformRepresentation_h
-

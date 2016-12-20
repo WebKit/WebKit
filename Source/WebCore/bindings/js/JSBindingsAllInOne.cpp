@@ -60,7 +60,6 @@
 #include "JSDOMWindowProperties.cpp"
 #include "JSDOMWindowShell.cpp"
 #include "JSDOMWrapper.cpp"
-#include "JSDataCueCustom.cpp"
 #include "JSDeviceOrientationEventCustom.cpp"
 #include "JSDocumentCustom.cpp"
 #include "JSDocumentFragmentCustom.cpp"
