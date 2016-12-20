@@ -34,10 +34,9 @@ function initializeRTCPeerConnection(configuration)
 {
     "use strict";
 
-    if (arguments.length < 1)
-        @throwTypeError("Not enough arguments");
-
-    if (!@isObject(configuration))
+    if (configuration === @undefined)
+        configuration = {};
+    else if (!@isObject(configuration))
         @throwTypeError("RTCPeerConnection argument must be a valid dictionary");
 
     // FIXME: Handle errors in a better way than catching and re-throwing (http://webkit.org/b/158936)
@@ -48,7 +47,6 @@ function initializeRTCPeerConnection(configuration)
             : "Error creating RTCPeerConnection";
         @throwTypeError(message);
     }
-
     this.@operations = [];
     this.@localStreams = [];
 

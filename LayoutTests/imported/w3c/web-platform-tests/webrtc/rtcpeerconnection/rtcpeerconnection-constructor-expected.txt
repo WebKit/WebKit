@@ -1,8 +1,8 @@
 
 PASS RTCPeerConnection.length 
-FAIL new RTCPeerConnection() Not enough arguments
+PASS new RTCPeerConnection() 
 FAIL new RTCPeerConnection(null) RTCPeerConnection argument must be a valid dictionary
-FAIL new RTCPeerConnection(undefined) RTCPeerConnection argument must be a valid dictionary
+PASS new RTCPeerConnection(undefined) 
 PASS new RTCPeerConnection({}) 
 PASS new RTCPeerConnection({ iceServers: null }) 
 PASS new RTCPeerConnection({ iceServers: undefined }) 
@@ -93,15 +93,15 @@ FAIL new RTCPeerConnection({ iceCandidatePoolSize: toNumberThrows }) assert_thro
       }" did not throw
 FAIL new RTCPeerConnection({ certificates: [certificate] }) RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256" })', 'RTCPeerConnection.generateCertificate' is undefined)
 FAIL new RTCPeerConnection({ certificates: [expiredCertificate] }) RTCPeerConnection.generateCertificate is not a function. (In 'RTCPeerConnection.generateCertificate({ name: "ECDSA", namedCurve: "P-256", expires: 0 })', 'RTCPeerConnection.generateCertificate' is undefined)
-FAIL localDescription initial value Not enough arguments
-FAIL currentLocalDescription initial value Not enough arguments
-FAIL pendingLocalDescription initial value Not enough arguments
-FAIL remoteDescription initial value Not enough arguments
-FAIL currentRemoteDescription initial value Not enough arguments
-FAIL pendingRemoteDescription initial value Not enough arguments
-FAIL signalingState initial value Not enough arguments
-FAIL iceGatheringState initial value Not enough arguments
-FAIL iceConnectionState initial value Not enough arguments
-FAIL connectionState initial value Not enough arguments
-FAIL canTrickleIceCandidates initial value Not enough arguments
+PASS localDescription initial value 
+PASS currentLocalDescription initial value 
+PASS pendingLocalDescription initial value 
+PASS remoteDescription initial value 
+PASS currentRemoteDescription initial value 
+PASS pendingRemoteDescription initial value 
+PASS signalingState initial value 
+PASS iceGatheringState initial value 
+PASS iceConnectionState initial value 
+FAIL connectionState initial value assert_equals: expected (string) "new" but got (undefined) undefined
+FAIL canTrickleIceCandidates initial value assert_equals: expected (object) null but got (undefined) undefined
 

@@ -8,8 +8,6 @@
             description("Tests the RTCPeerConnection constructor.");
 
             shouldThrow("new RTCPeerConnection(null);");
-            shouldThrow("new RTCPeerConnection(undefined);");
-            shouldThrow("new RTCPeerConnection();");
             shouldThrow("new RTCPeerConnection('');");
             shouldNotThrow("new RTCPeerConnection({});");
             shouldNotThrow("new RTCPeerConnection({iceServers:[]});");
