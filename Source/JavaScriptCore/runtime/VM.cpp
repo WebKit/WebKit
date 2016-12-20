@@ -699,8 +699,7 @@ inline void VM::updateStackLimits()
 #if ENABLE(DFG_JIT)
 void VM::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
-    for (size_t i = 0; i < scratchBuffers.size(); i++) {
-        ScratchBuffer* scratchBuffer = scratchBuffers[i];
+    for (auto* scratchBuffer : scratchBuffers) {
         if (scratchBuffer->activeLength()) {
             void* bufferStart = scratchBuffer->dataBuffer();
             conservativeRoots.add(bufferStart, static_cast<void*>(static_cast<char*>(bufferStart) + scratchBuffer->activeLength()));

@@ -126,8 +126,7 @@ ParserError BytecodeGenerator::generate()
 
     m_staticPropertyAnalyzer.kill();
 
-    for (unsigned i = 0; i < m_tryRanges.size(); ++i) {
-        TryRange& range = m_tryRanges[i];
+    for (auto& range : m_tryRanges) {
         int start = range.start->bind();
         int end = range.end->bind();
         
@@ -201,10 +200,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     const FunctionStack& functionStack = programNode->functionStack();
 
-    for (size_t i = 0; i < functionStack.size(); ++i) {
-        FunctionMetadataNode* function = functionStack[i];
+    for (auto* function : functionStack)
         m_functionsToInitialize.append(std::make_pair(function, GlobalFunctionVariable));
-    }
+
     if (Options::validateBytecode()) {
         for (auto& entry : programNode->varDeclarations())
             RELEASE_ASSERT(entry.value.isVar());

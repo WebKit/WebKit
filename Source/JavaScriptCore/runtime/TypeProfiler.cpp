@@ -122,8 +122,7 @@ TypeLocation* TypeProfiler::findLocation(unsigned divot, intptr_t sourceID, Type
     Vector<TypeLocation*>& bucket = m_bucketMap.find(sourceID)->value;
     TypeLocation* bestMatch = nullptr;
     unsigned distance = UINT_MAX; // Because assignments may be nested, make sure we find the closest enclosing assignment to this character offset.
-    for (size_t i = 0, size = bucket.size(); i < size; i++) {
-        TypeLocation* location = bucket.at(i);
+    for (auto* location : bucket) {
         // We found the type location that correlates to the convergence of all return statements in a function.
         // This text offset is the offset of the opening brace in a function declaration.
         if (descriptor == TypeProfilerSearchDescriptorFunctionReturn && location->m_globalVariableID == TypeProfilerReturnStatement && location->m_divotForFunctionOffsetIfReturnStatement == divot)

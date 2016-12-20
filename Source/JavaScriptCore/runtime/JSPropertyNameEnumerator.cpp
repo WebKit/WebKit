@@ -91,8 +91,8 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(cell, visitor);
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
     auto locker = holdLock(*thisObject);
-    for (unsigned i = 0; i < thisObject->m_propertyNames.size(); ++i)
-        visitor.append(thisObject->m_propertyNames[i]);
+    for (auto& propertyName : thisObject->m_propertyNames)
+        visitor.append(propertyName);
     visitor.append(thisObject->m_prototypeChain);
 }
 

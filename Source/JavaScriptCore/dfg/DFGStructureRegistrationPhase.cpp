@@ -71,9 +71,7 @@ public:
             if (!block)
                 continue;
         
-            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
-            
+            for (auto* node : *block) {
                 switch (node->op()) {
                 case CheckStructure:
                     assertAreRegistered(node->structureSet());

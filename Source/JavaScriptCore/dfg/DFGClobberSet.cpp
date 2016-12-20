@@ -129,9 +129,9 @@ void ClobberSet::dump(PrintStream& out) const
 HashSet<AbstractHeap> ClobberSet::setOf(bool direct) const
 {
     HashSet<AbstractHeap> result;
-    for (HashMap<AbstractHeap, bool>::const_iterator iter = m_clobbers.begin(); iter != m_clobbers.end(); ++iter) {
-        if (iter->value == direct)
-            result.add(iter->key);
+    for (auto& clobber : m_clobbers) {
+        if (clobber.value == direct)
+            result.add(clobber.key);
     }
     return result;
 }

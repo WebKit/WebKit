@@ -108,8 +108,7 @@ public:
     {
         Operands<VariableAccessData*> initialAccessData(block->variablesAtTail.numberOfArguments(), block->variablesAtTail.numberOfLocals(), nullptr);
         Operands<Node*> initialAccessNodes(block->variablesAtTail.numberOfArguments(), block->variablesAtTail.numberOfLocals(), nullptr);
-        for (unsigned i = 0; i < block->size(); i++) {
-            Node* node = block->at(i);
+        for (auto* node : *block) {
             if (!node->accessesStack(m_graph))
                 continue;
 

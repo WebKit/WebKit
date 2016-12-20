@@ -75,8 +75,7 @@ const ScriptCallFrame* ScriptCallStack::firstNonNativeCallFrame() const
     if (!m_frames.size())
         return nullptr;
 
-    for (size_t i = 0; i < m_frames.size(); ++i) {
-        const ScriptCallFrame& frame = m_frames[i];
+    for (const auto& frame : m_frames) {
         if (!frame.isNative())
             return &frame;
     }

@@ -693,8 +693,7 @@ CompilationResult JIT::link()
         return CompilationFailed;
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
-    for (unsigned i = 0; i < m_switches.size(); ++i) {
-        SwitchRecord record = m_switches[i];
+    for (auto& record : m_switches) {
         unsigned bytecodeOffset = record.bytecodeOffset;
 
         if (record.type != SwitchRecord::String) {
@@ -712,10 +711,9 @@ CompilationResult JIT::link()
 
             record.jumpTable.stringJumpTable->ctiDefault = patchBuffer.locationOf(m_labels[bytecodeOffset + record.defaultOffset]);
 
-            StringJumpTable::StringOffsetTable::iterator end = record.jumpTable.stringJumpTable->offsetTable.end();            
-            for (StringJumpTable::StringOffsetTable::iterator it = record.jumpTable.stringJumpTable->offsetTable.begin(); it != end; ++it) {
-                unsigned offset = it->value.branchOffset;
-                it->value.ctiOffset = offset ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
+            for (auto& location : record.jumpTable.stringJumpTable->offsetTable.values()) {
+                unsigned offset = location.branchOffset;
+                location.ctiOffset = offset ? patchBuffer.locationOf(m_labels[bytecodeOffset + offset]) : record.jumpTable.stringJumpTable->ctiDefault;
             }
         }
     }
@@ -725,9 +723,9 @@ CompilationResult JIT::link()
         handler.nativeCode = patchBuffer.locationOf(m_labels[handler.target]);
     }
 
-    for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
-        if (iter->to)
-            patchBuffer.link(iter->from, FunctionPtr(iter->to));
+    for (auto& record : m_calls) {
+        if (record.to)
+            patchBuffer.link(record.from, FunctionPtr(record.to));
     }
 
     for (unsigned i = m_getByIds.size(); i--;)
@@ -762,8 +760,7 @@ CompilationResult JIT::link()
         }
     }
 
-    for (unsigned i = 0; i < m_callCompilationInfo.size(); ++i) {
-        CallCompilationInfo& compilationInfo = m_callCompilationInfo[i];
+    for (auto& compilationInfo : m_callCompilationInfo) {
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
         info.setCallLocations(
             CodeLocationLabel(patchBuffer.locationOfNearCall(compilationInfo.callReturnLocation)),

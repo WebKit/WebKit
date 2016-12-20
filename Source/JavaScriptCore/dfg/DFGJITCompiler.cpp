@@ -274,8 +274,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             start, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
     }
     
-    for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
-        JSCallRecord& record = m_jsCalls[i];
+    for (auto& record : m_jsCalls) {
         CallLinkInfo& info = *record.info;
         linkBuffer.link(record.slowCall, FunctionPtr(m_vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
         info.setCallLocations(

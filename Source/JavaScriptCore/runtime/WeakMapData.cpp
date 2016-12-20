@@ -108,11 +108,11 @@ void WeakMapData::clear()
 void WeakMapData::DeadKeyCleaner::visitWeakReferences(SlotVisitor& visitor)
 {
     m_liveKeyCount = 0;
-    for (auto it = m_target->m_map.begin(), end = m_target->m_map.end(); it != end; ++it) {
-        if (!Heap::isMarked(it->key))
+    for (auto& pair : m_target->m_map) {
+        if (!Heap::isMarked(pair.key))
             continue;
         m_liveKeyCount++;
-        visitor.append(it->value);
+        visitor.append(pair.value);
     }
     RELEASE_ASSERT(m_liveKeyCount <= m_target->m_map.size());
 }
@@ -126,19 +126,19 @@ void WeakMapData::DeadKeyCleaner::finalizeUnconditionally()
             return;
         Vector<JSObject*> deadEntries;
         deadEntries.reserveCapacity(deadCount);
-        for (auto it = m_target->m_map.begin(), end = m_target->m_map.end(); it != end; ++it) {
-            if (Heap::isMarked(it->key))
+        for (auto& pair : m_target->m_map) {
+            if (Heap::isMarked(pair.key))
                 continue;
-            deadEntries.uncheckedAppend(it->key);
+            deadEntries.uncheckedAppend(pair.key);
         }
-        for (size_t i = 0; i < deadEntries.size(); i++)
-            m_target->m_map.remove(deadEntries[i]);
+        for (auto& deadEntry : deadEntries)
+            m_target->m_map.remove(deadEntry);
     } else {
         MapType newMap;
-        for (auto it = m_target->m_map.begin(), end = m_target->m_map.end(); it != end; ++it) {
-            if (!Heap::isMarked(it->key))
+        for (auto& pair : m_target->m_map) {
+            if (!Heap::isMarked(pair.key))
                 continue;
-            newMap.add(it->key, it->value);
+            newMap.add(pair.key, pair.value);
         }
         m_target->m_map.swap(newMap);
     }

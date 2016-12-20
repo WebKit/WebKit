@@ -38,10 +38,10 @@ bool FunctionHasExecutedCache::hasExecutedAtOffset(intptr_t id, unsigned offset)
     RangeMap& map = m_rangeMap.find(id)->second;
     unsigned distance = UINT_MAX;
     bool hasExecuted = false;
-    for (auto iter = map.begin(), end = map.end(); iter != end; ++iter) {
-        const FunctionRange& range = iter->first;
+    for (auto& pair : map) {
+        const FunctionRange& range = pair.first;
         if (range.m_start <= offset && offset <= range.m_end && range.m_end - range.m_start < distance) {
-            hasExecuted = iter->second;
+            hasExecuted = pair.second;
             distance = range.m_end - range.m_start;
         }
     }
@@ -88,9 +88,9 @@ Vector<std::tuple<bool, unsigned, unsigned>> FunctionHasExecutedCache::getFuncti
         return ranges;
 
     RangeMap& map = m_rangeMap.find(id)->second;
-    for (auto iter = map.begin(), end = map.end(); iter != end; ++iter) {
-        const FunctionRange& range = iter->first;
-        bool hasExecuted = iter->second;
+    for (auto& pair : map) {
+        const FunctionRange& range = pair.first;
+        bool hasExecuted = pair.second;
         ranges.append(std::tuple<bool, unsigned, unsigned>(hasExecuted, range.m_start, range.m_end));
     }
 

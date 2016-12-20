@@ -58,8 +58,7 @@ void TypeSet::addTypeInformation(RuntimeType type, PassRefPtr<StructureShape> pr
             //   prototype chain, they will be merged into one shape.
             bool found = false;
             String hash = newShape->propertyHash();
-            for (size_t i = 0; i < m_structureHistory.size(); i++) {
-                RefPtr<StructureShape>& seenShape = m_structureHistory.at(i);
+            for (auto& seenShape : m_structureHistory) {
                 if (seenShape->propertyHash() == hash) {
                     found = true;
                     break;
@@ -114,16 +113,15 @@ String TypeSet::dumpTypes() const
     if (m_seenTypes & TypeSymbol)
         seen.appendLiteral("Symbol ");
 
-    for (size_t i = 0; i < m_structureHistory.size(); i++) {
-        RefPtr<StructureShape> shape = m_structureHistory.at(i);
+    for (const auto& shape : m_structureHistory) {
         seen.append(shape->m_constructorName);
         seen.append(' ');
     }
 
     if (m_structureHistory.size()) 
         seen.appendLiteral("\nStructures:[ ");
-    for (size_t i = 0; i < m_structureHistory.size(); i++) {
-        seen.append(m_structureHistory.at(i)->stringRepresentation());
+    for (const auto& shape : m_structureHistory) {
+        seen.append(shape->stringRepresentation());
         seen.append(' ');
     }
     if (m_structureHistory.size())

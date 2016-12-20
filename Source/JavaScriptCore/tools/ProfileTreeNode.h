@@ -88,9 +88,7 @@ private:
         qsort(entries.begin(), entries.size(), sizeof(MapEntry*), compareEntries);
 
         // Iterate over the children in sample-frequency order.
-        for (size_t e = 0; e < entries.size(); ++e) {
-            MapEntry* entry = entries[e];
-
+        for (auto* entry : entries) {
             // Print the number of samples, the name of this node, and the number of samples that are stack-top
             // in this node (samples directly within this node, excluding samples in children.
             for (unsigned i = 0; i < indent; ++i)

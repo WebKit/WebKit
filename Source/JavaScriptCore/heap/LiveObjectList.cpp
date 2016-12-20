@@ -30,8 +30,7 @@ namespace JSC {
 
 LiveObjectData* LiveObjectList::findObject(JSObject* obj)
 {
-    for (size_t i = 0; i < liveObjects.size(); i++) {
-        LiveObjectData& data = liveObjects[i];
+    for (auto& data : liveObjects) {
         if (obj == data.obj)
             return &data;
     }

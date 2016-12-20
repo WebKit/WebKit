@@ -51,8 +51,7 @@ MarkedAllocator::MarkedAllocator(Heap* heap, MarkedSpace* markedSpace, size_t ce
 bool MarkedAllocator::isPagedOut(double deadline)
 {
     unsigned itersSinceLastTimeCheck = 0;
-    for (size_t index = 0; index < m_blocks.size(); ++index) {
-        MarkedBlock::Handle* block = m_blocks[index];
+    for (auto* block : m_blocks) {
         if (block)
             block->block().updateNeedsDestruction();
         ++itersSinceLastTimeCheck;

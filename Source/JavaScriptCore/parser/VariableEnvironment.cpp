@@ -50,16 +50,16 @@ void VariableEnvironment::markAllVariablesAsCaptured()
 
     m_isEverythingCaptured = true; // For fast queries.
     // We must mark every entry as captured for when we iterate through m_map and entry.isCaptured() is called.
-    for (auto iter = m_map.begin(), end = m_map.end(); iter != end; ++iter) 
-        iter->value.setIsCaptured();
+    for (auto& value : m_map.values())
+        value.setIsCaptured();
 }
 
 bool VariableEnvironment::hasCapturedVariables() const
 {
     if (m_isEverythingCaptured)
         return size() > 0;
-    for (auto entry : m_map) {
-        if (entry.value.isCaptured())
+    for (auto& value : m_map.values()) {
+        if (value.isCaptured())
             return true;
     }
     return false;

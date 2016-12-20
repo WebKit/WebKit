@@ -106,9 +106,9 @@ public:
         void visitChildren(SlotVisitor& visitor)
         {
             LockHolder locker(m_lock);
-            for (PrivatePropertyMap::iterator ptr = m_propertyMap.begin(); ptr != m_propertyMap.end(); ++ptr) {
-                if (ptr->value)
-                    visitor.append(ptr->value);
+            for (auto& pair : m_propertyMap) {
+                if (pair.value)
+                    visitor.append(pair.value);
             }
         }
 

@@ -295,10 +295,8 @@ void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, Br
 void Debugger::applyBreakpoints(CodeBlock* codeBlock)
 {
     BreakpointIDToBreakpointMap& breakpoints = m_breakpointIDToBreakpoint;
-    for (auto it = breakpoints.begin(); it != breakpoints.end(); ++it) {
-        Breakpoint& breakpoint = *it->value;
-        toggleBreakpoint(codeBlock, breakpoint, BreakpointEnabled);
-    }
+    for (auto* breakpoint : breakpoints.values())
+        toggleBreakpoint(codeBlock, *breakpoint, BreakpointEnabled);
 }
 
 class Debugger::ToggleBreakpointFunctor {

@@ -1419,9 +1419,7 @@ void Graph::visitChildren(SlotVisitor& visitor)
         if (!block)
             continue;
         
-        for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-            Node* node = block->at(nodeIndex);
-            
+        for (auto* node : *block) {
             switch (node->op()) {
             case CheckStructure:
                 for (unsigned i = node->structureSet().size(); i--;)

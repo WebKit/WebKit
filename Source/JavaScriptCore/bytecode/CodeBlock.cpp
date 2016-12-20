@@ -1769,8 +1769,8 @@ void CodeBlock::dumpBytecode(
     if (!exitSites.isEmpty()) {
         out.print(" !! frequent exits: ");
         CommaPrinter comma;
-        for (unsigned i = 0; i < exitSites.size(); ++i)
-            out.print(comma, exitSites[i].kind(), " ", exitSites[i].jitType());
+        for (auto& exitSite : exitSites)
+            out.print(comma, exitSite.kind(), " ", exitSite.jitType());
     }
 #else // ENABLE(DFG_JIT)
     UNUSED_PARAM(location);
@@ -2677,9 +2677,9 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
         for (auto& weakReference : dfgCommon->weakStructureReferences)
             allAreMarkedSoFar &= weakReference->markIfCheap(visitor);
-        
-        for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
-            if (shouldMarkTransition(dfgCommon->transitions[i])) {
+
+        for (auto& transition : dfgCommon->transitions) {
+            if (shouldMarkTransition(transition)) {
                 // If the following three things are live, then the target of the
                 // transition is also live:
                 //
@@ -2698,8 +2698,8 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 // We also short-circuit the liveness if the structure is harmless
                 // to mark (i.e. its global object and prototype are both already
                 // live).
-                
-                visitor.append(dfgCommon->transitions[i].m_to);
+
+                visitor.append(transition.m_to);
             } else
                 allAreMarkedSoFar = false;
         }
@@ -3068,12 +3068,12 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     if (m_rareData)
         m_rareData->m_directEvalCodeCache.visitAggregate(visitor);
     visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
-    for (size_t i = 0; i < m_functionExprs.size(); ++i)
-        visitor.append(m_functionExprs[i]);
-    for (size_t i = 0; i < m_functionDecls.size(); ++i)
-        visitor.append(m_functionDecls[i]);
-    for (unsigned i = 0; i < m_objectAllocationProfiles.size(); ++i)
-        m_objectAllocationProfiles[i].visitAggregate(visitor);
+    for (auto& functionExpr : m_functionExprs)
+        visitor.append(functionExpr);
+    for (auto& functionDecl : m_functionDecls)
+        visitor.append(functionDecl);
+    for (auto& objectAllocationProfile : m_objectAllocationProfiles)
+        objectAllocationProfile.visitAggregate(visitor);
 
 #if ENABLE(JIT)
     for (ByValInfo* byValInfo : m_byValInfos)
@@ -3096,18 +3096,18 @@ void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisit
     
     DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
 
-    for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
-        if (!!dfgCommon->transitions[i].m_codeOrigin)
-            visitor.append(dfgCommon->transitions[i].m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
-        visitor.append(dfgCommon->transitions[i].m_from);
-        visitor.append(dfgCommon->transitions[i].m_to);
+    for (auto& transition : dfgCommon->transitions) {
+        if (!!transition.m_codeOrigin)
+            visitor.append(transition.m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
+        visitor.append(transition.m_from);
+        visitor.append(transition.m_to);
     }
-    
-    for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i)
-        visitor.append(dfgCommon->weakReferences[i]);
 
-    for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i)
-        visitor.append(dfgCommon->weakStructureReferences[i]);
+    for (auto& weakReference : dfgCommon->weakReferences)
+        visitor.append(weakReference);
+
+    for (auto& weakStructureReference : dfgCommon->weakStructureReferences)
+        visitor.append(weakStructureReference);
 
     dfgCommon->livenessHasBeenProved = true;
 #endif    
@@ -3376,8 +3376,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         if (DFG::shouldDumpDisassembly()) {
             dataLog(*this, " will be jettisoned because of the following dead references:\n");
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-            for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
-                DFG::WeakReferenceTransition& transition = dfgCommon->transitions[i];
+            for (auto& transition : dfgCommon->transitions) {
                 JSCell* origin = transition.m_codeOrigin.get();
                 JSCell* from = transition.m_from.get();
                 JSCell* to = transition.m_to.get();
@@ -3906,9 +3905,9 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 
 ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, unsigned bytecodeOffset)
 {
-    for (unsigned i = 0; i < m_arrayProfiles.size(); ++i) {
-        if (m_arrayProfiles[i].bytecodeOffset() == bytecodeOffset)
-            return &m_arrayProfiles[i];
+    for (auto& m_arrayProfile : m_arrayProfiles) {
+        if (m_arrayProfile.bytecodeOffset() == bytecodeOffset)
+            return &m_arrayProfile;
     }
     return 0;
 }
@@ -4064,10 +4063,8 @@ void CodeBlock::tallyFrequentExitSites()
     switch (jitType()) {
     case JITCode::DFGJIT: {
         DFG::JITCode* jitCode = m_jitCode->dfg();
-        for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
-            DFG::OSRExit& exit = jitCode->osrExit[i];
+        for (auto& exit : jitCode->osrExit)
             exit.considerAddingAsFrequentExitSite(profiledBlock);
-        }
         break;
     }
 
@@ -4205,10 +4202,10 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
 
 String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 {
-    for (unsigned i = 0; i < m_constantRegisters.size(); i++) {
-        if (m_constantRegisters[i].get().isEmpty())
+    for (auto& constantRegister : m_constantRegisters) {
+        if (constantRegister.get().isEmpty())
             continue;
-        if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(m_constantRegisters[i].get())) {
+        if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(constantRegister.get())) {
             ConcurrentJSLocker locker(symbolTable->m_lock);
             auto end = symbolTable->end(locker);
             for (auto ptr = symbolTable->begin(locker); ptr != end; ++ptr) {

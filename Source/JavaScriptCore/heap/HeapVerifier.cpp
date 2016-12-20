@@ -127,8 +127,7 @@ static void trimDeadObjectsFromList(HashSet<JSObject*>& knownLiveSet, LiveObject
         return;
 
     size_t liveObjectsFound = 0;
-    for (size_t i = 0; i < list.liveObjects.size(); i++) {
-        LiveObjectData& objData = list.liveObjects[i];
+    for (auto& objData : list.liveObjects) {
         if (objData.isConfirmedDead)
             continue; // Don't "resurrect" known dead objects.
         if (!knownLiveSet.contains(objData.obj)) {
@@ -145,10 +144,8 @@ void HeapVerifier::trimDeadObjects()
     HashSet<JSObject*> knownLiveSet;
 
     LiveObjectList& after = currentCycle().after;
-    for (size_t i = 0; i < after.liveObjects.size(); i++) {
-        LiveObjectData& objData = after.liveObjects[i];
+    for (auto& objData : after.liveObjects)
         knownLiveSet.add(objData.obj);
-    }
 
     trimDeadObjectsFromList(knownLiveSet, currentCycle().before);
 

@@ -1767,10 +1767,8 @@ void SpeculativeJIT::compileCurrentBlock()
     
     // Perform the most basic verification that children have been used correctly.
     if (!ASSERT_DISABLED) {
-        for (unsigned index = 0; index < m_generationInfo.size(); ++index) {
-            GenerationInfo& info = m_generationInfo[index];
+        for (auto& info : m_generationInfo)
             RELEASE_ASSERT(!info.alive());
-        }
     }
 }
 
@@ -8892,10 +8890,8 @@ void SpeculativeJIT::addBranch(const MacroAssembler::JumpList& jump, BasicBlock*
 
 void SpeculativeJIT::linkBranches()
 {
-    for (size_t i = 0; i < m_branches.size(); ++i) {
-        BranchRecord& branch = m_branches[i];
+    for (auto& branch : m_branches)
         branch.jump.linkTo(m_jit.blockHeads()[branch.destination->index], &m_jit);
-    }
 }
 
 void SpeculativeJIT::compileStoreBarrier(Node* node)
