@@ -127,17 +127,9 @@ namespace WTF {
             return at(index);
         }
 
-        T& first() { return at(0); }
-        const T& first() const { return at(0); }
-        T& last() { return at(size() - 1); }
-        const T& last() const { return at(size() - 1); }
-
-        T takeLast()
+        T& last()
         {
-            ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
-            T result = WTFMove(last());
-            --m_size;
-            return result;
+            return at(size() - 1);
         }
 
         template<typename... Args>
