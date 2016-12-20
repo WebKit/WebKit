@@ -1,3 +1,14 @@
+2016-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Update keyword completions in the inspector for the new scroll snapping CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=166235
+
+        Reviewed by Joseph Pecoraro.
+
+        The CSS keyword completions for the scroll snapping properties need to be updated for the latest version of the spec.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2016-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Console could be made useful for very simple await expressions

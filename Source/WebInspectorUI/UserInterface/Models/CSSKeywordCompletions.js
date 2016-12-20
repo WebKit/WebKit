@@ -839,6 +839,12 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     "orientation": [
         "auto", "portait", "landscape"
     ],
+    "scroll-snap-align": [
+        "none", "start", "center", "end"
+    ],
+    "scroll-snap-type": [
+        "none", "mandatory", "proximity", "x", "y", "inline", "block", "both"
+    ],
     "user-zoom": [
         "zoom", "fixed"
     ],
@@ -1008,21 +1014,6 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     */
     "-webkit-animation-trigger": [
         "auto", "container-scroll()"
-    ],
-    "-webkit-scroll-snap-type": [
-        "none", "mandatory", "proximity"
-    ],
-    "-webkit-scroll-snap-points-x": [
-        "elements", "repeat()"
-    ],
-    "-webkit-scroll-snap-points-y": [
-        "elements", "repeat()"
-    ],
-    "-webkit-scroll-snap-destination": [
-        "none", "left", "right", "bottom", "top", "center"
-    ],
-    "-webkit-scroll-snap-coordinate": [
-        "none", "left", "right", "bottom", "top", "center"
     ],
 
     // iOS Properties
