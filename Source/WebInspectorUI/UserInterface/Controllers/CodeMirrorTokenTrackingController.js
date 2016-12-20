@@ -194,7 +194,6 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
 
     _startTracking()
     {
-        console.assert(!this._tracking);
         if (this._tracking)
             return;
 
@@ -210,7 +209,6 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
 
     _stopTracking()
     {
-        console.assert(this._tracking);
         if (!this._tracking)
             return;
 

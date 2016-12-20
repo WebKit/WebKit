@@ -124,6 +124,9 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
 
     presentHoverMenu()
     {
+        if (!this.cssClassName)
+            return;
+
         this._hoverMenu = new WebInspector.HoverMenu(this);
         this._hoverMenu.element.classList.add(this.cssClassName);
         this._rects = this._marker.rects;
@@ -132,6 +135,9 @@ WebInspector.CodeMirrorEditingController = class CodeMirrorEditingController ext
 
     dismissHoverMenu(discrete)
     {
+        if (!this._hoverMenu)
+            return;
+
         this._hoverMenu.dismiss(discrete);
     }
 
