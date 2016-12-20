@@ -83,15 +83,15 @@
 namespace WebCore {
 
 struct SameSizeAsRenderElement : public RenderObject {
-#if !ASSERT_DISABLED
-    bool reparentingChild;
-#endif
     uint8_t bitfields0;
     uint8_t bitfields1;
     uint8_t bitfields2;
     void* firstChild;
     void* lastChild;
     RenderStyle style;
+#if !ASSERT_DISABLED
+    bool reparentingChild;
+#endif
 };
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
