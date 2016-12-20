@@ -254,7 +254,6 @@
 		5CB3011D1DE39F1A00D2C405 /* ContextGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300E81DE39F1A00D2C405 /* ContextGL.h */; };
 		5CB3011E1DE39F1A00D2C405 /* DisplayGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300E91DE39F1A00D2C405 /* DisplayGL.cpp */; };
 		5CB3011F1DE39F1A00D2C405 /* DisplayGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300EA1DE39F1A00D2C405 /* DisplayGL.h */; };
-		5CB301201DE39F1A00D2C405 /* FeatureSupportGL.md in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300EC1DE39F1A00D2C405 /* FeatureSupportGL.md */; };
 		5CB301211DE39F1A00D2C405 /* FenceNVGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300ED1DE39F1A00D2C405 /* FenceNVGL.cpp */; };
 		5CB301221DE39F1A00D2C405 /* FenceNVGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB300EE1DE39F1A00D2C405 /* FenceNVGL.h */; };
 		5CB301231DE39F1A00D2C405 /* FenceSyncGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB300EF1DE39F1A00D2C405 /* FenceSyncGL.cpp */; };
@@ -1955,7 +1954,6 @@
 				5CCD81B11DBFEA5C006066B8 /* ExpandIntegerPowExpressions.cpp in Sources */,
 				72309A58183C27F300370B93 /* ExpressionParser.cpp in Sources */,
 				5C315D021CC5B6DA00776697 /* ExtensionGLSL.cpp in Sources */,
-				5CB301201DE39F1A00D2C405 /* FeatureSupportGL.md in Sources */,
 				5C1DBDEE1B0438D300235552 /* Fence.cpp in Sources */,
 				5CB301211DE39F1A00D2C405 /* FenceNVGL.cpp in Sources */,
 				5CB301231DE39F1A00D2C405 /* FenceSyncGL.cpp in Sources */,
