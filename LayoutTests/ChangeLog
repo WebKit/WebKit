@@ -1,3 +1,11 @@
+2016-12-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html for mac-wk1.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
 2016-12-20  Zalan Bujtas  <zalan@apple.com>
 
         SVG elements should inherit the root's flow thread state.
