@@ -681,10 +681,25 @@ enum class TouchAction {
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-enum class ScrollSnapType {
+enum class ScrollSnapStrictness {
     None,
     Proximity,
     Mandatory
+};
+
+enum class ScrollSnapAxis {
+    XAxis,
+    YAxis,
+    Block,
+    Inline,
+    Both
+};
+
+enum class ScrollSnapAxisAlignType {
+    None,
+    Start,
+    Center,
+    End
 };
 #endif
 

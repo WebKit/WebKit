@@ -1,7 +1,7 @@
 PASS successfullyParsed is true
 
 TEST COMPLETE
-Scroll-snap offsets for 'container': vertical = { 0, 101, 218, 335, 452, 569, 686, 803, 920, 1037, 1154, 1271, 1388, 1505, 1622, 1739, 1856, 1973, 2090, 2207, 4938 }
+Scroll-snap offsets for 'container': vertical = { 0, 100, 215, 330, 445, 560, 675, 790, 905, 1020, 1135, 1250, 1365, 1480, 1595, 1710, 1825, 1940, 2055, 2170, 4900 }
 PASS Scroll-snap offsets for 'invalidContainer': UNDEFINED
 PASS successfullyParsed is true
 

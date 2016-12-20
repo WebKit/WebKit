@@ -3674,43 +3674,6 @@
                 "setter": "setRTLOrdering"
             }
         },
-        "-webkit-scroll-snap-points-x": {
-            "codegen-properties": {
-                "converter": "ScrollSnapPoints",
-                "custom": "Initial|Inherit",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
-            }
-        },
-        "-webkit-scroll-snap-points-y": {
-            "codegen-properties": {
-                "converter": "ScrollSnapPoints",
-                "custom": "Initial|Inherit",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
-            }
-        },
-        "-webkit-scroll-snap-type": {
-            "values": [
-                "none",
-                "mandatory",
-                "proximity"
-            ],
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
-            }
-        },
-        "-webkit-scroll-snap-destination": {
-            "codegen-properties": {
-                "converter": "SnapCoordinatePair",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
-            }
-        },
-        "-webkit-scroll-snap-coordinate": {
-            "codegen-properties": {
-                "name-for-methods": "ScrollSnapCoordinates",
-                "converter": "ScrollSnapCoordinates",
-                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
-            }
-        },
         "-webkit-svg-shadow": {
             "codegen-properties": {
                 "custom": "All",
@@ -4029,6 +3992,96 @@
                 "name-for-methods": "BreakInside",
                 "converter": "RegionBreakInside",
                 "enable-if": "ENABLE_CSS_REGIONS"
+            }
+        },
+        "scroll-padding": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "longhands": [
+                    "scroll-padding-top",
+                    "scroll-padding-right",
+                    "scroll-padding-bottom",
+                    "scroll-padding-left"
+                ]
+            }
+        },
+        "scroll-padding-bottom": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollPadding",
+                "converter": "Length"
+            }
+        },
+        "scroll-padding-left": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollPadding",
+                "converter": "Length"
+            }
+        },
+        "scroll-padding-right": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollPadding",
+                "converter": "Length"
+            }
+        },
+        "scroll-padding-top": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollPadding",
+                "converter": "Length"
+            }
+        },
+        "scroll-snap-align": {
+            "codegen-properties": {
+                "converter": "ScrollSnapAlign",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
+            }
+        },
+        "scroll-snap-margin": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "longhands": [
+                    "scroll-snap-margin-top",
+                    "scroll-snap-margin-right",
+                    "scroll-snap-margin-bottom",
+                    "scroll-snap-margin-left"
+                ]
+            }
+        },
+        "scroll-snap-margin-bottom": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollSnapMargin",
+                "converter": "Length"
+            }
+        },
+        "scroll-snap-margin-left": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollSnapMargin",
+                "converter": "Length"
+            }
+        },
+        "scroll-snap-margin-right": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollSnapMargin",
+                "converter": "Length"
+            }
+        },
+        "scroll-snap-margin-top": {
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP",
+                "initial": "initialScrollSnapMargin",
+                "converter": "Length"
+            }
+        },
+        "scroll-snap-type": {
+            "codegen-properties": {
+                "converter": "ScrollSnapType",
+                "enable-if": "ENABLE_CSS_SCROLL_SNAP"
             }
         },
         "shape-outside": {

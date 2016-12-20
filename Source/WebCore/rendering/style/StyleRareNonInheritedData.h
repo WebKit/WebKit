@@ -58,7 +58,8 @@ class StyleReflection;
 class StyleResolver;
 class StyleTransformData;
 #if ENABLE(CSS_SCROLL_SNAP)
-class StyleScrollSnapPoints;
+class StyleScrollSnapPort;
+class StyleScrollSnapArea;
 #endif
 
 class ContentData;
@@ -133,7 +134,8 @@ public:
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    DataRef<StyleScrollSnapPoints> m_scrollSnapPoints;
+    DataRef<StyleScrollSnapPort> m_scrollSnapPort;
+    DataRef<StyleScrollSnapArea> m_scrollSnapArea;
 #endif
 
     std::unique_ptr<ContentData> m_content;
@@ -184,10 +186,6 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     unsigned m_touchAction : 1; // TouchAction
-#endif
-
-#if ENABLE(CSS_SCROLL_SNAP)
-    unsigned m_scrollSnapType : 2; // ScrollSnapType
 #endif
 
     unsigned m_regionFragment : 1; // RegionFragment

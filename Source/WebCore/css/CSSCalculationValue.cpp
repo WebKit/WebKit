@@ -138,9 +138,6 @@ static bool hasDoubleValue(CSSPrimitiveValue::UnitType type)
     case CSSPrimitiveValue::CSS_SHAPE:
     case CSSPrimitiveValue::CSS_QUAD:
     case CSSPrimitiveValue::CSS_QUIRKY_EMS:
-#if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPrimitiveValue::CSS_LENGTH_REPEAT:
-#endif
     case CSSPrimitiveValue::CSS_CALC:
     case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSPrimitiveValue::CSS_CALC_PERCENTAGE_WITH_LENGTH:

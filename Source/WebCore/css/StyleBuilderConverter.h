@@ -43,7 +43,6 @@
 #include "Frame.h"
 #include "LayoutUnit.h"
 #include "Length.h"
-#include "LengthRepeat.h"
 #include "Pair.h"
 #include "QuotesData.h"
 #include "RuntimeEnabledFeatures.h"
@@ -94,9 +93,8 @@ public:
     static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, const CSSValue&);
     static PassRefPtr<ShapeValue> convertShapeValue(StyleResolver&, CSSValue&);
 #if ENABLE(CSS_SCROLL_SNAP)
-    static std::unique_ptr<ScrollSnapPoints> convertScrollSnapPoints(StyleResolver&, const CSSValue&);
-    static LengthSize convertSnapCoordinatePair(StyleResolver&, const CSSValue&, size_t offset = 0);
-    static Vector<LengthSize> convertScrollSnapCoordinates(StyleResolver&, const CSSValue&);
+    static ScrollSnapType convertScrollSnapType(StyleResolver&, const CSSValue&);
+    static ScrollSnapAlign convertScrollSnapAlign(StyleResolver&, const CSSValue&);
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
     static GridTrackSize convertGridTrackSize(StyleResolver&, const CSSValue&);
@@ -798,98 +796,44 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-inline Length StyleBuilderConverter::parseSnapCoordinate(StyleResolver& styleResolver, const CSSValue& value)
+
+inline ScrollSnapType StyleBuilderConverter::convertScrollSnapType(StyleResolver&, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
+    ScrollSnapType type;
+    auto& values = downcast<CSSValueList>(value);
+    auto& firstValue = downcast<CSSPrimitiveValue>(*values.item(0));
+    if (values.length() == 2) {
+        type.axis = firstValue;
+        type.strictness = downcast<CSSPrimitiveValue>(*values.item(1));
+        return type;
+    }
+
+    switch (firstValue.valueID()) {
+    case CSSValueNone:
+    case CSSValueMandatory:
+    case CSSValueProximity:
+        type.strictness = firstValue;
+        break;
+    default:
+        type.axis = firstValue;
+        type.strictness = ScrollSnapStrictness::Proximity;
+        break;
+    }
+    return type;
 }
 
-inline std::unique_ptr<ScrollSnapPoints> StyleBuilderConverter::convertScrollSnapPoints(StyleResolver& styleResolver, const CSSValue& value)
+inline ScrollSnapAlign StyleBuilderConverter::convertScrollSnapAlign(StyleResolver&, const CSSValue& value)
 {
-    // FIXME-NEWPARSER: Old parser supports an identifier value called "elements" when it seems like
-    // "none" is what others use. For now, support both in the converter.
-    auto points = std::make_unique<ScrollSnapPoints>();
-    
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueElements || downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
-        points->usesElements = true;
-        return points;
-    }
-    
-    for (auto& currentValue : downcast<CSSValueList>(value)) {
-        if (is<CSSFunctionValue>(currentValue.get())) {
-            auto& functionValue = downcast<CSSFunctionValue>(currentValue.get());
-            points->repeatOffset = parseSnapCoordinate(styleResolver, *functionValue.item(0));
-            points->hasRepeat = true;
-            break;
-        }
-        
-        auto& itemValue = downcast<CSSPrimitiveValue>(currentValue.get());
-        if (auto* lengthRepeat = itemValue.lengthRepeatValue()) {
-            // FIXME-NEWPARSER: Old parsing code, which uses a special primitive value.
-            // Can remove this once new parser turns on.
-            if (auto* interval = lengthRepeat->interval()) {
-                points->repeatOffset = parseSnapCoordinate(styleResolver, *interval);
-                points->hasRepeat = true;
-                break;
-            }
-        }
-        points->offsets.append(parseSnapCoordinate(styleResolver, itemValue));
-    }
-
-    return points;
+    auto& values = downcast<CSSValueList>(value);
+    ScrollSnapAlign alignment;
+    alignment.x = downcast<CSSPrimitiveValue>(*values.item(0));
+    if (values.length() == 1)
+        alignment.y = alignment.x;
+    else
+        alignment.y = downcast<CSSPrimitiveValue>(*values.item(1));
+    return alignment;
 }
 
-inline LengthSize StyleBuilderConverter::convertSnapCoordinatePair(StyleResolver& styleResolver, const CSSValue& value, size_t offset)
-{
-    // FIXME-NEWPARSER: Can make this unconditional once old parser is gone. This is just how
-    // we detect that we're dealing with the new parser's pairs.
-    if (value.isPrimitiveValue() && downcast<CSSPrimitiveValue>(value).pairValue()) {
-        Pair* pair = downcast<CSSPrimitiveValue>(value).pairValue();
-        Length lengthX = convertPositionComponent<CSSValueLeft, CSSValueRight>(styleResolver, *pair->first());
-        Length lengthY = convertPositionComponent<CSSValueTop, CSSValueBottom>(styleResolver, *pair->second());
-        return LengthSize(lengthX, lengthY);
-    }
-
-    // FIXME-NEWPARSER: Remove once old parser is gone.
-    auto& valueList = downcast<CSSValueList>(value);
-    return LengthSize(parseSnapCoordinate(styleResolver, *valueList.item(offset)), parseSnapCoordinate(styleResolver, *valueList.item(offset + 1)));
-}
-
-inline Vector<LengthSize> StyleBuilderConverter::convertScrollSnapCoordinates(StyleResolver& styleResolver, const CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
-        return Vector<LengthSize>();
-    }
-
-    auto& valueList = downcast<CSSValueList>(value);
-    if (!valueList.length())
-        return Vector<LengthSize>();
-    
-    // FIXME-NEWPARSER: Can make this unconditional once old parser is gone. This is just how
-    // we detect that we're dealing with the new parser's pairs.
-    if (valueList.item(0)->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*valueList.item(0)).pairValue()) {
-        Vector<LengthSize> coordinates;
-        coordinates.reserveInitialCapacity(valueList.length());
-        for (auto& snapCoordinate : valueList) {
-            Pair* pair = downcast<CSSPrimitiveValue>(*snapCoordinate.ptr()).pairValue();
-            Length lengthX = convertPositionComponent<CSSValueLeft, CSSValueRight>(styleResolver, *pair->first());
-            Length lengthY = convertPositionComponent<CSSValueTop, CSSValueBottom>(styleResolver, *pair->second());
-            coordinates.uncheckedAppend(LengthSize(lengthX, lengthY));
-        }
-        return coordinates;
-    }
-    
-    // FIXME-NEWPARSER: Remove all of this once old parser is gone, including all the functions
-    // it calls.
-    ASSERT(!(valueList.length() % 2));
-    size_t pointCount = valueList.length() / 2;
-    Vector<LengthSize> coordinates;
-    coordinates.reserveInitialCapacity(pointCount);
-    for (size_t i = 0; i < pointCount; ++i)
-        coordinates.uncheckedAppend(convertSnapCoordinatePair(styleResolver, valueList, i * 2));
-    return coordinates;
-}
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)

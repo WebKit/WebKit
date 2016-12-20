@@ -4,22 +4,24 @@
         <style>
             .topLevel {
                 width: 400px;
-                -webkit-scroll-snap-type: proximity;
-                -webkit-scroll-snap-points-x: repeat(200%);
-                -webkit-scroll-snap-points-y: repeat(200%);
-                -webkit-scroll-snap-destination: 25% 25%;
-                -webkit-scroll-snap-coordinate: 20px 20px;
+                scroll-snap-type: x proximity;
+                scroll-snap-align: start end;
+                scroll-padding: 10%;
+                scroll-snap-margin: 5px 5px 10px 10px;
             }
+
             .horizontalGallery {
                 width: 400px;
                 height: 50px;
                 overflow-y: hidden;
                 overflow-x: auto;
             }
+
             .horizontalGalleryDrawer {
                 width: 3000px;
                 height: 50px;
             }
+
             .colorBox {
                 height: 50px;
                 width: 400px;
@@ -27,63 +29,48 @@
             }
 
             .noInherit {
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-destination: 10% 11%;
-                -webkit-scroll-snap-coordinate: none;
+                scroll-snap-type: mandatory;
+                scroll-snap-align: center;
+                scroll-padding: 20px;
+                scroll-snap-margin: 0 1px;
             }
 
             .inheritType {
-                -webkit-scroll-snap-type: inherit;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-destination: 0px 0px;
-                -webkit-scroll-snap-coordinate: 15px 122px;
+                scroll-snap-type: inherit;
+                scroll-snap-align: center;
+                scroll-padding: 20px;
+                scroll-snap-margin: 0 1px;
             }
 
-            .inheritXPoints {
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-points-x: inherit;
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-destination: 50% 70%;
-                -webkit-scroll-snap-coordinate: 100% 50%;
+            .inheritAlign {
+                scroll-snap-type: mandatory;
+                scroll-snap-align: inherit;
+                scroll-padding: 20px;
+                scroll-snap-margin: 0 1px;
             }
 
-            .inheritYPoints {
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-points-y: inherit;
-                -webkit-scroll-snap-destination: 10px 20px;
-                -webkit-scroll-snap-coordinate: 50% 100%;
+            .inheritPadding {
+                scroll-snap-type: mandatory;
+                scroll-snap-align: center;
+                scroll-padding: inherit;
+                scroll-snap-margin: 0 1px;
             }
 
-            .inheritDestination {
-                -webkit-scroll-snap-type: proximity;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-destination: inherit;
-                -webkit-scroll-snap-coordinate: 10px 10px;
-            }
-
-            .inheritSnapCoordinate {
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-destination: 10% 10%;
-                -webkit-scroll-snap-coordinate: inherit;
+            .inheritMargin {
+                scroll-snap-type: mandatory;
+                scroll-snap-align: center;
+                scroll-padding: 20px;
+                scroll-snap-margin: inherit;
             }
 
             .inheritAll {
-                -webkit-scroll-snap-type: inherit;
-                -webkit-scroll-snap-points-x: inherit;
-                -webkit-scroll-snap-points-y: inherit;
-                -webkit-scroll-snap-destination: inherit;
-                -webkit-scroll-snap-coordinate: inherit
+                scroll-snap-type: inherit;
+                scroll-snap-align: inherit;
+                scroll-padding: inherit;
+                scroll-snap-margin: inherit;
             }
 
-            .inheritNone {
-            }
+            .inheritNone { }
 
             #item0 { background-color: red; }
             #item1 { background-color: green; }
@@ -106,7 +93,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritType" class="horizontalGallery inheritType" style="-webkit-scroll-snap-type: inherit;">
+            <div id="inheritType" class="horizontalGallery inheritType" style="scroll-snap-type: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -116,7 +103,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritXPoints" class="horizontalGallery inheritXPoints" style="-webkit-scroll-snap-points-x: inherit;">
+            <div id="inheritAlign" class="horizontalGallery inheritAlign" style="scroll-snap-align: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -126,7 +113,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritYPoints" class="horizontalGallery inheritYPoints" style="-webkit-scroll-snap-points-y: inherit;">
+            <div id="inheritPadding" class="horizontalGallery inheritPadding" style="scroll-padding: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -136,7 +123,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritDestination" class="horizontalGallery inheritDestination" style="-webkit-scroll-snap-destination: inherit;">
+            <div id="inheritMargin" class="horizontalGallery inheritMargin" style="scroll-snap-margin: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -146,17 +133,7 @@
                     <div id="item5" class="colorBox"></div>
                 </div>
             </div>
-            <div id="inheritSnapCoordinate" class="horizontalGallery inheritSnapCoordinate" style="-webkit-scroll-snap-coordinate: inherit;">
-                <div class="horizontalGalleryDrawer">
-                    <div id="item0" class="colorBox"></div>
-                    <div id="item1" class="colorBox"></div>
-                    <div id="item2" class="colorBox"></div>
-                    <div id="item3" class="colorBox"></div>
-                    <div id="item4" class="colorBox"></div>
-                    <div id="item5" class="colorBox"></div>
-                </div>
-            </div>
-            <div id="inheritAll" class="horizontalGallery inheritAll" style="-webkit-scroll-snap-type: inherit; -webkit-scroll-snap-points-x: inherit; -webkit-scroll-snap-points-y: inherit; -webkit-scroll-snap-destination: inherit; -webkit-scroll-snap-coordinate: inherit;">
+            <div id="inheritAll" class="horizontalGallery inheritAll" style="scroll-snap-type: inherit; scroll-snap-align: inherit; scroll-padding: inherit; scroll-snap-margin: inherit;">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -182,100 +159,136 @@
         description("Tests 'inherit' on scroll snap properties.");
 
         var noInherit = document.getElementById('noInherit');
-        shouldBeEmptyString("noInherit.style['-webkit-scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
-        shouldBeEmptyString("noInherit.style['-webkit-scroll-snap-points-x']");
-        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
-        shouldBeEmptyString("noInherit.style['-webkit-scroll-snap-points-y']");
-        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
-        shouldBeEmptyString("noInherit.style['-webkit-scroll-snap-destination']");
-        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('-webkit-scroll-snap-destination')", "10% 11%");
-        shouldBeEmptyString("noInherit.style['-webkit-scroll-snap-coordinate']");
-        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
+        shouldBeEmptyString("noInherit.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-snap-type')", "both mandatory");
+        shouldBeEmptyString("noInherit.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEmptyString("noInherit.style['scroll-padding']");
+        shouldBeEmptyString("noInherit.style['scroll-padding-left']");
+        shouldBeEmptyString("noInherit.style['scroll-padding-right']");
+        shouldBeEmptyString("noInherit.style['scroll-padding-top']");
+        shouldBeEmptyString("noInherit.style['scroll-padding-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEmptyString("noInherit.style['scroll-snap-margin']");
+        shouldBeEmptyString("noInherit.style['scroll-snap-margin-left']");
+        shouldBeEmptyString("noInherit.style['scroll-snap-margin-right']");
+        shouldBeEmptyString("noInherit.style['scroll-snap-margin-top']");
+        shouldBeEmptyString("noInherit.style['scroll-snap-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(noInherit).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        debug("");
 
         var inheritType = document.getElementById('inheritType');
-        shouldBeEqualToString("inheritType.style['-webkit-scroll-snap-type']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('-webkit-scroll-snap-type')", "proximity");
-        shouldBeEmptyString("inheritType.style['-webkit-scroll-snap-points-x']");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
-        shouldBeEmptyString("inheritType.style['-webkit-scroll-snap-points-y']");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
-        shouldBeEmptyString("inheritType.style['-webkit-scroll-snap-destination']");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
-        shouldBeEmptyString("inheritType.style['-webkit-scroll-snap-coordinate']");
-        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('-webkit-scroll-snap-coordinate')", "15px 122px");
+        shouldBeEqualToString("inheritType.style['scroll-snap-type']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-type')", "x proximity");
+        shouldBeEmptyString("inheritType.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEmptyString("inheritType.style['scroll-padding']");
+        shouldBeEmptyString("inheritType.style['scroll-padding-left']");
+        shouldBeEmptyString("inheritType.style['scroll-padding-right']");
+        shouldBeEmptyString("inheritType.style['scroll-padding-top']");
+        shouldBeEmptyString("inheritType.style['scroll-padding-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEmptyString("inheritType.style['scroll-snap-margin']");
+        shouldBeEmptyString("inheritType.style['scroll-snap-margin-left']");
+        shouldBeEmptyString("inheritType.style['scroll-snap-margin-right']");
+        shouldBeEmptyString("inheritType.style['scroll-snap-margin-top']");
+        shouldBeEmptyString("inheritType.style['scroll-snap-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritType).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        debug("");
 
-        var inheritXPoints = document.getElementById('inheritXPoints');
-        shouldBeEmptyString("inheritXPoints.style['-webkit-scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(inheritXPoints).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
-        shouldBeEqualToString("inheritXPoints.style['-webkit-scroll-snap-points-x']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritXPoints).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(200%)");
-        shouldBeEmptyString("inheritXPoints.style['-webkit-scroll-snap-points-y']");
-        shouldBeEqualToString("window.getComputedStyle(inheritXPoints).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
-        shouldBeEmptyString("inheritXPoints.style['-webkit-scroll-snap-destination']");
-        shouldBeEqualToString("window.getComputedStyle(inheritXPoints).getPropertyValue('-webkit-scroll-snap-destination')", "50% 70%");
-        shouldBeEmptyString("inheritXPoints.style['-webkit-scroll-snap-coordinate']");
-        shouldBeEqualToString("window.getComputedStyle(inheritXPoints).getPropertyValue('-webkit-scroll-snap-coordinate')", "100% 50%");
+        var inheritAlign = document.getElementById('inheritAlign');
+        shouldBeEmptyString("inheritAlign.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-snap-type')", "both mandatory");
+        shouldBeEqualToString("inheritAlign.style['scroll-snap-align']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-snap-align')", "start end");
+        shouldBeEmptyString("inheritAlign.style['scroll-padding']");
+        shouldBeEmptyString("inheritAlign.style['scroll-padding-left']");
+        shouldBeEmptyString("inheritAlign.style['scroll-padding-right']");
+        shouldBeEmptyString("inheritAlign.style['scroll-padding-top']");
+        shouldBeEmptyString("inheritAlign.style['scroll-padding-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin']");
+        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-left']");
+        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-right']");
+        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-top']");
+        shouldBeEmptyString("inheritAlign.style['scroll-snap-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritAlign).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        debug("");
 
-        var inheritYPoints = document.getElementById('inheritYPoints');
-        shouldBeEmptyString("inheritYPoints.style['-webkit-scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(inheritYPoints).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
-        shouldBeEmptyString("inheritYPoints.style['-webkit-scroll-snap-points-x']");
-        shouldBeEqualToString("window.getComputedStyle(inheritYPoints).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
-        shouldBeEqualToString("inheritYPoints.style['-webkit-scroll-snap-points-y']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritYPoints).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(200%)");
-        shouldBeEmptyString("inheritYPoints.style['-webkit-scroll-snap-destination']");
-        shouldBeEqualToString("window.getComputedStyle(inheritYPoints).getPropertyValue('-webkit-scroll-snap-destination')", "10px 20px");
-        shouldBeEmptyString("inheritYPoints.style['-webkit-scroll-snap-coordinate']");
-        shouldBeEqualToString("window.getComputedStyle(inheritYPoints).getPropertyValue('-webkit-scroll-snap-coordinate')", "50% 100%");
+        var inheritPadding = document.getElementById('inheritPadding');
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-snap-type')", "both mandatory");
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEqualToString("inheritPadding.style['scroll-padding']", "inherit");
+        shouldBeEqualToString("inheritPadding.style['scroll-padding-left']", "inherit");
+        shouldBeEqualToString("inheritPadding.style['scroll-padding-right']", "inherit");
+        shouldBeEqualToString("inheritPadding.style['scroll-padding-top']", "inherit");
+        shouldBeEqualToString("inheritPadding.style['scroll-padding-bottom']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-padding')", "10%");
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin']");
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-left']");
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-right']");
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-top']");
+        shouldBeEmptyString("inheritPadding.style['scroll-snap-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritPadding).getPropertyValue('scroll-snap-margin')", "0px 1px");
+        debug("");
 
-        var inheritDestination = document.getElementById('inheritDestination');
-        shouldBeEmptyString("inheritDestination.style['-webkit-scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(inheritDestination).getPropertyValue('-webkit-scroll-snap-type')", "proximity");
-        shouldBeEmptyString("inheritDestination.style['-webkit-scroll-snap-points-x']");
-        shouldBeEqualToString("window.getComputedStyle(inheritDestination).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
-        shouldBeEmptyString("inheritDestination.style['-webkit-scroll-snap-points-y']");
-        shouldBeEqualToString("window.getComputedStyle(inheritDestination).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
-        shouldBeEqualToString("inheritDestination.style['-webkit-scroll-snap-destination']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritDestination).getPropertyValue('-webkit-scroll-snap-destination')", "25% 25%");
-        shouldBeEmptyString("inheritDestination.style['-webkit-scroll-snap-coordinate']");
-        shouldBeEqualToString("window.getComputedStyle(inheritDestination).getPropertyValue('-webkit-scroll-snap-coordinate')", "10px 10px");
-
-        var inheritSnapCoordinate = document.getElementById('inheritSnapCoordinate');
-        shouldBeEmptyString("inheritSnapCoordinate.style['-webkit-scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(inheritSnapCoordinate).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
-        shouldBeEmptyString("inheritSnapCoordinate.style['-webkit-scroll-snap-points-x']");
-        shouldBeEqualToString("window.getComputedStyle(inheritSnapCoordinate).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
-        shouldBeEmptyString("inheritSnapCoordinate.style['-webkit-scroll-snap-points-y']");
-        shouldBeEqualToString("window.getComputedStyle(inheritSnapCoordinate).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
-        shouldBeEmptyString("inheritSnapCoordinate.style['-webkit-scroll-snap-destination']");
-        shouldBeEqualToString("window.getComputedStyle(inheritSnapCoordinate).getPropertyValue('-webkit-scroll-snap-destination')", "10% 10%");
-        shouldBeEqualToString("inheritSnapCoordinate.style['-webkit-scroll-snap-coordinate']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritSnapCoordinate).getPropertyValue('-webkit-scroll-snap-coordinate')", "20px 20px");
+        var inheritMargin = document.getElementById('inheritMargin');
+        shouldBeEmptyString("inheritMargin.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-snap-type')", "both mandatory");
+        shouldBeEmptyString("inheritMargin.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-snap-align')", "center center");
+        shouldBeEmptyString("inheritMargin.style['scroll-padding']");
+        shouldBeEmptyString("inheritMargin.style['scroll-padding-left']");
+        shouldBeEmptyString("inheritMargin.style['scroll-padding-right']");
+        shouldBeEmptyString("inheritMargin.style['scroll-padding-top']");
+        shouldBeEmptyString("inheritMargin.style['scroll-padding-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-padding')", "20px");
+        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-left']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-right']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-top']", "inherit");
+        shouldBeEqualToString("inheritMargin.style['scroll-snap-margin-bottom']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritMargin).getPropertyValue('scroll-snap-margin')", "5px 5px 10px 10px");
+        debug("");
 
         var inheritAll = document.getElementById('inheritAll');
-        shouldBeEqualToString("inheritAll.style['-webkit-scroll-snap-type']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('-webkit-scroll-snap-type')", "proximity");
-        shouldBeEqualToString("inheritAll.style['-webkit-scroll-snap-points-x']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(200%)");
-        shouldBeEqualToString("inheritAll.style['-webkit-scroll-snap-points-y']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(200%)");
-        shouldBeEqualToString("inheritAll.style['-webkit-scroll-snap-destination']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('-webkit-scroll-snap-destination')", "25% 25%");
-        shouldBeEqualToString("inheritAll.style['-webkit-scroll-snap-coordinate']", "inherit");
-        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('-webkit-scroll-snap-coordinate')", "20px 20px");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-type']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-type')", "x proximity");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-align']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-align')", "start end");
+        shouldBeEqualToString("inheritAll.style['scroll-padding']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-padding-left']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-padding-right']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-padding-top']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-padding-bottom']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-padding')", "10%");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-margin']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-left']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-right']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-top']", "inherit");
+        shouldBeEqualToString("inheritAll.style['scroll-snap-margin-bottom']", "inherit");
+        shouldBeEqualToString("window.getComputedStyle(inheritAll).getPropertyValue('scroll-snap-margin')", "5px 5px 10px 10px");
+        debug("");
 
         var inheritNone = document.getElementById('inheritNone');
-        shouldBeEmptyString("inheritNone.style['-webkit-scroll-snap-type']");
-        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('-webkit-scroll-snap-type')", "none");
-        shouldBeEmptyString("inheritNone.style['-webkit-scroll-snap-points-x']");
-        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('-webkit-scroll-snap-points-x')", "none");
-        shouldBeEmptyString("inheritNone.style['-webkit-scroll-snap-points-y']");
-        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('-webkit-scroll-snap-points-y')", "none");
-        shouldBeEmptyString("inheritNone.style['-webkit-scroll-snap-destination']");
-        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('-webkit-scroll-snap-destination')", "0px 0px");
-        shouldBeEmptyString("inheritNone.style['-webkit-scroll-snap-coordinate']");
-        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('-webkit-scroll-snap-coordinate')", "none");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-type']");
+        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-snap-type')", "none");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-align']");
+        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-snap-align')", "none none");
+        shouldBeEmptyString("inheritNone.style['scroll-padding']");
+        shouldBeEmptyString("inheritNone.style['scroll-padding-left']");
+        shouldBeEmptyString("inheritNone.style['scroll-padding-right']");
+        shouldBeEmptyString("inheritNone.style['scroll-padding-top']");
+        shouldBeEmptyString("inheritNone.style['scroll-padding-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-padding')", "0px");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-margin']");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-left']");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-right']");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-top']");
+        shouldBeEmptyString("inheritNone.style['scroll-snap-margin-bottom']");
+        shouldBeEqualToString("window.getComputedStyle(inheritNone).getPropertyValue('scroll-snap-margin')", "0px");
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

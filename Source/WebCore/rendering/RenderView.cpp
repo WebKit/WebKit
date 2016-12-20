@@ -1473,14 +1473,14 @@ unsigned RenderView::pageCount() const
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void RenderView::registerBoxWithScrollSnapCoordinates(const RenderBox& box)
+void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 {
-    m_boxesWithScrollSnapCoordinates.add(&box);
+    m_boxesWithScrollSnapPositions.add(&box);
 }
 
-void RenderView::unregisterBoxWithScrollSnapCoordinates(const RenderBox& box)
+void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
 {
-    m_boxesWithScrollSnapCoordinates.remove(&box);
+    m_boxesWithScrollSnapPositions.remove(&box);
 }
 #endif
 

@@ -75,6 +75,7 @@
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleScrollSnapPoints.h"
 #include "Text.h"
 #include "WebKitFontFamilyNames.h"
 #include "WillChangeData.h"
@@ -89,11 +90,6 @@
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
-#endif
-
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "LengthRepeat.h"
-#include "StyleScrollSnapPoints.h"
 #endif
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
@@ -242,11 +238,18 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWordSpacing,
     CSSPropertyWordWrap,
 #if ENABLE(CSS_SCROLL_SNAP)
-    CSSPropertyWebkitScrollSnapType,
-    CSSPropertyWebkitScrollSnapPointsX,
-    CSSPropertyWebkitScrollSnapPointsY,
-    CSSPropertyWebkitScrollSnapDestination,
-    CSSPropertyWebkitScrollSnapCoordinate,
+    CSSPropertyScrollSnapMargin,
+    CSSPropertyScrollSnapMarginLeft,
+    CSSPropertyScrollSnapMarginTop,
+    CSSPropertyScrollSnapMarginRight,
+    CSSPropertyScrollSnapMarginBottom,
+    CSSPropertyScrollPadding,
+    CSSPropertyScrollPaddingLeft,
+    CSSPropertyScrollPaddingTop,
+    CSSPropertyScrollPaddingRight,
+    CSSPropertyScrollPaddingBottom,
+    CSSPropertyScrollSnapType,
+    CSSPropertyScrollSnapAlign,
 #endif
     CSSPropertyZIndex,
     CSSPropertyZoom,
@@ -1205,45 +1208,27 @@ static Ref<CSSValueList> getTransitionPropertyValue(const AnimationList* animLis
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-static Ref<CSSValueList> scrollSnapDestination(const RenderStyle& style, const LengthSize& destination)
+
+static Ref<CSSValueList> valueForScrollSnapType(const ScrollSnapType& type)
 {
-    auto list = CSSValueList::createSpaceSeparated();
-    list.get().append(zoomAdjustedPixelValueForLength(destination.width(), style));
-    list.get().append(zoomAdjustedPixelValueForLength(destination.height(), style));
-    return list;
-}
-
-static Ref<CSSValue> scrollSnapPoints(const RenderStyle& style, const ScrollSnapPoints* points)
-{
-    if (!points)
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-
-    if (points->usesElements)
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueElements);
-    auto list = CSSValueList::createSpaceSeparated();
-    for (auto& point : points->offsets)
-        list.get().append(zoomAdjustedPixelValueForLength(point, style));
-    if (points->hasRepeat)
-        list.get().append(CSSValuePool::singleton().createValue(LengthRepeat::create(zoomAdjustedPixelValueForLength(points->repeatOffset, style))));
-    return WTFMove(list);
-}
-
-static Ref<CSSValue> scrollSnapCoordinates(const RenderStyle& style, const Vector<LengthSize>& coordinates)
-{
-    if (coordinates.isEmpty())
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-
-    auto list = CSSValueList::createCommaSeparated();
-
-    for (auto& coordinate : coordinates) {
-        auto pair = CSSValueList::createSpaceSeparated();
-        pair.get().append(zoomAdjustedPixelValueForLength(coordinate.width(), style));
-        pair.get().append(zoomAdjustedPixelValueForLength(coordinate.height(), style));
-        list.get().append(WTFMove(pair));
+    auto value = CSSValueList::createSpaceSeparated();
+    if (type.strictness == ScrollSnapStrictness::None)
+        value->append(CSSValuePool::singleton().createValue(CSSValueNone));
+    else {
+        value->append(CSSPrimitiveValue::create(type.axis));
+        value->append(CSSPrimitiveValue::create(type.strictness));
     }
-
-    return WTFMove(list);
+    return value;
 }
+
+static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alignment)
+{
+    auto value = CSSValueList::createSpaceSeparated();
+    value->append(CSSPrimitiveValue::create(alignment.x));
+    value->append(CSSPrimitiveValue::create(alignment.y));
+    return value;
+}
+
 #endif
 
 static Ref<CSSValue> getWillChangePropertyValue(const WillChangeData* willChangeData)
@@ -3798,16 +3783,30 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return getCSSPropertyValuesForSidesShorthand(paddingShorthand());
 
 #if ENABLE(CSS_SCROLL_SNAP)
-        case CSSPropertyWebkitScrollSnapType:
-            return cssValuePool.createValue(style->scrollSnapType());
-        case CSSPropertyWebkitScrollSnapDestination:
-            return scrollSnapDestination(*style, style->scrollSnapDestination());
-        case CSSPropertyWebkitScrollSnapPointsX:
-            return scrollSnapPoints(*style, style->scrollSnapPointsX());
-        case CSSPropertyWebkitScrollSnapPointsY:
-            return scrollSnapPoints(*style, style->scrollSnapPointsY());
-        case CSSPropertyWebkitScrollSnapCoordinate:
-            return scrollSnapCoordinates(*style, style->scrollSnapCoordinates());
+        case CSSPropertyScrollSnapMargin:
+            return getCSSPropertyValuesForSidesShorthand(scrollSnapMarginShorthand());
+        case CSSPropertyScrollSnapMarginBottom:
+            return zoomAdjustedPixelValueForLength(style->scrollSnapMarginBottom(), *style);
+        case CSSPropertyScrollSnapMarginTop:
+            return zoomAdjustedPixelValueForLength(style->scrollSnapMarginTop(), *style);
+        case CSSPropertyScrollSnapMarginRight:
+            return zoomAdjustedPixelValueForLength(style->scrollSnapMarginRight(), *style);
+        case CSSPropertyScrollSnapMarginLeft:
+            return zoomAdjustedPixelValueForLength(style->scrollSnapMarginLeft(), *style);
+        case CSSPropertyScrollPadding:
+            return getCSSPropertyValuesForSidesShorthand(scrollPaddingShorthand());
+        case CSSPropertyScrollPaddingBottom:
+            return zoomAdjustedPixelValueForLength(style->scrollPaddingBottom(), *style);
+        case CSSPropertyScrollPaddingTop:
+            return zoomAdjustedPixelValueForLength(style->scrollPaddingTop(), *style);
+        case CSSPropertyScrollPaddingRight:
+            return zoomAdjustedPixelValueForLength(style->scrollPaddingRight(), *style);
+        case CSSPropertyScrollPaddingLeft:
+            return zoomAdjustedPixelValueForLength(style->scrollPaddingLeft(), *style);
+        case CSSPropertyScrollSnapType:
+            return valueForScrollSnapType(style->scrollSnapType());
+        case CSSPropertyScrollSnapAlign:
+            return valueForScrollSnapAlignment(style->scrollSnapAlign());
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)

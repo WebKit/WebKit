@@ -1,238 +1,113 @@
-Test the parsing of the -webkit-scroll-snap-* properties.
+Test the parsing of the scroll-snap-* properties.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 
-inherited type : inherit
+initial value : initial
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-type') is 'inherit'
+PASS declaration.getPropertyValue('scroll-snap-type') is 'initial'
 
-initial type : initial
+only strictness : mandatory
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-type') is 'initial'
+PASS declaration.getPropertyValue('scroll-snap-type') is 'mandatory'
 
-inherited points-x : inherit
+only axis : both
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'inherit'
+PASS declaration.getPropertyValue('scroll-snap-type') is 'both'
 
-initial points-x : initial
+none : none
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'initial'
+PASS declaration.getPropertyValue('scroll-snap-type') is 'none'
 
-inherited points-y : inherit
+strictness following axis : inline mandatory
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'inherit'
+PASS declaration.getPropertyValue('scroll-snap-type') is 'inline mandatory'
 
-initial points-y : initial
+initial value : initial
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'initial'
+PASS declaration.getPropertyValue('scroll-snap-align') is 'initial'
 
-inherited destination : inherit
+single value : start
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is 'inherit'
+PASS declaration.getPropertyValue('scroll-snap-align') is 'start'
 
-initial destination : initial
+two values : start end
 PASS cssRule.type is 1
 PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is 'initial'
+PASS declaration.getPropertyValue('scroll-snap-align') is 'start end'
 
-inherited coordinate : inherit
+single length : 10px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is 'inherit'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '10px'
 
-initial coordinate : initial
+two percentages : 10% 20%
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is 'initial'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '10% 20%'
 
-mandatory type : mandatory
+three lengths : 1px 2px 3px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-type') is 'mandatory'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '1px 2px 3px'
 
-proximity type : proximity
+four values : 50px 10% 20% 50px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-type') is 'proximity'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '50px 10% 20% 50px'
 
-element points along x axis : elements
+calc expression : calc(50px + 10%) 20px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'elements'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is 'calc(50px + 10%) 20px'
 
-percentage points along x axis : 100% 50%
+various units : 1em 5mm 2in 4cm
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100% 50%'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '1em 5mm 2in 4cm'
 
-pixel points along x axis : 100px 50px
+subpixel values : 10.4375px 6.5px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100px 50px'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-padding') is '10.4375px 6.5px'
 
-percentage points repeat along x axis : repeat(100%)
+single length : 10px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '10px'
 
-pixe points repeat along x axis : repeat(25px)
+two lengths : 10px 20px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(25px)'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '10px 20px'
 
-percentage points along x axis with percentage repeat : 100% repeat(100%)
+three lengths : 1px 2px 3px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100% repeat(100%)'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '1px 2px 3px'
 
-pixel points along x axis with percentage repeat : 100px 50px repeat(25%)
+four lengths : 50px 10px 20px 50px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100px 50px repeat(25%)'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '50px 10px 20px 50px'
 
-percentage points along x axis with pixel repeat : 100% 50% repeat(40px)
+various units : 1em 5mm 2in 4cm
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100% 50% repeat(40px)'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '1em 5mm 2in 4cm'
 
-pixel points along x axis with pixel repeat : 100px repeat(42px)
+subpixel values : 10.4375px 6.5px
 PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100px repeat(42px)'
-
-element points along y axis : elements
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'elements'
-
-percentage points along y axis : 100% 50%
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100% 50%'
-
-pixel points along y axis : 100px 50px
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100px 50px'
-
-percentage points repeat along y axis : repeat(100%)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
-
-pixe points repeat along y axis : repeat(25px)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(25px)'
-
-percentage points along y axis with percentage repeat : 100% repeat(100%)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100% repeat(100%)'
-
-pixel points along y axis with percentage repeat : 100px 50px repeat(25%)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100px 50px repeat(25%)'
-
-percentage points along y axis with pixel repeat : 100% 50% repeat(40px)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100% 50% repeat(40px)'
-
-pixel points along y axis with pixel repeat : 100px repeat(42px)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-y') is '100px repeat(42px)'
-
-em points along x axis with pixel repeat : 100em repeat(42em)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100em repeat(42em)'
-
-mm along x axis with pixel repeat : 100mm repeat(42mm)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100mm repeat(42mm)'
-
-in along x axis with pixel repeat : 100in repeat(42in)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100in repeat(42in)'
-
-pt along x axis with pixel repeat : 100pt repeat(42pt)
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-points-x') is '100pt repeat(42pt)'
-
-pixel/pixel destination : 10px 50px
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is '10px 50px'
-
-pixel/percentage destination : 20px 40%
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is '20px 40%'
-
-percentage/pixel destination : 0% 0px
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is '0% 0px'
-
-percentage/percentage destination : 5% 100%
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is '5% 100%'
-
-em/ex destination : 12em 16ex
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is '12em 16ex'
-
-in/cm destination : 2in 5cm
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-destination') is '2in 5cm'
-
-single pixel coordinate : 50px 100px
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px'
-
-single percentage coordinate : 50% 100%
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100%'
-
-multiple pixel coordinates : 50px 100px 150px 100px 200px 100px
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px 150px 100px 200px 100px'
-
-multiple percentage coordinates : 50% 100% 150% 100% 200% 100%
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100% 150% 100% 200% 100%'
-
-em/ex coordinate : 12em 16ex 16em 12ex
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is '12em 16ex 16em 12ex'
-
-in/cm coordinate : 2in 5cm 5in 2cm
-PASS cssRule.type is 1
-PASS declaration.length is 1
-PASS declaration.getPropertyValue('-webkit-scroll-snap-coordinate') is '2in 5cm 5in 2cm'
+PASS declaration.length is 4
+PASS declaration.getPropertyValue('scroll-snap-margin') is '10.4375px 6.5px'
 PASS successfullyParsed is true
 
 TEST COMPLETE

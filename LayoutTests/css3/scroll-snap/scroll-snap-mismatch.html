@@ -8,14 +8,17 @@
                 overflow-y: hidden;
                 overflow-x: auto;
                 margin-bottom: 2px;
-                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
             }
-            .horizontal-good {
-                -webkit-scroll-snap-points-x: repeat(300px);                
+
+            .good {
+                scroll-snap-align: start none;
             }
-            .horizontal-bad {
-                -webkit-scroll-snap-points-y: repeat(100vh);
+
+            .bad {
+                scroll-snap-align: none start;
             }
+
             .horizontalGalleryDrawer {
                 width: 1800px;
                 height: 300px;
@@ -62,22 +65,22 @@
             <div>Tests that the scroll-snap feature works properly with mixed-up snap points.</div>
             <div class="horizontalGallery horizontal-bad" id="badHorizontalTarget">
                 <div class="horizontalGalleryDrawer">
-                    <div id="itemH0" class="colorBox"></div>
-                    <div id="itemH1" class="colorBox"></div>
-                    <div id="itemH2" class="colorBox"></div>
-                    <div id="itemH3" class="colorBox"></div>
-                    <div id="itemH4" class="colorBox"></div>
-                    <div id="itemH5" class="colorBox"></div>
+                    <div id="itemH0" class="bad colorBox"></div>
+                    <div id="itemH1" class="bad colorBox"></div>
+                    <div id="itemH2" class="bad colorBox"></div>
+                    <div id="itemH3" class="bad colorBox"></div>
+                    <div id="itemH4" class="bad colorBox"></div>
+                    <div id="itemH5" class="bad colorBox"></div>
                 </div>
             </div>
             <div class="horizontalGallery horizontal-good" id="horizontalTarget">
                 <div class="horizontalGalleryDrawer">
-                    <div id="itemH0" class="colorBox"></div>
-                    <div id="itemH1" class="colorBox"></div>
-                    <div id="itemH2" class="colorBox"></div>
-                    <div id="itemH3" class="colorBox"></div>
-                    <div id="itemH4" class="colorBox"></div>
-                    <div id="itemH5" class="colorBox"></div>
+                    <div id="itemH0" class="good colorBox"></div>
+                    <div id="itemH1" class="good colorBox"></div>
+                    <div id="itemH2" class="good colorBox"></div>
+                    <div id="itemH3" class="good colorBox"></div>
+                    <div id="itemH4" class="good colorBox"></div>
+                    <div id="itemH5" class="good colorBox"></div>
                 </div>
             </div>
             <div id="console"></div>

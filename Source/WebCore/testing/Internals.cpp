@@ -3291,6 +3291,8 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     if (!element.renderBox())
         return String();
 
+    element.document().updateLayout();
+
     RenderBox& box = *element.renderBox();
     ScrollableArea* scrollableArea;
     

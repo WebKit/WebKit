@@ -155,10 +155,6 @@
 #include "WebVTTElement.h"
 #endif
 
-#if ENABLE(CSS_SCROLL_SNAP)
-#include "LengthRepeat.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;

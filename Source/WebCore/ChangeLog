@@ -1,3 +1,294 @@
+2016-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement the updated port/area-based Scroll Snap Module Level 1 Spec
+        https://bugs.webkit.org/show_bug.cgi?id=165317
+        <rdar://problem/29490956>
+
+        Reviewed by Dean Jackson.
+
+        Implements the changes drafted in the latest iteration of the Scroll Snap Module Level 1 spec, which uses a
+        snap-area and snap-port-based method for determining snap positions in a scroll snapping container.
+        Additionally, removes the now-obsolete and prefixed implementation of the scroll snap spec and refactors all
+        affected layout tests to use the new CSS properties. Also adds new layout tests covering some behaviors detailed
+        in the new version of the spec, such as scroll snapping with transformed child elements.
+
+        See below for more detailed descriptions of the changes.
+
+        Tests: css3/scroll-snap/scroll-snap-2d-change-axis-type.html
+               css3/scroll-snap/scroll-snap-2d-offsets-computed-independently.html
+               css3/scroll-snap/scroll-snap-children-with-scroll-snap-margin.html
+               css3/scroll-snap/scroll-snap-children-with-transforms.html
+               css3/scroll-snap/scroll-snap-positions-mainframe.html
+               css3/scroll-snap/scroll-snap-positions-overflow-resize.html
+               css3/scroll-snap/scroll-snap-positions.html
+               css3/scroll-snap/scroll-snap-style-changed-align.html
+               css3/scroll-snap/scroll-snap-with-scroll-padding.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::hasDoubleValue):
+
+        Removed use of length repeat.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForScrollSnapType):
+        (WebCore::valueForScrollSnapAlignment):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::scrollSnapDestination): Deleted.
+        (WebCore::scrollSnapPoints): Deleted.
+        (WebCore::scrollSnapCoordinates): Deleted.
+
+        Removed helper functions used to create CSS values for scroll snap coordinates and destination, and added
+        helpers for computed scroll snap type (a combination of axis and strictness values) as well as scroll snap align
+        (an alignment value per axis).
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+
+        Removed usages of the length repeat type, since repeat(*) is no longer being used anywhere.
+
+        * css/CSSPrimitiveValue.h:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ScrollSnapStrictness):
+        (WebCore::CSSPrimitiveValue::operator ScrollSnapAxis):
+        (WebCore::CSSPrimitiveValue::operator ScrollSnapAxisAlignType):
+        (WebCore::CSSPrimitiveValue::operator ScrollSnapType): Deleted.
+
+        Added CSSPrimitiveValue mappings to ScrollSnapAxisAlignType, ScrollSnapStrictness, and ScrollSnapAxis. Removed
+        the old ScrollSnapType mapping.
+
+        * css/CSSProperties.json:
+
+        Replaced the old scroll snap CSS properties with the new ones. Note that scroll-snap-margin and scroll-padding
+        have 4 shorthands each, for the individual top/bottom/left/right values.
+
+        * css/CSSValueKeywords.in:
+
+        Added CSS keywords {x, y}, which are necessary to support the new scroll snapping properties.
+
+        * css/LengthRepeat.h: Removed.
+
+        Removed LengthRepeat entirely. This represented the `repeat(<length>)` CSS value, which was only used for the
+        scroll-snap-points-x and scroll-snap-points-y values.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertScrollSnapType):
+        (WebCore::StyleBuilderConverter::convertScrollSnapAlign):
+        (WebCore::StyleBuilderConverter::parseSnapCoordinate): Deleted.
+        (WebCore::StyleBuilderConverter::convertScrollSnapPoints): Deleted.
+        (WebCore::StyleBuilderConverter::convertSnapCoordinatePair): Deleted.
+        (WebCore::StyleBuilderConverter::convertScrollSnapCoordinates): Deleted.
+
+        Added helper functions to convert scroll snap type and scroll snap alignment from parsed CSS values to their
+        primary representation in WebCore as ScrollSnapType and ScrollSnapAlign. These methods assume that the given
+        CSS values have successfully cleared the parsing step and are represented as CSSValueLists or length 1 or 2.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitScrollSnapPointsX): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitScrollSnapPointsX): Deleted.
+        (WebCore::StyleBuilderCustom::applyInitialWebkitScrollSnapPointsY): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritWebkitScrollSnapPointsY): Deleted.
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::asText):
+
+        Adds support for the scroll-snap-margin and scroll-padding.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::isScrollSnapAxisAlign):
+        (WebCore::isScrollSnapStrictness):
+        (WebCore::CSSParser::parseScrollSnapAlign):
+        (WebCore::CSSParser::parseScrollSnapType):
+        (WebCore::CSSParser::parseNonElementSnapPoints): Deleted.
+        (WebCore::CSSParser::parseScrollSnapPositions): Deleted.
+        (WebCore::CSSParser::parseScrollSnapDestination): Deleted.
+        (WebCore::CSSParser::parseScrollSnapCoordinate): Deleted.
+        * css/parser/CSSParser.h:
+
+        Removed references to LengthRepeat, and added support for parsing new scroll snapping properties. Scroll snap
+        margin and scroll padding, along with their shorthands, are parsed using the same helper functions as normal
+        margin and padding. For type and align, I added new helper functions that build up lists of 1 or 2
+        CSSPrimitiveValues for each of the properties.
+
+        Parsing scroll-snap-align is straightforward -- we either have one or two values in the set {none, start,
+        center, end}. For scroll-snap-type, we allow a single axis value {x, y, inline, block, both}, or a single
+        strictness value {none, proximity, mandatory}, or an axis value followed by a non-'none' strictness (i.e. either
+        proximity or mandatory).
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+
+        Removed references to LengthRepeat.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        (WebCore::consumeSnapPointCoordinateList): Deleted.
+        (WebCore::consumeScrollSnapCoordinate): Deleted.
+        (WebCore::consumeScrollSnapDestination): Deleted.
+        (WebCore::consumeScrollSnapPoints): Deleted.
+        (WebCore::consumeScrollSnapAlign):
+        (WebCore::consumeScrollSnapType):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+        Added parsing for the longhand properties of scroll-snap-margin and scroll-padding, which use the existing
+        consumeLength and consumeLengthOrPercent helpers, respectively. Removed code for parsing scroll snap
+        coordinates, destinations and points. Added parsing logic for align and type.
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::computeScrollSnapPortOrAreaRect):
+        (WebCore::computeScrollSnapAlignOffset):
+        (WebCore::snapOffsetsToString):
+        (WebCore::snapPortOrAreaToString):
+        (WebCore::updateSnapOffsetsForScrollableArea):
+        (WebCore::appendChildSnapOffsets): Deleted.
+        (WebCore::destinationOffsetForViewSize): Deleted.
+        (WebCore::updateFromStyle): Deleted.
+        (WebCore::styleUsesElements): Deleted.
+
+        Overhauled updateSnapOffsetsForScrollableArea to work with the new scroll snapping model. In the new way of
+        computing scroll snap offsets, we:
+
+        Compute the scroll container's scroll snap port, which is the padding box inset by the scroll padding
+        For each child with snap positions (i.e. scroll-snap-align is not none on both axes)
+          Compute the child's scroll snap area, which is the bounding box of the transformed border box
+            If the container snaps along the horizontal axis and the snap area contributes a horizontal snap offset:
+              Emit the distance from the alignment offset in the horizontal of the snap port to the corresponding offset
+              in the snap area as a snap position.
+            If the container snaps along the vertical axis and the snap area contributes a vertical snap offset:
+              Emit the distance from the alignment offset in the vertical of the snap port to the corresponding offset
+              in the snap area as a snap position.
+        For the snap offsets in each axis, if there is at least one snap offset:
+          Clamp the offsets to the min and max scroll offsets
+          Ensure that the offsets are sorted and do not contain duplicated offsets
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::updateScrollSnapState):
+
+        Clear out the ScrollController's snap offsets and state along an axis when its ScrollableArea no longer has snap
+        offsets in that axis.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleWillChange):
+        (WebCore::RenderBox::willBeRemovedFromTree):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::scrollSnapContainerRequiresUpdateForStyleUpdate):
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::registerBoxWithScrollSnapPositions):
+        (WebCore::RenderView::unregisterBoxWithScrollSnapPositions):
+        (WebCore::RenderView::registerBoxWithScrollSnapCoordinates): Deleted.
+        (WebCore::RenderView::unregisterBoxWithScrollSnapCoordinates): Deleted.
+        * rendering/RenderView.h:
+
+        Tweaked the scroll snap child registration logic. registerBoxWithScrollSnapCoordinates is renamed to
+        unregisterBoxWithScrollSnapPositions, since the notion of scroll snap coordinates no longer exists, and instead
+        of checking if the list of scroll snap coordinates is empty for the absence of scroll positions, we instead
+        check for a computed scroll snap align that is not none on both axes.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::initialScrollSnapType):
+        (WebCore::RenderStyle::initialScrollSnapAlign):
+        (WebCore::RenderStyle::scrollSnapArea):
+        (WebCore::RenderStyle::scrollSnapPort):
+        (WebCore::RenderStyle::scrollSnapType):
+        (WebCore::RenderStyle::scrollPadding):
+        (WebCore::RenderStyle::scrollPaddingTop):
+        (WebCore::RenderStyle::scrollPaddingBottom):
+        (WebCore::RenderStyle::scrollPaddingLeft):
+        (WebCore::RenderStyle::scrollPaddingRight):
+        (WebCore::RenderStyle::scrollSnapAlign):
+        (WebCore::RenderStyle::scrollSnapMargin):
+        (WebCore::RenderStyle::scrollSnapMarginTop):
+        (WebCore::RenderStyle::scrollSnapMarginBottom):
+        (WebCore::RenderStyle::scrollSnapMarginLeft):
+        (WebCore::RenderStyle::scrollSnapMarginRight):
+        (WebCore::RenderStyle::setScrollSnapType):
+        (WebCore::RenderStyle::setScrollPaddingTop):
+        (WebCore::RenderStyle::setScrollPaddingBottom):
+        (WebCore::RenderStyle::setScrollPaddingLeft):
+        (WebCore::RenderStyle::setScrollPaddingRight):
+        (WebCore::RenderStyle::setScrollSnapAlign):
+        (WebCore::RenderStyle::setScrollSnapMarginTop):
+        (WebCore::RenderStyle::setScrollSnapMarginBottom):
+        (WebCore::RenderStyle::setScrollSnapMarginLeft):
+        (WebCore::RenderStyle::setScrollSnapMarginRight):
+        (WebCore::RenderStyle::initialScrollSnapDestination): Deleted.
+        (WebCore::RenderStyle::initialScrollSnapCoordinates): Deleted.
+        (WebCore::RenderStyle::scrollSnapPointsX): Deleted.
+        (WebCore::RenderStyle::scrollSnapPointsY): Deleted.
+        (WebCore::RenderStyle::scrollSnapDestination): Deleted.
+        (WebCore::RenderStyle::scrollSnapCoordinates): Deleted.
+        (WebCore::RenderStyle::setScrollSnapPointsX): Deleted.
+        (WebCore::RenderStyle::setScrollSnapPointsY): Deleted.
+        (WebCore::RenderStyle::setScrollSnapDestination): Deleted.
+        (WebCore::RenderStyle::setScrollSnapCoordinates): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialScrollSnapMargin):
+        (WebCore::RenderStyle::initialScrollPadding):
+        (WebCore::RenderStyle::scrollSnapType): Deleted.
+        (WebCore::RenderStyle::setScrollSnapType): Deleted.
+        (WebCore::RenderStyle::initialScrollSnapType): Deleted.
+        (WebCore::RenderStyle::initialScrollSnapPointsX): Deleted.
+        (WebCore::RenderStyle::initialScrollSnapPointsY): Deleted.
+
+        Added boilerplate code for returning various new scroll snap style properties, and removed similar code for
+        handling the old scroll snap properties.
+
+        * rendering/style/RenderStyleConstants.h:
+
+        Added three new enum classes:
+        - ScrollSnapStrictness represents the strictness of scroll snapping along one or both axes
+        - ScrollSnapAxis designates the axes along which scroll snapping should occur
+        - ScrollSnapAxisAlignType indicates which offsets along the x or y axes of the snap port and snap area should be
+          used to compute the snap position emitted by a snap area.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
+        Replaces the StyleScrollSnapPoints object (which, confusingly, was in charge of storing both the scroll
+        container's and child elements' scroll snap styles) with StyleScrollSnapPort and StyleScrollSnapArea objects,
+        which keep track of the style properties on the scroll container and the child element, respectively.
+
+        * rendering/style/StyleScrollSnapPoints.h:
+        (WebCore::operator==):
+        (WebCore::StyleScrollSnapPort::copy):
+        (WebCore::StyleScrollSnapPort::StyleScrollSnapPort):
+        (WebCore::StyleScrollSnapArea::copy):
+        (WebCore::StyleScrollSnapArea::StyleScrollSnapArea):
+        * rendering/style/StyleScrollSnapping.h: Added.
+        (WebCore::operator!=):
+        (WebCore::StyleScrollSnapPort::create):
+        (WebCore::StyleScrollSnapArea::create):
+        (WebCore::StyleScrollSnapArea::hasSnapPosition):
+
+        Overhauled StyleScrollSnapPoints, breaking the logic here into two classes: StyleScrollSnapPort for the scroll
+        container, handling the properties `scroll-snap-type` and `scroll-padding` and StyleScrollSnapArea for child
+        elements, handling the properties `scroll-snap-align` and `scroll-snap-margin`. The ScrollSnapType itself is
+        composed of an axis value and a strictness, while a ScrollSnapAlign keeps track of the alignment modes in each
+        axis. By default, these are initialized to {Both, None} and {None, None}, respectively. The rest of the logic is
+        boilerplate code for comparing these style objects to one another and copying style representations.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::scrollSnapOffsets):
+
+        Perform a layout on the document if needed before returning the list of computed snap offsets. The absence of
+        this layout pass was causing some layout tests in css3/scroll-snap/ to flake when testing that programmatic
+        changes to the scroll snap style properties change the computed snap offsets.
+
 2016-12-19  Dean Jackson  <dino@apple.com>
 
         Use ENABLE() in place of ENABLE_CSS_SELECTORS_LEVEL4

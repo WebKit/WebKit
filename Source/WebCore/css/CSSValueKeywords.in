@@ -1092,6 +1092,8 @@ elements
 // -webkit-scroll-snap-type
 mandatory
 proximity
+x
+y
 #endif
 
 // -webkit-region-fragment

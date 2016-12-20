@@ -1,85 +1,82 @@
-description("Test the computed style of the -webkit-scroll-snap-* properties.");
+description("Test the computed style of the scroll-snap-* properties.");
 
 var stylesheet;
 var styleElement = document.createElement("style");
 document.head.appendChild(styleElement);
 stylesheet = styleElement.sheet;
 
-function testComputedScrollSnapRule(description, snapProperty, rule, expected)
+function testComputedScrollSnapRule(description, snapProperty, rule, expected, expectedShorthands = {})
 {
     debug("");
-    debug(description + " : " + rule);
+    debug(`${description}: \`${rule}\``);
 
-    stylesheet.insertRule("body { -webkit-scroll-snap-" + snapProperty + ": " + rule + "; }", 0);
+    stylesheet.insertRule(`body { ${snapProperty} : ${rule}; }`, 0);
 
-    shouldBe("window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-" + snapProperty + "')", "'" + expected + "'");
+    shouldBe(`window.getComputedStyle(document.body).getPropertyValue('${snapProperty}')`, `'${expected}'`);
+    for (let shorthand in expectedShorthands)
+        shouldBe(`window.getComputedStyle(document.body).getPropertyValue('${snapProperty}-${shorthand}')`, `'${expectedShorthands[shorthand]}'`);
     stylesheet.deleteRule(0);
 }
 
-testComputedScrollSnapRule("invalid snapping type", "type", "potato", "none");
-testComputedScrollSnapRule("invalid points along x axis", "points-x", "hello world", "none");
-testComputedScrollSnapRule("invalid points along y axis", "points-y", "hello world", "none");
-testComputedScrollSnapRule("typo in point definition", "points-x", "repaet(50px)", "none");
-testComputedScrollSnapRule("another invalid point definition", "points-x", "??px repeat(50px)", "none");
-testComputedScrollSnapRule("invalid destination", "destination", "foo bar", "0px 0px");
-testComputedScrollSnapRule("short one destination value", "destination", "50%", "0px 0px");
-testComputedScrollSnapRule("extra destination value", "destination", "50px 100% 75px", "0px 0px");
-testComputedScrollSnapRule("invalid coordinates", "coordinate", "ben bitdiddle", "none")
-testComputedScrollSnapRule("mismatched x coordinate", "coordinate", "50% 100px 75%", "none");
+// Test the scroll-snap-type property
+// Invalid declarations
+testComputedScrollSnapRule("invalid snap type", "scroll-snap-type", "potato", "none");
+testComputedScrollSnapRule("empty string for snap type", "scroll-snap-type", "", "none");
+testComputedScrollSnapRule("too many values", "scroll-snap-type", "block mandatory proximity", "none");
+testComputedScrollSnapRule("none following axis", "scroll-snap-type", "both none", "none");
+testComputedScrollSnapRule("two axis values", "scroll-snap-type", "block inline", "none");
+testComputedScrollSnapRule("two strictness values", "scroll-snap-type", "proximity mandatory", "none");
+testComputedScrollSnapRule("axis following strictness", "scroll-snap-type", "mandatory inline", "none");
+// Valid declarations
+testComputedScrollSnapRule("initial value", "scroll-snap-type", "initial", "none");
+testComputedScrollSnapRule("only strictness", "scroll-snap-type", "mandatory", "both mandatory");
+testComputedScrollSnapRule("only axis", "scroll-snap-type", "both", "both proximity");
+testComputedScrollSnapRule("none", "scroll-snap-type", "none", "none");
+testComputedScrollSnapRule("strictness following axis", "scroll-snap-type", "inline mandatory", "inline mandatory");
 
-testComputedScrollSnapRule("inherited type", "type", "inherit", "none");
-testComputedScrollSnapRule("initial type", "type", "initial", "none");
-testComputedScrollSnapRule("none type", "type", "none", "none");
-testComputedScrollSnapRule("mandatory type", "type", "mandatory", "mandatory");
-testComputedScrollSnapRule("proximity type", "type", "proximity", "proximity");
+// Test the scroll-snap-align property
+// Invalid declarations
+testComputedScrollSnapRule("invalid snap align", "scroll-snap-align", "potato", "none none");
+testComputedScrollSnapRule("empty string", "scroll-snap-align", "", "none none");
+testComputedScrollSnapRule("too many values", "scroll-snap-align", "start center end", "none none");
+testComputedScrollSnapRule("invalid second value", "scroll-snap-align", "start wut", "none none");
+testComputedScrollSnapRule("invalid first value", "scroll-snap-align", "wat center", "none none");
+testComputedScrollSnapRule("one length", "scroll-snap-align", "10px", "none none");
+testComputedScrollSnapRule("two lengths", "scroll-snap-align", "10px 50px", "none none");
+// Valid declarations
+testComputedScrollSnapRule("initial value", "scroll-snap-align", "initial", "none none");
+testComputedScrollSnapRule("single value", "scroll-snap-align", "start", "start start");
+testComputedScrollSnapRule("two values", "scroll-snap-align", "start end", "start end");
 
-testComputedScrollSnapRule("inherited points along x axis", "points-x", "inherit", "none");
-testComputedScrollSnapRule("initial points along x axis", "points-x", "initial", "none");
-testComputedScrollSnapRule("element points along x axis", "points-x", "elements", "elements");
-testComputedScrollSnapRule("percentage points along x axis", "points-x", "100% 50%", "100% 50%");
-testComputedScrollSnapRule("pixel points along x axis", "points-x", "100px 50px", "100px 50px");
-testComputedScrollSnapRule("percentage points repeat along x axis", "points-x", "repeat(100%)", "repeat(100%)");
-testComputedScrollSnapRule("pixel points repeat along x axis", "points-x", "repeat(25px)", "repeat(25px)");
-testComputedScrollSnapRule("percentage points along x axis with percentage repeat", "points-x", "100% repeat(100%)", "100% repeat(100%)");
-testComputedScrollSnapRule("pixel points along x axis with percentage repeat", "points-x", "100px 50px repeat(25%)", "100px 50px repeat(25%)");
-testComputedScrollSnapRule("percentage points along x axis with pixel repeat", "points-x", "100% 50% repeat(40px)", "100% 50% repeat(40px)");
-testComputedScrollSnapRule("pixel points along x axis with pixel repeat", "points-x", "100px repeat(42px)", "100px repeat(42px)");
+// Test the scroll-padding property
+// Invalid declarations
+testComputedScrollSnapRule("invalid scroll padding", "scroll-padding", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("empty string", "scroll-padding", "", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("too many values", "scroll-padding", "1px 2px 3px 4px 5px", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("attempt to use auto", "scroll-padding", "auto auto", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+// Valid declarations
+testComputedScrollSnapRule("single length", "scroll-padding", "10px", "10px", { top: "10px", left: "10px", right: "10px", bottom: "10px" });
+testComputedScrollSnapRule("two percentages", "scroll-padding", "10% 20%", "10% 20%", { top: "10%", left: "20%", right: "20%", bottom: "10%" });
+testComputedScrollSnapRule("three lengths", "scroll-padding", "1px 2px 3px", "1px 2px 3px", { top: "1px", left: "2px", right: "2px", bottom: "3px" });
+testComputedScrollSnapRule("four values", "scroll-padding", "50px 10% 20% 50px", "50px 10% 20% 50px", { top: "50px", left: "50px", right: "10%", bottom: "20%" });
+testComputedScrollSnapRule("calc expression", "scroll-padding", "calc(50px + 10%) 20px", "calc(50px + 10%) 20px", { top: "calc(50px + 10%)", left: "20px", right: "20px", bottom: "calc(50px + 10%)" });
+testComputedScrollSnapRule("various units", "scroll-padding", "1em 5mm 2in 4cm", "16px 18.89763832092285px 192px 151.1811065673828px", { top: "16px", left: "151.1811065673828px", right: "18.89763832092285px", bottom: "192px" });
+testComputedScrollSnapRule("subpixel values", "scroll-padding", "10.4375px 6.5px", "10.4375px 6.5px", { top: "10.4375px", left: "6.5px", right: "6.5px", bottom: "10.4375px" });
 
-testComputedScrollSnapRule("inherited points along y axis", "points-y", "inherit", "none");
-testComputedScrollSnapRule("initial points along y axis", "points-y", "initial", "none");
-testComputedScrollSnapRule("element points along y axis", "points-y", "elements", "elements");
-testComputedScrollSnapRule("percentage points along y axis", "points-y", "100% 50%", "100% 50%");
-testComputedScrollSnapRule("pixel points along y axis", "points-y", "100px 50px", "100px 50px");
-testComputedScrollSnapRule("percentage points repeat along y axis", "points-y", "repeat(100%)", "repeat(100%)");
-testComputedScrollSnapRule("pixel points repeat along y axis", "points-y", "repeat(25px)", "repeat(25px)");
-testComputedScrollSnapRule("percentage points along y axis with percentage repeat", "points-y", "100% repeat(100%)", "100% repeat(100%)");
-testComputedScrollSnapRule("pixel points along y axis with percentage repeat", "points-y", "100px 50px repeat(25%)", "100px 50px repeat(25%)");
-testComputedScrollSnapRule("percentage points along y axis with pixel repeat", "points-y", "100% 50% repeat(40px)", "100% 50% repeat(40px)");
-testComputedScrollSnapRule("pixel points along y axis with pixel repeat", "points-y", "100px repeat(42px)", "100px repeat(42px)");
-
-testComputedScrollSnapRule("inherited destination", "destination", "inherit", "0px 0px");
-testComputedScrollSnapRule("initial destination", "destination", "initial", "0px 0px");
-testComputedScrollSnapRule("pixel/pixel destination", "destination", "10px 50px", "10px 50px");
-testComputedScrollSnapRule("pixel/percentage destination", "destination", "20px 40%", "20px 40%");
-testComputedScrollSnapRule("percentage/pixel destination", "destination", "0% 0px", "0% 0px");
-testComputedScrollSnapRule("percentage/percentage destination", "destination", "5% 100%", "5% 100%");
-
-testComputedScrollSnapRule("inherited coordinate", "coordinate", "inherit", "none");
-testComputedScrollSnapRule("initial coordinate", "coordinate", "initial", "none");
-testComputedScrollSnapRule("no coordinate", "coordinate", "none", "none");
-testComputedScrollSnapRule("single pixel coordinate", "coordinate", "50px 100px", "50px 100px");
-testComputedScrollSnapRule("single percentage coordinate", "coordinate", "50% 100%", "50% 100%");
-testComputedScrollSnapRule("multiple pixel coordinates", "coordinate", "50px 100px 150px 100px 200px 100px", "50px 100px, 150px 100px, 200px 100px");
-testComputedScrollSnapRule("multiple percentage coordinates", "coordinate", "50% 100% 150% 100% 200% 100%", "50% 100%, 150% 100%, 200% 100%");
-
-testComputedScrollSnapRule("mm along x axis with pixel repeat", "points-x", "10mm repeat(42mm)", "37.7952766418457px repeat(158.7401580810547px)");
-testComputedScrollSnapRule("in along x axis with pixel repeat", "points-x", "10in repeat(4in)", "960px repeat(384px)");
-testComputedScrollSnapRule("pt along x axis with pixel repeat", "points-x", "10pt repeat(42pt)", "13.333333015441895px repeat(56px)");
-testComputedScrollSnapRule("in/cm destination", "destination", "2in 5cm", "192px 188.97637939453125px");
-testComputedScrollSnapRule("in/cm coordinate", "coordinate", "2in 5cm 5in 2cm", "192px 188.97637939453125px, 480px 75.5905532836914px");
-
-testComputedScrollSnapRule("subpixel along x axis with pixel repeat", "points-x", "100.5px repeat(50.25px)", "100.5px repeat(50.25px)");
-testComputedScrollSnapRule("subpixel destination", "destination", "0.125px 2.4375px", "0.125px 2.4375px");
-testComputedScrollSnapRule("subpixel coordinate", "coordinate", "110.125px 25.4375px", "110.125px 25.4375px");
+// Test the scroll-snap-margin property
+// Invalid declarations
+testComputedScrollSnapRule("invalid scroll padding", "scroll-snap-margin", "potato", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("empty string", "scroll-snap-margin", "", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("too many values", "scroll-snap-margin", "1px 2px 3px 4px 5px", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("attempt to use auto", "scroll-snap-margin", "auto auto", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("attempt to use percentage", "scroll-snap-margin", "25% 25%", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+testComputedScrollSnapRule("attempt to use calc", "scroll-snap-margin", "calc(25% + 10px)", "0px", { top: "0px", left: "0px", right: "0px", bottom: "0px" });
+// Valid declarations
+testComputedScrollSnapRule("single length", "scroll-snap-margin", "10px", "10px", { top: "10px", left: "10px", right: "10px", bottom: "10px" });
+testComputedScrollSnapRule("two lengths", "scroll-snap-margin", "10px 20px", "10px 20px", { top: "10px", left: "20px", right: "20px", bottom: "10px" });
+testComputedScrollSnapRule("three lengths", "scroll-snap-margin", "1px 2px 3px", "1px 2px 3px", { top: "1px", left: "2px", right: "2px", bottom: "3px" });
+testComputedScrollSnapRule("four lengths", "scroll-snap-margin", "50px 10px 20px 50px", "50px 10px 20px 50px", { top: "50px", left: "50px", right: "10px", bottom: "20px" });
+testComputedScrollSnapRule("various units", "scroll-snap-margin", "1em 5mm 2in 4cm", "16px 18.89763832092285px 192px 151.1811065673828px", { top: "16px", left: "151.1811065673828px", right: "18.89763832092285px", bottom: "192px" });
+testComputedScrollSnapRule("subpixel values", "scroll-snap-margin", "10.4375px 6.5px", "10.4375px 6.5px", { top: "10.4375px", left: "6.5px", right: "6.5px", bottom: "10.4375px" });
 
 successfullyParsed = true;

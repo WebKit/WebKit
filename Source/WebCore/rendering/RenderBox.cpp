@@ -66,6 +66,7 @@
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
+#include "StyleScrollSnapPoints.h"
 #include "TransformState.h"
 #include "htmlediting.h"
 #include <algorithm>
@@ -323,11 +324,12 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
         view().repaintRootContents();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (!newStyle.scrollSnapCoordinates().isEmpty() || (oldStyle && !oldStyle->scrollSnapCoordinates().isEmpty())) {
-        if (newStyle.scrollSnapCoordinates().isEmpty())
-            view().unregisterBoxWithScrollSnapCoordinates(*this);
+    bool boxContributesSnapPositions = newStyle.scrollSnapArea().hasSnapPosition();
+    if (boxContributesSnapPositions || (oldStyle && oldStyle->scrollSnapArea().hasSnapPosition())) {
+        if (boxContributesSnapPositions)
+            view().registerBoxWithScrollSnapPositions(*this);
         else
-            view().registerBoxWithScrollSnapCoordinates(*this);
+            view().unregisterBoxWithScrollSnapPositions(*this);
     }
 #endif
 
@@ -453,8 +455,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 void RenderBox::willBeRemovedFromTree()
 {
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (hasInitializedStyle() && !style().scrollSnapCoordinates().isEmpty())
-        view().unregisterBoxWithScrollSnapCoordinates(*this);
+    if (hasInitializedStyle() && style().scrollSnapArea().hasSnapPosition())
+        view().unregisterBoxWithScrollSnapPositions(*this);
 #endif
     
     RenderBoxModelObject::willBeRemovedFromTree();

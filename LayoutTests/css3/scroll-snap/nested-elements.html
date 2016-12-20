@@ -6,22 +6,20 @@
         .scrollable {
             overflow: scroll;
             -webkit-overflow-scrolling: touch;
-            border: 1px dashed black;
             height: 300px;
             margin: 0 10px;
         }
     
         .center-snap-receiver {
-            -webkit-scroll-snap-type: mandatory;
-            -webkit-scroll-snap-destination: 0 0;
+            scroll-snap-type: y mandatory;
         }
     
         .snap-point {
             margin-top: 100px;
             width: 15px;
             height: 15px;
-            border: 1px solid black;
-            -webkit-scroll-snap-coordinate: 0 0px;
+            background-color: blue;
+            scroll-snap-align: start;
         }
     
         .snap-point::after {
@@ -32,11 +30,12 @@
     
         .nested > .snap-point {
             margin-left: 50px;
-            border: 1px solid red;
+            background-color: red;
         }
         .nested > .nested > .snap-point {
             margin-left: 100px;
-            border: 1px solid blue;
+            background-color: blue;
+            opacity: 0.1;
         }
     
         .large-content {
@@ -50,7 +49,6 @@
         }
 
         .invalidContainer {
-            border: 1px dashed black;
             height: 300px;
             margin: 0 10px;
             opacity: 0.5;

@@ -7,8 +7,7 @@
                 height: 300px;
                 overflow-y: hidden;
                 overflow-x: auto;
-                -webkit-scroll-snap-points-x: elements;
-                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
             }
             #inner-container {
                 width: 1800px;
@@ -18,7 +17,7 @@
                 height: 300px;
                 float: left;
                 min-width: 200px;
-                -webkit-scroll-snap-coordinate: 0 0;
+                scroll-snap-align: start;
             }
         </style>
         <script src="../../resources/js-test-pre.js"></script>

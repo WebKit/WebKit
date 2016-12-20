@@ -249,9 +249,9 @@ public:
     void releaseProtectedRenderWidgets() { m_protectedRenderWidgets.clear(); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    void registerBoxWithScrollSnapCoordinates(const RenderBox&);
-    void unregisterBoxWithScrollSnapCoordinates(const RenderBox&);
-    const HashSet<const RenderBox*>& boxesWithScrollSnapCoordinates() { return m_boxesWithScrollSnapCoordinates; }
+    void registerBoxWithScrollSnapPositions(const RenderBox&);
+    void unregisterBoxWithScrollSnapPositions(const RenderBox&);
+    const HashSet<const RenderBox*>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 #endif
 
 #if !ASSERT_DISABLED
@@ -393,7 +393,7 @@ private:
     SelectionRectGatherer m_selectionRectGatherer;
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)
-    HashSet<const RenderBox*> m_boxesWithScrollSnapCoordinates;
+    HashSet<const RenderBox*> m_boxesWithScrollSnapPositions;
 #endif
 };
 

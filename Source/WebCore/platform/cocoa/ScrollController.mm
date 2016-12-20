@@ -583,9 +583,13 @@ void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableAre
 {
     if (auto* snapOffsets = scrollableArea.horizontalSnapOffsets())
         updateScrollSnapPoints(ScrollEventAxis::Horizontal, *snapOffsets);
+    else
+        updateScrollSnapPoints(ScrollEventAxis::Horizontal, { });
 
     if (auto* snapOffsets = scrollableArea.verticalSnapOffsets())
         updateScrollSnapPoints(ScrollEventAxis::Vertical, *snapOffsets);
+    else
+        updateScrollSnapPoints(ScrollEventAxis::Vertical, { });
 }
 
 void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints)

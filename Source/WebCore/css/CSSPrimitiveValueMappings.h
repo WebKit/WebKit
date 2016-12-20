@@ -5367,39 +5367,121 @@ template<> inline CSSPrimitiveValue::operator TouchAction() const
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapType e)
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapStrictness strictness)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
-    switch (e) {
-    case ScrollSnapType::None:
+    switch (strictness) {
+    case ScrollSnapStrictness::None:
         m_value.valueID = CSSValueNone;
         break;
-    case ScrollSnapType::Proximity:
+    case ScrollSnapStrictness::Proximity:
         m_value.valueID = CSSValueProximity;
         break;
-    case ScrollSnapType::Mandatory:
+    case ScrollSnapStrictness::Mandatory:
         m_value.valueID = CSSValueMandatory;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ScrollSnapType() const
+template<> inline CSSPrimitiveValue::operator ScrollSnapStrictness() const
 {
     ASSERT(isValueID());
     switch (m_value.valueID) {
     case CSSValueNone:
-        return ScrollSnapType::None;
+        return ScrollSnapStrictness::None;
     case CSSValueProximity:
-        return ScrollSnapType::Proximity;
+        return ScrollSnapStrictness::Proximity;
     case CSSValueMandatory:
-        return ScrollSnapType::Mandatory;
+        return ScrollSnapStrictness::Mandatory;
     default:
+        ASSERT_NOT_REACHED();
+        return ScrollSnapStrictness::None;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapAxis axis)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (axis) {
+    case ScrollSnapAxis::XAxis:
+        m_value.valueID = CSSValueX;
+        break;
+    case ScrollSnapAxis::YAxis:
+        m_value.valueID = CSSValueY;
+        break;
+    case ScrollSnapAxis::Block:
+        m_value.valueID = CSSValueBlock;
+        break;
+    case ScrollSnapAxis::Inline:
+        m_value.valueID = CSSValueInline;
+        break;
+    case ScrollSnapAxis::Both:
+        m_value.valueID = CSSValueBoth;
         break;
     }
-    ASSERT_NOT_REACHED();
-    return ScrollSnapType::None;
 }
+
+template<> inline CSSPrimitiveValue::operator ScrollSnapAxis() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueX:
+        return ScrollSnapAxis::XAxis;
+    case CSSValueY:
+        return ScrollSnapAxis::YAxis;
+    case CSSValueBlock:
+        return ScrollSnapAxis::Block;
+    case CSSValueInline:
+        return ScrollSnapAxis::Inline;
+    case CSSValueBoth:
+        return ScrollSnapAxis::Both;
+    default:
+        ASSERT_NOT_REACHED();
+        return ScrollSnapAxis::Both;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ScrollSnapAxisAlignType type)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_VALUE_ID;
+    switch (type) {
+    case ScrollSnapAxisAlignType::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    case ScrollSnapAxisAlignType::Start:
+        m_value.valueID = CSSValueStart;
+        break;
+    case ScrollSnapAxisAlignType::Center:
+        m_value.valueID = CSSValueCenter;
+        break;
+    case ScrollSnapAxisAlignType::End:
+        m_value.valueID = CSSValueEnd;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ScrollSnapAxisAlignType() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueNone:
+        return ScrollSnapAxisAlignType::None;
+    case CSSValueStart:
+        return ScrollSnapAxisAlignType::Start;
+    case CSSValueCenter:
+        return ScrollSnapAxisAlignType::Center;
+    case CSSValueEnd:
+        return ScrollSnapAxisAlignType::End;
+    default:
+        ASSERT_NOT_REACHED();
+        return ScrollSnapAxisAlignType::None;
+    }
+}
+
 #endif
 
 #if ENABLE(CSS_TRAILING_WORD)

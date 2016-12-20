@@ -8,12 +8,12 @@
                 display: inline-block;
                 overflow-x: hidden;
                 overflow-y: auto;
-                -webkit-scroll-snap-points-y: repeat(400px);
-                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: y mandatory;
             }
             .colorBox {
                 height: 400px;
                 width: 400px;
+                scroll-snap-align: start;
             }
             #item0, #item2 { background-color: red; }
             #item1 { background-color: green; }

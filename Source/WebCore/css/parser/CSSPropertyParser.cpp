@@ -2176,66 +2176,36 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-static RefPtr<CSSValueList> consumeSnapPointCoordinateList(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValueList> consumeScrollSnapAlign(CSSParserTokenRange& range)
 {
-    RefPtr<CSSValueList> positions = CSSValueList::createSpaceSeparated();
-    do {
-        
-        RefPtr<CSSPrimitiveValue> first = consumePositionX(range, cssParserMode);
-        if (!first || range.atEnd())
-            return nullptr;
-        RefPtr<CSSPrimitiveValue> second = consumePositionY(range, cssParserMode);
-        if (!second)
-            return nullptr;
-        RefPtr<CSSValue> position = createPrimitiveValuePair(first.releaseNonNull(), second.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
-        positions->append(position.releaseNonNull());
-    } while (!range.atEnd());
-    return positions;
+    RefPtr<CSSValueList> alignmentValue = CSSValueList::createSpaceSeparated();
+    if (RefPtr<CSSPrimitiveValue> firstValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range)) {
+        alignmentValue->append(firstValue.releaseNonNull());
+        if (auto secondValue = consumeIdent<CSSValueNone, CSSValueStart, CSSValueCenter, CSSValueEnd>(range))
+            alignmentValue->append(secondValue.releaseNonNull());
+    }
+    return alignmentValue->length() ? alignmentValue : nullptr;
 }
 
-static RefPtr<CSSValue> consumeScrollSnapCoordinate(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValueList> consumeScrollSnapType(CSSParserTokenRange& range)
 {
-    if (range.peek().id() == CSSValueNone)
-        return consumeIdent(range);
-    return consumeSnapPointCoordinateList(range, cssParserMode);
-}
+    RefPtr<CSSValueList> typeValue = CSSValueList::createSpaceSeparated();
+    RefPtr<CSSPrimitiveValue> secondValue;
 
-static RefPtr<CSSValue> consumeScrollSnapDestination(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    RefPtr<CSSPrimitiveValue> first = consumePositionX(range, cssParserMode);
-    if (!first || range.atEnd())
+    auto firstValue = consumeIdent<CSSValueX, CSSValueY, CSSValueBlock, CSSValueInline, CSSValueBoth>(range);
+    if (firstValue)
+        secondValue = consumeIdent<CSSValueProximity, CSSValueMandatory>(range);
+    else
+        firstValue = consumeIdent<CSSValueNone, CSSValueProximity, CSSValueMandatory>(range);
+
+    if (!firstValue)
         return nullptr;
-    RefPtr<CSSPrimitiveValue> second = consumePositionY(range, cssParserMode);
-    if (!second)
-        return nullptr;
-    return createPrimitiveValuePair(first.releaseNonNull(), second.releaseNonNull(), Pair::IdenticalValueEncoding::DoNotCoalesce);
-}
 
-static RefPtr<CSSValue> consumeScrollSnapPoints(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    if (range.peek().id() == CSSValueNone || range.peek().id() == CSSValueElements)
-        return consumeIdent(range);
-    
-    RefPtr<CSSValueList> points = CSSValueList::createSpaceSeparated();
-    do {
-        if (range.peek().functionId() == CSSValueRepeat) {
-            CSSParserTokenRange args = consumeFunction(range);
-            RefPtr<CSSPrimitiveValue> parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
-            if (args.atEnd() && parsedValue && (parsedValue->isCalculated() || parsedValue->doubleValue() > 0)) {
-                Ref<CSSFunctionValue> result = CSSFunctionValue::create(CSSValueRepeat);
-                result->append(parsedValue.releaseNonNull());
-                points->append(WTFMove(result));
-            }
-        } else {
-            RefPtr<CSSValue> length = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Forbid);
-            if (!length)
-                return nullptr;
-            points->append(length.releaseNonNull());
-        }
-    } while (!range.atEnd());
-    
-    
-    return points;
+    typeValue->append(firstValue.releaseNonNull());
+    if (secondValue)
+        typeValue->append(secondValue.releaseNonNull());
+
+    return typeValue;
 }
 
 #endif
@@ -3762,6 +3732,22 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitPaddingBefore:
     case CSSPropertyWebkitPaddingAfter:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative, UnitlessQuirk::Forbid);
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyScrollSnapMarginBottom:
+    case CSSPropertyScrollSnapMarginLeft:
+    case CSSPropertyScrollSnapMarginRight:
+    case CSSPropertyScrollSnapMarginTop:
+        return consumeLength(m_range, m_context.mode, ValueRangeAll);
+    case CSSPropertyScrollPaddingBottom:
+    case CSSPropertyScrollPaddingLeft:
+    case CSSPropertyScrollPaddingRight:
+    case CSSPropertyScrollPaddingTop:
+        return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeAll);
+    case CSSPropertyScrollSnapAlign:
+        return consumeScrollSnapAlign(m_range);
+    case CSSPropertyScrollSnapType:
+        return consumeScrollSnapType(m_range);
+#endif
     case CSSPropertyClip:
         return consumeClip(m_range, m_context.mode);
 #if ENABLE(TOUCH_EVENTS)
@@ -3958,15 +3944,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeImageOrNone(m_range, m_context);
     case CSSPropertyPerspective:
         return consumePerspective(m_range, m_context.mode);
-#if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyWebkitScrollSnapCoordinate:
-        return consumeScrollSnapCoordinate(m_range, m_context.mode);
-    case CSSPropertyWebkitScrollSnapDestination:
-        return consumeScrollSnapDestination(m_range, m_context.mode);
-    case CSSPropertyWebkitScrollSnapPointsX:
-    case CSSPropertyWebkitScrollSnapPointsY:
-        return consumeScrollSnapPoints(m_range, m_context.mode);
-#endif
     case CSSPropertyBorderTopRightRadius:
     case CSSPropertyBorderTopLeftRadius:
     case CSSPropertyBorderBottomLeftRadius:
@@ -5351,6 +5328,12 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consume4Values(marginShorthand(), important);
     case CSSPropertyPadding:
         return consume4Values(paddingShorthand(), important);
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyScrollSnapMargin:
+        return consume4Values(scrollSnapMarginShorthand(), important);
+    case CSSPropertyScrollPadding:
+        return consume4Values(scrollPaddingShorthand(), important);
+#endif
     case CSSPropertyWebkitTextEmphasis:
         return consumeShorthandGreedily(webkitTextEmphasisShorthand(), important);
     case CSSPropertyOutline:

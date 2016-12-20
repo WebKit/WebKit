@@ -7,13 +7,13 @@
                 height: 100vh;
                 margin: 0;
                 padding: 0;
-                -webkit-scroll-snap-points-x: repeat(100vw);
-                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
             }
             .colorBox {
                 height: 100vh;
                 width: 100vw;
                 float: left;
+                scroll-snap-align: start;
             }
             #item0 { background-color: red; }
             #item1 { background-color: green; }

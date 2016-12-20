@@ -1,8 +1,0 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
-Scroll-snap offsets for 'container': vertical = { 0, 101, 219, 339, 458, 575, 592, 692, 812, 931, 1049, 1167, 1285, 1402, 1520, 1638, 1756, 1876, 1995, 2012, 2112, 2232, 4964 }
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

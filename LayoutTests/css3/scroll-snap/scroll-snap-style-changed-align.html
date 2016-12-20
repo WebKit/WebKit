@@ -3,27 +3,27 @@
     <head>
         <style>
             #gallery {
-                width: 515px;
-                height: 500px;
-                -webkit-scroll-snap-type: mandatory;
+                width: 315px;
+                height: 600px;
+                scroll-snap-type: y mandatory;
                 -webkit-overflow-scrolling: touch;
                 overflow-y: scroll;
                 position: absolute;
             }
 
             .vertical {
-                width: 500px;
-                height: 500px;
-                -webkit-scroll-snap-coordinate: 0% 0%;
+                width: 300px;
+                height: 300px;
+                scroll-snap-align: start;
                 position: absolute;
             }
 
             #child00 { background-color: #DD0000; left: 0; top: 0px; }
-            #child01 { background-color: #FF6666; left: 0; top: 500px; }
-            #child02 { background-color: #00DD00; left: 0; top: 1000px; }
-            #child03 { background-color: #66FF66; left: 0; top: 1500px; }
-            #child04 { background-color: #0000DD; left: 0; top: 2000px; }
-            #child05 { background-color: #6666FF; left: 0; top: 2500px; }
+            #child01 { background-color: #FF6666; left: 0; top: 300px; }
+            #child02 { background-color: #00DD00; left: 0; top: 600px; }
+            #child03 { background-color: #66FF66; left: 0; top: 900px; }
+            #child04 { background-color: #0000DD; left: 0; top: 1200px; }
+            #child05 { background-color: #6666FF; left: 0; top: 1500px; }
         </style>
         <script src="../../resources/js-test-pre.js"></script>
         <script>
@@ -36,15 +36,15 @@
             }
 
             function dumpGalleryAndUpdateCoordinates() {
-                debug("Original snap offsets: " + snapOffsets());
+                debug("Original snap offsets with `start` alignment: " + snapOffsets());
                 for (var index = 0; index < coordinateChildElements.length; ++index)
-                    coordinateChildElements[index].style.webkitScrollSnapCoordinate = "0px 250px";
+                    coordinateChildElements[index].style.scrollSnapAlign = "center";
 
                 setTimeout(dumpGalleryAndFinishTest, 0);
             }
 
             function dumpGalleryAndFinishTest() {
-                debug("Updated child coordinates to 0px 250px: " + snapOffsets());
+                debug("Updated alignment to `center`: " + snapOffsets());
                 finishJSTest();
                 testRunner.notifyDone();
             }

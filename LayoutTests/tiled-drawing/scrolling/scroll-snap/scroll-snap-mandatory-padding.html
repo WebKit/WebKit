@@ -12,8 +12,7 @@
                 padding-top: 15px;
                 padding-bottom: 9px;
                 margin-bottom: 2px;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: x mandatory;
             }
             .horizontalGalleryDrawer {
                 width: 1800px;
@@ -30,8 +29,7 @@
                 padding-top: 15px;
                 padding-bottom: 9px;
                 margin-top: 2px;
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-type: mandatory;
+                scroll-snap-type: y mandatory;
             }
             .verticalGalleryDrawer {
                 width: 300px;
@@ -41,6 +39,7 @@
                 height: 300px;
                 width: 300px;
                 float: left;
+                scroll-snap-align: start;
             }
             #itemH0, #itemV0 { background-color: red; }
             #itemH1, #itemV1 { background-color: green; }
@@ -128,10 +127,10 @@
             var style = window.getComputedStyle(divTarget, null);
 
             var actualPosition = divTarget.scrollTop;
-            var expectedPosition = divTarget.clientHeight - style.getPropertyValue('padding-top').replace("px", "") - style.getPropertyValue('padding-bottom').replace("px", "");
+            var expectedPosition = 300 + parseInt(style.paddingTop.replace("px", ""));
             if (targetLabel == 'horizontalTarget') {
                 actualPosition = divTarget.scrollLeft;
-                expectedPosition = divTarget.clientWidth - style.getPropertyValue('padding-right').replace("px", "") - style.getPropertyValue('padding-left').replace("px", "");
+                expectedPosition = 300 + parseInt(style.paddingLeft.replace("px", ""));
             }
 
             // The div should have scrolled (glided) to the next snap point.

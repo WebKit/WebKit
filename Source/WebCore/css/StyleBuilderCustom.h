@@ -135,12 +135,6 @@ public:
     static void applyValueWebkitTextZoom(StyleResolver&, CSSValue&);
     static void applyValueWritingMode(StyleResolver&, CSSValue&);
     static void applyValueAlt(StyleResolver&, CSSValue&);
-#if ENABLE(CSS_SCROLL_SNAP)
-    static void applyInitialWebkitScrollSnapPointsX(StyleResolver&);
-    static void applyInheritWebkitScrollSnapPointsX(StyleResolver&);
-    static void applyInitialWebkitScrollSnapPointsY(StyleResolver&);
-    static void applyInheritWebkitScrollSnapPointsY(StyleResolver&);
-#endif
     static void applyValueWillChange(StyleResolver&, CSSValue&);
 
 private:
@@ -1780,30 +1774,6 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
     } else
         styleResolver.style()->setContentAltText(emptyAtom);
 }
-
-#if ENABLE(CSS_SCROLL_SNAP)
-
-inline void StyleBuilderCustom::applyInitialWebkitScrollSnapPointsX(StyleResolver& styleResolver)
-{
-    styleResolver.style()->setScrollSnapPointsX(nullptr);
-}
-
-inline void StyleBuilderCustom::applyInheritWebkitScrollSnapPointsX(StyleResolver& styleResolver)
-{
-    styleResolver.style()->setScrollSnapPointsX(styleResolver.parentStyle()->scrollSnapPointsX() ? std::make_unique<ScrollSnapPoints>(*styleResolver.parentStyle()->scrollSnapPointsX()) : nullptr);
-}
-
-inline void StyleBuilderCustom::applyInitialWebkitScrollSnapPointsY(StyleResolver& styleResolver)
-{
-    styleResolver.style()->setScrollSnapPointsY(nullptr);
-}
-
-inline void StyleBuilderCustom::applyInheritWebkitScrollSnapPointsY(StyleResolver& styleResolver)
-{
-    styleResolver.style()->setScrollSnapPointsY(styleResolver.parentStyle()->scrollSnapPointsY() ? std::make_unique<ScrollSnapPoints>(*styleResolver.parentStyle()->scrollSnapPointsY()) : nullptr);
-}
-
-#endif
 
 inline void StyleBuilderCustom::applyValueWillChange(StyleResolver& styleResolver, CSSValue& value)
 {

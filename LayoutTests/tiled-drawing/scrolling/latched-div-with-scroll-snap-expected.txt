@@ -1,10 +1,27 @@
-Tests that the scroll-snap feature works properly in overflow regions.
-PASS div scrolled to next window.
-PASS div honored snap points.
-Testing that latch moves to bottom div:
-PASS top div did not move.
-PASS div scrolled to next window.
-PASS successfullyParsed is true
+Manually test with the following steps:
 
-TEST COMPLETE
+1. Scroll with momentum to the green box in the first div.
+
+2. In the first div, drag so the blue box is partially visible, then let go so the div snaps back to show green.
+
+3. Scroll with momentum to the green box in the second div.
+
+4. In the second div, drag so the blue box is partially visible, then let go so the div snaps back to show green.
+
+* Swiping with momentum in topTarget with scroll offset 0
+topTarget now has scroll offset 400
+bottomTarget now has scroll offset 0
+
+* Swiping without momentum in topTarget with scroll offset 400
+topTarget now has scroll offset 400
+bottomTarget now has scroll offset 0
+
+* Swiping with momentum in bottomTarget with scroll offset 0
+topTarget now has scroll offset 400
+bottomTarget now has scroll offset 400
+
+* Swiping without momentum in bottomTarget with scroll offset 400
+topTarget now has scroll offset 400
+bottomTarget now has scroll offset 400
+
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,51 +30,37 @@
 
 namespace WebCore {
 
-ScrollSnapPoints::ScrollSnapPoints()
-    : repeatOffset(0, Fixed)
-    , hasRepeat(false)
-    , usesElements(false)
+Ref<StyleScrollSnapPort> StyleScrollSnapPort::copy() const
+{
+    return adoptRef(*new StyleScrollSnapPort(*this));
+}
+
+StyleScrollSnapPort::StyleScrollSnapPort()
 {
 }
 
-bool operator==(const ScrollSnapPoints& a, const ScrollSnapPoints& b)
-{
-    return a.repeatOffset == b.repeatOffset
-        && a.hasRepeat == b.hasRepeat
-        && a.usesElements == b.usesElements
-        && a.offsets == b.offsets;
-}
-
-LengthSize defaultScrollSnapDestination()
-{
-    return LengthSize(Length(0, Fixed), Length(0, Fixed));
-}
-
-StyleScrollSnapPoints::StyleScrollSnapPoints()
-    : destination(defaultScrollSnapDestination())
-{
-}
-
-inline StyleScrollSnapPoints::StyleScrollSnapPoints(const StyleScrollSnapPoints& other)
+inline StyleScrollSnapPort::StyleScrollSnapPort(const StyleScrollSnapPort& other)
     : RefCounted()
-    , xPoints(other.xPoints ? std::make_unique<ScrollSnapPoints>(*other.xPoints) : nullptr)
-    , yPoints(other.yPoints ? std::make_unique<ScrollSnapPoints>(*other.yPoints) : nullptr)
-    , destination(other.destination)
-    , coordinates(other.coordinates)
+    , type(other.type)
+    , scrollPadding(other.scrollPadding)
 {
 }
 
-Ref<StyleScrollSnapPoints> StyleScrollSnapPoints::copy() const
+Ref<StyleScrollSnapArea> StyleScrollSnapArea::copy() const
 {
-    return adoptRef(*new StyleScrollSnapPoints(*this));
+    return adoptRef(*new StyleScrollSnapArea(*this));
 }
 
-bool operator==(const StyleScrollSnapPoints& a, const StyleScrollSnapPoints& b)
+StyleScrollSnapArea::StyleScrollSnapArea()
+    : scrollSnapMargin(0, 0, 0, 0)
 {
-    return a.xPoints == b.xPoints
-        && a.yPoints == b.yPoints
-        && a.destination == b.destination
-        && a.coordinates == b.coordinates;
+}
+
+inline StyleScrollSnapArea::StyleScrollSnapArea(const StyleScrollSnapArea& other)
+    : RefCounted()
+    , alignment(other.alignment)
+    , scrollSnapMargin(other.scrollSnapMargin)
+{
 }
 
 } // namespace WebCore

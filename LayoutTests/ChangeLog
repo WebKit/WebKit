@@ -1,3 +1,163 @@
+2016-12-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement the updated port/area-based Scroll Snap Module Level 1 Spec
+        https://bugs.webkit.org/show_bug.cgi?id=165317
+        <rdar://problem/29490956>
+
+        Reviewed by Dean Jackson.
+
+        Refactors layout tests to use the new scroll snapping properties, removing any tests that only made sense in the
+        context of the old version of scroll snapping and adding new ones to cover behaviors that the existing tests do
+        not verify. See per-method descriptions for more details. In most cases, the old way of specifying scroll
+        snapping via repeat(<container width or length>) or a coordinate at (0, 0) on each child has been replaced with
+        `scroll-snap-type: (x|y|both) mandatory;` on the container and `scroll-snap-align: start` on each child element.
+        If a test below does not have an accompanying description, then this is the only change applied to it, and the
+        behavior it is testing is still relevant in the new scroll snapping model.
+
+        * css3/scroll-snap/improper-snap-points-crash-expected.txt: Removed.
+        * css3/scroll-snap/improper-snap-points-crash.html: Removed.
+
+        This test is no longer valid in the new scroll snapping model, since there is no way to specify both repeating
+        points along an axis and child elements with scroll snap coordinates.
+
+        * css3/scroll-snap/nested-elements-expected.txt:
+        * css3/scroll-snap/nested-elements.html:
+        * css3/scroll-snap/resources/iframe-content.html:
+        * css3/scroll-snap/scroll-snap-2d-change-axis-type-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-2d-change-axis-type.html: Added.
+
+        New layout test to check that changing the scroll-snap-type from one to both axes updates the computed snap
+        offsets in the container to have offsets from both axes.
+
+        * css3/scroll-snap/scroll-snap-2d-offsets-computed-independently-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-2d-offsets-computed-independently.html: Added.
+
+        New layout test to check that snap offsets are computed independently on each axis. In a 3x3 grid of child
+        elements with the child elements along the diagonal having `scroll-snap-align`s of `end`, `center` and `start`
+        in order from top left to bottom right, we should observe the same effect as having each child emit snap
+        positions in both axes.
+
+        * css3/scroll-snap/scroll-snap-children-with-scroll-snap-margin-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-children-with-scroll-snap-margin.html: Added.
+
+        New layout test to check that specifying a `scroll-snap-margin` correctly insets the scroll snap area of a child
+        element, and that changing the `scroll-snap-margin` via script also changes the computed scroll snap offsets.
+
+        * css3/scroll-snap/scroll-snap-children-with-transforms-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-children-with-transforms.html: Added.
+
+        New layout test to check that when computing the scroll snap areas of child elements, we take transforms into
+        account and use the bounding box of the transformed border box of the child element. Also verifies that we apply
+        the scroll offset _after_ the transform, so that scrolling the container and then recomputing snap offsets when
+        child elements are transformed does not result in different snap offsets.
+
+        * css3/scroll-snap/scroll-snap-coordinate-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-coordinate.html: Removed.
+
+        Renamed to scroll-snap-position.html, since the notion of scroll snap coordinates no longer exists.
+
+        * css3/scroll-snap/scroll-snap-desination-lock-up-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-desination-lock-up.html: Removed.
+
+        This test is no longer relevant in the new scroll snapping model. This is because the logic for computing scroll
+        snap offsets in AxisScrollSnapOffsets no longer has an opportunity to loop infinitely while trying to fill a
+        scrollable axis with snap offsets, since repeating snap points have been removed.
+
+        * css3/scroll-snap/scroll-snap-elements-container-larger-than-children.html:
+        * css3/scroll-snap/scroll-snap-inherit-expected.txt:
+        * css3/scroll-snap/scroll-snap-inherit.html:
+
+        Updated to test the new scroll snap properties.
+
+        * css3/scroll-snap/scroll-snap-initial-expected.txt:
+        * css3/scroll-snap/scroll-snap-initial.html:
+
+        Updated to test the new scroll snap properties.
+
+        * css3/scroll-snap/scroll-snap-mismatch.html:
+        * css3/scroll-snap/scroll-snap-negative-repeat-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-negative-repeat.html: Removed.
+
+        Removed, since negative repeating scroll snap offsets are (thankfully) no longer possible in the new scroll
+        snapping model.
+
+        * css3/scroll-snap/scroll-snap-offsets-expected.txt:
+        * css3/scroll-snap/scroll-snap-offsets.html:
+
+        Augmented to mix in various alignment values among the scroll snap child elements as well as various levels of
+        nesting.
+
+        * css3/scroll-snap/scroll-snap-position-values-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-position-values.html: Removed.
+
+        The behaviors tested here are covered by other similar tests: scroll-snap-initial and scroll-snap-inherit.
+
+        * css3/scroll-snap/scroll-snap-positions-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-positions-mainframe-expected.txt: Renamed from LayoutTests/css3/scroll-snap/scroll-snap-coordinate-mainframe-expected.txt.
+        * css3/scroll-snap/scroll-snap-positions-mainframe.html: Renamed from LayoutTests/css3/scroll-snap/scroll-snap-coordinate-mainframe.html.
+        * css3/scroll-snap/scroll-snap-positions-overflow-resize-expected.txt: Renamed from LayoutTests/css3/scroll-snap/scroll-snap-coordinate-overflow-resize-expected.txt.
+        * css3/scroll-snap/scroll-snap-positions-overflow-resize.html: Renamed from LayoutTests/css3/scroll-snap/scroll-snap-coordinate-overflow-resize.html.
+        * css3/scroll-snap/scroll-snap-positions.html: Added.
+
+        Renamed these existing tests to not use the term `scroll-snap-coordinate`. The semantics of these tests are
+        still the same, only using different values of `scroll-snap-align` instead of `-webkit-scroll-snap-coordinate`.
+
+        * css3/scroll-snap/scroll-snap-property-computed-style-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-computed-style.js:
+        * css3/scroll-snap/scroll-snap-property-parsing-expected.txt:
+        * css3/scroll-snap/scroll-snap-property-parsing.js:
+        * css3/scroll-snap/scroll-snap-style-changed-align-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-style-changed-align.html: Renamed from LayoutTests/css3/scroll-snap/scroll-snap-style-changed-coordinates.html.
+        * css3/scroll-snap/scroll-snap-style-changed-coordinates-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-style-changed-repeat-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-style-changed-repeat.html: Removed.
+
+        No longer relevant, since repeating scroll snap offsets are no longer in the spec.
+
+        * css3/scroll-snap/scroll-snap-subpixel-repeat-expected.txt: Removed.
+        * css3/scroll-snap/scroll-snap-subpixel-repeat.html: Removed.
+
+        No longer relevant, since repeating scroll snap offsets are no longer in the spec.
+
+        * css3/scroll-snap/scroll-snap-with-scroll-padding-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-with-scroll-padding.html: Added.
+
+        New layout test to check that specifying scroll padding on a scroll container correctly outsets the scroll snap
+        port, and that changing scroll padding via script also changes the computed snap offsets.
+
+        * platform/mac-wk2/TestExpectations:
+
+        Removed tiled-drawing/scrolling/latched-div-with-scroll-snap.html from the list of failing tests.
+
+        * tiled-drawing/scrolling/latched-div-with-scroll-snap-expected.txt:
+        * tiled-drawing/scrolling/latched-div-with-scroll-snap.html:
+
+        This test was failing 100% of the time due to the momentum portion of the scrolling phase being invoked after
+        scroll snapping has ended. This has been rewritten to perform the following steps:
+        1. Scroll the top div with momentum and verify that the scroll 'glided' to the red box.
+        2. Scroll the top div without momentum and verify that the scroll snaps back to the red box.
+        3. Repeat (1) and (2), but for the bottom div. The same thing should occur.
+
+        * tiled-drawing/scrolling/scroll-snap/resources/horizontal-mainframe.html:
+        * tiled-drawing/scrolling/scroll-snap/resources/vertical-mainframe.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-destination-lock-up-expected.txt: Removed.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-destination-lock-up.html: Removed.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow-stateless.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-scrolling-jumps-to-top.html:
+
+        All of the tests here were updated to use the new scroll-snap-* properties instead of the old versions. The
+        semantics of these tests have not changed.
+
 2016-12-20  Megan Gardner  <megan_gardner@apple.com>
 
         Fix memory leak in malformed test

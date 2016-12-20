@@ -840,23 +840,7 @@ void PDFPlugin::didCalculateSizes()
     pluginElement->setInlineStyleProperty(CSSPropertyWidth, m_pdfDocumentSize.width(), CSSPrimitiveValue::CSS_PX);
     pluginElement->setInlineStyleProperty(CSSPropertyHeight, m_pdfDocumentSize.height(), CSSPrimitiveValue::CSS_PX);
 
-    // FIXME: Can't do this in the overflow/subframe case. Where does scroll-snap-type go?
-    if (m_usingContinuousMode || !m_frame->isMainFrame() || !isFullFramePlugin())
-        return;
-
-    RetainPtr<NSArray> pageRects = [m_pdfLayerController pageRects];
-
-    StringBuilder coordinates;
-    for (NSValue *rect in pageRects.get()) {
-        // FIXME: Why 4?
-        coordinates.appendNumber((long)[rect rectValue].origin.y / 4);
-        coordinates.appendLiteral("px ");
-    }
-
-    pluginElement->setInlineStyleProperty(CSSPropertyWebkitScrollSnapCoordinate, coordinates.toString());
-
-    Document* document = webFrame()->coreFrame()->document();
-    document->bodyOrFrameset()->setInlineStyleProperty(CSSPropertyWebkitScrollSnapType, "mandatory");
+    // FIXME: Adopt the new scroll snap specification.
 }
 
 bool PDFPlugin::initialize(const Parameters& parameters)

@@ -1,0 +1,5 @@
+Scroll-snap offsets are: vertical = { 0, 700, 1410, 2120, 2830, 3540, 3600 }
+After resizing, the offsets should not have changed: vertical = { 0, 700, 1410, 2120, 2830, 3540, 3600 }
+After deflating scroll-snap-margin by 10px, the offsets are: vertical = { 0, 710, 1420, 2130, 2840, 3550, 3600 }
+After resizing, the offsets should not have changed: vertical = { 0, 710, 1420, 2130, 2840, 3550, 3600 }
+

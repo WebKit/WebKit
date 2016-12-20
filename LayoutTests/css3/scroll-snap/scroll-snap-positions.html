@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snap points - nested snap coordinates</title>
+    <style>
+        #container {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: 100px;
+            left: 100px;
+        }
+
+        .scrollable {
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+            height: 300px;
+            margin: 0 10px;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    
+        .center-snap-receiver {
+            scroll-snap-type: y mandatory;
+        }
+    
+        .snap-point-marker {
+            margin-top: 100px;
+            width: 15px;
+            height: 15px;
+        }
+
+        .snap-point-start {
+            scroll-snap-align: start;
+            background-color: red;
+            opacity: 0.5;
+        }
+
+        .snap-point-center {
+            scroll-snap-align: center;
+            background-color: green;
+            opacity: 0.5;
+        }
+
+        .snap-point-end {
+            scroll-snap-align: end;
+            background-color: blue;
+            opacity: 0.5;
+        }
+
+        .large-content {
+            height: 3000px;
+            width: 100%;
+        }
+    
+        .small-content {
+            height: 200px;
+            width: 100%;
+        }
+
+        .invalidContainer {
+            background-color: black;
+            opacity: 0.1;
+            height: 300px;
+            margin: 0 10px;
+            opacity: 0.5;
+            overflow: hidden;
+        }
+
+        #alignment-marker-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            top: 100px;
+            left: 100px;
+            z-index: -1;
+            margin: 0 10px;
+        }
+
+        .alignment-marker {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+        }
+    </style>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+        function runTest()
+        {
+            var container = document.getElementById('container');
+            debug("Scroll-snap offsets for 'container': " + window.internals.scrollSnapOffsets(container));
+
+            finishJSTest();
+            testRunner.notifyDone();
+        }
+
+        function onLoad()
+        {
+            if (window.testRunner) {
+                window.jsTestIsAsync = true;
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                setTimeout(runTest, 0);
+            }
+        }
+        </script>
+</head>
+<body onload="onLoad();">
+    <div id="container" class="center-snap-receiver scrollable">
+        <div id="snap-child-1" class="snap-point-start snap-point-marker"></div>
+        <div class="nested">
+            <div id="snap-child-2" class="snap-point-center snap-point-marker"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div id="snap-child-3" class="snap-point-start snap-point-marker"></div>
+            </div>
+        </div>
+        <div id="snap-child-4" class="snap-point-start snap-point-marker"></div>
+        <div id="snap-child-5" class="snap-point-start snap-point-marker"></div>
+        <div class="nested">
+            <div id="snap-child-6" class="snap-point-start snap-point-marker"></div>
+        </div>
+        <div id="snap-child-7" class="snap-point-start snap-point-marker"></div>
+        <div class="nested">
+            <div id="snap-child-8" class="snap-point-center snap-point-marker"></div>
+        </div>
+        <div id="snap-child-9" class="snap-point-start snap-point-marker"></div>
+        <div id="snap-child-10" class="snap-point-center snap-point-marker"></div>
+        <div class="nested">
+            <div id="snap-child-11" class="snap-point-start snap-point-marker"></div>
+        </div>
+         <div id="snap-child-12" class="snap-point-start snap-point-marker"></div>
+        <div class="nested">
+            <div id="snap-child-13" class="snap-point-start snap-point-marker"></div>
+        </div>
+        <div class="nested">
+            <div class="nested">
+                <div id="snap-child-14" class="snap-point-end snap-point-marker"></div>
+            </div>
+        </div>
+        <div id="snap-child-15" class="snap-point-end snap-point-marker"></div>
+        <div class="large-content"></div>
+    </div>
+    <div id="alignment-marker-box">
+        <div style="border-bottom: 2px red solid;" class="alignment-marker"></div>
+        <div style="border-bottom: 2px green solid; top: 150px;" class="alignment-marker"></div>
+        <div style="border-bottom: 2px blue solid; top: 300px;" class="alignment-marker"></div>
+    </div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

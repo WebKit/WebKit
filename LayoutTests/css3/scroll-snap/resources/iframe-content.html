@@ -16,13 +16,11 @@
                 height: 50px;
                 width: 400px;
                 float: left;
+                scroll-snap-align: start;
             }
 
             .noInitial {
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-coordinate: left top;
+                scroll-snap-type: x mandatory;
             }
 
             #item0 { background-color: red; }
@@ -38,7 +36,7 @@
     </head>
     <body>
         <div style="width: 400px">
-            <div id="noInitial" class="horizontalGallery noInitial" style="-webkit-scroll-snap-destination: right bottom; -webkit-scroll-snap-coordinate: left top;">
+            <div id="noInitial" class="horizontalGallery noInitial">
                 <div class="horizontalGalleryDrawer">
                     <div id="item0" class="colorBox"></div>
                     <div id="item1" class="colorBox"></div>
@@ -68,12 +66,11 @@
         }
 
         var noInitial = document.getElementById('noInitial');
-        top.succeeded = shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-type')", "mandatory");
-        top.succeeded = top.succeeded && shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-points-x')", "repeat(100%)");
-        top.succeeded = top.succeeded && shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-points-y')", "repeat(100%)");
-        top.succeeded = top.succeeded && shouldMatch("noInitial.style['-webkit-scroll-snap-coordinate']", "0% 0%");
-        top.succeeded = top.succeeded && shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('-webkit-scroll-snap-coordinate')", "0% 0%");
-
+        top.succeeded = shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-type')", "both mandatory");
+        document.querySelectorAll(".colorBox").forEach(colorBox => {
+            window.colorBox = colorBox;
+            top.succeeded = shouldMatch("getComputedStyle(colorBox).getPropertyValue('scroll-snap-align')", "start start");
+        });
         if (top.succeeded)
             top.debug("iframe processed all tests successfully.");
         else

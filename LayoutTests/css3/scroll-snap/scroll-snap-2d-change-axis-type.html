@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            #container {
+                width: 400px;
+                height: 400px;
+                overflow: auto;
+                scroll-snap-type: x mandatory;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                margin: 0;
+                padding: 0;
+            }
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            .cell {
+                width: 400px;
+                height: 400px;
+                margin: 0px;
+                padding: 0px;
+                position: absolute;
+                scroll-snap-align: center;
+            }
+
+            .green {
+                background-color: green;
+            }
+
+            .red {
+                background-color: red;
+            }
+        </style>
+        <script src="../../../resources/js-test.js"></script>
+        <script>
+        let write = s => output.innerHTML += s + "<br>";
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function run() {
+            if (!window.testRunner || !window.internals) {
+                write(`To manually test, verify that scrolling in the container snaps so that each colored box can fill
+                    the scroll container.`);
+                return;
+            }
+
+            setTimeout(() => {
+                write(`The scroll offsets are: ${internals.scrollSnapOffsets(container)}`);
+                testRunner.notifyDone();
+            }, 1000);
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div id="container">
+            <div style="top: 0px; left: 0px;" class="cell green"></div>
+            <div style="top: 0px; left: 400px;" class="cell red"></div>
+            <div style="top: 0px; left: 800px;" class="cell green"></div><br/>
+            <div style="top: 400px; left: 0px;" class="cell red"></div>
+            <div style="top: 400px; left: 400px;" class="cell green"></div>
+            <div style="top: 400px; left: 800px;" class="cell red"></div><br/>
+            <div style="top: 800px; left: 0px;" class="cell green"></div>
+            <div style="top: 800px; left: 400px;" class="cell red"></div>
+            <div style="top: 800px; left: 800px;" class="cell green"></div>
+        </div>
+        <script>
+            container.style.scrollSnapType = "both mandatory";
+        </script>
+        <div id="output"></div>
+    </body>
+</html>

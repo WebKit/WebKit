@@ -1,182 +1,235 @@
-Test the computed style of the -webkit-scroll-snap-* properties.
+Test the computed style of the scroll-snap-* properties.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 
-invalid snapping type : potato
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+invalid snap type: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-invalid points along x axis : hello world
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
+empty string for snap type: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-invalid points along y axis : hello world
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'none'
+too many values: `block mandatory proximity`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-typo in point definition : repaet(50px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
+none following axis: `both none`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-another invalid point definition : ??px repeat(50px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
+two axis values: `block inline`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-invalid destination : foo bar
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+two strictness values: `proximity mandatory`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-short one destination value : 50%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+axis following strictness: `mandatory inline`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-extra destination value : 50px 100% 75px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+initial value: `initial`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-invalid coordinates : ben bitdiddle
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+only strictness: `mandatory`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'both mandatory'
 
-mismatched x coordinate : 50% 100px 75%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+only axis: `both`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'both proximity'
 
-inherited type : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+none: `none`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'none'
 
-initial type : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+strictness following axis: `inline mandatory`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-type') is 'inline mandatory'
 
-none type : none
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'none'
+invalid snap align: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-mandatory type : mandatory
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'mandatory'
+empty string: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-proximity type : proximity
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-type') is 'proximity'
+too many values: `start center end`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-inherited points along x axis : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
+invalid second value: `start wut`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-initial points along x axis : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'none'
+invalid first value: `wat center`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-element points along x axis : elements
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'elements'
+one length: `10px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-percentage points along x axis : 100% 50%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100% 50%'
+two lengths: `10px 50px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-pixel points along x axis : 100px 50px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px 50px'
+initial value: `initial`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'none none'
 
-percentage points repeat along x axis : repeat(100%)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(100%)'
+single value: `start`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start start'
 
-pixel points repeat along x axis : repeat(25px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is 'repeat(25px)'
+two values: `start end`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-align') is 'start end'
 
-percentage points along x axis with percentage repeat : 100% repeat(100%)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100% repeat(100%)'
+invalid scroll padding: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
 
-pixel points along x axis with percentage repeat : 100px 50px repeat(25%)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px 50px repeat(25%)'
+empty string: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
 
-percentage points along x axis with pixel repeat : 100% 50% repeat(40px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100% 50% repeat(40px)'
+too many values: `1px 2px 3px 4px 5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
 
-pixel points along x axis with pixel repeat : 100px repeat(42px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100px repeat(42px)'
+attempt to use auto: `auto auto`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '0px'
 
-inherited points along y axis : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'none'
+single length: `10px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10px'
 
-initial points along y axis : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'none'
+two percentages: `10% 20%`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10% 20%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '10%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '20%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '20%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10%'
 
-element points along y axis : elements
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'elements'
+three lengths: `1px 2px 3px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '1px 2px 3px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '1px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '3px'
 
-percentage points along y axis : 100% 50%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100% 50%'
+four values: `50px 10% 20% 50px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '50px 10% 20% 50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '10%'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '20%'
 
-pixel points along y axis : 100px 50px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px 50px'
+calc expression: `calc(50px + 10%) 20px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is 'calc(50px + 10%) 20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is 'calc(50px + 10%)'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is 'calc(50px + 10%)'
 
-percentage points repeat along y axis : repeat(100%)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(100%)'
+various units: `1em 5mm 2in 4cm`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '16px 18.89763832092285px 192px 151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '16px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '18.89763832092285px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '192px'
 
-pixel points repeat along y axis : repeat(25px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is 'repeat(25px)'
+subpixel values: `10.4375px 6.5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding') is '10.4375px 6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-top') is '10.4375px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-left') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-right') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-padding-bottom') is '10.4375px'
 
-percentage points along y axis with percentage repeat : 100% repeat(100%)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100% repeat(100%)'
+invalid scroll padding: `potato`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
 
-pixel points along y axis with percentage repeat : 100px 50px repeat(25%)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px 50px repeat(25%)'
+empty string: ``
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
 
-percentage points along y axis with pixel repeat : 100% 50% repeat(40px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100% 50% repeat(40px)'
+too many values: `1px 2px 3px 4px 5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
 
-pixel points along y axis with pixel repeat : 100px repeat(42px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-y') is '100px repeat(42px)'
+attempt to use auto: `auto auto`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
 
-inherited destination : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+attempt to use percentage: `25% 25%`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
 
-initial destination : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0px 0px'
+attempt to use calc: `calc(25% + 10px)`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '0px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '0px'
 
-pixel/pixel destination : 10px 50px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '10px 50px'
+single length: `10px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '10px'
 
-pixel/percentage destination : 20px 40%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '20px 40%'
+two lengths: `10px 20px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '10px 20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '20px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '10px'
 
-percentage/pixel destination : 0% 0px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0% 0px'
+three lengths: `1px 2px 3px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '1px 2px 3px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '1px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '2px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '3px'
 
-percentage/percentage destination : 5% 100%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '5% 100%'
+four lengths: `50px 10px 20px 50px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '50px 10px 20px 50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '50px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '10px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '20px'
 
-inherited coordinate : inherit
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
+various units: `1em 5mm 2in 4cm`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '16px 18.89763832092285px 192px 151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '16px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '151.1811065673828px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '18.89763832092285px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '192px'
 
-initial coordinate : initial
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
-
-no coordinate : none
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is 'none'
-
-single pixel coordinate : 50px 100px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px'
-
-single percentage coordinate : 50% 100%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100%'
-
-multiple pixel coordinates : 50px 100px 150px 100px 200px 100px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50px 100px, 150px 100px, 200px 100px'
-
-multiple percentage coordinates : 50% 100% 150% 100% 200% 100%
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '50% 100%, 150% 100%, 200% 100%'
-
-mm along x axis with pixel repeat : 10mm repeat(42mm)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '37.7952766418457px repeat(158.7401580810547px)'
-
-in along x axis with pixel repeat : 10in repeat(4in)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '960px repeat(384px)'
-
-pt along x axis with pixel repeat : 10pt repeat(42pt)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '13.333333015441895px repeat(56px)'
-
-in/cm destination : 2in 5cm
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '192px 188.97637939453125px'
-
-in/cm coordinate : 2in 5cm 5in 2cm
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '192px 188.97637939453125px, 480px 75.5905532836914px'
-
-subpixel along x axis with pixel repeat : 100.5px repeat(50.25px)
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-points-x') is '100.5px repeat(50.25px)'
-
-subpixel destination : 0.125px 2.4375px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-destination') is '0.125px 2.4375px'
-
-subpixel coordinate : 110.125px 25.4375px
-PASS window.getComputedStyle(document.body).getPropertyValue('-webkit-scroll-snap-coordinate') is '110.125px 25.4375px'
+subpixel values: `10.4375px 6.5px`
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin') is '10.4375px 6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-top') is '10.4375px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-left') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-right') is '6.5px'
+PASS window.getComputedStyle(document.body).getPropertyValue('scroll-snap-margin-bottom') is '10.4375px'
 PASS successfullyParsed is true
 
 TEST COMPLETE

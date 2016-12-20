@@ -1,0 +1,5 @@
+Scroll-snap offsets are: vertical = { 0, 670, 1390, 2110, 2830, 3550, 3600 }
+After resizing, the offsets should not have changed: vertical = { 0, 670, 1390, 2110, 2830, 3550, 3600 }
+After removing scroll-padding, the offsets are: vertical = { 0, 720, 1440, 2160, 2880, 3600 }
+After resizing, the offsets should not have changed: vertical = { 0, 720, 1440, 2160, 2880, 3600 }
+

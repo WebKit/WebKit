@@ -59,7 +59,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_gridItem(StyleGridItemData::create())
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)
-    , m_scrollSnapPoints(StyleScrollSnapPoints::create())
+    , m_scrollSnapPort(StyleScrollSnapPort::create())
+    , m_scrollSnapArea(StyleScrollSnapArea::create())
 #endif
     , m_willChange(RenderStyle::initialWillChange())
     , m_mask(FillLayer(MaskFillLayer))
@@ -80,9 +81,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_justifySelf(RenderStyle::initialSelfAlignment())
 #if ENABLE(TOUCH_EVENTS)
     , m_touchAction(static_cast<unsigned>(RenderStyle::initialTouchAction()))
-#endif
-#if ENABLE(CSS_SCROLL_SNAP)
-    , m_scrollSnapType(static_cast<unsigned>(RenderStyle::initialScrollSnapType()))
 #endif
     , m_regionFragment(RenderStyle::initialRegionFragment())
     , m_pageSizeType(PAGE_SIZE_AUTO)
@@ -140,7 +138,8 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_gridItem(o.m_gridItem)
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)
-    , m_scrollSnapPoints(o.m_scrollSnapPoints)
+    , m_scrollSnapPort(o.m_scrollSnapPort)
+    , m_scrollSnapArea(o.m_scrollSnapArea)
 #endif
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
     , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
@@ -177,9 +176,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , m_justifySelf(o.m_justifySelf)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchAction(o.m_touchAction)
-#endif
-#if ENABLE(CSS_SCROLL_SNAP)
-    , m_scrollSnapType(o.m_scrollSnapType)
 #endif
     , m_regionFragment(o.m_regionFragment)
     , m_pageSizeType(o.m_pageSizeType)
@@ -248,7 +244,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_gridItem == o.m_gridItem
 #endif
 #if ENABLE(CSS_SCROLL_SNAP)
-        && m_scrollSnapPoints == o.m_scrollSnapPoints
+        && m_scrollSnapPort == o.m_scrollSnapPort
+        && m_scrollSnapArea == o.m_scrollSnapArea
 #endif
         && contentDataEquivalent(o)
         && arePointingToEqualData(m_counterDirectives, o.m_counterDirectives)
@@ -297,9 +294,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_textDecorationStyle == o.m_textDecorationStyle
 #if ENABLE(TOUCH_EVENTS)
         && m_touchAction == o.m_touchAction
-#endif
-#if ENABLE(CSS_SCROLL_SNAP)
-        && m_scrollSnapType == o.m_scrollSnapType
 #endif
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode

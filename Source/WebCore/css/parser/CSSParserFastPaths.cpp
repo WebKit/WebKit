@@ -769,10 +769,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyWebkitRegionFragment:
         return valueID == CSSValueAuto || valueID == CSSValueBreak;
 #endif
-#if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyWebkitScrollSnapType: // none | mandatory | proximity
-        return valueID == CSSValueNone || valueID == CSSValueMandatory || valueID == CSSValueProximity;
-#endif
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyTouchAction: // auto | manipulation
         return valueID == CSSValueAuto || valueID == CSSValueManipulation;
@@ -981,9 +977,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // Apple specific property. This will never be standardized and is purely to
     // support custom WebKit-based Apple applications.
     case CSSPropertyWebkitTouchCallout:
-#endif
-#if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyWebkitScrollSnapType:
 #endif
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle:

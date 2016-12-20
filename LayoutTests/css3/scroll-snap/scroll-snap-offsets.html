@@ -21,9 +21,7 @@
                 overflow-x: auto;
                 margin: 2px;
                 -webkit-overflow-scrolling: touch;
-                -webkit-scroll-snap-points-x: repeat(100%);
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-coordinate: 50% 50%;
+                scroll-snap-type: x mandatory;
             }
             .horizontalGalleryDrawer {
                 width: 180px;
@@ -37,9 +35,7 @@
                 overflow-y: auto;
                 margin: 2px;
                 -webkit-overflow-scrolling: touch;
-                -webkit-scroll-snap-points-y: repeat(100%);
-                -webkit-scroll-snap-type: mandatory;
-                -webkit-scroll-snap-coordinate: 50% 50%;
+                scroll-snap-type: y mandatory;
             }
             .verticalGalleryDrawer {
                 width: 30px;
@@ -49,6 +45,9 @@
                 height: 30px;
                 width: 30px;
                 float: left;
+            }
+            .colorBox {
+                scroll-snap-align: start;
             }
             #itemH0, #itemV0 { background-color: red; }
             #itemH1, #itemV1 { background-color: green; }
