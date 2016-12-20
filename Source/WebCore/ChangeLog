@@ -1,3 +1,14 @@
+2016-12-20  JF Bastien  <jfbastien@apple.com>
+
+        INDIE_UI: fix cmake build
+        https://bugs.webkit.org/show_bug.cgi?id=166288
+
+        Reviewed by Mark Lam.
+
+        Bug #165881 didn't remove a file from cmake.
+
+        * PlatformMac.cmake:
+
 2016-12-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix clean Windows build after r210029

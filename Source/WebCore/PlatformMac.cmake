@@ -153,8 +153,6 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    Modules/indieui/UIRequestEvent.cpp
-
     Modules/plugins/QuickTimePluginReplacement.mm
     Modules/plugins/YouTubePluginReplacement.cpp
 
