@@ -1,3 +1,24 @@
+2016-12-19  Dean Jackson  <dino@apple.com>
+
+        Use ENABLE() in place of ENABLE_CSS_SELECTORS_LEVEL4
+        https://bugs.webkit.org/show_bug.cgi?id=166043
+        <rdar://problems/29743655>
+
+        Reviewed by Alex Christensen.
+
+        This doesn't compile unless the ENABLE_CSS_SELECTORS_LEVEL4 is defined.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectIdentifierHashes):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isOnlyPseudoClassFunction):
+        (WebCore::CSSSelectorParser::consumePseudo):
+        (WebCore::CSSSelectorParser::consumeCombinator):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentRelationForSelectorRelation):
+
 2016-12-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix Windows Debug build part 2

@@ -459,7 +459,7 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
     case CSSSelector::PseudoClassNthLastOfType:
     case CSSSelector::PseudoClassLang:
     case CSSSelector::PseudoClassAny:
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::PseudoClassDir:
     case CSSSelector::PseudoClassRole:
 #endif
@@ -600,7 +600,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setSelectorList(WTFMove(selectorList));
             return selector;
         }
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         case CSSSelector::PseudoClassDir:
         case CSSSelector::PseudoClassRole: {
             const CSSParserToken& ident = block.consumeIncludingWhitespace();
@@ -673,7 +673,7 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
             return CSSSelector::IndirectAdjacent;
         }
         
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         range.consume();
         if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '>') {
             range.consumeIncludingWhitespace();

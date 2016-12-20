@@ -402,7 +402,7 @@ static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::
 {
     switch (relation) {
     case CSSSelector::DescendantSpace:
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSSelector::DescendantDoubleChild:
 #endif
         return FragmentRelation::Descendant;
