@@ -1,3 +1,16 @@
+2016-12-20  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix memory leak in malformed test
+        https://bugs.webkit.org/show_bug.cgi?id=165917
+
+        Reviewed by Alexey Proskuryakov.
+
+        Navigation caused 'onload' to be called twice, causing test harness to have extraneous
+        HID callback around after script controller was dismantled. Loading in body will eliminate
+        double load, and also prevent other race conditions where the body doesn't load fast enough.
+
+        * http/tests/quicklook/hide-referer-on-navigation.html:
+
 2016-12-20  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         WebRTC: RTCPeerConnection constructor argument should be optional
