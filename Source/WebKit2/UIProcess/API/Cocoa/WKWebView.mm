@@ -3886,6 +3886,8 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
             RefPtr<WebKit::WebFormSubmissionListenerProxy> localListener = WTFMove(listener);
             RefPtr<WebKit::CompletionHandlerCallChecker> checker = WebKit::CompletionHandlerCallChecker::create(inputDelegate.get(), @selector(_webView:willSubmitFormValues:userObject:submissionHandler:));
             [inputDelegate _webView:m_webView willSubmitFormValues:valueMap.get() userObject:userObject submissionHandler:[localListener, checker] {
+                if (checker->completionHandlerHasBeenCalled())
+                    return;
                 checker->didCallCompletionHandler();
                 localListener->continueSubmission();
             }];
