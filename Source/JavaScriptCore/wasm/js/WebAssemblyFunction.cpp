@@ -52,17 +52,18 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(exec->jsCallee());
     if (!wasmFunction)
         return JSValue::encode(throwException(exec, scope, createTypeError(exec, "expected a WebAssembly function", defaultSourceAppender, runtimeTypeForValue(exec->jsCallee()))));
-    const Wasm::Signature* signature = wasmFunction->signature();
+    Wasm::SignatureIndex signatureIndex = wasmFunction->signatureIndex();
+    const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
 
     // FIXME is this the right behavior? https://bugs.webkit.org/show_bug.cgi?id=164876
-    if (exec->argumentCount() != signature->arguments.size())
+    if (exec->argumentCount() != signature->argumentCount())
         return JSValue::encode(throwException(exec, scope, createNotEnoughArgumentsError(exec, defaultSourceAppender)));
 
     // FIXME is this boxing correct? https://bugs.webkit.org/show_bug.cgi?id=164876
     Vector<JSValue> boxedArgs;
     for (unsigned argIndex = 0; argIndex < exec->argumentCount(); ++argIndex) {
         JSValue arg = exec->uncheckedArgument(argIndex);
-        switch (signature->arguments[argIndex]) {
+        switch (signature->argument(argIndex)) {
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
             break;
@@ -121,7 +122,7 @@ EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
     vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
 
     // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876
-    switch (signature()->returnType) {
+    switch (m_returnType) {
     case Wasm::Void:
         return JSValue::encode(jsUndefined());
     case Wasm::I32:
@@ -140,12 +141,12 @@ EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
     return EncodedJSValue();
 }
 
-WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature* signature)
+WebAssemblyFunction* WebAssemblyFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::SignatureIndex signatureIndex)
 {
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
     Structure* structure = globalObject->webAssemblyFunctionStructure();
-    WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm.heap)) WebAssemblyFunction(vm, globalObject, structure);
-    function->finishCreation(vm, executable, length, name, instance, jsEntrypoint, wasmEntrypoint, signature);
+    WebAssemblyFunction* function = new (NotNull, allocateCell<WebAssemblyFunction>(vm.heap)) WebAssemblyFunction(vm, globalObject, structure, signatureIndex);
+    function->finishCreation(vm, executable, length, name, instance, jsEntrypoint, wasmEntrypoint);
     return function;
 }
 
@@ -155,9 +156,13 @@ Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
-WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::SignatureIndex signatureIndex)
     : Base(vm, globalObject, structure)
+    , m_signatureIndex(signatureIndex)
 {
+    // Don't cache the signature pointer: it's a global on VM and can change as new WebAssembly.Module are created.
+    const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, m_signatureIndex);
+    m_returnType = signature->returnType();
 }
 
 void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -170,7 +175,7 @@ void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_wasmEntrypoint);
 }
 
-void WebAssemblyFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature* signature)
+void WebAssemblyFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name, JSWebAssemblyInstance* instance, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint)
 {
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(info()));
@@ -178,7 +183,6 @@ void WebAssemblyFunction::finishCreation(VM& vm, NativeExecutable* executable, u
     ASSERT(jsEntrypoint != wasmEntrypoint);
     m_jsEntrypoint.set(vm, this, jsEntrypoint);
     m_wasmEntrypoint.set(vm, this, wasmEntrypoint);
-    m_signature = signature;
 }
 
 } // namespace JSC

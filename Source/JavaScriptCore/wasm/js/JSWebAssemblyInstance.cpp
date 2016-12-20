@@ -41,7 +41,7 @@ namespace JSC {
 JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     // FIXME: These objects could be pretty big we should try to throw OOM here.
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap, allocationSize(module->moduleInformation().importFunctions.size()))) JSWebAssemblyInstance(vm, structure, module->moduleInformation().importFunctions.size());
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap, allocationSize(module->moduleInformation().importFunctionSignatureIndices.size()))) JSWebAssemblyInstance(vm, structure, module->moduleInformation().importFunctionSignatureIndices.size());
     instance->finishCreation(vm, module, moduleNamespaceObject);
     return instance;
 }

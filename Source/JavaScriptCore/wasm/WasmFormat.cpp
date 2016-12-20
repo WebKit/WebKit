@@ -30,8 +30,30 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmMemory.h"
+#include <wtf/FastMalloc.h>
 
 namespace JSC { namespace Wasm {
+
+Segment* Segment::create(uint32_t offset, uint32_t sizeInBytes)
+{
+    auto allocated = tryFastCalloc(sizeof(Segment) + sizeInBytes, 1);
+    Segment* segment;
+    if (!allocated.getValue(segment))
+        return nullptr;
+    segment->offset = offset;
+    segment->sizeInBytes = sizeInBytes;
+    return segment;
+}
+
+void Segment::destroy(Segment *segment)
+{
+    fastFree(segment);
+}
+
+Segment::Ptr Segment::adoptPtr(Segment* segment)
+{
+    return Ptr(segment, &Segment::destroy);
+}
 
 JS_EXPORT_PRIVATE ModuleInformation::~ModuleInformation() { }
 

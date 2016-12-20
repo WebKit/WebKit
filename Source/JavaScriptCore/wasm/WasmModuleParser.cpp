@@ -99,7 +99,7 @@ auto ModuleParser::parseType() -> PartialResult
 
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count");
     WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Type section's count is too big ", count);
-    WASM_PARSER_FAIL_IF(!m_result.module->signatures.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
+    WASM_PARSER_FAIL_IF(!m_result.module->signatureIndices.tryReserveCapacity(count), "can't allocate enough memory for Type section's ", count, " entries");
 
     for (uint32_t i = 0; i < count; ++i) {
         int8_t type;
@@ -110,26 +110,28 @@ auto ModuleParser::parseType() -> PartialResult
         WASM_PARSER_FAIL_IF(type != Func, i, "th Type is non-Func ", type);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get ", i, "th Type's argument count");
         WASM_PARSER_FAIL_IF(argumentCount == std::numeric_limits<uint32_t>::max(), i, "th argument count is too big ", argumentCount);
-        WASM_PARSER_FAIL_IF(!argumentTypes.tryReserveCapacity(argumentCount), "can't allocate enough memory for Type section's ", i, "th ", argumentCount, " arguments");
+        std::unique_ptr<Signature, void (*)(Signature*)> signature(Signature::create(argumentCount), &Signature::destroy);
+        WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
 
         for (unsigned i = 0; i < argumentCount; ++i) {
             Type argumentType;
             WASM_PARSER_FAIL_IF(!parseResultType(argumentType), "can't get ", i, "th argument Type");
-            argumentTypes.uncheckedAppend(argumentType);
+            signature->argument(i) = argumentType;
         }
 
         uint8_t returnCount;
         WASM_PARSER_FAIL_IF(!parseVarUInt1(returnCount), "can't get ", i, "th Type's return count");
         Type returnType;
-
         if (returnCount) {
             Type value;
             WASM_PARSER_FAIL_IF(!parseValueType(value), "can't get ", i, "th Type's return value");
             returnType = static_cast<Type>(value);
         } else
             returnType = Type::Void;
+        signature->returnType() = returnType;
 
-        m_result.module->signatures.uncheckedAppend({ returnType, WTFMove(argumentTypes) });
+        SignatureIndex signatureIndex = SignatureInformation::adopt(m_vm, signature.release());
+        m_result.module->signatureIndices.uncheckedAppend(signatureIndex);
     }
     return { };
 }
@@ -141,7 +143,7 @@ auto ModuleParser::parseImport() -> PartialResult
     WASM_PARSER_FAIL_IF(importCount == std::numeric_limits<uint32_t>::max(), "Import section's count is too big ", importCount);
     WASM_PARSER_FAIL_IF(!m_result.module->globals.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " globals"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_result.module->imports.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " imports"); // FIXME this over-allocates when we fix the FIXMEs below.
-    WASM_PARSER_FAIL_IF(!m_result.module->importFunctions.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import functions"); // FIXME this over-allocates when we fix the FIXMEs below.
+    WASM_PARSER_FAIL_IF(!m_result.module->importFunctionSignatureIndices.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " import function signatures"); // FIXME this over-allocates when we fix the FIXMEs below.
     WASM_PARSER_FAIL_IF(!m_result.functionIndexSpace.tryReserveCapacity(importCount), "can't allocate enough memory for ", importCount, " functions in the index space"); // FIXME this over-allocates when we fix the FIXMEs below. We'll allocate some more here when we know how many functions to expect.
 
     for (uint32_t importNumber = 0; importNumber < importCount; ++importNumber) {
@@ -164,11 +166,11 @@ auto ModuleParser::parseImport() -> PartialResult
         case ExternalKind::Function: {
             uint32_t functionSignatureIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(functionSignatureIndex), "can't get ", importNumber, "th Import's function signature in module '", moduleString, "' field '", fieldString, "'");
-            WASM_PARSER_FAIL_IF(functionSignatureIndex >= m_result.module->signatures.size(), "invalid function signature for ", importNumber, "th Import, ", functionSignatureIndex, " is out of range of ", m_result.module->signatures.size(), " in module '", moduleString, "' field '", fieldString, "'");
-            imp.kindIndex = m_result.module->importFunctions.size();
-            Signature* signature = &m_result.module->signatures[functionSignatureIndex];
-            m_result.module->importFunctions.uncheckedAppend(signature);
-            m_result.functionIndexSpace.uncheckedAppend(signature);
+            WASM_PARSER_FAIL_IF(functionSignatureIndex >= m_result.module->signatureIndices.size(), "invalid function signature for ", importNumber, "th Import, ", functionSignatureIndex, " is out of range of ", m_result.module->signatureIndices.size(), " in module '", moduleString, "' field '", fieldString, "'");
+            imp.kindIndex = m_result.module->importFunctionSignatureIndices.size();
+            SignatureIndex signatureIndex = m_result.module->signatureIndices[functionSignatureIndex];
+            m_result.module->importFunctionSignatureIndices.uncheckedAppend(signatureIndex);
+            m_result.functionIndexSpace.uncheckedAppend(signatureIndex);
             break;
         }
         case ExternalKind::Table: {
@@ -208,22 +210,22 @@ auto ModuleParser::parseFunction() -> PartialResult
     uint32_t count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Function section's count");
     WASM_PARSER_FAIL_IF(count == std::numeric_limits<uint32_t>::max(), "Function section's count is too big ", count);
-    WASM_PARSER_FAIL_IF(!m_result.module->internalFunctionSignatures.tryReserveCapacity(count), "can't allocate enough memory for ", count, " Function signatures");
+    WASM_PARSER_FAIL_IF(!m_result.module->internalFunctionSignatureIndices.tryReserveCapacity(count), "can't allocate enough memory for ", count, " Function signatures");
     WASM_PARSER_FAIL_IF(!m_result.functionLocationInBinary.tryReserveCapacity(count), "can't allocate enough memory for ", count, "Function locations");
     WASM_PARSER_FAIL_IF(!m_result.functionIndexSpace.tryReserveCapacity(m_result.functionIndexSpace.size() + count), "can't allocate enough memory for ", count, " more functions in the function index space");
 
     for (uint32_t i = 0; i < count; ++i) {
         uint32_t typeNumber;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get ", i, "th Function's type number");
-        WASM_PARSER_FAIL_IF(typeNumber >= m_result.module->signatures.size(), i, "th Function type number is invalid ", typeNumber);
+        WASM_PARSER_FAIL_IF(typeNumber >= m_result.module->signatureIndices.size(), i, "th Function type number is invalid ", typeNumber);
 
-        Signature* signature = &m_result.module->signatures[typeNumber];
+        SignatureIndex signatureIndex = m_result.module->signatureIndices[typeNumber];
         // The Code section fixes up start and end.
         size_t start = 0;
         size_t end = 0;
-        m_result.module->internalFunctionSignatures.uncheckedAppend(signature);
+        m_result.module->internalFunctionSignatureIndices.uncheckedAppend(signatureIndex);
         m_result.functionLocationInBinary.uncheckedAppend({ start, end });
-        m_result.functionIndexSpace.uncheckedAppend(signature);
+        m_result.functionIndexSpace.uncheckedAppend(signatureIndex);
     }
 
     return { };
@@ -425,9 +427,10 @@ auto ModuleParser::parseStart() -> PartialResult
     uint32_t startFunctionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(startFunctionIndex), "can't get Start index");
     WASM_PARSER_FAIL_IF(startFunctionIndex >= m_result.functionIndexSpace.size(), "Start index ", startFunctionIndex, " exceeds function index space ", m_result.functionIndexSpace.size());
-    Signature* signature = m_result.functionIndexSpace[startFunctionIndex].signature;
-    WASM_PARSER_FAIL_IF(!signature->arguments.isEmpty(), "Start function can't have arguments");
-    WASM_PARSER_FAIL_IF(signature->returnType != Void, "Start function can't return a value");
+    SignatureIndex signatureIndex = m_result.functionIndexSpace[startFunctionIndex].signatureIndex;
+    const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
+    WASM_PARSER_FAIL_IF(signature->argumentCount(), "Start function can't have arguments");
+    WASM_PARSER_FAIL_IF(signature->returnType() != Void, "Start function can't return a value");
     m_result.module->startFunctionIndexSpace = startFunctionIndex;
     return { };
 }
@@ -594,9 +597,9 @@ auto ModuleParser::parseData() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
         WASM_PARSER_FAIL_IF(dataByteLength == std::numeric_limits<uint32_t>::max(), segmentNumber, "th Data segment's data byte length is too big ", dataByteLength);
 
-        Segment* segment = Segment::make(offset, dataByteLength);
+        Segment* segment = Segment::create(offset, dataByteLength);
         WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
-        m_result.module->data.uncheckedAppend(Segment::makePtr(segment));
+        m_result.module->data.uncheckedAppend(Segment::adoptPtr(segment));
         for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
             uint8_t byte;
             WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", dataByte, "th data byte from ", segmentNumber, "th Data segment");

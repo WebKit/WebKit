@@ -44,21 +44,15 @@ function makeInstance() {
     table.set(0, exports.bar);
     assert.eq(table.get(0), exports.bar);
 
-    for (let i = 0; i < 1000; i++) {
-        if (foo(0, i) !== i + 42)
-            throw new Error("Bad call indirect");
-    }
+    for (let i = 0; i < 1000; i++)
+        assert.eq(foo(0, i), i + 42, "call_indirect");
 }
 
-// FIXME: make this work cross module. The reason it doesn't
-// now is that we don't unique Signature*.
-// https://bugs.webkit.org/show_bug.cgi?id=165511
 {
     const {instance, table} = makeInstance();
     const foo = instance.exports.foo;
     table.set(0, makeInstance().instance.exports.bar); // Cross instance function.
 
-    for (let i = 0; i < 1000; i++) {
-        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a signature that does not match");
-    }
+    for (let i = 0; i < 1000; i++)
+        assert.eq(foo(0, i), i + 42, "call_indirect");
 }

@@ -50,7 +50,11 @@ public:
 
     const Wasm::ModuleInformation& moduleInformation() const { return *m_moduleInformation.get(); }
     SymbolTable* exportSymbolTable() const { return m_exportSymbolTable.get(); }
-    Wasm::Signature* signatureForFunctionIndexSpace(unsigned functionIndexSpace) const { ASSERT(functionIndexSpace < m_functionIndexSpace.size); return m_functionIndexSpace.buffer.get()[functionIndexSpace].signature; }
+    Wasm::SignatureIndex signatureForFunctionIndexSpace(unsigned functionIndexSpace) const
+    {
+        ASSERT(functionIndexSpace < m_functionIndexSpace.size);
+        return m_functionIndexSpace.buffer.get()[functionIndexSpace].signatureIndex;
+    }
     unsigned importCount() const { return m_wasmToJSStubs.size(); }
 
     JSWebAssemblyCallee* jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)

@@ -41,10 +41,6 @@ namespace B3 {
 class Compilation;
 }
 
-namespace Wasm {
-struct Signature;
-}
-
 class WebAssemblyFunction : public JSFunction {
 public:
     typedef JSFunction Base;
@@ -53,30 +49,27 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature*);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
-    Wasm::Signature* signature()
-    { 
-        ASSERT(m_signature);
-        return m_signature;
-    }
+    Wasm::SignatureIndex signatureIndex() const { return m_signatureIndex; }
     EncodedJSValue call(VM&, ProtoCallFrame*);
     void* wasmEntrypoint() { return m_wasmEntrypoint->entrypoint(); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature*);
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint);
 
 private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*);
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::SignatureIndex);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
     WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
     WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
-    Wasm::Signature* m_signature;
+    Wasm::SignatureIndex m_signatureIndex;
+    Wasm::Type m_returnType;
 };
 
 } // namespace JSC

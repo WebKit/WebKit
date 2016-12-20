@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,9 @@
 #include "WasmMemoryInformation.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
+#include "WasmSignature.h"
+#include <limits>
 #include <memory>
-#include <wtf/FastMalloc.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
@@ -100,11 +101,6 @@ static inline const char* makeString(ExternalKind kind)
     return "?";
 }
 
-struct Signature {
-    Type returnType;
-    Vector<Type> arguments;
-};
-
 struct Import {
     Identifier module;
     Identifier field;
@@ -146,30 +142,15 @@ struct Segment {
     uint32_t offset;
     uint32_t sizeInBytes;
     // Bytes are allocated at the end.
-    static Segment* make(uint32_t offset, uint32_t sizeInBytes)
-    {
-        auto allocated = tryFastCalloc(sizeof(Segment) + sizeInBytes, 1);
-        Segment* segment;
-        if (!allocated.getValue(segment))
-            return nullptr;
-        segment->offset = offset;
-        segment->sizeInBytes = sizeInBytes;
-        return segment;
-    }
-    static void destroy(Segment *segment)
-    {
-        fastFree(segment);
-    }
     uint8_t& byte(uint32_t pos)
     {
         ASSERT(pos < sizeInBytes);
         return *reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(this) + sizeof(offset) + sizeof(sizeInBytes) + pos);
     }
+    static Segment* create(uint32_t, uint32_t);
+    static void destroy(Segment*);
     typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
-    static Ptr makePtr(Segment* segment)
-    {
-        return Ptr(segment, &Segment::destroy);
-    }
+    static Ptr adoptPtr(Segment*);
 };
 
 struct Element {
@@ -206,10 +187,10 @@ private:
 };
 
 struct ModuleInformation {
-    Vector<Signature> signatures;
+    Vector<SignatureIndex> signatureIndices;
     Vector<Import> imports;
-    Vector<Signature*> importFunctions;
-    Vector<Signature*> internalFunctionSignatures;
+    Vector<SignatureIndex> importFunctionSignatureIndices;
+    Vector<SignatureIndex> internalFunctionSignatureIndices;
     MemoryInformation memory;
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
@@ -247,15 +228,14 @@ typedef MacroAssemblerCodeRef WasmToJSStub;
 struct CallableFunction {
     CallableFunction() = default;
 
-    CallableFunction(Signature* signature, void* code = nullptr)
-        : signature(signature)
+    CallableFunction(SignatureIndex signatureIndex, void* code = nullptr)
+        : signatureIndex(signatureIndex)
         , code(code)
     {
     }
 
-    // FIXME pack this inside a (uniqued) integer (for correctness the parser should unique Signatures),
-    // and then pack that integer into the code pointer. https://bugs.webkit.org/show_bug.cgi?id=165511
-    Signature* signature { nullptr }; 
+    // FIXME pack the SignatureIndex and the code pointer into one 64-bit value. https://bugs.webkit.org/show_bug.cgi?id=165511
+    SignatureIndex signatureIndex { Signature::invalidIndex };
     void* code { nullptr };
 };
 typedef Vector<CallableFunction> FunctionIndexSpace;

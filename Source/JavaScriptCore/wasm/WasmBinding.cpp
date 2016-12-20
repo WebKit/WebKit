@@ -36,11 +36,12 @@
 
 namespace JSC { namespace Wasm {
 
-WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signature* signature, unsigned importIndex)
+WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     const WasmCallingConvention& wasmCC = wasmCallingConvention();
     const JSCCallingConvention& jsCC = jscCallingConvention();
-    unsigned argCount = signature->arguments.size();
+    const Signature* signature = SignatureInformation::get(vm, signatureIndex);
+    unsigned argCount = signature->argumentCount();
     typedef AssemblyHelpers JIT;
     JIT jit(vm, nullptr);
 
@@ -72,7 +73,7 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
     unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
     for (unsigned argNum = 0; argNum < argCount; ++argNum) {
-        Type argType = signature->arguments[argNum];
+        Type argType = signature->argument(argNum);
         switch (argType) {
         case Void:
         case Func:
@@ -161,7 +162,7 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     JIT::Call slowCall = jit.nearCall();
     done.link(&jit);
 
-    switch (signature->returnType) {
+    switch (signature->returnType()) {
     case Void:
         // Discard.
         break;
@@ -230,7 +231,7 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
-    return FINALIZE_CODE(patchBuffer, ("WebAssembly import[%i] stub for signature %p", importIndex, signature));
+    return FINALIZE_CODE(patchBuffer, ("WebAssembly import[%i] stub for signature %i", importIndex, signatureIndex));
 }
 
 } } // namespace JSC::Wasm

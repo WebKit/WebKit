@@ -56,7 +56,7 @@ public:
     typedef Expected<SuccessType, ErrorType> Result;
 
 protected:
-    Parser(const uint8_t*, size_t);
+    Parser(VM*, const uint8_t*, size_t);
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
     bool WARN_UNUSED_RETURN consumeString(const char*);
@@ -81,6 +81,7 @@ protected:
     const uint8_t* source() const { return m_source; }
     size_t length() const { return m_sourceLength; }
 
+    VM* m_vm;
     size_t m_offset = 0;
 
     template <typename ...Args>
@@ -106,8 +107,9 @@ private:
 };
 
 template<typename SuccessType>
-ALWAYS_INLINE Parser<SuccessType>::Parser(const uint8_t* sourceBuffer, size_t sourceLength)
-    : m_source(sourceBuffer)
+ALWAYS_INLINE Parser<SuccessType>::Parser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
+    : m_vm(vm)
+    , m_source(sourceBuffer)
     , m_sourceLength(sourceLength)
 {
 }

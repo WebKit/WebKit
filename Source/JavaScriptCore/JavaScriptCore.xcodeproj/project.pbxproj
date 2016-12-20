@@ -2022,6 +2022,8 @@
 		AD4937D41DDD27DE0077C807 /* WebAssemblyFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */; };
 		AD4B1DF91DF244E20071AE32 /* WasmBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */; };
 		AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4B1DF81DF244D70071AE32 /* WasmBinding.h */; };
+		AD7438C01E0457A400FD0C2A /* WasmSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7438BF1E04579200FD0C2A /* WasmSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD7438C11E0457AA00FD0C2A /* WasmSignature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */; };
 		AD86A93E1AA4D88D002FE77F /* WeakGCMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ADBC54D41DF8EA2B005BF738 /* WebAssemblyToJSCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADBC54D21DF8EA00005BF738 /* WebAssemblyToJSCallee.cpp */; };
 		ADBC54D51DF8EA2B005BF738 /* WebAssemblyToJSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = ADBC54D31DF8EA00005BF738 /* WebAssemblyToJSCallee.h */; };
@@ -4498,6 +4500,8 @@
 		AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyFunction.h; path = js/WebAssemblyFunction.h; sourceTree = "<group>"; };
 		AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBinding.cpp; sourceTree = "<group>"; };
 		AD4B1DF81DF244D70071AE32 /* WasmBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBinding.h; sourceTree = "<group>"; };
+		AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmSignature.cpp; sourceTree = "<group>"; };
+		AD7438BF1E04579200FD0C2A /* WasmSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignature.h; sourceTree = "<group>"; };
 		AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMapInlines.h; sourceTree = "<group>"; };
 		ADBC54D21DF8EA00005BF738 /* WebAssemblyToJSCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyToJSCallee.cpp; path = js/WebAssemblyToJSCallee.cpp; sourceTree = "<group>"; };
 		ADBC54D31DF8EA00005BF738 /* WebAssemblyToJSCallee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyToJSCallee.h; path = js/WebAssemblyToJSCallee.h; sourceTree = "<group>"; };
@@ -6034,6 +6038,8 @@
 				531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */,
 				531374BC1D5CE67600AF7A0B /* WasmPlan.h */,
 				53F40E841D58F9770099A1B6 /* WasmSections.h */,
+				AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */,
+				AD7438BF1E04579200FD0C2A /* WasmSignature.h */,
 				53FF7F9A1DBFD2B900A26CCC /* WasmValidate.cpp */,
 				53FF7F981DBFCD9000A26CCC /* WasmValidate.h */,
 			);
@@ -8051,6 +8057,7 @@
 				0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */,
 				0F9D36951AE9CC33000D4DFB /* DFGCleanUpPhase.h in Headers */,
 				A77A424017A0BBFD00A8DB81 /* DFGClobberize.h in Headers */,
+				AD7438C01E0457A400FD0C2A /* WasmSignature.h in Headers */,
 				A77A424217A0BBFD00A8DB81 /* DFGClobberSet.h in Headers */,
 				0F3C1F1B1B868E7900ABB08B /* DFGClobbersExitState.h in Headers */,
 				0F04396E1B03DC0B009598B7 /* DFGCombinedLiveness.h in Headers */,
@@ -10393,6 +10400,7 @@
 				FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */,
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
 				1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */,
+				AD7438C11E0457AA00FD0C2A /* WasmSignature.cpp in Sources */,
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */,
