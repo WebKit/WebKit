@@ -1,3 +1,16 @@
+2016-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Enable ES6 Modules
+        https://bugs.webkit.org/show_bug.cgi?id=165849
+
+        Reviewed by Geoffrey Garen.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::determineScriptType):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        * page/Settings.in:
+
 2016-12-17  Sam Weinig  <sam@webkit.org>
 
         Remove a few trivial custom bindings

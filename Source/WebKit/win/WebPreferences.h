@@ -242,8 +242,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setCustomElementsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE modernMediaControlsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setModernMediaControlsEnabled(BOOL);
-    virtual HRESULT STDMETHODCALLTYPE es6ModulesEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setES6ModulesEnabled(BOOL);
 
     // IWebPreferencesPrivate4
     virtual HRESULT STDMETHODCALLTYPE setApplicationId(BSTR);

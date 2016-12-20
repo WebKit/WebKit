@@ -330,8 +330,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
 
     m_testRunner->setDownloadAttributeEnabled(true);
 
-    m_testRunner->setES6ModulesEnabled(true);
-
     m_testRunner->setEncryptedMediaAPIEnabled(true);
 
     m_testRunner->setCloseRemainingWindowsWhenComplete(false);

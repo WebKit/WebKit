@@ -129,7 +129,6 @@ public:
     void setAsynchronousSpellCheckingEnabled(bool);
     void setDownloadAttributeEnabled(bool);
     void setAllowsAnySSLCertificate(bool);
-    void setES6ModulesEnabled(bool);
     void setEncryptedMediaAPIEnabled(bool);
     void setSubtleCryptoEnabled(bool);
     void setMediaStreamEnabled(bool);

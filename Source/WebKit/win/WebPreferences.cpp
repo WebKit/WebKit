@@ -2003,20 +2003,6 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     return S_OK;
 }
 
-HRESULT WebPreferences::setES6ModulesEnabled(BOOL enabled)
-{
-    setBoolValue(WebKitES6ModulesEnabledPreferenceKey, enabled);
-    return S_OK;
-}
-
-HRESULT WebPreferences::es6ModulesEnabled(_Out_ BOOL* enabled)
-{
-    if (!enabled)
-        return E_POINTER;
-    *enabled = boolValueForKey(WebKitES6ModulesEnabledPreferenceKey);
-    return S_OK;
-}
-
 HRESULT WebPreferences::setApplicationId(BSTR applicationId)
 {
     m_applicationId = String(applicationId).createCFString();

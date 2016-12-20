@@ -177,5 +177,3 @@
 #define WebKitCustomElementsEnabledPreferenceKey "WebKitCustomElementsEnabled"
 
 #define WebKitModernMediaControlsEnabledPreferenceKey "WebKitModernMediaControlsEnabled"
-
-#define WebKitES6ModulesEnabledPreferenceKey "WebKitES6ModulesEnabled"

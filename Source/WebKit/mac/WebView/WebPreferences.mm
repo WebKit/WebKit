@@ -621,7 +621,6 @@ public:
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
         [NSNumber numberWithBool:NO], WebKitDownloadAttributeEnabledPreferenceKey,
 #endif
-        [NSNumber numberWithBool:NO], WebKitES6ModulesEnabledPreferenceKey,
 #if ENABLE(CSS_GRID_LAYOUT)
         [NSNumber numberWithBool:YES], WebKitCSSGridLayoutEnabledPreferenceKey,
 #endif
@@ -2846,16 +2845,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setDownloadAttributeEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitDownloadAttributeEnabledPreferenceKey];
-}
-
-- (BOOL)es6ModulesEnabled
-{
-    return [self _boolValueForKey:WebKitES6ModulesEnabledPreferenceKey];
-}
-
-- (void)setES6ModulesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitES6ModulesEnabledPreferenceKey];
 }
 
 - (BOOL)isCSSGridLayoutEnabled

@@ -170,9 +170,6 @@ std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(Lega
     if (!m_element.document().isHTMLDocument())
         return std::nullopt;
 
-    auto* settings = m_element.document().settings();
-    if (!settings || !settings->es6ModulesEnabled())
-        return std::nullopt;
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
     // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
     if (equalLettersIgnoringASCIICase(type, "module"))

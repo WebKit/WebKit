@@ -442,10 +442,6 @@ WK_EXPORT void WKPreferencesSetAllowsPictureInPictureMediaPlayback(WKPreferences
 WK_EXPORT bool WKPreferencesGetAllowsPictureInPictureMediaPlayback(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetES6ModulesEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetES6ModulesEnabled(WKPreferencesRef);
-
-// Defaults to false
 WK_EXPORT void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef);
 

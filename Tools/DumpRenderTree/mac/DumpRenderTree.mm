@@ -992,8 +992,6 @@ static void resetWebPreferencesToConsistentValues(const TestOptions& options)
 
     [preferences setDownloadAttributeEnabled:YES];
 
-    [preferences setES6ModulesEnabled:YES];
-
     [preferences setHiddenPageDOMTimerThrottlingEnabled:NO];
     [preferences setHiddenPageCSSAnimationSuspensionEnabled:NO];
 

@@ -1,3 +1,19 @@
+2016-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Enable ES6 Modules
+        https://bugs.webkit.org/show_bug.cgi?id=165849
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences es6ModulesEnabled]): Deleted.
+        (-[WebPreferences setES6ModulesEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2016-12-16  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Values] Make separate wrapper classes for the deprecated CSS Values OM
