@@ -72,9 +72,14 @@ void Manager::initialize(const String& recordReplayMode, const String& recordRep
         m_recordReplayMode = Disabled;
 
     m_recordReplayCacheLocation = WebCore::pathByAppendingComponent(recordReplayCacheLocation, kDirNameRecordReplay);
-    m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), WebCore::OpenForWrite);
-    m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForWrite);
-    m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), WebCore::OpenForWrite);
+
+    if (isRecording()) {
+        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForWrite);
+    } else if (isReplaying()) {
+        m_recordFileHandle = WebCore::FileHandle(reportRecordPath(), WebCore::OpenForRead);
+        m_loadFileHandle = WebCore::FileHandle(reportLoadPath(), WebCore::OpenForWrite);
+        m_replayFileHandle = WebCore::FileHandle(reportReplayPath(), WebCore::OpenForWrite);
+    }
 
     DEBUG_LOG("Cache location = " STRING_SPECIFIER, DEBUG_STR(m_recordReplayCacheLocation));
 

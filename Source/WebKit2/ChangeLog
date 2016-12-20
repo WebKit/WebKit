@@ -1,3 +1,19 @@
+2016-12-19  Keith Rollin  <krollin@apple.com>
+
+        Fix unwanted deletion of record/replay files
+        https://bugs.webkit.org/show_bug.cgi?id=166040
+
+        Reviewed by Alex Christensen.
+
+        As part of some refactoring, the objects that create the meta files
+        that are part of the record/replay cache would get deleted. They were
+        always getting opened in "write" mode", which would truncate the
+        files. Fix this so that the files are opened in the right modes for
+        record, replay, and neither.
+
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::initialize):
+
 2016-12-19  Gavin Barraclough  <barraclough@apple.com>
 
         [CSS Parser] Enable CSS Deferred Parsing
