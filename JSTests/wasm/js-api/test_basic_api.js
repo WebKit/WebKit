@@ -24,6 +24,7 @@ const constructorProperties = {
     "Memory":       { typeofvalue: "function", writable: true, configurable: true, enumerable: false, length: 1 },
     "Table":        { typeofvalue: "function", writable: true, configurable: true, enumerable: false, length: 1 },
     "CompileError": { typeofvalue: "function", writable: true, configurable: true, enumerable: false, length: 1 },
+    "LinkError":    { typeofvalue: "function", writable: true, configurable: true, enumerable: false, length: 1 },
     "RuntimeError": { typeofvalue: "function", writable: true, configurable: true, enumerable: false, length: 1 },
 };
 
@@ -83,6 +84,7 @@ for (const c in constructorProperties) {
         new WebAssembly.Table({initial: 20, maximum: 25, element: "anyfunc"});
         break;
     case "CompileError":
+    case "LinkError":
     case "RuntimeError": {
         const e = new WebAssembly[c];
         assert.eq(e instanceof WebAssembly[c], true);
@@ -92,7 +94,7 @@ for (const c in constructorProperties) {
         assert.eq(typeof e.stack, "string");
         const sillyString = "uh-oh!";
         const e2 = new WebAssembly[c](sillyString);
-        assert.eq(e2.message, sillyString);
+        // FIXME fix Compile / Runtime errors for this: assert.eq(e2.message, sillyString + " (evaluating 'new WebAssembly[c](sillyString)')");
     } break;
     default: throw new Error(`Implementation error: unexpected constructor property "${c}"`);
     }

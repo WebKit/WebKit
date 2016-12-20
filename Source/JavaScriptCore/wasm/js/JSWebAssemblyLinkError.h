@@ -27,51 +27,27 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSObject.h"
-#include "js/JSWebAssemblyCallee.h"
-#include "js/JSWebAssemblyCompileError.h"
-#include "js/JSWebAssemblyInstance.h"
-#include "js/JSWebAssemblyLinkError.h"
-#include "js/JSWebAssemblyMemory.h"
-#include "js/JSWebAssemblyModule.h"
-#include "js/JSWebAssemblyRuntimeError.h"
-#include "js/JSWebAssemblyTable.h"
-#include "js/WebAssemblyCompileErrorConstructor.h"
-#include "js/WebAssemblyCompileErrorPrototype.h"
-#include "js/WebAssemblyFunction.h"
-#include "js/WebAssemblyInstanceConstructor.h"
-#include "js/WebAssemblyInstancePrototype.h"
-#include "js/WebAssemblyLinkErrorConstructor.h"
-#include "js/WebAssemblyLinkErrorPrototype.h"
-#include "js/WebAssemblyMemoryConstructor.h"
-#include "js/WebAssemblyMemoryPrototype.h"
-#include "js/WebAssemblyModuleConstructor.h"
-#include "js/WebAssemblyModulePrototype.h"
-#include "js/WebAssemblyModuleRecord.h"
-#include "js/WebAssemblyPrototype.h"
-#include "js/WebAssemblyRuntimeErrorConstructor.h"
-#include "js/WebAssemblyRuntimeErrorPrototype.h"
-#include "js/WebAssemblyTableConstructor.h"
-#include "js/WebAssemblyTablePrototype.h"
-#include "js/WebAssemblyToJSCallee.h"
+#include "ErrorInstance.h"
 
 namespace JSC {
 
-class JSWebAssembly : public JSNonFinalObject {
+class JSWebAssemblyLinkError : public ErrorInstance {
 public:
-    typedef JSNonFinalObject Base;
+    typedef ErrorInstance Base;
 
-    static JSWebAssembly* create(VM&, JSGlobalObject*, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    static JSWebAssemblyLinkError* create(ExecState*, VM*, Structure*, const String&);
+    static JSWebAssemblyLinkError* create(ExecState* state, VM* vm, Structure* structure, JSValue message)
+    {
+        return create(state, vm, structure, message.isUndefined() ? String() : message.toWTFString(state));
+    }
 
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&, JSGlobalObject*);
-
-private:
-    JSWebAssembly(VM&, Structure*);
+    JSWebAssemblyLinkError(VM&, Structure*);
 };
+
+JSObject* createJSWebAssemblyLinkError(ExecState*, VM*, const String&);
 
 } // namespace JSC
 

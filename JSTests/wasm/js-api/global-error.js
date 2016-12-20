@@ -185,5 +185,5 @@ for ( let imp of [undefined, null, {}, () => {}, "number", new Number(4)]) {
     bin.trim();
 
     const module = new WebAssembly.Module(bin.get());
-    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: imp } }), TypeError, "imported global must be a number (evaluating 'new WebAssembly.Instance(module, { imp: { global: imp } })')");
+    assert.throws(() => new WebAssembly.Instance(module, { imp: { global: imp } }), WebAssembly.LinkError, "imported global must be a number (evaluating 'new WebAssembly.Instance(module, { imp: { global: imp } })')");
 }

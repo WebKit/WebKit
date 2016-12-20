@@ -1,5 +1,50 @@
 2016-12-20  JF Bastien  <jfbastien@apple.com>
 
+        WebAssembly API: implement WebAssembly.LinkError
+        https://bugs.webkit.org/show_bug.cgi?id=165805
+        <rdar://problem/29747874>
+
+        Reviewed by Mark Lam.
+
+        As described here: https://github.com/WebAssembly/design/pull/901
+        Some TypeError and RangeError are now converted to WebAssembly.LinkError.
+
+        * CMakeLists.txt: add files
+        * DerivedSources.make: add autoget .lut.h files
+        * JavaScriptCore.xcodeproj/project.pbxproj: add files
+        * builtins/BuiltinNames.h: new name LinkError
+        * runtime/JSGlobalObject.h: auto-register LinkError using existing macro magic
+        * wasm/JSWebAssembly.h: make the new includes available
+        * wasm/js/JSWebAssemblyLinkError.cpp: Copied from Source/JavaScriptCore/wasm/JSWebAssemblyCompileError.cpp.
+        (JSC::JSWebAssemblyLinkError::create):
+        (JSC::JSWebAssemblyLinkError::JSWebAssemblyLinkError):
+        (JSC::createWebAssemblyLinkError):
+        * wasm/js/JSWebAssemblyLinkError.h: Copied from Source/JavaScriptCore/wasm/JSWebAssemblyCompileError.h.
+        (JSC::JSWebAssemblyLinkError::create):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp: update as per spec change
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyCompileErrorConstructor.cpp.
+        (JSC::constructJSWebAssemblyLinkError):
+        (JSC::callJSWebAssemblyLinkError):
+        (JSC::WebAssemblyLinkErrorConstructor::create):
+        (JSC::WebAssemblyLinkErrorConstructor::createStructure):
+        (JSC::WebAssemblyLinkErrorConstructor::finishCreation):
+        (JSC::WebAssemblyLinkErrorConstructor::WebAssemblyLinkErrorConstructor):
+        (JSC::WebAssemblyLinkErrorConstructor::getConstructData):
+        (JSC::WebAssemblyLinkErrorConstructor::getCallData):
+        * wasm/js/WebAssemblyLinkErrorConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyCompileErrorConstructor.h.
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyCompileErrorPrototypr.cpp.
+        (JSC::WebAssemblyLinkErrorPrototype::create):
+        (JSC::WebAssemblyLinkErrorPrototype::createStructure):
+        (JSC::WebAssemblyLinkErrorPrototype::finishCreation):
+        (JSC::WebAssemblyLinkErrorPrototype::WebAssemblyLinkErrorPrototype):
+        * wasm/js/WebAssemblyLinkErrorPrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyCompileErrorPrototypr.h.
+        * wasm/js/WebAssemblyModuleRecord.cpp: update as per spec change
+        (JSC::dataSegmentFail):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+
+2016-12-20  JF Bastien  <jfbastien@apple.com>
+
         WebAssembly: unique function signatures
         https://bugs.webkit.org/show_bug.cgi?id=165957
         <rdar://problem/29735737>
