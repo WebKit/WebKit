@@ -276,7 +276,6 @@
 		07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116A1D899E63009F0FFB /* CaptureDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07B7116E1D899E63009F0FFB /* CaptureDeviceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B7116B1D899E63009F0FFB /* CaptureDeviceManager.cpp */; };
 		07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */; };
-		07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */; };
 		07C1C0E21BFB600100BD2256 /* MediaTrackSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E01BFB600100BD2256 /* MediaTrackSupportedConstraints.h */; };
 		07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C1C0E41BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07CE77D516712A6A00C55A47 /* InbandTextTrackPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07CE77D416712A6A00C55A47 /* InbandTextTrackPrivateClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5413,7 +5412,6 @@
 		BCA2B08B10505BCD0043BD1C /* UserScriptTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA2B08A10505BCD0043BD1C /* UserScriptTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA83E4F0D7CE1E9003421A8 /* JSDataTransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA83E4D0D7CE1E9003421A8 /* JSDataTransfer.cpp */; };
 		BCA83E500D7CE1E9003421A8 /* JSDataTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA83E4E0D7CE1E9003421A8 /* JSDataTransfer.h */; };
-		BCA83E520D7CE205003421A8 /* JSDataTransferCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA83E510D7CE205003421A8 /* JSDataTransferCustom.cpp */; };
 		BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA846D40DC67A350026C309 /* RenderReplica.cpp */; };
 		BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA846D50DC67A350026C309 /* RenderReplica.h */; };
 		BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C81C11E3D36900812FB7 /* BackForwardController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7260,7 +7258,6 @@
 		07B5A2D91464320A00A81ECE /* JSTextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackList.cpp; sourceTree = "<group>"; };
 		07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackList.h; sourceTree = "<group>"; };
 		07B5A3061468537100A81ECE /* TextTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackList.idl; sourceTree = "<group>"; };
-		07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackEventCustom.cpp; sourceTree = "<group>"; };
 		07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackListCustom.cpp; sourceTree = "<group>"; };
 		07B7116A1D899E63009F0FFB /* CaptureDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptureDevice.h; sourceTree = "<group>"; };
 		07B7116B1D899E63009F0FFB /* CaptureDeviceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptureDeviceManager.cpp; sourceTree = "<group>"; };
@@ -13328,7 +13325,6 @@
 		BCA83E360D7CDC4E003421A8 /* DataTransfer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DataTransfer.idl; sourceTree = "<group>"; };
 		BCA83E4D0D7CE1E9003421A8 /* JSDataTransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransfer.cpp; sourceTree = "<group>"; };
 		BCA83E4E0D7CE1E9003421A8 /* JSDataTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransfer.h; sourceTree = "<group>"; };
-		BCA83E510D7CE205003421A8 /* JSDataTransferCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransferCustom.cpp; sourceTree = "<group>"; };
 		BCA846D40DC67A350026C309 /* RenderReplica.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderReplica.cpp; sourceTree = "<group>"; };
 		BCA846D50DC67A350026C309 /* RenderReplica.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderReplica.h; sourceTree = "<group>"; };
 		BCA8C81C11E3D36900812FB7 /* BackForwardController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardController.h; sourceTree = "<group>"; };
@@ -18350,6 +18346,52 @@
 			name = Geolocation;
 			sourceTree = "<group>";
 		};
+		7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */ = {
+			isa = PBXGroup;
+			children = (
+				1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */,
+				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
+				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
+				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
+				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
+				AD726FE916D9F40A003A4E6D /* JSCSSRuleCustom.h */,
+				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
+				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
+				7C33F3601B4A050400502CAF /* JSDocumentFragmentCustom.cpp */,
+				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
+				ADEC78F718EE5308001315C2 /* JSElementCustom.h */,
+				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
+				E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */,
+				5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */,
+				5141299A1C6C166D0059E714 /* JSIDBIndexCustom.cpp */,
+				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
+				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
+				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
+				AD726FE716D9F204003A4E6D /* JSMediaListCustom.h */,
+				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
+				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
+				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
+				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
+				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
+				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
+				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
+				AD726FEC16D9F4B9003A4E6D /* JSStyleSheetCustom.h */,
+				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
+				838869EB1CE81E9E00D16A9E /* JSTextCustom.cpp */,
+				07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */,
+				07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */,
+				070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */,
+				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
+				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
+				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
+				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
+				83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */,
+				836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */,
+				A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */,
+			);
+			name = "GC / Wrapping Only";
+			sourceTree = "<group>";
+		};
 		7C3E510718DF8F1200C112F7 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -22077,30 +22119,21 @@
 		BC4EDEF70C08F414007EDD49 /* Custom */ = {
 			isa = PBXGroup;
 			children = (
-				1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */,
-				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
+				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
 				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
-				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
-				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				7CEF26181D6A92E300BE905D /* JSCryptoCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
-				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
-				AD726FE916D9F40A003A4E6D /* JSCSSRuleCustom.h */,
-				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */,
-				BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */,
 				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */,
 				DEC2975D1B4DEB2A005F5945 /* JSCustomEventCustom.cpp */,
 				07FBDE2B18FED178001A7CFF /* JSDataCueCustom.cpp */,
-				BCA83E510D7CE205003421A8 /* JSDataTransferCustom.cpp */,
 				31FB1A6B120A5D6900DC02A0 /* JSDeviceMotionEventCustom.cpp */,
 				590E1B4A11E4EF700069F784 /* JSDeviceOrientationEventCustom.cpp */,
 				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
 				ADDA94BF19686F8000453029 /* JSDocumentCustom.h */,
-				7C33F3601B4A050400502CAF /* JSDocumentFragmentCustom.cpp */,
 				A9C6E6460D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp */,
 				46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */,
 				A9C6E64A0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp */,
@@ -22108,11 +22141,7 @@
 				BC64649B11D8238C006455B0 /* JSDOMStringMapCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
-				BC2ED5540C6B9BD300920BFF /* JSElementCustom.cpp */,
-				ADEC78F718EE5308001315C2 /* JSElementCustom.h */,
 				A56D02A21D0B9AF30095E5D3 /* JSErrorEventCustom.cpp */,
-				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
-				E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */,
 				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
 				C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */,
 				1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */,
@@ -22136,61 +22165,34 @@
 				AB4CB4EA0B8BDA3D009F40B0 /* JSHTMLSelectElementCustom.h */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
 				512BDB4C1C46B0FF006494DF /* JSIDBCursorCustom.cpp */,
-				5141298D1C5FD7E90059E714 /* JSIDBCursorWithValueCustom.cpp */,
-				5141299A1C6C166D0059E714 /* JSIDBIndexCustom.cpp */,
-				511EF2CE17F0FDF100E4FA16 /* JSIDBObjectStoreCustom.cpp */,
 				934F31B41CC0737200DB43DC /* JSIDBRequestCustom.cpp */,
-				51E269321DD3BC43006B6A58 /* JSIDBTransactionCustom.cpp */,
-				A7D0318D0E93540300E24ACD /* JSImageDataCustom.cpp */,
 				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				2D9BF7481DBFDDF8007A7D99 /* JSMediaKeySessionCustom.cpp */,
-				AD726FE716D9F204003A4E6D /* JSMediaListCustom.h */,
-				E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
-				E1ADED460E76B8DD004A1A5E /* JSMessagePortCustom.cpp */,
 				A1E5B31D1AAD1DA4006EBEFB /* JSMockContentFilterSettingsCustom.cpp */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
 				BCD9C25F0C17AA67005C90A2 /* JSNamedNodeMapCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
 				BC9439C2116CF4940048C750 /* JSNodeCustom.h */,
 				83F1206A1B8C103600D75F63 /* JSNodeFilterCustom.cpp */,
-				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
-				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
-				AD20B18C18E9D216005A8083 /* JSNodeListCustom.h */,
-				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				A85F22081430377D007CC884 /* JSPopStateEventCustom.cpp */,
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				07DC5FD317D3EEE90099F890 /* JSRTCStatsResponseCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
 				1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */,
 				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
-				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
-				AD726FEC16D9F4B9003A4E6D /* JSStyleSheetCustom.h */,
 				A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */,
 				57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */,
-				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
-				838869EB1CE81E9E00D16A9E /* JSTextCustom.cpp */,
-				07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */,
 				07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */,
-				07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */,
-				070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */,
-				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
-				07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */,
-				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				7C73FB17191EF808007DE061 /* JSUserMessageHandlersNamespaceCustom.cpp */,
 				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
-				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
 				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
 				D3F3D35A1A69A3B00059FC2B /* JSWebGLRenderingContextBaseCustom.cpp */,
-				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */,
 				E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */,
 				E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */,
-				83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
-				836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */,
-				A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */,
 				BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */,
 			);
 			name = Custom;
@@ -29904,7 +29906,6 @@
 				BE61039D18A9D65200DD50D7 /* JSDataCue.cpp in Sources */,
 				07FBDE2C18FED178001A7CFF /* JSDataCueCustom.cpp in Sources */,
 				BCA83E4F0D7CE1E9003421A8 /* JSDataTransfer.cpp in Sources */,
-				BCA83E520D7CE205003421A8 /* JSDataTransferCustom.cpp in Sources */,
 				4162A4571011464700DFF3ED /* JSDedicatedWorkerGlobalScope.cpp in Sources */,
 				FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */,
 				31FB1A65120A5D3F00DC02A0 /* JSDeviceMotionEvent.cpp in Sources */,
@@ -30455,7 +30456,6 @@
 				0FDA7C1A188322EB00C954B5 /* JSTouchList.cpp in Sources */,
 				070334E9145A1F36008D8D45 /* JSTrackCustom.cpp in Sources */,
 				07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */,
-				07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */,
 				E17B492216A9B8FF001C8839 /* JSTransitionEvent.cpp in Sources */,
 				1A750D5C0A90DEE1000FF215 /* JSTreeWalker.cpp in Sources */,
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,

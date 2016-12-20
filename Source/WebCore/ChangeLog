@@ -1,3 +1,37 @@
+2016-12-17  Sam Weinig  <sam@webkit.org>
+
+        Remove a few trivial custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=165999
+
+        Reviewed by Simon Fraser.
+
+        * CMakeLists.txt:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Remove files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move custom bindings that only exist for GC or wrapping reasons
+        to their own group, so we can focus on the ones with custom functions.
+
+        * bindings/js/JSDataTransferCustom.cpp: Removed.
+        * bindings/js/JSTrackEventCustom.cpp: Removed.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::types):
+        Remove incorrect comment and use a more concise empty initialization syntax.
+
+        * dom/DataTransfer.idl:
+        Update IDL to remove [Custom] annotation and match spec better.
+
+        * html/track/TrackEvent.cpp:
+        (WebCore::convertToTrackEventTrack):
+        (WebCore::TrackEvent::TrackEvent):
+        * html/track/TrackEvent.h:
+        Switch to store the Track in a Variant to make the binding easier.
+
+        * html/track/TrackEvent.idl:
+        Remove [CustomGetter] annotation.
+
 2016-12-19  Zalan Bujtas  <zalan@apple.com>
 
         Do not position detached list item marker.

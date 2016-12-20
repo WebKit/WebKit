@@ -1120,7 +1120,6 @@ set(WebCore_SOURCES
     bindings/js/JSDOMWindowShell.cpp
     bindings/js/JSDOMWrapper.cpp
     bindings/js/JSDataCueCustom.cpp
-    bindings/js/JSDataTransferCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
@@ -1191,7 +1190,6 @@ set(WebCore_SOURCES
     bindings/js/JSTextTrackCustom.cpp
     bindings/js/JSTextTrackListCustom.cpp
     bindings/js/JSTrackCustom.cpp
-    bindings/js/JSTrackEventCustom.cpp
     bindings/js/JSTreeWalkerCustom.cpp
     bindings/js/JSVideoTrackCustom.cpp
     bindings/js/JSVideoTrackListCustom.cpp

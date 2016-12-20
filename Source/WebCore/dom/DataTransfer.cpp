@@ -147,10 +147,8 @@ void DataTransfer::setData(const String& type, const String& data)
 
 Vector<String> DataTransfer::types() const
 {
-    // FIXME: Per HTML5, types should be a live array, and the DOM attribute should always return the same object.
-
     if (!canReadTypes())
-        return Vector<String>();
+        return { };
 
     return m_pasteboard->types();
 }
