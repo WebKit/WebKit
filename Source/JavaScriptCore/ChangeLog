@@ -1,3 +1,53 @@
+2016-12-19  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r210007.
+
+    2016-12-19  Mark Lam  <mark.lam@apple.com>
+
+            Rolling out r209974 and r209952. They break some websites in mysterious ways. Step 1: Rollout r209974.
+            https://bugs.webkit.org/show_bug.cgi?id=166049
+
+            Not reviewed.
+
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::emitEnumeration):
+            (JSC::BytecodeGenerator::emitJumpViaFinallyIfNeeded):
+            (JSC::BytecodeGenerator::emitReturnViaFinallyIfNeeded):
+            (JSC::BytecodeGenerator::emitFinallyCompletion):
+            (JSC::BytecodeGenerator::allocateFinallyRegisters):
+            (JSC::BytecodeGenerator::releaseFinallyRegisters):
+            (JSC::BytecodeGenerator::emitCompareFinallyActionAndJumpIf):
+            (JSC::BytecodeGenerator::allocateCompletionRecordRegisters): Deleted.
+            (JSC::BytecodeGenerator::releaseCompletionRecordRegisters): Deleted.
+            (JSC::BytecodeGenerator::emitJumpIfCompletionType): Deleted.
+            * bytecompiler/BytecodeGenerator.h:
+            (JSC::FinallyJump::FinallyJump):
+            (JSC::FinallyContext::registerJump):
+            (JSC::BytecodeGenerator::FinallyRegistersScope::FinallyRegistersScope):
+            (JSC::BytecodeGenerator::FinallyRegistersScope::~FinallyRegistersScope):
+            (JSC::BytecodeGenerator::finallyActionRegister):
+            (JSC::BytecodeGenerator::finallyReturnValueRegister):
+            (JSC::BytecodeGenerator::emitSetFinallyActionToNormalCompletion):
+            (JSC::BytecodeGenerator::emitSetFinallyActionToReturnCompletion):
+            (JSC::BytecodeGenerator::emitSetFinallyActionToJumpID):
+            (JSC::BytecodeGenerator::emitSetFinallyReturnValueRegister):
+            (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNormalCompletion):
+            (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNotJump):
+            (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsReturnCompletion):
+            (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNotReturnCompletion):
+            (JSC::BytecodeGenerator::emitJumpIfFinallyActionIsNotThrowCompletion):
+            (JSC::BytecodeGenerator::emitJumpIfCompletionTypeIsThrow):
+            (JSC::BytecodeGenerator::bytecodeOffsetToJumpID):
+            (JSC::bytecodeOffsetToJumpID): Deleted.
+            (JSC::BytecodeGenerator::CompletionRecordScope::CompletionRecordScope): Deleted.
+            (JSC::BytecodeGenerator::CompletionRecordScope::~CompletionRecordScope): Deleted.
+            (JSC::BytecodeGenerator::completionTypeRegister): Deleted.
+            (JSC::BytecodeGenerator::completionValueRegister): Deleted.
+            (JSC::BytecodeGenerator::emitSetCompletionType): Deleted.
+            (JSC::BytecodeGenerator::emitSetCompletionValue): Deleted.
+            * bytecompiler/NodesCodegen.cpp:
+            (JSC::TryNode::emitBytecode):
+
 2016-12-19  Dean Jackson  <dino@apple.com>
 
         Merge another patch for rdar://problem/29466493.

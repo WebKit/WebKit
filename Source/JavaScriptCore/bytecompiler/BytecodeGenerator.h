@@ -80,41 +80,15 @@ namespace JSC {
         unsigned m_padding;
     };
 
-    // https://tc39.github.io/ecma262/#sec-completion-record-specification-type
-    //
-    // For the Break and Continue cases, instead of using the Break and Continue enum values
-    // below, we use the unique jumpID of the break and continue statement as the encoding
-    // for the CompletionType value. emitFinallyCompletion() uses this jumpID value later
-    // to determine the appropriate jump target to jump to after executing the relevant finally
-    // blocks. The jumpID is computed as:
-    //     jumpID = bytecodeOffset (of the break/continue node) + CompletionType::NumberOfTypes.
-    // Hence, there won't be any collision between jumpIDs and CompletionType enums.
-    enum class CompletionType : int {
-        Normal,
-        Break,
-        Continue,
-        Return,
-        Throw,
-        
-        NumberOfTypes
-    };
-
-    inline CompletionType bytecodeOffsetToJumpID(unsigned offset)
-    {
-        int jumpIDAsInt = offset + static_cast<int>(CompletionType::NumberOfTypes);
-        ASSERT(jumpIDAsInt >= static_cast<int>(CompletionType::NumberOfTypes));
-        return static_cast<CompletionType>(jumpIDAsInt);
-    }
-
     struct FinallyJump {
-        FinallyJump(CompletionType jumpID, int targetLexicalScopeIndex, Label* targetLabel)
+        FinallyJump(int jumpID, int targetLexicalScopeIndex, Label* targetLabel)
             : jumpID(jumpID)
             , targetLexicalScopeIndex(targetLexicalScopeIndex)
             , targetLabel(targetLabel)
         { }
 
-        CompletionType jumpID;
-        int targetLexicalScopeIndex;
+        int jumpID { 0 };
+        int targetLexicalScopeIndex { 0 };
         RefPtr<Label> targetLabel;
     };
 
@@ -142,7 +116,7 @@ namespace JSC {
         bool handlesReturns() const { return m_handlesReturns; }
         void setHandlesReturns() { m_handlesReturns = true; }
 
-        void registerJump(CompletionType jumpID, int lexicalScopeIndex, Label* targetLabel)
+        void registerJump(int jumpID, int lexicalScopeIndex, Label* targetLabel)
         {
             if (!m_jumps)
                 m_jumps = std::make_unique<Vector<FinallyJump>>();
@@ -801,18 +775,18 @@ namespace JSC {
         void emitDebugHook(ExpressionNode*);
         void emitWillLeaveCallFrameDebugHook();
 
-        class CompletionRecordScope {
+        class FinallyRegistersScope {
         public:
-            CompletionRecordScope(BytecodeGenerator& generator, bool needCompletionRecordRegisters = true)
+            FinallyRegistersScope(BytecodeGenerator& generator, bool needFinallyRegisters = true)
                 : m_generator(generator)
             {
-                if (needCompletionRecordRegisters && m_generator.allocateCompletionRecordRegisters())
+                if (needFinallyRegisters && m_generator.allocateFinallyRegisters())
                     m_needToReleaseOnDestruction = true;
             }
-            ~CompletionRecordScope()
+            ~FinallyRegistersScope()
             {
                 if (m_needToReleaseOnDestruction)
-                    m_generator.releaseCompletionRecordRegisters();
+                    m_generator.releaseFinallyRegisters();
             }
 
         private:
@@ -820,35 +794,78 @@ namespace JSC {
             bool m_needToReleaseOnDestruction { false };
         };
 
-        RegisterID* completionTypeRegister() const
+        RegisterID* finallyActionRegister() const
         {
-            ASSERT(m_completionTypeRegister);
-            return m_completionTypeRegister.get();
+            ASSERT(m_finallyActionRegister);
+            return m_finallyActionRegister.get();
         }
-        RegisterID* completionValueRegister() const
+        RegisterID* finallyReturnValueRegister() const
         {
-            ASSERT(m_completionValueRegister);
-            return m_completionValueRegister.get();
-        }
-
-        void emitSetCompletionType(CompletionType type)
-        {
-            emitLoad(completionTypeRegister(), JSValue(static_cast<int>(type)));
-        }
-        void emitSetCompletionValue(RegisterID* reg)
-        {
-            emitMove(completionValueRegister(), reg);
+            ASSERT(m_finallyReturnValueRegister);
+            return m_finallyReturnValueRegister.get();
         }
 
-        void emitJumpIfCompletionType(OpcodeID compareOpcode, CompletionType, Label* jumpTarget);
+        void emitSetFinallyActionToNormalCompletion()
+        {
+            emitMoveEmptyValue(m_finallyActionRegister.get());
+        }
+        void emitSetFinallyActionToReturnCompletion()
+        {
+            emitLoad(finallyActionRegister(), JSValue(static_cast<int>(CompletionType::Return)));
+        }
+        void emitSetFinallyActionToJumpID(int jumpID)
+        {
+            emitLoad(finallyActionRegister(), JSValue(jumpID));
+        }
+        void emitSetFinallyReturnValueRegister(RegisterID* reg)
+        {
+            emitMove(finallyReturnValueRegister(), reg);
+        }
+
+        void emitJumpIfFinallyActionIsNormalCompletion(Label* jumpTarget)
+        {
+            emitJumpIfTrue(emitIsEmpty(newTemporary(), finallyActionRegister()), jumpTarget);
+        }
+
+        void emitJumpIfFinallyActionIsNotJump(int jumpID, Label* jumpTarget)
+        {
+            emitCompareFinallyActionAndJumpIf(op_nstricteq, jumpID, jumpTarget);
+        }
+
+        void emitJumpIfFinallyActionIsReturnCompletion(Label* jumpTarget)
+        {
+            emitCompareFinallyActionAndJumpIf(op_stricteq, static_cast<int>(CompletionType::Return), jumpTarget);
+        }
+        void emitJumpIfFinallyActionIsNotReturnCompletion(Label* jumpTarget)
+        {
+            emitCompareFinallyActionAndJumpIf(op_nstricteq, static_cast<int>(CompletionType::Return), jumpTarget);
+        }
+
+        void emitJumpIfFinallyActionIsNotThrowCompletion(Label* jumpTarget)
+        {
+            emitJumpIfTrue(emitIsNumber(newTemporary(), finallyActionRegister()), jumpTarget);
+        }
+        void emitJumpIfCompletionTypeIsThrow(RegisterID* reg, Label* jumpTarget)
+        {
+            emitJumpIfFalse(emitIsNumber(newTemporary(), reg), jumpTarget);
+        }
 
         bool emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label* jumpTarget);
         bool emitReturnViaFinallyIfNeeded(RegisterID* returnRegister);
         void emitFinallyCompletion(FinallyContext&, Label* normalCompletionLabel);
 
     private:
-        bool allocateCompletionRecordRegisters();
-        void releaseCompletionRecordRegisters();
+        void emitCompareFinallyActionAndJumpIf(OpcodeID compareOpcode, int value, Label* jumpTarget);
+
+        int bytecodeOffsetToJumpID(unsigned offset)
+        {
+            int jumpID = offset + static_cast<int>(CompletionType::NumberOfTypes);
+            ASSERT(jumpID >= static_cast<int>(CompletionType::NumberOfTypes));
+            return jumpID;
+        }
+
+        bool allocateFinallyRegisters();
+        void releaseFinallyRegisters();
 
     public:
         FinallyContext* pushFinallyControlFlowScope(Label* finallyLabel);
@@ -1083,8 +1100,32 @@ namespace JSC {
         RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
         RegisterID* m_promiseCapabilityRegister { nullptr };
 
-        RefPtr<RegisterID> m_completionTypeRegister;
-        RefPtr<RegisterID> m_completionValueRegister;
+        // The spec at https://tc39.github.io/ecma262/#sec-completion-record-specification-type says
+        // that there are 5 types of completions. Conceptually, we'll set m_finallyActionRegister
+        // to one of these completion types. However, to optimize our implementation, we'll encode
+        // these type info as follows:
+        //
+        //     CompletionType::Normal   - m_finallyActionRegister is empty.
+        //     CompletionType::Break    - m_finallyActionRegister is an int JSValue jumpID.
+        //     CompletionType::Continue - m_finallyActionRegister is an int JSValue jumpID.
+        //     CompletionType::Return   - m_finallyActionRegister is the Return enum as an int JSValue.
+        //     CompletionType::Throw    - m_finallyActionRegister is the Exception object to rethrow.
+        //
+        // Hence, of the 5 completion types, only the CompletionType::Return enum value is used in
+        // our implementation. The rest are just provided for completeness.
+
+        enum class CompletionType : int {
+            Normal,
+            Break,
+            Continue,
+            Return,
+            Throw,
+
+            NumberOfTypes
+        };
+
+        RefPtr<RegisterID> m_finallyActionRegister;
+        RefPtr<RegisterID> m_finallyReturnValueRegister;
 
         FinallyContext* m_currentFinallyContext { nullptr };
 
@@ -1102,7 +1143,7 @@ namespace JSC {
         void pushLocalControlFlowScope();
         void popLocalControlFlowScope();
 
-        // FIXME: Restore overflow checking with UnsafeVectorOverflow once SegmentVector supports it.
+        // FIXME: Restore overflow checking with UnsafeVectorOverflow once SegmentVector supports it. 
         // https://bugs.webkit.org/show_bug.cgi?id=165980
         SegmentedVector<ControlFlowScope, 16> m_controlFlowScopeStack;
         Vector<SwitchInfo> m_switchContextStack;
