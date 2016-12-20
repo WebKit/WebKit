@@ -57,7 +57,11 @@
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h" 
 #include "RenderRuby.h"
+#include "RenderSVGBlock.h"
+#include "RenderSVGInline.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGRoot.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
 #include "RenderTheme.h"
@@ -185,7 +189,11 @@ RenderObject::FlowThreadState RenderObject::computedFlowThreadState(const Render
     auto inheritedFlowState = RenderObject::NotInsideFlowThread;
     if (is<RenderText>(renderer))
         inheritedFlowState = renderer.parent()->flowThreadState();
-    else if (auto* containingBlock = renderer.containingBlock())
+    else if (is<RenderSVGBlock>(renderer) || is<RenderSVGInline>(renderer) || is<RenderSVGModelObject>(renderer)) {
+        // containingBlock() skips svg boundary (SVG root is a RenderReplaced).
+        if (auto* svgRoot = SVGRenderSupport::findTreeRootObject(downcast<RenderElement>(renderer)))
+            inheritedFlowState = svgRoot->flowThreadState();
+    } else if (auto* containingBlock = renderer.containingBlock())
         inheritedFlowState = containingBlock->flowThreadState();
     else {
         // Splitting lines or doing continuation, so just keep the current state.

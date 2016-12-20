@@ -1,3 +1,14 @@
+2016-12-20  Zalan Bujtas  <zalan@apple.com>
+
+        SVG elements should inherit the root's flow thread state.
+        https://bugs.webkit.org/show_bug.cgi?id=166173
+        rdar://problem/29704862
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/svg-inside-multicolumn-expected.txt: Added.
+        * fast/multicol/svg-inside-multicolumn.html: Added.
+
 2016-12-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Console could be made useful for very simple await expressions
