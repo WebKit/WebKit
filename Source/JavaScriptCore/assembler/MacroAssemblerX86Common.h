@@ -31,6 +31,10 @@
 #include "AbstractMacroAssembler.h"
 #include <wtf/Optional.h>
 
+#if COMPILER(MSVC)
+#include <intrin.h>
+#endif
+
 namespace JSC {
 
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler, MacroAssemblerX86Common> {
