@@ -1,3 +1,10 @@
+2016-12-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix clean Windows build after r210029
+        https://bugs.webkit.org/show_bug.cgi?id=165881
+
+        * DerivedSources.cpp:
+
 2016-12-20  Brent Fulgham  <bfulgham@apple.com>
 
         Address some style problems found by static analysis
