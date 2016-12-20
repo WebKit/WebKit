@@ -40,7 +40,7 @@
 
     // WorkerUtils
 
-    [Custom] void importScripts(/*[Variadic] USVString urls */);
+    [MayThrowException] void importScripts(USVString... urls);
     readonly attribute WorkerNavigator navigator;
 
     // Additional constructors
