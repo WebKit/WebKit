@@ -1,3 +1,28 @@
+2016-12-20  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement readableByteStreamControllerCallPullIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=166022
+
+        Reviewed by Youenn Fablet.
+
+        Implemented readableByteStreamControllerCallPullIfNeeded(). This function is
+        in particular called when a new ReadableByteStreamController is created; hence,
+        ReadableByteStreamController constructor has been updated.
+
+        Added 3 tests to check behaviour in case of success/failure of the start and pull functions
+        associated to the underlyingByteSource.
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (privateInitializeReadableByteStreamController): Updated handling of underlyingByteSource
+        start function (especially with call to readableByteStreamControllerCallPullIfNeeded).
+        (isReadableStreamBYOBReader): Added.
+        (readableStreamHasBYOBReader): Added.
+        (readableStreamHasDefaultReader): Added.
+        (readableByteStreamControllerCallPullIfNeeded): Added.
+        * Modules/streams/ReadableStreamInternals.js:
+        (privateInitializeReadableStreamDefaultController): Added missing asserts.
+        * bindings/js/WebCoreBuiltinNames.h: Added readIntoRequests.
+
 2016-12-20  Sam Weinig  <sam@webkit.org>
 
         [DataCue] Un-prefix DataCue and remove custom bindings

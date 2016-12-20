@@ -73,6 +73,7 @@ namespace WebCore {
     macro(queuedSetLocalDescription) \
     macro(queuedSetRemoteDescription) \
     macro(reader) \
+    macro(readIntoRequests) \
     macro(readRequests) \
     macro(readableStreamController) \
     macro(readyPromiseCapability) \

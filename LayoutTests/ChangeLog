@@ -1,3 +1,17 @@
+2016-12-20  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+
+        [Readable Streams API] Implement readableByteStreamControllerCallPullIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=166022
+
+        Reviewed by Youenn Fablet.
+
+        Added 3 tests to check behaviour in case of success/failure of the start and pull functions
+        associated to the underlyingByteSource.
+
+        * streams/readable-byte-stream-controller-expected.txt: Added expectations for new tests.
+        * streams/readable-byte-stream-controller.js: Added 3 new tests.
+
 2016-12-20  Sam Weinig  <sam@webkit.org>
 
         [DataCue] Un-prefix DataCue and remove custom bindings

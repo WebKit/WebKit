@@ -223,4 +223,68 @@ promise_test(function() {
     );
 }, "Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined");
 
+promise_test(function() {
+    let pullCalls = 0;
+    const rs = new ReadableStream({
+        pull: function () {
+            pullCalls++;
+        },
+        type: "bytes"
+    });
+    return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+            if (pullCalls === 1)
+                resolve("ok");
+            else
+                reject("1 call should have been made to pull function");
+        }, 200);
+    });
+}, "Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController");
+
+promise_test(function() {
+    const myError = new Error("Pull failed");
+    const rs = new ReadableStream({
+        pull: function () {
+            throw myError;
+        },
+        type: "bytes"
+    });
+
+    return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+            rs.cancel().then(
+                function (res) { reject("Cancel should return a promise resolved with rejection"); },
+                function (err) {
+                    if (err === myError)
+                        resolve();
+                    else
+                        reject("Reason for rejection should be the error that was thrown in pull");
+                }
+            )
+        }, 200)});
+}, "Calling cancel after pull has thrown an error should result in a promise rejected with the same error");
+
+promise_test(function() {
+    const myError = new Error("Start failed");
+    const rs = new ReadableStream({
+        start: function () {
+            return new Promise(function(resolve, reject) { reject(myError); });
+        },
+        type: "bytes"
+    });
+
+    return new Promise(function(resolve, reject) {
+        setTimeout(function() {
+            rs.cancel().then(
+                function (res) { reject("An error should have been thrown"); },
+                function (err) {
+                    if (err === myError)
+                        resolve();
+                    else
+                        reject("Reason for rejection should be the error that led the promise returned by start to fail");
+                }
+            )
+        }, 200)});
+}, "Calling cancel after creating a ReadableStream with an underlyingByteStream's start function returning a rejected promise should result in a promise rejected with the same error");
+
 done();

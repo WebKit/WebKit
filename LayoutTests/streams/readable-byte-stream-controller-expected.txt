@@ -12,6 +12,9 @@ PASS Calling read() on a reader associated to a controller that has been closed 
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
 PASS By default initial value of desiredSize should be 1 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
+PASS Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController 
+PASS Calling cancel after pull has thrown an error should result in a promise rejected with the same error 
+PASS Calling cancel after creating a ReadableStream with an underlyingByteStream's start function returning a rejected promise should result in a promise rejected with the same error 
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
 PASS ReadableByteStreamController instances should have the correct list of properties 
 PASS Calling error() with a this object different from ReadableByteStreamController should throw a TypeError 
@@ -25,4 +28,7 @@ PASS Calling read() on a reader associated to a controller that has been closed 
 FAIL Calling read() after a chunk has been enqueued should result in obtaining said chunk ReadableByteStreamController enqueue() is not implemented
 PASS By default initial value of desiredSize should be 1 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
+PASS Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController 
+PASS Calling cancel after pull has thrown an error should result in a promise rejected with the same error 
+PASS Calling cancel after creating a ReadableStream with an underlyingByteStream's start function returning a rejected promise should result in a promise rejected with the same error 
 
