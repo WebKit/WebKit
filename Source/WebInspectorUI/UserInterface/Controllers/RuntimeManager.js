@@ -74,6 +74,9 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         } else if (/^\s*\{/.test(expression) && /\}\s*$/.test(expression)) {
             // Transform {a:1} to ({a:1}) so it is treated like an object literal instead of a block with a label.
             expression = "(" + expression + ")";
+        } else if (/\bawait\b/.test(expression)) {
+            // Transform `await <expr>` into an async function assignment.
+            expression = this._tryApplyAwaitConvenience(expression);
         }
 
         expression = sourceURLAppender(expression);
@@ -161,6 +164,91 @@ WebInspector.RuntimeManager = class RuntimeManager extends WebInspector.Object
         let currentContextWasDestroyed = contexts.some((context) => context.id === this._activeExecutionContext.id);
         if (currentContextWasDestroyed)
             this.activeExecutionContext = WebInspector.mainTarget.executionContext;
+    }
+
+    _tryApplyAwaitConvenience(originalExpression)
+    {
+        let esprimaSyntaxTree;
+
+        // Do not transform if the original code parses just fine.
+        try {
+            esprima.parse(originalExpression);
+            return originalExpression;
+        } catch (error) { }
+
+        // Do not transform if the async function version does not parse.
+        try {
+            esprimaSyntaxTree = esprima.parse("(async function(){" + originalExpression + "})");
+        } catch (error) {
+            return originalExpression;
+        }
+
+        // Assert expected AST produced by our wrapping code.
+        console.assert(esprimaSyntaxTree.type === "Program");
+        console.assert(esprimaSyntaxTree.body.length === 1);
+        console.assert(esprimaSyntaxTree.body[0].type === "ExpressionStatement");
+        console.assert(esprimaSyntaxTree.body[0].expression.type === "FunctionExpression");
+        console.assert(esprimaSyntaxTree.body[0].expression.async);
+        console.assert(esprimaSyntaxTree.body[0].expression.body.type === "BlockStatement");
+
+        // Do not transform if there is more than one statement.
+        let asyncFunctionBlock = esprimaSyntaxTree.body[0].expression.body;
+        if (asyncFunctionBlock.body.length !== 1)
+            return originalExpression;
+
+        // Extract the variable name for transformation.
+        let variableName;
+        let anonymous = false;
+        let declarationKind = "var";
+        let awaitPortion;
+        let statement = asyncFunctionBlock.body[0];
+        if (statement.type === "ExpressionStatement"
+            && statement.expression.type === "AwaitExpression") {
+            // await <expr>
+            anonymous = true;
+        } else if (statement.type === "ExpressionStatement"
+            && statement.expression.type === "AssignmentExpression"
+            && statement.expression.right.type === "AwaitExpression"
+            && statement.expression.left.type === "Identifier") {
+            // x = await <expr>
+            variableName = statement.expression.left.name;
+            awaitPortion = originalExpression.substring(originalExpression.indexOf("await"));
+        } else if (statement.type === "VariableDeclaration"
+            && statement.declarations.length === 1
+            && statement.declarations[0].init.type === "AwaitExpression"
+            && statement.declarations[0].id.type === "Identifier") {
+            // var x = await <expr>
+            variableName = statement.declarations[0].id.name;
+            declarationKind = statement.kind;
+            awaitPortion = originalExpression.substring(originalExpression.indexOf("await"));
+        } else {
+            // Do not transform if this was not one of the simple supported syntaxes.
+            return originalExpression;
+        }
+
+        if (anonymous) {
+            return `
+(async function() {
+    try {
+        let result = ${originalExpression};
+        console.info("%o", result);
+    } catch (e) {
+        console.error(e);
+    }
+})();
+undefined`;
+        }
+
+        return `${declarationKind} ${variableName};
+(async function() {
+    try {
+        ${variableName} = ${awaitPortion};
+        console.info("%o", ${variableName});
+    } catch (e) {
+        console.error(e);
+    }
+})();
+undefined;`;
     }
 };
 

@@ -1,3 +1,15 @@
+2016-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Console could be made useful for very simple await expressions
+        https://bugs.webkit.org/show_bug.cgi?id=165681
+        <rdar://problem/29755339>
+
+        Reviewed by Brian Burg.
+
+        * inspector/controller/runtime-controller-expected.txt:
+        * inspector/controller/runtime-controller.html:
+        Test the "await expression" convenience of RuntimeManager.
+
 2016-12-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html for mac-elcapitan after r210024.

@@ -3,6 +3,27 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
+let resultNumber = 100;
+function asyncOperation() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(resultNumber++);
+        }, 50);
+    });
+}
+
+function rejectedEventually() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            reject("Rejection");
+        }, 50);
+    });
+}
+
+function causeExceptionImmediately() {
+    throw "Thrown exception";
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("RuntimeManager");
@@ -10,7 +31,7 @@ function test()
     suite.addTestCase({
         name: "RuntimeManager.prototype.evaluateInInspectedWindow.ObjectLiteralConvenience",
         description: "Test evaluating an object literal string conveniently converts wraps it in parenthesis to avoid misinterpretation as a program with a block and labeled statement.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function testSource(expression, callback) {
                 WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
                     InspectorTest.log("Source: " + expression);
@@ -50,11 +71,64 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "RuntimeManager.prototype.evaluateInInspectedWindow.AwaitConvenience",
+        description: "Test evaluating a simple await expression wraps it into an async function and eventually resolves the value.",
+        test(resolve, reject) {
+            function testSource(expression, callback) {
+                WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                    InspectorTest.log("Source: " + expression);
+                    callback(result, wasThrown);
+                });
+            }
+
+            function expectUndefined(result, wasThrown) {
+                InspectorTest.expectThat(result.isUndefined(), "Transformed. Should log the value or an exception.");
+            }
+
+            function expectException(result, wasThrown) {
+                InspectorTest.expectThat(wasThrown, "Exception. Should not get transformed and produce a SyntaxError.");
+            }
+
+            // The convenience will detect these and make an async task.
+            const expected = 6;
+            testSource("await 1", expectUndefined);
+            testSource("   await 2   ", expectUndefined);
+            testSource("var x = await 3", expectUndefined);
+            testSource("await causeExceptionImmediately()", expectUndefined);
+            testSource("await Promise.resolve(4)", expectUndefined);
+            testSource("await Promise.reject('Promise.reject')", expectUndefined);
+            testSource("await rejectedEventually()", expectUndefined);
+            testSource("await asyncOperation()", expectUndefined);
+            testSource("x = await asyncOperation()", expectUndefined);
+
+            InspectorTest.log("");
+
+            // The convenience will not apply to these noexpressions.
+            testSource("return 10", expectException);
+            testSource("await 10; 1", expectException);
+            testSource("1; await 10;", expectException);
+            testSource("x = y = await 10", expectException);
+
+            // We can resolve after receiving the expected number of console.info messages.
+            let seen = 0;
+            let listener = WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, (event) => {
+                let consoleMessage = event.data.message;
+                if (consoleMessage.level !== WebInspector.ConsoleMessage.MessageLevel.Info)
+                    return;
+                if (++seen !== expected)
+                    return;
+                WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.MessageAdded, listener);
+                resolve();
+            });
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests for the Runtime.parse command.</p>
+<p>Tests for RuntimeManager operations.</p>
 </body>
 </html>

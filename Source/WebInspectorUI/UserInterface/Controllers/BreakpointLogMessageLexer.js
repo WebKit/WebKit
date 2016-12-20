@@ -152,7 +152,7 @@ WebInspector.BreakpointLogMessageLexer = class BreakpointLogMessageLexer extends
     _possiblePlaceholder()
     {
         let character = this._consume();
-        console.assert(character === "$")
+        console.assert(character === "$");
         let nextCharacter = this._peek();
 
         console.assert(this._states.lastValue === WebInspector.BreakpointLogMessageLexer.State.PossiblePlaceholder);
