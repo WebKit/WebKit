@@ -4304,6 +4304,18 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
     _page->synchronizeDynamicViewportUpdate();
 
+    // synchronizeDynamicViewportUpdate() may cause this function to re-enter via _didCommitLayerTree, so check _dynamicViewportUpdateMode again.
+    if (_dynamicViewportUpdateMode == DynamicViewportUpdateMode::NotResizing)
+        return;
+
+    if (!_resizeAnimationView) {
+        // Paranoia. If _resizeAnimationView is null we'll end up setting a zero scale on the content view.
+        ASSERT_NOT_REACHED();
+        _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
+        [_contentView setHidden:NO];
+        return;
+    }
+    
     NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
     [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
     [_scrollView insertSubview:[_contentView unscaledView] atIndex:indexOfResizeAnimationView + 1];

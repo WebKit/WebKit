@@ -1,3 +1,23 @@
+2016-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Switching or closing a tab leads to all-white tab content if the status bar is double height
+        https://bugs.webkit.org/show_bug.cgi?id=166286
+        rdar://problem/29593525
+
+        Reviewed by Tim Horton.
+
+        A double-height status bar triggers view resize while snapshotting in the background,
+        which also triggers calls to _endAnimatedResize on tab resume. However, it was possible
+        for _endAnimatedResize to re-enter via synchronizeDynamicViewportUpdate()/didCommitLayerTree(),
+        causing us to use a nil _resizeAnimationView for scale computations, thus setting a zero
+        scale on the WKContentView.
+
+        Fix by checking _dynamicViewportUpdateMode again after the call to synchronizeDynamicViewportUpdate(),
+        and do a belt-and-braces check for a nil _resizeAnimationView.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _endAnimatedResize]):
+
 2016-12-20  Andy Estes  <aestes@apple.com>
 
         [Cocoa] REGRESSION (r209558): Calling decisionHandler multiple times in webView:decidePolicyForNavigationAction:decisionHandler: leads to a crash
