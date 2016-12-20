@@ -180,14 +180,6 @@ table.queue-grid tr.platform.ios-10 img.logo {
     content: -webkit-image-set(url(../Images/IOS10@2x.png) 2x, url(../Images/IOS10.png) 1x);
 }
 
-table.queue-grid tr.platform.ios-simulator-9 img.logo {
-    content: -webkit-image-set(url(../Images/IOS9Simulator@2x.png) 2x, url(../Images/IOS9Simulator.png) 1x);
-}
-
-table.queue-grid tr.platform.ios-9 img.logo {
-    content: -webkit-image-set(url(../Images/IOS9@2x.png) 2x, url(../Images/IOS9.png) 1x);
-}
-
 table.queue-grid tr.platform.mac-os-x-elcapitan img.logo {
     content: -webkit-image-set(url(../Images/ElCapitan@2x.png) 2x, url(../Images/ElCapitan.png) 1x);
 }
@@ -195,14 +187,6 @@ table.queue-grid tr.platform.mac-os-x-elcapitan img.logo {
 table.queue-grid tr.platform.macos-sierra img.logo {
     content: -webkit-image-set(url(../Images/Sierra@2x.png) 2x, url(../Images/Sierra.png) 1x);
 }
-
-table.queue-grid tr.platform.mac-os-x-yosemite img.logo {
-    content: -webkit-image-set(url(../Images/Yosemite@2x.png) 2x, url(../Images/Yosemite.png) 1x);
-}
-
-table.queue-grid tr.platform.mac-os-x-mavericks img.logo { 
-    content: -webkit-image-set(url(../Images/Mavericks@2x.png) 2x, url(../Images/Mavericks.png) 1x); 
-} 
 
 table.queue-grid tr.platform.windows-8 img.logo {
     content: -webkit-image-set(url(../Images/Windows8@2x.png) 2x, url(../Images/Windows8.png) 1x);

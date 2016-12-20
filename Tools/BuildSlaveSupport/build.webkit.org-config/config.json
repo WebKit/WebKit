@@ -1,21 +1,6 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "bot139", "platform": "mac-yosemite" },
-                    { "name": "bot180", "platform": "mac-yosemite" },
-                    { "name": "bot181", "platform": "mac-yosemite" },
-                    { "name": "bot182", "platform": "mac-yosemite" },
-                    { "name": "bot183", "platform": "mac-yosemite" },
-                    { "name": "bot184", "platform": "mac-yosemite" },
-                    { "name": "bot185", "platform": "mac-yosemite" },
-                    { "name": "bot190", "platform": "mac-yosemite" },
-                    { "name": "bot191", "platform": "mac-yosemite" },
-                    { "name": "bot192", "platform": "mac-yosemite" },
-                    { "name": "bot193", "platform": "mac-yosemite" },
-                    { "name": "bot194", "platform": "mac-yosemite" },
-                    { "name": "bot400", "platform": "mac-yosemite" },
-                    { "name": "bot401", "platform": "mac-yosemite" },
-
                     { "name": "bot121", "platform": "mac-elcapitan" },
                     { "name": "bot123", "platform": "mac-elcapitan" },
                     { "name": "bot126", "platform": "mac-elcapitan" },
@@ -210,45 +195,6 @@
                       "platform": "mac-elcapitan", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot419"]
                     },
-                    { "name": "Apple Yosemite Release (32-bit Build)", "type": "Build", "builddir": "yosemite-32bit-release",
-                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["bot139"]
-                    },
-                    { "name": "Apple Yosemite Debug (Build)", "type": "Build", "builddir": "yosemite-debug",
-                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2"],
-                      "slavenames": ["bot180", "bot181"]
-                    },
-                    { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "yosemite-debug-tests-wk1",
-                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot182", "bot183"]
-                    },
-                    { "name": "Apple Yosemite Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-debug-tests-wk2",
-                      "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot184", "bot185"]
-                    },
-                    { "name": "Apple Yosemite Release (Build)", "type": "Build", "builddir": "yosemite-release",
-                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["yosemite-release-tests-wk1", "yosemite-release-tests-wk2", "yosemite-release-perf"],
-                      "slavenames": ["bot400", "bot401"]
-                    },
-                    { "name": "Apple Yosemite Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "yosemite-release-tests-wk1",
-                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot190", "bot191"]
-                    },
-                    { "name": "Apple Yosemite Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "yosemite-release-tests-wk2",
-                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot192", "bot193"]
-                    },
-                    {
-                      "name": "Apple Yosemite Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "yosemite-release-perf-tests",
-                      "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["bot194"]
-                    },
                     {
                       "name": "Apple iOS 10 Release (Build)", "type": "Build", "builddir": "ios-10-release",
                       "platform": "ios-10", "configuration": "release", "architectures": ["armv7s", "arm64"],
@@ -390,9 +336,6 @@
                                        "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
                                        "WinCairo 64-Bit Release"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-yosemite", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple Yosemite Release (Build)", "Apple Yosemite Debug (Build)", "Apple Yosemite Release (32-bit Build)"]
-                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-elcapitan", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple El Capitan Release (Build)", "Apple El Capitan Debug (Build)", "Apple El Capitan LLINT CLoop (BuildAndTest)", "Apple El Capitan 32-bit JSC (BuildAndTest)", "Apple El Capitan Release (32-bit Build)", "Apple El Capitan CMake Debug (Build)"]
                     },
@@ -449,21 +392,6 @@
                     },
                     { "type": "Triggerable", "name": "elcapitan-release-perf",
                       "builderNames": ["Apple El Capitan Release WK2 (Perf)"]
-                    },
-                    { "type": "Triggerable", "name": "yosemite-release-tests-wk1",
-                      "builderNames": ["Apple Yosemite Release WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "yosemite-release-tests-wk2",
-                      "builderNames": ["Apple Yosemite Release WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "yosemite-debug-tests-wk1",
-                      "builderNames": ["Apple Yosemite Debug WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "yosemite-debug-tests-wk2",
-                      "builderNames": ["Apple Yosemite Debug WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "yosemite-release-perf",
-                      "builderNames": ["Apple Yosemite Release WK2 (Perf)"]
                     },
                     { "type": "Triggerable", "name": "ios-simulator-10-release-tests-wk1",
                       "builderNames": ["Apple iOS 10 Simulator Release WK1 (Tests)"]

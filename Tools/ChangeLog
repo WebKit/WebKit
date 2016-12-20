@@ -1,3 +1,19 @@
+2016-12-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Repurpose bots and clean up dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=166045
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.mac-os-x-yosemite img.logo): Deleted.
+
 2016-12-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] TestWebKitAPIBase links to itself
