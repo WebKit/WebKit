@@ -51,7 +51,7 @@
 #include "Settings.h"
 #include <limits>
 #include <wtf/Ref.h>
-#include <wtf/SetForScope.h>
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 
@@ -371,7 +371,7 @@ void HTMLFormElement::reset()
 
     Ref<HTMLFormElement> protectedThis(*this);
 
-    SetForScope<bool> isInResetFunctionRestorer(m_isInResetFunction, true);
+    TemporaryChange<bool> isInResetFunctionRestorer(m_isInResetFunction, true);
 
     if (!dispatchEvent(Event::create(eventNames().resetEvent, true, true)))
         return;
