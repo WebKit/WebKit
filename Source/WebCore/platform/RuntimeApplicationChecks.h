@@ -78,6 +78,7 @@ bool isIBooks();
 WEBCORE_EXPORT bool isTheSecretSocietyHiddenMystery();
 bool isBaiduNuomi();
 bool isFlipboard();
+bool isAutoNaviAMap();
 
 } // IOSApplication
 

@@ -259,6 +259,12 @@ bool IOSApplication::isBaiduNuomi()
     return isBaiduNuomi;
 }
 
+bool IOSApplication::isAutoNaviAMap()
+{
+    static bool isBaiduNuomi = applicationBundleIsEqualTo("com.autonavi.amap");
+    return isBaiduNuomi;
+}
+
 bool IOSApplication::isFlipboard()
 {
     static bool isFlipboard = applicationBundleIsEqualTo("com.flipboard.flipboard-ipad");
