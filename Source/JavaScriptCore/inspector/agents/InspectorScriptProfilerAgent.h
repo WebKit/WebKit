@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,7 @@ public:
     void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     // ScriptProfilerBackendDispatcherHandler
-    void startTracking(ErrorString&, const bool* includeSamples) override;
+    void startTracking(ErrorString&, const bool* const includeSamples) override;
     void stopTracking(ErrorString&) override;
 
     void programmaticCaptureStarted();

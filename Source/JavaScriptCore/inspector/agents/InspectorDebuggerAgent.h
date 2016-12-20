@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,12 +67,12 @@ public:
     void disable(ErrorString&) final;
     void setAsyncStackTraceDepth(ErrorString&, int depth) final;
     void setBreakpointsActive(ErrorString&, bool active) final;
-    void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const Inspector::InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) final;
+    void setBreakpointByUrl(ErrorString&, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const Inspector::InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) final;
     void setBreakpoint(ErrorString&, const Inspector::InspectorObject& location, const Inspector::InspectorObject* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation) final;
     void removeBreakpoint(ErrorString&, const String& breakpointIdentifier) final;
     void continueUntilNextRunLoop(ErrorString&) final;
     void continueToLocation(ErrorString&, const InspectorObject& location) final;
-    void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) final;
+    void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) final;
     void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) final;
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>&) final;
     void pause(ErrorString&) final;
@@ -82,8 +82,8 @@ public:
     void stepOut(ErrorString&) final;
     void setPauseOnExceptions(ErrorString&, const String& pauseState) final;
     void setPauseOnAssertions(ErrorString&, bool enabled) final;
-    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
-    void setOverlayMessage(ErrorString&, const String*) override;
+    void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* const generatePreview, const bool* const saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
+    void setOverlayMessage(ErrorString&, const String* const) override;
 
     bool isPaused() const;
     bool breakpointsActive() const;

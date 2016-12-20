@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,8 +63,8 @@ public:
     ANGLEWebKitBridge(ShShaderOutput = SH_GLSL_COMPATIBILITY_OUTPUT, ShShaderSpec = SH_WEBGL_SPEC);
     ~ANGLEWebKitBridge();
     
-    ShBuiltInResources getResources() { return m_resources; }
-    void setResources(ShBuiltInResources);
+    const ShBuiltInResources& getResources() { return m_resources; }
+    void setResources(const ShBuiltInResources&);
     
     bool compileShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, int extraCompileOptions = 0);
 

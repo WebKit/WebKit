@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ namespace WebKit {
 
 class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
 public:
-    static PassRefPtr<WebBackForwardListItem> create(BackForwardListItemState, uint64_t pageID);
+    static Ref<WebBackForwardListItem> create(BackForwardListItemState&&, uint64_t pageID);
     virtual ~WebBackForwardListItem();
 
     uint64_t itemID() const { return m_itemState.identifier; }
@@ -67,7 +67,7 @@ public:
     static uint64_t highestUsedItemID();
 
 private:
-    explicit WebBackForwardListItem(BackForwardListItemState, uint64_t pageID);
+    explicit WebBackForwardListItem(BackForwardListItemState&&, uint64_t pageID);
 
     BackForwardListItemState m_itemState;
     uint64_t m_pageID;

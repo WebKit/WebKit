@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,13 +59,13 @@ public:
     void enable(ErrorString&) override { m_enabled = true; }
     void disable(ErrorString&) override { m_enabled = false; }
     void parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>&) final;
-    void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
-    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const Inspector::InspectorArray* optionalArguments, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) final;
+    void evaluate(ErrorString&, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* const executionContextId, const bool* const returnByValue, const bool* const generatePreview, const bool* const saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
+    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const Inspector::InspectorArray* optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* const generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown) final;
     void releaseObject(ErrorString&, const ErrorString& objectId) final;
-    void getProperties(ErrorString&, const String& objectId, const bool* ownProperties, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
-    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
-    void getCollectionEntries(ErrorString&, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries) final;
-    void saveResult(ErrorString&, const Inspector::InspectorObject& callArgument, const int* executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
+    void getProperties(ErrorString&, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
+    void getDisplayableProperties(ErrorString&, const String& objectId, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties) final;
+    void getCollectionEntries(ErrorString&, const String& objectId, const String* const objectGroup, const int* const startIndex, const int* const numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries) final;
+    void saveResult(ErrorString&, const Inspector::InspectorObject& callArgument, const int* const executionContextId, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
     void releaseObjectGroup(ErrorString&, const String& objectGroup) final;
     void getRuntimeTypesForVariablesAtOffsets(ErrorString&, const Inspector::InspectorArray& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>&) override;
     void enableTypeProfiler(ErrorString&) override;

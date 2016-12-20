@@ -1,3 +1,25 @@
+2016-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Address some style problems found by static analysis
+        https://bugs.webkit.org/show_bug.cgi?id=165975
+
+        Reviewed by Alex Christensen.
+
+        Correct the const-correctness of functions that are implemented using stricter
+        const declarations.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * inspector/scripts/codegen/cpp_generator.py:
+        (cpp_type_for_unchecked_formal_in_parameter): Update to match const declarations of
+        implementation files.
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        Rebaselined results for "const Ptr* const" syntax.
+
 2016-12-20  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: construct 32-bit encodedJSValue properly

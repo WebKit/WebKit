@@ -1,3 +1,29 @@
+2016-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Address some style problems found by static analysis
+        https://bugs.webkit.org/show_bug.cgi?id=165975
+
+        Reviewed by Alex Christensen.
+
+        Correct the const-correctness of functions that are implemented using stricter
+        const declarations.
+
+        Avoid passing large ANGLE data structures through the ANGLEWebKitBridge methods.
+
+        * inspector/InspectorCSSAgent.h: Declare the method overrides properly to match
+        the stricter const declarations in the implementation files.
+        * inspector/InspectorDOMAgent.h: Ditto.
+        * inspector/InspectorPageAgent.h: Ditto.
+        * inspector/InspectorTimelineAgent.h: Ditto.
+        * inspector/PageDebuggerAgent.h: Ditto.
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::setResources): Pass by const reference.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (WebCore::ANGLEWebKitBridge::getResources): Return a const reference.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::selectSettings): Use a lambda that takes
+        a const reference, rather than copying the maps while searching.
+
 2016-12-20  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom binding for WorkerGlobalScope::importScripts

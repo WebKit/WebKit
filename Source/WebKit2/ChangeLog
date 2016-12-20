@@ -1,3 +1,17 @@
+2016-12-20  Brent Fulgham  <bfulgham@apple.com>
+
+        Address some style problems found by static analysis
+        https://bugs.webkit.org/show_bug.cgi?id=165975
+
+        Reviewed by Alex Christensen.
+
+        Avoid passing large ANGLE data structures through the ANGLEWebKitBridge methods.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::create):
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        * Shared/WebBackForwardListItem.h:
+
 2016-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Switching or closing a tab leads to all-white tab content if the status bar is double height

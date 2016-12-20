@@ -139,7 +139,7 @@ class CppGenerator(Generator):
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
-                return 'const %s*' % cpp_name
+                return 'const %s* const' % cpp_name
             elif _type.raw_name() in ['string']:
                 return 'const %s&' % cpp_name
             else:

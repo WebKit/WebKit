@@ -554,7 +554,7 @@ bool RealtimeMediaSource::selectSettings(const MediaConstraints& constraints, Fl
     // 6. Select one settings dictionary from candidates, and return it as the result of the SelectSettings() algorithm.
     //    The UA should use the one with the smallest fitness distance, as calculated in step 3.
     if (!std::isinf(minimumDistance)) {
-        supportedConstraints.removeAllMatching([&](std::pair<double, MediaTrackConstraintSetMap> pair) -> bool {
+        supportedConstraints.removeAllMatching([&](const std::pair<double, MediaTrackConstraintSetMap>& pair) -> bool {
             return pair.first > minimumDistance;
         });
 

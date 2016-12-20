@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -285,7 +285,7 @@ void InspectorHeapAgent::getPreview(ErrorString& errorString, int heapObjectId, 
     objectPreview = injectedScript.previewValue(cell);
 }
 
-void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjectId, const String* optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
+void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjectId, const String* const optionalObjectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
 {
     // Prevent the cell from getting collected as we look it up.
     VM& vm = m_environment.vm();
