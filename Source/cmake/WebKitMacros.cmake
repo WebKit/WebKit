@@ -386,7 +386,7 @@ endmacro()
 
 macro(MAKE_JS_FILE_ARRAYS _output_cpp _output_h _scripts _scripts_dependencies)
     if (WIN32)
-        set(_python_path set "PYTHONPATH=${JavaScriptCore_SCRIPTS_DIR}" COMMAND)
+        set(_python_path set "PYTHONPATH=${JavaScriptCore_SCRIPTS_DIR}" &&)
     else ()
         set(_python_path "PYTHONPATH=${JavaScriptCore_SCRIPTS_DIR}")
     endif ()
