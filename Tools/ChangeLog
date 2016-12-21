@@ -1,3 +1,27 @@
+2016-12-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r210031.
+
+    2016-12-20  Andy Estes  <aestes@apple.com>
+
+            [Cocoa] REGRESSION (r209558): Calling decisionHandler multiple times in webView:decidePolicyForNavigationAction:decisionHandler: leads to a crash
+            https://bugs.webkit.org/show_bug.cgi?id=165992
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/DuplicateCompletionHandlerCalls.mm: Added.
+            (expectException):
+            (-[DuplicateCompletionHandlerCallsDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+            (-[DuplicateCompletionHandlerCallsDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+            (-[DuplicateCompletionHandlerCallsDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+            (-[DuplicateCompletionHandlerCallsDelegate webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:]):
+            (-[DuplicateCompletionHandlerCallsDelegate webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:]):
+            (-[DuplicateCompletionHandlerCallsDelegate _webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:]):
+            (-[DuplicateCompletionHandlerCallsDelegate _webView:willSubmitFormValues:userObject:submissionHandler:]):
+            (TEST):
+            * TestWebKitAPI/Tests/WebKit2Cocoa/duplicate-completion-handler-calls.html: Added.
+
 2016-12-19  Dean Jackson  <dino@apple.com>
 
         Merge another patch for rdar://problem/29466493.

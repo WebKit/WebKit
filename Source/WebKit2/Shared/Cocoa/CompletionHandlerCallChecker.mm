@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,10 @@
 
 #if WK_API_ENABLED
 
+#import <mutex>
 #import <objc/runtime.h>
 #import <wtf/Ref.h>
+#import "VersionChecks.h"
 
 namespace WebKit {
 
@@ -58,6 +60,29 @@ void CompletionHandlerCallChecker::didCallCompletionHandler()
 {
     ASSERT(!m_didCallCompletionHandler);
     m_didCallCompletionHandler = true;
+}
+
+static bool shouldThrowExceptionForDuplicateCompletionHandlerCall()
+{
+    static bool shouldThrowException;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        shouldThrowException = linkedOnOrAfter(LibraryVersion::FirstWithExceptionsForDuplicateCompletionHandlerCalls);
+    });
+    return shouldThrowException;
+}
+
+bool CompletionHandlerCallChecker::completionHandlerHasBeenCalled() const
+{
+    if (!m_didCallCompletionHandler)
+        return false;
+
+    if (shouldThrowExceptionForDuplicateCompletionHandlerCall()) {
+        Class delegateClass = classImplementingDelegateMethod();
+        [NSException raise:NSInternalInconsistencyException format:@"Completion handler passed to %c[%@ %@] was called more than once", class_isMetaClass(delegateClass) ? '+' : '-', NSStringFromClass(delegateClass), NSStringFromSelector(m_delegateMethodSelector)];
+    }
+
+    return true;
 }
 
 Class CompletionHandlerCallChecker::classImplementingDelegateMethod() const

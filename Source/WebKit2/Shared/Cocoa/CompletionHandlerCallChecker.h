@@ -39,6 +39,7 @@ public:
     ~CompletionHandlerCallChecker();
 
     void didCallCompletionHandler();
+    bool completionHandlerHasBeenCalled() const;
 
 private:
     CompletionHandlerCallChecker(Class delegateClass, SEL delegateMethodSelector);

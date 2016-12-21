@@ -1,3 +1,56 @@
+2016-12-20  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r210031.
+
+    2016-12-20  Andy Estes  <aestes@apple.com>
+
+            [Cocoa] REGRESSION (r209558): Calling decisionHandler multiple times in webView:decidePolicyForNavigationAction:decisionHandler: leads to a crash
+            https://bugs.webkit.org/show_bug.cgi?id=165992
+            <rdar://problem/29693817>
+
+            Reviewed by Brady Eidson.
+
+            r209558 added additional move semantics to the decisionHandler block passed to
+            -webView:decidePolicyForNavigationAction:decisionHandler:, resulting in a null pointer
+            dereference in clients that call the decisionHandler block more than once.
+
+            None of the completion handlers we expose in the WebKit API are intended to be called more
+            than once, and we ASSERT in CompletionHandlerCallChecker::didCallCompletionHandler() that
+            this doesn't happen.
+
+            This change strenghtens that protection by returning immediately in completion handlers
+            called more than once. And in programs linked on or after WebKit 603.1.17, an NSException is
+            thrown if a completion handler is called a second time, like we do for completion handlers
+            that are never called.
+
+            New API test: WebKit2.DuplicateCompletionHandlerCalls
+
+            * Shared/Cocoa/CompletionHandlerCallChecker.h: Declared completionHandlerHasBeenCalled().
+            * Shared/Cocoa/CompletionHandlerCallChecker.mm:
+            (WebKit::shouldThrowExceptionForDuplicateCompletionHandlerCall): Added. Returns true if the
+            program is linked on or after
+            LibraryVersion::FirstWithExceptionsForDuplicateCompletionHandlerCalls.
+            (WebKit::CompletionHandlerCallChecker::completionHandlerHasBeenCalled): Added. Returns
+            whether or not the completion handler has been called. If it has, and
+            shouldThrowExceptionForDuplicateCompletionHandlerCall() returns true, throws an
+            NSInternalInconsistencyException.
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _setInputDelegate:]): Added an early return if the completion handler has
+            already been called.
+            * UIProcess/Cocoa/NavigationState.mm:
+            (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction): Ditto.
+            (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse): Ditto.
+            (WebKit::NavigationState::NavigationClient::didReceiveAuthenticationChallenge): Ditto.
+            * UIProcess/Cocoa/UIDelegate.mm:
+            (WebKit::UIDelegate::UIClient::runJavaScriptAlert): Ditto.
+            (WebKit::UIDelegate::UIClient::runJavaScriptConfirm): Ditto.
+            (WebKit::UIDelegate::UIClient::runJavaScriptPrompt): Ditto.
+            (WebKit::UIDelegate::UIClient::exceededDatabaseQuota): Ditto.
+            (WebKit::UIDelegate::UIClient::runOpenPanel): Ditto.
+            (WebKit::UIDelegate::UIClient::reachedApplicationCacheOriginQuota): Ditto.
+            * UIProcess/Cocoa/VersionChecks.h: Added
+            FirstWithExceptionsForDuplicateCompletionHandlerCalls with the version number for 603.1.17.
+
 2016-12-19  Dean Jackson  <dino@apple.com>
 
         Another feature toggle for rdar://problem/29466493.

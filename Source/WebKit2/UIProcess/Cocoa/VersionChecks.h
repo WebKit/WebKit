@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VersionChecks_h
-#define VersionChecks_h
+#pragma once
 
 namespace WebKit {
 
@@ -40,10 +39,9 @@ namespace WebKit {
 enum class LibraryVersion {
     FirstWithNetworkCache = 0x02590116, // 601.1.22
     FirstWithMediaTypesRequiringUserActionForPlayback = 0x025A0121, // 602.1.33
+    FirstWithExceptionsForDuplicateCompletionHandlerCalls = 0x025B0111, // 603.1.17
 };
 
 bool linkedOnOrAfter(LibraryVersion);
 
 }
-
-#endif

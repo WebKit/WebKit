@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,6 +216,8 @@ void UIDelegate::UIClient::runJavaScriptAlert(WebKit::WebPageProxy*, const WTF::
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate.m_webView runJavaScriptAlertPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         completionHandler();
         checker->didCallCompletionHandler();
     }).get()];
@@ -236,6 +238,8 @@ void UIDelegate::UIClient::runJavaScriptConfirm(WebKit::WebPageProxy*, const WTF
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate.m_webView runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:BlockPtr<void (BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](BOOL result) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         completionHandler(result);
         checker->didCallCompletionHandler();
     }).get()];
@@ -256,6 +260,8 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF:
 
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate.m_webView runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:BlockPtr<void (NSString *)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](NSString *result) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         completionHandler(result);
         checker->didCallCompletionHandler();
     }).get()];
@@ -281,6 +287,8 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
     ASSERT(securityOrigin);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:));
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideDatabaseQuotaForSecurityOrigin:wrapper(*securityOrigin) currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:BlockPtr<void (unsigned long long newQuota)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         checker->didCallCompletionHandler();
         completionHandler(newQuota);
     }).get()];
@@ -302,6 +310,8 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:));
 
     [delegate webView:m_uiDelegate.m_webView runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:[checker, resultListener](NSArray *URLs) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         checker->didCallCompletionHandler();
 
         if (!URLs) {
@@ -460,6 +470,8 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
     RefPtr<API::SecurityOrigin> apiOrigin = API::SecurityOrigin::create(securityOrigin);
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideWebApplicationCacheQuotaForSecurityOrigin:wrapper(*apiOrigin) currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:BlockPtr<void (unsigned long long)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         checker->didCallCompletionHandler();
         completionHandler(newQuota);
     }).get()];

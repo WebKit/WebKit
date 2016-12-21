@@ -337,6 +337,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     
     auto decisionHandlerWithPolicies = [localListener = RefPtr<WebFramePolicyListenerProxy>(WTFMove(listener)), localNavigationAction = RefPtr<API::NavigationAction>(&navigationAction), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         checker->didCallCompletionHandler();
 
         WebsitePolicies policies;
@@ -412,6 +414,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
     RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
     [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
         checker->didCallCompletionHandler();
 
         switch (responsePolicy) {
@@ -647,6 +651,8 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
         RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:didReceiveAuthenticationChallenge:completionHandler:));
         [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)
             completionHandler:[challenge, checker](NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential) {
+                if (checker->completionHandlerHasBeenCalled())
+                    return;
                 checker->didCallCompletionHandler();
 
                 switch (disposition) {
