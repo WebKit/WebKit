@@ -257,7 +257,7 @@ TEST(_WKDownload, OriginatingWebView)
 {
     RetainPtr<DownloadNavigationDelegate> navigationDelegate = adoptNS([[DownloadNavigationDelegate alloc] init]);                 
     RetainPtr<OriginatingWebViewDownloadDelegate> downloadDelegate;
-    {
+    @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
         [webView setNavigationDelegate:navigationDelegate.get()];
         downloadDelegate = adoptNS([[OriginatingWebViewDownloadDelegate alloc] initWithWebView:webView.get()]);
