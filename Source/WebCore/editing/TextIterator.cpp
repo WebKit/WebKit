@@ -2608,11 +2608,39 @@ static Ref<Range> collapsedToBoundary(const Range& range, bool forward)
     return result;
 }
 
-static size_t findPlainText(const Range& range, const String& target, FindOptions options, size_t& matchStart)
+static std::optional<std::pair<size_t, size_t>> findPlainTextOffset(SearchBuffer& buffer, CharacterIterator& findIterator, bool searchForward)
 {
-    matchStart = 0;
+    size_t matchStart = 0;
     size_t matchLength = 0;
+    while (!findIterator.atEnd()) {
+        findIterator.advance(buffer.append(findIterator.text()));
+        while (1) {
+            size_t matchStartOffset;
+            size_t newMatchLength = buffer.search(matchStartOffset);
+            if (!newMatchLength) {
+                if (findIterator.atBreak() && !buffer.atBreak()) {
+                    buffer.reachedBreak();
+                    continue;
+                }
+                break;
+            }
+            size_t lastCharacterInBufferOffset = findIterator.characterOffset();
+            ASSERT(lastCharacterInBufferOffset >= matchStartOffset);
+            matchStart = lastCharacterInBufferOffset - matchStartOffset;
+            matchLength = newMatchLength;
+            if (searchForward) // Look for the last match when searching backwards instead.
+                return std::pair<size_t, size_t> { matchStart, matchLength };
+        }
+    }
 
+    if (!matchLength)
+        return std::nullopt;
+
+    return std::pair<size_t, size_t> { matchStart, matchLength };
+}
+
+Ref<Range> findPlainText(const Range& range, const String& target, FindOptions options)
+{
     SearchBuffer buffer(target, options);
 
     if (buffer.needsMoreContext()) {
@@ -2625,47 +2653,16 @@ static size_t findPlainText(const Range& range, const String& target, FindOption
         }
     }
 
-    CharacterIterator findIterator(range, TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors);
+    bool searchForward = !(options & Backwards);
+    TextIteratorBehavior iteratorOptions = TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors;
 
-    while (!findIterator.atEnd()) {
-        findIterator.advance(buffer.append(findIterator.text()));
-tryAgain:
-        size_t matchStartOffset;
-        if (size_t newMatchLength = buffer.search(matchStartOffset)) {
-            // Note that we found a match, and where we found it.
-            size_t lastCharacterInBufferOffset = findIterator.characterOffset();
-            ASSERT(lastCharacterInBufferOffset >= matchStartOffset);
-            matchStart = lastCharacterInBufferOffset - matchStartOffset;
-            matchLength = newMatchLength;
-            // If searching forward, stop on the first match.
-            // If searching backward, don't stop, so we end up with the last match.
-            if (!(options & Backwards))
-                break;
-            goto tryAgain;
-        }
-        if (findIterator.atBreak() && !buffer.atBreak()) {
-            buffer.reachedBreak();
-            goto tryAgain;
-        }
-    }
+    CharacterIterator findIterator(range, iteratorOptions);
+    auto result = findPlainTextOffset(buffer, findIterator, searchForward);
+    if (!result)
+        return collapsedToBoundary(range, searchForward);
 
-    return matchLength;
-}
-
-Ref<Range> findPlainText(const Range& range, const String& target, FindOptions options)
-{
-    // First, find the text.
-    size_t matchStart;
-    size_t matchLength;
-    {
-        matchLength = findPlainText(range, target, options, matchStart);
-        if (!matchLength)
-            return collapsedToBoundary(range, !(options & Backwards));
-    }
-
-    // Then, find the document position of the start and the end of the text.
-    CharacterIterator computeRangeIterator(range, TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors);
-    return characterSubrange(range.ownerDocument(), computeRangeIterator, matchStart, matchLength);
+    CharacterIterator rangeComputeIterator(range, iteratorOptions);
+    return characterSubrange(range.ownerDocument(), rangeComputeIterator, result->first, result->second);
 }
 
 }
