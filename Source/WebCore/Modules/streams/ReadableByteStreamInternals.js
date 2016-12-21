@@ -169,24 +169,39 @@ function readableStreamHasDefaultReader(stream)
     return stream.@reader !== @undefined && @isReadableStreamDefaultReader(stream.@reader);
 }
 
-function readableByteStreamControllerCallPullIfNeeded(controller)
+function readableByteStreamControllerShouldCallPull(controller)
 {
     "use strict";
 
     const stream = controller.@controlledReadableStream;
 
     if (stream.@state !== @streamReadable)
-        return;
+        return false;
     if (controller.@closeRequested)
+        return false;
+    if (!controller.@started)
+        return false;
+    if (@readableStreamHasDefaultReader(stream) && stream.@reader.@readRequests > 0)
+        return true;
+    if (@readableStreamHasBYOBReader(stream) && stream.@reader.@readIntoRequests > 0)
+        return true;
+    if (@readableByteStreamControllerGetDesiredSize(controller) > 0)
+        return true;
+    return false;
+}
+
+function readableByteStreamControllerCallPullIfNeeded(controller)
+{
+    "use strict";
+
+    if (!@readableByteStreamControllerShouldCallPull(controller))
         return;
-    if (!@readableStreamHasDefaultReader(stream) || stream.@reader.@readRequests <= 0)
-        if (!@readableStreamHasBYOBReader(stream) || stream.@reader.@readIntoRequests <= 0)
-            if (@readableByteStreamControllerGetDesiredSize(controller) <= 0)
-                return;
+
     if (controller.@pulling) {
         controller.@pullAgain = true;
         return;
     }
+
     @assert(!controller.@pullAgain);
     controller.@pulling = true;
     @promiseInvokeOrNoop(controller.@underlyingByteSource, "pull", [controller]).@then(() => {
