@@ -29,6 +29,7 @@
 
 #include "CompilationResult.h"
 #include "VM.h"
+#include "WasmB3IRGenerator.h"
 #include "WasmFormat.h"
 #include <wtf/Bag.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -103,13 +104,17 @@ private:
     Bag<CallLinkInfo> m_callLinkInfos;
     Vector<WasmToJSStub> m_wasmToJSStubs;
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
+    Vector<CompilationContext> m_compilationContexts;
     ImmutableFunctionIndexSpace m_functionIndexSpace;
 
     VM* m_vm;
+    Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     const uint8_t* m_source;
     const size_t m_sourceLength;
     bool m_failed { true };
     String m_errorMessage;
+    uint32_t m_currentIndex;
+    Lock m_lock;
 };
 
 } } // namespace JSC::Wasm

@@ -28,6 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
+#include "CCallHelpers.h"
 #include "VM.h"
 #include "WasmFormat.h"
 #include <wtf/Expected.h>
@@ -38,7 +39,15 @@ namespace JSC { namespace Wasm {
 
 class MemoryInformation;
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM&, const uint8_t*, size_t, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&, const ModuleInformation&, unsigned optLevel = 1);
+struct CompilationContext {
+    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
+    std::unique_ptr<B3::OpaqueByproducts> jsEntrypointByproducts;
+    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
+    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
+    CCallHelpers::Call jsEntrypointToWasmEntrypointCall;
+};
+
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM&, CompilationContext&, const uint8_t*, size_t, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&, const ModuleInformation&, unsigned optLevel = 1);
 
 } } // namespace JSC::Wasm
 
