@@ -39,24 +39,26 @@ static bool isDone;
 
 TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    @autoreleasepool {
+        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        [webView loadRequest:request];
 
-    [webView evaluateJavaScript:@"" completionHandler:^(id result, NSError *error) {
-        // NOTE: By referencing the request here, we convert the block into a stack block rather than a global block and thus allow the copying of the block
-        // in evaluateJavaScript to be meaningful.
-        (void)request;
-        
-        EXPECT_NULL(result);
-        EXPECT_NOT_NULL(error);
+        [webView evaluateJavaScript:@"" completionHandler:^(id result, NSError *error) {
+            // NOTE: By referencing the request here, we convert the block into a stack block rather than a global block and thus allow the copying of the block
+            // in evaluateJavaScript to be meaningful.
+            (void)request;
+            
+            EXPECT_NULL(result);
+            EXPECT_NOT_NULL(error);
 
-        isDone = true;
-    }];
+            isDone = true;
+        }];
 
-    // Force the WKWebView to be destroyed to allow evaluateJavaScript's completion handler to be called with an error.
-    webView = nullptr;
+        // Force the WKWebView to be destroyed to allow evaluateJavaScript's completion handler to be called with an error.
+        webView = nullptr;
+    }
 
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);

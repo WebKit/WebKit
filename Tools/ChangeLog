@@ -1,3 +1,15 @@
+2016-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: API test failure: WKWebView.EvaluateJavaScriptBlockCrash
+        https://bugs.webkit.org/show_bug.cgi?id=166031
+
+        Reviewed by Tim Horton.
+        
+        Add an @autoreleasepool around the code that allocates then clears the WKWebView, 
+        to ensure that the view is destroyed before the callback fires.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewEvaluateJavaScript.mm:
+
 2016-12-20  Megan Gardner  <megan_gardner@apple.com>
 
         Throw Exception when test doesn't clean up HID Events properly
