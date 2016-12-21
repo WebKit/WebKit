@@ -1,5 +1,13 @@
 2016-12-20  Tim Horton  <timothy_horton@apple.com>
 
+        Remove a duplicate reference to ScrollingMomentumCalculatorMac.h in the Xcode project
+
+        Rubber-stamped by Sam Weinig.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2016-12-20  Tim Horton  <timothy_horton@apple.com>
+
         Remove a duplicate reference to ScrollingMomentumCalculatorMac.mm in the Xcode project
 
         Rubber-stamped by Sam Weinig.

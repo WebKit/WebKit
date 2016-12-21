@@ -16067,7 +16067,6 @@
 				93C4A4141629DF5A00C3EB6E /* ScrollingTreeFrameScrollingNodeMac.mm */,
 				0FE5806119327A6200DE32EB /* ScrollingTreeMac.cpp */,
 				0FE5806219327A6200DE32EB /* ScrollingTreeMac.h */,
-				517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */,
 				0FB88908167D2FA10010CDA5 /* ScrollingTreeStickyNode.h */,
 				0FB88909167D2FA10010CDA5 /* ScrollingTreeStickyNode.mm */,
 			);
