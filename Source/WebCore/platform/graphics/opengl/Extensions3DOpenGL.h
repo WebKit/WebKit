@@ -37,7 +37,7 @@ class Extensions3DOpenGL : public Extensions3DOpenGLCommon {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     // This class only needs to be instantiated by GraphicsContext3D implementations.
-    explicit Extensions3DOpenGL(GraphicsContext3D*, bool useIndexedGetString);
+    Extensions3DOpenGL(GraphicsContext3D*, bool useIndexedGetString);
     virtual ~Extensions3DOpenGL();
 
     // Extensions3D methods.

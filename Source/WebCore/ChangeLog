@@ -1,3 +1,16 @@
+2016-12-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Extensions3DOpenGL[ES] constructor should not be explicit
+        https://bugs.webkit.org/show_bug.cgi?id=166296
+
+        Reviewed by Darin Adler.
+
+        These constructors used to only have one parameter. Now they have two and they're both
+        mandatory.
+
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+
 2016-12-21  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer can be called before it has a media stream

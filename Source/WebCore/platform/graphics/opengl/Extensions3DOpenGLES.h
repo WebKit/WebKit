@@ -63,7 +63,7 @@ namespace WebCore {
 class Extensions3DOpenGLES : public Extensions3DOpenGLCommon {
 public:
     // This class only needs to be instantiated by GraphicsContext3D implementations.
-    explicit Extensions3DOpenGLES(GraphicsContext3D*, bool useIndexedGetString);
+    Extensions3DOpenGLES(GraphicsContext3D*, bool useIndexedGetString);
     virtual ~Extensions3DOpenGLES();
 
     virtual void framebufferTexture2DMultisampleIMG(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned int texture, int level, unsigned long samples);
