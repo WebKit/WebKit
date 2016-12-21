@@ -1,3 +1,19 @@
+2016-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a layout test for scroll snapping with padding in the container
+        https://bugs.webkit.org/show_bug.cgi?id=144927
+        <rdar://problem/20923772>
+
+        Reviewed by Brent Fulgham.
+
+        The issue was actually addressed by changes to snap offset computation in AxisScrollSnapOffsets.cpp with
+        <https://trac.webkit.org/changeset/210024>, but there was no test for this. This patch adds a new layout test
+        verifying that the padding on child elements is accounted for when computing the scroll snap offsets of a scroll
+        snapping container.
+
+        * css3/scroll-snap/scroll-snap-children-with-padding-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-children-with-padding.html: Added.
+
 2016-12-21  Daniel Bates  <dabates@apple.com>
 
         WebKitTestRunner: Add comment to TestRunner::setCanOpenWindows()
