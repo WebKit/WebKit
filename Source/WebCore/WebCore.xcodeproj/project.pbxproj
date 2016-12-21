@@ -16059,7 +16059,6 @@
 				9391A990162746CB00297330 /* ScrollingCoordinatorMac.h */,
 				1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */,
 				517DEEE71DE94B0800B91644 /* ScrollingMomentumCalculatorMac.h */,
-				517DEEE31DE94ADC00B91644 /* ScrollingMomentumCalculatorMac.mm */,
 				0FA88EBC16A8D1BD00F99984 /* ScrollingStateFrameScrollingNodeMac.mm */,
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
 				93C38C01164473DD00091EB2 /* ScrollingTreeFixedNode.h */,
