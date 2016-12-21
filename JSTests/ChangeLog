@@ -1,3 +1,9 @@
+2016-12-21  Keith Miller  <keith_miller@apple.com>
+
+        Unreviewed, mark passing test as passing.
+
+        * es6.yaml:
+
 2016-12-21  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: cleanup & pass VM around to {Compile/Runtime}Error
