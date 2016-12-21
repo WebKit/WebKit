@@ -1,3 +1,13 @@
+2016-12-21  John Wilander  <wilander@apple.com>
+
+        Switch to a blacklist model for restricted Accept headers in simple CORS requests
+        https://bugs.webkit.org/show_bug.cgi?id=166363
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight-expected.txt:
+        * http/tests/xmlhttprequest/cors-non-standard-safelisted-headers-should-trigger-preflight.html:
+
 2016-12-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a layout test for scroll snapping with padding in the container

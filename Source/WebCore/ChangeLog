@@ -1,3 +1,20 @@
+2016-12-21  John Wilander  <wilander@apple.com>
+
+        Switch to a blacklist model for restricted Accept headers in simple CORS requests
+        https://bugs.webkit.org/show_bug.cgi?id=166363
+
+        Reviewed by Alex Christensen.
+
+        Updated existing tests.
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isDelimiterCharacter):
+            Convenience function for checking delimiter characters according to:
+            https://tools.ietf.org/html/rfc7230#section-3.2.6 
+        (WebCore::isValidAcceptHeaderValue):
+            Now uses WebCore::isDelimiterCharacter() to blacklist delimiter characters
+            instead of a whitelist of accepted non-alphanumeric characters.
+
 2016-12-21  Beth Dakin  <bdakin@apple.com>
 
         Holding down on candidates in the TouchBar should show panel on screen

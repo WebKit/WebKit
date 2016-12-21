@@ -34,7 +34,8 @@
     }
 
     var abnormalSimpleCorsHeaderValue = "() { :;};"
-    var allAllowedNonAlphanumericCharactersForAcceptHeader = " *,./;="
+    var allAllowedDelimiterCharactersForAcceptHeader = ",/;="
+    var allDisallowedDelimiterCharactersForAcceptHeader = ['"', '(', ')', ':', '<', '>', '?', '@', '[', '\\', ']', '{', '}'];
     var allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader = " *,-.;="
     var testCases = [
         // Positive test cases with normal headers
@@ -42,19 +43,43 @@
             headersToAdd: [{ name : "Accept", value: "application/json,text/*,*/*" }],
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
-            description: "Accept header with normal value SHOULD NOT cause a preflight"
+            description: "Accept header value 'application/json,text/*,*/*' SHOULD NOT cause a preflight"
         }
         ,{
-            headersToAdd: [{ name : "Accept", value: allAllowedNonAlphanumericCharactersForAcceptHeader }],
+            headersToAdd: [{ name : "Accept", value: "application/vnd.api+json" }],
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
-            description: "Accept header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
+            description: "Accept header with normal value 'application/vnd.api+json' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header with normal value 'text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: "text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header with normal value 'text/*;q=0.3, text/html;q=0.7, text/html;level=1, text/html;level=2;q=0.4, */*;q=0.5' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept", value: allAllowedDelimiterCharactersForAcceptHeader }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept header value with all allowed delimiter characters SHOULD NOT cause a preflight"
         }
         ,{
             headersToAdd: [{ name : "Accept-Language", value: "en-US,en;q=0.8" }],
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
-            description: "Accept-Language header with normal value SHOULD NOT cause a preflight"
+            description: "Accept-Language header value 'en-US,en;q=0.8' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Accept-Language", value: "zh-Latn-CN-variant1-a-extend1-x-wadegile-private1" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Accept-Language header value 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1' SHOULD NOT cause a preflight"
         }
         ,{
             headersToAdd: [{ name : "Accept-Language", value: allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader }],
@@ -63,10 +88,16 @@
             description: "Accept-Language header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
         }
         ,{
-            headersToAdd: [{ name : "Content-Language", value: "en" }],
+            headersToAdd: [{ name : "Content-Language", value: "en-US,en;q=0.8" }],
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
-            description: "Content-Language header with normal value SHOULD NOT cause a preflight"
+            description: "Content-Language header value 'en-US,en;q=0.8' SHOULD NOT cause a preflight"
+        }
+        ,{
+            headersToAdd: [{ name : "Content-Language", value: "zh-Latn-CN-variant1-a-extend1-x-wadegile-private1" }],
+            explicitlyAllowHeaders: false,
+            shouldCausePreflight: false,
+            description: "Content-Language header value 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1' SHOULD NOT cause a preflight"
         }
         ,{
             headersToAdd: [{ name : "Content-Language", value: allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader }],
@@ -131,6 +162,19 @@
             description: "Accept header with normal value, then another Accept header with abnormal value, and explicitly allowed headers SHOULD be allowed"
         }
     ];
+
+    // Individual negative test cases for each disallowed delimiter character in Accept header values.
+    for (var i = 0; i < allDisallowedDelimiterCharactersForAcceptHeader.length; i++) {
+        var disallowedDelimiter = allDisallowedDelimiterCharactersForAcceptHeader[i];
+        testCases.push(
+            {
+                headersToAdd: [{ name : "Accept", value: disallowedDelimiter }],
+                explicitlyAllowHeaders: false,
+                shouldCausePreflight: true,
+                description: "Accept header with disallowed delimiter '" + disallowedDelimiter + "' SHOULD cause a preflight"
+            }
+        );
+    }
 
     function runTestCase(testNumber) {
         var testCase = testCases[testNumber];

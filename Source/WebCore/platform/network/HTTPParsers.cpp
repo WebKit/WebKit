@@ -127,20 +127,31 @@ bool isValidHTTPHeaderValue(const String& value)
     return true;
 }
 
-// See RFC 7231, Section 5.3.2
+// See RFC 7230, Section 3.2.6.
+static bool isDelimiterCharacter(const UChar c)
+{
+    // DQUOTE and "(),/:;<=>?@[\]{}"
+    return (c == '"' || c == '(' || c == ')' || c == ',' || c == '/' || c == ':' || c == ';'
+        || c == '<' || c == '=' || c == '>' || c == '?' || c == '@' || c == '[' || c == '\\'
+        || c == ']' || c == '{' || c == '}');
+}
+
+// See RFC 7231, Section 5.3.2.
 bool isValidAcceptHeaderValue(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
         UChar c = value[i];
-        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == ',' || c == '.' || c == '/' || c == ';' || c == '=')
+        // First check for alphanumeric for performance reasons then whitelist four delimiter characters.
+        if (isASCIIAlphanumeric(c) || c == ',' || c == '/' || c == ';' || c == '=')
             continue;
-        return false;
+        if (isDelimiterCharacter(c))
+            return false;
     }
     
     return true;
 }
 
-// See RFC 7231, Section 5.3.5 and 3.1.3.2
+// See RFC 7231, Section 5.3.5 and 3.1.3.2.
 bool isValidLanguageHeaderValue(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
