@@ -1,3 +1,18 @@
+2016-12-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac][WK2] Stop using file* rules in WebProcess sandbox profiles
+        https://bugs.webkit.org/show_bug.cgi?id=165824
+        <rdar://problem/14024823>
+
+        Reviewed by Alexey Proskuryakov
+
+        Switch from blanket 'file*' sandbox rules, to the specific 'file-read*' and 'file-write*' rules
+        we actually need.
+
+        * DatabaseProcess/mac/com.apple.WebKit.Databases.sb.in:
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2016-12-21  Beth Dakin  <bdakin@apple.com>
 
         Holding down on candidates in the TouchBar should show panel on screen

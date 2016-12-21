@@ -37,6 +37,13 @@
 (define (home-literal home-relative-literal)
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+(define (allow-read-write-directory-and-issue-read-write-extensions path)
+    (if path
+        (begin
+            (allow file-read* file-write* (subpath path))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path)))
+            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") (subpath path))))))
+
 ;; IOKit user clients
 (allow iokit-open
     (iokit-user-client-class "RootDomainUserClient"))
@@ -59,9 +66,9 @@
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
-    (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
+    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; Read-only preferences and data
 (allow user-preference-read
