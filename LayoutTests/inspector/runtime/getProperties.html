@@ -1,6 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
 function test()
 {
@@ -38,7 +38,7 @@ function test()
         suite.addTestCase({
             name,
             description,
-            test: function(resolve, reject) {
+            test(resolve, reject) {
                 ProtocolTest.log("Evaluating expression: " + expression);
                 InspectorProtocol.awaitCommand({
                     method: "Runtime.evaluate",

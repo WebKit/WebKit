@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "MissingRequiredArgument",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorProtocol.sendCommand("Timeline.setInstruments", {}, (messageObject) => {
                 ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
                 resolve();
@@ -19,7 +19,7 @@ function test()
 
     suite.addTestCase({
         name: "InvalidTypeInInstrumentsList",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorProtocol.sendCommand("Timeline.setInstruments", {"instruments": [123]}, (messageObject) => {
                 ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
                 resolve();
@@ -29,7 +29,7 @@ function test()
 
     suite.addTestCase({
         name: "InvalidInstrumentInInstrumentsList",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorProtocol.sendCommand("Timeline.setInstruments", {"instruments": ["NoSuchInstrument"]}, (messageObject) => {
                 ProtocolTest.expectThat(messageObject.error, `Should be an error: ${messageObject.error ? messageObject.error.message : ""}`);
                 resolve();
@@ -39,7 +39,7 @@ function test()
 
     suite.addTestCase({
         name: "ValidInstrumentInInstrumentsList",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorProtocol.sendCommand("Timeline.setInstruments", {"instruments": ["ScriptProfiler", "Heap", "Timeline", "Memory"]}, (messageObject) => {
                 ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
                 resolve();

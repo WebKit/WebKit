@@ -63,7 +63,7 @@ function test()
         suite.addTestCase({
             name: `Console.CommandLineAPI.Copy.${name}`,
             description: "Should be able to copy values.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 InspectorTest.log(`TEST: copy(${expression})`);
                 commandLineAPICopyAndPaste(expression, (result) => {
                     if (result !== expected) {

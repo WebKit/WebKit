@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "StartAndStopTrackingWithEvent",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "Memory.trackingStart"}).then((messageObject) => {
                 ProtocolTest.log("Memory.trackingStart");
                 ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");

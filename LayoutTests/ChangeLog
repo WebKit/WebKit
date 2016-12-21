@@ -1,3 +1,12 @@
+2016-12-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix some typos and style in LayoutTests/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=166273
+
+        Reviewed by Brian Burg.
+
+        * inspector/*
+
 2016-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Fixed bars are positioned incorrectly when there are header and footer banners

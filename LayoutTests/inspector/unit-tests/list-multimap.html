@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "Instantiating Multimap",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             InspectorTest.log(multimap.size);
@@ -21,7 +21,7 @@ function test()
 
     suite.addTestCase({
         name: "Adding unique keys and values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add("zero", "one");
@@ -36,7 +36,7 @@ function test()
 
     suite.addTestCase({
         name: "Adding repeating keys and unique values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add("zero", "one");
@@ -51,7 +51,7 @@ function test()
 
     suite.addTestCase({
         name: "Adding unique keys and repeating values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add("zero", "one");
@@ -67,7 +67,7 @@ function test()
 
     suite.addTestCase({
         name: "Adding repeating keys and values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add("zero", "one");
@@ -84,7 +84,7 @@ function test()
 
     suite.addTestCase({
         name: "Deleting existing keys and values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add(0, 1);
@@ -107,7 +107,7 @@ function test()
 
     suite.addTestCase({
         name: "Deleting non-existing keys and non-existing values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add(0, 1);
@@ -129,7 +129,7 @@ function test()
 
     suite.addTestCase({
         name: "Deleting values for given key",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
 
             multimap.add("opossum", "badger");
@@ -152,7 +152,7 @@ function test()
 
     suite.addTestCase({
         name: "Deleting all keys and values",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
             multimap.add("badger", "raccoon");
             multimap.clear();
@@ -166,7 +166,7 @@ function test()
 
     suite.addTestCase({
         name: "Iterating using forEach method",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let multimap = new ListMultimap;
             multimap.add("Platypus", "Sugar glider");
             multimap.add("Quoll", "Wallaby");

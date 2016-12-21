@@ -9,7 +9,7 @@ CONSOLE MESSAGE: line 19: Created Database 'Database3'
 PASS: Should be 4 entries.
 PASS: Should not have more entries.
 PASS: Primary key should be ordered by primary key: 1
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 PASS: Primary key should be ordered by primary key: 2
 PASS: Value should be a remote object for: 'Jamming Peacock'
 PASS: Primary key should be ordered by primary key: 3
@@ -29,8 +29,8 @@ PASS: Primary key should be ordered by name: 4
 PASS: Key should be ordered by name: 'Monstrous Beaver'
 PASS: Value should be a remote object for: 'Monstrous Beaver'
 PASS: Primary key should be ordered by name: 1
-PASS: Key should be ordered by name: 'Thirsty Hampster'
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Key should be ordered by name: 'Thirsty Hamster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 -- Email Index
 PASS: Should be 4 entries.
 PASS: Should not have more entries.
@@ -43,8 +43,8 @@ PASS: Value should be a remote object for: 'Monstrous Beaver'
 FAIL: Primary key should be ordered by email: 2
     Expected: truthy
     Actual: false
-PASS: Key should be ordered by email: 'hampster@webkit.org'
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Key should be ordered by email: 'hamster@webkit.org'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 FAIL: Primary key should be ordered by email: 1
     Expected: truthy
     Actual: false
@@ -56,7 +56,7 @@ PASS: Value should be a remote object for: 'Jamming Peacock'
 PASS: Entries length should match page size.
 PASS: Should have more entries.
 PASS: Primary key should be ordered by primary key: 1
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 PASS: Primary key should be ordered by primary key: 2
 PASS: Value should be a remote object for: 'Jamming Peacock'
 -- Page 2
@@ -76,7 +76,7 @@ PASS: Should not have more entries.
 PASS: Primary key should be ordered by primary key: 4
 PASS: Value should be a remote object for: 'Monstrous Beaver'
 PASS: Primary key should be ordered by primary key: 1
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 -- Keys > 'M'
 -- Lower Bound: 'M' (open)
 -- Upper Bound: -
@@ -85,14 +85,14 @@ PASS: Should not have more entries.
 PASS: Primary key should be ordered by primary key: 4
 PASS: Value should be a remote object for: 'Monstrous Beaver'
 PASS: Primary key should be ordered by primary key: 1
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 -- Keys > 'Monstrous Beaver'
 -- Lower Bound: 'Monstrous Beaver' (open)
 -- Upper Bound: -
 PASS: Should be 1 entry.
 PASS: Should not have more entries.
 PASS: Primary key should be ordered by primary key: 1
-PASS: Value should be a remote object for: 'Thirsty Hampster'
+PASS: Value should be a remote object for: 'Thirsty Hamster'
 -- Keys <= 'M'
 -- Lower Bound: -
 -- Upper Bound: 'M' (closed)

@@ -25,7 +25,7 @@ function test()
     suite.addTestCase({
         name: "XHR.JSONContent",
         description: "Ensure an XMLHttpRequest with JSON content still gives us text.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createJSONXHR()");
             WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
                 let resource = event.data.resource;
@@ -43,7 +43,7 @@ function test()
     suite.addTestCase({
         name: "XHR.JSONContent.Blob",
         description: "Ensure an XMLHttpRequest with JSON content and a responseType of blob still gives us text.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createJSONBlobXHR()");
             WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
                 let resource = event.data.resource;

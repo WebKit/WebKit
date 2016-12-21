@@ -132,7 +132,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotProxy data",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 testSnapshot = WebInspector.TestHeapSnapshot.fromPayload(JSON.parse(snapshotStringData));
@@ -151,7 +151,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotProxy.prototype.instancesWithClassName",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let windowObjects = testSnapshot.instancesWithClassName("Window")
             let windowObjectCount = windowObjects.length;
             let functionObjectCount = testSnapshot.instancesWithClassName("Function").length;
@@ -183,7 +183,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotProxy.prototype.nodeWithIdentifier and HeapSnapshotNodeProxy data",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             snapshot.nodeWithIdentifier(testSnapshotNodeForWindowObject.id, (heapSnapshotNode) => {
                 InspectorTest.expectThat(heapSnapshotNode.className === "Window", "Node className should be 'Window'.");
                 InspectorTest.expectThat(heapSnapshotNode.id === testSnapshotNodeForWindowObject.id, "Node identifier should match.")
@@ -198,7 +198,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotProxy.prototype.allocationBucketCounts",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let testSmall = 0, testMedium = 0, testLarge = 0;
             const smallSize = 32, mediumSize = 128;
             // Skip <root>.
@@ -225,7 +225,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotNodeProxy.prototype.retainedNodes",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let expectedNodes = testSnapshotNodeForWindowObject.outgoingEdges.map((edge) => edge.to);
             expectedNodes.sort((a, b) => a.id - b.id);
 
@@ -242,7 +242,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotNodeProxy.prototype.retainers",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let expectedNodes = testSnapshotNodeForWindowObject.incomingEdges.map((edge) => edge.from);
             expectedNodes.sort((a, b) => a.id - b.id);
 

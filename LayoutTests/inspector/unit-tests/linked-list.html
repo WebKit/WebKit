@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "Adding items",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let list = new LinkedList;
 
             InspectorTest.log(list.length);
@@ -30,7 +30,7 @@ function test()
 
     suite.addTestCase({
         name: "Removing items",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let list = new LinkedList;
 
             list.push("one");
@@ -49,7 +49,7 @@ function test()
 
     suite.addTestCase({
         name: "Removing all items",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let list = new LinkedList;
 
             list.push("one");
@@ -65,7 +65,7 @@ function test()
 
     suite.addTestCase({
         name: "Iterating using forEach method",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let list = new LinkedList;
 
             list.push("one");

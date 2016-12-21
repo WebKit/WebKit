@@ -38,8 +38,8 @@ PASS: shallowEqual of empty arrays should be true.
 PASS: shallowEqual of an array with itself should be true.
 PASS: shallowEqual of equal arrays should be true.
 PASS: shallowEqual of equal arrays should be true.
-PASS: shallowEqual of inequal arrays should be false.
-PASS: shallowEqual of inequal arrays should be false.
+PASS: shallowEqual of unequal arrays should be false.
+PASS: shallowEqual of unequal arrays should be false.
 PASS: shallowEqual of an array and null should be false.
 PASS: shallowEqual of an array and non-array should be false.
 PASS: shallowEqual of a non-array with itself should be false.

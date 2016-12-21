@@ -11,7 +11,7 @@ function test()
 
     suite.addTestCase({
         name: "ShadowRootType.UserAgent",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.domTreeManager.querySelector(documentNode.id, "#host-user-agent", (nodeId) => {
                 let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #host-user-agent");
@@ -25,7 +25,7 @@ function test()
 
     suite.addTestCase({
         name: "ShadowRootType.Closed",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.domTreeManager.querySelector(documentNode.id, "#host-closed", (nodeId) => {
                 let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #host-closed");
@@ -39,7 +39,7 @@ function test()
 
     suite.addTestCase({
         name: "ShadowRootType.Open",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.domTreeManager.querySelector(documentNode.id, "#host-open", (nodeId) => {
                 let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #host-open");
@@ -53,7 +53,7 @@ function test()
 
     suite.addTestCase({
         name: "NoShadowRootType",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             WebInspector.domTreeManager.querySelector(documentNode.id, "#no-host", (nodeId) => {
                 let domNode = WebInspector.domTreeManager.nodeForId(nodeId);
                 InspectorTest.assert(domNode, "Got DOMNode for #no-host");

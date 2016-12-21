@@ -21,7 +21,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshot",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerCreateObjects()");
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
@@ -37,7 +37,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshotCollectionEvent",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("triggerRemoveObjects()");
 
             let workerProxy = WebInspector.HeapSnapshotWorkerProxy.singleton();
@@ -59,7 +59,7 @@ function test()
 
     suite.addTestCase({
         name: "HeapSnapshot.prototype.update",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let categoriesBefore = snapshot.categories;
             snapshot.update(() => {
                 let categoriesAfter = snapshot.categories;

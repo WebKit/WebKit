@@ -18,8 +18,6 @@ function pause2() {
 
 function test()
 {
-    InspectorTest.debug();
-
     function topCallFrameName() {
         let targetData = WebInspector.debuggerManager.dataForTarget(WebInspector.mainTarget);
         return targetData.callFrames[0].functionName;

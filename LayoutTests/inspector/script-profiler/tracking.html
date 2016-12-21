@@ -10,7 +10,7 @@ function test()
     suite.addTestCase({
         name: "StartAndStopTracking",
         description: "Start and stop the ScriptProfiler should cause trackingStart and trackingComplete events.",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingStart");
                 ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp when starting.");

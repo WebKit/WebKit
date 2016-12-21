@@ -35,7 +35,7 @@ function test()
     suite.addTestCase({
         name: "GetPreviewNoSnapshot",
         description: "Calling Heap.getPreview when no snapshot exists should result in an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.getPreview(1, (error, string, functionDetails, objectPreviewPayload) => {
                 InspectorTest.expectThat(error, "Should get an error when no snapshot exists.");
                 InspectorTest.pass(error);
@@ -47,7 +47,7 @@ function test()
     suite.addTestCase({
         name: "GetPreviewForString",
         description: "Calling Heap.getPreview for a live string should return the value of that string.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
                 InspectorTest.evaluateInPage("triggerCreateStringObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
@@ -72,7 +72,7 @@ function test()
     suite.addTestCase({
         name: "GetPreviewForFunction",
         description: "Calling Heap.getPreview for a live Function should return function details for that value.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
                 InspectorTest.evaluateInPage("triggerCreateFunctionObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
@@ -97,7 +97,7 @@ function test()
     suite.addTestCase({
         name: "GetPreviewForObject",
         description: "Calling Heap.getPreview for a live Object should return an object preview for that value.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
@@ -122,7 +122,7 @@ function test()
     suite.addTestCase({
         name: "GetPreviewBadIdentifier",
         description: "Calling Heap.getPreview with a bad identifier should result in an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 HeapAgent.getPreview(9999999, (error, string, functionDetails, objectPreviewPayload) => {
@@ -137,7 +137,7 @@ function test()
     suite.addTestCase({
         name: "GetRemoteObjectCollectedObject",
         description: "Calling Heap.getRemoteObject for an object that has been collected should result in an error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.

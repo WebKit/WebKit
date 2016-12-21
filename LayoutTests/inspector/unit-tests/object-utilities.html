@@ -10,7 +10,7 @@ function test()
 
     suite.addTestCase({
         name: "Object.shallowEqual",
-        test: () => {
+        test() {
             InspectorTest.expectThat(Object.shallowEqual({}, {}), "shallowEqual of empty object literals should be true.");
             InspectorTest.expectThat(Object.shallowEqual([], []), "shallowEqual of empty array literals should be true.");
             InspectorTest.expectThat(!Object.shallowEqual([], {}), "shallowEqual of empty array and object literals should be false.");
@@ -23,8 +23,8 @@ function test()
             InspectorTest.expectThat(Object.shallowEqual(obj2, obj1), "shallowEqual of equal objects should be true.");
 
             let obj3 = {a: 1, b: 2, c: 3};
-            InspectorTest.expectThat(!Object.shallowEqual(obj1, obj3), "shallowEqual of inequal objects should be false.");
-            InspectorTest.expectThat(!Object.shallowEqual(obj3, obj1), "shallowEqual of inequal objects should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual(obj1, obj3), "shallowEqual of unequal objects should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual(obj3, obj1), "shallowEqual of unequal objects should be false.");
 
             InspectorTest.expectThat(!Object.shallowEqual({}, null), "shallowEqual of an object and null should be false.");
             InspectorTest.expectThat(!Object.shallowEqual({}, 1.23), "shallowEqual of an object and non-object should be false.");

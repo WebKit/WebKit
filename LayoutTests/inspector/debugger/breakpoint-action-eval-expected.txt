@@ -1,4 +1,4 @@
-Testing that "Evaluate JavaScript" breakpoint actions work correctly in the presense of a Content Security Policy that doesn't include 'unsafe-eval'.
+Testing that "Evaluate JavaScript" breakpoint actions work correctly in the presence of a Content Security Policy that doesn't include 'unsafe-eval'.
 
 inside breakpointActions a:(42) b:([object Object])
 Breakpoint action evaluated. a:(42) b:([object Object])

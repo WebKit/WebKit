@@ -35,7 +35,7 @@ function test()
     suite.addTestCase({
         name: "Sampling Profiler Expression Location",
         description: "Make sure we properly collect location information.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
                 let tree = WebInspector.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
                 let foundLine19Column14 = false;

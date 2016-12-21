@@ -5,11 +5,11 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("Debouce");
+    let suite = InspectorTest.createAsyncSuite("Debounce");
 
     suite.addTestCase({
         name: "Basic Debounce",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let callCount = 0;
             let startTime = performance.now();
 
@@ -47,7 +47,7 @@ function test()
 
     suite.addTestCase({
         name: "Multiple Debounce Delays",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let callCount = 0;
             let startTime = performance.now();
 
@@ -84,7 +84,7 @@ function test()
 
     suite.addTestCase({
         name: "Soon Debounce",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let callCount = 0;
 
             let object = {
@@ -118,7 +118,7 @@ function test()
 
     suite.addTestCase({
         name: "Cancel Debounce",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             let object = {
                 test() {
                     InspectorTest.fail("Debounced function call should have been canceled.");

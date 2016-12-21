@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "String.format",
-        test: () => {
+        test() {
             InspectorTest.expectThat("%f".format(1.23456789) === "1.234568", "float format specifier with no sub-specifier should show 6 decimal digits");
             InspectorTest.expectThat("%.0f".format(1.23456789) === "1", "float format specifier with precision 0 should show 0 decimal digits");
             InspectorTest.expectThat("%.1f".format(1.23456789) === "1.2", "float format specifier with precision 1 should show 1 decimal digit");

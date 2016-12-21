@@ -11,7 +11,7 @@ function test()
     suite.addTestCase({
         name: "OuterHTMLBefore",
         description: "Log the initial outerHTML of the target element.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             domNode.getOuterHTML(function(error, outerHTML) {
                 InspectorTest.expectNoError(error);
                 InspectorTest.log(outerHTML);
@@ -49,7 +49,7 @@ function test()
         suite.addTestCase({
             name: `SetOuterHTML${title}`,
             description: "Change the outerHTML.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 domNode.setOuterHTML(replacementOuterHTML, function(error, outerHTML) {
                     InspectorTest.expectNoError(error);
                     resolve();
@@ -60,7 +60,7 @@ function test()
         suite.addTestCase({
             name: `CheckOuterHTMLAfter${title}`,
             description: "Log the outerHTML of the target element after changes.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 domNode.getOuterHTML(function(error, outerHTML) {
                     InspectorTest.expectNoError(error);
                     InspectorTest.expectThat(outerHTML === replacementOuterHTML, "The outerHTML should be what was just set.");

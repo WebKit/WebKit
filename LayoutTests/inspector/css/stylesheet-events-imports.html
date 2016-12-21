@@ -45,7 +45,7 @@ function test()
     suite.addTestCase({
         name: "CheckStyleSheets",
         description: "Ensure there are currently two stylesheets.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let styleSheets = WebInspector.cssStyleManager.styleSheets;
             InspectorTest.expectThat(styleSheets.length === 3, "Should be 3 stylesheets.");
             for (let styleSheet of styleSheets)
@@ -57,7 +57,7 @@ function test()
     suite.addTestCase({
         name: "DisablePropagatesThroughImports",
         description: "Disabling the top stylesheet containing imports will remove all stylesheets.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             currentStyleSheetRemovedHandler = collectEvents(3, function(events) {
                 events.map((e) => sanitizeURL(e.data.styleSheet.url))
                     .sort()
@@ -72,7 +72,7 @@ function test()
     suite.addTestCase({
         name: "EnablePropagatesThroughImports",
         description: "Enabling the top stylesheet containing imports will add all stylesheets.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             currentStyleSheetAddedHandler = collectEvents(3, function(events) {
                 events.map((e) => sanitizeURL(e.data.styleSheet.url))
                     .sort()
@@ -87,7 +87,7 @@ function test()
     suite.addTestCase({
         name: "DeleteImportRemovesStyleSheet",
         description: "Deleting the @import rule should remove that stylesheet and its imports.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             currentStyleSheetRemovedHandler = collectEvents(2, function(events) {
                 events.map((e) => sanitizeURL(e.data.styleSheet.url))
                     .sort()

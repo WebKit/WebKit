@@ -104,7 +104,7 @@ function test()
 
             InspectorTest.log("");
 
-            // The convenience will not apply to these noexpressions.
+            // The convenience will not apply to these expressions.
             testSource("return 10", expectException);
             testSource("await 10; 1", expectException);
             testSource("1; await 10;", expectException);

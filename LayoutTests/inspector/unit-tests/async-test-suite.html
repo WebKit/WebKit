@@ -49,7 +49,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: {},
-            test: () => {},
+            test() {},
         });
         ProtocolTest.log("FAIL: test case should require string name.");
     } catch (e) {
@@ -58,7 +58,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "        ",
-            test: () => {},
+            test() {},
         });
         ProtocolTest.log("FAIL: test case should require non-whitespace name.");
     } catch (e) {
@@ -76,7 +76,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "foo",
-            test: () => {},
+            test() {},
             setup: "astd"
         });
         ProtocolTest.log("FAIL: should not be able to specify non-Function `setup` parameter.");
@@ -86,7 +86,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "foo",
-            test: () => {},
+            test() {},
             setup: 123
         });
         ProtocolTest.log("FAIL: should not be able to specify non-Function `setup` parameter.");
@@ -96,7 +96,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "foo",
-            test: () => {},
+            test() {},
             setup: {}
         });
         ProtocolTest.log("FAIL: should not be able to specify non-Function `setup` parameter.");
@@ -106,7 +106,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "foo",
-            test: () => {},
+            test() {},
             teardown: "astd"
         });
         ProtocolTest.log("FAIL: should not be able to specify non-Function `teardown` parameter.");
@@ -116,7 +116,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "foo",
-            test: () => {},
+            test() {},
             teardown: 123
         });
         ProtocolTest.log("FAIL: should not be able to specify non-Function `teardown` parameter.");
@@ -126,7 +126,7 @@ function test()
     try {
         badArgsSuite.addTestCase({
             name: "foo",
-            test: () => {},
+            test() {},
             teardown: {}
         });
         ProtocolTest.log("FAIL: should not be able to specify non-Function `teardown` parameter.");
@@ -146,7 +146,7 @@ function test()
     runTwiceSuite.addTestCase({
         name: "DummyTest0",
         description: "Check that a suite can't run more than once.",
-        test: (resolve, reject) => { resolve(); }
+        test(resolve, reject) { resolve(); }
     });
 
     let result = runTwiceSuite.runTestCases();
@@ -166,39 +166,39 @@ function test()
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest1",
         description: "Check test case execution order.",
-        test: (resolve, reject) => { resolve(); }
+        test(resolve, reject) { resolve(); }
     });
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest2",
         description: "Check test case execution order.",
-        test: (resolve, reject) => { resolve(); }
+        test(resolve, reject) { resolve(); }
     });
     sequentialExecutionSuite.addTestCase({
         name: "DummyTest3",
         description: "Check test case execution order.",
-        test: (resolve, reject) => { resolve(); }
+        test(resolve, reject) { resolve(); }
     });
     sequentialExecutionSuite.addTestCase({
         name: "FailingTest4",
         description: "Check that test fails by throwing an Error instance.",
-        test: (resolve, reject) => { throw thrownError; }
+        test(resolve, reject) { throw thrownError; }
     });
 
     let abortOnFailureSuite = ProtocolTest.createAsyncSuite("AsyncTestSuite.AbortOnFailure");
     abortOnFailureSuite.addTestCase({
         name: "PassingTest5",
         description: "This test is a dummy.",
-        test: (resolve, reject) => { resolve(); }
+        test(resolve, reject) { resolve(); }
     });
     abortOnFailureSuite.addTestCase({
         name: "FailingTest6",
         description: "This test should fail by explicitly calling the `reject` callback.",
-        test: (resolve, reject) => { reject(rejectToken); }
+        test(resolve, reject) { reject(rejectToken); }
     });
     abortOnFailureSuite.addTestCase({
         name: "PassingTest7",
         description: "This test should not executed when the preceding test fails.",
-        test: (resolve, reject) => { resolve(); }
+        test(resolve, reject) { resolve(); }
     });
 
     result = result.then(() => {
@@ -247,7 +247,7 @@ function test()
             window[setupAndTeardownSymbol] = 1;
             resolve();
         },
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.expectThat(window[setupAndTeardownSymbol] === 1, "Test should see side effects of running setup() action.");
             window[setupAndTeardownSymbol] = 2;
             resolve();
@@ -261,7 +261,7 @@ function test()
     setupAndTeardownTestSuite.addTestCase({
         name: "TestRunningAfterTeardown",
         description: "Check execution order for test after a teardown action.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.expectThat(window[setupAndTeardownSymbol] === 3, "Test should see side effects of previous test's teardown() action.");
             resolve();
         },
@@ -282,7 +282,7 @@ function test()
         name: "TestWithExceptionDuringSetup",
         description: "Check execution order for setup action that throws an exception.",
         setup: (resolve, reject) => { throw new Error() },
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.assert(false, "Test should not execute if its setup action threw an exception.");
             reject();
         },
@@ -307,7 +307,7 @@ function test()
         name: "TestWithFailureDuringSetup",
         description: "Check execution order for setup action that has failed.",
         setup: (resolve, reject) => { reject(); },
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.assert(false, "Test should not execute if its setup action failed.")
             reject();
         },
@@ -331,7 +331,7 @@ function test()
     teardownExceptionTestSuite.addTestCase({
         name: "TestWithExceptionDuringTeardown",
         description: "Check execution order for teardown action that throws an exception.",
-        test: (resolve, reject) => { resolve(); },
+        test(resolve, reject) { resolve(); },
         teardown: (resolve, reject) => { throw new Error() }
     });
     teardownExceptionTestSuite.addTestCase({
@@ -341,7 +341,7 @@ function test()
             ProtocolTest.assert(false, "Setup action should not execute if previous test's teardown action threw an exception.");
             reject();
         },
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.assert(false, "Test should not execute if previous test's teardown action threw an exception.");
             reject();
         }
@@ -361,7 +361,7 @@ function test()
     teardownFailureTestSuite.addTestCase({
         name: "TestWithExceptionDuringTeardown",
         description: "Check execution order for teardown action that has failed.",
-        test: (resolve, reject) => { resolve(); },
+        test(resolve, reject) { resolve(); },
         teardown: (resolve, reject) => { reject(); },
     });
     teardownFailureTestSuite.addTestCase({
@@ -371,7 +371,7 @@ function test()
             ProtocolTest.assert(false, "Setup action should not execute if previous test's teardown action failed.");
             reject();
         },
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ProtocolTest.assert(false, "Test should not execute if previous test's teardown action failed.");
             reject();
         }

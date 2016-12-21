@@ -46,7 +46,7 @@ function test()
         suite.addTestCase({
             name: "HideHighlight",
             description: "Calling hideHighlight should hide the highlight.",
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 DOMAgent.hideHighlight(() => {
                     getHighlightRects((highlightRects) => {
                         InspectorTest.expectThat(highlightRects.length === 0, "Should be no highlight.");
@@ -60,7 +60,7 @@ function test()
     suite.addTestCase({
         name: "CheckEmptyHighlight",
         description: "Should not be a highlight yet.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             getHighlightRects((highlightRects) => {
                 InspectorTest.expectThat(highlightRects.length === 0, "Should not be a highlight yet.");
                 resolve();
@@ -71,7 +71,7 @@ function test()
     suite.addTestCase({
         name: "HighlightRect",
         description: "Call highlightRect to create a highlight.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 100, 100);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, (error) => {
                 dumpHighlightRects(resolve);
@@ -84,7 +84,7 @@ function test()
     suite.addTestCase({
         name: "HighlightQuad",
         description: "Call highlightQuad to create a highlight.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([100, 100, 150, 150, 100, 200, 50, 150]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, (error) => {
                 dumpHighlightRects(resolve);
@@ -97,7 +97,7 @@ function test()
     suite.addTestCase({
         name: "HighlightNode",
         description: "Call highlightNode to create a highlight.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             const highlightConfig = {
                 showInfo: true,
                 contentColor: {r: 255, g: 255, b: 255},

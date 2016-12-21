@@ -16,7 +16,7 @@ function test()
     suite.addTestCase({
         name: "Check$0IsUndefined",
         description: "No inspected node yet, $0 should be undefined.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             evaluate$0((remoteObject) => {
                 InspectorTest.expectThat(remoteObject.isUndefined(), "$0 should be undefined.");
                 resolve();
@@ -27,7 +27,7 @@ function test()
     suite.addTestCase({
         name: "SetAndCheckNodeA",
         description: "Set the inspected node to be Node A and check that $0 is Node A.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ConsoleAgent.addInspectedNode(nodeA.id);
             evaluate$0((remoteObject) => {
                 remoteObject.pushNodeToFrontend((nodeId) => {
@@ -42,7 +42,7 @@ function test()
     suite.addTestCase({
         name: "SetBadNodeId",
         description: "If an invalid inspected node is set, it should not be bound to $0.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ConsoleAgent.addInspectedNode(999999, (error) => {
                 InspectorTest.expectThat(error, "Should be an error");
             });
@@ -59,7 +59,7 @@ function test()
     suite.addTestCase({
         name: "SetAndCheckNodeB",
         description: "Set the inspected node to be Node B and check that $0 is Node B.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             ConsoleAgent.addInspectedNode(nodeB.id);
             evaluate$0((remoteObject) => {
                 remoteObject.pushNodeToFrontend((nodeId) => {

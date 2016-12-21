@@ -1,4 +1,4 @@
-This test ensures that the inspector can enumerate system font families, and checks for the existance of common fonts.
+This test ensures that the inspector can enumerate system font families, and checks for the existence of common fonts.
 
 Includes Arial
 Includes Times

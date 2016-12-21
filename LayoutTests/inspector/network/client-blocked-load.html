@@ -18,7 +18,7 @@ function test()
     suite.addTestCase({
         name: "TriggerBlockedResourceLoad",
         description: "Trigger a blocked resource load and ensure we get notified of the request.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createBlockedResourceLoad()");
             WebInspector.Frame.singleFireEventListener(WebInspector.Frame.Event.ResourceWasAdded, (event) => {
                 let resource = event.data.resource;

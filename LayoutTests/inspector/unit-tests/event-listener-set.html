@@ -96,7 +96,7 @@ function test()
     emitter1.dispatchEventToListeners(BarEvent, data2); // Should not fire.
     emitter2.dispatchEventToListeners(BazEvent, data2); // Should not fire.
 
-    InspectorTest.log("Unintalling and disconnecting listeners.");
+    InspectorTest.log("Uninstalling and disconnecting listeners.");
     listenerSet.uninstall(true);
     InspectorTest.log("Dispatching events.");
     emitter1.dispatchEventToListeners(FooEvent, data1); // Should not fire.

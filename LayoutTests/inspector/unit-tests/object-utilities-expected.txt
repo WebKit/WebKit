@@ -7,8 +7,8 @@ PASS: shallowEqual of empty array and object literals should be false.
 PASS: shallowEqual of an object with itself should be true.
 PASS: shallowEqual of equal objects should be true.
 PASS: shallowEqual of equal objects should be true.
-PASS: shallowEqual of inequal objects should be false.
-PASS: shallowEqual of inequal objects should be false.
+PASS: shallowEqual of unequal objects should be false.
+PASS: shallowEqual of unequal objects should be false.
 PASS: shallowEqual of an object and null should be false.
 PASS: shallowEqual of an object and non-object should be false.
 PASS: shallowEqual of a non-object with itself should be false.

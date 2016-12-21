@@ -1,7 +1,7 @@
 Testing debounce proxy support.
 
 
-== Running test suite: Debouce
+== Running test suite: Debounce
 -- Running test case: Basic Debounce
 PASS: Debounced successfully.
 PASS: Call delayed at least 10ms.

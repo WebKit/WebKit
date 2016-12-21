@@ -18,7 +18,7 @@ function test()
     suite.addTestCase({
         name: "SyntaxErrorType.None",
         description: "Test source without an issue.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
@@ -46,7 +46,7 @@ function test()
     suite.addTestCase({
         name: "SyntaxErrorType.UnterminatedLiteral",
         description: "Test source with an unterminated literal.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
@@ -75,7 +75,7 @@ function test()
     suite.addTestCase({
         name: "SyntaxErrorType.Recoverable",
         description: "Test source with a recoverable error.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");
@@ -155,7 +155,7 @@ function test()
     suite.addTestCase({
         name: "SyntaxErrorType.Irrecoverable",
         description: "Test source with an irrecoverable issue.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function testSource(source) {
                 RuntimeAgent.parse(source, (error, result, message, range) => {
                     InspectorTest.assert(!error, "Should not be a protocol error.");

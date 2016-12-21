@@ -10,7 +10,7 @@ function test()
     suite.addTestCase({
         name: "TriggerGCShouldCreateGCEvent",
         description: "Calling Heap.gc should trigger Heap.garbageCollected event if enabled.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             HeapAgent.gc();
             let resolving = false;
             WebInspector.heapManager.addEventListener(WebInspector.HeapManager.Event.GarbageCollected, (event) => {

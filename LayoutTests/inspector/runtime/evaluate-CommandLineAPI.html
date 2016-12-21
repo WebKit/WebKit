@@ -36,7 +36,7 @@ function test()
     suite.addTestCase({
         name: "AccessCommandLineAPI",
         description: "Test evaluate can access CommandLineAPI methods.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate("keys.toString()", (resultValue) => {
                 InspectorTest.expectThat(resultValue.includes("[Command Line API]"), "CommandLineAPI `keys` can be accessed.");
             });
@@ -50,7 +50,7 @@ function test()
     suite.addTestCase({
         name: "AccessGlobalVariable",
         description: "Test evaluate can access global variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate("varGlobalVariable", (resultValue) => {
                 InspectorTest.expectThat(resultValue === 1, "Should be able to access var in global scope.");
             });
@@ -67,7 +67,7 @@ function test()
     suite.addTestCase({
         name: "CreateGlobalVariable",
         description: "Test evaluate can create global variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate(`
                 var createdVarGlobalVariable = 1;
                 let createdLetGlobalVariable = 2;
@@ -89,7 +89,7 @@ function test()
     suite.addTestCase({
         name: "CreateGlobalClass",
         description: "Test evaluate can create a class.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate(`
                 class Foo {
                     static staticMethod() {
@@ -107,7 +107,7 @@ function test()
     suite.addTestCase({
         name: "ExpectedExceptionCreatingDuplicateLexicalGlobalVariables",
         description: "Test evaluate produces expected exception creating duplicate lexical global variables across evaluations.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate(`let duplicateGlobalVariable = 1`);
             testEvaluateThrow(`let duplicateGlobalVariable = 1`, (wasThrown) => {
                 InspectorTest.expectThat(wasThrown, "Should be an exception defining a lexical global multiple times.");
@@ -119,7 +119,7 @@ function test()
     suite.addTestCase({
         name: "NonStrictAndStrictEvaluations",
         description: "Test evaluate can run strict and non-strict programs.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate(`
                 // Not strict, this is okay.
                 (function f() {
@@ -143,7 +143,7 @@ function test()
     suite.addTestCase({
         name: "CommandLineAPIDoesNotShadowVariables",
         description: "Test CommandLineAPI does not shadow global variables.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate("keys.toString()", (resultValue) => {
                 InspectorTest.expectThat(resultValue.includes("[Command Line API]"), "`keys` is currently CommandLineAPI function.");
             });
@@ -160,7 +160,7 @@ function test()
     suite.addTestCase({
         name: "CommandLineAPIDoesNotShadowGlobalObjectProperties",
         description: "Test CommandLineAPI does not shadow global object properties.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             testEvaluate("values.toString()", (resultValue) => {
                 InspectorTest.expectThat(resultValue === "[object HTMLDivElement]", "`values` should be `window.values` and not shadowed by CommandLineAPI `values` function.");
                 resolve();

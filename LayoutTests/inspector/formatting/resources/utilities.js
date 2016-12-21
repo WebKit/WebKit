@@ -50,7 +50,7 @@ TestPage.registerInitializer(function() {
             let testURL = testPageResourcesURL + "/" + test;
             suite.addTestCase({
                 name: suite.name + "." + testName,
-                test: (resolve, reject) => {
+                test(resolve, reject) {
                     runFormattingTest(mode, testName, testURL).then(resolve).catch(reject);
                 }
             });

@@ -31,7 +31,7 @@ function test()
     suite.addTestCase({
         name: "CheckEmptyHighlight",
         description: "Should not be a highlight yet.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             getHighlightRects((highlightRects) => {
                 InspectorTest.expectThat(highlightRects.length === 0, "Should not be a highlight yet.");
                 resolve();
@@ -42,7 +42,7 @@ function test()
     suite.addTestCase({
         name: "HighlightSmallRectViewportCoordinates",
         description: "Should create a highlight using viewport coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 100, 200);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, useViewportCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -53,7 +53,7 @@ function test()
     suite.addTestCase({
         name: "HighlightSmallRectPageCoordinates",
         description: "Should create a highlight using page coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 100, 200);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, usePageCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -63,8 +63,8 @@ function test()
 
     suite.addTestCase({
         name: "HighlightSmallRectUnspecifiedCoordinatesUsesViewportCoordinates",
-        description: "Should create a highlight using viewport coordinates if unspecificed.",
-        test: (resolve, reject) => {
+        description: "Should create a highlight using viewport coordinates if unspecified.",
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 100, 200);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, (error) => {
                 dumpHighlightRects(resolve);
@@ -75,7 +75,7 @@ function test()
     suite.addTestCase({
         name: "HighlightLargeRectViewportCoordinates",
         description: "Should create a large highlight using viewport coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 100000, 200000);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, useViewportCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -86,7 +86,7 @@ function test()
     suite.addTestCase({
         name: "HighlightLargeRectPageCoordinates",
         description: "Should create a large highlight using page coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 100000, 200000);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, usePageCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -97,7 +97,7 @@ function test()
     suite.addTestCase({
         name: "HighlightEmptyRect",
         description: "Should create an empty highlight.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let rect = new WebInspector.Rect(0, 0, 0, 0);
             DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, color, outlineColor, false, (error) => {
                 dumpHighlightRects(resolve);

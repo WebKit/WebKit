@@ -10,7 +10,7 @@ function test()
     suite.addTestCase({
         name: "MatchCookiesAgainstResourceDomains",
         description: "Test that Inspector properly detects whether a cookie matches a resource's domain or not.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let testcasesByCookieDomain = {
                 ".example.com": [
                     // Unrelated top-level domain.

@@ -39,7 +39,7 @@ function createDatabaseWithStores(name, version) {
         // Populate once stores are created.
         lastObjectStore.transaction.oncomplete = (event) => {
             let reviewerObjectStore = db.transaction("Reviewers", "readwrite").objectStore("Reviewers");
-            reviewerObjectStore.add({name: "Thirsty Hampster", email: "hampster@webkit.org"});
+            reviewerObjectStore.add({name: "Thirsty Hamster", email: "hamster@webkit.org"});
             reviewerObjectStore.add({name: "Jamming Peacock", email: "peacock@webkit.org"});
             reviewerObjectStore.add({name: "Bustling Badger", email: "badger@webkit.org"});
             reviewerObjectStore.add({name: "Monstrous Beaver", email: "beaver@webkit.org"});

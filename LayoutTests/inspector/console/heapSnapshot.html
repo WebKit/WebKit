@@ -17,7 +17,7 @@ function test()
 
     suite.addTestCase({
         name: "TriggerHeapSnapshotNoTitle",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "Console.heapSnapshot"}).then((messageObject) => {
                 ProtocolTest.log("Console.heapSnapshot");
                 ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp.");
@@ -32,7 +32,7 @@ function test()
 
     suite.addTestCase({
         name: "TriggerHeapSnapshotWithTitle",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "Console.heapSnapshot"}).then((messageObject) => {
                 ProtocolTest.log("Console.heapSnapshot");
                 ProtocolTest.expectThat(typeof messageObject.params.timestamp === "number", "Should have a timestamp.");

@@ -23,7 +23,7 @@ function test()
         suite.addTestCase({
             name,
             description,
-            test: (resolve, reject) => {
+            test(resolve, reject) {
                 let stringifiedMessage = (typeof message !== "string") ? JSON.stringify(message) : message;
                 ProtocolTest.log("Sending message: " + stringifiedMessage);
                 InspectorProtocol.awaitMessage(message)

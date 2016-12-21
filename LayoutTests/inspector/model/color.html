@@ -37,7 +37,7 @@ function test()
     suite.addTestCase({
         name: "WebInspector.Color.fromString",
         description: "Test we can detect colors from strings.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function testGood(string, expectedFormat) {
                 let color = WebInspector.Color.fromString(string);
                 InspectorTest.expectThat(color instanceof WebInspector.Color, `'${string}' should be detected`);
@@ -114,7 +114,7 @@ function test()
     suite.addTestCase({
         name: "WebInspector.Color properties",
         description: "Test different color properties.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             function shallowEqual(arr1, arr2) {
                 if (arr1.length !== arr2.length)
                     return false;
@@ -225,7 +225,7 @@ function test()
     suite.addTestCase({
         name: "WebInspector.Color.prototype.toString",
         description: "Test the different toString outputs.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let color;
             function test(expected, format) {
                 let pass = color.toString(format) === expected;

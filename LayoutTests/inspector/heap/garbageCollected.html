@@ -36,7 +36,7 @@ function test()
     suite.addTestCase({
         name: "TriggerGCs",
         description: "Evaluating allocation-heavy JavaScript should trigger Heap.garbageCollected events.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("periodicallyTriggerGCs()");
 
             let seenFull = false;

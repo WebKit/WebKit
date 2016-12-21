@@ -28,7 +28,7 @@ function test()
     suite.addTestCase({
         name: "NoArguments",
         description: "No arguments increments a shared global counter.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let seen = 0;
             const expected = 16;
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);
@@ -49,7 +49,7 @@ function test()
     suite.addTestCase({
         name: "WithLabel",
         description: "Labeled counters increment the label.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let seen = 0;
             const expected = 20;
             WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, handler);

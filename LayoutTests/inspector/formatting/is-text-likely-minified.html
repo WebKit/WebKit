@@ -9,7 +9,7 @@ function test()
 
     suite.addTestCase({
         name: "JavaScriptShortSnippet.Unminified",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.expectThat(!isTextLikelyMinified("var x = 42;\nvar y = 24;\n"), "This small JavaScript snippet should be classified as unminified.");
             resolve();
         }
@@ -91,7 +91,7 @@ var support = {};`;
 
     suite.addTestCase({
         name: "JQuerySnippet.Unminified",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.expectThat(!isTextLikelyMinified(jquerySourceFragment), "jQuery snippet should be classified as unminified.");
             resolve();
         }
@@ -102,7 +102,7 @@ var support = {};`;
 
     suite.addTestCase({
         name: "JQuerySnippet.Minified",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.expectThat(isTextLikelyMinified(jQueryMinifiedSourceFragment), "jQuery snippet should be classified as minified.");
             resolve();
         }

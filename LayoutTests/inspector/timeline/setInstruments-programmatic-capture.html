@@ -37,7 +37,7 @@ function test()
 
     suite.addTestCase({
         name: "NoInstrumentsProgrammaticCapture",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             heapExpected = false;
             programmaticCaptureStopped = resolve;
 
@@ -50,7 +50,7 @@ function test()
 
     suite.addTestCase({
         name: "MultipleInstrumentsProgrammaticCapture",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             heapExpected = true;
             programmaticCaptureStopped = resolve;
 
@@ -63,7 +63,7 @@ function test()
 
     suite.addTestCase({
         name: "NoInstrumentsProgrammaticCaptureAgain",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             heapExpected = true;
             programmaticCaptureStopped = resolve;
 

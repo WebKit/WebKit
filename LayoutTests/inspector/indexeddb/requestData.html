@@ -19,7 +19,7 @@ function test()
     suite.addTestCase({
         name: "ClearDatabases",
         description: "Remove any existing IndexedDB databases.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             // FIXME: Remove any existing IndexedDB databases that might exist to workaround:
             // <https://webkit.org/b/148006> Each test should run with its own clean data store
             IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
@@ -31,7 +31,7 @@ function test()
     suite.addTestCase({
         name: "RequestDataBasic",
         description: "Request data for an object store with different indexes.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database1', 1)");
             IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database1", (error, database) => {
                 InspectorTest.expectNoError(error);
@@ -49,7 +49,7 @@ function test()
                     InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
                     let expectedPrimaryKeyOrder = [1, 2, 3, 4];
-                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hampster", "Jamming Peacock", "Bustling Badger", "Monstrous Beaver"];
+                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster", "Jamming Peacock", "Bustling Badger", "Monstrous Beaver"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
                         let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
@@ -67,7 +67,7 @@ function test()
                     InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
                     let expectedPrimaryKeyOrder = [3, 2, 4, 1];
-                    let expectedKeysOrderedByName = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hampster"];
+                    let expectedKeysOrderedByName = ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hamster"];
                     let expectedNamesOrderedByName = expectedKeysOrderedByName;
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
@@ -88,8 +88,8 @@ function test()
                     InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
                     let expectedPrimaryKeyOrder = [3, 4, 2, 1];
-                    let expectedKeysOrderedByEmail = ["badger@webkit.org", "beaver@webkit.org", "hampster@webkit.org", "peacock@webkit.org"];
-                    let expectedNamesOrderedByEmail = ["Bustling Badger", "Monstrous Beaver", "Thirsty Hampster", "Jamming Peacock"];
+                    let expectedKeysOrderedByEmail = ["badger@webkit.org", "beaver@webkit.org", "hamster@webkit.org", "peacock@webkit.org"];
+                    let expectedNamesOrderedByEmail = ["Bustling Badger", "Monstrous Beaver", "Thirsty Hamster", "Jamming Peacock"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
                         let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
@@ -109,7 +109,7 @@ function test()
     suite.addTestCase({
         name: "RequestDataPagination",
         description: "Request data for an object store with paginated requests.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database2', 1)");
             IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database2", (error, database) => {
                 InspectorTest.expectNoError(error);
@@ -127,7 +127,7 @@ function test()
                     InspectorTest.expectThat(hasMore, "Should have more entries.");
 
                     let expectedPrimaryKeyOrder = [1, 2];
-                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hampster", "Jamming Peacock"];
+                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster", "Jamming Peacock"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
                         let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
@@ -163,7 +163,7 @@ function test()
     suite.addTestCase({
         name: "RequestDataKeyRangeBounds",
         description: "Request key range bounded data for an object store.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             InspectorTest.evaluateInPage("createDatabaseWithStores('Database3', 1)");
             IndexedDBAgent.requestDatabase(WebInspector.frameResourceManager.mainFrame.securityOrigin, "Database3", (error, database) => {
                 InspectorTest.expectNoError(error);
@@ -180,7 +180,7 @@ function test()
 
                 // Index: Name Index
                 // Keys: [3, 2, 4, 1]
-                // Values: ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hampster"];
+                // Values: ["Bustling Badger", "Jamming Peacock", "Monstrous Beaver", "Thirsty Hamster"];
 
                 // Keys >= "M"
                 let keyRange = {lower: stringKeyWithString("M"), lowerOpen: false, upperOpen: true};
@@ -193,7 +193,7 @@ function test()
                     InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
                     let expectedPrimaryKeyOrder = [4, 1];
-                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hampster"];
+                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
                         let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
@@ -214,7 +214,7 @@ function test()
                     InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
                     let expectedPrimaryKeyOrder = [4, 1];
-                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hampster"];
+                    let expectedNamesOrderedByPrimaryKey = ["Monstrous Beaver", "Thirsty Hamster"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
                         let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);
@@ -235,7 +235,7 @@ function test()
                     InspectorTest.expectThat(!hasMore, "Should not have more entries.");
 
                     let expectedPrimaryKeyOrder = [1];
-                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hampster"];
+                    let expectedNamesOrderedByPrimaryKey = ["Thirsty Hamster"];
                     for (let i = 0; i < entries.length; ++i) {
                         let entryPayload = entries[i];
                         let primaryKey = WebInspector.RemoteObject.fromPayload(entryPayload.primaryKey);

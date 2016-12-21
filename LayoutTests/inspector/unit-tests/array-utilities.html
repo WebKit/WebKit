@@ -98,8 +98,8 @@ function test()
             InspectorTest.expectThat(Array.shallowEqual(arr2, arr1), "shallowEqual of equal arrays should be true.");
 
             let arr3 = [1, 2, 3, 4, 5];
-            InspectorTest.expectFalse(Array.shallowEqual(arr1, arr3), "shallowEqual of inequal arrays should be false.");
-            InspectorTest.expectFalse(Array.shallowEqual(arr3, arr1), "shallowEqual of inequal arrays should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(arr1, arr3), "shallowEqual of unequal arrays should be false.");
+            InspectorTest.expectFalse(Array.shallowEqual(arr3, arr1), "shallowEqual of unequal arrays should be false.");
 
             InspectorTest.expectFalse(Array.shallowEqual([], null), "shallowEqual of an array and null should be false.");
             InspectorTest.expectFalse(Array.shallowEqual([], 1.23), "shallowEqual of an array and non-array should be false.");

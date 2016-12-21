@@ -14,7 +14,7 @@ function test()
     suite.addTestCase({
         name: "TrackingSession",
         description: "Start a tracking session that includes an API event type.",
-        test: function(resolve, reject) {
+        test(resolve, reject) {
             
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then((messageObject) => {
                 ProtocolTest.log("ScriptProfiler.trackingStart");

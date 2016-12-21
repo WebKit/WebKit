@@ -20,6 +20,6 @@ Invoked callback for bar event.
 Invoked callback for baz event.
 Unregistering everything.
 Dispatching events.
-Unintalling and disconnecting listeners.
+Uninstalling and disconnecting listeners.
 Dispatching events.
 

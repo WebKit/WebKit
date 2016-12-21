@@ -31,7 +31,7 @@ function test()
     suite.addTestCase({
         name: "CheckEmptyHighlight",
         description: "Should not be a highlight yet.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             getHighlightRects((highlightRects) => {
                 InspectorTest.expectThat(highlightRects.length === 0, "Should not be a highlight yet.");
                 resolve();
@@ -42,7 +42,7 @@ function test()
     suite.addTestCase({
         name: "HighlightSmallRectWithQuad",
         description: "Should create a highlight using viewport coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([0, 0, 100, 0, 100, 100, 100, 0]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, (error) => {
                 dumpHighlightRects(resolve);
@@ -53,7 +53,7 @@ function test()
     suite.addTestCase({
         name: "HighlightSmallQuadViewportCoordinates",
         description: "Should create a highlight using viewport coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([100, 100, 150, 150, 100, 200, 50, 150]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, useViewportCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -64,7 +64,7 @@ function test()
     suite.addTestCase({
         name: "HighlightSmallQuadPageCoordinates",
         description: "Should create a highlight using page coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([100, 100, 150, 150, 100, 200, 50, 150]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, usePageCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -75,7 +75,7 @@ function test()
     suite.addTestCase({
         name: "HighlightSmallUnspecifiedCoordinatesUsesViewportCoordinates",
         description: "Should create a highlight using page coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([100, 100, 150, 150, 100, 200, 50, 150]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, (error) => {
                 dumpHighlightRects(resolve);
@@ -86,7 +86,7 @@ function test()
     suite.addTestCase({
         name: "HighlightLargeQuadViewportCoordinates",
         description: "Should create a highlight using viewport coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([0, 0, 500, 0, 1000, 1000, 0, 2000]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, useViewportCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -97,7 +97,7 @@ function test()
     suite.addTestCase({
         name: "HighlightLargeQuadPageCoordinates",
         description: "Should create a highlight using viewport coordinates.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let quad = new WebInspector.Quad([0, 0, 500, 0, 1000, 1000, 0, 2000]);
             DOMAgent.highlightQuad(quad.toProtocol(), color, outlineColor, usePageCoordinates, (error) => {
                 dumpHighlightRects(resolve);
@@ -110,7 +110,7 @@ function test()
     suite.addTestCase({
         name: "BadQuadShouldError",
         description: "Should get an error when specifying a quad with too few points.",
-        test: (resolve, reject) => {
+        test(resolve, reject) {
             let badQuadArray = [1, 2, 3, 4];
             DOMAgent.highlightQuad(badQuadArray, color, outlineColor, usePageCoordinates, (error) => {
                 InspectorTest.expectThat(error, "Should produce an error.");
