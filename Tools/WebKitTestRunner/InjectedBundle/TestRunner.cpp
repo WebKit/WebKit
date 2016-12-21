@@ -329,8 +329,13 @@ bool TestRunner::isCommandEnabled(JSStringRef name)
 
 void TestRunner::setCanOpenWindows(bool)
 {
-    // It's not clear if or why any tests require opening windows be forbidden.
-    // For now, just ignore this setting, and if we find later it's needed we can add it.
+    // The test plugins/get-url-with-blank-target.html requires that the embedding client forbid
+    // opening windows (by omitting a call to this function) so as to test that NPN_GetURL()
+    // with a blank target will return an error.
+    //
+    // It is not clear if we should implement this functionality or remove it and plugins/get-url-with-blank-target.html
+    // per the remark in <https://trac.webkit.org/changeset/64504/trunk/LayoutTests/platform/mac-wk2/Skipped>.
+    // For now, just ignore this setting.
 }
 
 void TestRunner::setXSSAuditorEnabled(bool enabled)

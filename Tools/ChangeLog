@@ -1,3 +1,20 @@
+2016-12-21  Daniel Bates  <dabates@apple.com>
+
+        WebKitTestRunner: Add comment to TestRunner::setCanOpenWindows()
+        https://bugs.webkit.org/show_bug.cgi?id=166356
+
+        Add comment in TestRunner::setCanOpenWindows() to elaborate further on its purpose
+        as a means to allow a test to explicit allow an embedding client to open a new windows
+        such that the default behavior is for the embedding client to forbid such an action.
+        The test plugins/get-url-with-blank-target.html assumes this default behavior though
+        it is currently skipped on WebKit2 because questions were raised in the patch for
+        <https://bugs.webkit.org/show_bug.cgi?id=43389> about its correctness and usefulness.
+        We will need to implement TestRunner::setCanOpenWindows() should we decide to unskip
+        this test.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCanOpenWindows):
+
 2016-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION: API test failure: WKWebView.EvaluateJavaScriptBlockCrash

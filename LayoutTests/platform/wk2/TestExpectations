@@ -315,7 +315,8 @@ plugins/plugin-document-willSendRequest-null.html [ Skip ]
 plugins/plugin-remove-readystatechange.html [ Skip ]
 
 # This test checks that NPN_GetURL with a blank target will return an error if the window isn't opened. This behavior doesn't
-# match Firefox or Chrome. We should either fix the test, or get rid of it.
+# match Firefox or Chrome. We should either fix the test, or get rid of it. This test also depends on implementing
+# testRunner::setCanOpenWindows() such that opening windows are forbidden by default.
 plugins/get-url-with-blank-target.html
 
 # requires video.buffered to be able to return multiple timeranges
