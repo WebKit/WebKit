@@ -32,10 +32,11 @@
 
 namespace JSC {
 
-JSWebAssemblyCompileError* JSWebAssemblyCompileError::create(ExecState* state, Structure* structure, const String& message, bool useCurrentFrame)
+JSWebAssemblyCompileError* JSWebAssemblyCompileError::create(ExecState* state, VM& vm, Structure* structure, const String& message)
 {
-    auto& vm = state->vm();
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyCompileError>(vm.heap)) JSWebAssemblyCompileError(vm, structure);
+    instance->m_sourceAppender = defaultSourceAppender;
+    bool useCurrentFrame = true;
     instance->finishCreation(state, vm, message, useCurrentFrame);
     return instance;
 }
@@ -48,11 +49,11 @@ JSWebAssemblyCompileError::JSWebAssemblyCompileError(VM& vm, Structure* structur
 const ClassInfo JSWebAssemblyCompileError::s_info = { "WebAssembly.CompileError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyCompileError) };
 
     
-JSObject* createWebAssemblyCompileError(ExecState* exec, const String& message)
+JSObject* createJSWebAssemblyCompileError(ExecState* state, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    return ErrorInstance::create(exec, globalObject->vm(), globalObject->WebAssemblyCompileErrorStructure(), message, defaultSourceAppender, TypeNothing, true);
+    JSGlobalObject* globalObject = state->lexicalGlobalObject();
+    return JSWebAssemblyCompileError::create(state, vm, globalObject->WebAssemblyCompileErrorStructure(), message);
 }
 
 } // namespace JSC

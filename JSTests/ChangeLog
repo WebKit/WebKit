@@ -1,3 +1,31 @@
+2016-12-21  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: cleanup & pass VM around to {Compile/Runtime}Error
+        https://bugs.webkit.org/show_bug.cgi?id=166295
+        <rdar://problem/29762017>
+
+        Reviewed by Mark Lam.
+
+        Update tests to generate new error messages. Adapt some to use the
+        assert.js module.
+
+        * wasm/assert.js: allow filtering out sometimes-useless source
+        location information. Return the exception so that further
+        processing can occur on it as desired.
+        * wasm/function-tests/exceptions.js:
+        * wasm/function-tests/trap-load-2.js:
+        (assert): Deleted.
+        (i.catch): Deleted.
+        * wasm/function-tests/trap-load.js:
+        (assert): Deleted.
+        (i.catch): Deleted.
+        * wasm/function-tests/trap-store-2.js:
+        (import.Builder.from.string_appeared_here.assert): Deleted.
+        (i.catch): Deleted.
+        * wasm/function-tests/trap-store.js:
+        (import.Builder.from.string_appeared_here.assert): Deleted.
+        (i.catch): Deleted.
+
 2016-12-20  Keith Miller  <keith_miller@apple.com>
 
         Add support for global

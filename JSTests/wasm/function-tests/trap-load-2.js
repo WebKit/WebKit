@@ -1,4 +1,5 @@
 import Builder from '../Builder.js'
+import * as assert from '../assert.js'
 
 const pageSize = 64 * 1024;
 const numPages = 10;
@@ -17,11 +18,6 @@ const builder = (new Builder())
             .Return()
         .End()
     .End();
-
-function assert(b) {
-    if (!b)
-        throw new Error("Bad")
-}
 
 function wasmFrameCountFromError(e) {
     let stackFrames = e.stack.split("\n").filter((s) => s.indexOf("<wasm>@[wasm code]") !== -1);
@@ -70,18 +66,10 @@ function wasmFrameCountFromError(e) {
     }
 
     for (let i = 0; i < 5000; i++) {
-        let threw = false;
-        try {
-            foo(5, address);
-        } catch(e) {
-            assert(e instanceof WebAssembly.RuntimeError);
-            assert(e.message === "Out of bounds memory access");
-            // There are 5 total calls, and each call does:
-            // JS entry, wasm entry, js call stub.
-            // The last call that traps just has JS entry and wasm entry.
-            assert(wasmFrameCountFromError(e) === 5 * 3 + 2);
-            threw = true;
-        }
-        assert(threw);
+        const e = assert.throws(() => foo(5, address), WebAssembly.RuntimeError, "Out of bounds memory access (evaluating 'foo(x - 1, address)')");
+        // There are 5 total calls, and each call does:
+        // JS entry, wasm entry, js call stub.
+        // The last call that traps just has JS entry and wasm entry.
+        assert.eq(wasmFrameCountFromError(e), 5 * 3 + 2);
     }
 }
