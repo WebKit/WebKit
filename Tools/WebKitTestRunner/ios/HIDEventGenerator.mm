@@ -769,6 +769,11 @@ static InterpolationType interpolationFromString(NSString *string)
     }
 }
 
+- (BOOL)checkForOutstandingCallbacks
+{
+    return !([_eventCallbacks count] > 0);
+}
+
 static inline bool shouldWrapWithShiftKeyEventForCharacter(NSString *key)
 {
     if (key.length != 1)

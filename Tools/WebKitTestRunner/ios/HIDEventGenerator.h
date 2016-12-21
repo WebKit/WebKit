@@ -98,6 +98,7 @@ extern NSString* const HIDEventPhaseCanceled;
 - (void)sendEventStream:(NSDictionary *)eventInfo completionBlock:(void (^)(void))completionBlock;
 
 - (void)markerEventReceived:(IOHIDEventRef)event;
+- (BOOL)checkForOutstandingCallbacks;
 
 // Keyboard
 - (void)keyPress:(NSString *)character completionBlock:(void (^)(void))completionBlock;

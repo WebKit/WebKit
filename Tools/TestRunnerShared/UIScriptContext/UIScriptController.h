@@ -47,6 +47,7 @@ public:
     }
 
     void contextDestroyed();
+    void checkForOutstandingCallbacks();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
     

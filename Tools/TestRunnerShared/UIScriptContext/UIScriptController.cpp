@@ -37,6 +37,12 @@ UIScriptController::UIScriptController(UIScriptContext& context)
 {
 }
 
+#if !PLATFORM(IOS)
+void UIScriptController::checkForOutstandingCallbacks()
+{
+}
+#endif
+
 void UIScriptController::contextDestroyed()
 {
     m_context = nullptr;
