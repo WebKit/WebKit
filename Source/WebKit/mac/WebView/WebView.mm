@@ -5025,7 +5025,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 - (void)showCandidates:(NSArray<NSTextCheckingResult *> *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock
 {
-    [self.candidateList setCandidates:candidates forSelectedRange:range inString:string];
+    [self.candidateList setCandidates:candidates forSelectedRange:range inString:string rect:rectOfTypedString view:view completionHandler:completionBlock];
 }
 
 - (BOOL)shouldRequestCandidates

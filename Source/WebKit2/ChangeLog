@@ -1,3 +1,23 @@
+2016-12-21  Beth Dakin  <bdakin@apple.com>
+
+        Holding down on candidates in the TouchBar should show panel on screen
+        https://bugs.webkit.org/show_bug.cgi?id=166367
+        -and corresponding-
+        <rdar://problem/28479236>
+
+        Reviewed by Tim Horton.
+
+        The showCandidates() helper function is not needed. We can call the AppKit method 
+        directly at the one call site.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
+        The panel should appear under the selection, so offset the selection rect.
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+
+        No more showCandidates() since we can call it directly. 
+        (WebKit::WebViewImpl::showCandidates): Deleted.
+
 2016-12-20  Taras Tsugrii  <ttsugrii@fb.com>
 
         Fix undefined behavior caused by macro expansion producing 'defined'

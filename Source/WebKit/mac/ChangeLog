@@ -1,3 +1,21 @@
+2016-12-21  Beth Dakin  <bdakin@apple.com>
+
+        Holding down on candidates in the TouchBar should show panel on screen
+        https://bugs.webkit.org/show_bug.cgi?id=166367
+        -and corresponding-
+        <rdar://problem/28479236>
+
+        Reviewed by Tim Horton.
+
+        Stray whitespace.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleRequestedCandidates):
+
+        Call the version of setCandidates: that takes a rect. We need to keep the helper 
+        function in WK1 (unlike WK2) since we also use it for testing.
+        * WebView/WebView.mm:
+        (-[WebView showCandidates:forString:inRect:forSelectedRange:view:completionHandler:]):
+
 2016-12-20  Dean Jackson  <dino@apple.com>
 
         Remove INDIE_UI

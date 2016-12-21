@@ -493,7 +493,6 @@ public:
 
     void forceRequestCandidatesForTesting();
     bool shouldRequestCandidates() const;
-    void showCandidates(NSArray *candidates, NSString *, NSRect rectOfTypedString, NSRange selectedRange, NSView *, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate));
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 

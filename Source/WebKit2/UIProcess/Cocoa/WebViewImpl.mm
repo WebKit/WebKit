@@ -1183,11 +1183,6 @@ bool WebViewImpl::shouldRequestCandidates() const
     return !m_page->editorState().isInPasswordField && candidateListTouchBarItem().candidateListVisible;
 }
 
-void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSRange selectedRange, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
-{
-    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:string];
-}
-
 void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 {
     m_editableElementIsFocused = editableElementIsFocused;
@@ -1210,10 +1205,6 @@ void WebViewImpl::forceRequestCandidatesForTesting()
 bool WebViewImpl::shouldRequestCandidates() const
 {
     return false;
-}
-
-void WebViewImpl::showCandidates(NSArray *candidates, NSString *string, NSRect rectOfTypedString, NSRange selectedRange, NSView *view, void (^completionHandler)(NSTextCheckingResult *acceptedCandidate))
-{
 }
 
 void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
@@ -2994,13 +2985,10 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
 
     NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
     auto weakThis = createWeakPtr();
-    showCandidates(candidates, postLayoutData.paragraphContextForCandidateRequest, postLayoutData.selectionClipRect, selectedRange, m_view, [weakThis](NSTextCheckingResult *acceptedCandidate) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!weakThis)
-                return;
-            weakThis->handleAcceptedCandidate(acceptedCandidate);
-        });
-    });
+    WebCore::IntRect offsetSelectionRect = postLayoutData.selectionClipRect;
+    offsetSelectionRect.move(0, offsetSelectionRect.height());
+
+    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view completionHandler:nil];
 }
 
 static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)

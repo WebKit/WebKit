@@ -27,6 +27,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <AppKit/NSCandidateListTouchBarItem_Private.h>
 #import <AppKit/NSFunctionBar_Private.h>
 #import <AppKit/NSTextTouchBarItemController_WebKitSPI.h>
 #import <AppKit/NSTouchBar_Private.h>
@@ -52,6 +53,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSTouchBarItem *)itemForIdentifier:(nullable NSString *)identifier;
 
+@end
+
+@interface NSCandidateListTouchBarItem ()
+- (void)setCandidates:(NSArray *)candidates forSelectedRange:(NSRange)selectedRange inString:(nullable NSString *)string rect:(NSRect)rect view:(nullable NSView *)view completionHandler:(nullable void (^)(id acceptedCandidate))completionBlock;
 @end
 
 #endif // !USE(APPLE_INTERNAL_SDK)
