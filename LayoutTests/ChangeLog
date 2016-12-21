@@ -1,3 +1,16 @@
+2016-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed bars are positioned incorrectly when there are header and footer banners
+        https://bugs.webkit.org/show_bug.cgi?id=166302
+        rdar://problem/29727145
+
+        Reviewed by Tim Horton.
+        
+        * fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt: Added.
+        * fast/visual-viewport/zoomed-fixed-header-and-footer.html: Added.
+        * platform/ios-simulator/fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt: Added.
+        * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+
 2016-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Skia lighter wght variation looks bolder than regular

@@ -102,21 +102,14 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const
 {
     ASSERT(scrollingTree().visualViewportEnabled());
 
-    FloatSize visibleContentSize = scrollableAreaSize();
-#if PLATFORM(MAC)
-    // On Mac, FrameView.visibleContentRect(), which was used to set scrollableAreaSize(), returns a rect with scale applied (so it's not really a "content rect"),
-    // so we have to convert back to unscaled coordinates here.
-    visibleContentSize.scale(1 / scale);
-#else
-    UNUSED_PARAM(scale);
-#endif
-    FloatRect visualViewport(visibleContentOrigin, visibleContentSize);
+    FloatRect visibleContentRect(visibleContentOrigin, scrollableAreaSize());
+    LayoutRect visualViewport(FrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
     LayoutRect layoutViewport(m_layoutViewport);
 
     LOG_WITH_STREAM(Scrolling, stream << "\nScrolling thread: " << "(visibleContentOrigin " << visibleContentOrigin << ")");
-    LOG_WITH_STREAM(Scrolling, stream << "layoutViewport: " << layoutViewport);
-    LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewport);
-    LOG_WITH_STREAM(Scrolling, stream << "scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
+    LOG_WITH_STREAM(Scrolling, stream << "  layoutViewport: " << layoutViewport);
+    LOG_WITH_STREAM(Scrolling, stream << "  visualViewport: " << visualViewport);
+    LOG_WITH_STREAM(Scrolling, stream << "  scroll positions: min: " << minLayoutViewportOrigin() << " max: "<< maxLayoutViewportOrigin());
 
     LayoutPoint newLocation = FrameView::computeLayoutViewportOrigin(LayoutRect(visualViewport), LayoutPoint(minLayoutViewportOrigin()), LayoutPoint(maxLayoutViewportOrigin()), layoutViewport);
 

@@ -1,3 +1,35 @@
+2016-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fixed bars are positioned incorrectly when there are header and footer banners
+        https://bugs.webkit.org/show_bug.cgi?id=166302
+        rdar://problem/29727145
+
+        Reviewed by Tim Horton.
+        
+        The computation of the visual viewport was wrong in the presence of header and footer
+        banners. It needs to take into account the fact that "visibleContentRect" applies to the
+        scroll view contents, which includes header and footer (unscaled), and the potentially scaled
+        document, and we need to return a rectangle in unscaled document coordinates.
+        
+        Make a static method in FrameView to do this computation, and call it from FrameView::visualViewportRect()
+        and ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition().
+        
+        layoutViewportForScrollPosition() is only called on Mac, so remove the #ifdeffing related to scaling, 
+        and pass in an unscaled scroll position.
+
+        Test: fast/visual-viewport/zoomed-fixed-header-and-footer.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::maxStableLayoutViewportOrigin):
+        (WebCore::FrameView::visibleDocumentRect):
+        (WebCore::FrameView::visualViewportRect):
+        * page/FrameView.h:
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp:
+        (WebCore::ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+
 2016-12-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Remove remaining INDIE_UI related entries.

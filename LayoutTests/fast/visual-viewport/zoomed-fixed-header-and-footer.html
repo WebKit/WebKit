@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .fixed {
+            position: fixed;
+            background-color: gray;
+        }
+        
+        #top, #bottom {
+            width: 100%;
+            left: 0;
+            height: 100px;
+        }
+
+        #left, #right {
+            width: 100px;
+            top: 0;
+            height: 100%;
+        }
+
+        #top { top: 0; }
+        #bottom { bottom: 0; }
+
+        #left { left: 0; }
+        #right { right: 0; }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        description("This test zooms and scrolls the page and checks the positions of fixed-position objects.");
+
+        if (window.internals) {
+            internals.setHeaderHeight(43);
+            internals.setFooterHeight(56);
+            internals.settings.setVisualViewportEnabled(true);
+        }
+
+        window.jsTestIsAsync = true;
+
+        var fixedElement;
+        function logFixedObject(objectID)
+        {
+            debug('client rect of ' + objectID + ':');
+            fixedElement = document.getElementById(objectID);
+            evalAndLogResult("JSON.stringify(fixedElement.getBoundingClientRect())");
+        }
+        
+        function doAfterZooming()
+        {
+            // Zooming may scroll the view away from the origin.
+            window.scrollTo(0, 0);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            logFixedObject('top');
+            logFixedObject('bottom');
+            logFixedObject('left');
+            logFixedObject('right');
+
+            debug('');
+            window.scrollTo(475, 525);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            logFixedObject('top');
+            logFixedObject('bottom');
+            logFixedObject('left');
+            logFixedObject('right');
+
+            debug('');
+            window.scrollTo(100, 776);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            logFixedObject('top');
+            logFixedObject('bottom');
+            logFixedObject('left');
+            logFixedObject('right');
+
+            debug('');
+            window.scrollTo(50, 300);
+            debug('Scrolled to ' + window.scrollX + ', ' + window.scrollY);
+
+            evalAndLogResult("JSON.stringify(internals.layoutViewportRect())");
+            evalAndLogResult("JSON.stringify(internals.visualViewportRect())");
+
+            logFixedObject('top');
+            logFixedObject('bottom');
+            logFixedObject('left');
+            logFixedObject('right');
+
+            window.scrollTo(0, 0);
+
+            finishJSTest();
+        }
+
+        function getUIScript()
+        {
+            return `(function() {
+                uiController.zoomToScale(2, function() {
+                    uiController.uiScriptComplete(uiController.zoomScale);
+                });
+            })();`;
+        }
+
+        function doTest()
+        {
+            if (!window.testRunner)
+                return;
+
+            testRunner.runUIScript(getUIScript(), function(zoomScale) {
+                doAfterZooming();
+            });
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="top" class="fixed"></div>
+    <div id="bottom" class="fixed"></div>
+    <div id="left" class="fixed"></div>
+    <div id="right" class="fixed"></div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
