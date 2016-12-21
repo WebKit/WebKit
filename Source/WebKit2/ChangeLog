@@ -1,3 +1,12 @@
+2016-12-20  Taras Tsugrii  <ttsugrii@fb.com>
+
+        Fix undefined behavior caused by macro expansion producing 'defined'
+        https://bugs.webkit.org/show_bug.cgi?id=166047
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/Cocoa/WKFoundation.h:
+
 2016-12-20  Brent Fulgham  <bfulgham@apple.com>
 
         Address some style problems found by static analysis
