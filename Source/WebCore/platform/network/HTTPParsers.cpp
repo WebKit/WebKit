@@ -132,7 +132,7 @@ bool isValidAcceptHeaderValue(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
         UChar c = value[i];
-        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == ',' || c == '.' || c == '/' || c == ';' || c == '=')
+        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == '.' || c == '/' || c == ';' || c == '=')
             continue;
         return false;
     }
@@ -145,7 +145,7 @@ bool isValidLanguageHeaderValue(const String& value)
 {
     for (unsigned i = 0; i < value.length(); ++i) {
         UChar c = value[i];
-        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == ',' || c == '-' || c == '.' || c == ';' || c == '=')
+        if (isASCIIAlphanumeric(c) || c == ' ' || c == '*' || c == '-' || c == '.' || c == ';' || c == '=')
             continue;
         return false;
     }

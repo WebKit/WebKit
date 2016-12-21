@@ -34,12 +34,12 @@
     }
 
     var abnormalSimpleCorsHeaderValue = "() { :;};"
-    var allAllowedNonAlphanumericCharactersForAcceptHeader = " *,./;="
-    var allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader = " *,-.;="
+    var allAllowedNonAlphanumericCharactersForAcceptHeader = " *./;="
+    var allAllowedNonAlphanumericCharactersForAcceptAndContentLanguageHeader = " *-.;="
     var testCases = [
         // Positive test cases with normal headers
         {
-            headersToAdd: [{ name : "Accept", value: "application/json,text/*,*/*" }],
+            headersToAdd: [{ name : "Accept", value: "text/*" }],
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
             description: "Accept header with normal value SHOULD NOT cause a preflight"
@@ -51,7 +51,7 @@
             description: "Accept header value with all allowed non-alphanumeric characters SHOULD NOT cause a preflight"
         }
         ,{
-            headersToAdd: [{ name : "Accept-Language", value: "en-US,en;q=0.8" }],
+            headersToAdd: [{ name : "Accept-Language", value: "en" }],
             explicitlyAllowHeaders: false,
             shouldCausePreflight: false,
             description: "Accept-Language header with normal value SHOULD NOT cause a preflight"

@@ -1,3 +1,7 @@
+2016-12-21  Babak Shafiei  <bshafiei@apple.com>
+
+        Roll out r209510.
+
 2016-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Changing text direction fires input events with null inputTypes and no data
