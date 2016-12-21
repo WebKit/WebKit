@@ -1,3 +1,13 @@
+2016-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Uncommenting CSS properties doesn't work for inline styles
+        https://bugs.webkit.org/show_bug.cgi?id=166297
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        Update checkboxes for inline styles, too.
+
 2016-12-20  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Window resize causes TimelineOverview graph elements to be repositioned
