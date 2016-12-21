@@ -69,8 +69,6 @@ enum XFrameOptionsDisposition {
 
 bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);
-bool isValidAcceptHeaderValue(const String&);
-bool isValidLanguageHeaderValue(const String&);
 bool isValidHTTPToken(const String&);
 bool parseHTTPRefresh(const String& refresh, double& delay, String& url);
 std::optional<std::chrono::system_clock::time_point> parseHTTPDate(const String&);

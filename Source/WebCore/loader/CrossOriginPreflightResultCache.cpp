@@ -29,7 +29,6 @@
 
 #include "CrossOriginAccessControl.h"
 #include "HTTPHeaderNames.h"
-#include "HTTPParsers.h"
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -128,7 +127,7 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& 
 bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, String& errorDescription) const
 {
     for (const auto& header : requestHeaders) {
-        if (header.keyAsHTTPHeaderName && isCrossOriginSafeRequestHeader(header.keyAsHTTPHeaderName.value(), header.value))
+        if (header.keyAsHTTPHeaderName && isOnAccessControlSimpleRequestHeaderWhitelist(header.keyAsHTTPHeaderName.value(), header.value))
             continue;
         if (!m_headers.contains(header.key)) {
             errorDescription = "Request header field " + header.key + " is not allowed by Access-Control-Allow-Headers.";

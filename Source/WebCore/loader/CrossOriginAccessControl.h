@@ -40,6 +40,7 @@ class URL;
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
+bool isOnAccessControlSimpleRequestHeaderWhitelist(HTTPHeaderName, const String& value);
 bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
 void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentials);
