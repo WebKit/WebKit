@@ -1,3 +1,28 @@
+2016-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Skia lighter wght variation looks bolder than regular
+        https://bugs.webkit.org/show_bug.cgi?id=165948
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/text/variations/default-value.html
+
+        This patch inspects the font's information regarding variations. It uses this information
+        to work around a bug in CoreText where default variation values were not getting applied.
+        This workaround is placed behind a version check and the macro name
+        "WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG" so we know to delete it whenever
+        possible. It also uses the minimum and maximum supported values for the axis to clamp our
+        variation values to the closest supported point, which is in line with a recent edit to
+        the fonts spec:
+        https://github.com/w3c/csswg-drafts/commit/52b802ac38619286a30662dceb71b8a29fa72f42
+        This clamping behavior also revealed another bug in CoreText, which was worked around
+        behind another version check and macro name WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG so
+        we know to delete it whenever possible.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::defaultVariationValues):
+        (WebCore::preparePlatformFont):
+
 2016-12-20  Tim Horton  <timothy_horton@apple.com>
 
         Remove a duplicate reference to ScrollingMomentumCalculatorMac.h in the Xcode project

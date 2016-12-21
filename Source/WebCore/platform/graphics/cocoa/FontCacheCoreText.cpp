@@ -363,6 +363,66 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
     return result;
 }
 
+#if ENABLE(VARIATION_FONTS)
+struct VariationDefaults {
+    float defaultValue;
+    float minimumValue;
+    float maximumValue;
+};
+
+typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
+
+static VariationDefaultsMap defaultVariationValues(CTFontRef font)
+{
+    VariationDefaultsMap result;
+    auto axes = adoptCF(CTFontCopyVariationAxes(font));
+    if (!axes)
+        return result;
+    auto size = CFArrayGetCount(axes.get());
+    for (CFIndex i = 0; i < size; ++i) {
+        CFDictionaryRef axis = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(axes.get(), i));
+        CFNumberRef axisIdentifier = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisIdentifierKey));
+        CFNumberRef defaultValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisDefaultValueKey));
+        CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
+        CFNumberRef maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMaximumValueKey));
+        int64_t rawAxisIdentifier = 0;
+        Boolean success = CFNumberGetValue(axisIdentifier, kCFNumberSInt64Type, &rawAxisIdentifier);
+        ASSERT_UNUSED(success, success);
+        float rawDefaultValue = 0;
+        float rawMinimumValue = 0;
+        float rawMaximumValue = 0;
+        CFNumberGetValue(defaultValue, kCFNumberFloatType, &rawDefaultValue);
+        CFNumberGetValue(minimumValue, kCFNumberFloatType, &rawMinimumValue);
+        CFNumberGetValue(maximumValue, kCFNumberFloatType, &rawMaximumValue);
+
+        // FIXME: Remove when <rdar://problem/28893836> is fixed
+#define WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+#if WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG
+        float epsilon = 0.001;
+        rawMinimumValue += epsilon;
+        rawMaximumValue -= epsilon;
+#endif
+#undef WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG
+
+        if (rawMinimumValue > rawMaximumValue)
+            std::swap(rawMinimumValue, rawMaximumValue);
+
+        auto b1 = rawAxisIdentifier >> 24;
+        auto b2 = (rawAxisIdentifier & 0xFF0000) >> 16;
+        auto b3 = (rawAxisIdentifier & 0xFF00) >> 8;
+        auto b4 = rawAxisIdentifier & 0xFF;
+        ASSERT(b1 >= 0 && b1 <= std::numeric_limits<char>::max());
+        ASSERT(b2 >= 0 && b2 <= std::numeric_limits<char>::max());
+        ASSERT(b3 >= 0 && b3 <= std::numeric_limits<char>::max());
+        ASSERT(b4 >= 0 && b4 <= std::numeric_limits<char>::max());
+        FontTag resultKey = {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
+        VariationDefaults resultValues = { rawDefaultValue, rawMinimumValue, rawMaximumValue };
+        result.set(resultKey, resultValues);
+    }
+    return result;
+}
+#endif
+
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, const FontVariationSettings& variations)
 {
     if (!originalFont || (!features.size() && variations.isEmpty() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
@@ -402,9 +462,25 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
 #if ENABLE(VARIATION_FONTS)
+    auto defaultValues = defaultVariationValues(originalFont);
+
     VariationsMap variationsToBeApplied;
-    for (auto& newVariation : variations)
-        variationsToBeApplied.set(newVariation.tag(), newVariation.value());
+    for (auto& newVariation : variations) {
+        auto iterator = defaultValues.find(newVariation.tag());
+        if (iterator != defaultValues.end()) {
+            float valueToApply = std::max(std::min(newVariation.value(), iterator->value.maximumValue), iterator->value.minimumValue);
+
+            // FIXME: Remove when <rdar://problem/28707822> is fixed
+#define WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+#if WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG
+            if (valueToApply == iterator->value.defaultValue)
+                valueToApply += 0.0001;
+#endif
+#undef WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG
+
+            variationsToBeApplied.set(newVariation.tag(), valueToApply);
+        }
+    }
 #endif
 
     RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

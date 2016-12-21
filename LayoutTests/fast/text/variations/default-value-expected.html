@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals)
+   window.internals.settings.setVariationFontsEnabled(true);
+</script>
+</head>
+<body>
+This test makes sure that default values of variations get applied correctly. The test fails if the text below isn't thin.
+<div style="font: 70px 'Skia'; font-variation-settings: 'wght' 1.000001;">hamburgefonstiv</div>
+</body>
+<html>

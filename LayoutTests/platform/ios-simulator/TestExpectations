@@ -2713,6 +2713,8 @@ webkit.org/b/162739 fast/images/gif-loop-count.html [ Pass ImageOnlyFailure ]
 
 # This variation font test requires Skia which isn't available on iOS.
 webkit.org/b/163093 fast/text/variations/advances.html [ Failure ]
+webkit.org/b/163093 fast/text/variations/outofbounds.html [ ImageOnlyFailure ]
+webkit.org/b/163093 fast/text/variations/default-value.html [ ImageOnlyFailure ]
 
 webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
 
