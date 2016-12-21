@@ -1,3 +1,19 @@
+2016-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer can be called before it has a media stream
+        https://bugs.webkit.org/show_bug.cgi?id=166344
+        <rdar://problem/29763143>
+
+        Reviewed by Jer Noble.
+
+        There is a very narrow window during which a MediaStream player can be asked for its layer 
+        before it has a steam, resulting in a NULL dereference and crash. Don't do that.
+
+        Unable to reproduce.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer):
+
 2016-12-21  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [Readable Streams API] Fix test in readableByteStreamCallPullIfNeeded

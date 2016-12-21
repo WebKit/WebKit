@@ -197,7 +197,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::flushAndRemoveVideoSampleBuffers()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer()
 {
-    if (haveVideoLayer())
+    if (!m_mediaStreamPrivate || haveVideoLayer())
         return;
 
     CALayer *videoLayer = nil;
