@@ -31,19 +31,17 @@
 #include "DOMTimer.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
+#include <heap/HandleTypes.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 
-namespace Deprecated {
-class ScriptValue;
-}
-
 namespace JSC {
 class Exception;
 class ExecState;
 class VM;
+template <typename T> class Strong;
 }
 
 namespace Inspector {
@@ -94,7 +92,7 @@ public:
 
     virtual String resourceRequestIdentifier() const { return String(); };
 
-    bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, Deprecated::ScriptValue& error, CachedScript* = nullptr);
+    bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, JSC::Strong<JSC::Unknown>& error, CachedScript* = nullptr);
     void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr);
 
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);

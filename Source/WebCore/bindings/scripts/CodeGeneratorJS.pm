@@ -4254,17 +4254,13 @@ sub GenerateCallWithUsingPointers
 
 sub GenerateCallWith
 {
-    my $callWith = shift;
+    my ($callWith, $outputArray, $returnValue, $function, $statePointer, $stateReference, $globalObject) = @_;
+
     return () unless $callWith;
-    my $outputArray = shift;
-    my $returnValue = shift;
-    my $function = shift;
-    my $statePointer = shift;
-    my $stateReference = shift;
-    my $globalObject = shift;
 
     my @callWithArgs;
     push(@callWithArgs, $stateReference) if $codeGenerator->ExtendedAttributeContains($callWith, "ScriptState");
+    push(@callWithArgs, "*${globalObject}") if $codeGenerator->ExtendedAttributeContains($callWith, "GlobalObject");
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, "    auto* context = $globalObject->scriptExecutionContext();\n");
         push(@$outputArray, "    if (!context)\n");

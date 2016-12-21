@@ -64,7 +64,6 @@
 #include "JSDocumentCustom.cpp"
 #include "JSDocumentFragmentCustom.cpp"
 #include "JSElementCustom.cpp"
-#include "JSErrorEventCustom.cpp"
 #include "JSErrorHandler.cpp"
 #include "JSEventCustom.cpp"
 #include "JSEventListener.cpp"

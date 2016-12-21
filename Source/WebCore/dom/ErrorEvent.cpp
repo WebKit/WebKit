@@ -35,6 +35,7 @@
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
 #include <heap/HeapInlines.h>
+#include <heap/StrongInlines.h>
 
 using namespace JSC;
 
@@ -50,7 +51,7 @@ ErrorEvent::ErrorEvent(ExecState& state, const AtomicString& type, const Init& i
 {
 }
 
-ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, const Deprecated::ScriptValue& error)
+ErrorEvent::ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, JSC::Strong<JSC::Unknown> error)
     : Event(eventNames().errorEvent, false, true)
     , m_message(message)
     , m_fileName(fileName)
@@ -69,9 +70,9 @@ EventInterface ErrorEvent::eventInterface() const
     return ErrorEventInterfaceType;
 }
 
-JSValue ErrorEvent::sanitizedErrorValue(ExecState& exec, JSGlobalObject& globalObject)
+JSValue ErrorEvent::error(ExecState& exec, JSGlobalObject& globalObject)
 {    
-    auto error = m_error.jsValue();
+    auto error = m_error.get();
     if (!error)
         return jsNull();
 
@@ -90,7 +91,7 @@ JSValue ErrorEvent::sanitizedErrorValue(ExecState& exec, JSGlobalObject& globalO
 RefPtr<SerializedScriptValue> ErrorEvent::trySerializeError(ExecState& exec)
 {
     if (!m_triedToSerialize) {
-        m_serializedDetail = SerializedScriptValue::create(exec, m_error, NonThrowing);
+        m_serializedDetail = SerializedScriptValue::create(exec, m_error.get(), NonThrowing);
         m_triedToSerialize = true;
     }
     return m_serializedDetail;

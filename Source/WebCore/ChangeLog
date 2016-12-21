@@ -1,3 +1,54 @@
+2016-12-21  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom binding for ErrorEvent
+        https://bugs.webkit.org/show_bug.cgi?id=166345
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSErrorEventCustom.cpp: Removed.
+        Remove JSErrorEventCustom.cpp
+
+        * ForwardingHeaders/heap/HandleTypes.h: Added.
+        Add forwarding header for HandleTypes.h
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        Switch to using JSDOMConvert and call the updated name for the error getter.
+
+        * bindings/js/ScriptController.h:
+        * bindings/js/SerializedScriptValue.h:
+        Remove unnecessary forward declaration of ScriptValue.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::sanitizeScriptError):
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent):
+        * dom/ScriptExecutionContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postExceptionToWorkerObject):
+        Update type that sanitizeScriptError takes from a ScriptValue to a Strong<Unknown>.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallWith):
+        * bindings/scripts/IDLAttributes.txt:
+        Add a new extended attributes option for the CallWith, GlobalObject, that passes the global object.
+
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEvent::ErrorEvent):
+        (WebCore::ErrorEvent::error):
+        (WebCore::ErrorEvent::trySerializeError):
+        (WebCore::ErrorEvent::sanitizedErrorValue): Deleted.
+        * dom/ErrorEvent.h:
+        Store a Strong<Unknown> directly, rather than a ScriptValue. Rename sanitizedErrorValue to 
+        just error to match the IDL.
+
+        * dom/ErrorEvent.idl:
+        Remove CustomGetter.
+
 2016-12-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Modernize findPlainText

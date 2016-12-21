@@ -37,10 +37,6 @@ OBJC_CLASS WebScriptObject;
 
 struct NPObject;
 
-namespace Deprecated {
-class ScriptValue;
-}
-
 namespace JSC {
 class ExecState;
 class JSGlobalObject;

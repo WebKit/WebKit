@@ -136,7 +136,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
         int lineNumber = 0;
         int columnNumber = 0;
         String sourceURL = sourceCode.url().string();
-        Deprecated::ScriptValue error;
+        JSC::Strong<JSC::Unknown> error;
         if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript()))
             returnedException = JSC::Exception::create(vm, createError(exec, errorMessage.impl()));
     }

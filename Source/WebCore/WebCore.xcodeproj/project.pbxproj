@@ -4008,7 +4008,6 @@
 		A55639D21C6F09E700806D8E /* WorkerConsoleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55639CF1C6EFD5900806D8E /* WorkerConsoleClient.cpp */; };
 		A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56C5B98189F34570082D13C /* WebConsoleAgent.cpp */; };
 		A56C5B9B189F34570082D13C /* WebConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A56C5B99189F34570082D13C /* WebConsoleAgent.h */; };
-		A56D02A31D0BAD680095E5D3 /* JSErrorEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56D02A21D0B9AF30095E5D3 /* JSErrorEventCustom.cpp */; };
 		A5732B0A136A161D005C8D7C /* DateComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5732B08136A161D005C8D7C /* DateComponents.cpp */; };
 		A5732B0B136A161D005C8D7C /* DateComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = A5732B09136A161D005C8D7C /* DateComponents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A57FD71B1DB9423E006AE24B /* WorkerRuntimeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A57FD7191DB94236006AE24B /* WorkerRuntimeAgent.cpp */; };
@@ -11686,7 +11685,6 @@
 		A55639D01C6EFD5900806D8E /* WorkerConsoleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerConsoleClient.h; sourceTree = "<group>"; };
 		A56C5B98189F34570082D13C /* WebConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebConsoleAgent.cpp; sourceTree = "<group>"; };
 		A56C5B99189F34570082D13C /* WebConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebConsoleAgent.h; sourceTree = "<group>"; };
-		A56D02A21D0B9AF30095E5D3 /* JSErrorEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorEventCustom.cpp; sourceTree = "<group>"; };
 		A5732B08136A161D005C8D7C /* DateComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateComponents.cpp; sourceTree = "<group>"; };
 		A5732B09136A161D005C8D7C /* DateComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateComponents.h; sourceTree = "<group>"; };
 		A57FD7191DB94236006AE24B /* WorkerRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerRuntimeAgent.cpp; sourceTree = "<group>"; };
@@ -22106,7 +22104,6 @@
 				BC64649B11D8238C006455B0 /* JSDOMStringMapCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
-				A56D02A21D0B9AF30095E5D3 /* JSErrorEventCustom.cpp */,
 				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
 				C28083411C6DC96A001451B6 /* JSFontFaceCustom.cpp */,
 				1C24EEAA1C72AA0A0080F8FC /* JSFontFaceSetCustom.cpp */,
@@ -29925,7 +29922,6 @@
 				65DF31F909D1CC60000BE325 /* JSElement.cpp in Sources */,
 				BC2ED5550C6B9BD300920BFF /* JSElementCustom.cpp in Sources */,
 				2ECF7ADC10162B3800427DE7 /* JSErrorEvent.cpp in Sources */,
-				A56D02A31D0BAD680095E5D3 /* JSErrorEventCustom.cpp in Sources */,
 				F3D461481161D53200CA0D09 /* JSErrorHandler.cpp in Sources */,
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
 				BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */,

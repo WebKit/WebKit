@@ -1120,7 +1120,6 @@ set(WebCore_SOURCES
     bindings/js/JSDocumentCustom.cpp
     bindings/js/JSDocumentFragmentCustom.cpp
     bindings/js/JSElementCustom.cpp
-    bindings/js/JSErrorEventCustom.cpp
     bindings/js/JSErrorHandler.cpp
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp

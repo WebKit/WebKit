@@ -27,7 +27,6 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include <bindings/ScriptValue.h>
 #include <heap/Strong.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/JSCJSValue.h>

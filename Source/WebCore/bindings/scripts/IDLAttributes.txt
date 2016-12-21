@@ -24,7 +24,7 @@ AtomicString
 CEReactions
 CachedAttribute
 CallbackNeedsOperatorEqual
-CallWith=Document|ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow|CallerDocument|CallerWindow
+CallWith=Document|ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|GlobalObject|ActiveWindow|FirstWindow|CallerDocument|CallerWindow
 CheckSecurity
 CheckSecurityForNode
 Clamp
@@ -110,7 +110,7 @@ Replaceable
 ReportExtraMemoryCost
 ReportExternalMemoryCost
 RequiresExistingAtomicString
-SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
+SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|GlobalObject|ActiveWindow|FirstWindow
 SetterMayThrowException
 SkipVTableValidation
 SuppressToJSObject
