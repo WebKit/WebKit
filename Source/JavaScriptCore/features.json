@@ -200,7 +200,7 @@
         "documentation-url": "https://hacks.mozilla.org/2015/08/es6-in-depth-modules/",
         "description": "Modules make modularizing code and splitting it across different files easy because the syntax and semantics are now standard in the JavaScript langauge.",
         "specification": "ES6",
-        "comment": "ES6 work is done, however, this feature is still listed as \"In Development\" because the module loading specification has yet to be finalized <a href=\"https:\/\/whatwg.github.io\/loader\/\"><\/a>. It is possible to use Modules with the jsc command line tool by passing the -m flag, although it is primarily intended for testing."
+        "comment": "Modules can be loaded through script type=\"module\" tags. It is also possible to use Modules with the jsc command line tool by passing the -m flag."
     },
     {
         "name": "Number Object Extensions",
