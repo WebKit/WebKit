@@ -1,3 +1,15 @@
+2016-12-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Cairo] Conditional jump or move depends on uninitialised value(s)
+        https://bugs.webkit.org/show_bug.cgi?id=166058
+
+        Reviewed by Michael Catanzaro.
+
+        Initialize x and y members of cairo_glyph_t struct before passing it to cairo_glyph_path.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::CairoGlyphToPathTranslator::path):
+
 2016-12-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Skia lighter wght variation looks bolder than regular
