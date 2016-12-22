@@ -1,3 +1,23 @@
+2016-12-21  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Allow br, br_if, and br_table to act as a return
+        https://bugs.webkit.org/show_bug.cgi?id=166393
+
+        Reviewed by Saam Barati.
+
+        Add tests for breaks acting as returns and fix tests that
+        validate error messages.
+
+        * wasm/function-tests/br-as-return.js: Added.
+        * wasm/function-tests/br-if-as-return.js: Added.
+        * wasm/function-tests/br-table-as-return.js: Added.
+        * wasm/function-tests/if-no-else-non-void.js:
+        * wasm/function-tests/struct.js: Added.
+        * wasm/js-api/global-error.js:
+        (assert.throws):
+        * wasm/js-api/table.js:
+        (assert.throws):
+
 2016-12-21  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Import spec tests

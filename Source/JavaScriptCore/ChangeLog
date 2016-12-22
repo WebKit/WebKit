@@ -1,3 +1,36 @@
+2016-12-21  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Allow br, br_if, and br_table to act as a return
+        https://bugs.webkit.org/show_bug.cgi?id=166393
+
+        Reviewed by Saam Barati.
+
+        This patch allows br, br_if, and br_table to treat branching to
+        the size of the control stack to act as a return. This change was
+        made by adding a new block type to the wasm function parser,
+        TopLevel. Adding this new block eliminates a lot of the special
+        case code we had in the parser previously. The only special case
+        we need is when the end opcode is parsed from the top level.  The
+        B3 IR generator needs to automatically emit a return at that
+        point.
+
+        Also, this patch adds the function number to validation errors
+        in the function parser. The current error message is not helpful
+        otherwise.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::ControlData::dump):
+        (JSC::Wasm::B3IRGenerator::addTopLevel):
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::parseAndValidateModule):
+        (JSC::Wasm::Plan::run):
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::Validate::ControlData::dump):
+        (JSC::Wasm::Validate::Validate):
+        (JSC::Wasm::Validate::addTopLevel):
+        (JSC::Wasm::validateFunction):
+
 2016-12-21  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: cleanup & pass VM around to {Compile/Runtime}Error

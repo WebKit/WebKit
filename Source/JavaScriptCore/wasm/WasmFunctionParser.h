@@ -35,7 +35,8 @@ namespace JSC { namespace Wasm {
 enum class BlockType {
     If,
     Block,
-    Loop
+    Loop,
+    TopLevel
 };
 
 template<typename Context>
@@ -60,7 +61,6 @@ private:
     PartialResult WARN_UNUSED_RETURN parseBody();
     PartialResult WARN_UNUSED_RETURN parseExpression(OpType);
     PartialResult WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
-    PartialResult WARN_UNUSED_RETURN addReturn();
     PartialResult WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
@@ -126,8 +126,9 @@ auto FunctionParser<Context>::parse() -> Result
 template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
-    while (true) {
-        uint8_t op;
+    m_controlStack.append({ ExpressionList(), m_context.addTopLevel(m_signature->returnType()) });
+    uint8_t op;
+    while (m_controlStack.size()) {
         WASM_PARSER_FAIL_IF(!parseUInt8(op), "can't decode opcode");
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
 
@@ -136,33 +137,13 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             m_context.dump(m_controlStack, m_expressionStack);
         }
 
-        if (op == End && !m_controlStack.size()) {
-            if (m_unreachableBlocks)
-                return { };
-            return addReturn();
-        }
-
         if (m_unreachableBlocks)
             WASM_FAIL_IF_HELPER_FAILS(parseUnreachableExpression(static_cast<OpType>(op)));
         else
             WASM_FAIL_IF_HELPER_FAILS(parseExpression(static_cast<OpType>(op)));
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-template<typename Context>
-auto FunctionParser<Context>::addReturn() -> PartialResult
-{
-    ExpressionList returnValues;
-    if (m_signature->returnType() != Void) {
-        ExpressionType returnValue;
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(returnValue, "return");
-        returnValues.append(returnValue);
-    }
-
-    m_unreachableBlocks = 1;
-    WASM_TRY_ADD_TO_CONTEXT(addReturn(returnValues));
+    ASSERT(op == OpType::End);
     return { };
 }
 
@@ -433,12 +414,13 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
 
     case BrTable: {
         uint32_t numberOfTargets;
-        ExpressionType condition;
         uint32_t defaultTarget;
+        ExpressionType condition;
+        Vector<ControlType*> targets;
+
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfTargets), "can't get the number of targets for br_table");
         WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big ", numberOfTargets);
 
-        Vector<ControlType*> targets;
         WASM_PARSER_FAIL_IF(!targets.tryReserveCapacity(numberOfTargets), "can't allocate memory for ", numberOfTargets, " br_table targets");
         for (uint32_t i = 0; i < numberOfTargets; ++i) {
             uint32_t target;
@@ -449,6 +431,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTarget), "can't get default target for br_table");
         WASM_PARSER_FAIL_IF(defaultTarget >= m_controlStack.size(), "br_table's default target ", defaultTarget, " exceeds control stack size ", m_controlStack.size());
+
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br_table condition");
         WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, m_controlStack[m_controlStack.size() - 1 - defaultTarget].controlData, m_expressionStack));
 
@@ -457,7 +440,16 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     }
 
     case Return: {
-        return addReturn();
+        ExpressionList returnValues;
+        if (m_signature->returnType() != Void) {
+            ExpressionType returnValue;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(returnValue, "return");
+            returnValues.append(returnValue);
+        }
+
+        WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, returnValues));
+        m_unreachableBlocks = 1;
+        return { };
     }
 
     case End: {
