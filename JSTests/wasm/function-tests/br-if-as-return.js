@@ -10,12 +10,11 @@ const builder = (new Builder())
       .End()
       .Code()
           .Function("br1", { params: [], ret: "i32" })
-              .Block("void", b => {
+              .Block("i32", b => {
                   return b.I32Const(0)
                   .I32Const(1)
                   .BrIf(1)
               })
-             .Unreachable()
           .End()
 
           .Function("br0", { params: [], ret: "i32" })

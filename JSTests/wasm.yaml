@@ -35,13 +35,13 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/block.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/br.wast.js
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/br_if.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/br_table.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -101,7 +101,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/func.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/func_ptrs.wast.js
   cmd: runWebAssemblySpecTest :skip

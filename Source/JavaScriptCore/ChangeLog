@@ -1,3 +1,20 @@
+2016-12-22  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: The validator should not allow unused stack entries at the end of a block
+        https://bugs.webkit.org/show_bug.cgi?id=166411
+
+        Reviewed by Saam Barati.
+
+        This patch also cleans up some of the verbose mode logging.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::B3IRGenerator::dump):
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmValidate.cpp:
+        (JSC::Wasm::dumpExpressionStack):
+        (JSC::Wasm::Validate::dump):
+
 2016-12-22  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make the spec-tests/start.wast.js test pass

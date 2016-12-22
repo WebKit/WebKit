@@ -1,3 +1,15 @@
+2016-12-22  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: The validator should not allow unused stack entries at the end of a block
+        https://bugs.webkit.org/show_bug.cgi?id=166411
+
+        Reviewed by Saam Barati.
+
+        Test cleanup and enable new passing tests.
+
+        * wasm.yaml:
+        * wasm/function-tests/br-if-as-return.js:
+
 2016-12-22  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make the spec-tests/start.wast.js test pass

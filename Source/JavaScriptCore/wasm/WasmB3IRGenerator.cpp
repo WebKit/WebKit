@@ -199,7 +199,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallIndirect(const Signature*, SignatureIndex, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 
-    void dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack);
+    void dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack);
 
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
@@ -803,28 +803,26 @@ void B3IRGenerator::unifyValuesWithBlock(const ExpressionList& resultStack, Resu
 
 static void dumpExpressionStack(const CommaPrinter& comma, const B3IRGenerator::ExpressionList& expressionStack)
 {
-    dataLogLn(comma, "ExpressionStack:");
+    dataLog(comma, "ExpressionStack:");
     for (const auto& expression : expressionStack)
-        dataLogLn(comma, *expression);
+        dataLog(comma, *expression);
 }
 
-void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const ExpressionList& expressionStack)
+void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack)
 {
     dataLogLn("Processing Graph:");
     dataLog(m_proc);
     dataLogLn("With current block:", *m_currentBlock);
     dataLogLn("Control stack:");
-    for (auto& data : controlStack) {
-        dataLogLn("  ", data.controlData);
-        if (data.enclosedExpressionStack.size()) {
-            CommaPrinter comma("    ", "  with ");
-            dumpExpressionStack(comma, data.enclosedExpressionStack);
-        }
+    ASSERT(controlStack.size());
+    for (size_t i = controlStack.size(); i--;) {
+        dataLog("  ", controlStack[i].controlData, ": ");
+        CommaPrinter comma(", ", "");
+        dumpExpressionStack(comma, *expressionStack);
+        expressionStack = &controlStack[i].enclosedExpressionStack;
+        dataLogLn();
     }
-
-    CommaPrinter comma("  ", "");
-    dumpExpressionStack(comma, expressionStack);
-    dataLogLn("\n");
+    dataLogLn();
 }
 
 static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext, WasmInternalFunction& function, const Signature* signature, const MemoryInformation& memory)
