@@ -1,5 +1,17 @@
 2016-12-22  Jer Noble  <jer.noble@apple.com>
 
+        Muted media element playback should not interrupt other audio playback
+        https://bugs.webkit.org/show_bug.cgi?id=166347
+
+        Reviewed by Eric Carlson.
+
+        Test: TestWebKitAPI/WebKit/ios/AudioSessionCategoryIOS.mm
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.cpp:
+        (PlatformMediaSessionManager::updateSessionState):
+
+2016-12-22  Jer Noble  <jer.noble@apple.com>
+
         Check for the existence of AVSampleBufferAudioRenderer.h before redeclaring AVSampleBufferAudioRenderer
         https://bugs.webkit.org/show_bug.cgi?id=166421
 
