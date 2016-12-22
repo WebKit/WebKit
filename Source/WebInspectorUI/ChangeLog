@@ -1,3 +1,19 @@
+2016-12-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles sidebar: Uncommenting CSS rules of pseudo-elements doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=165831
+        <rdar://problem/29652688>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.uncommentAllProperties):
+        Call _resetContent() when toggling all properties to ensure properties have text markers.
+
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._propertyCommentCheckboxChanged):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._uncommentProperty): Added.
+        This method is the opposite of _commentProperty. Introduce it to minimize code duplication.
+
 2016-12-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Uncommenting CSS properties doesn't work for inline styles
