@@ -1,3 +1,13 @@
+2016-12-22  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make the spec-tests/start.wast.js test pass
+        https://bugs.webkit.org/show_bug.cgi?id=166416
+        <rdar://problem/29784532>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm.yaml:
+
 2016-12-21  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: Fix decode floating point constants in unreachable code

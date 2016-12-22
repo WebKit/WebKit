@@ -170,7 +170,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/start.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/store_retval.wast.js
   cmd: runWebAssemblySpecTest :normal

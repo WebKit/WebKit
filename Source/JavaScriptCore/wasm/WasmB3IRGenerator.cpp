@@ -325,8 +325,8 @@ auto B3IRGenerator::getLocal(uint32_t index, ExpressionType& result) -> PartialR
 auto B3IRGenerator::addUnreachable() -> PartialResult
 {
     B3::PatchpointValue* unreachable = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
-    unreachable->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        jit.breakpoint();
+    unreachable->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, ExceptionType::Unreachable);
     });
     unreachable->effects.terminal = true;
     return { };
