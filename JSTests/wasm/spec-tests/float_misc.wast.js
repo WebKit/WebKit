@@ -1,0 +1,512 @@
+/* Copied from *
+ * https://github.com/WebAssembly/spec/blob/master/interpreter/host/js.ml */
+'use strict';
+
+let soft_validate = true;
+
+let spectest = {
+  print: print || ((...xs) => console.log(...xs)),
+  global: 666,
+  table: new WebAssembly.Table({initial: 10, maximum: 20, element: 'anyfunc'}),
+  memory: new WebAssembly.Memory({initial: 1, maximum: 2}),};
+
+let registry = {spectest};
+let $$;
+
+function register(name, instance) {
+  registry[name] = instance.exports;
+}
+
+function module(bytes) {
+  let buffer = new ArrayBuffer(bytes.length);
+  let view = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; ++i) {
+    view[i] = bytes.charCodeAt(i);
+  }
+  return new WebAssembly.Module(buffer);
+}
+
+function instance(bytes, imports = registry) {
+  return new WebAssembly.Instance(module(bytes), imports);
+}
+
+function assert_malformed(bytes) {
+  try { module(bytes) } catch (e) {
+    if (e instanceof WebAssembly.CompileError) return;
+  }
+  throw new Error("Wasm decoding failure expected");
+}
+
+function assert_invalid(bytes) {
+  try { module(bytes) } catch (e) {
+    if (e instanceof WebAssembly.CompileError) return;
+  }
+  throw new Error("Wasm validation failure expected");
+}
+
+function assert_soft_invalid(bytes) {
+  try { module(bytes) } catch (e) {
+    if (e instanceof WebAssembly.CompileError) return;
+    throw new Error("Wasm validation failure expected");
+  }
+  if (soft_validate)
+    throw new Error("Wasm validation failure expected");
+}
+
+function assert_unlinkable(bytes) {
+  let mod = module(bytes);
+  try { new WebAssembly.Instance(mod, registry) } catch (e) {
+    if (e instanceof TypeError) return;
+  }
+  throw new Error("Wasm linking failure expected");
+}
+
+function assert_uninstantiable(bytes) {
+  let mod = module(bytes);
+  try { new WebAssembly.Instance(mod, registry) } catch (e) {
+    if (e instanceof WebAssembly.RuntimeError) return;
+  }
+  throw new Error("Wasm trap expected");
+}
+
+function assert_trap(action) {
+  try { action() } catch (e) {
+    if (e instanceof WebAssembly.RuntimeError) return;
+  }
+  throw new Error("Wasm trap expected");
+}
+
+function assert_return(action, expected) {
+  let actual = action();
+  if (!Object.is(actual, expected)) {
+    throw new Error("Wasm return value " + expected + " expected, got " + actual);
+  };
+}
+
+function assert_return_nan(action) {
+  let actual = action();
+  if (!Number.isNaN(actual)) {
+    throw new Error("Wasm return value NaN expected, got " + actual);
+  };
+}
+
+let f32 = Math.fround;
+
+$$ = instance("\x00\x61\x73\x6d\x0d\x00\x00\x00\x01\x1a\x05\x60\x02\x7d\x7d\x01\x7d\x60\x01\x7d\x01\x7d\x60\x02\x7c\x7c\x01\x7c\x60\x01\x7c\x01\x7c\x60\x00\x00\x03\x3f\x3e\x00\x00\x00\x00\x01\x01\x01\x00\x01\x01\x01\x01\x00\x00\x02\x02\x02\x02\x03\x03\x03\x02\x03\x03\x03\x03\x02\x02\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x07\xc5\x05\x3e\x07\x66\x33\x32\x2e\x61\x64\x64\x00\x00\x07\x66\x33\x32\x2e\x73\x75\x62\x00\x01\x07\x66\x33\x32\x2e\x6d\x75\x6c\x00\x02\x07\x66\x33\x32\x2e\x64\x69\x76\x00\x03\x08\x66\x33\x32\x2e\x73\x71\x72\x74\x00\x04\x07\x66\x33\x32\x2e\x61\x62\x73\x00\x05\x07\x66\x33\x32\x2e\x6e\x65\x67\x00\x06\x0c\x66\x33\x32\x2e\x63\x6f\x70\x79\x73\x69\x67\x6e\x00\x07\x08\x66\x33\x32\x2e\x63\x65\x69\x6c\x00\x08\x09\x66\x33\x32\x2e\x66\x6c\x6f\x6f\x72\x00\x09\x09\x66\x33\x32\x2e\x74\x72\x75\x6e\x63\x00\x0a\x0b\x66\x33\x32\x2e\x6e\x65\x61\x72\x65\x73\x74\x00\x0b\x07\x66\x33\x32\x2e\x6d\x69\x6e\x00\x0c\x07\x66\x33\x32\x2e\x6d\x61\x78\x00\x0d\x07\x66\x36\x34\x2e\x61\x64\x64\x00\x0e\x07\x66\x36\x34\x2e\x73\x75\x62\x00\x0f\x07\x66\x36\x34\x2e\x6d\x75\x6c\x00\x10\x07\x66\x36\x34\x2e\x64\x69\x76\x00\x11\x08\x66\x36\x34\x2e\x73\x71\x72\x74\x00\x12\x07\x66\x36\x34\x2e\x61\x62\x73\x00\x13\x07\x66\x36\x34\x2e\x6e\x65\x67\x00\x14\x0c\x66\x36\x34\x2e\x63\x6f\x70\x79\x73\x69\x67\x6e\x00\x15\x08\x66\x36\x34\x2e\x63\x65\x69\x6c\x00\x16\x09\x66\x36\x34\x2e\x66\x6c\x6f\x6f\x72\x00\x17\x09\x66\x36\x34\x2e\x74\x72\x75\x6e\x63\x00\x18\x0b\x66\x36\x34\x2e\x6e\x65\x61\x72\x65\x73\x74\x00\x19\x07\x66\x36\x34\x2e\x6d\x69\x6e\x00\x1a\x07\x66\x36\x34\x2e\x6d\x61\x78\x00\x1b\x08\x61\x73\x73\x65\x72\x74\x5f\x30\x00\x1c\x08\x61\x73\x73\x65\x72\x74\x5f\x31\x00\x1d\x08\x61\x73\x73\x65\x72\x74\x5f\x32\x00\x1e\x08\x61\x73\x73\x65\x72\x74\x5f\x33\x00\x1f\x08\x61\x73\x73\x65\x72\x74\x5f\x34\x00\x20\x08\x61\x73\x73\x65\x72\x74\x5f\x35\x00\x21\x08\x61\x73\x73\x65\x72\x74\x5f\x36\x00\x22\x08\x61\x73\x73\x65\x72\x74\x5f\x37\x00\x23\x08\x61\x73\x73\x65\x72\x74\x5f\x38\x00\x24\x08\x61\x73\x73\x65\x72\x74\x5f\x39\x00\x25\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x30\x00\x26\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x31\x00\x27\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x32\x00\x28\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x33\x00\x29\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x34\x00\x2a\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x35\x00\x2b\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x36\x00\x2c\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x37\x00\x2d\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x38\x00\x2e\x09\x61\x73\x73\x65\x72\x74\x5f\x31\x39\x00\x2f\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x30\x00\x30\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x31\x00\x31\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x32\x00\x32\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x33\x00\x33\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x34\x00\x34\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x35\x00\x35\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x36\x00\x36\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x37\x00\x37\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x38\x00\x38\x09\x61\x73\x73\x65\x72\x74\x5f\x32\x39\x00\x39\x09\x61\x73\x73\x65\x72\x74\x5f\x33\x30\x00\x3a\x09\x61\x73\x73\x65\x72\x74\x5f\x33\x31\x00\x3b\x09\x61\x73\x73\x65\x72\x74\x5f\x33\x32\x00\x3c\x09\x61\x73\x73\x65\x72\x74\x5f\x33\x33\x00\x3d\x0a\xbf\x0a\x3e\x07\x00\x20\x00\x20\x01\x92\x0b\x07\x00\x20\x00\x20\x01\x93\x0b\x07\x00\x20\x00\x20\x01\x94\x0b\x07\x00\x20\x00\x20\x01\x95\x0b\x05\x00\x20\x00\x91\x0b\x05\x00\x20\x00\x8b\x0b\x05\x00\x20\x00\x8c\x0b\x07\x00\x20\x00\x20\x01\x98\x0b\x05\x00\x20\x00\x8d\x0b\x05\x00\x20\x00\x8e\x0b\x05\x00\x20\x00\x8f\x0b\x05\x00\x20\x00\x90\x0b\x07\x00\x20\x00\x20\x01\x96\x0b\x07\x00\x20\x00\x20\x01\x97\x0b\x07\x00\x20\x00\x20\x01\xa0\x0b\x07\x00\x20\x00\x20\x01\xa1\x0b\x07\x00\x20\x00\x20\x01\xa2\x0b\x07\x00\x20\x00\x20\x01\xa3\x0b\x05\x00\x20\x00\x9f\x0b\x05\x00\x20\x00\x99\x0b\x05\x00\x20\x00\x9a\x0b\x07\x00\x20\x00\x20\x01\xa6\x0b\x05\x00\x20\x00\x9b\x0b\x05\x00\x20\x00\x9c\x0b\x05\x00\x20\x00\x9d\x0b\x05\x00\x20\x00\x9e\x0b\x07\x00\x20\x00\x20\x01\xa4\x0b\x07\x00\x20\x00\x20\x01\xa5\x0b\x1e\x00\x02\x40\x43\x00\x00\xa0\x7f\x43\x00\x00\x80\x3f\x10\x00\xbc\x43\x00\x00\xe0\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf4\x7f\x44\x00\x00\x00\x00\x00\x00\xf0\x3f\x10\x0e\xbd\x44\x00\x00\x00\x00\x00\x00\xfc\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\x00\x00\xc0\x7f\x10\x05\xbc\x43\x00\x00\xc0\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\x00\x00\xc0\xff\x10\x05\xbc\x43\x00\x00\xc0\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\xe2\xf1\x80\x7f\x10\x05\xbc\x43\xe2\xf1\x80\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\xe2\xf1\x80\xff\x10\x05\xbc\x43\xe2\xf1\x80\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x10\x13\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x10\x13\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\x10\x13\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\x10\x13\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\x00\x00\xc0\x7f\x10\x06\xbc\x43\x00\x00\xc0\xff\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\x00\x00\xc0\xff\x10\x06\xbc\x43\x00\x00\xc0\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\xe2\xf1\x80\x7f\x10\x06\xbc\x43\xe2\xf1\x80\xff\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x19\x00\x02\x40\x43\xe2\xf1\x80\xff\x10\x06\xbc\x43\xe2\xf1\x80\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x10\x14\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\xff\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x10\x14\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\x10\x14\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x21\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\x10\x14\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\x00\x00\xc0\x7f\x43\x00\x00\xc0\x7f\x10\x07\xbc\x43\x00\x00\xc0\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\x00\x00\xc0\x7f\x43\x00\x00\xc0\xff\x10\x07\xbc\x43\x00\x00\xc0\xff\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\x00\x00\xc0\xff\x43\x00\x00\xc0\x7f\x10\x07\xbc\x43\x00\x00\xc0\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\x00\x00\xc0\xff\x43\x00\x00\xc0\xff\x10\x07\xbc\x43\x00\x00\xc0\xff\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\xe2\xf1\x80\x7f\x43\x00\x00\xc0\x7f\x10\x07\xbc\x43\xe2\xf1\x80\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\xe2\xf1\x80\x7f\x43\x00\x00\xc0\xff\x10\x07\xbc\x43\xe2\xf1\x80\xff\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\xe2\xf1\x80\xff\x43\x00\x00\xc0\x7f\x10\x07\xbc\x43\xe2\xf1\x80\x7f\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x1e\x00\x02\x40\x43\xe2\xf1\x80\xff\x43\x00\x00\xc0\xff\x10\x07\xbc\x43\xe2\xf1\x80\xff\xbc\x46\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x10\x15\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x10\x15\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\xff\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x10\x15\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x10\x15\xbd\x44\x00\x00\x00\x00\x00\x00\xf8\xff\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x10\x15\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x10\x15\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\x44\x00\x00\x00\x00\x00\x00\xf8\x7f\x10\x15\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\x7f\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b\x2a\x00\x02\x40\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\x44\x00\x00\x00\x00\x00\x00\xf8\xff\x10\x15\xbd\x44\x6b\x7a\xe2\xf1\x00\x00\xf0\xff\xbd\x51\x45\x0d\x00\x0f\x0b\x00\x0b");
+assert_return(() => $$.exports["f32.add"](f32(1.12345683575), f32(1.23450000222e-10)), f32(1.12345683575));
+assert_return(() => $$.exports["f64.add"](1.123456789, 1.2345e-10), 1.12345678912345);
+assert_return(() => $$.exports["f32.add"](f32(1.0), f32(5.96046447754e-08)), f32(1.0));
+assert_return(() => $$.exports["f32.add"](f32(1.0), f32(5.96046518808e-08)), f32(1.00000011921));
+assert_return(() => $$.exports["f64.add"](1.0, 1.1102230246251565e-16), 1.0);
+assert_return(() => $$.exports["f64.add"](1.0, 1.1102230246251568e-16), 1.0000000000000002);
+assert_return(() => $$.exports["assert_0"]());
+assert_return(() => $$.exports["assert_1"]());
+assert_return(() => $$.exports["f32.add"](f32(1.40129846432e-45), f32(1.17549421069e-38)), f32(1.17549435082e-38));
+assert_return(() => $$.exports["f64.add"](5e-324, 2.225073858507201e-308), 2.2250738585072014e-308);
+assert_return(() => $$.exports["f32.add"](f32(2147483648.0), f32(1024.25)), f32(2147484672.0));
+assert_return(() => $$.exports["f64.add"](9.223372036854776e+18, 1024.25), 9.223372036854778e+18);
+assert_return(() => $$.exports["f64.add"](-3.645561009778199e-304, 2.92e-320), -3.6455610097781983e-304);
+assert_return(() => $$.exports["f32.add"](f32(8388608.0), f32(0.5)), f32(8388608.0));
+assert_return(() => $$.exports["f32.add"](f32(8388609.0), f32(0.5)), f32(8388610.0));
+assert_return(() => $$.exports["f64.add"](4503599627370496.0, 0.5), 4503599627370496.0);
+assert_return(() => $$.exports["f64.add"](4503599627370497.0, 0.5), 4503599627370498.0);
+assert_return(() => $$.exports["f32.add"](f32(-6.20760015658e+30), f32(2.30979900343e-30)), f32(-6.20760015658e+30));
+assert_return(() => $$.exports["f32.add"](f32(2.09865807495e+20), f32(-5.27015250546e+15)), f32(2.09860529839e+20));
+assert_return(() => $$.exports["f32.add"](f32(1.96349204943e-25), f32(4.62200670123e-38)), f32(1.96349204943e-25));
+assert_return(() => $$.exports["f32.add"](f32(6.40904986624e+11), f32(-6.44495490993e+16)), f32(-6.44489091492e+16));
+assert_return(() => $$.exports["f32.add"](f32(6.0196598497e-05), f32(1.20372792216e+32)), f32(1.20372792216e+32));
+assert_return(() => $$.exports["f64.add"](9.218993827002741e-125, -1.2830782438780485e+75), -1.2830782438780485e+75);
+assert_return(() => $$.exports["f64.add"](-9.650340787014896e+22, 4.670208988478548e-56), -9.650340787014896e+22);
+assert_return(() => $$.exports["f64.add"](2.8559147675434106e-45, -0.00026124280570653086), -0.00026124280570653086);
+assert_return(() => $$.exports["f64.add"](4.179099281652967e+149, 7.93355647415127e+19), 4.179099281652967e+149);
+assert_return(() => $$.exports["f64.add"](8.265442868747023e+96, 4.360332783900625e+118), 4.360332783900625e+118);
+assert_return(() => $$.exports["f32.add"](f32(5.23840412782e+21), f32(-1570182.5)), f32(5.23840412782e+21));
+assert_return(() => $$.exports["f32.add"](f32(4.25893790178e-14), f32(-5.7092352567e-24)), f32(4.25893790178e-14));
+assert_return(() => $$.exports["f32.add"](f32(-2.72510258716e-13), f32(8.37115587335e+37)), f32(8.37115587335e+37));
+assert_return(() => $$.exports["f32.add"](f32(-8.84535974739e-14), f32(-1.51656256735e-32)), f32(-8.84535974739e-14));
+assert_return(() => $$.exports["f32.add"](f32(0.00105210347101), f32(-7.58213472342e-33)), f32(0.00105210347101));
+assert_return(() => $$.exports["f64.add"](1.5111352281889246e+54, -2.760218100603169e-159), 1.5111352281889246e+54);
+assert_return(() => $$.exports["f64.add"](6.238671976036028e+46, -8.592185488839212e-19), 6.238671976036028e+46);
+assert_return(() => $$.exports["f64.add"](4.195022848436354e-122, -2.9225342022551453e-295), 4.195022848436354e-122);
+assert_return(() => $$.exports["f64.add"](-2.1522054671482452e+44, -1.1122204120471372e+42), -2.1633276712687165e+44);
+assert_return(() => $$.exports["f64.add"](-13.6911535055856, 2.0661178989244198e+87), 2.0661178989244198e+87);
+assert_return(() => $$.exports["f32.add"](f32(-6.45602103061e-36), f32(2.02199490333e-13)), f32(2.02199490333e-13));
+assert_return(() => $$.exports["f32.add"](f32(-2.68231688096e-05), f32(1.11960156701e-08)), f32(-2.68119729299e-05));
+assert_return(() => $$.exports["f32.add"](f32(-1.2852617216e+11), f32(2.73563047337e-33)), f32(-1.2852617216e+11));
+assert_return(() => $$.exports["f32.add"](f32(4.15897312732e-36), f32(-1573528704.0)), f32(-1573528704.0));
+assert_return(() => $$.exports["f32.add"](f32(-9.3387686441e-37), f32(7.86475144986e+28)), f32(7.86475144986e+28));
+assert_return(() => $$.exports["f64.add"](2.1986596650683218e-234, -2.3544759484546134e+302), -2.3544759484546134e+302);
+assert_return(() => $$.exports["f64.add"](-3.141756195935957e+155, -3.011409851461166e+148), -3.1417564970769423e+155);
+assert_return(() => $$.exports["f64.add"](-1.3722858367681836e-291, 1.1571842749688977e-85), 1.1571842749688977e-85);
+assert_return(() => $$.exports["f64.add"](-9.828583756551075e-154, 1.6862581574752944e-259), -9.828583756551075e-154);
+assert_return(() => $$.exports["f64.add"](-6.725842035221635e+290, 8.374007930974482e+240), -6.725842035221635e+290);
+assert_return(() => $$.exports["f64.add"](-2.1089660532788995e+242, 5.814832334211963e+248), 5.814830225245911e+248);
+assert_return(() => $$.exports["f64.add"](1.0231579266682148e+236, 4.502043007974949e+224), 1.0231579266727168e+236);
+assert_return(() => $$.exports["f64.add"](-1.3052997857095656e+188, 1.5489943422018657e+203), 1.5489943422018645e+203);
+assert_return(() => $$.exports["f64.add"](4.7629997434721684e+139, 4.555864510582597e+155), 4.555864510582597e+155);
+assert_return(() => $$.exports["f64.add"](3.958952516558414e-300, 2.3092460710062946e-290), 2.30924607140219e-290);
+assert_return(() => $$.exports["f64.add"](-4.3780558475415996e+226, -4.9680759347383435e+286), -4.9680759347383435e+286);
+assert_return(() => $$.exports["f64.add"](2.117431116854608e+58, -2.6385928474612128e+82), -2.6385928474612128e+82);
+assert_return(() => $$.exports["f64.add"](-9.508489561700635e+90, 7.858068235728165e-128), -9.508489561700635e+90);
+assert_return(() => $$.exports["f64.add"](-5.079144928553737e-96, -3.540217207424998e+140), -3.540217207424998e+140);
+assert_return(() => $$.exports["f64.add"](-4.165382103988111e-60, 1.0865942283516648e-298), -4.165382103988111e-60);
+assert_return(() => $$.exports["f32.add"](f32(9.72156491625e+34), f32(3.05590867039e+38)), f32(3.05688080629e+38));
+assert_return(() => $$.exports["f32.add"](f32(2.70465627829e+38), f32(-2.30236846838e+32)), f32(2.70465404722e+38));
+assert_return(() => $$.exports["f32.add"](f32(3.57209281934e+35), f32(-2.36494052076e+38)), f32(-2.36136838278e+38));
+assert_return(() => $$.exports["f32.add"](f32(-1.48423409279e+36), f32(-3.28991392884e+38)), f32(-3.30475619053e+38));
+assert_return(() => $$.exports["f32.add"](f32(-2.19885598148e+38), f32(-8.1560928643e+37)), f32(-3.0144652172e+38));
+assert_return(() => $$.exports["f64.add"](9.039020493954763e+307, 2.2943337422040356e+295), 9.039020493957058e+307);
+assert_return(() => $$.exports["f64.add"](1.6591605973624605e+308, 1.257734933144416e+298), 1.659160597488234e+308);
+assert_return(() => $$.exports["f64.add"](-1.363512925613943e+308, 6.050703060387358e+304), -1.3629078553079044e+308);
+assert_return(() => $$.exports["f64.add"](-3.4377613258227424e+301, 1.6994715275879349e+308), 1.6994711838118022e+308);
+assert_return(() => $$.exports["f64.add"](9.227342700864557e+307, -3.926941645101868e+298), 9.227342696937615e+307);
+assert_return(() => $$.exports["f32.add"](f32(8.31345537333e-39), f32(8.73008943274e-43)), f32(8.31432838227e-39));
+assert_return(() => $$.exports["f32.add"](f32(5.184804318e-44), f32(-2.80259692865e-45)), f32(4.90454462514e-44));
+assert_return(() => $$.exports["f32.add"](f32(-1.12103877146e-44), f32(5.18628408918e-39)), f32(5.18627287879e-39));
+assert_return(() => $$.exports["f32.add"](f32(-2.80259692865e-44), f32(2.36752828347e-37)), f32(2.36752805926e-37));
+assert_return(() => $$.exports["f32.add"](f32(6.34788204339e-43), f32(-3.326962814e-41)), f32(-3.26348399357e-41));
+assert_return(() => $$.exports["f64.add"](2.8461489375936755e-308, -5.130160608603642e-308), -2.284011671009967e-308);
+assert_return(() => $$.exports["f64.add"](4.7404811354775e-308, -8.895417776504167e-308), -4.154936641026667e-308);
+assert_return(() => $$.exports["f64.add"](-9.330082001250494e-309, -2.9863980609419717e-308), -3.919406261067021e-308);
+assert_return(() => $$.exports["f64.add"](1.4418693884494008e-307, -1.6324914377759187e-307), -1.906220493265178e-308);
+assert_return(() => $$.exports["f64.add"](-4.3203619362281506e-308, 2.521511966399844e-308), -1.7988499698283067e-308);
+assert_return(() => $$.exports["f32.add"](f32(3.40282326356e+38), f32(2.02824096037e+31)), f32(3.40282346639e+38));
+assert_return(() => $$.exports["f64.add"](1.7976931348623155e+308, 1.99584030953472e+292), 1.7976931348623157e+308);
+assert_return(() => $$.exports["f32.sub"](f32(65536.0), f32(7.27595761418e-12)), f32(65536.0));
+assert_return(() => $$.exports["f64.sub"](65536.0, 7.275957614183426e-12), 65535.99999999999);
+assert_return(() => $$.exports["f32.sub"](f32(1.0), f32(2.98023223877e-08)), f32(1.0));
+assert_return(() => $$.exports["f32.sub"](f32(1.0), f32(2.98023259404e-08)), f32(0.999999940395));
+assert_return(() => $$.exports["f64.sub"](1.0, 5.551115123125783e-17), 1.0);
+assert_return(() => $$.exports["f64.sub"](1.0, 5.551115123125784e-17), 0.9999999999999999);
+assert_return(() => $$.exports["f32.sub"](f32(2.37920805984e-32), f32(-7.22129761698e+35)), f32(7.22129761698e+35));
+assert_return(() => $$.exports["f32.sub"](f32(-8.4228402384e+35), f32(-1.11184141353e+13)), f32(-8.4228402384e+35));
+assert_return(() => $$.exports["f32.sub"](f32(1.45494437218), f32(-3.37926145558e-25)), f32(1.45494437218));
+assert_return(() => $$.exports["f32.sub"](f32(9.48089142841e-36), f32(1.85895024984e-23)), f32(-1.85895024984e-23));
+assert_return(() => $$.exports["f32.sub"](f32(6.18116700934e-06), f32(-9.39598642425e-33)), f32(6.18116700934e-06));
+assert_return(() => $$.exports["f64.sub"](-7.75701650124413e-101, -2.524845082116609e-272), -7.75701650124413e-101);
+assert_return(() => $$.exports["f64.sub"](-2.099187106483271e+166, -3.8165079778426864e-48), -2.099187106483271e+166);
+assert_return(() => $$.exports["f64.sub"](2.8592030964162332e-139, -2.0889465194336087e-252), 2.8592030964162332e-139);
+assert_return(() => $$.exports["f64.sub"](3.03879528930943e-303, -2.3204941114021897e+46), 2.3204941114021897e+46);
+assert_return(() => $$.exports["f64.sub"](-1.4953904039036317e-43, -1.0592252695645683e-162), -1.4953904039036317e-43);
+assert_return(() => $$.exports["f32.sub"](f32(-4.48601655272e+32), f32(-8.98414805089e+33)), f32(8.5355464343e+33));
+assert_return(() => $$.exports["f32.sub"](f32(-8.99427424567e+32), f32(91.5793838501)), f32(-8.99427424567e+32));
+assert_return(() => $$.exports["f32.sub"](f32(-1.19749997533e-25), f32(6.31404049045e-08)), f32(-6.31404049045e-08));
+assert_return(() => $$.exports["f32.sub"](f32(-1.18004866619e-23), f32(-0.000315587356454)), f32(0.000315587356454));
+assert_return(() => $$.exports["f32.sub"](f32(-7.36483805054e+29), f32(3.08245132955e-18)), f32(-7.36483805054e+29));
+assert_return(() => $$.exports["f64.sub"](-9.410469964196796e+60, -1.730627569138597e+271), 1.730627569138597e+271);
+assert_return(() => $$.exports["f64.sub"](2.877908564233173e-111, 2.339448785991429e-136), 2.877908564233173e-111);
+assert_return(() => $$.exports["f64.sub"](-9.719219783531962e-61, 1.572015082308034e-153), -9.719219783531962e-61);
+assert_return(() => $$.exports["f64.sub"](-3.4908896031751274e-299, -1.9928479721303208e-99), 1.9928479721303208e-99);
+assert_return(() => $$.exports["f64.sub"](-7.538298763725556e+33, 4.447012580193329e+51), -4.447012580193329e+51);
+assert_return(() => $$.exports["f32.sub"](f32(7.58469764467e+28), f32(4.63917531306e-05)), f32(7.58469764467e+28));
+assert_return(() => $$.exports["f32.sub"](f32(-567139.875), f32(-3.0334842277e-11)), f32(-567139.875));
+assert_return(() => $$.exports["f32.sub"](f32(-1.74122608693e-11), f32(-1.78777933677e-17)), f32(-1.7412243522e-11));
+assert_return(() => $$.exports["f32.sub"](f32(-6.56455449644e-05), f32(0.000144738063682)), f32(-0.000210383615922));
+assert_return(() => $$.exports["f32.sub"](f32(-1.60161148233e-10), f32(-8.53800749739e-32)), f32(-1.60161148233e-10));
+assert_return(() => $$.exports["f64.sub"](-9.358725267183177e-48, -3.1137147338685164e+217), 3.1137147338685164e+217);
+assert_return(() => $$.exports["f64.sub"](-4.390767596767215e+228, -6.789045715895856e+271), 6.789045715895856e+271);
+assert_return(() => $$.exports["f64.sub"](3.6288281010831153e-240, 3.3831996832450044e+54), -3.3831996832450044e+54);
+assert_return(() => $$.exports["f64.sub"](-3.645097751812619e-173, 3.1423490969686624e-164), -3.1423491006137603e-164);
+assert_return(() => $$.exports["f64.sub"](-8.021529638989887e-169, -6.774972769072139e-05), 6.774972769072139e-05);
+assert_return(() => $$.exports["f64.sub"](5.816988065793039e-24, 2.5021499241540866e-35), 5.816988065768018e-24);
+assert_return(() => $$.exports["f64.sub"](4.3336683304809554e-296, 1.6945582607476316e-304), 4.3336683135353726e-296);
+assert_return(() => $$.exports["f64.sub"](6.908052676315257e-77, 1.2001773734799856e-60), -1.2001773734799856e-60);
+assert_return(() => $$.exports["f64.sub"](-2.2044291547443813e-12, -2.7947429925618632e-21), -2.204429151949638e-12);
+assert_return(() => $$.exports["f64.sub"](4.016393569117761e-08, 0.17053881989395447), -0.17053877973001877);
+assert_return(() => $$.exports["f64.sub"](-1.0015106898667285e-245, -4.785375958943186e-231), 4.7853759589431757e-231);
+assert_return(() => $$.exports["f64.sub"](-15618959953.641388, 5.982344106207189e+110), -5.982344106207189e+110);
+assert_return(() => $$.exports["f64.sub"](3.883207154037668e+34, 4.2192279274320304e-178), 3.883207154037668e+34);
+assert_return(() => $$.exports["f64.sub"](1.0705986890807897e-147, -1.7466607734737216e-209), 1.0705986890807897e-147);
+assert_return(() => $$.exports["f64.sub"](9.49378346261834e-18, 1.4584885434950294e-186), 9.49378346261834e-18);
+assert_return(() => $$.exports["f32.sub"](f32(23.1406917572), f32(3.14159274101)), f32(19.9990997314));
+assert_return(() => $$.exports["f64.sub"](23.14069263277927, 3.141592653589793), 19.999099979189477);
+assert_return(() => $$.exports["f32.sub"](f32(2999999.0), f32(2999998.0)), f32(1.0));
+assert_return(() => $$.exports["f32.sub"](f32(1999999.0), f32(1999995.0)), f32(4.0));
+assert_return(() => $$.exports["f32.sub"](f32(1999999.0), f32(1999993.0)), f32(6.0));
+assert_return(() => $$.exports["f32.sub"](f32(400002.0), f32(400001.0)), f32(1.0));
+assert_return(() => $$.exports["f32.sub"](f32(400002.0), f32(400000.0)), f32(2.0));
+assert_return(() => $$.exports["f64.sub"](2999999999999999.0, 2999999999999998.0), 1.0);
+assert_return(() => $$.exports["f64.sub"](1999999999999999.0, 1999999999999995.0), 4.0);
+assert_return(() => $$.exports["f64.sub"](1999999999999999.0, 1999999999999993.0), 6.0);
+assert_return(() => $$.exports["f64.sub"](400000000000002.0, 400000000000001.0), 1.0);
+assert_return(() => $$.exports["f64.sub"](400000000000002.0, 400000000000000.0), 2.0);
+assert_return(() => $$.exports["f32.sub"](f32(1.17549435082e-38), f32(1.40129846432e-45)), f32(1.17549421069e-38));
+assert_return(() => $$.exports["f64.sub"](2.2250738585072014e-308, 5e-324), 2.225073858507201e-308);
+assert_return(() => $$.exports["f32.sub"](f32(1.17549435082e-38), f32(1.17549421069e-38)), f32(1.40129846432e-45));
+assert_return(() => $$.exports["f64.sub"](2.2250738585072014e-308, 2.225073858507201e-308), 5e-324);
+assert_return(() => $$.exports["f32.mul"](f32(9.99999986991e+14), f32(9.99999986991e+14)), f32(9.9999993949e+29));
+assert_return(() => $$.exports["f32.mul"](f32(1.00000002004e+20), f32(1.00000002004e+20)), Infinity);
+assert_return(() => $$.exports["f32.mul"](f32(9.99999956202e+24), f32(9.99999956202e+24)), Infinity);
+assert_return(() => $$.exports["f64.mul"](1000000000000000.0, 1000000000000000.0), 1e+30);
+assert_return(() => $$.exports["f64.mul"](1e+20, 1e+20), 1e+40);
+assert_return(() => $$.exports["f64.mul"](1e+25, 1e+25), 1.0000000000000003e+50);
+assert_return(() => $$.exports["f32.mul"](f32(1848874880.0), f32(19954563072.0)), f32(3.68934925455e+19));
+assert_return(() => $$.exports["f64.mul"](1848874847.0, 19954562207.0), 3.689348814741911e+19);
+assert_return(() => $$.exports["f32.mul"](f32(77.0999984741), f32(850.0)), f32(65535.0));
+assert_return(() => $$.exports["f64.mul"](77.1, 850.0), 65534.99999999999);
+assert_return(() => $$.exports["f32.mul"](f32(-2.49383943148e+18), f32(2.11760539659e-11)), f32(-52809680.0));
+assert_return(() => $$.exports["f32.mul"](f32(-6.77724842063e+30), f32(-3.47582418302e-31)), f32(2.35565233231));
+assert_return(() => $$.exports["f32.mul"](f32(-8.3843975881e+27), f32(-1.19489907302e-29)), f32(0.100185088813));
+assert_return(() => $$.exports["f32.mul"](f32(-6.56765410037e+23), f32(-4.68897659886e-23)), f32(30.7955760956));
+assert_return(() => $$.exports["f32.mul"](f32(1.33282037162e+16), f32(45.5672225952)), f32(6.07329197656e+17));
+assert_return(() => $$.exports["f64.mul"](-9.942622609334243e+127, 5.8317724151424514e+284), -Infinity);
+assert_return(() => $$.exports["f64.mul"](-2.748155824301909e-297, -2.093035437779455e-66), 0.0);
+assert_return(() => $$.exports["f64.mul"](4.648882573713025e+182, -1.5927288648725436e+32), -7.404409464555696e+214);
+assert_return(() => $$.exports["f64.mul"](-8.261927764172427e-95, 3.6684744190529535e+175), -3.0308670654929913e+81);
+assert_return(() => $$.exports["f64.mul"](2.5383895833176925e+239, 7.842892881810105e-259), 1.9908317594263248e-19);
+assert_return(() => $$.exports["f32.mul"](f32(-2.01533334574e-27), f32(-5.03135328303e+27)), f32(10.1398544312));
+assert_return(() => $$.exports["f32.mul"](f32(1.22863253125e+22), f32(749601.8125)), f32(9.20985190161e+27));
+assert_return(() => $$.exports["f32.mul"](f32(-2.76351386219e-10), f32(-3.55247136163e+22)), f32(9.81730433434e+12));
+assert_return(() => $$.exports["f32.mul"](f32(2.18931219293e+20), f32(-40298.7851562)), f32(-8.82266206225e+24));
+assert_return(() => $$.exports["f32.mul"](f32(1691996288.0), f32(-1.22103352316e+20)), f32(-2.0659841458e+29));
+assert_return(() => $$.exports["f64.mul"](-7.576316076452304e-193, 4.601355879514986e-95), -3.486132652344772e-287);
+assert_return(() => $$.exports["f64.mul"](1.2228616081443885e-83, -8.055526185180067e-192), -9.850793705258527e-275);
+assert_return(() => $$.exports["f64.mul"](-2.0686512460392508e+99, -3.668010715832548e+251), Infinity);
+assert_return(() => $$.exports["f64.mul"](1.543238835610281e+285, 7.370621385787007e-133), 1.1374629165126177e+153);
+assert_return(() => $$.exports["f64.mul"](2.2358765662420587e+102, -7.60669005920257e+50), -1.700762005003744e+153);
+assert_return(() => $$.exports["f32.mul"](f32(-1.10087033061e+14), f32(-5.4038020774e+28)), Infinity);
+assert_return(() => $$.exports["f32.mul"](f32(-0.1936635077), f32(2.97489539984e-30)), f32(-5.76128683287e-31));
+assert_return(() => $$.exports["f32.mul"](f32(-3.43007127412e-06), f32(7.79915232792e+31)), f32(-2.67516490338e+26));
+assert_return(() => $$.exports["f32.mul"](f32(-9.90038494858e+16), f32(2.09337736553e-29)), f32(-2.07252422689e-12));
+assert_return(() => $$.exports["f32.mul"](f32(-129919.070312), f32(1.84809985644e-36)), f32(-2.40103419814e-31));
+assert_return(() => $$.exports["f64.mul"](-6.625572200844895e-150, -3.737402068174001e+130), 2.4762427246273877e-19);
+assert_return(() => $$.exports["f64.mul"](8.21076848561758e+143, -1.2976552328552289e-230), -1.0654746691124455e-86);
+assert_return(() => $$.exports["f64.mul"](-1.0223449294906041e+52, 1.9708555833346805e+108), -2.0148942123804574e+160);
+assert_return(() => $$.exports["f64.mul"](2.918243080119086e+231, -6.36331709416897e+112), -Infinity);
+assert_return(() => $$.exports["f64.mul"](3.407037798802672e+24, 1.225791423971563e+21), 4.1763177149192664e+45);
+assert_return(() => $$.exports["f64.mul"](4.4091927284399547e-103, 1.1518840702296592e-173), 5.078878866462432e-276);
+assert_return(() => $$.exports["f64.mul"](-0.002980041826472432, 6.3125412993218e+217), -1.8811637103313594e+215);
+assert_return(() => $$.exports["f64.mul"](-3.083445780813001e+110, -1.0081049555008529e-196), 3.1084369716557833e-86);
+assert_return(() => $$.exports["f64.mul"](3.493875013156773e+233, 2.1313169159308099e+18), 7.44655491768901e+251);
+assert_return(() => $$.exports["f64.mul"](-1.2500108005100234e-83, 1.0352657041604675e+270), -1.294093311598199e+187);
+assert_return(() => $$.exports["f64.mul"](8.947461661755698e-181, 2.0853844141312436e-128), 1.8658897095462173e-308);
+assert_return(() => $$.exports["f64.mul"](-1.161813037330394e-17, -1.8737038135583668e-291), 2.1768935186877886e-308);
+assert_return(() => $$.exports["f64.mul"](-2.1752326768352433e-147, -6.631210068072052e-162), 1.4424424827029184e-308);
+assert_return(() => $$.exports["f64.mul"](-7.149518157441743e-233, 2.2770445062365393e-77), -1.627977104264113e-309);
+assert_return(() => $$.exports["f64.mul"](-4.817739302150786e-156, -2.5375023049719763e-153), 1.2225024583961697e-308);
+assert_return(() => $$.exports["f64.mul"](4.6576441629501554e+256, 7.021344893525714e-266), 3.270292605938992e-09);
+assert_return(() => $$.exports["f64.mul"](0.012451716278313712, 1.945309177849331e-45), 2.422243795617958e-47);
+assert_return(() => $$.exports["f64.mul"](-3.8312314777598586, 9.039887741742674e-13), -3.4633902471580017e-12);
+assert_return(() => $$.exports["f64.mul"](9.843582638849689e-113, 3.375405654777583e-62), 3.3226084502443684e-174);
+assert_return(() => $$.exports["f64.mul"](-2.6054453709451446e+23, 3.2887528185809035e-105), -8.568665807354412e-82);
+assert_return(() => $$.exports["f32.mul"](f32(2.64697796017e-23), f32(2.64697796017e-23)), f32(0.0));
+assert_return(() => $$.exports["f32.mul"](f32(2.64697827571e-23), f32(2.64697827571e-23)), f32(1.40129846432e-45));
+assert_return(() => $$.exports["f64.mul"](1.5717277847026285e-162, 1.5717277847026285e-162), 0.0);
+assert_return(() => $$.exports["f64.mul"](1.5717277847026288e-162, 1.5717277847026288e-162), 5e-324);
+assert_return(() => $$.exports["f32.mul"](f32(1.84467429742e+19), f32(1.84467429742e+19)), f32(3.40282326356e+38));
+assert_return(() => $$.exports["f32.mul"](f32(1.84467440737e+19), f32(1.84467440737e+19)), Infinity);
+assert_return(() => $$.exports["f64.mul"](1.3407807929942596e+154, 1.3407807929942596e+154), 1.7976931348623155e+308);
+assert_return(() => $$.exports["f64.mul"](1.3407807929942597e+154, 1.3407807929942597e+154), Infinity);
+assert_return(() => $$.exports["f32.mul"](f32(1.17549435082e-38), f32(1.19209289551e-07)), f32(1.40129846432e-45));
+assert_return(() => $$.exports["f64.mul"](2.2250738585072014e-308, 2.220446049250313e-16), 5e-324);
+assert_return(() => $$.exports["f32.div"](f32(1.12345683575), f32(100.0)), f32(0.011234568432));
+assert_return(() => $$.exports["f32.div"](f32(8391667.0), f32(12582905.0)), f32(0.666910171509));
+assert_return(() => $$.exports["f32.div"](f32(65536.0), f32(7.27595761418e-12)), f32(9.00719925474e+15));
+assert_return(() => $$.exports["f32.div"](f32(1.8622957468), f32(3.40282346639e+38)), f32(5.47279497449e-39));
+assert_return(() => $$.exports["f32.div"](f32(4.0), f32(3.0)), f32(1.33333337307));
+assert_return(() => $$.exports["f64.div"](1.123456789, 100.0), 0.01123456789);
+assert_return(() => $$.exports["f64.div"](8391667.0, 12582905.0), 0.6669101451532854);
+assert_return(() => $$.exports["f64.div"](65536.0, 7.275957614183426e-12), 9007199254740992.0);
+assert_return(() => $$.exports["f64.div"](1.8622957468032837, 1.7976931348623157e+308), 1.035936395755283e-308);
+assert_return(() => $$.exports["f64.div"](4.0, 3.0), 1.3333333333333333);
+assert_return(() => $$.exports["f32.div"](f32(4195835.0), f32(3145727.0)), f32(1.33382046223));
+assert_return(() => $$.exports["f64.div"](4195835.0, 3145727.0), 1.333820449136241);
+assert_return(() => $$.exports["f32.div"](f32(5.0296329364e-15), f32(3.36324376381e+38)), f32(0.0));
+assert_return(() => $$.exports["f32.div"](f32(8.92198679354e-27), f32(3.54097526211e+20)), f32(0.0));
+assert_return(() => $$.exports["f32.div"](f32(-104167.46875), f32(1.5866622669e-24)), f32(-6.56519491718e+28));
+assert_return(() => $$.exports["f32.div"](f32(-2.49386573826e-23), f32(-3.62300875064e-37)), f32(6.88341070643e+13));
+assert_return(() => $$.exports["f32.div"](f32(-4.14220419072e+12), f32(1.19549483882e-24)), f32(-3.46484498333e+36));
+assert_return(() => $$.exports["f64.div"](1.9390116382448384e+44, 2.5290742357348314e+67), 7.666883046955921e-24);
+assert_return(() => $$.exports["f64.div"](6.600332149752304e-189, 3.007915153468629e-293), 2.1943212534239927e+104);
+assert_return(() => $$.exports["f64.div"](-9.348275173661903e+89, 4.809309529035847e+192), -1.9437873809582001e-103);
+assert_return(() => $$.exports["f64.div"](-1.7598339088417535e+208, 1.9938607258068285e+74), -8.826262968440915e+133);
+assert_return(() => $$.exports["f64.div"](-4.566268877844991e+162, 3.128249582233453e+136), -1.4596881603624626e+26);
+assert_return(() => $$.exports["f32.div"](f32(-1.03940637604e+21), f32(-1.2965965898e-26)), Infinity);
+assert_return(() => $$.exports["f32.div"](f32(2.68315626201e-14), f32(3.1241038463e+13)), f32(8.58856325341e-28));
+assert_return(() => $$.exports["f32.div"](f32(1.27342474461), f32(-6.92783706823e+26)), f32(-1.838127376e-27));
+assert_return(() => $$.exports["f32.div"](f32(6.89888271446e-16), f32(3.762675552e-39)), f32(1.83350457958e+23));
+assert_return(() => $$.exports["f32.div"](f32(1.81991622049e+27), f32(2.05067030525e+26)), f32(8.87473869324));
+assert_return(() => $$.exports["f64.div"](2.1137715924428077e-308, -1.6733261612910253e+109), -0.0);
+assert_return(() => $$.exports["f64.div"](-8.116644948016275e-298, 6.517571349002277e-162), -1.2453480772801648e-136);
+assert_return(() => $$.exports["f64.div"](-9.335476912259029e-122, -39099281466396.5), 2.3876338802497726e-135);
+assert_return(() => $$.exports["f64.div"](-1.6868569854885902e+24, 1.3535993861076857e-238), -1.2462010568276012e+262);
+assert_return(() => $$.exports["f64.div"](-1.733887733249412e+71, -7.002616047521747e+16), 2.47605712134259e+54);
+assert_return(() => $$.exports["f32.div"](f32(93506192.0), f32(2.87608846382e-36)), Infinity);
+assert_return(() => $$.exports["f32.div"](f32(-2.00575393467e+23), f32(246697216.0)), f32(-8.1304281206e+14));
+assert_return(() => $$.exports["f32.div"](f32(3.8471221248e+11), f32(-1.07037848166e+29)), f32(-3.59417007189e-18));
+assert_return(() => $$.exports["f32.div"](f32(-4.15666500377e+33), f32(-901.419189453)), f32(4.61124534608e+30));
+assert_return(() => $$.exports["f32.div"](f32(-6.70238686512e+27), f32(-14000.2548828)), f32(4.7873321685e+23));
+assert_return(() => $$.exports["f64.div"](-1.0085269598907525e-197, 1.8780374032850215e-208), -53701111496.85621);
+assert_return(() => $$.exports["f64.div"](-3.25716645629511e+235, -5.885738519211168e-167), Infinity);
+assert_return(() => $$.exports["f64.div"](-3.1640946861233317e-225, 4.5854510556516254e-20), -6.900291046010721e-206);
+assert_return(() => $$.exports["f64.div"](-5.268422429466566e+95, -1.4816907071451201e-177), 3.5556829803013436e+272);
+assert_return(() => $$.exports["f64.div"](4.03995627001749e+54, -4.7097881971884274e+64), -8.57778757955442e-11);
+assert_return(() => $$.exports["f64.div"](-2.039595604683476e+176, -7.474088739461226e+58), 2.728888665604071e+117);
+assert_return(() => $$.exports["f64.div"](-3.0426171229468766e+164, -2.6556792326588243e+99), 1.1457020432022042e+65);
+assert_return(() => $$.exports["f64.div"](4.923524051248073e+55, -3.663408283100367e+290), -1.3439736089369927e-235);
+assert_return(() => $$.exports["f64.div"](2.892608435563416e+65, 5.171948758373355e+128), 5.592879146144478e-64);
+assert_return(() => $$.exports["f64.div"](-4.215425823442686e+248, 1.4285058546706491e+105), -2.9509335293656034e+143);
+assert_return(() => $$.exports["f64.div"](1.8622957433108482, 1.7976931348623157e+308), 1.0359363938125513e-308);
+assert_return(() => $$.exports["f64.div"](8.566632480779937e-305, 5381.2699796556235), 1.591935084685746e-308);
+assert_return(() => $$.exports["f64.div"](-8.196220919495565e-44, -1.0406557086484777e+265), 7.876015911295176e-309);
+assert_return(() => $$.exports["f64.div"](-7.052801866447111e-119, -1.3767429405781133e+190), 5.122816800851397e-309);
+assert_return(() => $$.exports["f64.div"](2.2655621734165475e-258, 1.332199329634947e+50), 1.7006180103974106e-308);
+assert_return(() => $$.exports["f64.div"](4.196304106554003e-303, -9789327.297653636), -4.2866113053139e-310);
+assert_return(() => $$.exports["f32.div"](f32(1.03886078499e+27), f32(6.21107950387e+12)), f32(1.67259297284e+14));
+assert_return(() => $$.exports["f32.div"](f32(1.86903296399e+27), f32(-1.12355728108e+32)), f32(-1.66349600477e-05));
+assert_return(() => $$.exports["f32.div"](f32(3.29074724534e+24), f32(0.906478822231)), f32(3.63025265249e+24));
+assert_return(() => $$.exports["f32.div"](f32(-908946.5625), f32(-17034289152.0)), f32(5.33598176844e-05));
+assert_return(() => $$.exports["f32.div"](f32(-2.40924766031e-13), f32(-8.98408116377e+16)), f32(2.68168516711e-30));
+assert_return(() => $$.exports["f64.div"](3.910973045785834e+18, -8.392730733897136e-260), -4.6599529638070336e+277);
+assert_return(() => $$.exports["f64.div"](8.379351966732404e-40, -2.1077277802048832e-157), -3.975538039318286e+117);
+assert_return(() => $$.exports["f64.div"](4.561142017854715e+201, 1.5005780677368491e+192), 3039589952.6465592);
+assert_return(() => $$.exports["f64.div"](-6.236072401827852e+54, 8.31706325046099e+232), -7.497925907299316e-179);
+assert_return(() => $$.exports["f64.div"](-9.757271330468098e-263, -3.5613812243480865e-195), 2.739743575824061e-68);
+assert_return(() => $$.exports["f64.div"](1.046256872449641e-17, 1.8150892711657447), 5.764217160391678e-18);
+assert_return(() => $$.exports["f64.div"](2.2038268106596436e-31, -2.859803943943555e-13), -7.706216418530616e-19);
+assert_return(() => $$.exports["f64.div"](7.596539988437179e-13, 2.1055358831337124e-34), 3.6078891123579866e+21);
+assert_return(() => $$.exports["f64.div"](1.1206961145008669e+27, 1.597132338028665e+29), 0.007016927074960728);
+assert_return(() => $$.exports["f64.div"](0.0006342142502301953, -6391950865520085.0), -9.922076429769178e-20);
+assert_return(() => $$.exports["f32.div"](f32(1.17549435082e-38), f32(1.17549421069e-38)), f32(1.00000011921));
+assert_return(() => $$.exports["f32.div"](f32(1.17549421069e-38), f32(1.17549435082e-38)), f32(0.999999880791));
+assert_return(() => $$.exports["f64.div"](2.2250738585072014e-308, 2.225073858507201e-308), 1.0000000000000002);
+assert_return(() => $$.exports["f64.div"](2.225073858507201e-308, 2.2250738585072014e-308), 0.9999999999999998);
+assert_return(() => $$.exports["f32.div"](f32(2.38418564891e-07), f32(3.40282346639e+38)), f32(0.0));
+assert_return(() => $$.exports["f32.div"](f32(2.38418579102e-07), f32(3.40282346639e+38)), f32(1.40129846432e-45));
+assert_return(() => $$.exports["f64.div"](4.4408920985006257e-16, 1.7976931348623157e+308), 0.0);
+assert_return(() => $$.exports["f64.div"](4.440892098500626e-16, 1.7976931348623157e+308), 5e-324);
+assert_return(() => $$.exports["f32.div"](f32(1.0), f32(2.93873587706e-39)), Infinity);
+assert_return(() => $$.exports["f32.div"](f32(1.0), f32(2.93873727835e-39)), f32(3.40282204662e+38));
+assert_return(() => $$.exports["f64.div"](1.0, 5.562684646268003e-309), Infinity);
+assert_return(() => $$.exports["f64.div"](1.0, 5.56268464626801e-309), 1.7976931348623143e+308);
+assert_return(() => $$.exports["f32.div"](f32(1.0), f32(8.50706018714e+37)), f32(1.17549421069e-38));
+assert_return(() => $$.exports["f32.div"](f32(1.0), f32(8.50705917302e+37)), f32(1.17549435082e-38));
+assert_return(() => $$.exports["f64.div"](1.0, 4.494232837155791e+307), 2.225073858507201e-308);
+assert_return(() => $$.exports["f64.div"](1.0, 4.49423283715579e+307), 2.2250738585072014e-308);
+assert_return(() => $$.exports["f32.div"](f32(1.17549435082e-38), f32(1.40129846432e-45)), f32(8388608.0));
+assert_return(() => $$.exports["f64.div"](2.2250738585072014e-308, 5e-324), 4503599627370496.0);
+assert_return(() => $$.exports["f32.div"](f32(1.0), f32(3.0)), f32(0.333333343267));
+assert_return(() => $$.exports["f32.div"](f32(3.0), f32(9.0)), f32(0.333333343267));
+assert_return(() => $$.exports["f32.div"](f32(9.0), f32(27.0)), f32(0.333333343267));
+assert_return(() => $$.exports["f64.div"](1.0, 3.0), 0.3333333333333333);
+assert_return(() => $$.exports["f64.div"](3.0, 9.0), 0.3333333333333333);
+assert_return(() => $$.exports["f64.div"](9.0, 27.0), 0.3333333333333333);
+assert_return(() => $$.exports["f32.sqrt"](f32(171.0)), f32(13.0766963959));
+assert_return(() => $$.exports["f32.sqrt"](f32(1.60794996873e-07)), f32(0.000400992517825));
+assert_return(() => $$.exports["f64.sqrt"](171.0), 13.076696830622021);
+assert_return(() => $$.exports["f64.sqrt"](1.60795e-07), 0.00040099251863345283);
+assert_return(() => $$.exports["f64.sqrt"](4.316357580352844e-50), 2.0775845543209175e-25);
+assert_return(() => $$.exports["f64.sqrt"](6.762533004796485e+101), 8.223462169181838e+50);
+assert_return(() => $$.exports["f64.sqrt"](1.7485296624861996e+121), 4.1815423739168294e+60);
+assert_return(() => $$.exports["f64.sqrt"](9.593720960603523e-12), 3.0973732355987585e-06);
+assert_return(() => $$.exports["f64.sqrt"](6.348452898717835e-112), 2.519613640762773e-56);
+assert_return(() => $$.exports["f64.sqrt"](0.9999999999999999), 0.9999999999999999);
+assert_return(() => $$.exports["f32.sqrt"](f32(0.129639416933)), f32(0.360054731369));
+assert_return(() => $$.exports["f32.sqrt"](f32(2.34587582271e+30)), f32(1.53162520042e+15));
+assert_return(() => $$.exports["f32.sqrt"](f32(0.0787865743041)), f32(0.280689448118));
+assert_return(() => $$.exports["f32.sqrt"](f32(5.13710260448e-22)), f32(2.26651770269e-11));
+assert_return(() => $$.exports["f32.sqrt"](f32(0.000901671533938)), f32(0.0300278458744));
+assert_return(() => $$.exports["f64.sqrt"](9.591922760825561e-279), 9.793836204892116e-140);
+assert_return(() => $$.exports["f64.sqrt"](9.357875352164005e+218), 3.059064457013615e+109);
+assert_return(() => $$.exports["f64.sqrt"](1.4770669978336558e+116), 1.2153464517715332e+58);
+assert_return(() => $$.exports["f64.sqrt"](4.880045718002789e+31), 6985732401117859.0);
+assert_return(() => $$.exports["f64.sqrt"](7.61897768717454e+300), 2.760249569726357e+150);
+assert_return(() => $$.exports["f32.sqrt"](f32(154481008.0)), f32(12429.0390625));
+assert_return(() => $$.exports["f32.sqrt"](f32(1.04713048251e-34)), f32(1.02329396885e-17));
+assert_return(() => $$.exports["f32.sqrt"](f32(3.79063712899e-05)), f32(0.00615681521595));
+assert_return(() => $$.exports["f32.sqrt"](f32(8.96075347353e-37)), f32(9.46612568309e-19));
+assert_return(() => $$.exports["f32.sqrt"](f32(1.68771198742e-37)), f32(4.1081772611e-19));
+assert_return(() => $$.exports["f64.sqrt"](3.169962643789095e+209), 5.630242129597177e+104);
+assert_return(() => $$.exports["f64.sqrt"](4.0573669271847993e-230), 2.0142906759414837e-115);
+assert_return(() => $$.exports["f64.sqrt"](1.5299861660588838e-09), 3.911503759500793e-05);
+assert_return(() => $$.exports["f64.sqrt"](2.822766928951239e-73), 5.312971794533864e-37);
+assert_return(() => $$.exports["f64.sqrt"](1.4375957727045067e+280), 1.1989978201416826e+140);
+assert_return(() => $$.exports["f32.sqrt"](f32(4.64023422985e+35)), f32(6.81192670823e+17));
+assert_return(() => $$.exports["f32.sqrt"](f32(47536.1328125)), f32(218.027832031));
+assert_return(() => $$.exports["f32.sqrt"](f32(0.812613010406)), f32(0.901450514793));
+assert_return(() => $$.exports["f32.sqrt"](f32(9.54960499196e-27)), f32(9.77220827045e-14));
+assert_return(() => $$.exports["f32.sqrt"](f32(6.8856485336e-29)), f32(8.29798113767e-15));
+assert_return(() => $$.exports["f64.sqrt"](2.3497689174953322e+222), 1.532895599020146e+111);
+assert_return(() => $$.exports["f64.sqrt"](2.9262574743429683e-115), 5.409489323718985e-58);
+assert_return(() => $$.exports["f64.sqrt"](3.773350874844908e+290), 1.942511486412605e+145);
+assert_return(() => $$.exports["f64.sqrt"](3.5498432023945234e-14), 1.8841027579180822e-07);
+assert_return(() => $$.exports["f64.sqrt"](1.3747419336166767e-148), 1.1724938949165905e-74);
+assert_return_nan(() => $$.exports["f64.sqrt"](-1.5535152663257847e-290));
+assert_return(() => $$.exports["f64.sqrt"](1.87632963480297e+31), 4331662076851067.0);
+assert_return(() => $$.exports["f64.sqrt"](2.74405777036165e-229), 5.23837548325972e-115);
+assert_return(() => $$.exports["f64.sqrt"](1.5613859952920445e-83), 3.9514377070783294e-42);
+assert_return(() => $$.exports["f64.sqrt"](6.193037689450712e+170), 2.4885814612848646e+85);
+assert_return(() => $$.exports["f32.sqrt"](f32(1.00000011921)), f32(1.0));
+assert_return(() => $$.exports["f32.sqrt"](f32(1.00000023842)), f32(1.00000011921));
+assert_return(() => $$.exports["f64.sqrt"](1.0000000000000002), 1.0);
+assert_return(() => $$.exports["f64.sqrt"](1.0000000000000004), 1.0000000000000002);
+assert_return(() => $$.exports["assert_2"]());
+assert_return(() => $$.exports["assert_3"]());
+assert_return(() => $$.exports["assert_4"]());
+assert_return(() => $$.exports["assert_5"]());
+assert_return(() => $$.exports["assert_6"]());
+assert_return(() => $$.exports["assert_7"]());
+assert_return(() => $$.exports["assert_8"]());
+assert_return(() => $$.exports["assert_9"]());
+assert_return(() => $$.exports["assert_10"]());
+assert_return(() => $$.exports["assert_11"]());
+assert_return(() => $$.exports["assert_12"]());
+assert_return(() => $$.exports["assert_13"]());
+assert_return(() => $$.exports["assert_14"]());
+assert_return(() => $$.exports["assert_15"]());
+assert_return(() => $$.exports["assert_16"]());
+assert_return(() => $$.exports["assert_17"]());
+assert_return(() => $$.exports["assert_18"]());
+assert_return(() => $$.exports["assert_19"]());
+assert_return(() => $$.exports["assert_20"]());
+assert_return(() => $$.exports["assert_21"]());
+assert_return(() => $$.exports["assert_22"]());
+assert_return(() => $$.exports["assert_23"]());
+assert_return(() => $$.exports["assert_24"]());
+assert_return(() => $$.exports["assert_25"]());
+assert_return(() => $$.exports["assert_26"]());
+assert_return(() => $$.exports["assert_27"]());
+assert_return(() => $$.exports["assert_28"]());
+assert_return(() => $$.exports["assert_29"]());
+assert_return(() => $$.exports["assert_30"]());
+assert_return(() => $$.exports["assert_31"]());
+assert_return(() => $$.exports["assert_32"]());
+assert_return(() => $$.exports["assert_33"]());
+assert_return(() => $$.exports["f32.ceil"](f32(0.999999940395)), f32(1.0));
+assert_return(() => $$.exports["f32.ceil"](f32(1.17549435082e-38)), f32(1.0));
+assert_return(() => $$.exports["f64.ceil"](0.9999999999999999), 1.0);
+assert_return(() => $$.exports["f64.ceil"](2.2250738585072014e-308), 1.0);
+assert_return(() => $$.exports["f32.ceil"](f32(8388607.5)), f32(8388608.0));
+assert_return(() => $$.exports["f32.ceil"](f32(-8388607.5)), f32(-8388607.0));
+assert_return(() => $$.exports["f64.ceil"](4503599627370495.5), 4503599627370496.0);
+assert_return(() => $$.exports["f64.ceil"](-4503599627370495.5), -4503599627370495.0);
+assert_return(() => $$.exports["f32.floor"](f32(-0.999999940395)), f32(-1.0));
+assert_return(() => $$.exports["f32.floor"](f32(-1.17549435082e-38)), f32(-1.0));
+assert_return(() => $$.exports["f64.floor"](-0.9999999999999999), -1.0);
+assert_return(() => $$.exports["f64.floor"](-2.2250738585072014e-308), -1.0);
+assert_return(() => $$.exports["f32.floor"](f32(-8388607.5)), f32(-8388608.0));
+assert_return(() => $$.exports["f32.floor"](f32(8388607.5)), f32(8388607.0));
+assert_return(() => $$.exports["f64.floor"](-4503599627370495.5), -4503599627370496.0);
+assert_return(() => $$.exports["f64.floor"](4503599627370495.5), 4503599627370495.0);
+assert_return(() => $$.exports["f32.trunc"](f32(-8388607.5)), f32(-8388607.0));
+assert_return(() => $$.exports["f32.trunc"](f32(8388607.5)), f32(8388607.0));
+assert_return(() => $$.exports["f64.trunc"](-4503599627370495.5), -4503599627370495.0);
+assert_return(() => $$.exports["f64.trunc"](4503599627370495.5), 4503599627370495.0);
+assert_return(() => $$.exports["f32.nearest"](f32(8388609.0)), f32(8388609.0));
+assert_return(() => $$.exports["f32.nearest"](f32(8388610.0)), f32(8388610.0));
+assert_return(() => $$.exports["f32.nearest"](f32(0.499999970198)), f32(0.0));
+assert_return(() => $$.exports["f32.nearest"](f32(2.81474959933e+14)), f32(2.81474959933e+14));
+assert_return(() => $$.exports["f64.nearest"](4503599627370497.0), 4503599627370497.0);
+assert_return(() => $$.exports["f64.nearest"](4503599627370498.0), 4503599627370498.0);
+assert_return(() => $$.exports["f64.nearest"](0.49999999999999994), 0.0);
+assert_return(() => $$.exports["f64.nearest"](8.112963841460667e+31), 8.112963841460667e+31);
+assert_return(() => $$.exports["f32.nearest"](f32(4.5)), f32(4.0));
+assert_return(() => $$.exports["f32.nearest"](f32(-4.5)), f32(-4.0));
+assert_return(() => $$.exports["f32.nearest"](f32(-3.5)), f32(-4.0));
+assert_return(() => $$.exports["f64.nearest"](4.5), 4.0);
+assert_return(() => $$.exports["f64.nearest"](-4.5), -4.0);
+assert_return(() => $$.exports["f64.nearest"](-3.5), -4.0);
+assert_return(() => $$.exports["f32.nearest"](f32(-8388607.5)), f32(-8388608.0));
+assert_return(() => $$.exports["f32.nearest"](f32(8388607.5)), f32(8388608.0));
+assert_return(() => $$.exports["f64.nearest"](-4503599627370495.5), -4503599627370496.0);
+assert_return(() => $$.exports["f64.nearest"](4503599627370495.5), 4503599627370496.0);

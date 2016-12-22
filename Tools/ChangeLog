@@ -1,3 +1,12 @@
+2016-12-21  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Import spec tests
+        https://bugs.webkit.org/show_bug.cgi?id=166395
+
+        Rubber stamped by Keith Miller.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-12-21  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: API test failure: _WKDownload.OriginatingWebView
