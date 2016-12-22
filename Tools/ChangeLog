@@ -1,3 +1,12 @@
+2016-12-22  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Silence the output of the spec-tests
+        https://bugs.webkit.org/show_bug.cgi?id=166417
+
+        Reviewed by Mark Lam.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-12-22  Zhuo Li  <zachli@apple.com>
 
         [Cocoa] SPI for setloadsImagesAutomatically.

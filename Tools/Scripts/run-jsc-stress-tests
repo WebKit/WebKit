@@ -798,8 +798,12 @@ def slow!
     $runCommandOptions[:isSlow] = true
 end
 
+def runWithOutputHandler(kind, outputHandler, *options)
+    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], outputHandler, simpleErrorHandler)
+end
+
 def run(kind, *options)
-    addRunCommand(kind, [pathToVM.to_s] + BASE_OPTIONS + options + [$benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+    runWithOutputHandler(kind, silentOutputHandler, *options)
 end
 
 def runNoFTL(*optionalTestSpecificOptions)
@@ -1197,7 +1201,8 @@ def runWebAssemblySpecTest(mode)
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)
-    run("default-wasm", "-m", "--useWebAssembly=1")
+
+    runWithOutputHandler("default-wasm", noisyOutputHandler, "-m", "--useWebAssembly=1")
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)
