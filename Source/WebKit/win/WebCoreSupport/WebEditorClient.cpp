@@ -284,6 +284,21 @@ bool WebEditorClient::shouldDeleteRange(Range* range)
     return shouldDelete;
 }
 
+static WebViewInsertAction kit(EditorInsertAction action)
+{
+    switch (action) {
+    case EditorInsertAction::Typed:
+        return WebViewInsertActionTyped;
+    case EditorInsertAction::Pasted:
+        return WebViewInsertActionPasted;
+    case EditorInsertAction::Dropped:
+        return WebViewInsertActionDropped;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebViewInsertActionTyped;
+}
+
 bool WebEditorClient::shouldInsertNode(Node* node, Range* insertingRange, EditorInsertAction givenAction)
 { 
     COMPtr<IWebEditingDelegate> editingDelegate;
@@ -301,7 +316,7 @@ bool WebEditorClient::shouldInsertNode(Node* node, Range* insertingRange, Editor
     BOOL shouldInsert = FALSE;
     COMPtr<IWebEditingDelegate2> editingDelegate2(Query, editingDelegate);
     if (editingDelegate2) {
-        if (FAILED(editingDelegate2->shouldInsertNode(m_webView, insertDOMNode.get(), insertingDOMRange.get(), static_cast<WebViewInsertAction>(givenAction), &shouldInsert)))
+        if (FAILED(editingDelegate2->shouldInsertNode(m_webView, insertDOMNode.get(), insertingDOMRange.get(), kit(givenAction), &shouldInsert)))
             return true;
     }
 
@@ -320,7 +335,7 @@ bool WebEditorClient::shouldInsertText(const String& str, Range* insertingRange,
 
     BString text(str);
     BOOL shouldInsert = FALSE;
-    if (FAILED(editingDelegate->shouldInsertText(m_webView, text, insertingDOMRange.get(), static_cast<WebViewInsertAction>(givenAction), &shouldInsert)))
+    if (FAILED(editingDelegate->shouldInsertText(m_webView, text, insertingDOMRange.get(), kit(givenAction), &shouldInsert)))
         return true;
 
     return shouldInsert;

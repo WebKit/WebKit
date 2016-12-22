@@ -1,3 +1,13 @@
+2016-12-22  Andy Estes  <aestes@apple.com>
+
+        Make WebCore::EditorInsertAction an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=166424
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (kit):
+
 2016-12-21  Beth Dakin  <bdakin@apple.com>
 
         Holding down on candidates in the TouchBar should show panel on screen

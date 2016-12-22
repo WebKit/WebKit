@@ -99,7 +99,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainText);
 
-    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+    if (fragment && shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 
     client()->setInsertionPasteboard(String());
@@ -279,7 +279,7 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     bool chosePlainText;
     if (RefPtr<DocumentFragment> fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText)) {
         maybeCopyNodeAttributesToFragment(*node, *fragment);
-        if (shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+        if (shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
             pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
     }
 
@@ -724,11 +724,11 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
 
     if (m_frame.selection().selection().isContentRichlyEditable()) {
         RefPtr<DocumentFragment> fragment = createFragmentAndAddResources(attributedString);
-        if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertActionPasted))
+        if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertAction::Pasted))
             pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
     } else {
         String text = [attributedString string];
-        if (shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
+        if (shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))
             pasteAsPlainText(text, false);
     }
 }

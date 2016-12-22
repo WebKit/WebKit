@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2008, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -729,7 +729,7 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
 #if USE(DICTATION_ALTERNATIVES)
     Editor& editor = m_frame.editor();
     RefPtr<Range> selection = editor.selectedRange();
-    if (!selection || !editor.shouldInsertText(alternativeString, selection.get(), EditorInsertActionPasted))
+    if (!selection || !editor.shouldInsertText(alternativeString, selection.get(), EditorInsertAction::Pasted))
         return;
     DocumentMarkerController& markers = selection->startContainer().document().markers();
     Vector<RenderedDocumentMarker*> dictationAlternativesMarkers = markers.markersInRange(selection.get(), DocumentMarker::DictationAlternatives);

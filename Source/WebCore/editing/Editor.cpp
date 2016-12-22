@@ -443,7 +443,7 @@ void Editor::pasteAsPlainTextBypassingDHTML()
 void Editor::pasteAsPlainTextWithPasteboard(Pasteboard& pasteboard)
 {
     String text = readPlainTextFromPasteboard(pasteboard);
-    if (client() && client()->shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
+    if (client() && client()->shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))
         pasteAsPlainText(text, canSmartReplaceWithPasteboard(pasteboard));
 }
 
@@ -575,7 +575,7 @@ bool Editor::tryDHTMLPaste()
 
 bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertAction action) const
 {
-    if (m_frame.loader().shouldSuppressKeyboardInput() && action == EditorInsertActionTyped)
+    if (m_frame.loader().shouldSuppressKeyboardInput() && action == EditorInsertAction::Typed)
         return false;
 
     return client() && client()->shouldInsertText(text, range, action);
@@ -1091,7 +1091,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
         return false;
     RefPtr<Range> range = selection.toNormalizedRange();
 
-    if (!shouldInsertText(text, range.get(), EditorInsertActionTyped))
+    if (!shouldInsertText(text, range.get(), EditorInsertAction::Typed))
         return true;
 
     updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text[0]));
@@ -1148,7 +1148,7 @@ bool Editor::insertLineBreak()
     if (!canEdit())
         return false;
 
-    if (!shouldInsertText("\n", m_frame.selection().toNormalizedRange().get(), EditorInsertActionTyped))
+    if (!shouldInsertText("\n", m_frame.selection().toNormalizedRange().get(), EditorInsertAction::Typed))
         return true;
 
     VisiblePosition caret = m_frame.selection().selection().visibleStart();
@@ -1168,7 +1168,7 @@ bool Editor::insertParagraphSeparator()
     if (!canEditRichly())
         return insertLineBreak();
 
-    if (!shouldInsertText("\n", m_frame.selection().toNormalizedRange().get(), EditorInsertActionTyped))
+    if (!shouldInsertText("\n", m_frame.selection().toNormalizedRange().get(), EditorInsertAction::Typed))
         return true;
 
     VisiblePosition caret = m_frame.selection().selection().visibleStart();
@@ -2263,7 +2263,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
             m_frame.selection().setSelection(newSelection);
         }
 
-        if (!m_frame.editor().shouldInsertText(autocorrectedString, misspellingRange.get(), EditorInsertActionTyped))
+        if (!m_frame.editor().shouldInsertText(autocorrectedString, misspellingRange.get(), EditorInsertAction::Typed))
             return;
         m_frame.editor().replaceSelectionWithText(autocorrectedString, false, false, EditActionInsert);
 
@@ -2560,7 +2560,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
                 restoreSelectionAfterChange = false;
                 if (canEditRichly())
                     applyCommand(CreateLinkCommand::create(document(), replacement));
-            } else if (canEdit() && shouldInsertText(replacement, rangeToReplace.get(), EditorInsertActionTyped)) {
+            } else if (canEdit() && shouldInsertText(replacement, rangeToReplace.get(), EditorInsertAction::Typed)) {
                 correctSpellcheckingPreservingTextCheckingParagraph(paragraph, rangeToReplace, replacement, resultLocation, resultLength);
 
                 if (AXObjectCache* cache = document().existingAXObjectCache()) {
@@ -2610,7 +2610,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
         return;
 
     RefPtr<Range> selection = selectedRange();
-    if (!shouldInsertText(replacedString, selection.get(), EditorInsertActionPasted))
+    if (!shouldInsertText(replacedString, selection.get(), EditorInsertAction::Pasted))
         return;
     
     m_alternativeTextController->recordAutocorrectionResponseReversed(replacedString, selection);
@@ -2853,7 +2853,7 @@ void Editor::transpose()
     }
 
     // Insert the transposed characters.
-    if (!shouldInsertText(transposed, range.get(), EditorInsertActionTyped))
+    if (!shouldInsertText(transposed, range.get(), EditorInsertAction::Typed))
         return;
     replaceSelectionWithText(transposed, false, false, EditActionInsert);
 }
@@ -3601,7 +3601,7 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
     m_isHandlingAcceptedCandidate = true;
 
     if (auto range = rangeForTextCheckingResult(acceptedCandidate)) {
-        if (shouldInsertText(acceptedCandidate.replacement, range.get(), EditorInsertActionTyped)) {
+        if (shouldInsertText(acceptedCandidate.replacement, range.get(), EditorInsertAction::Typed)) {
             Ref<ReplaceRangeWithTextCommand> replaceCommand = ReplaceRangeWithTextCommand::create(range.get(), acceptedCandidate.replacement);
             applyCommand(replaceCommand.ptr());
         }

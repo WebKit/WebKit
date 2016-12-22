@@ -102,9 +102,16 @@ using namespace HTMLNames;
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)attributes subresources:(NSArray **)subresources;
 @end
 
-static WebViewInsertAction kit(EditorInsertAction coreAction)
+static WebViewInsertAction kit(EditorInsertAction action)
 {
-    return static_cast<WebViewInsertAction>(coreAction);
+    switch (action) {
+    case EditorInsertAction::Typed:
+        return WebViewInsertActionTyped;
+    case EditorInsertAction::Pasted:
+        return WebViewInsertActionPasted;
+    case EditorInsertAction::Dropped:
+        return WebViewInsertActionDropped;
+    }
 }
 
 @interface WebUndoStep : NSObject

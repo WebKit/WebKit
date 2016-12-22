@@ -1,3 +1,15 @@
+2016-12-22  Andy Estes  <aestes@apple.com>
+
+        Make WebCore::EditorInsertAction an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=166424
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        (WebKit::toAPI):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (toWK):
+
 2016-12-22  Zhuo Li  <zachli@apple.com>
 
         [Cocoa] SPI for setloadsImagesAutomatically

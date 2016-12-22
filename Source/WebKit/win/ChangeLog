@@ -1,3 +1,15 @@
+2016-12-22  Andy Estes  <aestes@apple.com>
+
+        Make WebCore::EditorInsertAction an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=166424
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (kit):
+        (WebEditorClient::shouldInsertNode):
+        (WebEditorClient::shouldInsertText):
+
 2016-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Enable ES6 Modules

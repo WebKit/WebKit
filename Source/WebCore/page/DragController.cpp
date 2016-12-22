@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009-2010, 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -514,7 +514,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, *range, true, chosePlainText);
-        if (!fragment || !innerFrame->editor().shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
+        if (!fragment || !innerFrame->editor().shouldInsertFragment(fragment, range, EditorInsertAction::Dropped)) {
             return false;
         }
 
@@ -537,7 +537,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         }
     } else {
         String text = dragData.asPlainText();
-        if (text.isEmpty() || !innerFrame->editor().shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
+        if (text.isEmpty() || !innerFrame->editor().shouldInsertText(text, range.get(), EditorInsertAction::Dropped)) {
             return false;
         }
 

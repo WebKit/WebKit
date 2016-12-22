@@ -1,3 +1,42 @@
+2016-12-22  Andy Estes  <aestes@apple.com>
+
+        Make WebCore::EditorInsertAction an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=166424
+
+        Reviewed by Brent Fulgham.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard):
+        (WebCore::Editor::shouldInsertText):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::insertLineBreak):
+        (WebCore::Editor::insertParagraphSeparator):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::transpose):
+        (WebCore::Editor::handleAcceptedCandidate):
+        * editing/EditorInsertAction.h:
+        (): Deleted.
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::pasteWithPasteboard):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::replaceSelectionWithAttributedString):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::replaceNodeFromPasteboard):
+        (WebCore::Editor::replaceSelectionWithAttributedString):
+        * editing/win/EditorWin.cpp:
+        (WebCore::Editor::pasteWithPasteboard):
+        * page/ContextMenuController.cpp:
+        (WebCore::insertUnicodeCharacter):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+
 2016-12-22  Jer Noble  <jer.noble@apple.com>
 
         Only include those parts of AVFoundation.framework which are strictly needed.

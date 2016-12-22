@@ -576,11 +576,11 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 static inline WKEditorInsertAction toWK(EditorInsertAction action)
 {
     switch (action) {
-    case EditorInsertActionTyped:
+    case EditorInsertAction::Typed:
         return WKEditorInsertActionTyped;
-    case EditorInsertActionPasted:
+    case EditorInsertAction::Pasted:
         return WKEditorInsertActionPasted;
-    case EditorInsertActionDropped:
+    case EditorInsertAction::Dropped:
         return WKEditorInsertActionDropped;
     }
 }

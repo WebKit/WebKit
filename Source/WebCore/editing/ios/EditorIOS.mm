@@ -530,7 +530,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
         fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainTextIgnored);
     }
 
-    if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
+    if (fragment && shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 }
 
@@ -596,11 +596,11 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
 
     if (m_frame.selection().selection().isContentRichlyEditable()) {
         RefPtr<DocumentFragment> fragment = createFragmentAndAddResources(attributedString);
-        if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertActionPasted))
+        if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertAction::Pasted))
             pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
     } else {
         String text = [attributedString string];
-        if (shouldInsertText(text, selectedRange().get(), EditorInsertActionPasted))
+        if (shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))
             pasteAsPlainText(text, false);
     }
 }
