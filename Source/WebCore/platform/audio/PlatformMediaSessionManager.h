@@ -114,14 +114,14 @@ protected:
     void addSession(PlatformMediaSession&);
     virtual void removeSession(PlatformMediaSession&);
 
-    Vector<PlatformMediaSession*> sessions() { return m_sessions; }
+    void forEachSession(const Function<void(PlatformMediaSession&, size_t)>&) const;
+    PlatformMediaSession* findSession(const Function<bool(PlatformMediaSession&, size_t)>&) const;
+    bool anyOfSessions(const Function<bool(PlatformMediaSession&, size_t)>& predicate) const { return findSession(predicate); }
 
 private:
     friend class Internals;
 
     void updateSessionState();
-    void forEachSession(std::function<void(PlatformMediaSession&, size_t)>) const;
-    bool anyOfSessions(std::function<bool(PlatformMediaSession&, size_t)>) const;
 
     // RemoteCommandListenerClient
     WEBCORE_EXPORT void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override;

@@ -1,5 +1,31 @@
 2016-12-22  Jer Noble  <jer.noble@apple.com>
 
+        NULL-deref CRASH in WebCore::PlatformMediaSession::mediaType
+        https://bugs.webkit.org/show_bug.cgi?id=166407
+
+        Reviewed by Darin Adler.
+
+        In r207688, we added a facility in PlatformMediaSessionManager for safely walking through a
+        list of PlatformMediaSessions by replacing entries of deleted sessions with nullptr. We now
+        need to use those new iteration falicities in MediaSessionManageriOS.
+
+        In addition to the existing iterators, add one which takes a predicate, and returns the first
+        session which matches the predicate, or nullptr, if none do.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::findSession):
+        (WebCore::PlatformMediaSessionManager::anyOfSessions):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::sessions): Deleted.
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::configureWireLessTargetMonitoring):
+        (WebCore::MediaSessionManageriOS::nowPlayingEligibleSession):
+        (WebCore::MediaSessionManageriOS::externalOutputDeviceAvailableDidChange):
+        (WebCore::MediaSessionManageriOS::applicationDidEnterBackground):
+        (WebCore::MediaSessionManageriOS::applicationWillEnterForeground):
+
+2016-12-22  Jer Noble  <jer.noble@apple.com>
+
         Muted media element playback should not interrupt other audio playback
         https://bugs.webkit.org/show_bug.cgi?id=166347
 
