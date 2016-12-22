@@ -1,3 +1,18 @@
+2016-12-22  Alejandro G. Castro  <alex@igalia.com>
+
+        [WebRTC] Add support for runtime PeeConnection setting, required after r209757
+        https://bugs.webkit.org/show_bug.cgi?id=166346
+
+        Reviewed by Carlos Garcia Campos.
+
+        After that commit we have to enable the peerConnection runtime
+        flag if we want webrtc to work. We are not adding a new API for
+        the moment to control the peerConnection feature.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_set_enable_media_stream): Use the mediaStream
+        setting to control the peerConnection
+
 2016-12-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac][WK2] Stop using file* rules in WebProcess sandbox profiles
