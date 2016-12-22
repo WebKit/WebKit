@@ -1,3 +1,19 @@
+2016-12-22  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Make the spec-tests/address.wast.js test pass
+        https://bugs.webkit.org/show_bug.cgi?id=166429
+        <rdar://problem/29793220>
+
+        Reviewed by Keith Miller.
+
+        Right now, provably out of bound loads/stores (given a load/store's constant
+        offset) are not a validation error. However, we were failing to catch uint32_t
+        overflows in release builds (we did have a debug assertion). To fix this,
+        I now detect when uint32_t addition will overflow, and instead of emitting
+        a normal load/store, I emit code that throws an out of bounds memory exception.
+
+        * wasm/WasmB3IRGenerator.cpp:
+
 2016-12-22  Keith Miller  <keith_miller@apple.com>
 
         WebAssembly: The validator should not allow unused stack entries at the end of a block

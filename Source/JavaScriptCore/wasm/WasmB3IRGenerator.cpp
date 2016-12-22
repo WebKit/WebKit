@@ -465,7 +465,42 @@ auto B3IRGenerator::load(LoadOpType op, ExpressionType pointer, ExpressionType& 
 {
     ASSERT(pointer->type() == Int32);
 
-    result = emitLoadOp(op, Origin(), emitCheckAndPreparePointer(pointer, offset, sizeOfLoadOp(op)), offset);
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfLoadOp(op)))) {
+        // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+        // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+        B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
+        throwException->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+
+        switch (op) {
+        case LoadOpType::I32Load8S:
+        case LoadOpType::I32Load16S:
+        case LoadOpType::I32Load:
+        case LoadOpType::I32Load16U:
+        case LoadOpType::I32Load8U:
+            result = zeroForType(I32);
+            break;
+        case LoadOpType::I64Load8S:
+        case LoadOpType::I64Load8U:
+        case LoadOpType::I64Load16S:
+        case LoadOpType::I64Load32U:
+        case LoadOpType::I64Load32S:
+        case LoadOpType::I64Load:
+        case LoadOpType::I64Load16U:
+            result = zeroForType(I64);
+            break;
+        case LoadOpType::F32Load:
+            result = zeroForType(F32);
+            break;
+        case LoadOpType::F64Load:
+            result = zeroForType(F64);
+            break;
+        }
+
+    } else
+        result = emitLoadOp(op, Origin(), emitCheckAndPreparePointer(pointer, offset, sizeOfLoadOp(op)), offset);
+
     return { };
 }
 
@@ -527,7 +562,16 @@ auto B3IRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionType
 {
     ASSERT(pointer->type() == Int32);
 
-    emitStoreOp(op, Origin(), emitCheckAndPreparePointer(pointer, offset, sizeOfStoreOp(op)), value, offset);
+    if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfStoreOp(op)))) {
+        // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+        // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+        B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
+        throwException->setGenerator([this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    } else
+        emitStoreOp(op, Origin(), emitCheckAndPreparePointer(pointer, offset, sizeOfStoreOp(op)), value, offset);
+
     return { };
 }
 

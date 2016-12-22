@@ -29,7 +29,7 @@
   cmd: runWebAssembly
 
 - path: wasm/spec-tests/address.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/binary.wast.js
   cmd: runWebAssemblySpecTest :normal
