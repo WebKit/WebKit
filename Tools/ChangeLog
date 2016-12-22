@@ -1,3 +1,29 @@
+2016-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html is flaky/order dependent
+        https://bugs.webkit.org/show_bug.cgi?id=161328
+        <rdar://problem/28475977>
+
+        Reviewed by Darin Adler.
+
+        Running a test that scales the viewport and listens to a didEndZooming callback (such as
+        viewport-shrink-to-fit-allows-double-tap.html) immediately after a test that may begin to trigger viewport
+        scaling as the test completes (such as viewport-device-width-at-initial-scale-fast-clicks.html) may result in
+        the didEndZooming callback of the latter test being fired early due to the previous test triggering a zoom
+        animation. Ideally, -[WKScrollView _stopScrollingAndZoomingAnimations], which is called when committing the page
+        load, should prevent this from happening, but from reading documentation and code inspection, this is not
+        intended to fire any associated delegate methods or notifications of the UIScrollView, instead deferring them
+        for later. Instead, what we need in this case is to clear out any started but not yet completed animations after
+        we finish running a test and before we load the next test.
+
+        One way to do this is to remove all animations from the WKScrollView's layer, and the layers of its children,
+        recursively. Doing so causes scrollViewDidEndZooming:withView:atScale: to fire at the end of the runloop if the
+        previous test started zooming and then finished before zooming completed. Since this happens before the next
+        test has a chance to run UI-side scripts, we won't end up firing this callback prematurely during the next test.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
 2016-12-22  Jer Noble  <jer.noble@apple.com>
 
         Muted media element playback should not interrupt other audio playback
