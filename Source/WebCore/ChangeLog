@@ -1,5 +1,23 @@
 2016-12-21  Tim Horton  <timothy_horton@apple.com>
 
+        TileGrid revalidates tiles twice during flush, first with wrong visible rect
+        https://bugs.webkit.org/show_bug.cgi?id=166406
+
+        Reviewed by Simon Fraser.
+
+        No new tests; existing tests cover this code, this is just a perf win,
+        specifically reducing the amount of layer churn during zooming.
+
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::setScale):
+        Schedule a revalidation, which will happen later in the same flush,
+        instead of doing it immediately. Doing it immediately is problematic,
+        because we're currently in the middle of a GraphicsLayer tree flush,
+        and don't have the complete picture of the new state yet. We're guaranteed
+        to get the new scale *before* the flush calls revalidateTiles.
+
+2016-12-21  Tim Horton  <timothy_horton@apple.com>
+
         TileGrid creates new tiles when there are recyclable tiles about to be removed
         https://bugs.webkit.org/show_bug.cgi?id=166408
 
