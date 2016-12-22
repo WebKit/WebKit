@@ -3719,7 +3719,7 @@ void WebPage::didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vect
 {
     m_userMediaPermissionRequestManager.didCompleteMediaDeviceEnumeration(userMediaID, devices, deviceIdentifierHashSalt, originHasPersistentAccess);
 }
-
+#if ENABLE(SANDBOX_EXTENSIONS)
 void WebPage::grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions& extensions)
 {
     m_userMediaPermissionRequestManager.grantUserMediaDeviceSandboxExtensions(extensions);
@@ -3729,6 +3729,7 @@ void WebPage::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& exten
 {
     m_userMediaPermissionRequestManager.revokeUserMediaDeviceSandboxExtensions(extensionIDs);
 }
+#endif
 #endif
 
 #if !PLATFORM(IOS)

@@ -111,6 +111,7 @@ void UserMediaProcessManager::removeUserMediaPermissionRequestManagerProxy(UserM
 
 void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestManagerProxy& proxy, bool withAudio, bool withVideo)
 {
+#if ENABLE(SANDBOX_EXTENSIONS)
     ASSERT(stateMap().contains(&proxy.page().process()));
 
     auto& state = processState(proxy.page().process());
@@ -151,6 +152,7 @@ void UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         state.setSandboxExtensionsGranted(currentExtensions);
         proxy.page().process().send(Messages::WebPage::GrantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions(ids, WTFMove(handles))), proxy.page().pageID());
     }
+#endif
 }
 
 void UserMediaProcessManager::startedCaptureSession(UserMediaPermissionRequestManagerProxy& proxy)
@@ -160,6 +162,7 @@ void UserMediaProcessManager::startedCaptureSession(UserMediaPermissionRequestMa
 
 void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestManagerProxy& proxy)
 {
+#if ENABLE(SANDBOX_EXTENSIONS)
     ASSERT(stateMap().contains(&proxy.page().process()));
 
     auto& state = processState(proxy.page().process());
@@ -191,6 +194,7 @@ void UserMediaProcessManager::endedCaptureSession(UserMediaPermissionRequestMana
 
     state.setSandboxExtensionsGranted(currentExtensions);
     proxy.page().process().send(Messages::WebPage::RevokeUserMediaDeviceSandboxExtensions(params), proxy.page().pageID());
+#endif
 }
 
 } // namespace WebKit

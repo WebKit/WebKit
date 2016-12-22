@@ -1,3 +1,22 @@
+2016-12-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        MediaStream: ASSERTION FAILED: m_ids.size() == m_handles.size() in MediaDeviceSandboxExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=166328
+
+        Reviewed by Eric Carlson.
+
+        This assertion failure happens for ports with sandbox extensions disabled. SandboxExtension is empty and
+        HandleArray:size() always returns 0. Disable creation of MediaDevicesSandboxExtension in UserMediaProcessManager
+        when building without support of sandbox extension. Disable also WebPage::grantUserMediaDeviceSandboxExtensions
+        and WebPage::revokeUserMediaDeviceSandboxExtensions which can be avoided when sandbox extension is empty.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-12-22  Alejandro G. Castro  <alex@igalia.com>
 
         [WebRTC] Add support for runtime PeeConnection setting, required after r209757

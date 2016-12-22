@@ -1180,8 +1180,10 @@ private:
     void userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint);
 
     void didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<WebCore::CaptureDevice>& devices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
+#if ENABLE(SANDBOX_EXTENSIONS)
     void grantUserMediaDeviceSandboxExtensions(const MediaDeviceSandboxExtensions&);
     void revokeUserMediaDeviceSandboxExtensions(const Vector<String>&);
+#endif
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);
