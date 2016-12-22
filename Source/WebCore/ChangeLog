@@ -1,3 +1,24 @@
+2016-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        CSS Scroll Snap does not work if scrollbar is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=160442
+        <rdar://problem/23317034>
+
+        Reviewed by Simon Fraser.
+
+        Currently, the only reason scroll snapping works in overflow scrolling containers without forcing layout is
+        because we would initialize the scrolling container's ScrollAnimator in the process of updating scrollbars. If
+        there are no scrollbars to render, we won't bother creating a ScrollAnimator. Without an existing
+        ScrollAnimator, ScrollableArea::updateScrollSnapState will simply bail instead of setting up the scroll snap
+        state. Instead, we should take setting a non-empty vector of scroll offsets on the ScrollableArea as a cue that
+        the ScrollableArea also needs a ScrollAnimator, and initialize it there if necessary.
+
+        Test: tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-hidden-scrollbars.html
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::setHorizontalSnapOffsets):
+        (WebCore::ScrollableArea::setVerticalSnapOffsets):
+
 2016-12-22  Daniel Bates  <dabates@apple.com>
 
         Bypass pop-up blocker from cross-origin or sandboxed frame

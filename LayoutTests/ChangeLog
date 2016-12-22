@@ -1,3 +1,16 @@
+2016-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        CSS Scroll Snap does not work if scrollbar is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=160442
+        <rdar://problem/23317034>
+
+        Reviewed by Simon Fraser.
+
+        Adds a new layout test verifying that scroll snapping still works when scrollbars are hidden via CSS.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-hidden-scrollbars-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-hidden-scrollbars.html: Added.
+
 2016-12-22  Daniel Bates  <dabates@apple.com>
 
         Make http/tests/security/popup-blocked-from-{fake-event, window-open}.html actually test popup

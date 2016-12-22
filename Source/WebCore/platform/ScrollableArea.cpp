@@ -427,11 +427,21 @@ bool ScrollableArea::hasLayerForScrollCorner() const
 #if ENABLE(CSS_SCROLL_SNAP)
 void ScrollableArea::setHorizontalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> horizontalSnapOffsets)
 {
+    ASSERT(horizontalSnapOffsets);
+    // Consider having a non-empty set of snap offsets as a cue to initialize the ScrollAnimator.
+    if (horizontalSnapOffsets->size())
+        scrollAnimator();
+
     m_horizontalSnapOffsets = WTFMove(horizontalSnapOffsets);
 }
 
 void ScrollableArea::setVerticalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> verticalSnapOffsets)
 {
+    ASSERT(verticalSnapOffsets);
+    // Consider having a non-empty set of snap offsets as a cue to initialize the ScrollAnimator.
+    if (verticalSnapOffsets->size())
+        scrollAnimator();
+
     m_verticalSnapOffsets = WTFMove(verticalSnapOffsets);
 }
 
