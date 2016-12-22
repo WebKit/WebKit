@@ -438,8 +438,6 @@ http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html
 http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html
 http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-domain-window-open.html
 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html
-http/tests/security/popup-blocked-from-fake-event.html
-http/tests/security/popup-blocked-from-window-open.html
 
 # Unexplained failures that were formerly in the "unsafe access" list.
 http/tests/security/cross-frame-access-enumeration.html

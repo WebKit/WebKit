@@ -1,5 +1,29 @@
 2016-12-22  Daniel Bates  <dabates@apple.com>
 
+        Make http/tests/security/popup-blocked-from-{fake-event, window-open}.html actually test popup
+        blocker; run on WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=166403
+
+        Reviewed by Darin Adler.
+
+        The tests http/tests/security/popup-blocked-from-{fake-event, window-open}.html inadvertently
+        depended on the default behavior of DumpRenderTree to ignore the ChromeClient::createWindow()
+        callback when asked to create a new window instead of testing that the popup blocker blocked
+        opening windows. We should call testRunner.setCanOpenWindows() and testRunner.setPopupBlockingEnabled(true)
+        from both of these tests so that DumpRenderTree respects requests to open windows and enable
+        the popup blocker (it is disabled by default), respectively.
+
+        The default behavior of DumpRenderTree to disallow opening windows falls out from the purpose
+        and implementation of testRunner.setCanOpenWindows() to support writing tests where the embedding
+        client ignores requests to create a new window. We do not implement such a concept in WebKitTestRunner
+        (see <https://bugs.webkit.org/show_bug.cgi?id=166402>).
+
+        * http/tests/security/popup-blocked-from-fake-event.html:
+        * http/tests/security/popup-blocked-from-window-open.html:
+        * platform/wk2/TestExpectations: Unskip the above tests as they now pass.
+
+2016-12-22  Daniel Bates  <dabates@apple.com>
+
         Bypass pop-up blocker from cross-origin or sandboxed frame
         https://bugs.webkit.org/show_bug.cgi?id=166290
         <rdar://problem/29742039>
