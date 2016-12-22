@@ -1,3 +1,18 @@
+2016-12-22  Tim Horton  <timothy_horton@apple.com>
+
+        TileGrid creates new cohorts even when not using temporarilyRetainTileCohorts mode
+        https://bugs.webkit.org/show_bug.cgi?id=166440
+
+        Reviewed by Simon Fraser.
+
+        No new tests.
+
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::revalidateTiles):
+        If we are not temporarily retaining unparented tile cohorts (e.g. on
+        iOS WebKit2), instead immediately removing all tiles that would go into
+        the new cohort, avoid starting the cohort at all.
+
 2016-12-22  Zalan Bujtas  <zalan@apple.com>
 
         Do not destroy the RenderNamedFlowFragment as leftover anonymous block.

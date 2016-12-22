@@ -395,15 +395,17 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
     if (needsTileRevalidation)
         m_controller.scheduleTileRevalidation(minimumRevalidationTimerDuration);
 
-    if (tilesInCohort)
-        startedNewCohort(currCohort);
-
     if (!m_controller.shouldAggressivelyRetainTiles()) {
         if (m_controller.shouldTemporarilyRetainTileCohorts())
             scheduleCohortRemoval();
-        else if (tilesInCohort)
+        else if (tilesInCohort) {
             removeTilesInCohort(currCohort);
+            tilesInCohort = 0;
+        }
     }
+
+    if (tilesInCohort)
+        startedNewCohort(currCohort);
 
     if (validationPolicy & PruneSecondaryTiles) {
         removeAllSecondaryTiles();
