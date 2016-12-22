@@ -180,6 +180,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
+#if __has_include("AVSampleBufferAudioRenderer.h")
+#import ("AVSampleBufferAudioRenderer")
+#else
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVSampleBufferAudioRenderer : NSObject
@@ -194,5 +198,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMuted:(BOOL)muted;
 @property (nonatomic, copy) NSString *audioTimePitchAlgorithm;
 @end
+
+#endif // __has_include("AVSampleBufferAudioRenderer.h")
 
 NS_ASSUME_NONNULL_END

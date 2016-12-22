@@ -1,3 +1,12 @@
+2016-12-22  Jer Noble  <jer.noble@apple.com>
+
+        Check for the existence of AVSampleBufferAudioRenderer.h before redeclaring AVSampleBufferAudioRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=166421
+
+        Reviewed by Eric Carlson.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2016-12-22  Eric Carlson  <eric.carlson@apple.com>
 
         AVPlayerLayer isn't available on every system
