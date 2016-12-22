@@ -88,7 +88,16 @@
 #include "TextTrack.h"
 #endif
 
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVAssetImageGenerator.h>
+#import <AVFoundation/AVAssetTrack.h>
+#import <AVFoundation/AVMediaSelectionGroup.h>
+#import <AVFoundation/AVMetadataItem.h>
+#import <AVFoundation/AVPlayer.h>
+#import <AVFoundation/AVPlayerItem.h>
+#import <AVFoundation/AVPlayerItemOutput.h>
+#import <AVFoundation/AVPlayerItemTrack.h>
+#import <AVFoundation/AVPlayerLayer.h>
+#import <AVFoundation/AVTime.h>
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #import "VideoFullscreenLayerManager.h"

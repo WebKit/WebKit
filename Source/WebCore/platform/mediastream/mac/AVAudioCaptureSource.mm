@@ -34,7 +34,9 @@
 #import "RealtimeMediaSourceSettings.h"
 #import "SoftLinking.h"
 #import "WebAudioSourceProviderAVFObjC.h"
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVCaptureInput.h>
+#import <AVFoundation/AVCaptureOutput.h>
+#import <AVFoundation/AVCaptureSession.h>
 #import <CoreAudio/CoreAudioTypes.h>
 #import <wtf/HashSet.h>
 

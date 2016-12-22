@@ -44,7 +44,8 @@
 #import "WebLayer.h"
 #import "WebSystemBackdropLayer.h"
 #import "WebTiledBackingLayer.h"
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVPlayer.h>
+#import <AVFoundation/AVPlayerLayer.h>
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>

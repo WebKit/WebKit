@@ -31,7 +31,7 @@
 
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVPlayerLayer.h>
 #import <Carbon/Carbon.h>
 #import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/HTMLVideoElement.h>

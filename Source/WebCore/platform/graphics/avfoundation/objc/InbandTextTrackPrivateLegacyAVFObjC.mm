@@ -33,7 +33,6 @@
 #import "Logging.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 #import "SoftLinking.h"
-#import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

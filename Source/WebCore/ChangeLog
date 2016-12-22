@@ -1,5 +1,26 @@
 2016-12-22  Jer Noble  <jer.noble@apple.com>
 
+        Only include those parts of AVFoundation.framework which are strictly needed.
+        https://bugs.webkit.org/show_bug.cgi?id=166423
+
+        Reviewed by Eric Carlson.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+
+2016-12-22  Jer Noble  <jer.noble@apple.com>
+
         NULL-deref CRASH in WebCore::PlatformMediaSession::mediaType
         https://bugs.webkit.org/show_bug.cgi?id=166407
 

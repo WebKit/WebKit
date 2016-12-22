@@ -45,11 +45,11 @@
 #import "ScriptSourceCode.h"
 #import "Settings.h"
 #import "UserAgentScripts.h"
-#import <objc/runtime.h>
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVMetadataItem.h>
 #import <Foundation/NSString.h>
-#import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JavaScriptCore.h>
+#import <objc/runtime.h>
 #import <wtf/text/Base64.h>
 
 #import "CoreMediaSoftLink.h"

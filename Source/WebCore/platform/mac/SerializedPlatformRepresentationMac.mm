@@ -30,15 +30,15 @@
 
 #import "JSDOMBinding.h"
 #import "SoftLinking.h"
+#import <AVFoundation/AVMetadataItem.h>
+#import <Foundation/NSString.h>
+#import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSContextRef.h>
+#import <JavaScriptCore/JSObjectRef.h>
+#import <JavaScriptCore/JavaScriptCore.h>
 #import <objc/runtime.h>
 #import <runtime/ArrayBuffer.h>
 #import <runtime/JSArrayBuffer.h>
-#import <AVFoundation/AVFoundation.h>
-#import <Foundation/NSString.h>
-#import <JavaScriptCore/APICast.h>
-#import <JavaScriptCore/JavaScriptCore.h>
-#import <JavaScriptCore/JSContextRef.h>
-#import <JavaScriptCore/JSObjectRef.h>
 #import <wtf/text/Base64.h>
 
 typedef AVMetadataItem AVMetadataItemType;

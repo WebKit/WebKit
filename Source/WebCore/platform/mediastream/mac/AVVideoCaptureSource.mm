@@ -41,7 +41,11 @@
 #import "RealtimeMediaSourcePreview.h"
 #import "RealtimeMediaSourceSettings.h"
 #import "WebActionDisablingCALayerDelegate.h"
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVCaptureDevice.h>
+#import <AVFoundation/AVCaptureInput.h>
+#import <AVFoundation/AVCaptureOutput.h>
+#import <AVFoundation/AVCaptureSession.h>
+#import <AVFoundation/AVCaptureVideoPreviewLayer.h>
 #import <objc/runtime.h>
 
 #if PLATFORM(IOS)

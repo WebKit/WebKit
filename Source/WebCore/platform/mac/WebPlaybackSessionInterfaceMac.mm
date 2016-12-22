@@ -34,7 +34,7 @@
 #import "TimeRanges.h"
 #import "WebPlaybackControlsManager.h"
 #import "WebPlaybackSessionModel.h"
-#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVTime.h>
 
 #import "CoreMediaSoftLink.h"
 
