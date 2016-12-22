@@ -3687,7 +3687,7 @@ FinallyContext* BytecodeGenerator::pushFinallyControlFlowScope(Label* finallyLab
     while (m_labelScopes.size() && !m_labelScopes.last().refCount())
         m_labelScopes.removeLast();
 
-    ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), FinallyContext(m_currentFinallyContext, finallyLabel, m_finallyDepth));
+    ControlFlowScope scope(ControlFlowScope::Finally, currentLexicalScopeIndex(), FinallyContext(m_currentFinallyContext, finallyLabel));
     m_controlFlowScopeStack.append(WTFMove(scope));
 
     m_finallyDepth++;
@@ -3886,8 +3886,8 @@ int BytecodeGenerator::localScopeDepth() const
 
 int BytecodeGenerator::labelScopeDepth() const
 {
-    int depth = localScopeDepth() + m_finallyDepth;
-    ASSERT(depth == static_cast<int>(m_controlFlowScopeStack.size()));
+    unsigned depth = localScopeDepth() + m_finallyDepth;
+    ASSERT(depth == m_controlFlowScopeStack.size());
     return depth;
 }
 

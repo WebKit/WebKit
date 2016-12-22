@@ -1,5 +1,22 @@
 2016-12-22  Mark Lam  <mark.lam@apple.com>
 
+        BytecodeGenerator::m_finallyDepth should be unsigned.
+        https://bugs.webkit.org/show_bug.cgi?id=166438
+
+        Reviewed by Saam Barati.
+
+        Also removed FinallyContext::m_finallyDepth because it is not used.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::pushFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::labelScopeDepth):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::FinallyContext::FinallyContext):
+        (JSC::FinallyContext::finallyLabel):
+        (JSC::FinallyContext::depth): Deleted.
+
+2016-12-22  Mark Lam  <mark.lam@apple.com>
+
         De-duplicate finally blocks.
         https://bugs.webkit.org/show_bug.cgi?id=160168
 

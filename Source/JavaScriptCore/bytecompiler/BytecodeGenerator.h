@@ -121,18 +121,15 @@ namespace JSC {
 
     struct FinallyContext {
         FinallyContext() { }
-        FinallyContext(FinallyContext* outerContext, Label* finallyLabel, int finallyDepth)
+        FinallyContext(FinallyContext* outerContext, Label* finallyLabel)
             : m_outerContext(outerContext)
             , m_finallyLabel(finallyLabel)
-            , m_finallyDepth(finallyDepth)
         {
-            ASSERT(m_finallyDepth >= 0);
             ASSERT(m_jumps.isEmpty());
         }
 
         FinallyContext* outerContext() const { return m_outerContext; }
         Label* finallyLabel() const { return m_finallyLabel; }
-        int depth() const { return m_finallyDepth; }
 
         uint32_t numberOfBreaksOrContinues() const { return m_numberOfBreaksOrContinues.unsafeGet(); }
         void incNumberOfBreaksOrContinues() { m_numberOfBreaksOrContinues++; }
@@ -151,7 +148,6 @@ namespace JSC {
     private:
         FinallyContext* m_outerContext { nullptr };
         Label* m_finallyLabel { nullptr };
-        int m_finallyDepth { 0 };
         Checked<uint32_t, WTF::CrashOnOverflow> m_numberOfBreaksOrContinues;
         bool m_handlesReturns { false };
         Vector<FinallyJump> m_jumps;
@@ -1091,7 +1087,7 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<Label, 32> m_labels;
         LabelScopeStore m_labelScopes;
-        int m_finallyDepth { 0 };
+        unsigned m_finallyDepth { 0 };
         int m_localScopeDepth { 0 };
         const CodeType m_codeType;
 
