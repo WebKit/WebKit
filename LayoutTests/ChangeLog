@@ -1,3 +1,17 @@
+2016-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Update media-stream-event-constructor test
+        https://bugs.webkit.org/show_bug.cgi?id=166398
+
+        Reviewed by Jer Noble.
+
+        Update and rebaseline test to reflect behavior changes that happened while the test was
+        skipped. Un-skip it on macOS.
+
+        * fast/events/constructors/media-stream-event-constructor-expected.txt:
+        * fast/events/constructors/media-stream-event-constructor.html:
+        * platform/mac/TestExpectations:
+
 2016-12-21  John Wilander  <wilander@apple.com>
 
         Switch to a blacklist model for restricted Accept headers in simple CORS requests

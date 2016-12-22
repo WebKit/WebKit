@@ -1,3 +1,14 @@
+2016-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Update media-stream-event-constructor test
+        https://bugs.webkit.org/show_bug.cgi?id=166398
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated existing test.
+
+        * Modules/mediastream/MediaStreamEvent.idl: Mark eventInitDict as optional.
+
 2016-12-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebKit should set Original URL of a download request correctly
