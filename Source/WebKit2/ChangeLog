@@ -1,3 +1,12 @@
+2016-12-22  Eric Carlson  <eric.carlson@apple.com>
+
+        AVPlayerLayer isn't available on every system
+        https://bugs.webkit.org/show_bug.cgi?id=166399
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm: Use SOFT_LINK_CLASS_OPTIONAL.
+
 2016-12-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         MediaStream: ASSERTION FAILED: m_ids.size() == m_handles.size() in MediaDeviceSandboxExtensions

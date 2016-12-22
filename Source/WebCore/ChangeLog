@@ -1,3 +1,14 @@
+2016-12-22  Eric Carlson  <eric.carlson@apple.com>
+
+        AVPlayerLayer isn't available on every system
+        https://bugs.webkit.org/show_bug.cgi?id=166399
+
+        Reviewed by Jer Noble.
+
+        No new tests, prevents a crash that can't be reproduced on a test system.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm: Use SOFT_LINK_CLASS_OPTIONAL.
+
 2016-12-21  Tim Horton  <timothy_horton@apple.com>
 
         TileGrid revalidates tiles twice during flush, first with wrong visible rect
