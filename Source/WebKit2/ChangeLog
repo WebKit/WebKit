@@ -1,3 +1,17 @@
+2016-12-22  Zhuo Li  <zachli@apple.com>
+
+        [Cocoa] SPI for setloadsImagesAutomatically
+        https://bugs.webkit.org/show_bug.cgi?id=166401
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm: Call the C API under the hood.
+        (-[WKPreferences _loadsImagesAutomatically]):
+        (-[WKPreferences _setLoadsImagesAutomatically:]):
+
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        Add `_loadsImagesAutomatically` property.
+
 2016-12-22  Eric Carlson  <eric.carlson@apple.com>
 
         AVPlayerLayer isn't available on every system

@@ -1,3 +1,14 @@
+2016-12-22  Zhuo Li  <zachli@apple.com>
+
+        [Cocoa] SPI for setloadsImagesAutomatically.
+        https://bugs.webkit.org/show_bug.cgi?id=166401.
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/Preferences.mm:
+        (TEST): Test the _setLoadsImagesAutomatically SPI. By default,
+        _loadsImagesAutomatically returns YES.
+
 2016-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/events/ios/viewport-shrink-to-fit-allows-double-tap.html is flaky/order dependent

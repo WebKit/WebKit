@@ -517,6 +517,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setShouldSuppressKeyboardInputDuringProvisionalNavigation(shouldSuppress);
 }
 
+- (BOOL)_loadsImagesAutomatically
+{
+    return _preferences->loadsImagesAutomatically();
+}
+
+- (void)_setLoadsImagesAutomatically:(BOOL)loadsImagesAutomatically
+{
+    _preferences->setLoadsImagesAutomatically(loadsImagesAutomatically);
+}
+
 @end
 
 #endif // WK_API_ENABLED

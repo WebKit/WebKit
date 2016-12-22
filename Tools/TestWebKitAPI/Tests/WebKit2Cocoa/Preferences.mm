@@ -42,6 +42,17 @@ TEST(WebKit2, DefaultWKPreferences)
     EXPECT_TRUE([preferences _isStandalone]);
 }
 
+TEST(WebKit2, LoadsImagesAutomatically)
+{
+    RetainPtr<WKPreferences> preferences = adoptNS([[WKPreferences alloc] init]);
+
+    EXPECT_TRUE([preferences _loadsImagesAutomatically]);
+    [preferences _setLoadsImagesAutomatically:NO];
+    EXPECT_FALSE([preferences _loadsImagesAutomatically]);
+    [preferences _setLoadsImagesAutomatically:YES];
+    EXPECT_TRUE([preferences _loadsImagesAutomatically]);
+}
+
 TEST(WebKit2, ExperimentalFeatures)
 {
     NSArray *features = [WKPreferences _experimentalFeatures];
