@@ -1,3 +1,20 @@
+2016-12-22  Mark Lam  <mark.lam@apple.com>
+
+        De-duplicate finally blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=160168
+
+        Reviewed by Saam Barati.
+
+        Re-landing r209952 with a few new tests added in test-finally.js.
+
+        * stress/deeply-nested-finallys.js: Copied from JSTests/stress/deeply-nested-finallys.js.
+        - Tests many levels of finally nesting.  This causes the old code to hang (and
+          crashes eventually) while trying to generate bytecode for the exponentially
+          duplicated finally blocks.  The new code completes this test almost instantly.
+
+        * stress/test-finally.js: Copied from JSTests/stress/test-finally.js.
+        - Tests control flow through various permutations of finally blocks.
+
 2016-12-22  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make the spec-tests/address.wast.js test pass

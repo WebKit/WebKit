@@ -127,9 +127,33 @@ namespace WTF {
             return at(index);
         }
 
+        T& first()
+        {
+            ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
+            return at(0);
+        }
+        const T& first() const
+        {
+            ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
+            return at(0);
+        }
         T& last()
         {
+            ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
             return at(size() - 1);
+        }
+        const T& last() const
+        {
+            ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
+            return at(size() - 1);
+        }
+
+        T takeLast()
+        {
+            ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
+            T result = WTFMove(last());
+            --m_size;
+            return result;
         }
 
         template<typename... Args>

@@ -1,3 +1,295 @@
+2016-12-22  Mark Lam  <mark.lam@apple.com>
+
+        De-duplicate finally blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=160168
+
+        Reviewed by Saam Barati.
+
+        JS execution can arrive at a finally block when there are abrupt completions from
+        its try or catch block.  The abrupt completion types include Break,
+        Continue, Return, and Throw.  The non-abrupt completion type is called Normal
+        (i.e. the case of a try block falling through to the finally block).
+
+        Previously, we enable each of these paths for abrupt completion (except for Throw)
+        to run the finally block code by duplicating the finally block code at each of
+        the sites that trigger those completions.  This patch fixes the implementation so
+        that each of these abrupt completions will set a completionTypeRegister (plus a
+        completionValueRegister for CompletionType::Return) and then jump to the
+        relevant finally blocks, and continue to thread through subsequent outer finally
+        blocks until execution reaches the outermost finally block that the completion
+        type dictates.  We no longer duplicate the finally block code.
+
+        The implementation details:
+        1. We allocate a pair of registers (completionTypeRegister and completionValueRegister)
+           just before entering the outermost try-catch-finally scope.
+
+           On allocating the registers, we initialize the completionTypeRegister to
+           CompletionType::Normal, and set the completionValueRegister to the empty
+           JSValue.
+
+        2. The completionTypeRegister will hold a CompletionType value.  This is how we
+           encode the CompletionType value to be set:
+
+           a. For Normal, Return, and Throw completion types: 
+              - The completionTypeRegister is set to CompletionType::Normal,
+                CompletionType::Return, and CompletionType::Throw respectively.
+
+           b. For Break and Continue completion types:
+              - The completionTypeRegister is set to a unique jumpID where the jumpID is
+                computed as:
+
+                jumpID = CompletionType::NumberOfTypes + bytecodeOffset
+
+                The bytecodeOffset used here is the bytecodeOffset of the break or continue
+                statement that triggered this completion.
+
+        3. Each finally block will have 2 entries:
+           a. the catch entry.
+           b. the normal entry.
+
+           The catch entry is recorded in the codeBlock's exception handler table,
+           and can only be jumped to by the VM's exception handling mechanism.
+
+           The normal entry is recorded in a FinallyContext (at bytecode generation time
+           only) and is jumped to when we want enter the finally block due any of the
+           other CompletionTypes.
+
+        4. How each completion type works?
+
+           CompletionType::Normal
+           ======================
+           We normally encounter this when falling through from a try or catch block to
+           the finally block.  
+          
+           For the try block case, since completionTypeRegister is set to Normal by default,
+           there's nothing more that needs to be done.
+
+           For the catch block case, since we entered the catch block with an exception,
+           completionTypeRegister may be set to Throw.  We'll need to set it to Normal
+           before jumping to the finally block's normal entry.
+
+           CompletionType::Break
+           =====================
+           When we emit bytecode for the BreakNode, we check if we have any FinallyContexts
+           that we need to service before jumping to the breakTarget.  If we don't, then
+           emit op_jump to the breakTarget as usual.  Otherwise:
+
+           a. we'll register a jumpID and the breakTarget with the FinallyContext for the
+              outermost finally block that we're supposed to run through.
+           b. we'll also increment the numberOfBreaksOrContinues count in each FinallyContext
+              from the innermost to the one for that outermost finally block.
+           c. emit bytecode to set the completionTypeRegister to the jumpID.
+           d. emit bytecode to jump to the normal entry of the innermost finally block.
+
+           Each finally block will take care of cascading to the next outer finally block
+           as needed (see (5) below).
+
+           CompletionType::Continue
+           ========================
+           Since continues and breaks work the same way (i.e. with a jump), we handle this
+           exactly the same way as CompletionType::Break, except that we use the
+           continueTarget instead of the breakTarget.
+
+           CompletionType::Return
+           ======================
+           When we emit bytecode for the ReturnNode, we check if we have any FinallyContexts
+           at all on the m_controlFlowScopeStack.  If we don't, then emit op_ret as usual.
+           Otherwise:
+
+           a. emit bytecode to set the completionTypeRegister to CompletionType::Return.
+           b. emit bytecode to move the return value into the completionValueRegister.
+           c. emit bytecode to jump to the normal entry of the innermost finally block.
+
+           Each finally block will take care of cascading to the next outer finally block
+           as needed (see (5) below).
+
+           CompletionType::Throw
+           ======================
+           At the catch entry a finally block, we:
+           1. emit an op_catch that stores the caught Exception object in the
+              completionValueRegister.
+           2. emit bytecode to set the completionTypeRegister to CompletionType::Throw.
+           3. Fall through or jump to the finally block's normal entry.
+
+        5. What happens in each finally block?
+           ==================================
+           For details on the finally block's catch entry, see "CompletionType::Throw" in
+           (4) above.
+
+           The finally block's normal entry will:
+           1. restore the scope of the finally block.
+           2. save the completionTypeRegister in a savedCompletionTypeRegister.
+           3. proceed to execute the body of the finally block.
+
+           At the end of the finally block, we will emit bytecode check the
+           savedCompletionTypeRegister for each completion type see emitFinallyCompletion())
+           in the following order:
+          
+           a. Check for CompletionType::Normal
+              ================================
+              If savedCompletionTypeRegister is CompletionType::Normal, jump to the
+              designated normalCompletion label.  We only need this check this finally
+              block also needs to check for Break, Continue, or Return.  If not, the
+              completion type check for CompletionType::Throw below will make this check
+              redundant.
+
+           b. Check for CompletionType::Break and Continue
+              ============================================
+              If the FinallyContext for this block has registered FinallyJumps, we'll
+              check the jumpIDs against the savedCompletionTypeRegister.  If the jumpID
+              matches, jump to the corresponding jumpTarget.
+
+              If no jumpIDs match but the FinallyContext's numberOfBreaksOrContinues is
+              greater than the number of registered FinallyJumps, then this means that
+              we have a Break or Continue that needs to be handled by an outer finally
+              block.  In that case, jump to the next outer finally block's normal entry.
+             
+           c. Check for CompletionType::Return
+              ================================
+              If this finally block is not the outermost and the savedCompletionTypeRegister
+              is set to CompletionType::Return, then jump to the next outer finally
+              block's normal entry.
+
+              Otherwise, if this finally block is the outermost and the savedCompletionTypeRegister
+              is set to CompletionType::Return, then execute op_ret and return the value
+              in the completionValueRegister.
+
+           d. CompletionType::Throw
+              =====================
+              If savedCompletionTypeRegister is CompletionType::Throw, then just re-throw the
+              Exception object in the completionValueRegister.
+
+           Detail 1: that we check the savedCompletionTypeRegister (and not the
+           completionTypeRegister).  This is because the finally block may itself contain
+           a try-finally, and this inner try-finally may have trashed the completionTypeRegister.
+           Here's an example:
+
+               try {
+                   return "r1"; // Sets completionTypeRegister to CompletionType::Return;
+               } finally {
+                   // completionTypeRegister is CompletionType::Return here.
+
+                   try {
+                       ... // do stuff.
+                   } finally {
+                       ... // do more stuff.
+                   }
+
+                   // completionTypeRegister may be anything here depending on what
+                   // was executed in the inner try-finally block above.
+
+                   // Hence, finally completion here must be based on a saved copy of the
+                   // completionTypeRegister when we entered this finally block.
+               }
+
+           Detail 2: the finally completion for CompletionType::Throw must always explicitly
+           check if the savedCompletionTypeRegister is CompletionType::Throw before throwing.
+           We cannot imply that it is so from the Throw case being last.  Here's why:
+
+               // completionTypeRegister is CompletionType::Normal here.
+               try {
+                   return "r1"; // Sets completionTypeRegister to CompletionType::Return;
+               } finally {
+                   // completionTypeRegister is CompletionType::Return here.
+
+                   try {
+                       ... // do stuff.  No abrupt completions.
+                   } finally {
+                       // completionTypeRegister is CompletionType::Return here (from the outer try-finally).
+                       // savedCompletionTypeRegister is set to completionTypeRegister (i.e. CompletionType::Return) here.
+
+                       ... // do more stuff.  No abrupt completions.
+
+                       // Unless there's an abrupt completion since entering the outer
+                       // finally block, the savedCompletionTypeRegister will remain set
+                       // to CompletionType::Return.  If we don't explicitly check if the
+                       // savedCompletionTypeRegister is CompletionType::Throw before
+                       // throwing here, we'll end up erroneously throwing "r1".
+                   }
+
+                   ...
+               }
+
+        6. restoreScopeRegister()
+       
+           Since the needed scope objects are always stored in a local, we can restore
+           the scope register by simply moving from that local instead of going through
+           op_get_parent_scope.
+
+        7. m_controlFlowScopeStack needs to be a SegmentedVector instead of a Vector.
+           This makes it easier to keep a pointer to the FinallyContext on that stack,
+           and not have to worry about the vector being realloc'ed due to resizing. 
+
+        Performance appears to be neutral both on ES6SampleBench (run via cli) and the
+        JSC benchmarks.
+
+        Relevant spec references:
+        https://tc39.github.io/ecma262/#sec-completion-record-specification-type
+        https://tc39.github.io/ecma262/#sec-try-statement-runtime-semantics-evaluation
+
+        * bytecode/HandlerInfo.h:
+        (JSC::HandlerInfoBase::typeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitReturn):
+        (JSC::BytecodeGenerator::pushFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::popFinallyControlFlowScope):
+        (JSC::BytecodeGenerator::allocateAndEmitScope):
+        (JSC::BytecodeGenerator::pushTry):
+        (JSC::BytecodeGenerator::popTry):
+        (JSC::BytecodeGenerator::emitCatch):
+        (JSC::BytecodeGenerator::restoreScopeRegister):
+        (JSC::BytecodeGenerator::labelScopeDepthToLexicalScopeIndex):
+        (JSC::BytecodeGenerator::labelScopeDepth):
+        (JSC::BytecodeGenerator::pushLocalControlFlowScope):
+        (JSC::BytecodeGenerator::popLocalControlFlowScope):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitIsNumber):
+        (JSC::BytecodeGenerator::emitYield):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        (JSC::BytecodeGenerator::emitJumpViaFinallyIfNeeded):
+        (JSC::BytecodeGenerator::emitReturnViaFinallyIfNeeded):
+        (JSC::BytecodeGenerator::emitFinallyCompletion):
+        (JSC::BytecodeGenerator::allocateCompletionRecordRegisters):
+        (JSC::BytecodeGenerator::releaseCompletionRecordRegisters):
+        (JSC::BytecodeGenerator::emitJumpIf):
+        (JSC::BytecodeGenerator::pushIteratorCloseControlFlowScope): Deleted.
+        (JSC::BytecodeGenerator::popIteratorCloseControlFlowScope): Deleted.
+        (JSC::BytecodeGenerator::emitComplexPopScopes): Deleted.
+        (JSC::BytecodeGenerator::emitPopScopes): Deleted.
+        (JSC::BytecodeGenerator::popTryAndEmitCatch): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::bytecodeOffsetToJumpID):
+        (JSC::FinallyJump::FinallyJump):
+        (JSC::FinallyContext::FinallyContext):
+        (JSC::FinallyContext::outerContext):
+        (JSC::FinallyContext::finallyLabel):
+        (JSC::FinallyContext::depth):
+        (JSC::FinallyContext::numberOfBreaksOrContinues):
+        (JSC::FinallyContext::incNumberOfBreaksOrContinues):
+        (JSC::FinallyContext::handlesReturns):
+        (JSC::FinallyContext::setHandlesReturns):
+        (JSC::FinallyContext::registerJump):
+        (JSC::FinallyContext::numberOfJumps):
+        (JSC::FinallyContext::jumps):
+        (JSC::ControlFlowScope::ControlFlowScope):
+        (JSC::ControlFlowScope::isLabelScope):
+        (JSC::ControlFlowScope::isFinallyScope):
+        (JSC::BytecodeGenerator::currentLexicalScopeIndex):
+        (JSC::BytecodeGenerator::CompletionRecordScope::CompletionRecordScope):
+        (JSC::BytecodeGenerator::CompletionRecordScope::~CompletionRecordScope):
+        (JSC::BytecodeGenerator::completionTypeRegister):
+        (JSC::BytecodeGenerator::completionValueRegister):
+        (JSC::BytecodeGenerator::emitSetCompletionType):
+        (JSC::BytecodeGenerator::emitSetCompletionValue):
+        (JSC::BytecodeGenerator::isInFinallyBlock): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+
 2016-12-22  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make the spec-tests/address.wast.js test pass

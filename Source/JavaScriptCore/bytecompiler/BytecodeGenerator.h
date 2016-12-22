@@ -44,6 +44,7 @@
 #include "TemplateRegistryKey.h"
 #include "UnlinkedCodeBlock.h"
 #include <functional>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/HashTraits.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
@@ -80,22 +81,99 @@ namespace JSC {
         unsigned m_padding;
     };
 
+    // https://tc39.github.io/ecma262/#sec-completion-record-specification-type
+    //
+    // For the Break and Continue cases, instead of using the Break and Continue enum values
+    // below, we use the unique jumpID of the break and continue statement as the encoding
+    // for the CompletionType value. emitFinallyCompletion() uses this jumpID value later
+    // to determine the appropriate jump target to jump to after executing the relevant finally
+    // blocks. The jumpID is computed as:
+    //     jumpID = bytecodeOffset (of the break/continue node) + CompletionType::NumberOfTypes.
+    // Hence, there won't be any collision between jumpIDs and CompletionType enums.
+    enum class CompletionType : int {
+        Normal,
+        Break,
+        Continue,
+        Return,
+        Throw,
+        
+        NumberOfTypes
+    };
+
+    inline CompletionType bytecodeOffsetToJumpID(unsigned offset)
+    {
+        int jumpIDAsInt = offset + static_cast<int>(CompletionType::NumberOfTypes);
+        ASSERT(jumpIDAsInt >= static_cast<int>(CompletionType::NumberOfTypes));
+        return static_cast<CompletionType>(jumpIDAsInt);
+    }
+
+    struct FinallyJump {
+        FinallyJump(CompletionType jumpID, int targetLexicalScopeIndex, Label* targetLabel)
+            : jumpID(jumpID)
+            , targetLexicalScopeIndex(targetLexicalScopeIndex)
+            , targetLabel(targetLabel)
+        { }
+
+        CompletionType jumpID;
+        int targetLexicalScopeIndex;
+        RefPtr<Label> targetLabel;
+    };
+
     struct FinallyContext {
-        StatementNode* finallyBlock;
-        RegisterID* iterator;
-        ThrowableExpressionData* enumerationNode;
-        unsigned controlFlowScopeStackSize;
-        unsigned switchContextStackSize;
-        unsigned forInContextStackSize;
-        unsigned tryContextStackSize;
-        unsigned labelScopesSize;
-        unsigned lexicalScopeStackSize;
-        int finallyDepth;
-        int dynamicScopeDepth;
+        FinallyContext() { }
+        FinallyContext(FinallyContext* outerContext, Label* finallyLabel, int finallyDepth)
+            : m_outerContext(outerContext)
+            , m_finallyLabel(finallyLabel)
+            , m_finallyDepth(finallyDepth)
+        {
+            ASSERT(m_finallyDepth >= 0);
+            ASSERT(m_jumps.isEmpty());
+        }
+
+        FinallyContext* outerContext() const { return m_outerContext; }
+        Label* finallyLabel() const { return m_finallyLabel; }
+        int depth() const { return m_finallyDepth; }
+
+        uint32_t numberOfBreaksOrContinues() const { return m_numberOfBreaksOrContinues.unsafeGet(); }
+        void incNumberOfBreaksOrContinues() { m_numberOfBreaksOrContinues++; }
+
+        bool handlesReturns() const { return m_handlesReturns; }
+        void setHandlesReturns() { m_handlesReturns = true; }
+
+        void registerJump(CompletionType jumpID, int lexicalScopeIndex, Label* targetLabel)
+        {
+            m_jumps.append(FinallyJump(jumpID, lexicalScopeIndex, targetLabel));
+        }
+
+        size_t numberOfJumps() const { return m_jumps.size(); }
+        FinallyJump& jumps(size_t i) { return m_jumps[i]; }
+
+    private:
+        FinallyContext* m_outerContext { nullptr };
+        Label* m_finallyLabel { nullptr };
+        int m_finallyDepth { 0 };
+        Checked<uint32_t, WTF::CrashOnOverflow> m_numberOfBreaksOrContinues;
+        bool m_handlesReturns { false };
+        Vector<FinallyJump> m_jumps;
     };
 
     struct ControlFlowScope {
-        bool isFinallyBlock;
+        typedef uint8_t Type;
+        enum {
+            Label,
+            Finally
+        };
+        ControlFlowScope(Type type, int lexicalScopeIndex, FinallyContext&& finallyContext = FinallyContext())
+            : type(type)
+            , lexicalScopeIndex(lexicalScopeIndex)
+            , finallyContext(std::forward<FinallyContext>(finallyContext))
+        { }
+
+        bool isLabelScope() const { return type == Label; }
+        bool isFinallyScope() const { return type == Finally; }
+
+        Type type;
+        int lexicalScopeIndex;
         FinallyContext finallyContext;
     };
 
@@ -605,7 +683,8 @@ namespace JSC {
 
         RegisterID* emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode*);
 
-        RegisterID* emitReturn(RegisterID* src);
+        enum class ReturnFrom { Normal, Finally };
+        RegisterID* emitReturn(RegisterID* src, ReturnFrom = ReturnFrom::Normal);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
         RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
@@ -626,7 +705,6 @@ namespace JSC {
         PassRefPtr<Label> emitJumpIfFalse(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionCall(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionApply(RegisterID* cond, Label* target);
-        void emitPopScopes(RegisterID* srcDst, int targetScopeDepth);
 
         void emitEnter();
         void emitWatchdog();
@@ -649,6 +727,7 @@ namespace JSC {
         RegisterID* emitIsMap(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSMapType); }
         RegisterID* emitIsSet(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, JSSetType); }
         RegisterID* emitIsObject(RegisterID* dst, RegisterID* src);
+        RegisterID* emitIsNumber(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsUndefined(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }
@@ -663,9 +742,30 @@ namespace JSC {
         bool emitReadOnlyExceptionIfNeeded(const Variable&);
 
         // Start a try block. 'start' must have been emitted.
-        TryData* pushTry(Label* start);
+        TryData* pushTry(Label* start, Label* handlerLabel, HandlerType);
         // End a try block. 'end' must have been emitted.
-        void popTryAndEmitCatch(TryData*, RegisterID* exceptionRegister, RegisterID* thrownValueRegister, Label* end, HandlerType);
+        void popTry(TryData*, Label* end);
+        void emitCatch(RegisterID* exceptionRegister, RegisterID* thrownValueRegister);
+
+    private:
+        static const int CurrentLexicalScopeIndex = -2;
+        static const int OutermostLexicalScopeIndex = -1;
+
+        int currentLexicalScopeIndex() const
+        {
+            int size = static_cast<int>(m_lexicalScopeStack.size());
+            ASSERT(static_cast<size_t>(size) == m_lexicalScopeStack.size());
+            ASSERT(size >= 0);
+            if (!size)
+                return OutermostLexicalScopeIndex;
+            return size - 1;
+        }
+
+    public:
+        void restoreScopeRegister();
+        void restoreScopeRegister(int lexicalScopeIndex);
+
+        int labelScopeDepthToLexicalScopeIndex(int labelScopeDepth);
 
         void emitThrow(RegisterID* exc)
         { 
@@ -698,12 +798,58 @@ namespace JSC {
         void emitDebugHook(ExpressionNode*);
         void emitWillLeaveCallFrameDebugHook();
 
-        bool isInFinallyBlock() { return m_finallyDepth > 0; }
+        class CompletionRecordScope {
+        public:
+            CompletionRecordScope(BytecodeGenerator& generator, bool needCompletionRecordRegisters = true)
+                : m_generator(generator)
+            {
+                if (needCompletionRecordRegisters && m_generator.allocateCompletionRecordRegisters())
+                    m_needToReleaseOnDestruction = true;
+            }
+            ~CompletionRecordScope()
+            {
+                if (m_needToReleaseOnDestruction)
+                    m_generator.releaseCompletionRecordRegisters();
+            }
 
-        void pushFinallyControlFlowScope(StatementNode* finallyBlock);
-        void popFinallyControlFlowScope();
-        void pushIteratorCloseControlFlowScope(RegisterID* iterator, ThrowableExpressionData* enumerationNode);
-        void popIteratorCloseControlFlowScope();
+        private:
+            BytecodeGenerator& m_generator;
+            bool m_needToReleaseOnDestruction { false };
+        };
+
+        RegisterID* completionTypeRegister() const
+        {
+            ASSERT(m_completionTypeRegister);
+            return m_completionTypeRegister.get();
+        }
+        RegisterID* completionValueRegister() const
+        {
+            ASSERT(m_completionValueRegister);
+            return m_completionValueRegister.get();
+        }
+
+        void emitSetCompletionType(CompletionType type)
+        {
+            emitLoad(completionTypeRegister(), JSValue(static_cast<int>(type)));
+        }
+        void emitSetCompletionValue(RegisterID* reg)
+        {
+            emitMove(completionValueRegister(), reg);
+        }
+
+        void emitJumpIf(OpcodeID compareOpcode, RegisterID* completionTypeRegister, CompletionType, Label* jumpTarget);
+
+        bool emitJumpViaFinallyIfNeeded(int targetLabelScopeDepth, Label* jumpTarget);
+        bool emitReturnViaFinallyIfNeeded(RegisterID* returnRegister);
+        void emitFinallyCompletion(FinallyContext&, RegisterID* completionTypeRegister, Label* normalCompletionLabel);
+
+    private:
+        bool allocateCompletionRecordRegisters();
+        void releaseCompletionRecordRegisters();
+
+    public:
+        FinallyContext* pushFinallyControlFlowScope(Label* finallyLabel);
+        FinallyContext popFinallyControlFlowScope();
 
         void pushIndexedForInScope(RegisterID* local, RegisterID* index);
         void popIndexedForInScope(RegisterID* local);
@@ -797,7 +943,6 @@ namespace JSC {
 
         void allocateCalleeSaveSpace();
         void allocateAndEmitScope();
-        void emitComplexPopScopes(RegisterID*, ControlFlowScope* topScope, ControlFlowScope* bottomScope);
 
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<UniquedStringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;
@@ -935,6 +1080,11 @@ namespace JSC {
         RegisterID* m_arrowFunctionContextLexicalEnvironmentRegister { nullptr };
         RegisterID* m_promiseCapabilityRegister { nullptr };
 
+        RefPtr<RegisterID> m_completionTypeRegister;
+        RefPtr<RegisterID> m_completionValueRegister;
+
+        FinallyContext* m_currentFinallyContext { nullptr };
+
         SegmentedVector<RegisterID*, 16> m_localRegistersForCalleeSaveRegisters;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeLocals;
@@ -949,7 +1099,9 @@ namespace JSC {
         void pushLocalControlFlowScope();
         void popLocalControlFlowScope();
 
-        Vector<ControlFlowScope, 0, UnsafeVectorOverflow> m_controlFlowScopeStack;
+        // FIXME: Restore overflow checking with UnsafeVectorOverflow once SegmentVector supports it.
+        // https://bugs.webkit.org/show_bug.cgi?id=165980
+        SegmentedVector<ControlFlowScope, 16> m_controlFlowScopeStack;
         Vector<SwitchInfo> m_switchContextStack;
         Vector<RefPtr<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
