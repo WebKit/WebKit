@@ -1,3 +1,15 @@
+2016-12-22  Tim Horton  <timothy_horton@apple.com>
+
+        Null deref under WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground
+        https://bugs.webkit.org/show_bug.cgi?id=166433
+        <rdar://problem/29732407>
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground):
+        m_drawingArea can be null if the process is not valid.
+
 2016-12-22  Andy Estes  <aestes@apple.com>
 
         Make WebCore::EditorInsertAction an enum class
