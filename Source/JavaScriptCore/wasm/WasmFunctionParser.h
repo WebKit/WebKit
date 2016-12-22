@@ -547,6 +547,18 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
+    case F32Const: {
+        uint32_t unused;
+        WASM_PARSER_FAIL_IF(!parseUInt32(unused), "can't parse 32-bit floating-point constant");
+        return { };
+    }
+
+    case F64Const: {
+        uint64_t constant;
+        WASM_PARSER_FAIL_IF(!parseUInt64(constant), "can't parse 64-bit floating-point constant");
+        return { };
+    }
+
     // two immediate cases
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
     FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
@@ -557,9 +569,7 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     }
 
     // one immediate cases
-    case F32Const:
     case I32Const:
-    case F64Const:
     case I64Const:
     case SetLocal:
     case GetLocal:
