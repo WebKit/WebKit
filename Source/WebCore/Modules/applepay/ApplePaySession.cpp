@@ -176,12 +176,15 @@ static ExceptionOr<PaymentRequest::LineItem> convertAndValidate(ApplePayLineItem
     return WTFMove(result);
 }
 
-static ExceptionOr<Vector<PaymentRequest::LineItem>> convertAndValidate(Vector<ApplePayLineItem>&& lineItems)
+static ExceptionOr<Vector<PaymentRequest::LineItem>> convertAndValidate(std::optional<Vector<ApplePayLineItem>>&& lineItems)
 {
     Vector<PaymentRequest::LineItem> result;
-    result.reserveInitialCapacity(lineItems.size());
+    if (!lineItems)
+        return WTFMove(result);
+
+    result.reserveInitialCapacity(lineItems->size());
     
-    for (auto lineItem : lineItems) {
+    for (auto lineItem : lineItems.value()) {
         auto convertedLineItem = convertAndValidate(WTFMove(lineItem));
         if (convertedLineItem.hasException())
             return convertedLineItem.releaseException();
@@ -300,7 +303,6 @@ static ExceptionOr<PaymentRequest> convertAndValidate(unsigned version, ApplePay
         return total.releaseException();
     result.setTotal(total.releaseReturnValue());
 
-    // FIXME: Should this swallow exceptions like the old code seemed to do?
     auto lineItems = convertAndValidate(WTFMove(paymentRequest.lineItems));
     if (lineItems.hasException())
         return lineItems.releaseException();

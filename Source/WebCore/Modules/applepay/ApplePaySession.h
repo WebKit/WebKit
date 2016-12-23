@@ -34,6 +34,11 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+class ExecState;
+class JSValue;
+}
+
 namespace WebCore {
 
 class DeferredPromise;

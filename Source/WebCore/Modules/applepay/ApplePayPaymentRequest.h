@@ -31,7 +31,6 @@
 #include "ApplePayPaymentContact.h"
 #include "ApplePayShippingMethod.h"
 #include "PaymentRequest.h"
-#include <heap/Strong.h>
 
 namespace WebCore {
 
@@ -56,7 +55,7 @@ struct ApplePayPaymentRequest {
     std::optional<Vector<ApplePayShippingMethod>> shippingMethods;
 
     ApplePayLineItem total;
-    Vector<ApplePayLineItem> lineItems;
+    std::optional<Vector<ApplePayLineItem>> lineItems;
 
     String applicationData;
 };

@@ -1,3 +1,22 @@
+2016-12-23  Sam Weinig  <sam@webkit.org>
+
+        Add missing std::optional to ApplePayPaymentRequest.lineItems
+        https://bugs.webkit.org/show_bug.cgi?id=166468
+
+        Reviewed by Alexey Proskuryakov.
+
+        No functional change, but is more consistent.
+
+        * Modules/applepay/ApplePayPaymentRequest.h:
+        Remove unnecessary #include of <heap/Strong.h>, add std::optional to lineItems.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        Update to deal with optional line items, remove unnecessary comment.
+
+        * Modules/applepay/ApplePaySession.h:
+        Remove unneeded forward declarations.
+
 2016-12-22  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for WebSQL code
