@@ -1,3 +1,14 @@
+2016-12-22  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for WebSQL code
+        https://bugs.webkit.org/show_bug.cgi?id=166441
+
+        Reviewed by Darin Adler.
+
+        * storage/websql/execute-sql-args-expected.txt:
+        * storage/websql/execute-sql-args.js:
+        Update test and result to be slightly more strict about functions taking sequences.
+
 2016-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         Nested calls to setDocument can omit firing 'unload' events

@@ -16,15 +16,10 @@ var expectNoException = [
     '"", undefined',
     '"", []',
     '"", [ "arg0" ]',
-    '"", { }',
-    '"", { length: 0 }',
-    '"", { length: 1, 0: "arg0" }',
     '"", null, null',
     '"", null, undefined',
-    '"", null, { }',
     '"", null, null, null',
     '"", null, null, undefined',
-    '"", null, null, { }',
 ];
 
 var expectException = [
@@ -35,10 +30,15 @@ var expectException = [
     '"", [ throwOnToStringObject ]',
     '"", 0',
     '"", ""',
+    '"", { }',
+    '"", { length: 0 }',
+    '"", { length: 1, 0: "arg0" }',
     '"", null, 0',
     '"", null, ""',
     '"", null, null, 0',
     '"", null, null, ""',
+    '"", null, { }',
+    '"", null, null, { }',
 ];
 
 function tryExecuteSql(transaction, parameterList)
@@ -80,7 +80,6 @@ function runTransactionTests(transaction)
 
 function runTest()
 {
-
     var db = openDatabaseWithSuffix("ExecuteSQLArgsTest", "1.0", "Test of handling of the arguments to SQLTransaction.executeSql", 1);
     db.transaction(runTransactionTests);
 }

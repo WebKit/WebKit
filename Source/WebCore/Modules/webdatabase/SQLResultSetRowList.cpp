@@ -29,16 +29,33 @@
 #include "config.h"
 #include "SQLResultSetRowList.h"
 
+#include "ExceptionCode.h"
+
 namespace WebCore {
 
 unsigned SQLResultSetRowList::length() const
 {
-    if (m_result.size() == 0)
+    if (m_result.isEmpty())
         return 0;
 
     ASSERT(m_result.size() % m_columns.size() == 0);
 
     return m_result.size() / m_columns.size();
+}
+
+ExceptionOr<HashMap<String, SQLValue>> SQLResultSetRowList::item(unsigned index) const
+{
+    if (index >= length())
+        return Exception { INDEX_SIZE_ERR };
+
+    HashMap<String, SQLValue> result;
+
+    unsigned numberOfColumns = m_columns.size();
+    unsigned valuesIndex = index * numberOfColumns;
+    for (unsigned i = 0; i < numberOfColumns; i++)
+        result.set(m_columns[i], m_result[valuesIndex + i]);
+
+    return WTFMove(result);
 }
 
 }

@@ -45,7 +45,7 @@ class SQLTransactionBackend;
 
 class SQLStatement {
 public:
-    SQLStatement(Database&, const String&, const Vector<SQLValue>&, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, int permissions);
+    SQLStatement(Database&, const String&, Vector<SQLValue>&&, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, int permissions);
     ~SQLStatement();
 
     bool execute(Database&);

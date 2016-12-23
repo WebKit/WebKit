@@ -1,3 +1,62 @@
+2016-12-22  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for WebSQL code
+        https://bugs.webkit.org/show_bug.cgi?id=166441
+
+        Reviewed by Darin Adler.
+
+        - Replace custom variant type SQLValue with a type alias of a Variant.
+        - Use the newly representable SQLValue to remove custom bindings for 
+          SQLResultSetRowList::item and SQLTransaction::executeSql.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSSQLResultSetRowListCustom.cpp: Removed.
+        * bindings/js/JSSQLTransactionCustom.cpp: Removed.
+        * platform/sql/SQLValue.cpp: Removed.
+        Remove files.
+
+        * Modules/webdatabase/SQLResultSetRowList.cpp:
+        (WebCore::SQLResultSetRowList::length):
+        (WebCore::SQLResultSetRowList::item):
+        * Modules/webdatabase/SQLResultSetRowList.h:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        Sink the implementation of item() into the implementation. Use a
+        record type to bridge to javascript.
+
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::SQLStatement):
+        * Modules/webdatabase/SQLStatement.h:
+        Update to take arguments by rvalue reference.
+
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::executeSql):
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webdatabase/SQLTransaction.idl:
+        Remove custom annotation, and update signature to match the IDL.
+
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        Remove unneeded #includes of SQLValue.h
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLNull>::convert):
+        (WebCore::JSConverter<IDLNull>::convert):
+        Implement conversion for the null type so it can be used in the SQLValue union.
+
+        * inspector/InspectorDatabaseAgent.cpp:
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindValue):
+        (WebCore::SQLiteStatement::getColumnValue):
+        * platform/sql/SQLiteStatement.h:
+        Replace old switch with a WTF::switchOn that operates on the new variant.
+
+        * platform/sql/SQLValue.h:
+        (WebCore::SQLValue::SQLValue): Deleted.
+        (WebCore::SQLValue::type): Deleted.
+        Replace implementation with a Variant.
+
 2016-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] GLES build broken since r208997

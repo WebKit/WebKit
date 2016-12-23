@@ -74,9 +74,9 @@
 
 namespace WebCore {
 
-SQLStatement::SQLStatement(Database& database, const String& statement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
+SQLStatement::SQLStatement(Database& database, const String& statement, Vector<SQLValue>&& arguments, RefPtr<SQLStatementCallback>&& callback, RefPtr<SQLStatementErrorCallback>&& errorCallback, int permissions)
     : m_statement(statement.isolatedCopy())
-    , m_arguments(arguments)
+    , m_arguments(WTFMove(arguments))
     , m_statementCallbackWrapper(WTFMove(callback), &database.scriptExecutionContext())
     , m_statementErrorCallbackWrapper(WTFMove(errorCallback), &database.scriptExecutionContext())
     , m_permissions(permissions)

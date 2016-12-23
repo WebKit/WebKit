@@ -331,6 +331,26 @@ template<typename T> struct JSConverter<IDLNullable<T>> {
 };
 
 // MARK: -
+// MARK: Null type
+
+template<> struct Converter<IDLNull> : DefaultConverter<IDLNull> {
+    static std::nullptr_t convert(JSC::ExecState&, JSC::JSValue)
+    {
+        return nullptr;
+    }
+};
+
+template<> struct JSConverter<IDLNull> {
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(std::nullptr_t)
+    {
+        return JSC::jsNull();
+    }
+};
+
+// MARK: -
 // MARK: Boolean type
 
 template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {

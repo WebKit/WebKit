@@ -26,8 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (DOMString? or unrestricted double) SQLValue;
+
 [
     SkipVTableValidation,
 ] interface SQLTransaction {
-    [Custom, MayThrowException] void executeSql(DOMString sqlStatement, ObjectArray arguments, optional SQLStatementCallback? callback, optional SQLStatementErrorCallback? errorCallback);
+    [MayThrowException] void executeSql(DOMString sqlStatement, optional sequence<SQLValue>? arguments = [], optional SQLStatementCallback? callback, optional SQLStatementErrorCallback? errorCallback);
 };

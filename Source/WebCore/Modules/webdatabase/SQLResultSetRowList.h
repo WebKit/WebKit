@@ -28,8 +28,10 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include "ExceptionOr.h"
 #include "SQLValue.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -44,6 +46,7 @@ public:
     void addResult(const SQLValue& result) { m_result.append(result); }
 
     unsigned length() const;
+    ExceptionOr<HashMap<String, SQLValue>> item(unsigned index) const;
 
 private:
     SQLResultSetRowList() { }

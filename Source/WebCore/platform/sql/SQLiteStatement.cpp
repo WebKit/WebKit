@@ -30,6 +30,7 @@
 #include "SQLValue.h"
 #include <sqlite3.h>
 #include <wtf/Assertions.h>
+#include <wtf/Variant.h>
 #include <wtf/text/StringView.h>
 
 // SQLite 3.6.16 makes sqlite3_prepare_v2 automatically retry preparing the statement
@@ -240,17 +241,11 @@ int SQLiteStatement::bindNull(int index)
 
 int SQLiteStatement::bindValue(int index, const SQLValue& value)
 {
-    switch (value.type()) {
-        case SQLValue::StringValue:
-            return bindText(index, value.string());
-        case SQLValue::NumberValue:
-            return bindDouble(index, value.number());
-        case SQLValue::NullValue:
-            return bindNull(index);
-    }
-
-    ASSERT_NOT_REACHED();
-    return SQLITE_ERROR;
+    return WTF::switchOn(value,
+        [&] (const std::nullptr_t&) { return bindNull(index); },
+        [&] (const String& string) { return bindText(index, string); },
+        [&] (double number) { return bindDouble(index, number); }
+    );
 }
 
 unsigned SQLiteStatement::bindParameterCount() const
@@ -307,9 +302,9 @@ SQLValue SQLiteStatement::getColumnValue(int col)
     ASSERT(col >= 0);
     if (!m_statement)
         if (prepareAndStep() != SQLITE_ROW)
-            return SQLValue();
+            return nullptr;
     if (columnCount() <= col)
-        return SQLValue();
+        return nullptr;
 
     // SQLite is typed per value. optional column types are
     // "(mostly) ignored"
@@ -317,19 +312,20 @@ SQLValue SQLiteStatement::getColumnValue(int col)
     switch (sqlite3_value_type(value)) {
         case SQLITE_INTEGER:    // SQLValue and JS don't represent integers, so use FLOAT -case
         case SQLITE_FLOAT:
-            return SQLValue(sqlite3_value_double(value));
+            return sqlite3_value_double(value);
         case SQLITE_BLOB:       // SQLValue and JS don't represent blobs, so use TEXT -case
         case SQLITE_TEXT: {
             const UChar* string = reinterpret_cast<const UChar*>(sqlite3_value_text16(value));
-            return SQLValue(StringImpl::create8BitIfPossible(string));
+            return StringImpl::create8BitIfPossible(string);
         }
         case SQLITE_NULL:
-            return SQLValue();
+            return nullptr;
         default:
             break;
     }
+
     ASSERT_NOT_REACHED();
-    return SQLValue();
+    return nullptr;
 }
 
 String SQLiteStatement::getColumnText(int col)

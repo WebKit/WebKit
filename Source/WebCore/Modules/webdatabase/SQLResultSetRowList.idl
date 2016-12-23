@@ -26,9 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (DOMString? or unrestricted double) SQLValue;
+
 [
     ImplementationLacksVTable,
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;
-    [Custom] any item(unsigned long index);
+    [MayThrowException] record<DOMString, SQLValue> item(unsigned long index);
 };

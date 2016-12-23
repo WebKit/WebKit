@@ -106,8 +106,6 @@
 #include "JSPluginElementFunctions.cpp"
 #include "JSPopStateEventCustom.cpp"
 #include "JSReadableStreamPrivateConstructors.cpp"
-#include "JSSQLResultSetRowListCustom.cpp"
-#include "JSSQLTransactionCustom.cpp"
 #include "JSSVGPathSegCustom.cpp"
 #include "JSStorageCustom.cpp"
 #include "JSStyleSheetCustom.cpp"
