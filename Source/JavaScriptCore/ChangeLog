@@ -1,3 +1,20 @@
+2016-12-23  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: trap on bad division.
+        https://bugs.webkit.org/show_bug.cgi?id=164786
+
+        Reviewed by Mark Lam.
+
+        This patch adds traps for division / modulo by zero and for
+        division by int_min / -1.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitChecksForModOrDiv):
+        * wasm/WasmExceptionType.h:
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::run):
+        * wasm/wasm.json:
+
 2016-12-23  Mark Lam  <mark.lam@apple.com>
 
         Fix broken LLINT_SLOW_PATH_TRACING build.

@@ -194,7 +194,7 @@ void Plan::run()
     if (verbose || Options::reportCompileTimes())
         startTime = MonotonicTime::now();
 
-    uint32_t threadCount = WTF::numberOfProcessorCores();
+    uint32_t threadCount = Options::useConcurrentJIT() ? WTF::numberOfProcessorCores() : 1;
     uint32_t numWorkerThreads = threadCount - 1;
     Vector<ThreadIdentifier> threads;
     threads.reserveCapacity(numWorkerThreads);
