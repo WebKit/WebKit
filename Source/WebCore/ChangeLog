@@ -1,3 +1,12 @@
+2016-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix unused parameter warning in GLES build
+
+        Looks like it's been here since 2012. Impressive!
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary):
+
 2016-12-22  Alex Christensen  <achristensen@webkit.org>
 
         Move GraphicsContext3DWin to GraphicsContext3DOpenGLES

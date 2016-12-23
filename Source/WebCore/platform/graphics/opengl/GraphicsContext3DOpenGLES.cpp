@@ -186,7 +186,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     return mustRestoreFBO;
 }
 
-void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
+void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect&)
 {
     // FIXME: We don't support antialiasing yet.
     notImplemented();
