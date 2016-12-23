@@ -1,3 +1,15 @@
+2016-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] GLES build broken since r208997
+        https://bugs.webkit.org/show_bug.cgi?id=166455
+
+        Unreviewed. Fix the preprocessor guards here; this code is incompatible with GLES2.
+
+        Looks like it's been broken for a month. Typical!
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::initializeAvailableExtensions):
+
 2016-12-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME][GStreamer] Enable various code paths for ENCRYPTED_MEDIA
