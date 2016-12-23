@@ -245,6 +245,8 @@ static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFie
 {
     PKAddressField result = 0;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (contactFields.postalAddress)
         result |= PKAddressFieldPostalAddress;
     if (contactFields.phone)
@@ -253,6 +255,7 @@ static PKAddressField toPKAddressField(const WebCore::PaymentRequest::ContactFie
         result |= PKAddressFieldEmail;
     if (contactFields.name)
         result |= PKAddressFieldName;
+#pragma clang diagnostic pop
 
     return result;
 }
@@ -377,10 +380,13 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
 
     [result setCountryCode:paymentRequest.countryCode()];
     [result setCurrencyCode:paymentRequest.currencyCode()];
-    [result setRequiredBillingAddressFields:toPKAddressField(paymentRequest.requiredBillingContactFields())];
     [result setBillingContact:paymentRequest.billingContact().pkContact()];
-    [result setRequiredShippingAddressFields:toPKAddressField(paymentRequest.requiredShippingContactFields())];
     [result setShippingContact:paymentRequest.shippingContact().pkContact()];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [result setRequiredBillingAddressFields:toPKAddressField(paymentRequest.requiredBillingContactFields())];
+    [result setRequiredShippingAddressFields:toPKAddressField(paymentRequest.requiredShippingContactFields())];
+#pragma clang diagnostic pop
 
     [result setSupportedNetworks:toSupportedNetworks(paymentRequest.supportedNetworks()).get()];
     [result setMerchantCapabilities:toPKMerchantCapabilities(paymentRequest.merchantCapabilities())];
