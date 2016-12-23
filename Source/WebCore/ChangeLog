@@ -1,3 +1,32 @@
+2016-12-22  Alex Christensen  <achristensen@webkit.org>
+
+        Move GraphicsContext3DWin to GraphicsContext3DOpenGLES
+        https://bugs.webkit.org/show_bug.cgi?id=166425
+
+        Reviewed by Tim Horton.
+
+        Move code which is GLES-specific not Windows-specific to the GLES-specific file
+        so I can use it on Cocoa, with a temporary PLATFORM macro that I plan to remove once
+        all platforms use ANGLE's GLES implementation. There is another copy of this code in
+        GraphicsContext3DCairo, which will also be united with this code here soon.
+        Also remove the PlatformCALayerWin, which was never used for anything.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::checkGPUStatusIfNecessary):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::isGLES2Compliant):
+        (WebCore::GraphicsContext3D::platformLayer):
+        * platform/graphics/win/GraphicsContext3DWin.cpp: Removed.
+        * PlatformMac.cmake:
+        Include the egl directory.  I'll need this, too, once Mac starts using ANGLE's EGL implementation.
+
 2016-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         Nested calls to setDocument can omit firing 'unload' events
