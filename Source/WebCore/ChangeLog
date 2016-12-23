@@ -1,3 +1,17 @@
+2016-12-22  Andy Estes  <aestes@apple.com>
+
+        [iOS] Move QuickLook from WebCore/platform to WebCore/loader
+        https://bugs.webkit.org/show_bug.cgi?id=166449
+
+        Reviewed by Darin Adler.
+
+        QuickLook.mm knows about ResourceLoader, so it's a layering violation to have it in
+        platform/. Move it to loader/ios/.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ios/QuickLook.h: Renamed from Source/WebCore/platform/network/ios/QuickLook.h.
+        * loader/ios/QuickLook.mm: Renamed from Source/WebCore/platform/network/ios/QuickLook.mm.
+
 2016-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix unused parameter warning in GLES build
