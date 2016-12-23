@@ -1,3 +1,22 @@
+2016-12-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Nested calls to setDocument can omit firing 'unload' events
+        https://bugs.webkit.org/show_bug.cgi?id=166422
+        <rdar://problem/29763012>
+
+        Reviewed by Alex Christensen.
+
+        Test: fast/loader/nested-document-handling.html
+
+        Only allow a single document change to be taking place during a given runloop cycle.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL): Block script changing the document
+        when we are in the middle of changing the document.
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): Keep track of document change state.
+        * page/Frame.h:
+
 2016-12-22  Tim Horton  <timothy_horton@apple.com>
 
         TileGrid creates new cohorts even when not using temporarilyRetainTileCohorts mode
