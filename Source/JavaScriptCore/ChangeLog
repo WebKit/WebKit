@@ -1,5 +1,15 @@
 2016-12-23  Mark Lam  <mark.lam@apple.com>
 
+        Using Option::breakOnThrow() shouldn't crash while printing a null CodeBlock.
+        https://bugs.webkit.org/show_bug.cgi?id=166466
+
+        Reviewed by Keith Miller.
+
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+
+2016-12-23  Mark Lam  <mark.lam@apple.com>
+
         Enhance LLInt tracing to dump the codeBlock signature instead of just a pointer where appropriate.
         https://bugs.webkit.org/show_bug.cgi?id=166465
 

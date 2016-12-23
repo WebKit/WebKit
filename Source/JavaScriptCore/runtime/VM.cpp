@@ -595,7 +595,12 @@ void VM::clearSourceProviderCaches()
 void VM::throwException(ExecState* exec, Exception* exception)
 {
     if (Options::breakOnThrow()) {
-        dataLog("In call frame ", RawPointer(exec), " for code block ", *exec->codeBlock(), "\n");
+        CodeBlock* codeBlock = exec->codeBlock();
+        dataLog("Throwing exception in call frame ", RawPointer(exec), " for code block ");
+        if (codeBlock)
+            dataLog(*codeBlock, "\n");
+        else
+            dataLog("<nullptr>\n");
         CRASH();
     }
 
