@@ -57,6 +57,10 @@
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/text/CString.h>
 
+#if USE(QUICK_LOOK)
+#include <WebCore/QuickLook.h>
+#endif
+
 using namespace WebCore;
 
 #define RELEASE_LOG_IF_ALLOWED(permissionChecker, fmt, ...) RELEASE_LOG_IF(permissionChecker.isAlwaysOnLoggingAllowed(), Network, "%p - WebLoaderStrategy::" fmt, this, ##__VA_ARGS__)

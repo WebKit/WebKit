@@ -35,10 +35,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if USE(QUICK_LOOK)
-#include "QuickLook.h"
-#endif
-
 #if USE(SOUP)
 typedef struct _GTlsCertificate GTlsCertificate;
 typedef struct _SoupSession SoupSession;
@@ -83,6 +79,7 @@ class Frame;
 class URL;
 class NetworkingContext;
 class ProtectionSpace;
+class QuickLookHandle;
 class ResourceError;
 class ResourceHandleClient;
 class ResourceHandleInternal;
@@ -152,7 +149,7 @@ public:
 
 #if USE(QUICK_LOOK)
     QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
-    void setQuickLookHandle(std::unique_ptr<QuickLookHandle> handle) { m_quickLook = WTFMove(handle); }
+    void setQuickLookHandle(std::unique_ptr<QuickLookHandle>);
 #endif
 
 #if PLATFORM(WIN) && USE(CURL)

@@ -1801,4 +1801,11 @@ bool DocumentLoader::isAlwaysOnLoggingAllowed() const
     return m_frame ? m_frame->isAlwaysOnLoggingAllowed() : true;
 }
 
+#if USE(QUICK_LOOK)
+void DocumentLoader::setQuickLookHandle(std::unique_ptr<QuickLookHandle> quickLookHandle)
+{
+    m_quickLookHandle = WTFMove(quickLookHandle);
+}
+#endif
+
 } // namespace WebCore

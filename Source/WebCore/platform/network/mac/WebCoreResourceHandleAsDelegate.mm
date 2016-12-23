@@ -32,6 +32,7 @@
 #import "AuthenticationMac.h"
 #import "Logging.h"
 #import "NSURLRequestSPI.h"
+#import "QuickLook.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
 #import "ResourceRequest.h"

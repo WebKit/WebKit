@@ -43,10 +43,6 @@
 #include <WebCore/RuntimeApplicationChecks.h>
 #endif
 
-#if USE(QUICK_LOOK)
-#include <WebCore/QuickLook.h>
-#endif
-
 // Match the parallel connection count used by the networking layer.
 static unsigned maxRequestsInFlightPerHost;
 #if !PLATFORM(IOS)

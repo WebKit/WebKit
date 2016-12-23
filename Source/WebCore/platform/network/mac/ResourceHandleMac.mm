@@ -752,5 +752,12 @@ void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, Networ
     
 #endif // ENABLE(WEB_TIMING)
 
+#if USE(QUICK_LOOK)
+void ResourceHandle::setQuickLookHandle(std::unique_ptr<QuickLookHandle> handle)
+{
+    m_quickLook = WTFMove(handle);
+}
+#endif
+
 } // namespace WebCore
 

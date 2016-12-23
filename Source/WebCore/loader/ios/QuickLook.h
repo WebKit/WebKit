@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef QuickLook_h
-#define QuickLook_h
+#pragma once
 
 #if USE(QUICK_LOOK)
 
-#import "QuickLookHandleClient.h"
-#import "ResourceRequest.h"
-#import <objc/objc-runtime.h>
-#import <wtf/RefPtr.h>
-
-#if USE(CFURLCONNECTION)
-#include "CFNetworkSPI.h"
-#endif
+#include "QuickLookHandleClient.h"
+#include <objc/objc.h>
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
@@ -50,11 +46,11 @@ OBJC_CLASS QLPreviewConverter;
 
 namespace WebCore {
 
-class QuickLookHandleClient;
 class ResourceHandle;
 class ResourceLoader;
 class ResourceResponse;
 class SynchronousResourceHandleCFURLConnectionDelegate;
+class URL;
 
 WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
 
@@ -122,5 +118,3 @@ private:
 } // namespace WebCore
 
 #endif // USE(QUICK_LOOK)
-
-#endif // QuickLook_h

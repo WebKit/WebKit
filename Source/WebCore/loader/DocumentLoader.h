@@ -52,10 +52,6 @@
 #include <wtf/RunLoopTimer.h>
 #endif
 
-#if USE(QUICK_LOOK)
-#include "QuickLook.h"
-#endif
-
 #if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
 #include <wtf/SchedulePair.h>
 #endif
@@ -74,6 +70,7 @@ class Frame;
 class FrameLoader;
 class IconLoader;
 class Page;
+class QuickLookHandle;
 class ResourceLoader;
 class SharedBuffer;
 class SubresourceLoader;
@@ -273,7 +270,7 @@ public:
     URL documentURL() const;
 
 #if USE(QUICK_LOOK)
-    void setQuickLookHandle(std::unique_ptr<QuickLookHandle> quickLookHandle) { m_quickLookHandle = WTFMove(quickLookHandle); }
+    WEBCORE_EXPORT void setQuickLookHandle(std::unique_ptr<QuickLookHandle>);
     QuickLookHandle* quickLookHandle() const { return m_quickLookHandle.get(); }
 #endif
 

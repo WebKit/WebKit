@@ -32,10 +32,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if USE(QUICK_LOOK)
-#include <WebCore/QuickLook.h>
-#endif
-
 namespace IPC {
 class DataReference;
 }

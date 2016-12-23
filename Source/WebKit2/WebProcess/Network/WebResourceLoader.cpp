@@ -44,6 +44,10 @@
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SubresourceLoader.h>
 
+#if USE(QUICK_LOOK)
+#include <WebCore/QuickLook.h>
+#endif
+
 using namespace WebCore;
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - WebResourceLoader::" fmt, this, ##__VA_ARGS__)

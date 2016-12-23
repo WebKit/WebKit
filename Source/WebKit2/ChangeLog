@@ -1,3 +1,14 @@
+2016-12-22  Andy Estes  <aestes@apple.com>
+
+        Reduce QuickLook.h include overhead
+        https://bugs.webkit.org/show_bug.cgi?id=166454
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp: Included QuickLook.h for QLPreviewProtocol().
+        * WebProcess/Network/WebResourceLoader.cpp: Included QuickLook.h for QuickLookHandle.
+        * WebProcess/Network/WebResourceLoader.h: Stopped including QuickLook.h.
+
 2016-12-22  Tim Horton  <timothy_horton@apple.com>
 
         Null deref under WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground

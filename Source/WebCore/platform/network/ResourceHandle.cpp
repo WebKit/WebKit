@@ -38,6 +38,10 @@
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/CString.h>
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 namespace WebCore {
 
 static bool shouldForceContentSniffing;

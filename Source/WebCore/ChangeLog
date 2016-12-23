@@ -1,5 +1,32 @@
 2016-12-22  Andy Estes  <aestes@apple.com>
 
+        Reduce QuickLook.h include overhead
+        https://bugs.webkit.org/show_bug.cgi?id=166454
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp: Included QuickLook.h for QLPreviewProtocol().
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setQuickLookHandle): Moved from DocumentLoader.h to here.
+        * loader/DocumentLoader.h: Stopped including QuickLook.h and forward-declared
+        QuickLookHandle.
+        (WebCore::DocumentLoader::setQuickLookHandle): Moved definition out-of-line since it
+        requires QuickLookHandle to be a complete type.
+        * loader/ios/QuickLook.h: Updated to use #pragma once. Cleaned up includes and forward
+        declarations.
+        * platform/network/ResourceHandle.cpp: Included QuickLook.h so that QuickLookHandle is a
+        complete type in the ResourceHandle constructor.
+        * platform/network/ResourceHandle.h: Stopped including QuickLook.h and forward-declared
+        QuickLookHandle.
+        (WebCore::ResourceHandle::setQuickLookHandle): Moved definition out-of-line since it
+        requires QuickLookHandle to be a complete type.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::setQuickLookHandle): Moved from ResourceHandle.h to here.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm: Included QuickLook.h for
+        QuickLookHandle.
+
+2016-12-22  Andy Estes  <aestes@apple.com>
+
         [iOS] Move QuickLook from WebCore/platform to WebCore/loader
         https://bugs.webkit.org/show_bug.cgi?id=166449
 
