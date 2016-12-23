@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@
 #include "LowLevelInterpreter.h"
 #include "JSCInlines.h"
 
+#if LLINT_SLOW_PATH_TRACING
+#include "Exception.h"
+#endif
+
 namespace JSC { namespace LLInt {
 
 Instruction* returnToThrowForThrownException(ExecState* exec)
@@ -47,7 +51,7 @@ Instruction* returnToThrow(ExecState* exec)
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
-    dataLog("Throwing exception ", scope.exception(), " (returnToThrow).\n");
+    dataLog("Throwing exception ", JSValue(scope.exception()), " (returnToThrow).\n");
 #endif
     return LLInt::exceptionInstructions();
 }
@@ -58,7 +62,7 @@ void* callToThrow(ExecState* exec)
 #if LLINT_SLOW_PATH_TRACING
     VM* vm = &exec->vm();
     auto scope = DECLARE_THROW_SCOPE(*vm);
-    dataLog("Throwing exception ", scope.exception(), " (callToThrow).\n");
+    dataLog("Throwing exception ", JSValue(scope.exception()), " (callToThrow).\n");
 #endif
     return LLInt::getCodePtr(llint_throw_during_call_trampoline);
 }
