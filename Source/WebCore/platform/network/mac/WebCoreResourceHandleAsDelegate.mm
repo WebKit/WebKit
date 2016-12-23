@@ -32,13 +32,16 @@
 #import "AuthenticationMac.h"
 #import "Logging.h"
 #import "NSURLRequestSPI.h"
-#import "QuickLook.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "WebCoreURLResponse.h"
+
+#if USE(QUICK_LOOK)
+#import "QuickLook.h"
+#endif
 
 using namespace WebCore;
 
