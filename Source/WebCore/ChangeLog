@@ -1,3 +1,33 @@
+2016-12-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME][GStreamer] Enable various code paths for ENCRYPTED_MEDIA
+        https://bugs.webkit.org/show_bug.cgi?id=166054
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add ENABLE_ENCRYPTED_MEDIA build guards in various places in GStreamer
+        code to enable decryption-related GStreamer elements and the proper
+        decryptor handling in AppendPipeline.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::registerWebKitGStreamerElements):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        Only call needKey() if LEGACY_ENCRYPTED_MEDIA is enabled, since this is
+        the way the legacy EME system expects to be notified of key necessity.
+        It's very likely ENCRYPTED_MEDIA will do this differently.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.h:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h:
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+
 2016-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Eliminate the use of lastChild in TextIterator

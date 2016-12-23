@@ -21,7 +21,7 @@
 
 #pragma once
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA) && USE(GSTREAMER)
+#if (ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)) && USE(GSTREAMER)
 
 #include "WebKitCommonEncryptionDecryptorGStreamer.h"
 
@@ -51,4 +51,4 @@ struct _WebKitMediaClearKeyDecryptClass {
 
 G_END_DECLS
 
-#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA) && USE(GSTREAMER)
+#endif // (ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)) && USE(GSTREAMER)

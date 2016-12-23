@@ -90,12 +90,14 @@
 #include <cairo-gl.h>
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
+#include "WebKitClearKeyDecryptorGStreamer.h"
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "UUID.h"
-#include "WebKitClearKeyDecryptorGStreamer.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8Array.h>
+#endif
 #endif
 
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
@@ -107,7 +109,7 @@ namespace WebCore {
 
 void registerWebKitGStreamerElements()
 {
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     if (!webkitGstCheckVersion(1, 6, 1))
         return;
 
@@ -258,7 +260,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
     UNUSED_PARAM(message);
 #endif // USE(GSTREAMER_GL)
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_ELEMENT) {
         const GstStructure* structure = gst_message_get_structure(message);
         if (gst_structure_has_name(structure, "drm-key-needed")) {
@@ -279,10 +281,13 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
             if (UNLIKELY(!valid || !gst_buffer_map(data.get(), &mapInfo, GST_MAP_READ)))
                 return false;
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
             GST_DEBUG("scheduling keyNeeded event");
             // FIXME: Provide a somehow valid sessionId.
             RefPtr<Uint8Array> initData = Uint8Array::create(reinterpret_cast<const unsigned char *>(mapInfo.data), mapInfo.size);
             needKey(initData);
+#endif
+
             gst_buffer_unmap(data.get(), &mapInfo);
             return true;
         }
