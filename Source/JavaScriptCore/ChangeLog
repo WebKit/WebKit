@@ -1,3 +1,19 @@
+2016-12-22  Keith Miller  <keith_miller@apple.com>
+
+        WebAssembly: Make spec-tests/f32.wast.js and spec-tests/f64.wast.js pass
+        https://bugs.webkit.org/show_bug.cgi?id=166447
+
+        Reviewed by Saam Barati.
+
+        We needed to treat -0.0 < 0.0 for floating point min/max. For min,
+        the algorithm works because if a == b then a and b are not NaNs so
+        either they are the same or they are some zero. When we or a and b
+        either we get the same number back or we get -0.0. Similarly for
+        max we use an and and the sign bit gets dropped if one is 0.0 and
+        the other is -0.0, otherwise, we get the same number back.
+
+        * wasm/wasm.json:
+
 2016-12-22  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Make calling Wasm functions that returns or takes an i64 as a parameter an early exception
