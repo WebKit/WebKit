@@ -54,8 +54,8 @@ public:
 
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
     Wasm::SignatureIndex signatureIndex() const { return m_signatureIndex; }
-    EncodedJSValue call(VM&, ProtoCallFrame*);
     void* wasmEntrypoint() { return m_wasmEntrypoint->entrypoint(); }
+    void* jsEntrypoint() { return m_jsEntrypoint->entrypoint(); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -69,7 +69,6 @@ private:
     WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
     WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
     Wasm::SignatureIndex m_signatureIndex;
-    Wasm::Type m_returnType;
 };
 
 } // namespace JSC

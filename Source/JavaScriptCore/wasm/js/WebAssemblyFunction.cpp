@@ -35,6 +35,7 @@
 #include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyMemory.h"
+#include "JSWebAssemblyRuntimeError.h"
 #include "LLIntThunks.h"
 #include "ProtoCallFrame.h"
 #include "VM.h"
@@ -59,9 +60,27 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     if (exec->argumentCount() != signature->argumentCount())
         return JSValue::encode(throwException(exec, scope, createNotEnoughArgumentsError(exec, defaultSourceAppender)));
 
+    {
+        // Check if we have a disallowed I64 use.
+
+        for (unsigned argIndex = 0; argIndex < signature->argumentCount(); ++argIndex) {
+            if (signature->argument(argIndex) == Wasm::I64) {
+                JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyRuntimeErrorStructure(),
+                    "WebAssembly function with an i64 argument can't be called from JavaScript");
+                return JSValue::encode(throwException(exec, scope, error));
+            }
+        }
+
+        if (signature->returnType() == Wasm::I64) {
+            JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyRuntimeErrorStructure(),
+                "WebAssembly function that returns i64 can't be called from JavaScript");
+            return JSValue::encode(throwException(exec, scope, error));
+        }
+    }
+
     // FIXME is this boxing correct? https://bugs.webkit.org/show_bug.cgi?id=164876
     Vector<JSValue> boxedArgs;
-    for (unsigned argIndex = 0; argIndex < exec->argumentCount(); ++argIndex) {
+    for (unsigned argIndex = 0; argIndex < signature->argumentCount(); ++argIndex) {
         JSValue arg = exec->uncheckedArgument(argIndex);
         switch (signature->argument(argIndex)) {
         case Wasm::I32:
@@ -100,13 +119,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(nullptr, wasmFunction, firstArgument, argCount, remainingArgs);
 
-    return wasmFunction->call(vm, &protoCallFrame);
-}
-
-EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
-{
-    // Setup the memory that the entrance loads.
-    if (JSWebAssemblyMemory* memory = instance()->memory()) {
+    if (JSWebAssemblyMemory* memory = wasmFunction->instance()->memory()) {
         Wasm::Memory* wasmMemory = memory->memory();
         vm.topWasmMemoryPointer = wasmMemory->memory();
         vm.topWasmMemorySize = wasmMemory->size();
@@ -116,28 +129,28 @@ EncodedJSValue WebAssemblyFunction::call(VM& vm, ProtoCallFrame* protoCallFrame)
     }
 
     JSWebAssemblyInstance* prevJSWebAssemblyInstance = vm.topJSWebAssemblyInstance;
-    vm.topJSWebAssemblyInstance = instance();
-    ASSERT(instance());
-    EncodedJSValue rawResult = vmEntryToWasm(m_jsEntrypoint->entrypoint(), &vm, protoCallFrame);
+    vm.topJSWebAssemblyInstance = wasmFunction->instance();
+    ASSERT(wasmFunction->instance());
+    EncodedJSValue rawResult = vmEntryToWasm(wasmFunction->jsEntrypoint(), &vm, &protoCallFrame);
     vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
+    RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876
-    switch (m_returnType) {
+    switch (signature->returnType()) {
     case Wasm::Void:
         return JSValue::encode(jsUndefined());
     case Wasm::I32:
-        return JSValue::encode(JSValue(static_cast<int32_t>(rawResult)));
+        return JSValue::encode(jsNumber(static_cast<int32_t>(rawResult)));
     case Wasm::F32:
-        return JSValue::encode(JSValue(bitwise_cast<float>(static_cast<int32_t>(rawResult))));
+        return JSValue::encode(jsNumber(purifyNaN(static_cast<double>(bitwise_cast<float>(static_cast<int32_t>(rawResult))))));
     case Wasm::F64:
-        return JSValue::encode(JSValue(bitwise_cast<double>(rawResult)));
+        return JSValue::encode(jsNumber(purifyNaN(bitwise_cast<double>(rawResult))));
     case Wasm::I64:
     case Wasm::Func:
     case Wasm::Anyfunc:
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
     return EncodedJSValue();
 }
 
@@ -159,11 +172,7 @@ Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalOb
 WebAssemblyFunction::WebAssemblyFunction(VM& vm, JSGlobalObject* globalObject, Structure* structure, Wasm::SignatureIndex signatureIndex)
     : Base(vm, globalObject, structure)
     , m_signatureIndex(signatureIndex)
-{
-    // Don't cache the signature pointer: it's a global on VM and can change as new WebAssembly.Module are created.
-    const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, m_signatureIndex);
-    m_returnType = signature->returnType();
-}
+{ }
 
 void WebAssemblyFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
