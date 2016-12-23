@@ -114,7 +114,7 @@ public:
     WEBCORE_EXPORT static Ref<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
 
 private:
-    void exitNode();
+    void exitNode(Node*);
     bool shouldRepresentNodeOffsetZero();
     bool shouldEmitSpaceBeforeAndAfterNode(Node&);
     void representNodeOffsetZero();
@@ -126,44 +126,46 @@ private:
     void emitCharacter(UChar, Node& characterNode, Node* offsetBaseNode, int textStartOffset, int textEndOffset);
     void emitText(Text& textNode, RenderText&, int textStartOffset, int textEndOffset);
 
-    const TextIteratorBehavior m_behavior;
+    Node* baseNodeForEmittingNewLine() const;
+
+    const TextIteratorBehavior m_behavior { TextIteratorDefaultBehavior };
 
     // Current position, not necessarily of the text being returned, but position as we walk through the DOM tree.
-    Node* m_node;
-    int m_offset;
-    bool m_handledNode;
-    bool m_handledChildren;
+    Node* m_node { nullptr };
+    int m_offset { 0 };
+    bool m_handledNode { false };
+    bool m_handledChildren { false };
     BitStack m_fullyClippedStack;
 
     // The range.
-    Node* m_startContainer;
-    int m_startOffset;
-    Node* m_endContainer;
-    int m_endOffset;
-    Node* m_pastEndNode;
+    Node* m_startContainer { nullptr };
+    int m_startOffset { 0 };
+    Node* m_endContainer { nullptr };
+    int m_endOffset { 0 };
+    Node* m_pastEndNode { nullptr };
 
     // The current text and its position, in the form to be returned from the iterator.
-    Node* m_positionNode;
-    mutable Node* m_positionOffsetBaseNode;
-    mutable int m_positionStartOffset;
-    mutable int m_positionEndOffset;
+    Node* m_positionNode { nullptr };
+    mutable Node* m_positionOffsetBaseNode { nullptr };
+    mutable int m_positionStartOffset { 0 };
+    mutable int m_positionEndOffset { 0 };
     TextIteratorCopyableText m_copyableText;
     StringView m_text;
 
     // Used when there is still some pending text from the current node; when these are false and null, we go back to normal iterating.
-    bool m_needsAnotherNewline;
-    InlineTextBox* m_textBox;
+    Node* m_nodeForAdditionalNewline { nullptr };
+    InlineTextBox* m_textBox { nullptr };
 
     // Used when iterating over :first-letter text to save pointer to remaining text box.
-    InlineTextBox* m_remainingTextBox;
+    InlineTextBox* m_remainingTextBox { nullptr };
 
     // Used to point to RenderText object for :first-letter.
-    RenderText* m_firstLetterText;
+    RenderText* m_firstLetterText { nullptr };
 
     // Used to do the whitespace collapsing logic.
-    Text* m_lastTextNode;
-    bool m_lastTextNodeEndedWithCollapsedSpace;
-    UChar m_lastCharacter;
+    Text* m_lastTextNode { nullptr };
+    bool m_lastTextNodeEndedWithCollapsedSpace { false };
+    UChar m_lastCharacter { 0 };
 
     // Used to do simple line layout run logic.
     bool m_nextRunNeedsWhitespace { false };
@@ -173,13 +175,13 @@ private:
 
     // Used when text boxes are out of order (Hebrew/Arabic with embedded LTR text)
     Vector<InlineTextBox*> m_sortedTextBoxes;
-    size_t m_sortedTextBoxesPosition;
+    size_t m_sortedTextBoxesPosition { 0 };
 
     // Used when deciding whether to emit a "positioning" (e.g. newline) before any other content
-    bool m_hasEmitted;
+    bool m_hasEmitted { false };
 
     // Used when deciding text fragment created by :first-letter should be looked into.
-    bool m_handledFirstLetter;
+    bool m_handledFirstLetter { false };
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

@@ -1,3 +1,21 @@
+2016-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Eliminate the use of lastChild in TextIterator
+        https://bugs.webkit.org/show_bug.cgi?id=166456
+
+        Reviewed by Antti Koivisto.
+
+        Just use the node we just existed in TextIterator::exitNode and in emitting additional new line
+        to eliminate the use of Node::lastChild.
+
+        Also initialize member variables in the declaration instead of the constructor to modernize the code.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::exitNode):
+        * editing/TextIterator.h:
+
 2016-12-22  Andy Estes  <aestes@apple.com>
 
         Reduce QuickLook.h include overhead
