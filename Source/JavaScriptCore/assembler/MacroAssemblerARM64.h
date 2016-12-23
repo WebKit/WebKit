@@ -1941,6 +1941,16 @@ public:
         andDouble(op1, op2, dest);
     }
 
+    void orDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.vorr<64>(dest, op1, op2);
+    }
+
+    void orFloat(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        orDouble(op1, op2, dest);
+    }
+
     void negateDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fneg<64>(dest, src);

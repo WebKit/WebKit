@@ -621,7 +621,19 @@ private:
     };
 
     enum SIMD3Same {
-        SIMD_LogicalOp_AND = 0x03
+        SIMD_LogicalOp = 0x03
+    };
+
+    enum SIMD3SameLogical {
+        // This includes both the U bit and the "size" / opc for convience.
+        SIMD_LogicalOp_AND = 0x00,
+        SIMD_LogicalOp_BIC = 0x01,
+        SIMD_LogicalOp_ORR = 0x02,
+        SIMD_LogicalOp_ORN = 0x03,
+        SIMD_LogacalOp_EOR = 0x80,
+        SIMD_LogicalOp_BSL = 0x81,
+        SIMD_LogicalOp_BIT = 0x82,
+        SIMD_LogicalOp_BIF = 0x83,
     };
 
     enum FPIntConvOp {
@@ -2222,7 +2234,14 @@ public:
     ALWAYS_INLINE void vand(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
     {
         CHECK_VECTOR_DATASIZE();
-        insn(vectorDataProcessing2Source(SIMD_LogicalOp_AND, vm, vn, vd));
+        insn(vectorDataProcessingLogical(SIMD_LogicalOp_AND, vm, vn, vd));
+    }
+
+    template<int datasize>
+    ALWAYS_INLINE void vorr(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm)
+    {
+        CHECK_VECTOR_DATASIZE();
+        insn(vectorDataProcessingLogical(SIMD_LogicalOp_ORR, vm, vn, vd));
     }
 
     template<int datasize>
@@ -3328,17 +3347,11 @@ private:
         return (0x1e200800 | M << 31 | S << 29 | type << 22 | rm << 16 | opcode << 12 | rn << 5 | rd);
     }
 
-    ALWAYS_INLINE static int vectorDataProcessing2Source(SIMD3Same opcode, unsigned size, FPRegisterID vm, FPRegisterID vn, FPRegisterID vd)
+    ALWAYS_INLINE static int vectorDataProcessingLogical(SIMD3SameLogical uAndSize, FPRegisterID vm, FPRegisterID vn, FPRegisterID vd)
     {
         const int Q = 0;
-        return (0xe201c00 | Q << 30 | size << 22 | vm << 16 | opcode << 11 | vn << 5 | vd);
+        return (0xe200400 | Q << 30 | uAndSize << 22 | vm << 16 | SIMD_LogicalOp << 11 | vn << 5 | vd);
     }
-
-    ALWAYS_INLINE static int vectorDataProcessing2Source(SIMD3Same opcode, FPRegisterID vm, FPRegisterID vn, FPRegisterID vd)
-    {
-        return vectorDataProcessing2Source(opcode, 0, vm, vn, vd);
-    }
-
 
     // 'o1' means negate
     ALWAYS_INLINE static int floatingPointDataProcessing3Source(Datasize type, bool o1, FPRegisterID rm, AddOp o2, FPRegisterID ra, FPRegisterID rn, FPRegisterID rd)

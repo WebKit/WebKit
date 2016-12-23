@@ -1,3 +1,54 @@
+2016-12-22  Keith Miller  <keith_miller@apple.com>
+
+        Add BitOr for floating points to B3
+        https://bugs.webkit.org/show_bug.cgi?id=166446
+
+        Reviewed by Saam Barati.
+
+        This patch does some slight refactoring to the ARM assembler,
+        which groups all the vector floating point instructions together.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::vand):
+        (JSC::ARM64Assembler::vorr):
+        (JSC::ARM64Assembler::vectorDataProcessingLogical):
+        (JSC::ARM64Assembler::vectorDataProcessing2Source): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::orDouble):
+        (JSC::MacroAssemblerARM64::orFloat):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::orDouble):
+        (JSC::MacroAssemblerX86Common::orFloat):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::orps_rr):
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::bitOrConstant):
+        (JSC::B3::ConstDoubleValue::bitXorConstant):
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::bitOrConstant):
+        (JSC::B3::ConstFloatValue::bitXorConstant):
+        * b3/B3ConstFloatValue.h:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Validate.cpp:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::bitOrDouble):
+        (JSC::B3::testBitOrArgDouble):
+        (JSC::B3::testBitOrArgsDouble):
+        (JSC::B3::testBitOrArgImmDouble):
+        (JSC::B3::testBitOrImmsDouble):
+        (JSC::B3::bitOrFloat):
+        (JSC::B3::testBitOrArgFloat):
+        (JSC::B3::testBitOrArgsFloat):
+        (JSC::B3::testBitOrArgImmFloat):
+        (JSC::B3::testBitOrImmsFloat):
+        (JSC::B3::testBitOrArgsFloatWithUselessDoubleConversion):
+        (JSC::B3::run):
+
 2016-12-22  Mark Lam  <mark.lam@apple.com>
 
         BytecodeGenerator::m_finallyDepth should be unsigned.

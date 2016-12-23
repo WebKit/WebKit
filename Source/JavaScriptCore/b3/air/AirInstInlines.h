@@ -129,6 +129,8 @@ inline std::optional<unsigned> Inst::shouldTryAliasingDef()
     case Xor64:
     case AndFloat:
     case AndDouble:
+    case OrFloat:
+    case OrDouble:
     case XorDouble:
     case XorFloat:
         if (args.size() == 3)

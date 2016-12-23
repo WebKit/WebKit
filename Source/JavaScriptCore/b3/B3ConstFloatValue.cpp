@@ -77,6 +77,22 @@ Value* ConstFloatValue::bitAndConstant(Procedure& proc, const Value* other) cons
     return proc.add<ConstFloatValue>(origin(), result);
 }
 
+Value* ConstFloatValue::bitOrConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasFloat())
+        return nullptr;
+    float result = bitwise_cast<float>(bitwise_cast<uint32_t>(m_value) | bitwise_cast<uint32_t>(other->asFloat()));
+    return proc.add<ConstFloatValue>(origin(), result);
+}
+
+Value* ConstFloatValue::bitXorConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasFloat())
+        return nullptr;
+    float result = bitwise_cast<float>(bitwise_cast<uint32_t>(m_value) ^ bitwise_cast<uint32_t>(other->asFloat()));
+    return proc.add<ConstFloatValue>(origin(), result);
+}
+
 Value* ConstFloatValue::bitwiseCastConstant(Procedure& proc) const
 {
     return proc.add<Const32Value>(origin(), bitwise_cast<int32_t>(m_value));

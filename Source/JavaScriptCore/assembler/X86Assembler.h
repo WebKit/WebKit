@@ -281,6 +281,7 @@ private:
         OP2_SQRTSD_VsdWsd   = 0x51,
         OP2_ANDPS_VpdWpd    = 0x54,
         OP2_ANDNPD_VpdWpd   = 0x55,
+        OP2_ORPS_VpdWpd     = 0x56,
         OP2_XORPD_VpdWpd    = 0x57,
         OP2_MOVD_VdEd       = 0x6E,
         OP2_MOVD_EdVd       = 0x7E,
@@ -2658,6 +2659,11 @@ public:
     void andps_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         m_formatter.twoByteOp(OP2_ANDPS_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void orps_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        m_formatter.twoByteOp(OP2_ORPS_VpdWpd, (RegisterID)dst, (RegisterID)src);
     }
 
     void xorps_rr(XMMRegisterID src, XMMRegisterID dst)

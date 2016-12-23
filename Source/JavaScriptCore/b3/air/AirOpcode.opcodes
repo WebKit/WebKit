@@ -353,6 +353,18 @@ AndFloat U:F:32, U:F:32, D:F:32
 x86: AndFloat U:F:32, UD:F:32
     Tmp, Tmp
 
+OrDouble U:F:64, U:F:64, D:F:64
+    Tmp, Tmp, Tmp
+
+x86: OrDouble U:F:64, UD:F:64
+    Tmp, Tmp
+
+OrFloat U:F:32, U:F:32, D:F:32
+    Tmp, Tmp, Tmp
+
+x86: OrFloat U:F:32, UD:F:32
+    Tmp, Tmp
+
 x86: XorDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
 

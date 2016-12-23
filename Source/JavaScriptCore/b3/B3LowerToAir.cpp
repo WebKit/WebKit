@@ -2153,7 +2153,7 @@ private:
         }
 
         case BitOr: {
-            appendBinOp<Or32, Or64, Commutative>(
+            appendBinOp<Or32, Or64, OrDouble, OrFloat, Commutative>(
                 m_value->child(0), m_value->child(1));
             return;
         }
