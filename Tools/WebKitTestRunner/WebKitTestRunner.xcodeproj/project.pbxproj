@@ -70,7 +70,6 @@
 		2E63ED911891ADAD002A7AFC /* PlatformWebViewIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */; };
 		2E63ED921891ADAD002A7AFC /* TestControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */; };
 		2E63ED941891ADAD002A7AFC /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D161890A9FB0010ED21 /* mainIOS.mm */; };
-		2E63ED9E1891AEC1002A7AFC /* WebArchiveDumpSupportIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */; };
 		2E63EDA11891B291002A7AFC /* AccessibilityUIElementIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED781891ACE9002A7AFC /* AccessibilityUIElementIOS.mm */; };
 		2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC9981711D3F51E0017BCA2 /* TestRunner.cpp */; };
 		2E749BF21891EBFA007FC175 /* EventSenderProxyIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E63ED7A1891ACE9002A7AFC /* EventSenderProxyIOS.mm */; };
@@ -79,7 +78,7 @@
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
 		5664A49A14326384008881BE /* TextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5664A49814326384008881BE /* TextInputController.cpp */; };
 		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
-		5C45C30F17398E290079714E /* WebArchiveDumpSupportMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */; };
+		5C45C30F17398E290079714E /* WebArchiveDumpSupportCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C30E17398E290079714E /* WebArchiveDumpSupportCocoa.mm */; };
 		5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
@@ -252,7 +251,6 @@
 		2EE52CEA1890A9A80010ED21 /* WebKitTestRunnerApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WebKitTestRunnerApp-Info.plist"; path = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist"; sourceTree = "<group>"; };
 		2EE52D131890A9FB0010ED21 /* PlatformWebViewIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewIOS.mm; sourceTree = "<group>"; };
 		2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestControllerIOS.mm; sourceTree = "<group>"; };
-		2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupportIOS.mm; sourceTree = "<group>"; };
 		2EE52D161890A9FB0010ED21 /* mainIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = mainIOS.mm; path = ../ios/mainIOS.mm; sourceTree = "<group>"; };
 		3110BE0F15BA011400D216AC /* WebNotificationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebNotificationProvider.h; sourceTree = "<group>"; };
 		3164C8EF15D1ADA100EF1FE0 /* WebNotificationProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNotificationProvider.cpp; sourceTree = "<group>"; };
@@ -274,7 +272,7 @@
 		5670B8271386FCA5002EB355 /* EventSenderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxy.mm; sourceTree = "<group>"; };
 		583913D014335E95008307E5 /* JSAccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityController.cpp; sourceTree = "<group>"; };
 		583913D114335E95008307E5 /* JSAccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityController.h; sourceTree = "<group>"; };
-		5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebArchiveDumpSupportMac.mm; path = mac/WebArchiveDumpSupportMac.mm; sourceTree = SOURCE_ROOT; };
+		5C45C30E17398E290079714E /* WebArchiveDumpSupportCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupportCocoa.mm; sourceTree = "<group>"; };
 		5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebArchiveDumpSupport.cpp; path = cf/WebArchiveDumpSupport.cpp; sourceTree = SOURCE_ROOT; };
 		5C45C31217398E480079714E /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchiveDumpSupport.h; path = cf/WebArchiveDumpSupport.h; sourceTree = SOURCE_ROOT; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
@@ -508,6 +506,7 @@
 			children = (
 				65EB859F11EC67CC0034D300 /* ActivateFontsCocoa.mm */,
 				0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */,
+				5C45C30E17398E290079714E /* WebArchiveDumpSupportCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -595,7 +594,6 @@
 				2EE52D141890A9FB0010ED21 /* TestControllerIOS.mm */,
 				0FEBF85C1BB62D460028722D /* UIKitSPI.h */,
 				0F73B55B1BA89042004B3EF4 /* UIScriptControllerIOS.mm */,
-				2EE52D151890A9FB0010ED21 /* WebArchiveDumpSupportIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -617,7 +615,6 @@
 				29A8FCE4145F0464009045A6 /* AccessibilityTextMarkerRangeMac.mm */,
 				29210EAB144CACB200835BB5 /* AccessibilityUIElementMac.mm */,
 				BC8DAD771316D7B900EC96FC /* InjectedBundleMac.mm */,
-				5C45C30E17398E290079714E /* WebArchiveDumpSupportMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -1040,8 +1037,7 @@
 				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
 				5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */,
-				2E63ED9E1891AEC1002A7AFC /* WebArchiveDumpSupportIOS.mm in Sources */,
-				5C45C30F17398E290079714E /* WebArchiveDumpSupportMac.mm in Sources */,
+				5C45C30F17398E290079714E /* WebArchiveDumpSupportCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

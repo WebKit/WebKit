@@ -1003,7 +1003,6 @@ scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failur
 userscripts/user-script-plugin-document.html [ Failure ]
 
 # Webarchive tests that fail:
-webarchive/loading/video-in-webarchive.html [ Failure ]
 webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 webarchive/test-link-rel-icon.html [ Failure ]

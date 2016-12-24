@@ -32,12 +32,12 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
-    ${WEBKIT_TESTRUNNER_DIR}/mac/WebArchiveDumpSupportMac.mm
     ${WEBKIT_TESTRUNNER_DIR}/cocoa/CrashReporterInfo.mm
     ${WEBKIT_TESTRUNNER_DIR}/cf/WebArchiveDumpSupport.cpp
 
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/cocoa/ActivateFontsCocoa.mm
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/cocoa/InjectedBundlePageCocoa.mm
+    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/cocoa/WebArchiveDumpSupportCocoa.mm
 
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityControllerMac.mm
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/mac/AccessibilityNotificationHandler.mm

@@ -35,5 +35,5 @@ OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_PLATFORM);
 OTHER_LDFLAGS_PLATFORM[sdk=iphone*] = -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework Foundation -framework UIKit;
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework Carbon -framework Cocoa;
 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = AccessibilityControllerMac.mm AccessibilityTextMarkerMac.mm AccessibilityUIElementMac.mm ActivateFonts.mm InjectedBundleMac.mm InjectedBundlePageMac.mm WebArchiveDumpSupportMac.mm;
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = AccessibilityControllerMac.mm AccessibilityTextMarkerMac.mm AccessibilityUIElementMac.mm ActivateFonts.mm InjectedBundleMac.mm InjectedBundlePageMac.mm;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = *IOS.*;

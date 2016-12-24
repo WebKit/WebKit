@@ -1,3 +1,15 @@
+2016-12-23  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fix some crashing webarchive tests
+        https://bugs.webkit.org/show_bug.cgi?id=166470
+
+        Reviewed by Andreas Kling.
+
+        Removed entries for previously crashing/failing tests.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
 2016-12-23  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r209865): Crash when navigating back to some pages with compositing layers.

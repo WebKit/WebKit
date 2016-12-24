@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,41 +34,40 @@
 extern "C" {
 
 enum CFURLCacheStoragePolicy {
-  kCFURLCacheStorageAllowed = 0,
-  kCFURLCacheStorageAllowedInMemoryOnly = 1,
-  kCFURLCacheStorageNotAllowed = 2
+    kCFURLCacheStorageAllowed = 0,
+    kCFURLCacheStorageAllowedInMemoryOnly = 1,
+    kCFURLCacheStorageNotAllowed = 2
 };
 typedef enum CFURLCacheStoragePolicy CFURLCacheStoragePolicy;
 
 extern const CFStringRef kCFHTTPVersion1_1;
 
-CFURLResponseRef CFURLResponseCreate(CFAllocatorRef alloc, CFURLRef URL, CFStringRef mimeType, SInt64 expectedContentLength, CFStringRef textEncodingName, CFURLCacheStoragePolicy recommendedPolicy);
-CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef alloc, CFURLRef URL, CFHTTPMessageRef httpResponse, CFURLCacheStoragePolicy recommendedPolicy);
-void CFURLResponseSetExpectedContentLength(CFURLResponseRef response, SInt64 length);
-void CFURLResponseSetMIMEType(CFURLResponseRef response, CFStringRef mimeType);
+CFURLResponseRef CFURLResponseCreate(CFAllocatorRef, CFURLRef, CFStringRef mimeType, SInt64 expectedContentLength, CFStringRef textEncodingName, CFURLCacheStoragePolicy recommendedPolicy);
+CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef, CFURLRef, CFHTTPMessageRef httpResponse, CFURLCacheStoragePolicy recommendedPolicy);
+void CFURLResponseSetExpectedContentLength(CFURLResponseRef, SInt64 length);
+void CFURLResponseSetMIMEType(CFURLResponseRef, CFStringRef mimeType);
 
 }
 
 CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
-    // Decode NSURLResponse
     RetainPtr<NSKeyedUnarchiver> unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
-    NSURLResponse *response = [unarchiver.get() decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-    [unarchiver.get() finishDecoding];
+    NSURLResponse *response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
+    [unarchiver finishDecoding];
 
     if (![response isKindOfClass:[NSHTTPURLResponse class]])
-        return CFURLResponseCreate(kCFAllocatorDefault, (CFURLRef)[response URL], (CFStringRef)[response MIMEType], [response expectedContentLength], (CFStringRef)[response textEncodingName], kCFURLCacheStorageAllowed);
+        return CFURLResponseCreate(kCFAllocatorDefault, (CFURLRef)response.URL, (CFStringRef)response.MIMEType, response.expectedContentLength, (CFStringRef)response.textEncodingName, kCFURLCacheStorageAllowed);
 
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
 
     // NSURLResponse is not toll-free bridged to CFURLResponse.
-    RetainPtr<CFHTTPMessageRef> httpMessage = adoptCF(CFHTTPMessageCreateResponse(kCFAllocatorDefault, [httpResponse statusCode], 0, kCFHTTPVersion1_1));
+    RetainPtr<CFHTTPMessageRef> httpMessage = adoptCF(CFHTTPMessageCreateResponse(kCFAllocatorDefault, httpResponse.statusCode, nullptr, kCFHTTPVersion1_1));
 
-    NSDictionary *headerFields = [httpResponse allHeaderFields];
+    NSDictionary *headerFields = httpResponse.allHeaderFields;
     for (NSString *headerField in [headerFields keyEnumerator])
         CFHTTPMessageSetHeaderFieldValue(httpMessage.get(), (CFStringRef)headerField, (CFStringRef)[headerFields objectForKey:headerField]);
 
-    return CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (CFURLRef)[response URL], httpMessage.get(), kCFURLCacheStorageAllowed);
+    return CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (CFURLRef)response.URL, httpMessage.get(), kCFURLCacheStorageAllowed);
 }
 
 CFArrayRef supportedNonImageMIMETypes()

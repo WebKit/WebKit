@@ -1,3 +1,22 @@
+2016-12-23  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fix some crashing webarchive tests
+        https://bugs.webkit.org/show_bug.cgi?id=166470
+
+        Reviewed by Andreas Kling.
+
+        Tests that use TestRunner.dumpDOMAsWebArchive() crashed on iOS due to a stub implementation
+        of WebArchiveDumpSupport in WebKitTestRunner. The Mac implementation works fine on iOS too,
+        so this change uses that on both platforms.
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig: Removed
+        WebArchiveDumpSupportMac.mm from EXCLUDED_SOURCE_FILE_NAMES.
+        * WebKitTestRunner/InjectedBundle/cocoa/WebArchiveDumpSupportCocoa.mm: Renamed from
+        Tools/WebKitTestRunner/mac/WebArchiveDumpSupportMac.mm.
+        * WebKitTestRunner/PlatformMac.cmake:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/ios/WebArchiveDumpSupportIOS.mm: Removed.
+
 2016-12-22  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Silence the output of the spec-tests

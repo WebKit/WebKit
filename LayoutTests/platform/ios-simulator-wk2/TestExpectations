@@ -323,29 +323,9 @@ svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml [ Failure ]
 # <rdar://problem/19223413> ASSERT(animatedTypes[0].properties.size() == 1) failed in SVGAnimatedTypeAnimator::constructFromBaseValue()
 svg/animations/unsupported-animate-element-attributes.svg
 
-# Webarchive tests that fail with stderr:
-webarchive/adopt-attribute-styled-body-webarchive.html
-webarchive/adopt-attribute-styled-node-webarchive.html
-webarchive/adopt-inline-styled-node-webarchive.html
-webarchive/archive-with-unencoded-url.html
-webarchive/test-body-background.html
-webarchive/test-css-url-resources-in-stylesheets.html
-webarchive/test-css-url-resources-inline-styles.html
-webarchive/test-duplicate-resources.html
-webarchive/test-frameset.html
-webarchive/test-img-src.html
-webarchive/test-input-src.html
-webarchive/test-object-data.html
-webarchive/test-table-background.html
-webarchive/test-td-background.html
-webarchive/test-xml-stylesheet.xml
-
 # Webarchive tests that fail:
 webarchive/archive-empty-frame-source.html [ Failure ]
 webarchive/doctype.html [ Failure ]
-webarchive/test-css-import.html [ Failure ]
-webarchive/test-link-href.html [ Failure ]
-webarchive/test-script-src.html [ Failure ]
 
 # HTTP tests that fail:
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
