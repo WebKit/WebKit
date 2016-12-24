@@ -638,7 +638,7 @@ void AccessCase::generateWithGuard(
         fallThrough.append(
             jit.branchTestPtr(
                 CCallHelpers::NonZero,
-                CCallHelpers::Address(baseGPR, DirectArguments::offsetOfOverrides())));
+                CCallHelpers::Address(baseGPR, DirectArguments::offsetOfMappedArguments())));
         jit.load32(
             CCallHelpers::Address(baseGPR, DirectArguments::offsetOfLength()),
             valueRegs.payloadGPR());

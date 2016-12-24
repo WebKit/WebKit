@@ -24,7 +24,5 @@ if (array.join(",") != "0")
 if (Object.keys(result[2]).join(",") != "0")
     throw new Error();
 
-// FIXME: This is totally weird!
-// https://bugs.webkit.org/show_bug.cgi?id=141952
-if (Object.getOwnPropertyDescriptor(result[2], 0).enumerable !== true)
+if (Object.getOwnPropertyDescriptor(result[2], 0).enumerable === true)
     throw new Error();

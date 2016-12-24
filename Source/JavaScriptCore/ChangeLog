@@ -1,3 +1,116 @@
+2016-12-24  Caio Lima  <ticaiolima@gmail.com>
+
+        [test262] Fixing mapped arguments object property test case
+        https://bugs.webkit.org/show_bug.cgi?id=159398
+
+        Reviewed by Saam Barati.
+
+        This patch changes GenericArguments' override mechanism to
+        implement corret behavior on ECMAScript test262 suite test cases of
+        mapped arguments object with non-configurable and non-writable
+        property. Also it is ensuring that arguments[i]
+        cannot be deleted when argument "i" is {configurable: false}.
+        
+        The previous implementation is against to the specification for 2 reasons:
+
+        1. Every argument in arguments object are {writable: true} by default
+           (http://www.ecma-international.org/ecma-262/7.0/index.html#sec-createunmappedargumentsobject).
+           It means that we have to stop mapping a defined property index
+           if the new property descriptor contains writable (i.e writable is
+           present) and its value is false (also check
+           https://tc39.github.io/ecma262/#sec-arguments-exotic-objects-defineownproperty-p-desc).
+           Previous implementation considers {writable: false} if writable is
+           not present.
+
+        2. When a property is overriden, "delete" operation is always returning true. However
+           delete operations should follow the specification.
+
+        We created an auxilary boolean array named m_modifiedArgumentsDescriptor
+        to store which arguments[i] descriptor was changed from its default
+        property descriptor. This modification was necessary because m_overrides
+        was responsible to keep this information at the same time
+        of keeping information about arguments mapping. The problem of this apporach was
+        that we needed to call overridesArgument(i) as soon as the ith argument's property
+        descriptor was changed and it stops the argument's mapping as sideffect, producing
+        wrong behavior.
+        To keep tracking arguments mapping status, we renamed DirectArguments::m_overrides to
+        DirectArguments::m_mappedArguments and now we it is responsible to manage if an
+        argument[i] is mapped or not.
+        With these 2 structures, now it is possible to an argument[i] have its property 
+        descriptor modified and don't stop the mapping as soon as it happens. One example
+        of that wrong behavior can be found on arguments-bizarre-behaviour-disable-enumerability
+        test case, that now is fixed by this new mechanism.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArrayLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        * jit/JITOperations.cpp:
+        (JSC::canAccessArgumentIndexQuickly):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::estimatedSize):
+        (JSC::DirectArguments::visitChildren):
+        (JSC::DirectArguments::overrideThings):
+        (JSC::DirectArguments::overrideThingsIfNecessary):
+        (JSC::DirectArguments::unmapArgument):
+        (JSC::DirectArguments::copyToArguments):
+        (JSC::DirectArguments::overridesSize):
+        (JSC::DirectArguments::overrideArgument): Deleted.
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::length):
+        (JSC::DirectArguments::isMappedArgument):
+        (JSC::DirectArguments::isMappedArgumentInDFG):
+        (JSC::DirectArguments::getIndexQuickly):
+        (JSC::DirectArguments::setIndexQuickly):
+        (JSC::DirectArguments::overrodeThings):
+        (JSC::DirectArguments::initModifiedArgumentsDescriptorIfNecessary):
+        (JSC::DirectArguments::setModifiedArgumentDescriptor):
+        (JSC::DirectArguments::isModifiedArgumentDescriptor):
+        (JSC::DirectArguments::offsetOfMappedArguments):
+        (JSC::DirectArguments::offsetOfModifiedArgumentsDescriptor):
+        (JSC::DirectArguments::canAccessIndexQuickly): Deleted.
+        (JSC::DirectArguments::canAccessArgumentIndexQuicklyInDFG): Deleted.
+        (JSC::DirectArguments::offsetOfOverrides): Deleted.
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::visitChildren):
+        (JSC::GenericArguments<Type>::getOwnPropertySlot):
+        (JSC::GenericArguments<Type>::getOwnPropertySlotByIndex):
+        (JSC::GenericArguments<Type>::getOwnPropertyNames):
+        (JSC::GenericArguments<Type>::put):
+        (JSC::GenericArguments<Type>::putByIndex):
+        (JSC::GenericArguments<Type>::deleteProperty):
+        (JSC::GenericArguments<Type>::deletePropertyByIndex):
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptorIfNecessary):
+        (JSC::GenericArguments<Type>::setModifiedArgumentDescriptor):
+        (JSC::GenericArguments<Type>::isModifiedArgumentDescriptor):
+        (JSC::GenericArguments<Type>::copyToArguments):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::visitChildren):
+        (JSC::ScopedArguments::unmapArgument):
+        (JSC::ScopedArguments::overrideArgument): Deleted.
+        * runtime/ScopedArguments.h:
+        (JSC::ScopedArguments::isMappedArgument):
+        (JSC::ScopedArguments::isMappedArgumentInDFG):
+        (JSC::ScopedArguments::getIndexQuickly):
+        (JSC::ScopedArguments::setIndexQuickly):
+        (JSC::ScopedArguments::initModifiedArgumentsDescriptorIfNecessary):
+        (JSC::ScopedArguments::setModifiedArgumentDescriptor):
+        (JSC::ScopedArguments::isModifiedArgumentDescriptor):
+        (JSC::ScopedArguments::canAccessIndexQuickly): Deleted.
+        (JSC::ScopedArguments::canAccessArgumentIndexQuicklyInDFG): Deleted.
+
 2016-12-23  Mark Lam  <mark.lam@apple.com>
 
         Using Option::breakOnThrow() shouldn't crash while printing a null CodeBlock.

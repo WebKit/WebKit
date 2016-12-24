@@ -3140,7 +3140,7 @@ private:
             LValue arguments = lowCell(m_node->child1());
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.notNull(m_out.loadPtr(arguments, m_heaps.DirectArguments_overrides)));
+                m_out.notNull(m_out.loadPtr(arguments, m_heaps.DirectArguments_mappedArguments)));
             setInt32(m_out.load32NonNegative(arguments, m_heaps.DirectArguments_length));
             return;
         }
@@ -3292,7 +3292,7 @@ private:
             
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.notNull(m_out.loadPtr(base, m_heaps.DirectArguments_overrides)));
+                m_out.notNull(m_out.loadPtr(base, m_heaps.DirectArguments_mappedArguments)));
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.aboveOrEqual(
@@ -4088,7 +4088,8 @@ private:
         
         m_out.store32(length.value, fastObject, m_heaps.DirectArguments_length);
         m_out.store32(m_out.constInt32(minCapacity), fastObject, m_heaps.DirectArguments_minCapacity);
-        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_overrides);
+        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_mappedArguments);
+        m_out.storePtr(m_out.intPtrZero, fastObject, m_heaps.DirectArguments_modifiedArgumentsDescriptor);
         
         ValueFromBlock fastResult = m_out.anchor(fastObject);
         m_out.jump(continuation);

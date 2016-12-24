@@ -1620,13 +1620,13 @@ static bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
     switch (object.structure()->typeInfo().type()) {
     case DirectArgumentsType: {
         DirectArguments* directArguments = jsCast<DirectArguments*>(&object);
-        if (directArguments->canAccessArgumentIndexQuicklyInDFG(index))
+        if (directArguments->isMappedArgumentInDFG(index))
             return true;
         break;
     }
     case ScopedArgumentsType: {
         ScopedArguments* scopedArguments = jsCast<ScopedArguments*>(&object);
-        if (scopedArguments->canAccessArgumentIndexQuicklyInDFG(index))
+        if (scopedArguments->isMappedArgumentInDFG(index))
             return true;
         break;
     }
