@@ -40,7 +40,7 @@ public:
 
     static std::unique_ptr<FloatingObject> create(RenderBox&);
     std::unique_ptr<FloatingObject> copyToNewContainer(LayoutSize, bool shouldPaint = false, bool isDescendant = false) const;
-    std::unique_ptr<FloatingObject> unsafeClone() const;
+    std::unique_ptr<FloatingObject> cloneForNewParent() const;
 
     explicit FloatingObject(RenderBox&);
     FloatingObject(RenderBox&, Type, const LayoutRect&, bool shouldPaint, bool isDescendant);

@@ -461,7 +461,7 @@ protected:
     bool isTopLayoutOverflowAllowed() const override;
     bool isLeftLayoutOverflowAllowed() const override;
 
-    void moveFloatsTo(RenderBlockFlow* toBlock);
+    void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
     
     virtual void computeColumnCountAndWidth();
     virtual bool requiresColumns(int) const;

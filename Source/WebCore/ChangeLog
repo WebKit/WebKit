@@ -1,3 +1,31 @@
+2016-12-24  Zalan Bujtas  <zalan@apple.com>
+
+        RenderBlockFlow::moveFloatsTo does not move floats.
+        https://bugs.webkit.org/show_bug.cgi?id=166467
+
+        Reviewed by Darin Adler.
+
+        RenderBlockFlow::moveFloatsTo name is misleading. Floats are not moved from "this" to
+        the new RenderBlockFlow parent, but rather they are copied so that overhanging floats
+        don't get lost.
+
+        Covered by existing tests.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::cloneForNewParent):
+        (WebCore::FloatingObject::unsafeClone): Deleted.
+        * rendering/FloatingObjects.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addFloatsToNewParent):
+        (WebCore::RenderBlockFlow::moveAllChildrenIncludingFloatsTo):
+        (WebCore::RenderBlockFlow::moveFloatsTo): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::mergeChildrenWithBase):
+        * rendering/RenderRubyBase.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::removeChild):
+
 2016-12-23  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r209865): Crash when navigating back to some pages with compositing layers.

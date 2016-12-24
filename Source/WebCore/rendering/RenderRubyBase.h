@@ -63,7 +63,7 @@ private:
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
     void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
-    void mergeChildrenWithBase(RenderRubyBase* toBlock);
+    void mergeChildrenWithBase(RenderRubyBase& toBlock);
 
     void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
     void moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);

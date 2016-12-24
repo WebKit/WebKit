@@ -88,10 +88,9 @@ std::unique_ptr<FloatingObject> FloatingObject::copyToNewContainer(LayoutSize of
     return std::make_unique<FloatingObject>(renderer(), type(), LayoutRect(frameRect().location() - offset, frameRect().size()), shouldPaint, isDescendant);
 }
 
-std::unique_ptr<FloatingObject> FloatingObject::unsafeClone() const
+std::unique_ptr<FloatingObject> FloatingObject::cloneForNewParent() const
 {
-    // FIXME: Use make_unique here, once we can get it to compile on all platforms we support.
-    std::unique_ptr<FloatingObject> cloneObject(new FloatingObject(renderer(), type(), m_frameRect, m_shouldPaint, m_isDescendant));
+    auto cloneObject = std::make_unique<FloatingObject>(renderer(), type(), m_frameRect, m_shouldPaint, m_isDescendant);
     cloneObject->m_paginationStrut = m_paginationStrut;
     cloneObject->m_isPlaced = m_isPlaced;
     return cloneObject;
