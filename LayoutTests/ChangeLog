@@ -1,3 +1,16 @@
+2016-12-23  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r209865): Crash when navigating back to some pages with compositing layers.
+        <https://webkit.org/b/166469>
+        <rdar://problem/29109053>
+
+        Reviewed by Darin Adler.
+
+        Add a smoke test for the crashes we were seeing. Thanks to Zalán for the reduction.
+
+        * compositing/page-cache-back-crash-expected.txt: Added.
+        * compositing/page-cache-back-crash.html: Added.
+
 2016-12-22  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for WebSQL code

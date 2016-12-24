@@ -1,3 +1,26 @@
+2016-12-23  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r209865): Crash when navigating back to some pages with compositing layers.
+        <https://webkit.org/b/166469>
+        <rdar://problem/29109053>
+
+        Reviewed by Darin Adler.
+
+        Remove the old WK1-era clear/restoreBackingStores optimization from the page cache.
+        When enabling it on non-iOS platforms, we started hitting lots of assertions,
+        and none of our memory tests showed any significant improvement anyway.
+
+        Test: compositing/page-cache-back-crash.html
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        * history/CachedFrame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::restoreBackingStores): Deleted.
+        * page/FrameView.h:
+
 2016-12-23  Sam Weinig  <sam@webkit.org>
 
         Add missing std::optional to ApplePayPaymentRequest.lineItems

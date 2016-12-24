@@ -63,7 +63,6 @@ CachedFrameBase::CachedFrameBase(Frame& frame)
     , m_view(frame.view())
     , m_url(frame.document()->url())
     , m_isMainFrame(!frame.tree().parent())
-    , m_isComposited(frame.view()->hasCompositedContent())
 {
 }
 
@@ -96,9 +95,6 @@ void CachedFrameBase::restore()
     // It is necessary to update any platform script objects after restoring the
     // cached page.
     frame.script().updatePlatformScriptObjects();
-
-    if (m_isComposited)
-        frame.view()->restoreBackingStores();
 
     frame.loader().client().didRestoreFromPageCache();
 
@@ -163,9 +159,6 @@ CachedFrame::CachedFrame(Frame& frame)
     m_document->domWindow()->suspendForDocumentSuspension();
 
     frame.loader().client().savePlatformDataToCachedFrame(this);
-
-    if (m_isComposited)
-        frame.view()->clearBackingStores();
 
     // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.
     frame.clearTimers();
