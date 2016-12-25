@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+            width: 2000px;
+        }
+        
+        .anchor {
+            position: absolute;
+            top: 1000px;
+            left: 40px;
+            border: 1px solid black;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+    description("Tests scrolling to an anchor in a zoomed page with a header scrolls to the correct location.");
+    window.jsTestIsAsync = true;
+
+    const headerHeight = 32;
+    const pageScale = 1.8;
+
+    if (window.internals) {
+        internals.setHeaderHeight(headerHeight);
+        internals.setPageScaleFactor(pageScale, 0, 0);
+    }
+
+    function runTest()
+    {
+        setTimeout(function() {
+            window.location='#anchor';
+            setTimeout(finishTest, 0);
+        }, 0);
+    }
+
+    function finishTest()
+    {
+        if (window.location.toString().indexOf("#") == -1) {
+            setTimeout(finishTest, 0);
+            return;
+        }
+        
+        shouldBe('document.scrollingElement.scrollTop', '1019');
+        shouldBe('document.scrollingElement.scrollLeft', '0');
+
+        finishJSTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+
+<div class="anchor">
+    <a name="anchor">Anchor is here</a>
+</div>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body></html>

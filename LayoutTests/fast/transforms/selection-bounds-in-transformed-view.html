@@ -10,6 +10,8 @@
         }
 
         document.execCommand("FindString", false, "target");
-        document.getElementById("result").innerText = document.body.scrollTop === 937 ? "PASS" : "FAIL";
+        var scrollTop = document.body.scrollTop;
+        var expectedScrollTop = 864;
+        document.getElementById("result").innerText = scrollTop === expectedScrollTop ? "PASS" : "FAIL: document.body.scrollTop was " + scrollTop + ", should be " + expectedScrollTop;
     </script>
 </body>

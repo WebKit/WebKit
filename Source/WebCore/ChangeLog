@@ -1,3 +1,30 @@
+2016-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r209299): Selection is broken when you zoom in webpage using trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=166472
+        rdar://problem/29675551
+
+        Reviewed by Tim Horton.
+
+        r209299 broke autoscroll in zoomed pages because it changed RenderLayer::scrollRectToVisible()
+        to shrink viewRect by page scale. This is incorrect for all callers of scrollRectToVisible, since
+        the "absoluteRect" passed in is actually in zoomed document coordinates for all the callers I tested.
+
+        This code is also fixed to account for headers and footers. getRectToExpose() takes rectangles
+        in "scroll view contents" coordinates (i.e. including header, and zoomed document), so doesn't need
+        the separate visibleRectRelativeToDocument parameter.
+
+        Tests: fast/events/autoscroll-main-document.html
+               fast/events/autoscroll-when-zoomed.html
+               fast/events/drag-select-when-zoomed-with-header.html
+               fast/events/drag-select-when-zoomed.html
+               fast/scrolling/scroll-to-anchor-zoomed-header.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::getRectToExpose):
+        * rendering/RenderLayer.h:
+
 2016-12-24  Zalan Bujtas  <zalan@apple.com>
 
         RenderBlockFlow::moveFloatsTo does not move floats.

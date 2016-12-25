@@ -1,3 +1,30 @@
+2016-12-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r209299): Selection is broken when you zoom in webpage using trackpad
+        https://bugs.webkit.org/show_bug.cgi?id=166472
+        rdar://problem/29675551
+
+        Reviewed by Tim Horton.
+
+        Add some test coverage for autoscroll of the main document. I could only get this
+        working in WebKitTestRunner, not DumpRenderTree.
+
+        * TestExpectations:
+        * fast/events/autoscroll-main-document-expected.txt: Added.
+        * fast/events/autoscroll-main-document.html: Added.
+        * fast/events/autoscroll-when-zoomed-expected.txt: Added.
+        * fast/events/autoscroll-when-zoomed.html: Added.
+        * fast/events/drag-select-when-zoomed-expected.txt: Added.
+        * fast/events/drag-select-when-zoomed-with-header-expected.txt: Added.
+        * fast/events/drag-select-when-zoomed-with-header.html: Added.
+        * fast/events/drag-select-when-zoomed.html: Added.
+        * fast/scrolling/scroll-to-anchor-zoomed-header-expected.txt: Added.
+        * fast/scrolling/scroll-to-anchor-zoomed-header.html: Added.
+        * fast/transforms/selection-bounds-in-transformed-view.html: Revert the target scroll position to what it was
+        before r209299, and improve the failure output.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2016-12-23  Andy Estes  <aestes@apple.com>
 
         [iOS] Fix some crashing webarchive tests

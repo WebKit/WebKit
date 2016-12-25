@@ -13,6 +13,8 @@ fast/events/cancelled-force-click-link-navigation.html [ Pass ]
 fast/events/force-click-link-selection-behavior.html [ Pass ]
 fast/events/force-click-on-link-navigation.html [ Pass ]
 fast/events/force-click-text-selection-behavior.html [ Failure ]
+fast/events/autoscroll-when-zoomed.html [ Pass ]
+fast/events/autoscroll-main-document.html [ Pass ]
 
 fast/media/mq-inverted-colors-live-update.html [ Pass ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
@@ -40,7 +42,7 @@ pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Pass ]
 ########################################
 ### START OF (1) Classified failures with bug reports
 
-# WebKitTestRunner needs an implementation of eventSender
+# WebKitTestRunner needs a more complete implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/pasteboard/4947130.html
 editing/pasteboard/cleanup-on-move.html

@@ -51,6 +51,10 @@ fast/events/mouse-force-changed.html [ Skip ]
 fast/events/mouse-force-down.html [ Skip ]
 fast/events/mouse-force-up.html [ Skip ]
 
+# Document autoscroll tests only work on Mac WK2
+fast/events/autoscroll-when-zoomed.html [ Skip ]
+fast/events/autoscroll-main-document.html [ Skip ]
+
 # Only iOS supports QuickLook
 quicklook [ Skip ]
 http/tests/quicklook [ Skip ]
