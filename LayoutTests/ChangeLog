@@ -1,3 +1,14 @@
+2016-12-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Headers of table not read by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=158693
+        <rdar://problem/26771065>
+
+        Reviewed by Darin Adler.
+
+        * accessibility/hidden-th-still-column-header-expected.txt: Added.
+        * accessibility/hidden-th-still-column-header.html: Added.
+
 2016-12-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove (most) custom bindings for the IndexedDB code

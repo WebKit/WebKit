@@ -1,3 +1,20 @@
+2016-12-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Headers of table not read by VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=158693
+        <rdar://problem/26771065>
+
+        Reviewed by Darin Adler.
+
+        If a table cell header is hidden, by pushing off screen then the content won't be accessible.
+        It seems that unless specifically requested (such as using aria-hidden), we should try to return
+        that table cell header.
+
+        Test: accessibility/hidden-th-still-column-header.html
+
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+
 2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Propagate the source origin as much as possible

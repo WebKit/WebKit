@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityTableCell.h"
+#include "HTMLCollection.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "RenderTable.h"
@@ -142,12 +143,21 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
             if ((testCell->col() + (testCell->colSpan()-1)) < m_columnIndex)
                 break;
             
-            // If this does not have an element (like a <caption>) then check the next row
-            if (!testCell->element())
+            Node* testCellNode = testCell->element();
+            // If the RenderTableCell doesn't have an element because its anonymous,
+            // try to see if we can find the original cell element to check if it has a <th> tag.
+            if (!testCellNode && testCell->isAnonymous()) {
+                if (Element* parentElement = testCell->parent() ? testCell->parent()->element() : nullptr) {
+                    if (parentElement->hasTagName(trTag) && testCol < static_cast<int>(parentElement->countChildNodes()))
+                        testCellNode = parentElement->traverseToChildAt(testCol);
+                }
+            }
+
+            if (!testCellNode)
                 continue;
             
             // If th is required, but we found an element that doesn't have a th tag, we can stop looking.
-            if (thTagRequired && !testCell->element()->hasTagName(thTag))
+            if (thTagRequired && !testCellNode->hasTagName(thTag))
                 break;
             
             cell = testCell;
@@ -158,7 +168,11 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     if (!cell)
         return nullptr;
 
-    return axObjectCache()->getOrCreate(cell);
+    auto* cellObject = axObjectCache()->getOrCreate(cell);
+    if (!cellObject || cellObject->accessibilityIsIgnored())
+        return nullptr;
+        
+    return cellObject;
 }
     
 bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
