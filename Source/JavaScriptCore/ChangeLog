@@ -1,3 +1,14 @@
+2016-12-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use variadic templates in JSC Parser to clean up
+        https://bugs.webkit.org/show_bug.cgi?id=166482
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::logError):
+        * parser/Parser.h:
+
 2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Propagate the source origin as much as possible

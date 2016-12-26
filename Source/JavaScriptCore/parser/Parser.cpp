@@ -91,8 +91,8 @@ void Parser<LexerType>::logError(bool)
     setErrorMessage(stream.toStringWithLatin1Fallback());
 }
 
-template <typename LexerType> template <typename A>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1)
+template <typename LexerType> template <typename... Args>
+void Parser<LexerType>::logError(bool shouldPrintToken, Args&&... args)
 {
     if (hasError())
         return;
@@ -101,91 +101,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1)
         printUnexpectedTokenText(stream);
         stream.print(". ");
     }
-    stream.print(value1, ".");
-    setErrorMessage(stream.toStringWithLatin1Fallback());
-}
-
-template <typename LexerType> template <typename A, typename B>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B& value2)
-{
-    if (hasError())
-        return;
-    StringPrintStream stream;
-    if (shouldPrintToken) {
-        printUnexpectedTokenText(stream);
-        stream.print(". ");
-    }
-    stream.print(value1, value2, ".");
-    setErrorMessage(stream.toStringWithLatin1Fallback());
-}
-
-template <typename LexerType> template <typename A, typename B, typename C>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B& value2, const C& value3)
-{
-    if (hasError())
-        return;
-    StringPrintStream stream;
-    if (shouldPrintToken) {
-        printUnexpectedTokenText(stream);
-        stream.print(". ");
-    }
-    stream.print(value1, value2, value3, ".");
-    setErrorMessage(stream.toStringWithLatin1Fallback());
-}
-
-template <typename LexerType> template <typename A, typename B, typename C, typename D>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B& value2, const C& value3, const D& value4)
-{
-    if (hasError())
-        return;
-    StringPrintStream stream;
-    if (shouldPrintToken) {
-        printUnexpectedTokenText(stream);
-        stream.print(". ");
-    }
-    stream.print(value1, value2, value3, value4, ".");
-    setErrorMessage(stream.toStringWithLatin1Fallback());
-}
-
-template <typename LexerType> template <typename A, typename B, typename C, typename D, typename E>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B& value2, const C& value3, const D& value4, const E& value5)
-{
-    if (hasError())
-        return;
-    StringPrintStream stream;
-    if (shouldPrintToken) {
-        printUnexpectedTokenText(stream);
-        stream.print(". ");
-    }
-    stream.print(value1, value2, value3, value4, value5, ".");
-    setErrorMessage(stream.toStringWithLatin1Fallback());
-}
-
-template <typename LexerType> template <typename A, typename B, typename C, typename D, typename E, typename F>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B& value2, const C& value3, const D& value4, const E& value5, const F& value6)
-{
-    if (hasError())
-        return;
-    StringPrintStream stream;
-    if (shouldPrintToken) {
-        printUnexpectedTokenText(stream);
-        stream.print(". ");
-    }
-    stream.print(value1, value2, value3, value4, value5, value6, ".");
-    setErrorMessage(stream.toStringWithLatin1Fallback());
-}
-
-template <typename LexerType> template <typename A, typename B, typename C, typename D, typename E, typename F, typename G>
-void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B& value2, const C& value3, const D& value4, const E& value5, const F& value6, const G& value7)
-{
-    if (hasError())
-        return;
-    StringPrintStream stream;
-    if (shouldPrintToken) {
-        printUnexpectedTokenText(stream);
-        stream.print(". ");
-    }
-    stream.print(value1, value2, value3, value4, value5, value6, value7, ".");
+    stream.print(std::forward<Args>(args)..., ".");
     setErrorMessage(stream.toStringWithLatin1Fallback());
 }
 
