@@ -891,7 +891,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 
     UserGestureIndicator gestureIndicator(allowPopups ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
     
-    JSValue result = JSC::evaluate(exec, makeSource(script));
+    JSValue result = JSC::evaluate(exec, JSC::makeSource(script, { }));
     
     marshalValue(exec, result, resultData, resultLength);
     scope.clearException();

@@ -1009,6 +1009,7 @@ static EncodedJSValue JSC_HOST_CALL functionSetGlobalConstRedeclarationShouldNot
 static EncodedJSValue JSC_HOST_CALL functionGetRandomSeed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetRandomSeed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionIsRope(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCallerSourceOrigin(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -1103,7 +1104,7 @@ template<typename Vector>
 static inline SourceCode jscSource(const Vector& utf8, const String& filename)
 {
     String str = stringFromUTF(utf8);
-    return makeSource(str, filename);
+    return makeSource(str, SourceOrigin { filename }, filename);
 }
 
 class GlobalObject : public JSGlobalObject {
@@ -1232,6 +1233,7 @@ protected:
         addFunction(vm, "getRandomSeed", functionGetRandomSeed, 0);
         addFunction(vm, "setRandomSeed", functionSetRandomSeed, 1);
         addFunction(vm, "isRope", functionIsRope, 1);
+        addFunction(vm, "callerSourceOrigin", functionCallerSourceOrigin, 0);
 
         addFunction(vm, "is32BitPlatform", functionIs32BitPlatform, 0);
 
@@ -1332,11 +1334,12 @@ ModuleName::ModuleName(const String& moduleName)
     moduleName.split('/', true, queries);
 }
 
-static bool extractDirectoryName(const String& absolutePathToFile, DirectoryName& directoryName)
+static std::optional<DirectoryName> extractDirectoryName(const String& absolutePathToFile)
 {
     size_t firstSeparatorPosition = absolutePathToFile.find(pathSeparator());
     if (firstSeparatorPosition == notFound)
-        return false;
+        return std::nullopt;
+    DirectoryName directoryName;
     directoryName.rootName = absolutePathToFile.substring(0, firstSeparatorPosition + 1); // Include the separator.
     size_t lastSeparatorPosition = absolutePathToFile.reverseFind(pathSeparator());
     ASSERT_WITH_MESSAGE(lastSeparatorPosition != notFound, "If the separator is not found, this function already returns when performing the forward search.");
@@ -1347,10 +1350,10 @@ static bool extractDirectoryName(const String& absolutePathToFile, DirectoryName
         size_t queryLength = lastSeparatorPosition - queryStartPosition; // Not include the last separator.
         directoryName.queryName = absolutePathToFile.substring(queryStartPosition, queryLength);
     }
-    return true;
+    return directoryName;
 }
 
-static bool currentWorkingDirectory(DirectoryName& directoryName)
+static std::optional<DirectoryName> currentWorkingDirectory()
 {
 #if OS(WINDOWS)
     // https://msdn.microsoft.com/en-us/library/windows/desktop/aa364934.aspx
@@ -1364,7 +1367,7 @@ static bool currentWorkingDirectory(DirectoryName& directoryName)
     // In the path utility functions inside the JSC shell, we does not handle the UNC and UNCW including the network host name.
     DWORD bufferLength = ::GetCurrentDirectoryW(0, nullptr);
     if (!bufferLength)
-        return false;
+        return std::nullopt;
     // In Windows, wchar_t is the UTF-16LE.
     // https://msdn.microsoft.com/en-us/library/dd374081.aspx
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
@@ -1374,20 +1377,20 @@ static bool currentWorkingDirectory(DirectoryName& directoryName)
     String directoryString = String(reinterpret_cast<UChar*>(buffer.get()));
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"))
-        return false;
+        return std::nullopt;
 #else
     auto buffer = std::make_unique<char[]>(PATH_MAX);
     if (!getcwd(buffer.get(), PATH_MAX))
-        return false;
+        return std::nullopt;
     String directoryString = String::fromUTF8(buffer.get());
 #endif
     if (directoryString.isEmpty())
-        return false;
+        return std::nullopt;
 
     if (directoryString[directoryString.length() - 1] == pathSeparator())
-        return extractDirectoryName(directoryString, directoryName);
+        return extractDirectoryName(directoryString);
     // Append the seperator to represents the file name. extractDirectoryName only accepts the absolute file name.
-    return extractDirectoryName(makeString(directoryString, pathSeparator()), directoryName);
+    return extractDirectoryName(makeString(directoryString, pathSeparator()));
 }
 
 static String resolvePath(const DirectoryName& directoryName, const ModuleName& moduleName)
@@ -1433,28 +1436,32 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
     if (key.isSymbol())
         return deferred->resolve(exec, keyValue);
 
-    DirectoryName directoryName;
     if (referrerValue.isUndefined()) {
-        if (!currentWorkingDirectory(directoryName))
+        auto directoryName = currentWorkingDirectory();
+        if (!directoryName)
             return deferred->reject(exec, createError(exec, ASCIILiteral("Could not resolve the current working directory.")));
-    } else {
-        const Identifier referrer = referrerValue.toPropertyKey(exec);
-        if (UNLIKELY(scope.exception())) {
-            JSValue exception = scope.exception();
-            scope.clearException();
-            return deferred->reject(exec, exception);
-        }
-        if (referrer.isSymbol()) {
-            if (!currentWorkingDirectory(directoryName))
-                return deferred->reject(exec, createError(exec, ASCIILiteral("Could not resolve the current working directory.")));
-        } else {
-            // If the referrer exists, we assume that the referrer is the correct absolute path.
-            if (!extractDirectoryName(referrer.impl(), directoryName))
-                return deferred->reject(exec, createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
-        }
+        return deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
     }
 
-    return deferred->resolve(exec, jsString(exec, resolvePath(directoryName, ModuleName(key.impl()))));
+    const Identifier referrer = referrerValue.toPropertyKey(exec);
+    if (UNLIKELY(scope.exception())) {
+        JSValue exception = scope.exception();
+        scope.clearException();
+        return deferred->reject(exec, exception);
+    }
+
+    if (referrer.isSymbol()) {
+        auto directoryName = currentWorkingDirectory();
+        if (!directoryName)
+            return deferred->reject(exec, createError(exec, ASCIILiteral("Could not resolve the current working directory.")));
+        return deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+    }
+
+    // If the referrer exists, we assume that the referrer is the correct absolute path.
+    auto directoryName = extractDirectoryName(referrer.impl());
+    if (!directoryName)
+        return deferred->reject(exec, createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
+    return deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
 }
 
 static void convertShebangToJSComment(Vector<char>& buffer)
@@ -1945,7 +1952,7 @@ EncodedJSValue JSC_HOST_CALL functionRunString(ExecState* exec)
         vm, Identifier::fromString(globalObject->globalExec(), "arguments"), array);
 
     NakedPtr<Exception> exception;
-    evaluate(globalObject->globalExec(), makeSource(source), JSValue(), exception);
+    evaluate(globalObject->globalExec(), makeSource(source, exec->callerSourceOrigin()), JSValue(), exception);
 
     if (exception) {
         scope.throwException(globalObject->globalExec(), exception);
@@ -1985,7 +1992,7 @@ EncodedJSValue JSC_HOST_CALL functionLoadString(ExecState* exec)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), makeSource(sourceCode), JSValue(), evaluationException);
+    JSValue result = evaluate(globalObject->globalExec(), makeSource(sourceCode, exec->callerSourceOrigin()), JSValue(), evaluationException);
     if (evaluationException)
         throwException(exec, scope, evaluationException);
     return JSValue::encode(result);
@@ -2104,6 +2111,14 @@ EncodedJSValue JSC_HOST_CALL functionIsRope(ExecState* exec)
         return JSValue::encode(jsBoolean(false));
     const StringImpl* impl = asString(argument)->tryGetValueImpl();
     return JSValue::encode(jsBoolean(!impl));
+}
+
+EncodedJSValue JSC_HOST_CALL functionCallerSourceOrigin(ExecState* state)
+{
+    SourceOrigin sourceOrigin = state->callerSourceOrigin();
+    if (sourceOrigin.isNull())
+        return JSValue::encode(jsNull());
+    return JSValue::encode(jsString(state, sourceOrigin.string()));
 }
 
 EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)
@@ -2404,7 +2419,7 @@ EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState* exec)
     String functionText = asString(exec->argument(0))->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    const SourceCode& source = makeSource(functionText);
+    const SourceCode& source = makeSource(functionText, { });
     JSFunction* func = JSFunction::createBuiltinFunction(vm, createBuiltinExecutable(vm, source, Identifier::fromString(&vm, "foo"), ConstructorKind::None, ConstructAbility::CannotConstruct)->link(vm, source), exec->lexicalGlobalObject());
 
     return JSValue::encode(func);
@@ -2428,7 +2443,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckModuleSyntax(ExecState* exec)
     stopWatch.start();
 
     ParserError error;
-    bool validSyntax = checkModuleSyntax(exec, makeSource(source, String(), TextPosition(), SourceProviderSourceType::Module), error);
+    bool validSyntax = checkModuleSyntax(exec, makeSource(source, { }, String(), TextPosition(), SourceProviderSourceType::Module), error);
     stopWatch.stop();
 
     if (!validSyntax)
@@ -2947,7 +2962,10 @@ static void runInteractive(GlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    String interpreterName(ASCIILiteral("Interpreter"));
+    std::optional<DirectoryName> directoryName = currentWorkingDirectory();
+    if (!directoryName)
+        return;
+    SourceOrigin sourceOrigin(resolvePath(directoryName.value(), ModuleName("interpreter")));
     
     bool shouldQuit = false;
     while (!shouldQuit) {
@@ -2962,7 +2980,7 @@ static void runInteractive(GlobalObject* globalObject)
                 break;
             source = source + line;
             source = source + '\n';
-            checkSyntax(globalObject->vm(), makeSource(source, interpreterName), error);
+            checkSyntax(globalObject->vm(), makeSource(source, sourceOrigin), error);
             if (!line[0]) {
                 free(line);
                 break;
@@ -2978,7 +2996,7 @@ static void runInteractive(GlobalObject* globalObject)
         
         
         NakedPtr<Exception> evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), makeSource(source, interpreterName), JSValue(), evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), makeSource(source, sourceOrigin), JSValue(), evaluationException);
 #else
         printf("%s", interactivePrompt);
         Vector<char, 256> line;
@@ -2993,7 +3011,7 @@ static void runInteractive(GlobalObject* globalObject)
             break;
 
         NakedPtr<Exception> evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, interpreterName), JSValue(), evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, sourceOrigin.string()), JSValue(), evaluationException);
 #endif
         if (evaluationException)
             printf("Exception: %s\n", evaluationException->value().toWTFString(globalObject->globalExec()).utf8().data());

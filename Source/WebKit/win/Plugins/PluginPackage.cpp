@@ -192,11 +192,6 @@ static void getListFromVariantArgs(JSC::ExecState* exec, const NPVariant* args, 
         aList.append(JSC::Bindings::convertNPVariantToValue(exec, &args[i], rootObject));
 }
 
-static inline JSC::SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition())
-{
-    return JSC::SourceCode(JSC::StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
-}
-
 static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* variant)
 {
     if (o->_class == NPScriptObjectClass) {
@@ -218,7 +213,7 @@ static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* vari
         JSC::ExecState* exec = globalObject->globalExec();
         String scriptString = JSC::Bindings::convertNPStringToUTF16(s);
 
-        JSC::JSValue returnValue = JSC::evaluate(exec, makeSource(scriptString), JSC::JSValue());
+        JSC::JSValue returnValue = JSC::evaluate(exec, JSC::makeSource(scriptString, { }), JSC::JSValue());
 
         JSC::Bindings::convertValueToNPVariant(exec, returnValue, variant);
         scope.clearException();

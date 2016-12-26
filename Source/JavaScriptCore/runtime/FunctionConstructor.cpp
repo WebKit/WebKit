@@ -76,7 +76,7 @@ CallType FunctionConstructor::getCallData(JSCell*, CallData& callData)
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const String& sourceURL, const TextPosition& position, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
+JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const SourceOrigin& sourceOrigin, const String& sourceURL, const TextPosition& position, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -84,12 +84,12 @@ JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const
     if (!globalObject->evalEnabled())
         return throwException(exec, scope, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
     scope.release();
-    return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceURL, position, -1, functionConstructionMode, newTarget);
+    return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceOrigin, sourceURL, position, -1, functionConstructionMode, newTarget);
 }
 
 JSObject* constructFunctionSkippingEvalEnabledCheck(
     ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, 
-    const Identifier& functionName, const String& sourceURL, 
+    const Identifier& functionName, const SourceOrigin& sourceOrigin, const String& sourceURL, 
     const TextPosition& position, int overrideLineNumber, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
     VM& vm = exec->vm();
@@ -143,7 +143,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         program = builder.toString();
     }
 
-    SourceCode source = makeSource(program, sourceURL, position);
+    SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
     JSObject* exception = nullptr;
     FunctionExecutable* function = FunctionExecutable::fromGlobalCode(functionName, *exec, source, exception, overrideLineNumber);
     if (!function) {
@@ -170,7 +170,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, FunctionConstructionMode functionConstructionMode, JSValue newTarget)
 {
-    return constructFunction(exec, globalObject, args, exec->propertyNames().anonymous, String(), TextPosition(), functionConstructionMode, newTarget);
+    return constructFunction(exec, globalObject, args, exec->propertyNames().anonymous, exec->callerSourceOrigin(), String(), TextPosition(), functionConstructionMode, newTarget);
 }
 
 } // namespace JSC

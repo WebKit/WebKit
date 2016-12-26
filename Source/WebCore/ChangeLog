@@ -1,3 +1,21 @@
+2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Propagate the source origin as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=166348
+
+        Reviewed by Darin Adler.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]):
+
 2016-12-24  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove (most) custom bindings for the IndexedDB code

@@ -36,7 +36,7 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length)))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, length) , m_##name##Source(makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
     JSC_FOREACH_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef EXPOSE_BUILTIN_STRINGS
 {
@@ -51,9 +51,9 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
     case ConstructorKind::None:
         break;
     case ConstructorKind::Base:
-        return createExecutable(m_vm, makeSource(baseConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutable(m_vm, makeSource(baseConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
     case ConstructorKind::Extends:
-        return createExecutable(m_vm, makeSource(derivedConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
+        return createExecutable(m_vm, makeSource(derivedConstructorCode, { }), name, constructorKind, ConstructAbility::CanConstruct);
     }
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -1,3 +1,106 @@
+2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Propagate the source origin as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=166348
+
+        Reviewed by Darin Adler.
+
+        This patch introduces CallFrame::callerSourceOrigin, SourceOrigin class
+        and SourceProvider::m_sourceOrigin. CallFrame::callerSourceOrigin returns
+        an appropriate SourceOrigin if possible. If we cannot find the appropriate
+        one, we just return null SourceOrigin.
+
+        This paves the way for implementing the module dynamic-import[1].
+        When the import operator is evaluated, it will resolve the module
+        specifier with this propagated source origin of the caller function.
+
+        To support import operator inside the dynamic code generation
+        functions (like `eval`, `new Function`, indirect call to `eval`),
+        we need to propagate the caller's source origin to the generated
+        source code.
+
+        We do not use sourceURL for that purpose. This is because we
+        would like to keep sourceURL for `eval` / `new Function` null.
+        This sourceURL will be used for the stack dump for errors with line/column
+        numbers. Dumping the caller's sourceURL with line/column numbers are
+        meaningless. So we would like to keep it null while we would like
+        to propagate SourceOrigin for dynamic imports.
+
+        [1]: https://github.com/tc39/proposal-dynamic-import
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::create):
+        (OpaqueJSScript::vm):
+        (OpaqueJSScript::OpaqueJSScript):
+        (parseScript):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/builtins/builtins_templates.py:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::BuiltinExecutables):
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluateWithScopeExtension):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::createInjectedScript):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::evaluateWithScopeExtension):
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::parse):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::callerSourceOrigin):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        * jsc.cpp:
+        (jscSource):
+        (GlobalObject::finishCreation):
+        (extractDirectoryName):
+        (currentWorkingDirectory):
+        (GlobalObject::moduleLoaderResolve):
+        (functionRunString):
+        (functionLoadString):
+        (functionCallerSourceOrigin):
+        (functionCreateBuiltin):
+        (functionCheckModuleSyntax):
+        (runInteractive):
+        * parser/SourceCode.h:
+        (JSC::makeSource):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::SourceProvider):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::sourceOrigin):
+        (JSC::StringSourceProvider::create):
+        (JSC::StringSourceProvider::StringSourceProvider):
+        (JSC::WebAssemblySourceProvider::create):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::sourceOrigin):
+        * runtime/SourceOrigin.h: Added.
+        (JSC::SourceOrigin::SourceOrigin):
+        (JSC::SourceOrigin::string):
+        (JSC::SourceOrigin::isNull):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+
 2016-12-24  Caio Lima  <ticaiolima@gmail.com>
 
         [test262] Fixing mapped arguments object property test case

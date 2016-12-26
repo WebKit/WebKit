@@ -40,6 +40,7 @@ public:
 
     const SourceCode& source() const { return m_source; }
     intptr_t sourceID() const { return m_source.providerID(); }
+    const SourceOrigin& sourceOrigin() const { return m_source.provider()->sourceOrigin(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
     int firstLine() const { return m_source.firstLine().oneBasedInt(); }
     void setOverrideLineNumber(int overrideLineNumber) { m_overrideLineNumber = overrideLineNumber; }

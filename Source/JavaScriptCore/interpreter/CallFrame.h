@@ -137,6 +137,8 @@ namespace JSC  {
         CallFrame* unsafeCallerFrame(VMEntryFrame*&);
         JS_EXPORT_PRIVATE CallFrame* callerFrame(VMEntryFrame*&);
 
+        JS_EXPORT_PRIVATE SourceOrigin callerSourceOrigin();
+
         static ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
         ReturnAddressPtr returnPC() const { return ReturnAddressPtr(callerFrameAndPC().pc); }

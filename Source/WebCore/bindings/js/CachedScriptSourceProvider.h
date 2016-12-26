@@ -48,7 +48,7 @@ public:
 
 private:
     CachedScriptSourceProvider(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType)
-        : SourceProvider(cachedScript->response().url(), TextPosition(), sourceType)
+        : SourceProvider(JSC::SourceOrigin { cachedScript->response().url() }, cachedScript->response().url(), TextPosition(), sourceType)
         , m_cachedScript(cachedScript)
     {
         m_cachedScript->addClient(*this);

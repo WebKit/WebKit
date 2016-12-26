@@ -43,7 +43,7 @@ namespace WebCore {
 class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, const URL& url = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
-        : m_provider(JSC::StringSourceProvider::create(source, url.isNull() ? String() : url.string(), startPosition, sourceType))
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url.string() }, url.string(), startPosition, sourceType))
         , m_code(m_provider, startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
         , m_url(url)
     {

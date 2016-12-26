@@ -138,7 +138,7 @@ JSC::JSObject* InjectedScriptManager::createInjectedScript(const String& source,
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    SourceCode sourceCode = makeSource(source);
+    SourceCode sourceCode = makeSource(source, { });
     JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
     JSValue globalThisValue = scriptState->globalThisValue();
 

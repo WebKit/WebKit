@@ -89,7 +89,7 @@ void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Inspec
     JSLockHolder lock(m_vm);
 
     ParserError error;
-    checkSyntax(m_vm, JSC::makeSource(expression), error);
+    checkSyntax(m_vm, JSC::makeSource(expression, { }), error);
 
     switch (error.syntaxErrorType()) {
     case ParserError::SyntaxErrorNone:

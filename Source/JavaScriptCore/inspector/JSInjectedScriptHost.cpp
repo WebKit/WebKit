@@ -107,7 +107,7 @@ JSValue JSInjectedScriptHost::evaluateWithScopeExtension(ExecState* exec)
 
     NakedPtr<Exception> exception;
     JSObject* scopeExtension = exec->argument(1).getObject();
-    JSValue result = JSC::evaluateWithScopeExtension(exec, makeSource(program), scopeExtension, exception);
+    JSValue result = JSC::evaluateWithScopeExtension(exec, makeSource(program, exec->callerSourceOrigin()), scopeExtension, exception);
     if (exception)
         throwException(exec, scope, exception);
 
