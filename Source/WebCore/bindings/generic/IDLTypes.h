@@ -170,10 +170,6 @@ struct IDLDate : IDLType<double> {
     static double extractValueFromNullable(double value) { return value; }
 };
 
-template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
-template<typename T> struct IDLEventListener : IDLWrapper<T> { };
-template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
-
 struct IDLJSON : IDLType<String> { 
     using ParameterType = const String&;
 
@@ -182,6 +178,11 @@ struct IDLJSON : IDLType<String> {
     static bool isNullValue(const String& value) { return value.isNull(); }
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
+
+template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
+template<typename T> struct IDLEventListener : IDLWrapper<T> { };
+template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
+template<typename T> struct IDLIDBKey : IDLWrapper<T> { };
 
 // Non-WebIDL convenience type aliases
 

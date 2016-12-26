@@ -71,7 +71,6 @@ Global=*
 Immutable
 ImplementedAs=*
 ImplementationLacksVTable
-ImplementationReturnType=*
 ImplicitThis
 InterfaceName=*
 IsImmutablePrototypeExoticObject

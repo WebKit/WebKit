@@ -56,14 +56,13 @@ public:
 
     void rollbackInfoForVersionChangeAbort();
 
-    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, IDBKeyRange*, const String& direction);
-    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, IDBKeyRange*, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, JSC::JSValue key, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, IDBKeyRange*, IDBCursorDirection);
+    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, JSC::JSValue key, IDBCursorDirection);
 
     ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, JSC::JSValue key);
-
-    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, IDBKeyRange*, const String& direction);
-    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
 
     ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, JSC::JSValue key);

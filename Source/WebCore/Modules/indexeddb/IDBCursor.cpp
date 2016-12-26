@@ -43,70 +43,10 @@
 #include <heap/HeapInlines.h>
 #include <heap/StrongInlines.h>
 #include <runtime/JSCJSValueInlines.h>
-#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 
 namespace WebCore {
-
-const AtomicString& IDBCursor::directionNext()
-{
-    static NeverDestroyed<AtomicString> next("next", AtomicString::ConstructFromLiteral);
-    return next;
-}
-
-const AtomicString& IDBCursor::directionNextUnique()
-{
-    static NeverDestroyed<AtomicString> nextunique("nextunique", AtomicString::ConstructFromLiteral);
-    return nextunique;
-}
-
-const AtomicString& IDBCursor::directionPrev()
-{
-    static NeverDestroyed<AtomicString> prev("prev", AtomicString::ConstructFromLiteral);
-    return prev;
-}
-
-const AtomicString& IDBCursor::directionPrevUnique()
-{
-    static NeverDestroyed<AtomicString> prevunique("prevunique", AtomicString::ConstructFromLiteral);
-    return prevunique;
-}
-
-std::optional<IndexedDB::CursorDirection> IDBCursor::stringToDirection(const String& directionString)
-{
-    if (directionString == directionNext())
-        return IndexedDB::CursorDirection::Next;
-    if (directionString == directionNextUnique())
-        return IndexedDB::CursorDirection::NextNoDuplicate;
-    if (directionString == directionPrev())
-        return IndexedDB::CursorDirection::Prev;
-    if (directionString == directionPrevUnique())
-        return IndexedDB::CursorDirection::PrevNoDuplicate;
-
-    return std::nullopt;
-}
-
-const AtomicString& IDBCursor::directionToString(IndexedDB::CursorDirection direction)
-{
-    switch (direction) {
-    case IndexedDB::CursorDirection::Next:
-        return directionNext();
-
-    case IndexedDB::CursorDirection::NextNoDuplicate:
-        return directionNextUnique();
-
-    case IndexedDB::CursorDirection::Prev:
-        return directionPrev();
-
-    case IndexedDB::CursorDirection::PrevNoDuplicate:
-        return directionPrevUnique();
-
-    default:
-        ASSERT_NOT_REACHED();
-        return directionNext();
-    }
-}
 
 Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {
@@ -121,7 +61,7 @@ Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBIndex& index, c
 IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
     : ActiveDOMObject(transaction.scriptExecutionContext())
     , m_info(info)
-    , m_objectStore(&objectStore)
+    , m_source(&objectStore)
 {
     ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
@@ -131,7 +71,7 @@ IDBCursor::IDBCursor(IDBTransaction& transaction, IDBObjectStore& objectStore, c
 IDBCursor::IDBCursor(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
     : ActiveDOMObject(transaction.scriptExecutionContext())
     , m_info(info)
-    , m_index(&index)
+    , m_source(&index)
 {
     ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
@@ -147,32 +87,24 @@ bool IDBCursor::sourcesDeleted() const
 {
     ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
 
-    if (m_objectStore)
-        return m_objectStore->isDeleted();
-
-    ASSERT(m_index);
-    return m_index->isDeleted() || m_index->objectStore().isDeleted();
+    return WTF::switchOn(m_source,
+        [] (const RefPtr<IDBObjectStore>& objectStore) { return objectStore->isDeleted(); },
+        [] (const RefPtr<IDBIndex>& index) { return index->isDeleted() || index->objectStore().isDeleted(); }
+    );
 }
 
 IDBObjectStore& IDBCursor::effectiveObjectStore() const
 {
-    if (m_objectStore)
-        return *m_objectStore;
-
-    ASSERT(m_index);
-    return m_index->objectStore();
+    return WTF::switchOn(m_source,
+        [] (const RefPtr<IDBObjectStore>& objectStore) -> IDBObjectStore& { return *objectStore; },
+        [] (const RefPtr<IDBIndex>& index) -> IDBObjectStore& { return index->objectStore(); }
+    );
 }
 
 IDBTransaction& IDBCursor::transaction() const
 {
     ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
     return effectiveObjectStore().transaction();
-}
-
-const String& IDBCursor::direction() const
-{
-    ASSERT(currentThread() == effectiveObjectStore().transaction().database().originThreadID());
-    return directionToString(m_info.cursorDirection());
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
@@ -251,7 +183,7 @@ ExceptionOr<void> IDBCursor::continuePrimaryKey(ExecState& state, JSValue keyVal
     if (sourcesDeleted())
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source or effective object store has been deleted.") };
 
-    if (!m_index)
+    if (!WTF::holds_alternative<RefPtr<IDBIndex>>(m_source))
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'continuePrimaryKey' on 'IDBCursor': The cursor's source is not an index.") };
 
     auto direction = m_info.cursorDirection();

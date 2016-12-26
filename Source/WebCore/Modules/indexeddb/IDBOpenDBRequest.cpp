@@ -136,7 +136,7 @@ void IDBOpenDBRequest::onSuccess(const IDBResultData& resultData)
     ASSERT(currentThread() == originThreadID());
 
     setResult(IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData));
-    m_isDone = true;
+    m_readyState = ReadyState::Done;
 
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().successEvent, false, false, *this));
 }
@@ -157,7 +157,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
     LOG(IndexedDB, "IDBOpenDBRequest::onUpgradeNeeded() - current version is %" PRIu64 ", new is %" PRIu64, oldVersion, newVersion);
 
     setResult(WTFMove(database));
-    m_isDone = true;
+    m_readyState = ReadyState::Done;
     m_transaction = WTFMove(transaction);
     m_transaction->addRequest(*this);
 
@@ -172,7 +172,7 @@ void IDBOpenDBRequest::onDeleteDatabaseSuccess(const IDBResultData& resultData)
 
     LOG(IndexedDB, "IDBOpenDBRequest::onDeleteDatabaseSuccess() - current version is %" PRIu64, oldVersion);
 
-    m_isDone = true;
+    m_readyState = ReadyState::Done;
     setResultToUndefined();
 
     enqueueEvent(IDBVersionChangeEvent::create(oldVersion, 0, eventNames().successEvent));

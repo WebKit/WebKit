@@ -1,3 +1,19 @@
+2016-12-25  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove (most) custom bindings for the IndexedDB code
+        https://bugs.webkit.org/show_bug.cgi?id=166451
+
+        Reviewed by Darin Adler.
+
+        * storage/indexeddb/exceptions-expected.txt:
+        * storage/indexeddb/exceptions-private-expected.txt:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics-private-expected.txt:
+        * storage/indexeddb/index-basics-workers-expected.txt:
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+        * storage/indexeddb/objectstore-cursor-private-expected.txt:
+        Update results for improved exception messages.
+
 2016-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r209299): Selection is broken when you zoom in webpage using trackpad

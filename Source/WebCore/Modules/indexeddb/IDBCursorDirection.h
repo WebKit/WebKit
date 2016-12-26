@@ -23,38 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSIDBRequest.h"
+#pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
-#include "JSIDBCursor.h"
-#include "JSIDBDatabase.h"
-#include "JSIDBIndex.h"
-#include "JSIDBObjectStore.h"
-
-using namespace JSC;
+#include "IndexedDB.h"
 
 namespace WebCore {
 
-JSValue JSIDBRequest::result(ExecState& state) const
-{
-    auto& request = wrapped();
+using IDBCursorDirection = IndexedDB::CursorDirection;
 
-    if (!request.isDone()) {
-        propagateException(state, Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to read the 'result' property from 'IDBRequest': The request has not finished.") });
-        return { };
-    }
-
-    if (auto* cursor = request.cursorResult())
-        return toJS(&state, globalObject(), *cursor);
-    if (auto* database = request.databaseResult())
-        return toJS(&state, globalObject(), *database);
-    if (auto result = request.scriptResult())
-        return result;
-    return jsNull();
 }
-
-} // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

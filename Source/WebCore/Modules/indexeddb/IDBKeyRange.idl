@@ -28,8 +28,11 @@
     ImplementationLacksVTable,
     EnabledAtRuntime=IndexedDB,
 ] interface IDBKeyRange {
-    [ImplementationReturnType=IDBKey] readonly attribute any lower;
-    [ImplementationReturnType=IDBKey] readonly attribute any upper;
+    // NOTE: The 'lower' and 'upper' attributes are specified to be of type 'any'
+    // but we use the extension type IDBKey, to allow code generator to know our
+    // which conversion to use based on our actual implementation type.
+    readonly attribute IDBKey lower;
+    readonly attribute IDBKey upper;
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 

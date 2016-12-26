@@ -150,7 +150,7 @@ bool IDBObjectStore::autoIncrement() const
     return m_info.autoIncrement();
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, RefPtr<IDBKeyRange> range, const String& directionString)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, RefPtr<IDBKeyRange> range, IDBCursorDirection direction)
 {
     LOG(IndexedDB, "IDBObjectStore::openCursor");
     ASSERT(currentThread() == m_transaction.database().originThreadID());
@@ -161,15 +161,11 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, Re
     if (!m_transaction.isActive())
         return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'openCursor' on 'IDBObjectStore': The transaction is inactive or finished.") };
 
-    auto direction = IDBCursor::stringToDirection(directionString);
-    if (!direction)
-        return Exception { TypeError };
-
-    auto info = IDBCursorInfo::objectStoreCursor(m_transaction, m_info.identifier(), range.get(), direction.value(), IndexedDB::CursorType::KeyAndValue);
+    auto info = IDBCursorInfo::objectStoreCursor(m_transaction, m_info.identifier(), range.get(), direction, IndexedDB::CursorType::KeyAndValue);
     return m_transaction.requestOpenCursor(execState, *this, info);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, JSValue key, const String& direction)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
 {
     auto onlyResult = IDBKeyRange::only(execState, key);
     if (onlyResult.hasException())
@@ -178,7 +174,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openCursor(ExecState& execState, JS
     return openCursor(execState, onlyResult.releaseReturnValue(), direction);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState, RefPtr<IDBKeyRange> range, const String& directionString)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState, RefPtr<IDBKeyRange> range, IDBCursorDirection direction)
 {
     LOG(IndexedDB, "IDBObjectStore::openCursor");
     ASSERT(currentThread() == m_transaction.database().originThreadID());
@@ -189,15 +185,11 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState,
     if (!m_transaction.isActive())
         return Exception { IDBDatabaseException::TransactionInactiveError, ASCIILiteral("Failed to execute 'openKeyCursor' on 'IDBObjectStore': The transaction is inactive or finished.") };
 
-    auto direction = IDBCursor::stringToDirection(directionString);
-    if (!direction)
-        return Exception { TypeError };
-
-    auto info = IDBCursorInfo::objectStoreCursor(m_transaction, m_info.identifier(), range.get(), direction.value(), IndexedDB::CursorType::KeyOnly);
+    auto info = IDBCursorInfo::objectStoreCursor(m_transaction, m_info.identifier(), range.get(), direction, IndexedDB::CursorType::KeyOnly);
     return m_transaction.requestOpenCursor(execState, *this, info);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState, JSValue key, const String& direction)
+ExceptionOr<Ref<IDBRequest>> IDBObjectStore::openKeyCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
 {
     auto onlyResult = IDBKeyRange::only(execState, key);
     if (onlyResult.hasException())

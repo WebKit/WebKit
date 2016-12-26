@@ -31,8 +31,8 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface IDBCursor {
-    [CustomGetter] readonly attribute any source;
-    readonly attribute DOMString direction;
+    readonly attribute (IDBObjectStore or IDBIndex) source;
+    readonly attribute IDBCursorDirection direction;
     readonly attribute any key;
     readonly attribute any primaryKey;
 

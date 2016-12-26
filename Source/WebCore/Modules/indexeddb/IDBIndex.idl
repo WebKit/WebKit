@@ -23,6 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// NOTE: This type is specified as 'any' in the IndexedDB specification, but is always
+// constrained to this union.
+typedef (DOMString or sequence<DOMString>) IDBKeyPath;
+
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
@@ -32,15 +36,15 @@
 ] interface IDBIndex {
     [SetterMayThrowException] attribute DOMString name;
     readonly attribute IDBObjectStore objectStore;
-    [ImplementationReturnType=IDBKeyPath] readonly attribute any keyPath;
+    readonly attribute IDBKeyPath? keyPath;
     readonly attribute boolean multiEntry;
     readonly attribute boolean unique;
 
-    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
-    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(any key, optional DOMString direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
 
-    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
-    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(any key, optional DOMString direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
 
     [CallWith=ScriptState, MayThrowException] IDBRequest get(IDBKeyRange? key);
     [CallWith=ScriptState, MayThrowException] IDBRequest get(any key);
@@ -53,4 +57,3 @@
     [CallWith=ScriptState, MayThrowException] IDBRequest count(optional IDBKeyRange? range = null);
     [CallWith=ScriptState, MayThrowException] IDBRequest count(any key);
 };
-

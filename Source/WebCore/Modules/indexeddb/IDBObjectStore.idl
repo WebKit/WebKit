@@ -23,6 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// NOTE: This type is specified as 'any' in the IndexedDB specification, but is always
+// constrained to this union.
+typedef (DOMString or sequence<DOMString>) IDBKeyPath;
+
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
@@ -31,7 +35,7 @@
     SkipVTableValidation,
 ] interface IDBObjectStore {
     [SetterMayThrowException] attribute DOMString name;
-    [ImplementationReturnType=IDBKeyPath] readonly attribute any keyPath;
+    readonly attribute IDBKeyPath? keyPath;
     readonly attribute DOMStringList indexNames;
     readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
@@ -45,10 +49,10 @@
     [CallWith=ScriptState, MayThrowException] IDBRequest getKey(IDBKeyRange? key);
     [CallWith=ScriptState, MayThrowException] IDBRequest getKey(any key);
     [CallWith=ScriptState, MayThrowException] IDBRequest clear();
-    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
-    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(any key, optional DOMString direction = "next");
-    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
-    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(any key, optional DOMString direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(any key, optional IDBCursorDirection direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional IDBCursorDirection direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(any key, optional IDBCursorDirection direction = "next");
     [CallWith=ScriptState, MayThrowException] IDBRequest getAll(optional IDBKeyRange? range = null, [EnforceRange] optional unsigned long count);
     [CallWith=ScriptState, MayThrowException] IDBRequest getAll(any key,  [EnforceRange] optional unsigned long count);
     [CallWith=ScriptState, MayThrowException] IDBRequest getAllKeys(optional IDBKeyRange? range = null, [EnforceRange] optional unsigned long count);

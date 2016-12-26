@@ -182,6 +182,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/indexeddb/DOMWindowIndexedDatabase.idl
     Modules/indexeddb/IDBCursor.idl
+    Modules/indexeddb/IDBCursorDirection.idl
     Modules/indexeddb/IDBCursorWithValue.idl
     Modules/indexeddb/IDBDatabase.idl
     Modules/indexeddb/IDBFactory.idl

@@ -127,6 +127,7 @@ public:
             m_executableWithDatabase->requestCallback().sendFailure("Could not get result in callback.");
             return;
         }
+
         auto databaseResult = request.databaseResult();
         if (!databaseResult) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
@@ -365,10 +366,12 @@ public:
             m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
+        
         if (request.scriptResult()) {
             end(false);
             return;
         }
+        
         auto* cursorResult = request.cursorResult();
         if (!cursorResult) {
             end(false);
@@ -468,13 +471,13 @@ public:
             }
 
             if (exec) {
-                auto result = idbIndex->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext());
+                auto result = idbIndex->openCursor(*exec, m_idbKeyRange.get(), IDBCursorDirection::Next);
                 if (!result.hasException())
                     idbRequest = result.releaseReturnValue();
             }
         } else {
             if (exec) {
-                auto result = idbObjectStore->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext());
+                auto result = idbObjectStore->openCursor(*exec, m_idbKeyRange.get(), IDBCursorDirection::Next);
                 if (!result.hasException())
                     idbRequest = result.releaseReturnValue();
             }

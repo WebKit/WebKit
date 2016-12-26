@@ -132,7 +132,7 @@ static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::Cu
         builder.append('<');
 
     builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
-    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate)
+    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique)
         builder.appendLiteral(" DESC");
 
     builder.appendLiteral(", value");
@@ -164,7 +164,7 @@ static String buildObjectStoreStatement(const IDBKeyRangeData& keyRange, Indexed
 
     builder.appendLiteral(" CAST(? AS TEXT) ORDER BY key");
 
-    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate)
+    if (cursorDirection == IndexedDB::CursorDirection::Prev || cursorDirection == IndexedDB::CursorDirection::Prevunique)
         builder.appendLiteral(" DESC");
 
     builder.append(';');
@@ -221,7 +221,7 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
     m_statementNeedsReset = true;
     ASSERT(!m_fetchedRecords.isEmpty());
 
-    if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
+    if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::Nextunique) {
         m_currentLowerKey = m_fetchedRecords.first().record.key;
         if (!m_keyRange.lowerOpen) {
             m_keyRange.lowerOpen = true;
@@ -366,7 +366,7 @@ bool SQLiteIDBCursor::fetch()
 
     m_fetchedRecords.append({ });
 
-    bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate || m_cursorDirection == IndexedDB::CursorDirection::PrevNoDuplicate;
+    bool isUnique = m_cursorDirection == IndexedDB::CursorDirection::Nextunique || m_cursorDirection == IndexedDB::CursorDirection::Prevunique;
     if (!isUnique)
         return fetchNextRecord(m_fetchedRecords.last());
 
@@ -509,7 +509,7 @@ bool SQLiteIDBCursor::iterate(const IDBKeyData& targetKey, const IDBKeyData& tar
             return false;
 
         // Search for the next key >= the target if the cursor is a Next cursor, or the next key <= if the cursor is a Previous cursor.
-        if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
+        if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::Nextunique) {
             if (m_fetchedRecords.first().record.key.compare(targetKey) >= 0)
                 break;
         } else if (m_fetchedRecords.first().record.key.compare(targetKey) <= 0)
@@ -524,7 +524,7 @@ bool SQLiteIDBCursor::iterate(const IDBKeyData& targetKey, const IDBKeyData& tar
                 return false;
 
             // Search for the next primary key >= the primary target if the cursor is a Next cursor, or the next key <= if the cursor is a Previous cursor.
-            if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::NextNoDuplicate) {
+            if (m_cursorDirection == IndexedDB::CursorDirection::Next || m_cursorDirection == IndexedDB::CursorDirection::Nextunique) {
                 if (m_fetchedRecords.first().record.primaryKey.compare(targetPrimaryKey) >= 0)
                     break;
             } else if (m_fetchedRecords.first().record.primaryKey.compare(targetPrimaryKey) <= 0)

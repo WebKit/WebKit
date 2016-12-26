@@ -1,3 +1,112 @@
+2016-12-24  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove (most) custom bindings for the IndexedDB code
+        https://bugs.webkit.org/show_bug.cgi?id=166451
+
+        Reviewed by Darin Adler.
+
+        Removes the custom bindings for all but one attribute (IDBRequest.result) in
+        the IndexedDB code.
+        - Adds a new WebIDL extension type, IDBKey, to represent the complex key conversion
+          rules IndexedDB specifies.
+        - Replaces custom bindings for IDBCursor.source with use of a union.
+        - Replaces custom enum type checking for IDBCursor.direction with a WebIDL enum.
+        - Replaces custom code generation for IDBKeyPaths with a union.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::source):
+        (WebCore::IDBCursor::direction):
+        (WebCore::IDBCursor::directionNext): Deleted.
+        (WebCore::IDBCursor::directionNextUnique): Deleted.
+        (WebCore::IDBCursor::directionPrev): Deleted.
+        (WebCore::IDBCursor::directionPrevUnique): Deleted.
+        (WebCore::IDBCursor::stringToDirection): Deleted.
+        (WebCore::IDBCursor::directionToString): Deleted.
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::objectStore): Deleted.
+        (WebCore::IDBCursor::index): Deleted.
+        Replace custom enum checking with direct use of the enum, letting the generator
+        handle the checks. Also adds source function which returns a Variant.
+
+        * Modules/indexeddb/IDBCursor.idl:
+        Remove custom annotation and use correct types.
+
+        * Modules/indexeddb/IDBCursorDirection.h: Added.
+        * Modules/indexeddb/IDBCursorDirection.idl: Added.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::openKeyCursor):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        Replace Strings with IDBCursorDirection enums.
+
+        * Modules/indexeddb/IDBKeyRange.idl:
+        Remove annotation and use new IDBKey extension type.
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore::IDBOpenDBRequest::onDeleteDatabaseSuccess):
+        Use ReadyState enum in place of the old m_isDone boolean.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::error):
+        (WebCore::IDBRequest::source):
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::willIterateCursor):
+        (WebCore::IDBRequest::completeRequestAndDispatchEvent):
+        (WebCore::IDBRequest::readyState): Deleted.
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::readyState):
+        (WebCore::IDBRequest::isDone):
+        (WebCore::IDBRequest::objectStoreSource): Deleted.
+        (WebCore::IDBRequest::indexSource): Deleted.
+        (WebCore::IDBRequest::cursorSource): Deleted.
+        * Modules/indexeddb/IDBRequest.idl:
+        Replace the readyState String with a enum, and the custom source binding with a
+        source function that returns a Variant.
+
+        * Modules/indexeddb/IndexedDB.h:
+        Add the missing values to CursorDirection to make it comply with the IDL definition.
+
+        * bindings/generic/IDLTypes.h:
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::JSConverter<IDLIDBKey<T>>::convert):
+        Add new extension type IDLIDBKey.
+
+        * bindings/js/JSIDBCursorCustom.cpp:
+        (WebCore::JSIDBCursor::source): Deleted.
+        * bindings/js/JSIDBRequestCustom.cpp:
+        (WebCore::JSIDBRequest::source): Deleted.
+        Remove custom bindings.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetBaseIDLType):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        (NativeToJSValue):
+        Add support for IDBKey, and remove custom code for IndexedDB in core conversion logic.
+
+        * bindings/scripts/IDLAttributes.txt:
+        Remove now unused ImplementationReturnType attribute.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        Update to work with new functions taking enums rather than strings.
+
 2016-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r209299): Selection is broken when you zoom in webpage using trackpad

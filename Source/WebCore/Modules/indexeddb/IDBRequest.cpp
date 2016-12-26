@@ -48,7 +48,7 @@
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
 #include <heap/StrongInlines.h>
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Variant.h>
 
 using namespace JSC;
 
@@ -101,12 +101,15 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     : IDBActiveDOMObject(&context)
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
-    , m_objectStoreSource(cursor.objectStore())
-    , m_indexSource(cursor.index())
     , m_pendingCursor(&cursor)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
     suspendIfNeeded();
+
+    WTF::switchOn(cursor.source(),
+        [this] (const RefPtr<IDBIndex>& index) { this->m_indexSource = index; },
+        [this] (const RefPtr<IDBObjectStore>& objectStore) { this->m_objectStoreSource = objectStore; }
+    );
 
     cursor.setRequest(*this);
 }
@@ -150,10 +153,22 @@ ExceptionOr<DOMError*> IDBRequest::error() const
 {
     ASSERT(currentThread() == originThreadID());
 
-    if (!m_isDone)
+    if (!isDone())
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to read the 'error' property from 'IDBRequest': The request has not finished.") };
 
     return m_domError.get();
+}
+
+std::optional<IDBRequest::Source> IDBRequest::source() const
+{
+    if (m_cursorSource)
+        return Source { m_cursorSource };
+    if (m_indexSource)
+        return Source { m_indexSource };
+    if (m_objectStoreSource)
+        return Source { m_objectStoreSource };
+
+    return std::nullopt;
 }
 
 void IDBRequest::setSource(IDBCursor& cursor)
@@ -184,15 +199,6 @@ RefPtr<WebCore::IDBTransaction> IDBRequest::transaction() const
 {
     ASSERT(currentThread() == originThreadID());
     return m_shouldExposeTransactionToDOM ? m_transaction : nullptr;
-}
-
-const String& IDBRequest::readyState() const
-{
-    ASSERT(currentThread() == originThreadID());
-
-    static NeverDestroyed<String> pendingString(ASCIILiteral("pending"));
-    static NeverDestroyed<String> doneString(ASCIILiteral("done"));
-    return m_isDone ? doneString : pendingString;
 }
 
 uint64_t IDBRequest::sourceObjectStoreIdentifier() const
@@ -292,7 +298,7 @@ bool IDBRequest::dispatchEvent(Event& event)
     ASSERT(!m_contextStopped);
 
     if (event.type() != eventNames().blockedEvent)
-        m_isDone = true;
+        m_readyState = ReadyState::Done;
 
     Vector<RefPtr<EventTarget>> targets;
     targets.append(this);
@@ -457,7 +463,7 @@ IDBCursor* IDBRequest::resultCursor()
 void IDBRequest::willIterateCursor(IDBCursor& cursor)
 {
     ASSERT(currentThread() == originThreadID());
-    ASSERT(m_isDone);
+    ASSERT(isDone());
     ASSERT(scriptExecutionContext());
     ASSERT(m_transaction);
     ASSERT(!m_pendingCursor);
@@ -467,7 +473,7 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_pendingCursor = &cursor;
     m_hasPendingActivity = true;
     clearResult();
-    m_isDone = false;
+    m_readyState = ReadyState::Pending;
     m_domError = nullptr;
     m_idbError = { };
 
@@ -499,7 +505,7 @@ void IDBRequest::completeRequestAndDispatchEvent(const IDBResultData& resultData
 {
     ASSERT(currentThread() == originThreadID());
 
-    m_isDone = true;
+    m_readyState = ReadyState::Done;
 
     m_idbError = resultData.error();
     if (!m_idbError.isNull())
