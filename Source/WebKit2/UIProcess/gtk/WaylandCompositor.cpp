@@ -214,7 +214,7 @@ bool WaylandCompositor::Surface::prepareTextureForPainting(unsigned& texture, In
     glImageTargetTexture2D(GL_TEXTURE_2D, m_image);
 
     texture = m_texture;
-    textureSize = m_buffer->size();
+    textureSize = m_imageSize;
     return true;
 }
 
@@ -226,6 +226,8 @@ void WaylandCompositor::Surface::commit()
     m_image = m_pendingBuffer->createImage();
     if (m_image == EGL_NO_IMAGE_KHR)
         return;
+
+    m_imageSize = m_pendingBuffer->size();
 
     makePendingBufferCurrent();
     if (m_webPage)

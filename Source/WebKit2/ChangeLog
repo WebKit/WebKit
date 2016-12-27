@@ -1,3 +1,19 @@
+2016-11-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] UI process crash in WebKit::WaylandCompositor::Surface::prepareTextureForPainting
+        https://bugs.webkit.org/show_bug.cgi?id=164911
+
+        Reviewed by Michael Catanzaro.
+
+        The problem is that m_buffer is nullptr in Surface::prepareTextureForPainting() even though we have already an
+        image. We only use the buffer to get the image size, so we could save the image size when the image is created,
+        and then we don't need to care about the buffer anymore.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::prepareTextureForPainting):
+        (WebKit::WaylandCompositor::Surface::commit):
+        * UIProcess/gtk/WaylandCompositor.h:
+
 2016-11-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] BadDamage X Window System error in WebKit::AcceleratedBackingStoreX11::update when called from WebPageProxy::exitAcceleratedCompositingMode
