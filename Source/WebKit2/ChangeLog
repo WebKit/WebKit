@@ -1,3 +1,26 @@
+2016-12-27  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Ensure NetworkProcess is ready before whitelisting TLS certificates
+        https://bugs.webkit.org/show_bug.cgi?id=162962
+
+        Reviewed by Alex Christensen.
+
+        If the API user tries to whitelist TLS certificates before any web
+        view has been created, the action will be ignored because the
+        NetworkProcess hasn't been fired up yet.
+
+        For example, the snippet below using the GTK+ API does not work,
+        unless the whitelisting is moved after the web view creation:
+
+          webkit_web_context_allow_tls_certificate_for_host(webkit_web_context_get_default(), crt, host);
+          webView = webkit_web_view_new();
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::allowSpecificHTTPSCertificateForHost): Ensure
+        that the NetworkProcess has been already fired up when adding
+        certificates, so they can be whitelisted before the first web view is
+        instantiated.
+
 2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Propagate the source origin as much as possible
