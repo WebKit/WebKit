@@ -158,6 +158,7 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     float deviceScaleFactor = m_webPage.deviceScaleFactor();
     size.scale(deviceScaleFactor);
 
+    XErrorTrapper trapper(display, XErrorTrapper::Policy::Crash, { BadDrawable, BadDamage });
     ASSERT(downcast<PlatformDisplayX11>(PlatformDisplay::sharedDisplay()).native() == GDK_DISPLAY_XDISPLAY(gdk_display_get_default()));
     GdkVisual* visual = gdk_screen_get_rgba_visual(gdk_screen_get_default());
     if (!visual)
