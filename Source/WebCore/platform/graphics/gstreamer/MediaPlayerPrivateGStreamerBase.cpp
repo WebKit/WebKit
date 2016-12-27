@@ -555,14 +555,21 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
 #if USE(GSTREAMER_GL)
-    pushTextureToCompositor();
+    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
+        pushTextureToCompositor();
+    else {
+        LockHolder locker(m_drawMutex);
+        m_drawTimer.startOneShot(0);
+        m_drawCondition.wait(m_drawMutex);
+    }
 #else
-    {
+    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player)) {
         LockHolder lock(m_drawMutex);
         if (!m_platformLayerProxy->scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); }))
             return;
         m_drawCondition.wait(m_drawMutex);
-    }
+    } else
+        repaint();
 #endif
     return;
 #else
