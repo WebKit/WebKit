@@ -24,8 +24,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DOpenGLCommon_h
-#define Extensions3DOpenGLCommon_h
+#pragma once
 
 #include "Extensions3D.h"
 
@@ -96,5 +95,3 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // Extensions3DOpenGLCommon_h

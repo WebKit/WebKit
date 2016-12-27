@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context)
-    : Extensions3DOpenGLCommon(context)
+Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context, bool useIndexedGetString)
+    : Extensions3DOpenGLCommon(context, useIndexedGetString)
     , m_contextResetStatus(GL_NO_ERROR)
     , m_supportsOESvertexArrayObject(false)
     , m_supportsIMGMultisampledRenderToTexture(false)
