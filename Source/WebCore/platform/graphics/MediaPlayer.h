@@ -196,6 +196,9 @@ public:
     // availability of the platformLayer().
     virtual void mediaPlayerRenderingModeChanged(MediaPlayer*) { }
 
+    // whether accelerated compositing is enabled for video rendering
+    virtual bool mediaPlayerAcceleratedCompositingEnabled() { return false; }
+
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const { return 0; }
 #endif

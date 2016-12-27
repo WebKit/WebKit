@@ -4581,6 +4581,11 @@ void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
     setNeedsStyleRecalc(SyntheticStyleChange);
 }
 
+bool HTMLMediaElement::mediaPlayerAcceleratedCompositingEnabled()
+{
+    return document().settings() && document().settings()->acceleratedCompositingEnabled();
+}
+
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 
 GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const
