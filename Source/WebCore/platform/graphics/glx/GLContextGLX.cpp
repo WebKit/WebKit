@@ -249,6 +249,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createSharingContext(PlatformDisplay
 
 GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, GLNativeWindowType window)
     : GLContext(display)
+    , m_x11Display(downcast<PlatformDisplayX11>(m_display).native())
     , m_context(WTFMove(context))
     , m_window(static_cast<Window>(window))
 {
@@ -256,6 +257,7 @@ GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context
 
 GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XUniqueGLXPbuffer&& pbuffer)
     : GLContext(display)
+    , m_x11Display(downcast<PlatformDisplayX11>(m_display).native())
     , m_context(WTFMove(context))
     , m_pbuffer(WTFMove(pbuffer))
 {
@@ -263,6 +265,7 @@ GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context
 
 GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XUniquePixmap&& pixmap, XUniqueGLXPixmap&& glxPixmap)
     : GLContext(display)
+    , m_x11Display(downcast<PlatformDisplayX11>(m_display).native())
     , m_context(WTFMove(context))
     , m_pixmap(WTFMove(pixmap))
     , m_glxPixmap(WTFMove(glxPixmap))
@@ -276,7 +279,7 @@ GLContextGLX::~GLContextGLX()
 
     if (m_context) {
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        glXMakeCurrent(downcast<PlatformDisplayX11>(m_display).native(), None, None);
+        glXMakeCurrent(m_x11Display, None, None);
     }
 }
 
@@ -293,7 +296,7 @@ IntSize GLContextGLX::defaultFrameBufferSize()
     int x, y;
     Window rootWindow;
     unsigned int width, height, borderWidth, depth;
-    if (!XGetGeometry(downcast<PlatformDisplayX11>(m_display).native(), m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
+    if (!XGetGeometry(m_x11Display, m_window, &rootWindow, &x, &y, &width, &height, &borderWidth, &depth))
         return IntSize();
 
     return IntSize(width, height);
@@ -307,20 +310,19 @@ bool GLContextGLX::makeContextCurrent()
     if (glXGetCurrentContext() == m_context.get())
         return true;
 
-    Display* display = downcast<PlatformDisplayX11>(m_display).native();
     if (m_window)
-        return glXMakeCurrent(display, m_window, m_context.get());
+        return glXMakeCurrent(m_x11Display, m_window, m_context.get());
 
     if (m_pbuffer)
-        return glXMakeCurrent(display, m_pbuffer.get(), m_context.get());
+        return glXMakeCurrent(m_x11Display, m_pbuffer.get(), m_context.get());
 
-    return ::glXMakeCurrent(display, m_glxPixmap.get(), m_context.get());
+    return ::glXMakeCurrent(m_x11Display, m_glxPixmap.get(), m_context.get());
 }
 
 void GLContextGLX::swapBuffers()
 {
     if (m_window)
-        glXSwapBuffers(downcast<PlatformDisplayX11>(m_display).native(), m_window);
+        glXSwapBuffers(m_x11Display, m_window);
 }
 
 void GLContextGLX::waitNative()
@@ -330,7 +332,7 @@ void GLContextGLX::waitNative()
 
 void GLContextGLX::swapInterval(int interval)
 {
-    if (!hasSGISwapControlExtension(downcast<PlatformDisplayX11>(m_display).native()))
+    if (!hasSGISwapControlExtension(m_x11Display))
         return;
     glXSwapIntervalSGI(interval);
 }
@@ -341,7 +343,7 @@ cairo_device_t* GLContextGLX::cairoDevice()
         return m_cairoDevice;
 
 #if ENABLE(ACCELERATED_2D_CANVAS) && CAIRO_HAS_GLX_FUNCTIONS
-    m_cairoDevice = cairo_glx_device_create(downcast<PlatformDisplayX11>(m_display).native(), m_context.get());
+    m_cairoDevice = cairo_glx_device_create(m_x11Display, m_context.get());
 #endif
 
     return m_cairoDevice;

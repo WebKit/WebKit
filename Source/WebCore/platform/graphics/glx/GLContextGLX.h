@@ -28,6 +28,7 @@
 typedef unsigned char GLubyte;
 typedef unsigned long Window;
 typedef void* ContextKeyType;
+typedef struct _XDisplay Display;
 
 namespace WebCore {
 
@@ -61,6 +62,7 @@ private:
     static std::unique_ptr<GLContextGLX> createPbufferContext(PlatformDisplay&, GLXContext sharingContext = nullptr);
     static std::unique_ptr<GLContextGLX> createPixmapContext(PlatformDisplay&, GLXContext sharingContext = nullptr);
 
+    Display* m_x11Display { nullptr };
     XUniqueGLXContext m_context;
     Window m_window { 0 };
     XUniqueGLXPbuffer m_pbuffer;
