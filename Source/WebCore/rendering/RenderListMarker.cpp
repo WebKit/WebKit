@@ -1189,14 +1189,16 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     LayoutRect box(boxOrigin, size());
     
-    FloatRect marker = getRelativeMarkerRect();
-    marker.moveBy(boxOrigin);
+    auto markerRect = getRelativeMarkerRect();
+    markerRect.moveBy(boxOrigin);
+    if (markerRect.isEmpty())
+        return;
 
     GraphicsContext& context = paintInfo.context();
 
     if (isImage()) {
-        if (RefPtr<Image> markerImage = m_image->image(this, marker.size()))
-            context.drawImage(*markerImage, marker);
+        if (RefPtr<Image> markerImage = m_image->image(this, markerRect.size()))
+            context.drawImage(*markerImage, markerRect);
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
@@ -1220,14 +1222,14 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     EListStyleType type = style().listStyleType();
     switch (type) {
         case Disc:
-            context.drawEllipse(marker);
+            context.drawEllipse(markerRect);
             return;
         case Circle:
             context.setFillColor(Color::transparent);
-            context.drawEllipse(marker);
+            context.drawEllipse(markerRect);
             return;
         case Square:
-            context.drawRect(marker);
+            context.drawRect(markerRect);
             return;
         case NoneListStyle:
             return;
@@ -1318,16 +1320,16 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     GraphicsContextStateSaver stateSaver(context, false);
     if (!style().isHorizontalWritingMode()) {
-        marker.moveBy(-boxOrigin);
-        marker = marker.transposedRect();
-        marker.moveBy(FloatPoint(box.x(), box.y() - logicalHeight()));
+        markerRect.moveBy(-boxOrigin);
+        markerRect = markerRect.transposedRect();
+        markerRect.moveBy(FloatPoint(box.x(), box.y() - logicalHeight()));
         stateSaver.save();
-        context.translate(marker.x(), marker.maxY());
+        context.translate(markerRect.x(), markerRect.maxY());
         context.rotate(static_cast<float>(deg2rad(90.)));
-        context.translate(-marker.x(), -marker.maxY());
+        context.translate(-markerRect.x(), -markerRect.maxY());
     }
 
-    FloatPoint textOrigin = FloatPoint(marker.x(), marker.y() + style().fontMetrics().ascent());
+    FloatPoint textOrigin = FloatPoint(markerRect.x(), markerRect.y() + style().fontMetrics().ascent());
     textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), document().deviceScaleFactor(), style().isLeftToRightDirection());
 
     if (type == Asterisks || type == Footnotes)

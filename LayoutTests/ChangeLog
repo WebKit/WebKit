@@ -1,3 +1,13 @@
+2016-12-26  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !rect.isEmpty() in WebCore::GraphicsContext::drawRect
+        https://bugs.webkit.org/show_bug.cgi?id=163461
+
+        Reviewed by Darin Adler.
+
+        * fast/lists/assert-on-empty-list-marker-expected.txt: Added.
+        * fast/lists/assert-on-empty-list-marker.html: Added.
+
 2016-12-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Headers of table not read by VoiceOver
