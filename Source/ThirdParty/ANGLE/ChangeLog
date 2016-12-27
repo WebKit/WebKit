@@ -1,3 +1,36 @@
+2016-10-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wpragmas warning spam from angleutils.h
+        https://bugs.webkit.org/show_bug.cgi?id=164207
+
+        Reviewed by Darin Adler.
+
+        Use #pragma clang instead of #pragma GCC since all of the warnings we need to suppress are
+        Clang-specific warnings. GCC ignores unknown pragmas and does not warn, but it does warn if
+        any GCC pragma is invalid.
+
+        Note that this might still be broken for MSVCC, as MSVCC warns when it sees unknown pragmas.
+
+        * changes.diff:
+        * src/common/angleutils.cpp:
+        (FormatString):
+        * src/common/angleutils.h:
+        (MakeStaticString):
+        * src/common/debug.cpp:
+        * src/common/mathutil.cpp:
+        * src/libANGLE/Caps.cpp:
+        (gl::TextureCapsMap::get):
+        (gl::GetExtensionInfoMap):
+        * src/libANGLE/Device.cpp:
+        (egl::GetDeviceSet):
+        * src/libANGLE/Display.cpp:
+        (egl::Display::getClientExtensionString):
+        * src/libANGLE/formatutils.cpp:
+        (gl::GetInternalFormatMap):
+        (gl::GetAllSizedInternalFormats):
+        * src/libANGLE/validationES3.cpp:
+        (gl::IsValidES3CopyTexImageCombination):
+
 2016-10-28  Alex Christensen  <achristensen@webkit.org>
 
         Another build fix.

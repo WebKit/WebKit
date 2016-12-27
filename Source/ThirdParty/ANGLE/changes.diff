@@ -135,10 +135,10 @@ index 7099c21..4641928 100644
  
  std::string FormatString(const char *fmt, va_list vararg)
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static std::vector<char> buffer(512);
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
  
      size_t len = FormatStringIntoVector(fmt, vararg, buffer);
      return std::string(&buffer[0], len);
@@ -150,10 +150,10 @@ index f5ef7bd..4cb556c 100644
  
  inline const char* MakeStaticString(const std::string &str)
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static std::set<std::string> strings;
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      std::set<std::string>::iterator it = strings.find(str);
      if (it != strings.end())
      {
@@ -165,10 +165,10 @@ index 746da5e..47e1565 100644
  {
      if (DebugAnnotationsActive())
      {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
          static std::vector<char> buffer(512);
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
          size_t len = FormatStringIntoVector(format, vararg, buffer);
          std::wstring formattedWideMessage(buffer.begin(), buffer.begin() + len);
  
@@ -180,12 +180,12 @@ index acbcbdf..ba6da52 100644
  // Emax is the maximum allowed biased exponent value (31)
  static const int g_sharedexp_maxexponent = 31;
  
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wglobal-constructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wglobal-constructors"
  static const float g_sharedexp_max = ((pow(2.0f, g_sharedexp_mantissabits) - 1) /
                                         pow(2.0f, g_sharedexp_mantissabits)) *
                                       pow(2.0f, g_sharedexp_maxexponent - g_sharedexp_bias);
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
  
  unsigned int convertRGBFloatsTo999E5(float red, float green, float blue)
  {
@@ -394,10 +394,10 @@ index 47e1cf0..0f4d69d 100644
  
  const TextureCaps &TextureCapsMap::get(GLenum internalFormat) const
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static TextureCaps defaultUnsupportedTexture;
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      InternalFormatToCapsMap::const_iterator iter = mCapsMap.find(internalFormat);
      return (iter != mCapsMap.end()) ? iter->second : defaultUnsupportedTexture;
  }
@@ -405,10 +405,10 @@ index 47e1cf0..0f4d69d 100644
          return map;
      };
  
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static const ExtensionInfoMap extensionInfo = buildExtensionInfoMap();
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return extensionInfo;
  }
  
@@ -420,10 +420,10 @@ index eb30b20..a94d500 100644
  typedef std::set<egl::Device *> DeviceSet;
  static DeviceSet *GetDeviceSet()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static DeviceSet devices;
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return &devices;
  }
  
@@ -435,30 +435,30 @@ index 92d7dda..5711117 100644
  // associated with it.
  static WindowSurfaceMap *GetWindowSurfaces()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static WindowSurfaceMap windowSurfaces;
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return &windowSurfaces;
  }
  
  typedef std::map<EGLNativeDisplayType, Display *> ANGLEPlatformDisplayMap;
  static ANGLEPlatformDisplayMap *GetANGLEPlatformDisplayMap()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static ANGLEPlatformDisplayMap displays;
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return &displays;
  }
  
  typedef std::map<Device *, Display *> DevicePlatformDisplayMap;
  static DevicePlatformDisplayMap *GetDevicePlatformDisplayMap()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static DevicePlatformDisplayMap displays;
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return &displays;
  }
  
@@ -466,10 +466,10 @@ index 92d7dda..5711117 100644
  
  const std::string &Display::getClientExtensionString()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static const std::string clientExtensionsString = GenerateExtensionsString(getClientExtensions());
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return clientExtensionsString;
  }
  
@@ -514,10 +514,10 @@ index ff285dd..55a5fc8 100644
  
  static const InternalFormatInfoMap &GetInternalFormatMap()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static const InternalFormatInfoMap formatMap = BuildInternalFormatInfoMap();
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return formatMap;
  }
  
@@ -525,10 +525,10 @@ index ff285dd..55a5fc8 100644
  
  const FormatSet &GetAllSizedInternalFormats()
  {
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static FormatSet formatSet = BuildAllSizedInternalFormatSet();
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      return formatSet;
  }
  
@@ -551,10 +551,10 @@ index 2f93651..49aa604 100644
      const auto &textureFormatInfo     = *textureFormat.info;
      const auto &framebufferFormatInfo = *framebufferFormat.info;
  
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wexit-time-destructors"
      static const CopyConversionSet conversionSet = BuildValidES3CopyTexImageCombinations();
-+#pragma GCC diagnostic pop
++#pragma clang diagnostic pop
      if (conversionSet.find(CopyConversion(textureFormatInfo.format,
                                            framebufferFormatInfo.format)) != conversionSet.end())
      {

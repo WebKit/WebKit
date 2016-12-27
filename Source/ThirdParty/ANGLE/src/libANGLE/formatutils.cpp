@@ -615,10 +615,10 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
 
 static const InternalFormatInfoMap &GetInternalFormatMap()
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const InternalFormatInfoMap formatMap = BuildInternalFormatInfoMap();
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
     return formatMap;
 }
 
@@ -862,10 +862,10 @@ GLenum GetSizedInternalFormat(GLenum internalFormat, GLenum type)
 
 const FormatSet &GetAllSizedInternalFormats()
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static FormatSet formatSet = BuildAllSizedInternalFormatSet();
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
     return formatSet;
 }
 

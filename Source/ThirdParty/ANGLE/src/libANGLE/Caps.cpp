@@ -77,10 +77,10 @@ void TextureCapsMap::clear()
 
 const TextureCaps &TextureCapsMap::get(GLenum internalFormat) const
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static TextureCaps defaultUnsupportedTexture;
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
     InternalFormatToCapsMap::const_iterator iter = mCapsMap.find(internalFormat);
     return (iter != mCapsMap.end()) ? iter->second : defaultUnsupportedTexture;
 }
@@ -597,10 +597,10 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         return map;
     };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
     static const ExtensionInfoMap extensionInfo = buildExtensionInfoMap();
-#pragma GCC diagnostic pop
+#pragma clang diagnostic pop
     return extensionInfo;
 }
 
