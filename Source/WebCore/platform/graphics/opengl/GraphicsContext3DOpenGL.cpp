@@ -54,7 +54,10 @@
 #define GL_RGBA32F_ARB                      0x8814
 #define GL_RGB32F_ARB                       0x8815
 #elif PLATFORM(MAC)
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <OpenGL/gl.h>
+#include <OpenGL/gl3.h>
+#undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
 #include "OpenGLShims.h"
 #endif
@@ -285,8 +288,17 @@ void GraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
         *value /= 4;
         break;
     case MAX_VARYING_VECTORS:
-        ::glGetIntegerv(GL_MAX_VARYING_FLOATS, value);
-        *value /= 4;
+        if (isGLES2Compliant()) {
+            ASSERT(::glGetError() == GL_NO_ERROR);
+            ::glGetIntegerv(GL_MAX_VARYING_VECTORS, value);
+            if (::glGetError() == GL_INVALID_ENUM) {
+                ::glGetIntegerv(GL_MAX_VARYING_COMPONENTS, value);
+                *value /= 4;
+            }
+        } else {
+            ::glGetIntegerv(GL_MAX_VARYING_FLOATS, value);
+            *value /= 4;
+        }
         break;
 #endif
     case MAX_TEXTURE_SIZE:
@@ -397,7 +409,7 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = std::make_unique<Extensions3DOpenGL>(this);
+        m_extensions = std::make_unique<Extensions3DOpenGL>(this, isGLES2Compliant());
     return m_extensions.get();
 }
 

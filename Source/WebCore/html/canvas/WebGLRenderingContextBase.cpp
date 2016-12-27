@@ -414,10 +414,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
         std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
 #if ENABLE(WEBGL2)
         if (type == "webgl2")
-            renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
+            renderingContext = std::make_unique<WebGL2RenderingContext>(canvas, attributes);
         else
 #endif
-            renderingContext = std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, attributes));
+            renderingContext = std::make_unique<WebGLRenderingContext>(canvas, attributes);
         renderingContext->suspendIfNeeded();
         return renderingContext;
     }
@@ -437,10 +437,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
-        renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(context), attributes));
+        renderingContext = std::make_unique<WebGL2RenderingContext>(canvas, WTFMove(context), attributes);
     else
 #endif
-        renderingContext = std::unique_ptr<WebGLRenderingContext>(new WebGLRenderingContext(canvas, WTFMove(context), attributes));
+        renderingContext = std::make_unique<WebGLRenderingContext>(canvas, WTFMove(context), attributes);
     renderingContext->suspendIfNeeded();
 
     return renderingContext;

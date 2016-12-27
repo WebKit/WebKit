@@ -93,7 +93,7 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GC3Dsizeiptr byteLen
 
 bool WebGLBuffer::associateBufferData(GC3Dsizeiptr size)
 {
-    return associateBufferDataImpl(0, size);
+    return associateBufferDataImpl(nullptr, size);
 }
 
 bool WebGLBuffer::associateBufferData(ArrayBuffer* array)

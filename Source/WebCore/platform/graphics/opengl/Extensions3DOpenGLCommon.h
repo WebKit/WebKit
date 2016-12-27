@@ -70,7 +70,7 @@ public:
 
 protected:
     friend class Extensions3DOpenGLES;
-    Extensions3DOpenGLCommon(GraphicsContext3D*);
+    Extensions3DOpenGLCommon(GraphicsContext3D*, bool useIndexedGetString);
 
     virtual bool supportsExtension(const String&) = 0;
     virtual String getExtensions() = 0;
@@ -88,6 +88,8 @@ protected:
     bool m_isImagination;
     bool m_requiresBuiltInFunctionEmulation;
     bool m_requiresRestrictedMaximumTextureSize;
+
+    bool m_useIndexedGetString { false };
 
     String m_vendor;
     String m_renderer;

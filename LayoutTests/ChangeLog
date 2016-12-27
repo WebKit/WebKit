@@ -1,3 +1,14 @@
+2016-10-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] [WebGL2] Temporarily upgrade WebGL 2's internal OpenGL context from version 2.1 to 3.2
+        https://bugs.webkit.org/show_bug.cgi?id=164091
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * fast/canvas/webgl/webgl2-context-creation-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-context-creation.html: Added.
+
 2016-10-25  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r178265): XSS Auditor fails to block document.write() of incomplete tag

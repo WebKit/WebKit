@@ -34,13 +34,17 @@
 
 #if PLATFORM(IOS)
 #include <OpenGLES/ES2/glext.h>
+#include <OpenGLES/ES3/gl.h>
 #else
 #if USE(OPENGL_ES_2)
 #include "OpenGLESShims.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #elif PLATFORM(MAC)
+#define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #include <OpenGL/gl.h>
+#include <OpenGL/gl3.h>
+#undef GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
 #include "OpenGLShims.h"
 #endif
@@ -51,7 +55,7 @@
 
 namespace WebCore {
 
-Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
+Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context, bool useIndexedGetString)
     : m_initializedAvailableExtensions(false)
     , m_context(context)
     , m_isNVIDIA(false)
@@ -60,6 +64,7 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     , m_isImagination(false)
     , m_requiresBuiltInFunctionEmulation(false)
     , m_requiresRestrictedMaximumTextureSize(false)
+    , m_useIndexedGetString(useIndexedGetString)
 {
     m_vendor = String(reinterpret_cast<const char*>(::glGetString(GL_VENDOR)));
     m_renderer = String(reinterpret_cast<const char*>(::glGetString(GL_RENDERER)));
@@ -206,11 +211,21 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
 void Extensions3DOpenGLCommon::initializeAvailableExtensions()
 {
-    String extensionsString = getExtensions();
-    Vector<String> availableExtensions;
-    extensionsString.split(' ', availableExtensions);
-    for (size_t i = 0; i < availableExtensions.size(); ++i)
-        m_availableExtensions.add(availableExtensions[i]);
+#if PLATFORM(MAC)
+    if (m_useIndexedGetString) {
+        GLint numExtensions = 0;
+        ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+        for (GLint i = 0; i < numExtensions; ++i)
+            m_availableExtensions.add(glGetStringi(GL_EXTENSIONS, i));
+    } else
+#endif
+    {
+        String extensionsString = getExtensions();
+        Vector<String> availableExtensions;
+        extensionsString.split(' ', availableExtensions);
+        for (size_t i = 0; i < availableExtensions.size(); ++i)
+            m_availableExtensions.add(availableExtensions[i]);
+    }
     m_initializedAvailableExtensions = true;
 }
 
