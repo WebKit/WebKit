@@ -13,10 +13,12 @@
 // TODO(jmadill): Rework this if Chromium decides to ban <random>
 #include <random>
 
+#include <export.h>
+
 namespace angle
 {
 
-class RNG
+class ANGLE_EXPORT RNG
 {
   public:
     // Seed from clock

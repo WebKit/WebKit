@@ -29,13 +29,16 @@ class Buffer9 : public BufferD3D
     gl::Error getData(const uint8_t **outData) override;
 
     // BufferImpl implementation
-    virtual gl::Error setData(const void* data, size_t size, GLenum usage);
-    virtual gl::Error setSubData(const void* data, size_t size, size_t offset);
-    virtual gl::Error copySubData(BufferImpl* source, GLintptr sourceOffset, GLintptr destOffset, GLsizeiptr size);
-    virtual gl::Error map(GLenum access, GLvoid **mapPtr);
-    virtual gl::Error mapRange(size_t offset, size_t length, GLbitfield access, GLvoid **mapPtr);
-    virtual gl::Error unmap(GLboolean *result);
-    virtual gl::Error markTransformFeedbackUsage();
+    gl::Error setData(GLenum target, const void *data, size_t size, GLenum usage) override;
+    gl::Error setSubData(GLenum target, const void *data, size_t size, size_t offset) override;
+    gl::Error copySubData(BufferImpl *source,
+                          GLintptr sourceOffset,
+                          GLintptr destOffset,
+                          GLsizeiptr size) override;
+    gl::Error map(GLenum access, GLvoid **mapPtr) override;
+    gl::Error mapRange(size_t offset, size_t length, GLbitfield access, GLvoid **mapPtr) override;
+    gl::Error unmap(GLboolean *result) override;
+    gl::Error markTransformFeedbackUsage() override;
 
   private:
     MemoryBuffer mMemory;

@@ -28,6 +28,7 @@ struct ImageIndex
     ImageIndex &operator=(const ImageIndex &other);
 
     bool hasLayer() const { return layerIndex != ENTIRE_LEVEL; }
+    bool is3D() const;
 
     static ImageIndex Make2D(GLint mipIndex);
     static ImageIndex MakeCube(GLenum target, GLint mipIndex);
@@ -40,6 +41,8 @@ struct ImageIndex
     static const GLint ENTIRE_LEVEL = static_cast<GLint>(-1);
 
     bool operator<(const ImageIndex &other) const;
+    bool operator==(const ImageIndex &other) const;
+    bool operator!=(const ImageIndex &other) const;
 
   private:
     friend class ImageIndexIterator;
@@ -65,6 +68,7 @@ class ImageIndexIterator
                        const Range<GLint> &layerRange, const GLsizei *layerCounts);
 
     GLint maxLayer() const;
+    void done();
 
     GLenum mType;
     Range<GLint> mMipRange;

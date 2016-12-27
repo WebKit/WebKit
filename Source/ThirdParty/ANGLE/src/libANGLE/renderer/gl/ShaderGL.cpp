@@ -19,7 +19,7 @@
 namespace rx
 {
 
-ShaderGL::ShaderGL(const gl::Shader::Data &data,
+ShaderGL::ShaderGL(const gl::ShaderState &data,
                    const FunctionsGL *functions,
                    const WorkaroundsGL &workarounds)
     : ShaderImpl(data), mFunctions(functions), mWorkarounds(workarounds), mShaderID(0)
@@ -36,8 +36,8 @@ ShaderGL::~ShaderGL()
     }
 }
 
-int ShaderGL::prepareSourceAndReturnOptions(std::stringstream *sourceStream,
-                                            std::string * /*sourcePath*/)
+ShCompileOptions ShaderGL::prepareSourceAndReturnOptions(std::stringstream *sourceStream,
+                                                         std::string * /*sourcePath*/)
 {
     // Reset the previous state
     if (mShaderID != 0)
@@ -48,11 +48,31 @@ int ShaderGL::prepareSourceAndReturnOptions(std::stringstream *sourceStream,
 
     *sourceStream << mData.getSource();
 
-    int options = SH_INIT_GL_POSITION;
+    ShCompileOptions options = SH_INIT_GL_POSITION;
 
     if (mWorkarounds.doWhileGLSLCausesGPUHang)
     {
         options |= SH_REWRITE_DO_WHILE_LOOPS;
+    }
+
+    if (mWorkarounds.emulateAbsIntFunction)
+    {
+        options |= SH_EMULATE_ABS_INT_FUNCTION;
+    }
+
+    if (mWorkarounds.addAndTrueToLoopCondition)
+    {
+        options |= SH_ADD_AND_TRUE_TO_LOOP_CONDITION;
+    }
+
+    if (mWorkarounds.emulateIsnanFloat)
+    {
+        options |= SH_EMULATE_ISNAN_FLOAT_FUNCTION;
+    }
+
+    if (mWorkarounds.useUnusedBlocksWithStandardOrSharedLayout)
+    {
+        options |= SH_USE_UNUSED_STANDARD_SHARED_BLOCKS;
     }
 
     return options;

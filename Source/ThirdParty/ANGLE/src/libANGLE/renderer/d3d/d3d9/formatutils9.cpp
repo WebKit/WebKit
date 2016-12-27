@@ -7,12 +7,16 @@
 // formatutils9.cpp: Queries for GL image formats and their translations to D3D9
 // formats.
 
-#include "libANGLE/renderer/d3d/copyimage.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
+
+#include "image_util/copyimage.h"
+#include "image_util/generatemip.h"
+#include "image_util/loadimage.h"
+
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
 #include "libANGLE/renderer/d3d/d3d9/vertexconversion.h"
-#include "libANGLE/renderer/d3d/generatemip.h"
-#include "libANGLE/renderer/d3d/loadimage.h"
+
+using namespace angle;
 
 namespace rx
 {
@@ -22,33 +26,6 @@ namespace d3d9
 
 const D3DFORMAT D3DFMT_INTZ = ((D3DFORMAT)(MAKEFOURCC('I', 'N', 'T', 'Z')));
 const D3DFORMAT D3DFMT_NULL = ((D3DFORMAT)(MAKEFOURCC('N', 'U', 'L', 'L')));
-
-struct D3D9FastCopyFormat
-{
-    GLenum destFormat;
-    GLenum destType;
-    ColorCopyFunction copyFunction;
-
-    D3D9FastCopyFormat(GLenum destFormat, GLenum destType, ColorCopyFunction copyFunction)
-        : destFormat(destFormat), destType(destType), copyFunction(copyFunction)
-    { }
-
-    bool operator<(const D3D9FastCopyFormat& other) const
-    {
-        return memcmp(this, &other, sizeof(D3D9FastCopyFormat)) < 0;
-    }
-};
-
-typedef std::multimap<D3DFORMAT, D3D9FastCopyFormat> D3D9FastCopyMap;
-
-static D3D9FastCopyMap BuildFastCopyMap()
-{
-    D3D9FastCopyMap map;
-
-    map.insert(std::make_pair(D3DFMT_A8R8G8B8, D3D9FastCopyFormat(GL_RGBA, GL_UNSIGNED_BYTE, CopyBGRA8ToRGBA8)));
-
-    return map;
-}
 
 // A map to determine the pixel size and mip generation function of a given D3D format
 typedef std::map<D3DFORMAT, D3DFormat> D3D9FormatInfoMap;
@@ -64,24 +41,23 @@ D3DFormat::D3DFormat()
       luminanceBits(0),
       depthBits(0),
       stencilBits(0),
-      internalFormat(GL_NONE),
-      mipGenerationFunction(NULL),
-      colorReadFunction(NULL),
-      fastCopyFunctions()
+      info(nullptr)
 {
 }
 
-ColorCopyFunction D3DFormat::getFastCopyFunction(GLenum format, GLenum type) const
-{
-    FastCopyFunctionMap::const_iterator iter = fastCopyFunctions.find(std::make_pair(format, type));
-    return (iter != fastCopyFunctions.end()) ? iter->second : NULL;
-}
-
-static inline void InsertD3DFormatInfo(D3D9FormatInfoMap *map, D3DFORMAT format, GLuint bits, GLuint blockWidth,
-                                       GLuint blockHeight, GLuint redBits, GLuint greenBits, GLuint blueBits,
-                                       GLuint alphaBits, GLuint lumBits, GLuint depthBits, GLuint stencilBits,
-                                       GLenum internalFormat, MipGenerationFunction mipFunc,
-                                       ColorReadFunction colorReadFunc)
+static inline void InsertD3DFormatInfo(D3D9FormatInfoMap *map,
+                                       D3DFORMAT format,
+                                       GLuint bits,
+                                       GLuint blockWidth,
+                                       GLuint blockHeight,
+                                       GLuint redBits,
+                                       GLuint greenBits,
+                                       GLuint blueBits,
+                                       GLuint alphaBits,
+                                       GLuint lumBits,
+                                       GLuint depthBits,
+                                       GLuint stencilBits,
+                                       Format::ID formatID)
 {
     D3DFormat info;
     info.pixelBytes = bits / 8;
@@ -94,53 +70,48 @@ static inline void InsertD3DFormatInfo(D3D9FormatInfoMap *map, D3DFORMAT format,
     info.luminanceBits = lumBits;
     info.depthBits = depthBits;
     info.stencilBits = stencilBits;
-    info.internalFormat = internalFormat;
-    info.mipGenerationFunction = mipFunc;
-    info.colorReadFunction = colorReadFunc;
-
-    static const D3D9FastCopyMap fastCopyMap = BuildFastCopyMap();
-    std::pair<D3D9FastCopyMap::const_iterator, D3D9FastCopyMap::const_iterator> fastCopyIter = fastCopyMap.equal_range(format);
-    for (D3D9FastCopyMap::const_iterator i = fastCopyIter.first; i != fastCopyIter.second; i++)
-    {
-        info.fastCopyFunctions.insert(std::make_pair(std::make_pair(i->second.destFormat, i->second.destType), i->second.copyFunction));
-    }
+    info.info          = &Format::Get(formatID);
 
     map->insert(std::make_pair(format, info));
 }
 
 static D3D9FormatInfoMap BuildD3D9FormatInfoMap()
 {
+    using namespace angle;  // For image reading and mipmap generation functions
+
     D3D9FormatInfoMap map;
 
-    //                       | D3DFORMAT           | S  |W |H | R | G | B | A | L | D | S | Internal format                   | Mip generation function   | Color read function             |
-    InsertD3DFormatInfo(&map, D3DFMT_NULL,            0, 0, 0,  0,  0,  0,  0,  0,  0,  0, GL_NONE,                            NULL,                       NULL                             );
-    InsertD3DFormatInfo(&map, D3DFMT_UNKNOWN,         0, 0, 0,  0,  0,  0,  0,  0,  0,  0, GL_NONE,                            NULL,                       NULL                             );
+    // clang-format off
+    //                       | D3DFORMAT           | S  |W |H | R | G | B | A | L | D | S | ANGLE format                   |
+    InsertD3DFormatInfo(&map, D3DFMT_NULL,            0, 0, 0,  0,  0,  0,  0,  0,  0,  0, Format::ID::NONE                );
+    InsertD3DFormatInfo(&map, D3DFMT_UNKNOWN,         0, 0, 0,  0,  0,  0,  0,  0,  0,  0, Format::ID::NONE                );
 
-    InsertD3DFormatInfo(&map, D3DFMT_L8,              8, 1, 1,  0,  0,  0,  0,  8,  0,  0, GL_LUMINANCE8_EXT,                  GenerateMip<L8>,            ReadColor<L8, GLfloat>           );
-    InsertD3DFormatInfo(&map, D3DFMT_A8,              8, 1, 1,  0,  0,  0,  8,  0,  0,  0, GL_ALPHA8_EXT,                      GenerateMip<A8>,            ReadColor<A8, GLfloat>           );
-    InsertD3DFormatInfo(&map, D3DFMT_A8L8,           16, 1, 1,  0,  0,  0,  8,  8,  0,  0, GL_LUMINANCE8_ALPHA8_EXT,           GenerateMip<A8L8>,          ReadColor<A8L8, GLfloat>         );
-    InsertD3DFormatInfo(&map, D3DFMT_A4R4G4B4,       16, 1, 1,  4,  4,  4,  4,  0,  0,  0, GL_BGRA4_ANGLEX,                    GenerateMip<A4R4G4B4>,      ReadColor<A4R4G4B4, GLfloat>     );
-    InsertD3DFormatInfo(&map, D3DFMT_A1R5G5B5,       16, 1, 1,  5,  5,  5,  1,  0,  0,  0, GL_BGR5_A1_ANGLEX,                  GenerateMip<A1R5G5B5>,      ReadColor<A1R5G5B5, GLfloat>     );
-    InsertD3DFormatInfo(&map, D3DFMT_R5G6B5,         16, 1, 1,  5,  6,  5,  0,  0,  0,  0, GL_RGB565,                          GenerateMip<R5G6B5>,        ReadColor<R5G6B5, GLfloat>       );
-    InsertD3DFormatInfo(&map, D3DFMT_X8R8G8B8,       32, 1, 1,  8,  8,  8,  0,  0,  0,  0, GL_BGRA8_EXT,                       GenerateMip<B8G8R8X8>,      ReadColor<B8G8R8X8, GLfloat>     );
-    InsertD3DFormatInfo(&map, D3DFMT_A8R8G8B8,       32, 1, 1,  8,  8,  8,  8,  0,  0,  0, GL_BGRA8_EXT,                       GenerateMip<B8G8R8A8>,      ReadColor<B8G8R8A8, GLfloat>     );
-    InsertD3DFormatInfo(&map, D3DFMT_R16F,           16, 1, 1, 16,  0,  0,  0,  0,  0,  0, GL_R16F_EXT,                        GenerateMip<R16F>,          ReadColor<R16F, GLfloat>         );
-    InsertD3DFormatInfo(&map, D3DFMT_G16R16F,        32, 1, 1, 16, 16,  0,  0,  0,  0,  0, GL_RG16F_EXT,                       GenerateMip<R16G16F>,       ReadColor<R16G16F, GLfloat>      );
-    InsertD3DFormatInfo(&map, D3DFMT_A16B16G16R16F,  64, 1, 1, 16, 16, 16, 16,  0,  0,  0, GL_RGBA16F_EXT,                     GenerateMip<R16G16B16A16F>, ReadColor<R16G16B16A16F, GLfloat>);
-    InsertD3DFormatInfo(&map, D3DFMT_R32F,           32, 1, 1, 32,  0,  0,  0,  0,  0,  0, GL_R32F_EXT,                        GenerateMip<R32F>,          ReadColor<R32F, GLfloat>         );
-    InsertD3DFormatInfo(&map, D3DFMT_G32R32F,        64, 1, 1, 32, 32,  0,  0,  0,  0,  0, GL_RG32F_EXT,                       GenerateMip<R32G32F>,       ReadColor<R32G32F, GLfloat>      );
-    InsertD3DFormatInfo(&map, D3DFMT_A32B32G32R32F, 128, 1, 1, 32, 32, 32, 32,  0,  0,  0, GL_RGBA32F_EXT,                     GenerateMip<R32G32B32A32F>, ReadColor<R32G32B32A32F, GLfloat>);
+    InsertD3DFormatInfo(&map, D3DFMT_L8,              8, 1, 1,  0,  0,  0,  0,  8,  0,  0, Format::ID::L8_UNORM            );
+    InsertD3DFormatInfo(&map, D3DFMT_A8,              8, 1, 1,  0,  0,  0,  8,  0,  0,  0, Format::ID::A8_UNORM            );
+    InsertD3DFormatInfo(&map, D3DFMT_A8L8,           16, 1, 1,  0,  0,  0,  8,  8,  0,  0, Format::ID::L8A8_UNORM          );
+    InsertD3DFormatInfo(&map, D3DFMT_A4R4G4B4,       16, 1, 1,  4,  4,  4,  4,  0,  0,  0, Format::ID::B4G4R4A4_UNORM      );
+    InsertD3DFormatInfo(&map, D3DFMT_A1R5G5B5,       16, 1, 1,  5,  5,  5,  1,  0,  0,  0, Format::ID::B5G5R5A1_UNORM      );
+    InsertD3DFormatInfo(&map, D3DFMT_R5G6B5,         16, 1, 1,  5,  6,  5,  0,  0,  0,  0, Format::ID::R5G6B5_UNORM        );
+    InsertD3DFormatInfo(&map, D3DFMT_X8R8G8B8,       32, 1, 1,  8,  8,  8,  0,  0,  0,  0, Format::ID::B8G8R8X8_UNORM      );
+    InsertD3DFormatInfo(&map, D3DFMT_A8R8G8B8,       32, 1, 1,  8,  8,  8,  8,  0,  0,  0, Format::ID::B8G8R8A8_UNORM      );
+    InsertD3DFormatInfo(&map, D3DFMT_R16F,           16, 1, 1, 16,  0,  0,  0,  0,  0,  0, Format::ID::R16_FLOAT           );
+    InsertD3DFormatInfo(&map, D3DFMT_G16R16F,        32, 1, 1, 16, 16,  0,  0,  0,  0,  0, Format::ID::R16G16_FLOAT        );
+    InsertD3DFormatInfo(&map, D3DFMT_A16B16G16R16F,  64, 1, 1, 16, 16, 16, 16,  0,  0,  0, Format::ID::R16G16B16A16_FLOAT  );
+    InsertD3DFormatInfo(&map, D3DFMT_R32F,           32, 1, 1, 32,  0,  0,  0,  0,  0,  0, Format::ID::R32_FLOAT           );
+    InsertD3DFormatInfo(&map, D3DFMT_G32R32F,        64, 1, 1, 32, 32,  0,  0,  0,  0,  0, Format::ID::R32G32_FLOAT        );
+    InsertD3DFormatInfo(&map, D3DFMT_A32B32G32R32F, 128, 1, 1, 32, 32, 32, 32,  0,  0,  0, Format::ID::R32G32B32A32_FLOAT  );
 
-    InsertD3DFormatInfo(&map, D3DFMT_D16,            16, 1, 1,  0,  0,  0,  0,  0, 16,  0, GL_DEPTH_COMPONENT16,               NULL,                       NULL                             );
-    InsertD3DFormatInfo(&map, D3DFMT_D24S8,          32, 1, 1,  0,  0,  0,  0,  0, 24,  8, GL_DEPTH24_STENCIL8_OES,            NULL,                       NULL                             );
-    InsertD3DFormatInfo(&map, D3DFMT_D24X8,          32, 1, 1,  0,  0,  0,  0,  0, 24,  0, GL_DEPTH_COMPONENT16,               NULL,                       NULL                             );
-    InsertD3DFormatInfo(&map, D3DFMT_D32,            32, 1, 1,  0,  0,  0,  0,  0, 32,  0, GL_DEPTH_COMPONENT32_OES,           NULL,                       NULL                             );
+    InsertD3DFormatInfo(&map, D3DFMT_D16,            16, 1, 1,  0,  0,  0,  0,  0, 16,  0, Format::ID::D16_UNORM           );
+    InsertD3DFormatInfo(&map, D3DFMT_D24S8,          32, 1, 1,  0,  0,  0,  0,  0, 24,  8, Format::ID::D24_UNORM_S8_UINT   );
+    InsertD3DFormatInfo(&map, D3DFMT_D24X8,          32, 1, 1,  0,  0,  0,  0,  0, 24,  0, Format::ID::D16_UNORM           );
+    InsertD3DFormatInfo(&map, D3DFMT_D32,            32, 1, 1,  0,  0,  0,  0,  0, 32,  0, Format::ID::D32_UNORM           );
 
-    InsertD3DFormatInfo(&map, D3DFMT_INTZ,           32, 1, 1,  0,  0,  0,  0,  0, 24,  8, GL_DEPTH24_STENCIL8_OES,            NULL,                       NULL                             );
+    InsertD3DFormatInfo(&map, D3DFMT_INTZ,           32, 1, 1,  0,  0,  0,  0,  0, 24,  8, Format::ID::D24_UNORM_S8_UINT   );
 
-    InsertD3DFormatInfo(&map, D3DFMT_DXT1,           64, 4, 4,  0,  0,  0,  0,  0,  0,  0, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,   NULL,                       NULL                             );
-    InsertD3DFormatInfo(&map, D3DFMT_DXT3,          128, 4, 4,  0,  0,  0,  0,  0,  0,  0, GL_COMPRESSED_RGBA_S3TC_DXT3_ANGLE, NULL,                       NULL                             );
-    InsertD3DFormatInfo(&map, D3DFMT_DXT5,          128, 4, 4,  0,  0,  0,  0,  0,  0,  0, GL_COMPRESSED_RGBA_S3TC_DXT5_ANGLE, NULL,                       NULL                             );
+    InsertD3DFormatInfo(&map, D3DFMT_DXT1,           64, 4, 4,  0,  0,  0,  0,  0,  0,  0, Format::ID::BC1_RGBA_UNORM_BLOCK);
+    InsertD3DFormatInfo(&map, D3DFMT_DXT3,          128, 4, 4,  0,  0,  0,  0,  0,  0,  0, Format::ID::BC2_RGBA_UNORM_BLOCK);
+    InsertD3DFormatInfo(&map, D3DFMT_DXT5,          128, 4, 4,  0,  0,  0,  0,  0,  0,  0, Format::ID::BC3_RGBA_UNORM_BLOCK);
+    // clang-format on
 
     return map;
 }
@@ -167,34 +138,14 @@ typedef std::map<GLint, InitializeTextureDataFunction> InternalFormatInitialzerM
 
 static InternalFormatInitialzerMap BuildInternalFormatInitialzerMap()
 {
+    using namespace angle;  // For image initialization functions
+
     InternalFormatInitialzerMap map;
 
     map.insert(InternalFormatInitialzerPair(GL_RGB16F, Initialize4ComponentData<GLhalf,   0x0000,     0x0000,     0x0000,     gl::Float16One>));
     map.insert(InternalFormatInitialzerPair(GL_RGB32F, Initialize4ComponentData<GLfloat,  0x00000000, 0x00000000, 0x00000000, gl::Float32One>));
 
     return map;
-}
-
-// Each GL internal format corresponds to one D3D format and data loading function.
-// Due to not all formats being available all the time, some of the function/format types are wrapped
-// in templates that perform format support queries on a Renderer9 object which is supplied
-// when requesting the function or format.
-
-typedef bool(*FallbackPredicateFunction)();
-
-template <FallbackPredicateFunction pred, LoadImageFunction prefered, LoadImageFunction fallback>
-static void FallbackLoad(size_t width, size_t height, size_t depth,
-                         const uint8_t *input, size_t inputRowPitch, size_t inputDepthPitch,
-                         uint8_t *output, size_t outputRowPitch, size_t outputDepthPitch)
-{
-    if (pred())
-    {
-        prefered(width, height, depth, input, inputRowPitch, inputDepthPitch, output, outputRowPitch, outputDepthPitch);
-    }
-    else
-    {
-        fallback(width, height, depth, input, inputRowPitch, inputDepthPitch, output, outputRowPitch, outputDepthPitch);
-    }
 }
 
 static void UnreachableLoad(size_t width, size_t height, size_t depth,
@@ -233,8 +184,11 @@ static inline void InsertD3D9FormatInfo(D3D9FormatMap *map, GLenum internalForma
 
 static D3D9FormatMap BuildD3D9FormatMap()
 {
+    using namespace angle;  // For image loading functions
+
     D3D9FormatMap map;
 
+    // clang-format off
     //                       | Internal format                     | Texture format      | Render format        | Load function                           |
     InsertD3D9FormatInfo(&map, GL_NONE,                             D3DFMT_NULL,          D3DFMT_NULL,           UnreachableLoad                          );
 
@@ -268,11 +222,11 @@ static D3D9FormatMap BuildD3D9FormatMap()
     InsertD3D9FormatInfo(&map, GL_LUMINANCE16F_EXT,                 D3DFMT_A16B16G16R16F, D3DFMT_UNKNOWN,        LoadL16FToRGBA16F                        );
     InsertD3D9FormatInfo(&map, GL_LUMINANCE_ALPHA16F_EXT,           D3DFMT_A16B16G16R16F, D3DFMT_UNKNOWN,        LoadLA16FToRGBA16F                       );
 
-    InsertD3D9FormatInfo(&map, GL_ALPHA8_EXT,                       D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       FallbackLoad<gl::supportsSSE2, LoadA8ToBGRA8_SSE2, LoadA8ToBGRA8>);
+    InsertD3D9FormatInfo(&map, GL_ALPHA8_EXT,                       D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadA8ToBGRA8                            );
 
     InsertD3D9FormatInfo(&map, GL_RGB8_OES,                         D3DFMT_X8R8G8B8,      D3DFMT_X8R8G8B8,       LoadRGB8ToBGRX8                           );
     InsertD3D9FormatInfo(&map, GL_RGB565,                           D3DFMT_X8R8G8B8,      D3DFMT_X8R8G8B8,       LoadR5G6B5ToBGRA8                         );
-    InsertD3D9FormatInfo(&map, GL_RGBA8_OES,                        D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       FallbackLoad<gl::supportsSSE2, LoadRGBA8ToBGRA8_SSE2, LoadRGBA8ToBGRA8>);
+    InsertD3D9FormatInfo(&map, GL_RGBA8_OES,                        D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadRGBA8ToBGRA8                          );
     InsertD3D9FormatInfo(&map, GL_RGBA4,                            D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadRGBA4ToBGRA8                          );
     InsertD3D9FormatInfo(&map, GL_RGB5_A1,                          D3DFMT_A8R8G8B8,      D3DFMT_A8R8G8B8,       LoadRGB5A1ToBGRA8                         );
     InsertD3D9FormatInfo(&map, GL_R8_EXT,                           D3DFMT_X8R8G8B8,      D3DFMT_X8R8G8B8,       LoadR8ToBGRX8                             );
@@ -291,6 +245,7 @@ static D3D9FormatMap BuildD3D9FormatMap()
     // then changing the format and loading function appropriately.
     InsertD3D9FormatInfo(&map, GL_LUMINANCE8_EXT,                   D3DFMT_L8,            D3DFMT_UNKNOWN,        LoadToNative<GLubyte, 1>                  );
     InsertD3D9FormatInfo(&map, GL_LUMINANCE8_ALPHA8_EXT,            D3DFMT_A8L8,          D3DFMT_UNKNOWN,        LoadToNative<GLubyte, 2>                  );
+    // clang-format on
 
     return map;
 }

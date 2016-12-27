@@ -61,7 +61,7 @@ gl::Error Image9::generateMip(IDirect3DSurface9 *destSurface, IDirect3DSurface9 
     ASSERT(sourceDesc.Height == 1 || sourceDesc.Height / 2 == destDesc.Height);
 
     const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(sourceDesc.Format);
-    ASSERT(d3dFormatInfo.mipGenerationFunction != NULL);
+    ASSERT(d3dFormatInfo.info->mipGenerationFunction != NULL);
 
     D3DLOCKED_RECT sourceLocked = {0};
     result = sourceSurface->LockRect(&sourceLocked, NULL, D3DLOCK_READONLY);
@@ -85,8 +85,8 @@ gl::Error Image9::generateMip(IDirect3DSurface9 *destSurface, IDirect3DSurface9 
 
     ASSERT(sourceData && destData);
 
-    d3dFormatInfo.mipGenerationFunction(sourceDesc.Width, sourceDesc.Height, 1, sourceData, sourceLocked.Pitch, 0,
-                                        destData, destLocked.Pitch, 0);
+    d3dFormatInfo.info->mipGenerationFunction(sourceDesc.Width, sourceDesc.Height, 1, sourceData,
+                                              sourceLocked.Pitch, 0, destData, destLocked.Pitch, 0);
 
     destSurface->UnlockRect();
     sourceSurface->UnlockRect();
@@ -473,15 +473,23 @@ gl::Error Image9::copyToSurface(IDirect3DSurface9 *destSurface, const gl::Box &a
 
 // Store the pixel rectangle designated by xoffset,yoffset,width,height with pixels stored as format/type at input
 // into the target pixel rectangle.
-gl::Error Image9::loadData(const gl::Box &area, const gl::PixelUnpackState &unpack, GLenum type, const void *input)
+gl::Error Image9::loadData(const gl::Box &area,
+                           const gl::PixelUnpackState &unpack,
+                           GLenum type,
+                           const void *input,
+                           bool applySkipImages)
 {
     // 3D textures are not supported by the D3D9 backend.
     ASSERT(area.z == 0 && area.depth == 1);
 
     const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(mInternalFormat);
-    GLsizei inputRowPitch = formatInfo.computeRowPitch(type, area.width, unpack.alignment, unpack.rowLength);
-    GLsizei inputSkipBytes = formatInfo.computeSkipPixels(inputRowPitch, 0, unpack.skipImages,
-                                                          unpack.skipRows, unpack.skipPixels);
+    GLuint inputRowPitch                 = 0;
+    ANGLE_TRY_RESULT(
+        formatInfo.computeRowPitch(type, area.width, unpack.alignment, unpack.rowLength),
+        inputRowPitch);
+    ASSERT(!applySkipImages);
+    ASSERT(unpack.skipPixels == 0);
+    ASSERT(unpack.skipRows == 0);
 
     const d3d9::TextureFormat &d3dFormatInfo = d3d9::GetTextureFormatInfo(mInternalFormat);
     ASSERT(d3dFormatInfo.loadFunction != NULL);
@@ -500,9 +508,8 @@ gl::Error Image9::loadData(const gl::Box &area, const gl::PixelUnpackState &unpa
     }
 
     d3dFormatInfo.loadFunction(area.width, area.height, area.depth,
-                               reinterpret_cast<const uint8_t *>(input) + inputSkipBytes,
-                               inputRowPitch, 0, reinterpret_cast<uint8_t *>(locked.pBits),
-                               locked.Pitch, 0);
+                               reinterpret_cast<const uint8_t *>(input), inputRowPitch, 0,
+                               reinterpret_cast<uint8_t *>(locked.pBits), locked.Pitch, 0);
 
     unlock();
 
@@ -515,9 +522,11 @@ gl::Error Image9::loadCompressedData(const gl::Box &area, const void *input)
     ASSERT(area.z == 0 && area.depth == 1);
 
     const gl::InternalFormat &formatInfo = gl::GetInternalFormatInfo(mInternalFormat);
-    GLsizei inputRowPitch = formatInfo.computeRowPitch(GL_UNSIGNED_BYTE, area.width, 1, 0);
-    GLsizei inputDepthPitch =
-        formatInfo.computeDepthPitch(GL_UNSIGNED_BYTE, area.width, area.height, 1, 0, 0);
+    GLsizei inputRowPitch                = 0;
+    ANGLE_TRY_RESULT(formatInfo.computeRowPitch(GL_UNSIGNED_BYTE, area.width, 1, 0), inputRowPitch);
+    GLsizei inputDepthPitch = 0;
+    ANGLE_TRY_RESULT(formatInfo.computeDepthPitch(area.height, 0, inputDepthPitch),
+                     inputDepthPitch);
 
     const d3d9::TextureFormat &d3d9FormatInfo = d3d9::GetTextureFormatInfo(mInternalFormat);
 

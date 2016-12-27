@@ -1298,37 +1298,7 @@ private:
     RefPtr<PlatformCALayer> m_webGLLayer;
 #endif
 
-    struct SymbolInfo {
-        SymbolInfo()
-            : type(0)
-            , size(0)
-            , precision(GL_NONE) // Invalid precision.
-            , staticUse(0)
-        {
-        }
-
-        SymbolInfo(GC3Denum type, int size, const String& mappedName, sh::GLenum precision, int staticUse)
-            : type(type)
-            , size(size)
-            , mappedName(mappedName)
-            , precision(precision)
-            , staticUse(staticUse)
-        {
-        }
-
-        bool operator==(SymbolInfo& other) const
-        {
-            return type == other.type && size == other.size && mappedName == other.mappedName;
-        }
-
-        GC3Denum type;
-        int size;
-        String mappedName;
-        sh::GLenum precision;
-        int staticUse;
-    };
-
-    typedef HashMap<String, SymbolInfo> ShaderSymbolMap;
+    typedef HashMap<String, sh::ShaderVariable> ShaderSymbolMap;
 
     struct ShaderSourceEntry {
         GC3Denum type;

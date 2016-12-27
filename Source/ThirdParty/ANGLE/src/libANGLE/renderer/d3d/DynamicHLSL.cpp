@@ -402,8 +402,8 @@ void DynamicHLSL::generateVaryingLinkHLSL(ShaderType shaderType,
     linkStream << "};\n";
 }
 
-bool DynamicHLSL::generateShaderLinkHLSL(const gl::Data &data,
-                                         const gl::Program::Data &programData,
+bool DynamicHLSL::generateShaderLinkHLSL(const gl::ContextState &data,
+                                         const gl::ProgramState &programData,
                                          const ProgramD3DMetadata &programMetadata,
                                          const VaryingPacking &varyingPacking,
                                          std::string *pixelHLSL,
@@ -434,9 +434,9 @@ bool DynamicHLSL::generateShaderLinkHLSL(const gl::Data &data,
     if (useInstancedPointSpriteEmulation)
     {
         vertexStream << "static float minPointSize = "
-                     << static_cast<int>(data.caps->minAliasedPointSize) << ".0f;\n"
+                     << static_cast<int>(data.getCaps().minAliasedPointSize) << ".0f;\n"
                      << "static float maxPointSize = "
-                     << static_cast<int>(data.caps->maxAliasedPointSize) << ".0f;\n";
+                     << static_cast<int>(data.getCaps().maxAliasedPointSize) << ".0f;\n";
     }
 
     // Add stub string to be replaced when shader is dynamically defined by its layout
@@ -720,7 +720,9 @@ bool DynamicHLSL::generateShaderLinkHLSL(const gl::Data &data,
         ASSERT(!varying.isBuiltIn() && !varying.isStruct());
 
         // Don't reference VS-only transform feedback varyings in the PS.
-        if (registerInfo.packedVarying->vertexOnly)
+        // TODO: Consider updating the fragment shader's varyings with a parameter signaling that a
+        // varying is only used in the vertex shader in MergeVaryings
+        if (packedVarying.vertexOnly || (!varying.staticUse && !packedVarying.isStructField()))
             continue;
 
         pixelStream << "    ";
@@ -825,8 +827,8 @@ std::string DynamicHLSL::generateGeometryShaderPreamble(const VaryingPacking &va
 }
 
 std::string DynamicHLSL::generateGeometryShaderHLSL(gl::PrimitiveType primitiveType,
-                                                    const gl::Data &data,
-                                                    const gl::Program::Data &programData,
+                                                    const gl::ContextState &data,
+                                                    const gl::ProgramState &programData,
                                                     const bool useViewScale,
                                                     const std::string &preambleString) const
 {
@@ -903,10 +905,10 @@ std::string DynamicHLSL::generateGeometryShaderHLSL(gl::PrimitiveType primitiveT
                         "};\n"
                         "\n"
                         "static float minPointSize = "
-                     << static_cast<int>(data.caps->minAliasedPointSize)
+                     << static_cast<int>(data.getCaps().minAliasedPointSize)
                      << ".0f;\n"
                         "static float maxPointSize = "
-                     << static_cast<int>(data.caps->maxAliasedPointSize) << ".0f;\n"
+                     << static_cast<int>(data.getCaps().maxAliasedPointSize) << ".0f;\n"
                      << "\n";
     }
 
@@ -1029,8 +1031,8 @@ std::string DynamicHLSL::generateAttributeConversionHLSL(
     return attribString;
 }
 
-void DynamicHLSL::getPixelShaderOutputKey(const gl::Data &data,
-                                          const gl::Program::Data &programData,
+void DynamicHLSL::getPixelShaderOutputKey(const gl::ContextState &data,
+                                          const gl::ProgramState &programData,
                                           const ProgramD3DMetadata &metadata,
                                           std::vector<PixelShaderOutputVariable> *outPixelShaderKey)
 {
@@ -1039,7 +1041,7 @@ void DynamicHLSL::getPixelShaderOutputKey(const gl::Data &data,
     // - with a 2.0 context, the output color is broadcast to all channels
     bool broadcast = metadata.usesBroadcast(data);
     const unsigned int numRenderTargets =
-        (broadcast || metadata.usesMultipleFragmentOuts() ? data.caps->maxDrawBuffers : 1);
+        (broadcast || metadata.usesMultipleFragmentOuts() ? data.getCaps().maxDrawBuffers : 1);
 
     if (metadata.getMajorShaderVersion() < 300)
     {

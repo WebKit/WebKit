@@ -86,17 +86,6 @@ QueryT CastStateValue(GLenum pname, NativeT value)
 
 }  // anonymous namespace
 
-template <>
-GLenum GLTypeToGLenum<GLint>::value = GL_INT;
-template <>
-GLenum GLTypeToGLenum<GLuint>::value = GL_UNSIGNED_INT;
-template <>
-GLenum GLTypeToGLenum<GLboolean>::value = GL_BOOL;
-template <>
-GLenum GLTypeToGLenum<GLint64>::value = GL_INT_64_ANGLEX;
-template <>
-GLenum GLTypeToGLenum<GLfloat>::value = GL_FLOAT;
-
 template <typename QueryT>
 void CastStateValues(Context *context, GLenum nativeType, GLenum pname,
                      unsigned int numParams, QueryT *outParams)
@@ -154,4 +143,77 @@ template void CastStateValues<GLuint>(Context *, GLenum, GLenum, unsigned int, G
 template void CastStateValues<GLfloat>(Context *, GLenum, GLenum, unsigned int, GLfloat *);
 template void CastStateValues<GLint64>(Context *, GLenum, GLenum, unsigned int, GLint64 *);
 
+template <typename QueryT>
+void CastIndexedStateValues(Context *context,
+                            GLenum nativeType,
+                            GLenum pname,
+                            GLuint index,
+                            unsigned int numParams,
+                            QueryT *outParams)
+{
+    if (nativeType == GL_INT)
+    {
+        std::vector<GLint> intParams(numParams, 0);
+        context->getIntegeri_v(pname, index, intParams.data());
+
+        for (unsigned int i = 0; i < numParams; ++i)
+        {
+            outParams[i] = CastStateValue<QueryT>(pname, intParams[i]);
+        }
+    }
+    else if (nativeType == GL_BOOL)
+    {
+        std::vector<GLboolean> boolParams(numParams, GL_FALSE);
+        context->getBooleani_v(pname, index, boolParams.data());
+
+        for (unsigned int i = 0; i < numParams; ++i)
+        {
+            outParams[i] =
+                (boolParams[i] == GL_FALSE ? static_cast<QueryT>(0) : static_cast<QueryT>(1));
+        }
+    }
+    else if (nativeType == GL_INT_64_ANGLEX)
+    {
+        std::vector<GLint64> int64Params(numParams, 0);
+        context->getInteger64i_v(pname, index, int64Params.data());
+
+        for (unsigned int i = 0; i < numParams; ++i)
+        {
+            outParams[i] = CastStateValue<QueryT>(pname, int64Params[i]);
+        }
+    }
+    else
+        UNREACHABLE();
+}
+
+template void CastIndexedStateValues<GLboolean>(Context *,
+                                                GLenum,
+                                                GLenum,
+                                                GLuint index,
+                                                unsigned int,
+                                                GLboolean *);
+template void CastIndexedStateValues<GLint>(Context *,
+                                            GLenum,
+                                            GLenum,
+                                            GLuint index,
+                                            unsigned int,
+                                            GLint *);
+template void CastIndexedStateValues<GLuint>(Context *,
+                                             GLenum,
+                                             GLenum,
+                                             GLuint index,
+                                             unsigned int,
+                                             GLuint *);
+template void CastIndexedStateValues<GLfloat>(Context *,
+                                              GLenum,
+                                              GLenum,
+                                              GLuint index,
+                                              unsigned int,
+                                              GLfloat *);
+template void CastIndexedStateValues<GLint64>(Context *,
+                                              GLenum,
+                                              GLenum,
+                                              GLuint index,
+                                              unsigned int,
+                                              GLint64 *);
 }

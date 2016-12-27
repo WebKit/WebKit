@@ -21,57 +21,39 @@
 namespace rx
 {
 
-SurfaceD3D *SurfaceD3D::createOffscreen(RendererD3D *renderer, egl::Display *display, const egl::Config *config, EGLClientBuffer shareHandle,
-                                        EGLint width, EGLint height)
-{
-    return new SurfaceD3D(renderer, display, config, width, height, EGL_TRUE, 0, EGL_FALSE,
-                          shareHandle, NULL);
-}
-
-SurfaceD3D *SurfaceD3D::createFromWindow(RendererD3D *renderer,
-                                         egl::Display *display,
-                                         const egl::Config *config,
-                                         EGLNativeWindowType window,
-                                         EGLint fixedSize,
-                                         EGLint directComposition,
-                                         EGLint width,
-                                         EGLint height,
-                                         EGLint orientation)
-{
-    return new SurfaceD3D(renderer, display, config, width, height, fixedSize, orientation,
-                          directComposition, static_cast<EGLClientBuffer>(0), window);
-}
-
-SurfaceD3D::SurfaceD3D(RendererD3D *renderer,
+SurfaceD3D::SurfaceD3D(const egl::SurfaceState &state,
+                       RendererD3D *renderer,
                        egl::Display *display,
                        const egl::Config *config,
-                       EGLint width,
-                       EGLint height,
-                       EGLint fixedSize,
-                       EGLint orientation,
-                       EGLint directComposition,
+                       EGLNativeWindowType window,
                        EGLClientBuffer shareHandle,
-                       EGLNativeWindowType window)
-    : SurfaceImpl(),
+                       const egl::AttributeMap &attribs)
+    : SurfaceImpl(state),
       mRenderer(renderer),
       mDisplay(display),
-      mFixedSize(fixedSize == EGL_TRUE),
-      mOrientation(orientation),
+      mFixedSize(window == nullptr || attribs.get(EGL_FIXED_SIZE_ANGLE, EGL_FALSE) == EGL_TRUE),
+      mOrientation(static_cast<EGLint>(attribs.get(EGL_SURFACE_ORIENTATION_ANGLE, 0))),
       mRenderTargetFormat(config->renderTargetFormat),
       mDepthStencilFormat(config->depthStencilFormat),
       mSwapChain(nullptr),
       mSwapIntervalDirty(true),
-      mNativeWindow(window, config, directComposition == EGL_TRUE),
-      mWidth(width),
-      mHeight(height),
+      mNativeWindow(renderer->createNativeWindow(window, config, attribs)),
+      mWidth(static_cast<EGLint>(attribs.get(EGL_WIDTH, 0))),
+      mHeight(static_cast<EGLint>(attribs.get(EGL_HEIGHT, 0))),
       mSwapInterval(1),
       mShareHandle(reinterpret_cast<HANDLE *>(shareHandle))
 {
+    if (window != nullptr && !mFixedSize)
+    {
+        mWidth  = -1;
+        mHeight = -1;
+    }
 }
 
 SurfaceD3D::~SurfaceD3D()
 {
     releaseSwapChain();
+    SafeDelete(mNativeWindow);
 }
 
 void SurfaceD3D::releaseSwapChain()
@@ -81,9 +63,9 @@ void SurfaceD3D::releaseSwapChain()
 
 egl::Error SurfaceD3D::initialize()
 {
-    if (mNativeWindow.getNativeWindow())
+    if (mNativeWindow->getNativeWindow())
     {
-        if (!mNativeWindow.initialize())
+        if (!mNativeWindow->initialize())
         {
             return egl::Error(EGL_BAD_SURFACE);
         }
@@ -98,9 +80,9 @@ egl::Error SurfaceD3D::initialize()
     return egl::Error(EGL_SUCCESS);
 }
 
-FramebufferImpl *SurfaceD3D::createDefaultFramebuffer(const gl::Framebuffer::Data &data)
+FramebufferImpl *SurfaceD3D::createDefaultFramebuffer(const gl::FramebufferState &data)
 {
-    return mRenderer->createFramebuffer(data);
+    return mRenderer->createDefaultFramebuffer(data);
 }
 
 egl::Error SurfaceD3D::bindTexImage(gl::Texture *, EGLint)
@@ -113,6 +95,11 @@ egl::Error SurfaceD3D::releaseTexImage(EGLint)
     return egl::Error(EGL_SUCCESS);
 }
 
+egl::Error SurfaceD3D::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
+{
+    return mSwapChain->getSyncValues(ust, msc, sbc);
+}
+
 egl::Error SurfaceD3D::resetSwapChain()
 {
     ASSERT(!mSwapChain);
@@ -123,7 +110,7 @@ egl::Error SurfaceD3D::resetSwapChain()
     if (!mFixedSize)
     {
         RECT windowRect;
-        if (!mNativeWindow.getClientRect(&windowRect))
+        if (!mNativeWindow->getClientRect(&windowRect))
         {
             ASSERT(false);
 
@@ -247,11 +234,11 @@ bool SurfaceD3D::checkForOutOfDateSwapChain()
     int clientWidth = getWidth();
     int clientHeight = getHeight();
     bool sizeDirty = false;
-    if (!mFixedSize && !mNativeWindow.isIconic())
+    if (!mFixedSize && !mNativeWindow->isIconic())
     {
         // The window is automatically resized to 150x22 when it's minimized, but the swapchain shouldn't be resized
         // because that's not a useful size to render to.
-        if (!mNativeWindow.getClientRect(&client))
+        if (!mNativeWindow->getClientRect(&client))
         {
             ASSERT(false);
             return false;
@@ -353,4 +340,38 @@ gl::Error SurfaceD3D::getAttachmentRenderTarget(const gl::FramebufferAttachment:
     return gl::Error(GL_NO_ERROR);
 }
 
+WindowSurfaceD3D::WindowSurfaceD3D(const egl::SurfaceState &state,
+                                   RendererD3D *renderer,
+                                   egl::Display *display,
+                                   const egl::Config *config,
+                                   EGLNativeWindowType window,
+                                   const egl::AttributeMap &attribs)
+    : SurfaceD3D(state, renderer, display, config, window, static_cast<EGLClientBuffer>(0), attribs)
+{
 }
+
+WindowSurfaceD3D::~WindowSurfaceD3D()
+{
+}
+
+PbufferSurfaceD3D::PbufferSurfaceD3D(const egl::SurfaceState &state,
+                                     RendererD3D *renderer,
+                                     egl::Display *display,
+                                     const egl::Config *config,
+                                     EGLClientBuffer shareHandle,
+                                     const egl::AttributeMap &attribs)
+    : SurfaceD3D(state,
+                 renderer,
+                 display,
+                 config,
+                 static_cast<EGLNativeWindowType>(0),
+                 shareHandle,
+                 attribs)
+{
+}
+
+PbufferSurfaceD3D::~PbufferSurfaceD3D()
+{
+}
+
+}  // namespace rc

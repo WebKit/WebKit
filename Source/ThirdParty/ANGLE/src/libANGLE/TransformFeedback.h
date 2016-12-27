@@ -16,7 +16,7 @@
 
 namespace rx
 {
-class ImplFactory;
+class GLImplFactory;
 class TransformFeedbackImpl;
 }
 
@@ -26,10 +26,34 @@ class Buffer;
 struct Caps;
 class Program;
 
+class TransformFeedbackState final : public angle::NonCopyable
+{
+  public:
+    TransformFeedbackState(size_t maxIndexedBuffers);
+
+    const BindingPointer<Buffer> &getGenericBuffer() const;
+    const OffsetBindingPointer<Buffer> &getIndexedBuffer(size_t idx) const;
+    const std::vector<OffsetBindingPointer<Buffer>> &getIndexedBuffers() const;
+
+  private:
+    friend class TransformFeedback;
+
+    std::string mLabel;
+
+    bool mActive;
+    GLenum mPrimitiveMode;
+    bool mPaused;
+
+    Program *mProgram;
+
+    BindingPointer<Buffer> mGenericBuffer;
+    std::vector<OffsetBindingPointer<Buffer>> mIndexedBuffers;
+};
+
 class TransformFeedback final : public RefCountObject, public LabeledObject
 {
   public:
-    TransformFeedback(rx::ImplFactory *implFactory, GLuint id, const Caps &caps);
+    TransformFeedback(rx::GLImplFactory *implFactory, GLuint id, const Caps &caps);
     virtual ~TransformFeedback();
 
     void setLabel(const std::string &label) override;
@@ -61,18 +85,8 @@ class TransformFeedback final : public RefCountObject, public LabeledObject
   private:
     void bindProgram(Program *program);
 
+    TransformFeedbackState mState;
     rx::TransformFeedbackImpl* mImplementation;
-
-    std::string mLabel;
-
-    bool mActive;
-    GLenum mPrimitiveMode;
-    bool mPaused;
-
-    Program *mProgram;
-
-    BindingPointer<Buffer> mGenericBuffer;
-    std::vector<OffsetBindingPointer<Buffer>> mIndexedBuffers;
 };
 
 }

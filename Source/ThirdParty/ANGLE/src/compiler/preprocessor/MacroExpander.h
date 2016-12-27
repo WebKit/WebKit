@@ -7,13 +7,11 @@
 #ifndef COMPILER_PREPROCESSOR_MACROEXPANDER_H_
 #define COMPILER_PREPROCESSOR_MACROEXPANDER_H_
 
-#include <cassert>
 #include <memory>
 #include <vector>
 
-#include "Lexer.h"
-#include "Macro.h"
-#include "pp_utils.h"
+#include "compiler/preprocessor/Lexer.h"
+#include "compiler/preprocessor/Macro.h"
 
 namespace pp
 {
@@ -24,14 +22,12 @@ struct SourceLocation;
 class MacroExpander : public Lexer
 {
   public:
-    MacroExpander(Lexer *lexer, MacroSet *macroSet, Diagnostics *diagnostics, bool parseDefined);
+    MacroExpander(Lexer *lexer, MacroSet *macroSet, Diagnostics *diagnostics);
     ~MacroExpander() override;
 
     void lex(Token *token) override;
 
   private:
-    PP_DISALLOW_COPY_AND_ASSIGN(MacroExpander);
-
     void getToken(Token *token);
     void ungetToken(const Token &token);
     bool isNextTokenLeftParen();
@@ -54,37 +50,23 @@ class MacroExpander : public Lexer
 
     struct MacroContext
     {
+        MacroContext();
+        bool empty() const;
+        const Token &get();
+        void unget();
+
         const Macro *macro;
         std::size_t index;
         std::vector<Token> replacements;
-
-        MacroContext()
-            : macro(0),
-              index(0)
-        {
-        }
-        bool empty() const
-        {
-            return index == replacements.size();
-        }
-        const Token &get()
-        {
-            return replacements[index++];
-        }
-        void unget()
-        {
-            assert(index > 0);
-            --index;
-        }
     };
 
     Lexer *mLexer;
     MacroSet *mMacroSet;
     Diagnostics *mDiagnostics;
-    bool mParseDefined;
 
     std::unique_ptr<Token> mReserveToken;
     std::vector<MacroContext *> mContextStack;
+    size_t mTotalTokensInContexts;
 };
 
 }  // namespace pp

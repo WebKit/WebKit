@@ -68,10 +68,6 @@ bool TVersionGLSL::visitAggregate(Visit, TIntermAggregate *node)
 
     switch (node->getOp())
     {
-      case EOpSequence:
-        // We need to visit sequence children to get to global or inner scope.
-        visitChildren = true;
-        break;
       case EOpDeclaration:
         {
             const TIntermSequence &sequence = *(node->getSequence());

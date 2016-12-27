@@ -19,10 +19,7 @@ class Renderer9;
 class VertexArray9 : public VertexArrayImpl
 {
   public:
-    VertexArray9(const gl::VertexArray::Data &data)
-        : VertexArrayImpl(data)
-    {
-    }
+    VertexArray9(const gl::VertexArrayState &data) : VertexArrayImpl(data) {}
 
     virtual ~VertexArray9() { }
 };

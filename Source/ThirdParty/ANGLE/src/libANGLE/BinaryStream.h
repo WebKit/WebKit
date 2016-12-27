@@ -9,25 +9,13 @@
 #ifndef LIBANGLE_BINARYSTREAM_H_
 #define LIBANGLE_BINARYSTREAM_H_
 
-#include "common/angleutils.h"
-#include "common/mathutil.h"
-
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <stdint.h>
 
-template <typename T>
-void StaticAssertIsFundamental()
-{
-    // c++11 STL is not available on OSX or Android
-#if !defined(ANGLE_PLATFORM_APPLE) && !defined(ANGLE_PLATFORM_ANDROID)
-    static_assert(std::is_fundamental<T>::value, "T must be a fundamental type.");
-#else
-    union { T dummy; } dummy;
-    static_cast<void>(dummy);
-#endif
-}
+#include "common/angleutils.h"
+#include "common/mathutil.h"
 
 namespace gl
 {
@@ -92,25 +80,31 @@ class BinaryInputStream : angle::NonCopyable
             return;
         }
 
-        if (!rx::IsUnsignedAdditionSafe(mOffset, length) || mOffset + length > mLength)
+        angle::CheckedNumeric<size_t> checkedOffset(mOffset);
+        checkedOffset += length;
+
+        if (!checkedOffset.IsValid() || mOffset + length > mLength)
         {
             mError = true;
             return;
         }
 
         v->assign(reinterpret_cast<const char *>(mData) + mOffset, length);
-        mOffset += length;
+        mOffset = checkedOffset.ValueOrDie();
     }
 
     void skip(size_t length)
     {
-        if (!rx::IsUnsignedAdditionSafe(mOffset, length) || mOffset + length > mLength)
+        angle::CheckedNumeric<size_t> checkedOffset(mOffset);
+        checkedOffset += length;
+
+        if (!checkedOffset.IsValid() || mOffset + length > mLength)
         {
             mError = true;
             return;
         }
 
-        mOffset += length;
+        mOffset = checkedOffset.ValueOrDie();
     }
 
     size_t offset() const
@@ -142,24 +136,27 @@ class BinaryInputStream : angle::NonCopyable
     template <typename T>
     void read(T *v, size_t num)
     {
-        StaticAssertIsFundamental<T>();
+        static_assert(std::is_fundamental<T>::value, "T must be a fundamental type.");
 
-        if (!rx::IsUnsignedMultiplicationSafe(num, sizeof(T)))
+        angle::CheckedNumeric<size_t> checkedLength(num);
+        checkedLength *= sizeof(T);
+        if (!checkedLength.IsValid())
         {
             mError = true;
             return;
         }
 
-        size_t length = num * sizeof(T);
+        angle::CheckedNumeric<size_t> checkedOffset(mOffset);
+        checkedOffset += checkedLength;
 
-        if (!rx::IsUnsignedAdditionSafe(mOffset, length) || mOffset + length > mLength)
+        if (!checkedOffset.IsValid() || checkedOffset.ValueOrDie() > mLength)
         {
             mError = true;
             return;
         }
 
-        memcpy(v, mData + mOffset, length);
-        mOffset += length;
+        memcpy(v, mData + mOffset, checkedLength.ValueOrDie());
+        mOffset = checkedOffset.ValueOrDie();
     }
 
     template <typename T>
@@ -181,9 +178,23 @@ class BinaryOutputStream : angle::NonCopyable
     template <class IntT>
     void writeInt(IntT param)
     {
-        ASSERT(rx::IsIntegerCastSafe<int>(param));
+        ASSERT(angle::IsValueInRangeForNumericType<int>(param));
         int intValue = static_cast<int>(param);
         write(&intValue, 1);
+    }
+
+    // Specialized writeInt for values that can also be exactly -1.
+    template <class UintT>
+    void writeIntOrNegOne(UintT param)
+    {
+        if (param == static_cast<UintT>(-1))
+        {
+            writeInt(-1);
+        }
+        else
+        {
+            writeInt(param);
+        }
     }
 
     void writeString(const std::string &v)
@@ -213,7 +224,7 @@ class BinaryOutputStream : angle::NonCopyable
     template <typename T>
     void write(const T *v, size_t num)
     {
-        StaticAssertIsFundamental<T>();
+        static_assert(std::is_fundamental<T>::value, "T must be a fundamental type.");
         const char *asBytes = reinterpret_cast<const char*>(v);
         mData.insert(mData.end(), asBytes, asBytes + num * sizeof(T));
     }

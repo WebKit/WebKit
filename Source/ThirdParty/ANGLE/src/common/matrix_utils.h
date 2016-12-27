@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "common/debug.h"
+#include "common/mathutil.h"
 
 namespace angle
 {
@@ -335,6 +336,42 @@ class Matrix
                 result(i, j) = det ? adjugateMatrix(i, j) / det : T();
 
         return result;
+    }
+
+    void setToIdentity()
+    {
+        ASSERT(rows() == columns());
+
+        const auto one  = T(1);
+        const auto zero = T(0);
+
+        for (auto &e : mElements)
+            e = zero;
+
+        for (unsigned int i = 0; i < rows(); ++i)
+        {
+            const auto pos = i * columns() + (i % columns());
+            mElements[pos] = one;
+        }
+    }
+
+    template <unsigned int Size>
+    static void setToIdentity(T(&matrix)[Size])
+    {
+        static_assert(gl::iSquareRoot<Size>() != 0, "Matrix is not square.");
+
+        const auto cols = gl::iSquareRoot<Size>();
+        const auto one  = T(1);
+        const auto zero = T(0);
+
+        for (auto &e : matrix)
+            e = zero;
+
+        for (unsigned int i = 0; i < cols; ++i)
+        {
+            const auto pos = i * cols + (i % cols);
+            matrix[pos]    = one;
+        }
     }
 
   private:

@@ -120,11 +120,7 @@ gl::Error VertexBuffer11::storeVertexAttributes(const gl::VertexAttribute &attri
     int inputStride = static_cast<int>(ComputeVertexAttributeStride(attrib));
 
     // This will map the resource if it isn't already mapped.
-    gl::Error error = mapResource();
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mapResource());
 
     uint8_t *output = mMappedResourceData + offset;
 
@@ -141,7 +137,7 @@ gl::Error VertexBuffer11::storeVertexAttributes(const gl::VertexAttribute &attri
     ASSERT(vertexFormatInfo.copyFunction != NULL);
     vertexFormatInfo.copyFunction(input, inputStride, count, output);
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 unsigned int VertexBuffer11::getBufferSize() const

@@ -36,7 +36,10 @@ size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>
 
 std::string FormatString(const char *fmt, va_list vararg)
 {
-    static auto& buffer = *new std::vector<char>(512);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+    static std::vector<char> buffer(512);
+#pragma GCC diagnostic pop
 
     size_t len = FormatStringIntoVector(fmt, vararg, buffer);
     return std::string(&buffer[0], len);

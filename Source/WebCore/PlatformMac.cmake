@@ -589,6 +589,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     Modules/applepay
     Modules/geolocation
     Modules/indexeddb
+    Modules/mediastream
     Modules/notifications
     Modules/webdatabase
     Modules/websockets

@@ -9,12 +9,11 @@
 
 #include "libANGLE/Fence.h"
 
+#include "angle_gl.h"
+
+#include "common/utilities.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
 #include "libANGLE/renderer/FenceSyncImpl.h"
-#include "libANGLE/renderer/Renderer.h"
-#include "common/utilities.h"
-
-#include "angle_gl.h"
 
 namespace gl
 {

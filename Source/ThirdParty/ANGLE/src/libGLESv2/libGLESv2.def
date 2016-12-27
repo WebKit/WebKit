@@ -202,6 +202,34 @@ EXPORTS
     glGetQueryObjectivEXT           @315
     glGetQueryObjecti64vEXT         @316
     glGetQueryObjectui64vEXT        @317
+    glBindUniformLocationCHROMIUM   @318
+    glCoverageModulationCHROMIUM    @319
+
+    glMatrixLoadfCHROMIUM           @320
+    glMatrixLoadIdentityCHROMIUM    @321
+    glGenPathsCHROMIUM              @322
+    glDeletePathsCHROMIUM           @323
+    glIsPathCHROMIUM                @324
+    glPathCommandsCHROMIUM          @325
+    glPathParameterfCHROMIUM        @326
+    glPathParameteriCHROMIUM        @327
+    glGetPathParameterfvCHROMIUM    @328
+    glGetPathParameterivCHROMIUM    @329
+    glPathStencilFuncCHROMIUM       @330
+    glStencilFillPathCHROMIUM       @331
+    glStencilStrokePathCHROMIUM     @332
+    glCoverFillPathCHROMIUM         @333
+    glCoverStrokePathCHROMIUM       @334
+    glStencilThenCoverFillPathCHROMIUM            @335
+    glStencilThenCoverStrokePathCHROMIUM          @336
+    glCoverFillPathInstancedCHROMIUM              @337
+    glCoverStrokePathInstancedCHROMIUM            @338
+    glStencilStrokePathInstancedCHROMIUM          @339
+    glStencilFillPathInstancedCHROMIUM            @340
+    glStencilThenCoverFillPathInstancedCHROMIUM   @341
+    glStencilThenCoverStrokePathInstancedCHROMIUM @342
+    glBindFragmentInputLocationCHROMIUM           @343
+    glProgramPathFragmentInputGenCHROMIUM         @344
 
     ; GLES 3.0 Functions
     glReadBuffer                    @180
@@ -308,6 +336,76 @@ EXPORTS
     glTexStorage2D                  @281
     glTexStorage3D                  @282
     glGetInternalformativ           @283
+
+    ; GLES 3.1 Functions
+    glDispatchCompute               @345
+    glDispatchComputeIndirect       @346
+    glDrawArraysIndirect            @347
+    glDrawElementsIndirect          @348
+    glFramebufferParameteri         @349
+    glGetFramebufferParameteriv     @350
+    glGetProgramInterfaceiv         @351
+    glGetProgramResourceIndex       @352
+    glGetProgramResourceName        @353
+    glGetProgramResourceiv          @354
+    glGetProgramResourceLocation    @355
+    glUseProgramStages              @356
+    glActiveShaderProgram           @357
+    glCreateShaderProgramv          @358
+    glBindProgramPipeline           @359
+    glDeleteProgramPipelines        @360
+    glGenProgramPipelines           @361
+    glIsProgramPipeline             @362
+    glGetProgramPipelineiv          @363
+    glProgramUniform1i              @364
+    glProgramUniform2i              @365
+    glProgramUniform3i              @366
+    glProgramUniform4i              @367
+    glProgramUniform1ui             @368
+    glProgramUniform2ui             @369
+    glProgramUniform3ui             @370
+    glProgramUniform4ui             @371
+    glProgramUniform1f              @372
+    glProgramUniform2f              @373
+    glProgramUniform3f              @374
+    glProgramUniform4f              @375
+    glProgramUniform1iv             @376
+    glProgramUniform2iv             @377
+    glProgramUniform3iv             @378
+    glProgramUniform4iv             @379
+    glProgramUniform1uiv            @380
+    glProgramUniform2uiv            @381
+    glProgramUniform3uiv            @382
+    glProgramUniform4uiv            @383
+    glProgramUniform1fv             @384
+    glProgramUniform2fv             @385
+    glProgramUniform3fv             @386
+    glProgramUniform4fv             @387
+    glProgramUniformMatrix2fv       @388
+    glProgramUniformMatrix3fv       @389
+    glProgramUniformMatrix4fv       @390
+    glProgramUniformMatrix2x3fv     @391
+    glProgramUniformMatrix3x2fv     @392
+    glProgramUniformMatrix2x4fv     @393
+    glProgramUniformMatrix4x2fv     @394
+    glProgramUniformMatrix3x4fv     @395
+    glProgramUniformMatrix4x3fv     @396
+    glValidateProgramPipeline       @397
+    glGetProgramPipelineInfoLog     @398
+    glBindImageTexture              @399
+    glGetBooleani_v                 @400
+    glMemoryBarrier                 @401
+    glMemoryBarrierByRegion         @402
+    glTexStorage2DMultisample       @403
+    glGetMultisamplefv              @404
+    glSampleMaski                   @405
+    glGetTexLevelParameteriv        @406
+    glGetTexLevelParameterfv        @407
+    glBindVertexBuffer              @408
+    glVertexAttribFormat            @409
+    glVertexAttribIFormat           @410
+    glVertexAttribBinding           @411
+    glVertexBindingDivisor          @412
 
     ; ANGLE Platform Implementation
     ANGLEPlatformCurrent            @290

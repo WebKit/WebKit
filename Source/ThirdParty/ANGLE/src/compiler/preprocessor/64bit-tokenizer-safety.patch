@@ -1,31 +1,79 @@
+diff --git a/src/compiler/preprocessor/Tokenizer.cpp b/src/compiler/preprocessor/Tokenizer.cpp
+index 0d7ad58..5ef0e5e 100644
 --- a/src/compiler/preprocessor/Tokenizer.cpp
 +++ b/src/compiler/preprocessor/Tokenizer.cpp
-@@ -56,6 +56,7 @@ typedef int16_t flex_int16_t;
- typedef uint16_t flex_uint16_t;
- typedef int32_t flex_int32_t;
- typedef uint32_t flex_uint32_t;
-+typedef uint64_t flex_uint64_t;
- #else
- typedef signed char flex_int8_t;
- typedef short int flex_int16_t;
-@@ -179,6 +180,11 @@ typedef void* yyscan_t;
- typedef struct yy_buffer_state *YY_BUFFER_STATE;
- #endif
-
-+#ifndef YY_TYPEDEF_YY_SIZE_T
-+#define YY_TYPEDEF_YY_SIZE_T
-+typedef size_t yy_size_t;
-+#endif
-+
- #define EOB_ACT_CONTINUE_SCAN 0
- #define EOB_ACT_END_OF_FILE 1
- #define EOB_ACT_LAST_MATCH 2
-@@ -353,7 +354,7 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
+@@ -1703,7 +1703,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 	else
+ 		{
+ 			int num_to_read =
+-			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
++			static_cast<int>(YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1);
+ 
+ 		while ( num_to_read <= 0 )
+ 			{ /* Not enough room in the buffer - grow it. */
+@@ -1737,8 +1737,8 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 
+ 			yyg->yy_c_buf_p = &b->yy_ch_buf[yy_c_buf_p_offset];
+ 
+-			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+-						number_to_move - 1;
++			num_to_read = static_cast<int>(YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
++						number_to_move - 1);
+ 
+ 			}
+ 
+@@ -1746,8 +1746,10 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 			num_to_read = YY_READ_BUF_SIZE;
+ 
+ 		/* Read in more data. */
++		yy_size_t ret = 0;
+ 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
+-			yyg->yy_n_chars, num_to_read );
++			ret, num_to_read );
++		yyg->yy_n_chars = static_cast<int>(ret);
+ 
+ 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = yyg->yy_n_chars;
+ 		}
+@@ -1773,13 +1775,13 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 
+ 	if ((int) (yyg->yy_n_chars + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
+ 		/* Extend the array by 50%, plus the number we really need. */
+-		int new_size = yyg->yy_n_chars + number_to_move + (yyg->yy_n_chars >> 1);
++		yy_size_t new_size = yyg->yy_n_chars + number_to_move + (yyg->yy_n_chars >> 1);
+ 		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) pprealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size ,yyscanner );
+ 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
+ 			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
+ 	}
+ 
+-	yyg->yy_n_chars += number_to_move;
++	yyg->yy_n_chars += static_cast<int>(number_to_move);
+ 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars] = YY_END_OF_BUFFER_CHAR;
+ 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
+ 
+@@ -2171,7 +2173,7 @@ void pppop_buffer_state (yyscan_t yyscanner)
   */
- #define YY_DO_BEFORE_ACTION \
- 	yyg->yytext_ptr = yy_bp; \
--	yyleng = (size_t) (yy_cp - yy_bp); \
-+	yyleng = (yy_size_t) (yy_cp - yy_bp); \
- 	yyg->yy_hold_char = *yy_cp; \
- 	*yy_cp = '\0'; \
- 	yyg->yy_c_buf_p = yy_cp;
+ static void ppensure_buffer_stack (yyscan_t yyscanner)
+ {
+-	int num_to_alloc;
++	yy_size_t num_to_alloc;
+     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
+ 
+ 	if (!yyg->yy_buffer_stack) {
+@@ -2238,7 +2240,7 @@ YY_BUFFER_STATE pp_scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscann
+ 	if ( ! b )
+ 		YY_FATAL_ERROR( "out of dynamic memory in pp_scan_buffer()" );
+ 
+-	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
++	b->yy_buf_size = static_cast<int>(size - 2);	/* "- 2" to take care of EOB's */
+ 	b->yy_buf_pos = b->yy_ch_buf = base;
+ 	b->yy_is_our_buffer = 0;
+ 	b->yy_input_file = NULL;
+@@ -2293,7 +2295,7 @@ YY_BUFFER_STATE pp_scan_bytes  (yyconst char * yybytes, int  _yybytes_len , yysc
+ 	if ( ! buf )
+ 		YY_FATAL_ERROR( "out of dynamic memory in pp_scan_bytes()" );
+ 
+-	for ( i = 0; i < _yybytes_len; ++i )
++	for ( i = 0; i < static_cast<yy_size_t>(_yybytes_len); ++i )
+ 		buf[i] = yybytes[i];
+ 
+ 	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;

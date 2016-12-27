@@ -37,23 +37,9 @@ bool ContainsVectorNode(const TIntermSequence &sequence)
     return false;
 }
 
-TIntermConstantUnion *ConstructIndexNode(int index)
-{
-    TConstantUnion *u = new TConstantUnion[1];
-    u[0].setIConst(index);
-
-    TType type(EbtInt, EbpUndefined, EvqConst, 1);
-    TIntermConstantUnion *node = new TIntermConstantUnion(u, type);
-    return node;
-}
-
 TIntermBinary *ConstructVectorIndexBinaryNode(TIntermSymbol *symbolNode, int index)
 {
-    TIntermBinary *binary = new TIntermBinary(EOpIndexDirect);
-    binary->setLeft(symbolNode);
-    TIntermConstantUnion *indexNode = ConstructIndexNode(index);
-    binary->setRight(indexNode);
-    return binary;
+    return new TIntermBinary(EOpIndexDirect, symbolNode, TIntermTyped::CreateIndexNode(index));
 }
 
 TIntermBinary *ConstructMatrixIndexBinaryNode(
@@ -62,11 +48,8 @@ TIntermBinary *ConstructMatrixIndexBinaryNode(
     TIntermBinary *colVectorNode =
         ConstructVectorIndexBinaryNode(symbolNode, colIndex);
 
-    TIntermBinary *binary = new TIntermBinary(EOpIndexDirect);
-    binary->setLeft(colVectorNode);
-    TIntermConstantUnion *rowIndexNode = ConstructIndexNode(rowIndex);
-    binary->setRight(rowIndexNode);
-    return binary;
+    return new TIntermBinary(EOpIndexDirect, colVectorNode,
+                             TIntermTyped::CreateIndexNode(rowIndex));
 }
 
 }  // namespace anonymous
@@ -77,25 +60,6 @@ bool ScalarizeVecAndMatConstructorArgs::visitAggregate(Visit visit, TIntermAggre
     {
         switch (node->getOp())
         {
-          case EOpSequence:
-            mSequenceStack.push_back(TIntermSequence());
-            {
-                for (TIntermSequence::const_iterator iter = node->getSequence()->begin();
-                     iter != node->getSequence()->end(); ++iter)
-                {
-                    TIntermNode *child = *iter;
-                    ASSERT(child != NULL);
-                    child->traverse(this);
-                    mSequenceStack.back().push_back(child);
-                }
-            }
-            if (mSequenceStack.back().size() > node->getSequence()->size())
-            {
-                node->getSequence()->clear();
-                *(node->getSequence()) = mSequenceStack.back();
-            }
-            mSequenceStack.pop_back();
-            return false;
           case EOpConstructVec2:
           case EOpConstructVec3:
           case EOpConstructVec4:
@@ -125,6 +89,26 @@ bool ScalarizeVecAndMatConstructorArgs::visitAggregate(Visit visit, TIntermAggre
         }
     }
     return true;
+}
+
+bool ScalarizeVecAndMatConstructorArgs::visitBlock(Visit visit, TIntermBlock *node)
+{
+    mBlockStack.push_back(TIntermSequence());
+    {
+        for (TIntermNode *child : *node->getSequence())
+        {
+            ASSERT(child != nullptr);
+            child->traverse(this);
+            mBlockStack.back().push_back(child);
+        }
+    }
+    if (mBlockStack.back().size() > node->getSequence()->size())
+    {
+        node->getSequence()->clear();
+        *(node->getSequence()) = mBlockStack.back();
+    }
+    mBlockStack.pop_back();
+    return false;
 }
 
 void ScalarizeVecAndMatConstructorArgs::scalarizeArgs(
@@ -278,17 +262,14 @@ TString ScalarizeVecAndMatConstructorArgs::createTempVariable(TIntermTyped *orig
         type.setPrecision(mFragmentPrecisionHigh ? EbpHigh : EbpMedium);
     }
 
-    TIntermBinary *init = new TIntermBinary(EOpInitialize);
     TIntermSymbol *symbolNode = new TIntermSymbol(-1, tempVarName, type);
-    init->setLeft(symbolNode);
-    init->setRight(original);
-    init->setType(type);
+    TIntermBinary *init       = new TIntermBinary(EOpInitialize, symbolNode, original);
 
     TIntermAggregate *decl = new TIntermAggregate(EOpDeclaration);
     decl->getSequence()->push_back(init);
 
-    ASSERT(mSequenceStack.size() > 0);
-    TIntermSequence &sequence = mSequenceStack.back();
+    ASSERT(mBlockStack.size() > 0);
+    TIntermSequence &sequence = mBlockStack.back();
     sequence.push_back(decl);
 
     return tempVarName;

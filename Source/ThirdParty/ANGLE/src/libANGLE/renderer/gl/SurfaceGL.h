@@ -19,16 +19,11 @@ class RendererGL;
 class SurfaceGL : public SurfaceImpl
 {
   public:
-    SurfaceGL(RendererGL *renderer);
+    SurfaceGL(const egl::SurfaceState &state, RendererGL *renderer);
     ~SurfaceGL() override;
 
-    gl::Error getAttachmentRenderTarget(const gl::FramebufferAttachment::Target &target,
-                                        FramebufferAttachmentRenderTarget **rtOut) override
-    {
-        return gl::Error(GL_OUT_OF_MEMORY, "Not supported on OpenGL");
-    }
-
-    FramebufferImpl *createDefaultFramebuffer(const gl::Framebuffer::Data &data) override;
+    FramebufferImpl *createDefaultFramebuffer(const gl::FramebufferState &data) override;
+    egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
 
     virtual egl::Error makeCurrent() = 0;
 

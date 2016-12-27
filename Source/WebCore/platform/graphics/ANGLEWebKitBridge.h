@@ -57,27 +57,6 @@ enum ANGLEShaderSymbolType {
     SHADER_SYMBOL_TYPE_VARYING
 };
 
-struct ANGLEShaderSymbol {
-    ANGLEShaderSymbolType symbolType;
-    String name;
-    String mappedName;
-    sh::GLenum dataType;
-    unsigned size;
-    sh::GLenum precision;
-    int staticUse;
-
-    bool isSampler() const
-    {
-        return symbolType == SHADER_SYMBOL_TYPE_UNIFORM
-            && (dataType == GL_SAMPLER_2D
-            || dataType == GL_SAMPLER_CUBE
-#if !PLATFORM(IOS) && !((PLATFORM(EFL) || PLATFORM(GTK)) && USE(OPENGL_ES_2))
-            || dataType == GL_SAMPLER_2D_RECT_ARB
-#endif
-            );
-    }
-};
-
 class ANGLEWebKitBridge {
 public:
 
@@ -87,7 +66,7 @@ public:
     ShBuiltInResources getResources() { return m_resources; }
     void setResources(ShBuiltInResources);
     
-    bool compileShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<ANGLEShaderSymbol>& symbols, int extraCompileOptions = 0);
+    bool compileShaderSource(const char* shaderSource, ANGLEShaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, int extraCompileOptions = 0);
 
 private:
 

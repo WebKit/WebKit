@@ -62,8 +62,6 @@ const char *GetOperatorString(TOperator op)
       case EOpIndexDirectStruct:
       case EOpIndexDirectInterfaceBlock: return ".";
 
-      case EOpVectorSwizzle: return ".";
-
       case EOpRadians: return "radians";
       case EOpDegrees: return "degrees";
       case EOpSin: return "sin";
@@ -199,3 +197,31 @@ const char *GetOperatorString(TOperator op)
     return "";
 }
 
+bool IsAssignment(TOperator op)
+{
+    switch (op)
+    {
+        case EOpPostIncrement:
+        case EOpPostDecrement:
+        case EOpPreIncrement:
+        case EOpPreDecrement:
+        case EOpAssign:
+        case EOpAddAssign:
+        case EOpSubAssign:
+        case EOpMulAssign:
+        case EOpVectorTimesMatrixAssign:
+        case EOpVectorTimesScalarAssign:
+        case EOpMatrixTimesScalarAssign:
+        case EOpMatrixTimesMatrixAssign:
+        case EOpDivAssign:
+        case EOpIModAssign:
+        case EOpBitShiftLeftAssign:
+        case EOpBitShiftRightAssign:
+        case EOpBitwiseAndAssign:
+        case EOpBitwiseXorAssign:
+        case EOpBitwiseOrAssign:
+            return true;
+        default:
+            return false;
+    }
+}

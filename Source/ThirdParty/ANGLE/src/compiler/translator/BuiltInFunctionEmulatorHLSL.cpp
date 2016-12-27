@@ -8,6 +8,59 @@
 #include "compiler/translator/BuiltInFunctionEmulator.h"
 #include "compiler/translator/BuiltInFunctionEmulatorHLSL.h"
 #include "compiler/translator/SymbolTable.h"
+#include "compiler/translator/VersionGLSL.h"
+
+void InitBuiltInIsnanFunctionEmulatorForHLSLWorkarounds(BuiltInFunctionEmulator *emu,
+                                                        int targetGLSLVersion)
+{
+    if (targetGLSLVersion < GLSL_VERSION_130)
+        return;
+
+    TType *float1 = new TType(EbtFloat);
+    TType *float2 = new TType(EbtFloat, 2);
+    TType *float3 = new TType(EbtFloat, 3);
+    TType *float4 = new TType(EbtFloat, 4);
+
+    emu->addEmulatedFunction(EOpIsNan, float1,
+        "bool webgl_isnan_emu(float x)\n"
+        "{\n"
+        "    return (x > 0.0 || x < 0.0) ? false : x != 0.0;\n"
+        "}\n"
+        "\n");
+
+    emu->addEmulatedFunction(EOpIsNan, float2,
+        "bool2 webgl_isnan_emu(float2 x)\n"
+        "{\n"
+        "    bool2 isnan;\n"
+        "    for (int i = 0; i < 2; i++)\n"
+        "    {\n"
+        "        isnan[i] = (x[i] > 0.0 || x[i] < 0.0) ? false : x[i] != 0.0;\n"
+        "    }\n"
+        "    return isnan;\n"
+        "}\n");
+
+    emu->addEmulatedFunction(EOpIsNan, float3,
+        "bool3 webgl_isnan_emu(float3 x)\n"
+        "{\n"
+        "    bool3 isnan;\n"
+        "    for (int i = 0; i < 3; i++)\n"
+        "    {\n"
+        "        isnan[i] = (x[i] > 0.0 || x[i] < 0.0) ? false : x[i] != 0.0;\n"
+        "    }\n"
+        "    return isnan;\n"
+        "}\n");
+
+    emu->addEmulatedFunction(EOpIsNan, float4,
+        "bool4 webgl_isnan_emu(float4 x)\n"
+        "{\n"
+        "    bool4 isnan;\n"
+        "    for (int i = 0; i < 4; i++)\n"
+        "    {\n"
+        "        isnan[i] = (x[i] > 0.0 || x[i] < 0.0) ? false : x[i] != 0.0;\n"
+        "    }\n"
+        "    return isnan;\n"
+        "}\n");
+}
 
 void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu)
 {

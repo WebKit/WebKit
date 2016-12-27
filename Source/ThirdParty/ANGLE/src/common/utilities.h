@@ -68,6 +68,76 @@ bool IsTriangleMode(GLenum drawMode);
 template <typename outT> outT iround(GLfloat value) { return static_cast<outT>(value > 0.0f ? floor(value + 0.5f) : ceil(value - 0.5f)); }
 template <typename outT> outT uiround(GLfloat value) { return static_cast<outT>(value + 0.5f); }
 
+// Helper for converting arbitrary GL types to other GL types used in queries and state setting
+template <typename ParamType>
+GLuint ConvertToGLuint(ParamType param)
+{
+    return static_cast<GLuint>(param);
+}
+template <>
+GLuint ConvertToGLuint(GLfloat param);
+
+template <typename ParamType>
+GLint ConvertToGLint(ParamType param)
+{
+    return static_cast<GLint>(param);
+}
+template <>
+GLint ConvertToGLint(GLfloat param);
+
+// Same conversion as uint
+template <typename ParamType>
+GLenum ConvertToGLenum(ParamType param)
+{
+    return static_cast<GLenum>(ConvertToGLuint(param));
+}
+
+template <typename ParamType>
+GLfloat ConvertToGLfloat(ParamType param)
+{
+    return static_cast<GLfloat>(param);
+}
+
+template <typename ParamType>
+ParamType ConvertFromGLfloat(GLfloat param)
+{
+    return static_cast<ParamType>(param);
+}
+template <>
+GLint ConvertFromGLfloat(GLfloat param);
+template <>
+GLuint ConvertFromGLfloat(GLfloat param);
+
+template <typename ParamType>
+ParamType ConvertFromGLenum(GLenum param)
+{
+    return static_cast<ParamType>(param);
+}
+
+template <typename ParamType>
+ParamType ConvertFromGLuint(GLuint param)
+{
+    return static_cast<ParamType>(param);
+}
+
+template <typename ParamType>
+ParamType ConvertFromGLint(GLint param)
+{
+    return static_cast<ParamType>(param);
+}
+
+template <typename ParamType>
+ParamType ConvertFromGLboolean(GLboolean param)
+{
+    return static_cast<ParamType>(param ? GL_TRUE : GL_FALSE);
+}
+
+template <typename ParamType>
+ParamType ConvertFromGLint64(GLint64 param)
+{
+    return clampCast<ParamType>(param);
+}
+
 unsigned int ParseAndStripArrayIndex(std::string *name);
 
 }  // namespace gl

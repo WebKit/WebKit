@@ -1,3 +1,13 @@
+2016-10-27  Alex Christensen  <achristensen@webkit.org>
+
+        Update ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=164101
+
+        Reviewed by Darin Adler.
+
+        Updated to f01731530e7f754e5ebaf32d00f3e23b62376424
+        Differences between upstream ANGLE and WebKit's copy of ANGLE are in changes.diff
+
 2016-07-29  David Kilzer  <ddkilzer@apple.com>
 
         ANGLE: Fix global constructors and exit-time destructors

@@ -23,7 +23,7 @@
 
 namespace rx
 {
-class ImplFactory;
+class GLImplFactory;
 class VertexArrayImpl;
 }
 
@@ -31,10 +31,35 @@ namespace gl
 {
 class Buffer;
 
+class VertexArrayState final : public angle::NonCopyable
+{
+  public:
+    explicit VertexArrayState(size_t maxAttribs);
+    ~VertexArrayState();
+
+    const std::string &getLabel() const { return mLabel; }
+
+    const BindingPointer<Buffer> &getElementArrayBuffer() const { return mElementArrayBuffer; }
+    size_t getMaxAttribs() const { return mVertexAttributes.size(); }
+    size_t getMaxEnabledAttribute() const { return mMaxEnabledAttribute; }
+    const std::vector<VertexAttribute> &getVertexAttributes() const { return mVertexAttributes; }
+    const VertexAttribute &getVertexAttribute(size_t index) const
+    {
+        return mVertexAttributes[index];
+    }
+
+  private:
+    friend class VertexArray;
+    std::string mLabel;
+    std::vector<VertexAttribute> mVertexAttributes;
+    BindingPointer<Buffer> mElementArrayBuffer;
+    size_t mMaxEnabledAttribute;
+};
+
 class VertexArray final : public LabeledObject
 {
   public:
-    VertexArray(rx::ImplFactory *factory, GLuint id, size_t maxAttribs);
+    VertexArray(rx::GLImplFactory *factory, GLuint id, size_t maxAttribs);
     ~VertexArray();
 
     GLuint id() const;
@@ -52,39 +77,19 @@ class VertexArray final : public LabeledObject
 
     void setElementArrayBuffer(Buffer *buffer);
 
-    const BindingPointer<Buffer> &getElementArrayBuffer() const { return mData.getElementArrayBuffer(); }
-    size_t getMaxAttribs() const { return mData.getVertexAttributes().size(); }
-    const std::vector<VertexAttribute> &getVertexAttributes() const { return mData.getVertexAttributes(); }
-
-    rx::VertexArrayImpl *getImplementation() { return mVertexArray; }
-    const rx::VertexArrayImpl *getImplementation() const { return mVertexArray; }
-
-    size_t getMaxEnabledAttribute() const { return mData.getMaxEnabledAttribute(); }
-
-    class Data final : public angle::NonCopyable
+    const BindingPointer<Buffer> &getElementArrayBuffer() const
     {
-      public:
-        explicit Data(size_t maxAttribs);
-        ~Data();
+        return mState.getElementArrayBuffer();
+    }
+    size_t getMaxAttribs() const { return mState.getVertexAttributes().size(); }
+    const std::vector<VertexAttribute> &getVertexAttributes() const
+    {
+        return mState.getVertexAttributes();
+    }
 
-        const std::string &getLabel() const { return mLabel; }
+    rx::VertexArrayImpl *getImplementation() const { return mVertexArray; }
 
-        const BindingPointer<Buffer> &getElementArrayBuffer() const { return mElementArrayBuffer; }
-        size_t getMaxAttribs() const { return mVertexAttributes.size(); }
-        size_t getMaxEnabledAttribute() const { return mMaxEnabledAttribute; }
-        const std::vector<VertexAttribute> &getVertexAttributes() const { return mVertexAttributes; }
-        const VertexAttribute &getVertexAttribute(size_t index) const
-        {
-            return mVertexAttributes[index];
-        }
-
-      private:
-        friend class VertexArray;
-        std::string mLabel;
-        std::vector<VertexAttribute> mVertexAttributes;
-        BindingPointer<Buffer> mElementArrayBuffer;
-        size_t mMaxEnabledAttribute;
-    };
+    size_t getMaxEnabledAttribute() const { return mState.getMaxEnabledAttribute(); }
 
     enum DirtyBitType
     {
@@ -114,7 +119,7 @@ class VertexArray final : public LabeledObject
   private:
     GLuint mId;
 
-    Data mData;
+    VertexArrayState mState;
     DirtyBits mDirtyBits;
 
     rx::VertexArrayImpl *mVertexArray;

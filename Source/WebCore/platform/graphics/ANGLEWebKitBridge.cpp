@@ -35,11 +35,14 @@ namespace WebCore {
 
 // FIXME: This is awful. Get rid of ANGLEWebKitBridge completely and call the libANGLE API directly to validate shaders.
 
-static void appendSymbol(const sh::ShaderVariable& variable, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols, const std::string& name, const std::string& mappedName)
+static void appendSymbol(const sh::ShaderVariable& variable, ANGLEShaderSymbolType symbolType, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, const std::string& name, const std::string& mappedName)
 {
     LOG(WebGL, "Map shader symbol %s -> %s\n", name.c_str(), mappedName.c_str());
     
-    symbols.append(ANGLEShaderSymbol({symbolType, name.c_str(), mappedName.c_str(), variable.type, variable.arraySize, variable.precision, variable.staticUse}));
+    sh::ShaderVariable variableToAppend = variable;
+    variableToAppend.name = name;
+    variableToAppend.mappedName = mappedName;
+    symbols.append(std::make_pair(symbolType, variableToAppend));
     
     if (variable.isArray()) {
         for (unsigned i = 0; i < variable.elementCount(); i++) {
@@ -47,13 +50,14 @@ static void appendSymbol(const sh::ShaderVariable& variable, ANGLEShaderSymbolTy
             std::string arrayName = name + arrayBrackets;
             std::string arrayMappedName = mappedName + arrayBrackets;
             LOG(WebGL, "Map shader symbol %s -> %s\n", arrayName.c_str(), arrayMappedName.c_str());
-            
-            symbols.append({symbolType, arrayName.c_str(), arrayMappedName.c_str(), variable.type, variable.arraySize, variable.precision, variable.staticUse});
+            variableToAppend.name = arrayName;
+            variableToAppend.mappedName = arrayMappedName;
+            symbols.append(std::make_pair(symbolType, variableToAppend));
         }
     }
 }
 
-static void getStructInfo(const sh::ShaderVariable& field, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols, const std::string& namePrefix, const std::string& mappedNamePrefix)
+static void getStructInfo(const sh::ShaderVariable& field, ANGLEShaderSymbolType symbolType, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, const std::string& namePrefix, const std::string& mappedNamePrefix)
 {
     std::string name = namePrefix + '.' + field.name;
     std::string mappedName = mappedNamePrefix + '.' + field.mappedName;
@@ -67,7 +71,7 @@ static void getStructInfo(const sh::ShaderVariable& field, ANGLEShaderSymbolType
         appendSymbol(field, symbolType, symbols, name, mappedName);
 }
 
-static void getSymbolInfo(const sh::ShaderVariable& variable, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols)
+static void getSymbolInfo(const sh::ShaderVariable& variable, ANGLEShaderSymbolType symbolType, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols)
 {
     if (variable.isStruct()) {
         if (variable.isArray()) {
@@ -86,7 +90,7 @@ static void getSymbolInfo(const sh::ShaderVariable& variable, ANGLEShaderSymbolT
         appendSymbol(variable, symbolType, symbols, variable.name, variable.mappedName);
 }
 
-static bool getSymbolInfo(ShHandle compiler, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols)
+static bool getSymbolInfo(ShHandle compiler, ANGLEShaderSymbolType symbolType, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols)
 {
     switch (symbolType) {
     case SHADER_SYMBOL_TYPE_UNIFORM: {
@@ -156,7 +160,7 @@ void ANGLEWebKitBridge::setResources(ShBuiltInResources resources)
     m_resources = resources;
 }
 
-bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<ANGLEShaderSymbol>& symbols, int extraCompileOptions)
+bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>>& symbols, int extraCompileOptions)
 {
     if (!builtCompilers) {
         m_fragmentCompiler = ShConstructCompiler(GL_FRAGMENT_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);

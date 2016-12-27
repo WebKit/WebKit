@@ -264,6 +264,21 @@ void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DT
     }
 }
 
+D3DQUERYTYPE ConvertQueryType(GLenum queryType)
+{
+    switch (queryType)
+    {
+        case GL_ANY_SAMPLES_PASSED_EXT:
+        case GL_ANY_SAMPLES_PASSED_CONSERVATIVE_EXT:
+            return D3DQUERYTYPE_OCCLUSION;
+        case GL_COMMANDS_COMPLETED_CHROMIUM:
+            return D3DQUERYTYPE_EVENT;
+        default:
+            UNREACHABLE();
+            return static_cast<D3DQUERYTYPE>(0);
+    }
+}
+
 D3DMULTISAMPLE_TYPE GetMultisampleType(GLuint samples)
 {
     return (samples > 1) ? static_cast<D3DMULTISAMPLE_TYPE>(samples) : D3DMULTISAMPLE_NONE;
@@ -291,7 +306,7 @@ GLsizei GetSamplesCount(D3DMULTISAMPLE_TYPE type)
 
 bool IsFormatChannelEquivalent(D3DFORMAT d3dformat, GLenum format)
 {
-    GLenum internalFormat = d3d9::GetD3DFormatInfo(d3dformat).internalFormat;
+    GLenum internalFormat  = d3d9::GetD3DFormatInfo(d3dformat).info->glInternalFormat;
     GLenum convertedFormat = gl::GetInternalFormatInfo(internalFormat).format;
     return convertedFormat == format;
 }
@@ -575,10 +590,10 @@ void GenerateCaps(IDirect3D9 *d3d9,
     extensions->colorBufferFloat = false;
     extensions->debugMarker = true;
     extensions->eglImage               = true;
+    extensions->eglImageExternal       = true;
     extensions->unpackSubimage         = true;
     extensions->packSubimage           = true;
-    extensions->vertexArrayObject      = true;
-    extensions->noError                = true;
+    extensions->syncQuery              = extensions->fence;
 
     // D3D9 has no concept of separate masks and refs for front and back faces in the depth stencil
     // state.
@@ -631,9 +646,13 @@ WorkaroundsD3D GenerateWorkarounds()
     workarounds.mrtPerfWorkaround = true;
     workarounds.setDataFasterThanImageUpload = false;
     workarounds.useInstancedPointSpriteEmulation = false;
+
+    // TODO(jmadill): Disable workaround when we have a fixed compiler DLL.
+    workarounds.expandIntegerPowExpressions = true;
+
     return workarounds;
 }
 
-}
+}  // namespace d3d9
 
-}
+}  // namespace rx

@@ -25,7 +25,7 @@ Renderbuffer::Renderbuffer(rx::RenderbufferImpl *impl, GLuint id)
       mLabel(),
       mWidth(0),
       mHeight(0),
-      mInternalFormat(GL_RGBA4),
+      mFormat(GL_RGBA4),
       mSamples(0)
 {
 }
@@ -49,66 +49,55 @@ Error Renderbuffer::setStorage(GLenum internalformat, size_t width, size_t heigh
 {
     orphanImages();
 
-    Error error = mRenderbuffer->setStorage(internalformat, width, height);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mRenderbuffer->setStorage(internalformat, width, height));
 
     mWidth          = static_cast<GLsizei>(width);
     mHeight         = static_cast<GLsizei>(height);
-    mInternalFormat = internalformat;
+    mFormat         = Format(internalformat);
     mSamples = 0;
 
-    return Error(GL_NO_ERROR);
+    mDirtyChannel.signal();
+
+    return NoError();
 }
 
 Error Renderbuffer::setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height)
 {
     orphanImages();
 
-    Error error = mRenderbuffer->setStorageMultisample(samples, internalformat, width, height);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mRenderbuffer->setStorageMultisample(samples, internalformat, width, height));
 
     mWidth          = static_cast<GLsizei>(width);
     mHeight         = static_cast<GLsizei>(height);
-    mInternalFormat = internalformat;
+    mFormat         = Format(internalformat);
     mSamples        = static_cast<GLsizei>(samples);
 
-    return Error(GL_NO_ERROR);
+    mDirtyChannel.signal();
+
+    return NoError();
 }
 
 Error Renderbuffer::setStorageEGLImageTarget(egl::Image *image)
 {
     orphanImages();
 
-    Error error = mRenderbuffer->setStorageEGLImageTarget(image);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mRenderbuffer->setStorageEGLImageTarget(image));
 
     setTargetImage(image);
 
     mWidth          = static_cast<GLsizei>(image->getWidth());
     mHeight         = static_cast<GLsizei>(image->getHeight());
-    mInternalFormat = image->getInternalFormat();
+    mFormat         = Format(image->getFormat());
     mSamples        = 0;
 
-    return Error(GL_NO_ERROR);
+    mDirtyChannel.signal();
+
+    return NoError();
 }
 
-rx::RenderbufferImpl *Renderbuffer::getImplementation()
+rx::RenderbufferImpl *Renderbuffer::getImplementation() const
 {
     ASSERT(mRenderbuffer);
-    return mRenderbuffer;
-}
-
-const rx::RenderbufferImpl *Renderbuffer::getImplementation() const
-{
     return mRenderbuffer;
 }
 
@@ -122,9 +111,9 @@ GLsizei Renderbuffer::getHeight() const
     return mHeight;
 }
 
-GLenum Renderbuffer::getInternalFormat() const
+const Format &Renderbuffer::getFormat() const
 {
-    return mInternalFormat;
+    return mFormat;
 }
 
 GLsizei Renderbuffer::getSamples() const
@@ -134,32 +123,32 @@ GLsizei Renderbuffer::getSamples() const
 
 GLuint Renderbuffer::getRedSize() const
 {
-    return GetInternalFormatInfo(mInternalFormat).redBits;
+    return mFormat.info->redBits;
 }
 
 GLuint Renderbuffer::getGreenSize() const
 {
-    return GetInternalFormatInfo(mInternalFormat).greenBits;
+    return mFormat.info->greenBits;
 }
 
 GLuint Renderbuffer::getBlueSize() const
 {
-    return GetInternalFormatInfo(mInternalFormat).blueBits;
+    return mFormat.info->blueBits;
 }
 
 GLuint Renderbuffer::getAlphaSize() const
 {
-    return GetInternalFormatInfo(mInternalFormat).alphaBits;
+    return mFormat.info->alphaBits;
 }
 
 GLuint Renderbuffer::getDepthSize() const
 {
-    return GetInternalFormatInfo(mInternalFormat).depthBits;
+    return mFormat.info->depthBits;
 }
 
 GLuint Renderbuffer::getStencilSize() const
 {
-    return GetInternalFormatInfo(mInternalFormat).stencilBits;
+    return mFormat.info->stencilBits;
 }
 
 void Renderbuffer::onAttach()
@@ -181,4 +170,4 @@ Extents Renderbuffer::getAttachmentSize(const FramebufferAttachment::Target & /*
 {
     return Extents(mWidth, mHeight, 1);
 }
-}
+}  // namespace gl

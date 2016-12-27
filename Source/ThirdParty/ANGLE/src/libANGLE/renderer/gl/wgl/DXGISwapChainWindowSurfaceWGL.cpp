@@ -22,7 +22,8 @@
 namespace rx
 {
 
-DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(RendererGL *renderer,
+DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(const egl::SurfaceState &state,
+                                                             RendererGL *renderer,
                                                              EGLNativeWindowType window,
                                                              ID3D11Device *device,
                                                              HANDLE deviceHandle,
@@ -31,10 +32,11 @@ DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(RendererGL *rendere
                                                              const FunctionsGL *functionsGL,
                                                              const FunctionsWGL *functionsWGL,
                                                              EGLint orientation)
-    : SurfaceGL(renderer),
+    : SurfaceGL(state, renderer),
       mWindow(window),
       mStateManager(renderer->getStateManager()),
       mWorkarounds(renderer->getWorkarounds()),
+      mRenderer(renderer),
       mFunctionsGL(functionsGL),
       mFunctionsWGL(functionsWGL),
       mDevice(device),
@@ -289,9 +291,10 @@ EGLint DXGISwapChainWindowSurfaceWGL::getSwapBehavior() const
 }
 
 FramebufferImpl *DXGISwapChainWindowSurfaceWGL::createDefaultFramebuffer(
-    const gl::Framebuffer::Data &data)
+    const gl::FramebufferState &data)
 {
-    return new FramebufferGL(mFramebufferID, data, mFunctionsGL, mWorkarounds, mStateManager);
+    return new FramebufferGL(mFramebufferID, data, mFunctionsGL, mWorkarounds,
+                             mRenderer->getBlitter(), mStateManager);
 }
 
 egl::Error DXGISwapChainWindowSurfaceWGL::setObjectsLocked(bool locked)

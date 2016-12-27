@@ -9,6 +9,9 @@
 #ifndef LIBANGLE_RENDERER_GL_PROGRAMGL_H_
 #define LIBANGLE_RENDERER_GL_PROGRAMGL_H_
 
+#include <string>
+#include <vector>
+
 #include "libANGLE/renderer/gl/WorkaroundsGL.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 
@@ -27,17 +30,18 @@ struct SamplerBindingGL
 class ProgramGL : public ProgramImpl
 {
   public:
-    ProgramGL(const gl::Program::Data &data,
+    ProgramGL(const gl::ProgramState &data,
               const FunctionsGL *functions,
               const WorkaroundsGL &workarounds,
-              StateManagerGL *stateManager);
+              StateManagerGL *stateManager,
+              bool enablePathRendering);
     ~ProgramGL() override;
 
     LinkResult load(gl::InfoLog &infoLog, gl::BinaryInputStream *stream) override;
     gl::Error save(gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
 
-    LinkResult link(const gl::Data &data, gl::InfoLog &infoLog) override;
+    LinkResult link(const gl::ContextState &data, gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
@@ -68,11 +72,18 @@ class ProgramGL : public ProgramImpl
     bool getUniformBlockMemberInfo(const std::string &memberUniformName,
                                    sh::BlockMemberInfo *memberInfoOut) const override;
 
+    void setPathFragmentInputGen(const std::string &inputName,
+                                 GLenum genMode,
+                                 GLint components,
+                                 const GLfloat *coeffs) override;
+
     GLuint getProgramID() const;
     const std::vector<SamplerBindingGL> &getAppliedSamplerUniforms() const;
 
   private:
-    void reset();
+    void preLink();
+    bool checkLinkStatus(gl::InfoLog &infoLog);
+    void postLink();
 
     // Helper function, makes it simpler to type.
     GLint uniLoc(GLint glLocation) const { return mUniformRealLocationMap[glLocation]; }
@@ -89,6 +100,15 @@ class ProgramGL : public ProgramImpl
 
     // A map from a mData.getUniforms() index to a mSamplerBindings index.
     std::vector<size_t> mUniformIndexToSamplerIndex;
+
+    struct PathRenderingFragmentInput
+    {
+        std::string name;
+        GLint location;
+    };
+    std::vector<PathRenderingFragmentInput> mPathRenderingFragmentInputs;
+
+    bool mEnablePathRendering;
 
     GLuint mProgramID;
 };

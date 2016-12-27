@@ -133,7 +133,7 @@ Context *GetValidGlobalContext()
     {
         if (context->isContextLost())
         {
-            context->recordError(gl::Error(GL_OUT_OF_MEMORY, "Context has been lost."));
+            context->handleError(gl::Error(GL_OUT_OF_MEMORY, "Context has been lost."));
             return nullptr;
         }
         else

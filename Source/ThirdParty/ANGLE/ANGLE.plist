@@ -10,7 +10,7 @@
         <key>OpenSourceWebsiteURL</key>
         <string>http://code.google.com/p/angleproject/</string>
         <key>OpenSourceSCM</key>
-        <string>git clone https://chromium.googlesource.com/angle/angle &amp;&amp; cd angle &amp;&amp; git checkout 6684007a77572f3616fc453138b0ef5f7d42d038</string>
+        <string>git clone https://chromium.googlesource.com/angle/angle &amp;&amp; cd angle &amp;&amp; git checkout f01731530e7f754e5ebaf32d00f3e23b62376424</string>
         <key>OpenSourceImportDate</key>
         <string>2014-04-29</string>
         <key>OpenSourceLicense</key>

@@ -58,25 +58,14 @@ void RegenerateStructNames::visitSymbol(TIntermSymbol *symbol)
     userType->setName(tmp);
 }
 
-bool RegenerateStructNames::visitAggregate(Visit, TIntermAggregate *aggregate)
+bool RegenerateStructNames::visitBlock(Visit, TIntermBlock *block)
 {
-    ASSERT(aggregate);
-    switch (aggregate->getOp())
+    ++mScopeDepth;
+    TIntermSequence &sequence = *(block->getSequence());
+    for (TIntermNode *node : sequence)
     {
-      case EOpSequence:
-        ++mScopeDepth;
-        {
-            TIntermSequence &sequence = *(aggregate->getSequence());
-            for (size_t ii = 0; ii < sequence.size(); ++ii)
-            {
-                TIntermNode *node = sequence[ii];
-                ASSERT(node != NULL);
-                node->traverse(this);
-            }
-        }
-        --mScopeDepth;
-        return false;
-      default:
-        return true;
+        node->traverse(this);
     }
+    --mScopeDepth;
+    return false;
 }

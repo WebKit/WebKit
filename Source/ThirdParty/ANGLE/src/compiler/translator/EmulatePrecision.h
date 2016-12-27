@@ -28,7 +28,11 @@ class EmulatePrecision : public TLValueTrackingTraverser
     bool visitUnary(Visit visit, TIntermUnary *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
 
-    void writeEmulationHelpers(TInfoSinkBase& sink, ShShaderOutput outputLanguage);
+    void writeEmulationHelpers(TInfoSinkBase &sink,
+                               const int shaderVersion,
+                               const ShShaderOutput outputLanguage);
+
+    static bool SupportedInLanguage(const ShShaderOutput outputLanguage);
 
   private:
     struct TypePair

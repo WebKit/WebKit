@@ -14,17 +14,17 @@
 #include "tests/angle_unittests_utils.h"
 
 using ::testing::_;
+using ::testing::get;
 using ::testing::Return;
 using ::testing::SetArgumentPointee;
 
 namespace
 {
 
-class MockFactory : public rx::NullFactory
+ACTION(CreateMockTransformFeedbackImpl)
 {
-  public:
-    MOCK_METHOD0(createTransformFeedback, rx::TransformFeedbackImpl *());
-};
+    return new rx::MockTransformFeedbackImpl(arg0);
+}
 
 class TransformFeedbackTest : public testing::Test
 {
@@ -33,17 +33,18 @@ class TransformFeedbackTest : public testing::Test
 
     void SetUp() override
     {
-        mImpl = new rx::MockTransformFeedbackImpl;
-        EXPECT_CALL(mMockFactory, createTransformFeedback())
-            .WillOnce(Return(mImpl))
+        EXPECT_CALL(mMockFactory, createTransformFeedback(_))
+            .WillOnce(CreateMockTransformFeedbackImpl())
             .RetiresOnSaturation();
 
         // Set a reasonable number of tf attributes
         mCaps.maxTransformFeedbackSeparateAttributes = 8;
 
-        EXPECT_CALL(*mImpl, destructor());
         mFeedback = new gl::TransformFeedback(&mMockFactory, 1, mCaps);
         mFeedback->addRef();
+
+        mImpl = rx::GetImplAs<rx::MockTransformFeedbackImpl>(mFeedback);
+        EXPECT_CALL(*mImpl, destructor());
     }
 
     void TearDown() override
@@ -59,7 +60,7 @@ class TransformFeedbackTest : public testing::Test
         testing::Mock::VerifyAndClear(mImpl);
     }
 
-    MockFactory mMockFactory;
+    rx::MockGLFactory mMockFactory;
     rx::MockTransformFeedbackImpl* mImpl;
     gl::TransformFeedback* mFeedback;
     gl::Caps mCaps;

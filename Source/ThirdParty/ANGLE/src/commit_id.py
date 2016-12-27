@@ -2,11 +2,15 @@ import subprocess as sp
 import sys
 import os
 
-# Usage: commit_id.py check <angle_dir> (checks if git is present)
-# Usage: commit_id.py gen <angle_dir> <file_to_write> (generates commit id)
+usage = """\
+Usage: commit_id.py check <angle_dir>                - check if git is present
+       commit_id.py gen <angle_dir> <file_to_write>  - generate commit.h"""
 
 def grab_output(command, cwd):
     return sp.Popen(command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip()
+
+if len(sys.argv) < 3:
+    sys.exit(usage)
 
 operation = sys.argv[1]
 cwd = sys.argv[2]

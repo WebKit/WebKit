@@ -34,10 +34,10 @@ void ValidateOutputs::visitSymbol(TIntermSymbol *symbol)
     TString name = symbol->getSymbol();
     TQualifier qualifier = symbol->getQualifier();
 
-    if (mVisitedSymbols.count(name) == 1)
+    if (mVisitedSymbols.count(name.c_str()) == 1)
         return;
 
-    mVisitedSymbols.insert(name);
+    mVisitedSymbols.insert(name.c_str());
 
     if (qualifier == EvqFragmentOut)
     {
@@ -60,7 +60,7 @@ int ValidateOutputs::validateAndCountErrors(TInfoSinkBase &sink) const
     for (const auto &symbol : mOutputs)
     {
         const TType &type         = symbol->getType();
-        const size_t elementCount = static_cast<size_t>(type.isArray() ? type.getArraySize() : 1);
+        const size_t elementCount = static_cast<size_t>(type.isArray() ? type.getArraySize() : 1u);
         const size_t location     = static_cast<size_t>(type.getLayoutQualifier().location);
 
         ASSERT(type.getLayoutQualifier().location != -1);

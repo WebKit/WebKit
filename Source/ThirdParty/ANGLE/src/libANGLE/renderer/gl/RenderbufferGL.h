@@ -38,12 +38,6 @@ class RenderbufferGL : public RenderbufferImpl
 
     GLuint getRenderbufferID() const;
 
-    gl::Error getAttachmentRenderTarget(const gl::FramebufferAttachment::Target &target,
-                                        FramebufferAttachmentRenderTarget **rtOut) override
-    {
-        return gl::Error(GL_OUT_OF_MEMORY, "Not supported on OpenGL");
-    }
-
   private:
     const FunctionsGL *mFunctions;
     const WorkaroundsGL &mWorkarounds;

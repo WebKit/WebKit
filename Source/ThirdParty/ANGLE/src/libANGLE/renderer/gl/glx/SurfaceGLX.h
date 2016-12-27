@@ -17,7 +17,7 @@ namespace rx
 class SurfaceGLX : public SurfaceGL
 {
   public:
-    SurfaceGLX(RendererGL *renderer) : SurfaceGL(renderer) {}
+    SurfaceGLX(const egl::SurfaceState &state, RendererGL *renderer) : SurfaceGL(state, renderer) {}
 
     virtual egl::Error checkForResize() = 0;
 };

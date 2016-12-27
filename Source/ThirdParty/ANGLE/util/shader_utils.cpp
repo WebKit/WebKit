@@ -77,6 +77,40 @@ GLuint CompileShaderFromFile(GLenum type, const std::string &sourcePath)
     return CompileShader(type, source);
 }
 
+GLuint CheckLinkStatusAndReturnProgram(GLuint program, bool outputErrorMessages)
+{
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    if (linkStatus == 0)
+    {
+        if (outputErrorMessages)
+        {
+            GLint infoLogLength;
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+            // Info log length includes the null terminator, so 1 means that the info log is an
+            // empty string.
+            if (infoLogLength > 1)
+            {
+                std::vector<GLchar> infoLog(infoLogLength);
+                glGetProgramInfoLog(program, static_cast<GLsizei>(infoLog.size()), nullptr,
+                                    &infoLog[0]);
+
+                std::cerr << "program link failed: " << &infoLog[0];
+            }
+            else
+            {
+                std::cerr << "program link failed. <Empty log message>";
+            }
+        }
+
+        glDeleteProgram(program);
+        return 0;
+    }
+
+    return program;
+}
+
 GLuint CompileProgramWithTransformFeedback(
     const std::string &vsSource,
     const std::string &fsSource,
@@ -117,33 +151,7 @@ GLuint CompileProgramWithTransformFeedback(
 
     glLinkProgram(program);
 
-    GLint linkStatus;
-    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-
-    if (linkStatus == 0)
-    {
-        GLint infoLogLength;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        // Info log length includes the null terminator, so 1 means that the info log is an empty
-        // string.
-        if (infoLogLength > 1)
-        {
-            std::vector<GLchar> infoLog(infoLogLength);
-            glGetProgramInfoLog(program, static_cast<GLsizei>(infoLog.size()), nullptr, &infoLog[0]);
-
-            std::cerr << "program link failed: " << &infoLog[0];
-        }
-        else
-        {
-            std::cerr << "program link failed. <Empty log message>";
-        }
-
-        glDeleteProgram(program);
-        return 0;
-    }
-
-    return program;
+    return CheckLinkStatusAndReturnProgram(program, true);
 }
 
 GLuint CompileProgram(const std::string &vsSource, const std::string &fsSource)
@@ -162,4 +170,22 @@ GLuint CompileProgramFromFiles(const std::string &vsPath, const std::string &fsP
     }
 
     return CompileProgram(vsSource, fsSource);
+}
+
+GLuint CompileComputeProgram(const std::string &csSource, bool outputErrorMessages)
+{
+    GLuint program = glCreateProgram();
+
+    GLuint cs = CompileShader(GL_COMPUTE_SHADER, csSource);
+    if (cs == 0)
+    {
+        glDeleteProgram(program);
+        return 0;
+    }
+
+    glAttachShader(program, cs);
+
+    glLinkProgram(program);
+
+    return CheckLinkStatusAndReturnProgram(program, outputErrorMessages);
 }

@@ -12,16 +12,19 @@
 
 #include <vector>
 
+#include "common/Optional.h"
 #include "common/angleutils.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Debug.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/RefCountObject.h"
+#include "libANGLE/signal_utils.h"
 
 namespace rx
 {
-class ImplFactory;
+class ContextImpl;
+class GLImplFactory;
 class FramebufferImpl;
 class RenderbufferImpl;
 class SurfaceImpl;
@@ -35,65 +38,72 @@ class Surface;
 namespace gl
 {
 class Context;
+class Framebuffer;
 class Renderbuffer;
 class State;
 class Texture;
 class TextureCapsMap;
 struct Caps;
-struct Data;
+class ContextState;
 struct Extensions;
 struct ImageIndex;
 struct Rectangle;
 
-class Framebuffer final : public LabeledObject
+class FramebufferState final : angle::NonCopyable
 {
   public:
+    FramebufferState();
+    explicit FramebufferState(const Caps &caps);
+    ~FramebufferState();
 
-    class Data final : angle::NonCopyable
+    const std::string &getLabel();
+
+    const FramebufferAttachment *getAttachment(GLenum attachment) const;
+    const FramebufferAttachment *getReadAttachment() const;
+    const FramebufferAttachment *getFirstColorAttachment() const;
+    const FramebufferAttachment *getDepthOrStencilAttachment() const;
+    const FramebufferAttachment *getColorAttachment(size_t colorAttachment) const;
+    const FramebufferAttachment *getDepthAttachment() const;
+    const FramebufferAttachment *getStencilAttachment() const;
+    const FramebufferAttachment *getDepthStencilAttachment() const;
+
+    const std::vector<GLenum> &getDrawBufferStates() const { return mDrawBufferStates; }
+    GLenum getReadBufferState() const { return mReadBufferState; }
+    const std::vector<FramebufferAttachment> &getColorAttachments() const
     {
-      public:
-        explicit Data();
-        explicit Data(const Caps &caps);
-        ~Data();
+        return mColorAttachments;
+    }
 
-        const std::string &getLabel();
+    bool attachmentsHaveSameDimensions() const;
+    bool colorAttachmentsAreUniqueImages() const;
 
-        const FramebufferAttachment *getReadAttachment() const;
-        const FramebufferAttachment *getFirstColorAttachment() const;
-        const FramebufferAttachment *getDepthOrStencilAttachment() const;
-        const FramebufferAttachment *getColorAttachment(size_t colorAttachment) const;
-        const FramebufferAttachment *getDepthAttachment() const;
-        const FramebufferAttachment *getStencilAttachment() const;
-        const FramebufferAttachment *getDepthStencilAttachment() const;
+    const FramebufferAttachment *getDrawBuffer(size_t drawBufferIdx) const;
+    size_t getDrawBufferCount() const;
 
-        const std::vector<GLenum> &getDrawBufferStates() const { return mDrawBufferStates; }
-        GLenum getReadBufferState() const { return mReadBufferState; }
-        const std::vector<FramebufferAttachment> &getColorAttachments() const { return mColorAttachments; }
+  private:
+    friend class Framebuffer;
 
-        bool attachmentsHaveSameDimensions() const;
+    std::string mLabel;
 
-      private:
-        friend class Framebuffer;
+    std::vector<FramebufferAttachment> mColorAttachments;
+    FramebufferAttachment mDepthAttachment;
+    FramebufferAttachment mStencilAttachment;
 
-        std::string mLabel;
+    std::vector<GLenum> mDrawBufferStates;
+    GLenum mReadBufferState;
+};
 
-        std::vector<FramebufferAttachment> mColorAttachments;
-        FramebufferAttachment mDepthAttachment;
-        FramebufferAttachment mStencilAttachment;
-
-        std::vector<GLenum> mDrawBufferStates;
-        GLenum mReadBufferState;
-    };
-
-    Framebuffer(const Caps &caps, rx::ImplFactory *factory, GLuint id);
+class Framebuffer final : public LabeledObject, public angle::SignalReceiver
+{
+  public:
+    Framebuffer(const Caps &caps, rx::GLImplFactory *factory, GLuint id);
     Framebuffer(rx::SurfaceImpl *surface);
     virtual ~Framebuffer();
 
     void setLabel(const std::string &label) override;
     const std::string &getLabel() const override;
 
-    const rx::FramebufferImpl *getImplementation() const { return mImpl; }
-    rx::FramebufferImpl *getImplementation() { return mImpl; }
+    rx::FramebufferImpl *getImplementation() const { return mImpl; }
 
     GLuint id() const { return mId; }
 
@@ -130,27 +140,36 @@ class Framebuffer final : public LabeledObject
     size_t getNumColorBuffers() const;
     bool hasDepth() const;
     bool hasStencil() const;
-    int getSamples(const gl::Data &data) const;
+
     bool usingExtendedDrawBuffers() const;
 
-    GLenum checkStatus(const gl::Data &data) const;
+    // This method calls checkStatus.
+    int getSamples(const ContextState &state);
+    GLenum checkStatus(const ContextState &state);
+
+    // Helper for checkStatus == GL_FRAMEBUFFER_COMPLETE.
+    bool complete(const ContextState &state);
+
     bool hasValidDepthStencil() const;
 
     Error discard(size_t count, const GLenum *attachments);
     Error invalidate(size_t count, const GLenum *attachments);
     Error invalidateSub(size_t count, const GLenum *attachments, const gl::Rectangle &area);
 
-    Error clear(const gl::Data &data, GLbitfield mask);
-    Error clearBufferfv(const gl::Data &data,
+    Error clear(rx::ContextImpl *context, GLbitfield mask);
+    Error clearBufferfv(rx::ContextImpl *context,
                         GLenum buffer,
                         GLint drawbuffer,
                         const GLfloat *values);
-    Error clearBufferuiv(const gl::Data &data,
+    Error clearBufferuiv(rx::ContextImpl *context,
                          GLenum buffer,
                          GLint drawbuffer,
                          const GLuint *values);
-    Error clearBufferiv(const gl::Data &data, GLenum buffer, GLint drawbuffer, const GLint *values);
-    Error clearBufferfi(const gl::Data &data,
+    Error clearBufferiv(rx::ContextImpl *context,
+                        GLenum buffer,
+                        GLint drawbuffer,
+                        const GLint *values);
+    Error clearBufferfi(rx::ContextImpl *context,
                         GLenum buffer,
                         GLint drawbuffer,
                         GLfloat depth,
@@ -158,18 +177,17 @@ class Framebuffer final : public LabeledObject
 
     GLenum getImplementationColorReadFormat() const;
     GLenum getImplementationColorReadType() const;
-    Error readPixels(const gl::State &state,
+    Error readPixels(rx::ContextImpl *context,
                      const gl::Rectangle &area,
                      GLenum format,
                      GLenum type,
                      GLvoid *pixels) const;
 
-    Error blit(const State &state,
+    Error blit(rx::ContextImpl *context,
                const Rectangle &sourceArea,
                const Rectangle &destArea,
                GLbitfield mask,
-               GLenum filter,
-               const Framebuffer *sourceFramebuffer);
+               GLenum filter);
 
     enum DirtyBitType
     {
@@ -187,19 +205,31 @@ class Framebuffer final : public LabeledObject
     typedef std::bitset<DIRTY_BIT_MAX> DirtyBits;
     bool hasAnyDirtyBit() const { return mDirtyBits.any(); }
 
-    void syncState() const;
+    void syncState();
 
-  protected:
+    // angle::SignalReceiver implementation
+    void signal(angle::SignalToken token) override;
+
+  private:
     void detachResourceById(GLenum resourceType, GLuint resourceId);
+    void detachMatchingAttachment(FramebufferAttachment *attachment,
+                                  GLenum matchType,
+                                  GLuint matchId,
+                                  size_t dirtyBit);
+    GLenum checkStatusImpl(const ContextState &state);
 
-    Data mData;
+    FramebufferState mState;
     rx::FramebufferImpl *mImpl;
     GLuint mId;
 
-    // TODO(jmadill): See if we can make this non-mutable.
-    mutable DirtyBits mDirtyBits;
+    Optional<GLenum> mCachedStatus;
+    std::vector<angle::ChannelBinding> mDirtyColorAttachmentBindings;
+    angle::ChannelBinding mDirtyDepthAttachmentBinding;
+    angle::ChannelBinding mDirtyStencilAttachmentBinding;
+
+    DirtyBits mDirtyBits;
 };
 
-}
+}  // namespace gl
 
 #endif   // LIBANGLE_FRAMEBUFFER_H_

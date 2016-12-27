@@ -22,16 +22,17 @@ TString arrayBrackets(const TType &type)
 
 bool isSingleStatement(TIntermNode *node)
 {
-    if (const TIntermAggregate *aggregate = node->getAsAggregate())
+    if (node->getAsFunctionDefinition())
     {
-        return (aggregate->getOp() != EOpFunction) &&
-               (aggregate->getOp() != EOpSequence);
+        return false;
     }
-    else if (const TIntermSelection *selection = node->getAsSelectionNode())
+    else if (node->getAsBlock())
     {
-        // Ternary operators are usually part of an assignment operator.
-        // This handles those rare cases in which they are all by themselves.
-        return selection->usesTernaryOperator();
+        return false;
+    }
+    else if (node->getAsIfElseNode())
+    {
+        return false;
     }
     else if (node->getAsLoopNode())
     {
@@ -243,20 +244,20 @@ const TConstantUnion *TOutputGLSLBase::writeConstantUnion(
     return pConstUnion;
 }
 
-void TOutputGLSLBase::writeConstructorTriplet(Visit visit, const TType &type, const char *constructorBaseType)
+void TOutputGLSLBase::writeConstructorTriplet(Visit visit, const TType &type)
 {
     TInfoSinkBase &out = objSink();
     if (visit == PreVisit)
     {
         if (type.isArray())
         {
-            out << constructorBaseType;
+            out << getTypeName(type);
             out << arrayBrackets(type);
             out << "(";
         }
         else
         {
-            out << constructorBaseType << "(";
+            out << getTypeName(type) << "(";
         }
     }
     else
@@ -282,241 +283,222 @@ void TOutputGLSLBase::visitConstantUnion(TIntermConstantUnion *node)
     writeConstantUnion(node->getType(), node->getUnionArrayPointer());
 }
 
+bool TOutputGLSLBase::visitSwizzle(Visit visit, TIntermSwizzle *node)
+{
+    TInfoSinkBase &out = objSink();
+    if (visit == PostVisit)
+    {
+        out << ".";
+        node->writeOffsetsAsXYZW(&out);
+    }
+    return true;
+}
+
 bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary *node)
 {
     bool visitChildren = true;
     TInfoSinkBase &out = objSink();
     switch (node->getOp())
     {
-      case EOpInitialize:
-        if (visit == InVisit)
-        {
-            out << " = ";
-            // RHS of initialize is not being declared.
-            mDeclaringVariables = false;
-        }
-        break;
-      case EOpAssign:
-        writeTriplet(visit, "(", " = ", ")");
-        break;
-      case EOpAddAssign:
-        writeTriplet(visit, "(", " += ", ")");
-        break;
-      case EOpSubAssign:
-        writeTriplet(visit, "(", " -= ", ")");
-        break;
-      case EOpDivAssign:
-        writeTriplet(visit, "(", " /= ", ")");
-        break;
-      case EOpIModAssign:
-        writeTriplet(visit, "(", " %= ", ")");
-        break;
-      // Notice the fall-through.
-      case EOpMulAssign:
-      case EOpVectorTimesMatrixAssign:
-      case EOpVectorTimesScalarAssign:
-      case EOpMatrixTimesScalarAssign:
-      case EOpMatrixTimesMatrixAssign:
-        writeTriplet(visit, "(", " *= ", ")");
-        break;
-      case EOpBitShiftLeftAssign:
-        writeTriplet(visit, "(", " <<= ", ")");
-        break;
-      case EOpBitShiftRightAssign:
-        writeTriplet(visit, "(", " >>= ", ")");
-        break;
-      case EOpBitwiseAndAssign:
-        writeTriplet(visit, "(", " &= ", ")");
-        break;
-      case EOpBitwiseXorAssign:
-        writeTriplet(visit, "(", " ^= ", ")");
-        break;
-      case EOpBitwiseOrAssign:
-        writeTriplet(visit, "(", " |= ", ")");
-        break;
-
-      case EOpIndexDirect:
-        writeTriplet(visit, NULL, "[", "]");
-        break;
-      case EOpIndexIndirect:
-        if (node->getAddIndexClamp())
-        {
+        case EOpComma:
+            writeTriplet(visit, "(", ", ", ")");
+            break;
+        case EOpInitialize:
             if (visit == InVisit)
             {
-                if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC)
-                    out << "[int(clamp(float(";
-                else
-                    out << "[webgl_int_clamp(";
+                out << " = ";
+                // RHS of initialize is not being declared.
+                mDeclaringVariables = false;
             }
-            else if (visit == PostVisit)
-            {
-                int maxSize;
-                TIntermTyped *left = node->getLeft();
-                TType leftType = left->getType();
+            break;
+        case EOpAssign:
+            writeTriplet(visit, "(", " = ", ")");
+            break;
+        case EOpAddAssign:
+            writeTriplet(visit, "(", " += ", ")");
+            break;
+        case EOpSubAssign:
+            writeTriplet(visit, "(", " -= ", ")");
+            break;
+        case EOpDivAssign:
+            writeTriplet(visit, "(", " /= ", ")");
+            break;
+        case EOpIModAssign:
+            writeTriplet(visit, "(", " %= ", ")");
+            break;
+        // Notice the fall-through.
+        case EOpMulAssign:
+        case EOpVectorTimesMatrixAssign:
+        case EOpVectorTimesScalarAssign:
+        case EOpMatrixTimesScalarAssign:
+        case EOpMatrixTimesMatrixAssign:
+            writeTriplet(visit, "(", " *= ", ")");
+            break;
+        case EOpBitShiftLeftAssign:
+            writeTriplet(visit, "(", " <<= ", ")");
+            break;
+        case EOpBitShiftRightAssign:
+            writeTriplet(visit, "(", " >>= ", ")");
+            break;
+        case EOpBitwiseAndAssign:
+            writeTriplet(visit, "(", " &= ", ")");
+            break;
+        case EOpBitwiseXorAssign:
+            writeTriplet(visit, "(", " ^= ", ")");
+            break;
+        case EOpBitwiseOrAssign:
+            writeTriplet(visit, "(", " |= ", ")");
+            break;
 
-                if (left->isArray())
-                {
-                    // The shader will fail validation if the array length is not > 0.
-                    maxSize = leftType.getArraySize() - 1;
-                }
-                else
-                {
-                    maxSize = leftType.getNominalSize() - 1;
-                }
-
-                if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC)
-                    out << "), 0.0, float(" << maxSize << ")))]";
-                else
-                    out << ", 0, " << maxSize << ")]";
-            }
-        }
-        else
-        {
+        case EOpIndexDirect:
             writeTriplet(visit, NULL, "[", "]");
-        }
-        break;
-      case EOpIndexDirectStruct:
-        if (visit == InVisit)
-        {
-            // Here we are writing out "foo.bar", where "foo" is struct
-            // and "bar" is field. In AST, it is represented as a binary
-            // node, where left child represents "foo" and right child "bar".
-            // The node itself represents ".". The struct field "bar" is
-            // actually stored as an index into TStructure::fields.
-            out << ".";
-            const TStructure *structure = node->getLeft()->getType().getStruct();
-            const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
-            const TField *field = structure->fields()[index->getIConst(0)];
+            break;
+        case EOpIndexIndirect:
+            if (node->getAddIndexClamp())
+            {
+                if (visit == InVisit)
+                {
+                    if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC)
+                        out << "[int(clamp(float(";
+                    else
+                        out << "[webgl_int_clamp(";
+                }
+                else if (visit == PostVisit)
+                {
+                    int maxSize;
+                    TIntermTyped *left = node->getLeft();
+                    TType leftType     = left->getType();
 
-            TString fieldName = field->name();
-            if (!mSymbolTable.findBuiltIn(structure->name(), mShaderVersion))
+                    if (left->isArray())
+                    {
+                        // The shader will fail validation if the array length is not > 0.
+                        maxSize = static_cast<int>(leftType.getArraySize()) - 1;
+                    }
+                    else
+                    {
+                        maxSize = leftType.getNominalSize() - 1;
+                    }
+
+                    if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC)
+                        out << "), 0.0, float(" << maxSize << ")))]";
+                    else
+                        out << ", 0, " << maxSize << ")]";
+                }
+            }
+            else
+            {
+                writeTriplet(visit, NULL, "[", "]");
+            }
+            break;
+        case EOpIndexDirectStruct:
+            if (visit == InVisit)
+            {
+                // Here we are writing out "foo.bar", where "foo" is struct
+                // and "bar" is field. In AST, it is represented as a binary
+                // node, where left child represents "foo" and right child "bar".
+                // The node itself represents ".". The struct field "bar" is
+                // actually stored as an index into TStructure::fields.
+                out << ".";
+                const TStructure *structure       = node->getLeft()->getType().getStruct();
+                const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
+                const TField *field               = structure->fields()[index->getIConst(0)];
+
+                TString fieldName = field->name();
+                if (!mSymbolTable.findBuiltIn(structure->name(), mShaderVersion))
+                    fieldName = hashName(fieldName);
+
+                out << fieldName;
+                visitChildren = false;
+            }
+            break;
+        case EOpIndexDirectInterfaceBlock:
+            if (visit == InVisit)
+            {
+                out << ".";
+                const TInterfaceBlock *interfaceBlock =
+                    node->getLeft()->getType().getInterfaceBlock();
+                const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
+                const TField *field               = interfaceBlock->fields()[index->getIConst(0)];
+
+                TString fieldName = field->name();
+                ASSERT(!mSymbolTable.findBuiltIn(interfaceBlock->name(), mShaderVersion));
                 fieldName = hashName(fieldName);
 
-            out << fieldName;
-            visitChildren = false;
-        }
-        break;
-      case EOpIndexDirectInterfaceBlock:
-          if (visit == InVisit)
-          {
-              out << ".";
-              const TInterfaceBlock *interfaceBlock = node->getLeft()->getType().getInterfaceBlock();
-              const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
-              const TField *field = interfaceBlock->fields()[index->getIConst(0)];
-
-              TString fieldName = field->name();
-              ASSERT(!mSymbolTable.findBuiltIn(interfaceBlock->name(), mShaderVersion));
-              fieldName = hashName(fieldName);
-
-              out << fieldName;
-              visitChildren = false;
-          }
-          break;
-      case EOpVectorSwizzle:
-        if (visit == InVisit)
-        {
-            out << ".";
-            TIntermAggregate *rightChild = node->getRight()->getAsAggregate();
-            TIntermSequence *sequence = rightChild->getSequence();
-            for (TIntermSequence::iterator sit = sequence->begin(); sit != sequence->end(); ++sit)
-            {
-                TIntermConstantUnion *element = (*sit)->getAsConstantUnion();
-                ASSERT(element->getBasicType() == EbtInt);
-                ASSERT(element->getNominalSize() == 1);
-                const TConstantUnion& data = element->getUnionArrayPointer()[0];
-                ASSERT(data.getType() == EbtInt);
-                switch (data.getIConst())
-                {
-                  case 0:
-                    out << "x";
-                    break;
-                  case 1:
-                    out << "y";
-                    break;
-                  case 2:
-                    out << "z";
-                    break;
-                  case 3:
-                    out << "w";
-                    break;
-                  default:
-                    UNREACHABLE();
-                }
+                out << fieldName;
+                visitChildren = false;
             }
-            visitChildren = false;
-        }
-        break;
+            break;
 
-      case EOpAdd:
-        writeTriplet(visit, "(", " + ", ")");
-        break;
-      case EOpSub:
-        writeTriplet(visit, "(", " - ", ")");
-        break;
-      case EOpMul:
-        writeTriplet(visit, "(", " * ", ")");
-        break;
-      case EOpDiv:
-        writeTriplet(visit, "(", " / ", ")");
-        break;
-      case EOpIMod:
-        writeTriplet(visit, "(", " % ", ")");
-        break;
-      case EOpBitShiftLeft:
-        writeTriplet(visit, "(", " << ", ")");
-        break;
-      case EOpBitShiftRight:
-        writeTriplet(visit, "(", " >> ", ")");
-        break;
-      case EOpBitwiseAnd:
-        writeTriplet(visit, "(", " & ", ")");
-        break;
-      case EOpBitwiseXor:
-        writeTriplet(visit, "(", " ^ ", ")");
-        break;
-      case EOpBitwiseOr:
-        writeTriplet(visit, "(", " | ", ")");
-        break;
+        case EOpAdd:
+            writeTriplet(visit, "(", " + ", ")");
+            break;
+        case EOpSub:
+            writeTriplet(visit, "(", " - ", ")");
+            break;
+        case EOpMul:
+            writeTriplet(visit, "(", " * ", ")");
+            break;
+        case EOpDiv:
+            writeTriplet(visit, "(", " / ", ")");
+            break;
+        case EOpIMod:
+            writeTriplet(visit, "(", " % ", ")");
+            break;
+        case EOpBitShiftLeft:
+            writeTriplet(visit, "(", " << ", ")");
+            break;
+        case EOpBitShiftRight:
+            writeTriplet(visit, "(", " >> ", ")");
+            break;
+        case EOpBitwiseAnd:
+            writeTriplet(visit, "(", " & ", ")");
+            break;
+        case EOpBitwiseXor:
+            writeTriplet(visit, "(", " ^ ", ")");
+            break;
+        case EOpBitwiseOr:
+            writeTriplet(visit, "(", " | ", ")");
+            break;
 
-      case EOpEqual:
-        writeTriplet(visit, "(", " == ", ")");
-        break;
-      case EOpNotEqual:
-        writeTriplet(visit, "(", " != ", ")");
-        break;
-      case EOpLessThan:
-        writeTriplet(visit, "(", " < ", ")");
-        break;
-      case EOpGreaterThan:
-        writeTriplet(visit, "(", " > ", ")");
-        break;
-      case EOpLessThanEqual:
-        writeTriplet(visit, "(", " <= ", ")");
-        break;
-      case EOpGreaterThanEqual:
-        writeTriplet(visit, "(", " >= ", ")");
-        break;
+        case EOpEqual:
+            writeTriplet(visit, "(", " == ", ")");
+            break;
+        case EOpNotEqual:
+            writeTriplet(visit, "(", " != ", ")");
+            break;
+        case EOpLessThan:
+            writeTriplet(visit, "(", " < ", ")");
+            break;
+        case EOpGreaterThan:
+            writeTriplet(visit, "(", " > ", ")");
+            break;
+        case EOpLessThanEqual:
+            writeTriplet(visit, "(", " <= ", ")");
+            break;
+        case EOpGreaterThanEqual:
+            writeTriplet(visit, "(", " >= ", ")");
+            break;
 
-      // Notice the fall-through.
-      case EOpVectorTimesScalar:
-      case EOpVectorTimesMatrix:
-      case EOpMatrixTimesVector:
-      case EOpMatrixTimesScalar:
-      case EOpMatrixTimesMatrix:
-        writeTriplet(visit, "(", " * ", ")");
-        break;
+        // Notice the fall-through.
+        case EOpVectorTimesScalar:
+        case EOpVectorTimesMatrix:
+        case EOpMatrixTimesVector:
+        case EOpMatrixTimesScalar:
+        case EOpMatrixTimesMatrix:
+            writeTriplet(visit, "(", " * ", ")");
+            break;
 
-      case EOpLogicalOr:
-        writeTriplet(visit, "(", " || ", ")");
-        break;
-      case EOpLogicalXor:
-        writeTriplet(visit, "(", " ^^ ", ")");
-        break;
-      case EOpLogicalAnd:
-        writeTriplet(visit, "(", " && ", ")");
-        break;
-      default:
-        UNREACHABLE();
+        case EOpLogicalOr:
+            writeTriplet(visit, "(", " || ", ")");
+            break;
+        case EOpLogicalXor:
+            writeTriplet(visit, "(", " ^^ ", ")");
+            break;
+        case EOpLogicalAnd:
+            writeTriplet(visit, "(", " && ", ")");
+            break;
+        default:
+            UNREACHABLE();
     }
 
     return visitChildren;
@@ -711,40 +693,40 @@ bool TOutputGLSLBase::visitUnary(Visit visit, TIntermUnary *node)
     return true;
 }
 
-bool TOutputGLSLBase::visitSelection(Visit visit, TIntermSelection *node)
+bool TOutputGLSLBase::visitTernary(Visit visit, TIntermTernary *node)
+{
+    TInfoSinkBase &out = objSink();
+    // Notice two brackets at the beginning and end. The outer ones
+    // encapsulate the whole ternary expression. This preserves the
+    // order of precedence when ternary expressions are used in a
+    // compound expression, i.e., c = 2 * (a < b ? 1 : 2).
+    out << "((";
+    node->getCondition()->traverse(this);
+    out << ") ? (";
+    node->getTrueExpression()->traverse(this);
+    out << ") : (";
+    node->getFalseExpression()->traverse(this);
+    out << "))";
+    return false;
+}
+
+bool TOutputGLSLBase::visitIfElse(Visit visit, TIntermIfElse *node)
 {
     TInfoSinkBase &out = objSink();
 
-    if (node->usesTernaryOperator())
-    {
-        // Notice two brackets at the beginning and end. The outer ones
-        // encapsulate the whole ternary expression. This preserves the
-        // order of precedence when ternary expressions are used in a
-        // compound expression, i.e., c = 2 * (a < b ? 1 : 2).
-        out << "((";
-        node->getCondition()->traverse(this);
-        out << ") ? (";
-        node->getTrueBlock()->traverse(this);
-        out << ") : (";
-        node->getFalseBlock()->traverse(this);
-        out << "))";
-    }
-    else
-    {
-        out << "if (";
-        node->getCondition()->traverse(this);
-        out << ")\n";
+    out << "if (";
+    node->getCondition()->traverse(this);
+    out << ")\n";
 
-        incrementDepth(node);
-        visitCodeBlock(node->getTrueBlock());
+    incrementDepth(node);
+    visitCodeBlock(node->getTrueBlock());
 
-        if (node->getFalseBlock())
-        {
-            out << "else\n";
-            visitCodeBlock(node->getFalseBlock());
-        }
-        decrementDepth();
+    if (node->getFalseBlock())
+    {
+        out << "else\n";
+        visitCodeBlock(node->getFalseBlock());
     }
+    decrementDepth();
     return false;
 }
 
@@ -778,6 +760,65 @@ bool TOutputGLSLBase::visitCase(Visit visit, TIntermCase *node)
     }
 }
 
+bool TOutputGLSLBase::visitBlock(Visit visit, TIntermBlock *node)
+{
+    TInfoSinkBase &out = objSink();
+    // Scope the blocks except when at the global scope.
+    if (mDepth > 0)
+    {
+        out << "{\n";
+    }
+
+    incrementDepth(node);
+    for (TIntermSequence::const_iterator iter = node->getSequence()->begin();
+         iter != node->getSequence()->end(); ++iter)
+    {
+        TIntermNode *curNode = *iter;
+        ASSERT(curNode != nullptr);
+        curNode->traverse(this);
+
+        if (isSingleStatement(curNode))
+            out << ";\n";
+    }
+    decrementDepth();
+
+    // Scope the blocks except when at the global scope.
+    if (mDepth > 0)
+    {
+        out << "}\n";
+    }
+    return false;
+}
+
+bool TOutputGLSLBase::visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node)
+{
+    TInfoSinkBase &out = objSink();
+
+    ASSERT(visit == PreVisit);
+    {
+        const TType &type = node->getType();
+        writeVariableType(type);
+        if (type.isArray())
+            out << arrayBrackets(type);
+    }
+
+    out << " " << hashFunctionNameIfNeeded(node->getFunctionSymbolInfo()->getNameObj());
+
+    incrementDepth(node);
+
+    // Traverse function parameters.
+    TIntermAggregate *params = node->getFunctionParameters()->getAsAggregate();
+    ASSERT(params->getOp() == EOpParameters);
+    params->traverse(this);
+
+    // Traverse function body.
+    visitCodeBlock(node->getBody());
+    decrementDepth();
+
+    // Fully processed; no need to visit children.
+    return false;
+}
+
 bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
 {
     bool visitChildren = true;
@@ -785,33 +826,6 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
     bool useEmulatedFunction = (visit == PreVisit && node->getUseEmulatedFunction());
     switch (node->getOp())
     {
-      case EOpSequence:
-        // Scope the sequences except when at the global scope.
-        if (mDepth > 0)
-        {
-            out << "{\n";
-        }
-
-        incrementDepth(node);
-        for (TIntermSequence::const_iterator iter = node->getSequence()->begin();
-             iter != node->getSequence()->end(); ++iter)
-        {
-            TIntermNode *curNode = *iter;
-            ASSERT(curNode != NULL);
-            curNode->traverse(this);
-
-            if (isSingleStatement(curNode))
-                out << ";\n";
-        }
-        decrementDepth();
-
-        // Scope the sequences except when at the global scope.
-        if (mDepth > 0)
-        {
-            out << "}\n";
-        }
-        visitChildren = false;
-        break;
       case EOpPrototype:
         // Function declaration.
         ASSERT(visit == PreVisit);
@@ -822,7 +836,7 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
                 out << arrayBrackets(type);
         }
 
-        out << " " << hashFunctionNameIfNeeded(node->getNameObj());
+        out << " " << hashFunctionNameIfNeeded(node->getFunctionSymbolInfo()->getNameObj());
 
         out << "(";
         writeFunctionParameters(*(node->getSequence()));
@@ -830,46 +844,10 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
 
         visitChildren = false;
         break;
-      case EOpFunction: {
-        // Function definition.
-        ASSERT(visit == PreVisit);
-        {
-            const TType &type = node->getType();
-            writeVariableType(type);
-            if (type.isArray())
-                out << arrayBrackets(type);
-        }
-
-        out << " " << hashFunctionNameIfNeeded(node->getNameObj());
-
-        incrementDepth(node);
-        // Function definition node contains one or two children nodes
-        // representing function parameters and function body. The latter
-        // is not present in case of empty function bodies.
-        const TIntermSequence &sequence = *(node->getSequence());
-        ASSERT((sequence.size() == 1) || (sequence.size() == 2));
-        TIntermSequence::const_iterator seqIter = sequence.begin();
-
-        // Traverse function parameters.
-        TIntermAggregate *params = (*seqIter)->getAsAggregate();
-        ASSERT(params != NULL);
-        ASSERT(params->getOp() == EOpParameters);
-        params->traverse(this);
-
-        // Traverse function body.
-        TIntermAggregate *body = ++seqIter != sequence.end() ?
-            (*seqIter)->getAsAggregate() : NULL;
-        visitCodeBlock(body);
-        decrementDepth();
-
-        // Fully processed; no need to visit children.
-        visitChildren = false;
-        break;
-      }
       case EOpFunctionCall:
         // Function call.
         if (visit == PreVisit)
-            out << hashFunctionNameIfNeeded(node->getNameObj()) << "(";
+            out << hashFunctionNameIfNeeded(node->getFunctionSymbolInfo()->getNameObj()) << "(";
         else if (visit == InVisit)
             out << ", ";
         else
@@ -917,88 +895,33 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         visitChildren = false;
         break;
       case EOpConstructFloat:
-        writeConstructorTriplet(visit, node->getType(), "float");
-        break;
       case EOpConstructVec2:
-        writeConstructorTriplet(visit, node->getType(), "vec2");
-        break;
       case EOpConstructVec3:
-        writeConstructorTriplet(visit, node->getType(), "vec3");
-        break;
       case EOpConstructVec4:
-        writeConstructorTriplet(visit, node->getType(), "vec4");
-        break;
       case EOpConstructBool:
-        writeConstructorTriplet(visit, node->getType(), "bool");
-        break;
       case EOpConstructBVec2:
-        writeConstructorTriplet(visit, node->getType(), "bvec2");
-        break;
       case EOpConstructBVec3:
-        writeConstructorTriplet(visit, node->getType(), "bvec3");
-        break;
       case EOpConstructBVec4:
-        writeConstructorTriplet(visit, node->getType(), "bvec4");
-        break;
       case EOpConstructInt:
-        writeConstructorTriplet(visit, node->getType(), "int");
-        break;
       case EOpConstructIVec2:
-        writeConstructorTriplet(visit, node->getType(), "ivec2");
-        break;
       case EOpConstructIVec3:
-        writeConstructorTriplet(visit, node->getType(), "ivec3");
-        break;
       case EOpConstructIVec4:
-        writeConstructorTriplet(visit, node->getType(), "ivec4");
-        break;
       case EOpConstructUInt:
-        writeConstructorTriplet(visit, node->getType(), "uint");
-        break;
       case EOpConstructUVec2:
-        writeConstructorTriplet(visit, node->getType(), "uvec2");
-        break;
       case EOpConstructUVec3:
-        writeConstructorTriplet(visit, node->getType(), "uvec3");
-        break;
       case EOpConstructUVec4:
-        writeConstructorTriplet(visit, node->getType(), "uvec4");
-        break;
       case EOpConstructMat2:
-        writeConstructorTriplet(visit, node->getType(), "mat2");
-        break;
       case EOpConstructMat2x3:
-        writeConstructorTriplet(visit, node->getType(), "mat2x3");
-        break;
       case EOpConstructMat2x4:
-        writeConstructorTriplet(visit, node->getType(), "mat2x4");
-        break;
       case EOpConstructMat3x2:
-        writeConstructorTriplet(visit, node->getType(), "mat3x2");
-        break;
       case EOpConstructMat3:
-        writeConstructorTriplet(visit, node->getType(), "mat3");
-        break;
       case EOpConstructMat3x4:
-        writeConstructorTriplet(visit, node->getType(), "mat3x4");
-        break;
       case EOpConstructMat4x2:
-        writeConstructorTriplet(visit, node->getType(), "mat4x2");
-        break;
       case EOpConstructMat4x3:
-        writeConstructorTriplet(visit, node->getType(), "mat4x3");
-        break;
       case EOpConstructMat4:
-        writeConstructorTriplet(visit, node->getType(), "mat4");
-        break;
       case EOpConstructStruct:
-        {
-            const TType &type = node->getType();
-            ASSERT(type.getBasicType() == EbtStruct);
-            TString constructorName = hashName(type.getStruct()->name());
-            writeConstructorTriplet(visit, node->getType(), constructorName.c_str());
-            break;
-        }
+          writeConstructorTriplet(visit, node->getType());
+          break;
 
       case EOpOuterProduct:
         writeBuiltInFunctionTriplet(visit, "outerProduct(", useEmulatedFunction);
@@ -1021,9 +944,6 @@ bool TOutputGLSLBase::visitAggregate(Visit visit, TIntermAggregate *node)
         break;
       case EOpVectorNotEqual:
         writeBuiltInFunctionTriplet(visit, "notEqual(", useEmulatedFunction);
-        break;
-      case EOpComma:
-        writeTriplet(visit, "(", ", ", ")");
         break;
 
       case EOpMod:
@@ -1189,7 +1109,7 @@ bool TOutputGLSLBase::visitBranch(Visit visit, TIntermBranch *node)
     return true;
 }
 
-void TOutputGLSLBase::visitCodeBlock(TIntermNode *node)
+void TOutputGLSLBase::visitCodeBlock(TIntermBlock *node)
 {
     TInfoSinkBase &out = objSink();
     if (node != NULL)
@@ -1208,45 +1128,10 @@ void TOutputGLSLBase::visitCodeBlock(TIntermNode *node)
 
 TString TOutputGLSLBase::getTypeName(const TType &type)
 {
-    TInfoSinkBase out;
-    if (type.isMatrix())
-    {
-        out << "mat";
-        out << type.getNominalSize();
-        if (type.getSecondarySize() != type.getNominalSize())
-        {
-            out << "x" << type.getSecondarySize();
-        }
-    }
-    else if (type.isVector())
-    {
-        switch (type.getBasicType())
-        {
-          case EbtFloat:
-            out << "vec";
-            break;
-          case EbtInt:
-            out << "ivec";
-            break;
-          case EbtBool:
-            out << "bvec";
-            break;
-          case EbtUInt:
-            out << "uvec";
-            break;
-          default:
-            UNREACHABLE();
-        }
-        out << type.getNominalSize();
-    }
+    if (type.getBasicType() == EbtStruct)
+        return hashName(type.getStruct()->name());
     else
-    {
-        if (type.getBasicType() == EbtStruct)
-            out << hashName(type.getStruct()->name());
-        else
-            out << type.getBasicString();
-    }
-    return TString(out.c_str());
+        return type.getBuiltInTypeNameString();
 }
 
 TString TOutputGLSLBase::hashName(const TString &name)

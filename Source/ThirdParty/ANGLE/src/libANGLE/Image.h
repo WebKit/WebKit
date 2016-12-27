@@ -13,6 +13,7 @@
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/RefCountObject.h"
+#include "libANGLE/formatutils.h"
 
 #include <set>
 
@@ -57,7 +58,7 @@ class Image final : public RefCountObject
     Image(rx::ImageImpl *impl, EGLenum target, ImageSibling *buffer, const AttributeMap &attribs);
     ~Image();
 
-    GLenum getInternalFormat() const;
+    const gl::Format &getFormat() const;
     size_t getWidth() const;
     size_t getHeight() const;
     size_t getSamples() const;
@@ -78,7 +79,7 @@ class Image final : public RefCountObject
 
     rx::ImageImpl *mImplementation;
 
-    GLenum mInternalFormat;
+    gl::Format mFormat;
     size_t mWidth;
     size_t mHeight;
     size_t mSamples;

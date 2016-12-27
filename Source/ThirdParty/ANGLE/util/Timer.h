@@ -7,7 +7,9 @@
 #ifndef SAMPLE_UTIL_TIMER_H
 #define SAMPLE_UTIL_TIMER_H
 
-class Timer
+#include <export.h>
+
+class ANGLE_EXPORT Timer
 {
   public:
     virtual ~Timer() {}
@@ -16,6 +18,6 @@ class Timer
     virtual double getElapsedTime() const = 0;
 };
 
-Timer *CreateTimer();
+ANGLE_EXPORT Timer *CreateTimer();
 
 #endif // SAMPLE_UTIL_TIMER_H

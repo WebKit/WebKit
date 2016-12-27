@@ -18,21 +18,21 @@ namespace rx
 class ShaderImpl : angle::NonCopyable
 {
   public:
-    ShaderImpl(const gl::Shader::Data &data) : mData(data) {}
+    ShaderImpl(const gl::ShaderState &data) : mData(data) {}
     virtual ~ShaderImpl() { }
 
     // Returns additional ShCompile options.
-    virtual int prepareSourceAndReturnOptions(std::stringstream *sourceStream,
-                                              std::string *sourcePath) = 0;
+    virtual ShCompileOptions prepareSourceAndReturnOptions(std::stringstream *sourceStream,
+                                                           std::string *sourcePath) = 0;
     // Returns success for compiling on the driver. Returns success.
     virtual bool postTranslateCompile(gl::Compiler *compiler, std::string *infoLog) = 0;
 
     virtual std::string getDebugInfo() const = 0;
 
-    const gl::Shader::Data &getData() const { return mData; }
+    const gl::ShaderState &getData() const { return mData; }
 
   protected:
-    const gl::Shader::Data &mData;
+    const gl::ShaderState &mData;
 };
 
 }

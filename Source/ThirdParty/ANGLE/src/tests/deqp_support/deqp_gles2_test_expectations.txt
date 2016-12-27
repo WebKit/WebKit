@@ -1,0 +1,244 @@
+// Copyright 2015 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file contains a list of defective dEQP conformance tests. The expected
+// format is:
+//  {BUG#} {MODIFIERS} : {TEST_NAME} = {PASS,FAIL,FLAKY,TIMEOUT,SKIP}
+//
+// MODIFIERS can be a combination of the below list:
+//  WIN XP VISTA WIN7 MAC LEOPARD SNOWLEOPARD LION LINUX CHROMEOS MOUNTAINLION
+//  MAVERICKS
+//  NVIDIA AMD INTEL
+//  0xabcd - GPU PCI device ID. Specifying a PCI id requires a vendor.
+//  DEBUG RELEASE
+// TODO(jmadill): Add ANGLE Renderer selection modifiers
+//
+// TEST_NAME can be a specific test name, or have a '*' in the end, which
+// indicates a prefix matching.
+//
+// Examples:
+//  91530 MAC WIN LINUX : context_lost_restored = TIMEOUT
+//  91533 WIN : gl_min_uniforms = FAIL
+//  91531 MAC WIN LINUX : conformance_more_* = SKIP
+//  91532 MAC NVIDIA 0x0640 : tex_image_and_sub_image_2d_with_video = PASS FAIL
+
+// TODO(jmadill): Figure out why these fail on the bots, but not locally.
+1018 WIN : dEQP-GLES2.functional.shaders.invariance.highp.loop_2 = FAIL
+1018 WIN : dEQP-GLES2.functional.shaders.invariance.mediump.loop_2 = FAIL
+
+// Skip these tests due to timeouts
+1034 WIN LINUX MAC : dEQP-GLES2.functional.flush_finish.* = SKIP
+
+// Don't run these tests for faster turnover
+998 WIN LINUX MAC : dEQP-GLES2.performance.* = SKIP
+998 WIN LINUX MAC : dEQP-GLES2.stress.* = SKIP
+
+// Tests that we fail because they're not in line with the WebGL spec
+1335 WIN LINUX MAC ANDROID : dEQP-GLES2.functional.shaders.preprocessor.conditional_inclusion.basic_2* = FAIL
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Temporary entries: they should be removed once the bugs are fixed.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// Windows only failures
+
+// These tests crash for unknown reason under a newer D3DCompiler_47.dll
+// TODO(jmadill): Figure out if we can solve these crashes
+1252 WIN : dEQP-GLES2.functional.shaders.random.trigonometric.vertex.63 = SKIP
+1252 WIN : dEQP-GLES2.functional.shaders.random.trigonometric.fragment.63 = SKIP
+
+// TODO(jmadill): triage these into temporary and permanent suppressions
+
+1027 WIN : dEQP-GLES2.functional.fbo.render.color_clear.rbo_rgb5_a1 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.color_clear.rbo_rgb5_a1_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.color_clear.rbo_rgb5_a1_depth_component16 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.stencil_clear.rbo_rgb5_a1_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.shared_colorbuffer.tex2d_rgb_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.shared_colorbuffer.tex2d_rgba_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.shared_colorbuffer.rbo_rgb565_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.shared_colorbuffer.rbo_rgb5_a1_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.shared_colorbuffer.rbo_rgba4_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_tex2d_rgb_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_tex2d_rgba_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgb565_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgb5_a1_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgba4_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.no_rebind_tex2d_rgb_stencil_index8 = FAIL
+1027 WIN : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.no_rebind_tex2d_rgba_stencil_index8 = FAIL
+1033 WIN : dEQP-GLES2.functional.polygon_offset.fixed16_render_with_units = FAIL
+1017 WIN : dEQP-GLES2.functional.shaders.loops.for_constant_iterations.nested_tricky_dataflow_* = FAIL
+1017 WIN : dEQP-GLES2.functional.shaders.loops.while_constant_iterations.nested_tricky_dataflow_* = FAIL
+1017 WIN : dEQP-GLES2.functional.shaders.loops.do_while_constant_iterations.nested_tricky_dataflow_* = FAIL
+989 WIN : dEQP-GLES2.functional.shaders.preprocessor.pragmas.invalid_pragma_invalid_* = FAIL
+1018 WIN : dEQP-GLES2.functional.shaders.texture_functions.vertex.texturecubelod = FAIL
+1020 WIN : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_nearest = FAIL
+1020 WIN : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_linear = FAIL
+1020 WIN : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_nearest = FAIL
+1020 WIN : dEQP-GLES2.functional.texture.mipmap.cube.bias.linear_nearest = FAIL
+1020 WIN : dEQP-GLES2.functional.texture.mipmap.cube.bias.linear_linear = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_depth_funcs.stencil_* = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.depth_stencil.stencil_ops.* = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.depth_stencil.write_mask.* = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.depth_stencil.random.* = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_constant_color_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_constant_color_one_minus_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_one_minus_constant_color_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_one_minus_constant_color_one_minus_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_constant_alpha_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_constant_alpha_one_minus_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_one_minus_constant_alpha_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.add_one_minus_constant_alpha_one_minus_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_constant_color_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_constant_color_one_minus_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_one_minus_constant_color_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_one_minus_constant_color_one_minus_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_constant_alpha_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_constant_alpha_one_minus_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_one_minus_constant_alpha_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.subtract_one_minus_constant_alpha_one_minus_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_constant_color_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_constant_color_one_minus_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_one_minus_constant_color_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_one_minus_constant_color_one_minus_constant_alpha = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_constant_alpha_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_constant_alpha_one_minus_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_one_minus_constant_alpha_constant_color = FAIL
+1025 WIN : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.reverse_subtract_one_minus_constant_alpha_one_minus_constant_color = FAIL
+1418 WIN : dEQP-GLES2.functional.clipping.triangle_vertex.clip_three.clip_pos_x_pos_y_pos_z_and_neg_x_pos_y_pos_z_and_neg_x_neg_y_neg_z = FAIL
+
+// Failures on the dEQP Windows bots that do not reproduce locally
+1108 WIN : dEQP-GLES2.functional.shaders.struct.local.dynamic_loop_struct_array_fragment = FAIL
+
+// Linux only failures
+
+1051 LINUX : dEQP-GLES2.functional.shaders.functions.array_arguments.copy_global_inout_on_call_fragment = FAIL
+1051 LINUX : dEQP-GLES2.functional.shaders.functions.array_arguments.copy_global_inout_on_call_vertex = FAIL
+1019 LINUX : dEQP-GLES2.functional.texture.size.cube.256x256_rgba4444 = FAIL
+1019 LINUX : dEQP-GLES2.functional.texture.size.cube.512x512_rgba4444 = FAIL
+1020 LINUX : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_linear* = FAIL
+1020 LINUX : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_linear* = FAIL
+
+// Failures on the Linux dEQP bot that do not appear on the workstation
+1143 LINUX : dEQP-GLES2.functional.shaders.random.all_features.vertex.13 = FAIL
+1143 LINUX : dEQP-GLES2.functional.shaders.invariance.mediump.common_subexpression_1 = FAIL
+1143 LINUX : dEQP-GLES2.functional.shaders.invariance.highp.common_subexpression_1 = FAIL
+1143 LINUX : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_nearest = FAIL
+
+// Mac specific failures
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.mediump.common_subexpression_1 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.highp.common_subexpression_1 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.preprocessor.pragmas.pragma_* = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.linkage.varying_4 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.scoping.valid.local_int_variable_hides_struct_type_* = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.scoping.valid.local_struct_variable_hides_struct_type_* = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.scoping.valid.function_parameter_hides_struct_type_* = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.highp.common_subexpression_3 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.highp.loop_0 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.highp.loop_1 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.mediump.common_subexpression_3 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.mediump.loop_0 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.mediump.loop_1 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.lowp.common_subexpression_1 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.lowp.common_subexpression_3 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.lowp.loop_0 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.invariance.lowp.loop_1 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.random.trigonometric.vertex.43 = FAIL
+1143 MAC : dEQP-GLES2.functional.shaders.random.trigonometric.vertex.65 = FAIL
+1143 MAC : dEQP-GLES2.functional.texture.size.cube.256x256_rgba4444 = FAIL
+1143 MAC : dEQP-GLES2.functional.texture.size.cube.512x512_rgba4444 = FAIL
+1143 MAC : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_linear = FAIL
+1143 MAC : dEQP-GLES2.functional.texture.specification.basic_copyteximage2d.cube_* = FAIL
+
+// Android only failures
+1484 ANDROID : dEQP-GLES2.functional.vertex_arrays.* = SKIP
+1485 ANDROID : dEQP-GLES2.functional.clipping.triangle_vertex.clip_three.clip_neg_x_neg_z_and_pos_x_pos_z_and_neg_x_neg_y_pos_z = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.none_none_none_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.none_none_rbo_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.none_none_tex_none = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.none_none_tex_rbo = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.none_none_tex_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.rbo_none_none_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.rbo_none_rbo_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.rbo_none_tex_none = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.rbo_none_tex_rbo = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.rbo_none_tex_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.tex_none_none_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.tex_none_rbo_tex = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.tex_none_tex_none = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.tex_none_tex_rbo = FAIL
+1486 ANDROID : dEQP-GLES2.functional.fbo.completeness.attachment_combinations.tex_none_tex_tex = FAIL
+1487 ANDROID : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.depth_stencil_unsigned_int_24_8 = FAIL
+1487 ANDROID : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.srgb8 = FAIL
+1487 ANDROID : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.depth_stencil_unsigned_int_24_8 = FAIL
+1487 ANDROID : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.srgb8 = FAIL
+1487 ANDROID : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.depth_stencil_unsigned_int_24_8 = FAIL
+1487 ANDROID : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.srgb8 = FAIL
+1488 ANDROID : dEQP-GLES2.functional.shaders.return.conditional_return_always_vertex = FAIL
+1488 ANDROID : dEQP-GLES2.functional.shaders.return.conditional_return_always_fragment = FAIL
+1488 ANDROID : dEQP-GLES2.functional.shaders.return.output_write_always_vertex = FAIL
+1488 ANDROID : dEQP-GLES2.functional.shaders.return.output_write_always_fragment = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.2d.generate.a8_fastest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.2d.generate.a8_nicest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.2d.generate.l8_fastest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.2d.generate.l8_nicest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.2d.generate.la88_fastest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.2d.generate.la88_nicest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.cube.generate.a8_fastest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.cube.generate.a8_nicest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.cube.generate.l8_fastest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.cube.generate.l8_nicest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.cube.generate.la88_fastest = FAIL
+1489 ANDROID : dEQP-GLES2.functional.texture.mipmap.cube.generate.la88_nicest = FAIL
+
+// Windows and Linux failures
+1020 WIN LINUX : dEQP-GLES2.functional.texture.mipmap.cube.projected.linear_linear = FAIL
+
+// Windows Linux and Mac failures
+989 WIN LINUX MAC : dEQP-GLES2.functional.shaders.preprocessor.extensions.after_non_preprocessing_tokens_vertex = FAIL
+989 WIN LINUX MAC : dEQP-GLES2.functional.shaders.preprocessor.extensions.after_non_preprocessing_tokens_fragment = FAIL
+1015 WIN LINUX MAC : dEQP-GLES2.functional.shaders.functions.invalid.return_array_in_struct_vertex = FAIL
+1015 WIN LINUX MAC : dEQP-GLES2.functional.shaders.functions.invalid.return_array_in_struct_fragment = FAIL
+1016 WIN LINUX MAC : dEQP-GLES2.functional.shaders.scoping.valid.local_variable_hides_function_parameter_vertex = FAIL
+1016 WIN LINUX MAC : dEQP-GLES2.functional.shaders.scoping.valid.local_variable_hides_function_parameter_fragment = FAIL
+1016 WIN LINUX MAC : dEQP-GLES2.functional.shaders.scoping.invalid.redeclare_function_vertex = FAIL
+1016 WIN LINUX MAC : dEQP-GLES2.functional.shaders.scoping.invalid.redeclare_function_fragment = FAIL
+1020 WIN LINUX MAC : dEQP-GLES2.functional.texture.mipmap.2d.projected.nearest_nearest* = FAIL
+1020 WIN LINUX MAC : dEQP-GLES2.functional.texture.mipmap.2d.projected.linear_nearest* = FAIL
+1025 WIN LINUX MAC : dEQP-GLES2.functional.fragment_ops.random.* = FAIL
+1025 WIN LINUX MAC : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = FAIL
+1027 WIN LINUX MAC : dEQP-GLES2.functional.fbo.render.repeated_clear.tex2d_rgb = FAIL
+1027 WIN LINUX MAC : dEQP-GLES2.functional.fbo.render.repeated_clear.tex2d_rgba = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.rgb_float = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.rgb_half_float_oes = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.rgba_float = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.rgba_half_float_oes = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.srgb8 = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.srgb8 = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.depth_component_unsigned_short = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.depth_component_unsigned_int = FAIL
+1028 WIN LINUX MAC : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.srgb8 = FAIL
+1128 WIN LINUX MAC : dEQP-GLES2.functional.negative_api.texture.compressedtexsubimage2d_invalid_size = FAIL
+1029 WIN LINUX MAC : dEQP-GLES2.functional.negative_api.texture.teximage2d_invalid_format = FAIL
+1029 WIN LINUX MAC : dEQP-GLES2.functional.negative_api.texture.teximage2d_invalid_internalformat = FAIL
+1029 WIN LINUX MAC : dEQP-GLES2.functional.negative_api.texture.texsubimage2d_invalid_type = FAIL
+1029 WIN LINUX MAC : dEQP-GLES2.functional.negative_api.texture.texsubimage2d_offset_allowed = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_float = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_float = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_vec2 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_vec2 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_vec3 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_vec3 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_vec4 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_vec4 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_mat2 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_mat2_offset_1 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_mat2 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_mat3 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_mat3_offset_1 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_mat3 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_mat4 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond_mat4_offset_1 = FAIL
+1030 WIN LINUX MAC : dEQP-GLES2.functional.attribute_location.bind_aliasing.max_cond_mat4 = FAIL

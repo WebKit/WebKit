@@ -15,6 +15,8 @@
 #include "common/platform.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/Format.h"
+#include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/d3d/formatutilsD3D.h"
 
 namespace rx
@@ -24,8 +26,6 @@ class Renderer9;
 
 namespace d3d9
 {
-
-typedef std::map<std::pair<GLenum, GLenum>, ColorCopyFunction> FastCopyFunctionMap;
 
 struct D3DFormat
 {
@@ -44,14 +44,9 @@ struct D3DFormat
     GLuint depthBits;
     GLuint stencilBits;
 
-    GLenum internalFormat;
-
-    MipGenerationFunction mipGenerationFunction;
-    ColorReadFunction colorReadFunction;
-
-    FastCopyFunctionMap fastCopyFunctions;
-    ColorCopyFunction getFastCopyFunction(GLenum format, GLenum type) const;
+    const angle::Format *info;
 };
+
 const D3DFormat &GetD3DFormatInfo(D3DFORMAT format);
 
 struct VertexFormat

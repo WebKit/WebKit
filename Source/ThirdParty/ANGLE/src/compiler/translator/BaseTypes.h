@@ -7,7 +7,11 @@
 #ifndef COMPILER_TRANSLATOR_BASETYPES_H_
 #define COMPILER_TRANSLATOR_BASETYPES_H_
 
+#include <algorithm>
+#include <array>
+
 #include "common/debug.h"
+#include "GLSLANG/ShaderLang.h"
 
 //
 // Precision qualifiers
@@ -28,10 +32,10 @@ inline const char* getPrecisionString(TPrecision p)
 {
     switch(p)
     {
-    case EbpHigh:		return "highp";		break;
-    case EbpMedium:		return "mediump";	break;
-    case EbpLow:		return "lowp";		break;
-    default:			return "mediump";   break;   // Safest fallback
+        case EbpHigh:   return "highp";
+        case EbpMedium: return "mediump";
+        case EbpLow:    return "lowp";
+        default:        return "mediump";  // Safest fallback
     }
 }
 
@@ -337,18 +341,33 @@ enum TQualifier
     EvqLastFragData,
 
     // GLSL ES 3.0 vertex output and fragment input
-    EvqSmooth,  // Incomplete qualifier, smooth is the default
-    EvqFlat,    // Incomplete qualifier
-    EvqSmoothOut = EvqSmooth,
-    EvqFlatOut   = EvqFlat,
+    EvqSmooth,    // Incomplete qualifier, smooth is the default
+    EvqFlat,      // Incomplete qualifier
+    EvqCentroid,  // Incomplete qualifier
+    EvqSmoothOut,
+    EvqFlatOut,
     EvqCentroidOut,  // Implies smooth
     EvqSmoothIn,
     EvqFlatIn,
     EvqCentroidIn,  // Implies smooth
 
+    // GLSL ES 3.1 compute shader special variables
+    EvqComputeIn,
+    EvqNumWorkGroups,
+    EvqWorkGroupSize,
+    EvqWorkGroupID,
+    EvqLocalInvocationID,
+    EvqGlobalInvocationID,
+    EvqLocalInvocationIndex,
+
     // end of list
     EvqLast
 };
+
+inline bool IsQualifierUnspecified(TQualifier qualifier)
+{
+    return (qualifier == EvqTemporary || qualifier == EvqGlobal);
+}
 
 enum TLayoutMatrixPacking
 {
@@ -368,25 +387,64 @@ enum TLayoutBlockStorage
 struct TLayoutQualifier
 {
     int location;
+    unsigned int locationsSpecified;
     TLayoutMatrixPacking matrixPacking;
     TLayoutBlockStorage blockStorage;
+
+    // Compute shader layout qualifiers.
+    sh::WorkGroupSize localSize;
 
     static TLayoutQualifier create()
     {
         TLayoutQualifier layoutQualifier;
 
         layoutQualifier.location = -1;
+        layoutQualifier.locationsSpecified = 0;
         layoutQualifier.matrixPacking = EmpUnspecified;
         layoutQualifier.blockStorage = EbsUnspecified;
+
+        layoutQualifier.localSize.fill(-1);
 
         return layoutQualifier;
     }
 
     bool isEmpty() const
     {
-        return location == -1 && matrixPacking == EmpUnspecified && blockStorage == EbsUnspecified;
+        return location == -1 && matrixPacking == EmpUnspecified &&
+               blockStorage == EbsUnspecified && !localSize.isAnyValueSet();
+    }
+
+    bool isCombinationValid() const
+    {
+        bool workSizeSpecified = localSize.isAnyValueSet();
+        bool otherLayoutQualifiersSpecified =
+            (location != -1 || matrixPacking != EmpUnspecified || blockStorage != EbsUnspecified);
+
+        // we can have either the work group size specified, or the other layout qualifiers
+        return !(workSizeSpecified && otherLayoutQualifiersSpecified);
+    }
+
+    bool isLocalSizeEqual(const sh::WorkGroupSize &localSizeIn) const
+    {
+        return localSize.isWorkGroupSizeMatching(localSizeIn);
     }
 };
+
+inline const char *getWorkGroupSizeString(size_t dimension)
+{
+    switch (dimension)
+    {
+        case 0u:
+            return "local_size_x";
+        case 1u:
+            return "local_size_y";
+        case 2u:
+            return "local_size_z";
+        default:
+            UNREACHABLE();
+            return "dimension out of bounds";
+    }
+}
 
 //
 // This is just for debug print out, carried along with the definitions above.
@@ -427,11 +485,21 @@ inline const char* getQualifierString(TQualifier q)
     case EvqLastFragColor:          return "LastFragColor";
     case EvqLastFragData:           return "LastFragData";
     case EvqSmoothOut:              return "smooth out";
-    case EvqCentroidOut:            return "centroid out";
+    case EvqCentroidOut:            return "smooth centroid out";
     case EvqFlatOut:                return "flat out";
     case EvqSmoothIn:               return "smooth in";
     case EvqFlatIn:                 return "flat in";
-    case EvqCentroidIn:             return "centroid in";
+    case EvqCentroidIn:             return "smooth centroid in";
+    case EvqCentroid:               return "centroid";
+    case EvqFlat:                   return "flat";
+    case EvqSmooth:                 return "smooth";
+    case EvqComputeIn:              return "in";
+    case EvqNumWorkGroups:          return "NumWorkGroups";
+    case EvqWorkGroupSize:          return "WorkGroupSize";
+    case EvqWorkGroupID:            return "WorkGroupID";
+    case EvqLocalInvocationID:      return "LocalInvocationID";
+    case EvqGlobalInvocationID:     return "GlobalInvocationID";
+    case EvqLocalInvocationIndex:   return "LocalInvocationIndex";
     default: UNREACHABLE();         return "unknown qualifier";
     }
     // clang-format on
@@ -457,20 +525,6 @@ inline const char* getBlockStorageString(TLayoutBlockStorage bsq)
     case EbsPacked:         return "packed";
     case EbsStd140:         return "std140";
     default: UNREACHABLE(); return "unknown block storage";
-    }
-}
-
-inline const char* getInterpolationString(TQualifier q)
-{
-    switch(q)
-    {
-    case EvqSmoothOut:      return "smooth";   break;
-    case EvqCentroidOut:    return "centroid"; break;
-    case EvqFlatOut:        return "flat";     break;
-    case EvqSmoothIn:       return "smooth";   break;
-    case EvqCentroidIn:     return "centroid"; break;
-    case EvqFlatIn:         return "flat";     break;
-    default: UNREACHABLE(); return "unknown interpolation";
     }
 }
 

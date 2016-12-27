@@ -13,6 +13,7 @@
 #include "common/utilities.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/VertexAttribute.h"
+#include "libANGLE/VertexArray.h"
 #include "libANGLE/renderer/d3d/IndexDataManager.h"
 #include "libANGLE/renderer/d3d/ProgramD3D.h"
 #include "libANGLE/renderer/d3d/VertexDataManager.h"

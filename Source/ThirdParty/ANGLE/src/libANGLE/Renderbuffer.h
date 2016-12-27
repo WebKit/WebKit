@@ -17,6 +17,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/Image.h"
+#include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/RenderbufferImpl.h"
 
 namespace gl
@@ -41,12 +42,11 @@ class Renderbuffer final : public egl::ImageSibling,
     Error setStorageMultisample(size_t samples, GLenum internalformat, size_t width, size_t height);
     Error setStorageEGLImageTarget(egl::Image *imageTarget);
 
-    rx::RenderbufferImpl *getImplementation();
-    const rx::RenderbufferImpl *getImplementation() const;
+    rx::RenderbufferImpl *getImplementation() const;
 
     GLsizei getWidth() const;
     GLsizei getHeight() const;
-    GLenum getInternalFormat() const;
+    const Format &getFormat() const;
     GLsizei getSamples() const;
     GLuint getRedSize() const;
     GLuint getGreenSize() const;
@@ -57,7 +57,11 @@ class Renderbuffer final : public egl::ImageSibling,
 
     // FramebufferAttachmentObject Impl
     Extents getAttachmentSize(const FramebufferAttachment::Target &target) const override;
-    GLenum getAttachmentInternalFormat(const FramebufferAttachment::Target &/*target*/) const override { return getInternalFormat(); }
+    const Format &getAttachmentFormat(
+        const FramebufferAttachment::Target & /*target*/) const override
+    {
+        return getFormat();
+    }
     GLsizei getAttachmentSamples(const FramebufferAttachment::Target &/*target*/) const override { return getSamples(); }
 
     void onAttach() override;
@@ -73,7 +77,7 @@ class Renderbuffer final : public egl::ImageSibling,
 
     GLsizei mWidth;
     GLsizei mHeight;
-    GLenum mInternalFormat;
+    Format mFormat;
     GLsizei mSamples;
 };
 

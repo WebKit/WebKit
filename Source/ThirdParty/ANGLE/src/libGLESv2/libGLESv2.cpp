@@ -9,6 +9,7 @@
 #include "libGLESv2/entry_points_gles_2_0.h"
 #include "libGLESv2/entry_points_gles_2_0_ext.h"
 #include "libGLESv2/entry_points_gles_3_0.h"
+#include "libGLESv2/entry_points_gles_3_1.h"
 
 #include "common/event_tracer.h"
 
@@ -1562,4 +1563,669 @@ void GL_APIENTRY glGetPointervKHR(GLenum pname, void **params)
 {
     return gl::GetPointervKHR(pname, params);
 }
+
+void GL_APIENTRY glBindUniformLocationCHROMIUM(GLuint program, GLint location, const GLchar *name)
+{
+    return gl::BindUniformLocationCHROMIUM(program, location, name);
 }
+
+void GL_APIENTRY glCoverageModulationCHROMIUM(GLenum components)
+{
+    return gl::CoverageModulationCHROMIUM(components);
+}
+
+// CHROMIUM_path_rendendering
+void GL_APIENTRY glMatrixLoadfCHROMIUM(GLenum matrixMode, const GLfloat *matrix)
+{
+    gl::MatrixLoadfCHROMIUM(matrixMode, matrix);
+}
+
+void GL_APIENTRY glMatrixLoadIdentityCHROMIUM(GLenum matrixMode)
+{
+    gl::MatrixLoadIdentityCHROMIUM(matrixMode);
+}
+
+GLuint GL_APIENTRY glGenPathsCHROMIUM(GLsizei range)
+{
+    return gl::GenPathsCHROMIUM(range);
+}
+
+void GL_APIENTRY glDeletePathsCHROMIUM(GLuint first, GLsizei range)
+{
+    gl::DeletePathsCHROMIUM(first, range);
+}
+
+GLboolean GL_APIENTRY glIsPathCHROMIUM(GLuint path)
+{
+    return gl::IsPathCHROMIUM(path);
+}
+
+void GL_APIENTRY glPathCommandsCHROMIUM(GLuint path,
+                                        GLsizei numCommands,
+                                        const GLubyte *commands,
+                                        GLsizei numCoords,
+                                        GLenum coordType,
+                                        const void *coords)
+{
+    gl::PathCommandsCHROMIUM(path, numCommands, commands, numCoords, coordType, coords);
+}
+
+void GL_APIENTRY glPathParameterfCHROMIUM(GLuint path, GLenum pname, GLfloat value)
+{
+    gl::PathParameterfCHROMIUM(path, pname, value);
+}
+
+void GL_APIENTRY glPathParameteriCHROMIUM(GLuint path, GLenum pname, GLint value)
+{
+    gl::PathParameteriCHROMIUM(path, pname, value);
+}
+
+void GL_APIENTRY glGetPathParameterfvCHROMIUM(GLuint path, GLenum pname, GLfloat *value)
+{
+    gl::GetPathParameterfCHROMIUM(path, pname, value);
+}
+
+void GL_APIENTRY glGetPathParameterivCHROMIUM(GLuint path, GLenum pname, GLint *value)
+{
+    gl::GetPathParameteriCHROMIUM(path, pname, value);
+}
+
+void GL_APIENTRY glPathStencilFuncCHROMIUM(GLenum func, GLint ref, GLuint mask)
+{
+    gl::PathStencilFuncCHROMIUM(func, ref, mask);
+}
+
+void GL_APIENTRY glStencilFillPathCHROMIUM(GLuint path, GLenum fillMode, GLuint mask)
+{
+    gl::StencilFillPathCHROMIUM(path, fillMode, mask);
+}
+
+void GL_APIENTRY glStencilStrokePathCHROMIUM(GLuint path, GLint reference, GLuint mask)
+{
+    gl::StencilStrokePathCHROMIUM(path, reference, mask);
+}
+
+void GL_APIENTRY glCoverFillPathCHROMIUM(GLuint path, GLenum coverMode)
+{
+    gl::CoverFillPathCHROMIUM(path, coverMode);
+}
+
+void GL_APIENTRY glCoverStrokePathCHROMIUM(GLuint path, GLenum coverMode)
+{
+    gl::CoverStrokePathCHROMIUM(path, coverMode);
+}
+
+void GL_APIENTRY glStencilThenCoverFillPathCHROMIUM(GLuint path,
+                                                    GLenum fillMode,
+                                                    GLuint mask,
+                                                    GLenum coverMode)
+{
+    gl::StencilThenCoverFillPathCHROMIUM(path, fillMode, mask, coverMode);
+}
+
+void GL_APIENTRY glStencilThenCoverStrokePathCHROMIUM(GLuint path,
+                                                      GLint reference,
+                                                      GLuint mask,
+                                                      GLenum coverMode)
+{
+    gl::StencilThenCoverStrokePathCHROMIUM(path, reference, mask, coverMode);
+}
+
+void GL_APIENTRY glCoverFillPathInstancedCHROMIUM(GLsizei numPaths,
+                                                  GLenum pathNameType,
+                                                  const void *paths,
+                                                  GLuint pathBase,
+                                                  GLenum coverMode,
+                                                  GLenum transformType,
+                                                  const GLfloat *transformValues)
+{
+    gl::CoverFillPathInstancedCHROMIUM(numPaths, pathNameType, paths, pathBase, coverMode,
+                                       transformType, transformValues);
+}
+
+void GL_APIENTRY glCoverStrokePathInstancedCHROMIUM(GLsizei numPaths,
+                                                    GLenum pathNameType,
+                                                    const void *paths,
+                                                    GLuint pathBase,
+                                                    GLenum coverMode,
+                                                    GLenum transformType,
+                                                    const GLfloat *transformValues)
+{
+    gl::CoverStrokePathInstancedCHROMIUM(numPaths, pathNameType, paths, pathBase, coverMode,
+                                         transformType, transformValues);
+}
+
+void GL_APIENTRY glStencilFillPathInstancedCHROMIUM(GLsizei numPaths,
+                                                    GLenum pathNameType,
+                                                    const void *paths,
+                                                    GLuint pathBase,
+                                                    GLenum fillMode,
+                                                    GLuint mask,
+                                                    GLenum transformType,
+                                                    const GLfloat *transformValues)
+{
+    gl::StencilFillPathInstancedCHROMIUM(numPaths, pathNameType, paths, pathBase, fillMode, mask,
+                                         transformType, transformValues);
+}
+
+void GL_APIENTRY glStencilStrokePathInstancedCHROMIUM(GLsizei numPaths,
+                                                      GLenum pathNameType,
+                                                      const void *paths,
+                                                      GLuint pathBase,
+                                                      GLint reference,
+                                                      GLuint mask,
+                                                      GLenum transformType,
+                                                      const GLfloat *transformValues)
+{
+    gl::StencilStrokePathInstancedCHROMIUM(numPaths, pathNameType, paths, pathBase, reference, mask,
+                                           transformType, transformValues);
+}
+
+void GL_APIENTRY glStencilThenCoverFillPathInstancedCHROMIUM(GLsizei numPaths,
+                                                             GLenum pathNameType,
+                                                             const void *paths,
+                                                             GLuint pathBase,
+                                                             GLenum fillMode,
+                                                             GLuint mask,
+                                                             GLenum coverMode,
+                                                             GLenum transformType,
+                                                             const GLfloat *transformValues)
+{
+    gl::StencilThenCoverFillPathInstancedCHROMIUM(numPaths, pathNameType, paths, pathBase, fillMode,
+                                                  mask, coverMode, transformType, transformValues);
+}
+
+void GL_APIENTRY glStencilThenCoverStrokePathInstancedCHROMIUM(GLsizei numPaths,
+                                                               GLenum pathNameType,
+                                                               const void *paths,
+                                                               GLuint pathBase,
+                                                               GLint reference,
+                                                               GLuint mask,
+                                                               GLenum coverMode,
+                                                               GLenum transformType,
+                                                               const GLfloat *transformValues)
+{
+    gl::StencilThenCoverStrokePathInstancedCHROMIUM(numPaths, pathNameType, paths, pathBase,
+                                                    reference, mask, coverMode, transformType,
+                                                    transformValues);
+}
+
+void GL_APIENTRY glBindFragmentInputLocationCHROMIUM(GLuint program,
+                                                     GLint location,
+                                                     const GLchar *name)
+{
+    gl::BindFragmentInputLocationCHROMIUM(program, location, name);
+}
+
+void GL_APIENTRY glProgramPathFragmentInputGenCHROMIUM(GLuint program,
+                                                       GLint location,
+                                                       GLenum genMode,
+                                                       GLint components,
+                                                       const GLfloat *coeffs)
+{
+    gl::ProgramPathFragmentInputGenCHROMIUM(program, location, genMode, components, coeffs);
+}
+
+// GLES 3.1
+void GL_APIENTRY glDispatchCompute(GLuint numGroupsX, GLuint numGroupsY, GLuint numGroupsZ)
+{
+    gl::DispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+}
+
+void GL_APIENTRY glDispatchComputeIndirect(GLintptr indirect)
+{
+    gl::DispatchComputeIndirect(indirect);
+}
+
+void GL_APIENTRY glDrawArraysIndirect(GLenum mode, const void *indirect)
+{
+    gl::DrawArraysIndirect(mode, indirect);
+}
+
+void GL_APIENTRY glDrawElementsIndirect(GLenum mode, GLenum type, const void *indirect)
+{
+    gl::DrawElementsIndirect(mode, type, indirect);
+}
+
+void GL_APIENTRY glFramebufferParameteri(GLenum target, GLenum pname, GLint param)
+{
+    gl::FramebufferParameteri(target, pname, param);
+}
+
+void GL_APIENTRY glGetFramebufferParameteriv(GLenum target, GLenum pname, GLint *params)
+{
+    gl::GetFramebufferParameteriv(target, pname, params);
+}
+
+void GL_APIENTRY glGetProgramInterfaceiv(GLuint program,
+                                         GLenum programInterface,
+                                         GLenum pname,
+                                         GLint *params)
+{
+    gl::GetProgramInterfaceiv(program, programInterface, pname, params);
+}
+
+GLuint GL_APIENTRY glGetProgramResourceIndex(GLuint program,
+                                             GLenum programInterface,
+                                             const GLchar *name)
+{
+    return gl::GetProgramResourceIndex(program, programInterface, name);
+}
+
+void GL_APIENTRY glGetProgramResourceName(GLuint program,
+                                          GLenum programInterface,
+                                          GLuint index,
+                                          GLsizei bufSize,
+                                          GLsizei *length,
+                                          GLchar *name)
+{
+    gl::GetProgramResourceName(program, programInterface, index, bufSize, length, name);
+}
+
+void GL_APIENTRY glGetProgramResourceiv(GLuint program,
+                                        GLenum programInterface,
+                                        GLuint index,
+                                        GLsizei propCount,
+                                        const GLenum *props,
+                                        GLsizei bufSize,
+                                        GLsizei *length,
+                                        GLint *params)
+{
+    gl::GetProgramResourceiv(program, programInterface, index, propCount, props, bufSize, length,
+                             params);
+}
+
+GLint GL_APIENTRY glGetProgramResourceLocation(GLuint program,
+                                               GLenum programInterface,
+                                               const GLchar *name)
+{
+    return gl::GetProgramResourceLocation(program, programInterface, name);
+}
+
+void GL_APIENTRY glUseProgramStages(GLuint pipeline, GLbitfield stages, GLuint program)
+{
+    gl::UseProgramStages(pipeline, stages, program);
+}
+
+void GL_APIENTRY glActiveShaderProgram(GLuint pipeline, GLuint program)
+{
+    gl::ActiveShaderProgram(pipeline, program);
+}
+
+GLuint GL_APIENTRY glCreateShaderProgramv(GLenum type, GLsizei count, const GLchar *const *strings)
+{
+    return gl::CreateShaderProgramv(type, count, strings);
+}
+
+void GL_APIENTRY glBindProgramPipeline(GLuint pipeline)
+{
+    gl::BindProgramPipeline(pipeline);
+}
+
+void GL_APIENTRY glDeleteProgramPipelines(GLsizei n, const GLuint *pipelines)
+{
+    gl::DeleteProgramPipelines(n, pipelines);
+}
+
+void GL_APIENTRY glGenProgramPipelines(GLsizei n, GLuint *pipelines)
+{
+    gl::GenProgramPipelines(n, pipelines);
+}
+
+GLboolean GL_APIENTRY glIsProgramPipeline(GLuint pipeline)
+{
+    return gl::IsProgramPipeline(pipeline);
+}
+
+void GL_APIENTRY glGetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint *params)
+{
+    gl::GetProgramPipelineiv(pipeline, pname, params);
+}
+
+void GL_APIENTRY glProgramUniform1i(GLuint program, GLint location, GLint v0)
+{
+    gl::ProgramUniform1i(program, location, v0);
+}
+
+void GL_APIENTRY glProgramUniform2i(GLuint program, GLint location, GLint v0, GLint v1)
+{
+    gl::ProgramUniform2i(program, location, v0, v1);
+}
+
+void GL_APIENTRY glProgramUniform3i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2)
+{
+    gl::ProgramUniform3i(program, location, v0, v1, v2);
+}
+
+void GL_APIENTRY
+glProgramUniform4i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3)
+{
+    gl::ProgramUniform4i(program, location, v0, v1, v2, v3);
+}
+
+void GL_APIENTRY glProgramUniform1ui(GLuint program, GLint location, GLuint v0)
+{
+    gl::ProgramUniform1ui(program, location, v0);
+}
+
+void GL_APIENTRY glProgramUniform2ui(GLuint program, GLint location, GLuint v0, GLuint v1)
+{
+    gl::ProgramUniform2ui(program, location, v0, v1);
+}
+
+void GL_APIENTRY
+glProgramUniform3ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2)
+{
+    gl::ProgramUniform3ui(program, location, v0, v1, v2);
+}
+
+void GL_APIENTRY
+glProgramUniform4ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
+{
+    gl::ProgramUniform4ui(program, location, v0, v1, v2, v3);
+}
+
+void GL_APIENTRY glProgramUniform1f(GLuint program, GLint location, GLfloat v0)
+{
+    gl::ProgramUniform1f(program, location, v0);
+}
+
+void GL_APIENTRY glProgramUniform2f(GLuint program, GLint location, GLfloat v0, GLfloat v1)
+{
+    gl::ProgramUniform2f(program, location, v0, v1);
+}
+
+void GL_APIENTRY
+glProgramUniform3f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2)
+{
+    gl::ProgramUniform3f(program, location, v0, v1, v2);
+}
+
+void GL_APIENTRY
+glProgramUniform4f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
+{
+    gl::ProgramUniform4f(program, location, v0, v1, v2, v3);
+}
+
+void GL_APIENTRY glProgramUniform1iv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLint *value)
+{
+    gl::ProgramUniform1iv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform2iv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLint *value)
+{
+    gl::ProgramUniform2iv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform3iv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLint *value)
+{
+    gl::ProgramUniform3iv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform4iv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLint *value)
+{
+    gl::ProgramUniform4iv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform1uiv(GLuint program,
+                                      GLint location,
+                                      GLsizei count,
+                                      const GLuint *value)
+{
+    gl::ProgramUniform1uiv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform2uiv(GLuint program,
+                                      GLint location,
+                                      GLsizei count,
+                                      const GLuint *value)
+{
+    gl::ProgramUniform2uiv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform3uiv(GLuint program,
+                                      GLint location,
+                                      GLsizei count,
+                                      const GLuint *value)
+{
+    gl::ProgramUniform3uiv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform4uiv(GLuint program,
+                                      GLint location,
+                                      GLsizei count,
+                                      const GLuint *value)
+{
+    gl::ProgramUniform4uiv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform1fv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLfloat *value)
+{
+    gl::ProgramUniform1fv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform2fv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLfloat *value)
+{
+    gl::ProgramUniform2fv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform3fv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLfloat *value)
+{
+    gl::ProgramUniform3fv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniform4fv(GLuint program,
+                                     GLint location,
+                                     GLsizei count,
+                                     const GLfloat *value)
+{
+    gl::ProgramUniform4fv(program, location, count, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix2fv(GLuint program,
+                                           GLint location,
+                                           GLsizei count,
+                                           GLboolean transpose,
+                                           const GLfloat *value)
+{
+    gl::ProgramUniformMatrix2fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix3fv(GLuint program,
+                                           GLint location,
+                                           GLsizei count,
+                                           GLboolean transpose,
+                                           const GLfloat *value)
+{
+    gl::ProgramUniformMatrix3fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix4fv(GLuint program,
+                                           GLint location,
+                                           GLsizei count,
+                                           GLboolean transpose,
+                                           const GLfloat *value)
+{
+    gl::ProgramUniformMatrix4fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix2x3fv(GLuint program,
+                                             GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    gl::ProgramUniformMatrix2x3fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix3x2fv(GLuint program,
+                                             GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    gl::ProgramUniformMatrix3x2fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix2x4fv(GLuint program,
+                                             GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    gl::ProgramUniformMatrix2x4fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix4x2fv(GLuint program,
+                                             GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    gl::ProgramUniformMatrix4x2fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix3x4fv(GLuint program,
+                                             GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    gl::ProgramUniformMatrix3x4fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glProgramUniformMatrix4x3fv(GLuint program,
+                                             GLint location,
+                                             GLsizei count,
+                                             GLboolean transpose,
+                                             const GLfloat *value)
+{
+    gl::ProgramUniformMatrix4x3fv(program, location, count, transpose, value);
+}
+
+void GL_APIENTRY glValidateProgramPipeline(GLuint pipeline)
+{
+    gl::ValidateProgramPipeline(pipeline);
+}
+
+void GL_APIENTRY glGetProgramPipelineInfoLog(GLuint pipeline,
+                                             GLsizei bufSize,
+                                             GLsizei *length,
+                                             GLchar *infoLog)
+{
+    gl::GetProgramPipelineInfoLog(pipeline, bufSize, length, infoLog);
+}
+
+void GL_APIENTRY glBindImageTexture(GLuint unit,
+                                    GLuint texture,
+                                    GLint level,
+                                    GLboolean layered,
+                                    GLint layer,
+                                    GLenum access,
+                                    GLenum format)
+{
+    gl::BindImageTexture(unit, texture, level, layered, layer, access, format);
+}
+
+void GL_APIENTRY glGetBooleani_v(GLenum target, GLuint index, GLboolean *data)
+{
+    gl::GetBooleani_v(target, index, data);
+}
+
+void GL_APIENTRY glMemoryBarrier(GLbitfield barriers)
+{
+    gl::MemoryBarrier(barriers);
+}
+
+void GL_APIENTRY glMemoryBarrierByRegion(GLbitfield barriers)
+{
+    gl::MemoryBarrierByRegion(barriers);
+}
+
+void GL_APIENTRY glTexStorage2DMultisample(GLenum target,
+                                           GLsizei samples,
+                                           GLenum internalformat,
+                                           GLsizei width,
+                                           GLsizei height,
+                                           GLboolean fixedsamplelocations)
+{
+    gl::TexStorage2DMultisample(target, samples, internalformat, width, height,
+                                fixedsamplelocations);
+}
+
+void GL_APIENTRY glGetMultisamplefv(GLenum pname, GLuint index, GLfloat *val)
+{
+    gl::GetMultisamplefv(pname, index, val);
+}
+
+void GL_APIENTRY glSampleMaski(GLuint maskNumber, GLbitfield mask)
+{
+    gl::SampleMaski(maskNumber, mask);
+}
+
+void GL_APIENTRY glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint *params)
+{
+    gl::GetTexLevelParameteriv(target, level, pname, params);
+}
+
+void GL_APIENTRY glGetTexLevelParameterfv(GLenum target, GLint level, GLenum pname, GLfloat *params)
+{
+    gl::GetTexLevelParameterfv(target, level, pname, params);
+}
+
+void GL_APIENTRY glBindVertexBuffer(GLuint bindingindex,
+                                    GLuint buffer,
+                                    GLintptr offset,
+                                    GLsizei stride)
+{
+    gl::BindVertexBuffer(bindingindex, buffer, offset, stride);
+}
+
+void GL_APIENTRY glVertexAttribFormat(GLuint attribindex,
+                                      GLint size,
+                                      GLenum type,
+                                      GLboolean normalized,
+                                      GLuint relativeoffset)
+{
+    gl::VertexAttribFormat(attribindex, size, type, normalized, relativeoffset);
+}
+
+void GL_APIENTRY glVertexAttribIFormat(GLuint attribindex,
+                                       GLint size,
+                                       GLenum type,
+                                       GLuint relativeoffset)
+{
+    gl::VertexAttribIFormat(attribindex, size, type, relativeoffset);
+}
+
+void GL_APIENTRY glVertexAttribBinding(GLuint attribindex, GLuint bindingindex)
+{
+    gl::VertexAttribBinding(attribindex, bindingindex);
+}
+
+void GL_APIENTRY glVertexBindingDivisor(GLuint bindingindex, GLuint divisor)
+{
+    gl::VertexBindingDivisor(bindingindex, divisor);
+}
+}  // extern "C"

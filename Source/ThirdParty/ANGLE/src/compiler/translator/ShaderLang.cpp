@@ -148,6 +148,8 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     // Extensions.
     resources->OES_standard_derivatives = 0;
     resources->OES_EGL_image_external = 0;
+    resources->OES_EGL_image_external_essl3    = 0;
+    resources->NV_EGL_stream_consumer_external = 0;
     resources->ARB_texture_rectangle = 0;
     resources->EXT_blend_func_extended      = 0;
     resources->EXT_draw_buffers = 0;
@@ -180,6 +182,37 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     resources->MaxExpressionComplexity = 256;
     resources->MaxCallStackDepth       = 256;
     resources->MaxFunctionParameters   = 1024;
+
+    // ES 3.1 Revision 4, 7.2 Built-in Constants
+    resources->MaxImageUnits            = 4;
+    resources->MaxVertexImageUniforms   = 0;
+    resources->MaxFragmentImageUniforms = 0;
+    resources->MaxComputeImageUniforms  = 4;
+    resources->MaxCombinedImageUniforms = 4;
+
+    resources->MaxCombinedShaderOutputResources = 4;
+
+    resources->MaxComputeWorkGroupCount[0] = 65535;
+    resources->MaxComputeWorkGroupCount[1] = 65535;
+    resources->MaxComputeWorkGroupCount[2] = 65535;
+    resources->MaxComputeWorkGroupSize[0]  = 128;
+    resources->MaxComputeWorkGroupSize[1]  = 128;
+    resources->MaxComputeWorkGroupSize[2]  = 64;
+    resources->MaxComputeUniformComponents = 512;
+    resources->MaxComputeTextureImageUnits = 16;
+
+    resources->MaxComputeAtomicCounters       = 8;
+    resources->MaxComputeAtomicCounterBuffers = 1;
+
+    resources->MaxVertexAtomicCounters   = 0;
+    resources->MaxFragmentAtomicCounters = 0;
+    resources->MaxCombinedAtomicCounters = 8;
+    resources->MaxAtomicCounterBindings  = 1;
+
+    resources->MaxVertexAtomicCounterBuffers   = 0;
+    resources->MaxFragmentAtomicCounterBuffers = 0;
+    resources->MaxCombinedAtomicCounterBuffers = 1;
+    resources->MaxAtomicCounterBufferSize      = 32;
 }
 
 //
@@ -235,11 +268,10 @@ const std::string &ShGetBuiltInResourcesString(const ShHandle handle)
 // Return:  The return value of ShCompile is really boolean, indicating
 // success or failure.
 //
-bool ShCompile(
-    const ShHandle handle,
-    const char *const shaderStrings[],
-    size_t numStrings,
-    int compileOptions)
+bool ShCompile(const ShHandle handle,
+               const char *const shaderStrings[],
+               size_t numStrings,
+               ShCompileOptions compileOptions)
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
@@ -325,18 +357,20 @@ const std::vector<sh::InterfaceBlock> *ShGetInterfaceBlocks(const ShHandle handl
     return GetShaderVariables<sh::InterfaceBlock>(handle);
 }
 
-bool ShCheckVariablesWithinPackingLimits(
-    int maxVectors, ShVariableInfo *varInfoArray, size_t varInfoArraySize)
+sh::WorkGroupSize ShGetComputeShaderLocalGroupSize(const ShHandle handle)
 {
-    if (varInfoArraySize == 0)
-        return true;
-    ASSERT(varInfoArray);
-    std::vector<sh::ShaderVariable> variables;
-    for (size_t ii = 0; ii < varInfoArraySize; ++ii)
-    {
-        sh::ShaderVariable var(varInfoArray[ii].type, varInfoArray[ii].size);
-        variables.push_back(var);
-    }
+    ASSERT(handle);
+
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getComputeShaderLocalSize();
+}
+
+bool ShCheckVariablesWithinPackingLimits(int maxVectors,
+                                         const std::vector<sh::ShaderVariable> &variables)
+{
     VariablePacker packer;
     return packer.CheckVariablesWithinPackingLimits(maxVectors, variables);
 }
@@ -371,7 +405,6 @@ const std::map<std::string, unsigned int> *ShGetUniformRegisterMap(const ShHandl
 
     return translator->getUniformRegisterMap();
 #else
-    static auto& map = *new std::map<std::string, unsigned int>;
-    return &map;
+    return nullptr;
 #endif  // ANGLE_ENABLE_HLSL
 }

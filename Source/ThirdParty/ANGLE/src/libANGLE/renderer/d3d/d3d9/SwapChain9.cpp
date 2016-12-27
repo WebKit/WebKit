@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/d3d/d3d9/SwapChain9.h"
 #include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
+#include "libANGLE/renderer/d3d/d3d9/NativeWindow9.h"
 #include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
 #include "libANGLE/features.h"
 
@@ -16,16 +17,17 @@ namespace rx
 {
 
 SwapChain9::SwapChain9(Renderer9 *renderer,
-                       NativeWindow nativeWindow,
+                       NativeWindow9 *nativeWindow,
                        HANDLE shareHandle,
                        GLenum backBufferFormat,
                        GLenum depthBufferFormat,
                        EGLint orientation)
-    : SwapChainD3D(nativeWindow, shareHandle, backBufferFormat, depthBufferFormat),
+    : SwapChainD3D(shareHandle, backBufferFormat, depthBufferFormat),
       mRenderer(renderer),
       mWidth(-1),
       mHeight(-1),
       mSwapInterval(-1),
+      mNativeWindow(nativeWindow),
       mSwapChain(nullptr),
       mBackBuffer(nullptr),
       mRenderTarget(nullptr),
@@ -50,7 +52,7 @@ void SwapChain9::release()
     SafeRelease(mRenderTarget);
     SafeRelease(mOffscreenTexture);
 
-    if (mNativeWindow.getNativeWindow())
+    if (mNativeWindow->getNativeWindow())
     {
         mShareHandle = NULL;
     }
@@ -104,7 +106,7 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
     SafeRelease(mDepthStencil);
 
     HANDLE *pShareHandle = NULL;
-    if (!mNativeWindow.getNativeWindow() && mRenderer->getShareHandleSupport())
+    if (!mNativeWindow->getNativeWindow() && mRenderer->getShareHandleSupport())
     {
         pShareHandle = &mShareHandle;
     }
@@ -163,7 +165,7 @@ EGLint SwapChain9::reset(int backbufferWidth, int backbufferHeight, EGLint swapI
 
     // Don't create a swapchain for NULLREF devices
     D3DDEVTYPE deviceType = mRenderer->getD3D9DeviceType();
-    EGLNativeWindowType window = mNativeWindow.getNativeWindow();
+    EGLNativeWindowType window = mNativeWindow->getNativeWindow();
     if (window && deviceType != D3DDEVTYPE_NULLREF)
     {
         D3DPRESENT_PARAMETERS presentParameters = {0};
@@ -333,7 +335,7 @@ EGLint SwapChain9::swapRect(EGLint x, EGLint y, EGLint width, EGLint height)
     // On Windows 8 systems, IDirect3DSwapChain9::Present sometimes returns 0x88760873 when the windows is
     // in the process of entering/exiting fullscreen. This code doesn't seem to have any documentation.  The
     // device appears to be ok after emitting this error so simply return a failure to swap.
-    if (result == 0x88760873)
+    if (result == static_cast<HRESULT>(0x88760873))
     {
         return EGL_BAD_MATCH;
     }
@@ -393,6 +395,12 @@ void *SwapChain9::getKeyedMutex()
 {
     UNREACHABLE();
     return nullptr;
+}
+
+egl::Error SwapChain9::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
+{
+    UNREACHABLE();
+    return egl::Error(EGL_BAD_SURFACE);
 }
 
 void SwapChain9::recreate()

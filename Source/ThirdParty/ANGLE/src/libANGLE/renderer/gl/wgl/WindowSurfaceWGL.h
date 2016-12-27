@@ -21,7 +21,8 @@ class FunctionsWGL;
 class WindowSurfaceWGL : public SurfaceGL
 {
   public:
-    WindowSurfaceWGL(RendererGL *renderer,
+    WindowSurfaceWGL(const egl::SurfaceState &state,
+                     RendererGL *renderer,
                      EGLNativeWindowType window,
                      int pixelFormat,
                      HGLRC wglContext,

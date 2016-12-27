@@ -20,6 +20,8 @@
 #include "libANGLE/renderer/d3d/RendererD3D.h"
 #include "libANGLE/renderer/d3d/VertexBuffer.h"
 
+using namespace angle;
+
 namespace rx
 {
 namespace
@@ -118,27 +120,16 @@ TranslatedAttribute::TranslatedAttribute()
 
 gl::ErrorOrResult<unsigned int> TranslatedAttribute::computeOffset(GLint startVertex) const
 {
-    unsigned int offset = baseOffset;
-    if (usesFirstVertexOffset)
+    if (!usesFirstVertexOffset)
     {
-        unsigned int startVertexUnsigned = static_cast<unsigned int>(startVertex);
-
-        if (!IsUnsignedMultiplicationSafe(stride, startVertexUnsigned))
-        {
-            return gl::Error(GL_INVALID_OPERATION,
-                             "Multiplication overflow in TranslatedAttribute::computeOffset");
-        }
-
-        unsigned int strideOffset = stride * startVertexUnsigned;
-        if (!IsUnsignedAdditionSafe(offset, strideOffset))
-        {
-            return gl::Error(GL_INVALID_OPERATION,
-                             "Addition overflow in TranslatedAttribute::computeOffset");
-        }
-
-        offset += strideOffset;
+        return baseOffset;
     }
-    return offset;
+
+    CheckedNumeric<unsigned int> offset;
+
+    offset = baseOffset + stride * static_cast<unsigned int>(startVertex);
+    ANGLE_TRY_CHECKED_MATH(offset);
+    return offset.ValueOrDie();
 }
 
 VertexStorageType ClassifyAttributeStorage(const gl::VertexAttribute &attrib)
@@ -351,7 +342,10 @@ gl::Error VertexDataManager::StoreStaticAttrib(TranslatedAttribute *translated,
 
     VertexBuffer *vertexBuffer = staticBuffer->getVertexBuffer();
 
-    if (!IsUnsignedAdditionSafe(streamOffset, firstElementOffset))
+    CheckedNumeric<unsigned int> checkedOffset(streamOffset);
+    checkedOffset += firstElementOffset;
+
+    if (!checkedOffset.IsValid())
     {
         return gl::Error(GL_INVALID_OPERATION,
                          "Integer overflow in VertexDataManager::StoreStaticAttrib");
@@ -375,7 +369,7 @@ gl::Error VertexDataManager::storeDynamicAttribs(
     GLsizei instances)
 {
     // Instantiating this class will ensure the streaming buffer is never left mapped.
-    class StreamingBufferUnmapper final : angle::NonCopyable
+    class StreamingBufferUnmapper final : NonCopyable
     {
       public:
         StreamingBufferUnmapper(StreamingVertexBufferInterface *streamingBuffer)
@@ -393,14 +387,14 @@ gl::Error VertexDataManager::storeDynamicAttribs(
     StreamingBufferUnmapper localUnmapper(mStreamingBuffer);
 
     // Reserve the required space for the dynamic buffers.
-    for (auto attribIndex : angle::IterateBitSet(dynamicAttribsMask))
+    for (auto attribIndex : IterateBitSet(dynamicAttribsMask))
     {
         const auto &dynamicAttrib = (*translatedAttribs)[attribIndex];
         ANGLE_TRY(reserveSpaceForAttrib(dynamicAttrib, count, instances));
     }
 
     // Store dynamic attributes
-    for (auto attribIndex : angle::IterateBitSet(dynamicAttribsMask))
+    for (auto attribIndex : IterateBitSet(dynamicAttribsMask))
     {
         auto *dynamicAttrib = &(*translatedAttribs)[attribIndex];
         ANGLE_TRY(storeDynamicAttrib(dynamicAttrib, start, count, instances));
@@ -414,7 +408,7 @@ void VertexDataManager::PromoteDynamicAttribs(
     const gl::AttributesMask &dynamicAttribsMask,
     GLsizei count)
 {
-    for (auto attribIndex : angle::IterateBitSet(dynamicAttribsMask))
+    for (auto attribIndex : IterateBitSet(dynamicAttribsMask))
     {
         const auto &dynamicAttrib = translatedAttribs[attribIndex];
         gl::Buffer *buffer = dynamicAttrib.attribute->buffer.get();

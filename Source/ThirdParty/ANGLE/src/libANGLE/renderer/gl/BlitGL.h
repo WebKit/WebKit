@@ -52,14 +52,26 @@ class BlitGL : public angle::NonCopyable
                                                   const gl::Rectangle &sourceArea,
                                                   const gl::Framebuffer *source);
 
+    gl::Error blitColorBufferWithShader(const gl::Framebuffer *source,
+                                        const gl::Framebuffer *dest,
+                                        const gl::Rectangle &sourceArea,
+                                        const gl::Rectangle &destArea,
+                                        GLenum filter);
+
     gl::Error initializeResources();
 
   private:
+    void orphanScratchTextures();
+    void setScratchTextureParameter(GLenum param, GLenum value);
+
     const FunctionsGL *mFunctions;
     const WorkaroundsGL &mWorkarounds;
     StateManagerGL *mStateManager;
 
     GLuint mBlitProgram;
+    GLint mSourceTextureLocation;
+    GLint mScaleLocation;
+    GLint mOffsetLocation;
 
     GLuint mScratchTextures[2];
     GLuint mScratchFBO;

@@ -20,7 +20,8 @@ class FunctionsGLX;
 class PbufferSurfaceGLX : public SurfaceGLX
 {
   public:
-    PbufferSurfaceGLX(RendererGL *renderer,
+    PbufferSurfaceGLX(const egl::SurfaceState &state,
+                      RendererGL *renderer,
                       EGLint width,
                       EGLint height,
                       bool largest,

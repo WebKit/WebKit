@@ -7,21 +7,24 @@
 // Framebuffer9.cpp: Implements the Framebuffer9 class.
 
 #include "libANGLE/renderer/d3d/d3d9/Framebuffer9.h"
-#include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
-#include "libANGLE/renderer/d3d/d3d9/TextureStorage9.h"
-#include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
-#include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
-#include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
-#include "libANGLE/renderer/d3d/TextureD3D.h"
-#include "libANGLE/formatutils.h"
+
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/Texture.h"
+#include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/ContextImpl.h"
+#include "libANGLE/renderer/renderer_utils.h"
+#include "libANGLE/renderer/d3d/TextureD3D.h"
+#include "libANGLE/renderer/d3d/d3d9/Renderer9.h"
+#include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
+#include "libANGLE/renderer/d3d/d3d9/TextureStorage9.h"
+#include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
+#include "libANGLE/renderer/d3d/d3d9/renderer9_utils.h"
 
 namespace rx
 {
 
-Framebuffer9::Framebuffer9(const gl::Framebuffer::Data &data, Renderer9 *renderer)
+Framebuffer9::Framebuffer9(const gl::FramebufferState &data, Renderer9 *renderer)
     : FramebufferD3D(data, renderer), mRenderer(renderer)
 {
     ASSERT(mRenderer != nullptr);
@@ -52,23 +55,25 @@ gl::Error Framebuffer9::invalidateSub(size_t, const GLenum *, const gl::Rectangl
     return gl::Error(GL_NO_ERROR);
 }
 
-gl::Error Framebuffer9::clear(const gl::Data &data, const ClearParameters &clearParams)
+gl::Error Framebuffer9::clearImpl(ContextImpl *context, const ClearParameters &clearParams)
 {
-    const gl::FramebufferAttachment *colorAttachment = mData.getColorAttachment(0);
-    const gl::FramebufferAttachment *depthStencilAttachment = mData.getDepthOrStencilAttachment();
+    const gl::FramebufferAttachment *colorAttachment        = mState.getColorAttachment(0);
+    const gl::FramebufferAttachment *depthStencilAttachment = mState.getDepthOrStencilAttachment();
 
-    gl::Error error = mRenderer->applyRenderTarget(colorAttachment, depthStencilAttachment);
+    gl::Error error =
+        mRenderer->applyRenderTarget(context, colorAttachment, depthStencilAttachment);
     if (error.isError())
     {
         return error;
     }
 
-    float nearZ = data.state->getNearPlane();
-    float farZ = data.state->getFarPlane();
-    mRenderer->setViewport(data.caps, data.state->getViewport(), nearZ, farZ, GL_TRIANGLES,
-                           data.state->getRasterizerState().frontFace, true);
+    const gl::State &glState = context->getGLState();
+    float nearZ              = glState.getNearPlane();
+    float farZ = glState.getFarPlane();
+    mRenderer->setViewport(glState.getViewport(), nearZ, farZ, GL_TRIANGLES,
+                           glState.getRasterizerState().frontFace, true);
 
-    mRenderer->setScissorRectangle(data.state->getScissor(), data.state->isScissorTestEnabled());
+    mRenderer->setScissorRectangle(glState.getScissor(), glState.isScissorTestEnabled());
 
     return mRenderer->clear(clearParams, colorAttachment, depthStencilAttachment);
 }
@@ -82,7 +87,7 @@ gl::Error Framebuffer9::readPixelsImpl(const gl::Rectangle &area,
 {
     ASSERT(pack.pixelBuffer.get() == nullptr);
 
-    const gl::FramebufferAttachment *colorbuffer = mData.getColorAttachment(0);
+    const gl::FramebufferAttachment *colorbuffer = mState.getColorAttachment(0);
     ASSERT(colorbuffer);
 
     RenderTarget9 *renderTarget = nullptr;
@@ -183,72 +188,24 @@ gl::Error Framebuffer9::readPixelsImpl(const gl::Rectangle &area,
         return gl::Error(GL_OUT_OF_MEMORY, "Failed to lock internal render target.");
     }
 
-    uint8_t *source;
-    int inputPitch;
-    if (pack.reverseRowOrder)
-    {
-        source = reinterpret_cast<uint8_t*>(lock.pBits) + lock.Pitch * (rect.bottom - rect.top - 1);
-        inputPitch = -lock.Pitch;
-    }
-    else
-    {
-        source = reinterpret_cast<uint8_t*>(lock.pBits);
-        inputPitch = lock.Pitch;
-    }
+    uint8_t *source = reinterpret_cast<uint8_t *>(lock.pBits);
+    int inputPitch  = lock.Pitch;
 
     const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(desc.Format);
-    const gl::InternalFormat &sourceFormatInfo = gl::GetInternalFormatInfo(d3dFormatInfo.internalFormat);
-    if (sourceFormatInfo.format == format && sourceFormatInfo.type == type)
-    {
-        // Direct copy possible
-        for (int y = 0; y < rect.bottom - rect.top; y++)
-        {
-            memcpy(pixels + y * outputPitch, source + y * inputPitch, (rect.right - rect.left) * sourceFormatInfo.pixelBytes);
-        }
-    }
-    else
-    {
-        const d3d9::D3DFormat &sourceD3DFormatInfo = d3d9::GetD3DFormatInfo(desc.Format);
-        ColorCopyFunction fastCopyFunc = sourceD3DFormatInfo.getFastCopyFunction(format, type);
+    gl::FormatType formatType(format, type);
 
-        GLenum sizedDestInternalFormat = gl::GetSizedInternalFormat(format, type);
-        const gl::InternalFormat &destFormatInfo = gl::GetInternalFormatInfo(sizedDestInternalFormat);
+    // TODO(jmadill): Maybe we can avoid a copy of pack parameters here?
+    PackPixelsParams packParams;
+    packParams.area.x      = rect.left;
+    packParams.area.y      = rect.top;
+    packParams.area.width  = rect.right - rect.left;
+    packParams.area.height = rect.bottom - rect.top;
+    packParams.format      = format;
+    packParams.type        = type;
+    packParams.outputPitch = static_cast<GLuint>(outputPitch);
+    packParams.pack        = pack;
 
-        if (fastCopyFunc)
-        {
-            // Fast copy is possible through some special function
-            for (int y = 0; y < rect.bottom - rect.top; y++)
-            {
-                for (int x = 0; x < rect.right - rect.left; x++)
-                {
-                    uint8_t *dest = pixels + y * outputPitch + x * destFormatInfo.pixelBytes;
-                    const uint8_t *src = source + y * inputPitch + x * sourceFormatInfo.pixelBytes;
-
-                    fastCopyFunc(src, dest);
-                }
-            }
-        }
-        else
-        {
-            ColorReadFunction colorReadFunction = sourceD3DFormatInfo.colorReadFunction;
-            ColorWriteFunction colorWriteFunction = GetColorWriteFunction(format, type);
-
-            uint8_t temp[sizeof(gl::ColorF)];
-            for (int y = 0; y < rect.bottom - rect.top; y++)
-            {
-                for (int x = 0; x < rect.right - rect.left; x++)
-                {
-                    uint8_t *dest = pixels + y * outputPitch + x * destFormatInfo.pixelBytes;
-                    const uint8_t *src = source + y * inputPitch + x * sourceFormatInfo.pixelBytes;
-
-                    // readFunc and writeFunc will be using the same type of color, CopyTexImage
-                    // will not allow the copy otherwise.
-                    colorReadFunction(src, temp);
-                    colorWriteFunction(temp, dest);
-                }
-            }
-        }
-    }
+    PackPixels(packParams, *d3dFormatInfo.info, inputPitch, source, pixels);
 
     systemSurface->UnlockRect();
     SafeRelease(systemSurface);
@@ -256,9 +213,14 @@ gl::Error Framebuffer9::readPixelsImpl(const gl::Rectangle &area,
     return gl::Error(GL_NO_ERROR);
 }
 
-gl::Error Framebuffer9::blit(const gl::Rectangle &sourceArea, const gl::Rectangle &destArea, const gl::Rectangle *scissor,
-                             bool blitRenderTarget, bool blitDepth, bool blitStencil, GLenum filter,
-                             const gl::Framebuffer *sourceFramebuffer)
+gl::Error Framebuffer9::blitImpl(const gl::Rectangle &sourceArea,
+                                 const gl::Rectangle &destArea,
+                                 const gl::Rectangle *scissor,
+                                 bool blitRenderTarget,
+                                 bool blitDepth,
+                                 bool blitStencil,
+                                 GLenum filter,
+                                 const gl::Framebuffer *sourceFramebuffer)
 {
     ASSERT(filter == GL_NEAREST);
 
@@ -280,7 +242,7 @@ gl::Error Framebuffer9::blit(const gl::Rectangle &sourceArea, const gl::Rectangl
         }
         ASSERT(readRenderTarget);
 
-        const gl::FramebufferAttachment *drawBuffer = mData.getColorAttachment(0);
+        const gl::FramebufferAttachment *drawBuffer = mState.getColorAttachment(0);
         ASSERT(drawBuffer);
 
         RenderTarget9 *drawRenderTarget = nullptr;
@@ -406,7 +368,7 @@ gl::Error Framebuffer9::blit(const gl::Rectangle &sourceArea, const gl::Rectangl
         }
         ASSERT(readDepthStencil);
 
-        const gl::FramebufferAttachment *drawBuffer = mData.getDepthOrStencilAttachment();
+        const gl::FramebufferAttachment *drawBuffer = mState.getDepthOrStencilAttachment();
         ASSERT(drawBuffer);
 
         RenderTarget9 *drawDepthStencil = nullptr;
@@ -442,7 +404,7 @@ GLenum Framebuffer9::getRenderTargetImplementationFormat(RenderTargetD3D *render
 {
     RenderTarget9 *renderTarget9 = GetAs<RenderTarget9>(renderTarget);
     const d3d9::D3DFormat &d3dFormatInfo = d3d9::GetD3DFormatInfo(renderTarget9->getD3DFormat());
-    return d3dFormatInfo.internalFormat;
+    return d3dFormatInfo.info->glInternalFormat;
 }
 
-}
+}  // namespace rx

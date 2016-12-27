@@ -19,14 +19,14 @@ struct WorkaroundsGL;
 class ShaderGL : public ShaderImpl
 {
   public:
-    ShaderGL(const gl::Shader::Data &data,
+    ShaderGL(const gl::ShaderState &data,
              const FunctionsGL *functions,
              const WorkaroundsGL &workarounds);
     ~ShaderGL() override;
 
     // ShaderImpl implementation
-    int prepareSourceAndReturnOptions(std::stringstream *sourceStream,
-                                      std::string *sourcePath) override;
+    ShCompileOptions prepareSourceAndReturnOptions(std::stringstream *sourceStream,
+                                                   std::string *sourcePath) override;
     bool postTranslateCompile(gl::Compiler *compiler, std::string *infoLog) override;
     std::string getDebugInfo() const override;
 

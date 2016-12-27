@@ -4,11 +4,10 @@
 // found in the LICENSE file.
 //
 
-#include "Token.h"
+#include "compiler/preprocessor/Token.h"
 
-#include <cassert>
-
-#include "numeric_lex.h"
+#include "common/debug.h"
+#include "compiler/preprocessor/numeric_lex.h"
 
 namespace pp
 {
@@ -55,19 +54,19 @@ void Token::setExpansionDisabled(bool disable)
 
 bool Token::iValue(int *value) const
 {
-    assert(type == CONST_INT);
+    ASSERT(type == CONST_INT);
     return numeric_lex_int(text, value);
 }
 
 bool Token::uValue(unsigned int *value) const
 {
-    assert(type == CONST_INT);
+    ASSERT(type == CONST_INT);
     return numeric_lex_int(text, value);
 }
 
 bool Token::fValue(float *value) const
 {
-    assert(type == CONST_FLOAT);
+    ASSERT(type == CONST_FLOAT);
     return numeric_lex_float(text, value);
 }
 

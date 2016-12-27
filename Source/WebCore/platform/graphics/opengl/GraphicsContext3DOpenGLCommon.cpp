@@ -376,7 +376,7 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
     const auto& vertexEntry = m_shaderSourceMap.find(vertexShader)->value;
     const auto& fragmentEntry = m_shaderSourceMap.find(fragmentShader)->value;
 
-    HashMap<String, ShVariableInfo> combinedVaryings;
+    HashMap<String, sh::ShaderVariable> combinedVaryings;
     for (const auto& vertexSymbol : vertexEntry.varyingMap) {
         const String& symbolName = vertexSymbol.key;
         // The varying map includes variables for each index of an array variable.
@@ -389,25 +389,18 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
             continue;
 
         const auto& fragmentSymbol = fragmentEntry.varyingMap.find(symbolName);
-        if (fragmentSymbol != fragmentEntry.varyingMap.end()) {
-            ShVariableInfo symbolInfo;
-            symbolInfo.type = (fragmentSymbol->value).type;
-            // The arrays are already split up.
-            symbolInfo.size = (fragmentSymbol->value).size;
-            combinedVaryings.add(symbolName, symbolInfo);
-        }
+        if (fragmentSymbol != fragmentEntry.varyingMap.end())
+            combinedVaryings.add(symbolName, fragmentSymbol->value);
     }
 
     size_t numVaryings = combinedVaryings.size();
     if (!numVaryings)
         return true;
 
-    ShVariableInfo* variables = new ShVariableInfo[numVaryings];
-    int index = 0;
-    for (const auto& varyingSymbol : combinedVaryings) {
-        variables[index] = varyingSymbol.value;
-        index++;
-    }
+    std::vector<sh::ShaderVariable> variables;
+    variables.reserve(combinedVaryings.size());
+    for (const auto& varyingSymbol : combinedVaryings.values())
+        variables.push_back(varyingSymbol);
 
     GC3Dint maxVaryingVectors = 0;
 #if !PLATFORM(IOS) && !((PLATFORM(WIN) || PLATFORM(GTK)) && USE(OPENGL_ES_2))
@@ -417,9 +410,7 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
 #else
     ::glGetIntegerv(MAX_VARYING_VECTORS, &maxVaryingVectors);
 #endif
-    int result = ShCheckVariablesWithinPackingLimits(maxVaryingVectors, variables, numVaryings);
-    delete[] variables;
-    return result;
+    return ShCheckVariablesWithinPackingLimits(maxVaryingVectors, variables);
 }
 
 bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3DObject fragmentShader) const
@@ -431,11 +422,14 @@ bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3
 
     HashMap<String, sh::GLenum> vertexSymbolPrecisionMap;
 
-    for (const auto& entry : vertexEntry.uniformMap)
-        vertexSymbolPrecisionMap.add(entry.value.mappedName, entry.value.precision);
+    for (const auto& entry : vertexEntry.uniformMap) {
+        const std::string& mappedName = entry.value.mappedName;
+        vertexSymbolPrecisionMap.add(String(mappedName.c_str(), mappedName.length()), entry.value.precision);
+    }
 
     for (const auto& entry : fragmentEntry.uniformMap) {
-        const auto& vertexSymbol = vertexSymbolPrecisionMap.find(entry.value.mappedName);
+        const std::string& mappedName = entry.value.mappedName;
+        const auto& vertexSymbol = vertexSymbolPrecisionMap.find(String(mappedName.c_str(), mappedName.length()));
         if (vertexSymbol != vertexSymbolPrecisionMap.end() && vertexSymbol->value != entry.value.precision)
             return false;
     }
@@ -901,8 +895,10 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject program, ANGLEShader
 
         const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
         ShaderSymbolMap::const_iterator symbolEntry = symbolMap.find(name);
-        if (symbolEntry != symbolMap.end())
-            return symbolEntry->value.mappedName;
+        if (symbolEntry != symbolMap.end()) {
+            const std::string& mappedName = symbolEntry->value.mappedName;
+            return String(mappedName.c_str(), mappedName.length());
+        }
     }
 
     if (symbolType == SHADER_SYMBOL_TYPE_ATTRIBUTE && !name.isEmpty()) {
@@ -937,7 +933,7 @@ String GraphicsContext3D::originalSymbolName(Platform3DObject program, ANGLEShad
         
         const ShaderSymbolMap& symbolMap = result->value.symbolMap(symbolType);
         for (const auto& symbolEntry : symbolMap) {
-            if (symbolEntry.value.mappedName == name)
+            if (name == symbolEntry.value.mappedName.c_str())
                 return symbolEntry.key;
         }
     }
@@ -964,7 +960,7 @@ String GraphicsContext3D::mappedSymbolName(Platform3DObject shaders[2], size_t c
             
             const ShaderSymbolMap& symbolMap = result->value.symbolMap(static_cast<enum ANGLEShaderSymbolType>(symbolType));
             for (const auto& symbolEntry : symbolMap) {
-                if (symbolEntry.value.mappedName == name)
+                if (name == symbolEntry.value.mappedName.c_str())
                     return symbolEntry.key;
             }
         }

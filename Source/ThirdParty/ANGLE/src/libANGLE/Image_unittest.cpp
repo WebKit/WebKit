@@ -14,8 +14,10 @@
 #include "libANGLE/renderer/ImageImpl_mock.h"
 #include "libANGLE/renderer/TextureImpl_mock.h"
 #include "libANGLE/renderer/RenderbufferImpl_mock.h"
+#include "tests/angle_unittests_utils.h"
 
 using ::testing::_;
+using ::testing::NiceMock;
 using ::testing::Return;
 
 namespace angle
@@ -23,9 +25,11 @@ namespace angle
 // Verify ref counts are maintained between images and their siblings when objects are deleted
 TEST(ImageTest, RefCounting)
 {
+    NiceMock<rx::MockGLFactory> mockFactory;
     // Create a texture and an EGL image that uses the texture as its source
     rx::MockTextureImpl *textureImpl = new rx::MockTextureImpl();
-    gl::Texture *texture = new gl::Texture(textureImpl, 1, GL_TEXTURE_2D);
+    EXPECT_CALL(mockFactory, createTexture(_)).WillOnce(Return(textureImpl));
+    gl::Texture *texture = new gl::Texture(&mockFactory, 1, GL_TEXTURE_2D);
     texture->addRef();
 
     rx::MockImageImpl *imageImpl = new rx::MockImageImpl();
@@ -82,9 +86,11 @@ TEST(ImageTest, RefCounting)
 // Verify that respecifiying textures releases references to the Image.
 TEST(ImageTest, RespecificationReleasesReferences)
 {
+    NiceMock<rx::MockGLFactory> mockFactory;
     // Create a texture and an EGL image that uses the texture as its source
     rx::MockTextureImpl *textureImpl = new rx::MockTextureImpl();
-    gl::Texture *texture = new gl::Texture(textureImpl, 1, GL_TEXTURE_2D);
+    EXPECT_CALL(mockFactory, createTexture(_)).WillOnce(Return(textureImpl));
+    gl::Texture *texture = new gl::Texture(&mockFactory, 1, GL_TEXTURE_2D);
     texture->addRef();
 
     gl::PixelUnpackState defaultUnpackState;

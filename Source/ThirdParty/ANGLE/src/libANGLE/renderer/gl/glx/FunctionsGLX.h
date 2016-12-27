@@ -49,6 +49,7 @@ class FunctionsGLX
     void waitGL() const;
 
     // GLX 1.1
+    const char *getClientString(int name) const;
     const char *queryExtensionsString() const;
 
     // GLX 1.3

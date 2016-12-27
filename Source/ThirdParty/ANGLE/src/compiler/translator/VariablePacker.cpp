@@ -148,15 +148,21 @@ bool VariablePacker::searchColumn(int column, int numRows, int* destRow, int* de
     return true;
 }
 
-template <typename VarT>
-bool VariablePacker::CheckVariablesWithinPackingLimits(unsigned int maxVectors,
-                                                       const std::vector<VarT> &in_variables)
+bool VariablePacker::CheckVariablesWithinPackingLimits(
+    unsigned int maxVectors,
+    const std::vector<sh::ShaderVariable> &in_variables)
 {
     ASSERT(maxVectors > 0);
     maxRows_ = maxVectors;
     topNonFullRow_ = 0;
     bottomNonFullRow_ = maxRows_ - 1;
-    std::vector<VarT> variables(in_variables);
+    std::vector<sh::ShaderVariable> variables;
+
+    for (const auto &variable : in_variables)
+    {
+        ExpandVariable(variable, variable.name, variable.mappedName, variable.staticUse,
+                       &variables);
+    }
 
     // Check whether each variable fits in the available vectors.
     for (size_t i = 0; i < variables.size(); i++) {
@@ -261,9 +267,3 @@ bool VariablePacker::CheckVariablesWithinPackingLimits(unsigned int maxVectors,
 
     return true;
 }
-
-// Instantiate all possible variable packings
-template bool VariablePacker::CheckVariablesWithinPackingLimits(unsigned int, const std::vector<sh::ShaderVariable> &);
-template bool VariablePacker::CheckVariablesWithinPackingLimits(unsigned int, const std::vector<sh::Attribute> &);
-template bool VariablePacker::CheckVariablesWithinPackingLimits(unsigned int, const std::vector<sh::Uniform> &);
-template bool VariablePacker::CheckVariablesWithinPackingLimits(unsigned int, const std::vector<sh::Varying> &);

@@ -20,6 +20,16 @@ inline Version::Version(GLuint major_, GLuint minor_)
     minor = minor_;
 }
 
+inline bool operator==(const Version &a, const Version &b)
+{
+    return a.major == b.major && a.minor == b.minor;
+}
+
+inline bool operator!=(const Version &a, const Version &b)
+{
+    return !(a == b);
+}
+
 inline bool operator>=(const Version &a, const Version &b)
 {
     return a.major > b.major || (a.major == b.major && a.minor >= b.minor);

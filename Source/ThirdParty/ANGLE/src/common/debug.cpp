@@ -7,19 +7,54 @@
 // debug.cpp: Debugging utilities.
 
 #include "common/debug.h"
-#include "common/platform.h"
-#include "common/angleutils.h"
 
 #include <stdarg.h>
-#include <vector>
-#include <fstream>
+
 #include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+#include "common/angleutils.h"
+#include "common/platform.h"
+#include "common/Optional.h"
 
 namespace gl
 {
 
 namespace
 {
+
+class FormattedString final : angle::NonCopyable
+{
+  public:
+    FormattedString(const char *format, va_list vararg) : mFormat(format)
+    {
+        va_copy(mVarArg, vararg);
+    }
+
+    const char *c_str() { return str().c_str(); }
+
+    const std::string &str()
+    {
+        if (!mMessage.valid())
+        {
+            mMessage = FormatString(mFormat, mVarArg);
+        }
+        return mMessage.value();
+    }
+
+    size_t length()
+    {
+        c_str();
+        return mMessage.value().length();
+    }
+
+  private:
+    const char *mFormat;
+    va_list mVarArg;
+    Optional<std::string> mMessage;
+};
 enum DebugTraceOutputType
 {
    DebugTraceOutputTypeNone,
@@ -34,7 +69,10 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
 {
     if (DebugAnnotationsActive())
     {
-        static auto& buffer = *new std::vector<char>(512);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+        static std::vector<char> buffer(512);
+#pragma GCC diagnostic pop
         size_t len = FormatStringIntoVector(format, vararg, buffer);
         std::wstring formattedWideMessage(buffer.begin(), buffer.begin() + len);
 
@@ -52,19 +90,15 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
         }
     }
 
-    std::string formattedMessage;
-    UNUSED_VARIABLE(formattedMessage);
+    FormattedString formattedMessage(format, vararg);
 
-#if !defined(NDEBUG) && defined(_MSC_VER)
     if (messageType == MESSAGE_ERR)
     {
-        if (formattedMessage.empty())
-        {
-            formattedMessage = FormatString(format, vararg);
-        }
+        std::cerr << formattedMessage.c_str();
+#if !defined(NDEBUG) && defined(_MSC_VER)
         OutputDebugStringA(formattedMessage.c_str());
+#endif  // !defined(NDEBUG) && defined(_MSC_VER)
     }
-#endif
 
 #if defined(ANGLE_ENABLE_DEBUG_TRACE)
 #if defined(NDEBUG)
@@ -72,12 +106,7 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
     {
         return;
     }
-#endif // NDEBUG
-    if (formattedMessage.empty())
-    {
-        formattedMessage = FormatString(format, vararg);
-    }
-
+#endif  // NDEBUG
     static std::ofstream file(TRACE_OUTPUT_FILE, std::ofstream::app);
     if (file)
     {
@@ -87,9 +116,9 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
 
 #if defined(ANGLE_ENABLE_DEBUG_TRACE_TO_DEBUGGER)
     OutputDebugStringA(formattedMessage.c_str());
-#endif // ANGLE_ENABLE_DEBUG_TRACE_TO_DEBUGGER
+#endif  // ANGLE_ENABLE_DEBUG_TRACE_TO_DEBUGGER
 
-#endif // ANGLE_ENABLE_DEBUG_TRACE
+#endif  // ANGLE_ENABLE_DEBUG_TRACE
 }
 
 } // namespace

@@ -9,8 +9,13 @@
 
 #include "string_utils.h"
 
+#include <algorithm>
+#include <stdlib.h>
+#include <string.h>
 #include <fstream>
 #include <sstream>
+
+#include "common/platform.h"
 
 namespace angle
 {
@@ -133,4 +138,45 @@ bool ReadFileToString(const std::string &path, std::string *stringOut)
     return !inFile.fail();
 }
 
+Optional<std::vector<wchar_t>> WidenString(size_t length, const char *cString)
+{
+    std::vector<wchar_t> wcstring(length + 1);
+#if !defined(ANGLE_PLATFORM_WINDOWS)
+    size_t written = mbstowcs(wcstring.data(), cString, length + 1);
+    if (written == 0)
+    {
+        return Optional<std::vector<wchar_t>>::Invalid();
+    }
+#else
+    size_t convertedChars = 0;
+    errno_t err = mbstowcs_s(&convertedChars, wcstring.data(), length + 1, cString, _TRUNCATE);
+    if (err != 0)
+    {
+        return Optional<std::vector<wchar_t>>::Invalid();
+    }
+#endif
+    return Optional<std::vector<wchar_t>>(wcstring);
 }
+
+bool BeginsWith(const std::string &str, const char *prefix)
+{
+    return strncmp(str.c_str(), prefix, strlen(prefix)) == 0;
+}
+
+bool BeginsWith(const char *str, const char *prefix)
+{
+    return strncmp(str, prefix, strlen(prefix)) == 0;
+}
+
+bool EndsWith(const std::string &str, const char *suffix)
+{
+    const auto len = strlen(suffix);
+    if (len > str.size())
+        return false;
+
+    const char *end = str.c_str() + str.size() - len;
+
+    return memcmp(end, suffix, len) == 0;
+}
+
+}  // namespace angle

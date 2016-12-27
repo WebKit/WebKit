@@ -10,6 +10,8 @@
 #ifndef LIBANGLE_STREAM_H_
 #define LIBANGLE_STREAM_H_
 
+#include <array>
+
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
@@ -18,17 +20,47 @@
 
 namespace rx
 {
-class StreamImpl;
+class StreamProducerImpl;
+}
+
+namespace gl
+{
+class Context;
+class Texture;
 }
 
 namespace egl
 {
+class Display;
+class Error;
 
 class Stream final : angle::NonCopyable
 {
   public:
-    Stream(rx::StreamImpl *impl, const AttributeMap &attribs);
+    Stream(Display *display, const AttributeMap &attribs);
     ~Stream();
+
+    enum class ConsumerType
+    {
+        NoConsumer,
+        GLTextureRGB,
+        GLTextureYUV,
+    };
+
+    enum class ProducerType
+    {
+        NoProducer,
+        D3D11TextureNV12,
+    };
+
+    // A GL texture interpretation of a part of a producer frame. For use with GL texture consumers
+    struct GLTextureDescription
+    {
+        unsigned int width;
+        unsigned int height;
+        unsigned int internalFormat;
+        unsigned int mipLevels;
+    };
 
     EGLenum getState() const;
 
@@ -41,9 +73,42 @@ class Stream final : angle::NonCopyable
     void setConsumerAcquireTimeout(EGLint timeout);
     EGLint getConsumerAcquireTimeout() const;
 
+    ConsumerType getConsumerType() const;
+    ProducerType getProducerType() const;
+
+    EGLint getPlaneCount() const;
+
+    rx::StreamProducerImpl *getImplementation();
+
+    // Consumer creation methods
+    Error createConsumerGLTextureExternal(const AttributeMap &attributes, gl::Context *context);
+
+    // Producer creation methods
+    Error createProducerD3D11TextureNV12(const AttributeMap &attributes);
+
+    // Consumer methods
+    Error consumerAcquire();
+    Error consumerRelease();
+
+    // Some consumers are bound to GL contexts. This validates that a given context is bound to the
+    // stream's consumer
+    bool isConsumerBoundToContext(const gl::Context *context) const;
+
+    // Producer methods
+    Error validateD3D11NV12Texture(void *texture) const;
+    Error postD3D11NV12Texture(void *texture, const AttributeMap &attributes);
+
   private:
-    // Implementation
-    rx::StreamImpl *mImplementation;
+    // Associated display
+    Display *mDisplay;
+
+    // Producer Implementation
+    rx::StreamProducerImpl *mProducerImplementation;
+
+    // Associated GL context. Note that this is a weak pointer used for validation purposes only,
+    // and should never be arbitrarily dereferenced without knowing the context still exists as it
+    // can become dangling at any time.
+    gl::Context *mContext;
 
     // EGL defined attributes
     EGLint mState;
@@ -53,6 +118,24 @@ class Stream final : angle::NonCopyable
 
     // EGL gltexture consumer attributes
     EGLint mConsumerAcquireTimeout;
+
+    // EGL gltexture yuv consumer attributes
+    EGLint mPlaneCount;
+    struct PlaneTexture
+    {
+        EGLint textureUnit;
+        gl::Texture *texture;
+    };
+    // Texture units and textures for all the planes
+    std::array<PlaneTexture, 3> mPlanes;
+
+    // Consumer and producer types
+    ConsumerType mConsumerType;
+    ProducerType mProducerType;
+
+    // ANGLE-only method, used internally
+    friend class gl::Texture;
+    void releaseTextures();
 };
 }  // namespace egl
 

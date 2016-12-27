@@ -98,7 +98,7 @@ EGLBoolean EGLAPIENTRY PostSubBufferNV(EGLDisplay dpy, EGLSurface surface, EGLin
         return EGL_FALSE;
     }
 
-    if (display->isDeviceLost())
+    if (display->testDeviceLost())
     {
         SetGlobalError(Error(EGL_CONTEXT_LOST));
         return EGL_FALSE;
@@ -193,6 +193,17 @@ EGLDisplay EGLAPIENTRY GetPlatformDisplayEXT(EGLenum platform, void *native_disp
                             if (!clientExtensions.platformANGLEOpenGL)
                             {
                                 SetGlobalError(Error(EGL_BAD_ATTRIBUTE));
+                                return EGL_NO_DISPLAY;
+                            }
+                            break;
+
+                        case EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE:
+                            if (!clientExtensions.platformANGLENULL)
+                            {
+                                SetGlobalError(Error(EGL_BAD_ATTRIBUTE,
+                                                     "Display type "
+                                                     "EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE "
+                                                     "requires EGL_ANGLE_platform_angle_null."));
                                 return EGL_NO_DISPLAY;
                             }
                             break;
@@ -433,7 +444,13 @@ EGLBoolean EGLAPIENTRY QueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribute, E
           dpy, attribute, value);
 
     Display *display = static_cast<Display*>(dpy);
-    Error error(EGL_SUCCESS);
+
+    Error error = ValidateDisplay(display);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
 
     if (!display->getExtensions().deviceQuery)
     {
@@ -725,8 +742,16 @@ EGLBoolean EGLAPIENTRY StreamConsumerGLTextureExternalKHR(EGLDisplay dpy, EGLStr
         SetGlobalError(error);
         return EGL_FALSE;
     }
+
+    error = streamObject->createConsumerGLTextureExternal(AttributeMap(), context);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
     SetGlobalError(error);
-    return EGL_FALSE;
+    return EGL_TRUE;
 }
 
 EGLBoolean EGLAPIENTRY StreamConsumerAcquireKHR(EGLDisplay dpy, EGLStreamKHR stream)
@@ -742,8 +767,16 @@ EGLBoolean EGLAPIENTRY StreamConsumerAcquireKHR(EGLDisplay dpy, EGLStreamKHR str
         SetGlobalError(error);
         return EGL_FALSE;
     }
+
+    error = streamObject->consumerAcquire();
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
     SetGlobalError(error);
-    return EGL_FALSE;
+    return EGL_TRUE;
 }
 
 EGLBoolean EGLAPIENTRY StreamConsumerReleaseKHR(EGLDisplay dpy, EGLStreamKHR stream)
@@ -759,8 +792,16 @@ EGLBoolean EGLAPIENTRY StreamConsumerReleaseKHR(EGLDisplay dpy, EGLStreamKHR str
         SetGlobalError(error);
         return EGL_FALSE;
     }
+
+    error = streamObject->consumerRelease();
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
     SetGlobalError(error);
-    return EGL_FALSE;
+    return EGL_TRUE;
 }
 
 EGLBoolean EGLAPIENTRY StreamConsumerGLTextureExternalAttribsNV(EGLDisplay dpy,
@@ -782,8 +823,16 @@ EGLBoolean EGLAPIENTRY StreamConsumerGLTextureExternalAttribsNV(EGLDisplay dpy,
         SetGlobalError(error);
         return EGL_FALSE;
     }
+
+    error = streamObject->createConsumerGLTextureExternal(attributes, context);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
     SetGlobalError(error);
-    return EGL_FALSE;
+    return EGL_TRUE;
 }
 
 EGLBoolean EGLAPIENTRY CreateStreamProducerD3DTextureNV12ANGLE(EGLDisplay dpy,
@@ -805,8 +854,15 @@ EGLBoolean EGLAPIENTRY CreateStreamProducerD3DTextureNV12ANGLE(EGLDisplay dpy,
         return EGL_FALSE;
     }
 
+    error = streamObject->createProducerD3D11TextureNV12(attributes);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
     SetGlobalError(error);
-    return EGL_FALSE;
+    return EGL_TRUE;
 }
 
 EGLBoolean EGLAPIENTRY StreamPostD3DTextureNV12ANGLE(EGLDisplay dpy,
@@ -829,7 +885,46 @@ EGLBoolean EGLAPIENTRY StreamPostD3DTextureNV12ANGLE(EGLDisplay dpy,
         return EGL_FALSE;
     }
 
+    error = streamObject->postD3D11NV12Texture(texture, attributes);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
     SetGlobalError(error);
-    return EGL_FALSE;
+    return EGL_TRUE;
+}
+
+EGLBoolean EGLAPIENTRY GetSyncValuesCHROMIUM(EGLDisplay dpy,
+                                             EGLSurface surface,
+                                             EGLuint64KHR *ust,
+                                             EGLuint64KHR *msc,
+                                             EGLuint64KHR *sbc)
+{
+    EVENT(
+        "(EGLDisplay dpy = 0x%0.8p, EGLSurface surface = 0x%0.8p, EGLuint64KHR* ust = 0x%0.8p, "
+        "EGLuint64KHR* msc = 0x%0.8p, EGLuint64KHR* sbc = 0x%0.8p",
+        dpy, surface, ust, msc, sbc);
+
+    Display *display    = static_cast<Display *>(dpy);
+    Surface *eglSurface = static_cast<Surface *>(surface);
+
+    Error error = ValidateGetSyncValuesCHROMIUM(display, eglSurface, ust, msc, sbc);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
+    error = eglSurface->getSyncValues(ust, msc, sbc);
+    if (error.isError())
+    {
+        SetGlobalError(error);
+        return EGL_FALSE;
+    }
+
+    SetGlobalError(error);
+    return EGL_TRUE;
 }
 }

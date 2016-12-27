@@ -10,24 +10,26 @@
 
 #include "libANGLE/Surface.h"
 
-#include "libANGLE/Config.h"
-#include "libANGLE/Framebuffer.h"
-#include "libANGLE/Texture.h"
-
 #include <EGL/eglext.h>
 
 #include <iostream>
 
+#include "libANGLE/Config.h"
+#include "libANGLE/Framebuffer.h"
+#include "libANGLE/Texture.h"
+#include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/EGLImplFactory.h"
+
 namespace egl
 {
 
-Surface::Surface(rx::SurfaceImpl *impl,
-                 EGLint surfaceType,
-                 const egl::Config *config,
-                 const AttributeMap &attributes)
+SurfaceState::SurfaceState() : defaultFramebuffer(nullptr)
+{
+}
+
+Surface::Surface(EGLint surfaceType, const egl::Config *config, const AttributeMap &attributes)
     : FramebufferAttachmentObject(),
-      mImplementation(impl),
-      mDefaultFramebuffer(nullptr),
+      mImplementation(nullptr),
       mCurrentCount(0),
       mDestroyed(false),
       mType(surfaceType),
@@ -41,9 +43,11 @@ Surface::Surface(rx::SurfaceImpl *impl,
       // FIXME: Determine actual pixel aspect ratio
       mPixelAspectRatio(static_cast<EGLint>(1.0 * EGL_DISPLAY_SCALING)),
       mRenderBuffer(EGL_BACK_BUFFER),
-      mSwapBehavior(impl->getSwapBehavior()),
+      mSwapBehavior(EGL_NONE),
       mOrientation(0),
-      mTexture()
+      mTexture(),
+      mBackFormat(config->renderTargetFormat),
+      mDSFormat(config->depthStencilFormat)
 {
     mPostSubBufferRequested = (attributes.get(EGL_POST_SUB_BUFFER_SUPPORTED_NV, EGL_FALSE) == EGL_TRUE);
     mFlexibleSurfaceCompatibilityRequested =
@@ -65,9 +69,6 @@ Surface::Surface(rx::SurfaceImpl *impl,
     }
 
     mOrientation = static_cast<EGLint>(attributes.get(EGL_SURFACE_ORIENTATION_ANGLE, 0));
-
-    mDefaultFramebuffer = createDefaultFramebuffer();
-    ASSERT(mDefaultFramebuffer != nullptr);
 }
 
 Surface::~Surface()
@@ -82,8 +83,23 @@ Surface::~Surface()
         mTexture.set(nullptr);
     }
 
-    SafeDelete(mDefaultFramebuffer);
+    SafeDelete(mState.defaultFramebuffer);
     SafeDelete(mImplementation);
+}
+
+Error Surface::initialize()
+{
+    ANGLE_TRY(mImplementation->initialize());
+
+    // Initialized here since impl is nullptr in the constructor.
+    // Must happen after implementation initialize for Android.
+    mSwapBehavior = mImplementation->getSwapBehavior();
+
+    // Must happen after implementation initialize for OSX.
+    mState.defaultFramebuffer = createDefaultFramebuffer();
+    ASSERT(mState.defaultFramebuffer != nullptr);
+
+    return Error(EGL_SUCCESS);
 }
 
 void Surface::setIsCurrent(bool isCurrent)
@@ -205,6 +221,11 @@ Error Surface::releaseTexImage(EGLint buffer)
     return mImplementation->releaseTexImage(buffer);
 }
 
+Error Surface::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
+{
+    return mImplementation->getSyncValues(ust, msc, sbc);
+}
+
 void Surface::releaseTexImageFromTexture()
 {
     ASSERT(mTexture.get());
@@ -216,10 +237,10 @@ gl::Extents Surface::getAttachmentSize(const gl::FramebufferAttachment::Target &
     return gl::Extents(getWidth(), getHeight(), 1);
 }
 
-GLenum Surface::getAttachmentInternalFormat(const gl::FramebufferAttachment::Target &target) const
+const gl::Format &Surface::getAttachmentFormat(
+    const gl::FramebufferAttachment::Target &target) const
 {
-    const egl::Config *config = getConfig();
-    return (target.binding() == GL_BACK ? config->renderTargetFormat : config->depthStencilFormat);
+    return (target.binding() == GL_BACK ? mBackFormat : mDSFormat);
 }
 
 GLsizei Surface::getAttachmentSamples(const gl::FramebufferAttachment::Target &target) const
@@ -258,4 +279,53 @@ gl::Framebuffer *Surface::createDefaultFramebuffer()
 
     return framebuffer;
 }
+
+WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,
+                             const egl::Config *config,
+                             EGLNativeWindowType window,
+                             const AttributeMap &attribs)
+    : Surface(EGL_WINDOW_BIT, config, attribs)
+{
+    mImplementation = implFactory->createWindowSurface(mState, config, window, attribs);
 }
+
+WindowSurface::~WindowSurface()
+{
+}
+
+PbufferSurface::PbufferSurface(rx::EGLImplFactory *implFactory,
+                               const Config *config,
+                               const AttributeMap &attribs)
+    : Surface(EGL_PBUFFER_BIT, config, attribs)
+{
+    mImplementation = implFactory->createPbufferSurface(mState, config, attribs);
+}
+
+PbufferSurface::PbufferSurface(rx::EGLImplFactory *implFactory,
+                               const Config *config,
+                               EGLClientBuffer shareHandle,
+                               const AttributeMap &attribs)
+    : Surface(EGL_PBUFFER_BIT, config, attribs)
+{
+    mImplementation =
+        implFactory->createPbufferFromClientBuffer(mState, config, shareHandle, attribs);
+}
+
+PbufferSurface::~PbufferSurface()
+{
+}
+
+PixmapSurface::PixmapSurface(rx::EGLImplFactory *implFactory,
+                             const Config *config,
+                             NativePixmapType nativePixmap,
+                             const AttributeMap &attribs)
+    : Surface(EGL_PIXMAP_BIT, config, attribs)
+{
+    mImplementation = implFactory->createPixmapSurface(mState, config, nativePixmap, attribs);
+}
+
+PixmapSurface::~PixmapSurface()
+{
+}
+
+}  // namespace egl

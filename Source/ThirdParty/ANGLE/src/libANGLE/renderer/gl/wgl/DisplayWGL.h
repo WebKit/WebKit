@@ -28,21 +28,24 @@ class DisplayWGL : public DisplayGL
     void terminate() override;
 
     // Surface creation
-    SurfaceImpl *createWindowSurface(const egl::Config *configuration,
+    SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
+                                     const egl::Config *configuration,
                                      EGLNativeWindowType window,
                                      const egl::AttributeMap &attribs) override;
-    SurfaceImpl *createPbufferSurface(const egl::Config *configuration,
+    SurfaceImpl *createPbufferSurface(const egl::SurfaceState &state,
+                                      const egl::Config *configuration,
                                       const egl::AttributeMap &attribs) override;
-    SurfaceImpl *createPbufferFromClientBuffer(const egl::Config *configuration,
+    SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
+                                               const egl::Config *configuration,
                                                EGLClientBuffer shareHandle,
                                                const egl::AttributeMap &attribs) override;
-    SurfaceImpl *createPixmapSurface(const egl::Config *configuration,
+    SurfaceImpl *createPixmapSurface(const egl::SurfaceState &state,
+                                     const egl::Config *configuration,
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
-    egl::ConfigSet generateConfigs() const override;
+    egl::ConfigSet generateConfigs() override;
 
-    bool isDeviceLost() const override;
     bool testDeviceLost() override;
     egl::Error restoreLostDevice() override;
 
@@ -74,6 +77,8 @@ class DisplayWGL : public DisplayGL
 
     FunctionsWGL *mFunctionsWGL;
     FunctionsGL *mFunctionsGL;
+
+    bool mHasRobustness;
 
     ATOM mWindowClass;
     HWND mWindow;

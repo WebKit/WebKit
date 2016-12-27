@@ -10,7 +10,7 @@
 #define LIBANGLE_RENDERER_D3D9_STATEMANAGER9_H_
 
 #include "libANGLE/angletypes.h"
-#include "libANGLE/Data.h"
+#include "libANGLE/ContextState.h"
 #include "libANGLE/State.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
 
@@ -39,12 +39,13 @@ class StateManager9 final : angle::NonCopyable
     StateManager9(Renderer9 *renderer9);
     ~StateManager9();
 
+    void initialize();
+
     void syncState(const gl::State &state, const gl::State::DirtyBits &dirtyBits);
 
     gl::Error setBlendDepthRasterStates(const gl::State &glState, unsigned int sampleMask);
     void setScissorState(const gl::Rectangle &scissor, bool enabled);
-    void setViewportState(const gl::Caps *caps,
-                          const gl::Rectangle &viewport,
+    void setViewportState(const gl::Rectangle &viewport,
                           float zNear,
                           float zFar,
                           GLenum drawMode,
@@ -155,6 +156,8 @@ class StateManager9 final : angle::NonCopyable
     };
 
     typedef std::bitset<DIRTY_BIT_MAX> DirtyBits;
+
+    bool mUsingZeroColorMaskWorkaround;
 
     // Currently applied blend state
     gl::BlendState mCurBlendState;

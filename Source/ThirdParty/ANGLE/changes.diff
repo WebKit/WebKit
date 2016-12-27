@@ -1,5 +1,121 @@
+diff --git a/include/EGL/egl.h b/include/EGL/egl.h
+index 9f9e021..8ada051 100644
+--- a/include/EGL/egl.h
++++ b/include/EGL/egl.h
+@@ -38,6 +38,12 @@ extern "C" {
+ 
+ #include <EGL/eglplatform.h>
+ 
++#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
++#define EGL_SOFT_LINKING 1
++#else
++#define EGL_SOFT_LINKING 0
++#endif
++
+ /* Generated on date 20150623 */
+ 
+ /* Generated C header for:
+@@ -118,6 +124,7 @@ typedef void (*__eglMustCastToProperFunctionPointerType)(void);
+ #define EGL_VERSION                       0x3054
+ #define EGL_WIDTH                         0x3057
+ #define EGL_WINDOW_BIT                    0x0004
++#if !EGL_SOFT_LINKING
+ EGLAPI EGLBoolean EGLAPIENTRY eglChooseConfig (EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs, EGLint config_size, EGLint *num_config);
+ EGLAPI EGLBoolean EGLAPIENTRY eglCopyBuffers (EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target);
+ EGLAPI EGLContext EGLAPIENTRY eglCreateContext (EGLDisplay dpy, EGLConfig config, EGLContext share_context, const EGLint *attrib_list);
+@@ -142,6 +149,7 @@ EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffers (EGLDisplay dpy, EGLSurface surface
+ EGLAPI EGLBoolean EGLAPIENTRY eglTerminate (EGLDisplay dpy);
+ EGLAPI EGLBoolean EGLAPIENTRY eglWaitGL (void);
+ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative (EGLint engine);
++#endif
+ #endif /* EGL_VERSION_1_0 */
+ 
+ #ifndef EGL_VERSION_1_1
+@@ -160,10 +168,12 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitNative (EGLint engine);
+ #define EGL_TEXTURE_RGB                   0x305D
+ #define EGL_TEXTURE_RGBA                  0x305E
+ #define EGL_TEXTURE_TARGET                0x3081
++#if !EGL_SOFT_LINKING
+ EGLAPI EGLBoolean EGLAPIENTRY eglBindTexImage (EGLDisplay dpy, EGLSurface surface, EGLint buffer);
+ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseTexImage (EGLDisplay dpy, EGLSurface surface, EGLint buffer);
+ EGLAPI EGLBoolean EGLAPIENTRY eglSurfaceAttrib (EGLDisplay dpy, EGLSurface surface, EGLint attribute, EGLint value);
+ EGLAPI EGLBoolean EGLAPIENTRY eglSwapInterval (EGLDisplay dpy, EGLint interval);
++#endif
+ #endif /* EGL_VERSION_1_1 */
+ 
+ #ifndef EGL_VERSION_1_2
+@@ -199,11 +209,13 @@ typedef void *EGLClientBuffer;
+ #define EGL_SWAP_BEHAVIOR                 0x3093
+ #define EGL_UNKNOWN                       ((EGLint)-1)
+ #define EGL_VERTICAL_RESOLUTION           0x3091
++#if !EGL_SOFT_LINKING
+ EGLAPI EGLBoolean EGLAPIENTRY eglBindAPI (EGLenum api);
+ EGLAPI EGLenum EGLAPIENTRY eglQueryAPI (void);
+ EGLAPI EGLSurface EGLAPIENTRY eglCreatePbufferFromClientBuffer (EGLDisplay dpy, EGLenum buftype, EGLClientBuffer buffer, EGLConfig config, const EGLint *attrib_list);
+ EGLAPI EGLBoolean EGLAPIENTRY eglReleaseThread (void);
+ EGLAPI EGLBoolean EGLAPIENTRY eglWaitClient (void);
++#endif
+ #endif /* EGL_VERSION_1_2 */
+ 
+ #ifndef EGL_VERSION_1_3
+@@ -232,7 +244,9 @@ EGLAPI EGLBoolean EGLAPIENTRY eglWaitClient (void);
+ #define EGL_OPENGL_API                    0x30A2
+ #define EGL_OPENGL_BIT                    0x0008
+ #define EGL_SWAP_BEHAVIOR_PRESERVED_BIT   0x0400
++#if !EGL_SOFT_LINKING
+ EGLAPI EGLContext EGLAPIENTRY eglGetCurrentContext (void);
++#endif
+ #endif /* EGL_VERSION_1_4 */
+ 
+ #ifndef EGL_VERSION_1_5
+@@ -284,6 +298,7 @@ typedef void *EGLImage;
+ #define EGL_GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 0x30B8
+ #define EGL_IMAGE_PRESERVED               0x30D2
+ #define EGL_NO_IMAGE                      ((EGLImage)0)
++#if !EGL_SOFT_LINKING
+ EGLAPI EGLSync EGLAPIENTRY eglCreateSync (EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list);
+ EGLAPI EGLBoolean EGLAPIENTRY eglDestroySync (EGLDisplay dpy, EGLSync sync);
+ EGLAPI EGLint EGLAPIENTRY eglClientWaitSync (EGLDisplay dpy, EGLSync sync, EGLint flags, EGLTime timeout);
+@@ -294,8 +309,13 @@ EGLAPI EGLDisplay EGLAPIENTRY eglGetPlatformDisplay (EGLenum platform, void *nat
+ EGLAPI EGLSurface EGLAPIENTRY eglCreatePlatformWindowSurface (EGLDisplay dpy, EGLConfig config, void *native_window, const EGLAttrib *attrib_list);
+ EGLAPI EGLSurface EGLAPIENTRY eglCreatePlatformPixmapSurface (EGLDisplay dpy, EGLConfig config, void *native_pixmap, const EGLAttrib *attrib_list);
+ EGLAPI EGLBoolean EGLAPIENTRY eglWaitSync (EGLDisplay dpy, EGLSync sync, EGLint flags);
++#endif
+ #endif /* EGL_VERSION_1_5 */
+ 
++#if EGL_SOFT_LINKING
++#include <EGL/eglsoftlinking.h>
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/GLES2/gl2.h b/include/GLES2/gl2.h
+index 027e1f7..4d710c2 100644
+--- a/include/GLES2/gl2.h
++++ b/include/GLES2/gl2.h
+@@ -520,6 +520,11 @@ typedef void (GL_APIENTRYP PFNGLVERTEXATTRIB4FPROC) (GLuint index, GLfloat x, GL
+ typedef void (GL_APIENTRYP PFNGLVERTEXATTRIB4FVPROC) (GLuint index, const GLfloat *v);
+ typedef void (GL_APIENTRYP PFNGLVERTEXATTRIBPOINTERPROC) (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
+ typedef void (GL_APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
++
++#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
++#include <GLES2/gl2softlinking.h>
++#else
++
+ #ifdef GL_GLEXT_PROTOTYPES
+ GL_APICALL void GL_APIENTRY glActiveTexture (GLenum texture);
+ GL_APICALL void GL_APIENTRY glAttachShader (GLuint program, GLuint shader);
+@@ -664,6 +669,7 @@ GL_APICALL void GL_APIENTRY glVertexAttrib4fv (GLuint index, const GLfloat *v);
+ GL_APICALL void GL_APIENTRY glVertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
+ GL_APICALL void GL_APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
+ #endif
++#endif
+ #endif /* GL_ES_VERSION_2_0 */
+ 
+ #ifdef __cplusplus
 diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
-index 78f8ef6..b7fdf55 100644
+index 965f7ab..f7b0ef7 100644
 --- a/include/GLSLANG/ShaderLang.h
 +++ b/include/GLSLANG/ShaderLang.h
 @@ -25,7 +25,7 @@
@@ -9,17 +125,70 @@ index 78f8ef6..b7fdf55 100644
 -#include "KHR/khrplatform.h"
 +#include "khrplatform.h"
  
+ #include <array>
  #include <map>
- #include <string>
-@@ -343,7 +343,7 @@ COMPILER_EXPORT const std::string &ShGetBuiltInResourcesString(const ShHandle ha
- // type: Specifies the type of shader - GL_FRAGMENT_SHADER or GL_VERTEX_SHADER.
- // spec: Specifies the language spec the compiler must conform to -
- //       SH_GLES2_SPEC or SH_WEBGL_SPEC.
--// output: Specifies the output code type - for example SH_ESSL_OUTPUT, SH_GLSL_OUTPUT,
-+// output: Specifies the output code type - for example SH_ESSL_OUTPUT, SH_GLSL_COMPATIBILITY_OUTPUT,
- //         SH_HLSL_3_0_OUTPUT or SH_HLSL_4_1_OUTPUT. Note: Each output type may only
- //         be supported in some configurations.
- // resources: Specifies the built-in resources.
+diff --git a/src/common/angleutils.cpp b/src/common/angleutils.cpp
+index 7099c21..4641928 100644
+--- a/src/common/angleutils.cpp
++++ b/src/common/angleutils.cpp
+@@ -36,7 +36,10 @@ size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char>
+ 
+ std::string FormatString(const char *fmt, va_list vararg)
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static std::vector<char> buffer(512);
++#pragma GCC diagnostic pop
+ 
+     size_t len = FormatStringIntoVector(fmt, vararg, buffer);
+     return std::string(&buffer[0], len);
+diff --git a/src/common/angleutils.h b/src/common/angleutils.h
+index f5ef7bd..4cb556c 100644
+--- a/src/common/angleutils.h
++++ b/src/common/angleutils.h
+@@ -116,7 +116,10 @@ inline bool IsMaskFlagSet(T mask, T flag)
+ 
+ inline const char* MakeStaticString(const std::string &str)
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static std::set<std::string> strings;
++#pragma GCC diagnostic pop
+     std::set<std::string>::iterator it = strings.find(str);
+     if (it != strings.end())
+     {
+diff --git a/src/common/debug.cpp b/src/common/debug.cpp
+index 746da5e..47e1565 100644
+--- a/src/common/debug.cpp
++++ b/src/common/debug.cpp
+@@ -69,7 +69,10 @@ void output(bool traceInDebugOnly, MessageType messageType, DebugTraceOutputType
+ {
+     if (DebugAnnotationsActive())
+     {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+         static std::vector<char> buffer(512);
++#pragma GCC diagnostic pop
+         size_t len = FormatStringIntoVector(format, vararg, buffer);
+         std::wstring formattedWideMessage(buffer.begin(), buffer.begin() + len);
+ 
+diff --git a/src/common/mathutil.cpp b/src/common/mathutil.cpp
+index acbcbdf..ba6da52 100644
+--- a/src/common/mathutil.cpp
++++ b/src/common/mathutil.cpp
+@@ -31,9 +31,12 @@ static const int g_sharedexp_mantissabits = 9;
+ // Emax is the maximum allowed biased exponent value (31)
+ static const int g_sharedexp_maxexponent = 31;
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wglobal-constructors"
+ static const float g_sharedexp_max = ((pow(2.0f, g_sharedexp_mantissabits) - 1) /
+                                        pow(2.0f, g_sharedexp_mantissabits)) *
+                                      pow(2.0f, g_sharedexp_maxexponent - g_sharedexp_bias);
++#pragma GCC diagnostic pop
+ 
+ unsigned int convertRGBFloatsTo999E5(float red, float green, float blue)
+ {
 diff --git a/src/common/version.h b/src/common/version.h
 index e7ffa7c..b653ae3 100644
 --- a/src/common/version.h
@@ -34,7 +203,7 @@ index e7ffa7c..b653ae3 100644
  #define ANGLE_MAJOR_VERSION 2
  #define ANGLE_MINOR_VERSION 1
 diff --git a/src/compiler/preprocessor/ExpressionParser.cpp b/src/compiler/preprocessor/ExpressionParser.cpp
-index 193b150..b38b7ae 100644
+index f737a2e..a8df235 100644
 --- a/src/compiler/preprocessor/ExpressionParser.cpp
 +++ b/src/compiler/preprocessor/ExpressionParser.cpp
 @@ -1,5 +1,7 @@
@@ -46,64 +215,141 @@ index 193b150..b38b7ae 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 diff --git a/src/compiler/preprocessor/Tokenizer.cpp b/src/compiler/preprocessor/Tokenizer.cpp
-index eb6156f..1caee47 100644
+index 40e910e..fee20c6 100644
 --- a/src/compiler/preprocessor/Tokenizer.cpp
 +++ b/src/compiler/preprocessor/Tokenizer.cpp
-@@ -712,7 +712,7 @@ static void yy_flex_strncpy (char *,yyconst char *,int ,yyscan_t yyscanner);
+@@ -969,7 +969,7 @@ static void yy_flex_strncpy (char *,yyconst char *,int ,yyscan_t yyscanner);
  static int yy_flex_strlen (yyconst char * ,yyscan_t yyscanner);
  #endif
  
 -#ifndef YY_NO_INPUT
-+#if 0 //#ifndef YY_NO_INPUT
++#if 0
  
  #ifdef __cplusplus
  static int yyinput (yyscan_t yyscanner );
-@@ -1526,7 +1526,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
-        return yy_is_jam ? 0 : yy_current_state;
- }
+@@ -1858,7 +1858,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
+ 
+ #endif
  
 -#ifndef YY_NO_INPUT
-+#if 0 //#ifndef YY_NO_INPUT
++#if 0
  #ifdef __cplusplus
      static int yyinput (yyscan_t yyscanner)
  #else
-diff --git a/src/compiler/translator/CodeGen.cpp b/src/compiler/translator/CodeGen.cpp
-index f099bcc..fe7c4f1 100644
---- a/src/compiler/translator/CodeGen.cpp
-+++ b/src/compiler/translator/CodeGen.cpp
-@@ -4,6 +4,8 @@
- // found in the LICENSE file.
- //
+@@ -1883,7 +1883,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
  
-+#include "compiler/translator/Compiler.h"
-+
- #ifdef ANGLE_ENABLE_ESSL
- #include "compiler/translator/TranslatorESSL.h"
- #endif
-diff --git a/src/compiler/translator/ShaderLang.cpp b/src/compiler/translator/ShaderLang.cpp
-index 421597b..a58e917 100644
---- a/src/compiler/translator/ShaderLang.cpp
-+++ b/src/compiler/translator/ShaderLang.cpp
-@@ -374,4 +374,4 @@ const std::map<std::string, unsigned int> *ShGetUniformRegisterMap(const ShHandl
-     static std::map<std::string, unsigned int> map;
-     return &map;
- #endif  // ANGLE_ENABLE_HLSL
+ 		else
+ 			{ /* need more input */
+-			int offset = yyg->yy_c_buf_p - yyg->yytext_ptr;
++			auto offset = yyg->yy_c_buf_p - yyg->yytext_ptr;
+ 			++yyg->yy_c_buf_p;
+ 
+ 			switch ( yy_get_next_buffer( yyscanner ) )
+@@ -2014,7 +2014,7 @@ static void pp_load_buffer_state  (yyscan_t yyscanner)
+ 	if ( ! b )
+ 		YY_FATAL_ERROR( "out of dynamic memory in pp_create_buffer()" );
+ 
+-	b->yy_buf_size = (yy_size_t)size;
++	b->yy_buf_size = size;
+ 
+ 	/* yy_ch_buf has to be 2 characters longer than the size given because
+ 	 * we need to put in 2 end-of-buffer characters.
+diff --git a/src/compiler/translator/Operator.cpp b/src/compiler/translator/Operator.cpp
+index 57878b9..0b693e2 100644
+--- a/src/compiler/translator/Operator.cpp
++++ b/src/compiler/translator/Operator.cpp
+@@ -224,4 +224,4 @@ bool IsAssignment(TOperator op)
+         default:
+             return false;
+     }
 -}
 \ No newline at end of file
 +}
-diff --git a/src/compiler/translator/TranslatorHLSL.cpp b/src/compiler/translator/TranslatorHLSL.cpp
-index 111a38b..2940260 100644
---- a/src/compiler/translator/TranslatorHLSL.cpp
-+++ b/src/compiler/translator/TranslatorHLSL.cpp
-@@ -75,4 +75,4 @@ unsigned int TranslatorHLSL::getInterfaceBlockRegister(const std::string &interf
- const std::map<std::string, unsigned int> *TranslatorHLSL::getUniformRegisterMap() const
- {
-     return &mUniformRegisterMap;
--}
+diff --git a/src/compiler/translator/OutputHLSL.h b/src/compiler/translator/OutputHLSL.h
+index db78859..f296dd9 100644
+--- a/src/compiler/translator/OutputHLSL.h
++++ b/src/compiler/translator/OutputHLSL.h
+@@ -56,21 +56,21 @@ class OutputHLSL : public TIntermTraverser
+     void header(TInfoSinkBase &out, const BuiltInFunctionEmulator *builtInFunctionEmulator);
+ 
+     // Visit AST nodes and output their code to the body stream
+-    void visitSymbol(TIntermSymbol*);
+-    void visitRaw(TIntermRaw*);
+-    void visitConstantUnion(TIntermConstantUnion*);
++    void visitSymbol(TIntermSymbol*) override;
++    void visitRaw(TIntermRaw*) override;
++    void visitConstantUnion(TIntermConstantUnion*) override;
+     bool visitSwizzle(Visit visit, TIntermSwizzle *node) override;
+-    bool visitBinary(Visit visit, TIntermBinary*);
+-    bool visitUnary(Visit visit, TIntermUnary*);
+-    bool visitTernary(Visit visit, TIntermTernary *);
+-    bool visitIfElse(Visit visit, TIntermIfElse *);
+-    bool visitSwitch(Visit visit, TIntermSwitch *);
+-    bool visitCase(Visit visit, TIntermCase *);
++    bool visitBinary(Visit visit, TIntermBinary*) override;
++    bool visitUnary(Visit visit, TIntermUnary*) override;
++    bool visitTernary(Visit visit, TIntermTernary *) override;
++    bool visitIfElse(Visit visit, TIntermIfElse *) override;
++    bool visitSwitch(Visit visit, TIntermSwitch *) override;
++    bool visitCase(Visit visit, TIntermCase *) override;
+     bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
+-    bool visitAggregate(Visit visit, TIntermAggregate*);
+-    bool visitBlock(Visit visit, TIntermBlock *node);
+-    bool visitLoop(Visit visit, TIntermLoop*);
+-    bool visitBranch(Visit visit, TIntermBranch*);
++    bool visitAggregate(Visit visit, TIntermAggregate*) override;
++    bool visitBlock(Visit visit, TIntermBlock *node) override;
++    bool visitLoop(Visit visit, TIntermLoop*) override;
++    bool visitBranch(Visit visit, TIntermBranch*) override;
+ 
+     bool isSingleStatement(TIntermNode *node);
+     bool handleExcessiveLoop(TInfoSinkBase &out, TIntermLoop *node);
+diff --git a/src/compiler/translator/RewriteTexelFetchOffset.cpp b/src/compiler/translator/RewriteTexelFetchOffset.cpp
+index 487c909..6d0c866 100644
+--- a/src/compiler/translator/RewriteTexelFetchOffset.cpp
++++ b/src/compiler/translator/RewriteTexelFetchOffset.cpp
+@@ -167,4 +167,4 @@ void RewriteTexelFetchOffset(TIntermNode *root,
+     Traverser::Apply(root, symbolTable, shaderVersion);
+ }
+ 
+-}  // namespace sh
 \ No newline at end of file
-+}
++}  // namespace sh
+diff --git a/src/compiler/translator/RewriteTexelFetchOffset.h b/src/compiler/translator/RewriteTexelFetchOffset.h
+index 4218f0b..c6db664 100644
+--- a/src/compiler/translator/RewriteTexelFetchOffset.h
++++ b/src/compiler/translator/RewriteTexelFetchOffset.h
+@@ -27,4 +27,4 @@ void RewriteTexelFetchOffset(TIntermNode *root,
+ 
+ }  // namespace sh
+ 
+-#endif  // COMPILER_TRANSLATOR_REWRITE_TEXELFETCHOFFSET_H_
+\ No newline at end of file
++#endif  // COMPILER_TRANSLATOR_REWRITE_TEXELFETCHOFFSET_H_
+diff --git a/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp b/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
+index ef708cb..d205805 100644
+--- a/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
++++ b/src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
+@@ -109,4 +109,4 @@ void RewriteUnaryMinusOperatorInt(TIntermNode *root)
+     Traverser::Apply(root);
+ }
+ 
+-}  // namespace sh
+\ No newline at end of file
++}  // namespace sh
+diff --git a/src/compiler/translator/RewriteUnaryMinusOperatorInt.h b/src/compiler/translator/RewriteUnaryMinusOperatorInt.h
+index 50f0c44..802ed57 100644
+--- a/src/compiler/translator/RewriteUnaryMinusOperatorInt.h
++++ b/src/compiler/translator/RewriteUnaryMinusOperatorInt.h
+@@ -17,4 +17,4 @@ void RewriteUnaryMinusOperatorInt(TIntermNode *root);
+ 
+ }  // namespace sh
+ 
+-#endif  // COMPILER_TRANSLATOR_REWRITEUNARYMINUSOPERATORINT_H_
+\ No newline at end of file
++#endif  // COMPILER_TRANSLATOR_REWRITEUNARYMINUSOPERATORINT_H_
 diff --git a/src/compiler/translator/TranslatorHLSL.h b/src/compiler/translator/TranslatorHLSL.h
-index 40cfd70..4e84612 100644
+index 213d860..d2add14 100644
 --- a/src/compiler/translator/TranslatorHLSL.h
 +++ b/src/compiler/translator/TranslatorHLSL.h
 @@ -13,7 +13,9 @@ class TranslatorHLSL : public TCompiler
@@ -112,25 +358,12 @@ index 40cfd70..4e84612 100644
      TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
 +#ifdef ANGLE_ENABLE_HLSL
      TranslatorHLSL *getAsTranslatorHLSL() override { return this; }
-+#endif
++#endif // ANGLE_ENABLE_HLSL
  
      bool hasInterfaceBlock(const std::string &interfaceBlockName) const;
      unsigned int getInterfaceBlockRegister(const std::string &interfaceBlockName) const;
-diff --git a/src/compiler/translator/glslang_lex.cpp b/src/compiler/translator/glslang_lex.cpp
-index ff6c2d6..1af876b 100644
---- a/src/compiler/translator/glslang_lex.cpp
-+++ b/src/compiler/translator/glslang_lex.cpp
-@@ -2090,7 +2090,7 @@ case YY_STATE_EOF(FIELDS):
-        YY_BREAK
- case 239:
- YY_RULE_SETUP
--{ assert(false); return 0; }
-+{ return 0; }
-        YY_BREAK
- case 240:
- YY_RULE_SETUP
 diff --git a/src/compiler/translator/glslang_tab.cpp b/src/compiler/translator/glslang_tab.cpp
-index 8b4fbd2..a799d29 100644
+index d9b8ada..3e50fbc 100644
 --- a/src/compiler/translator/glslang_tab.cpp
 +++ b/src/compiler/translator/glslang_tab.cpp
 @@ -1,5 +1,7 @@
@@ -142,7 +375,7 @@ index 8b4fbd2..a799d29 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 diff --git a/src/compiler/translator/glslang_tab.h b/src/compiler/translator/glslang_tab.h
-index 7331594..eb7ef39 100644
+index d0e691d..74a56da 100644
 --- a/src/compiler/translator/glslang_tab.h
 +++ b/src/compiler/translator/glslang_tab.h
 @@ -1,5 +1,7 @@
@@ -153,23 +386,175 @@ index 7331594..eb7ef39 100644
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+diff --git a/src/libANGLE/Caps.cpp b/src/libANGLE/Caps.cpp
+index 47e1cf0..0f4d69d 100644
+--- a/src/libANGLE/Caps.cpp
++++ b/src/libANGLE/Caps.cpp
+@@ -77,7 +77,10 @@ void TextureCapsMap::clear()
+ 
+ const TextureCaps &TextureCapsMap::get(GLenum internalFormat) const
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static TextureCaps defaultUnsupportedTexture;
++#pragma GCC diagnostic pop
+     InternalFormatToCapsMap::const_iterator iter = mCapsMap.find(internalFormat);
+     return (iter != mCapsMap.end()) ? iter->second : defaultUnsupportedTexture;
+ }
+@@ -594,7 +597,10 @@ const ExtensionInfoMap &GetExtensionInfoMap()
+         return map;
+     };
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static const ExtensionInfoMap extensionInfo = buildExtensionInfoMap();
++#pragma GCC diagnostic pop
+     return extensionInfo;
+ }
+ 
+diff --git a/src/libANGLE/Device.cpp b/src/libANGLE/Device.cpp
+index eb30b20..a94d500 100644
+--- a/src/libANGLE/Device.cpp
++++ b/src/libANGLE/Device.cpp
+@@ -38,7 +38,10 @@ static std::string GenerateExtensionsString(const T &extensions)
+ typedef std::set<egl::Device *> DeviceSet;
+ static DeviceSet *GetDeviceSet()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static DeviceSet devices;
++#pragma GCC diagnostic pop
+     return &devices;
+ }
+ 
 diff --git a/src/libANGLE/Display.cpp b/src/libANGLE/Display.cpp
-index c94dff2..4de579b 100644
+index 92d7dda..5711117 100644
 --- a/src/libANGLE/Display.cpp
 +++ b/src/libANGLE/Display.cpp
-@@ -139,6 +139,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap)
-     switch (displayType)
-     {
-       case EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE:
-+#if defined(ANGLE_ENABLE_OPENGL)
- #if defined(ANGLE_ENABLE_D3D9) || defined(ANGLE_ENABLE_D3D11)
-         // Default to D3D displays
-         impl = new rx::DisplayD3D();
-@@ -150,6 +151,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(const AttributeMap &attribMap)
-         // No display available
-         UNREACHABLE();
- #endif
-+#endif
-         break;
+@@ -90,21 +90,30 @@ typedef std::map<EGLNativeWindowType, Surface*> WindowSurfaceMap;
+ // associated with it.
+ static WindowSurfaceMap *GetWindowSurfaces()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static WindowSurfaceMap windowSurfaces;
++#pragma GCC diagnostic pop
+     return &windowSurfaces;
+ }
  
-       case EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE:
+ typedef std::map<EGLNativeDisplayType, Display *> ANGLEPlatformDisplayMap;
+ static ANGLEPlatformDisplayMap *GetANGLEPlatformDisplayMap()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static ANGLEPlatformDisplayMap displays;
++#pragma GCC diagnostic pop
+     return &displays;
+ }
+ 
+ typedef std::map<Device *, Display *> DevicePlatformDisplayMap;
+ static DevicePlatformDisplayMap *GetDevicePlatformDisplayMap()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static DevicePlatformDisplayMap displays;
++#pragma GCC diagnostic pop
+     return &displays;
+ }
+ 
+@@ -921,7 +930,10 @@ const ClientExtensions &Display::getClientExtensions()
+ 
+ const std::string &Display::getClientExtensionString()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static const std::string clientExtensionsString = GenerateExtensionsString(getClientExtensions());
++#pragma GCC diagnostic pop
+     return clientExtensionsString;
+ }
+ 
+diff --git a/src/libANGLE/HandleRangeAllocator.cpp b/src/libANGLE/HandleRangeAllocator.cpp
+index f219f95..3831aca 100644
+--- a/src/libANGLE/HandleRangeAllocator.cpp
++++ b/src/libANGLE/HandleRangeAllocator.cpp
+@@ -223,4 +223,4 @@ bool HandleRangeAllocator::isUsed(GLuint handle) const
+     return current->second >= handle;
+ }
+ 
+-}  // namespace gl
+\ No newline at end of file
++}  // namespace gl
+diff --git a/src/libANGLE/HandleRangeAllocator.h b/src/libANGLE/HandleRangeAllocator.h
+index 20f9a11..1023a84 100644
+--- a/src/libANGLE/HandleRangeAllocator.h
++++ b/src/libANGLE/HandleRangeAllocator.h
+@@ -56,4 +56,4 @@ class HandleRangeAllocator final : angle::NonCopyable
+ 
+ }  // namespace gl
+ 
+-#endif  // LIBANGLE_HANDLERANGEALLOCATOR_H_
+\ No newline at end of file
++#endif  // LIBANGLE_HANDLERANGEALLOCATOR_H_
+diff --git a/src/libANGLE/Path.h b/src/libANGLE/Path.h
+index b103c84..85f49c1 100644
+--- a/src/libANGLE/Path.h
++++ b/src/libANGLE/Path.h
+@@ -68,4 +68,4 @@ class Path final : angle::NonCopyable
+ 
+ }  // namespace gl
+ 
+-#endif  // LIBANGLE_PATH_H_
+\ No newline at end of file
++#endif  // LIBANGLE_PATH_H_
+diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
+index ff285dd..55a5fc8 100644
+--- a/src/libANGLE/formatutils.cpp
++++ b/src/libANGLE/formatutils.cpp
+@@ -615,7 +615,10 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
+ 
+ static const InternalFormatInfoMap &GetInternalFormatMap()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static const InternalFormatInfoMap formatMap = BuildInternalFormatInfoMap();
++#pragma GCC diagnostic pop
+     return formatMap;
+ }
+ 
+@@ -859,7 +862,10 @@ GLenum GetSizedInternalFormat(GLenum internalFormat, GLenum type)
+ 
+ const FormatSet &GetAllSizedInternalFormats()
+ {
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static FormatSet formatSet = BuildAllSizedInternalFormatSet();
++#pragma GCC diagnostic pop
+     return formatSet;
+ }
+ 
+diff --git a/src/libANGLE/renderer/PathImpl.h b/src/libANGLE/renderer/PathImpl.h
+index 3607f69..cb03ed6 100644
+--- a/src/libANGLE/renderer/PathImpl.h
++++ b/src/libANGLE/renderer/PathImpl.h
+@@ -33,4 +33,4 @@ class PathImpl : angle::NonCopyable
+ 
+ }  // namespace rx
+ 
+-#endif  // LIBANGLE_RENDERER_PATHIMPL_H_
+\ No newline at end of file
++#endif  // LIBANGLE_RENDERER_PATHIMPL_H_
+diff --git a/src/libANGLE/validationES3.cpp b/src/libANGLE/validationES3.cpp
+index 2f93651..49aa604 100644
+--- a/src/libANGLE/validationES3.cpp
++++ b/src/libANGLE/validationES3.cpp
+@@ -524,7 +524,10 @@ static bool IsValidES3CopyTexImageCombination(const Format &textureFormat,
+     const auto &textureFormatInfo     = *textureFormat.info;
+     const auto &framebufferFormatInfo = *framebufferFormat.info;
+ 
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+     static const CopyConversionSet conversionSet = BuildValidES3CopyTexImageCombinations();
++#pragma GCC diagnostic pop
+     if (conversionSet.find(CopyConversion(textureFormatInfo.format,
+                                           framebufferFormatInfo.format)) != conversionSet.end())
+     {

@@ -25,15 +25,19 @@ class DisplayD3D : public DisplayImpl
     virtual void terminate() override;
 
     // Surface creation
-    SurfaceImpl *createWindowSurface(const egl::Config *configuration,
+    SurfaceImpl *createWindowSurface(const egl::SurfaceState &state,
+                                     const egl::Config *configuration,
                                      EGLNativeWindowType window,
                                      const egl::AttributeMap &attribs) override;
-    SurfaceImpl *createPbufferSurface(const egl::Config *configuration,
+    SurfaceImpl *createPbufferSurface(const egl::SurfaceState &state,
+                                      const egl::Config *configuration,
                                       const egl::AttributeMap &attribs) override;
-    SurfaceImpl *createPbufferFromClientBuffer(const egl::Config *configuration,
+    SurfaceImpl *createPbufferFromClientBuffer(const egl::SurfaceState &state,
+                                               const egl::Config *configuration,
                                                EGLClientBuffer shareHandle,
                                                const egl::AttributeMap &attribs) override;
-    SurfaceImpl *createPixmapSurface(const egl::Config *configuration,
+    SurfaceImpl *createPixmapSurface(const egl::SurfaceState &state,
+                                     const egl::Config *configuration,
                                      NativePixmapType nativePixmap,
                                      const egl::AttributeMap &attribs) override;
 
@@ -41,17 +45,16 @@ class DisplayD3D : public DisplayImpl
                            egl::ImageSibling *buffer,
                            const egl::AttributeMap &attribs) override;
 
-    gl::Context *createContext(const egl::Config *config,
-                               const gl::Context *shareContext,
-                               const egl::AttributeMap &attribs) override;
+    ContextImpl *createContext(const gl::ContextState &state) override;
 
-    StreamImpl *createStream(const egl::AttributeMap &attribs) override;
+    StreamProducerImpl *createStreamProducerD3DTextureNV12(
+        egl::Stream::ConsumerType consumerType,
+        const egl::AttributeMap &attribs) override;
 
     egl::Error makeCurrent(egl::Surface *drawSurface, egl::Surface *readSurface, gl::Context *context) override;
 
-    egl::ConfigSet generateConfigs() const override;
+    egl::ConfigSet generateConfigs() override;
 
-    bool isDeviceLost() const override;
     bool testDeviceLost() override;
     egl::Error restoreLostDevice() override;
 
@@ -65,6 +68,7 @@ class DisplayD3D : public DisplayImpl
     egl::Error waitNative(EGLint engine,
                           egl::Surface *drawSurface,
                           egl::Surface *readSurface) const override;
+    gl::Version getMaxSupportedESVersion() const override;
 
   private:
     void generateExtensions(egl::DisplayExtensions *outExtensions) const override;

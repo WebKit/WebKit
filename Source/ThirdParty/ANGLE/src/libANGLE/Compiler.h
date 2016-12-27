@@ -16,17 +16,17 @@
 namespace rx
 {
 class CompilerImpl;
-class ImplFactory;
+class GLImplFactory;
 }
 
 namespace gl
 {
-struct Data;
+class ContextState;
 
 class Compiler final : angle::NonCopyable
 {
   public:
-    Compiler(rx::ImplFactory *implFactory, const Data &data);
+    Compiler(rx::GLImplFactory *implFactory, const ContextState &data);
     ~Compiler();
 
     Error release();
@@ -42,6 +42,7 @@ class Compiler final : angle::NonCopyable
 
     ShHandle mFragmentCompiler;
     ShHandle mVertexCompiler;
+    ShHandle mComputeCompiler;
 };
 
 }  // namespace gl

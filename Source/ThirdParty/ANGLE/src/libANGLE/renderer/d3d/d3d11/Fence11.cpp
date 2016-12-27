@@ -14,6 +14,8 @@
 namespace rx
 {
 
+static const int kDeviceLostCheckPeriod = 64;
+
 //
 // Template helpers for set and test operations.
 //
@@ -50,10 +52,6 @@ gl::Error FenceTestHelper(FenceClass *fence, bool flushCommandBuffer, GLboolean 
     {
         return gl::Error(GL_OUT_OF_MEMORY, "Failed to get query data, result: 0x%X.", result);
     }
-    else if (fence->mRenderer->isDeviceLost())
-    {
-        return gl::Error(GL_OUT_OF_MEMORY, "Device was lost while querying result of an event query.");
-    }
 
     ASSERT(result == S_OK || result == S_FALSE);
     *outFinished = ((result == S_OK) ? GL_TRUE : GL_FALSE);
@@ -89,18 +87,23 @@ gl::Error FenceNV11::test(GLboolean *outFinished)
 gl::Error FenceNV11::finish()
 {
     GLboolean finished = GL_FALSE;
+
+    int loopCount = 0;
     while (finished != GL_TRUE)
     {
-        gl::Error error = FenceTestHelper(this, true, &finished);
-        if (error.isError())
+        loopCount++;
+        ANGLE_TRY(FenceTestHelper(this, true, &finished));
+
+        if (loopCount % kDeviceLostCheckPeriod == 0 && mRenderer->testDeviceLost())
         {
-            return error;
+            return gl::Error(GL_OUT_OF_MEMORY,
+                             "Device was lost while querying result of an event query.");
         }
 
         ScheduleYield();
     }
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 //
@@ -176,8 +179,10 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
     LONGLONG timeoutInSeconds = static_cast<LONGLONG>(timeout) * static_cast<LONGLONG>(1000000ll);
     LONGLONG endCounter = currentCounter.QuadPart + mCounterFrequency * timeoutInSeconds;
 
+    int loopCount = 0;
     while (currentCounter.QuadPart < endCounter && !result)
     {
+        loopCount++;
         ScheduleYield();
         success = QueryPerformanceCounter(&currentCounter);
         UNUSED_ASSERTION_VARIABLE(success);
@@ -188,6 +193,13 @@ gl::Error FenceSync11::clientWait(GLbitfield flags, GLuint64 timeout, GLenum *ou
         {
             *outResult = GL_WAIT_FAILED;
             return error;
+        }
+
+        if ((loopCount % kDeviceLostCheckPeriod) == 0 && mRenderer->testDeviceLost())
+        {
+            *outResult = GL_WAIT_FAILED;
+            return gl::Error(GL_OUT_OF_MEMORY,
+                             "Device was lost while querying result of an event query.");
         }
     }
 

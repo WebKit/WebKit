@@ -8,18 +8,18 @@
 
 #include "libANGLE/VertexArray.h"
 #include "libANGLE/Buffer.h"
-#include "libANGLE/renderer/ImplFactory.h"
+#include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/VertexArrayImpl.h"
 
 namespace gl
 {
 
-VertexArray::Data::Data(size_t maxAttribs)
+VertexArrayState::VertexArrayState(size_t maxAttribs)
     : mLabel(), mVertexAttributes(maxAttribs), mMaxEnabledAttribute(0)
 {
 }
 
-VertexArray::Data::~Data()
+VertexArrayState::~VertexArrayState()
 {
     for (size_t i = 0; i < getMaxAttribs(); i++)
     {
@@ -28,8 +28,8 @@ VertexArray::Data::~Data()
     mElementArrayBuffer.set(nullptr);
 }
 
-VertexArray::VertexArray(rx::ImplFactory *factory, GLuint id, size_t maxAttribs)
-    : mId(id), mData(maxAttribs), mVertexArray(factory->createVertexArray(mData))
+VertexArray::VertexArray(rx::GLImplFactory *factory, GLuint id, size_t maxAttribs)
+    : mId(id), mState(maxAttribs), mVertexArray(factory->createVertexArray(mState))
 {
 }
 
@@ -45,60 +45,60 @@ GLuint VertexArray::id() const
 
 void VertexArray::setLabel(const std::string &label)
 {
-    mData.mLabel = label;
+    mState.mLabel = label;
 }
 
 const std::string &VertexArray::getLabel() const
 {
-    return mData.mLabel;
+    return mState.mLabel;
 }
 
 void VertexArray::detachBuffer(GLuint bufferName)
 {
     for (size_t attribute = 0; attribute < getMaxAttribs(); attribute++)
     {
-        if (mData.mVertexAttributes[attribute].buffer.id() == bufferName)
+        if (mState.mVertexAttributes[attribute].buffer.id() == bufferName)
         {
-            mData.mVertexAttributes[attribute].buffer.set(nullptr);
+            mState.mVertexAttributes[attribute].buffer.set(nullptr);
         }
     }
 
-    if (mData.mElementArrayBuffer.id() == bufferName)
+    if (mState.mElementArrayBuffer.id() == bufferName)
     {
-        mData.mElementArrayBuffer.set(nullptr);
+        mState.mElementArrayBuffer.set(nullptr);
     }
 }
 
 const VertexAttribute &VertexArray::getVertexAttribute(size_t attributeIndex) const
 {
     ASSERT(attributeIndex < getMaxAttribs());
-    return mData.mVertexAttributes[attributeIndex];
+    return mState.mVertexAttributes[attributeIndex];
 }
 
 void VertexArray::setVertexAttribDivisor(size_t index, GLuint divisor)
 {
     ASSERT(index < getMaxAttribs());
-    mData.mVertexAttributes[index].divisor = divisor;
+    mState.mVertexAttributes[index].divisor = divisor;
     mDirtyBits.set(DIRTY_BIT_ATTRIB_0_DIVISOR + index);
 }
 
 void VertexArray::enableAttribute(size_t attributeIndex, bool enabledState)
 {
     ASSERT(attributeIndex < getMaxAttribs());
-    mData.mVertexAttributes[attributeIndex].enabled = enabledState;
+    mState.mVertexAttributes[attributeIndex].enabled = enabledState;
     mDirtyBits.set(DIRTY_BIT_ATTRIB_0_ENABLED + attributeIndex);
 
     // Update state cache
     if (enabledState)
     {
-        mData.mMaxEnabledAttribute = std::max(attributeIndex + 1, mData.mMaxEnabledAttribute);
+        mState.mMaxEnabledAttribute = std::max(attributeIndex + 1, mState.mMaxEnabledAttribute);
     }
-    else if (mData.mMaxEnabledAttribute == attributeIndex + 1)
+    else if (mState.mMaxEnabledAttribute == attributeIndex + 1)
     {
-        while (mData.mMaxEnabledAttribute > 0 &&
-               !mData.mVertexAttributes[mData.mMaxEnabledAttribute - 1].enabled)
+        while (mState.mMaxEnabledAttribute > 0 &&
+               !mState.mVertexAttributes[mState.mMaxEnabledAttribute - 1].enabled)
         {
-            --mData.mMaxEnabledAttribute;
+            --mState.mMaxEnabledAttribute;
         }
     }
 }
@@ -108,7 +108,7 @@ void VertexArray::setAttributeState(size_t attributeIndex, gl::Buffer *boundBuff
 {
     ASSERT(attributeIndex < getMaxAttribs());
 
-    VertexAttribute *attrib = &mData.mVertexAttributes[attributeIndex];
+    VertexAttribute *attrib = &mState.mVertexAttributes[attributeIndex];
 
     attrib->buffer.set(boundBuffer);
     attrib->size = size;
@@ -122,7 +122,7 @@ void VertexArray::setAttributeState(size_t attributeIndex, gl::Buffer *boundBuff
 
 void VertexArray::setElementArrayBuffer(Buffer *buffer)
 {
-    mData.mElementArrayBuffer.set(buffer);
+    mState.mElementArrayBuffer.set(buffer);
     mDirtyBits.set(DIRTY_BIT_ELEMENT_ARRAY_BUFFER);
 }
 

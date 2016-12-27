@@ -11,6 +11,7 @@
 #include "common/debug.h"
 #include "common/utilities.h"
 #include "libANGLE/angletypes.h"
+#include "libANGLE/formatutils.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/Renderbuffer.h"
 #include "libANGLE/renderer/ImageImpl.h"
@@ -82,7 +83,7 @@ void ImageSibling::removeImageSource(egl::Image *imageSource)
 Image::Image(rx::ImageImpl *impl, EGLenum target, ImageSibling *buffer, const AttributeMap &attribs)
     : RefCountObject(0),
       mImplementation(impl),
-      mInternalFormat(GL_NONE),
+      mFormat(gl::Format::Invalid()),
       mWidth(0),
       mHeight(0),
       mSamples(0),
@@ -100,7 +101,7 @@ Image::Image(rx::ImageImpl *impl, EGLenum target, ImageSibling *buffer, const At
         gl::Texture *texture = rx::GetAs<gl::Texture>(mSource.get());
         GLenum textureTarget = egl_gl::EGLImageTargetToGLTextureTarget(target);
         size_t level         = attribs.get(EGL_GL_TEXTURE_LEVEL_KHR, 0);
-        mInternalFormat      = texture->getInternalFormat(textureTarget, level);
+        mFormat              = texture->getFormat(textureTarget, level);
         mWidth               = texture->getWidth(textureTarget, level);
         mHeight              = texture->getHeight(textureTarget, level);
         mSamples             = 0;
@@ -108,7 +109,7 @@ Image::Image(rx::ImageImpl *impl, EGLenum target, ImageSibling *buffer, const At
     else if (IsRenderbufferTarget(target))
     {
         gl::Renderbuffer *renderbuffer = rx::GetAs<gl::Renderbuffer>(mSource.get());
-        mInternalFormat                = renderbuffer->getInternalFormat();
+        mFormat                        = renderbuffer->getFormat();
         mWidth                         = renderbuffer->getWidth();
         mHeight                        = renderbuffer->getHeight();
         mSamples                       = renderbuffer->getSamples();
@@ -160,9 +161,9 @@ gl::Error Image::orphanSibling(ImageSibling *sibling)
     return error;
 }
 
-GLenum Image::getInternalFormat() const
+const gl::Format &Image::getFormat() const
 {
-    return mInternalFormat;
+    return mFormat;
 }
 
 size_t Image::getWidth() const
@@ -189,4 +190,4 @@ const rx::ImageImpl *Image::getImplementation() const
 {
     return mImplementation;
 }
-}
+}  // namespace egl

@@ -173,6 +173,8 @@ TString TextureTypeSuffix(const TBasicType type)
             return "Cube_int4_";
         case EbtUSamplerCube:
             return "Cube_uint4_";
+        case EbtSamplerExternalOES:
+            return "_External";
         default:
             // All other types are identified by their group suffix
             return TextureGroupSuffix(type);
@@ -181,11 +183,6 @@ TString TextureTypeSuffix(const TBasicType type)
 
 TString DecorateUniform(const TName &name, const TType &type)
 {
-    if (type.getBasicType() == EbtSamplerExternalOES)
-    {
-        return "ex_" + name.getString();
-    }
-
     return DecorateIfNeeded(name);
 }
 
@@ -394,46 +391,6 @@ TString QualifierString(TQualifier qualifier)
     }
 
     return "";
-}
-
-int HLSLTextureCoordsCount(const TBasicType samplerType)
-{
-    switch (samplerType)
-    {
-        case EbtSampler2D:
-            return 2;
-        case EbtSampler3D:
-            return 3;
-        case EbtSamplerCube:
-            return 3;
-        case EbtSampler2DArray:
-            return 3;
-        case EbtISampler2D:
-            return 2;
-        case EbtISampler3D:
-            return 3;
-        case EbtISamplerCube:
-            return 3;
-        case EbtISampler2DArray:
-            return 3;
-        case EbtUSampler2D:
-            return 2;
-        case EbtUSampler3D:
-            return 3;
-        case EbtUSamplerCube:
-            return 3;
-        case EbtUSampler2DArray:
-            return 3;
-        case EbtSampler2DShadow:
-            return 2;
-        case EbtSamplerCubeShadow:
-            return 3;
-        case EbtSampler2DArrayShadow:
-            return 3;
-        default:
-            UNREACHABLE();
-    }
-    return 0;
 }
 
 TString DisambiguateFunctionName(const TIntermSequence *parameters)

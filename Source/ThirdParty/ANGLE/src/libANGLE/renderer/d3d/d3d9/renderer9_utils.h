@@ -10,7 +10,7 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D9_RENDERER9UTILS_H_
 #define LIBANGLE_RENDERER_D3D_D3D9_RENDERER9UTILS_H_
 
-#include "libANGLE/angletypes.h"
+#include "common/Color.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
 
@@ -39,6 +39,7 @@ DWORD ConvertColorMask(bool red, bool green, bool blue, bool alpha);
 D3DTEXTUREFILTERTYPE ConvertMagFilter(GLenum magFilter, float maxAnisotropy);
 void ConvertMinFilter(GLenum minFilter, D3DTEXTUREFILTERTYPE *d3dMinFilter, D3DTEXTUREFILTERTYPE *d3dMipFilter,
                       float *d3dLodBias, float maxAnisotropy, size_t baseLevel);
+D3DQUERYTYPE ConvertQueryType(GLenum queryType);
 
 D3DMULTISAMPLE_TYPE GetMultisampleType(GLuint samples);
 

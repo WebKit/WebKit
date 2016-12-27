@@ -12,7 +12,7 @@
 #include <array>
 
 #include "libANGLE/angletypes.h"
-#include "libANGLE/Data.h"
+#include "libANGLE/ContextState.h"
 #include "libANGLE/State.h"
 #include "libANGLE/renderer/d3d/d3d11/RenderStateCache.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
@@ -77,7 +77,7 @@ class StateManager11 final : angle::NonCopyable
                            ID3D11ShaderResourceView *srv);
     gl::Error clearTextures(gl::SamplerType samplerType, size_t rangeStart, size_t rangeEnd);
 
-    gl::Error syncFramebuffer(const gl::Framebuffer *framebuffer);
+    gl::Error syncFramebuffer(gl::Framebuffer *framebuffer);
 
     void invalidateRenderTarget();
     void invalidateBoundViews();
@@ -90,7 +90,7 @@ class StateManager11 final : angle::NonCopyable
 
     void onBeginQuery(Query11 *query);
     void onDeleteQueryObject(Query11 *query);
-    gl::Error onMakeCurrent(const gl::Data &data);
+    gl::Error onMakeCurrent(const gl::ContextState &data);
 
     gl::Error updateCurrentValueAttribs(const gl::State &state,
                                         VertexDataManager *vertexDataManager);

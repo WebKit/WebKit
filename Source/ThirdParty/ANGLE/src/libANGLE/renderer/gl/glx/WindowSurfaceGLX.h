@@ -22,7 +22,8 @@ class FunctionsGLX;
 class WindowSurfaceGLX : public SurfaceGLX
 {
   public:
-    WindowSurfaceGLX(const FunctionsGLX &glx,
+    WindowSurfaceGLX(const egl::SurfaceState &state,
+                     const FunctionsGLX &glx,
                      DisplayGLX *glxDisplay,
                      RendererGL *renderer,
                      Window window,

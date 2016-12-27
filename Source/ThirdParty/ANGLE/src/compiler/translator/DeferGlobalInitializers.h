@@ -13,8 +13,8 @@
 #ifndef COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_
 #define COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_
 
-class TIntermNode;
+class TIntermBlock;
 
-void DeferGlobalInitializers(TIntermNode *root);
+void DeferGlobalInitializers(TIntermBlock *root);
 
 #endif  // COMPILER_TRANSLATOR_DEFERGLOBALINITIALIZERS_H_

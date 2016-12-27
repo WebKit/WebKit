@@ -110,6 +110,8 @@ EGLWindow::EGLWindow(EGLint glesMajorVersion,
       mMultisample(false),
       mDebug(false),
       mNoError(false),
+      mWebGLCompatibility(false),
+      mBindGeneratesResource(true),
       mSwapInterval(-1)
 {
 }
@@ -207,6 +209,22 @@ bool EGLWindow::initializeGL(OSWindow *osWindow)
         return false;
     }
 
+    bool hasWebGLCompatibility =
+        strstr(displayExtensions, "EGL_ANGLE_create_context_webgl_compatibility") != nullptr;
+    if (mWebGLCompatibility && !hasWebGLCompatibility)
+    {
+        destroyGL();
+        return false;
+    }
+
+    bool hasBindGeneratesResource =
+        strstr(displayExtensions, "EGL_CHROMIUM_create_context_bind_generates_resource") != nullptr;
+    if (!mBindGeneratesResource && !hasBindGeneratesResource)
+    {
+        destroyGL();
+        return false;
+    }
+
     eglBindAPI(EGL_OPENGL_ES_API);
     if (eglGetError() != EGL_SUCCESS)
     {
@@ -275,6 +293,18 @@ bool EGLWindow::initializeGL(OSWindow *osWindow)
 
         contextAttributes.push_back(EGL_CONTEXT_OPENGL_NO_ERROR_KHR);
         contextAttributes.push_back(mNoError ? EGL_TRUE : EGL_FALSE);
+
+        if (hasWebGLCompatibility)
+        {
+            contextAttributes.push_back(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
+            contextAttributes.push_back(mWebGLCompatibility ? EGL_TRUE : EGL_FALSE);
+        }
+
+        if (hasBindGeneratesResource)
+        {
+            contextAttributes.push_back(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+            contextAttributes.push_back(mBindGeneratesResource ? EGL_TRUE : EGL_FALSE);
+        }
     }
     contextAttributes.push_back(EGL_NONE);
 

@@ -11,6 +11,7 @@
 #include "libGLESv2/entry_points_gles_2_0.h"
 #include "libGLESv2/entry_points_gles_2_0_ext.h"
 #include "libGLESv2/entry_points_gles_3_0.h"
+#include "libGLESv2/entry_points_gles_3_1.h"
 #include "libGLESv2/global_state.h"
 
 #include "libANGLE/Context.h"
@@ -582,19 +583,10 @@ EGLBoolean EGLAPIENTRY MakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface r
         }
     }
 
-    if (display->isInitialized())
+    if (display->isInitialized() && display->testDeviceLost())
     {
-        if (display->testDeviceLost())
-        {
-            display->notifyDeviceLost();
-            return EGL_FALSE;
-        }
-
-        if (display->isDeviceLost())
-        {
-            SetGlobalError(Error(EGL_CONTEXT_LOST));
-            return EGL_FALSE;
-        }
+        SetGlobalError(Error(EGL_CONTEXT_LOST));
+        return EGL_FALSE;
     }
 
     Surface *drawSurface = static_cast<Surface*>(draw);
@@ -728,8 +720,8 @@ EGLBoolean EGLAPIENTRY QueryContext(EGLDisplay dpy, EGLContext ctx, EGLint attri
         *value = context->getClientType();
         break;
       case EGL_CONTEXT_CLIENT_VERSION:
-        *value = context->getClientVersion();
-        break;
+          *value = context->getClientMajorVersion();
+          break;
       case EGL_RENDER_BUFFER:
         *value = context->getRenderBuffer();
         break;
@@ -812,7 +804,7 @@ EGLBoolean EGLAPIENTRY SwapBuffers(EGLDisplay dpy, EGLSurface surface)
         return EGL_FALSE;
     }
 
-    if (display->isDeviceLost())
+    if (display->testDeviceLost())
     {
         SetGlobalError(Error(EGL_CONTEXT_LOST));
         return EGL_FALSE;
@@ -849,7 +841,7 @@ EGLBoolean EGLAPIENTRY CopyBuffers(EGLDisplay dpy, EGLSurface surface, EGLNative
         return EGL_FALSE;
     }
 
-    if (display->isDeviceLost())
+    if (display->testDeviceLost())
     {
         SetGlobalError(Error(EGL_CONTEXT_LOST));
         return EGL_FALSE;
@@ -1411,6 +1403,19 @@ __eglMustCastToProperFunctionPointerType EGLAPIENTRY GetProcAddress(const char *
         INSERT_PROC_ADDRESS(gl, GetQueryivEXT);
         INSERT_PROC_ADDRESS(gl, GetQueryObjectuivEXT);
 
+        // GL_EXT_disjoint_timer_query
+        INSERT_PROC_ADDRESS(gl, GenQueriesEXT);
+        INSERT_PROC_ADDRESS(gl, DeleteQueriesEXT);
+        INSERT_PROC_ADDRESS(gl, IsQueryEXT);
+        INSERT_PROC_ADDRESS(gl, BeginQueryEXT);
+        INSERT_PROC_ADDRESS(gl, EndQueryEXT);
+        INSERT_PROC_ADDRESS(gl, QueryCounterEXT);
+        INSERT_PROC_ADDRESS(gl, GetQueryivEXT);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjectivEXT);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjectuivEXT);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjecti64vEXT);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjectui64vEXT);
+
         // GL_EXT_draw_buffers
         INSERT_PROC_ADDRESS(gl, DrawBuffersEXT);
 
@@ -1459,6 +1464,81 @@ __eglMustCastToProperFunctionPointerType EGLAPIENTRY GetProcAddress(const char *
         INSERT_PROC_ADDRESS(gl, ObjectPtrLabelKHR);
         INSERT_PROC_ADDRESS(gl, GetObjectPtrLabelKHR);
         INSERT_PROC_ADDRESS(gl, GetPointervKHR);
+
+        // GL_CHROMIUM_bind_uniform_location
+        INSERT_PROC_ADDRESS(gl, BindUniformLocationCHROMIUM);
+
+        // GL_CHROMIUM_copy_texture
+        INSERT_PROC_ADDRESS(gl, CopyTextureCHROMIUM);
+        INSERT_PROC_ADDRESS(gl, CopySubTextureCHROMIUM);
+
+        // GL_CHROMIUM_copy_compressed_texture
+        INSERT_PROC_ADDRESS(gl, CompressedCopyTextureCHROMIUM);
+
+        // GL_ANGLE_webgl_compatibility
+        INSERT_PROC_ADDRESS(gl, EnableExtensionANGLE);
+
+        // GL_ANGLE_robust_client_memory
+        INSERT_PROC_ADDRESS(gl, GetBooleanvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetBufferParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetFloatvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetFramebufferAttachmentParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetIntegervRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetProgramivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetRenderbufferParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetShaderivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetTexParameterfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetTexParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetUniformfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetUniformivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetVertexAttribfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetVertexAttribivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetVertexAttribPointervRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, ReadPixelsRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexImage2DRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexParameterfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexSubImage2DRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexImage3DRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexSubImage3DRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetQueryivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjectuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetBufferPointervRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetIntegeri_vRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetInternalformativRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetVertexAttribIivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetVertexAttribIuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetUniformuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetActiveUniformBlockivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetInteger64vRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetInteger64i_vRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetBufferParameteri64vRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, SamplerParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, SamplerParameterfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetSamplerParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetSamplerParameterfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetFramebufferParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetProgramInterfaceivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetBooleani_vRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetMultisamplefvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetTexLevelParameterivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetTexLevelParameterfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetPointervRobustANGLERobustANGLE);
+        INSERT_PROC_ADDRESS(gl, ReadnPixelsRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetnUniformfvRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetnUniformivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetnUniformuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexParameterIivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, TexParameterIuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetTexParameterIivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetTexParameterIuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, SamplerParameterIivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, SamplerParameterIuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetSamplerParameterIivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetSamplerParameterIuivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjectivRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjecti64vRobustANGLE);
+        INSERT_PROC_ADDRESS(gl, GetQueryObjectui64vRobustANGLE);
 
         // GLES3 core
         INSERT_PROC_ADDRESS(gl, ReadBuffer);
@@ -1567,6 +1647,76 @@ __eglMustCastToProperFunctionPointerType EGLAPIENTRY GetProcAddress(const char *
         INSERT_PROC_ADDRESS(gl, TexStorage3D);
         INSERT_PROC_ADDRESS(gl, GetInternalformativ);
 
+        // GLES31 core
+        INSERT_PROC_ADDRESS(gl, DispatchCompute);
+        INSERT_PROC_ADDRESS(gl, DispatchComputeIndirect);
+        INSERT_PROC_ADDRESS(gl, DrawArraysIndirect);
+        INSERT_PROC_ADDRESS(gl, DrawElementsIndirect);
+        INSERT_PROC_ADDRESS(gl, FramebufferParameteri);
+        INSERT_PROC_ADDRESS(gl, GetFramebufferParameteriv);
+        INSERT_PROC_ADDRESS(gl, GetProgramInterfaceiv);
+        INSERT_PROC_ADDRESS(gl, GetProgramResourceIndex);
+        INSERT_PROC_ADDRESS(gl, GetProgramResourceName);
+        INSERT_PROC_ADDRESS(gl, GetProgramResourceiv);
+        INSERT_PROC_ADDRESS(gl, GetProgramResourceLocation);
+        INSERT_PROC_ADDRESS(gl, UseProgramStages);
+        INSERT_PROC_ADDRESS(gl, ActiveShaderProgram);
+        INSERT_PROC_ADDRESS(gl, CreateShaderProgramv);
+        INSERT_PROC_ADDRESS(gl, BindProgramPipeline);
+        INSERT_PROC_ADDRESS(gl, DeleteProgramPipelines);
+        INSERT_PROC_ADDRESS(gl, GenProgramPipelines);
+        INSERT_PROC_ADDRESS(gl, IsProgramPipeline);
+        INSERT_PROC_ADDRESS(gl, GetProgramPipelineiv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform1i);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform2i);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform3i);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform4i);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform1ui);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform2ui);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform3ui);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform4ui);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform1f);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform2f);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform3f);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform4f);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform1iv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform2iv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform3iv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform4iv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform1uiv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform2uiv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform3uiv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform4uiv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform1fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform2fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform3fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniform4fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix2fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix3fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix4fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix2x3fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix3x2fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix2x4fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix4x2fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix3x4fv);
+        INSERT_PROC_ADDRESS(gl, ProgramUniformMatrix4x3fv);
+        INSERT_PROC_ADDRESS(gl, ValidateProgramPipeline);
+        INSERT_PROC_ADDRESS(gl, GetProgramPipelineInfoLog);
+        INSERT_PROC_ADDRESS(gl, BindImageTexture);
+        INSERT_PROC_ADDRESS(gl, GetBooleani_v);
+        INSERT_PROC_ADDRESS(gl, MemoryBarrier);
+        INSERT_PROC_ADDRESS(gl, MemoryBarrierByRegion);
+        INSERT_PROC_ADDRESS(gl, TexStorage2DMultisample);
+        INSERT_PROC_ADDRESS(gl, GetMultisamplefv);
+        INSERT_PROC_ADDRESS(gl, SampleMaski);
+        INSERT_PROC_ADDRESS(gl, GetTexLevelParameteriv);
+        INSERT_PROC_ADDRESS(gl, GetTexLevelParameterfv);
+        INSERT_PROC_ADDRESS(gl, BindVertexBuffer);
+        INSERT_PROC_ADDRESS(gl, VertexAttribFormat);
+        INSERT_PROC_ADDRESS(gl, VertexAttribIFormat);
+        INSERT_PROC_ADDRESS(gl, VertexAttribBinding);
+        INSERT_PROC_ADDRESS(gl, VertexBindingDivisor);
+
         // EGL 1.0
         INSERT_PROC_ADDRESS(egl, ChooseConfig);
         INSERT_PROC_ADDRESS(egl, CopyBuffers);
@@ -1658,6 +1808,12 @@ __eglMustCastToProperFunctionPointerType EGLAPIENTRY GetProcAddress(const char *
         // EGL_NV_stream_consumer_gltexture_yuv
         INSERT_PROC_ADDRESS(egl, StreamConsumerGLTextureExternalAttribsNV);
 
+        // EGL_ANGLE_stream_producer_d3d_texture_nv12
+        INSERT_PROC_ADDRESS(egl, CreateStreamProducerD3DTextureNV12ANGLE);
+        INSERT_PROC_ADDRESS(egl, StreamPostD3DTextureNV12ANGLE);
+
+        // EGL_CHROMIUM_get_sync_values
+        INSERT_PROC_ADDRESS(egl, GetSyncValuesCHROMIUM);
 #undef INSERT_PROC_ADDRESS
         return map;
     };

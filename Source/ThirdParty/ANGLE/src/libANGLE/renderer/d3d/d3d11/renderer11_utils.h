@@ -14,7 +14,8 @@
 #include <functional>
 #include <vector>
 
-#include "libANGLE/angletypes.h"
+#include "common/Color.h"
+
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/renderer/d3d/d3d11/texture_format_table.h"
@@ -51,6 +52,7 @@ D3D11_STENCIL_OP ConvertStencilOp(GLenum stencilOp);
 
 D3D11_FILTER ConvertFilter(GLenum minFilter, GLenum magFilter, float maxAnisotropy, GLenum comparisonMode);
 D3D11_TEXTURE_ADDRESS_MODE ConvertTextureWrap(GLenum wrap);
+UINT ConvertMaxAnisotropy(float maxAnisotropy, D3D_FEATURE_LEVEL featureLevel);
 
 D3D11_QUERY ConvertQueryType(GLenum queryType);
 
@@ -345,7 +347,8 @@ void SetBufferData(ID3D11DeviceContext *context, ID3D11Buffer *constantBuffer, c
     }
 }
 
-WorkaroundsD3D GenerateWorkarounds(D3D_FEATURE_LEVEL featureLevel);
+WorkaroundsD3D GenerateWorkarounds(const Renderer11DeviceCaps &deviceCaps,
+                                   const DXGI_ADAPTER_DESC &adapterDesc);
 
 enum ReservedConstantBufferSlot
 {
@@ -368,20 +371,21 @@ class TextureHelper11 : angle::NonCopyable
     TextureHelper11 &operator=(TextureHelper11 &&texture);
 
     static TextureHelper11 MakeAndReference(ID3D11Resource *genericResource,
-                                            d3d11::ANGLEFormat angleFormat);
+                                            const d3d11::Format &formatSet);
     static TextureHelper11 MakeAndPossess2D(ID3D11Texture2D *texToOwn,
-                                            d3d11::ANGLEFormat angleFormat);
+                                            const d3d11::Format &formatSet);
     static TextureHelper11 MakeAndPossess3D(ID3D11Texture3D *texToOwn,
-                                            d3d11::ANGLEFormat angleFormat);
+                                            const d3d11::Format &formatSet);
 
     GLenum getTextureType() const { return mTextureType; }
     gl::Extents getExtents() const { return mExtents; }
     DXGI_FORMAT getFormat() const { return mFormat; }
-    d3d11::ANGLEFormat getANGLEFormat() const { return mANGLEFormat; }
+    const d3d11::Format &getFormatSet() const { return *mFormatSet; }
     int getSampleCount() const { return mSampleCount; }
     ID3D11Texture2D *getTexture2D() const { return mTexture2D; }
     ID3D11Texture3D *getTexture3D() const { return mTexture3D; }
     ID3D11Resource *getResource() const;
+    bool valid() const;
 
   private:
     void reset();
@@ -390,36 +394,25 @@ class TextureHelper11 : angle::NonCopyable
     GLenum mTextureType;
     gl::Extents mExtents;
     DXGI_FORMAT mFormat;
-    d3d11::ANGLEFormat mANGLEFormat;
+    const d3d11::Format *mFormatSet;
     int mSampleCount;
     ID3D11Texture2D *mTexture2D;
     ID3D11Texture3D *mTexture3D;
 };
 
+enum class StagingAccess
+{
+    READ,
+    READ_WRITE,
+};
+
 gl::ErrorOrResult<TextureHelper11> CreateStagingTexture(GLenum textureType,
-                                                        DXGI_FORMAT dxgiFormat,
-                                                        d3d11::ANGLEFormat angleFormat,
+                                                        const d3d11::Format &formatSet,
                                                         const gl::Extents &size,
+                                                        StagingAccess readAndWriteAccess,
                                                         ID3D11Device *device);
 
 bool UsePresentPathFast(const Renderer11 *renderer, const gl::FramebufferAttachment *colorbuffer);
-
-using NotificationCallback = std::function<void()>;
-
-class NotificationSet final : angle::NonCopyable
-{
-  public:
-    NotificationSet();
-    ~NotificationSet();
-
-    void add(const NotificationCallback *callback);
-    void remove(const NotificationCallback *callback);
-    void signal() const;
-    void clear();
-
-  private:
-    std::set<const NotificationCallback *> mCallbacks;
-};
 
 }  // namespace rx
 

@@ -97,19 +97,16 @@ struct D3DVarying final
     unsigned int outputSlot;
 };
 
-class ProgramD3DMetadata : angle::NonCopyable
+class ProgramD3DMetadata final : angle::NonCopyable
 {
   public:
-    ProgramD3DMetadata(int rendererMajorShaderModel,
-                       const std::string &shaderModelSuffix,
-                       bool usesInstancedPointSpriteEmulation,
-                       bool usesViewScale,
+    ProgramD3DMetadata(RendererD3D *renderer,
                        const ShaderD3D *vertexShader,
                        const ShaderD3D *fragmentShader);
 
     int getRendererMajorShaderModel() const;
-    bool usesBroadcast(const gl::Data &data) const;
-    bool usesFragDepth(const gl::Program::Data &programData) const;
+    bool usesBroadcast(const gl::ContextState &data) const;
+    bool usesFragDepth() const;
     bool usesPointCoord() const;
     bool usesFragCoord() const;
     bool usesPointSize() const;
@@ -134,7 +131,7 @@ class ProgramD3DMetadata : angle::NonCopyable
 class ProgramD3D : public ProgramImpl
 {
   public:
-    ProgramD3D(const gl::Program::Data &data, RendererD3D *renderer);
+    ProgramD3D(const gl::ProgramState &data, RendererD3D *renderer);
     virtual ~ProgramD3D();
 
     const std::vector<PixelShaderOutputVariable> &getPixelShaderKey() { return mPixelShaderKey; }
@@ -163,21 +160,25 @@ class ProgramD3D : public ProgramImpl
     gl::Error getVertexExecutableForInputLayout(const gl::InputLayout &inputLayout,
                                                 ShaderExecutableD3D **outExectuable,
                                                 gl::InfoLog *infoLog);
-    gl::Error getGeometryExecutableForPrimitiveType(const gl::Data &data,
+    gl::Error getGeometryExecutableForPrimitiveType(const gl::ContextState &data,
                                                     GLenum drawMode,
                                                     ShaderExecutableD3D **outExecutable,
                                                     gl::InfoLog *infoLog);
 
-    LinkResult link(const gl::Data &data, gl::InfoLog &infoLog) override;
+    LinkResult link(const gl::ContextState &data, gl::InfoLog &infoLog) override;
     GLboolean validate(const gl::Caps &caps, gl::InfoLog *infoLog) override;
 
     bool getUniformBlockSize(const std::string &blockName, size_t *sizeOut) const override;
     bool getUniformBlockMemberInfo(const std::string &memberUniformName,
                                    sh::BlockMemberInfo *memberInfoOut) const override;
+    void setPathFragmentInputGen(const std::string &inputName,
+                                 GLenum genMode,
+                                 GLint components,
+                                 const GLfloat *coeffs) override;
 
     void initializeUniformStorage();
     gl::Error applyUniforms(GLenum drawMode);
-    gl::Error applyUniformBuffers(const gl::Data &data);
+    gl::Error applyUniformBuffers(const gl::ContextState &data);
     void dirtyAllUniforms();
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v);
@@ -340,7 +341,7 @@ class ProgramD3D : public ProgramImpl
                             const GLfloat *value,
                             GLenum targetUniformType);
 
-    LinkResult compileProgramExecutables(const gl::Data &data, gl::InfoLog &infoLog);
+    LinkResult compileProgramExecutables(const gl::ContextState &data, gl::InfoLog &infoLog);
 
     void gatherTransformFeedbackVaryings(const VaryingPacking &varyings);
     D3DUniform *getD3DUniformByName(const std::string &name);

@@ -48,7 +48,7 @@ gl::Error RenderbufferD3D::setStorageMultisample(size_t samples, GLenum internal
     // the specified storage.
     // Because ES 3.0 already knows the exact number of supported samples, it would already have been
     // validated and generated GL_INVALID_VALUE.
-    const gl::TextureCaps &formatCaps = mRenderer->getRendererTextureCaps().get(creationFormat);
+    const gl::TextureCaps &formatCaps = mRenderer->getNativeTextureCaps().get(creationFormat);
     if (samples > formatCaps.getMaxSamples())
     {
         return gl::Error(GL_OUT_OF_MEMORY, "Renderbuffer format does not support %u samples, %u is the maximum.",
@@ -56,19 +56,14 @@ gl::Error RenderbufferD3D::setStorageMultisample(size_t samples, GLenum internal
     }
 
     RenderTargetD3D *newRT = NULL;
-    gl::Error error =
-        mRenderer->createRenderTarget(static_cast<int>(width), static_cast<int>(height),
-                                      creationFormat, static_cast<GLsizei>(samples), &newRT);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mRenderer->createRenderTarget(static_cast<int>(width), static_cast<int>(height),
+                                            creationFormat, static_cast<GLsizei>(samples), &newRT));
 
     SafeDelete(mRenderTarget);
     mImage        = nullptr;
     mRenderTarget = newRT;
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error RenderbufferD3D::setStorageEGLImageTarget(egl::Image *image)
@@ -76,7 +71,7 @@ gl::Error RenderbufferD3D::setStorageEGLImageTarget(egl::Image *image)
     mImage = GetImplAs<EGLImageD3D>(image);
     SafeDelete(mRenderTarget);
 
-    return gl::Error(GL_NO_ERROR);
+    return gl::NoError();
 }
 
 gl::Error RenderbufferD3D::getRenderTarget(RenderTargetD3D **outRenderTarget)
@@ -88,7 +83,7 @@ gl::Error RenderbufferD3D::getRenderTarget(RenderTargetD3D **outRenderTarget)
     else
     {
         *outRenderTarget = mRenderTarget;
-        return gl::Error(GL_NO_ERROR);
+        return gl::NoError();
     }
 }
 

@@ -7,8 +7,9 @@
 #include "compiler/translator/Diagnostics.h"
 
 #include "common/debug.h"
-#include "compiler/translator/InfoSink.h"
 #include "compiler/preprocessor/SourceLocation.h"
+#include "compiler/translator/Common.h"
+#include "compiler/translator/InfoSink.h"
 
 TDiagnostics::TDiagnostics(TInfoSink& infoSink) :
     mInfoSink(infoSink),
@@ -48,6 +49,28 @@ void TDiagnostics::writeInfo(Severity severity,
     sink.prefix(prefix);
     sink.location(loc.file, loc.line);
     sink << "'" << token <<  "' : " << reason << " " << extra << "\n";
+}
+
+void TDiagnostics::error(const TSourceLoc &loc,
+                         const char *reason,
+                         const char *token,
+                         const char *extraInfo)
+{
+    pp::SourceLocation srcLoc;
+    srcLoc.file = loc.first_file;
+    srcLoc.line = loc.first_line;
+    writeInfo(pp::Diagnostics::PP_ERROR, srcLoc, reason, token, extraInfo);
+}
+
+void TDiagnostics::warning(const TSourceLoc &loc,
+                           const char *reason,
+                           const char *token,
+                           const char *extraInfo)
+{
+    pp::SourceLocation srcLoc;
+    srcLoc.file = loc.first_file;
+    srcLoc.line = loc.first_line;
+    writeInfo(pp::Diagnostics::PP_WARNING, srcLoc, reason, token, extraInfo);
 }
 
 void TDiagnostics::print(ID id,

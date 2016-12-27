@@ -436,7 +436,8 @@ gl::Error RenderStateCache::getSamplerState(const gl::SamplerState &samplerState
         samplerDesc.AddressV = gl_d3d11::ConvertTextureWrap(samplerState.wrapT);
         samplerDesc.AddressW = gl_d3d11::ConvertTextureWrap(samplerState.wrapR);
         samplerDesc.MipLODBias = 0;
-        samplerDesc.MaxAnisotropy = static_cast<UINT>(samplerState.maxAnisotropy);
+        samplerDesc.MaxAnisotropy =
+            gl_d3d11::ConvertMaxAnisotropy(samplerState.maxAnisotropy, mDevice->GetFeatureLevel());
         samplerDesc.ComparisonFunc = gl_d3d11::ConvertComparison(samplerState.compareFunc);
         samplerDesc.BorderColor[0] = 0.0f;
         samplerDesc.BorderColor[1] = 0.0f;

@@ -19,11 +19,11 @@ namespace rx
 class VertexArrayImpl : angle::NonCopyable
 {
   public:
-    VertexArrayImpl(const gl::VertexArray::Data &data) : mData(data) { }
+    VertexArrayImpl(const gl::VertexArrayState &data) : mData(data) {}
     virtual ~VertexArrayImpl() { }
     virtual void syncState(const gl::VertexArray::DirtyBits &dirtyBits) {}
   protected:
-    const gl::VertexArray::Data &mData;
+    const gl::VertexArrayState &mData;
 };
 
 }

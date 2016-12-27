@@ -13,4 +13,10 @@ class BuiltInFunctionEmulator;
 
 void InitBuiltInFunctionEmulatorForHLSL(BuiltInFunctionEmulator *emu);
 
+//
+// This works around isnan() bug on some Intel drivers.
+//
+void InitBuiltInIsnanFunctionEmulatorForHLSLWorkarounds(BuiltInFunctionEmulator *emu,
+                                                        int targetGLSLVersion);
+
 #endif  // COMPILER_TRANSLATOR_BUILTINFUNCTIONEMULATORHLSL_H_

@@ -10,7 +10,6 @@
 
 #include "libANGLE/Buffer.h"
 #include "libANGLE/renderer/BufferImpl.h"
-#include "libANGLE/renderer/Renderer.h"
 
 namespace gl
 {
@@ -45,45 +44,33 @@ const std::string &Buffer::getLabel() const
     return mLabel;
 }
 
-Error Buffer::bufferData(const void *data, GLsizeiptr size, GLenum usage)
+Error Buffer::bufferData(GLenum target, const void *data, GLsizeiptr size, GLenum usage)
 {
-    gl::Error error = mBuffer->setData(data, size, usage);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mBuffer->setData(target, data, size, usage));
 
     mIndexRangeCache.clear();
     mUsage = usage;
     mSize = size;
 
-    return error;
+    return NoError();
 }
 
-Error Buffer::bufferSubData(const void *data, GLsizeiptr size, GLintptr offset)
+Error Buffer::bufferSubData(GLenum target, const void *data, GLsizeiptr size, GLintptr offset)
 {
-    gl::Error error = mBuffer->setSubData(data, size, offset);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mBuffer->setSubData(target, data, size, offset));
 
     mIndexRangeCache.invalidateRange(static_cast<unsigned int>(offset), static_cast<unsigned int>(size));
 
-    return error;
+    return NoError();
 }
 
 Error Buffer::copyBufferSubData(Buffer* source, GLintptr sourceOffset, GLintptr destOffset, GLsizeiptr size)
 {
-    gl::Error error = mBuffer->copySubData(source->getImplementation(), sourceOffset, destOffset, size);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mBuffer->copySubData(source->getImplementation(), sourceOffset, destOffset, size));
 
     mIndexRangeCache.invalidateRange(static_cast<unsigned int>(destOffset), static_cast<unsigned int>(size));
 
-    return error;
+    return NoError();
 }
 
 Error Buffer::map(GLenum access)
@@ -179,18 +166,14 @@ Error Buffer::getIndexRange(GLenum type,
 {
     if (mIndexRangeCache.findRange(type, offset, count, primitiveRestartEnabled, outRange))
     {
-        return gl::Error(GL_NO_ERROR);
+        return NoError();
     }
 
-    Error error = mBuffer->getIndexRange(type, offset, count, primitiveRestartEnabled, outRange);
-    if (error.isError())
-    {
-        return error;
-    }
+    ANGLE_TRY(mBuffer->getIndexRange(type, offset, count, primitiveRestartEnabled, outRange));
 
     mIndexRangeCache.addRange(type, offset, count, primitiveRestartEnabled, *outRange);
 
-    return Error(GL_NO_ERROR);
+    return NoError();
 }
 
-}
+}  // namespace gl

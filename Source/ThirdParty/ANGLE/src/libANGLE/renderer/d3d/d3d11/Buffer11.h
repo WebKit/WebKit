@@ -9,11 +9,12 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_BUFFER11_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_BUFFER11_H_
 
+#include <array>
 #include <map>
 
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/d3d/BufferD3D.h"
-#include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
+#include "libANGLE/signal_utils.h"
 
 namespace gl
 {
@@ -22,6 +23,7 @@ class FramebufferAttachment;
 
 namespace rx
 {
+struct PackPixelsParams;
 class Renderer11;
 struct SourceIndexData;
 struct TranslatedAttribute;
@@ -38,21 +40,6 @@ enum BufferUsage
     BUFFER_USAGE_EMULATED_INDEXED_VERTEX,
 
     BUFFER_USAGE_COUNT,
-};
-
-struct PackPixelsParams
-{
-    PackPixelsParams();
-    PackPixelsParams(const gl::Rectangle &area, GLenum format, GLenum type, GLuint outputPitch,
-                     const gl::PixelPackState &pack, ptrdiff_t offset);
-
-    gl::Rectangle area;
-    GLenum format;
-    GLenum type;
-    GLuint outputPitch;
-    gl::Buffer *packBuffer;
-    gl::PixelPackState pack;
-    ptrdiff_t offset;
 };
 
 typedef size_t DataRevision;
@@ -82,8 +69,8 @@ class Buffer11 : public BufferD3D
     void invalidateStaticData() override;
 
     // BufferImpl implementation
-    gl::Error setData(const void *data, size_t size, GLenum usage) override;
-    gl::Error setSubData(const void *data, size_t size, size_t offset) override;
+    gl::Error setData(GLenum target, const void *data, size_t size, GLenum usage) override;
+    gl::Error setSubData(GLenum target, const void *data, size_t size, size_t offset) override;
     gl::Error copySubData(BufferImpl *source,
                           GLintptr sourceOffset,
                           GLintptr destOffset,
@@ -93,14 +80,11 @@ class Buffer11 : public BufferD3D
     gl::Error unmap(GLboolean *result) override;
     gl::Error markTransformFeedbackUsage() override;
 
-    // We use two set of dirty callbacks for two events. Static buffers are marked dirty whenever
-    // the data is changed, because they must be re-translated. Direct buffers only need to be
+    // We use two set of dirty events. Static buffers are marked dirty whenever
+    // data changes, because they must be re-translated. Direct buffers only need to be
     // updated when the underlying ID3D11Buffer pointer changes - hopefully far less often.
-    void addStaticBufferDirtyCallback(const NotificationCallback *callback);
-    void removeStaticBufferDirtyCallback(const NotificationCallback *callback);
-
-    void addDirectBufferDirtyCallback(const NotificationCallback *callback);
-    void removeDirectBufferDirtyCallback(const NotificationCallback *callback);
+    angle::BroadcastChannel *getStaticBroadcastChannel();
+    angle::BroadcastChannel *getDirectBroadcastChannel();
 
   private:
     class BufferStorage;
@@ -117,7 +101,7 @@ class Buffer11 : public BufferD3D
         unsigned int lruCount;
     };
 
-    gl::Error markBufferUsage();
+    gl::Error markBufferUsage(BufferUsage usage);
     gl::ErrorOrResult<NativeStorage *> getStagingStorage();
     gl::ErrorOrResult<PackStorage *> getPackStorage();
     gl::ErrorOrResult<SystemMemoryStorage *> getSystemMemoryStorage();
@@ -129,14 +113,22 @@ class Buffer11 : public BufferD3D
     gl::ErrorOrResult<BufferStorage *> getConstantBufferRangeStorage(GLintptr offset,
                                                                      GLsizeiptr size);
 
-    BufferStorage *allocateStorage(BufferUsage usage) const;
+    BufferStorage *allocateStorage(BufferUsage usage);
+    void updateDeallocThreshold(BufferUsage usage);
+
+    // Free the storage if we decide it isn't being used very often.
+    gl::Error checkForDeallocation(BufferUsage usage);
 
     Renderer11 *mRenderer;
     size_t mSize;
 
     BufferStorage *mMappedStorage;
 
-    std::vector<BufferStorage *> mBufferStorages;
+    std::array<BufferStorage *, BUFFER_USAGE_COUNT> mBufferStorages;
+
+    // These two arrays are used to track when to free unused storage.
+    std::array<unsigned int, BUFFER_USAGE_COUNT> mDeallocThresholds;
+    std::array<unsigned int, BUFFER_USAGE_COUNT> mIdleness;
 
     // Cache of D3D11 constant buffer for specific ranges of buffer data.
     // This is used to emulate UBO ranges on 11.0 devices.
@@ -146,13 +138,8 @@ class Buffer11 : public BufferD3D
     size_t mConstantBufferStorageAdditionalSize;
     unsigned int mMaxConstantBufferLruCount;
 
-    typedef std::pair<ID3D11Buffer *, ID3D11ShaderResourceView *> BufferSRVPair;
-    std::map<DXGI_FORMAT, BufferSRVPair> mBufferResourceViews;
-
-    unsigned int mReadUsageCount;
-
-    NotificationSet mStaticBufferDirtyCallbacks;
-    NotificationSet mDirectBufferDirtyCallbacks;
+    angle::BroadcastChannel mStaticBroadcastChannel;
+    angle::BroadcastChannel mDirectBroadcastChannel;
 };
 
 }  // namespace rx

@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_
 
 #include "libANGLE/angletypes.h"
+#include "libANGLE/Error.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
 
 #include <string>
@@ -47,6 +48,13 @@ uint8_t *MapBufferRangeWithFallback(const FunctionsGL *functions,
                                     size_t offset,
                                     size_t length,
                                     GLbitfield access);
+
+gl::ErrorOrResult<bool> ShouldApplyLastRowPaddingWorkaround(const gl::Extents &size,
+                                                            const gl::PixelStoreStateBase &state,
+                                                            GLenum format,
+                                                            GLenum type,
+                                                            bool is3D,
+                                                            const void *pixels);
 }
 
 #endif // LIBANGLE_RENDERER_GL_RENDERERGLUTILS_H_

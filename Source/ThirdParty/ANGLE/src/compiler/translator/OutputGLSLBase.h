@@ -37,21 +37,25 @@ class TOutputGLSLBase : public TIntermTraverser
     virtual bool writeVariablePrecision(TPrecision precision) = 0;
     void writeFunctionParameters(const TIntermSequence &args);
     const TConstantUnion *writeConstantUnion(const TType &type, const TConstantUnion *pConstUnion);
-    void writeConstructorTriplet(Visit visit, const TType &type, const char *constructorBaseType);
+    void writeConstructorTriplet(Visit visit, const TType &type);
     TString getTypeName(const TType &type);
 
     void visitSymbol(TIntermSymbol *node) override;
     void visitConstantUnion(TIntermConstantUnion *node) override;
+    bool visitSwizzle(Visit visit, TIntermSwizzle *node) override;
     bool visitBinary(Visit visit, TIntermBinary *node) override;
     bool visitUnary(Visit visit, TIntermUnary *node) override;
-    bool visitSelection(Visit visit, TIntermSelection *node) override;
+    bool visitTernary(Visit visit, TIntermTernary *node) override;
+    bool visitIfElse(Visit visit, TIntermIfElse *node) override;
     bool visitSwitch(Visit visit, TIntermSwitch *node) override;
     bool visitCase(Visit visit, TIntermCase *node) override;
+    bool visitFunctionDefinition(Visit visit, TIntermFunctionDefinition *node) override;
     bool visitAggregate(Visit visit, TIntermAggregate *node) override;
+    bool visitBlock(Visit visit, TIntermBlock *node) override;
     bool visitLoop(Visit visit, TIntermLoop *node) override;
     bool visitBranch(Visit visit, TIntermBranch *node) override;
 
-    void visitCodeBlock(TIntermNode *node);
+    void visitCodeBlock(TIntermBlock *node);
 
     // Return the original name if hash function pointer is NULL;
     // otherwise return the hashed name.

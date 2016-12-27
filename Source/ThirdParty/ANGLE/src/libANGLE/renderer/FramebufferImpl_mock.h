@@ -20,32 +20,27 @@ namespace rx
 class MockFramebufferImpl : public rx::FramebufferImpl
 {
   public:
-    MockFramebufferImpl() : rx::FramebufferImpl(gl::Framebuffer::Data()) {}
+    MockFramebufferImpl() : rx::FramebufferImpl(gl::FramebufferState()) {}
     virtual ~MockFramebufferImpl() { destroy(); }
 
     MOCK_METHOD2(discard, gl::Error(size_t, const GLenum *));
     MOCK_METHOD2(invalidate, gl::Error(size_t, const GLenum *));
     MOCK_METHOD3(invalidateSub, gl::Error(size_t, const GLenum *, const gl::Rectangle &));
 
-    MOCK_METHOD2(clear, gl::Error(const gl::Data &, GLbitfield));
-    MOCK_METHOD4(clearBufferfv, gl::Error(const gl::Data &, GLenum, GLint, const GLfloat *));
-    MOCK_METHOD4(clearBufferuiv, gl::Error(const gl::Data &, GLenum, GLint, const GLuint *));
-    MOCK_METHOD4(clearBufferiv, gl::Error(const gl::Data &, GLenum, GLint, const GLint *));
-    MOCK_METHOD5(clearBufferfi, gl::Error(const gl::Data &, GLenum, GLint, GLfloat, GLint));
+    MOCK_METHOD2(clear, gl::Error(ContextImpl *, GLbitfield));
+    MOCK_METHOD4(clearBufferfv, gl::Error(ContextImpl *, GLenum, GLint, const GLfloat *));
+    MOCK_METHOD4(clearBufferuiv, gl::Error(ContextImpl *, GLenum, GLint, const GLuint *));
+    MOCK_METHOD4(clearBufferiv, gl::Error(ContextImpl *, GLenum, GLint, const GLint *));
+    MOCK_METHOD5(clearBufferfi, gl::Error(ContextImpl *, GLenum, GLint, GLfloat, GLint));
 
     MOCK_CONST_METHOD0(getImplementationColorReadFormat, GLenum());
     MOCK_CONST_METHOD0(getImplementationColorReadType, GLenum());
-    MOCK_CONST_METHOD5(
-        readPixels,
-        gl::Error(const gl::State &, const gl::Rectangle &, GLenum, GLenum, GLvoid *));
+    MOCK_CONST_METHOD5(readPixels,
+                       gl::Error(ContextImpl *, const gl::Rectangle &, GLenum, GLenum, GLvoid *));
 
-    MOCK_METHOD6(blit,
-                 gl::Error(const gl::State &,
-                           const gl::Rectangle &,
-                           const gl::Rectangle &,
-                           GLbitfield,
-                           GLenum,
-                           const gl::Framebuffer *));
+    MOCK_METHOD5(
+        blit,
+        gl::Error(ContextImpl *, const gl::Rectangle &, const gl::Rectangle &, GLbitfield, GLenum));
 
     MOCK_CONST_METHOD0(checkStatus, bool());
 
