@@ -1,3 +1,36 @@
+2016-11-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Experimental features should not be enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=164367
+
+        Reviewed by Darin Adler.
+
+        We have two classes of experimental features:
+
+        (1) Features that are unstable and should be off by default, except for the developers
+            currently working on them. This is straightforward to handle; the default value should
+            be false.
+        (2) Features that are still not ready for end users, but are stable enough for testing. We
+            want these features to be enabled in testing environments like the bots, MiniBrowser,
+            Safari Tech Preview, and so forth, but not in stable release builds.
+
+        Implement this. It is better than having all experimental features on unconditionally, and
+        expecting them to be disabled manually on release branches, which is not something we are
+        keen to do. An exception is Cocoa ports, which to my knowledge do not currently have any
+        concept of development builds. These ports seem happy to continue disabling features
+        manually in release branches, and should continue to do so at least for now.
+
+        We also have features that we wish to enumerate at runtime, yet have enabled by default
+        unconditionally. We do not currently have any infrastructure to support this and should not
+        abuse the experimental status for this purpose; it requires future work. All settings can
+        still be toggled at runtime by clients that know about them using the existing runtime
+        features API.
+
+        Lastly, the custom elements feature is ready to be enabled by default, so it's no longer
+        experimental and can graduate to the list of normal boolean features.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-11-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.2 release.

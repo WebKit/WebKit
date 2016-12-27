@@ -278,20 +278,30 @@
 #define FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \
     macro(VisibleDebugOverlayRegions, visibleDebugOverlayRegions, UInt32, uint32_t, 0, "", "")
 
+// Our XCode build system does not currently have any concept of DEVELOPER_MODE.
+// Cocoa ports must disable experimental features on release branches for now.
+#if ENABLE(DEVELOPER_MODE) || PLATFORM(COCOA)
+#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
+#else
+#define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
+#endif
+
 // For experimental features:
 // - The type should be boolean.
 // - You must provide the last two parameters for all experimental features. They
 //   are the text exposed to the user from the WebKit client.
 // - They should be alphabetically ordered by the human readable text.
-// - They should be false by default, although they are currently set to true while we develop client UI.
+// - The default value may be either false (for very unstable features) or
+//   DEFAULT_EXPERIMENTAL_FEATURE_ENABLED (for features that are ready for
+//   wider testing).
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false, "CSS Grid", "CSS Grid Layout Module support") \
-    macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, false, "Custom Elements", "HTML Custom Elements prototype") \
-    macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, false, "Gamepads", "Web Gamepad API support") \
-    macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, true, "CSS Spring Animations", "CSS Spring Animation prototype") \
-    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, true, "WebGL 2.0", "WebGL 2 prototype") \
-    macro(VisualViewportEnabled, visualViewportEnabled, Bool, bool, false, "Visual Viewport", "Use Visual Viewport for fixed elements when zooming") \
+    macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Grid", "CSS Grid Layout Module support") \
+    macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
+    macro(CustomElementsEnabled, customElementsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "", "") \
+    macro(GamepadsEnabled, gamepadsEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Gamepads", "Web Gamepad API support") \
+    macro(WebGL2Enabled, webGL2Enabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "WebGL 2.0", "WebGL 2 prototype") \
+    macro(VisualViewportEnabled, visualViewportEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Visual Viewport", "Use Visual Viewport for fixed elements when zooming") \
     \
 
 #if PLATFORM(COCOA)
