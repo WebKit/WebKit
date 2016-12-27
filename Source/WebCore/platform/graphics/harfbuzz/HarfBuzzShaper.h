@@ -77,10 +77,10 @@ private:
         unsigned startIndex() const { return m_startIndex; }
         unsigned numCharacters() const { return m_numCharacters; }
         unsigned numGlyphs() const { return m_numGlyphs; }
-        uint16_t* glyphs() { return &m_glyphs[0]; }
-        float* advances() { return &m_advances[0]; }
-        FloatPoint* offsets() { return &m_offsets[0]; }
-        uint16_t* glyphToCharacterIndexes() { return &m_glyphToCharacterIndexes[0]; }
+        uint16_t* glyphs() { return m_glyphs.data(); }
+        float* advances() { return m_advances.data(); }
+        FloatPoint* offsets() { return m_offsets.data(); }
+        uint16_t* glyphToCharacterIndexes() { return m_glyphToCharacterIndexes.data(); }
         float width() { return m_width; }
         bool rtl() { return m_direction == RTL; }
         hb_script_t script() { return m_script; }
