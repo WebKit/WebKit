@@ -1,3 +1,17 @@
+2016-11-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] BadDamage X Window System error in WebKit::AcceleratedBackingStoreX11::update when called from WebPageProxy::exitAcceleratedCompositingMode
+        https://bugs.webkit.org/show_bug.cgi?id=164303
+
+        Reviewed by Michael Catanzaro.
+
+        This can happen if the web process exits before the UI process has cleaned up the accelerated surface. Trap
+        BadDrawable and BadDamage X errors and ignore them, while still crashing for any other X error.
+
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11):
+        (WebKit::AcceleratedBackingStoreX11::update):
+
 2016-11-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Database process should not initialize gtk
