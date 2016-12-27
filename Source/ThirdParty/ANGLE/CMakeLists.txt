@@ -233,6 +233,7 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/d3d9/Context9.cpp
     src/libANGLE/renderer/d3d/d3d9/DebugAnnotator9.cpp
     src/libANGLE/renderer/d3d/d3d9/Fence9.cpp
+    src/libANGLE/renderer/d3d/d3d9/formatutils9.cpp
     src/libANGLE/renderer/d3d/d3d9/Framebuffer9.cpp
     src/libANGLE/renderer/d3d/d3d9/Image9.cpp
     src/libANGLE/renderer/d3d/d3d9/IndexBuffer9.cpp
@@ -251,7 +252,6 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/DisplayD3D.cpp
     src/libANGLE/renderer/d3d/DynamicHLSL.cpp
     src/libANGLE/renderer/d3d/EGLImageD3D.cpp
-    src/libANGLE/renderer/d3d/formatutilsD3D.cpp
     src/libANGLE/renderer/d3d/FramebufferD3D.cpp
     src/libANGLE/renderer/d3d/HLSLCompiler.cpp
     src/libANGLE/renderer/d3d/ImageD3D.cpp
