@@ -1,3 +1,13 @@
+2016-12-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Improve user agent construction
+        https://bugs.webkit.org/show_bug.cgi?id=142074
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] WebKitWebPage URI not updated after URI is modified by InjectedBundlePageResourceLoadClient::willSendRequestForFrame

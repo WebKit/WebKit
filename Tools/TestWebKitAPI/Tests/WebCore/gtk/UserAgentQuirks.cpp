@@ -47,16 +47,16 @@ TEST(WebCore, UserAgentQuirksTest)
 
     // google domains require Chrome in the UA
     uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.google.es/"));
-    EXPECT_FALSE(uaString.contains("Macintosh"));
-    EXPECT_FALSE(uaString.contains("Mac OS X"));
-    EXPECT_TRUE(uaString.contains("Linux"));
-    EXPECT_TRUE(uaString.contains("Chrome"));
+    EXPECT_TRUE(uaString.contains("Macintosh"));
+    EXPECT_TRUE(uaString.contains("Mac OS X"));
+    EXPECT_FALSE(uaString.contains("Linux"));
+    EXPECT_FALSE(uaString.contains("Chrome"));
 
     uaString = standardUserAgentForURL(URL(ParsedURLString, "http://maps.google.com/"));
-    EXPECT_FALSE(uaString.contains("Macintosh"));
-    EXPECT_FALSE(uaString.contains("Mac OS X"));
-    EXPECT_TRUE(uaString.contains("Linux"));
-    EXPECT_TRUE(uaString.contains("Chrome"));
+    EXPECT_TRUE(uaString.contains("Macintosh"));
+    EXPECT_TRUE(uaString.contains("Mac OS X"));
+    EXPECT_FALSE(uaString.contains("Linux"));
+    EXPECT_FALSE(uaString.contains("Chrome"));
 
     // Slack requires Chrome in the UA
     uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.slack.com/"));
