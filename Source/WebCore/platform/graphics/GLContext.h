@@ -47,6 +47,7 @@ public:
     static bool isExtensionSupported(const char* extensionList, const char* extension);
 
     PlatformDisplay& display() const { return m_display; }
+    unsigned version();
 
     virtual ~GLContext();
     virtual bool makeContextCurrent();
@@ -77,6 +78,7 @@ protected:
     GLContext(PlatformDisplay&);
 
     PlatformDisplay& m_display;
+    unsigned m_version { 0 };
 };
 
 } // namespace WebCore

@@ -406,12 +406,14 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 #endif
 }
 
+#if !PLATFORM(GTK)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
         m_extensions = std::make_unique<Extensions3DOpenGL>(this, isGLES2Compliant());
     return m_extensions.get();
 }
+#endif
 
 void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {

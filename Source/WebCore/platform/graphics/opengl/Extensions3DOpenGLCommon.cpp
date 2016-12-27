@@ -209,7 +209,7 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
 void Extensions3DOpenGLCommon::initializeAvailableExtensions()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(GTK)
     if (m_useIndexedGetString) {
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);

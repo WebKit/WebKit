@@ -92,6 +92,7 @@ typedef void (GLAPIENTRY *glGetRenderbufferParameterivType) (GLenum, GLenum, GLi
 typedef void (GLAPIENTRY *glGetShaderInfoLogType) (GLuint, GLsizei, GLsizei*, char*);
 typedef void (GLAPIENTRY *glGetShaderivType) (GLuint, GLenum, GLint*);
 typedef void (GLAPIENTRY *glGetShaderSourceType) (GLuint, GLsizei, GLsizei*, char*);
+typedef const GLubyte* (GLAPIENTRY *glGetStringiType) (GLenum, GLuint);
 typedef GLint (GLAPIENTRY *glGetUniformLocationType) (GLuint, const char*);
 typedef void (GLAPIENTRY *glGetUniformfvType) (GLuint, GLint, GLfloat*);
 typedef void (GLAPIENTRY *glGetUniformivType) (GLuint, GLint, GLint*);
@@ -198,6 +199,7 @@ typedef struct _OpenGLFunctionTable {
     FUNCTION_TABLE_ENTRY(glGetShaderInfoLog);
     FUNCTION_TABLE_ENTRY(glGetShaderiv);
     FUNCTION_TABLE_ENTRY(glGetShaderSource);
+    FUNCTION_TABLE_ENTRY(glGetStringi);
     FUNCTION_TABLE_ENTRY(glGetUniformfv);
     FUNCTION_TABLE_ENTRY(glGetUniformiv);
     FUNCTION_TABLE_ENTRY(glGetUniformLocation);
@@ -325,6 +327,7 @@ typedef struct _OpenGLFunctionTable {
 #define glGetShaderInfoLog                     LOOKUP_GL_FUNCTION(glGetShaderInfoLog)
 #define glGetShaderiv                          LOOKUP_GL_FUNCTION(glGetShaderiv)
 #define glGetShaderSource                      LOOKUP_GL_FUNCTION(glGetShaderSource)
+#define glGetStringi                           LOOKUP_GL_FUNCTION(glGetStringi)
 #define glGetUniformfv                         LOOKUP_GL_FUNCTION(glGetUniformfv)
 #define glGetUniformiv                         LOOKUP_GL_FUNCTION(glGetUniformiv)
 #define glGetUniformLocation                   LOOKUP_GL_FUNCTION(glGetUniformLocation)

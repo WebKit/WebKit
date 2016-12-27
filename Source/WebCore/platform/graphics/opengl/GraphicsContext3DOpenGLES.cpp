@@ -241,12 +241,14 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
     ::glClearDepthf(depth);
 }
 
+#if !PLATFORM(GTK)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
         m_extensions = std::make_unique<Extensions3DOpenGLES>(this, isGLES2Compliant());
     return m_extensions.get();
 }
+#endif
 
 }
 

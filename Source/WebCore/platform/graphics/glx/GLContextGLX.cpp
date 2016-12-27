@@ -38,8 +38,12 @@ namespace WebCore {
 #if !defined(PFNGLXSWAPINTERVALSGIPROC)
 typedef int (*PFNGLXSWAPINTERVALSGIPROC) (int);
 #endif
+#if !defined(PFNGLXCREATECONTEXTATTRIBSARBPROC)
+typedef GLXContext (*PFNGLXCREATECONTEXTATTRIBSARBPROC) (Display *dpy, GLXFBConfig config, GLXContext share_context, Bool direct, const int *attrib_list);
+#endif
 
 static PFNGLXSWAPINTERVALSGIPROC glXSwapIntervalSGI;
+static PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB;
 
 static bool hasSGISwapControlExtension(Display* display)
 {
@@ -55,6 +59,20 @@ static bool hasSGISwapControlExtension(Display* display)
     return !!glXSwapIntervalSGI;
 }
 
+static bool hasGLXARBCreateContextExtension(Display* display)
+{
+    static bool initialized = false;
+    if (initialized)
+        return !!glXCreateContextAttribsARB;
+
+    initialized = true;
+    if (!GLContext::isExtensionSupported(glXQueryExtensionsString(display, 0), "GLX_ARB_create_context"))
+        return false;
+
+    glXCreateContextAttribsARB = reinterpret_cast<PFNGLXCREATECONTEXTATTRIBSARBPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXCreateContextAttribsARB")));
+    return !!glXCreateContextAttribsARB;
+}
+
 std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, GLXContext sharingContext)
 {
     Display* display = downcast<PlatformDisplayX11>(platformDisplay).native();
@@ -65,10 +83,38 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowTy
     XVisualInfo visualInfo;
     visualInfo.visualid = XVisualIDFromVisual(attributes.visual);
 
-    int numReturned = 0;
-    XUniquePtr<XVisualInfo> visualInfoList(XGetVisualInfo(display, VisualIDMask, &visualInfo, &numReturned));
+    int numConfigs = 0;
+    GLXFBConfig config = nullptr;
+    XUniquePtr<GLXFBConfig> configs(glXGetFBConfigs(display, DefaultScreen(display), &numConfigs));
+    for (int i = 0; i < numConfigs; i++) {
+        XUniquePtr<XVisualInfo> glxVisualInfo(glXGetVisualFromFBConfig(display, configs.get()[i]));
+        if (!glxVisualInfo)
+            continue;
 
-    XUniqueGLXContext context(glXCreateContext(display, visualInfoList.get(), sharingContext, True));
+        if (glxVisualInfo.get()->visualid == visualInfo.visualid) {
+            config = configs.get()[i];
+            break;
+        }
+    }
+    ASSERT(config);
+
+    XUniqueGLXContext context;
+    if (hasGLXARBCreateContextExtension(display)) {
+        // Request OpenGL version 3.2 and core profile, which guarantees that the i965 driver doesn't use the software renderer.
+        static const int contextAttributes[] = {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+            0
+        };
+        context.reset(glXCreateContextAttribsARB(display, config, sharingContext, GL_TRUE, contextAttributes));
+    }
+
+    if (!context) {
+        // Fallback to legacy OpenGL version.
+        XUniquePtr<XVisualInfo> visualInfoList(glXGetVisualFromFBConfig(display, config));
+        context.reset(glXCreateContext(display, visualInfoList.get(), sharingContext, True));
+    }
+
     if (!context)
         return nullptr;
 
@@ -100,7 +146,23 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPbufferContext(PlatformDisplay
     if (!pbuffer)
         return nullptr;
 
-    XUniqueGLXContext context(glXCreateNewContext(display, configs.get()[0], GLX_RGBA_TYPE, sharingContext, GL_TRUE));
+    XUniqueGLXContext context;
+
+    if (hasGLXARBCreateContextExtension(display)) {
+        // Request OpenGL version 3.2 and core profile, which guarantees that the i965 driver doesn't use the software renderer.
+        static const int contextAttributes[] = {
+            GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+            GLX_CONTEXT_MINOR_VERSION_ARB, 2,
+            0
+        };
+        context.reset(glXCreateContextAttribsARB(display, configs.get()[0], sharingContext, GL_TRUE, contextAttributes));
+    }
+
+    if (!context) {
+        // Fallback to legacy OpenGL version.
+        context.reset(glXCreateNewContext(display, configs.get()[0], GLX_RGBA_TYPE, sharingContext, GL_TRUE));
+    }
+
     if (!context)
         return nullptr;
 

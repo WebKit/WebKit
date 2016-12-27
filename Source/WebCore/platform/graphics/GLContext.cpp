@@ -160,6 +160,18 @@ bool GLContext::isExtensionSupported(const char* extensionList, const char* exte
     return false;
 }
 
+unsigned GLContext::version()
+{
+    if (!m_version) {
+        GC3Dint major = 0;
+        GC3Dint minor = 0;
+        ::glGetIntegerv(GL_MAJOR_VERSION, &major);
+        ::glGetIntegerv(GL_MINOR_VERSION, &minor);
+        m_version = major * 100 + minor * 10;
+    }
+    return m_version;
+}
+
 } // namespace WebCore
 
 #endif
