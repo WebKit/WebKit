@@ -80,10 +80,6 @@ protected:
     EGLDisplay m_eglDisplay;
 #endif
 
-#if USE(EGL) || USE(GLX)
-    std::unique_ptr<GLContext> m_sharingGLContext;
-#endif
-
 private:
     static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
 
@@ -93,6 +89,9 @@ private:
     bool m_eglDisplayInitialized { false };
     int m_eglMajorVersion { 0 };
     int m_eglMinorVersion { 0 };
+#endif
+#if USE(EGL) || USE(GLX)
+    std::unique_ptr<GLContext> m_sharingGLContext;
 #endif
 };
 

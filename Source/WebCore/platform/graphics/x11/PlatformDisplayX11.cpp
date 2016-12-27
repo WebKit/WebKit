@@ -56,10 +56,6 @@ PlatformDisplayX11::PlatformDisplayX11(Display* display)
 
 PlatformDisplayX11::~PlatformDisplayX11()
 {
-#if USE(EGL) || USE(GLX)
-    // Clear the sharing context before releasing the display.
-    m_sharingGLContext = nullptr;
-#endif
     if (m_ownedDisplay)
         XCloseDisplay(m_display);
 }
