@@ -70,9 +70,12 @@ public:
 #endif
 
 protected:
-    PlatformDisplay();
+    enum class NativeDisplayOwned { No, Yes };
+    explicit PlatformDisplay(NativeDisplayOwned = NativeDisplayOwned::No);
 
     static void setSharedDisplayForCompositing(PlatformDisplay&);
+
+    NativeDisplayOwned m_nativeDisplayOwned { NativeDisplayOwned::No };
 
 #if USE(EGL)
     virtual void initializeEGLDisplay();

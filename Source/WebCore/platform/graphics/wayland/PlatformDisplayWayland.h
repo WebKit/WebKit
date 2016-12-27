@@ -36,7 +36,8 @@ namespace WebCore {
 
 class PlatformDisplayWayland : public PlatformDisplay {
 public:
-    PlatformDisplayWayland(struct wl_display*);
+    static std::unique_ptr<PlatformDisplay> create();
+    PlatformDisplayWayland(struct wl_display*, NativeDisplayOwned = NativeDisplayOwned::No);
     virtual ~PlatformDisplayWayland();
 
     struct wl_display* native() const { return m_display; }
