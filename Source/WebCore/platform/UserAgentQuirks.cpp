@@ -45,12 +45,6 @@ static bool urlRequiresChromeBrowser(const URL& url)
     if (baseDomain == "typekit.net" || baseDomain == "typekit.com")
         return true;
 
-    // Shut off Chrome ads. Avoid missing features on maps.google.com. Avoid
-    // receiving a terrible fallback version of calendar.google.com. Receive a
-    // fancier plus.google.com.
-    if (baseDomain.startsWith("google."))
-        return true;
-
     // Needed for YouTube 360 with WebKitGTK+ and WPE (requires ENABLE_MEDIA_SOURCE).
     if (baseDomain == "youtube.com")
         return true;
@@ -65,6 +59,11 @@ static bool urlRequiresChromeBrowser(const URL& url)
 static bool urlRequiresMacintoshPlatform(const URL& url)
 {
     String baseDomain = topPrivatelyControlledDomain(url.host());
+
+    // Avoid receiving terrible fallbacks version of calendar.google.com and
+    // maps.google.com on certain platforms. https://webkit.org/b/142074
+    if (baseDomain.startsWith("google."))
+        return true;
 
     // At least finance.yahoo.com displays a mobile version with WebKitGTK+'s standard user agent.
     if (baseDomain == "yahoo.com")

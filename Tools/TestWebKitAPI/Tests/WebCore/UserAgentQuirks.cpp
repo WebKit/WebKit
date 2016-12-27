@@ -69,17 +69,15 @@ TEST(UserAgentTest, Quirks)
     String uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.webkit.org/"));
     EXPECT_TRUE(uaString.isNull());
 
+#if !OS(MAC_OS_X)
     // Google quirk should not affect sites with similar domains.
     uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.googleblog.com/"));
-    EXPECT_FALSE(uaString.contains("Chrome"));
+    EXPECT_FALSE(uaString.contains("Macintosh"));
+    EXPECT_FALSE(uaString.contains("Mac OS X"));
+#endif
 
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://typekit.net/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://www.google.com/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://www.google.es/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://calendar.google.com/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://maps.google.com/");
-    assertUserAgentForURLHasChromeBrowserQuirk("http://plus.google.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.youtube.com/");
     assertUserAgentForURLHasChromeBrowserQuirk("http://www.slack.com/");
 
@@ -88,6 +86,12 @@ TEST(UserAgentTest, Quirks)
     assertUserAgentForURLHasMacPlatformQuirk("http://intl.taobao.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://www.whatsapp.com/");
     assertUserAgentForURLHasMacPlatformQuirk("http://web.whatsapp.com/");
+
+    assertUserAgentForURLHasMacPlatformQuirk("http://www.google.com/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://www.google.es/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://calendar.google.com/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://maps.google.com/");
+    assertUserAgentForURLHasMacPlatformQuirk("http://plus.google.com/");
 }
 
 } // namespace TestWebKitAPI
