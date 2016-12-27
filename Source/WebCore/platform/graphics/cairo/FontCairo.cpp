@@ -243,6 +243,7 @@ Path CairoGlyphToPathTranslator::path()
 
     cairo_glyph_t cairoGlyph;
     cairoGlyph.index = m_glyphBuffer.glyphAt(m_index);
+    cairoGlyph.x = cairoGlyph.y = 0;
     cairo_set_scaled_font(path.platformPath()->context(), m_fontData->platformData().scaledFont());
     cairo_glyph_path(path.platformPath()->context(), &cairoGlyph, 1);
 
