@@ -54,50 +54,13 @@ set_property(TARGET libGLESv2 PROPERTY COMPILE_DEFINITIONS
 )
 
 add_library(libANGLE STATIC
-    src/common/Float16ToFloat32.cpp
-    src/common/string_utils.cpp
-    src/compiler/translator/AddAndTrueToLoopCondition.cpp
-    src/compiler/translator/AddDefaultReturnStatements.cpp
-    src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
-    src/compiler/translator/EmulateGLFragColorBroadcast.cpp
-    src/compiler/translator/ExpandIntegerPowExpressions.cpp
-    src/compiler/translator/RewriteTexelFetchOffset.cpp
-    src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
-    src/compiler/translator/SimplifyLoopConditions.cpp
-    src/compiler/translator/SplitSequenceOperator.cpp
-    src/compiler/translator/TextureFunctionHLSL.cpp
-    src/compiler/translator/UseInterfaceBlockFields.cpp
-    src/image_util/copyimage.cpp
-    src/image_util/imageformats.cpp
-    src/image_util/loadimage_etc.cpp
-    src/image_util/loadimage.cpp
-    src/libANGLE/format_map_autogen.cpp
-    src/libANGLE/format_map_autogen.cpp
-    src/libANGLE/formatutils.cpp
-    src/libANGLE/HandleRangeAllocator.cpp
-    src/libANGLE/Path.cpp
-    src/libANGLE/queryutils.cpp
-    src/libANGLE/renderer/ContextImpl.cpp
-    src/libANGLE/renderer/d3d/d3d11/Context11.cpp
-    src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp
-    src/libANGLE/renderer/d3d/d3d11/StreamProducerNV12.cpp
-    src/libANGLE/renderer/d3d/d3d11/texture_format_table.cpp
-    src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp
-    src/libANGLE/renderer/d3d/d3d11/TransformFeedback11.cpp
-    src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp
-    src/libANGLE/renderer/d3d/d3d9/Context9.cpp
-    src/libANGLE/renderer/d3d/d3d9/NativeWindow9.cpp
-    src/libANGLE/renderer/d3d/NativeWindowD3D.cpp
-    src/libANGLE/renderer/Format_autogen.cpp
-    src/libANGLE/renderer/Format.cpp
-    src/libANGLE/renderer/load_functions_table_autogen.cpp
-    src/libANGLE/signal_utils.cpp
-    src/libANGLE/validationES31.cpp
     src/common/angleutils.cpp
     src/common/debug.cpp
     src/common/event_tracer.cpp
+    src/common/Float16ToFloat32.cpp
     src/common/mathutil.cpp
     src/common/MemoryBuffer.cpp
+    src/common/string_utils.cpp
     src/common/tls.cpp
     src/common/utilities.cpp
     src/compiler/preprocessor/DiagnosticsBase.cpp
@@ -111,10 +74,13 @@ add_library(libANGLE STATIC
     src/compiler/preprocessor/Preprocessor.cpp
     src/compiler/preprocessor/Token.cpp
     src/compiler/preprocessor/Tokenizer.cpp
+    src/compiler/translator/AddAndTrueToLoopCondition.cpp
+    src/compiler/translator/AddDefaultReturnStatements.cpp
     src/compiler/translator/ArrayReturnValueToOutParameter.cpp
     src/compiler/translator/ASTMetadataHLSL.cpp
     src/compiler/translator/blocklayout.cpp
     src/compiler/translator/blocklayoutHLSL.cpp
+    src/compiler/translator/BreakVariableAliasingInInnerLoops.cpp
     src/compiler/translator/BuiltInFunctionEmulator.cpp
     src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp
     src/compiler/translator/BuiltInFunctionEmulatorHLSL.cpp
@@ -130,7 +96,9 @@ add_library(libANGLE STATIC
     src/compiler/translator/depgraph/DependencyGraphTraverse.cpp
     src/compiler/translator/Diagnostics.cpp
     src/compiler/translator/DirectiveHandler.cpp
+    src/compiler/translator/EmulateGLFragColorBroadcast.cpp
     src/compiler/translator/EmulatePrecision.cpp
+    src/compiler/translator/ExpandIntegerPowExpressions.cpp
     src/compiler/translator/ExtensionGLSL.cpp
     src/compiler/translator/FlagStd140Structs.cpp
     src/compiler/translator/ForLoopUnroll.cpp
@@ -163,6 +131,8 @@ add_library(libANGLE STATIC
     src/compiler/translator/RemoveSwitchFallThrough.cpp
     src/compiler/translator/RewriteDoWhile.cpp
     src/compiler/translator/RewriteElseBlocks.cpp
+    src/compiler/translator/RewriteTexelFetchOffset.cpp
+    src/compiler/translator/RewriteUnaryMinusOperatorInt.cpp
     src/compiler/translator/ScalarizeVecAndMatConstructorArgs.cpp
     src/compiler/translator/SearchSymbol.cpp
     src/compiler/translator/SearchSymbol.cpp
@@ -172,8 +142,11 @@ add_library(libANGLE STATIC
     src/compiler/translator/SeparateExpressionsReturningArrays.cpp
     src/compiler/translator/ShaderLang.cpp
     src/compiler/translator/ShaderVars.cpp
+    src/compiler/translator/SimplifyLoopConditions.cpp
+    src/compiler/translator/SplitSequenceOperator.cpp
     src/compiler/translator/StructureHLSL.cpp
     src/compiler/translator/SymbolTable.cpp
+    src/compiler/translator/TextureFunctionHLSL.cpp
     src/compiler/translator/timing/RestrictFragmentShaderTiming.cpp
     src/compiler/translator/timing/RestrictVertexShaderTiming.cpp
     src/compiler/translator/TranslatorESSL.cpp
@@ -183,6 +156,7 @@ add_library(libANGLE STATIC
     src/compiler/translator/UnfoldShortCircuitAST.cpp
     src/compiler/translator/UnfoldShortCircuitToIf.cpp
     src/compiler/translator/UniformHLSL.cpp
+    src/compiler/translator/UseInterfaceBlockFields.cpp
     src/compiler/translator/util.cpp
     src/compiler/translator/UtilsHLSL.cpp
     src/compiler/translator/ValidateGlobalInitializer.cpp
@@ -194,6 +168,10 @@ add_library(libANGLE STATIC
     src/compiler/translator/VariablePacker.cpp
     src/compiler/translator/VersionGLSL.cpp
     src/compiler/translator/VersionGLSL.cpp
+    src/image_util/copyimage.cpp
+    src/image_util/imageformats.cpp
+    src/image_util/loadimage_etc.cpp
+    src/image_util/loadimage.cpp
     src/libANGLE/angletypes.cpp
     src/libANGLE/AttributeMap.cpp
     src/libANGLE/Buffer.cpp
@@ -209,25 +187,34 @@ add_library(libANGLE STATIC
     src/libANGLE/Error.cpp
     src/libANGLE/Fence.cpp
     src/libANGLE/Float16ToFloat32.cpp
+    src/libANGLE/format_map_autogen.cpp
+    src/libANGLE/format_map_autogen.cpp
+    src/libANGLE/formatutils.cpp
     src/libANGLE/formatutils.cpp
     src/libANGLE/Framebuffer.cpp
     src/libANGLE/FramebufferAttachment.cpp
     src/libANGLE/HandleAllocator.cpp
+    src/libANGLE/HandleRangeAllocator.cpp
     src/libANGLE/Image.cpp
     src/libANGLE/ImageIndex.cpp
     src/libANGLE/IndexRangeCache.cpp
+    src/libANGLE/Path.cpp
     src/libANGLE/Platform.cpp
     src/libANGLE/Program.cpp
     src/libANGLE/Query.cpp
     src/libANGLE/queryconversions.cpp
+    src/libANGLE/queryutils.cpp
     src/libANGLE/Renderbuffer.cpp
+    src/libANGLE/renderer/ContextImpl.cpp
     src/libANGLE/renderer/d3d/BufferD3D.cpp
     src/libANGLE/renderer/d3d/CompilerD3D.cpp
     src/libANGLE/renderer/d3d/copyimage.cpp
     src/libANGLE/renderer/d3d/d3d11/Blit11.cpp
     src/libANGLE/renderer/d3d/d3d11/Buffer11.cpp
     src/libANGLE/renderer/d3d/d3d11/Clear11.cpp
+    src/libANGLE/renderer/d3d/d3d11/Context11.cpp
     src/libANGLE/renderer/d3d/d3d11/DebugAnnotator11.cpp
+    src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp
     src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.cpp
     src/libANGLE/renderer/d3d/d3d11/Fence11.cpp
     src/libANGLE/renderer/d3d/d3d11/formatutils11.cpp
@@ -245,21 +232,28 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/d3d11/ShaderExecutable11.cpp
     src/libANGLE/renderer/d3d/d3d11/StateManager11.cpp
     src/libANGLE/renderer/d3d/d3d11/Stream11.cpp
+    src/libANGLE/renderer/d3d/d3d11/StreamProducerNV12.cpp
     src/libANGLE/renderer/d3d/d3d11/SwapChain11.cpp
     src/libANGLE/renderer/d3d/d3d11/texture_format_table_autogen.cpp
+    src/libANGLE/renderer/d3d/d3d11/texture_format_table.cpp
     src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp
+    src/libANGLE/renderer/d3d/d3d11/TextureStorage11.cpp
+    src/libANGLE/renderer/d3d/d3d11/TransformFeedback11.cpp
     src/libANGLE/renderer/d3d/d3d11/Trim11.cpp
     src/libANGLE/renderer/d3d/d3d11/VertexArray11.cpp
     src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp
     src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow.cpp
+    src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp
     src/libANGLE/renderer/d3d/d3d9/Blit9.cpp
     src/libANGLE/renderer/d3d/d3d9/Buffer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/Context9.cpp
     src/libANGLE/renderer/d3d/d3d9/DebugAnnotator9.cpp
     src/libANGLE/renderer/d3d/d3d9/Fence9.cpp
     src/libANGLE/renderer/d3d/d3d9/formatutils9.cpp
     src/libANGLE/renderer/d3d/d3d9/Framebuffer9.cpp
     src/libANGLE/renderer/d3d/d3d9/Image9.cpp
     src/libANGLE/renderer/d3d/d3d9/IndexBuffer9.cpp
+    src/libANGLE/renderer/d3d/d3d9/NativeWindow9.cpp
     src/libANGLE/renderer/d3d/d3d9/Query9.cpp
     src/libANGLE/renderer/d3d/d3d9/renderer9_utils.cpp
     src/libANGLE/renderer/d3d/d3d9/Renderer9.cpp
@@ -283,6 +277,7 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/loadimage_etc.cpp
     src/libANGLE/renderer/d3d/loadimage.cpp
     src/libANGLE/renderer/d3d/loadimageSSE2.cpp
+    src/libANGLE/renderer/d3d/NativeWindowD3D.cpp
     src/libANGLE/renderer/d3d/ProgramD3D.cpp
     src/libANGLE/renderer/d3d/RenderbufferD3D.cpp
     src/libANGLE/renderer/d3d/RendererD3D.cpp
@@ -297,6 +292,9 @@ add_library(libANGLE STATIC
     src/libANGLE/renderer/d3d/VertexDataManager.cpp
     src/libANGLE/renderer/DeviceImpl.cpp
     src/libANGLE/renderer/DisplayImpl.cpp
+    src/libANGLE/renderer/Format_autogen.cpp
+    src/libANGLE/renderer/Format.cpp
+    src/libANGLE/renderer/load_functions_table_autogen.cpp
     src/libANGLE/renderer/renderer_utils.cpp
     src/libANGLE/renderer/Renderer.cpp
     src/libANGLE/renderer/SurfaceImpl.cpp
@@ -304,6 +302,7 @@ add_library(libANGLE STATIC
     src/libANGLE/ResourceManager.cpp
     src/libANGLE/Sampler.cpp
     src/libANGLE/Shader.cpp
+    src/libANGLE/signal_utils.cpp
     src/libANGLE/State.cpp
     src/libANGLE/Stream.cpp
     src/libANGLE/Surface.cpp
@@ -314,6 +313,7 @@ add_library(libANGLE STATIC
     src/libANGLE/validationES.cpp
     src/libANGLE/validationES2.cpp
     src/libANGLE/validationES3.cpp
+    src/libANGLE/validationES31.cpp
     src/libANGLE/VertexArray.cpp
     src/libANGLE/VertexAttribute.cpp
     src/third_party/compiler/ArrayBoundsClamper.cpp
