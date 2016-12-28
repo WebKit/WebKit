@@ -55,24 +55,15 @@ static const unsigned bufferSize = 512 * 1024;
 static const int httpOK = 200;
 static const int httpPartialContent = 206;
 static const int httpNotAllowed = 403;
-static const int httpNotFound = 404;
 static const int httpRequestedRangeNotSatisfiable = 416;
 static const int httpInternalError = 500;
 static const char* httpOKText = "OK";
 static const char* httpPartialContentText = "Partial Content";
 static const char* httpNotAllowedText = "Not Allowed";
-static const char* httpNotFoundText = "Not Found";
 static const char* httpRequestedRangeNotSatisfiableText = "Requested Range Not Satisfiable";
 static const char* httpInternalErrorText = "Internal Server Error";
 
 static const char* const webKitBlobResourceDomain = "WebKitBlobResource";
-enum {
-    notFoundError = 1,
-    securityError = 2,
-    rangeError = 3,
-    notReadableError = 4,
-    methodNotAllowed = 5
-};
 
 ///////////////////////////////////////////////////////////////////////////////
 // BlobResourceSynchronousLoader
@@ -103,7 +94,7 @@ void BlobResourceSynchronousLoader::didReceiveResponse(ResourceHandle* handle, R
 {
     // We cannot handle the size that is more than maximum integer.
     if (response.expectedContentLength() > INT_MAX) {
-        m_error = ResourceError(webKitBlobResourceDomain, notReadableError, response.url(), "File is too large");
+        m_error = ResourceError(webKitBlobResourceDomain, static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large");
         return;
     }
 
@@ -132,7 +123,7 @@ Ref<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, cons
 void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
-        error = ResourceError(webKitBlobResourceDomain, methodNotAllowed, response.url(), "Request method must be GET");
+        error = ResourceError(webKitBlobResourceDomain, static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET");
         return;
     }
 
@@ -188,25 +179,24 @@ void BlobResourceHandle::doStart()
     ASSERT(isMainThread());
 
     // Do not continue if the request is aborted or an error occurs.
-    if (m_aborted || m_errorCode)
+    if (erroredOrAborted())
         return;
 
     if (!equalLettersIgnoringASCIICase(firstRequest().httpMethod(), "get")) {
-        notifyFail(methodNotAllowed);
+        notifyFail(Error::MethodNotAllowed);
         return;
     }
 
     // If the blob data is not found, fail now.
     if (!m_blobData) {
-        m_errorCode = notFoundError;
-        notifyResponse();
+        notifyFail(Error::NotFoundError);
         return;
     }
 
     // Parse the "Range" header we care about.
     String range = firstRequest().httpHeaderField(HTTPHeaderName::Range);
     if (!range.isEmpty() && !parseRange(range, m_rangeOffset, m_rangeEnd, m_rangeSuffixLength)) {
-        m_errorCode = rangeError;
+        m_errorCode = Error::RangeError;
         notifyResponse();
         return;
     }
@@ -215,7 +205,7 @@ void BlobResourceHandle::doStart()
         getSizeForNext();
     else {
         Ref<BlobResourceHandle> protectedThis(*this); // getSizeForNext calls the client
-        for (size_t i = 0; i < m_blobData->items().size() && !m_aborted && !m_errorCode; ++i)
+        for (size_t i = 0; i < m_blobData->items().size() && !erroredOrAborted(); ++i)
             getSizeForNext();
         notifyResponse();
     }
@@ -261,13 +251,12 @@ void BlobResourceHandle::didGetSize(long long size)
     ASSERT(isMainThread());
 
     // Do not continue if the request is aborted or an error occurs.
-    if (m_aborted || m_errorCode)
+    if (erroredOrAborted())
         return;
 
     // If the size is -1, it means the file has been moved or changed. Fail now.
     if (size == -1) {
-        m_errorCode = notFoundError;
-        notifyResponse();
+        notifyFail(Error::NotFoundError);
         return;
     }
 
@@ -329,13 +318,13 @@ int BlobResourceHandle::readSync(char* buf, int length)
     int remaining = length;
     while (remaining) {
         // Do not continue if the request is aborted or an error occurs.
-        if (m_aborted || m_errorCode)
+        if (erroredOrAborted())
             break;
 
         // If there is no more remaining data to read, we are done.
         if (!m_totalRemainingSize || m_readItemCount >= m_blobData->items().size())
             break;
-        
+
         const BlobDataItem& item = m_blobData->items().at(m_readItemCount);
         int bytesRead = 0;
         if (item.type() == BlobDataItem::Type::Data)
@@ -352,7 +341,7 @@ int BlobResourceHandle::readSync(char* buf, int length)
     }
 
     int result;
-    if (m_aborted || m_errorCode)
+    if (erroredOrAborted())
         result = -1;
     else
         result = length - remaining;
@@ -401,7 +390,7 @@ int BlobResourceHandle::readFileSync(const BlobDataItem& item, char* buf, int le
         bool success = m_stream->openForRead(item.file()->path(), item.offset() + m_currentItemReadSize, bytesToRead);
         m_currentItemReadSize = 0;
         if (!success) {
-            m_errorCode = notReadableError;
+            m_errorCode = Error::NotReadableError;
             return 0;
         }
 
@@ -410,7 +399,7 @@ int BlobResourceHandle::readFileSync(const BlobDataItem& item, char* buf, int le
 
     int bytesRead = m_stream->read(buf, length);
     if (bytesRead < 0) {
-        m_errorCode = notReadableError;
+        m_errorCode = Error::NotReadableError;
         return 0;
     }
     if (!bytesRead) {
@@ -429,7 +418,7 @@ void BlobResourceHandle::readAsync()
     ASSERT(m_async);
 
     // Do not continue if the request is aborted or an error occurs.
-    if (m_aborted || m_errorCode)
+    if (erroredOrAborted())
         return;
 
     // If there is no more remaining data to read, we are done.
@@ -485,7 +474,7 @@ void BlobResourceHandle::didOpen(bool success)
     ASSERT(m_async);
 
     if (!success) {
-        failed(notReadableError);
+        failed(Error::NotReadableError);
         return;
     }
 
@@ -496,7 +485,7 @@ void BlobResourceHandle::didOpen(bool success)
 void BlobResourceHandle::didRead(int bytesRead)
 {
     if (bytesRead < 0) {
-        failed(notReadableError);
+        failed(Error::NotReadableError);
         return;
     }
 
@@ -533,7 +522,7 @@ void BlobResourceHandle::consumeData(const char* data, int bytesRead)
     readAsync();
 }
 
-void BlobResourceHandle::failed(int errorCode)
+void BlobResourceHandle::failed(Error errorCode)
 {
     ASSERT(m_async);
     Ref<BlobResourceHandle> protectedThis(*this);
@@ -553,7 +542,7 @@ void BlobResourceHandle::notifyResponse()
     if (!client())
         return;
 
-    if (m_errorCode) {
+    if (m_errorCode != Error::NoError) {
         Ref<BlobResourceHandle> protectedThis(*this);
         notifyResponseOnError();
         notifyFinish();
@@ -590,19 +579,15 @@ void BlobResourceHandle::notifyResponseOnSuccess()
 
 void BlobResourceHandle::notifyResponseOnError()
 {
-    ASSERT(m_errorCode);
+    ASSERT(m_errorCode != Error::NoError);
 
     ResourceResponse response(firstRequest().url(), "text/plain", 0, String());
     switch (m_errorCode) {
-    case rangeError:
+    case Error::RangeError:
         response.setHTTPStatusCode(httpRequestedRangeNotSatisfiable);
         response.setHTTPStatusText(httpRequestedRangeNotSatisfiableText);
         break;
-    case notFoundError:
-        response.setHTTPStatusCode(httpNotFound);
-        response.setHTTPStatusText(httpNotFoundText);
-        break;
-    case securityError:
+    case Error::SecurityError:
         response.setHTTPStatusCode(httpNotAllowed);
         response.setHTTPStatusText(httpNotAllowedText);
         break;
@@ -626,10 +611,10 @@ void BlobResourceHandle::notifyReceiveData(const char* data, int bytesRead)
         client()->didReceiveBuffer(this, SharedBuffer::create(data, bytesRead), bytesRead);
 }
 
-void BlobResourceHandle::notifyFail(int errorCode)
+void BlobResourceHandle::notifyFail(Error errorCode)
 {
     if (client())
-        client()->didFail(this, ResourceError(webKitBlobResourceDomain, errorCode, firstRequest().url(), String()));
+        client()->didFail(this, ResourceError(webKitBlobResourceDomain, static_cast<int>(errorCode), firstRequest().url(), String()));
 }
 
 static void doNotifyFinish(BlobResourceHandle& handle)

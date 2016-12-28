@@ -1,3 +1,17 @@
+2016-08-30  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Blob not found URL should result in a network error
+        https://bugs.webkit.org/show_bug.cgi?id=161381
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/fetch/api/basic/scheme-blob-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/scheme-blob-worker.html:
+        * web-platform-tests/fetch/api/basic/scheme-blob.html:
+        * web-platform-tests/fetch/api/basic/scheme-blob.js:
+        (invalidRequestMethods.forEach):
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         [WK2] 304 revalidation on the network process does not update the validated response

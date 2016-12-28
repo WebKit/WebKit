@@ -36,6 +36,7 @@
 #include "BlobURL.h"
 #include "FileReaderLoaderClient.h"
 #include "HTTPHeaderNames.h"
+#include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
@@ -227,13 +228,13 @@ void FileReaderLoader::didFinishLoading(unsigned long, double)
         m_client->didFinishLoading();
 }
 
-void FileReaderLoader::didFail(const ResourceError&)
+void FileReaderLoader::didFail(const ResourceError& error)
 {
     // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
     if (m_errorCode == FileError::ABORT_ERR)
         return;
 
-    failed(FileError::NOT_READABLE_ERR);
+    failed(toErrorCode(static_cast<BlobResourceHandle::Error>(error.errorCode())));
 }
 
 void FileReaderLoader::failed(int errorCode)
@@ -244,13 +245,21 @@ void FileReaderLoader::failed(int errorCode)
         m_client->didFail(m_errorCode);
 }
 
+FileError::ErrorCode FileReaderLoader::toErrorCode(BlobResourceHandle::Error error)
+{
+    switch (error) {
+    case BlobResourceHandle::Error::NotFoundError:
+        return FileError::NOT_FOUND_ERR;
+    default:
+        return FileError::NOT_READABLE_ERR;
+    }
+}
+
 FileError::ErrorCode FileReaderLoader::httpStatusCodeToErrorCode(int httpStatusCode)
 {
     switch (httpStatusCode) {
     case 403:
         return FileError::SECURITY_ERR;
-    case 404:
-        return FileError::NOT_FOUND_ERR;
     default:
         return FileError::NOT_READABLE_ERR;
     }

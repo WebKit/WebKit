@@ -1,3 +1,13 @@
+2016-08-30  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Blob not found URL should result in a network error
+        https://bugs.webkit.org/show_bug.cgi?id=161381
+
+        Reviewed by Sam Weinig.
+
+        * fast/files/apply-blob-url-to-xhr-expected.txt:
+        * fast/files/workers/worker-apply-blob-url-to-xhr-expected.txt:
+
 2016-11-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz] HarfBuzzShaper should not assume numGlyphs is greater than 0
