@@ -1713,6 +1713,9 @@ webkit.org/b/152247 fast/forms/input-appearance-spinbutton-up.html [ Skip ]
 webkit.org/b/152247 fast/forms/input-appearance-spinbutton.html [ Skip ]
 webkit.org/b/152247 fast/forms/listbox-scrollbar-hit-test.html [ Skip ]
 
+# Only Mac has implemented DictionaryLookup
+fast/layers/prevent-hit-test-during-layout.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests with architecture-specific results
 #////////////////////////////////////////////////////////////////////////////////////////

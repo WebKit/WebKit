@@ -569,6 +569,9 @@ security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
 security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
 
+# Only Mac has implemented DictionaryLookup
+fast/layers/prevent-hit-test-during-layout.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////

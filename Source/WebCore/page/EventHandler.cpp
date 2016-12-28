@@ -1144,9 +1144,11 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
 
     unsigned nonNegativePaddingWidth = std::max<LayoutUnit>(0, padding.width()).toUnsigned();
     unsigned nonNegativePaddingHeight = std::max<LayoutUnit>(0, padding.height()).toUnsigned();
+
     // We should always start hit testing a clean tree.
-    if (m_frame.document())
-        m_frame.document()->updateLayoutIgnorePendingStylesheets();
+    if (auto* frameView = m_frame.view())
+        frameView->updateLayoutAndStyleIfNeededRecursive();
+
     HitTestResult result(point, nonNegativePaddingHeight, nonNegativePaddingWidth, nonNegativePaddingHeight, nonNegativePaddingWidth);
     RenderView* renderView = m_frame.contentRenderer();
     if (!renderView)
