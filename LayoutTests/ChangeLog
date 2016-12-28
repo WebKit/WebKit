@@ -1,3 +1,11 @@
+2016-12-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Gardening on 28th Dec.
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Mark failing tests to Failure or ImageOnlyFailure.
+
 2016-12-27  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Gardening on 27th Dec.
