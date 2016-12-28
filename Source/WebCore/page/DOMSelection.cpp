@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2009, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -196,6 +196,7 @@ void DOMSelection::collapse(Node* node, unsigned offset)
         return;
 
     // FIXME: Eliminate legacy editing positions
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
@@ -211,6 +212,7 @@ void DOMSelection::collapseToEnd(ExceptionCode& ec)
         return;
     }
 
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(selection.end(), DOWNSTREAM);
 }
 
@@ -226,6 +228,7 @@ void DOMSelection::collapseToStart(ExceptionCode& ec)
         return;
     }
 
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(selection.start(), DOWNSTREAM);
 }
 
@@ -245,6 +248,7 @@ void DOMSelection::setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* e
         return;
 
     // FIXME: Eliminate legacy editing positions
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(createLegacyEditingPosition(baseNode, baseOffset), createLegacyEditingPosition(extentNode, extentOffset), DOWNSTREAM);
 }
 
@@ -257,6 +261,7 @@ void DOMSelection::setPosition(Node* node, unsigned offset)
         return;
 
     // FIXME: Eliminate legacy editing positions
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().moveTo(createLegacyEditingPosition(node, offset), DOWNSTREAM);
 }
 
@@ -307,6 +312,7 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     else
         return;
 
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().modify(alter, direction, granularity);
 }
 
@@ -324,6 +330,7 @@ void DOMSelection::extend(Node& node, unsigned offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
+    Ref<Frame> protector(*m_frame);
     m_frame->selection().setExtent(createLegacyEditingPosition(&node, offset), DOWNSTREAM);
 }
 
@@ -360,6 +367,8 @@ void DOMSelection::addRange(Range& range)
 {
     if (!m_frame)
         return;
+
+    Ref<Frame> protector(*m_frame);
 
     FrameSelection& selection = m_frame->selection();
     if (selection.isNone()) {
@@ -411,6 +420,7 @@ void DOMSelection::deleteFromDocument()
     if (!selectedRange)
         return;
 
+    Ref<Frame> protector(*m_frame);
     selectedRange->deleteContents(ASSERT_NO_EXCEPTION);
 
     setBaseAndExtent(&selectedRange->startContainer(), selectedRange->startOffset(), &selectedRange->startContainer(), selectedRange->startOffset());

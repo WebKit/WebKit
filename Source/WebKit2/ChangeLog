@@ -1,3 +1,19 @@
+2016-10-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Do a better job of protecting Frame objects in the context of JavaScript calls
+        https://bugs.webkit.org/show_bug.cgi?id=164163
+        <rdar://problem/28955249>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage): Protected the Frame.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::insertTextAsync): Ditto.
+        (WebKit::WebPage::setComposition): Ditto.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::insertDictatedTextAsync): Ditto.
+
 2016-10-21  David Kilzer  <ddkilzer@apple.com>
 
         Bug 163762: IntSize::area() should used checked arithmetic

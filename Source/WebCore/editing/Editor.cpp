@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2011, 2013-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1786,6 +1786,8 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
 void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, unsigned selectionStart, unsigned selectionEnd)
 {
+    Ref<Frame> protection(m_frame);
+
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     setIgnoreCompositionSelectionChange(true);
@@ -1919,6 +1921,8 @@ void Editor::learnSpelling()
 #if !PLATFORM(IOS)
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 {
+    Ref<Frame> protection(m_frame);
+
     // The basic approach is to search in two phases - from the selection end to the end of the doc, and
     // then we wrap and search from the doc start to (approximately) where we started.
     
@@ -2237,6 +2241,8 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
 
 void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)
 {
+    Ref<Frame> protection(m_frame);
+
 #if PLATFORM(IOS)
     UNUSED_PARAM(selectionAfterTyping);
     UNUSED_PARAM(doReplacement);
@@ -2487,6 +2493,7 @@ static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingPara
 
 void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vector<TextCheckingResult>& results)
 {
+    Ref<Frame> protection(m_frame);
     ASSERT(request);
 
     TextCheckingTypeMask textCheckingOptions = request->data().mask();
@@ -2945,6 +2952,8 @@ void Editor::dismissCorrectionPanelAsIgnored()
 
 void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, FrameSelection::SetSelectionOptions options)
 {
+    Ref<Frame> protection(m_frame);
+
     // If the new selection is orphaned, then don't update the selection.
     if (newSelection.start().isOrphan() || newSelection.end().isOrphan())
         return;
@@ -3135,6 +3144,8 @@ void Editor::applyEditingStyleToElement(Element* element) const
 
 bool Editor::findString(const String& target, FindOptions options)
 {
+    Ref<Frame> protection(m_frame);
+
     VisibleSelection selection = m_frame.selection().selection();
 
     RefPtr<Range> resultRange = rangeOfString(target, selection.firstRange().get(), options);

@@ -259,6 +259,7 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     if (&node->document() != m_frame.document())
         return;
 
+    Ref<Frame> protector(m_frame);
     RefPtr<Range> range = Range::create(node->document(), Position(node, Position::PositionIsBeforeAnchor), Position(node, Position::PositionIsAfterAnchor));
     m_frame.selection().setSelection(VisibleSelection(*range), FrameSelection::DoNotSetFocus);
 

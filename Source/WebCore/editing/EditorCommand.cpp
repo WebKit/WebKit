@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2008, 2014, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Igalia S.L.
  *
@@ -1061,6 +1061,7 @@ static bool executeSuperscript(Frame& frame, Event*, EditorCommandSource source,
 
 static bool executeSwapWithMark(Frame& frame, Event*, EditorCommandSource, const String&)
 {
+    Ref<Frame> protector(frame);
     const VisibleSelection& mark = frame.editor().mark();
     const VisibleSelection& selection = frame.selection().selection();
     if (mark.isNone() || selection.isNone()) {
