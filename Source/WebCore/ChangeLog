@@ -1,3 +1,58 @@
+2016-12-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Move Grid into GridSizingData
+        https://bugs.webkit.org/show_bug.cgi?id=165654
+
+        Reviewed by Darin Adler.
+
+        The grid track sizing algorithm has been using the m_grid attribute from RenderGrid to
+        compute the sizes of the tracks unconditionally. However the goal is to make it work against
+        a generic instance of the Grid class, so that the intrinsic size computation and the layout
+        processes could be effectively decoupled.
+
+        Instead of passing the Grid as a new argument to all the track sizing algorithm methods we
+        leverage the existence of GridSizingData which is already passed to all of them. This data
+        structure holds from now on a reference to the Grid instance so that the track sizing
+        algorithm could use it.
+
+        No new tests as this is a refactoring.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::GridSizingData::GridSizingData):
+        (WebCore::RenderGrid::GridSizingData::grid):
+        (WebCore::RenderGrid::computeTrackBasedLogicalHeight):
+        (WebCore::RenderGrid::computeTrackSizesForDirection):
+        (WebCore::RenderGrid::repeatTracksSizingIfNeeded):
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::guttersSize):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths):
+        (WebCore::RenderGrid::computeIntrinsicLogicalHeight):
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::computeFlexSizedTracksGrowth):
+        (WebCore::RenderGrid::computeFlexFactorUnitSize):
+        (WebCore::RenderGrid::findFlexFactorUnitSize):
+        (WebCore::RenderGrid::rawGridTrackSize):
+        (WebCore::RenderGrid::gridTrackSize):
+        (WebCore::RenderGrid::spanningItemCrossesFlexibleSizedTracks):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForNonSpanningItems):
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctionsForItems):
+        (WebCore::RenderGrid::tracksAreWiderThanMinTrackBreadth):
+        (WebCore::RenderGrid::trackSizesForComputedStyle):
+        (WebCore::RenderGrid::applyStretchAlignmentToTracksIfNeeded):
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::offsetAndBreadthForPositionedChild):
+        (WebCore::RenderGrid::assumedRowsSizeForOrthogonalChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChild):
+        (WebCore::RenderGrid::gridAreaBreadthForChildIncludingAlignmentOffsets):
+        (WebCore::RenderGrid::populateGridPositionsForDirection):
+        (WebCore::RenderGrid::columnAxisOffsetForChild):
+        (WebCore::RenderGrid::rowAxisOffsetForChild):
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        (WebCore::RenderGrid::numTracks):
+        (WebCore::RenderGrid::paintChildren):
+        * rendering/RenderGrid.h:
+
 2016-12-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Improve user agent construction
