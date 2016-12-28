@@ -1,3 +1,14 @@
+2016-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        Ignore out-of-flow siblings when searching for a spanner candidate.
+        https://bugs.webkit.org/show_bug.cgi?id=164042.
+        <rdar://problem/28758456>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/crash-when-spanner-candidate-is-out-of-flow-expected.txt: Added.
+        * fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html: Added.
+
 2016-10-20  Dean Jackson  <dino@apple.com>
 
         SVG should not paint selection within a mask
