@@ -50,6 +50,7 @@ public:
 private:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&& completionHandler) override
     {
+        // FIXME: Follow redirects for hyperlink auditing. See <https://bugs.webkit.org/show_bug.cgi?id=162580>.
         completionHandler({ });
         delete this;
     }

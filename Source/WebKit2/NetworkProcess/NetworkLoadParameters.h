@@ -41,6 +41,7 @@ public:
     WebCore::ContentSniffingPolicy contentSniffingPolicy { WebCore::SniffContent };
     WebCore::StoredCredentials allowStoredCredentials { WebCore::DoNotAllowStoredCredentials };
     WebCore::ClientCredentialPolicy clientCredentialPolicy { WebCore::ClientCredentialPolicy::CannotAskClientForCredentials };
+    bool shouldFollowRedirects { true };
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool defersLoading { false };
     bool needsCertificateInfo { false };

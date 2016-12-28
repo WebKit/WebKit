@@ -43,9 +43,10 @@ public:
         No,
     };
     
-    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks)
+    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects)
         : m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
+        , m_shouldFollowRedirects(shouldFollowRedirects)
         , m_usesAsyncCallbacks(useAsyncCallbacks)
     {
         m_handle = ResourceHandle::create(networkingContext, request, this, false, false);
@@ -56,6 +57,18 @@ public:
     }
 
 private:
+    ResourceRequest willSendRequest(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&) final
+    {
+        return m_shouldFollowRedirects ? request : ResourceRequest();
+    }
+    void willSendRequestAsync(ResourceHandle* handle, ResourceRequest&& request, ResourceResponse&&) final
+    {
+        if (m_shouldFollowRedirects) {
+            handle->continueWillSendRequest(WTFMove(request));
+            return;
+        }
+        delete this;
+    }
     void didReceiveResponse(ResourceHandle*, ResourceResponse&&) override { delete this; }
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) override { delete this; };
     void didFinishLoading(ResourceHandle*, double) override { delete this; }
@@ -76,6 +89,7 @@ private:
     RefPtr<ResourceHandle> m_handle;
     Timer m_timeoutTimer;
     bool m_shouldUseCredentialStorage;
+    bool m_shouldFollowRedirects;
     UsesAsyncCallbacks m_usesAsyncCallbacks;
 };
 

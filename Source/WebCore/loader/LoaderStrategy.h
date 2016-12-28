@@ -59,7 +59,7 @@ public:
     virtual void suspendPendingRequests() = 0;
     virtual void resumePendingRequests() = 0;
 
-    virtual void createPingHandle(NetworkingContext*, ResourceRequest&, bool shouldUseCredentialStorage) = 0;
+    virtual void createPingHandle(NetworkingContext*, ResourceRequest&, bool shouldUseCredentialStorage, bool shouldFollowRedirects) = 0;
 
 protected:
     virtual ~LoaderStrategy();

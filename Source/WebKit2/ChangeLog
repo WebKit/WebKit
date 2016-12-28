@@ -1,3 +1,29 @@
+2016-10-05  Daniel Bates  <dabates@apple.com>
+
+        Do not follow redirects when sending violation report
+        https://bugs.webkit.org/show_bug.cgi?id=162520
+        <rdar://problem/27957639>
+
+        Reviewed by Alex Christensen.
+
+        Update the non-Network Session WebKit2 implementation to follow redirect responses for a ping
+        request, if applicable. I did not update the Network Session implementation at this time. I
+        will fix it in <https://bugs.webkit.org/show_bug.cgi?id=162580>.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing): Tell PingHandle whether to follow redirects.
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode): Encode NetworkResourceLoadParameters::shouldFollowRedirects.
+        (WebKit::NetworkResourceLoadParameters::decode): Decode NetworkResourceLoadParameters::shouldFollowRedirects.
+        * NetworkProcess/PingLoad.h: Added FIXME comment to implement support for following redirects,
+        if applicable (for hyperlink auditing). See <https://bugs.webkit.org/show_bug.cgi?id=162580>
+        for more details.
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::createPingHandle): Modified to take a boolean whether to follow
+        redirects responses and set NetworkResourceLoadParameters::shouldFollowRedirects as appropriate.
+        * WebProcess/Network/WebLoaderStrategy.h:
+
 2016-09-19  Anders Carlsson  <andersca@apple.com>
 
         Suppress JavaScript prompts early on in certain cases

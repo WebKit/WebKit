@@ -331,7 +331,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     }
 }
 
-void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage)
+void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage, bool shouldFollowRedirects)
 {
     // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
     // It is not clear that we should send ping loads during that process anyways.
@@ -347,6 +347,7 @@ void WebLoaderStrategy::createPingHandle(NetworkingContext* networkingContext, R
     loadParameters.request = request;
     loadParameters.sessionID = webPage ? webPage->sessionID() : SessionID::defaultSessionID();
     loadParameters.allowStoredCredentials = shouldUseCredentialStorage ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    loadParameters.shouldFollowRedirects = shouldFollowRedirects;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::LoadPing(loadParameters), 0);
