@@ -85,8 +85,9 @@ public:
     int maxY() const { return y() + height(); }
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
-    
-    unsigned area() const { return m_size.area(); }
+
+    template <typename T = WTF::CrashOnOverflow>
+    Checked<unsigned, T> area() const { return m_size.area<T>(); }
 
     void setX(int x) { m_location.setX(x); }
     void setY(int y) { m_location.setY(y); }

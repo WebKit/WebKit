@@ -103,7 +103,7 @@ SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const
     const SubsamplingLevel maxSubsamplingLevel = 3;
     
     for (SubsamplingLevel level = 0; level < maxSubsamplingLevel; ++level) {
-        if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
+        if (frameSizeAtIndex(0, level).area().unsafeGet() < maximumImageAreaBeforeSubsampling)
             return level;
     }
     
@@ -206,7 +206,7 @@ IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsampling
 
 unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
-    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
+    return (frameSizeAtIndex(index, subsamplingLevel).area() * 4).unsafeGet();
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)

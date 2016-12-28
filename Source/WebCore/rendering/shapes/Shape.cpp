@@ -196,7 +196,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         int minBufferY = std::max(0, marginRect.y() - imageRect.y());
         int maxBufferY = std::min(imageRect.height(), marginRect.maxY() - imageRect.y());
 
-        if (static_cast<unsigned>(imageRect.width() * imageRect.height() * 4) == pixelArrayLength) {
+        if ((imageRect.area() * 4).unsafeGet() == pixelArrayLength) {
             for (int y = minBufferY; y < maxBufferY; ++y) {
                 int startX = -1;
                 for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {

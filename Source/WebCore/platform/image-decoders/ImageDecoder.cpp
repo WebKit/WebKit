@@ -291,7 +291,7 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
     if (m_frameBufferCache.size() <= index)
         return 0;
     // FIXME: Use the dimension of the requested frame.
-    return m_size.area() * sizeof(ImageFrame::PixelData);
+    return (m_size.area() * sizeof(ImageFrame::PixelData)).unsafeGet();
 }
 
 float ImageDecoder::frameDurationAtIndex(size_t index)

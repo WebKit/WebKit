@@ -40,9 +40,9 @@ namespace WebKit {
 
 static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
 
-size_t ShareableBitmap::numBytesForSize(const WebCore::IntSize& size)
+Checked<unsigned, RecordOverflow> ShareableBitmap::numBytesForSize(const WebCore::IntSize& size)
 {
-    return cairo_format_stride_for_width(cairoFormat, size.width()) * size.height();
+    return Checked<unsigned, RecordOverflow>(cairo_format_stride_for_width(cairoFormat, size.width())) * size.height();
 }
 
 static inline RefPtr<cairo_surface_t> createSurfaceFromData(void* data, const WebCore::IntSize& size)

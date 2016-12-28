@@ -66,10 +66,12 @@ void ShareableBitmap::Handle::clear()
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags)
 {
-    size_t numBytes = numBytesForSize(size);
-    
+    auto numBytes = numBytesForSize(size);
+    if (numBytes.hasOverflowed())
+        return nullptr;
+
     void* data = 0;
-    if (!tryFastMalloc(numBytes).getValue(data))
+    if (!tryFastMalloc(numBytes.unsafeGet()).getValue(data))
         return nullptr;
 
     return adoptRef(new ShareableBitmap(size, flags, data));
@@ -77,9 +79,11 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags
 
 RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Flags flags)
 {
-    size_t numBytes = numBytesForSize(size);
+    auto numBytes = numBytesForSize(size);
+    if (numBytes.hasOverflowed())
+        return nullptr;
 
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(numBytes);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(numBytes.unsafeGet());
     if (!sharedMemory)
         return nullptr;
 
@@ -90,9 +94,14 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags
 {
     ASSERT(sharedMemory);
 
-    size_t numBytes = numBytesForSize(size);
-    ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
-    
+    auto numBytes = numBytesForSize(size);
+    if (numBytes.hasOverflowed())
+        return nullptr;
+    if (sharedMemory->size() < numBytes.unsafeGet()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
 

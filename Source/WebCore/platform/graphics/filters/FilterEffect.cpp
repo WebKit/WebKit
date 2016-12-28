@@ -237,7 +237,7 @@ PassRefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& r
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
-    auto imageData = Uint8ClampedArray::createUninitialized(scaledSize.width() * scaledSize.height() * 4);
+    auto imageData = Uint8ClampedArray::createUninitialized((scaledSize.area() * 4).unsafeGet());
     copyUnmultipliedImage(imageData.get(), rect);
     return WTFMove(imageData);
 }
@@ -247,7 +247,7 @@ PassRefPtr<Uint8ClampedArray> FilterEffect::asPremultipliedImage(const IntRect& 
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
     scaledSize.scale(m_filter.filterScale());
-    auto imageData = Uint8ClampedArray::createUninitialized(scaledSize.width() * scaledSize.height() * 4);
+    auto imageData = Uint8ClampedArray::createUninitialized((scaledSize.area() * 4).unsafeGet());
     copyPremultipliedImage(imageData.get(), rect);
     return WTFMove(imageData);
 }
@@ -316,14 +316,14 @@ void FilterEffect::copyUnmultipliedImage(Uint8ClampedArray* destination, const I
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
-            m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(inputSize.width() * inputSize.height() * 4);
+            m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized((inputSize.area() * 4).unsafeGet());
             if (!m_unmultipliedImageResult) {
                 WTFLogAlways("FilterEffect::copyUnmultipliedImage Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
                 return;
             }
             unsigned char* sourceComponent = m_premultipliedImageResult->data();
             unsigned char* destinationComponent = m_unmultipliedImageResult->data();
-            unsigned char* end = sourceComponent + (inputSize.width() * inputSize.height() * 4);
+            unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
             while (sourceComponent < end) {
                 int alpha = sourceComponent[3];
                 if (alpha) {
@@ -356,14 +356,14 @@ void FilterEffect::copyPremultipliedImage(Uint8ClampedArray* destination, const 
             IntSize inputSize(m_absolutePaintRect.size());
             ASSERT(!ImageBuffer::sizeNeedsClamping(inputSize));
             inputSize.scale(m_filter.filterScale());
-            m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(inputSize.width() * inputSize.height() * 4);
+            m_premultipliedImageResult = Uint8ClampedArray::createUninitialized((inputSize.area() * 4).unsafeGet());
             if (!m_premultipliedImageResult) {
                 WTFLogAlways("FilterEffect::copyPremultipliedImage Unable to create buffer. Requested size was %d x %d\n", inputSize.width(), inputSize.height());
                 return;
             }
             unsigned char* sourceComponent = m_unmultipliedImageResult->data();
             unsigned char* destinationComponent = m_premultipliedImageResult->data();
-            unsigned char* end = sourceComponent + (inputSize.width() * inputSize.height() * 4);
+            unsigned char* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
             while (sourceComponent < end) {
                 int alpha = sourceComponent[3];
                 destinationComponent[0] = static_cast<int>(sourceComponent[0]) * alpha / 255;
@@ -403,7 +403,7 @@ Uint8ClampedArray* FilterEffect::createUnmultipliedImageResult()
     IntSize resultSize(m_absolutePaintRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
-    m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized(resultSize.width() * resultSize.height() * 4);
+    m_unmultipliedImageResult = Uint8ClampedArray::createUninitialized((resultSize.area() * 4).unsafeGet());
     return m_unmultipliedImageResult.get();
 }
 
@@ -417,7 +417,7 @@ Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
     IntSize resultSize(m_absolutePaintRect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(resultSize));
     resultSize.scale(m_filter.filterScale());
-    m_premultipliedImageResult = Uint8ClampedArray::createUninitialized(resultSize.width() * resultSize.height() * 4);
+    m_premultipliedImageResult = Uint8ClampedArray::createUninitialized((resultSize.area() * 4).unsafeGet());
     return m_premultipliedImageResult.get();
 }
 

@@ -71,7 +71,7 @@ BitmapImage::BitmapImage(NativeImagePtr&& image, ImageObserver* observer)
     // Since we don't have a decoder, we can't figure out the image orientation.
     // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
     m_sizeRespectingOrientation = m_size = NativeImage::size(image);
-    m_decodedSize = m_size.area() * 4;
+    m_decodedSize = (m_size.area() * 4).unsafeGet();
     
     m_frames.grow(1);
     m_frames[0].m_hasAlpha = NativeImage::hasAlpha(image);
