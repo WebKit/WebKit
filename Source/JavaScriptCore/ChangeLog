@@ -1,3 +1,14 @@
+2016-09-13  Mark Lam  <mark.lam@apple.com>
+
+        DFG NewArrayBuffer node should watch for "have a bad time" state change.
+        https://bugs.webkit.org/show_bug.cgi?id=161927
+        <rdar://problem/27995222>
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2016-10-25  Christopher Reid  <Christopher.Reid@am.sony.com>
 
         jsc.cpp is leaking memory allocated by readline in runInteractive
