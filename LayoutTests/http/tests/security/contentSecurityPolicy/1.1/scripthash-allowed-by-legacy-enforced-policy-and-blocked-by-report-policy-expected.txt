@@ -8,6 +8,7 @@ Frame: '<!--framePath //<!--frame0-->-->'
 --------
 CSP report received:
 CONTENT_TYPE: application/csp-report
+HTTP_HOST: 127.0.0.1:8000
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.php
 REQUEST_METHOD: POST
 === POST DATA ===

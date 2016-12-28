@@ -3,6 +3,7 @@ CONSOLE MESSAGE: line 9: [Report Only] Refused to execute a script because its h
 ALERT: PASS
 CSP report received:
 CONTENT_TYPE: application/csp-report
+HTTP_HOST: 127.0.0.1:8000
 HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-and-enforce.php
 REQUEST_METHOD: POST
 === POST DATA ===
