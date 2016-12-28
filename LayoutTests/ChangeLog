@@ -1,3 +1,14 @@
+2016-12-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [Gardening] Remove INDIE_UI related entries from TestExpectation files.
+        https://bugs.webkit.org/show_bug.cgi?id=165881
+
+        Unreviewed.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-12-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Gardening on 28th Dec.

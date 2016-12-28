@@ -140,9 +140,6 @@ http/tests/download/ [ Skip ]
 # TODO Needs scheduleAsynchronousClick method for EventSender
 fast/events/popup-blocking-click-in-iframe.html [ Skip ]
 
-# TODO ENABLE(INDIE_UI) required
-indieui/ [ Skip ]
-
 # TODO This port doesn't support Geolocation.
 fast/dom/Geolocation/ [ Skip ]
 
@@ -3406,7 +3403,6 @@ fast/css/font_property_normal.html [ Failure ]
 fast/css/image-rendering-parsing.html [ Failure ]
 fast/css/shadow-multiple.html [ Failure ]
 fast/css/word-space-extra.html [ Failure ]
-fast/custom-elements/reactions-for-indieui.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html [ Failure ]
