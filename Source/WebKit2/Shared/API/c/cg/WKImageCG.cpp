@@ -38,23 +38,21 @@ using namespace WebCore;
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
 {
     WebImage* webImage = toImpl(imageRef);
-    if (!webImage || !webImage->bitmap())
-        return 0;
+    if (!webImage)
+        return nullptr;
 
-    return webImage->bitmap()->makeCGImageCopy().leakRef();
+    return webImage->bitmap().makeCGImageCopy().leakRef();
 }
 
 WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
 {
     if (!imageRef)
-        return 0;
+        return nullptr;
     
     IntSize imageSize(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
     auto webImage = WebImage::create(imageSize, toImageOptions(options));
-    if (!webImage->bitmap())
-        return 0;
 
-    auto graphicsContext = webImage->bitmap()->createGraphicsContext();
+    auto graphicsContext = webImage->bitmap().createGraphicsContext();
     FloatRect rect(FloatPoint(0, 0), imageSize);
     graphicsContext->clearRect(rect);
     graphicsContext->drawNativeImage(imageRef, imageSize, rect, rect);

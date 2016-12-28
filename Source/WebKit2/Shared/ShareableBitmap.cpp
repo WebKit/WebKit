@@ -127,7 +127,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemo
     return create(handle.m_size, handle.m_flags, WTFMove(sharedMemory));
 }
 
-bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection protection)
+bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection protection) const
 {
     ASSERT(isBackedBySharedMemory());
 

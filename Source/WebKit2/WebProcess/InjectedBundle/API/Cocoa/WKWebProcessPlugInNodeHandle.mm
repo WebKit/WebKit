@@ -68,10 +68,10 @@ using namespace WebKit;
 - (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
     RefPtr<WebImage> image = _nodeHandle->renderedImage(options);
-    if (!image || !image->bitmap())
+    if (!image)
         return nil;
 
-    return [[[UIImage alloc] initWithCGImage:image->bitmap()->makeCGImage().get()] autorelease];
+    return [[[UIImage alloc] initWithCGImage:image->bitmap().makeCGImage().get()] autorelease];
 }
 #endif
 
@@ -79,10 +79,10 @@ using namespace WebKit;
 - (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options
 {
     RefPtr<WebImage> image = _nodeHandle->renderedImage(options);
-    if (!image || !image->bitmap())
+    if (!image)
         return nil;
 
-    return [[[NSImage alloc] initWithCGImage:image->bitmap()->makeCGImage().get() size:NSZeroSize] autorelease];
+    return [[[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:NSZeroSize] autorelease];
 }
 #endif
 

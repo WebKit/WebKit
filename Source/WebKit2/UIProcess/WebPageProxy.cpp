@@ -4434,7 +4434,12 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
 
 void WebPageProxy::didGetImageForFindMatch(const ShareableBitmap::Handle& contentImageHandle, uint32_t matchIndex)
 {
-    m_findMatchesClient->didGetImageForMatchResult(this, WebImage::create(ShareableBitmap::create(contentImageHandle)).get(), matchIndex);
+    auto bitmap = ShareableBitmap::create(contentImageHandle);
+    if (!bitmap) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_findMatchesClient->didGetImageForMatchResult(this, WebImage::create(bitmap.releaseNonNull()).ptr(), matchIndex);
 }
 
 void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)

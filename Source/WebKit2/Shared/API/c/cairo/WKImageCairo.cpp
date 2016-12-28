@@ -39,14 +39,14 @@ using namespace WebCore;
 cairo_surface_t* WKImageCreateCairoSurface(WKImageRef imageRef)
 {
     // We cannot pass a RefPtr through the API here, so we just leak the reference.
-    return toImpl(imageRef)->bitmap()->createCairoSurface().leakRef();
+    return toImpl(imageRef)->bitmap().createCairoSurface().leakRef();
 }
 
 WKImageRef WKImageCreateFromCairoSurface(cairo_surface_t* surface, WKImageOptions options)
 {
     IntSize imageSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
     auto webImage = WebImage::create(imageSize, toImageOptions(options));
-    auto graphicsContext = webImage->bitmap()->createGraphicsContext();
+    auto graphicsContext = webImage->bitmap().createGraphicsContext();
 
     cairo_t* cr = graphicsContext->platformContext()->cr();
     cairo_set_source_surface(cr, surface, 0, 0);

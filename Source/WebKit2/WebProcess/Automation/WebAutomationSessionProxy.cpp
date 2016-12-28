@@ -534,7 +534,7 @@ void WebAutomationSessionProxy::takeScreenshot(uint64_t pageID, uint64_t callbac
 
     RefPtr<WebImage> image = page->scaledSnapshotWithOptions(snapshotRect, 1, SnapshotOptionsShareable);
     if (image)
-        image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, String()), 0);    
 }

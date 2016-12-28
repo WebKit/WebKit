@@ -248,11 +248,11 @@ static RetainPtr<NSArray> arrayFromRects(const Vector<IntRect>& matchRects)
     if (_imageReplyCallbacks.isEmpty())
         return;
 
-    IntSize size = image->bitmap()->size();
+    IntSize size = image->bitmap().size();
     size.scale(1 / _page->deviceScaleFactor());
 
     auto imageCallback = _imageReplyCallbacks.takeFirst();
-    imageCallback(adoptNS([[NSImage alloc] initWithCGImage:image->bitmap()->makeCGImage().get() size:size]).get());
+    imageCallback(adoptNS([[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:size]).get());
 }
 
 #pragma mark - WKTextFinderMatch callbacks

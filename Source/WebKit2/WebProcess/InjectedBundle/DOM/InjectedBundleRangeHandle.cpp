@@ -157,7 +157,7 @@ PassRefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions op
 
     frame->selection().setSelection(oldSelection);
 
-    return WebImage::create(backingStore);
+    return WebImage::create(backingStore.releaseNonNull());
 }
 
 } // namespace WebKit

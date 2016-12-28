@@ -1,3 +1,54 @@
+2016-12-27  Alex Christensen  <achristensen@webkit.org>
+
+        reduce PassRefPtr use in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=166452
+
+        Reviewed by Yusuke Suzuki.
+
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        (WKImageCreateFromCGImage):
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::createHandle):
+        * Shared/ShareableBitmap.h:
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+        (WebKit::WebImage::WebImage):
+        * Shared/WebImage.h:
+        (WebKit::WebImage::bitmap):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didGetImageForFindMatch):
+        * UIProcess/mac/WKTextFinderClient.mm:
+        (-[WKTextFinderClient didGetImageForMatchResult:]):
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::takeScreenshot):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        (-[WKWebProcessPlugInNodeHandle renderedImageWithOptions:]):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        (WebKit::InjectedBundleNodeHandle::renderedImage):
+        (WebKit::InjectedBundleNodeHandle::visibleRange):
+        (WebKit::InjectedBundleNodeHandle::htmlTableCellElementCellAbove):
+        (WebKit::InjectedBundleNodeHandle::documentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlFrameElementContentFrame):
+        (WebKit::InjectedBundleNodeHandle::htmlIFrameElementContentFrame):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::takeSnapshot):
+        (WebKit::WebPage::snapshotAtSize):
+        (WebKit::WebPage::snapshotNode):
+        (WebKit::WebPage::drawRectToImage):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setTopOverhangImage):
+        (WebKit::WebPage::setBottomOverhangImage):
+
 2016-12-27  Emanuele Aina  <emanuele.aina@collabora.com>
 
         Ensure NetworkProcess is ready before whitelisting TLS certificates

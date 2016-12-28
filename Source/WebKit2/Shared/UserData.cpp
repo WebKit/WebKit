@@ -217,8 +217,8 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         auto& image = static_cast<const WebImage&>(object);
 
         ShareableBitmap::Handle handle;
-        ASSERT(!image.bitmap() || image.bitmap()->isBackedBySharedMemory());
-        if (!image.bitmap() || !image.bitmap()->isBackedBySharedMemory() || !image.bitmap()->createHandle(handle)) {
+        ASSERT(image.bitmap().isBackedBySharedMemory());
+        if (!image.bitmap().isBackedBySharedMemory() || !image.bitmap().createHandle(handle)) {
             // Initial false indicates no allocated bitmap or is not shareable.
             encoder << false;
             break;
@@ -420,7 +420,11 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!decoder.decode(handle))
             return false;
 
-        result = WebImage::create(ShareableBitmap::create(handle));
+        auto bitmap = ShareableBitmap::create(handle);
+        if (!bitmap)
+            return false;
+
+        result = WebImage::create(bitmap.releaseNonNull());
         break;
     }
 

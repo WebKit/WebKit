@@ -23,15 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebImage_h
-#define WebImage_h
+#pragma once
 
 #include "APIObject.h"
 #include "ImageOptions.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
-    class IntSize;
+class IntSize;
 }
 
 namespace WebKit {
@@ -42,20 +41,19 @@ class ShareableBitmap;
 
 class WebImage : public API::ObjectImpl<API::Object::Type::Image> {
 public:
-    static PassRefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions);
-    static PassRefPtr<WebImage> create(PassRefPtr<ShareableBitmap>);
+    static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions);
+    static Ref<WebImage> create(Ref<ShareableBitmap>&&);
     ~WebImage();
     
     const WebCore::IntSize& size() const;
 
-    ShareableBitmap* bitmap() const { return m_bitmap.get(); }
+    ShareableBitmap& bitmap() { return m_bitmap.get(); }
+    const ShareableBitmap& bitmap() const { return m_bitmap.get(); }
 
 private:
-    WebImage(PassRefPtr<ShareableBitmap>);
+    WebImage(Ref<ShareableBitmap>&&);
 
-    RefPtr<ShareableBitmap> m_bitmap;
+    Ref<ShareableBitmap> m_bitmap;
 };
 
 } // namespace WebKit
-
-#endif // WebImage_h

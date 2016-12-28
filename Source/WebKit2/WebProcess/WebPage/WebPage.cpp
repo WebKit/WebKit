@@ -1859,7 +1859,7 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
     ShareableBitmap::Handle handle;
     if (image)
-        image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
     send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
 }
@@ -1900,10 +1900,8 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
     float scaleFactor = std::max(horizontalScaleFactor, verticalScaleFactor);
 
     auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
-    if (!snapshot->bitmap())
-        return nullptr;
 
-    auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
 
     if (options & SnapshotOptionsPrinting) {
         PrintContext::spoolAllPagesWithBoundaries(*coreFrame, *graphicsContext, snapshotRect.size());
@@ -1969,10 +1967,8 @@ PassRefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions 
     }
 
     auto snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options));
-    if (!snapshot->bitmap())
-        return nullptr;
 
-    auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
         double deviceScaleFactor = corePage()->deviceScaleFactor();
@@ -4267,6 +4263,10 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
 #endif
 
         auto bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
+        if (!bitmap) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
         auto graphicsContext = bitmap->createGraphicsContext();
 
         float printingScale = static_cast<float>(imageSize.width()) / rect.width();
@@ -4284,14 +4284,14 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
             m_printContext->spoolRect(*graphicsContext, rect);
         }
 
-        image = WebImage::create(WTFMove(bitmap));
+        image = WebImage::create(bitmap.releaseNonNull());
     }
 #endif
 
     ShareableBitmap::Handle handle;
 
     if (image)
-        image->bitmap()->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        image->bitmap().createHandle(handle, SharedMemory::Protection::ReadOnly);
 
     send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
 }

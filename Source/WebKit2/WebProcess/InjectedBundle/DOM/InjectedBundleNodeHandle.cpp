@@ -134,17 +134,15 @@ IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced)
     return m_node->pixelSnappedRenderRect(isReplaced);
 }
 
-static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, SnapshotOptions options)
+static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, SnapshotOptions options)
 {
     IntSize bitmapSize = rect.size();
     float scaleFactor = frameView->frame().page()->deviceScaleFactor();
     bitmapSize.scale(scaleFactor);
 
     auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
-    if (!snapshot->bitmap())
-        return 0;
 
-    auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
     graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
     graphicsContext->applyDeviceScaleFactor(scaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
@@ -167,7 +165,7 @@ static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& re
     return snapshot;
 }
 
-PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options)
+RefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options)
 {
     Frame* frame = m_node->document().frame();
     if (!frame)
@@ -193,7 +191,7 @@ PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions opt
     return image;
 }
 
-PassRefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()
+RefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()
 {
     VisiblePosition start = firstPositionInNode(m_node.ptr());
     VisiblePosition end = lastPositionInNode(m_node.ptr());
@@ -286,7 +284,7 @@ bool InjectedBundleNodeHandle::isTextField() const
     return downcast<HTMLInputElement>(m_node.get()).isText();
 }
 
-PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
+RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()
 {
     if (!is<HTMLTableCellElement>(m_node))
         return nullptr;
@@ -294,7 +292,7 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElem
     return getOrCreate(downcast<HTMLTableCellElement>(m_node.get()).cellAbove());
 }
 
-PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
+RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
 {
     if (!m_node->isDocumentNode())
         return nullptr;
@@ -306,7 +304,7 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
     return WebFrame::fromCoreFrame(*frame);
 }
 
-PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
+RefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
 {
     if (!is<HTMLFrameElement>(m_node))
         return nullptr;
@@ -318,7 +316,7 @@ PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
     return WebFrame::fromCoreFrame(*frame);
 }
 
-PassRefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
+RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
 {
     if (!is<HTMLIFrameElement>(m_node))
         return nullptr;

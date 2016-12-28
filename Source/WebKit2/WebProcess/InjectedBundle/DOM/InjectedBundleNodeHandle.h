@@ -23,20 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleNodeHandle_h
-#define InjectedBundleNodeHandle_h
+#pragma once
 
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-    class IntRect;
-    class Node;
-    enum class AutoFillButtonType : uint8_t;
+class IntRect;
+class Node;
+enum class AutoFillButtonType : uint8_t;
 }
 
 namespace WebKit {
@@ -63,8 +61,8 @@ public:
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds();
     WebCore::IntRect renderRect(bool*);
-    PassRefPtr<WebImage> renderedImage(SnapshotOptions);
-    PassRefPtr<InjectedBundleRangeHandle> visibleRange();
+    RefPtr<WebImage> renderedImage(SnapshotOptions);
+    RefPtr<InjectedBundleRangeHandle> visibleRange();
     void setHTMLInputElementValueForUser(const String&);
     void setHTMLInputElementSpellcheckEnabled(bool);
     bool isHTMLInputElementAutoFilled() const;
@@ -76,11 +74,11 @@ public:
     bool htmlTextAreaElementLastChangeWasUserEdit();
     bool isTextField() const;
     
-    PassRefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
+    RefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 
-    PassRefPtr<WebFrame> documentFrame();
-    PassRefPtr<WebFrame> htmlFrameElementContentFrame();
-    PassRefPtr<WebFrame> htmlIFrameElementContentFrame();
+    RefPtr<WebFrame> documentFrame();
+    RefPtr<WebFrame> htmlFrameElementContentFrame();
+    RefPtr<WebFrame> htmlIFrameElementContentFrame();
 
 private:
     static Ref<InjectedBundleNodeHandle> create(WebCore::Node&);
@@ -90,5 +88,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // InjectedBundleNodeHandle_h
