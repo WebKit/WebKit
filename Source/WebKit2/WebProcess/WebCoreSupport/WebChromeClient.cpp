@@ -379,8 +379,19 @@ void WebChromeClient::closeWindowSoon()
     m_page->sendClose();
 }
 
+static bool shouldSuppressJavaScriptDialogs(Frame& frame)
+{
+    if (frame.loader().opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())
+        return true;
+
+    return false;
+}
+
 void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 {
+    if (shouldSuppressJavaScriptDialogs(*frame))
+        return;
+
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
@@ -394,6 +405,9 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 
 bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
+    if (shouldSuppressJavaScriptDialogs(*frame))
+        return false;
+
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
@@ -411,6 +425,9 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
+    if (shouldSuppressJavaScriptDialogs(*frame))
+        return false;
+
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
