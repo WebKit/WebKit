@@ -33,6 +33,7 @@
 #include "ScriptArguments.h"
 
 #include "JSCInlines.h"
+#include "ProxyObject.h"
 #include "ScriptValue.h"
 
 namespace Inspector {
@@ -84,6 +85,12 @@ bool ScriptArguments::getFirstArgumentAsString(String& result)
     if (!globalState()) {
         ASSERT_NOT_REACHED();
         return false;
+    }
+
+    JSC::JSValue value = argumentAt(0).jsValue();
+    if (JSC::jsDynamicCast<JSC::ProxyObject*>(value)) {
+        result = ASCIILiteral("[object Proxy]");
+        return true;
     }
 
     result = argumentAt(0).toString(globalState());

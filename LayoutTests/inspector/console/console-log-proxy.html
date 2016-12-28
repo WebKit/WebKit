@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerProxyConsoleLog() {
+    window.accessedHandlerGet = false;
+
+    let proxy = new Proxy({foo: 1}, {
+        get(target, name, receiver) {
+            window.accessedHandlerGet = true;
+            return target[name];
+        }
+    });
+
+    console.log(proxy);
+}
+
+function triggerProxyAndPrimitiveConsoleLog() {
+    window.accessedHandlerGet = false;
+
+    let proxy = new Proxy({bar: 2}, {
+        get(target, name, receiver) {
+            window.accessedHandlerGet = true;
+            console.log(1);
+            return target[name];
+        }
+    });
+
+    console.log(0);
+    console.log(proxy);
+    console.log(1);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("console.log.proxy");
+
+    suite.addTestCase({
+        name: "BasicProxyLog",
+        description: "console.log of a Proxy object should not trigger proxy get trap.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage("triggerProxyConsoleLog()", () => {
+                InspectorTest.evaluateInPage("window.accessedHandlerGet", (error, result) => {
+                    let value = WebInspector.RemoteObject.fromPayload(result).value;
+                    InspectorTest.expectEqual(value, false, "Logging Proxy objects should not have triggered get trap.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "AvoidTrapWhenCheckingConsoleRepeat",
+        description: "console.log repeat checking should not trigger proxy get trap.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage("triggerProxyAndPrimitiveConsoleLog()", () => {
+                InspectorTest.evaluateInPage("window.accessedHandlerGet", (error, result) => {
+                    let value = WebInspector.RemoteObject.fromPayload(result).value;
+                    InspectorTest.expectEqual(value, false, "Logging Proxy objects and primitives should not have triggered get trap.");
+                    resolve();
+                });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the console.log with Proxy objects.</p>
+</body>
+</html>

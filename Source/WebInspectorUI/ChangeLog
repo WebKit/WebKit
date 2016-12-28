@@ -1,3 +1,15 @@
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve support for logging Proxy objects in console
+        https://bugs.webkit.org/show_bug.cgi?id=163323
+        <rdar://problem/28432553>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatParameter):
+        Treat a Proxy like any other object.
+
 2016-09-27  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Mac defaults are used for key shortcuts on Linux

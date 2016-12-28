@@ -1,3 +1,51 @@
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve support for logging Proxy objects in console
+        https://bugs.webkit.org/show_bug.cgi?id=163323
+        <rdar://problem/28432553>
+
+        Reviewed by Timothy Hatcher.
+
+        This is based off of similiar patches in Blink for Proxy handling.
+
+        * bindings/ScriptValue.cpp:
+        (Deprecated::ScriptValue::isEqual):
+        Use strict equality. This is the intent, and it prevents the possibility of triggering
+        primitive conversion on objects in previous ConsoleMessage argument lists.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._propertyDescriptors):
+        Bail if the object is a Proxy.
+
+        (InjectedScript.prototype._describe):
+        Provide a friendlier name, "Proxy" instead of "ProxyObject".
+        
+        (InjectedScript.RemoteObject):
+        When generating a preview for a Proxy object, generate it from the final target
+        and mark it as lossy so that the object can always be expanded to get the internal
+        target/handler properties.
+
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        New subtype for Proxy objects.
+
+        (Inspector::JSInjectedScriptHost::proxyTargetValue):
+        Resolve the final target value for a Proxy.
+
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionProxyTargetValue):
+        Add the new method.
+
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::getFirstArgumentAsString):
+        Avoid triggering Proxy traps on a Proxy object when getting a quick
+        string description for ConsoleMessages.
+
+        * inspector/protocol/Runtime.json:
+        Add new "proxy" subtype.
+
 2016-09-27  Filip Pizlo  <fpizlo@apple.com>
 
         B3::lowerMacros forgets to before->updatePredecessorsAfter() when lowering ChillMod on ARM64

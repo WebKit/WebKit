@@ -168,6 +168,8 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         return jsNontrivialString(exec, ASCIILiteral("date"));
     if (value.inherits(RegExpObject::info()))
         return jsNontrivialString(exec, ASCIILiteral("regexp"));
+    if (value.inherits(ProxyObject::info()))
+        return jsNontrivialString(exec, ASCIILiteral("proxy"));
 
     if (value.inherits(JSMap::info()))
         return jsNontrivialString(exec, ASCIILiteral("map"));
@@ -383,6 +385,23 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
     }
 
     return jsUndefined();
+}
+
+JSValue JSInjectedScriptHost::proxyTargetValue(ExecState *exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->uncheckedArgument(0);
+    ProxyObject* proxy = jsDynamicCast<ProxyObject*>(value);
+    if (!proxy)
+        return jsUndefined();
+
+    JSObject* target = proxy->target();
+    while (ProxyObject* proxy = jsDynamicCast<ProxyObject*>(target))
+        target = proxy->target();
+
+    return target;
 }
 
 JSValue JSInjectedScriptHost::weakMapSize(ExecState* exec)

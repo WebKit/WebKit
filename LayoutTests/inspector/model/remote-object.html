@@ -170,6 +170,7 @@ function test()
 
         // Proxy
         {expression: "new Proxy({x:1, y:1}, {handler: true})"},
+        {expression: "new Proxy(new Proxy({foo:1, bar:1}, {}), {})"},
 
     // Classes
 

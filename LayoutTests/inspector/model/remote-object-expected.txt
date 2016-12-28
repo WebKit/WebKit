@@ -4659,64 +4659,60 @@ EXPRESSION: Promise.resolve({result:1})
 EXPRESSION: new Proxy({x:1, y:1}, {handler: true})
 {
   "_type": "object",
+  "_subtype": "proxy",
   "_objectId": "<filtered>",
-  "_description": "ProxyObject",
+  "_description": "Proxy",
   "_preview": {
     "_listeners": null,
     "_type": "object",
-    "_description": "ProxyObject",
-    "_lossless": true,
+    "_subtype": "proxy",
+    "_description": "Proxy",
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
         "_listeners": null,
-        "_name": "target",
-        "_type": "object",
-        "_valuePreview": {
-          "_listeners": null,
-          "_type": "object",
-          "_description": "Object",
-          "_lossless": true,
-          "_overflow": false,
-          "_properties": [
-            {
-              "_listeners": null,
-              "_name": "x",
-              "_type": "number",
-              "_value": "1"
-            },
-            {
-              "_listeners": null,
-              "_name": "y",
-              "_type": "number",
-              "_value": "1"
-            }
-          ],
-          "_entries": null
-        },
-        "_internal": true
+        "_name": "x",
+        "_type": "number",
+        "_value": "1"
       },
       {
         "_listeners": null,
-        "_name": "handler",
-        "_type": "object",
-        "_valuePreview": {
-          "_listeners": null,
-          "_type": "object",
-          "_description": "Object",
-          "_lossless": true,
-          "_overflow": false,
-          "_properties": [
-            {
-              "_listeners": null,
-              "_name": "handler",
-              "_type": "boolean",
-              "_value": "true"
-            }
-          ],
-          "_entries": null
-        },
-        "_internal": true
+        "_name": "y",
+        "_type": "number",
+        "_value": "1"
+      }
+    ],
+    "_entries": null
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Proxy(new Proxy({foo:1, bar:1}, {}), {})
+{
+  "_type": "object",
+  "_subtype": "proxy",
+  "_objectId": "<filtered>",
+  "_description": "Proxy",
+  "_preview": {
+    "_listeners": null,
+    "_type": "object",
+    "_subtype": "proxy",
+    "_description": "Proxy",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [
+      {
+        "_listeners": null,
+        "_name": "foo",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_listeners": null,
+        "_name": "bar",
+        "_type": "number",
+        "_value": "1"
       }
     ],
     "_entries": null
