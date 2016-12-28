@@ -44,6 +44,8 @@
 #include <limits>
 #endif
 
+#include <wtf/CheckedArithmetic.h>
+
 namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)
@@ -174,7 +176,7 @@ void BitmapImage::destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSo
     }
 
     if (frameBytesCleared && imageObserver())
-        imageObserver()->decodedSizeChanged(this, -safeCast<int>(frameBytesCleared));
+        imageObserver()->decodedSizeChanged(this, -static_cast<long long>(frameBytesCleared));
 }
 
 void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, ImageFrameCaching frameCaching)
@@ -202,12 +204,11 @@ void BitmapImage::cacheFrame(size_t index, SubsamplingLevel subsamplingLevel, Im
 
     LOG(Images, "BitmapImage %p cacheFrame %lu (%s%u bytes, complete %d)", this, index, frameCaching == CacheMetadataOnly ? "metadata only, " : "", m_frames[index].m_frameBytes, m_frames[index].m_isComplete);
 
-    if (m_frames[index].m_image) {
-        int deltaBytes = safeCast<int>(m_frames[index].m_frameBytes);
-        m_decodedSize += deltaBytes;
+    if (m_frames[index].m_image && WTF::isInBounds<unsigned>(m_frames[index].m_frameBytes + m_decodedSize)) {
+        m_decodedSize += m_frames[index].m_frameBytes;
         // The fully-decoded frame will subsume the partially decoded data used
         // to determine image properties.
-        deltaBytes -= m_decodedPropertiesSize;
+        long long deltaBytes = static_cast<long long>(m_frames[index].m_frameBytes) - m_decodedPropertiesSize;
         m_decodedPropertiesSize = 0;
         if (imageObserver())
             imageObserver()->decodedSizeChanged(this, deltaBytes);
@@ -219,16 +220,11 @@ void BitmapImage::didDecodeProperties() const
     if (m_decodedSize)
         return;
 
-    size_t updatedSize = m_source.bytesDecodedToDetermineProperties();
+    unsigned updatedSize = m_source.bytesDecodedToDetermineProperties();
     if (m_decodedPropertiesSize == updatedSize)
         return;
 
-    int deltaBytes = updatedSize - m_decodedPropertiesSize;
-#if !ASSERT_DISABLED
-    bool overflow = updatedSize > m_decodedPropertiesSize && deltaBytes < 0;
-    bool underflow = updatedSize < m_decodedPropertiesSize && deltaBytes > 0;
-    ASSERT(!overflow && !underflow);
-#endif
+    long long deltaBytes = static_cast<long long>(updatedSize) - m_decodedPropertiesSize;
     m_decodedPropertiesSize = updatedSize;
     if (imageObserver())
         imageObserver()->decodedSizeChanged(this, deltaBytes);
@@ -394,12 +390,15 @@ NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, float presentationSc
         LOG(Images, "  subsamplingLevel was %d, resampling", m_frames[index].m_subsamplingLevel);
 
         // If the image is already cached, but at too small a size, re-decode a larger version.
-        int sizeChange = -m_frames[index].m_frameBytes;
+        unsigned sizeChange = m_frames[index].m_frameBytes;
         m_frames[index].clear(true);
         invalidatePlatformData();
-        m_decodedSize += sizeChange;
-        if (imageObserver())
-            imageObserver()->decodedSizeChanged(this, sizeChange);
+        if (sizeChange) {
+            ASSERT(m_decodedSize >= sizeChange);
+            m_decodedSize -= sizeChange;
+            if (imageObserver())
+                imageObserver()->decodedSizeChanged(this, -static_cast<long long>(sizeChange));
+        }
     }
 
     // If we haven't fetched a frame yet, do so.

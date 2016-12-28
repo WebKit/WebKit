@@ -116,7 +116,7 @@ private:
     bool stillNeedsLoad() const override { return !errorOccurred() && status() == Unknown && !isLoading(); }
 
     // ImageObserver
-    void decodedSizeChanged(const Image*, int delta) override;
+    void decodedSizeChanged(const Image*, long long delta) override;
     void didDraw(const Image*) override;
 
     void animationAdvanced(const Image*) override;

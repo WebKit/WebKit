@@ -37,7 +37,7 @@ class ImageObserver {
 protected:
     virtual ~ImageObserver() {}
 public:
-    virtual void decodedSizeChanged(const Image*, int delta) = 0;
+    virtual void decodedSizeChanged(const Image*, long long delta) = 0;
     virtual void didDraw(const Image*) = 0;
 
     virtual void animationAdvanced(const Image*) = 0;

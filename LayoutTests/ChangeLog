@@ -1,3 +1,13 @@
+2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the MemoryCache and CachedResource adjustSize functions to take a long argument
+        https://bugs.webkit.org/show_bug.cgi?id=162708
+        <rdar://problem/28555702>
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations: Remove failed tests.
+
 2016-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent hit tests from being performed on an invalid render tree
