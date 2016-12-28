@@ -1,3 +1,16 @@
+2016-09-27  Filip Pizlo  <fpizlo@apple.com>
+
+        B3::lowerMacros forgets to before->updatePredecessorsAfter() when lowering ChillMod on ARM64
+        https://bugs.webkit.org/show_bug.cgi?id=162644
+
+        Reviewed by Keith Miller.
+
+        If you forget to update the predecessors of your successors, then bad things will happen if you
+        do something that requires accurate predecessors for correctness. lowerMacros() uses
+        BlockInsertionSet, which relies on accurate predecessors.
+
+        * b3/B3LowerMacros.cpp:
+
 2016-09-13  Mark Lam  <mark.lam@apple.com>
 
         DFG NewArrayBuffer node should watch for "have a bad time" state change.
