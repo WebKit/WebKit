@@ -54,15 +54,16 @@ enum PaintPhase {
 };
 
 enum PaintBehaviorFlags {
-    PaintBehaviorNormal = 0,
-    PaintBehaviorSelectionOnly = 1 << 0,
-    PaintBehaviorForceBlackText = 1 << 1,
-    PaintBehaviorForceWhiteText = 1 << 2,
-    PaintBehaviorFlattenCompositingLayers = 1 << 3,
-    PaintBehaviorRenderingSVGMask = 1 << 4,
-    PaintBehaviorSkipRootBackground = 1 << 5,
-    PaintBehaviorRootBackgroundOnly = 1 << 6,
-    PaintBehaviorSelectionAndBackgroundsOnly = 1 << 7,
+    PaintBehaviorNormal                      = 0,
+    PaintBehaviorSelectionOnly               = 1 << 0,
+    PaintBehaviorSkipSelectionHighlight      = 1 << 1,
+    PaintBehaviorForceBlackText              = 1 << 2,
+    PaintBehaviorForceWhiteText              = 1 << 3,
+    PaintBehaviorFlattenCompositingLayers    = 1 << 4,
+    PaintBehaviorRenderingSVGMask            = 1 << 5,
+    PaintBehaviorSkipRootBackground          = 1 << 6,
+    PaintBehaviorRootBackgroundOnly          = 1 << 7,
+    PaintBehaviorSelectionAndBackgroundsOnly = 1 << 8,
 };
 
 typedef unsigned PaintBehavior;
