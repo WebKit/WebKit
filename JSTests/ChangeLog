@@ -1,3 +1,79 @@
+2016-12-29  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Rebase spec-tests now that wabt has been updated to produce certain kinds of invalid modules
+        https://bugs.webkit.org/show_bug.cgi?id=166491
+        <rdar://problem/29814999>
+
+        Reviewed by Yusuke Suzuki.
+
+        Based off these revisions:
+        - spec: b055d01ea1dfdd7a5231ae779095435f836de97f
+        - wabt: d0d44702c753f851b094615298a2f4d4e3c21035
+
+        The reason for the rebase is that wabt was updated to stop
+        silently rejecting invalid modules. This was needed because
+        some of the spec tests check to make sure that the module
+        is invalid, but wabt was silently ignoring the errors and
+        generating valid modules:
+        https://github.com/WebAssembly/wabt/issues/256
+
+        * wasm.yaml:
+        * wasm/spec-tests/address.wast.js:
+        * wasm/spec-tests/binary.wast.js:
+        * wasm/spec-tests/block.wast.js:
+        * wasm/spec-tests/br.wast.js:
+        * wasm/spec-tests/br_if.wast.js:
+        * wasm/spec-tests/br_table.wast.js:
+        * wasm/spec-tests/break-drop.wast.js:
+        * wasm/spec-tests/call.wast.js:
+        * wasm/spec-tests/call_indirect.wast.js:
+        * wasm/spec-tests/comments.wast.js:
+        * wasm/spec-tests/conversions.wast.js:
+        * wasm/spec-tests/custom_section.wast.js:
+        * wasm/spec-tests/endianness.wast.js:
+        * wasm/spec-tests/exports.wast.js:
+        * wasm/spec-tests/f32.wast.js:
+        * wasm/spec-tests/f32_cmp.wast.js:
+        * wasm/spec-tests/f64.wast.js:
+        * wasm/spec-tests/f64_cmp.wast.js:
+        * wasm/spec-tests/fac.wast.js:
+        * wasm/spec-tests/float_exprs.wast.js:
+        * wasm/spec-tests/float_literals.wast.js:
+        * wasm/spec-tests/float_memory.wast.js:
+        * wasm/spec-tests/float_misc.wast.js:
+        * wasm/spec-tests/forward.wast.js:
+        * wasm/spec-tests/func.wast.js:
+        * wasm/spec-tests/func_ptrs.wast.js:
+        * wasm/spec-tests/get_local.wast.js:
+        * wasm/spec-tests/globals.wast.js:
+        * wasm/spec-tests/i32.wast.js:
+        * wasm/spec-tests/i64.wast.js:
+        * wasm/spec-tests/imports.wast.js:
+        * wasm/spec-tests/int_exprs.wast.js:
+        * wasm/spec-tests/int_literals.wast.js:
+        * wasm/spec-tests/left-to-right.wast.js:
+        * wasm/spec-tests/linking.wast.js:
+        * wasm/spec-tests/loop.wast.js:
+        * wasm/spec-tests/memory.wast.js:
+        * wasm/spec-tests/memory_redundancy.wast.js:
+        * wasm/spec-tests/memory_trap.wast.js:
+        * wasm/spec-tests/names.wast.js:
+        * wasm/spec-tests/nop.wast.js:
+        * wasm/spec-tests/resizing.wast.js:
+        * wasm/spec-tests/return.wast.js:
+        * wasm/spec-tests/select.wast.js:
+        * wasm/spec-tests/set_local.wast.js:
+        * wasm/spec-tests/skip-stack-guard-page.wast.js:
+        * wasm/spec-tests/stack.wast.js:
+        * wasm/spec-tests/start.wast.js:
+        * wasm/spec-tests/store_retval.wast.js:
+        * wasm/spec-tests/switch.wast.js:
+        * wasm/spec-tests/tee_local.wast.js:
+        * wasm/spec-tests/traps.wast.js:
+        * wasm/spec-tests/typecheck.wast.js:
+        * wasm/spec-tests/unreachable.wast.js:
+        * wasm/spec-tests/unwind.wast.js:
+
 2016-12-28  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Don't allow duplicate export names
