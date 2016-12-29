@@ -1,5 +1,15 @@
 2016-12-28  Saam Barati  <sbarati@apple.com>
 
+        WebAssembly: Don't allow duplicate export names
+        https://bugs.webkit.org/show_bug.cgi?id=166490
+        <rdar://problem/29815000>
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmModuleParser.cpp:
+
+2016-12-28  Saam Barati  <sbarati@apple.com>
+
         Unreviewed. Fix jsc.cpp build error.
 
         * jsc.cpp:

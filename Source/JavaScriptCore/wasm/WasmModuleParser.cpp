@@ -371,6 +371,7 @@ auto ModuleParser::parseExport() -> PartialResult
     WASM_PARSER_FAIL_IF(exportCount == std::numeric_limits<uint32_t>::max(), "Export section's count is too big ", exportCount);
     WASM_PARSER_FAIL_IF(!m_result.module->exports.tryReserveCapacity(exportCount), "can't allocate enough memory for ", exportCount, " exports");
 
+    HashSet<String> exportNames;
     for (uint32_t exportNumber = 0; exportNumber < exportCount; ++exportNumber) {
         Export exp;
         uint32_t fieldLen;
@@ -378,6 +379,8 @@ auto ModuleParser::parseExport() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldLen), "can't get ", exportNumber, "th Export's field name length");
         WASM_PARSER_FAIL_IF(!consumeUTF8String(fieldString, fieldLen), "can't get ", exportNumber, "th Export's field name of length ", fieldLen);
+        WASM_PARSER_FAIL_IF(exportNames.contains(fieldString), "duplicate export: '", fieldString, "'");
+        exportNames.add(fieldString);
         exp.field = Identifier::fromString(m_vm, fieldString);
 
         WASM_PARSER_FAIL_IF(!parseExternalKind(exp.kind), "can't get ", exportNumber, "th Export's kind, named '", fieldString, "'");
