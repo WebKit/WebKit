@@ -1,5 +1,12 @@
 2016-12-28  Saam Barati  <sbarati@apple.com>
 
+        Unreviewed. Fix jsc.cpp build error.
+
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+
+2016-12-28  Saam Barati  <sbarati@apple.com>
+
         WebAssembly: Implement grow_memory and current_memory
         https://bugs.webkit.org/show_bug.cgi?id=166448
         <rdar://problem/29803676>
