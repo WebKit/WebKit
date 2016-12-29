@@ -583,6 +583,16 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return nil;
 }
 
+- (AccessibilityObjectWrapper*)_accessibilityFrameAncestor
+{
+    auto* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+        return object.isWebArea();
+    });
+    if (!parent)
+        return nil;
+    return parent->wrapper();
+}
+
 - (uint64_t)_accessibilityTraitsFromAncestors
 {
     uint64_t traits = 0;

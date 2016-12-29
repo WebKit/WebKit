@@ -1,3 +1,16 @@
+2016-12-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Need to expose frames to iOS Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=166571
+        <rdar://problem/29823724>
+
+        Reviewed by Darin Adler.
+
+        To support navigation by frame for VoiceOver on iOS, we need to expose the frame ancestor. 
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityFrameAncestor]):
+
 2016-12-09  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Move Grid into GridSizingData
