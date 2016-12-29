@@ -1,3 +1,49 @@
+2016-12-28  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Implement grow_memory and current_memory
+        https://bugs.webkit.org/show_bug.cgi?id=166448
+        <rdar://problem/29803676>
+
+        Reviewed by Keith Miller.
+
+        I rewrote some of the testWasmModuleFunctions that used Memory to use
+        the JS API since the jsc.cpp version can no longer use memory.
+
+        * wasm.yaml:
+        * wasm/function-tests/add-12.js:
+        (testWasmModuleFunctions):
+        * wasm/function-tests/br-if-loop-less-than.js:
+        (testWasmModuleFunctions):
+        * wasm/function-tests/brTableAsIf.js:
+        (testWasmModuleFunctions):
+        * wasm/function-tests/brTableManyValues.js:
+        (testWasmModuleFunctions):
+        * wasm/function-tests/brTableWithLoop.js:
+        (testWasmModuleFunctions):
+        * wasm/function-tests/dumb-eq-if-then-else.js:
+        * wasm/function-tests/eqz.js:
+        * wasm/function-tests/grow-memory-2.js: Added.
+        (const.func):
+        (assert.eq.instance.exports.foo):
+        * wasm/function-tests/grow-memory-3.js: Added.
+        * wasm/function-tests/grow-memory-4.js: Added.
+        (const.func):
+        * wasm/function-tests/grow-memory.js: Added.
+        (binaryShouldNotParse):
+        (assert.truthy):
+        (assert.eq):
+        (memory.grow):
+        * wasm/function-tests/i32-load.js:
+        (testWasmModuleFunctions):
+        * wasm/function-tests/i32-load8-s.js:
+        * wasm/function-tests/max.js:
+        * wasm/function-tests/min.js:
+        * wasm/js-api/memory-grow.js: Added.
+        (i.i):
+        (assertEq):
+        * wasm/js-api/test_memory.js:
+        * wasm/wasm.json:
+
 2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Propagate the source origin as much as possible

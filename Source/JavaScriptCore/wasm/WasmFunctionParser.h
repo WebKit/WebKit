@@ -478,12 +478,36 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case GrowMemory:
-        return fail("not yet implemented: grow_memory"); // FIXME: Not yet implemented.
+    case GrowMemory: {
+        WASM_PARSER_FAIL_IF(!m_info.memory, "grow_memory is only valid if a memory is defined or imported");
 
-    case CurrentMemory:
-        return fail("not yet implemented: current_memory"); // FIXME: Not yet implemented.
+        uint8_t reserved;
+        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for grow_memory");
+        WASM_PARSER_FAIL_IF(reserved != 0, "reserved varUint1 for grow_memory must be zero");
 
+        ExpressionType delta;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i32 argument to grow_memory on the stack");
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addGrowMemory(delta, result));
+        m_expressionStack.append(result);
+
+        return { };
+    }
+
+    case CurrentMemory: {
+        WASM_PARSER_FAIL_IF(!m_info.memory, "current_memory is only valid if a memory is defined or imported");
+
+        uint8_t reserved;
+        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for current_memory");
+        WASM_PARSER_FAIL_IF(reserved != 0, "reserved varUint1 for current_memory must be zero");
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result));
+        m_expressionStack.append(result);
+
+        return { };
+    }
     }
 
     ASSERT_NOT_REACHED();
@@ -584,6 +608,13 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
+    case GrowMemory:
+    case CurrentMemory: {
+        uint8_t reserved;
+        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for grow_memory/current_memory");
+        return { };
+    }
+
     // no immediate cases
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
@@ -591,9 +622,7 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     case Nop:
     case Return:
     case Select:
-    case Drop:
-    case GrowMemory:
-    case CurrentMemory: {
+    case Drop: {
         return { };
     }
     }

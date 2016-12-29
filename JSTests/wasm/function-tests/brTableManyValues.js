@@ -1,10 +1,12 @@
 import Builder from '../Builder.js'
+import * as assert from '../assert.js'
 
 const b = new Builder();
 b.Type().End()
     .Function().End()
+    .Export().Function('f0').End()
     .Code()
-    .Function({ params: ["i32"], ret: "i32" }, ["i32"])
+    .Function('f0', { params: ["i32"], ret: "i32" }, ["i32"])
     .Block("i32", (b) =>
            b.Block("i32", (b) =>
                    b.Block("i32", (b) =>
@@ -29,9 +31,21 @@ b.Type().End()
     .I32Add()
     .Return()
     .End()
-const bin = b.WebAssembly()
-bin.trim();
-testWasmModuleFunctions(bin.get(), 1, [[{type: "i32", value: 213 }, [{ type: "i32", value: 0 }]],
+    .End()
+
+const bin = b.WebAssembly().get();
+const instance = new WebAssembly.Instance(new WebAssembly.Module(bin));
+function testWasmModuleFunctions(...tests) {
+    for (let i = 0; i < tests.length; i++) {
+        const func = instance.exports['f' + i];
+        for (let test of tests[i]) {
+            let result = test[0].value;
+            let args = test[1].map(x => x.value);
+            assert.eq(result, func(...args));
+        }
+    }
+}
+testWasmModuleFunctions([[{type: "i32", value: 213 }, [{ type: "i32", value: 0 }]],
                                        [{type: "i32", value: 212 }, [{ type: "i32", value: 1 }]],
                                        [{type: "i32", value: 211 }, [{ type: "i32", value: 2 }]],
                                        [{type: "i32", value: 210 }, [{ type: "i32", value: 3 }]],

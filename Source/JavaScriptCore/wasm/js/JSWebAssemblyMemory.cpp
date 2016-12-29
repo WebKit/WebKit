@@ -30,8 +30,8 @@
 
 #include "JSCInlines.h"
 
-#include "JSArrayBuffer.h"
 #include "ArrayBuffer.h"
+#include "JSArrayBuffer.h"
 
 namespace JSC {
 
@@ -55,6 +55,15 @@ JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure, std::uniq
 {
 }
 
+JSWebAssemblyMemory::~JSWebAssemblyMemory()
+{
+    if (m_buffer) {
+        ArrayBufferContents dummyContents;
+        m_buffer->transferTo(dummyContents);
+        m_buffer = nullptr;
+    }
+}
+
 JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
 {
     if (m_bufferWrapper)
@@ -69,6 +78,48 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
     m_bufferWrapper.set(vm, this, JSArrayBuffer::create(vm, globalObject->m_arrayBufferStructure.get(), m_buffer.get()));
     RELEASE_ASSERT(m_bufferWrapper);
     return m_bufferWrapper.get();
+}
+
+Wasm::PageCount JSWebAssemblyMemory::grow(ExecState* exec, uint32_t delta, bool shouldThrowExceptionsOnFailure)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    Wasm::PageCount oldPageCount = m_memory->sizeInPages();
+
+    if (!Wasm::PageCount::isValid(delta)) {
+        if (shouldThrowExceptionsOnFailure)
+            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the delta to be a valid page count")));
+        return Wasm::PageCount();
+    }
+
+    Wasm::PageCount newSize = oldPageCount + Wasm::PageCount(delta);
+    if (!newSize) {
+        if (shouldThrowExceptionsOnFailure)
+            throwException(exec, throwScope, createRangeError(exec, ASCIILiteral("WebAssembly.Memory.grow expects the grown size to be a valid page count")));
+        return Wasm::PageCount();
+    }
+
+    if (delta) {
+        bool success = m_memory->grow(newSize);
+        if (!success) {
+            if (shouldThrowExceptionsOnFailure)
+                throwException(exec, throwScope, createOutOfMemoryError(exec));
+            return Wasm::PageCount();
+        }
+    }
+
+    // We need to clear out the old array buffer because it might now be pointing
+    // to stale memory.
+    // Neuter the old array.
+    if (m_buffer) {
+        ArrayBufferContents dummyContents;
+        m_buffer->transferTo(dummyContents);
+        m_buffer = nullptr;
+        m_bufferWrapper.clear();
+    }
+
+    return oldPageCount;
 }
 
 void JSWebAssemblyMemory::finishCreation(VM& vm)

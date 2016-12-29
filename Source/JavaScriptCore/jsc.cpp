@@ -2654,8 +2654,9 @@ static EncodedJSValue JSC_HOST_CALL functionTestWasmModuleFunctions(ExecState* e
     std::unique_ptr<Wasm::ModuleInformation> moduleInformation = plan.takeModuleInformation();
 
     if (!!moduleInformation->memory) {
-        memory = std::make_unique<Wasm::Memory>(moduleInformation->memory.initial(), moduleInformation->memory.maximum());
-        RELEASE_ASSERT(memory->isValid());
+        bool failed;
+        memory = std::make_unique<Wasm::Memory>(moduleInformation->memory.initial(), moduleInformation->memory.maximum(), failed);
+        RELEASE_ASSERT(!failed);
         memoryBytes = memory->memory();
         memorySize = memory->size();
     }

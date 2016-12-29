@@ -64,7 +64,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
-    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&);
+    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
 
     ModuleParserResult m_result;
     bool m_hasTable { false };

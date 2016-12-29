@@ -143,7 +143,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/memory_trap.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/names.wast.js
   cmd: runWebAssemblySpecTest :skip

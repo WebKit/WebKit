@@ -1,3 +1,97 @@
+2016-12-28  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Implement grow_memory and current_memory
+        https://bugs.webkit.org/show_bug.cgi?id=166448
+        <rdar://problem/29803676>
+
+        Reviewed by Keith Miller.
+
+        This patch implements grow_memory, current_memory, and WebAssembly.prototype.grow.
+        See relevant spec texts here:
+        
+        https://github.com/WebAssembly/design/blob/master/Semantics.md#linear-memory-accesses
+        https://github.com/WebAssembly/design/blob/master/JS.md#webassemblymemoryprototypegrow
+        
+        I also fix a couple miscellaneous bugs:
+        
+        1. Data section now understands full init_exprs. 
+        2. parseVarUint1 no longer has a bug where we allow values larger than 1 if
+        their bottom 8 bits are zero.
+        
+        Since the JS API can now grow memory, we need to make calling an import
+        and call_indirect refresh the base memory register and the size registers.
+
+        * jsc.cpp:
+        (functionTestWasmModuleFunctions):
+        * runtime/Options.h:
+        * runtime/VM.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::reloadPinnedRegisters):
+        (JSC::Wasm::B3IRGenerator::emitReloadPinnedRegisters):
+        (JSC::Wasm::createJSToWasmWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::Segment::create):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::I32InitExpr::I32InitExpr):
+        (JSC::Wasm::I32InitExpr::globalImport):
+        (JSC::Wasm::I32InitExpr::constValue):
+        (JSC::Wasm::I32InitExpr::isConst):
+        (JSC::Wasm::I32InitExpr::isGlobalImport):
+        (JSC::Wasm::I32InitExpr::globalImportIndex):
+        (JSC::Wasm::Segment::byte):
+        (JSC::Wasm::ModuleInformation::importFunctionCount):
+        (JSC::Wasm::ModuleInformation::hasMemory):
+        * wasm/WasmFunctionParser.h:
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::grow):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::size):
+        (JSC::Wasm::Memory::sizeInPages):
+        (JSC::Wasm::Memory::offsetOfMemory):
+        (JSC::Wasm::Memory::isValid): Deleted.
+        (JSC::Wasm::Memory::grow): Deleted.
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::makeI32InitExpr):
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmPageCount.h:
+        (JSC::Wasm::PageCount::bytes):
+        (JSC::Wasm::PageCount::pageCount):
+        (JSC::Wasm::PageCount::fromBytes):
+        (JSC::Wasm::PageCount::operator+):
+        * wasm/WasmParser.h:
+        (JSC::Wasm::Parser<SuccessType>::parseVarUInt1):
+        * wasm/WasmValidate.cpp:
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfMemory):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::~JSWebAssemblyMemory):
+        (JSC::JSWebAssemblyMemory::grow):
+        * wasm/js/JSWebAssemblyMemory.h:
+        (JSC::JSWebAssemblyMemory::offsetOfMemory):
+        * wasm/js/JSWebAssemblyModule.h:
+        (JSC::JSWebAssemblyModule::functionImportCount):
+        (JSC::JSWebAssemblyModule::jsEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::wasmEntrypointCalleeFromFunctionIndexSpace):
+        (JSC::JSWebAssemblyModule::importCount): Deleted.
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::getMemory):
+        (JSC::webAssemblyMemoryProtoFuncBuffer):
+        (JSC::webAssemblyMemoryProtoFuncGrow):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::dataSegmentFail):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/wasm.json:
+
 2016-12-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use variadic templates in JSC Parser to clean up

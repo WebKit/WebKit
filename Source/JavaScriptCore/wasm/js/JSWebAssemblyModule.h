@@ -55,20 +55,20 @@ public:
         ASSERT(functionIndexSpace < m_functionIndexSpace.size);
         return m_functionIndexSpace.buffer.get()[functionIndexSpace].signatureIndex;
     }
-    unsigned importCount() const { return m_wasmToJSStubs.size(); }
+    unsigned functionImportCount() const { return m_wasmToJSStubs.size(); }
 
     JSWebAssemblyCallee* jsEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
-        RELEASE_ASSERT(functionIndexSpace >= importCount());
-        unsigned calleeIndex = functionIndexSpace - importCount();
+        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
         RELEASE_ASSERT(calleeIndex < m_calleeCount);
         return callees()[calleeIndex].get();
     }
 
     JSWebAssemblyCallee* wasmEntrypointCalleeFromFunctionIndexSpace(unsigned functionIndexSpace)
     {
-        RELEASE_ASSERT(functionIndexSpace >= importCount());
-        unsigned calleeIndex = functionIndexSpace - importCount();
+        RELEASE_ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
         RELEASE_ASSERT(calleeIndex < m_calleeCount);
         return callees()[calleeIndex + m_calleeCount].get();
     }
