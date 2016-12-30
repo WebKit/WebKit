@@ -735,11 +735,10 @@ LayoutUnit RenderGrid::guttersSize(const Grid& grid, GridTrackSizingDirection di
 
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    bool wasPopulated = !m_grid.needsItemsPlacement();
-    if (!wasPopulated)
-        const_cast<RenderGrid*>(this)->placeItemsOnGrid(const_cast<Grid&>(m_grid), IntrinsicSizeComputation);
+    Grid grid(const_cast<RenderGrid&>(*this));
+    placeItemsOnGrid(grid, IntrinsicSizeComputation);
 
-    GridSizingData sizingData(numTracks(ForColumns, m_grid), numTracks(ForRows, m_grid), const_cast<Grid&>(m_grid));
+    GridSizingData sizingData(numTracks(ForColumns, grid), numTracks(ForRows, grid), grid);
     sizingData.setAvailableSpace(std::nullopt);
     sizingData.setFreeSpace(ForColumns, std::nullopt);
     sizingData.sizingOperation = IntrinsicSizeComputation;
@@ -752,9 +751,6 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
     LayoutUnit scrollbarWidth = intrinsicScrollbarLogicalWidth();
     minLogicalWidth += scrollbarWidth;
     maxLogicalWidth += scrollbarWidth;
-
-    if (!wasPopulated)
-        const_cast<RenderGrid*>(this)->clearGrid();
 }
 
 void RenderGrid::computeIntrinsicLogicalHeight(GridSizingData& sizingData)
@@ -1708,7 +1704,7 @@ std::unique_ptr<RenderGrid::OrderedTrackIndexSet> RenderGrid::computeEmptyTracks
     unsigned firstAutoRepeatTrack = insertionPoint + std::abs(grid.smallestTrackStart(direction));
     unsigned lastAutoRepeatTrack = firstAutoRepeatTrack + grid.autoRepeatTracks(direction);
 
-    if (!m_grid.hasGridItems()) {
+    if (!grid.hasGridItems()) {
         emptyTrackIndexes = std::make_unique<OrderedTrackIndexSet>();
         for (unsigned trackIndex = firstAutoRepeatTrack; trackIndex < lastAutoRepeatTrack; ++trackIndex)
             emptyTrackIndexes->add(trackIndex);
@@ -1725,15 +1721,19 @@ std::unique_ptr<RenderGrid::OrderedTrackIndexSet> RenderGrid::computeEmptyTracks
     return emptyTrackIndexes;
 }
 
-void RenderGrid::placeItemsOnGrid(Grid& grid, SizingOperation sizingOperation)
+void RenderGrid::placeItemsOnGrid(Grid& grid, SizingOperation sizingOperation) const
 {
-    ASSERT(grid.needsItemsPlacement());
-    ASSERT(!grid.hasGridItems());
-
     unsigned autoRepeatColumns = computeAutoRepeatTracksCount(ForColumns, sizingOperation);
     unsigned autoRepeatRows = computeAutoRepeatTracksCount(ForRows, sizingOperation);
-    grid.setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
+    if (autoRepeatColumns != grid.autoRepeatTracks(ForColumns) || autoRepeatRows != grid.autoRepeatTracks(ForRows)) {
+        grid.setNeedsItemsPlacement(true);
+        grid.setAutoRepeatTracks(autoRepeatRows, autoRepeatColumns);
+    }
 
+    if (!grid.needsItemsPlacement())
+        return;
+
+    ASSERT(!grid.hasGridItems());
     populateExplicitGridAndOrderIterator(grid);
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
@@ -2793,7 +2793,7 @@ unsigned RenderGrid::numTracks(GridTrackSizingDirection direction, const Grid& g
     // to get it from the style. Note that we know for sure that there are't any implicit tracks,
     // because not having rows implies that there are no "normal" children (out-of-flow children are
     // not stored in m_grid).
-    ASSERT(!m_grid.needsItemsPlacement());
+    ASSERT(!grid.needsItemsPlacement());
     if (direction == ForRows)
         return grid.numTracks(ForRows);
 

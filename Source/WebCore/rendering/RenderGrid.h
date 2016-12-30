@@ -94,7 +94,7 @@ private:
     typedef ListHashSet<size_t> OrderedTrackIndexSet;
     std::unique_ptr<OrderedTrackIndexSet> computeEmptyTracksForAutoRepeat(Grid&, GridTrackSizingDirection) const;
 
-    void placeItemsOnGrid(Grid&, SizingOperation);
+    void placeItemsOnGrid(Grid&, SizingOperation) const;
     void populateExplicitGridAndOrderIterator(Grid&) const;
     std::unique_ptr<GridArea> createEmptyGridAreaAtSpecifiedPositionsOutsideGrid(Grid&, const RenderBox&, GridTrackSizingDirection, const GridSpan&) const;
     void placeSpecifiedMajorAxisItemsOnGrid(Grid&, const Vector<RenderBox*>&) const;

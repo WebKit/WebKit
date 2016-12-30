@@ -1,3 +1,32 @@
+2016-12-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Isolate instrinsic size computation from layout
+        https://bugs.webkit.org/show_bug.cgi?id=166530
+
+        Reviewed by Darin Adler.
+
+        This is the last patch of the items placement data refactoring. By using a different Grid
+        instance in computeIntrinsicLogicalWidths we effectively isolate the intrinsic size
+        computation from the layout. They are now using different data structures so they don't
+        interfere each other.
+
+        This also means that we no longer reuse the placement of items done in the intrinsic size
+        computation. That shouldn't be a big issue once we make m_grid persistent on RenderGrid.
+
+        Last but not least, this patch finally removes the ugly const_cast's we had in
+        computeIntrinsicLogicalWidths() as we no longer modify the internal state of RenderGrid.
+
+        Tests: fast/css-grid-layout/grid-auto-repeat-intrinsic.html
+               fast/css-grid-layout/grid-change-intrinsic-size-with-auto-repeat-tracks.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths): Use a new instance of Grid.
+        (WebCore::RenderGrid::computeEmptyTracksForAutoRepeat): Fixed a missing m_grid -> grid
+        rename.
+        (WebCore::RenderGrid::placeItemsOnGrid): Constify it. It nows repositions the items if the
+        number of auto repeat tracks has changed.
+        * rendering/RenderGrid.h:
+
 2016-12-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Improve user agent construction
