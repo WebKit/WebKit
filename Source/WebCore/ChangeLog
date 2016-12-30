@@ -1,3 +1,36 @@
+2016-12-30  Andreas Kling  <akling@apple.com>
+
+        Drop the render tree for documents in the page cache.
+        <https://webkit.org/b/121798>
+
+        Reviewed by Darin Adler.
+
+        To save memory and reduce complexity, have documents tear down their render tree
+        when entering the page cache. I've wanted to do this for a long time and it seems
+        like we can actually do it now.
+
+        This patch will enable a number of clean-ups since it's no longer valid for renderers
+        to exist while the document is in page cache.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree): Remove assertion that we're not in the page cache
+        since we will now be tearing down render trees right as they enter the page cache.
+
+        (WebCore::Document::setPageCacheState): Tear down the render tree right before setting
+        the in-cache flag. From now on, there should not exist render objects for documents in
+        the page cache.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didRestoreFromPageCache): Update the scollable area set after restoring a
+        frame from the page cache. This dirties the scrolling tree, which was covered by tests.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc): Make this a no-op if the render tree is being
+        torn down. This fixes assertions firing on animation tests.
+
 2016-12-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Need to expose frames to iOS Accessibility
