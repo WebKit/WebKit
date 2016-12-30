@@ -2221,6 +2221,7 @@ void Document::frameDestroyed()
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
+    ASSERT(m_pageCacheState != InPageCache);
 
     SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 
@@ -4522,13 +4523,6 @@ void Document::setPageCacheState(PageCacheState state)
 {
     if (m_pageCacheState == state)
         return;
-
-    if (state == InPageCache) {
-        // When entering page cache, tear down the render tree before setting the in-cache flag.
-        // This maintains the invariant that render trees are never present in the page cache.
-        if (hasLivingRenderTree())
-            destroyRenderTree();
-    }
 
     m_pageCacheState = state;
 
