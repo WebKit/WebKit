@@ -1,3 +1,25 @@
+2016-12-30  Olivier Blin  <olivier.blin@softathome.com>
+
+        [EFL] fix buffer over-read in RenderThemeEfl::mediaControlsStyleSheet()
+        https://bugs.webkit.org/show_bug.cgi?id=166622
+
+        Reviewed by Gyuyoung Kim.
+
+        This has been detected by a charactersAreAllASCII() assert failure.
+        Initially in WebKitForWayland (WPE), but the code was likely borrowed from EFL.
+
+        This is because ASCIILiteral() is wrongly used in mediaControlsStyleSheet().
+        mediaControlsBaseUserAgentStyleSheet is a char array, not a null-terminated string.
+        It is thus incorrect to use StringImpl::createFromLiteral() that calls
+        strlen() to get the string length.
+
+        The String::ConstructFromLiteral constructor can not be used, since it
+        skips the last character.
+
+        * rendering/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::mediaControlsStyleSheet):
+        Explicitely pass the size to the String constructor.
+
 2016-12-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210206.

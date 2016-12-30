@@ -1054,7 +1054,7 @@ bool RenderThemeEfl::paintProgressBar(const RenderObject& object, const PaintInf
 #if ENABLE(VIDEO)
 String RenderThemeEfl::mediaControlsStyleSheet()
 {
-    return ASCIILiteral(mediaControlsBaseUserAgentStyleSheet);
+    return String(mediaControlsBaseUserAgentStyleSheet, sizeof(mediaControlsBaseUserAgentStyleSheet));
 }
 
 String RenderThemeEfl::mediaControlsScript()
