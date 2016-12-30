@@ -36,7 +36,9 @@ class UserAgentQuirks {
 public:
     enum UserAgentQuirk {
         NeedsChromeBrowser,
+        NeedsFirefoxBrowser,
         NeedsMacintoshPlatform,
+        NeedsLinuxDesktopPlatform,
 
         NumUserAgentQuirks
     };
@@ -65,6 +67,8 @@ public:
     static UserAgentQuirks quirksForURL(const URL&);
 
     static String stringForQuirk(UserAgentQuirk);
+
+    static String firefoxRevisionString();
 
 private:
     uint32_t m_quirks;

@@ -34,6 +34,27 @@ namespace WebCore {
 // When editing the quirks in this file, be sure to update
 // Tools/TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp.
 
+static bool isGoogle(const URL& url)
+{
+    String baseDomain = topPrivatelyControlledDomain(url.host());
+
+    // Our Google UA is *very* complicated to get right. Read
+    // https://webkit.org/b/142074 carefully before changing. Test that Earth
+    // view is available in Google Maps. Test Google Calendar. Test downloading
+    // the Hangouts browser plugin. Change platformVersionForUAString() to
+    // return "FreeBSD amd64" and test Maps and Calendar again.
+    if (baseDomain.startsWith("google."))
+        return true;
+    if (baseDomain == "gstatic.com")
+        return true;
+    if (baseDomain == "googleapis.com")
+        return true;
+    if (baseDomain == "googleusercontent.com")
+        return true;
+
+    return false;
+}
+
 // Be careful with this quirk: it's an invitation for sites to use JavaScript
 // that works in Chrome that WebKit cannot handle. Prefer other quirks instead.
 static bool urlRequiresChromeBrowser(const URL& url)
@@ -56,14 +77,14 @@ static bool urlRequiresChromeBrowser(const URL& url)
     return false;
 }
 
+static bool urlRequiresFirefoxBrowser(const URL& url)
+{
+    return isGoogle(url);
+}
+
 static bool urlRequiresMacintoshPlatform(const URL& url)
 {
     String baseDomain = topPrivatelyControlledDomain(url.host());
-
-    // Avoid receiving terrible fallbacks version of calendar.google.com and
-    // maps.google.com on certain platforms. https://webkit.org/b/142074
-    if (baseDomain.startsWith("google."))
-        return true;
 
     // At least finance.yahoo.com displays a mobile version with WebKitGTK+'s standard user agent.
     if (baseDomain == "yahoo.com")
@@ -80,14 +101,27 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
     return false;
 }
 
+static bool urlRequiresLinuxDesktopPlatform(const URL& url)
+{
+    return isGoogle(url);
+}
+
 UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 {
     ASSERT(!url.isNull());
+
     UserAgentQuirks quirks;
+
     if (urlRequiresChromeBrowser(url))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
+    else if (urlRequiresFirefoxBrowser(url))
+        quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
+
     if (urlRequiresMacintoshPlatform(url))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
+    else if (urlRequiresLinuxDesktopPlatform(url))
+        quirks.add(UserAgentQuirks::NeedsLinuxDesktopPlatform);
+
     return quirks;
 }
 
@@ -97,13 +131,23 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     case NeedsChromeBrowser:
         // Get versions from https://chromium.googlesource.com/chromium/src.git
         return ASCIILiteral("Chrome/56.0.2891.4");
+    case NeedsFirefoxBrowser:
+        // Gecko version never changes. Firefox version must be updated below.
+        return ASCIILiteral("Gecko/20100101 Firefox/50.0");
     case NeedsMacintoshPlatform:
         return ASCIILiteral("Macintosh; Intel Mac OS X 10_12");
+    case NeedsLinuxDesktopPlatform:
+        return ASCIILiteral("X11; Linux x86_64");
     case NumUserAgentQuirks:
     default:
         ASSERT_NOT_REACHED();
     }
     return ASCIILiteral("");
+}
+
+String UserAgentQuirks::firefoxRevisionString()
+{
+    return ASCIILiteral("rv:50.0");
 }
 
 }
