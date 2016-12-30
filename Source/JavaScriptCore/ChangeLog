@@ -1,3 +1,45 @@
+2016-10-27  Mark Lam  <mark.lam@apple.com>
+
+        JSFunction::put() should not allow caching of lazily reified properties.
+        https://bugs.webkit.org/show_bug.cgi?id=164081
+
+        Reviewed by Geoffrey Garen.
+
+        It is incorrect for JSFunction::put() to return PutPropertySlots that indicates
+        that its lazily reified properties (e.g. .caller, and .arguments) are cacheable.
+        The reason for this is:
+
+        1. Currently, a cacheable put may only consist of the following types of put
+           operations:
+           a. putting a new property at an offset in the object storage.
+           b. changing the value of an existing property at an offset in the object storage.
+           c. invoking the setter for a property at an offset in the object storage.
+
+           Returning a PutPropertySlot that indicates the property is cacheable means that
+           the property put must be one of the above operations.
+
+           For lazily reified properties, JSFunction::put() implements complex conditional
+           behavior that is different than the set of cacheable put operations above.
+           Hence, it should not claim that the property put is cacheable.
+    
+        2. Cacheable puts are cached on the original structure of the object before the
+           put operation.
+
+           Reifying a lazy property will trigger a structure transition.  Even though
+           subsequent puts to such a property may be cacheable after the structure
+           transition, it is incorrect to indicate that the property put is cacheable
+           because the caching is on the original structure, not the new transitioned
+           structure.
+
+        Also fixed some missing exception checks.
+
+        * jit/JITOperations.cpp:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::reifyLazyPropertyIfNeeded):
+        (JSC::JSFunction::reifyBoundNameIfNeeded):
+        * runtime/JSFunction.h:
+
 2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve support for logging Proxy objects in console

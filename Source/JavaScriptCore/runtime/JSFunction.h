@@ -191,9 +191,11 @@ private:
     bool hasReifiedName() const;
     void reifyLength(VM&);
     void reifyName(VM&, ExecState*);
-    void reifyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
     void reifyName(VM&, ExecState*, String name);
-    void reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName propertyName);
+
+    enum class LazyPropertyType { NotLazyProperty, IsLazyProperty };
+    LazyPropertyType reifyLazyPropertyIfNeeded(VM&, ExecState*, PropertyName);
+    LazyPropertyType reifyBoundNameIfNeeded(VM&, ExecState*, PropertyName);
 
     friend class LLIntOffsetsExtractor;
 
