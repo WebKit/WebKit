@@ -100,7 +100,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
     if (!validateOptions(options))
         return Exception { TypeError };
 
-    node.registerMutationObserver(this, options, attributeFilter);
+    node.registerMutationObserver(*this, options, attributeFilter);
 
     return { };
 }
@@ -117,7 +117,7 @@ void MutationObserver::disconnect()
     m_records.clear();
     HashSet<MutationObserverRegistration*> registrations(m_registrations);
     for (auto* registration : registrations)
-        MutationObserverRegistration::unregisterAndDelete(registration);
+        registration->node().unregisterMutationObserver(*registration);
 }
 
 void MutationObserver::observationStarted(MutationObserverRegistration& registration)

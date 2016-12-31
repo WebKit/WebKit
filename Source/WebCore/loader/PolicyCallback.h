@@ -40,18 +40,15 @@ namespace WebCore {
 
 class FormState;
 
-typedef std::function<void (const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue)> NavigationPolicyDecisionFunction;
-typedef std::function<void (const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue)> NewWindowPolicyDecisionFunction;
-typedef std::function<void (PolicyAction)> ContentPolicyDecisionFunction;
+using ContentPolicyDecisionFunction = std::function<void(PolicyAction)>;
+using NavigationPolicyDecisionFunction = std::function<void(const ResourceRequest&, FormState*, bool shouldContinue)>;
+using NewWindowPolicyDecisionFunction = std::function<void(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, bool shouldContinue)>;
 
 class PolicyCallback {
 public:
-    PolicyCallback();
-    ~PolicyCallback();
-
     void clear();
-    void set(const ResourceRequest&, PassRefPtr<FormState>, NavigationPolicyDecisionFunction);
-    void set(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, NewWindowPolicyDecisionFunction);
+    void set(const ResourceRequest&, FormState*, NavigationPolicyDecisionFunction);
+    void set(const ResourceRequest&, FormState*, const String& frameName, const NavigationAction&, NewWindowPolicyDecisionFunction);
     void set(ContentPolicyDecisionFunction);
 
     const ResourceRequest& request() const { return m_request; }

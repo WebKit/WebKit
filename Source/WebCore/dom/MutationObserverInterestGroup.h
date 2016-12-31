@@ -32,16 +32,17 @@
 
 #include "Document.h"
 #include "MutationObserver.h"
-#include "QualifiedName.h"
 #include <memory>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
 
+class QualifiedName;
+
 class MutationObserverInterestGroup {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MutationObserverInterestGroup(HashMap<MutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag);
+    MutationObserverInterestGroup(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&&, MutationRecordDeliveryOptions);
 
     static std::unique_ptr<MutationObserverInterestGroup> createForChildListMutation(Node& target)
     {
@@ -68,13 +69,13 @@ public:
         return createIfNeeded(target, MutationObserver::Attributes, MutationObserver::AttributeOldValue, &attributeName);
     }
 
-    bool isOldValueRequested();
+    bool isOldValueRequested() const;
     void enqueueMutationRecord(Ref<MutationRecord>&&);
 
 private:
     static std::unique_ptr<MutationObserverInterestGroup> createIfNeeded(Node& target, MutationObserver::MutationType, MutationRecordDeliveryOptions oldValueFlag, const QualifiedName* attributeName = nullptr);
 
-    bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }
+    bool hasOldValue(MutationRecordDeliveryOptions options) const { return options & m_oldValueFlag; }
 
     HashMap<MutationObserver*, MutationRecordDeliveryOptions> m_observers;
     MutationRecordDeliveryOptions m_oldValueFlag;

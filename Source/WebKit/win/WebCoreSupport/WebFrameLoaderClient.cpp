@@ -420,7 +420,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
     if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
         // FIXME: use direction of title.
-        frameLoadDelegate->didReceiveTitle(webView, BString(title.string()), m_webFrame);
+        frameLoadDelegate->didReceiveTitle(webView, BString(title.string), m_webFrame);
 }
 
 void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent>)
@@ -711,7 +711,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(loader->originalRequestCopy()));
         
         COMPtr<IWebNavigationData> navigationData(AdoptCOM, WebNavigationData::createInstance(
-            loader->urlForHistory(), loader->title().string(), urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), loader->clientRedirectSourceForHistory()));
+            loader->urlForHistory(), loader->title().string, urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), loader->clientRedirectSourceForHistory()));
 
         historyDelegate->didNavigateWithNavigationData(webView, navigationData.get(), m_webFrame);
         return;
@@ -721,7 +721,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if (!history)
         return;
 
-    history->visitedURL(loader->urlForHistory(), loader->title().string(), loader->originalRequestCopy().httpMethod(), loader->urlForHistoryReflectsFailure(), !loader->clientRedirectSourceForHistory());
+    history->visitedURL(loader->urlForHistory(), loader->title().string, loader->originalRequestCopy().httpMethod(), loader->urlForHistoryReflectsFailure(), !loader->clientRedirectSourceForHistory());
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
@@ -929,7 +929,7 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
     COMPtr<IWebHistoryDelegate> historyDelegate;
     webView->historyDelegate(&historyDelegate);
     if (historyDelegate) {
-        BString titleBSTR(title.string());
+        BString titleBSTR(title.string);
         BString urlBSTR(url.string());
         historyDelegate->updateHistoryTitle(webView, titleBSTR, urlBSTR);
         return;
@@ -955,7 +955,7 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
     if (!itemPrivate)
         return;
 
-    itemPrivate->setTitle(BString(title.string()));
+    itemPrivate->setTitle(BString(title.string));
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)

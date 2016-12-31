@@ -1,7 +1,5 @@
 /*
- * This file is part of the DOM implementation for WebCore.
- *
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,8 +21,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
@@ -33,8 +30,6 @@ typedef struct objc_object *id;
 #endif
 
 namespace WebCore {
-
-class DocumentMarkerDetails;
 
 // A range of a node within a document that is "marked", such as the range of a misspelled word.
 // It optionally includes a description that could be displayed in the user interface.
@@ -74,7 +69,7 @@ public:
         TelephoneNumber = 1 << 10,
 #endif
 #if PLATFORM(IOS)
-        // FIXME: iOS should share the same Dictation marks as everyone else.
+        // FIXME: iOS should share the same dictation mark system with the other platforms <rdar://problem/9431249>.
         DictationPhraseWithAlternatives = 1 << 11,
         DictationResult = 1 << 12,
 #endif
@@ -84,15 +79,15 @@ public:
 
     class MarkerTypes {
     public:
-        // The constructor is intentionally implicit to allow conversion from the bit-wise sum of above types
+        // This constructor is left implicit to allow conversion from result of a bit-wise or of enumeration values.
         MarkerTypes(unsigned mask) : m_mask(mask) { }
 
         bool contains(MarkerType type) const { return m_mask & type; }
-        bool intersects(const MarkerTypes& types) const { return (m_mask & types.m_mask); }
-        bool operator==(const MarkerTypes& other) const { return m_mask == other.m_mask; }
+        bool intersects(MarkerTypes types) const { return m_mask & types.m_mask; }
+        bool operator==(MarkerTypes other) const { return m_mask == other.m_mask; }
 
-        void add(const MarkerTypes& types) { m_mask |= types.m_mask; }
-        void remove(const MarkerTypes& types) { m_mask &= ~types.m_mask; }
+        void add(MarkerTypes types) { m_mask |= types.m_mask; }
+        void remove(MarkerTypes types) { m_mask &= ~types.m_mask; }
 
     private:
         unsigned m_mask;
@@ -101,38 +96,62 @@ public:
     class AllMarkers : public MarkerTypes {
     public:
         AllMarkers()
-#if !PLATFORM(IOS)
-#if !ENABLE(TELEPHONE_NUMBER_DETECTION)
-            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives | AcceptedCandidate)
-#else
-            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives | TelephoneNumber | AcceptedCandidate)
-#endif // !ENABLE(TELEPHONE_NUMBER_DETECTION)
-#else
-            : MarkerTypes(Spelling | Grammar | TextMatch | Replacement | CorrectionIndicator | RejectedCorrection | Autocorrected | SpellCheckingExemption | DeletedAutocorrection | DictationAlternatives | TelephoneNumber | DictationPhraseWithAlternatives | DictationResult | AcceptedCandidate)
-#endif // !PLATFORM(IOS)
+            : MarkerTypes(0
+                | AcceptedCandidate
+                | Autocorrected
+                | CorrectionIndicator
+                | DeletedAutocorrection
+                | DictationAlternatives
+                | Grammar
+                | RejectedCorrection
+                | Replacement
+                | SpellCheckingExemption
+                | Spelling
+                | TextMatch
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+                | TelephoneNumber
+#endif
+#if PLATFORM(IOS)
+                | DictationPhraseWithAlternatives
+                | DictationResult
+#endif
+            )
         {
         }
     };
 
-    DocumentMarker();
-    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset);
-    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description);
+    using IsActiveMatchData = bool;
+    using DescriptionData = String;
+    struct DictationData {
+        uint64_t context;
+        String originalText;
+    };
+    struct DictationAlternativesData {
+#if PLATFORM(IOS)
+        Vector<String> alternatives;
+        RetainPtr<id> metadata;
+#endif
+    };
+    using Data = Variant<IsActiveMatchData, DescriptionData, DictationData, DictationAlternativesData>;
+
+    DocumentMarker(unsigned startOffset, unsigned endOffset, bool isActiveMatch);
+    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description = String());
+    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, Data&&);
 #if PLATFORM(IOS)
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description, const Vector<String>& alternatives, RetainPtr<id> metadata);
 #endif
-    DocumentMarker(unsigned startOffset, unsigned endOffset, bool activeMatch);
-    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, RefPtr<DocumentMarkerDetails>&&);
 
     MarkerType type() const { return m_type; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned endOffset() const { return m_endOffset; }
 
-    WEBCORE_EXPORT const String& description() const;
-    bool activeMatch() const;
-    DocumentMarkerDetails* details() const;
+    const String& description() const;
 
+    bool isActiveMatch() const;
     void setActiveMatch(bool);
-    void clearDetails() { m_details = nullptr; }
+
+    const Data& data() const { return m_data; }
+    void clearData() { m_data = false; }
 
     // Offset modifications are done by DocumentMarkerController.
     // Other classes should not call following setters.
@@ -147,76 +166,92 @@ public:
     void setMetadata(id);
 #endif
 
-    bool operator==(const DocumentMarker& o) const
-    {
-        return type() == o.type() && startOffset() == o.startOffset() && endOffset() == o.endOffset();
-    }
-
-    bool operator!=(const DocumentMarker& o) const
-    {
-        return !(*this == o);
-    }
-
 private:
     MarkerType m_type;
     unsigned m_startOffset;
     unsigned m_endOffset;
-#if PLATFORM(IOS)
-    // FIXME: See <rdar://problem/9431249>.
-    Vector<String> m_alternatives;
-    RetainPtr<id> m_metadata;
-#endif
-    RefPtr<DocumentMarkerDetails> m_details;
+    Data m_data;
 };
 
-inline DocumentMarkerDetails* DocumentMarker::details() const
+inline DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool isActiveMatch)
+    : m_type(TextMatch)
+    , m_startOffset(startOffset)
+    , m_endOffset(endOffset)
+    , m_data(isActiveMatch)
 {
-    return m_details.get();
+}
+
+inline DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, const String& description)
+    : m_type(type)
+    , m_startOffset(startOffset)
+    , m_endOffset(endOffset)
+    , m_data(description)
+{
+}
+
+inline DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, Data&& data)
+    : m_type(type)
+    , m_startOffset(startOffset)
+    , m_endOffset(endOffset)
+    , m_data(WTFMove(data))
+{
+}
+
+inline void DocumentMarker::shiftOffsets(int delta)
+{
+    m_startOffset += delta;
+    m_endOffset += delta;
+}
+
+inline const String& DocumentMarker::description() const
+{
+    return WTF::holds_alternative<String>(m_data) ? WTF::get<String>(m_data) : emptyString();
+}
+
+inline bool DocumentMarker::isActiveMatch() const
+{
+    return WTF::holds_alternative<bool>(m_data) && WTF::get<bool>(m_data);
+}
+
+inline void DocumentMarker::setActiveMatch(bool isActiveMatch)
+{
+    ASSERT(m_type == TextMatch);
+    m_data = isActiveMatch;
 }
 
 #if PLATFORM(IOS)
+
+// FIXME: iOS should share the same dictation mark system with the other platforms <rdar://problem/9431249>.
+
 inline DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, const String&, const Vector<String>& alternatives, RetainPtr<id> metadata)
     : m_type(type)
     , m_startOffset(startOffset)
     , m_endOffset(endOffset)
-    , m_alternatives(alternatives)
-    , m_metadata(metadata)
+    , m_data(DictationAlternativesData { alternatives, metadata })
 {
-    // FIXME: <rdar://problem/11306422> iOS should investigate cleaner merge with ToT Dictation support
     ASSERT(type == DictationPhraseWithAlternatives || type == DictationResult);
 }
-#endif
 
-#if PLATFORM(IOS)
 inline const Vector<String>& DocumentMarker::alternatives() const
 {
-    ASSERT(m_type == DocumentMarker::DictationPhraseWithAlternatives);
-    return m_alternatives;
+    return WTF::get<DictationAlternativesData>(m_data).alternatives;
 }
 
 inline void DocumentMarker::setAlternative(const String& alternative, size_t index)
 {
-    ASSERT(m_type == DocumentMarker::DictationPhraseWithAlternatives);
-    m_alternatives[index] = alternative;
+    WTF::get<DictationAlternativesData>(m_data).alternatives[index] = alternative;
 }
 
 inline id DocumentMarker::metadata() const
 {
-    return m_metadata.get();
+    return WTF::get<DictationAlternativesData>(m_data).metadata.get();
 }
 
 inline void DocumentMarker::setMetadata(id metadata)
 {
-    m_metadata = metadata;
+    WTF::get<DictationAlternativesData>(m_data).metadata = metadata;
 }
-#endif
 
-class DocumentMarkerDetails : public RefCounted<DocumentMarkerDetails> {
-public:
-    DocumentMarkerDetails() { }
-    virtual ~DocumentMarkerDetails();
-    virtual bool isDescription() const { return false; }
-    virtual bool isTextMatch() const { return false; }
-};
+#endif
 
 } // namespace WebCore

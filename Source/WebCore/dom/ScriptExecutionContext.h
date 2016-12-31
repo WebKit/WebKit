@@ -41,7 +41,7 @@ namespace JSC {
 class Exception;
 class ExecState;
 class VM;
-template <typename T> class Strong;
+template<typename> class Strong;
 }
 
 namespace Inspector {
@@ -183,7 +183,7 @@ public:
     // Gets the next id in a circular sequence from 1 to 2^31-1.
     int circularSequentialID();
 
-    bool addTimeout(int timeoutId, PassRefPtr<DOMTimer> timer) { return m_timeouts.add(timeoutId, timer).isNewEntry; }
+    bool addTimeout(int timeoutId, DOMTimer& timer) { return m_timeouts.add(timeoutId, &timer).isNewEntry; }
     void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
@@ -241,30 +241,30 @@ private:
     HashSet<ContextDestructionObserver*> m_destructionObservers;
     HashSet<ActiveDOMObject*> m_activeDOMObjects;
 
-    int m_circularSequentialID;
+    int m_circularSequentialID { 0 };
     HashMap<int, RefPtr<DOMTimer>> m_timeouts;
 
-    bool m_inDispatchErrorEvent;
+    bool m_inDispatchErrorEvent { false };
     struct PendingException;
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
 
-    bool m_activeDOMObjectsAreSuspended;
-    ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
-    bool m_activeDOMObjectsAreStopped;
+    bool m_activeDOMObjectsAreSuspended { false };
+    ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ActiveDOMObject::ReasonForSuspension>(-1) };
+    bool m_activeDOMObjectsAreStopped { false };
 
     std::unique_ptr<PublicURLManager> m_publicURLManager;
 
     RefPtr<DatabaseContext> m_databaseContext;
 
-    bool m_activeDOMObjectAdditionForbidden;
+    bool m_activeDOMObjectAdditionForbidden { false };
     bool m_willProcessMessagePortMessagesSoon { false };
-    int m_timerNestingLevel;
+    int m_timerNestingLevel { 0 };
 
 #if !ASSERT_DISABLED
-    bool m_inScriptExecutionContextDestructor;
+    bool m_inScriptExecutionContextDestructor { false };
 #endif
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-    bool m_activeDOMObjectRemovalForbidden;
+    bool m_activeDOMObjectRemovalForbidden { false };
 #endif
 };
 

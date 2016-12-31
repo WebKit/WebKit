@@ -54,9 +54,9 @@ using namespace Inspector;
 namespace WebCore {
 
 struct ScriptExecutionContext::PendingException {
-    WTF_MAKE_NONCOPYABLE(PendingException); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    PendingException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
+    PendingException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, RefPtr<ScriptCallStack>&& callStack)
         : m_errorMessage(errorMessage)
         , m_lineNumber(lineNumber)
         , m_columnNumber(columnNumber)
@@ -72,19 +72,6 @@ public:
 };
 
 ScriptExecutionContext::ScriptExecutionContext()
-    : m_circularSequentialID(0)
-    , m_inDispatchErrorEvent(false)
-    , m_activeDOMObjectsAreSuspended(false)
-    , m_reasonForSuspendingActiveDOMObjects(static_cast<ActiveDOMObject::ReasonForSuspension>(-1))
-    , m_activeDOMObjectsAreStopped(false)
-    , m_activeDOMObjectAdditionForbidden(false)
-    , m_timerNestingLevel(0)
-#if !ASSERT_DISABLED
-    , m_inScriptExecutionContextDestructor(false)
-#endif
-#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-    , m_activeDOMObjectRemovalForbidden(false)
-#endif
 {
 }
 
@@ -363,7 +350,7 @@ bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& line
     } else if (securityOrigin()->canRequest(completeURL(sourceURL)))
         return false;
 
-    errorMessage = "Script error.";
+    errorMessage = ASCIILiteral { "Script error." };
     sourceURL = { };
     lineNumber = 0;
     columnNumber = 0;
@@ -376,7 +363,7 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     if (m_inDispatchErrorEvent) {
         if (!m_pendingExceptions)
             m_pendingExceptions = std::make_unique<Vector<std::unique_ptr<PendingException>>>();
-        m_pendingExceptions->append(std::make_unique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, callStack.copyRef()));
+        m_pendingExceptions->append(std::make_unique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, WTFMove(callStack)));
         return;
     }
 
@@ -387,9 +374,9 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     if (!m_pendingExceptions)
         return;
 
-    std::unique_ptr<Vector<std::unique_ptr<PendingException>>> pendingExceptions = WTFMove(m_pendingExceptions);
+    auto pendingExceptions = WTFMove(m_pendingExceptions);
     for (auto& exception : *pendingExceptions)
-        logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, exception->m_callStack.copyRef());
+        logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTFMove(exception->m_callStack));
 }
 
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)

@@ -45,11 +45,11 @@ public:
 
 private:
     SimulatedMouseEvent(const AtomicString& eventType, DOMWindow* view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
-        : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : currentTime(), view, 0, 0, 0, 0, 0,
+        : MouseEvent(eventType, true, true, underlyingEvent ? underlyingEvent->timeStamp() : currentTime(), view, 0, { }, { },
 #if ENABLE(POINTER_LOCK)
-                     0, 0,
+            { },
 #endif
-                     false, false, false, false, 0, 0, 0, 0, 0, true)
+            false, false, false, false, 0, 0, 0, 0, 0, true)
     {
         if (source == SimulatedClickSource::Bindings)
             setUntrusted();

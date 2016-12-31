@@ -39,7 +39,8 @@ namespace WebCore {
 class Frame;
 class HistoryItem;
 class SerializedScriptValue;
-class StringWithDirection;
+
+struct StringWithDirection;
 
 class HistoryController {
     WTF_MAKE_NONCOPYABLE(HistoryController);

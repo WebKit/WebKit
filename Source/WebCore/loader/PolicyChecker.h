@@ -32,7 +32,6 @@
 #include "FrameLoaderTypes.h"
 #include "PolicyCallback.h"
 #include "ResourceRequest.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(CONTENT_FILTERING)
@@ -54,9 +53,9 @@ class PolicyChecker {
 public:
     explicit PolicyChecker(Frame&);
 
-    void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, DocumentLoader*, PassRefPtr<FormState>, NavigationPolicyDecisionFunction);
+    void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, DocumentLoader*, FormState*, NavigationPolicyDecisionFunction);
     void checkNavigationPolicy(const ResourceRequest&, bool didReceiveRedirectResponse, NavigationPolicyDecisionFunction);
-    void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, NewWindowPolicyDecisionFunction);
+    void checkNewWindowPolicy(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, NewWindowPolicyDecisionFunction);
     void checkContentPolicy(const ResourceResponse&, ContentPolicyDecisionFunction);
 
     // FIXME: These are different.  They could use better names.

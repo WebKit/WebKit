@@ -114,6 +114,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
+#include "NamedFlowCollection.h"
 #include "NestingLevelIncrementer.h"
 #include "NoEventDispatchAssertion.h"
 #include "NodeIterator.h"
@@ -1449,64 +1450,41 @@ Element* Document::scrollingElement()
     return body();
 }
 
-/*
- * Performs three operations:
- *  1. Convert control characters to spaces
- *  2. Trim leading and trailing spaces
- *  3. Collapse internal whitespace.
- */
-template <typename CharacterType>
-static inline StringWithDirection canonicalizedTitle(Document* document, const StringWithDirection& titleWithDirection)
+template<typename CharacterType> static inline String canonicalizedTitle(Document& document, const String& title)
 {
-    const String& title = titleWithDirection.string();
-    const CharacterType* characters = title.characters<CharacterType>();
+    // FIXME: Compiling a separate copy of this for each character type is likely unnecessary.
+    // FIXME: Missing an optimized case for when title is fine as-is. This unnecessarily allocates
+    // and keeps around a new copy, and it's even the less optimal type of StringImpl with a separate buffer.
+    // Could probably just use StringBuilder instead.
+
+    auto* characters = title.characters<CharacterType>();
     unsigned length = title.length();
-    unsigned i;
 
-    StringBuffer<CharacterType> buffer(length);
-    unsigned builderIndex = 0;
+    StringBuffer<CharacterType> buffer { length };
+    unsigned bufferLength = 0;
 
-    // Skip leading spaces and leading characters that would convert to spaces
-    for (i = 0; i < length; ++i) {
-        CharacterType c = characters[i];
-        if (isNotHTMLSpace(c))
-            break;
-    }
-
-    if (i == length)
-        return StringWithDirection();
-
-    // Replace control characters with spaces, and backslashes with currency symbols, and collapse whitespace.
-    bool previousCharWasWS = false;
-    for (; i < length; ++i) {
-        CharacterType c = characters[i];
-        if (isHTMLSpace(c)) {
-            if (previousCharWasWS)
-                continue;
-            buffer[builderIndex++] = ' ';
-            previousCharWasWS = true;
-        } else {
-            buffer[builderIndex++] = c;
-            previousCharWasWS = false;
+    // Collapse runs of HTML spaces into single space characters; strip leading and trailing spaces.
+    bool previousCharacterWasHTMLSpace = false;
+    for (unsigned i = 0; i < length; ++i) {
+        auto character = characters[i];
+        if (isHTMLSpace(character))
+            previousCharacterWasHTMLSpace = true;
+        else {
+            if (previousCharacterWasHTMLSpace && bufferLength)
+                buffer[bufferLength++] = ' ';
+            buffer[bufferLength++] = character;
+            previousCharacterWasHTMLSpace = false;
         }
     }
+    if (!bufferLength)
+        return { };
+    buffer.shrink(bufferLength);
 
-    // Strip trailing spaces
-    while (builderIndex > 0) {
-        --builderIndex;
-        if (buffer[builderIndex] != ' ')
-            break;
-    }
+    // Replace backslashes with currency symbols if the encoding requires it.
+    if (auto* decoder = document.decoder())
+        decoder->encoding().displayBuffer(buffer.characters(), bufferLength);
 
-    if (!builderIndex && buffer[builderIndex] == ' ')
-        return StringWithDirection();
-
-    buffer.shrink(builderIndex + 1);
-
-    // Replace the backslashes with currency symbols if the encoding requires it.
-    document->displayBufferModifiedByEncoding(buffer.characters(), buffer.length());
-    
-    return StringWithDirection(String::adopt(WTFMove(buffer)), titleWithDirection.direction());
+    return String::adopt(WTFMove(buffer));
 }
 
 void Document::updateTitle(const StringWithDirection& title)
@@ -1515,31 +1493,31 @@ void Document::updateTitle(const StringWithDirection& title)
         return;
 
     m_rawTitle = title;
+    m_title = title;
 
-    if (m_rawTitle.string().isEmpty())
-        m_title = StringWithDirection();
-    else {
-        if (m_rawTitle.string().is8Bit())
-            m_title = canonicalizedTitle<LChar>(this, m_rawTitle);
+    if (!m_title.string.isEmpty()) {
+        if (m_title.string.is8Bit())
+            m_title.string = canonicalizedTitle<LChar>(*this, m_title.string);
         else
-            m_title = canonicalizedTitle<UChar>(this, m_rawTitle);
+            m_title.string = canonicalizedTitle<UChar>(*this, m_title.string);
     }
-    if (DocumentLoader* loader = this->loader())
+
+    if (auto* loader = this->loader())
         loader->setTitle(m_title);
 }
 
 void Document::updateTitleFromTitleElement()
 {
     if (!m_titleElement) {
-        updateTitle(StringWithDirection());
+        updateTitle({ });
         return;
     }
 
     if (is<HTMLTitleElement>(*m_titleElement))
         updateTitle(downcast<HTMLTitleElement>(*m_titleElement).textWithDirection());
     else if (is<SVGTitleElement>(*m_titleElement)) {
-        // FIXME: does SVG have a title text direction?
-        updateTitle(StringWithDirection(downcast<SVGTitleElement>(*m_titleElement).textContent(), LTR));
+        // FIXME: Does the SVG title element have a text direction?
+        updateTitle({ downcast<SVGTitleElement>(*m_titleElement).textContent(), LTR });
     }
 }
 
@@ -1559,16 +1537,19 @@ void Document::setTitle(const String& title)
             m_titleElement = SVGTitleElement::create(SVGNames::titleTag, *this);
             element->insertBefore(*m_titleElement, element->firstChild());
         }
-    } else if (!isHTMLDocument() && !isXHTMLDocument() && !isSVGDocument())
+    } else if (!isHTMLDocument() && !isXHTMLDocument() && !isSVGDocument()) {
+        // FIXME: What exactly is the point of this? This seems like a strange moment
+        // in time to demote something from being m_titleElement, when setting the
+        // value of the title attribute. Do we have test coverage for this?
         m_titleElement = nullptr;
-
-    // The DOM API has no method of specifying direction, so assume LTR.
-    updateTitle(StringWithDirection(title, LTR));
+    }
 
     if (is<HTMLTitleElement>(m_titleElement.get()))
         downcast<HTMLTitleElement>(*m_titleElement).setTextContent(title);
     else if (is<SVGTitleElement>(m_titleElement.get()))
         downcast<SVGTitleElement>(*m_titleElement).setTextContent(title);
+    else
+        updateTitle({ title, LTR });
 }
 
 void Document::updateTitleElement(Element* newTitleElement)
@@ -4044,11 +4025,11 @@ void Document::setAttributeEventListener(const AtomicString& eventType, const Qu
     setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue));
 }
 
-void Document::setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener)
+void Document::setWindowAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener)
 {
     if (!m_domWindow)
         return;
-    m_domWindow->setAttributeEventListener(eventType, listener);
+    m_domWindow->setAttributeEventListener(eventType, WTFMove(listener));
 }
 
 void Document::setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
@@ -5241,7 +5222,7 @@ void Document::updateURLForPushOrReplaceState(const URL& url)
         documentLoader->replaceRequestURLForSameDocumentNavigation(url);
 }
 
-void Document::statePopped(PassRefPtr<SerializedScriptValue> stateObject)
+void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
 {
     if (!frame())
         return;
@@ -5249,9 +5230,9 @@ void Document::statePopped(PassRefPtr<SerializedScriptValue> stateObject)
     // Per step 11 of section 6.5.9 (history traversal) of the HTML5 spec, we 
     // defer firing of popstate until we're in the complete state.
     if (m_readyState == Complete)
-        enqueuePopstateEvent(stateObject);
+        enqueuePopstateEvent(WTFMove(stateObject));
     else
-        m_pendingStateObject = stateObject;
+        m_pendingStateObject = WTFMove(stateObject);
 }
 
 void Document::updateFocusAppearanceSoon(SelectionRestorationMode mode)
@@ -5498,24 +5479,6 @@ String Document::displayStringModifiedByEncoding(const String& str) const
         return m_decoder->encoding().displayString(str.impl()).get();
     return str;
 }
-
-RefPtr<StringImpl> Document::displayStringModifiedByEncoding(PassRefPtr<StringImpl> str) const
-{
-    if (m_decoder)
-        return m_decoder->encoding().displayString(str);
-    return str;
-}
-
-template <typename CharacterType>
-void Document::displayBufferModifiedByEncodingInternal(CharacterType* buffer, unsigned len) const
-{
-    if (m_decoder)
-        m_decoder->encoding().displayBuffer(buffer, len);
-}
-
-// Generate definitions for both character types
-template void Document::displayBufferModifiedByEncodingInternal<LChar>(LChar*, unsigned) const;
-template void Document::displayBufferModifiedByEncodingInternal<UChar>(UChar*, unsigned) const;
 
 void Document::enqueuePageshowEvent(PageshowEventPersistence persisted)
 {
@@ -6060,7 +6023,7 @@ double Document::monotonicTimestamp() const
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 
-int Document::requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback> callback)
+int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)
 {
     if (!m_scriptedAnimationController) {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
@@ -6075,7 +6038,7 @@ int Document::requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback> ca
             m_scriptedAnimationController->suspend();
     }
 
-    return m_scriptedAnimationController->registerCallback(callback);
+    return m_scriptedAnimationController->registerCallback(WTFMove(callback));
 }
 
 void Document::cancelAnimationFrame(int id)

@@ -282,7 +282,7 @@ HRESULT WebDataSource::pageTitle(_Deref_opt_out_ BSTR* title)
     if (!m_loader)
         return E_UNEXPECTED;
 
-    *title = BString(m_loader->title().string()).release();
+    *title = BString(m_loader->title().string).release();
     return S_OK;
 }
 

@@ -144,9 +144,6 @@ public:
     virtual bool isCompositionEvent() const;
     virtual bool isTouchEvent() const;
 
-    // Drag events are a subset of mouse events.
-    virtual bool isDragEvent() const;
-
     // These events lack a DOM interface.
     virtual bool isClipboardEvent() const;
     virtual bool isBeforeTextInsertedEvent() const;
@@ -186,8 +183,6 @@ public:
     void setUnderlyingEvent(Event*);
 
     bool isBeingDispatched() const { return eventPhase(); }
-
-    virtual Ref<Event> cloneFor(HTMLIFrameElement*) const;
 
     virtual EventTarget* relatedTarget() const { return nullptr; }
 

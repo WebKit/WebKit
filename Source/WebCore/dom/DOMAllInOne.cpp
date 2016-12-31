@@ -66,7 +66,6 @@
 #include "Document.cpp"
 #include "DocumentEventQueue.cpp"
 #include "DocumentFragment.cpp"
-#include "DocumentMarker.cpp"
 #include "DocumentMarkerController.cpp"
 #include "DocumentOrderedMap.cpp"
 #include "DocumentParser.cpp"

@@ -820,7 +820,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
     if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
         return;
 
-    Color color = marker.activeMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
+    Color color = marker.isActiveMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
     GraphicsContextStateSaver stateSaver(context);
     updateGraphicsContext(context, TextPaintStyle(color)); // Don't draw text at all!
 

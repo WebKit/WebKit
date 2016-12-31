@@ -1,5 +1,329 @@
 2016-12-30  Darin Adler  <darin@apple.com>
 
+        Remove PassRefPtr use from the "dom" directory, related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=166569
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Removed DocumentMarker.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state): Pass ExecState by reference.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent): Use auto.
+
+        * dom/DOMAllInOne.cpp: Removed DocumentMarker.cpp.
+
+        * dom/DOMNamedFlowCollection.cpp:
+        (WebCore::DOMNamedFlowCollection::DOMNamedFlowCollection): Updated to take
+        ownership of the passed in vector.
+        (WebCore::DOMNamedFlowCollection::create): Moved here from header.
+        (WebCore::DOMNamedFlowCollection::~DOMNamedFlowCollection): Moved here so we
+        don't need to include "WebKitNamedFlow.h" in the header.
+        (WebCore::DOMNamedFlowCollection::item): Rewrote to use Vector.
+        (WebCore::DOMNamedFlowCollection::namedItem): Rewrote to use a HashSet that
+        we build from the Vector. Uses a set of hash functions defined right here.
+        Note that the privor version of this class had incorrect use of ListHashSet
+        with safeToCompareToEmptyOrDeleted inaccurately set to true.
+        (WebCore::DOMNamedFlowCollection::supportedPropertyNames): Added this.
+        Old version just had an empty placeholder.
+        * dom/DOMNamedFlowCollection.h: Changed to no longer use ListHashSet, not
+        the right data structure for this. Removed incorrect use of "long" and
+        made some other simplifications.
+        * dom/DOMNamedFlowCollection.idl: Changed return types of item and namedItem
+        to accurately reflect the fact that they return null when the index or name
+        not found in the collection.
+
+        * dom/DataTransfer.h: Remove indentation. Remove unimplemented
+        incorrect declarations of items for ENABLE(DATA_TRANSFER_ITEMS).
+        Will be added back when someone implements that feature, or perhaps
+        ENABLE(DATA_TRANSFER_ITEMS) should be entirely removed for now?
+
+        * dom/DataTransferItem.h: Changed return type for getAsFile to
+        RefPtr. Again, part of ENABLE(DATA_TRANSFER_ITEMS), so dead code for now.
+
+        * dom/Document.cpp:
+        (WebCore::canonicalizedTitle): Removed incorrect comment claiming we
+        convert control characters to spaces. Simplified logic, removing two
+        extra loops. Changed to work on just a String rather than StringWithDirection.
+        (WebCore::Document::updateTitle): Updated to call the function above.
+        Also updated since StringWithDirection is now a struct instead of a class.
+        Call displayBuffer on the encoding directly instead of calling a member
+        function named displayBufferModifiedByEncoding.
+        (WebCore::Document::updateTitleFromTitleElement): Updated since
+        StringWithDirection is now a struct.
+        (WebCore::Document::setTitle): Removed code that unnecessarily calls
+        updateTitle twice; once indirectly by calling setTextContent on the
+        title elmeent and once by directly calling updateTitle.
+        (WebCore::Document::setWindowAttributeEventListener): Take a RefPtr&&.
+        (WebCore::Document::statePopped): Take a Ref&&.
+        (WebCore::Document::displayStringModifiedByEncoding): Deleted unused overload.
+        (WebCore::Document::displayBufferModifiedByEncodingInternal): Deleted.
+        (WebCore::Document::requestAnimationFrame): Take a Ref&&.
+        * dom/Document.h: Updated for changes above. Also changed the title function
+        to return a const String& to slightly cut down on reference count churn.
+        (WebCore::Document::displayBufferModifiedByEncoding): Deleted.
+
+        * dom/DocumentMarker.cpp: Removed.
+        * dom/DocumentMarker.h: Reworked the DocumentMarker class to use a variant
+        instead of a separate reference counted DocumentMarkerDetails object.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarkerToNode): Changed argument
+        type to DocumentMarker::Data&&.
+        (DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        clearDetails -> clearData
+        (DocumentMarkerController::showMarkers): activeMatch -> isActiveMatch
+        * dom/DocumentMarkerController.h: Updated for the above.
+
+        * dom/DocumentParser.h: Fixed incorrect reference to PassRefPtr in a comment.
+
+        * dom/Element.cpp:
+        (WebCore::Element::willModifyAttribute): Use auto.
+
+        * dom/Event.cpp:
+        (WebCore::Event::isDragEvent): Deleted. Unused.
+        (WebCore::Event::cloneFor): Deleted. Unused function left over from the
+        start of an implementation of seamless frames.
+        * dom/Event.h: Updated for the above.
+
+        * dom/EventContext.cpp: Tweaked blank lines.
+        * dom/EventContext.h: Removed unnecessary includes and forward declarations.
+        Changed setRelatedTarget to take a raw pointer instead of PassRefPtr since
+        callers aren't passing ownership. Moved TouchEventContext::touchList body
+        out of the class definition since it's a bit long. Deleted unused
+        toTouchEventContext functions. FIxed incorrect comment.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::initMessageEvent): Removed unused overload.
+        * dom/MessageEvent.h: Updated for above. Also changed the
+        dataAsSerializedScriptValue function to return a raw pointer instead of
+        PassRefPtr since it is not passing ownership.
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create): Use raw pointer instead of PassRefPtr for
+        data transfer and related target arguments.
+        (WebCore::MouseEvent::MouseEvent): Ditto. Also use IntPoint instead of
+        separate ints for the various X/Y pairs.
+        (WebCore::MouseEvent::initMouseEvent): Take a raw pointer for event target.
+        (WebCore::MouseEvent::isDragEvent): Reformatted, sorted alphabetically,
+        added comment about why this function probably needs to go.
+        (WebCore::adjustedClientX): Deleted.
+        (WebCore::adjustedClientY): Deleted.
+        (WebCore::MouseEvent::cloneFor): Deleted.
+        * dom/MouseEvent.h: Updated for the above. Also made more functions private
+        and final and initialized more of the data members.
+
+        * dom/MutationEvent.cpp:
+        (WebCore::MutationEvent::MutationEvent): Pass related node as a raw pointer.
+        (WebCore::MutationEvent::initMutationEvent): Ditto.
+        * dom/MutationEvent.h: Updated for the above. Fixed indentation. Removed
+        unnecessary explicit destructor; default generated one is fine. Initialize
+        m_attrChange in the class definition.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::observe): Pass reference.
+        (WebCore::MutationObserver::disconnect): Call unregisterMutationObserver
+        directly instead of calling unregisterAndDelete.
+
+        * dom/MutationObserverInterestGroup.cpp:
+        (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup):
+        Take an rvalue reference to the HashMap and use move.
+        (WebCore::MutationObserverInterestGroup::createIfNeeded): Updated to call
+        registeredMutationObservers.
+        * dom/MutationObserverInterestGroup.h: Updated for the above.
+
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::MutationObserverRegistration):
+        Take a reference to the observer instead of PassRefPtr. Also take a
+        refererence to the node rather than a pointer.
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        Updated to use references instead of pointers.
+        (WebCore::MutationObserverRegistration::clearTransientRegistrations): Ditto.
+        (WebCore::MutationObserverRegistration::unregisterAndDelete): Deleted.
+        (WebCore::MutationObserverRegistration::shouldReceiveMutationFrom): Ditto.
+        (WebCore::MutationObserverRegistration::addRegistrationNodesToSet): Ditto.
+        * dom/MutationObserverRegistration.h: Updated for above changes. Also added
+        a node member function. Changed m_observer to a Ref and m_node to a reference.
+        Removed the NodeHashSet typedef.
+
+        * dom/NamedFlowCollection.cpp:
+        (WebCore::NamedFlowCollection::createCSSOMSnapshot): Pass a vector of Ref
+        instead of a vector of raw pointers and pass it as an rvalue reference so
+        it can be taken over by the named flow collection wrapper.
+
+        * dom/Node.cpp:
+        (WebCore::Node::mutationObserverRegistry): Use auto and nullptr.
+        (WebCore::Node::transientMutationObserverRegistry): Ditto.
+        (WebCore::collectMatchingObserversForMutation): Use references instead of pointers.
+        (WebCore::Node::registeredMutationObservers): Changed to return a map instead of
+        filling one in and renamed to remove "get" from name.
+        (WebCore::Node::registerMutationObserver): Use references instead of pointers.
+        (WebCore::Node::unregisterMutationObserver): Ditto.
+        (WebCore::Node::registerTransientMutationObserver): Ditto.
+        (WebCore::Node::unregisterTransientMutationObserver): Ditto.
+        (WebCore::Node::notifyMutationObserversNodeWillDetach): Ditto.
+        * dom/Node.h: Updated for the above.
+
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent): Use RefPtr&& instead of PassRefPtr.
+        (WebCore::PopStateEvent::create): Use a raw pointer instead of PassRefPtr.
+        (WebCore::PopStateEvent::trySerializeState): Take a reference to ExecState.
+        * dom/PopStateEvent.h: Updated for the above.
+
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Take a raw pointer instead of PassRefPtr.
+        (WebCore::Position::moveToPosition): Ditto.
+        * dom/Position.h: Updated for the above, also changed createLegacyEditingPosition
+        in the same way and got rid of the LegacyEditingPosition class.
+
+        * dom/Range.cpp:
+        (WebCore::Range::Range): Changed startContainer and endContainer to RefPtr<Node>&&.
+        Later this needs to be changed more, but for now this keeps code changes to a minimum.
+        (WebCore::Range::create): Changed startContainer and endContainer to Node*.
+        * dom/Range.h: Updated for the above.
+
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::dispatchEvent): Removed a comment that talks about
+        PassRefPtr, and simplified the code since the comment is no longer valid.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::PendingException::PendingException):
+        Take a RefPtr&& instead of a PassRefPtr.
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext): Moved initialization
+        of all the data members up to the class definition.
+        (WebCore::ScriptExecutionContext::sanitizeScriptError): Use ASCIILiteral.
+        (WebCore::ScriptExecutionContext::reportException): Use WTFMove when passing
+        arguments to the PendingException constructor and using a value from the
+        PendingException just before destroying it.
+
+        * dom/ScriptExecutionContext.h: Changed addTimeout to take a reference rather
+        than a PassRefPtr to the timer. Callers were not passing ownership. Also
+        initialize all the data members here in the class definition.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::registerCallback): Take a Ref&&.
+        * dom/ScriptedAnimationController.h: Updated for the above.
+
+        * dom/SimulatedClick.cpp:
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent): Updated since MouseEvent
+        constructor arguments changed to use IntPoint.
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent): Ditto. Also removed some unneeded initializers
+        now that the header does more.
+        (WebCore::WheelEvent::initWheelEvent): Tweaed style a bit.
+        (WebCore::WheelEvent::initWebKitWheelEvent): Deleted. Moved to the header since it's
+        just an inline that forwards to initWheelEvent.
+        * dom/WheelEvent.h: Updated for the above.
+
+        * dom/make_event_factory.pl:
+        (generateImplementation): Use RefPtr instead of PassRefPtr. A couple other tweaks.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord): Use the data
+        insetad of details.
+        (WebCore::AlternativeTextController::removeDictationAlternativesForMarker):
+        Ditto, also changed to take reference instead of pointer.
+        (WebCore::AlternativeTextController::dictationAlternativesForMarker): Ditto.
+        (WebCore::AlternativeTextController::applyDictationAlternative): Ditto.
+        * editing/AlternativeTextController.h: Updated for the above.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        Updated since Position now takes a raw pointer.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::joinChildTextNodes): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceSelectedTextInNode): Ditto.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring): Ditto.
+
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationMarkerSupplier::addMarkersToTextNode): Updated to use the
+        DictationData struct.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing): Pass a reference.
+        (WebCore::Editor::dictationAlternativesForMarker): Take a reference.
+        * editing/Editor.h: Updated for the above.
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performOverwrite): Updated since Position now takes
+        a raw pointer.
+        (WebCore::InsertTextCommand::doApply): Ditto.
+        (WebCore::InsertTextCommand::insertTab): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition): Ditto.
+
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::computedTextWithDirection): Updated since
+        StringWithDirection is now a struct.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm): Use Ref&& for the form submission.
+        (WebCore::FrameLoader::receivedFirstData): Updated for change to StringWithDirection.
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::didBeginDocument): Pass a reference.
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Pass a Ref to loadArchive.
+        (WebCore::FrameLoader::loadArchive): Take a Ref&& for the archive.
+        (WebCore::FrameLoader::loadInSameDocument): Take a raw pointer for the
+        serialized script value state object. No one was passing ownership.
+        But pass it along to statePopped as a Ref since we need to pass ownership
+        of the null value, at least for now.
+        (WebCore::FrameLoader::loadFrameRequest): Take a raw pointer for form state.
+        No one was passing ownership.
+        (WebCore::FrameLoader::loadURL): Ditto.
+        (WebCore::FrameLoader::load): Ditto.
+        (WebCore::FrameLoader::loadWithNavigationAction): Ditto.
+        (WebCore::FrameLoader::loadWithDocumentLoader): Ditto.
+        (WebCore::FrameLoader::loadPostRequest): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Ditto.
+        * loader/FrameLoader.h: Updated for the above and to remove an unneeded forward
+        declaration of StringWithDirection, which is not used here.
+
+        * loader/FrameLoaderClient.h: Updated forward declaration of StringWithDirection.
+        Also sorted the others and removed unneeded conditionals.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::setCurrentItemTitle): Updated to use struct.
+        (WebCore::HistoryController::initializeItem): Ditto.
+        * loader/HistoryController.h: Updated forward declaration of StringWithDirection.
+
+        * loader/PolicyCallback.cpp:
+        (WebCore::PolicyCallback::PolicyCallback): Deleted. Default works fine.
+        (WebCore::PolicyCallback::~PolicyCallback): Ditto.
+        (WebCore::PolicyCallback::set): Take a raw pointer to form state.
+        * loader/PolicyCallback.h: Use raw pointer for form state.
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): Take a raw pointer for form state.
+        (WebCore::PolicyChecker::checkNewWindowPolicy): Ditto.
+        * loader/PolicyChecker.h: Updated for the above.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer): Pass reference to addTimeout function.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::requestAnimationFrame): Use Ref&& for callback.
+        (WebCore::DOMWindow::webkitRequestAnimationFrame): Ditto.
+        (WebCore::DOMWindow::cancelAnimationFrame): Tweak coding style.
+        * page/DOMWindow.h: Updated for the above.
+
+        * platform/PlatformWheelEvent.h: Use pragma once. Tweaked header indentation.
+        Simplified constructors by initializing data members.
+
+        * platform/text/StringWithDirection.h: Use pragma once. Use struct instead of class.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::dictationAlternatives): Pass a reference.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintTextMatchMarker): activeMatch -> isActiveMatch
+
+2016-12-30  Darin Adler  <darin@apple.com>
+
         Remove PassRefPtr use from the "css" directory, related cleanup
         https://bugs.webkit.org/show_bug.cgi?id=166628
 

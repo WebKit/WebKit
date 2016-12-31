@@ -433,11 +433,11 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
-    // FIXME: use direction of title.
-    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title.string(), m_frame, userData);
+    // FIXME: Use direction of title.
+    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title.string, m_frame, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent)
@@ -1001,8 +1001,8 @@ void WebFrameLoaderClient::updateGlobalHistory()
 
     WebNavigationDataStore data;
     data.url = loader->url().string();
-    // FIXME: use direction of title.
-    data.title = loader->title().string();
+    // FIXME: Use direction of title.
+    data.title = loader->title().string;
     data.originalRequest = loader->originalRequestCopy();
     data.response = loader->response();
 
@@ -1274,8 +1274,8 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
     if (!webPage || !webPage->pageGroup()->isVisibleToHistoryClient())
         return;
 
-    // FIXME: use direction of title.
-    webPage->send(Messages::WebPageProxy::DidUpdateHistoryTitle(title.string(), url.string(), m_frame->frameID()));
+    // FIXME: Use direction of title.
+    webPage->send(Messages::WebPageProxy::DidUpdateHistoryTitle(title.string, url.string(), m_frame->frameID()));
 }
 
 String WebFrameLoaderClient::userAgent(const URL& url)

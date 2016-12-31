@@ -62,9 +62,10 @@ public:
 
     void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted) override
     {
-        DocumentMarkerController& markerController = textNode->document().markers();
+        auto& markerController = textNode->document().markers();
         for (auto& alternative : m_alternatives) {
-            markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, DictationMarkerDetails::create(textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength), alternative.dictationContext));
+            DocumentMarker::DictationData data { alternative.dictationContext, textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength) };
+            markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, WTFMove(data));
             markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::SpellCheckingExemption);
         }
     }

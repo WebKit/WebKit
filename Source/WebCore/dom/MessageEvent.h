@@ -61,7 +61,6 @@ public:
     virtual ~MessageEvent();
 
     void initMessageEvent(JSC::ExecState&, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
-    void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
 
     const String& origin() const { return m_origin; }
     const String& lastEventId() const { return m_lastEventId; }
@@ -70,8 +69,6 @@ public:
 
     // FIXME: Remove this when we have custom ObjC binding support.
     SerializedScriptValue* data() const;
-
-    EventInterface eventInterface() const override;
 
     enum DataType {
         DataTypeScriptValue,
@@ -82,13 +79,13 @@ public:
     };
     DataType dataType() const { return m_dataType; }
     JSC::JSValue dataAsScriptValue() const { ASSERT(m_dataType == DataTypeScriptValue); return m_dataAsScriptValue; }
-    PassRefPtr<SerializedScriptValue> dataAsSerializedScriptValue() const { ASSERT(m_dataType == DataTypeSerializedScriptValue); return m_dataAsSerializedScriptValue; }
+    SerializedScriptValue* dataAsSerializedScriptValue() const { ASSERT(m_dataType == DataTypeSerializedScriptValue); return m_dataAsSerializedScriptValue.get(); }
     String dataAsString() const { ASSERT(m_dataType == DataTypeString); return m_dataAsString; }
     Blob* dataAsBlob() const { ASSERT(m_dataType == DataTypeBlob); return m_dataAsBlob.get(); }
     ArrayBuffer* dataAsArrayBuffer() const { ASSERT(m_dataType == DataTypeArrayBuffer); return m_dataAsArrayBuffer.get(); }
 
     RefPtr<SerializedScriptValue> trySerializeData(JSC::ExecState*);
-    
+
 private:
     MessageEvent();
     MessageEvent(JSC::ExecState&, const AtomicString&, Init&&, IsTrusted);
@@ -97,6 +94,8 @@ private:
     MessageEvent(const String& data, const String& origin);
     MessageEvent(Ref<Blob>&& data, const String& origin);
     MessageEvent(Ref<ArrayBuffer>&& data, const String& origin);
+
+    EventInterface eventInterface() const final;
 
     DataType m_dataType;
     Deprecated::ScriptValue m_dataAsScriptValue;

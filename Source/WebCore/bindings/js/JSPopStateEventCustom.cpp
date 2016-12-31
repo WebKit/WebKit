@@ -63,7 +63,7 @@ JSValue JSPopStateEvent::state(ExecState& state) const
         // We need to make sure a PopStateEvent does not leak objects in its state property across isolated DOM worlds.
         // Ideally, we would check that the worlds have different privileges but that's not possible yet.
         if (eventState.isObject() && &worldForDOMObject(eventState.getObject()) != &currentWorld(&state)) {
-            if (auto serializedValue = event.trySerializeState(&state))
+            if (auto serializedValue = event.trySerializeState(state))
                 eventState = serializedValue->deserialize(state, globalObject());
             else
                 eventState = jsNull();

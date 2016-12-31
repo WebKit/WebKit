@@ -106,12 +106,12 @@ Document* NamedFlowCollection::document() const
 
 Ref<DOMNamedFlowCollection> NamedFlowCollection::createCSSOMSnapshot()
 {
-    Vector<WebKitNamedFlow*> createdFlows;
+    Vector<Ref<WebKitNamedFlow>> createdFlows;
     for (auto& namedFlow : m_namedFlows) {
         if (namedFlow->flowState() == WebKitNamedFlow::FlowStateCreated)
-            createdFlows.append(namedFlow);
+            createdFlows.append(*namedFlow);
     }
-    return DOMNamedFlowCollection::create(createdFlows);
+    return DOMNamedFlowCollection::create(WTFMove(createdFlows));
 }
 
 // The HashFunctions object used by the HashSet to compare between NamedFlows.

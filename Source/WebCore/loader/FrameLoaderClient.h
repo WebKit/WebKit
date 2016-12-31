@@ -72,36 +72,32 @@ class FormState;
 class Frame;
 class FrameLoader;
 class FrameNetworkingContext;
-class HistoryItem;
 class HTMLAppletElement;
 class HTMLFormElement;
 class HTMLFrameOwnerElement;
 class HTMLPlugInElement;
+class HistoryItem;
 class IntSize;
-class URL;
 class MessageEvent;
 class NavigationAction;
 class Page;
-class ProtectionSpace;
 class PluginViewBase;
 class PolicyChecker;
+class ProtectionSpace;
+class QuickLookHandle;
+class RTCPeerConnectionHandler;
 class ResourceError;
 class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
-#if ENABLE(WEB_RTC)
-class RTCPeerConnectionHandler;
-#endif
 class SecurityOrigin;
 class SessionID;
 class SharedBuffer;
-class StringWithDirection;
 class SubstituteData;
+class URL;
 class Widget;
 
-#if USE(QUICK_LOOK)
-class QuickLookHandle;
-#endif
+struct StringWithDirection;
 
 typedef std::function<void (PolicyAction)> FramePolicyFunction;
 

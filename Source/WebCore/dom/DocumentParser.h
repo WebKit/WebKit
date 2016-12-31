@@ -51,7 +51,7 @@ public:
 
     // FIXME: append() should be private, but DocumentWriter::replaceDocument uses it for now.
     // FIXME: This really should take a std::unique_ptr to signify that it expects to take
-    // ownership of the buffer. The parser expects the PassRefPtr to hold the only ref of the StringImpl.
+    // ownership of the buffer. The parser expects the RefPtr to hold the only ref of the StringImpl.
     virtual void append(RefPtr<StringImpl>&&) = 0;
 
     virtual void finish() = 0;

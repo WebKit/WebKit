@@ -37,7 +37,7 @@ class SerializedScriptValue;
 class PopStateEvent final : public Event {
 public:
     virtual ~PopStateEvent();
-    static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, PassRefPtr<History>);
+    static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, History*);
 
     struct Init : EventInit {
         JSC::JSValue state;
@@ -49,16 +49,16 @@ public:
     JSC::JSValue state() const { return m_state; }
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
 
-    RefPtr<SerializedScriptValue> trySerializeState(JSC::ExecState*);
+    RefPtr<SerializedScriptValue> trySerializeState(JSC::ExecState&);
     
     History* history() const { return m_history.get(); }
-
-    EventInterface eventInterface() const override;
 
 private:
     PopStateEvent() = default;
     PopStateEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
-    explicit PopStateEvent(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
+    PopStateEvent(RefPtr<SerializedScriptValue>&&, History*);
+
+    EventInterface eventInterface() const final;
 
     Deprecated::ScriptValue m_state;
     RefPtr<SerializedScriptValue> m_serializedState;

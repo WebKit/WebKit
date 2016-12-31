@@ -295,7 +295,7 @@ static CGColorRef createCGColorWithDeviceWhite(CGFloat white, CGFloat alpha)
     if ([title length]) {
         [_title release];
         _title = [title copy];
-        core([self _frame])->loader().client().dispatchDidReceiveTitle(StringWithDirection(title, LTR));
+        core([self _frame])->loader().client().dispatchDidReceiveTitle({ title, LTR });
     }
 }
 

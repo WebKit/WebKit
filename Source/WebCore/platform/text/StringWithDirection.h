@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringWithDirection_h
-#define StringWithDirection_h
+#pragma once
 
 #include "WritingMode.h"
 #include <wtf/text/WTFString.h>
@@ -44,36 +43,23 @@ namespace WebCore {
 // Note that is explicitly *not* the direction of the string as learned
 // from the characters of the string; it's extra metadata we have external
 // to the string.
-class StringWithDirection {
-public:
-    StringWithDirection()
-        : m_direction(LTR)
-    {
-    }
 
-    StringWithDirection(const String& string, TextDirection dir)
-        : m_string(string)
-        , m_direction(dir)
-    {
-    }
-
-    const String& string() const { return m_string; }
-    TextDirection direction() const { return m_direction; }
-
-    bool isEmpty() const { return m_string.isEmpty(); }
-    bool isNull() const { return m_string.isNull(); }
-
-    bool operator==(const StringWithDirection& other) const
-    {
-        return other.m_string == m_string && other.m_direction == m_direction;
-    }
-    bool operator!=(const StringWithDirection& other) const { return !((*this) == other); }
-
-private:
-    String m_string;
-    TextDirection m_direction;
+struct StringWithDirection {
+    StringWithDirection() = default;
+    StringWithDirection(const String& string, TextDirection direction) : string { string }, direction { direction } { }
+    StringWithDirection(String&& string, TextDirection direction) : string { WTFMove(string) }, direction { direction } { }
+    String string;
+    TextDirection direction { LTR };
 };
 
+inline bool operator==(const StringWithDirection& a, const StringWithDirection& b)
+{
+    return a.string == b.string && a.direction == b.direction;
 }
 
-#endif // StringWithDirection_h
+inline bool operator!=(const StringWithDirection& a, const StringWithDirection& b)
+{
+    return !(a == b);
+}
+
+}

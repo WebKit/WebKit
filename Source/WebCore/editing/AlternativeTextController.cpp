@@ -649,13 +649,13 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         startAlternativeTextUITimer(AlternativeTextTypeReversion);
         break;
     case DocumentMarker::DictationAlternatives: {
-        const DictationMarkerDetails* markerDetails = static_cast<const DictationMarkerDetails*>(marker.details());
-        if (!markerDetails)
+        if (!WTF::holds_alternative<DocumentMarker::DictationData>(marker.data()))
             return false;
-        if (currentWord != markerDetails->originalText())
+        auto& markerData = WTF::get<DocumentMarker::DictationData>(marker.data());
+        if (currentWord != markerData.originalText)
             return false;
         m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = DictationAlternativeDetails::create(markerDetails->dictationContext());
+        m_alternativeTextInfo.details = DictationAlternativeDetails::create(markerData.context);
         startAlternativeTextUITimer(AlternativeTextTypeDictationAlternatives);
     }
         break;
@@ -696,27 +696,23 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     return event->defaultHandled();
 }
 
-void AlternativeTextController::removeDictationAlternativesForMarker(const DocumentMarker* marker)
+void AlternativeTextController::removeDictationAlternativesForMarker(const DocumentMarker& marker)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    ASSERT(marker->details());
-    if (DictationMarkerDetails* details = static_cast<DictationMarkerDetails*>(marker->details())) {
-        if (AlternativeTextClient* client = alternativeTextClient())
-            client->removeDictationAlternatives(details->dictationContext());
-    }
+    ASSERT(WTF::holds_alternative<DocumentMarker::DictationData>(marker.data()));
+    if (auto* client = alternativeTextClient())
+        client->removeDictationAlternatives(WTF::get<DocumentMarker::DictationData>(marker.data()).context);
 #else
     UNUSED_PARAM(marker);
 #endif
 }
 
-Vector<String> AlternativeTextController::dictationAlternativesForMarker(const DocumentMarker* marker)
+Vector<String> AlternativeTextController::dictationAlternativesForMarker(const DocumentMarker& marker)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    ASSERT(marker->type() == DocumentMarker::DictationAlternatives);
-    if (AlternativeTextClient* client = alternativeTextClient()) {
-        DictationMarkerDetails* details = static_cast<DictationMarkerDetails*>(marker->details());
-        return client->dictationAlternatives(details->dictationContext());
-    }
+    ASSERT(marker.type() == DocumentMarker::DictationAlternatives);
+    if (auto* client = alternativeTextClient())
+        return client->dictationAlternatives(WTF::get<DocumentMarker::DictationData>(marker.data()).context);
     return Vector<String>();
 #else
     UNUSED_PARAM(marker);
@@ -734,7 +730,7 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
     DocumentMarkerController& markers = selection->startContainer().document().markers();
     Vector<RenderedDocumentMarker*> dictationAlternativesMarkers = markers.markersInRange(selection.get(), DocumentMarker::DictationAlternatives);
     for (auto* marker : dictationAlternativesMarkers)
-        removeDictationAlternativesForMarker(marker);
+        removeDictationAlternativesForMarker(*marker);
 
     applyAlternativeTextToRange(selection.get(), alternativeString, AlternativeTextTypeDictationAlternatives, markerTypesForAppliedDictationAlternative());
 #else

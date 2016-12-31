@@ -1536,9 +1536,9 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
     
         Text& nextText = downcast<Text>(*next);
         if (start.anchorType() == Position::PositionIsOffsetInAnchor && next == start.containerNode())
-            newStart = Position(childText, childText->length() + start.offsetInContainerNode());
+            newStart = Position(childText.get(), childText->length() + start.offsetInContainerNode());
         if (end.anchorType() == Position::PositionIsOffsetInAnchor && next == end.containerNode())
-            newEnd = Position(childText, childText->length() + end.offsetInContainerNode());
+            newEnd = Position(childText.get(), childText->length() + end.offsetInContainerNode());
         String textToMove = nextText.data();
         insertTextIntoNode(childText, childText->length(), textToMove);
         removeNode(next);

@@ -189,7 +189,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAct
     // Keep asking for the next id until we're given one that we don't already have.
     do {
         m_timeoutId = context.circularSequentialID();
-    } while (!context.addTimeout(m_timeoutId, reference));
+    } while (!context.addTimeout(m_timeoutId, *this));
 
     if (singleShot)
         startOneShot(m_currentTimerInterval);

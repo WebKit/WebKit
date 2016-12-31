@@ -416,7 +416,7 @@ public:
 
     EditorParagraphSeparator defaultParagraphSeparator() const { return m_defaultParagraphSeparator; }
     void setDefaultParagraphSeparator(EditorParagraphSeparator separator) { m_defaultParagraphSeparator = separator; }
-    Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
+    Vector<String> dictationAlternativesForMarker(const DocumentMarker&);
     void applyDictationAlternativelternative(const String& alternativeString);
 
 #if USE(APPKIT)

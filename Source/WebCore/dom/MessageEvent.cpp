@@ -152,21 +152,6 @@ void MessageEvent::initMessageEvent(ExecState& state, const AtomicString& type, 
     m_ports = WTFMove(ports);
 }
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubble, cancelable);
-
-    m_dataType = DataTypeSerializedScriptValue;
-    m_dataAsSerializedScriptValue = data;
-    m_origin = origin;
-    m_lastEventId = lastEventId;
-    m_source = WTFMove(source);
-    m_ports = WTFMove(ports);
-}
-    
 EventTarget* MessageEvent::source() const
 {
     if (!m_source)

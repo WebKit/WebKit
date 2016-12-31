@@ -601,9 +601,9 @@ void HistoryController::setCurrentItem(HistoryItem* item)
 
 void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
 {
+    // FIXME: This ignores the title's direction.
     if (m_currentItem)
-        // FIXME: make use of title.direction() as well.
-        m_currentItem->setTitle(title.string());
+        m_currentItem->setTitle(title.string);
 }
 
 bool HistoryController::currentItemShouldBeReplaced() const
@@ -659,8 +659,8 @@ void HistoryController::initializeItem(HistoryItem& item)
 
     item.setURL(url);
     item.setTarget(m_frame.tree().uniqueName());
-    // FIXME: should store title directionality in history as well.
-    item.setTitle(title.string());
+    // FIXME: Should store the title direction as well.
+    item.setTitle(title.string);
     item.setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)

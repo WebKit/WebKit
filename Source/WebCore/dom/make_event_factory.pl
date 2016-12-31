@@ -69,7 +69,6 @@ sub generateImplementation()
     my $parsedParametersRef = shift;
     my $parsedItemsRef = shift;
 
-    my $F;
     my %parsedEvents = %{ $parsedItemsRef };
     my %parsedParameters = %{ $parsedParametersRef };
 
@@ -78,9 +77,8 @@ sub generateImplementation()
     # Currently, only Events have factory files.
     return if $namespace ne "Event";
 
-    my $outputFile = "$outputDir/${namespace}Factory.cpp";
-
-    open F, ">$outputFile" or die "Failed to open file: $!";
+    my $F;
+    open F, ">", "$outputDir/${namespace}Factory.cpp" or die "Failed to open file: $!";
 
     print F $InCompiler->license();
 
@@ -92,7 +90,7 @@ sub generateImplementation()
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
-    print F "PassRefPtr<$namespace> ${namespace}Factory::create(const String& type)\n";
+    print F "RefPtr<$namespace> ${namespace}Factory::create(const String& type)\n";
     print F "{\n";
 
     for my $eventName (sort keys %parsedEvents) {
@@ -100,17 +98,18 @@ sub generateImplementation()
         my $runtimeConditional = $parsedEvents{$eventName}{"runtimeConditional"};
         my $interfaceName = $InCompiler->interfaceForItem($eventName);
 
+        # FIXME: This should pay attention to $runtimeConditional so it can support RuntimeEnabledFeatures.
+
         if ($conditional) {
             my $conditionals = "#if ENABLE(" . join(") || ENABLE(", split("\\|", $conditional)) . ")";
             print F "$conditionals\n";
         }
-        # FIXME: JSC should support RuntimeEnabledFeatures.
         print F "    if (equalIgnoringASCIICase(type, \"$eventName\"))\n";
         print F "        return ${interfaceName}::create();\n";
         print F "#endif\n" if $conditional;
     }
 
-    print F "    return 0;\n";
+    print F "    return nullptr;\n";
     print F "}\n";
     print F "\n";
     print F "} // namespace WebCore\n";

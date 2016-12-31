@@ -1,3 +1,22 @@
+2016-12-30  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from the "dom" directory, related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=166569
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveTitle): Updated to use struct.
+        (WebFrameLoaderClient::updateGlobalHistory): Ditto.
+        (WebFrameLoaderClient::setTitle): Ditto.
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _dispatchDidReceiveTitle:]): Use aggregate-style syntax for StringWithDirection.
+        Not needed now, but useful later if we ever can get rid of the explicit constructors.
+        (-[WebFrame loadArchive:]): Pass a reference to loadArchive.
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation title]): Updated to use struct.
+
 2016-12-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Propagate the source origin as much as possible

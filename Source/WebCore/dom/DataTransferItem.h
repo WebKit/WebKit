@@ -51,7 +51,7 @@ public:
     virtual String type() const = 0;
 
     virtual void getAsString(RefPtr<StringCallback>&&) const = 0;
-    virtual PassRefPtr<Blob> getAsFile() const = 0;
+    virtual RefPtr<Blob> getAsFile() const = 0;
 };
 
 } // namespace WebCore

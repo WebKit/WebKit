@@ -2254,6 +2254,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 }
 
 #if PLATFORM(IOS)
+
 - (DOMDocumentFragment *)_documentFragmentForText:(NSString *)text
 {
     return kit(createFragmentFromText(*_private->coreFrame->selection().toNormalizedRange().get(), text).ptr());
@@ -2303,8 +2304,9 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return;
-    coreFrame->loader().client().dispatchDidReceiveTitle(StringWithDirection(title, LTR));
+    coreFrame->loader().client().dispatchDidReceiveTitle({ title, LTR });
 }
+
 #endif // PLATFORM(IOS)
 
 - (JSValueRef)jsWrapperForNode:(DOMNode *)node inScriptWorld:(WebScriptWorld *)world
@@ -2528,8 +2530,8 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)loadArchive:(WebArchive *)archive
 {
-    if (LegacyWebArchive* coreArchive = [archive _coreLegacyWebArchive])
-        _private->coreFrame->loader().loadArchive(coreArchive);
+    if (auto* coreArchive = [archive _coreLegacyWebArchive])
+        _private->coreFrame->loader().loadArchive(*coreArchive);
 }
 
 - (void)stopLoading

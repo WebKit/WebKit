@@ -54,9 +54,8 @@ void ScopedEventQueue::enqueueEvent(Ref<Event>&& event)
 void ScopedEventQueue::dispatchEvent(Event& event) const
 {
     ASSERT(event.target());
-    // Store the target in a local variable to avoid possibly dereferencing a nullified PassRefPtr after it's passed on.
-    Node* node = event.target()->toNode();
-    EventDispatcher::dispatchEvent(*node, event);
+    ASSERT(event.target()->toNode());
+    EventDispatcher::dispatchEvent(*event.target()->toNode(), event);
 }
 
 void ScopedEventQueue::dispatchAllEvents()

@@ -250,7 +250,7 @@ static RetainPtr<NSArray> newArrayWithStrings(const HashSet<String, ASCIICaseIns
 
 - (NSString *)title
 {
-    return nsStringNilIfEmpty([_private->dataSource _documentLoader]->title().string());
+    return nsStringNilIfEmpty([_private->dataSource _documentLoader]->title().string);
 }
 
 - (DOMDocument *)DOMDocument

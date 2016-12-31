@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,7 +38,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventIni
     return adoptRef(*new MouseEvent(type, initializer, isTrusted));
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, DOMWindow* view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
+Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, DOMWindow* view, const PlatformMouseEvent& event, int detail, Node* relatedTarget)
 {
     bool isMouseEnterOrLeave = eventType == eventNames().mouseenterEvent || eventType == eventNames().mouseleaveEvent;
     bool isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave;
@@ -57,56 +57,35 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, boo
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
 #endif
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType)
-
-{
-    return MouseEvent::create(type, canBubble, cancelable, timestamp, view,
-        detail, screenX, screenY, pageX, pageY,
-#if ENABLE(POINTER_LOCK)
-        movementX, movementY,
-#endif
-        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, force, syntheticClickType, 0, false);
-}
-
-Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow* view, int detail, int screenX, int screenY, int pageX, int pageY,
-#if ENABLE(POINTER_LOCK)
-    int movementX, int movementY,
-#endif
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType, PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, bool isSimulated)
 {
     return adoptRef(*new MouseEvent(type, canBubble, cancelable, timestamp, view,
-        detail, screenX, screenY, pageX, pageY,
+        detail, { screenX, screenY }, { pageX, pageY },
 #if ENABLE(POINTER_LOCK)
-        movementX, movementY,
+        { movementX, movementY },
 #endif
         ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, force, syntheticClickType, dataTransfer, isSimulated));
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget)
+Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget)
 {
-    return adoptRef(*new MouseEvent(eventType, canBubble, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, syntheticClickType, relatedTarget));
+    return adoptRef(*new MouseEvent(eventType, canBubble, cancelable, view, detail, { screenX, screenY }, { clientX, clientY }, ctrlKey, altKey, shiftKey, metaKey, button, syntheticClickType, relatedTarget));
 }
 
 MouseEvent::MouseEvent()
-    : m_button(0)
-    , m_buttonDown(false)
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, DOMWindow* view,
-                       int detail, int screenX, int screenY, int pageX, int pageY,
+MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
-                       int movementX, int movementY,
+        const IntPoint& movementDelta,
 #endif
-                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                       unsigned short button, PassRefPtr<EventTarget> relatedTarget, double force, unsigned short syntheticClickType,
-                       PassRefPtr<DataTransfer> dataTransfer, bool isSimulated)
-    : MouseRelatedEvent(eventType, canBubble, cancelable, timestamp, view, detail, IntPoint(screenX, screenY),
-                        IntPoint(pageX, pageY),
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget, double force, unsigned short syntheticClickType, DataTransfer* dataTransfer, bool isSimulated)
+    : MouseRelatedEvent(eventType, canBubble, cancelable, timestamp, view, detail, screenLocation, windowLocation,
 #if ENABLE(POINTER_LOCK)
-                        IntPoint(movementX, movementY),
+        movementDelta,
 #endif
-                        ctrlKey, altKey, shiftKey, metaKey, isSimulated)
+        ctrlKey, altKey, shiftKey, metaKey, isSimulated)
     , m_button(button == (unsigned short)-1 ? 0 : button)
     , m_syntheticClickType(button == (unsigned short)-1 ? 0 : syntheticClickType)
     , m_buttonDown(button != (unsigned short)-1)
@@ -116,10 +95,10 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget)
-    : MouseRelatedEvent(eventType, canBubble, cancelable, WTF::currentTime(), view, detail, IntPoint(screenX, screenY), IntPoint(0, 0),
+MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget)
+    : MouseRelatedEvent(eventType, canBubble, cancelable, WTF::currentTime(), view, detail, screenLocation, { },
 #if ENABLE(POINTER_LOCK)
-        IntPoint(0, 0),
+        { },
 #endif
         ctrlKey, altKey, shiftKey, metaKey, false)
     , m_button(button == (unsigned short)-1 ? 0 : button)
@@ -127,7 +106,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
     , m_buttonDown(button != (unsigned short)-1)
     , m_relatedTarget(relatedTarget)
 {
-    initCoordinates(IntPoint(clientX, clientY));
+    initCoordinates(clientLocation);
 }
 
 MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
@@ -135,19 +114,15 @@ MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& init
     , m_button(initializer.button == (unsigned short)-1 ? 0 : initializer.button)
     , m_buttonDown(initializer.button != (unsigned short)-1)
     , m_relatedTarget(initializer.relatedTarget)
-    , m_dataTransfer(0 /* dataTransfer */)
 {
-    initCoordinates(IntPoint(initializer.clientX, initializer.clientY));
+    initCoordinates({ initializer.clientX, initializer.clientY });
 }
 
 MouseEvent::~MouseEvent()
 {
 }
 
-void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view,
-                                int detail, int screenX, int screenY, int clientX, int clientY,
-                                bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-                                unsigned short button, PassRefPtr<EventTarget> relatedTarget)
+void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool cancelable, DOMWindow* view, int detail, int screenX, int screenY, int clientX, int clientY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, EventTarget* relatedTarget)
 {
     if (dispatched())
         return;
@@ -182,9 +157,17 @@ bool MouseEvent::isMouseEvent() const
 
 bool MouseEvent::isDragEvent() const
 {
-    const AtomicString& t = type();
-    return t == eventNames().dragenterEvent || t == eventNames().dragoverEvent || t == eventNames().dragleaveEvent || t == eventNames().dropEvent
-               || t == eventNames().dragstartEvent|| t == eventNames().dragEvent || t == eventNames().dragendEvent;
+    // This function is only used to decide to return nullptr for dataTransfer even when m_dataTransfer is non-null.
+    // FIXME: Is that really valuable? Why will m_dataTransfer be non-null but we need to return null for dataTransfer?
+    // Quite peculiar to decide based on the type string; may have been be provided by call to JavaScript constructor.
+    auto& type = this->type();
+    return type == eventNames().dragEvent
+        || type == eventNames().dragendEvent
+        || type == eventNames().dragenterEvent
+        || type == eventNames().dragleaveEvent
+        || type == eventNames().dragoverEvent
+        || type == eventNames().dragstartEvent
+        || type == eventNames().dropEvent;
 }
 
 bool MouseEvent::canTriggerActivationBehavior(const Event& event)
@@ -222,37 +205,6 @@ Node* MouseEvent::fromElement() const
     }
 
     return target() ? target()->toNode() : nullptr;
-}
-
-// FIXME: Fix positioning. e.g. We need to consider border/padding.
-// https://bugs.webkit.org/show_bug.cgi?id=93696
-inline static int adjustedClientX(int innerClientX, HTMLIFrameElement* iframe, FrameView* frameView)
-{
-    return iframe->offsetLeft() - frameView->scrollX() + innerClientX;
-}
-
-inline static int adjustedClientY(int innerClientY, HTMLIFrameElement* iframe, FrameView* frameView)
-{
-    return iframe->offsetTop() - frameView->scrollY() + innerClientY;
-}
-
-Ref<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
-{
-    ASSERT(iframe);
-    Frame* frame = iframe->document().frame();
-    FrameView* frameView = frame ? frame->view() : nullptr;
-    Ref<MouseEvent> clonedMouseEvent = MouseEvent::create(type(), bubbles(), cancelable(),
-        iframe->document().defaultView(),
-        detail(), screenX(), screenY(),
-        frameView ? adjustedClientX(clientX(), iframe, frameView) : 0,
-        frameView ? adjustedClientY(clientY(), iframe, frameView) : 0,
-        ctrlKey(), altKey(), shiftKey(), metaKey(),
-        button(),
-        syntheticClickType(),
-        // Nullifies relatedTarget.
-        0);
-    clonedMouseEvent->setForce(force());
-    return WTFMove(clonedMouseEvent);
 }
 
 } // namespace WebCore

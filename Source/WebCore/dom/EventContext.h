@@ -26,17 +26,12 @@
 
 #pragma once
 
-#include "EventTarget.h"
 #include "Node.h"
 #include "TreeScope.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class Event;
-#if ENABLE(TOUCH_EVENTS)
 class TouchList;
-#endif
 
 class EventContext {
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,6 +52,7 @@ protected:
 #if !ASSERT_DISABLED
     bool isUnreachableNode(EventTarget*) const;
 #endif
+
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_currentTarget;
     RefPtr<EventTarget> m_target;
@@ -66,17 +62,19 @@ class MouseOrFocusEventContext final : public EventContext {
 public:
     MouseOrFocusEventContext(Node*, EventTarget* currentTarget, EventTarget*);
     virtual ~MouseOrFocusEventContext();
-    EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
-    void setRelatedTarget(PassRefPtr<EventTarget>);
-    void handleLocalEvents(Event&) const override;
-    bool isMouseOrFocusEventContext() const override;
+
+    Node* relatedTarget() const { return m_relatedTarget.get(); }
+    void setRelatedTarget(Node*);
 
 private:
-    RefPtr<EventTarget> m_relatedTarget;
+    void handleLocalEvents(Event&) const final;
+    bool isMouseOrFocusEventContext() const final;
+
+    RefPtr<Node> m_relatedTarget;
 };
 
-
 #if ENABLE(TOUCH_EVENTS)
+
 class TouchEventContext final : public EventContext {
 public:
     TouchEventContext(Node*, EventTarget* currentTarget, EventTarget*);
@@ -86,61 +84,59 @@ public:
     bool isTouchEventContext() const override;
 
     enum TouchListType { Touches, TargetTouches, ChangedTouches, NotTouchList };
-    TouchList* touchList(TouchListType type)
-    {
-        switch (type) {
-        case Touches:
-            return m_touches.get();
-        case TargetTouches:
-            return m_targetTouches.get();
-        case ChangedTouches:
-            return m_changedTouches.get();
-        case NotTouchList:
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
+    TouchList* touchList(TouchListType);
 
     TouchList* touches() { return m_touches.get(); }
     TouchList* targetTouches() { return m_targetTouches.get(); }
     TouchList* changedTouches() { return m_changedTouches.get(); }
 
 private:
-    RefPtr<TouchList> m_touches;
-    RefPtr<TouchList> m_targetTouches;
-    RefPtr<TouchList> m_changedTouches;
 #if !ASSERT_DISABLED
     void checkReachability(TouchList*) const;
 #endif
+
+    RefPtr<TouchList> m_touches;
+    RefPtr<TouchList> m_targetTouches;
+    RefPtr<TouchList> m_changedTouches;
 };
 
-inline TouchEventContext& toTouchEventContext(EventContext& eventContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(eventContext.isTouchEventContext());
-    return static_cast<TouchEventContext&>(eventContext);
-}
-
-inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!eventContext || eventContext->isTouchEventContext());
-    return static_cast<TouchEventContext*>(eventContext);
-}
-#endif // ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
+#endif // ENABLE(TOUCH_EVENTS)
 
 #if !ASSERT_DISABLED
+
 inline bool EventContext::isUnreachableNode(EventTarget* target) const
 {
     // FIXME: Checks also for SVG elements.
     return target && target->toNode() && !target->toNode()->isSVGElement() && m_node->isClosedShadowHidden(*target->toNode());
 }
+
 #endif
 
-inline void MouseOrFocusEventContext::setRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
+inline void MouseOrFocusEventContext::setRelatedTarget(Node* relatedTarget)
 {
-    ASSERT(!isUnreachableNode(relatedTarget.get()));
+    ASSERT(!isUnreachableNode(relatedTarget));
     m_relatedTarget = relatedTarget;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+
+inline TouchList* TouchEventContext::touchList(TouchListType type)
+{
+    switch (type) {
+    case Touches:
+        return m_touches.get();
+    case TargetTouches:
+        return m_targetTouches.get();
+    case ChangedTouches:
+        return m_changedTouches.get();
+    case NotTouchList:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+#endif
 
 } // namespace WebCore
 

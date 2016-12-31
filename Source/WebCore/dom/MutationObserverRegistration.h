@@ -42,31 +42,29 @@ class QualifiedName;
 class MutationObserverRegistration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
+    MutationObserverRegistration(MutationObserver&, Node&, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
     ~MutationObserverRegistration();
 
     void resetObservation(MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
-    void observedSubtreeNodeWillDetach(Node*);
+    void observedSubtreeNodeWillDetach(Node&);
     void clearTransientRegistrations();
     bool hasTransientRegistrations() const { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
-    static void unregisterAndDelete(MutationObserverRegistration*);
 
-    bool shouldReceiveMutationFrom(Node*, MutationObserver::MutationType, const QualifiedName* attributeName) const;
+    bool shouldReceiveMutationFrom(Node&, MutationObserver::MutationType, const QualifiedName* attributeName) const;
     bool isSubtree() const { return m_options & MutationObserver::Subtree; }
 
-    MutationObserver* observer() const { return m_observer.get(); }
+    MutationObserver& observer() { return m_observer.get(); }
+    Node& node() { return m_node; }
     MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
     void addRegistrationNodesToSet(HashSet<Node*>&) const;
 
 private:
-    RefPtr<MutationObserver> m_observer;
-    Node* m_registrationNode;
-    RefPtr<Node> m_registrationNodeKeepAlive;
-    typedef HashSet<RefPtr<Node>> NodeHashSet;
-    std::unique_ptr<NodeHashSet> m_transientRegistrationNodes;
-
+    Ref<MutationObserver> m_observer;
+    Node& m_node;
+    RefPtr<Node> m_nodeKeptAlive;
+    std::unique_ptr<HashSet<RefPtr<Node>>> m_transientRegistrationNodes;
     MutationObserverOptions m_options;
     HashSet<AtomicString> m_attributeFilter;
 };

@@ -57,7 +57,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -768,7 +767,7 @@ public:
 
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& value);
-    void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
+    void setWindowAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&&);
     EventListener* getWindowAttributeEventListener(const AtomicString& eventType);
     WEBCORE_EXPORT void dispatchWindowEvent(Event&, EventTarget* = nullptr);
     void dispatchWindowLoadEvent();
@@ -832,7 +831,7 @@ public:
     HTMLFrameOwnerElement* ownerElement() const;
 
     // Used by DOM bindings; no direction known.
-    String title() const { return m_title.string(); }
+    const String& title() const { return m_title.string; }
     WEBCORE_EXPORT void setTitle(const String&);
 
     WEBCORE_EXPORT const AtomicString& dir() const;
@@ -1034,15 +1033,6 @@ public:
     TextResourceDecoder* decoder() const { return m_decoder.get(); }
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
-    RefPtr<StringImpl> displayStringModifiedByEncoding(PassRefPtr<StringImpl>) const;
-    void displayBufferModifiedByEncoding(LChar* buffer, unsigned len) const
-    {
-        displayBufferModifiedByEncodingInternal(buffer, len);
-    }
-    void displayBufferModifiedByEncoding(UChar* buffer, unsigned len) const
-    {
-        displayBufferModifiedByEncodingInternal(buffer, len);
-    }
 
     // Quirk for the benefit of Apple's Dictionary application.
     void setFrameElementsShouldIgnoreScrolling(bool ignore) { m_frameElementsShouldIgnoreScrolling = ignore; }
@@ -1066,7 +1056,7 @@ public:
     void initContentSecurityPolicy();
 
     void updateURLForPushOrReplaceState(const URL&);
-    void statePopped(PassRefPtr<SerializedScriptValue>);
+    void statePopped(Ref<SerializedScriptValue>&&);
 
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
@@ -1149,7 +1139,7 @@ public:
     double monotonicTimestamp() const;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    int requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
+    int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
     void serviceScriptedAnimations(double timestamp);
 #endif
@@ -1356,11 +1346,7 @@ private:
 
     void pendingTasksTimerFired();
 
-    template <typename CharacterType>
-    void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
-
-    template <CollectionType collectionType>
-    Ref<HTMLCollection> ensureCachedCollection();
+    template<CollectionType> Ref<HTMLCollection> ensureCachedCollection();
 
 #if ENABLE(FULLSCREEN_API)
     void dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);
@@ -1769,6 +1755,8 @@ private:
     static bool hasEverCreatedAnAXObjectCache;
 };
 
+Element* eventTargetElementForDocument(Document*);
+
 inline void Document::notifyRemovePendingSheetIfNeeded()
 {
     if (m_needsNotifyRemoveAllPendingStylesheet)
@@ -1794,7 +1782,7 @@ inline AXObjectCache* Document::existingAXObjectCache() const
     return existingAXObjectCacheSlow();
 }
 
-// Put these methods here, because they require the Document definition, but we really want to inline them.
+// These functions are here because they require the Document class definition and we want to inline them.
 
 inline bool Node::isDocumentNode() const
 {
@@ -1805,8 +1793,6 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
 {
     return &document().contextDocument();
 }
-
-Element* eventTargetElementForDocument(Document*);
 
 } // namespace WebCore
 

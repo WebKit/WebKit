@@ -84,11 +84,10 @@ void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset,
     addMarker(node, DocumentMarker(type, startOffset, startOffset + length));
 }
 
-void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, RefPtr<DocumentMarkerDetails>&& details)
+void DocumentMarkerController::addMarkerToNode(Node* node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, DocumentMarker::Data&& data)
 {
-    addMarker(node, DocumentMarker(type, startOffset, startOffset + length, WTFMove(details)));
+    addMarker(node, DocumentMarker(type, startOffset, startOffset + length, WTFMove(data)));
 }
-
 
 void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activeMatch)
 {
@@ -101,6 +100,7 @@ void DocumentMarkerController::addTextMatchMarker(const Range* range, bool activ
 }
 
 #if PLATFORM(IOS)
+
 void DocumentMarkerController::addMarker(Range* range, DocumentMarker::MarkerType type, const String& description, const Vector<String>& interpretations, const RetainPtr<id>& metadata)
 {
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
@@ -132,6 +132,7 @@ void DocumentMarkerController::addDictationResultMarker(Range* range, const Reta
         addMarker(&textPiece->startContainer(), DocumentMarker(DocumentMarker::DictationResult, textPiece->startOffset(), textPiece->endOffset(), String(), Vector<String>(), metadata));
     }
 }
+
 #endif
 
 void DocumentMarkerController::removeMarkers(Range* range, DocumentMarker::MarkerTypes markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
@@ -785,7 +786,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
                 continue;
             }
 
-            marker.clearDetails();
+            marker.clearData();
         }
     }
 }
@@ -798,7 +799,7 @@ void DocumentMarkerController::showMarkers() const
         Node* node = marker.key.get();
         fprintf(stderr, "%p", node);
         for (auto& documentMarker : *marker.value)
-            fprintf(stderr, " %d:[%d:%d](%d)", documentMarker.type(), documentMarker.startOffset(), documentMarker.endOffset(), documentMarker.activeMatch());
+            fprintf(stderr, " %d:[%d:%d](%d)", documentMarker.type(), documentMarker.startOffset(), documentMarker.endOffset(), documentMarker.isActiveMatch());
 
         fprintf(stderr, "\n");
     }

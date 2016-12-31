@@ -47,7 +47,6 @@ struct DictationAlternative;
 
 class AlternativeTextDetails : public RefCounted<AlternativeTextDetails> {
 public:
-    AlternativeTextDetails() { }
     virtual ~AlternativeTextDetails() { }
 };
 
@@ -57,24 +56,6 @@ struct AlternativeTextInfo {
     AlternativeTextType type;
     String originalText;
     RefPtr<AlternativeTextDetails> details;
-};
-
-class DictationMarkerDetails : public DocumentMarkerDetails {
-public:
-    static Ref<DictationMarkerDetails> create(const String& originalText, uint64_t dictationContext)
-    {
-        return adoptRef(*new DictationMarkerDetails(originalText, dictationContext));
-    }
-    const String& originalText() const { return m_originalText; }
-    uint64_t dictationContext() const { return m_dictationContext; }
-private:
-    DictationMarkerDetails(const String& originalText, uint64_t dictationContext)
-    : m_dictationContext(dictationContext)
-    , m_originalText(originalText)
-    { }
- 
-    uint64_t m_dictationContext;
-    String m_originalText;
 };
 
 struct TextCheckingResult;
@@ -129,8 +110,8 @@ public:
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
 
     bool insertDictatedText(const String&, const Vector<DictationAlternative>&, Event*);
-    void removeDictationAlternativesForMarker(const DocumentMarker*);
-    Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
+    void removeDictationAlternativesForMarker(const DocumentMarker&);
+    Vector<String> dictationAlternativesForMarker(const DocumentMarker&);
     void applyDictationAlternative(const String& alternativeString);
 
 private:
