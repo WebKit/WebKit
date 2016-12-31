@@ -1,3 +1,12 @@
+2016-12-30  Bernd Homuth  <dev@hmt.im>
+
+        [GTK] German translation update
+        https://bugs.webkit.org/show_bug.cgi?id=152228
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * de.po:
+
 2016-11-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: Add NetworkDataTask implementation for blobs
