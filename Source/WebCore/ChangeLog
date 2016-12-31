@@ -1,3 +1,92 @@
+2016-12-30  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from the "css" directory, related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=166628
+
+        Reviewed by Alex Christensen.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcBinaryOperation::create): Take RefPtr&& instead of PassRefPtr.
+        Also added some checks for null. Code here is really inconsistent about null;
+        probably should change from RefPtr to Ref at some point.
+        (WebCore::CSSCalcBinaryOperation::createSimplified): Ditto.
+        (WebCore::CSSCalcBinaryOperation::CSSCalcBinaryOperation): Take Ref&& instead
+        of PassRefPtr.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::subimageKnownToBeOpaque): Take a reference instead of a pointer.
+        (WebCore::CSSCrossfadeValue::SubimageObserver::SubimageObserver): Moved here
+        from the header, and renamed.
+        (WebCore::CSSCrossfadeValue::SubimageObserver::imageChanged): Ditto.
+        (WebCore::CSSCrossfadeValue::CSSCrossfadeValue): Moved here from the header.
+        (WebCore::CSSCrossfadeValue::create): Ditto.
+        (WebCore::CSSCrossfadeValue::~CSSCrossfadeValue): Updated for data member name change.
+        (WebCore::CSSCrossfadeValue::fixedSize): Take a reference. Also rewrote size math to
+        take advantage of FloatSize multiplication and addition operators.
+        (WebCore::CSSCrossfadeValue::knownToBeOpaque): Take a reference.
+        (WebCore::CSSCrossfadeValue::loadSubimages): Set m_subimagesAreReady rather than
+        calling setReady on the subimage observer.
+        (WebCore::CSSCrossfadeValue::image): Return a raw pointer rather than a RefPtr.
+        Take a reference instead of a pointer.
+        (WebCore::CSSCrossfadeValue::crossfadeChanged): Removed unused rect argument.
+        Rewrote to use modern for loop.
+        * css/CSSCrossfadeValue.h: Updated for above changes.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::createGradient): Added. Helper so the function below can use Ref rather
+        than RefPtr, and it's also nice to factor out this "poor man's virtual function".
+        (WebCore::CSSGradientValue::image): Take a reference rather than a pointer.
+        (WebCore::clone): Added. Helper like createGradient above.
+        (WebCore::CSSGradientValue::gradientWithStylesResolved): Take a reference rather
+        than a pointer. Simplified by using the helper above.
+        (WebCore::CSSGradientValue::knownToBeOpaque): Removed unused argument. Rewrote to
+        use a modern for loop.
+        * css/CSSGradientValue.h: Updated for above changes.
+
+        * css/CSSImageGeneratorValue.cpp: Moved the CachedGeneratedImage class in here
+        from the header. Also changed it to use const and Ref.
+        (WebCore::CSSImageGeneratorValue::addClient): Take a reference rather than a pointer.
+        (WebCore::CSSImageGeneratorValue::removeClient): Ditto.
+        (WebCore::CSSImageGeneratorValue::cachedImageForSize): Updated since image now returns
+        a reference rather than a pointer.
+        (WebCore::CSSImageGeneratorValue::saveCachedImageForSize): Take a reference rather
+        than PassRefPtr.
+        (WebCore::CSSImageGeneratorValue::image): Take a reference rather than a pointer.
+        (WebCore::CSSImageGeneratorValue::fixedSize): Ditto.
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque): Ditto.
+        * css/CSSImageGeneratorValue.h: Updated for above changes.
+
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFaceValue): Return a RefPtr rather than PassRefPtr.
+        * css/CSSValuePool.h: Updated for the above.
+
+        * css/StyleBuilderConverter.h: Change convertStyleImage and convertShapeValue to
+        return RefPtr instead of PassRefPtr.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueContent): Since gradientWithStylesResolved
+        returns a Ref now, no need to dereference it any more. This also removes reference
+        count churn since we are now passing a Ref temporary to a Ref&&.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleImage): Ditto.
+
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::GradientImage): Pass generator as a reference rather than
+        as a PassRefPtr.
+        (WebCore::GradientImage::draw): Updated since m_gradient is now a Ref rather than
+        a RefPtr.
+        (WebCore::GradientImage::drawPattern): Ditto.
+        * platform/graphics/GradientImage.h: Updated for the above changes. Make things
+        private rather than protected since this class is final.
+
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::imageSize): Pass renderer as a reference. Later, we
+        should change the interface to this function, too.
+        (WebCore::StyleGeneratedImage::addClient): Ditto.
+        (WebCore::StyleGeneratedImage::removeClient): Ditto.
+        (WebCore::StyleGeneratedImage::image): Ditto.
+        (WebCore::StyleGeneratedImage::knownToBeOpaque): Ditto.
+
 2016-12-30  Olivier Blin  <olivier.blin@softathome.com>
 
         [EFL] fix buffer over-read in RenderThemeEfl::mediaControlsStyleSheet()

@@ -54,8 +54,9 @@ void StyleGeneratedImage::load(CachedResourceLoader& loader, const ResourceLoade
 
 FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float multiplier) const
 {
+    ASSERT(renderer);
     if (m_fixedSize) {
-        FloatSize fixedSize = const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).fixedSize(renderer);
+        FloatSize fixedSize = const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).fixedSize(*renderer);
         if (multiplier == 1.0f)
             return fixedSize;
 
@@ -87,22 +88,26 @@ void StyleGeneratedImage::computeIntrinsicDimensions(const RenderElement* render
 
 void StyleGeneratedImage::addClient(RenderElement* renderer)
 {
-    m_imageGeneratorValue->addClient(renderer);
+    ASSERT(renderer);
+    m_imageGeneratorValue->addClient(*renderer);
 }
 
 void StyleGeneratedImage::removeClient(RenderElement* renderer)
 {
-    m_imageGeneratorValue->removeClient(renderer);
+    ASSERT(renderer);
+    m_imageGeneratorValue->removeClient(*renderer);
 }
 
 RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const
 {
-    return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).image(renderer, size);
+    ASSERT(renderer);
+    return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).image(*renderer, size);
 }
 
 bool StyleGeneratedImage::knownToBeOpaque(const RenderElement* renderer) const
 {
-    return m_imageGeneratorValue->knownToBeOpaque(renderer);
+    ASSERT(renderer);
+    return m_imageGeneratorValue->knownToBeOpaque(*renderer);
 }
 
 }

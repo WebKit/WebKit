@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GradientImage_h
-#define GradientImage_h
+#pragma once
 
-#include "FloatSize.h"
 #include "GeneratedImage.h"
-#include "Gradient.h"
-#include "Image.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class Gradient;
 class ImageBuffer;
 
 class GradientImage final : public GeneratedImage {
 public:
-    static PassRefPtr<GradientImage> create(PassRefPtr<Gradient> generator, const FloatSize& size)
+    static Ref<GradientImage> create(Gradient& generator, const FloatSize& size)
     {
-        return adoptRef(new GradientImage(generator, size));
+        return adoptRef(*new GradientImage(generator, size));
     }
 
     virtual ~GradientImage();
 
-protected:
-    void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) override;
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-        const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) override;
-
-    GradientImage(PassRefPtr<Gradient>, const FloatSize&);
-
 private:
-    bool isGradientImage() const override { return true; }
-    void dump(TextStream&) const override;
+    GradientImage(Gradient&, const FloatSize&);
+
+    void draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientationDescription) final;
+    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator, BlendMode) final;
+    bool isGradientImage() const final { return true; }
+    void dump(TextStream&) const final;
     
-    RefPtr<Gradient> m_gradient;
+    Ref<Gradient> m_gradient;
     std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
     FloatSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash;
 };
 
 }
-
-#endif

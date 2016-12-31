@@ -28,36 +28,26 @@
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "CSSImageGeneratorValue.h"
-#include "CSSPrimitiveValue.h"
-#include "Image.h"
-#include "ImageObserver.h"
 
 namespace WebCore {
 
-class CachedImage;
-class CrossfadeSubimageObserverProxy;
-class RenderElement;
-class Document;
+class CSSPrimitiveValue;
 
 class CSSCrossfadeValue final : public CSSImageGeneratorValue {
-    friend class CrossfadeSubimageObserverProxy;
 public:
-    static Ref<CSSCrossfadeValue> create(Ref<CSSValue>&& fromValue, Ref<CSSValue>&& toValue, Ref<CSSPrimitiveValue>&& percentageValue, bool prefixed = false)
-    {
-        return adoptRef(*new CSSCrossfadeValue(WTFMove(fromValue), WTFMove(toValue), WTFMove(percentageValue), prefixed));
-    }
+    static Ref<CSSCrossfadeValue> create(Ref<CSSValue>&& fromValue, Ref<CSSValue>&& toValue, Ref<CSSPrimitiveValue>&& percentageValue, bool prefixed = false);
 
     ~CSSCrossfadeValue();
 
     String customCSSText() const;
 
-    RefPtr<Image> image(RenderElement*, const FloatSize&);
+    Image* image(RenderElement&, const FloatSize&);
     bool isFixedSize() const { return true; }
-    FloatSize fixedSize(const RenderElement*);
+    FloatSize fixedSize(const RenderElement&);
 
     bool isPrefixed() const { return m_isPrefixed; }
     bool isPending() const;
-    bool knownToBeOpaque(const RenderElement*) const;
+    bool knownToBeOpaque(const RenderElement&) const;
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
 
@@ -66,37 +56,20 @@ public:
     RefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, double) const;
 
     bool equals(const CSSCrossfadeValue&) const;
-
     bool equalInputImages(const CSSCrossfadeValue&) const;
 
 private:
-    CSSCrossfadeValue(Ref<CSSValue>&& fromValue, Ref<CSSValue>&& toValue, Ref<CSSPrimitiveValue>&& percentageValue, bool prefixed)
-        : CSSImageGeneratorValue(CrossfadeClass)
-        , m_fromValue(WTFMove(fromValue))
-        , m_toValue(WTFMove(toValue))
-        , m_percentageValue(WTFMove(percentageValue))
-        , m_crossfadeSubimageObserver(this)
-        , m_isPrefixed(prefixed)
-    {
-    }
+    CSSCrossfadeValue(Ref<CSSValue>&& fromValue, Ref<CSSValue>&& toValue, Ref<CSSPrimitiveValue>&& percentageValue, bool prefixed);
 
-    class CrossfadeSubimageObserverProxy final : public CachedImageClient {
+    class SubimageObserver final : public CachedImageClient {
     public:
-        CrossfadeSubimageObserverProxy(CSSCrossfadeValue* ownerValue)
-            : m_ownerValue(ownerValue)
-            , m_ready(false)
-        {
-        }
-
-        virtual ~CrossfadeSubimageObserverProxy() { }
-        void imageChanged(CachedImage*, const IntRect* = nullptr) final;
-        void setReady(bool ready) { m_ready = ready; }
+        SubimageObserver(CSSCrossfadeValue&);
     private:
-        CSSCrossfadeValue* m_ownerValue;
-        bool m_ready;
+        void imageChanged(CachedImage*, const IntRect*) final;
+        CSSCrossfadeValue& m_owner;
     };
 
-    void crossfadeChanged(const IntRect&);
+    void crossfadeChanged();
 
     Ref<CSSValue> m_fromValue;
     Ref<CSSValue> m_toValue;
@@ -107,8 +80,9 @@ private:
 
     RefPtr<Image> m_generatedImage;
 
-    CrossfadeSubimageObserverProxy m_crossfadeSubimageObserver;
+    SubimageObserver m_subimageObserver;
     bool m_isPrefixed { false };
+    bool m_subimagesAreReady { false };
 };
 
 } // namespace WebCore

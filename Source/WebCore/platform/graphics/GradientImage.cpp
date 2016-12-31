@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,12 @@
 #include "config.h"
 #include "GradientImage.h"
 
-#include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
-#include "Length.h"
-#include "TextStream.h"
 
 namespace WebCore {
 
-GradientImage::GradientImage(PassRefPtr<Gradient> generator, const FloatSize& size)
+GradientImage::GradientImage(Gradient& generator, const FloatSize& size)
     : m_gradient(generator)
 {
     setContainerSize(size);
@@ -53,7 +50,7 @@ void GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect
     if (destRect.size() != srcRect.size())
         destContext.scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
     destContext.translate(-srcRect.x(), -srcRect.y());
-    destContext.fillRect(FloatRect(FloatPoint(), size()), *m_gradient.get());
+    destContext.fillRect(FloatRect(FloatPoint(), size()), m_gradient.get());
 }
 
 void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
@@ -80,7 +77,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
             return;
 
         // Fill with the generated image.
-        m_cachedImageBuffer->context().fillRect(FloatRect(FloatPoint(), adjustedSize), *m_gradient);
+        m_cachedImageBuffer->context().fillRect(FloatRect(FloatPoint(), adjustedSize), m_gradient.get());
 
         m_cachedGeneratorHash = generatorHash;
         m_cachedAdjustedSize = adjustedSize;

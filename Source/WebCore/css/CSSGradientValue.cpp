@@ -30,47 +30,39 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "FloatSize.h"
-#include "FloatSizeHash.h"
 #include "Gradient.h"
 #include "GradientImage.h"
-#include "Image.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
 #include "RenderElement.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-RefPtr<Image> CSSGradientValue::image(RenderElement* renderer, const FloatSize& size)
+static inline Ref<Gradient> createGradient(CSSGradientValue& value, RenderElement& renderer, FloatSize size)
+{
+    if (is<CSSLinearGradientValue>(value))
+        return downcast<CSSLinearGradientValue>(value).createGradient(renderer, size);
+    return downcast<CSSRadialGradientValue>(value).createGradient(renderer, size);
+}
+
+RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& size)
 {
     if (size.isEmpty())
         return nullptr;
-
     bool cacheable = isCacheable();
     if (cacheable) {
-        if (!clients().contains(renderer))
+        if (!clients().contains(&renderer))
             return nullptr;
-
-        Image* result = cachedImageForSize(size);
-        if (result)
+        if (auto* result = cachedImageForSize(size))
             return result;
     }
-
-    RefPtr<Gradient> gradient;
-
-    if (is<CSSLinearGradientValue>(*this))
-        gradient = downcast<CSSLinearGradientValue>(*this).createGradient(*renderer, size);
-    else
-        gradient = downcast<CSSRadialGradientValue>(*this).createGradient(*renderer, size);
-
-    RefPtr<GradientImage> newImage = GradientImage::create(gradient, size);
+    auto newImage = GradientImage::create(createGradient(*this, renderer, size), size);
     if (cacheable)
-        saveCachedImageForSize(size, newImage);
-
-    return newImage;
+        saveCachedImageForSize(size, newImage.get());
+    return WTFMove(newImage);
 }
 
 // Should only ever be called for deprecated gradients.
@@ -94,45 +86,34 @@ void CSSGradientValue::sortStopsIfNeeded()
 
 struct GradientStop {
     Color color;
-    float offset;
-    bool specified;
-    bool isMidpoint;
-
-    GradientStop()
-        : offset(0)
-        , specified(false)
-        , isMidpoint(false)
-    { }
+    float offset { 0 };
+    bool specified { false };
+    bool isMidpoint { false };
 };
 
-RefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleResolver* styleResolver)
+static inline Ref<CSSGradientValue> clone(CSSGradientValue& value)
 {
-    bool derived = false;
+    if (is<CSSLinearGradientValue>(value))
+        return downcast<CSSLinearGradientValue>(value).clone();
+    ASSERT(is<CSSRadialGradientValue>(value));
+    return downcast<CSSRadialGradientValue>(value).clone();
+}
+
+Ref<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(const StyleResolver& styleResolver)
+{
+    bool colorIsDerivedFromElement = false;
     for (auto& stop : m_stops) {
-        if (!stop.isMidpoint && styleResolver->colorFromPrimitiveValueIsDerivedFromElement(*stop.m_color)) {
+        if (!stop.isMidpoint && styleResolver.colorFromPrimitiveValueIsDerivedFromElement(*stop.m_color)) {
             stop.m_colorIsDerivedFromElement = true;
-            derived = true;
+            colorIsDerivedFromElement = true;
             break;
         }
     }
-
-    RefPtr<CSSGradientValue> result;
-    if (!derived)
-        result = this;
-    else if (is<CSSLinearGradientValue>(*this))
-        result = downcast<CSSLinearGradientValue>(*this).clone();
-    else if (is<CSSRadialGradientValue>(*this))
-        result = downcast<CSSRadialGradientValue>(*this).clone();
-    else {
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-
+    auto result = colorIsDerivedFromElement ? clone(*this) : makeRef(*this);
     for (auto& stop : result->m_stops) {
         if (!stop.isMidpoint)
-            stop.m_resolvedColor = styleResolver->colorFromPrimitiveValue(*stop.m_color);
+            stop.m_resolvedColor = styleResolver.colorFromPrimitiveValue(*stop.m_color);
     }
-
     return result;
 }
 
@@ -579,10 +560,10 @@ bool CSSGradientValue::isCacheable() const
     return true;
 }
 
-bool CSSGradientValue::knownToBeOpaque(const RenderElement*) const
+bool CSSGradientValue::knownToBeOpaque() const
 {
-    for (size_t i = 0; i < m_stops.size(); ++i) {
-        if (!m_stops[i].m_resolvedColor.isOpaque())
+    for (auto& stop : m_stops) {
+        if (!stop.m_resolvedColor.isOpaque())
             return false;
     }
     return true;

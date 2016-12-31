@@ -200,7 +200,7 @@ public:
 
     static RefPtr<CSSCalcPrimitiveValue> create(double value, CSSPrimitiveValue::UnitType type, bool isInteger)
     {
-        if (std::isnan(value) || std::isinf(value))
+        if (!std::isfinite(value))
             return nullptr;
         return adoptRef(new CSSCalcPrimitiveValue(CSSPrimitiveValue::create(value, type), isInteger));
     }
@@ -341,23 +341,27 @@ static inline bool isIntegerResult(CalcOperator op, const CSSCalcExpressionNode&
 class CSSCalcBinaryOperation final : public CSSCalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<CSSCalcBinaryOperation> create(CalcOperator op, PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide)
+    static RefPtr<CSSCalcBinaryOperation> create(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
     {
+        if (!leftSide || !rightSide)
+            return nullptr;
+
         ASSERT(leftSide->category() < CalcOther);
         ASSERT(rightSide->category() < CalcOther);
 
-        CalculationCategory newCategory = determineCategory(*leftSide, *rightSide, op);
-
+        auto newCategory = determineCategory(*leftSide, *rightSide, op);
         if (newCategory == CalcOther)
             return nullptr;
-
-        return adoptRef(new CSSCalcBinaryOperation(newCategory, op, leftSide, rightSide));
+        return adoptRef(new CSSCalcBinaryOperation(newCategory, op, leftSide.releaseNonNull(), rightSide.releaseNonNull()));
     }
 
-    static RefPtr<CSSCalcExpressionNode> createSimplified(CalcOperator op, PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide)
+    static RefPtr<CSSCalcExpressionNode> createSimplified(CalcOperator op, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide)
     {
-        CalculationCategory leftCategory = leftSide->category();
-        CalculationCategory rightCategory = rightSide->category();
+        if (!leftSide || !rightSide)
+            return nullptr;
+
+        auto leftCategory = leftSide->category();
+        auto rightCategory = rightSide->category();
         ASSERT(leftCategory < CalcOther);
         ASSERT(rightCategory < CalcOther);
 
@@ -391,25 +395,25 @@ public:
         } else {
             // Simplify multiplying or dividing by a number for simplifiable types.
             ASSERT(op == CalcMultiply || op == CalcDivide);
-            CSSCalcExpressionNode* numberSide = getNumberSide(*leftSide, *rightSide);
+            auto* numberSide = getNumberSide(*leftSide, *rightSide);
             if (!numberSide)
-                return create(op, leftSide, rightSide);
+                return create(op, leftSide.releaseNonNull(), rightSide.releaseNonNull());
             if (numberSide == leftSide && op == CalcDivide)
                 return nullptr;
-            CSSCalcExpressionNode* otherSide = leftSide == numberSide ? rightSide.get() : leftSide.get();
+            auto& otherSide = leftSide == numberSide ? *rightSide : *leftSide;
 
             double number = numberSide->doubleValue();
-            if (std::isnan(number) || std::isinf(number))
+            if (!std::isfinite(number))
                 return nullptr;
             if (op == CalcDivide && !number)
                 return nullptr;
 
-            CSSPrimitiveValue::UnitType otherType = otherSide->primitiveType();
+            auto otherType = otherSide.primitiveType();
             if (hasDoubleValue(otherType))
-                return CSSCalcPrimitiveValue::create(evaluateOperator(op, otherSide->doubleValue(), number), otherType, isInteger);
+                return CSSCalcPrimitiveValue::create(evaluateOperator(op, otherSide.doubleValue(), number), otherType, isInteger);
         }
 
-        return create(op, leftSide, rightSide);
+        return create(op, leftSide.releaseNonNull(), rightSide.releaseNonNull());
     }
 
 private:
@@ -420,10 +424,10 @@ private:
 
     std::unique_ptr<CalcExpressionNode> createCalcExpression(const CSSToLengthConversionData& conversionData) const final
     {
-        std::unique_ptr<CalcExpressionNode> left(m_leftSide->createCalcExpression(conversionData));
+        auto left = m_leftSide->createCalcExpression(conversionData);
         if (!left)
             return nullptr;
-        std::unique_ptr<CalcExpressionNode> right(m_rightSide->createCalcExpression(conversionData));
+        auto right = m_rightSide->createCalcExpression(conversionData);
         if (!right)
             return nullptr;
         return std::make_unique<CalcExpressionBinaryOperation>(WTFMove(left), WTFMove(right), m_operator);
@@ -505,10 +509,10 @@ private:
         return CSSPrimitiveValue::CSS_UNKNOWN;
     }
 
-    CSSCalcBinaryOperation(CalculationCategory category, CalcOperator op, PassRefPtr<CSSCalcExpressionNode> leftSide, PassRefPtr<CSSCalcExpressionNode> rightSide)
-        : CSSCalcExpressionNode(category, isIntegerResult(op, *leftSide, *rightSide))
-        , m_leftSide(leftSide)
-        , m_rightSide(rightSide)
+    CSSCalcBinaryOperation(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
+        : CSSCalcExpressionNode(category, isIntegerResult(op, leftSide.get(), rightSide.get()))
+        , m_leftSide(WTFMove(leftSide))
+        , m_rightSide(WTFMove(rightSide))
         , m_operator(op)
     {
     }
@@ -632,7 +636,7 @@ private:
             if (!parseValueTerm(tokens, depth, &rhs))
                 return false;
             
-            result->value = CSSCalcBinaryOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), result->value, rhs.value);
+            result->value = CSSCalcBinaryOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
 
             if (!result->value)
                 return false;
@@ -664,7 +668,7 @@ private:
             if (!parseValueMultiplicativeExpression(tokens, depth, &rhs))
                 return false;
             
-            result->value = CSSCalcBinaryOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), result->value, rhs.value);
+            result->value = CSSCalcBinaryOperation::createSimplified(static_cast<CalcOperator>(operatorCharacter), WTFMove(result->value), WTFMove(rhs.value));
             if (!result->value)
                 return false;
         }
@@ -689,7 +693,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
     switch (node.type()) {
     case CalcExpressionNodeNumber: {
         float value = toCalcExpressionNumber(node).value();
-        return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER), value == truncf(value));
+        return CSSCalcPrimitiveValue::create(CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER), value == std::trunc(value));
     }
     case CalcExpressionNodeLength:
         return createCSS(toCalcExpressionLength(node).length(), style);
@@ -705,9 +709,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
     }
     case CalcExpressionNodeUndefined:
         ASSERT_NOT_REACHED();
-        return nullptr;
     }
-    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
@@ -729,23 +731,22 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const Length& length, const Rende
     case Relative:
     case Undefined:
         ASSERT_NOT_REACHED();
-        return nullptr;
     }
-    ASSERT_NOT_REACHED();
     return nullptr;
 }
 
 RefPtr<CSSCalcValue> CSSCalcValue::create(const CSSParserTokenRange& tokens, ValueRange range)
 {
     CSSCalcExpressionNodeParser parser;
-    RefPtr<CSSCalcExpressionNode> expression = parser.parseCalc(tokens);
-    return expression ? adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll)) : nullptr;
-
+    auto expression = parser.parseCalc(tokens);
+    if (!expression)
+        return nullptr;
+    return adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll));
 }
     
 RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const RenderStyle& style)
 {
-    RefPtr<CSSCalcExpressionNode> expression = createCSS(value.expression(), style);
+    auto expression = createCSS(value.expression(), style);
     if (!expression)
         return nullptr;
     return adoptRef(new CSSCalcValue(expression.releaseNonNull(), value.shouldClampToNonNegative()));
