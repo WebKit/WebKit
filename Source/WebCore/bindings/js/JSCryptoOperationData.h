@@ -30,13 +30,14 @@
 namespace JSC {
 class ExecState;
 class JSValue;
+class ThrowScope;
 }
 
 namespace WebCore {
 
-typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
+using CryptoOperationData = std::pair<const uint8_t*, size_t>;
 
-bool cryptoOperationDataFromJSValue(JSC::ExecState&, JSC::JSValue, CryptoOperationData&);
+CryptoOperationData cryptoOperationDataFromJSValue(JSC::ExecState&, JSC::ThrowScope&, JSC::JSValue);
 
 } // namespace WebCore
 

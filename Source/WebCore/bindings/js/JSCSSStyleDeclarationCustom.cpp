@@ -342,7 +342,9 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* state, PropertyName propertyN
 
     auto setPropertyInternalResult = wrapped().setPropertyInternal(propertyInfo.propertyID, propertyValue, important);
     if (setPropertyInternalResult.hasException()) {
-        propagateException(*state, setPropertyInternalResult.releaseException());
+        auto& vm = state->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        propagateException(*state, scope, setPropertyInternalResult.releaseException());
         return true;
     }
     putResult = setPropertyInternalResult.releaseReturnValue();

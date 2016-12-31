@@ -50,8 +50,7 @@
 
     void abort();
 
-    // file data
-    [Custom] readonly attribute any result;
+    readonly attribute (DOMString or ArrayBuffer)? result;
 
     readonly attribute FileError error;
 

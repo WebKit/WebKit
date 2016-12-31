@@ -34,16 +34,12 @@ namespace WebCore {
 
 class CryptoAlgorithmRsaKeyGenParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmRsaKeyGenParamsDeprecated()
-        : hasHash(false)
-    {
-    }
     // The length, in bits, of the RSA modulus.
     unsigned modulusLength;
     // The RSA public exponent, encoded as BigInteger.
     Vector<uint8_t> publicExponent;
     // The hash algorith identifier
-    bool hasHash;
+    bool hasHash { false };
     CryptoAlgorithmIdentifier hash;
 
     Class parametersClass() const override { return Class::RsaKeyGenParams; }

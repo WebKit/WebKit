@@ -42,23 +42,21 @@ namespace WebCore {
 
 using namespace JSC;
 
-RefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(ExecState* exec, JSValue value)
+ExceptionOr<Ref<JSCustomXPathNSResolver>> JSCustomXPathNSResolver::create(ExecState& state, JSValue value)
 {
     if (value.isUndefinedOrNull())
-        return nullptr;
+        return Exception { TypeError };
 
-    JSObject* resolverObject = value.getObject();
-    if (!resolverObject) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return nullptr;
-    }
+    auto* resolverObject = value.getObject();
+    if (!resolverObject)
+        return Exception { TYPE_MISMATCH_ERR };
 
-    return adoptRef(*new JSCustomXPathNSResolver(exec, resolverObject, asJSDOMWindow(exec->vmEntryGlobalObject())));
+    return adoptRef(*new JSCustomXPathNSResolver(state.vm(), resolverObject, asJSDOMWindow(state.vmEntryGlobalObject())));
 }
 
-JSCustomXPathNSResolver::JSCustomXPathNSResolver(ExecState* exec, JSObject* customResolver, JSDOMWindow* globalObject)
-    : m_customResolver(exec->vm(), customResolver)
-    , m_globalObject(exec->vm(), globalObject)
+JSCustomXPathNSResolver::JSCustomXPathNSResolver(VM& vm, JSObject* customResolver, JSDOMWindow* globalObject)
+    : m_customResolver(vm, customResolver)
+    , m_globalObject(vm, globalObject)
 {
 }
 

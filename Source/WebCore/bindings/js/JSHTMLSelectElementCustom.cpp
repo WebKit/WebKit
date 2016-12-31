@@ -46,7 +46,7 @@ void selectElementIndexSetter(JSC::ExecState& state, HTMLSelectElement& element,
 
     auto* option = JSHTMLOptionElement::toWrapped(value);
     if (!option) {
-        setDOMException(&state, throwScope, TYPE_MISMATCH_ERR);
+        throwTypeMismatchError(state, throwScope);
         return;
     }
 

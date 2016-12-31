@@ -2683,29 +2683,26 @@ static ExceptionOr<std::unique_ptr<ArrayBufferContentsArray>> transferArrayBuffe
     return WTFMove(contents);
 }
 
-static void maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)
+static void maybeThrowExceptionIfSerializationFailed(ExecState& state, SerializationReturnCode code)
 {
-    auto& vm = exec->vm();
+    auto& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (code == SerializationReturnCode::SuccessfullyCompleted)
-        return;
-    
     switch (code) {
+    case SerializationReturnCode::SuccessfullyCompleted:
+        break;
     case SerializationReturnCode::StackOverflowError:
-        throwException(exec, scope, createStackOverflowError(exec));
+        throwException(&state, scope, createStackOverflowError(&state));
         break;
     case SerializationReturnCode::ValidationError:
-        throwTypeError(exec, scope, ASCIILiteral("Unable to deserialize data."));
+        throwTypeError(&state, scope, ASCIILiteral("Unable to deserialize data."));
         break;
     case SerializationReturnCode::DataCloneError:
-        setDOMException(exec, DATA_CLONE_ERR);
+        throwDataCloneError(state, scope);
         break;
     case SerializationReturnCode::ExistingExceptionError:
     case SerializationReturnCode::UnspecifiedError:
         break;
-        break;
-    case SerializationReturnCode::SuccessfullyCompleted:
     case SerializationReturnCode::InterruptedExecutionError:
         ASSERT_NOT_REACHED();
     }
@@ -2744,7 +2741,7 @@ RefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState& exec, JSV
     auto code = CloneSerializer::serialize(&exec, value, dummyMessagePorts, dummyArrayBuffers, blobURLs, buffer);
 
     if (throwExceptions == Throwing)
-        maybeThrowExceptionIfSerializationFailed(&exec, code);
+        maybeThrowExceptionIfSerializationFailed(exec, code);
 
     if (code != SerializationReturnCode::SuccessfullyCompleted)
         return nullptr;
@@ -2834,7 +2831,7 @@ JSValue SerializedScriptValue::deserialize(ExecState& exec, JSGlobalObject* glob
 {
     DeserializationResult result = CloneDeserializer::deserialize(&exec, globalObject, messagePorts, m_arrayBufferContentsArray.get(), m_data, blobURLs, blobFilePaths);
     if (throwExceptions == Throwing)
-        maybeThrowExceptionIfSerializationFailed(&exec, result.second);
+        maybeThrowExceptionIfSerializationFailed(exec, result.second);
     return result.first ? result.first : jsNull();
 }
 

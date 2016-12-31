@@ -1,3 +1,189 @@
+2016-12-25  Darin Adler  <darin@apple.com>
+
+        Remove setDOMException and a few custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=166002
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Removed JSFileReaderCustom.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed JSFileReaderCustom.cpp.
+
+        * bindings/js/CallbackFunction.cpp:
+        (WebCore::checkFunctionOnlyCallback): Use throwTypeMismatchError instead
+        of calling setDOMException with TYPE_MISMATCH_ERR.
+
+        * bindings/js/JSBindingsAllInOne.cpp: Removed JSFileReaderCustom.cpp.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate): Pass a throw scope in to
+        propagateException.
+
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::JSCryptoAlgorithmDictionary::parseAlgorithmIdentifier):
+        Renamed from getAlgorithmIdentifier. Got rid of bool return value, instead
+        use a conventional return value and conventional JavaScript exception
+        handling. Added a ThrowScope argument.
+        (WebCore::optionalHashAlgorithm): Added. Returns an optional hash algorithm.
+        Also makes the same changes as above, conventional exception handling and
+        ThrowScope argument.
+        (WebCore::requiredHashAlgorithm): Added. Like the above but throws an
+        exception if the algorithm is omitted.
+        (WebCore::getHashAlgorithm): Deleted. Replaced by the two functions above.
+        (WebCore::createAesCbcParams): Updated for above changes.
+        (WebCore::createHmacParams): Ditto.
+        (WebCore::createHmacKeyParams): Ditto.
+        (WebCore::createRsaKeyGenParams): Ditto.
+        (WebCore::createRsaOaepParams): Ditto.
+        (WebCore::createRsaSsaParams): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForEncrypt): Added
+        a ThrowScope argument, and changed to use throwNotSupportedError instead
+        of setDOMException with NOT_SUPPORTED_ERROR.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDecrypt): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForSign): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForVerify):
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDigest): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForGenerateKey): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveKey): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForDeriveBits): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForImportKey): Ditto.
+        (WebCore::JSCryptoAlgorithmDictionary::createParametersForExportKey): Ditto.
+        * bindings/js/JSCryptoAlgorithmDictionary.h: Updated for the above changes.
+
+        * bindings/js/JSCryptoOperationData.cpp:
+        (WebCore::cryptoOperationDataFromJSValue): Got rid of bool return value and
+        instead use a conventional return value and conventional JS exception handling.
+        Added a ThrowScope argument.
+        * bindings/js/JSCryptoOperationData.h: Updated for the above.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create): Use ExceptionOr.
+        (WebCore::JSCustomXPathNSResolver::JSCustomXPathNSResolver): Take a VM&
+        rather than an ExecState*.
+        * bindings/js/JSCustomXPathNSResolver.h: Updated for the changes above.
+        Also marked class final and fixed indentation.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException): Updated comment.
+        (WebCore::throwDOMException): Deleted.
+        (WebCore::propagateException): Deleted non-inline overload that does not take
+        a throw scope, now that all callers pass a throw scope.
+        (WebCore::setDOMExceptionSlow): Deleted.
+        (WebCore::setDOMException): Deleted.
+        (WebCore::throwNotSupportedError): Added.
+        (WebCore::throwDOMSyntaxError): Added.
+        (WebCore::throwDataCloneError): Added.
+        (WebCore::throwIndexSizeError): Added.
+        (WebCore::throwTypeMismatchError): Added.
+        * bindings/js/JSDOMBinding.h: Updated for the additions and removals
+        above. Also grouped the standard DOM exception throwing functions separately
+        from the special ones for getters and setters, and sorted them alphabetically.
+
+        * bindings/js/JSDataCueCustom.cpp:
+        (WebCore::createJSDataCue): Added, helper function for the below.
+        (WebCore::constructJSDataCue): Tightened and tweaked a bit.
+
+        * bindings/js/JSFileReaderCustom.cpp: Removed.
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::setLength): Use throwIndexSizeError instead
+        of setDOMException with INDEX_SIZE_ERR.
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::selectElementIndexSetter): Use throwTypeMismatchError instead of
+        setDOMExceptoin with TYPEMISMATCH_ERR.
+
+        * bindings/js/JSIDBRequestCustom.cpp:
+        (WebCore::JSIDBRequest::result): Pass a throw scope in to
+        propagateException.
+
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item): Use throwTypeMismatchError and
+        throwIndexSizeError instead of setDOMException with TYPE_MISMATCH_ERR and
+        INDEX_ERR. This required adding a throw scope.
+
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql): Use throwDOMSyntaxError and
+        throwTypeMismatchError instead of setDOMException with SYNTAX_ERR and
+        TYPE_MISMATCH_ERR.
+
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter): Pass a throw scope in to
+        propagateException.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        (WebCore::normalizeCryptoAlgorithmParameters): Use throwNotSupportedError
+        instead of setDOMException with NOT_SUPPORTED_ERR.
+        (WebCore::createAlgorithm): Deleted.
+        (WebCore::supportExportKeyThrow): Added ThrowScope argument and use
+        throwNotSupportedError instead of setDOMException with NOT_SUPPORTED_ERR.
+        (WebCore::jsSubtleCryptoFunctionEncryptPromise): Updated for above changes,
+        throwing a not supported exception at this level rather than in a helper.
+        (WebCore::jsSubtleCryptoFunctionDecryptPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionSignPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionVerifyPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionDigestPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionImportKeyPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionExportKeyPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionWrapKeyPromise): Ditto.
+        (WebCore::jsSubtleCryptoFunctionUnwrapKeyPromise): Ditto.
+
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        (WebCore::createAlgorithmFromJSValue): Got rid of bool return value and
+        instead use a conventional return value and conventional JS exception handling.
+        Added a ThrowScope argument.
+        (WebCore::cryptoKeyFormatFromJSValue): Ditto.
+        (WebCore::cryptoKeyUsagesFromJSValue): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::encrypt): Updated for above changes.
+        (WebCore::JSWebKitSubtleCrypto::decrypt): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::sign): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::verify): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::digest): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::generateKey): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::importKey): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::exportKey): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::wrapKey): Ditto.
+        (WebCore::JSWebKitSubtleCrypto::unwrapKey): Ditto.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send): Pass a throw scope in to
+        propagateException.
+        (WebCore::JSXMLHttpRequest::responseText): Ditto.
+
+        * bindings/js/JSXPathNSResolverCustom.cpp:
+        (WebCore::JSXPathNSResolver::toWrapped): Updated since
+        JSCustomXPathNSResolver::create now uses ExceptionOr.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::maybeThrowExceptionIfSerializationFailed): Updated to take
+        a reference instead of a pointer. Fixed the handling of success to be
+        simpler; no need to check the code twice. Use throwDataCloneError instead
+        of setDOMException with DATA_CLONE_ERR.
+        (WebCore::SerializedScriptValue::create): Updated for above.
+        (WebCore::SerializedScriptValue::deserialize): Ditto.
+
+        * bindings/js/StructuredClone.cpp:
+        (WebCore::structuredCloneArrayBuffer): Use throwDataCloneError instead of
+        setDOMException with DATA_CLONE_ERR.
+        (WebCore::structuredCloneArrayBufferView): Ditto.
+
+        * crypto/CryptoAlgorithmParametersDeprecated.h: Removed unneeded empty
+        constructor.
+        * crypto/parameters/CryptoAlgorithmHmacKeyParamsDeprecated.h: Ditto,
+        moving initialization to where the data member is defined.
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParamsDeprecated.h: Ditto.
+        * crypto/parameters/CryptoAlgorithmRsaOaepParamsDeprecated.h: Ditto.
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::result): Added. Returns a combination of optional
+        and variant that matches what the ID specifies. Moved the code from the
+        two following functions in here.
+        (WebCore::FileReader::arrayBufferResult): Deleted.
+        (WebCore::FileReader::stringResult): Deleted.
+        * fileapi/FileReader.h: Updated for the above.
+        * fileapi/FileReader.idl: Removed [Custom] from the result attribute and
+        declared it with the type mentioned in the specification, a nullable union.
+
 2016-12-30  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from the "dom" directory, related cleanup

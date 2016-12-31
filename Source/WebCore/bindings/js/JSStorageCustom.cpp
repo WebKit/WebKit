@@ -41,8 +41,12 @@ bool JSStorage::nameGetter(ExecState* state, PropertyName propertyName, JSValue&
         return false;
 
     auto item = wrapped().getItem(propertyNameToString(propertyName));
-    if (item.hasException())
-        propagateException(*state, item.releaseException());
+    if (item.hasException()) {
+        auto& vm = state->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        propagateException(*state, scope, item.releaseException());
+        return false;
+    }
 
     auto string = item.releaseReturnValue();
     if (string.isNull())

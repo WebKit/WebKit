@@ -95,8 +95,8 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
         RETURN_IF_EXCEPTION(scope, nullptr);
 
         auto identifier = CryptoAlgorithmRegistry::singleton().identifier(params.name);
-        if (!identifier) {
-            setDOMException(&state, NOT_SUPPORTED_ERR);
+        if (UNLIKELY(!identifier)) {
+            throwNotSupportedError(state, scope);
             return nullptr;
         }
 
@@ -121,7 +121,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 break;
             }
             default:
-                setDOMException(&state, NOT_SUPPORTED_ERR);
+                throwNotSupportedError(state, scope);
                 return nullptr;
             }
             break;
@@ -133,7 +133,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
             default:
-                setDOMException(&state, NOT_SUPPORTED_ERR);
+                throwNotSupportedError(state, scope);
                 return nullptr;
             }
             break;
@@ -147,13 +147,13 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
             default:
-                setDOMException(&state, NOT_SUPPORTED_ERR);
+                throwNotSupportedError(state, scope);
                 return nullptr;
             }
             break;
         case Operations::DeriveKey:
         case Operations::DeriveBits:
-            setDOMException(&state, NOT_SUPPORTED_ERR);
+            throwNotSupportedError(state, scope);
             return nullptr;
         case Operations::GenerateKey:
             switch (*identifier) {
@@ -193,7 +193,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 break;
             }
             default:
-                setDOMException(&state, NOT_SUPPORTED_ERR);
+                throwNotSupportedError(state, scope);
                 return nullptr;
             }
             break;
@@ -229,7 +229,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 break;
             }
             default:
-                setDOMException(&state, NOT_SUPPORTED_ERR);
+                throwNotSupportedError(state, scope);
                 return nullptr;
             }
             break;
@@ -240,7 +240,7 @@ static std::unique_ptr<CryptoAlgorithmParameters> normalizeCryptoAlgorithmParame
                 result = std::make_unique<CryptoAlgorithmParameters>(params);
                 break;
             default:
-                setDOMException(&state, NOT_SUPPORTED_ERR);
+                throwNotSupportedError(state, scope);
                 return nullptr;
             }
             break;
@@ -294,14 +294,6 @@ static CryptoKeyUsageBitmap cryptoKeyUsageBitmapFromJSValue(ExecState& state, JS
     for (auto usage : usages)
         result |= toCryptoKeyUsageBitmap(usage);
 
-    return result;
-}
-
-static RefPtr<CryptoAlgorithm> createAlgorithm(ExecState& state, CryptoAlgorithmIdentifier identifier)
-{
-    auto result = CryptoAlgorithmRegistry::singleton().create(identifier);
-    if (!result)
-        setDOMException(&state, NOT_SUPPORTED_ERR);
     return result;
 }
 
@@ -449,7 +441,7 @@ static Vector<uint8_t> toVector(ExecState& state, JSValue value)
     return dataVector;
 }
 
-static void supportExportKeyThrow(ExecState& state, CryptoAlgorithmIdentifier identifier)
+static void supportExportKeyThrow(ExecState& state, ThrowScope& scope, CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
@@ -465,7 +457,7 @@ static void supportExportKeyThrow(ExecState& state, CryptoAlgorithmIdentifier id
     case CryptoAlgorithmIdentifier::HMAC:
         return;
     default:
-        setDOMException(&state, NOT_SUPPORTED_ERR);
+        throwNotSupportedError(state, scope);
     }
 }
 
@@ -498,8 +490,11 @@ static void jsSubtleCryptoFunctionEncryptPromise(ExecState& state, Ref<DeferredP
         return;
     }
 
-    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(key->algorithmIdentifier());
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& cipherText) mutable {
         fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), cipherText.data(), cipherText.size());
@@ -543,8 +538,11 @@ static void jsSubtleCryptoFunctionDecryptPromise(ExecState& state, Ref<DeferredP
         return;
     }
 
-    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(key->algorithmIdentifier());
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& plainText) mutable {
         fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), plainText.data(), plainText.size());
@@ -588,8 +586,11 @@ static void jsSubtleCryptoFunctionSignPromise(ExecState& state, Ref<DeferredProm
         return;
     }
 
-    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(key->algorithmIdentifier());
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& signature) mutable {
         fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), signature.data(), signature.size());
@@ -636,8 +637,11 @@ static void jsSubtleCryptoFunctionVerifyPromise(ExecState& state, Ref<DeferredPr
         return;
     }
 
-    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(key->algorithmIdentifier());
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](bool result) mutable {
         capturedPromise->resolve<IDLBoolean>(result);
@@ -668,8 +672,11 @@ static void jsSubtleCryptoFunctionDigestPromise(ExecState& state, Ref<DeferredPr
     auto data = toVector(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto algorithm = createAlgorithm(state, params->identifier);
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](const Vector<uint8_t>& digest) mutable {
         fulfillPromiseWithArrayBuffer(WTFMove(capturedPromise), digest.data(), digest.size());
@@ -737,8 +744,11 @@ static void jsSubtleCryptoFunctionGenerateKeyPromise(ExecState& state, Ref<Defer
     auto keyUsages = cryptoKeyUsageBitmapFromJSValue(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto algorithm = createAlgorithm(state, params->identifier);
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](KeyOrKeyPair&& keyOrKeyPair) mutable {
         WTF::switchOn(keyOrKeyPair,
@@ -793,8 +803,11 @@ static void jsSubtleCryptoFunctionImportKeyPromise(ExecState& state, Ref<Deferre
     auto keyUsages = cryptoKeyUsageBitmapFromJSValue(state, state.uncheckedArgument(4));
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto algorithm = createAlgorithm(state, params->identifier);
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](CryptoKey& key) mutable {
         if ((key.type() == CryptoKeyType::Private || key.type() == CryptoKeyType::Secret) && !key.usagesBitmap()) {
@@ -829,7 +842,7 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
     auto key = toCryptoKey(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, void());
 
-    supportExportKeyThrow(state, key->algorithmIdentifier());
+    supportExportKeyThrow(state, scope, key->algorithmIdentifier());
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!key->extractable()) {
@@ -837,8 +850,11 @@ static void jsSubtleCryptoFunctionExportKeyPromise(ExecState& state, Ref<Deferre
         return;
     }
 
-    auto algorithm = createAlgorithm(state, key->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto algorithm = CryptoAlgorithmRegistry::singleton().create(key->algorithmIdentifier());
+    if (UNLIKELY(!algorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [capturedPromise = promise.copyRef()](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
         switch (format) {
@@ -904,7 +920,7 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
         return;
     }
 
-    supportExportKeyThrow(state, key->algorithmIdentifier());
+    supportExportKeyThrow(state, scope, key->algorithmIdentifier());
     RETURN_IF_EXCEPTION(scope, void());
 
     if (!key->extractable()) {
@@ -912,11 +928,17 @@ static void jsSubtleCryptoFunctionWrapKeyPromise(ExecState& state, Ref<DeferredP
         return;
     }
 
-    auto exportAlgorithm = createAlgorithm(state, key->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto exportAlgorithm = CryptoAlgorithmRegistry::singleton().create(key->algorithmIdentifier());
+    if (UNLIKELY(!exportAlgorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
-    auto wrapAlgorithm = createAlgorithm(state, wrappingKey->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto wrapAlgorithm = CryptoAlgorithmRegistry::singleton().create(wrappingKey->algorithmIdentifier());
+    if (UNLIKELY(!wrapAlgorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto context = scriptExecutionContextFromExecState(&state);
 
@@ -1014,11 +1036,17 @@ static void jsSubtleCryptoFunctionUnwrapKeyPromise(ExecState& state, Ref<Deferre
         return;
     }
 
-    auto importAlgorithm = createAlgorithm(state, unwrappedKeyAlgorithm->identifier);
-    RETURN_IF_EXCEPTION(scope, void());
+    auto importAlgorithm = CryptoAlgorithmRegistry::singleton().create(unwrappedKeyAlgorithm->identifier);
+    if (UNLIKELY(!importAlgorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
-    auto unwrapAlgorithm = createAlgorithm(state, unwrappingKey->algorithmIdentifier());
-    RETURN_IF_EXCEPTION(scope, void());
+    auto unwrapAlgorithm = CryptoAlgorithmRegistry::singleton().create(unwrappingKey->algorithmIdentifier());
+    if (UNLIKELY(!unwrapAlgorithm)) {
+        throwNotSupportedError(state, scope);
+        return;
+    }
 
     auto callback = [promise = promise.copyRef(), format, importAlgorithm, unwrappedKeyAlgorithm = WTFMove(unwrappedKeyAlgorithm), extractable, keyUsages](const Vector<uint8_t>& bytes) mutable {
         ExecState& state = *(promise->globalObject()->globalExec());

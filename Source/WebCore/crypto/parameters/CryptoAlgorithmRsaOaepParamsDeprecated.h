@@ -34,17 +34,12 @@ namespace WebCore {
 
 class CryptoAlgorithmRsaOaepParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmRsaOaepParamsDeprecated()
-        : hasLabel(false)
-    {
-    }
-
     // The hash function to apply to the message.
     CryptoAlgorithmIdentifier hash;
 
     // The optional label/application data to associate with the message.
     // FIXME: Is there a difference between a missing label and an empty one? Perhaps we don't need the hasLabel member.
-    bool hasLabel;
+    bool hasLabel { false };
     Vector<uint8_t> label;
 
     Class parametersClass() const override { return Class::RsaOaepParams; }

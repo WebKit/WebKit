@@ -27,6 +27,7 @@
 #include "JSXPathNSResolver.h"
 
 #include "JSCustomXPathNSResolver.h"
+#include "JSDOMBinding.h"
 
 using namespace JSC;
 
@@ -37,7 +38,14 @@ RefPtr<XPathNSResolver> JSXPathNSResolver::toWrapped(ExecState& state, JSValue v
     if (value.inherits(JSXPathNSResolver::info()))
         return &jsCast<JSXPathNSResolver*>(asObject(value))->wrapped();
 
-    return JSCustomXPathNSResolver::create(&state, value);
+    auto result = JSCustomXPathNSResolver::create(state, value);
+    if (UNLIKELY(result.hasException())) {
+        VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        propagateException(state, scope, result.releaseException());
+        return nullptr;
+    }
+    return result.releaseReturnValue();
 }
 
 } // namespace WebCore

@@ -134,7 +134,9 @@ JSValue JSXMLHttpRequest::send(ExecState& state)
 
     // FIXME: Is it correct to do this only after the paragraph code of code just above, or should we exit earlier?
     if (UNLIKELY(result.hasException())) {
-        propagateException(state, result.releaseException());
+        auto& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        propagateException(state, scope, result.releaseException());
         return { };
     }
 
@@ -146,7 +148,9 @@ JSValue JSXMLHttpRequest::responseText(ExecState& state) const
     auto result = wrapped().responseText();
 
     if (UNLIKELY(result.hasException())) {
-        propagateException(state, result.releaseException());
+        auto& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        propagateException(state, scope, result.releaseException());
         return { };
     }
 

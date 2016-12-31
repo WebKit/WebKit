@@ -34,17 +34,12 @@ namespace WebCore {
 
 class CryptoAlgorithmHmacKeyParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmHmacKeyParamsDeprecated()
-        : hasLength(false)
-    {
-    }
-
     // The inner hash function to use.
     CryptoAlgorithmIdentifier hash;
 
     // The length (in bytes) of the key to generate. If unspecified, the recommended length will be used,
     // which is the size of the associated hash function's block size.
-    bool hasLength;
+    bool hasLength { false };
     unsigned length;
 
     Class parametersClass() const override { return Class::HmacKeyParams; }

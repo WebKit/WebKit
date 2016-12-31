@@ -25,17 +25,15 @@
 
 #pragma once
 
-#include <wtf/Noncopyable.h>
+#if ENABLE(SUBTLE_CRYPTO)
+
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
-
-#if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
 class CryptoAlgorithmParametersDeprecated : public RefCounted<CryptoAlgorithmParametersDeprecated> {
 public:
-    CryptoAlgorithmParametersDeprecated() { }
     virtual ~CryptoAlgorithmParametersDeprecated() { }
 
     enum class Class {

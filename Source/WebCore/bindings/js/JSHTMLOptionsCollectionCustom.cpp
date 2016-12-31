@@ -59,7 +59,7 @@ void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
     if (!std::isfinite(number))
         length = 0;
     else if (number < 0)
-        return setDOMException(&state, throwScope, INDEX_SIZE_ERR);
+        return throwIndexSizeError(state, throwScope);
     else
         length = static_cast<unsigned>(std::min<double>(number, UINT_MAX));
     propagateException(state, throwScope, wrapped().setLength(length));
