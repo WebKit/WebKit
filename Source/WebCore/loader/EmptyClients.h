@@ -71,7 +71,6 @@
 
 namespace WebCore {
 
-class GraphicsContext3D;
 class Page;
 class PageConfiguration;
 

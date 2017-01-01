@@ -1,3 +1,20 @@
+2017-01-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up GraphicsContext3D forward declarations, header inclusion
+        https://bugs.webkit.org/show_bug.cgi?id=166537
+
+        Reviewed by Alex Christensen.
+
+        Remove two unnecessary GraphicsContext3D forward declarations from the
+        EmptyClients and ChromeClient header files, and remove the unnecessary
+        GraphicsContext3D.h header inclusion from RenderLayerBacking.
+
+        No changes in behavior.
+
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        * rendering/RenderLayerBacking.cpp:
+
 2016-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         SecurityOrigin::create triplet constructor does not canonicalize port

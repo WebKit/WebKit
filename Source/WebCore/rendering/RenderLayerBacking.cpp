@@ -64,10 +64,6 @@
 #include "StyleResolver.h"
 #include "TiledBacking.h"
 
-#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
-#include "GraphicsContext3D.h"
-#endif
-
 #if PLATFORM(IOS)
 #include "RuntimeApplicationChecks.h"
 #endif
