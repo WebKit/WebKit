@@ -1,3 +1,20 @@
+2016-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        SecurityOrigin::create triplet constructor does not canonicalize port
+        https://bugs.webkit.org/show_bug.cgi?id=166624
+
+        Reviewed by Daniel Bates.
+
+        It is currently possible to create two different unequal SecurityOrigin objects that
+        represent the same security origin. The SecurityOrigin create functions that take URL and
+        String parameters convert the port to nullopt if it is the default port for the protocol,
+        but the separate protocol/host/port constructor doesn't. Change it to parallel the other
+        constructors.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::create):
+        * page/SecurityOrigin.h: Export isSameOriginAs for use by tests.
+
 2016-12-25  Darin Adler  <darin@apple.com>
 
         Remove setDOMException and a few custom bindings

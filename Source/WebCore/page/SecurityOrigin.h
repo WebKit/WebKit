@@ -198,7 +198,7 @@ public:
 
     // This method implements the "same origin" algorithm from the HTML Standard:
     // https://html.spec.whatwg.org/multipage/browsers.html#same-origin
-    bool isSameOriginAs(const SecurityOrigin*) const;
+    WEBCORE_EXPORT bool isSameOriginAs(const SecurityOrigin*) const;
 
     static URL urlWithUniqueSecurityOrigin();
 

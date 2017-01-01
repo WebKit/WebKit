@@ -490,7 +490,8 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
 {
     String decodedHost = decodeURLEscapeSequences(host);
     auto origin = create(URL(URL(), protocol + "://" + host + "/"));
-    origin->m_port = port;
+    if (port && !isDefaultPortForProtocol(*port, protocol))
+        origin->m_port = port;
     return origin;
 }
 

@@ -1,3 +1,17 @@
+2016-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        SecurityOrigin::create triplet constructor does not canonicalize port
+        https://bugs.webkit.org/show_bug.cgi?id=166624
+
+        Reviewed by Daniel Bates.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp: Added.
+        (TestWebKitAPI::SecurityOriginTest::SetUp):
+        (TestWebKitAPI::TEST_F):
+
 2016-12-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Improve user agent construction
