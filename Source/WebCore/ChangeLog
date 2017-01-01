@@ -1,3 +1,12 @@
+2017-01-01  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2017
+        https://bugs.webkit.org/show_bug.cgi?id=166278
+
+        Reviewed by Dan Bernstein.
+
+        * Info.plist:
+
 2017-01-01  Zan Dobersek  <zdobersek@igalia.com>
 
         GraphicsContextCairo: setMiterLimit() is missing the DisplayListRecorder diversion
