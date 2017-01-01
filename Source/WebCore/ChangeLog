@@ -1,5 +1,16 @@
 2017-01-01  Zan Dobersek  <zdobersek@igalia.com>
 
+        GraphicsContextCairo: setMiterLimit() is missing the DisplayListRecorder diversion
+        https://bugs.webkit.org/show_bug.cgi?id=166539
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setMiterLimit): Call the setMiterLimit() method on the
+        m_displayListRecorder object when the GraphicsContext object is in recording mode.
+
+2017-01-01  Zan Dobersek  <zdobersek@igalia.com>
+
         Clean up GraphicsContext3D forward declarations, header inclusion
         https://bugs.webkit.org/show_bug.cgi?id=166537
 

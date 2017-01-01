@@ -1016,6 +1016,12 @@ void GraphicsContext::setMiterLimit(float miter)
     if (paintingDisabled())
         return;
 
+    if (isRecording()) {
+        // Maybe this should be part of the state.
+        m_displayListRecorder->setMiterLimit(miter);
+        return;
+    }
+
     cairo_set_miter_limit(platformContext()->cr(), miter);
 }
 
