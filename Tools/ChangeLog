@@ -1,3 +1,18 @@
+2017-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] WebCore/CSSParser unit test is not being built
+        https://bugs.webkit.org/show_bug.cgi?id=166492
+
+        Reviewed by Michael Catanzaro.
+
+        This test was introduced in r175930, but we were not building
+        it on GTK+ port since r176015.
+        This patch marks the test to be built again on GTK+.
+        JFTR, the test is passing right now.
+
+        * TestWebKitAPI/PlatformGTK.cmake: Add CSSParser.cpp test file and use
+        ADD_WHOLE_ARCHIVE_TO_LIBRARIES to avoid linking errors.
+
 2017-01-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose block quote level to iOS API
