@@ -1,3 +1,26 @@
+2017-01-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use StaticStringImpl instead of StaticASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=166586
+
+        Reviewed by Darin Adler.
+
+        It is more handy way to define static StringImpl. It calculates the length
+        and hash value by using the constexpr constructor and function. So we do
+        not need to calculate these things in Perl script.
+        And it allows us to use StaticStringImpl in the hand written C++ code.
+        Previously, we need to calculate the length and hash value by hand if we
+        would like to use StaticASCIILiteral in the hand written C++ code, and it
+        meant that we cannot use it at all in the hand written C++ code.
+
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::AtomicStringImpl::addSlowCase):
+        (WTF::AtomicStringImpl::lookUpSlowCase):
+        * wtf/text/AtomicStringImpl.h:
+        * wtf/text/StringImpl.h:
+        * wtf/text/SymbolImpl.h:
+        * wtf/text/UniquedStringImpl.h:
+
 2017-01-02  Andreas Kling  <akling@apple.com>
 
         Discard media controls JS/CSS caches under memory pressure.

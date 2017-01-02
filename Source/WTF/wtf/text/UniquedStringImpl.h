@@ -42,7 +42,7 @@ protected:
 };
 
 #if !ASSERT_DISABLED
-// UniquedStringImpls created from StaticASCIILiteral will ASSERT
+// UniquedStringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc.
 // We don't currently have any way to detect that case

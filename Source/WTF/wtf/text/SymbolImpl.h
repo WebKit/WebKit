@@ -105,7 +105,7 @@ inline unsigned StringImpl::existingSymbolAwareHash() const
 }
 
 #if !ASSERT_DISABLED
-// SymbolImpls created from StaticASCIILiteral will ASSERT
+// SymbolImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc.
 // We don't currently have any way to detect that case

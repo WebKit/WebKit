@@ -405,7 +405,7 @@ Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(StringImpl& string)
     if (!string.length())
         return *static_cast<AtomicStringImpl*>(StringImpl::empty());
 
-    if (string.isSymbol()) {
+    if (string.isSymbol() || string.isStatic()) {
         if (string.is8Bit())
             return *add(string.characters8(), string.length());
         return *add(string.characters16(), string.length());
@@ -429,7 +429,7 @@ Ref<AtomicStringImpl> AtomicStringImpl::addSlowCase(AtomicStringTable& stringTab
     if (!string.length())
         return *static_cast<AtomicStringImpl*>(StringImpl::empty());
 
-    if (string.isSymbol()) {
+    if (string.isSymbol() || string.isStatic()) {
         if (string.is8Bit())
             return *add(string.characters8(), string.length());
         return *add(string.characters16(), string.length());
@@ -466,7 +466,7 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::lookUpSlowCase(StringImpl& string)
     if (!string.length())
         return static_cast<AtomicStringImpl*>(StringImpl::empty());
 
-    if (string.isSymbol()) {
+    if (string.isSymbol() || string.isStatic()) {
         if (string.is8Bit())
             return lookUpInternal(string.characters8(), string.length());
         return lookUpInternal(string.characters16(), string.length());

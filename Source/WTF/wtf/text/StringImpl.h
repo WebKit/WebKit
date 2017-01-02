@@ -845,21 +845,6 @@ private:
 #endif
 
 public:
-    // FIXME: It should be replaced with StaticStringImpl.
-    // https://bugs.webkit.org/show_bug.cgi?id=165134
-    struct StaticASCIILiteral {
-        // These member variables must match the layout of StringImpl.
-        unsigned m_refCount;
-        unsigned m_length;
-        const LChar* m_data8;
-        unsigned m_hashAndFlags;
-
-        // These values mimic ConstructFromLiteral.
-        static const unsigned s_initialRefCount = s_refCountIncrement;
-        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | StringNormal | BufferInternal;
-        static const unsigned s_hashShift = s_flagCount;
-    };
-
 #ifndef NDEBUG
     void assertHashIsCorrect()
     {
@@ -869,7 +854,7 @@ public:
 #endif
 
 private:
-    // These member variables must match the layout of StaticASCIILiteral and StaticStringImpl.
+    // These member variables must match the layout of StaticStringImpl.
     unsigned m_refCount;
     unsigned m_length;
     union {
@@ -879,11 +864,10 @@ private:
     mutable unsigned m_hashAndFlags;
 };
 
-static_assert(sizeof(StringImpl) == sizeof(StringImpl::StaticASCIILiteral), "");
 static_assert(sizeof(StringImpl) == sizeof(StringImpl::StaticStringImpl), "");
 
 #if !ASSERT_DISABLED
-// StringImpls created from StaticASCIILiteral will ASSERT
+// StringImpls created from StaticStringImpl will ASSERT
 // in the generic ValueCheck<T>::checkConsistency
 // as they are not allocated by fastMalloc.
 // We don't currently have any way to detect that case
