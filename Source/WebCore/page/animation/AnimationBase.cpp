@@ -89,9 +89,11 @@ AnimationBase::AnimationBase(const Animation& animation, RenderElement* renderer
 
 void AnimationBase::setNeedsStyleRecalc(Element* element)
 {
-    ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
-    if (element)
-        element->invalidateStyleAndLayerComposition();
+    if (!element || element->document().renderTreeBeingDestroyed())
+        return;
+
+    ASSERT(element->document().pageCacheState() == Document::NotInPageCache);
+    element->invalidateStyleAndLayerComposition();
 }
 
 double AnimationBase::duration() const

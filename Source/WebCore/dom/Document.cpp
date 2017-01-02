@@ -2202,7 +2202,6 @@ void Document::frameDestroyed()
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
-    ASSERT(m_pageCacheState != InPageCache);
 
     SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 

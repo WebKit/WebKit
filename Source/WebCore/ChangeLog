@@ -1,5 +1,43 @@
 2017-01-02  Andreas Kling  <akling@apple.com>
 
+        Drop the render tree for documents in the page cache.
+        <https://webkit.org/b/121798>
+
+        Reviewed by Antti Koivisto.
+
+        To save memory and reduce complexity, have documents tear down their render tree
+        when entering the page cache. I've wanted to do this for a long time and it seems
+        like we can actually do it now.
+
+        This patch will enable a number of clean-ups since it's no longer valid for renderers
+        to exist while the document is in page cache.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree): Remove assertion that we're not in the page cache
+        since we will now be tearing down render trees right as they enter the page cache.
+
+        * dom/PageCache.cpp:
+        (WebCore::destroyRenderTree):
+        (WebCore::PageCache::addIfCacheable): Tear down the render tree right before setting
+        the in-cache flag. The render tree is destroyed in bottom-up order to ensure that the
+        main frame renderers die last.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didRestoreFromPageCache): Update the scollable area set after restoring
+        a frame from the page cache. This dirties the scrolling tree, which was covered by tests.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::cancelAnimations): Make these no-ops if called
+        while the render tree is being torn down. This fixes some assertion failures
+        on layout tests and avoids pointless style invalidation.
+
+2017-01-02  Andreas Kling  <akling@apple.com>
+
         Discard media controls JS/CSS caches under memory pressure.
         <https://webkit.org/b/166639>
 

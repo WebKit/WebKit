@@ -364,6 +364,20 @@ static void setPageCacheState(Page& page, Document::PageCacheState pageCacheStat
     }
 }
 
+// When entering page cache, tear down the render tree before setting the in-cache flag.
+// This maintains the invariant that render trees are never present in the page cache.
+// Note that destruction happens bottom-up so that the main frame's tree dies last.
+static void destroyRenderTree(MainFrame& mainFrame)
+{
+    for (Frame* frame = mainFrame.tree().traversePreviousWithWrap(true); frame; frame = frame->tree().traversePreviousWithWrap(false)) {
+        if (!frame->document())
+            continue;
+        auto& document = *frame->document();
+        if (document.hasLivingRenderTree())
+            document.destroyRenderTree();
+    }
+}
+
 static void firePageHideEventRecursively(Frame& frame)
 {
     auto* document = frame.document();
@@ -406,6 +420,8 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
         setPageCacheState(*page, Document::NotInPageCache);
         return;
     }
+
+    destroyRenderTree(page->mainFrame());
 
     setPageCacheState(*page, Document::InPageCache);
 
