@@ -444,9 +444,9 @@ bool AccessibilityObject::hasMisspelling() const
     return isMisspelled;
 }
 
-int AccessibilityObject::blockquoteLevel() const
+unsigned AccessibilityObject::blockquoteLevel() const
 {
-    int level = 0;
+    unsigned level = 0;
     for (Node* elementNode = node(); elementNode; elementNode = elementNode->parentNode()) {
         if (elementNode->hasTagName(blockquoteTag))
             ++level;

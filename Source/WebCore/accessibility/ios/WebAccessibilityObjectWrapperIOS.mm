@@ -1251,6 +1251,13 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return NSMakeRange(columnRange.first, columnRange.second);
 }
 
+- (NSUInteger)accessibilityBlockquoteLevel
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+    return m_object->blockquoteLevel();
+}
+
 - (NSString *)accessibilityPlaceholderValue
 {
     if (![self _prepareAccessibilityCall])

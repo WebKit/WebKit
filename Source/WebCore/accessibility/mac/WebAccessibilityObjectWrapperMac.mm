@@ -3176,7 +3176,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
-        return [NSNumber numberWithInt:m_object->blockquoteLevel()];
+        return [NSNumber numberWithUnsignedInt:m_object->blockquoteLevel()];
     if ([attributeName isEqualToString:@"AXTableLevel"])
         return [NSNumber numberWithInt:m_object->tableLevel()];
     

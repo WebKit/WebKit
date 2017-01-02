@@ -613,7 +613,7 @@ public:
     virtual AccessibilityObjectInclusion defaultObjectInclusion() const;
     bool accessibilityIsIgnoredByDefault() const;
     
-    int blockquoteLevel() const;
+    unsigned blockquoteLevel() const;
     virtual int headingLevel() const { return 0; }
     virtual int tableLevel() const { return 0; }
     virtual AccessibilityButtonState checkboxOrRadioValue() const;

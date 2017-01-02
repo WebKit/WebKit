@@ -99,6 +99,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSString *)accessibilityExpandedTextValue;
 - (NSString *)accessibilitySortDirection;
 - (BOOL)accessibilityIsExpanded;
+- (NSUInteger)accessibilityBlockquoteLevel;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -1142,6 +1143,8 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
         return [m_element accessibilityARIAColumnIndex];
     if (JSStringIsEqualToUTF8CString(attribute, "AXARIARowIndex"))
         return [m_element accessibilityARIARowIndex];
+    if (JSStringIsEqualToUTF8CString(attribute, "AXBlockquoteLevel"))
+        return [m_element accessibilityBlockquoteLevel];
     
     return 0;
 }

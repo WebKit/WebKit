@@ -1,3 +1,24 @@
+2017-01-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose block quote level to iOS API
+        https://bugs.webkit.org/show_bug.cgi?id=166629
+        <rdar://problem/29834793>
+
+        Reviewed by Darin Adler.
+
+        Expose the blockquote level to iOS Accessbility API.
+        Change the return type of blockquote level to unsigned.
+
+        Test: accessibility/ios-simulator/blockquote-level.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::blockquoteLevel):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityBlockquoteLevel]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2017-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2017

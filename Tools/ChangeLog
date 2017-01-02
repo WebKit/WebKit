@@ -1,3 +1,16 @@
+2017-01-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Expose block quote level to iOS API
+        https://bugs.webkit.org/show_bug.cgi?id=166629
+        <rdar://problem/29834793>
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::numberAttributeValue):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::numberAttributeValue):
+
 2016-12-31  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         SecurityOrigin::create triplet constructor does not canonicalize port
