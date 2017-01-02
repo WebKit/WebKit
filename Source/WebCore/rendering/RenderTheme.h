@@ -72,6 +72,8 @@ public:
         return themeForPage(nullptr);
     };
 
+    virtual void purgeCaches() { }
+
     // This method is called whenever style has been computed for an element and the appearance
     // property has been set to a value other than "none".  The theme should map in all of the appropriate
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like

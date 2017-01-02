@@ -469,6 +469,14 @@ public:
         return (*m_impl)[index];
     }
 
+    // Turns this String empty if the StringImpl is not referenced by anyone else.
+    // This is useful for clearing String-based caches.
+    void clearImplIfNotShared()
+    {
+        if (m_impl && m_impl->hasOneRef())
+            m_impl = nullptr;
+    }
+
 private:
     template <typename CharacterType>
     void removeInternal(const CharacterType*, unsigned, int);

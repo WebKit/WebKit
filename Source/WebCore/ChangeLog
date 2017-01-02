@@ -1,3 +1,27 @@
+2017-01-02  Andreas Kling  <akling@apple.com>
+
+        Discard media controls JS/CSS caches under memory pressure.
+        <https://webkit.org/b/166639>
+
+        Reviewed by Antti Koivisto.
+
+        Add a RenderTheme::purgeCaches() virtual and teach the iOS and macOS implementations
+        to drop their cached media controls JS/CSS strings there. The strings are only cleared
+        if nothing else is referencing them, which gives us a decent "weak cache" behavior.
+
+        This sheds ~300kB memory on iOS with the current media controls.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseNoncriticalMemory):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::purgeCaches):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::purgeCaches):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::purgeCaches):
+
 2017-01-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Since the memory pressure relief has been activated, my disk has a high usage and the desktop stalls

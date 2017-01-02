@@ -246,6 +246,14 @@ String RenderThemeMac::mediaControlsStyleSheet()
 #endif
 }
 
+void RenderThemeMac::purgeCaches()
+{
+    m_legacyMediaControlsScript.clearImplIfNotShared();
+    m_mediaControlsScript.clearImplIfNotShared();
+    m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
+    m_mediaControlsStyleSheet.clearImplIfNotShared();
+}
+
 String RenderThemeMac::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

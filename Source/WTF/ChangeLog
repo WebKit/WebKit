@@ -1,3 +1,14 @@
+2017-01-02  Andreas Kling  <akling@apple.com>
+
+        Discard media controls JS/CSS caches under memory pressure.
+        <https://webkit.org/b/166639>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::clearImplIfNotShared): Add a helper for clearing a String if the underlying
+        StringImpl is not referenced by anyone else.
+
 2016-12-22  Mark Lam  <mark.lam@apple.com>
 
         De-duplicate finally blocks.

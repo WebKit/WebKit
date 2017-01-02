@@ -172,6 +172,8 @@ private:
 
     Color systemColor(CSSValueID) const override;
 
+    void purgeCaches() override;
+
     // Get the control size based off the font. Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(const RenderStyle&) const;
     NSControlSize controlSizeForSystemFont(const RenderStyle&) const;

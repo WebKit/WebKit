@@ -1305,6 +1305,14 @@ String RenderThemeIOS::mediaControlsStyleSheet()
 #endif
 }
 
+void RenderThemeIOS::purgeCaches()
+{
+    m_legacyMediaControlsScript.clearImplIfNotShared();
+    m_mediaControlsScript.clearImplIfNotShared();
+    m_legacyMediaControlsStyleSheet.clearImplIfNotShared();
+    m_mediaControlsStyleSheet.clearImplIfNotShared();
+}
+
 String RenderThemeIOS::mediaControlsScript()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

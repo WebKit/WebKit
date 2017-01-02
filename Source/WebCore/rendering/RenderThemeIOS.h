@@ -121,6 +121,8 @@ private:
     RenderThemeIOS();
     virtual ~RenderThemeIOS() { }
 
+    void purgeCaches() override;
+
     const Color& shadowColor() const;
     FloatRect addRoundedBorderClip(const RenderObject& box, GraphicsContext&, const IntRect&);
 
