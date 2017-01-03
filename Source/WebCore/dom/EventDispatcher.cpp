@@ -97,7 +97,7 @@ static void dispatchEventInDOM(Event& event, const EventPath& path)
         const EventContext& eventContext = path.contextAt(i);
         if (eventContext.currentTargetSameAsTarget())
             event.setEventPhase(Event::AT_TARGET);
-        else if (event.bubbles() && !event.cancelBubble())
+        else if (event.bubbles())
             event.setEventPhase(Event::BUBBLING_PHASE);
         else
             continue;

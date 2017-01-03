@@ -176,8 +176,8 @@ public:
 
     void setInPassiveListener(bool value) { m_isExecutingPassiveEventListener = value; }
 
-    bool cancelBubble() const { return m_cancelBubble; }
-    void setCancelBubble(bool cancel) { m_cancelBubble = cancel; }
+    bool cancelBubble() const { return propagationStopped(); }
+    void setCancelBubble(bool);
 
     Event* underlyingEvent() const { return m_underlyingEvent.get(); }
     void setUnderlyingEvent(Event*);
@@ -207,7 +207,6 @@ private:
     bool m_immediatePropagationStopped { false };
     bool m_defaultPrevented { false };
     bool m_defaultHandled { false };
-    bool m_cancelBubble { false };
     bool m_isTrusted { false };
     bool m_isExecutingPassiveEventListener { false };
 
@@ -224,6 +223,12 @@ inline void Event::resetPropagationFlags()
 {
     m_propagationStopped = false;
     m_immediatePropagationStopped = false;
+}
+
+inline void Event::setCancelBubble(bool cancel)
+{
+    if (cancel)
+        m_propagationStopped = true;
 }
 
 } // namespace WebCore

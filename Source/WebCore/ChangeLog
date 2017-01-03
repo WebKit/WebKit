@@ -1,3 +1,28 @@
+2017-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Make setting Event's cancelBubble to false a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=166018
+
+        Reviewed by Ryosuke Niwa.
+
+        Align behavior of Event.cancelBubble with the latest DOM specification:
+        - https://dom.spec.whatwg.org/#dom-event-cancelbubble
+
+        Setting it to true sets the 'stop propagation' flag to true and setting
+        it to false is now a no-op.
+
+        Tests: imported/w3c/web-platform-tests/dom/events/Event-cancelBubble.html
+               imported/w3c/web-platform-tests/dom/events/Event-dispatch-bubble-canceled.html
+               imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-cancelBubble.html
+
+        * Modules/indexeddb/IDBEventDispatcher.cpp:
+        (WebCore::IDBEventDispatcher::dispatch):
+        * dom/Event.h:
+        (WebCore::Event::cancelBubble):
+        (WebCore::Event::setCancelBubble):
+        * dom/EventDispatcher.cpp:
+        (WebCore::dispatchEventInDOM):
+
 2017-01-03  Jer Noble  <jer.noble@apple.com>
 
         Check for the existence of AVSampleBufferAudioRenderer.h before redeclaring AVSampleBufferAudioRenderer

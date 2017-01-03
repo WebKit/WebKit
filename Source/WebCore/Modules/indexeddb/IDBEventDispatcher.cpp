@@ -52,14 +52,14 @@ bool IDBEventDispatcher::dispatch(Event& event, Vector<RefPtr<EventTarget>>& eve
     event.setEventPhase(Event::AT_TARGET);
     event.setCurrentTarget(eventTargets[0].get());
     eventTargets[0]->fireEventListeners(event);
-    if (event.propagationStopped() || !event.bubbles() || event.cancelBubble())
+    if (event.propagationStopped() || !event.bubbles())
         goto doneDispatching;
 
     event.setEventPhase(Event::BUBBLING_PHASE);
     for (size_t i = 1; i < size; ++i) { // Don't do the first element.
         event.setCurrentTarget(eventTargets[i].get());
         eventTargets[i]->fireEventListeners(event);
-        if (event.propagationStopped() || event.cancelBubble())
+        if (event.propagationStopped())
             goto doneDispatching;
     }
 

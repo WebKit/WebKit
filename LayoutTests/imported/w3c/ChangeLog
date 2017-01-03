@@ -1,3 +1,24 @@
+2017-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Make setting Event's cancelBubble to false a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=166018
+
+        Reviewed by Ryosuke Niwa.
+
+        Merge https://github.com/w3c/web-platform-tests/pull/4304 to extend / fix
+        test coverage.
+
+        * web-platform-tests/dom/events/Event-cancelBubble-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-cancelBubble.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-bubble-canceled-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-bubble-canceled.html: Added.
+        * web-platform-tests/dom/events/Event-dispatch-multiple-cancelBubble-expected.txt: Added.
+        * web-platform-tests/dom/events/Event-dispatch-multiple-cancelBubble.html: Added.
+        * web-platform-tests/dom/events/Event-initEvent.html:
+        * web-platform-tests/dom/events/Event-propagation-expected.txt:
+        * web-platform-tests/dom/events/Event-propagation.html:
+        * web-platform-tests/dom/events/w3c-import.log:
+
 2016-12-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove initEvent quirk
