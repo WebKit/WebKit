@@ -27,6 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+namespace WTF {
+class PrintStream;
+}
+
 namespace JSC { namespace Wasm {
 
 class PageCount {
@@ -41,6 +45,8 @@ public:
     PageCount(uint32_t pageCount)
         : m_pageCount(pageCount)
     { }
+
+    void dump(WTF::PrintStream&) const;
 
     uint64_t bytes() const { return static_cast<uint64_t>(m_pageCount) * static_cast<uint64_t>(pageSize); }
     uint32_t pageCount() const { return m_pageCount; }

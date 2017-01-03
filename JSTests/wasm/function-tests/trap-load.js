@@ -29,6 +29,6 @@ function wasmFrameCountFromError(e) {
 }
 
 for (let i = 0; i < 1000; i++) {
-    const e = assert.throws(() => foo(numPages * pageSize + 1), WebAssembly.RuntimeError, "Out of bounds memory access (evaluating 'func(...args)')");
+    const e = assert.throws(() => foo(numPages * pageSize + 1), WebAssembly.RuntimeError, "Out of bounds memory access");
     assert.eq(wasmFrameCountFromError(e), 2);
 }

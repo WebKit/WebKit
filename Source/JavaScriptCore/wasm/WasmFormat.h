@@ -222,7 +222,6 @@ private:
 };
 
 struct ModuleInformation {
-    Vector<SignatureIndex> signatureIndices;
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;
@@ -236,6 +235,18 @@ struct ModuleInformation {
     TableInformation tableInformation;
     Vector<Global> globals;
     unsigned firstInternalGlobal { 0 };
+    size_t functionIndexSpaceSize() const { return importFunctionSignatureIndices.size() + internalFunctionSignatureIndices.size(); }
+    bool isImportedFunctionFromFunctionIndexSpace(size_t functionIndex) const
+    {
+        ASSERT(functionIndex < functionIndexSpaceSize());
+        return functionIndex < importFunctionSignatureIndices.size();
+    }
+    SignatureIndex signatureIndexFromFunctionIndexSpace(size_t functionIndex) const
+    {
+        return isImportedFunctionFromFunctionIndexSpace(functionIndex)
+            ? importFunctionSignatureIndices[functionIndex]
+            : internalFunctionSignatureIndices[functionIndex - importFunctionSignatureIndices.size()];
+    }
 
     uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
     bool hasMemory() const { return !!memory; }
@@ -246,6 +257,10 @@ struct ModuleInformation {
 struct UnlinkedWasmToWasmCall {
     CodeLocationCall callLocation;
     size_t functionIndex;
+    enum class Target : uint8_t {
+        ToJs,
+        ToWasm,
+    } target;
 };
 
 struct Entrypoint {
@@ -261,7 +276,10 @@ struct WasmInternalFunction {
     Entrypoint jsToWasmEntrypoint;
 };
 
-typedef MacroAssemblerCodeRef WasmToJSStub;
+struct WasmExitStubs {
+    MacroAssemblerCodeRef wasmToJs;
+    MacroAssemblerCodeRef wasmToWasm;
+};
 
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts with all imports, and then all internal functions.
 // CallableFunction and FunctionIndexSpace are only meant as fast lookup tables for these opcodes, and do not own code.
@@ -279,12 +297,6 @@ struct CallableFunction {
     void* code { nullptr };
 };
 typedef Vector<CallableFunction> FunctionIndexSpace;
-
-
-struct ImmutableFunctionIndexSpace {
-    MallocPtr<CallableFunction> buffer;
-    size_t size;
-};
 
 } } // namespace JSC::Wasm
 

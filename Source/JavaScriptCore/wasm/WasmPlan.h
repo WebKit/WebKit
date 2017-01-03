@@ -86,26 +86,20 @@ public:
         return WTFMove(m_callLinkInfos);
     }
 
-    Vector<WasmToJSStub>&& takeWasmToJSStubs()
+    Vector<WasmExitStubs>&& takeWasmExitStubs()
     {
         RELEASE_ASSERT(!failed());
-        return WTFMove(m_wasmToJSStubs);
-    }
-
-    ImmutableFunctionIndexSpace&& takeFunctionIndexSpace()
-    {
-        RELEASE_ASSERT(!failed());
-        return WTFMove(m_functionIndexSpace);
+        return WTFMove(m_wasmExitStubs);
     }
 
 private:
     std::unique_ptr<ModuleInformation> m_moduleInformation;
     Vector<FunctionLocationInBinary> m_functionLocationInBinary;
+    Vector<SignatureIndex> m_moduleSignatureIndicesToUniquedSignatureIndices;
     Bag<CallLinkInfo> m_callLinkInfos;
-    Vector<WasmToJSStub> m_wasmToJSStubs;
+    Vector<WasmExitStubs> m_wasmExitStubs;
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
-    ImmutableFunctionIndexSpace m_functionIndexSpace;
 
     VM* m_vm;
     Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;

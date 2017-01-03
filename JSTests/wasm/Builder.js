@@ -38,7 +38,7 @@ const _isValidValue = (value, type) => {
     switch (type) {
     // We allow both signed and unsigned numbers.
     case "i32": return Math.round(value) === value && LLB.varint32Min <= value && value <= LLB.varuint32Max;
-    case "i64": throw new Error(`Unimplemented: value check for ${type}`); // FIXME https://bugs.webkit.org/show_bug.cgi?id=163420 64-bit values
+    case "i64": return true; // FIXME https://bugs.webkit.org/show_bug.cgi?id=163420 64-bit values
     case "f32": return typeof(value) === "number" && isFinite(value);
     case "f64": return typeof(value) === "number" && isFinite(value);
     default: throw new Error(`Implementation problem: unknown type ${type}`);
@@ -56,6 +56,16 @@ const _normalizeFunctionSignature = (params, ret) => {
     assert.truthy(WASM.isValidBlockType(ret), `Type return ${ret} must be valid block type`);
     return [params, ret];
 };
+
+const _errorHandlingProxyFor = builder => builder["__isProxy"] ? builder : new Proxy(builder, {
+    get: (target, property, receiver) => {
+        if (property === "__isProxy")
+            return true;
+        if (target[property] === undefined)
+            throw new Error(`WebAssembly builder received unknown property '${property}'`);
+        return target[property];
+    }
+});
 
 const _maybeRegisterType = (builder, type) => {
     const typeSection = builder._getSection("Type");
@@ -100,7 +110,7 @@ const _importFunctionContinuation = (builder, section, nextBuilder) => {
         section.data.push({ field: field, type: type, kind: "Function", module: module });
         // Imports also count in the function index space. Map them as objects to avoid clashing with Code functions' names.
         builder._registerFunctionToIndexSpace({ module: module, field: field });
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     };
 };
 
@@ -109,7 +119,7 @@ const _importMemoryContinuation = (builder, section, nextBuilder) => {
         assert.isString(module, `Import Memory module should be a string, got "${module}"`);
         assert.isString(field, `Import Memory field should be a string, got "${field}"`);
         section.data.push({module, field, kind: "Memory", memoryDescription: {initial, maximum}});
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     };
 };
 
@@ -118,7 +128,7 @@ const _importTableContinuation = (builder, section, nextBuilder) => {
         assert.isString(module, `Import Table module should be a string, got "${module}"`);
         assert.isString(field, `Import Table field should be a string, got "${field}"`);
         section.data.push({module, field, kind: "Table", tableDescription: {initial, maximum, element}});
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     };
 };
 
@@ -172,7 +182,7 @@ const _exportFunctionContinuation = (builder, section, nextBuilder) => {
                 assert.eq(type, exportedImport.type, `Re-exporting import "${exportedImport.field}" as "${field}" has mismatching type`);
         }
         section.data.push({ field: field, type: type, kind: "Function", index: index });
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     };
 };
 
@@ -189,7 +199,7 @@ const _exportGlobalContinuation = (builder, section, nextBuilder) => {
     return (field, index) => {
         assert.isNumber(index, `Global exports only support number indices right now`);
         section.data.push({ field, kind: "Global", index });
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     }
 };
 
@@ -197,7 +207,7 @@ const _exportMemoryContinuation = (builder, section, nextBuilder) => {
     return (field, index) => {
         assert.isNumber(index, `Memory exports only support number indices`);
         section.data.push({field, kind: "Memory", index});
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     }
 };
 
@@ -205,7 +215,7 @@ const _exportTableContinuation = (builder, section, nextBuilder) => {
     return (field, index) => {
         assert.isNumber(index, `Table exports only support number indices`);
         section.data.push({field, kind: "Table", index});
-        return nextBuilder;
+        return _errorHandlingProxyFor(nextBuilder);
     }
 };
 
@@ -220,10 +230,10 @@ const _importGlobalContinuation = (builder, section, nextBuilder) => {
                 assert.isString(field, `Import global field should be a string, got "${field}"`);
                 assert.isString(mutability, `Import global mutability should be a string, got "${mutability}"`);
                 section.data.push({ globalDescription: { type: op, mutability: _normalizeMutability(mutability) }, module, field, kind: "Global" });
-                return globalBuilder;
+                return _errorHandlingProxyFor(globalBuilder);
             };
         }
-        return globalBuilder;
+        return _errorHandlingProxyFor(globalBuilder);
     };
 };
 
@@ -324,11 +334,11 @@ const _createFunctionBuilder = (func, builder, previousBuilder) => {
             default:
                 nextBuilder = functionBuilder;
                 break;
-                case "End":
+            case "End":
                 nextBuilder = previousBuilder;
-                    break;
+                break;
             case "Block":
-                case "Loop":
+            case "Loop":
             case "If":
                 nextBuilder = _createFunctionBuilder(func, builder, functionBuilder);
                 break;
@@ -344,11 +354,12 @@ const _createFunctionBuilder = (func, builder, previousBuilder) => {
             const stackArgs = []; // FIXME https://bugs.webkit.org/show_bug.cgi?id=162706
             func.code.push({ name: op, value: value, arguments: stackArgs, immediates: imms });
             if (hasContinuation)
-                return continuation(nextBuilder).End();
-            return nextBuilder;
+                return _errorHandlingProxyFor(continuation(nextBuilder).End());
+            return _errorHandlingProxyFor(nextBuilder);
         };
-    }
-    return functionBuilder;
+    };
+
+    return _errorHandlingProxyFor(functionBuilder);
 }
 
 const _createFunction = (section, builder, previousBuilder) => {
@@ -449,10 +460,10 @@ export default class Builder {
                         Func: (params, ret) => {
                             [params, ret] = _normalizeFunctionSignature(params, ret);
                             s.data.push({ params: params, ret: ret });
-                            return typeBuilder;
+                            return _errorHandlingProxyFor(typeBuilder);
                         },
                     };
-                    return typeBuilder;
+                    return _errorHandlingProxyFor(typeBuilder);
                 };
                 break;
 
@@ -466,7 +477,7 @@ export default class Builder {
                     importBuilder.Function = _importFunctionContinuation(this, s, importBuilder);
                     importBuilder.Memory = _importMemoryContinuation(this, s, importBuilder);
                     importBuilder.Table = _importTableContinuation(this, s, importBuilder);
-                    return importBuilder;
+                    return _errorHandlingProxyFor(importBuilder);
                 };
                 break;
 
@@ -477,7 +488,7 @@ export default class Builder {
                         End: () => this
                         // FIXME: add ability to add this with whatever.
                     };
-                    return functionBuilder;
+                    return _errorHandlingProxyFor(functionBuilder);
                 };
                 break;
 
@@ -488,10 +499,10 @@ export default class Builder {
                         End: () => this,
                         Table: ({initial, maximum, element}) => {
                             s.data.push({tableDescription: {initial, maximum, element}});
-                            return tableBuilder;
+                            return _errorHandlingProxyFor(tableBuilder);
                         }
                     };
-                    return tableBuilder;
+                    return _errorHandlingProxyFor(tableBuilder);
                 };
                 break;
 
@@ -502,10 +513,10 @@ export default class Builder {
                         End: () => this,
                         InitialMaxPages: (initial, max) => {
                             s.data.push({ initial, max });
-                            return memoryBuilder;
+                            return _errorHandlingProxyFor(memoryBuilder);
                         }
                     };
-                    return memoryBuilder;
+                    return _errorHandlingProxyFor(memoryBuilder);
                 };
                 break;
 
@@ -516,16 +527,16 @@ export default class Builder {
                         End: () => this,
                         GetGlobal: (type, initValue, mutability) => {
                             s.data.push({ type, op: "get_global", mutability: _normalizeMutability(mutability), initValue });
-                            return globalBuilder;
+                            return _errorHandlingProxyFor(globalBuilder);
                         }
                     };
                     for (let op of WASM.description.value_type) {
                         globalBuilder[_toJavaScriptName(op)] = (initValue, mutability) => {
                             s.data.push({ type: op, op: op + ".const", mutability: _normalizeMutability(mutability), initValue });
-                            return globalBuilder;
+                            return _errorHandlingProxyFor(globalBuilder);
                         };
                     }
-                    return globalBuilder;
+                    return _errorHandlingProxyFor(globalBuilder);
                 };
                 break;
 
@@ -539,7 +550,7 @@ export default class Builder {
                     exportBuilder.Function = _exportFunctionContinuation(this, s, exportBuilder);
                     exportBuilder.Memory = _exportMemoryContinuation(this, s, exportBuilder);
                     exportBuilder.Table = _exportTableContinuation(this, s, exportBuilder);
-                    return exportBuilder;
+                    return _errorHandlingProxyFor(exportBuilder);
                 };
                 break;
 
@@ -552,7 +563,7 @@ export default class Builder {
                     if (typeof(functionIndexOrName) !== "number" && typeof(functionIndexOrName) !== "string")
                         throw new Error(`Start section's function index  must either be a number or a string`);
                     s.data.push(functionIndexOrName);
-                    return startBuilder;
+                    return _errorHandlingProxyFor(startBuilder);
                 };
                 break;
 
@@ -563,11 +574,11 @@ export default class Builder {
                         End: () => this,
                         Element: ({tableIndex = 0, offset, functionIndices}) => {
                             s.data.push({tableIndex, offset, functionIndices});
-                            return elementBuilder;
+                            return _errorHandlingProxyFor(elementBuilder);
                         }
                     };
 
-                    return elementBuilder;
+                    return _errorHandlingProxyFor(elementBuilder);
                 };
                 break;
 
@@ -632,12 +643,12 @@ export default class Builder {
                                     // FIXME in checked mode, test that the type is acceptable for start function. We probably want _registerFunctionToIndexSpace to also register types per index. https://bugs.webkit.org/show_bug.cgi?id=165658
                                 }
                             }
-                            return builder;
+                            return _errorHandlingProxyFor(builder);
                         },
 
                     };
                     codeBuilder.Function = _createFunction(s, builder, codeBuilder);
-                    return codeBuilder;
+                    return _errorHandlingProxyFor(codeBuilder);
                 };
                 break;
 
@@ -660,19 +671,19 @@ export default class Builder {
                                 Index: index => {
                                     assert.eq(index, 0); // Linear memory index must be zero in MVP.
                                     thisSegment.index = index;
-                                    return segmentBuilder;
+                                    return _errorHandlingProxyFor(segmentBuilder);
                                 },
                                 Offset: offset => {
                                     // FIXME allow complex init_expr here. https://bugs.webkit.org/show_bug.cgi?id=165700
                                     assert.isNumber(offset);
                                     thisSegment.offset = offset;
-                                    return segmentBuilder;
+                                    return _errorHandlingProxyFor(segmentBuilder);
                                 },
                             };
-                            return segmentBuilder;
+                            return _errorHandlingProxyFor(segmentBuilder);
                         },
                     };
-                    return dataBuilder;
+                    return _errorHandlingProxyFor(dataBuilder);
                 };
                 break;
 
@@ -690,10 +701,10 @@ export default class Builder {
                 Byte: b => {
                     assert.eq(b & 0xFF, b, `Unknown section expected byte, got: "${b}"`);
                     s.data.push(b);
-                    return unknownBuilder;
+                    return _errorHandlingProxyFor(unknownBuilder);
                 }
             };
-            return unknownBuilder;
+            return _errorHandlingProxyFor(unknownBuilder);
         };
     }
     _addSection(nameOrNumber, extraObject) {

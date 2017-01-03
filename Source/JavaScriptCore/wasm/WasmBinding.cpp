@@ -36,13 +36,21 @@
 
 namespace JSC { namespace Wasm {
 
-WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+typedef AssemblyHelpers JIT;
+
+static void materializeImportJSCell(VM* vm, JIT& jit, unsigned importIndex, GPRReg result)
+{
+    // We're calling out of the current WebAssembly.Instance, which is identified on VM. That Instance has a list of all its import functions.
+    jit.loadPtr(&vm->topJSWebAssemblyInstance, result);
+    jit.loadPtr(JIT::Address(result, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
+}
+
+static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     const WasmCallingConvention& wasmCC = wasmCallingConvention();
     const JSCCallingConvention& jsCC = jscCallingConvention();
     const Signature* signature = SignatureInformation::get(vm, signatureIndex);
     unsigned argCount = signature->argumentCount();
-    typedef AssemblyHelpers JIT;
     JIT jit(vm, nullptr);
 
     // Below, we assume that the JS calling convention is always on the stack.
@@ -138,9 +146,7 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
     ASSERT(!wasmCC.m_calleeSaveRegisters.get(importJSCellGPRReg));
 
-    // Each JS -> wasm entry sets the WebAssembly.Instance whose export is being called. We're calling out of this Instance, and can therefore figure out the import being called.
-    jit.loadPtr(&vm->topJSWebAssemblyInstance, importJSCellGPRReg);
-    jit.loadPtr(JIT::Address(importJSCellGPRReg, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), importJSCellGPRReg);
+    materializeImportJSCell(vm, jit, importIndex, importJSCellGPRReg);
 
     uint64_t thisArgument = ValueUndefined; // FIXME what does the WebAssembly spec say this should be? https://bugs.webkit.org/show_bug.cgi?id=165471
     jit.store64(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
@@ -231,7 +237,56 @@ WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signa
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
-    return FINALIZE_CODE(patchBuffer, ("WebAssembly import[%i] stub for signature %i", importIndex, signatureIndex));
+    String signatureDescription = SignatureInformation::get(vm, signatureIndex)->toString();
+    return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signatureDescription.ascii().data()));
+}
+
+static MacroAssemblerCodeRef wasmToWasm(VM* vm, unsigned importIndex)
+{
+    const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
+    JIT jit(vm, nullptr);
+
+    GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR;
+
+    // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
+    materializeImportJSCell(vm, jit, importIndex, scratch);
+
+    // Get the callee's WebAssembly.Instance and set it as vm.topJSWebAssemblyInstance. The caller will take care of restoring its own Instance.
+    GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
+    ASSERT(baseMemory != scratch);
+    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfInstance()), baseMemory); // Instance*.
+    jit.storePtr(baseMemory, &vm->topJSWebAssemblyInstance);
+
+    // FIXME the following code assumes that all WebAssembly.Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
+    // Set up the callee's baseMemory register as well as the memory size registers.
+    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
+    const auto& sizeRegs = pinnedRegs.sizeRegisters;
+    ASSERT(sizeRegs.size() >= 1);
+    ASSERT(sizeRegs[0].sizeRegister != baseMemory);
+    ASSERT(sizeRegs[0].sizeRegister != scratch);
+    ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
+    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
+    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.
+    for (unsigned i = 1; i < sizeRegs.size(); ++i) {
+        ASSERT(sizeRegs[i].sizeRegister != baseMemory);
+        ASSERT(sizeRegs[i].sizeRegister != scratch);
+        jit.add64(JIT::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
+    }
+
+    // Tail call into the callee WebAssembly function.
+    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfWasmEntryPointCode()), scratch);
+    jit.jump(scratch);
+
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, ("WebAssembly->WebAssembly import[%i]", importIndex));
+}
+
+WasmExitStubs exitStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+{
+    WasmExitStubs stubs;
+    stubs.wasmToJs = wasmToJs(vm, callLinkInfos, signatureIndex, importIndex);
+    stubs.wasmToWasm = wasmToWasm(vm, importIndex);
+    return stubs;
 }
 
 } } // namespace JSC::Wasm

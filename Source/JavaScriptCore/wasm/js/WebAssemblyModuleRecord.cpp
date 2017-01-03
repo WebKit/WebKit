@@ -118,7 +118,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             //     c. Return func.
             JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
             JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(exp.kindIndex);
-            Wasm::SignatureIndex signatureIndex = module->signatureForFunctionIndexSpace(exp.kindIndex);
+            Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
             const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
             WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature->argumentCount(), exp.field.string(), instance, jsEntrypointCallee, wasmEntrypointCallee, signatureIndex);
             exportedValue = function;
@@ -133,8 +133,6 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             break;
         }
         case Wasm::ExternalKind::Memory: {
-            // This should be guaranteed by module verification.
-            RELEASE_ASSERT(instance->memory()); 
             ASSERT(exp.kindIndex == 0);
 
             exportedValue = instance->memory();
@@ -175,7 +173,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     bool hasStart = !!moduleInformation.startFunctionIndexSpace;
     if (hasStart) {
         auto startFunctionIndexSpace = moduleInformation.startFunctionIndexSpace.value_or(0);
-        Wasm::SignatureIndex signatureIndex = module->signatureForFunctionIndexSpace(startFunctionIndexSpace);
+        Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(startFunctionIndexSpace);
         const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
         // The start function must not take any arguments or return anything. This is enforced by the parser.
         ASSERT(!signature->argumentCount());
@@ -238,7 +236,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
 
                 JSWebAssemblyCallee* jsEntrypointCallee = module->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
                 JSWebAssemblyCallee* wasmEntrypointCallee = module->wasmEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-                Wasm::SignatureIndex signatureIndex = module->signatureForFunctionIndexSpace(functionIndex);
+                Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
                 const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
                 // FIXME: Say we export local function "foo" at funciton index 0.
                 // What if we also set it to the table an Element w/ index 0.
@@ -257,7 +255,6 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
         const Vector<Wasm::Segment::Ptr>& data = m_instance->module()->moduleInformation().data;
         JSWebAssemblyMemory* jsMemory = m_instance->memory();
         if (!data.isEmpty()) {
-            RELEASE_ASSERT(jsMemory); // It is a validation error for a Data section to exist without a Memory section or import.
             uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory()->memory());
             uint64_t sizeInBytes = jsMemory->memory()->size();
             for (auto& segment : data) {

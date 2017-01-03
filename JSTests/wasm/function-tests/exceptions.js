@@ -45,18 +45,18 @@ function makeInstance() {
     assert.eq(table.get(0), null);
 
     for (let i = 0; i < 1000; i++) {
-        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a null table entry (evaluating 'func(...args)')");
+        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a null table entry");
     }
 
     table.set(0, foo);
     assert.eq(table.get(0), foo);
 
     for (let i = 0; i < 1000; i++) {
-        assert.throws(() => foo(1 + i, i), WebAssembly.RuntimeError, "Out of bounds call_indirect (evaluating 'func(...args)')");
+        assert.throws(() => foo(1 + i, i), WebAssembly.RuntimeError, "Out of bounds call_indirect");
     }
 
     for (let i = 0; i < 1000; i++) {
-        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a signature that does not match (evaluating 'func(...args)')");
+        assert.throws(() => foo(0, i), WebAssembly.RuntimeError, "call_indirect to a signature that does not match");
     }
 
     table.set(0, bar);
