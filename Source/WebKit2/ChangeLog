@@ -1,5 +1,23 @@
 2017-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Load options allowStoredCredentials = DoNotAllowStoredCredentials with clientCredentialPolicy = MayAskClientForCredentials doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=164471
+
+        Reviewed by Michael Catanzaro.
+
+        When DoNotAllowStoredCredentials is used we disable the SoupAuthManager feature for the message, but that
+        disables all HTTP authentication, causing the load to always fail with Authorization required even when
+        clientCredentialPolicy allows to ask the user for credentials. The problem is that even if we don't use the
+        WebCore credentials for that request, libsoup will always use its internal cache of SoupAuth if we enable the
+        SoupAuthManager feature. Libsoup 2.57.1 has new API to disable the use of cached credentials for a particular
+        message, adding the new message flag SOUP_MESSAGE_DO_NOT_USE_AUTH_CACHE.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::createRequest): Set SOUP_MESSAGE_DO_NOT_USE_AUTH_CACHE flag to disable cached
+        credentials for the message if libsoup >= 2.57.1 is used.
+
+2017-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] HTTP auth layout tests are flaky
         https://bugs.webkit.org/show_bug.cgi?id=158919
 

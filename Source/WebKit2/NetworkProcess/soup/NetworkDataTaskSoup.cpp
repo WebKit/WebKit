@@ -129,13 +129,19 @@ void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
         return;
     }
 
+    unsigned messageFlags = SOUP_MESSAGE_NO_REDIRECT;
+
     request.updateSoupMessage(soupMessage.get());
     if (m_shouldContentSniff == DoNotSniffContent)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_CONTENT_SNIFFER);
     if (m_user.isEmpty() && m_password.isEmpty() && m_storedCredentials == DoNotAllowStoredCredentials) {
+#if SOUP_CHECK_VERSION(2, 57, 1)
+        messageFlags |= SOUP_MESSAGE_DO_NOT_USE_AUTH_CACHE;
+#else
         // In case credential is not available and credential storage should not to be used,
         // disable authentication manager so that credentials stored in libsoup are not used.
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_AUTH_MANAGER);
+#endif
     }
 
     // Make sure we have an Accept header for subresources; some sites want this to serve some of their subresources.
@@ -148,8 +154,7 @@ void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
     if ((soupMessage->method == SOUP_METHOD_POST || soupMessage->method == SOUP_METHOD_PUT) && !soupMessage->request_body->length)
         soup_message_headers_set_content_length(soupMessage->request_headers, 0);
 
-    unsigned flags = SOUP_MESSAGE_NO_REDIRECT;
-    soup_message_set_flags(soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(soupMessage.get()) | flags));
+    soup_message_set_flags(soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(soupMessage.get()) | messageFlags));
 
 #if SOUP_CHECK_VERSION(2, 43, 1)
     soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(request.priority()));
