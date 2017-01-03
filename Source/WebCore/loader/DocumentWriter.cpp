@@ -73,6 +73,12 @@ DocumentWriter::DocumentWriter(Frame* frame)
 void DocumentWriter::replaceDocument(const String& source, Document* ownerDocument)
 {
     m_frame->loader().stopAllLoaders();
+
+    // If we are in the midst of changing the frame's document, don't execute script
+    // that modifes the document further:
+    if (m_frame->documentIsBeingReplaced())
+        return;
+
     begin(m_frame->document()->url(), true, ownerDocument);
 
     // begin() might fire an unload event, which will result in a situation where no new document has been attached,
