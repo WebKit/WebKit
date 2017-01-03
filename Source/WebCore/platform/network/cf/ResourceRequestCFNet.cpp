@@ -139,14 +139,15 @@ void ResourceRequest::doUpdatePlatformRequest()
 
     RetainPtr<CFURLRef> url = ResourceRequest::url().createCFURL();
     RetainPtr<CFURLRef> firstPartyForCookies = ResourceRequest::firstPartyForCookies().createCFURL();
+    double timeoutInterval = ResourceRequestBase::timeoutInterval() ? ResourceRequestBase::timeoutInterval() : ResourceRequestBase::defaultTimeoutInterval();
     if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
         CFURLRequestSetMainDocumentURL(cfRequest, firstPartyForCookies.get());
         CFURLRequestSetCachePolicy(cfRequest, (CFURLRequestCachePolicy)cachePolicy());
-        CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval());
+        CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval);
     } else
-        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
+        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval, firstPartyForCookies.get());
 
     CFURLRequestSetHTTPRequestMethod(cfRequest, httpMethod().createCFString().get());
 
@@ -201,14 +202,15 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     RetainPtr<CFURLRef> url = ResourceRequest::url().createCFURL();
     RetainPtr<CFURLRef> firstPartyForCookies = ResourceRequest::firstPartyForCookies().createCFURL();
+    double timeoutInterval = ResourceRequestBase::timeoutInterval() ? ResourceRequestBase::timeoutInterval() : ResourceRequestBase::defaultTimeoutInterval();
     if (m_cfRequest) {
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
         CFURLRequestSetMainDocumentURL(cfRequest, firstPartyForCookies.get());
         CFURLRequestSetCachePolicy(cfRequest, toPlatformRequestCachePolicy(cachePolicy()));
-        CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval());
+        CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval);
     } else
-        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
+        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval, firstPartyForCookies.get());
 
     FormData* formData = httpBody();
     if (formData && !formData->isEmpty())

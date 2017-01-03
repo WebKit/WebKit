@@ -1,3 +1,17 @@
+2017-01-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Some xmlhttprequest tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=166638
+
+        Reviewed by Darin Adler.
+
+        The tests are failing because the request timeout is set to zero.
+        When the timeout is set to zero, we should use the default timeout.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+
 2017-01-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, follow-up fix for r210227
