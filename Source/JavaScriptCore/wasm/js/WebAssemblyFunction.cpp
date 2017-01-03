@@ -56,10 +56,6 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     Wasm::SignatureIndex signatureIndex = wasmFunction->signatureIndex();
     const Wasm::Signature* signature = Wasm::SignatureInformation::get(&vm, signatureIndex);
 
-    // FIXME is this the right behavior? https://bugs.webkit.org/show_bug.cgi?id=164876
-    if (exec->argumentCount() != signature->argumentCount())
-        return JSValue::encode(throwException(exec, scope, createNotEnoughArgumentsError(exec, defaultSourceAppender)));
-
     {
         // Check if we have a disallowed I64 use.
 
@@ -78,10 +74,9 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         }
     }
 
-    // FIXME is this boxing correct? https://bugs.webkit.org/show_bug.cgi?id=164876
     Vector<JSValue> boxedArgs;
     for (unsigned argIndex = 0; argIndex < signature->argumentCount(); ++argIndex) {
-        JSValue arg = exec->uncheckedArgument(argIndex);
+        JSValue arg = exec->argument(argIndex);
         switch (signature->argument(argIndex)) {
         case Wasm::I32:
             arg = JSValue::decode(arg.toInt32(exec));
@@ -127,7 +122,6 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     vm.topJSWebAssemblyInstance = prevJSWebAssemblyInstance;
     RETURN_IF_EXCEPTION(scope, { });
 
-    // FIXME is this correct? https://bugs.webkit.org/show_bug.cgi?id=164876
     switch (signature->returnType()) {
     case Wasm::Void:
         return JSValue::encode(jsUndefined());

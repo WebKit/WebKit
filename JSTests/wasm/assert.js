@@ -72,11 +72,19 @@ export const falsy = (v, msg) => {
 };
 
 export const eq = (lhs, rhs, msg) => {
+    if (typeof lhs !== typeof rhs)
+        _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
     if (Array.isArray(lhs) && Array.isArray(rhs) && (lhs.length === rhs.length)) {
         for (let i = 0; i !== lhs.length; ++i)
             eq(lhs[i], rhs[i], msg);
-    } else if (lhs !== rhs)
+    } else if (lhs !== rhs) {
+        if (typeof lhs === "number" && isNaN(lhs) && isNaN(rhs))
+            return;
         _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
+    } else {
+        if (typeof lhs === "number" && (1.0 / lhs !== 1.0 / rhs)) // Distinguish -0.0 from 0.0.
+            _fail(`Not the same: "${lhs}" and "${rhs}"`, msg);
+    }
 };
 
 const canonicalizeI32 = (number) => {

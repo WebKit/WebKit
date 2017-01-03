@@ -752,7 +752,13 @@ export default class Builder {
             preamble: this._preamble,
             section: this._sections
         };
-        return JSON.stringify(obj);
+        // JSON.stringify serializes -0.0 as 0.0.
+        const replacer = (key, value) => {
+            if (value === 0.0 && 1.0 / value === -Infinity)
+                return "NEGATIVE_ZERO";
+            return value;
+        };
+        return JSON.stringify(obj, replacer);
     }
     AsmJS() {
         "use asm"; // For speed.

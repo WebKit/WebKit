@@ -510,7 +510,7 @@ const assertOpThrows = (opFn, message) => {
         assert.eq(j.section[1].data[0].code[0].name, "f32.const");
         assert.eq(j.section[1].data[0].code[0].arguments.length, 0);
         assert.eq(j.section[1].data[0].code[0].immediates.length, 1);
-        assert.eq(j.section[1].data[0].code[0].immediates[0], c);
+        assert.eq(j.section[1].data[0].code[0].immediates[0] === "NEGATIVE_ZERO" ? -0.0 : j.section[1].data[0].code[0].immediates[0], c);
     }
 })();
 
@@ -526,7 +526,7 @@ const assertOpThrows = (opFn, message) => {
         assert.eq(j.section[1].data[0].code[0].name, "f64.const");
         assert.eq(j.section[1].data[0].code[0].arguments.length, 0);
         assert.eq(j.section[1].data[0].code[0].immediates.length, 1);
-        assert.eq(j.section[1].data[0].code[0].immediates[0], c);
+        assert.eq(j.section[1].data[0].code[0].immediates[0] === "NEGATIVE_ZERO" ? -0.0 : j.section[1].data[0].code[0].immediates[0], c);
     }
 })();
 

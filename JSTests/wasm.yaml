@@ -27,6 +27,8 @@
   cmd: runWebAssembly
 - path: wasm/function-tests
   cmd: runWebAssembly
+- path: wasm/fuzz
+  cmd: runWebAssembly
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal
