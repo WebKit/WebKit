@@ -1,3 +1,18 @@
+2017-01-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] jsc.exe sometimes never exits.
+        https://bugs.webkit.org/show_bug.cgi?id=158073
+
+        Reviewed by Darin Adler.
+
+        On Windows the thread specific destructor is also called when the main thread is exiting.
+        This may lead to the main thread waiting forever for the machine thread lock when exiting,
+        if the sampling profiler thread was terminated by the system while holding the machine
+        thread lock.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::removeThread):
+
 2017-01-02  Julien Brianceau  <jbriance@cisco.com>
 
         Remove sh4 specific code from JavaScriptCore

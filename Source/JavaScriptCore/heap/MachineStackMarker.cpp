@@ -32,6 +32,7 @@
 #include "VM.h"
 #include <setjmp.h>
 #include <stdlib.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
@@ -276,6 +277,17 @@ void THREAD_SPECIFIC_CALL MachineThreads::removeThread(void* p)
         // to be instantiated at the same address. Hence, this thread may or
         // may not be found in this MachineThreads registry. We only need to
         // do a removal if this thread is found in it.
+
+#if PLATFORM(WIN)
+        // On Windows the thread specific destructor is also called when the
+        // main thread is exiting. This may lead to the main thread waiting
+        // forever for the machine thread lock when exiting, if the sampling
+        // profiler thread was terminated by the system while holding the
+        // machine thread lock.
+        if (WTF::isMainThread())
+            return;
+#endif
+
         machineThreads->removeThreadIfFound(getCurrentPlatformThread());
     }
 }
