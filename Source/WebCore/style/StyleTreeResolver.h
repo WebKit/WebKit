@@ -109,8 +109,6 @@ private:
 void queuePostResolutionCallback(Function<void ()>&&);
 bool postResolutionCallbacksAreSuspended();
 
-bool isPlaceholderStyle(const RenderStyle&);
-
 class PostResolutionCallbackDisabler {
 public:
     explicit PostResolutionCallbackDisabler(Document&);

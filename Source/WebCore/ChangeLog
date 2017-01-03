@@ -1,3 +1,28 @@
+2017-01-03  Andreas Kling  <akling@apple.com>
+
+        Placeholder style mechanism leaks CSSFontSelector for first Document styled.
+        <https://webkit.org/b/166652>
+
+        Reviewed by Antti Koivisto.
+
+        The placeholder style is used when we're resolving style for a non-rendered
+        element, or any element before stylesheets have loaded.
+
+        An old optimization had us reusing the same style each time, which meant that
+        since it was initialized with a font selector the first time, it kept that
+        font selector alive forever.
+
+        As we have to clone the style anyway, fix this by just making a new style
+        each time, using the current document's font selector.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::makePlaceholderStyle):
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::ensurePlaceholderStyle): Deleted.
+        (WebCore::Style::isPlaceholderStyle): Deleted.
+        * style/StyleTreeResolver.h:
+
 2017-01-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         A floating element within <li> overlaps with the marker

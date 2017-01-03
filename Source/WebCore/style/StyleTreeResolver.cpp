@@ -51,13 +51,9 @@ namespace WebCore {
 
 namespace Style {
 
-static RenderStyle* placeholderStyle;
-
-static void ensurePlaceholderStyle(Document& document)
+static std::unique_ptr<RenderStyle> makePlaceholderStyle(Document& document)
 {
-    if (placeholderStyle)
-        return;
-    placeholderStyle = RenderStyle::createPtr().release();
+    auto placeholderStyle = RenderStyle::createPtr();
     placeholderStyle->setDisplay(NONE);
     placeholderStyle->setIsPlaceholderStyle();
 
@@ -70,12 +66,12 @@ static void ensurePlaceholderStyle(Document& document)
     placeholderStyle->setFontDescription(fontDescription);
 
     placeholderStyle->fontCascade().update(&document.fontSelector());
+    return placeholderStyle;
 }
 
 TreeResolver::TreeResolver(Document& document)
     : m_document(document)
 {
-    ensurePlaceholderStyle(document);
 }
 
 TreeResolver::~TreeResolver()
@@ -133,7 +129,7 @@ std::unique_ptr<RenderStyle> TreeResolver::styleForElement(Element& element, con
 {
     if (!m_document.haveStylesheetsLoaded() && !element.renderer()) {
         m_document.setHasNodesWithPlaceholderStyle();
-        return RenderStyle::clonePtr(*placeholderStyle);
+        return makePlaceholderStyle(m_document);
     }
 
     if (element.hasCustomStyleResolveCallbacks()) {
@@ -548,11 +544,6 @@ PostResolutionCallbackDisabler::~PostResolutionCallbackDisabler()
 bool postResolutionCallbacksAreSuspended()
 {
     return resolutionNestingDepth;
-}
-
-bool isPlaceholderStyle(const RenderStyle& style)
-{
-    return &style == placeholderStyle;
 }
 
 }
