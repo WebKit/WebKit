@@ -1,3 +1,33 @@
+2017-01-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        A floating element within <li> overlaps with the marker
+        https://bugs.webkit.org/show_bug.cgi?id=166528
+
+        Reviewed by Zalan Bujtas.
+
+        Merged from Blink (patch by trobhogan@gmail.com):
+        https://crrev.com/c896e79e5ba348d7ed87438cd3a19d0176f3036d
+        https://crbug.com/548616
+
+        Establish a list marker's offset before floats have been added to its line.
+
+        Computing the offset for a list marker after the rest of the objects on the line
+        it is on have been laid out, means it will avoid floats it ought not to.
+
+        Instead, compute the offset when laying out the marker and cache it for use later.
+
+        Tests: fast/lists/list-marker-before-float-nested-rtl.html
+               fast/lists/list-marker-before-float-nested.html
+               fast/lists/list-marker-before-float-rtl.html
+               fast/lists/list-marker-before-float.html
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::RenderListMarker):
+        (WebCore::RenderListMarker::layout):
+        * rendering/RenderListMarker.h:
+
 2017-01-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Some xmlhttprequest tests are failing.

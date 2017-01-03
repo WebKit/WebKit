@@ -1372,6 +1372,14 @@ void RenderListMarker::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
+
+    LayoutUnit blockOffset;
+    for (auto* box = parentBox(); box && box != &m_listItem; box = box->parentBox())
+        blockOffset += box->logicalTop();
+    if (style().isLeftToRightDirection())
+        m_lineOffsetForListItem = m_listItem.logicalLeftOffsetForLine(blockOffset, DoNotIndentText, LayoutUnit());
+    else
+        m_lineOffsetForListItem = m_listItem.logicalRightOffsetForLine(blockOffset, DoNotIndentText, LayoutUnit());
  
     if (isImage()) {
         updateMarginsAndContent();

@@ -42,6 +42,8 @@ public:
 
     bool isInside() const;
 
+    LayoutUnit lineOffsetForListItem() const { return m_lineOffsetForListItem; }
+
     void updateMarginsAndContent();
 
 #if !ASSERT_DISABLED
@@ -86,6 +88,7 @@ private:
     String m_text;
     RefPtr<StyleImage> m_image;
     RenderListItem& m_listItem;
+    LayoutUnit m_lineOffsetForListItem;
 };
 
 } // namespace WebCore
