@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setPopupBlockingEnabled(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+</script>
+</head>
+<body>
+<iframe name="A"></iframe>
+<iframe name="B" src="data:text/html,<script>alert(window.open('about:blank', 'A') ? 'FAIL' : 'PASS');</script>"></iframe>
+</body>
+</html>
