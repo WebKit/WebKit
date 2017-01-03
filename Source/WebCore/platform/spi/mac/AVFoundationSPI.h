@@ -180,8 +180,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#if __has_include("AVSampleBufferAudioRenderer.h")
-#import ("AVSampleBufferAudioRenderer")
+#if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
+#import <AVFoundation/AVSampleBufferAudioRenderer.h>
 #else
 
 NS_ASSUME_NONNULL_BEGIN
@@ -199,6 +199,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *audioTimePitchAlgorithm;
 @end
 
-#endif // __has_include("AVSampleBufferAudioRenderer.h")
-
 NS_ASSUME_NONNULL_END
+
+#endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)

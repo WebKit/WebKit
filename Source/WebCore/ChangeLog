@@ -1,3 +1,15 @@
+2017-01-03  Jer Noble  <jer.noble@apple.com>
+
+        Check for the existence of AVSampleBufferAudioRenderer.h before redeclaring AVSampleBufferAudioRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=166421
+        <rdar://problem/29782862>
+
+        Reviewed by Dan Bernstein.
+
+        Follow up after r210099; fix the __has_include directive to include the framework and fix the #import inside #if.
+
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-01-03  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r210226): fast/history/back-from-page-with-focused-iframe.html crashes under GuardMalloc
