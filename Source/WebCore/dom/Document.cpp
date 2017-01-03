@@ -2203,6 +2203,9 @@ void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
 
+    // Prevent Widget tree changes from committing until the RenderView is dead and gone.
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
     SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
 
     if (this == &topDocument())

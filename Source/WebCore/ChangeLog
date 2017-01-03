@@ -1,5 +1,24 @@
 2017-01-03  Andreas Kling  <akling@apple.com>
 
+        REGRESSION(r210226): fast/history/back-from-page-with-focused-iframe.html crashes under GuardMalloc
+        <https://webkit.org/b/166657>
+        <rdar://problem/29848806>
+
+        Reviewed by Antti Koivisto.
+
+        The problem was that tearDownRenderers() would cause commit Widget hierarchy updates
+        before returning, which is just before Document clears its m_renderView pointer.
+        This led to an awkward callback into Page::setActivityState() which ended up trying
+        to clear the selection inside a partially dead render tree.
+
+        Fix this by adding a WidgetHierarchyUpdatesSuspensionScope to Document::destroyRenderTree()
+        which ensures that Widget updates don't happen until after Document::m_renderView is cleared.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+
+2017-01-03  Andreas Kling  <akling@apple.com>
+
         Placeholder style mechanism leaks CSSFontSelector for first Document styled.
         <https://webkit.org/b/166652>
 
