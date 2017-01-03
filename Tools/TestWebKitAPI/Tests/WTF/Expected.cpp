@@ -25,10 +25,13 @@
 
 #include "config.h"
 
+#include "RefLogger.h"
+
 #include <string>
 #include <unordered_map>
 
 #include <wtf/Expected.h>
+#include <wtf/Ref.h>
 
 namespace WTF {
 
@@ -465,6 +468,45 @@ TEST(WTF_Expected, hash_void)
     EXPECT_EQ(m[E()], 42);
     EXPECT_EQ(m[E(makeUnexpected(oops))], 5);
     EXPECT_EQ(m[E(makeUnexpected(foof))], 0xf00f);
+}
+
+TEST(WTF_Expected, Ref)
+{
+    {
+        RefLogger a("a");
+        Expected<Ref<RefLogger>, int> expected = Ref<RefLogger>(a);
+        EXPECT_TRUE(expected.hasValue());
+        EXPECT_EQ(&a, expected.value().ptr());
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        RefLogger a("a");
+        Expected<Ref<RefLogger>, int> expected = makeExpected<Ref<RefLogger>, int>(Ref<RefLogger>(a));
+        EXPECT_TRUE(expected.hasValue());
+        EXPECT_EQ(&a, expected.value().ptr());
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        RefLogger a("a");
+        Expected<int, Ref<RefLogger>> expected = makeUnexpected(Ref<RefLogger>(a));
+        EXPECT_FALSE(expected.hasValue());
+        EXPECT_EQ(&a, expected.error().ptr());
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    {
+        RefLogger a("a");
+        Expected<void, Ref<RefLogger>> expected = makeUnexpected(Ref<RefLogger>(a));
+        EXPECT_FALSE(expected.hasValue());
+        EXPECT_EQ(&a, expected.error().ptr());
+    }
+
+    ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 } // namespace TestWebkitAPI

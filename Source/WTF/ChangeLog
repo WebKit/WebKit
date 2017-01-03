@@ -1,3 +1,23 @@
+2017-01-03  Sam Weinig  <sam@webkit.org>
+
+        Make WTF::Expected support Ref template parameters
+        https://bugs.webkit.org/show_bug.cgi?id=166662
+
+        Reviewed by Alex Christensen.
+
+        Tests: Added to TestWebKitAPI/Expected.cpp
+
+        * wtf/Expected.h:
+        (WTF::UnexpectedType::value):
+        Add overloads based on this value type to allow getting at the value
+        as an rvalue for moving the error into the Expected.
+
+        (WTF::Expected::Expected):
+        Add overload that takes an ErrorType/UnexpectedType<ErrorType> as an rvalue.
+
+        (WTF::Expected::swap):
+        Move the temporary value/error rather than copying.
+
 2017-01-02  Julien Brianceau  <jbriance@cisco.com>
 
         Remove sh4 specific code from JavaScriptCore
