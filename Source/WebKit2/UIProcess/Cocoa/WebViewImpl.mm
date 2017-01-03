@@ -1195,7 +1195,7 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 }
 
 } // namespace WebKit
-#else
+#else // !HAVE(TOUCH_BAR)
 namespace WebKit {
 
 void WebViewImpl::forceRequestCandidatesForTesting()
@@ -2988,7 +2988,9 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
     WebCore::IntRect offsetSelectionRect = postLayoutData.selectionClipRect;
     offsetSelectionRect.move(0, offsetSelectionRect.height());
 
+#if HAVE(TOUCH_BAR)
     [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view completionHandler:nil];
+#endif
 }
 
 static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NSTextCheckingResult *nsResult)

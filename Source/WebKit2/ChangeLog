@@ -1,3 +1,19 @@
+2017-01-03  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Apple Sierra Release 32-bit Build following <https://trac.webkit.org/changeset/210075>
+        (https://bugs.webkit.org/show_bug.cgi?id=166367)
+
+        Add HAVE(TOUCH_BAR)-guard around code that messages candidateListTouchBarItem() as
+        candidateListTouchBarItem() is only defined when building with Touch Bar support.
+
+        Also added an inline comment to help demarcate the code when building without Touch Bar
+        support. We should look to clean up WebViewImpl.mm including extracting out the Touch
+        Bar code to another file or better demarcating it so as to improve the hackability of
+        this code and prevent breaking the build when building without Touch Bar support.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+
 2017-01-03  Michael Catanzaro  <mcatanzaro@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Expose WebKitSecurityOrigin API
