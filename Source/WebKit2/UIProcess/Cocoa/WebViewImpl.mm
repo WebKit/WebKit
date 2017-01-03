@@ -2983,13 +2983,14 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
     if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
         return;
 
+#if HAVE(TOUCH_BAR)
     NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    auto weakThis = createWeakPtr();
     WebCore::IntRect offsetSelectionRect = postLayoutData.selectionClipRect;
     offsetSelectionRect.move(0, offsetSelectionRect.height());
 
-#if HAVE(TOUCH_BAR)
     [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view completionHandler:nil];
+#else
+    UNUSED_PARAM(candidates);
 #endif
 }
 
