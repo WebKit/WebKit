@@ -28,6 +28,7 @@
 
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
+#include <libsoup/soup.h>
 
 using namespace WebCore;
 
@@ -45,6 +46,13 @@ NetworkSessionSoup::~NetworkSessionSoup()
 SoupSession* NetworkSessionSoup::soupSession() const
 {
     return networkStorageSession().soupNetworkSession().soupSession();
+}
+
+void NetworkSessionSoup::clearCredentials()
+{
+#if SOUP_CHECK_VERSION(2, 57, 1)
+    soup_auth_manager_clear_cached_credentials(SOUP_AUTH_MANAGER(soup_session_get_feature(soupSession(), SOUP_TYPE_AUTH_MANAGER)));
+#endif
 }
 
 } // namespace WebKit

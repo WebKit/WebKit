@@ -1323,9 +1323,6 @@ webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dashed.h
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure Pass ]
 webkit.org/b/158918 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/158919 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure Pass ]
-webkit.org/b/158919 http/tests/loading/basic-credentials-sent-automatically.html [ Failure Pass ]
-
 # This test relies on iOS-specific font fallback.
 fast/text/arabic-blacklisted-expected.html [ Pass ImageOnlyFailure ]
 

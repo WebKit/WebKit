@@ -1,3 +1,14 @@
+2017-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] HTTP auth layout tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=158919
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip tests that should pass now.
+
+        * platform/gtk/TestExpectations:
+
 2017-01-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Expose block quote level to iOS API

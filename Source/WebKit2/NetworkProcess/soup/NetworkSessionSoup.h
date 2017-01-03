@@ -43,6 +43,8 @@ public:
 
 private:
     NetworkSessionSoup(WebCore::SessionID);
+
+    void clearCredentials() override;
 };
 
 } // namespace WebKit

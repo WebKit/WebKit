@@ -26,10 +26,6 @@ __gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
 sys.path = [__gtk_tools_directory] + sys.path
 import common
 
-# We always enable introspection so that we can sniff out problems with our
-# annotations sooner rather than later.
-autogenargs='--enable-introspection'
-
 # LLVM requires that builddir != srcdir, and it's not possible to do that in jhbuild only
 # for a module, so we do it here globally since it's a good idea for all other modules as well.
 buildroot = os.path.join(os.path.dirname(checkoutroot), "Build")
