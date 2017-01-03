@@ -612,10 +612,11 @@ void Debugger::breakProgram()
 
 void Debugger::continueProgram()
 {
+    clearNextPauseState();
+
     if (!m_isPaused)
         return;
 
-    m_pauseAtNextOpportunity = false;
     notifyDoneProcessingDebuggerEvents();
 }
 

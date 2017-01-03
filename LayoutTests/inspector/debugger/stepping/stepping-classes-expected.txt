@@ -250,7 +250,7 @@ PAUSE AT entryClassDefaultConstructor:67:5
      69    function entryClassGetterSetter() {
 
 ACTION: step-in
-PAUSE AT Child2:1:16
+PAUSE AT Child2:1:23
 --- Source Unavailable ---
 
 ACTION: step-in
@@ -264,7 +264,7 @@ PAUSE AT Base:18:9
      20        baseMethod()
 
 ACTION: step-out
-PAUSE AT Child2:1:38
+PAUSE AT Child2:1:40
 --- Source Unavailable ---
 
 ACTION: step-out

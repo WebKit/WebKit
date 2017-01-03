@@ -1,5 +1,15 @@
 2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Address failures under LayoutTests/inspector/debugger/stepping
+        https://bugs.webkit.org/show_bug.cgi?id=166300
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/stepping/stepping-classes-expected.txt:
+        Rebaseline these results to new column values.
+
+2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Fix Content Flow Container Regions Computed Style section
         https://bugs.webkit.org/show_bug.cgi?id=166294
 
