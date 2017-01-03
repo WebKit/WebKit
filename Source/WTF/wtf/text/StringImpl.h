@@ -537,6 +537,7 @@ public:
     }
 
     class StaticStringImpl {
+        WTF_MAKE_NONCOPYABLE(StaticStringImpl);
     public:
         // Used to construct static strings, which have an special refCount that can never hit zero.
         // This means that the static string will never be destroyed, which is important because
@@ -557,6 +558,11 @@ public:
             , m_data16(characters)
             , m_hashAndFlags(stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount))
         {
+        }
+
+        operator StringImpl&()
+        {
+            return *reinterpret_cast<StringImpl*>(this);
         }
 
         // These member variables must match the layout of StringImpl.

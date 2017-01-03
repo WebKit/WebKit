@@ -1,3 +1,13 @@
+2017-01-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Leverage Substring to create new AtomicStringImpl for StaticStringImpl and SymbolImpl
+        https://bugs.webkit.org/show_bug.cgi?id=166636
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] WebCore/CSSParser unit test is not being built

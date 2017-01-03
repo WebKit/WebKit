@@ -1,5 +1,31 @@
 2017-01-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Leverage Substring to create new AtomicStringImpl for StaticStringImpl and SymbolImpl
+        https://bugs.webkit.org/show_bug.cgi?id=166636
+
+        Reviewed by Darin Adler.
+
+        Previously we always create the full atomic string if we need to create the same string
+        based on the given value. For example, when generating AtomicStringImpl from the SymbolImpl,
+        we need to create a new AtomicStringImpl since SymbolImpl never becomes `isAtomic() == true`.
+        But it is costly.
+
+        This patch leverages the substring system of StringImpl. Instead of allocating the completely
+        duplicate string, we create a substring StringImpl that shares the same content with the
+        base string.
+
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::stringTable):
+        (WTF::addToStringTable):
+        (WTF::addSubstring):
+        (WTF::AtomicStringImpl::addSlowCase):
+        (WTF::AtomicStringImpl::remove):
+        (WTF::AtomicStringImpl::lookUpSlowCase):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StaticStringImpl::operator StringImpl&):
+
+2017-01-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Use StaticStringImpl instead of StaticASCIILiteral
         https://bugs.webkit.org/show_bug.cgi?id=166586
 

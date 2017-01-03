@@ -554,11 +554,17 @@ TEST(WTF, StringImplSymbolToAtomicString)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 
+    auto result = AtomicStringImpl::lookUp(reference.ptr());
+    ASSERT_FALSE(result);
+
     auto atomic = AtomicStringImpl::add(reference.ptr());
     ASSERT_TRUE(atomic->isAtomic());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
+
+    auto result2 = AtomicStringImpl::lookUp(reference.ptr());
+    ASSERT_TRUE(result2);
 }
 
 TEST(WTF, StringImplNullSymbolToAtomicString)
@@ -567,11 +573,43 @@ TEST(WTF, StringImplNullSymbolToAtomicString)
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
 
+    // Because the substring of the reference is the empty string which is already interned.
+    auto result = AtomicStringImpl::lookUp(reference.ptr());
+    ASSERT_TRUE(result);
+
     auto atomic = AtomicStringImpl::add(reference.ptr());
     ASSERT_TRUE(atomic->isAtomic());
     ASSERT_FALSE(atomic->isSymbol());
     ASSERT_TRUE(reference->isSymbol());
     ASSERT_FALSE(reference->isAtomic());
+    ASSERT_EQ(atomic.get(), StringImpl::empty());
+
+    auto result2 = AtomicStringImpl::lookUp(reference.ptr());
+    ASSERT_TRUE(result2);
+}
+
+static StringImpl::StaticStringImpl staticString {"Cocoa"};
+
+TEST(WTF, StringImplStaticToAtomicString)
+{
+    StringImpl& original = staticString;
+    ASSERT_FALSE(original.isSymbol());
+    ASSERT_FALSE(original.isAtomic());
+    ASSERT_TRUE(original.isStatic());
+
+    auto result = AtomicStringImpl::lookUp(&original);
+    ASSERT_FALSE(result);
+
+    auto atomic = AtomicStringImpl::add(&original);
+    ASSERT_TRUE(atomic->isAtomic());
+    ASSERT_FALSE(atomic->isSymbol());
+    ASSERT_FALSE(atomic->isStatic());
+    ASSERT_FALSE(original.isSymbol());
+    ASSERT_FALSE(original.isAtomic());
+    ASSERT_TRUE(original.isStatic());
+
+    auto result2 = AtomicStringImpl::lookUp(&original);
+    ASSERT_TRUE(result2);
 }
 
 TEST(WTF, StringImplConstexprHasher)
