@@ -1,3 +1,13 @@
+2017-01-02  Saam Barati  <sbarati@apple.com>
+
+        WebAssembly: Some loads don't take into account the offset
+        https://bugs.webkit.org/show_bug.cgi?id=166616
+        <rdar://problem/29841541>
+
+        Reviewed by Keith Miller.
+
+        * wasm/function-tests/load-offset.js: Added.
+
 2016-12-29  Saam Barati  <sbarati@apple.com>
 
         WebAssembly: Rebase spec-tests now that wabt has been updated to produce certain kinds of invalid modules
