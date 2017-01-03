@@ -1,3 +1,14 @@
+2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix Content Flow Container Regions Computed Style section
+        https://bugs.webkit.org/show_bug.cgi?id=166294
+
+        Reviewed by Brian Burg.
+
+        * inspector/dom/content-flow-list.html:
+        Update the domTree across navigations. Also dynamically add the flows to
+        ensure we get the events.
+
 2017-01-03  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         A floating element within <li> overlaps with the marker

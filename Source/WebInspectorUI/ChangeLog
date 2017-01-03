@@ -1,3 +1,21 @@
+2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix Content Flow Container Regions Computed Style section
+        https://bugs.webkit.org/show_bug.cgi?id=166294
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._coerceRemoteArrayOfDOMNodes):
+        (WebInspector.DOMTreeManager.prototype.getNodeContentFlowInfo.domNodeResolved):
+        (WebInspector.DOMTreeManager.prototype.getNodeContentFlowInfo.remoteObjectPropertiesAvailable):
+        (WebInspector.DOMTreeManager.prototype.getNodeContentFlowInfo):
+        (WebInspector.DOMTreeManager.prototype.getNodeContentFlowInfo.backendFunction.getComputedProperty): Deleted.
+        (WebInspector.DOMTreeManager.prototype.getNodeContentFlowInfo.backendFunction.getContentFlowName): Deleted.
+        Update this to use Array.from() to convert the NodeList to an Array, and then
+        use the already available RemoteObject's size property instead of getting the
+        "length" property from the Array.
+
 2017-01-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: opening Test.html in a normal browser window doesn't log errors to console

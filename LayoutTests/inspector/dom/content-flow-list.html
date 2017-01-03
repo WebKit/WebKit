@@ -9,25 +9,30 @@
 </style>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-function removeFlow()
-{
+function addFlow() {
+    let div = document.createElement("div");
+    div.id = "flow1";
+    document.body.appendChild(div);
+}
+
+function removeFlow() {
     document.getElementById("flow1").remove();
 }
 
 function test()
 {
-    let domTree = WebInspector.frameResourceManager.mainFrame.domTree;
+    let domTree;
 
     function onRootDOMNodeInvalidated()
     {
         domTree.requestContentFlowList();
+        InspectorTest.evaluateInPage("addFlow()");
     }
 
     function onContentFlowWasAdded(event)
     {
         InspectorTest.expectEqual(event.data.flow.name, "flow1", "ContentFlow was added");
         InspectorTest.expectEqual(domTree.contentFlowCollection.items.size, 1, "Flow count is 1");
-
         InspectorTest.evaluateInPage("removeFlow()");
     }
 
@@ -39,6 +44,7 @@ function test()
     }
 
     WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function() {
+        domTree = WebInspector.frameResourceManager.mainFrame.domTree;
         domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, onRootDOMNodeInvalidated);
         domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasAdded, onContentFlowWasAdded);
         domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasRemoved, onContentFlowWasRemoved);
@@ -50,8 +56,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Testing that the ContentFlows events are correctly dispatched when new flows are created/removed.</p>
-
-    <div id="flow1"></div>
+<p>Testing that the ContentFlows events are correctly dispatched when new flows are created/removed.</p>
 </body>
 </html>
