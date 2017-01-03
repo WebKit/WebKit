@@ -51,6 +51,7 @@
     <xi:include href="xml/WebKitUserContent.xml"/>
     <xi:include href="xml/WebKitNotification.xml"/>
     <xi:include href="xml/WebKitNotificationPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitSecurityOrigin.xml"/>
     <xi:include href="xml/WebKitWebsiteDataManager.xml"/>
   </chapter>
 

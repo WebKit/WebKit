@@ -1,3 +1,20 @@
+2017-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Expose WebKitSecurityOrigin API
+        https://bugs.webkit.org/show_bug.cgi?id=166632
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSecurityOrigin.cpp: Added.
+        (testSecurityOriginBasicConstructor):
+        (testSecurityOriginURIConstructor):
+        (testSecurityOriginDefaultPort):
+        (testSecurityOriginFileURI):
+        (testSecurityOriginDataURI):
+        (beforeAll):
+        (afterAll):
+
 2017-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] HTTP auth layout tests are flaky

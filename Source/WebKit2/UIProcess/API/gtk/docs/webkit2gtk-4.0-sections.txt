@@ -1211,6 +1211,26 @@ webkit_security_manager_get_type
 </SECTION>
 
 <SECTION>
+<FILE>WebKitSecurityOrigin</FILE>
+WebKitSecurityOrigin
+webkit_security_origin_new
+webkit_security_origin_new_for_uri
+webkit_security_origin_ref
+webkit_security_origin_unref
+webkit_security_origin_get_protocol
+webkit_security_origin_get_host
+webkit_security_origin_get_port
+webkit_security_origin_is_opaque
+webkit_security_origin_to_string
+
+<SUBSECTION Standard>
+WEBKIT_TYPE_SECURITY_ORIGIN
+
+<SUBSECTION Private>
+webkit_security_origin_get_type
+</SECTION>
+
+<SECTION>
 <FILE>WebKitWebsiteDataManager</FILE>
 WebKitWebsiteDataManager
 webkit_website_data_manager_new
