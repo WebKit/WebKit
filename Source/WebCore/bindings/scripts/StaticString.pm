@@ -38,21 +38,20 @@ sub GenerateStrings($)
 #pragma warning(push)
 #pragma warning(disable: 4307)
 #endif
-END
 
-    push(@result, "\n");
+END
 
     for my $name (sort keys %strings) {
         my $value = $strings{$name};
         push(@result, "static StringImpl::StaticStringImpl ${name}Data(\"${value}\");\n");
     }
 
-    push(@result, "\n");
-
     push(@result, <<END);
+
 #if COMPILER(MSVC)
 #pragma warning(pop)
 #endif
+
 END
 
     return join "", @result;
