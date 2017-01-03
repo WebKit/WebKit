@@ -46,13 +46,6 @@
 #include <sys/cachectl.h>
 #endif
 
-#if CPU(SH4) && OS(LINUX)
-#include <asm/cachectl.h>
-#include <asm/unistd.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-#endif
-
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
 #define EXECUTABLE_POOL_WRITABLE true

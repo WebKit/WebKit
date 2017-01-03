@@ -534,43 +534,6 @@ public:
     }
 #endif
 
-#if CPU(SH4)
-    static size_t prologueStackPointerDelta()
-    {
-        // Prologue saves the framePointerRegister and link register
-        return 2 * sizeof(void*);
-    }
-
-    void emitFunctionPrologue()
-    {
-        push(linkRegister);
-        push(framePointerRegister);
-        move(stackPointerRegister, framePointerRegister);
-    }
-
-    void emitFunctionEpilogue()
-    {
-        move(framePointerRegister, stackPointerRegister);
-        pop(framePointerRegister);
-        pop(linkRegister);
-    }
-
-    ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
-    {
-        m_assembler.stspr(reg);
-    }
-
-    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(RegisterID reg)
-    {
-        m_assembler.ldspr(reg);
-    }
-
-    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(Address address)
-    {
-        loadPtrLinkReg(address);
-    }
-#endif
-
     void emitGetFromCallFrameHeaderPtr(int entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
     {
         loadPtr(Address(from, entry * sizeof(Register)), to);
@@ -1023,7 +986,7 @@ public:
         move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
         storePtr(TrustedImmPtr(scratchSize), GPRInfo::regT0);
 
-#if CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(SH4)
+#if CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)
         move(TrustedImmPtr(buffer), GPRInfo::argumentGPR2);
         move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);

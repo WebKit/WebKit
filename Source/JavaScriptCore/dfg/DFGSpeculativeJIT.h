@@ -2151,13 +2151,13 @@ public:
 
     JITCompiler::Call callOperation(S_JITOperation_EJJ operation, GPRReg result, JSValueRegs arg1, JSValueRegs arg2)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), SH4_32BIT_DUMMY_ARG arg2.payloadGPR(), arg2.tagGPR());
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2.payloadGPR(), arg2.tagGPR());
         return appendCallSetResult(operation, result);
     }
 
     JITCompiler::Call callOperation(S_JITOperation_EGJJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), SH4_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3.payloadGPR(), arg3.tagGPR());
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_JITOperation_EGReoJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
@@ -2172,22 +2172,22 @@ public:
     }
     JITCompiler::Call callOperation(J_JITOperation_EJJ operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), SH4_32BIT_DUMMY_ARG arg2.payloadGPR(), arg2.tagGPR());
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), arg2.payloadGPR(), arg2.tagGPR());
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EGJJ operation, JSValueRegs result, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), SH4_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3.payloadGPR(), arg3.tagGPR());
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EJJ operation, JSValueRegs result, JSValueRegs arg1, MacroAssembler::TrustedImm32 imm)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), SH4_32BIT_DUMMY_ARG imm, TrustedImm32(JSValue::Int32Tag));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG arg1.payloadGPR(), arg1.tagGPR(), imm, TrustedImm32(JSValue::Int32Tag));
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EJJ operation, JSValueRegs result, MacroAssembler::TrustedImm32 imm, JSValueRegs arg2)
     {
-        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG imm, TrustedImm32(JSValue::Int32Tag), SH4_32BIT_DUMMY_ARG arg2.payloadGPR(), arg2.tagGPR());
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG imm, TrustedImm32(JSValue::Int32Tag), arg2.payloadGPR(), arg2.tagGPR());
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EJJJ operation, JSValueRegs result, JSValueRegs arg1, JSValueRegs arg2, JSValueRegs arg3)
@@ -2247,23 +2247,23 @@ public:
 
     JITCompiler::Call callOperation(V_JITOperation_EPZJ operation, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG SH4_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
+        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
         return appendCall(operation);
     }
 
     JITCompiler::Call callOperation(V_JITOperation_EOZJ operation, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG SH4_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
+        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3.payloadGPR(), arg3.tagGPR());
         return appendCall(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_EOZJ operation, GPRReg arg1, GPRReg arg2, TrustedImm32 arg3Tag, GPRReg arg3Payload)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG SH4_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
         return appendCall(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_EOZJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3Tag, GPRReg arg3Payload)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG SH4_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, EABI_32BIT_DUMMY_ARG arg3Payload, arg3Tag);
         return appendCall(operation);
     }
 
@@ -2314,7 +2314,7 @@ public:
     }
 #endif // USE(JSVALUE32_64)
     
-#if !defined(NDEBUG) && !CPU(ARM) && !CPU(MIPS) && !CPU(SH4)
+#if !defined(NDEBUG) && !CPU(ARM) && !CPU(MIPS)
     void prepareForExternalCall()
     {
         // We're about to call out to a "native" helper function. The helper
@@ -2384,7 +2384,7 @@ public:
             m_jit.assembler().vmov(result, GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2);
         return call;
     }
-#else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS) || CPU(SH4)
+#else // CPU(X86_64) || (CPU(ARM) && CPU(ARM_HARDFP)) || CPU(ARM64) || CPU(MIPS)
     JITCompiler::Call appendCallSetResult(const FunctionPtr& function, FPRReg result)
     {
         JITCompiler::Call call = appendCall(function);

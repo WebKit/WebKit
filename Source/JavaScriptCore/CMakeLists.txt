@@ -1079,7 +1079,6 @@ set(OFFLINE_ASM
     offlineasm/risc.rb
     offlineasm/self_hash.rb
     offlineasm/settings.rb
-    offlineasm/sh4.rb
     offlineasm/transform.rb
     offlineasm/x86.rb
 )

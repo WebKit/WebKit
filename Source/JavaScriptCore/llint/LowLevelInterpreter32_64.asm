@@ -49,7 +49,7 @@ macro dispatchAfterCall()
 end
 
 macro cCall2(function)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         call function
     elsif X86 or X86_WIN
         subp 8, sp
@@ -73,7 +73,7 @@ macro cCall2Void(function)
 end
 
 macro cCall4(function)
-    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+    if ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         call function
     elsif X86 or X86_WIN
         push a3
@@ -2045,7 +2045,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t3
         loadp MarkedBlock::m_vm[t3], t3
         addp 8, sp
-    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS or SH4
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS
         subp 8, sp # align stack pointer
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1

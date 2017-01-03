@@ -1494,8 +1494,6 @@
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
 		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AE64A7135E5E1C00963012 /* SH4Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B5822E14D2373B00A9C306 /* CodeProfile.cpp */; };
 		86B5826914D2797000A9C306 /* CodeProfiling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8603CEF214C7546400AE59E3 /* CodeProfiling.cpp */; };
 		86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3955,8 +3953,6 @@
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
 		86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARMv7.h; sourceTree = "<group>"; };
-		86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerSH4.h; sourceTree = "<group>"; };
-		86AE64A7135E5E1C00963012 /* SH4Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SH4Assembler.h; sourceTree = "<group>"; };
 		86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileTreeNode.h; sourceTree = "<group>"; };
 		86B5822E14D2373B00A9C306 /* CodeProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeProfile.cpp; sourceTree = "<group>"; };
 		86B5822F14D2373B00A9C306 /* CodeProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeProfile.h; sourceTree = "<group>"; };
@@ -7173,14 +7169,12 @@
 				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
 				FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */,
 				FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */,
-				86AE64A6135E5E1C00963012 /* MacroAssemblerSH4.h */,
 				860161E00F3A83C100F84710 /* MacroAssemblerX86.h */,
 				860161E10F3A83C100F84710 /* MacroAssemblerX86_64.h */,
 				A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */,
 				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */,
 				86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */,
-				86AE64A7135E5E1C00963012 /* SH4Assembler.h */,
 				9688CB140ED12B4E001D649F /* X86Assembler.h */,
 			);
 			path = assembler;
@@ -8726,7 +8720,6 @@
 				E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */,
 				86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */,
 				FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */,
-				86AE64A9135E5E1C00963012 /* MacroAssemblerSH4.h in Headers */,
 				860161E40F3A83C100F84710 /* MacroAssemblerX86.h in Headers */,
 				860161E50F3A83C100F84710 /* MacroAssemblerX86_64.h in Headers */,
 				860161E60F3A83C100F84710 /* MacroAssemblerX86Common.h in Headers */,
@@ -8894,7 +8887,6 @@
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
 				0FEE98411A8865B700754E93 /* SetupVarargsFrame.h in Headers */,
-				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 				DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */,
 				DC17E8191C9C91DB008A6AB3 /* ShadowChickenInlines.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,

@@ -72,7 +72,7 @@
 #  registers on all architectures.
 #
 #  - lr is defined on non-X86 architectures (ARM64, ARMv7, ARM,
-#  ARMv7_TRADITIONAL, MIPS, SH4 and CLOOP) and holds the return PC
+#  ARMv7_TRADITIONAL, MIPS and CLOOP) and holds the return PC
 #
 #  - pc holds the (native) program counter on 32-bits ARM architectures (ARM,
 #  ARMv7, ARMv7_TRADITIONAL)
@@ -225,7 +225,7 @@ const CallOpCodeSize = 9
 
 if X86_64 or ARM64 or C_LOOP
     const maxFrameExtentForSlowPathCall = 0
-elsif ARM or ARMv7_TRADITIONAL or ARMv7 or SH4
+elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const maxFrameExtentForSlowPathCall = 24
 elsif X86 or X86_WIN
     const maxFrameExtentForSlowPathCall = 40
@@ -483,11 +483,10 @@ if X86_64
 end
 
 macro checkStackPointerAlignment(tempReg, location)
-    if ARM64 or C_LOOP or SH4
+    if ARM64 or C_LOOP
         # ARM64 will check for us!
         # C_LOOP does not need the alignment, and can use a little perf
         # improvement from avoiding useless work.
-        # SH4 does not need specific alignment (4 bytes).
     else
         if ARM or ARMv7 or ARMv7_TRADITIONAL
             # ARM can't do logical ops with the sp as a source
@@ -507,8 +506,6 @@ if C_LOOP or ARM64 or X86_64 or X86_64_WIN
     const CalleeSaveRegisterCount = 0
 elsif ARM or ARMv7_TRADITIONAL or ARMv7
     const CalleeSaveRegisterCount = 7
-elsif SH4
-    const CalleeSaveRegisterCount = 5
 elsif MIPS
     const CalleeSaveRegisterCount = 1
 elsif X86 or X86_WIN
@@ -532,12 +529,6 @@ macro pushCalleeSaves()
         emit "sw $s4, 0($sp)"
         # save $gp to $s4 so that we can restore it after a function call
         emit "move $s4, $gp"
-    elsif SH4
-        emit "mov.l r13, @-r15"
-        emit "mov.l r11, @-r15"
-        emit "mov.l r10, @-r15"
-        emit "mov.l r9, @-r15"
-        emit "mov.l r8, @-r15"
     elsif X86
         emit "push %esi"
         emit "push %edi"
@@ -558,12 +549,6 @@ macro popCalleeSaves()
     elsif MIPS
         emit "lw $s4, 0($sp)"
         emit "addiu $sp, $sp, 4"
-    elsif SH4
-        emit "mov.l @r15+, r8"
-        emit "mov.l @r15+, r9"
-        emit "mov.l @r15+, r10"
-        emit "mov.l @r15+, r11"
-        emit "mov.l @r15+, r13"
     elsif X86
         emit "pop %ebx"
         emit "pop %edi"
@@ -576,7 +561,7 @@ macro popCalleeSaves()
 end
 
 macro preserveCallerPCAndCFR()
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         push lr
         push cfr
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -591,7 +576,7 @@ end
 
 macro restoreCallerPCAndCFR()
     move cfr, sp
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         pop cfr
         pop lr
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -610,7 +595,6 @@ macro preserveCalleeSavesUsedByLLInt()
         emit "stp x27, x28, [x29, #-16]"
         emit "stp xzr, x26, [x29, #-32]"
     elsif MIPS
-    elsif SH4
     elsif X86
     elsif X86_WIN
     elsif X86_64
@@ -632,7 +616,6 @@ macro restoreCalleeSavesUsedByLLInt()
         emit "ldp xzr, x26, [x29, #-32]"
         emit "ldp x27, x28, [x29, #-16]"
     elsif MIPS
-    elsif SH4
     elsif X86
     elsif X86_WIN
     elsif X86_64
@@ -731,7 +714,7 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
 end
 
 macro preserveReturnAddressAfterCall(destinationRegister)
-    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS or SH4
+    if C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or ARM64 or MIPS
         # In C_LOOP case, we're only preserving the bytecode vPC.
         move lr, destinationRegister
     elsif X86 or X86_WIN or X86_64 or X86_64_WIN
@@ -746,7 +729,7 @@ macro functionPrologue()
         push cfr
     elsif ARM64
         push cfr, lr
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         push lr
         push cfr
     end
@@ -758,7 +741,7 @@ macro functionEpilogue()
         pop cfr
     elsif ARM64
         pop lr, cfr
-    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+    elsif C_LOOP or ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
         pop cfr
         pop lr
     end
@@ -844,7 +827,7 @@ macro prepareForTailCall(callee, temp1, temp2, temp3)
     addi StackAlignment - 1 + CallFrameHeaderSize, temp2
     andi ~StackAlignmentMask, temp2
 
-    if ARM or ARMv7_TRADITIONAL or ARMv7 or SH4 or ARM64 or C_LOOP or MIPS
+    if ARM or ARMv7_TRADITIONAL or ARMv7 or ARM64 or C_LOOP or MIPS
         addp 2 * PtrSize, sp
         subi 2 * PtrSize, temp2
         loadp PtrSize[cfr], lr
@@ -984,7 +967,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
         # pop the callerFrame since we will jump to a function that wants to save it
         if ARM64
             pop lr, cfr
-        elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS or SH4
+        elsif ARM or ARMv7 or ARMv7_TRADITIONAL or MIPS
             pop cfr
             pop lr
         else
@@ -1165,11 +1148,6 @@ else
             la _relativePCBase, pcBase
             setcallreg pcBase # needed to set $t9 to the right value for the .cpload created by the label.
         _relativePCBase:
-        elsif SH4
-            mova _relativePCBase, t0
-            move t0, pcBase
-            alignformova
-        _relativePCBase:
         end
 end
 
@@ -1193,12 +1171,6 @@ macro setEntryAddress(index, label)
         addp t4, t1, t4
         move index, t3
         storep t4, [a0, t3, 4]
-    elsif SH4
-        move (label - _relativePCBase), t4
-        addp t4, t1, t4
-        move index, t3
-        storep t4, [a0, t3, 4]
-        flushcp # Force constant pool flush to avoid "pcrel too far" link error.
     elsif MIPS
         la label, t4
         la _relativePCBase, t3

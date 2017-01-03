@@ -48,15 +48,6 @@ namespace JSC {
 #define EABI_32BIT_DUMMY_ARG
 #endif
 
-// JSVALUE32_64 is a 64-bit integer that cannot be put half in an argument register and half on stack when using SH4 architecture.
-// To avoid this, let's occupy the 4th argument register (r7) with a dummy argument when necessary. This must only be done when there
-// is no other 32-bit value argument behind this 64-bit JSValue.
-#if CPU(SH4)
-#define SH4_32BIT_DUMMY_ARG      CCallHelpers::TrustedImm32(0),
-#else
-#define SH4_32BIT_DUMMY_ARG
-#endif
-
 class CCallHelpers : public AssemblyHelpers {
 public:
     CCallHelpers(VM* vm, CodeBlock* codeBlock = 0)
@@ -1228,37 +1219,6 @@ public:
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32, FPRReg arg4)
     {
         setupArgumentsWithExecState(arg1, arg2, arg4);
-    }
-#elif CPU(SH4)
-    ALWAYS_INLINE void setupArguments(FPRReg arg1)
-    {
-        moveDouble(arg1, FPRInfo::argumentFPR0);
-    }
-
-    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
-    {
-        if (arg2 != FPRInfo::argumentFPR0) {
-            moveDouble(arg1, FPRInfo::argumentFPR0);
-            moveDouble(arg2, FPRInfo::argumentFPR1);
-        } else if (arg1 != FPRInfo::argumentFPR1) {
-            moveDouble(arg2, FPRInfo::argumentFPR1);
-            moveDouble(arg1, FPRInfo::argumentFPR0);
-        } else
-            swapDouble(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
-    {
-        moveDouble(arg1, FPRInfo::argumentFPR0);
-        move(arg2, GPRInfo::argumentGPR1);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-    }
-
-    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
-    {
-        moveDouble(arg3, FPRInfo::argumentFPR0);
-        setupStubArguments(arg1, arg2);
-        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     }
 #else
 #error "JIT not supported on this platform."
@@ -2462,7 +2422,7 @@ public:
 
         // We don't need the current frame beyond this point. Masquerade as our
         // caller.
-#if CPU(ARM) || CPU(SH4) || CPU(ARM64)
+#if CPU(ARM) || CPU(ARM64)
         loadPtr(Address(framePointerRegister, sizeof(void*)), linkRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
 #elif CPU(MIPS)

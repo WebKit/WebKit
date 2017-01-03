@@ -316,7 +316,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, ARM64Registers::x1);
     jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x1, JSFunction::offsetOfExecutable()), ARM64Registers::x2);
     jit.call(JSInterfaceJIT::Address(ARM64Registers::x2, executableOffsetToFunction));
-#elif CPU(ARM) || CPU(SH4) || CPU(MIPS)
+#elif CPU(ARM) || CPU(MIPS)
 #if CPU(MIPS)
     // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);

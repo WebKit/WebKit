@@ -1,3 +1,59 @@
+2017-01-02  Julien Brianceau  <jbriance@cisco.com>
+
+        Remove sh4 specific code from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=166640
+
+        Reviewed by Filip Pizlo.
+
+        sh4-specific code does not compile for a while (r189884 at least).
+        As nobody seems to have interest in this architecture anymore, let's
+        remove this dead code and thus ease the burden for JSC maintainers.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerSH4.h: Removed.
+        * assembler/MaxFrameExtentForSlowPathCall.h:
+        * assembler/SH4Assembler.h: Removed.
+        * bytecode/DOMJITAccessCasePatchpointParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/ExecutableAllocator.h:
+        * jit/FPRInfo.h:
+        * jit/GPRInfo.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOperations.cpp:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * offlineasm/backends.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/sh4.rb: Removed.
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+
 2017-01-02  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: handle and optimize wasm export → wasm import calls

@@ -59,7 +59,7 @@ public:
 
         jit.makeSpaceOnStackForCCall();
 
-        // FIXME: Currently, we do not check any ARM EABI / SH4 things here.
+        // FIXME: Currently, we do not check any ARM EABI things here.
         // But it is OK because a compile error happens when you pass JSValueRegs as an argument.
         // https://bugs.webkit.org/show_bug.cgi?id=163099
         jit.setupArgumentsWithExecState(std::get<ArgumentsIndex>(m_arguments)...);

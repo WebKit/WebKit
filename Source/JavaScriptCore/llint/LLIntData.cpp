@@ -138,7 +138,7 @@ void Data::performAssertions(VM& vm)
 #endif
 #if (CPU(X86_64) && !OS(WINDOWS)) || CPU(ARM64) || !ENABLE(JIT)
     STATIC_ASSERT(!maxFrameExtentForSlowPathCall);
-#elif CPU(ARM) || CPU(SH4)
+#elif CPU(ARM)
     STATIC_ASSERT(maxFrameExtentForSlowPathCall == 24);
 #elif CPU(X86) || CPU(MIPS)
     STATIC_ASSERT(maxFrameExtentForSlowPathCall == 40);

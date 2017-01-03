@@ -2811,24 +2811,6 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "b " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
 );
 
-#elif COMPILER(GCC_OR_CLANG) && CPU(SH4)
-
-#define SH4_SCRATCH_REGISTER "r11"
-
-asm (
-".text" "\n"
-".globl " SYMBOL_STRING(getHostCallReturnValue) "\n"
-HIDE_SYMBOL(getHostCallReturnValue) "\n"
-SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
-    "mov r15, r4" "\n"
-    "add -8, r4" "\n"
-    "mov.l 2f, " SH4_SCRATCH_REGISTER "\n"
-    "braf " SH4_SCRATCH_REGISTER "\n"
-    "nop" "\n"
-    "1: .balign 4" "\n"
-    "2: .long " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "-1b\n"
-);
-
 #elif COMPILER(MSVC) && CPU(X86)
 extern "C" {
     __declspec(naked) EncodedJSValue HOST_CALL_RETURN_VALUE_OPTION getHostCallReturnValue()
