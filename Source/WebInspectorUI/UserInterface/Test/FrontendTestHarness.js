@@ -195,7 +195,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
         // If the connection to the test page is not set up, then just dump to console and give up.
         // Errors encountered this early can be debugged by loading Test.html in a normal browser page.
-        if (this._originalConsole && (!InspectorFrontendHost || !InspectorBackend)) {
+        if (this._originalConsole && !this._testPageHasLoaded()) {
             this._originalConsole["error"](result);
             return false;
         }
@@ -207,6 +207,11 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
     }
 
     // Private
+
+    _testPageHasLoaded()
+    {
+        return self._shouldResendResults;
+    }
 
     _resendResults()
     {
