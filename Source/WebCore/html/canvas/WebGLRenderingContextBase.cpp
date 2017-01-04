@@ -401,6 +401,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     if (frame->settings().forceSoftwareWebGLRendering())
         attributes.forceSoftwareRenderer = true;
 
+    if (!attributes.preferLowPowerToHighPerformance && frame->settings().preferLowPowerWebGLRendering())
+        attributes.preferLowPowerToHighPerformance = true;
+
     if (page)
         attributes.devicePixelRatio = page->deviceScaleFactor();
 
