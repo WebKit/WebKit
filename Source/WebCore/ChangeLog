@@ -1,3 +1,18 @@
+2017-01-04  Jer Noble  <jer.noble@apple.com>
+
+        Check for the existence of AVSampleBufferDisplayLayer_Private.h in AVFoundationSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=166691
+
+        Reviewed by Eric Carlson.
+
+        Move the declaration of AVSampleBufferDisplayLayer SPI into AVFoundationSPI.h and key off the presence of the _Private.h header.
+
+        Drive-by Fix: also check for the presence of AVSampleBufferRenderSynchronizer.h before re-declaring AVSampleBufferRenderSynchronizer.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-01-04  Nan Wang  <n_wang@apple.com>
 
         Many new HTML5 input types still exposed as generic AXTextfield
