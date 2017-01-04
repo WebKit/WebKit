@@ -1,3 +1,9 @@
+2017-01-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed cmake buildfix after r210266.
+
+        * DumpRenderTree/PlatformMac.cmake:
+
 2017-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Provide a setting for clients to always prefer low-power WebGL

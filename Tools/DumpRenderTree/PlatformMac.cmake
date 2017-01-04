@@ -97,6 +97,7 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/DumpRenderTree.mm
     mac/DumpRenderTreeDraggingInfo.mm
     mac/DumpRenderTreeMain.mm
+    mac/DumpRenderTreeSpellChecker.mm
     mac/DumpRenderTreeWindow.mm
     mac/EditingDelegate.mm
     mac/EventSendingController.mm
