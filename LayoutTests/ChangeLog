@@ -1,3 +1,18 @@
+2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cross Origin importScripts() scripts lack source URL, causes issues with Inspector showing Resource
+        https://bugs.webkit.org/show_bug.cgi?id=165569
+        <rdar://problem/29607569>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts-expected.txt: Added.
+        * http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html: Added.
+        * http/tests/inspector/worker/resources/worker-blob-import-script.js: Added.
+        * http/tests/inspector/worker/resources/worker-blob-script.js: Added.
+        Ensure cross origin scripts imported by workers still get the correct Script URL.
+        Also this provides a test for worker started with a blob URL.
+
 2017-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         label element with tabindex >= 0 is not focusable

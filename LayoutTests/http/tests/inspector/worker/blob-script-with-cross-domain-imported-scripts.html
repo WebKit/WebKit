@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+let worker;
+
+function triggerWorkerStart() {
+    let blob = new Blob([`importScripts(["http://localhost:8000/inspector/worker/resources/worker-blob-script.js"]);`]);
+    let blobURL = URL.createObjectURL(blob);
+    worker = new Worker(blobURL);
+}
+
+function test()
+{
+    let workerTarget;
+    let mainTarget = WebInspector.mainTarget;
+
+    function sanitizeURL(url) {
+        if (!url)
+            return "<null>";
+        if (url.startsWith("blob:"))
+            return "blob:<sanitized>";
+        return url;
+    }
+
+    function dumpURLs(urls) {
+        if (!urls.length)
+            InspectorTest.log("-- None --");
+        else {
+            urls.sort((a, b) => a <= b)
+            for (let url of urls)
+                InspectorTest.log(url);
+        }
+    }
+
+    function dumpWorkerScripts() {
+        InspectorTest.log("SCRIPTS:");
+        let targetData = WebInspector.debuggerManager.dataForTarget(workerTarget);
+        let urls = [];
+        for (let script of targetData.scripts)
+            urls.push(sanitizeURL(script.url));
+        dumpURLs(urls);
+    }
+
+    function dumpWorkerResources() {
+        InspectorTest.log("RESOURCES:");
+        let urls = [];
+        for (let resource of workerTarget.resourceCollection.items)
+            urls.push(sanitizeURL(resource.url));
+        dumpURLs(urls);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Resources");
+
+    suite.addTestCase({
+        name: "Worker.Resource.Start",
+        description: "Start the worker and load multiple resources.",
+        test(resolve, reject) {
+            InspectorTest.evaluateInPage("triggerWorkerStart()");
+
+            WebInspector.targetManager.singleFireEventListener(WebInspector.TargetManager.Event.TargetAdded, (event) => {
+                workerTarget = event.data.target;
+                InspectorTest.assert(workerTarget instanceof WebInspector.Target);
+                InspectorTest.expectEqual(workerTarget.type, WebInspector.Target.Type.Worker, "Added Target should have Worker type.");
+            });
+
+            let seen = 0;
+            const expected = 3;
+            let listener = WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, (event) => {
+                if (event.data.script.target === workerTarget)
+                    seen++;
+                if (seen !== expected)
+                    return;
+
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, listener);
+                dumpWorkerResources();
+                dumpWorkerScripts();
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for Resources in a Worker started with a Blob URL that imports cross origin scripts.</p>
+</body>
+</html>
