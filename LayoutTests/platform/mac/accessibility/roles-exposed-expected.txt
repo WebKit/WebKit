@@ -247,7 +247,7 @@ input[type='datetime']
 input[type='datetime-local']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: date and time field
       
 input[type='email']
       AXRole: AXTextField
@@ -272,12 +272,12 @@ input[type='image']
 input[type='month']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: month and year field
       
 input[type='number']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: number field
       
 input[type='password']
       AXRole: AXTextField
@@ -332,7 +332,7 @@ input[type='url']
 input[type='week']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: week and year field
       
 ins:not([datetime])
       AXRole: AXGroup

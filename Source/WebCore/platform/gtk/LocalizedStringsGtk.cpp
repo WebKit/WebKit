@@ -491,6 +491,26 @@ String AXTimeFieldText()
     return String::fromUTF8(_("time field"));
 }
 
+String AXDateTimeFieldText()
+{
+    return String::fromUTF8(_("date and time field"));
+}
+
+String AXMonthFieldText()
+{
+    return String::fromUTF8(_("month and year field"));
+}
+
+String AXNumberFieldText()
+{
+    return String::fromUTF8(_("number field"));
+}
+
+String AXWeekFieldText()
+{
+    return String::fromUTF8(_("week and year field"));
+}
+
 String AXFooterRoleDescriptionText()
 {
     return String::fromUTF8(_("footer"));

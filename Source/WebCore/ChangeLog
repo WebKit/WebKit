@@ -1,3 +1,36 @@
+2017-01-04  Nan Wang  <n_wang@apple.com>
+
+        Many new HTML5 input types still exposed as generic AXTextfield
+        https://bugs.webkit.org/show_bug.cgi?id=109017
+        <rdar://problem/13658955>
+
+        Reviewed by Chris Fleizach.
+
+        Provided more detailed role description for input types that
+        are exposed as standard text fields on the mac.
+
+        Changes are covered in modified test expectation.
+
+        * English.lproj/Localizable.strings:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXDateTimeFieldText):
+        (WebCore::AXMonthFieldText):
+        (WebCore::AXNumberFieldText):
+        (WebCore::AXWeekFieldText):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXDateTimeFieldText):
+        (WebCore::AXMonthFieldText):
+        (WebCore::AXNumberFieldText):
+        (WebCore::AXWeekFieldText):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXDateTimeFieldText):
+        (WebCore::AXMonthFieldText):
+        (WebCore::AXNumberFieldText):
+        (WebCore::AXWeekFieldText):
+
 2017-01-04  Sam Weinig  <sam@webkit.org>
 
         Remove bindings/generic and distribute its contents appropriately

@@ -443,6 +443,26 @@ String AXTimeFieldText()
     return String::fromUTF8("time field");
 }
 
+String AXDateTimeFieldText()
+{
+    return String::fromUTF8("date and time field");
+}
+
+String AXMonthFieldText()
+{
+    return String::fromUTF8("month and year field");
+}
+
+String AXNumberFieldText()
+{
+    return String::fromUTF8("number field");
+}
+
+String AXWeekFieldText()
+{
+    return String::fromUTF8("week and year field");
+}
+
 String AXFooterRoleDescriptionText()
 {
     return String::fromUTF8("footer");

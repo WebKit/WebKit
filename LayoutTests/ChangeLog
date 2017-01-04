@@ -1,3 +1,13 @@
+2017-01-04  Nan Wang  <n_wang@apple.com>
+
+        Many new HTML5 input types still exposed as generic AXTextfield
+        https://bugs.webkit.org/show_bug.cgi?id=109017
+        <rdar://problem/13658955>
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2017-01-04  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit on redfin.com: ASSERTION FAILED: collection->length() > 1

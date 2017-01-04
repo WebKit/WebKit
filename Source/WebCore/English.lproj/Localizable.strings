@@ -850,6 +850,9 @@
 /* accessibility role description for a date field. */
 "date field" = "date field";
 
+/* accessibility role description for a date and time field */
+"date and time field" = "date and time field";
+
 /* role description of ARIA definition role */
 "definition" = "definition";
 
@@ -952,6 +955,9 @@
 /* HTTP result code string */
 "method not allowed" = "method not allowed";
 
+/* accessibility role description for a month field. */
+"month and year field" = "month and year field";
+
 /* HTTP result code string */
 "moved permanently" = "moved permanently";
 
@@ -1011,6 +1017,9 @@
 
 /* An ARIA accessibility group that acts as a note in a document. */
 "note" = "note";
+
+/* accessibility role description for a number field. */
+"number field" = "number field";
 
 /* accessibility help text for remaining time display */
 "number of seconds of movie remaining" = "number of seconds of movie remaining";
@@ -1200,6 +1209,9 @@
 
 /* An ARIA accessibility group that acts as an dialog. */
 "web dialog" = "web dialog";
+
+/* accessibility role description for a week field. */
+"week and year field" = "week and year field";
 
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";

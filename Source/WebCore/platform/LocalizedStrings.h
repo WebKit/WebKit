@@ -177,6 +177,10 @@ namespace WebCore {
     String AXURLFieldText();
     String AXDateFieldText();
     String AXTimeFieldText();
+    String AXDateTimeFieldText();
+    String AXMonthFieldText();
+    String AXNumberFieldText();
+    String AXWeekFieldText();
     
     String AXButtonActionVerb();
     String AXRadioButtonActionVerb();
