@@ -1,3 +1,23 @@
+2017-01-03  JF Bastien  <jfbastien@apple.com>
+
+        REGRESSION (r210244): Release JSC Stress test failure: wasm.yaml/wasm/js-api/wasm-to-wasm.js.default-wasm
+        https://bugs.webkit.org/show_bug.cgi?id=166669
+        <rdar://problem/29856455>
+
+        Reviewed by Saam Barati.
+
+        Bug #165282 added wasm -> wasm calls, but caused crashes in
+        release builds because the pinned registers are also callee-saved
+        and were being clobbered. B3 didn't see itself clobbering them
+        when no memory was used, and therefore omitted a restore.
+
+        This was causing the C++ code in callWebAssemblyFunction to crash
+        because $r12 was 0, and it expected it to have its value prior to
+        the call.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+
 2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Address failures under LayoutTests/inspector/debugger/stepping
