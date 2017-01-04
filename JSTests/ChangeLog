@@ -1,3 +1,13 @@
+2017-01-04  Saam Barati  <sbarati@apple.com>
+
+        stress/spread-calling.js timing out on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=166689
+        <rdar://problem/29779182>
+
+        Reviewed by Mark Lam.
+
+        * stress/spread-calling.js:
+
 2017-01-04  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: add Module.sections
