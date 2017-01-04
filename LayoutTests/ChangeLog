@@ -1,3 +1,11 @@
+2017-01-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Two editing tests are passing but marked as failure
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-01-04  John Wilander  <wilander@apple.com>
 
         Validate the BCP47-ness of the language string passed to TrackBase::setLanguage()
