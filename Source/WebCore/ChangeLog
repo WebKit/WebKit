@@ -1,3 +1,34 @@
+2017-01-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        label element with tabindex >= 0 is not focusable
+        https://bugs.webkit.org/show_bug.cgi?id=102780
+        <rdar://problem/29796608>
+
+        Reviewed by Darin Adler.
+
+        Fixed the bug by removing the override for HTMLLabelElement::isFocusable which always returned false.
+
+        This is a behavior from r5532 but it doesn't match the latest HTML specification or that of Chrome
+        and Firefox.
+
+        Also fixed an existing bug in HTMLLabelElement::focus and HTMLLegendElement::focus which focused
+        the associated form control when there is one even if the element itself is focusable. Without this fix,
+        traversing from control with shift+tab would break since focusing the label would move the focus back
+        to the input element inside the label element.
+
+        Finally, fixed a bug in HTMLLegendElement::focus that we can call inFocus without updating layout first.
+
+        The fix was inspired by https://chromium.googlesource.com/chromium/src/+/085ad8697b1be50c4f93e296797a25a43a79bcfb
+
+        Test: fast/events/focus-label-legend-elements-with-tabindex.html
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::focus):
+        (WebCore::HTMLLabelElement::isFocusable): Deleted.
+        * html/HTMLLabelElement.h:
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::focus):
+
 2017-01-03  Tim Horton  <timothy_horton@apple.com>
 
         NSSpellChecker's recordResponse isn't called for unseen automatic corrections

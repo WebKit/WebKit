@@ -1,0 +1,12 @@
+Tests for calling focus() on a label element and a legend element. They should not move the focus to the associated element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testContent.querySelector("label").focus(); document.activeElement is testContent.querySelector("label")
+PASS testContent.querySelector("legend").focus(); document.activeElement is testContent.querySelector("legend")
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ foo
+

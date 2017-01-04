@@ -57,13 +57,17 @@ HTMLFormControlElement* HTMLLegendElement::associatedControl()
     return descendantsOfType<HTMLFormControlElement>(*enclosingFieldset).first();
 }
 
-void HTMLLegendElement::focus(bool, FocusDirection direction)
+void HTMLLegendElement::focus(bool restorePreviousSelection, FocusDirection direction)
 {
-    if (isFocusable())
-        Element::focus(true, direction);
-        
     // To match other browsers' behavior, never restore previous selection.
-    if (HTMLFormControlElement* control = associatedControl())
+    if (document().haveStylesheetsLoaded()) {
+        document().updateLayoutIgnorePendingStylesheets();
+        if (isFocusable()) {
+            Element::focus(restorePreviousSelection, direction);
+            return;
+        }
+    }
+    if (auto* control = associatedControl())
         control->focus(false, direction);
 }
 

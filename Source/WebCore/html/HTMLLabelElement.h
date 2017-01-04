@@ -39,8 +39,6 @@ public:
 private:
     HTMLLabelElement(const QualifiedName&, Document&);
 
-    bool isFocusable() const final;
-
     void accessKeyAction(bool sendMouseEvents) final;
 
     // Overridden to update the hover/active state of the corresponding control.

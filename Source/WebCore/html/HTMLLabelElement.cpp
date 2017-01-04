@@ -58,11 +58,6 @@ Ref<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLLabelElement(tagName, document));
 }
 
-bool HTMLLabelElement::isFocusable() const
-{
-    return false;
-}
-
 LabelableElement* HTMLLabelElement::control()
 {
     const AtomicString& controlId = attributeWithoutSynchronization(forAttr);
@@ -150,9 +145,18 @@ bool HTMLLabelElement::willRespondToMouseClickEvents()
     return (element && element->willRespondToMouseClickEvents()) || HTMLElement::willRespondToMouseClickEvents();
 }
 
-void HTMLLabelElement::focus(bool, FocusDirection direction)
+void HTMLLabelElement::focus(bool restorePreviousSelection, FocusDirection direction)
 {
-    // to match other browsers, always restore previous selection
+    if (document().haveStylesheetsLoaded()) {
+        document().updateLayout();
+        if (isFocusable()) {
+            // The value of restorePreviousSelection is not used for label elements as it doesn't override updateFocusAppearance.
+            Element::focus(restorePreviousSelection, direction);
+            return;
+        }
+    }
+
+    // To match other browsers, always restore previous selection.
     if (auto* element = control())
         element->focus(true, direction);
 }
