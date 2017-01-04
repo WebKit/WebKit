@@ -1,3 +1,30 @@
+2017-01-03  Sam Weinig  <sam@webkit.org>
+
+        Re-implement ExceptionOr on top of WTF::Expected
+        https://bugs.webkit.org/show_bug.cgi?id=166668
+
+        Reviewed by Alex Christensen.
+
+        As a first step towards using WTF::Expected instead of ExceptionOr,
+        use Expected as an implementation detail, rather than Variant/std::optional. 
+
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        Add missing #include of Variant.h
+
+        * dom/ExceptionOr.h:
+        (WebCore::ExceptionOr<ReturnType>::ExceptionOr):
+        (WebCore::ExceptionOr<ReturnType>::hasException):
+        (WebCore::ExceptionOr<ReturnType>::releaseException):
+        (WebCore::ExceptionOr<ReturnType>::releaseReturnValue):
+        (WebCore::ExceptionOr<void>::ExceptionOr):
+        (WebCore::ExceptionOr<void>::hasException):
+        (WebCore::ExceptionOr<void>::releaseException):
+        Re-implement on top of Expected.
+
 2017-01-03  Chris Dumez  <cdumez@apple.com>
 
         Make setting Event's cancelBubble to false a no-op

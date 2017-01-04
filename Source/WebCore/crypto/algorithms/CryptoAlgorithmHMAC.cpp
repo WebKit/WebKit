@@ -34,6 +34,7 @@
 #include "CryptoKeyDataOctetSequence.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
+#include <wtf/Variant.h>
 
 namespace WebCore {
 

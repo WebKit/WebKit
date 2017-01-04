@@ -27,8 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "Exception.h"
-#include <wtf/Optional.h>
-#include <wtf/Variant.h>
+#include <wtf/Expected.h>
 
 namespace WebCore {
 
@@ -43,7 +42,7 @@ public:
     ReturnType&& releaseReturnValue();
 
 private:
-    Variant<Exception, ReturnType> m_value;
+    Expected<ReturnType, Exception> m_value;
 };
 
 template<typename ReturnReferenceType> class ExceptionOr<ReturnReferenceType&> {
@@ -68,13 +67,13 @@ public:
     Exception&& releaseException();
 
 private:
-    std::optional<Exception> m_exception;
+    Expected<void, Exception> m_value;
 };
 
 ExceptionOr<void> isolatedCopy(ExceptionOr<void>&&);
 
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Exception&& exception)
-    : m_value(WTFMove(exception))
+    : m_value(makeUnexpected(WTFMove(exception)))
 {
 }
 
@@ -90,17 +89,17 @@ template<typename ReturnType> template<typename OtherType> inline ExceptionOr<Re
 
 template<typename ReturnType> inline bool ExceptionOr<ReturnType>::hasException() const
 {
-    return WTF::holds_alternative<Exception>(m_value);
+    return !m_value.hasValue();
 }
 
 template<typename ReturnType> inline Exception&& ExceptionOr<ReturnType>::releaseException()
 {
-    return WTF::get<Exception>(WTFMove(m_value));
+    return WTFMove(m_value.error());
 }
 
 template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::releaseReturnValue()
 {
-    return WTF::get<ReturnType>(WTFMove(m_value));
+    return WTFMove(m_value.value());
 }
 
 template<typename ReturnReferenceType> inline ExceptionOr<ReturnReferenceType&>::ExceptionOr(Exception&& exception)
@@ -129,18 +128,18 @@ template<typename ReturnReferenceType> inline ReturnReferenceType& ExceptionOr<R
 }
 
 inline ExceptionOr<void>::ExceptionOr(Exception&& exception)
-    : m_exception(WTFMove(exception))
+    : m_value(makeUnexpected(WTFMove(exception)))
 {
 }
 
 inline bool ExceptionOr<void>::hasException() const
 {
-    return !!m_exception;
+    return !m_value.hasValue();
 }
 
 inline Exception&& ExceptionOr<void>::releaseException()
 {
-    return WTFMove(m_exception.value());
+    return WTFMove(m_value.error());
 }
 
 inline ExceptionOr<void> isolatedCopy(ExceptionOr<void>&& value)
