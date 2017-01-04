@@ -1,3 +1,19 @@
+2017-01-04  Jeremy Jones  <jeremyj@apple.com>
+
+        Release pointer lock when page state is reset for any reason, not just for process exited.
+        https://bugs.webkit.org/show_bug.cgi?id=166654
+        <rdar://problem/29849769>
+
+        Reviewed by Tim Horton.
+
+        Pointer lock was not being released when the window is closed.
+        Move the pointer lock to resetState() so it happens whenever the page is
+        reset, not just when it is reset after process exit.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState): Release here.
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Don't release here.
+
 2017-01-03  Tim Horton  <timothy_horton@apple.com>
 
         NSSpellChecker's recordResponse isn't called for unseen automatic corrections
