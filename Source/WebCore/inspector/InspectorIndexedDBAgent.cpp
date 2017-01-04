@@ -123,17 +123,20 @@ public:
         }
 
         auto& request = static_cast<IDBOpenDBRequest&>(*event->target());
-        if (!request.isDone()) {
+
+        auto result = request.result();
+        if (result.hasException()) {
             m_executableWithDatabase->requestCallback().sendFailure("Could not get result in callback.");
             return;
         }
 
-        auto databaseResult = request.databaseResult();
-        if (!databaseResult) {
+        auto resultValue = result.releaseReturnValue();
+        if (!resultValue || !WTF::holds_alternative<RefPtr<IDBDatabase>>(resultValue.value())) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
 
+        auto databaseResult = WTF::get<RefPtr<IDBDatabase>>(resultValue.value());
         m_executableWithDatabase->execute(*databaseResult);
         databaseResult->close();
     }
@@ -362,26 +365,23 @@ public:
         }
 
         auto& request = static_cast<IDBRequest&>(*event->target());
-        if (!request.isDone()) {
+
+        auto result = request.result();
+        if (result.hasException()) {
             m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
         
-        if (request.scriptResult()) {
-            end(false);
-            return;
-        }
-        
-        auto* cursorResult = request.cursorResult();
-        if (!cursorResult) {
+        auto resultValue = result.releaseReturnValue();
+        if (!resultValue || !WTF::holds_alternative<RefPtr<IDBCursor>>(resultValue.value())) {
             end(false);
             return;
         }
 
-        auto& cursor = *cursorResult;
+        auto cursor = WTF::get<RefPtr<IDBCursor>>(resultValue.value());
 
         if (m_skipCount) {
-            if (cursor.advance(m_skipCount).hasException())
+            if (cursor->advance(m_skipCount).hasException())
                 m_requestCallback->sendFailure("Could not advance cursor.");
             m_skipCount = 0;
             return;
@@ -393,7 +393,7 @@ public:
         }
 
         // Continue cursor before making injected script calls, otherwise transaction might be finished.
-        if (cursor.continueFunction(nullptr).hasException()) {
+        if (cursor->continueFunction(nullptr).hasException()) {
             m_requestCallback->sendFailure("Could not continue cursor.");
             return;
         }
@@ -403,9 +403,9 @@ public:
             return;
 
         auto dataEntry = DataEntry::create()
-            .setKey(m_injectedScript.wrapObject(cursor.key(), String(), true))
-            .setPrimaryKey(m_injectedScript.wrapObject(cursor.primaryKey(), String(), true))
-            .setValue(m_injectedScript.wrapObject(cursor.value(), String(), true))
+            .setKey(m_injectedScript.wrapObject(cursor->key(), String(), true))
+            .setPrimaryKey(m_injectedScript.wrapObject(cursor->primaryKey(), String(), true))
+            .setValue(m_injectedScript.wrapObject(cursor->value(), String(), true))
             .release();
         m_result->addItem(WTFMove(dataEntry));
     }

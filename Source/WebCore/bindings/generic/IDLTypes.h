@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <heap/HandleTypes.h>
 #include <wtf/Brigand.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
@@ -59,7 +60,14 @@ struct IDLUnsupportedType : IDLType<void> { };
 // IDLNull is a special type for use as a subtype in an IDLUnion that is nullable.
 struct IDLNull : IDLType<std::nullptr_t> { };
 
-struct IDLAny : IDLType<JSC::JSValue> { };
+struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
+    using ParameterType = JSC::JSValue;
+
+    using NullableType = JSC::Strong<JSC::Unknown>;
+    static inline std::nullptr_t nullValue() { return nullptr; }
+    template<typename U> static inline bool isNullValue(U&& value) { return !value; }
+    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
+};
 
 struct IDLBoolean : IDLType<bool> { };
 

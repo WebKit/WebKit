@@ -1148,7 +1148,6 @@ set(WebCore_SOURCES
     bindings/js/JSIDBCursorWithValueCustom.cpp
     bindings/js/JSIDBIndexCustom.cpp
     bindings/js/JSIDBObjectStoreCustom.cpp
-    bindings/js/JSIDBRequestCustom.cpp
     bindings/js/JSIDBTransactionCustom.cpp
     bindings/js/JSImageDataCustom.cpp
     bindings/js/JSInspectorFrontendHostCustom.cpp

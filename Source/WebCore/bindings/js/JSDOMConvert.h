@@ -214,9 +214,16 @@ template<typename T> struct DefaultConverter {
 // MARK: Any type
 
 template<> struct Converter<IDLAny> : DefaultConverter<IDLAny> {
+    using ReturnType = JSC::JSValue;
+    
     static JSC::JSValue convert(JSC::ExecState&, JSC::JSValue value)
     {
         return value;
+    }
+
+    static JSC::JSValue convert(const JSC::Strong<JSC::Unknown>& value)
+    {
+        return value.get();
     }
 };
 
@@ -250,6 +257,11 @@ namespace Detail {
     template<typename T>
     struct NullableConversionType<IDLInterface<T>> {
         using Type = typename Converter<IDLInterface<T>>::ReturnType;
+    };
+
+    template<>
+    struct NullableConversionType<IDLAny> {
+        using Type = typename Converter<IDLAny>::ReturnType;
     };
 }
 

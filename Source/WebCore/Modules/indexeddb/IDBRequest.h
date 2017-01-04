@@ -67,12 +67,11 @@ public:
 
     virtual ~IDBRequest();
 
-    IDBCursor* cursorResult() const { return m_cursorResult.get(); }
-    IDBDatabase* databaseResult() const { return m_databaseResult.get(); }
-    JSC::JSValue scriptResult() const { return m_scriptResult.get(); }
+    using Result = Variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, JSC::Strong<JSC::Unknown>>;
+    ExceptionOr<std::optional<Result>> result() const;
 
     using Source = Variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>, RefPtr<IDBCursor>>;
-    std::optional<Source> source() const;
+    const std::optional<Source>& source() const { return m_source; }
 
     ExceptionOr<DOMError*> error() const;
 
@@ -141,8 +140,6 @@ private:
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IndexedDB::ObjectStoreRecordType, IDBTransaction&);
     IDBRequest(ScriptExecutionContext&, IDBIndex&, IndexedDB::IndexRecordType, IDBTransaction&);
 
-    void clearResult();
-
     EventTargetInterface eventTargetInterface() const override;
 
     const char* activeDOMObjectName() const final;
@@ -161,18 +158,11 @@ private:
 
     IDBCursor* resultCursor();
 
-    // Could consider storing these three in a union or union-like class instead.
-    JSC::Strong<JSC::Unknown> m_scriptResult;
-    RefPtr<IDBCursor> m_cursorResult;
-    RefPtr<IDBDatabase> m_databaseResult;
-
     IDBError m_idbError;
     IDBResourceIdentifier m_resourceIdentifier;
 
-    // Could consider storing these three in a union or union-like class instead.
-    RefPtr<IDBObjectStore> m_objectStoreSource;
-    RefPtr<IDBIndex> m_indexSource;
-    RefPtr<IDBCursor> m_cursorSource;
+    std::optional<Result> m_result;
+    std::optional<Source> m_source;
 
     bool m_hasPendingActivity { true };
     IndexedDB::ObjectStoreRecordType m_requestedObjectStoreRecordType { IndexedDB::ObjectStoreRecordType::ValueOnly };
