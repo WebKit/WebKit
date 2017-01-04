@@ -1,3 +1,30 @@
+2017-01-03  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: color picker should feature an editable CSS value
+        https://bugs.webkit.org/show_bug.cgi?id=124356
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker):
+        (.color-picker > .color-inputs):
+        (.color-picker > .color-inputs > div):
+        (.color-picker > .color-inputs > div[hidden]):
+        (.color-picker > .color-inputs input):
+
+        * UserInterface/Views/ColorPicker.js:
+        (WebInspector.ColorPicker.createColorInput):
+        (WebInspector.ColorPicker):
+        (WebInspector.ColorPicker.prototype.set color):
+        (WebInspector.ColorPicker.prototype.sliderValueDidChange):
+        (WebInspector.ColorPicker.prototype._updateColor):
+        (WebInspector.ColorPicker.prototype._showColorComponentInputs.updateColorInput):
+        (WebInspector.ColorPicker.prototype._showColorComponentInputs):
+        (WebInspector.ColorPicker.prototype._handleColorInputInput):
+        Add an input element (with a label for the component name and its units) for each component
+        as part of the current color format (e.g. R, G, B, A).  If any of these inputs are changed
+        then the color is also changed and the "ColorChanged" event is fired.
+
 2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: "Invalid Characters" setting does the opposite of the checkbox
