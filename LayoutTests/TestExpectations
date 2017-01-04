@@ -988,6 +988,8 @@ accessibility/roles-exposed.html
 animations/trigger-computed-style.html
 animations/trigger-container-scroll-boundaries.html
 animations/trigger-parsing.html
+animations/trigger-container-scroll-empty.html
+animations/trigger-container-scroll-simple.html
 fast/css/ancestor-of-hovered-element-removed.html
 fast/css/css-selector-text.html
 fast/css/css-set-selector-text.html
