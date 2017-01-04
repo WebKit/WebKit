@@ -1,3 +1,21 @@
+2017-01-04  Saam Barati  <sbarati@apple.com>
+
+        We don't properly handle exceptions inside the nativeCallTrampoline macro in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=163720
+
+        Reviewed by Mark Lam.
+
+        In the LLInt, we were incorrectly doing the exception check after the call.
+        Before the exception check, we were unwinding to our caller's
+        frame under the assumption that our caller was always a JS frame.
+        This is incorrect, however, because our caller might be a C frame.
+        One way that it can be a C frame is when C calls to JS, and JS tail
+        calls to native. This patch fixes this bug by doing unwinding from
+        the native callee's frame instead of its callers.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2017-01-03  JF Bastien  <jfbastien@apple.com>
 
         REGRESSION (r210244): Release JSC Stress test failure: wasm.yaml/wasm/js-api/wasm-to-wasm.js.default-wasm

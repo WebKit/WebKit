@@ -2021,18 +2021,18 @@ macro nativeCallTrampoline(executableOffsetToFunction)
             addp 32, sp
         end
     end
+
     loadp Callee[cfr], t3
     andp MarkedBlockMask, t3
     loadp MarkedBlock::m_vm[t3], t3
 
-    functionEpilogue()
-
     btqnz VM::m_exception[t3], .handleException
+
+    functionEpilogue()
     ret
 
 .handleException:
     storep cfr, VM::topCallFrame[t3]
-    restoreStackPointerAfterCall()
     jmp _llint_throw_from_slow_path_trampoline
 end
 

@@ -1,3 +1,15 @@
+2017-01-04  Saam Barati  <sbarati@apple.com>
+
+        We don't properly handle exceptions inside the nativeCallTrampoline macro in the LLInt
+        https://bugs.webkit.org/show_bug.cgi?id=163720
+
+        Reviewed by Mark Lam.
+
+        * stress/bound-function-tail-call-with-exception.js: Added.
+        (bar):
+        (foo):
+        (catch):
+
 2017-01-03  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: check and test in-call / out-call values
