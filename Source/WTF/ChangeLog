@@ -1,3 +1,12 @@
+2017-01-04  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r210257): com.apple.WebKit.WebContent.Development crashed in com.apple.WebCore: WebCore::ExceptionOr<WTF::Ref<WebCore::Database> >::operator= + 14
+        <rdar://problem/29866398> 
+
+        * wtf/Expected.h:
+        (WTF::Expected::swap):
+        Add missing calls to destroy() when moving things over each other in a union.
+
 2017-01-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use prctl to name thread on Linux

@@ -288,12 +288,16 @@ public:
             swap(base::s.val, o.s.val);
         else if (base::has && !o.has) {
             ErrorType e(WTFMove(o.s.err));
+            ExpectedDetail::destroy(o.s.err);
             ::new (&o.s.val) ValueType(WTFMove(base::s.val));
+            ExpectedDetail::destroy(base::s.val);
             ::new (&base::s.err) ErrorType(WTFMove(e));
             swap(base::has, o.has);
         } else if (!base::has && o.has) {
             ValueType v(WTFMove(o.s.val));
+            ExpectedDetail::destroy(o.s.val);
             ::new (&o.s.err) ErrorType(WTFMove(base::s.err));
+            ExpectedDetail::destroy(base::s.err);
             ::new (&base::s.val) ValueType(WTFMove(v));
             swap(base::has, o.has);
         } else
