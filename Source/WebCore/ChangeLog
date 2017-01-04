@@ -1,3 +1,24 @@
+2017-01-04  Tim Horton  <timothy_horton@apple.com>
+
+        Provide a setting for clients to always prefer low-power WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=166675
+        <rdar://problem/29834093>
+
+        Reviewed by Dan Bernstein.
+
+        No new tests; as noted in r204664, we don't know how to reliably test
+        automatic graphics switching. One could use the manual test introduced
+        in that commit; after this commit, with the setting switched on, on a
+        dual-GPU machine that is actively using integrated graphics, that test
+        should return the same result for both contexts.
+
+        * page/Settings.in:
+        Add a setting to prefer low-power WebGL.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        If said setting is enabled, set preferLowPowerToHighPerformance.
+
 2017-01-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         label element with tabindex >= 0 is not focusable
