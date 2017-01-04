@@ -53,7 +53,11 @@ NSArray* PasteboardTypes::forEditing()
 
 NSArray* PasteboardTypes::forURL()
 {
-    static NSArray *types = retain([NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, WebURLPboardType,  WebURLNamePboardType, NSStringPboardType, NSFilenamesPboardType, nil]);
+    static NSArray *types = retain([NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, WebURLPboardType,  WebURLNamePboardType, NSStringPboardType, NSFilenamesPboardType,
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+                                    NSFilesPromisePboardType,
+#endif
+                                    nil]);
     return types;
 }
 

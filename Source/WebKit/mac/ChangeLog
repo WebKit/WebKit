@@ -1,3 +1,19 @@
+2017-01-04  Enrica Casucci  <enrica@apple.com>
+
+        Support File Promise during drag for macOS.
+        https://bugs.webkit.org/show_bug.cgi?id=165204
+        rdar://problem/19595567
+
+        Reviewed by Tim Horton.
+
+        Adds support for dropping a File Promise in a WebView.
+        The implementation uses new File Promise API available in Sierra.
+
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_dragTypesForURL]):
+        * WebView/WebView.mm:
+        (-[WebView performDragOperation:]):
+
 2017-01-04  Tim Horton  <timothy_horton@apple.com>
 
         Provide a setting for clients to always prefer low-power WebGL

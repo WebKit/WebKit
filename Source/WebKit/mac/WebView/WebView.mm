@@ -6517,8 +6517,45 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    return core(self)->dragController().performDragOperation(dragData);
+    DragData *dragData = new DragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if ([draggingInfo.draggingPasteboard.types containsObject:NSFilesPromisePboardType]) {
+        NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:NSFilesPromisePboardType];
+        if (![files isKindOfClass:[NSArray class]]) {
+            delete dragData;
+            return false;
+        }
+        size_t fileCount = files.count;
+        Vector<String> *fileNames = new Vector<String>;
+        NSURL *dropLocation = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:self classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) {
+            NSFilePromiseReceiver *item = draggingItem.item;
+            NSDictionary *options = @{ };
+
+            [item receivePromisedFilesAtDestination:dropLocation options:options operationQueue:[NSOperationQueue new] reader:^(NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) {
+                if (errorOrNil)
+                    return;
+
+                dispatch_async(dispatch_get_main_queue(), [self, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData] {
+                    fileNames->append(path.get());
+                    if (fileNames->size() == fileCount) {
+                        dragData->setFileNames(*fileNames);
+                        core(self)->dragController().performDragOperation(*dragData);
+                        delete dragData;
+                        delete fileNames;
+                    }
+                });
+            }];
+        }];
+
+        return true;
+    }
+#endif
+    bool returnValue = core(self)->dragController().performDragOperation(*dragData);
+    delete dragData;
+
+    return returnValue;
 }
 
 - (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types
