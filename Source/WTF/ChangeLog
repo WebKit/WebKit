@@ -1,5 +1,18 @@
 2017-01-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Use prctl to name thread on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=166663
+
+        Reviewed by Michael Catanzaro.
+
+        It is quite useful if we can name threads. This name will be shown in GDB.
+        While macOS uses pthread_setname_np, we can use prctl on Linux.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeCurrentThreadInternal):
+
+2017-01-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         WorkQueueGeneric's platformInvalidate() can deadlock when called on the RunLoop's thread
         https://bugs.webkit.org/show_bug.cgi?id=166645
 
