@@ -1,3 +1,25 @@
+2017-01-03  Nan Wang  <n_wang@apple.com>
+
+        AX: Focus should jump into modal dialogs when one appears
+        https://bugs.webkit.org/show_bug.cgi?id=166670
+
+        Reviewed by Chris Fleizach.
+
+        Added a timer to let focus jump into a modal dialog if the web
+        author didn't handle the focus movement.
+
+        Test: accessibility/mac/aria-modal-auto-focus.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::~AXObjectCache):
+        (WebCore::firstFocusableChild):
+        (WebCore::AXObjectCache::focusAriaModalNode):
+        (WebCore::AXObjectCache::focusAriaModalNodeTimerFired):
+        (WebCore::AXObjectCache::handleAriaModalChange):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::focusAriaModalNode):
+
 2017-01-03  Andy Estes  <aestes@apple.com>
 
         Rename SharedBufferMac.mm to SharedBufferCocoa.mm

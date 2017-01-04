@@ -1,3 +1,13 @@
+2017-01-03  Nan Wang  <n_wang@apple.com>
+
+        AX: Focus should jump into modal dialogs when one appears
+        https://bugs.webkit.org/show_bug.cgi?id=166670
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/aria-modal-auto-focus-expected.txt: Added.
+        * accessibility/mac/aria-modal-auto-focus.html: Added.
+
 2017-01-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: WrappedPromise constructor should behave like the Promise constructor

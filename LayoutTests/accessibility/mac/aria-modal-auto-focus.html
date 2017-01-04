@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+
+<style>
+.box-hidden {
+    display: none;
+}
+</style>
+
+<body id="body">
+
+<div id="bg">
+<p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
+<p><a onclick="toggleDialog(document.getElementById('box'),'show'); document.getElementById('new').focus(); return false;" href="#" role="button" id="displayBtn">Display a dialog</a></p>
+</div>
+
+<div role="dialog" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1" aria-modal="false">
+    <h3 id="myDialog">Just an example.</h3>
+    <button id="ok" onclick="toggleDialog(document.getElementById('box'),'hide');" class="close-button">OK</button>
+    <button onclick="toggleDialog(document.getElementById('box2'),'show');" id="new">New</button>
+</div>
+
+<div role="dialog" aria-labelledby="myDialog2" id="box2" class="box-hidden" tabindex="-1">
+    <h3 id="myDialog2">Another dialog.</h3>
+    <button id="close" onclick="toggleDialog(document.getElementById('box2'),'hide');" class="close-button">Close</button>
+</div>
+
+
+<script>
+
+    description("This tests that focus will automatically move to aria-modal dialogs");
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        shouldBeTrue("backgroundAccessible()");
+        var newBtn;
+        var okBtn;
+        var closeBtn;
+        
+        // 1. Click the display button, dialog1 shows and focus shouldn't move since we have
+        // javascript code to focus on the "new" button.
+        document.getElementById("displayBtn").click();
+        newBtn = accessibilityController.accessibleElementById("new");
+        setTimeout(function(){ 
+            shouldBeTrue("newBtn.isFocused");
+            
+            // 2. Click the new button, dialog2 shows and focus should move to the close button.
+            document.getElementById("new").click();
+            closeBtn = accessibilityController.accessibleElementById("close");
+            setTimeout(function(){ 
+                shouldBeTrue("closeBtn.isFocused");
+                
+                // 3. Click the close button, dialog2 closes and focus should go back to the
+                // first focusable child of dialog1.
+                document.getElementById("close").click();
+                okBtn = accessibilityController.accessibleElementById("ok");
+                setTimeout(function(){
+                    shouldBeTrue("okBtn.isFocused");
+                    finishJSTest();
+                }, 50);
+            }, 50);
+        }, 50);
+    }
+    
+    function backgroundAccessible() {
+        var displayBtn = accessibilityController.accessibleElementById("displayBtn");
+        var bgContent = accessibilityController.accessibleElementById("bgContent");
+        
+        if (!displayBtn || !bgContent)
+            return false;
+        
+        return !displayBtn.isIgnored && !bgContent.isIgnored;
+    }
+    
+    function toggleDialog(dialog, sh) {
+        if (sh == "show") {
+            // show the dialog 
+            dialog.style.display = 'block';
+            dialog.setAttribute("aria-modal", "true");
+        } else {
+            dialog.style.display = 'none';
+            dialog.setAttribute("aria-modal", "false"); 
+        }
+    }
+
+</script>
+
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
