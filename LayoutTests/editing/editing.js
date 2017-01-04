@@ -894,7 +894,11 @@ function forwardDeleteCommand() {
 })();
 
 function runEditingTest() {
-    if (window.testRunner)
+    runEditingTestWithCallbackLogging(true);
+}
+
+function runEditingTestWithCallbackLogging(enableCallbackLogging) {
+    if (window.testRunner && enableCallbackLogging)
         testRunner.dumpEditingCallbacks();
 
     var elem = document.getElementById("test");

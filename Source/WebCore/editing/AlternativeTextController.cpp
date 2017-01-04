@@ -314,7 +314,7 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
 void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction)
 {
     if (AlternativeTextClient* client = alternativeTextClient())
-        client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
+        client->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, corrected, correction);
 
     Ref<Frame> protector(m_frame);
     m_frame.document()->updateLayout();
@@ -516,15 +516,10 @@ TextCheckerClient* AlternativeTextController::textChecker()
     return nullptr;
 }
 
-void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString)
+void AlternativeTextController::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, PassRefPtr<Range> replacementRange)
 {
-    if (AlternativeTextClient* client = alternativeTextClient())
-        client->recordAutocorrectionResponse(AutocorrectionReverted, replacedString, replacementString);
-}
-
-void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange)
-{
-    recordAutocorrectionResponseReversed(replacedString, plainText(replacementRange.get()));
+    if (auto client = alternativeTextClient())
+        client->recordAutocorrectionResponse(response, replacedString, plainText(replacementRange.get()));
 }
 
 void AlternativeTextController::markReversed(PassRefPtr<Range> changedRange)
@@ -557,9 +552,9 @@ void AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection(
         // Spelling corrected text has been edited. We need to determine whether user has reverted it to original text or
         // edited it to something else, and notify spellchecker accordingly.
         if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0]->description() == corrected)
-            client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
+            client->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, corrected, correction);
         else
-            client->recordAutocorrectionResponse(AutocorrectionEdited, corrected, correction);
+            client->recordAutocorrectionResponse(AutocorrectionResponse::Edited, corrected, correction);
     }
 
     markers.removeMarkers(rangeOfCorrection, DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);

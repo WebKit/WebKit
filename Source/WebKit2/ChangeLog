@@ -1,3 +1,25 @@
+2017-01-03  Tim Horton  <timothy_horton@apple.com>
+
+        NSSpellChecker's recordResponse isn't called for unseen automatic corrections
+        https://bugs.webkit.org/show_bug.cgi?id=166450
+        <rdar://problem/29447824>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/CorrectionPanel.h:
+        * UIProcess/mac/CorrectionPanel.mm:
+        (WebKit::CorrectionPanel::recordAutocorrectionResponse):
+        (WebKit::CorrectionPanel::handleAcceptedReplacement):
+        Funnel all calls to recordResponse:toCorrection:forWord:language:inSpellDocumentWithTag:
+        through recordAutocorrectionResponse, for debugging's sake.
+        Drop the NSView parameter because we don't need it, just the tag.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::toCorrectionResponse):
+        (WebKit::PageClientImpl::recordAutocorrectionResponse):
+        Convert the new AutocorrectionResponseType value to its corresponding
+        NSCorrectionResponse value.
+
 2017-01-03  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the Apple Sierra Release 32-bit Build following <https://trac.webkit.org/changeset/210075>

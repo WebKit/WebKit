@@ -109,7 +109,7 @@ String CorrectionPanel::dismissInternal(ReasonForDismissingAlternativeText reaso
     return m_resultForDismissal.get();
 }
 
-void CorrectionPanel::recordAutocorrectionResponse(NSView *view, NSInteger spellCheckerDocumentTag, NSCorrectionResponse response, const String& replacedString, const String& replacementString)
+void CorrectionPanel::recordAutocorrectionResponse(NSInteger spellCheckerDocumentTag, NSCorrectionResponse response, const String& replacedString, const String& replacementString)
 {
     [[NSSpellChecker sharedSpellChecker] recordResponse:response toCorrection:replacementString forWord:replacedString language:nil inSpellDocumentWithTag:spellCheckerDocumentTag];
 }
@@ -119,26 +119,24 @@ void CorrectionPanel::handleAcceptedReplacement(WebViewImpl& webViewImpl, NSStri
     if (!m_view)
         return;
 
-    NSSpellChecker* spellChecker = [NSSpellChecker sharedSpellChecker];
-    
     switch (correctionIndicatorType) {
     case NSCorrectionIndicatorTypeDefault:
         if (acceptedReplacement)
-            [spellChecker recordResponse:NSCorrectionResponseAccepted toCorrection:acceptedReplacement forWord:replaced language:nil inSpellDocumentWithTag:m_spellCheckerDocumentTag];
+            recordAutocorrectionResponse(m_spellCheckerDocumentTag, NSCorrectionResponseAccepted, replaced, acceptedReplacement);
         else {
             if (!m_wasDismissedExternally || m_reasonForDismissing == ReasonForDismissingAlternativeTextCancelled)
-                [spellChecker recordResponse:NSCorrectionResponseRejected toCorrection:proposedReplacement forWord:replaced language:nil inSpellDocumentWithTag:m_spellCheckerDocumentTag];
+                recordAutocorrectionResponse(m_spellCheckerDocumentTag, NSCorrectionResponseRejected, replaced, proposedReplacement);
             else
-                [spellChecker recordResponse:NSCorrectionResponseIgnored toCorrection:proposedReplacement forWord:replaced language:nil inSpellDocumentWithTag:m_spellCheckerDocumentTag];
+                recordAutocorrectionResponse(m_spellCheckerDocumentTag, NSCorrectionResponseIgnored, replaced, proposedReplacement);
         }
         break;
     case NSCorrectionIndicatorTypeReversion:
         if (acceptedReplacement)
-            [spellChecker recordResponse:NSCorrectionResponseReverted toCorrection:replaced forWord:acceptedReplacement language:nil inSpellDocumentWithTag:m_spellCheckerDocumentTag];
+            recordAutocorrectionResponse(m_spellCheckerDocumentTag, NSCorrectionResponseReverted, replaced, acceptedReplacement);
         break;
     case NSCorrectionIndicatorTypeGuesses:
         if (acceptedReplacement)
-            [spellChecker recordResponse:NSCorrectionResponseAccepted toCorrection:acceptedReplacement forWord:replaced language:nil inSpellDocumentWithTag:m_spellCheckerDocumentTag];
+            recordAutocorrectionResponse(m_spellCheckerDocumentTag, NSCorrectionResponseAccepted, replaced, acceptedReplacement);
         break;
     }
 

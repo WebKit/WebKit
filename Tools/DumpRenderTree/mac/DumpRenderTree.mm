@@ -34,6 +34,7 @@
 #import "DefaultPolicyDelegate.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "DumpRenderTreePasteboard.h"
+#import "DumpRenderTreeSpellChecker.h"
 #import "DumpRenderTreeWindow.h"
 #import "EditingDelegate.h"
 #import "EventSendingController.h"
@@ -1893,6 +1894,8 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
 #endif
 
     [mainFrame _clearOpener];
+
+    setSpellCheckerLoggingEnabled(false);
 
     resetAccumulatedLogs();
     WebCoreTestSupport::initializeLogChannelsIfNecessary();

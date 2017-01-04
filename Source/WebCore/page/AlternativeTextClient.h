@@ -50,9 +50,10 @@ enum AlternativeTextType {
     AlternativeTextTypeDictationAlternatives
 };
 
-enum AutocorrectionResponseType {
-    AutocorrectionEdited,
-    AutocorrectionReverted
+enum class AutocorrectionResponse {
+    Edited,
+    Reverted,
+    Accepted
 };
 
 class AlternativeTextClient {
@@ -63,7 +64,7 @@ public:
     virtual void showCorrectionAlternative(AlternativeTextType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
     virtual void dismissAlternative(ReasonForDismissingAlternativeText) = 0;
     virtual String dismissAlternativeSoon(ReasonForDismissingAlternativeText) = 0;
-    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
+    virtual void recordAutocorrectionResponse(AutocorrectionResponse, const String& replacedString, const String& replacementString) = 0;
 #endif
 #if USE(DICTATION_ALTERNATIVES)
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext) = 0;
