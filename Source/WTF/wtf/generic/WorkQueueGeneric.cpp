@@ -56,25 +56,14 @@ void WorkQueue::platformInitialize(const char* name, Type, QOS)
             m_initializeRunLoopCondition.notifyOne();
         }
         m_runLoop->run();
-        {
-            LockHolder locker(m_terminateRunLoopConditionMutex);
-            m_runLoop = nullptr;
-            m_terminateRunLoopCondition.notifyOne();
-        }
     });
     m_initializeRunLoopCondition.wait(m_initializeRunLoopConditionMutex);
 }
 
 void WorkQueue::platformInvalidate()
 {
-    {
-        LockHolder locker(m_terminateRunLoopConditionMutex);
-        if (m_runLoop) {
-            m_runLoop->stop();
-            m_terminateRunLoopCondition.wait(m_terminateRunLoopConditionMutex);
-        }
-    }
-
+    if (m_runLoop)
+        m_runLoop->stop();
     if (m_workQueueThread) {
         detachThread(m_workQueueThread);
         m_workQueueThread = 0;

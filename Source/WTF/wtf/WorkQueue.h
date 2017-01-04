@@ -116,8 +116,6 @@ private:
     Lock m_initializeRunLoopConditionMutex;
     Condition m_initializeRunLoopCondition;
     RunLoop* m_runLoop;
-    Lock m_terminateRunLoopConditionMutex;
-    Condition m_terminateRunLoopCondition;
 #endif
 };
 
