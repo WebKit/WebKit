@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test that only BCP47 language tags are accepted as valid but still reflected</title>
+        <!--
+        <script src="media-controls.js"></script>
+        <script src="media-file.js"></script>
+        -->
+        <script src="media-source-loader.js"></script>
+        <script src="../video-test.js"></script>
+        <script>
+            var loader;
+            var source;
+            var sourceBuffer;
+
+            function mediaDataLoadingFailed() {
+                failTest('Media data loading failed');
+            }
+
+            function mediaDataLoaded() {
+                source = new MediaSource();
+                waitForEvent('sourceopen', sourceOpen, false, false, source);
+                waitForEventAndFail('error');
+                run('video.src = URL.createObjectURL(source)');
+            }
+
+            function sourceOpen() {
+                run('source.duration = loader.duration()');
+                run('sourceBuffer = source.addSourceBuffer(loader.type())');
+                waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+                run('sourceBuffer.appendBuffer(loader.initSegment())');
+            }
+
+            function sourceInitialized() {
+                waitForEventOn(sourceBuffer, 'update', startBCP74Test, false, true);
+                consoleWrite('Append a partial media segment.')
+                run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegment(0).byteLength / 2))');
+            }
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            var validLanguageTags = [
+                // Grandfathered, irregular, https://tools.ietf.org/html/bcp47#section-2.1
+                "en-GB-oed", "i-ami", "i-bnn", "i-default",
+                "i-enochian", "i-hak", "i-klingon", "i-lux",
+                "i-mingo", "i-navajo", "i-pwn", "i-tao",
+                "i-tay", "i-tsu", "sgn-BE-FR", "sgn-BE-NL",
+                "sgn-CH-DE",
+                // Grandfathered, regular, https://tools.ietf.org/html/bcp47#section-2.1
+                "art-lojban", "cel-gaulish", "no-bok", "no-nyn",
+                "zh-guoyu", "zh-hakka", "zh-min", "zh-min-nan",
+                "zh-xiang",
+                // Other examples from the spec, mainly https://tools.ietf.org/html/bcp47#appendix-A
+                "de", "fr", "ja", "zh-Hant",
+                "zh-Han", "sr-Cyrl", "sr-Latn", "zh-cmn-Hans-CN",
+                "cmn-Hans-CN", "zh-yue-HK", "yue-HK", "zh-Hans-CN",
+                "sr-Latn-RS", "sl-rozaj", "sl-rozaj-biske", "sl-nedis",
+                "de-CH-1901", "sl-IT-nedis", "hy-Latn-IT-arevela", "en-US",
+                "es-419", "de-CH-x-phonebk", "az-Arab-x-AZE-derbend", "x-whatever",
+                "qaa-Qaaa-QM-x-southern", "de-Qaaa", "sr-Latn-QM", "sr-Qaaa-RS",
+                "zh-Hant-CN-x-private1-private2", "de-DE", "de-de", "de-Latn-DE",
+                "de-Latf-DE", "de-DE-x-goethe", "de-Latn-DE-1996", "de-Deva-DE",
+                "en-US-u-islamcal", "zh-CN-a-myext-x-private", "en-a-myext-b-another",
+                "zh-Latn-CN-variant1-a-extend1-x-wadegile-private1"
+            ];
+
+            var invalidLanguageTags = [
+                // Invalid length, less than 2 or over 100
+                "a", "1", "ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij",
+                // Invalid first characters
+                "1a", "-a",
+                // Invalid second characters
+                "a-", "a1",
+                // Invalid third characters
+                "aa1",
+                // Invalid fourth characters
+                "aaaa", "aaa1",
+                // Invalid characters beyond the fourth
+                "inv-alid-char space", "inv-alid-char–longDash", "inv-alid-char-Pålska",
+                "inv-alid-char-*", "inv-alid-char-"
+            ];
+
+            var videoTrack;
+            var audioTrack;
+            var textTrack;
+            function startBCP74Test () {
+                videoTrack = video.videoTracks[0];
+                audioTrack = video.audioTracks[0];
+                // Access text track language through the element's srclang attribute
+                // since the DOM property is read-only.
+                textTrack = document.getElementById("textTrack");
+                for (var i = 0; i < validLanguageTags.length; i++) {
+                    videoTrack.language = validLanguageTags[i];
+                    testExpected("videoTrack.language", validLanguageTags[i]);
+                    textTrack.setAttribute("srclang", validLanguageTags[i]);
+                    testExpected("textTrack.track.language", validLanguageTags[i]);
+                    audioTrack.language = validLanguageTags[i];
+                    testExpected("audioTrack.language", validLanguageTags[i]);
+                }
+                var notOverwritten = "not-overwritten";
+                for (var i = 0; i < invalidLanguageTags.length; i++) {
+                    // These are accepted in the web page layer but will produce console warnings
+                    videoTrack.language = invalidLanguageTags[i];
+                    testExpected("videoTrack.language", invalidLanguageTags[i]);
+                    textTrack.setAttribute("srclang", invalidLanguageTags[i]);
+                    testExpected("textTrack.track.language", invalidLanguageTags[i]);
+                    audioTrack.language = invalidLanguageTags[i];
+                    testExpected("audioTrack.language", invalidLanguageTags[i]);
+                }
+                endTest();
+            }
+
+            function runTest()
+            {
+                findMediaElement();
+
+                loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+                loader.onload = mediaDataLoaded;
+                loader.onerror = mediaDataLoadingFailed;
+            }
+        </script>
+    </head>
+
+    <body onload="runTest()">
+        <p>Test that only BCP47 language tags are accepted as valid but still reflected.</p>
+        <video controls>
+            <track id="textTrack" kind="captions" src="../track/captions-webvtt/captions-fast.vtt" />
+        </video>
+    </body>
+</html>

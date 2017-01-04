@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1380: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 26: The language contains a null character and is not a valid BCP 47 language tag.
 
 PASS TextTrack.language 
 PASS TextTrack.language, \u0000 

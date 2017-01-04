@@ -1,0 +1,302 @@
+CONSOLE MESSAGE: line 176: The language 'a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language '1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language '1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language '1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language '1a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language '1a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language '1a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language '-a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language '-a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language '-a' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'a-' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'a-' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'a-' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'a1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'a1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'a1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'aa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'aa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'aa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'aaaa' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'aaaa' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'aaaa' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'aaa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'aaa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'aaa1' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char space' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-charâ€“longDash' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char-PÃ¥lska' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char-*' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 106: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 176: The language 'inv-alid-char-ï£¿' is not a valid BCP 47 language tag.
+Test that only BCP47 language tags are accepted as valid but still reflected.
+
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a partial media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegment(0).byteLength / 2)))
+EVENT(update)
+EXPECTED (videoTrack.language == 'en-GB-oed') OK
+EXPECTED (textTrack.track.language == 'en-GB-oed') OK
+EXPECTED (audioTrack.language == 'en-GB-oed') OK
+EXPECTED (videoTrack.language == 'i-ami') OK
+EXPECTED (textTrack.track.language == 'i-ami') OK
+EXPECTED (audioTrack.language == 'i-ami') OK
+EXPECTED (videoTrack.language == 'i-bnn') OK
+EXPECTED (textTrack.track.language == 'i-bnn') OK
+EXPECTED (audioTrack.language == 'i-bnn') OK
+EXPECTED (videoTrack.language == 'i-default') OK
+EXPECTED (textTrack.track.language == 'i-default') OK
+EXPECTED (audioTrack.language == 'i-default') OK
+EXPECTED (videoTrack.language == 'i-enochian') OK
+EXPECTED (textTrack.track.language == 'i-enochian') OK
+EXPECTED (audioTrack.language == 'i-enochian') OK
+EXPECTED (videoTrack.language == 'i-hak') OK
+EXPECTED (textTrack.track.language == 'i-hak') OK
+EXPECTED (audioTrack.language == 'i-hak') OK
+EXPECTED (videoTrack.language == 'i-klingon') OK
+EXPECTED (textTrack.track.language == 'i-klingon') OK
+EXPECTED (audioTrack.language == 'i-klingon') OK
+EXPECTED (videoTrack.language == 'i-lux') OK
+EXPECTED (textTrack.track.language == 'i-lux') OK
+EXPECTED (audioTrack.language == 'i-lux') OK
+EXPECTED (videoTrack.language == 'i-mingo') OK
+EXPECTED (textTrack.track.language == 'i-mingo') OK
+EXPECTED (audioTrack.language == 'i-mingo') OK
+EXPECTED (videoTrack.language == 'i-navajo') OK
+EXPECTED (textTrack.track.language == 'i-navajo') OK
+EXPECTED (audioTrack.language == 'i-navajo') OK
+EXPECTED (videoTrack.language == 'i-pwn') OK
+EXPECTED (textTrack.track.language == 'i-pwn') OK
+EXPECTED (audioTrack.language == 'i-pwn') OK
+EXPECTED (videoTrack.language == 'i-tao') OK
+EXPECTED (textTrack.track.language == 'i-tao') OK
+EXPECTED (audioTrack.language == 'i-tao') OK
+EXPECTED (videoTrack.language == 'i-tay') OK
+EXPECTED (textTrack.track.language == 'i-tay') OK
+EXPECTED (audioTrack.language == 'i-tay') OK
+EXPECTED (videoTrack.language == 'i-tsu') OK
+EXPECTED (textTrack.track.language == 'i-tsu') OK
+EXPECTED (audioTrack.language == 'i-tsu') OK
+EXPECTED (videoTrack.language == 'sgn-BE-FR') OK
+EXPECTED (textTrack.track.language == 'sgn-BE-FR') OK
+EXPECTED (audioTrack.language == 'sgn-BE-FR') OK
+EXPECTED (videoTrack.language == 'sgn-BE-NL') OK
+EXPECTED (textTrack.track.language == 'sgn-BE-NL') OK
+EXPECTED (audioTrack.language == 'sgn-BE-NL') OK
+EXPECTED (videoTrack.language == 'sgn-CH-DE') OK
+EXPECTED (textTrack.track.language == 'sgn-CH-DE') OK
+EXPECTED (audioTrack.language == 'sgn-CH-DE') OK
+EXPECTED (videoTrack.language == 'art-lojban') OK
+EXPECTED (textTrack.track.language == 'art-lojban') OK
+EXPECTED (audioTrack.language == 'art-lojban') OK
+EXPECTED (videoTrack.language == 'cel-gaulish') OK
+EXPECTED (textTrack.track.language == 'cel-gaulish') OK
+EXPECTED (audioTrack.language == 'cel-gaulish') OK
+EXPECTED (videoTrack.language == 'no-bok') OK
+EXPECTED (textTrack.track.language == 'no-bok') OK
+EXPECTED (audioTrack.language == 'no-bok') OK
+EXPECTED (videoTrack.language == 'no-nyn') OK
+EXPECTED (textTrack.track.language == 'no-nyn') OK
+EXPECTED (audioTrack.language == 'no-nyn') OK
+EXPECTED (videoTrack.language == 'zh-guoyu') OK
+EXPECTED (textTrack.track.language == 'zh-guoyu') OK
+EXPECTED (audioTrack.language == 'zh-guoyu') OK
+EXPECTED (videoTrack.language == 'zh-hakka') OK
+EXPECTED (textTrack.track.language == 'zh-hakka') OK
+EXPECTED (audioTrack.language == 'zh-hakka') OK
+EXPECTED (videoTrack.language == 'zh-min') OK
+EXPECTED (textTrack.track.language == 'zh-min') OK
+EXPECTED (audioTrack.language == 'zh-min') OK
+EXPECTED (videoTrack.language == 'zh-min-nan') OK
+EXPECTED (textTrack.track.language == 'zh-min-nan') OK
+EXPECTED (audioTrack.language == 'zh-min-nan') OK
+EXPECTED (videoTrack.language == 'zh-xiang') OK
+EXPECTED (textTrack.track.language == 'zh-xiang') OK
+EXPECTED (audioTrack.language == 'zh-xiang') OK
+EXPECTED (videoTrack.language == 'de') OK
+EXPECTED (textTrack.track.language == 'de') OK
+EXPECTED (audioTrack.language == 'de') OK
+EXPECTED (videoTrack.language == 'fr') OK
+EXPECTED (textTrack.track.language == 'fr') OK
+EXPECTED (audioTrack.language == 'fr') OK
+EXPECTED (videoTrack.language == 'ja') OK
+EXPECTED (textTrack.track.language == 'ja') OK
+EXPECTED (audioTrack.language == 'ja') OK
+EXPECTED (videoTrack.language == 'zh-Hant') OK
+EXPECTED (textTrack.track.language == 'zh-Hant') OK
+EXPECTED (audioTrack.language == 'zh-Hant') OK
+EXPECTED (videoTrack.language == 'zh-Han') OK
+EXPECTED (textTrack.track.language == 'zh-Han') OK
+EXPECTED (audioTrack.language == 'zh-Han') OK
+EXPECTED (videoTrack.language == 'sr-Cyrl') OK
+EXPECTED (textTrack.track.language == 'sr-Cyrl') OK
+EXPECTED (audioTrack.language == 'sr-Cyrl') OK
+EXPECTED (videoTrack.language == 'sr-Latn') OK
+EXPECTED (textTrack.track.language == 'sr-Latn') OK
+EXPECTED (audioTrack.language == 'sr-Latn') OK
+EXPECTED (videoTrack.language == 'zh-cmn-Hans-CN') OK
+EXPECTED (textTrack.track.language == 'zh-cmn-Hans-CN') OK
+EXPECTED (audioTrack.language == 'zh-cmn-Hans-CN') OK
+EXPECTED (videoTrack.language == 'cmn-Hans-CN') OK
+EXPECTED (textTrack.track.language == 'cmn-Hans-CN') OK
+EXPECTED (audioTrack.language == 'cmn-Hans-CN') OK
+EXPECTED (videoTrack.language == 'zh-yue-HK') OK
+EXPECTED (textTrack.track.language == 'zh-yue-HK') OK
+EXPECTED (audioTrack.language == 'zh-yue-HK') OK
+EXPECTED (videoTrack.language == 'yue-HK') OK
+EXPECTED (textTrack.track.language == 'yue-HK') OK
+EXPECTED (audioTrack.language == 'yue-HK') OK
+EXPECTED (videoTrack.language == 'zh-Hans-CN') OK
+EXPECTED (textTrack.track.language == 'zh-Hans-CN') OK
+EXPECTED (audioTrack.language == 'zh-Hans-CN') OK
+EXPECTED (videoTrack.language == 'sr-Latn-RS') OK
+EXPECTED (textTrack.track.language == 'sr-Latn-RS') OK
+EXPECTED (audioTrack.language == 'sr-Latn-RS') OK
+EXPECTED (videoTrack.language == 'sl-rozaj') OK
+EXPECTED (textTrack.track.language == 'sl-rozaj') OK
+EXPECTED (audioTrack.language == 'sl-rozaj') OK
+EXPECTED (videoTrack.language == 'sl-rozaj-biske') OK
+EXPECTED (textTrack.track.language == 'sl-rozaj-biske') OK
+EXPECTED (audioTrack.language == 'sl-rozaj-biske') OK
+EXPECTED (videoTrack.language == 'sl-nedis') OK
+EXPECTED (textTrack.track.language == 'sl-nedis') OK
+EXPECTED (audioTrack.language == 'sl-nedis') OK
+EXPECTED (videoTrack.language == 'de-CH-1901') OK
+EXPECTED (textTrack.track.language == 'de-CH-1901') OK
+EXPECTED (audioTrack.language == 'de-CH-1901') OK
+EXPECTED (videoTrack.language == 'sl-IT-nedis') OK
+EXPECTED (textTrack.track.language == 'sl-IT-nedis') OK
+EXPECTED (audioTrack.language == 'sl-IT-nedis') OK
+EXPECTED (videoTrack.language == 'hy-Latn-IT-arevela') OK
+EXPECTED (textTrack.track.language == 'hy-Latn-IT-arevela') OK
+EXPECTED (audioTrack.language == 'hy-Latn-IT-arevela') OK
+EXPECTED (videoTrack.language == 'en-US') OK
+EXPECTED (textTrack.track.language == 'en-US') OK
+EXPECTED (audioTrack.language == 'en-US') OK
+EXPECTED (videoTrack.language == 'es-419') OK
+EXPECTED (textTrack.track.language == 'es-419') OK
+EXPECTED (audioTrack.language == 'es-419') OK
+EXPECTED (videoTrack.language == 'de-CH-x-phonebk') OK
+EXPECTED (textTrack.track.language == 'de-CH-x-phonebk') OK
+EXPECTED (audioTrack.language == 'de-CH-x-phonebk') OK
+EXPECTED (videoTrack.language == 'az-Arab-x-AZE-derbend') OK
+EXPECTED (textTrack.track.language == 'az-Arab-x-AZE-derbend') OK
+EXPECTED (audioTrack.language == 'az-Arab-x-AZE-derbend') OK
+EXPECTED (videoTrack.language == 'x-whatever') OK
+EXPECTED (textTrack.track.language == 'x-whatever') OK
+EXPECTED (audioTrack.language == 'x-whatever') OK
+EXPECTED (videoTrack.language == 'qaa-Qaaa-QM-x-southern') OK
+EXPECTED (textTrack.track.language == 'qaa-Qaaa-QM-x-southern') OK
+EXPECTED (audioTrack.language == 'qaa-Qaaa-QM-x-southern') OK
+EXPECTED (videoTrack.language == 'de-Qaaa') OK
+EXPECTED (textTrack.track.language == 'de-Qaaa') OK
+EXPECTED (audioTrack.language == 'de-Qaaa') OK
+EXPECTED (videoTrack.language == 'sr-Latn-QM') OK
+EXPECTED (textTrack.track.language == 'sr-Latn-QM') OK
+EXPECTED (audioTrack.language == 'sr-Latn-QM') OK
+EXPECTED (videoTrack.language == 'sr-Qaaa-RS') OK
+EXPECTED (textTrack.track.language == 'sr-Qaaa-RS') OK
+EXPECTED (audioTrack.language == 'sr-Qaaa-RS') OK
+EXPECTED (videoTrack.language == 'zh-Hant-CN-x-private1-private2') OK
+EXPECTED (textTrack.track.language == 'zh-Hant-CN-x-private1-private2') OK
+EXPECTED (audioTrack.language == 'zh-Hant-CN-x-private1-private2') OK
+EXPECTED (videoTrack.language == 'de-DE') OK
+EXPECTED (textTrack.track.language == 'de-DE') OK
+EXPECTED (audioTrack.language == 'de-DE') OK
+EXPECTED (videoTrack.language == 'de-de') OK
+EXPECTED (textTrack.track.language == 'de-de') OK
+EXPECTED (audioTrack.language == 'de-de') OK
+EXPECTED (videoTrack.language == 'de-Latn-DE') OK
+EXPECTED (textTrack.track.language == 'de-Latn-DE') OK
+EXPECTED (audioTrack.language == 'de-Latn-DE') OK
+EXPECTED (videoTrack.language == 'de-Latf-DE') OK
+EXPECTED (textTrack.track.language == 'de-Latf-DE') OK
+EXPECTED (audioTrack.language == 'de-Latf-DE') OK
+EXPECTED (videoTrack.language == 'de-DE-x-goethe') OK
+EXPECTED (textTrack.track.language == 'de-DE-x-goethe') OK
+EXPECTED (audioTrack.language == 'de-DE-x-goethe') OK
+EXPECTED (videoTrack.language == 'de-Latn-DE-1996') OK
+EXPECTED (textTrack.track.language == 'de-Latn-DE-1996') OK
+EXPECTED (audioTrack.language == 'de-Latn-DE-1996') OK
+EXPECTED (videoTrack.language == 'de-Deva-DE') OK
+EXPECTED (textTrack.track.language == 'de-Deva-DE') OK
+EXPECTED (audioTrack.language == 'de-Deva-DE') OK
+EXPECTED (videoTrack.language == 'en-US-u-islamcal') OK
+EXPECTED (textTrack.track.language == 'en-US-u-islamcal') OK
+EXPECTED (audioTrack.language == 'en-US-u-islamcal') OK
+EXPECTED (videoTrack.language == 'zh-CN-a-myext-x-private') OK
+EXPECTED (textTrack.track.language == 'zh-CN-a-myext-x-private') OK
+EXPECTED (audioTrack.language == 'zh-CN-a-myext-x-private') OK
+EXPECTED (videoTrack.language == 'en-a-myext-b-another') OK
+EXPECTED (textTrack.track.language == 'en-a-myext-b-another') OK
+EXPECTED (audioTrack.language == 'en-a-myext-b-another') OK
+EXPECTED (videoTrack.language == 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1') OK
+EXPECTED (textTrack.track.language == 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1') OK
+EXPECTED (audioTrack.language == 'zh-Latn-CN-variant1-a-extend1-x-wadegile-private1') OK
+EXPECTED (videoTrack.language == 'a') OK
+EXPECTED (textTrack.track.language == 'a') OK
+EXPECTED (audioTrack.language == 'a') OK
+EXPECTED (videoTrack.language == '1') OK
+EXPECTED (textTrack.track.language == '1') OK
+EXPECTED (audioTrack.language == '1') OK
+EXPECTED (videoTrack.language == 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij') OK
+EXPECTED (textTrack.track.language == 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij') OK
+EXPECTED (audioTrack.language == 'ab-abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij') OK
+EXPECTED (videoTrack.language == '1a') OK
+EXPECTED (textTrack.track.language == '1a') OK
+EXPECTED (audioTrack.language == '1a') OK
+EXPECTED (videoTrack.language == '-a') OK
+EXPECTED (textTrack.track.language == '-a') OK
+EXPECTED (audioTrack.language == '-a') OK
+EXPECTED (videoTrack.language == 'a-') OK
+EXPECTED (textTrack.track.language == 'a-') OK
+EXPECTED (audioTrack.language == 'a-') OK
+EXPECTED (videoTrack.language == 'a1') OK
+EXPECTED (textTrack.track.language == 'a1') OK
+EXPECTED (audioTrack.language == 'a1') OK
+EXPECTED (videoTrack.language == 'aa1') OK
+EXPECTED (textTrack.track.language == 'aa1') OK
+EXPECTED (audioTrack.language == 'aa1') OK
+EXPECTED (videoTrack.language == 'aaaa') OK
+EXPECTED (textTrack.track.language == 'aaaa') OK
+EXPECTED (audioTrack.language == 'aaaa') OK
+EXPECTED (videoTrack.language == 'aaa1') OK
+EXPECTED (textTrack.track.language == 'aaa1') OK
+EXPECTED (audioTrack.language == 'aaa1') OK
+EXPECTED (videoTrack.language == 'inv-alid-char space') OK
+EXPECTED (textTrack.track.language == 'inv-alid-char space') OK
+EXPECTED (audioTrack.language == 'inv-alid-char space') OK
+EXPECTED (videoTrack.language == 'inv-alid-charâ€“longDash') OK
+EXPECTED (textTrack.track.language == 'inv-alid-charâ€“longDash') OK
+EXPECTED (audioTrack.language == 'inv-alid-charâ€“longDash') OK
+EXPECTED (videoTrack.language == 'inv-alid-char-PÃ¥lska') OK
+EXPECTED (textTrack.track.language == 'inv-alid-char-PÃ¥lska') OK
+EXPECTED (audioTrack.language == 'inv-alid-char-PÃ¥lska') OK
+EXPECTED (videoTrack.language == 'inv-alid-char-*') OK
+EXPECTED (textTrack.track.language == 'inv-alid-char-*') OK
+EXPECTED (audioTrack.language == 'inv-alid-char-*') OK
+EXPECTED (videoTrack.language == 'inv-alid-char-ï£¿') OK
+EXPECTED (textTrack.track.language == 'inv-alid-char-ï£¿') OK
+EXPECTED (audioTrack.language == 'inv-alid-char-ï£¿') OK
+END OF TEST
+

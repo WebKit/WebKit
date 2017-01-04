@@ -614,7 +614,7 @@ static String languageIdentifier(const String& languageCode)
 static void buildDisplayStringForTrackBase(StringBuilder& displayName, const TrackBase& track)
 {
     String label = track.label();
-    String trackLanguageIdentifier = track.language();
+    String trackLanguageIdentifier = track.validBCP47Language();
 
     RetainPtr<CFLocaleRef> currentLocale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, defaultLanguage().createCFString().get()));
     RetainPtr<CFStringRef> localeIdentifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromString(kCFAllocatorDefault, trackLanguageIdentifier.createCFString().get()));
@@ -737,7 +737,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
         if (!mediaElement || !mediaElement->player())
             return 0;
 
-        String textTrackLanguage = track->language();
+        String textTrackLanguage = track->validBCP47Language();
         if (textTrackLanguage.isEmpty())
             return 0;
 
@@ -804,7 +804,7 @@ int CaptionUserPreferencesMediaAF::textTrackSelectionScore(TextTrack* track, HTM
 static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
 {
     String preferredLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(defaultLanguage()));
-    String aLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(a->language()));
+    String aLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(a->validBCP47Language()));
     String bLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(b->language()));
 
     // Tracks in the user's preferred language are always at the top of the menu.
@@ -844,7 +844,7 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
     
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         AudioTrack* track = trackList->item(i);
-        String language = displayNameForLanguageLocale(track->language());
+        String language = displayNameForLanguageLocale(track->validBCP47Language());
         tracksForMenu.append(track);
     }
     
@@ -867,7 +867,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
-        String language = displayNameForLanguageLocale(track->language());
+        String language = displayNameForLanguageLocale(track->validBCP47Language());
 
         if (displayMode == Manual) {
             LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because selection mode is 'manual'", track->kindKeyword().string().utf8().data(), language.utf8().data());

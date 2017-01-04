@@ -203,11 +203,11 @@ static String trackDisplayName(TextTrack* track)
     if (track == TextTrack::captionMenuAutomaticItem())
         return textTrackAutomaticMenuItemText();
 
-    if (track->label().isEmpty() && track->language().isEmpty())
+    if (track->label().isEmpty() && track->validBCP47Language().isEmpty())
         return textTrackNoLabelText();
     if (!track->label().isEmpty())
         return track->label();
-    return track->language();
+    return track->validBCP47Language();
 }
 
 String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
@@ -240,11 +240,11 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTra
 
 static String trackDisplayName(AudioTrack* track)
 {
-    if (track->label().isEmpty() && track->language().isEmpty())
+    if (track->label().isEmpty() && track->validBCP47Language().isEmpty())
         return audioTrackNoLabelText();
     if (!track->label().isEmpty())
         return track->label();
-    return track->language();
+    return track->validBCP47Language();
 }
 
 String CaptionUserPreferences::displayNameForTrack(AudioTrack* track) const
@@ -283,11 +283,11 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
 
 int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, const Vector<String>& preferredLanguages) const
 {
-    if (track->language().isEmpty())
+    if (track->validBCP47Language().isEmpty())
         return 0;
 
     bool exactMatch;
-    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->language(), preferredLanguages, exactMatch);
+    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->validBCP47Language(), preferredLanguages, exactMatch);
     if (languageMatchIndex >= preferredLanguages.size())
         return 0;
 

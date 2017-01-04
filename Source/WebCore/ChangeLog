@@ -1,3 +1,52 @@
+2017-01-04  John Wilander  <wilander@apple.com>
+
+        Validate the BCP47-ness of the language string passed to TrackBase::setLanguage()
+        https://bugs.webkit.org/show_bug.cgi?id=123926
+
+        Reviewed by Jer Noble.
+
+        Test: media/media-source/only-bcp47-language-tags-accepted-as-valid.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureTextTrackGroup):
+            Log message now includes the valid BCP 47 language too.
+        (WebCore::HTMLMediaElement::setSelectedTextTrack):
+            Now sets preferred language to the valid BCP 47 language.
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::setLanguage):
+            Removed fixme and aligned comments with new behavior.
+        * html/track/TrackBase.cpp:
+        (WebCore::TrackBase::TrackBase):
+            Initializes m_validBCP47Language with language parameter.
+        (WebCore::isValidBCP47LanguageTag):
+            New convenience function.
+        (WebCore::TrackBase::setLanguage):
+            Sets m_validBCP47Language if the incoming tag is valid.
+            Produces a console warning if the tag is invalid.
+            The member m_language is set to the incoming tag regardless.
+        (WebCore::TrackBase::validBCP47Language):
+            New getter for valid language tag. To be used internally.
+        * html/track/TrackBase.h:
+            New AtomicString member m_validBCP47Language.
+        (WebCore::TrackBase::setLanguage): Deleted.
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::setLanguage):
+            Removed fixme and aligned comments with new behavior.
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::trackDisplayName):
+            Now uses the getter for BCP 47 language.
+        (WebCore::CaptionUserPreferences::textTrackLanguageSelectionScore):
+            Now uses the getter for BCP 47 language.
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::buildDisplayStringForTrackBase):
+            Now uses the getter for BCP 47 language.
+        (WebCore::CaptionUserPreferencesMediaAF::textTrackSelectionScore):
+            Now uses the getter for BCP 47 language.
+        (WebCore::textTrackCompare):
+            Now uses the getter for BCP 47 language.
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu):
+            Now uses the getter for BCP 47 language.
+
 2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cross Origin importScripts() scripts lack source URL, causes issues with Inspector showing Resource

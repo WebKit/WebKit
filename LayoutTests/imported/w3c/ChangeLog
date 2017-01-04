@@ -1,3 +1,20 @@
+2017-01-04  John Wilander  <wilander@apple.com>
+
+        Validate the BCP47-ness of the language string passed to TrackBase::setLanguage()
+        https://bugs.webkit.org/show_bug.cgi?id=123926
+
+        Reviewed by Jer Noble.
+
+        * web-platform-tests/html/dom/reflection-embedded-expected.txt:
+            Expected text change since we now have console warnings for
+            invalid language tags.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/srclang-expected.txt:
+            Expected text change since we now have console warnings for
+            invalid language tags.
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TextTrack/language-expected.txt:
+            Expected text change since we now have console warnings for
+            invalid language tags.
+
 2017-01-03  Chris Dumez  <cdumez@apple.com>
 
         Make setting Event's cancelBubble to false a no-op

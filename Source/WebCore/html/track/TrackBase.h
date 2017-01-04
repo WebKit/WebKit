@@ -54,8 +54,9 @@ public:
     AtomicString label() const { return m_label; }
     void setLabel(const AtomicString& label) { m_label = label; }
 
+    AtomicString validBCP47Language() const;
     AtomicString language() const { return m_language; }
-    virtual void setLanguage(const AtomicString& language) { m_language = language; }
+    virtual void setLanguage(const AtomicString&);
 
     virtual void clearClient() = 0;
 
@@ -83,6 +84,7 @@ private:
     AtomicString m_id;
     AtomicString m_label;
     AtomicString m_language;
+    AtomicString m_validBCP47Language;
 };
 
 class MediaTrackBase : public TrackBase {

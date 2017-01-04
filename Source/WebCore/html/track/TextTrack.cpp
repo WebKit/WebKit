@@ -556,7 +556,8 @@ void TextTrack::setLanguage(const AtomicString& language)
     // 11.1 language, on setting:
     // 1. If the value being assigned to this attribute is not an empty string or a BCP 47 language
     // tag[BCP47], then abort these steps.
-    // FIXME(123926): Validate the BCP47-ness of langague.
+    // BCP 47 validation is done in TrackBase::setLanguage() which is
+    // shared between all tracks that support setting language.
 
     // 2. Update this attribute to the new value.
     TrackBase::setLanguage(language);

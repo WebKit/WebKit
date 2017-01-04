@@ -6,6 +6,32 @@ Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
 Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
+CONSOLE MESSAGE: line 707: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 707: The language 'test-valueOf' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1380: The language 'test-valueOf' is not a valid BCP 47 language tag.
 Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
 
 

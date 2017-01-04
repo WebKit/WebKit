@@ -3774,7 +3774,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             currentlyEnabledTracks.append(textTrack);
 
         int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get(), this) : 0;
-        LOG(Media, "HTMLMediaElement::configureTextTrackGroup(%p) -  '%s' track with language '%s' has score %i", this, textTrack->kindKeyword().string().utf8().data(), textTrack->language().string().utf8().data(), trackScore);
+        LOG(Media, "HTMLMediaElement::configureTextTrackGroup(%p) -  '%s' track with language '%s' and BCP 47 language '%s' has score %d", this, textTrack->kindKeyword().string().utf8().data(), textTrack->language().string().utf8().data(), textTrack->validBCP47Language().string().utf8().data(), trackScore);
 
         if (trackScore) {
 
@@ -4005,8 +4005,8 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         displayMode = CaptionUserPreferences::Automatic;
     else {
         displayMode = CaptionUserPreferences::AlwaysOn;
-        if (trackToSelect->language().length())
-            captionPreferences.setPreferredLanguage(trackToSelect->language());
+        if (trackToSelect->validBCP47Language().length())
+            captionPreferences.setPreferredLanguage(trackToSelect->validBCP47Language());
     }
 
     captionPreferences.setCaptionDisplayMode(displayMode);
