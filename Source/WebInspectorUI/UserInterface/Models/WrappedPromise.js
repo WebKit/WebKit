@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,24 @@ WebInspector.WrappedPromise = class WrappedPromise
 {
     constructor(work)
     {
+        this._settled = false;
         this._promise = new Promise((resolve, reject) => {
-            this._resolve = resolve;
-            this._reject = reject;
+            this._resolveCallback = resolve;
+            this._rejectCallback = reject;
 
+            // Allow work to resolve or reject the promise by shimming our
+            // internal callbacks. This ensures that this._settled gets set properly.
             if (work && typeof work === "function")
-                work();
+                return work(this.resolve.bind(this), this.reject.bind(this));
         });
     }
 
     // Public
+
+    get settled()
+    {
+        return this._settled;
+    }
 
     get promise()
     {
@@ -45,11 +53,19 @@ WebInspector.WrappedPromise = class WrappedPromise
 
     resolve(value)
     {
-        this._resolve(value);
+        if (this._settled)
+            throw new Error("Promise is already settled, cannot call resolve().");
+
+        this._settled = true;
+        this._resolveCallback(value);
     }
 
     reject(value)
     {
-        this._reject(value);
+        if (this._settled)
+            throw new Error("Promise is already settled, cannot call reject().");
+
+        this._settled = true;
+        this._rejectCallback(value);
     }
 };

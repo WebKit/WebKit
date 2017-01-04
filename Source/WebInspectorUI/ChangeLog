@@ -1,3 +1,23 @@
+2017-01-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: WrappedPromise constructor should behave like the Promise constructor
+        https://bugs.webkit.org/show_bug.cgi?id=166523
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/WrappedPromise.js:
+        (WebInspector.WrappedPromise):
+        - Return the result of 'work' from the inner promise
+        so WrappedPromise.promise can be chained.
+        - Provide shim resolve, reject callbacks as parameters.
+
+        (WebInspector.WrappedPromise.prototype.get settled): Added.
+        Tells whether we already resolved or rejected the promise.
+
+        (WebInspector.WrappedPromise.prototype.resolve):
+        (WebInspector.WrappedPromise.prototype.reject):
+        Throw an error if already settled and update the flag.
+
 2017-01-03  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: color picker should feature an editable CSS value

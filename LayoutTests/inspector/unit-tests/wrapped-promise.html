@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WrappedPromise");
+
+    suite.addTestCase({
+        name: "WrappedPromise.constructor resolve",
+        description: "Should be able to resolve the promise using the 'resolve' callback argument.",
+        test(resolve, reject) {
+            let result = new WebInspector.WrappedPromise((resolve, reject) => {
+                resolve();
+            });
+
+            result.promise.then(resolve, reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "WrappedPromise.constructor reject",
+        description: "Should be able to reject the promise using the 'reject' callback argument.",
+        test(resolve, reject) {
+            let result = new WebInspector.WrappedPromise((resolve, reject) => {
+                reject();
+            });
+
+            result.promise.then(reject, resolve);
+        }
+    });
+
+    suite.addTestCase({
+        name: "WrappedPromise.prototype.resolve",
+        description: "Should be able to resolve the promise using resolve().",
+        test(resolve, reject) {
+            let result = new WebInspector.WrappedPromise;
+            result.promise.then(resolve, reject);
+
+            result.resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WrappedPromise.prototype.reject",
+        description: "Should be able to reject the promise using reject().",
+        test(resolve, reject) {
+            let result = new WebInspector.WrappedPromise;
+            result.promise.then(reject, resolve);
+
+            result.reject();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WrappedPromise.prototype.get settled",
+        description: "Should be able to see that the promise is settled.",
+        test(resolve, reject) {
+            let result = new WebInspector.WrappedPromise;
+            InspectorTest.expectFalse(result.settled, "Should not be settled yet.");
+
+            result.promise.then(() => {
+                InspectorTest.expectThat(result.settled, "Should be settled now.");
+                resolve();
+            })
+            .catch(reject);
+
+            result.resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing methods of WrappedPromise.</p>
+</body>
+</html>
