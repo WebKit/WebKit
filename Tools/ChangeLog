@@ -1,3 +1,15 @@
+2017-01-03  Andy Estes  <aestes@apple.com>
+
+        Place all the Cocoa WebCore API tests in the same directory
+        https://bugs.webkit.org/show_bug.cgi?id=166673
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/cocoa/SerializedCryptoKeyWrap.mm: Renamed from Tools/TestWebKitAPI/Tests/WebCore/SerializedCryptoKeyWrap.mm.
+        * TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm: Renamed from Tools/TestWebKitAPI/Tests/Cocoa/URLExtras.mm.
+        * TestWebKitAPI/Tests/WebCore/cocoa/WebCoreNSURLSession.mm: Renamed from Tools/TestWebKitAPI/Tests/WebCore/WebCoreNSURLSession.mm.
+
 2017-01-03  Tim Horton  <timothy_horton@apple.com>
 
         NSSpellChecker's recordResponse isn't called for unseen automatic corrections
