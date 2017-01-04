@@ -60,6 +60,7 @@ private:
     FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
 #undef WASM_SECTION_DECLARE_PARSER
 
+    PartialResult WARN_UNUSED_RETURN parseCustom(uint32_t);
     PartialResult WARN_UNUSED_RETURN parseGlobalType(Global&);
     PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);

@@ -713,7 +713,8 @@ export default class Builder {
         if (this._checked) {
             // Check uniqueness.
             for (const s of this._sections)
-                assert.falsy(s.name === name && s.id === number, `Cannot have two sections with the same name "${name}" and ID ${number}`);
+                if (number !== _unknownSectionId)
+                    assert.falsy(s.name === name && s.id === number, `Cannot have two sections with the same name "${name}" and ID ${number}`);
             // Check ordering.
             if ((number !== _unknownSectionId) && (this._sections.length !== 0)) {
                 for (let i = this._sections.length - 1; i >= 0; --i) {

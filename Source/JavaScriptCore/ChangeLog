@@ -1,3 +1,22 @@
+2017-01-04  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: add Module.sections
+        https://bugs.webkit.org/show_bug.cgi?id=165159
+        <rdar://problem/29760326>
+
+        Reviewed by Mark Lam.
+
+        As described in: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblymodulecustomsections
+
+        This was added for Emscripten, and is likely to be used soon.
+
+        * wasm/WasmFormat.h: custom sections are just name + bytes
+        * wasm/WasmModuleParser.cpp: parse them, instead of skipping over
+        * wasm/WasmModuleParser.h:
+        * wasm/js/WebAssemblyModulePrototype.cpp: construct the Array of
+        ArrayBuffer as described in the spec
+        (JSC::webAssemblyModuleProtoCustomSections):
+
 2017-01-04  Saam Barati  <sbarati@apple.com>
 
         We don't properly handle exceptions inside the nativeCallTrampoline macro in the LLInt

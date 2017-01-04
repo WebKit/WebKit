@@ -87,8 +87,7 @@ auto ModuleParser::parse() -> Result
 #undef WASM_SECTION_PARSE
 
         case Section::Unknown: {
-            // Ignore section's name LEB and bytes: they're already included in sectionLength.
-            m_offset += sectionLength;
+            WASM_FAIL_IF_HELPER_FAILS(parseCustom(sectionLength));
             break;
         }
         }
@@ -598,6 +597,30 @@ auto ModuleParser::parseData() -> PartialResult
             segment->byte(dataByte) = byte;
         }
     }
+    return { };
+}
+    
+auto ModuleParser::parseCustom(uint32_t sectionLength) -> PartialResult
+{
+    const uint32_t customSectionStartOffset = m_offset;
+
+    CustomSection section;
+    uint32_t customSectionNumber = m_result.module->customSections.size() + 1;
+    uint32_t nameLen;
+    WASM_PARSER_FAIL_IF(!m_result.module->customSections.tryReserveCapacity(customSectionNumber), "can't allocate enough memory for ", customSectionNumber, "th custom section");
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(nameLen), "can't get ", customSectionNumber, "th custom section's name length");
+    WASM_PARSER_FAIL_IF(!consumeUTF8String(section.name, nameLen), "nameLen get ", customSectionNumber, "th custom section's name of length ", nameLen);
+
+    uint32_t payloadBytes = sectionLength - (m_offset - customSectionStartOffset);
+    WASM_PARSER_FAIL_IF(!section.payload.tryReserveCapacity(payloadBytes), "can't allocate enough memory for ", customSectionNumber, "th custom section's ", payloadBytes, " bytes");
+    for (uint32_t byteNumber = 0; byteNumber < payloadBytes; ++byteNumber) {
+        uint8_t byte;
+        WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", byteNumber, "th data byte from ", customSectionNumber, "th custom section");
+        section.payload.uncheckedAppend(byte);
+    }
+    
+    m_result.module->customSections.uncheckedAppend(WTFMove(section));
+
     return { };
 }
 
