@@ -1,3 +1,16 @@
+2017-01-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Merge r209996.
+
+    2016-12-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline fast/text/emoji.html for macOS.
+
+            Unreviewed test gardening.
+
+            * platform/mac-elcapitan/fast/text/emoji-expected.txt: Copied from LayoutTests/platform/mac/fast/text/emoji-expected.txt.
+            * platform/mac/fast/text/emoji-expected.txt:
+
 2016-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed LayoutTest gardening.
