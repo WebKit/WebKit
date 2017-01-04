@@ -1,3 +1,14 @@
+2017-01-03  Andy Estes  <aestes@apple.com>
+
+        Rename SharedBufferMac.mm to SharedBufferCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=166666
+
+        Reviewed by Tim Horton.
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/SharedBufferCocoa.mm: Renamed from Source/WebCore/platform/mac/SharedBufferMac.mm.
+
 2017-01-03  Sam Weinig  <sam@webkit.org>
 
         Re-implement ExceptionOr on top of WTF::Expected
