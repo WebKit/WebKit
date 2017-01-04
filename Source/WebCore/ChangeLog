@@ -1,5 +1,29 @@
 2017-01-04  Sam Weinig  <sam@webkit.org>
 
+        Remove bindings/generic and distribute its contents appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=166700
+
+        Rubber-stamped by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/IDLTypes.h: Copied from Source/WebCore/bindings/generic/IDLTypes.h.
+        * bindings/generic/ActiveDOMCallback.cpp: Removed.
+        * bindings/generic/ActiveDOMCallback.h: Removed.
+        * bindings/generic/IDLTypes.h: Removed.
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Removed.
+        * bindings/generic/RuntimeEnabledFeatures.h: Removed.
+        * dom/ActiveDOMCallback.cpp: Copied from Source/WebCore/bindings/generic/ActiveDOMCallback.cpp.
+        * dom/ActiveDOMCallback.h: Copied from Source/WebCore/bindings/generic/ActiveDOMCallback.h.
+        * page/RuntimeEnabledFeatures.cpp: Copied from Source/WebCore/bindings/generic/RuntimeEnabledFeatures.cpp.
+        * page/RuntimeEnabledFeatures.h: Copied from Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h.
+        Move files around.
+
+2017-01-04  Sam Weinig  <sam@webkit.org>
+
         Add Exception accessor to ExceptionOr to remove unnecessary releases
         https://bugs.webkit.org/show_bug.cgi?id=166692
 

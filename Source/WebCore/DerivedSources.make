@@ -51,7 +51,6 @@ VPATH = \
     $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/websockets \
     $(WebCore)/animation \
-    $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
     $(WebCore)/crypto/parameters \

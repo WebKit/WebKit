@@ -33,7 +33,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/animation"
     "${WEBCORE_DIR}/bindings"
-    "${WEBCORE_DIR}/bindings/generic"
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bridge"
     "${WEBCORE_DIR}/bridge/c"
@@ -151,7 +150,6 @@ set(WebCore_IDL_INCLUDES
     Modules/webdatabase
     Modules/websockets
 
-    bindings/generic
     bindings/js
 
     html/canvas
@@ -1066,9 +1064,6 @@ set(WebCore_SOURCES
     animation/KeyframeEffect.cpp
     animation/WebAnimation.cpp
 
-    bindings/generic/ActiveDOMCallback.cpp
-    bindings/generic/RuntimeEnabledFeatures.cpp
-
     bindings/js/CachedModuleScript.cpp
     bindings/js/CachedModuleScriptLoader.cpp
     bindings/js/CallbackFunction.cpp
@@ -1381,6 +1376,7 @@ set(WebCore_SOURCES
 
     cssjit/SelectorCompiler.cpp
 
+    dom/ActiveDOMCallback.cpp
     dom/ActiveDOMCallbackMicrotask.cpp
     dom/ActiveDOMObject.cpp
     dom/AnimationEvent.cpp
@@ -2053,6 +2049,7 @@ set(WebCore_SOURCES
     page/ResourceUsageData.cpp
     page/ResourceUsageOverlay.cpp
     page/ResourceUsageThread.cpp
+    page/RuntimeEnabledFeatures.cpp
     page/Screen.cpp
     page/SecurityOrigin.cpp
     page/SecurityOriginData.cpp

@@ -201,7 +201,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     accessibility/win
 
-    bindings/generic
     bindings/js
 
     bridge/c
