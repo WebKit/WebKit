@@ -1,3 +1,19 @@
+2017-01-04  Sam Weinig  <sam@webkit.org>
+
+        Add Exception accessor to ExceptionOr to remove unnecessary releases
+        https://bugs.webkit.org/show_bug.cgi?id=166692
+
+        Reviewed by Alex Christensen.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        Use new exception() function.
+
+        * dom/ExceptionOr.h:
+        (WebCore::ExceptionOr<ReturnType>::exception):
+        (WebCore::ExceptionOr<void>::exception):
+        Add exception() function which returns the exception without releasing it.
+
 2016-01-04  Brent Fulgham  <bfulgham@apple.com>
 
         Correct DOMWindow handling during FrameLoader::clear

@@ -38,6 +38,7 @@ public:
     template<typename OtherType> ExceptionOr(const OtherType&, typename std::enable_if<std::is_scalar<OtherType>::value && std::is_convertible<OtherType, ReturnType>::value>::type* = nullptr);
 
     bool hasException() const;
+    const Exception& exception() const;
     Exception&& releaseException();
     ReturnType&& releaseReturnValue();
 
@@ -51,6 +52,7 @@ public:
     ExceptionOr(ReturnReferenceType&);
 
     bool hasException() const;
+    const Exception& exception() const;
     Exception&& releaseException();
     ReturnReferenceType& releaseReturnValue();
 
@@ -64,6 +66,7 @@ public:
     ExceptionOr() = default;
 
     bool hasException() const;
+    const Exception& exception() const;
     Exception&& releaseException();
 
 private:
@@ -97,6 +100,11 @@ template<typename ReturnType> inline Exception&& ExceptionOr<ReturnType>::releas
     return WTFMove(m_value.error());
 }
 
+template<typename ReturnType> inline const Exception& ExceptionOr<ReturnType>::exception() const
+{
+    return m_value.error();
+}
+
 template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::releaseReturnValue()
 {
     return WTFMove(m_value.value());
@@ -117,6 +125,11 @@ template<typename ReturnReferenceType> inline bool ExceptionOr<ReturnReferenceTy
     return m_value.hasException();
 }
 
+template<typename ReturnReferenceType> inline const Exception& ExceptionOr<ReturnReferenceType&>::exception() const
+{
+    return m_value.exception();
+}
+
 template<typename ReturnReferenceType> inline Exception&& ExceptionOr<ReturnReferenceType&>::releaseException()
 {
     return m_value.releaseException();
@@ -135,6 +148,11 @@ inline ExceptionOr<void>::ExceptionOr(Exception&& exception)
 inline bool ExceptionOr<void>::hasException() const
 {
     return !m_value.hasValue();
+}
+
+inline const Exception& ExceptionOr<void>::exception() const
+{
+    return m_value.error();
 }
 
 inline Exception&& ExceptionOr<void>::releaseException()
