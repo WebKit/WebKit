@@ -38,8 +38,8 @@ log = logging.getLogger('global')
 
 
 class CppBackendDispatcherImplementationGenerator(CppGenerator):
-    def __init__(self, model, input_filepath):
-        CppGenerator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        CppGenerator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
         return "%sBackendDispatchers.cpp" % self.protocol_name()

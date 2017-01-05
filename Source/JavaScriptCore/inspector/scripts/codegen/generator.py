@@ -76,13 +76,17 @@ _TYPES_WITH_OPEN_FIELDS = set([
 
 
 class Generator:
-    def __init__(self, model, input_filepath):
+    def __init__(self, model, platform, input_filepath):
         self._model = model
+        self._platform = platform
         self._input_filepath = input_filepath
         self._settings = {}
 
     def model(self):
         return self._model
+
+    def platform(self):
+        return self._platform
 
     def set_generator_setting(self, key, value):
         self._settings[key] = value

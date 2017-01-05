@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -114,6 +114,7 @@ def generate_from_specification(primary_specification_filepath=None,
                                 output_dirpath=None,
                                 force_output=False,
                                 framework_name="",
+                                platform_name="",
                                 generate_frontend=True,
                                 generate_backend=True):
 
@@ -125,6 +126,7 @@ def generate_from_specification(primary_specification_filepath=None,
         except ValueError as e:
             raise Exception("Error parsing valid JSON in file: " + filepath + "\nParse error: " + str(e))
 
+    platform = Platform.fromString(platform_name)
     protocol = models.Protocol(framework_name)
     for specification in supplemental_specification_filepaths:
         load_specification(protocol, specification, isSupplemental=True)
@@ -132,59 +134,61 @@ def generate_from_specification(primary_specification_filepath=None,
 
     protocol.resolve_types()
 
+    generator_arguments = [protocol, platform, primary_specification_filepath]
     generators = []
+
     if protocol.framework is Frameworks.Test:
-        generators.append(JSBackendCommandsGenerator(protocol, primary_specification_filepath))
-        generators.append(CppAlternateBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(CppFrontendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCConfigurationHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCConfigurationImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCInternalHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypeConversionsImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(JSBackendCommandsGenerator(*generator_arguments))
+        generators.append(CppAlternateBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppBackendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(CppFrontendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppFrontendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(CppProtocolTypesHeaderGenerator(*generator_arguments))
+        generators.append(CppProtocolTypesImplementationGenerator(*generator_arguments))
+        generators.append(ObjCBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(ObjCBackendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(ObjCConfigurationHeaderGenerator(*generator_arguments))
+        generators.append(ObjCConfigurationImplementationGenerator(*generator_arguments))
+        generators.append(ObjCFrontendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(ObjCHeaderGenerator(*generator_arguments))
+        generators.append(ObjCInternalHeaderGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypeConversionsImplementationGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypesImplementationGenerator(*generator_arguments))
 
     elif protocol.framework is Frameworks.JavaScriptCore:
-        generators.append(JSBackendCommandsGenerator(protocol, primary_specification_filepath))
-        generators.append(CppAlternateBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(CppFrontendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(JSBackendCommandsGenerator(*generator_arguments))
+        generators.append(CppAlternateBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppBackendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(CppFrontendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppFrontendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(CppProtocolTypesHeaderGenerator(*generator_arguments))
+        generators.append(CppProtocolTypesImplementationGenerator(*generator_arguments))
 
     elif protocol.framework is Frameworks.WebKit and generate_backend:
-        generators.append(CppBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(CppProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(CppBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppBackendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(CppProtocolTypesHeaderGenerator(*generator_arguments))
+        generators.append(CppProtocolTypesImplementationGenerator(*generator_arguments))
 
     elif protocol.framework is Frameworks.WebKit and generate_frontend:
-        generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypeConversionsImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCHeaderGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypeConversionsImplementationGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypesImplementationGenerator(*generator_arguments))
 
     elif protocol.framework is Frameworks.WebInspector:
-        generators.append(ObjCBackendDispatcherHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCBackendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCConfigurationHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCConfigurationImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCFrontendDispatcherImplementationGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCInternalHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(protocol, primary_specification_filepath))
-        generators.append(ObjCProtocolTypesImplementationGenerator(protocol, primary_specification_filepath))
+        generators.append(ObjCBackendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(ObjCBackendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(ObjCConfigurationHeaderGenerator(*generator_arguments))
+        generators.append(ObjCConfigurationImplementationGenerator(*generator_arguments))
+        generators.append(ObjCFrontendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(ObjCHeaderGenerator(*generator_arguments))
+        generators.append(ObjCInternalHeaderGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypeConversionsHeaderGenerator(*generator_arguments))
+        generators.append(ObjCProtocolTypesImplementationGenerator(*generator_arguments))
 
     single_output_file_contents = []
 
@@ -216,6 +220,7 @@ def generate_from_specification(primary_specification_filepath=None,
 
 if __name__ == '__main__':
     allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'WebKit', 'Test']
+    allowed_platform_names = ['iOS', 'macOS', 'all', 'generic']
     cli_parser = optparse.OptionParser(usage="usage: %prog [options] PrimaryProtocol.json [SupplementalProtocol.json ...]")
     cli_parser.add_option("-o", "--outputDir", help="Directory where generated files should be written.")
     cli_parser.add_option("--framework", type="choice", choices=allowed_framework_names, help="The framework that the primary specification belongs to.")
@@ -224,6 +229,7 @@ if __name__ == '__main__':
     cli_parser.add_option("-t", "--test", action="store_true", help="Enable test mode. Use unique output filenames created by prepending the input filename.")
     cli_parser.add_option("--frontend", action="store_true", help="Generate code for the frontend-side of the protocol only.")
     cli_parser.add_option("--backend", action="store_true", help="Generate code for the backend-side of the protocol only.")
+    cli_parser.add_option("--platform", default="generic", help="The platform of the backend being generated. For example, we compile WebKit2 for either macOS or iOS. This value is case-insensitive. Allowed values: %s" % ", ".join(allowed_platform_names))
     options = None
 
     arg_options, arg_values = cli_parser.parse_args()
@@ -249,6 +255,7 @@ if __name__ == '__main__':
         'output_dirpath': arg_options.outputDir,
         'concatenate_output': arg_options.test,
         'framework_name': arg_options.framework,
+        'platform_name': arg_options.platform,
         'force_output': arg_options.force,
         'generate_backend': generate_backend,
         'generate_frontend': generate_frontend,

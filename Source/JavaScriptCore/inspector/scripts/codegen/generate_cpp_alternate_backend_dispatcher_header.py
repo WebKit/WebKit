@@ -37,8 +37,8 @@ log = logging.getLogger('global')
 
 
 class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
-    def __init__(self, model, input_filepath):
-        CppGenerator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        CppGenerator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
         return '%sAlternateBackendDispatchers.h' % self.protocol_name()

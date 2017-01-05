@@ -44,8 +44,8 @@ _PRIMITIVE_TO_CPP_NAME_MAP = {
 }
 
 class CppGenerator(Generator):
-    def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
 
     def protocol_name(self):
         return self.model().framework.setting('cpp_protocol_group', '')

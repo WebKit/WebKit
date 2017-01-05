@@ -89,8 +89,8 @@ class ObjCGenerator(Generator):
     OBJC_SHARED_PREFIX = 'Protocol'
     OBJC_STATIC_PREFIX = '%s%s' % (OBJC_HELPER_PREFIX, OBJC_SHARED_PREFIX)
 
-    def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
 
     # The 'protocol name' is used to prefix filenames for a protocol group (a set of domains generated together).
     def protocol_name(self):

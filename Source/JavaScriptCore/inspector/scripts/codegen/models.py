@@ -109,6 +109,35 @@ class Frameworks:
     Test = Framework("Test")
 
 
+class Platform:
+    def __init__(self, name):
+        self.name = name
+
+    @staticmethod
+    def fromString(platformString):
+        platformString = platformString.lower()
+        if platformString == "ios":
+            return Platforms.iOS
+
+        if platformString == "macos":
+            return Platforms.macOS
+
+        if platformString == "all":
+            return Platforms.All
+
+        if platformString == "generic" or not platformString:
+            return Platforms.Generic
+
+        raise ParseException("Unknown platform: %s" % platformString)
+
+
+class Platforms:
+    All = Platform("All")
+    Generic = Platform("generic")
+    iOS = Platform("iOS")
+    macOS = Platform("macOS")
+
+
 class TypeReference:
     def __init__(self, type_kind, referenced_type_name, enum_values, array_items):
         self.type_kind = type_kind

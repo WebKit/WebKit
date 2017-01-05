@@ -1,3 +1,75 @@
+2017-01-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: teach the protocol generator about platform-specific types, events, and commands
+        https://bugs.webkit.org/show_bug.cgi?id=166003
+        <rdar://problem/28718990>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a --platform argument to generate-inspector-protocol-bindings.py and propagate
+        the specified platform to each generator. This will be used in the next few patches
+        to exclude types, events, and commands that are unsupported by the backend platform.
+
+        Covert all subclasses of Generator to pass along their positional arguments so that we
+        can easily change base class arguments without editing all generator constructors.
+
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator.__init__):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.__init__):
+        Pass along *args instead of single positional arguments.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.__init__):
+        Save the target platform and add a getter.
+
+        * inspector/scripts/codegen/models.py:
+        (Platform):
+        (Platform.__init__):
+        (Platform.fromString):
+        (Platforms):
+        Define the allowed Platform instances (iOS, macOS, and Any).
+
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.and.__init__):
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (generate_from_specification):
+        Pass along *args instead of single positional arguments.
+
 2017-01-04  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: add Module.sections

@@ -37,8 +37,8 @@ log = logging.getLogger('global')
 
 
 class ObjCInternalHeaderGenerator(ObjCGenerator):
-    def __init__(self, model, input_filepath):
-        ObjCGenerator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        ObjCGenerator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
         return '%sInternal.h' % self.protocol_name()

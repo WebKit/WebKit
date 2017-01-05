@@ -39,8 +39,8 @@ log = logging.getLogger('global')
 
 
 class CppProtocolTypesImplementationGenerator(CppGenerator):
-    def __init__(self, model, input_filepath):
-        CppGenerator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        CppGenerator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
         return "%sProtocolObjects.cpp" % self.protocol_name()

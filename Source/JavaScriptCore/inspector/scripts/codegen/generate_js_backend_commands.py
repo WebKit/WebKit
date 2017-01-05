@@ -37,8 +37,8 @@ log = logging.getLogger('global')
 
 
 class JSBackendCommandsGenerator(Generator):
-    def __init__(self, model, input_filepath):
-        Generator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
         return "InspectorBackendCommands.js"

@@ -40,8 +40,8 @@ log = logging.getLogger('global')
 
 
 class ObjCConfigurationImplementationGenerator(ObjCGenerator):
-    def __init__(self, model, input_filepath):
-        ObjCGenerator.__init__(self, model, input_filepath)
+    def __init__(self, *args, **kwargs):
+        ObjCGenerator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
         return '%sBackendDispatchers.mm' % self.protocol_name()
