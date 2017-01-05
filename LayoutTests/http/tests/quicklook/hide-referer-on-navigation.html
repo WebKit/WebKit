@@ -3,6 +3,10 @@
 <head>
 <script src="resources/tap-at-point-and-notify-done.js"></script>
 <script>
+function doTest(){
+    tapAtPointAndNotifyDone(document.getElementsByTagName('iframe')[0].offsetLeft + 5, document.getElementsByTagName('iframe')[0].offsetTop + 5)
+}
+
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
@@ -10,8 +14,9 @@ if (window.testRunner) {
 }
 </script>
 </head>
-<body>
+<body onload="doTest()">
 <p>This test verifies that the HTTP referrer is hidden when navigating from a Microsoft Word QuickLook preview. This test PASSED only if nothing is printed below.</p>
-<iframe src="resources/hide-referer-on-navigation.docx" onload="tapAtPoint(this.offsetLeft + 5, this.offsetTop + 5, function () { /* Do nothing */ })"></iframe>
+
+<iframe src="resources/hide-referer-on-navigation.docx"></iframe>
 </body>
 </html>
