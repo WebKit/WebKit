@@ -163,17 +163,6 @@ NS_ASSUME_NONNULL_END
 #import <CoreMedia/CMSampleBuffer.h>
 #import <CoreMedia/CMSync.h>
 
-#if __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
-#import <AVFoundation/AVSampleBufferRenderSynchronizer.h>
-
-NS_ASSUME_NONNULL_BEGIN
-@interface AVSampleBufferRenderSynchronizer (AVSampleBufferRenderSynchronizerPrivate)
-- (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
-@end
-NS_ASSUME_NONNULL_END
-
-#else
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AVSampleBufferRenderSynchronizer : NSObject
@@ -190,8 +179,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // __has_include(<AVFoundation/AVSampleBufferRenderSynchronizer.h>)
 
 #if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>
@@ -215,30 +202,3 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
-
-#if __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
-#import <AVFoundation/AVSampleBufferDisplayLayer_Private.h>
-#else
-
-#import <AVFoundation/AVSampleBufferDisplayLayer.h>
-
-#pragma mark -
-#pragma mark AVVideoPerformanceMetrics
-
-@interface AVVideoPerformanceMetrics : NSObject
-- (unsigned long)totalNumberOfVideoFrames;
-- (unsigned long)numberOfDroppedVideoFrames;
-- (unsigned long)numberOfCorruptedVideoFrames;
-- (double)totalFrameDelay;
-@end
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface AVSampleBufferDisplayLayer (WebCoreAVSampleBufferDisplayLayerPrivate)
-- (AVVideoPerformanceMetrics *)videoPerformanceMetrics;
-@end
-
-NS_ASSUME_NONNULL_END
-
-#endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer_Private.h>)
-

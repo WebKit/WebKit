@@ -1,5 +1,18 @@
 2017-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r210296.
+
+        This change broke macOS builds.
+
+        Reverted changeset:
+
+        "Check for the existence of
+        AVSampleBufferDisplayLayer_Private.h in AVFoundationSPI.h"
+        https://bugs.webkit.org/show_bug.cgi?id=166691
+        http://trac.webkit.org/changeset/210296
+
+2017-01-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r210287.
 
         This change caused editing test failures on macOS.
