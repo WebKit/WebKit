@@ -348,16 +348,16 @@ TEST(WTF, StringLeftBasic)
 TEST(WTF, StringReverseFindBasic)
 {
     auto reference = String::fromUTF8("Cappuccino");
-    EXPECT_EQ(reference.reverseFind('o'), 9);
-    EXPECT_EQ(reference.reverseFind('n'), 8);
-    EXPECT_EQ(reference.reverseFind('c'), 6);
-    EXPECT_EQ(reference.reverseFind('p'), 3);
+    EXPECT_EQ(reference.reverseFind('o'), 9U);
+    EXPECT_EQ(reference.reverseFind('n'), 8U);
+    EXPECT_EQ(reference.reverseFind('c'), 6U);
+    EXPECT_EQ(reference.reverseFind('p'), 3U);
     EXPECT_EQ(reference.reverseFind('k'), notFound);
 
     EXPECT_EQ(reference.reverseFind('o', 8), notFound);
-    EXPECT_EQ(reference.reverseFind('c', 8), 6);
-    EXPECT_EQ(reference.reverseFind('c', 6), 6);
-    EXPECT_EQ(reference.reverseFind('c', 5), 5);
+    EXPECT_EQ(reference.reverseFind('c', 8), 6U);
+    EXPECT_EQ(reference.reverseFind('c', 6), 6U);
+    EXPECT_EQ(reference.reverseFind('c', 5), 5U);
     EXPECT_EQ(reference.reverseFind('c', 4), notFound);
 }
 
