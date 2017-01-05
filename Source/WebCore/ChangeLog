@@ -1,5 +1,11 @@
 2017-01-05  Andreas Kling  <akling@apple.com>
 
+        Fix iOS build due to missing #include's.
+
+        * history/CachedFrame.cpp:
+
+2017-01-05  Andreas Kling  <akling@apple.com>
+
         Remove ChromeClient::needTouchEvents().
         <https://webkit.org/b/166723>
 
