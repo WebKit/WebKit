@@ -80,8 +80,15 @@ const assertOpThrows = (opFn, message) => {
 })();
 
 (function SectionsWithSameCustomName() {
-    const b = (new Builder()).Unknown("foo").End();
-    assert.throws(() => b.Unknown("foo"), Error, `Expected falsy: Cannot have two sections with the same name "foo" and ID 0`);
+    const b = (new Builder()).Unknown("foo").Byte(42).End().Unknown("foo").Byte(100).End();
+    const j = JSON.parse(b.json());
+    assert.eq(j.section.length, 2);
+    assert.eq(j.section[0].name, "foo");
+    assert.eq(j.section[0].data.length, 1);
+    assert.eq(j.section[0].data[0], 42);
+    assert.eq(j.section[1].name, "foo");
+    assert.eq(j.section[1].data.length, 1);
+    assert.eq(j.section[1].data[0], 100);
 })();
 
 (function EmptyTypeSection() {

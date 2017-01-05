@@ -1,3 +1,13 @@
+2017-01-04  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: sections with the same name are allowed
+        https://bugs.webkit.org/show_bug.cgi?id=166708
+
+        Reviewed by Saam Barati.
+
+        * wasm/self-test/test_BuilderJSON.js:
+        (SectionsWithSameCustomName):
+
 2017-01-04  Saam Barati  <sbarati@apple.com>
 
         stress/spread-calling.js timing out on the bots
