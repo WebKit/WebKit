@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@
 #endif
 
 #if USE(FOUNDATION)
+OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
 #endif
 
@@ -64,6 +65,7 @@ public:
     
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData();
+    WEBCORE_EXPORT RetainPtr<NSArray> createNSDataArray();
     WEBCORE_EXPORT static Ref<SharedBuffer> wrapNSData(NSData *);
 #endif
 #if USE(CF)
@@ -99,8 +101,8 @@ public:
     unsigned platformDataSize() const;
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    static Ref<SharedBuffer> wrapCFDataArray(CFArrayRef);
-    void append(CFDataRef);
+    WEBCORE_EXPORT static Ref<SharedBuffer> wrapCFDataArray(CFArrayRef);
+    WEBCORE_EXPORT void append(CFDataRef);
 #endif
 
     WEBCORE_EXPORT Ref<SharedBuffer> copy() const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,6 +121,30 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
     if (resourceData) 
         return SharedBuffer::wrapNSData(resourceData);
     return nullptr;
+}
+
+RetainPtr<NSArray> SharedBuffer::createNSDataArray()
+{
+    if (auto platformData = (NSData *)m_cfData.get())
+        return @[ platformData ];
+
+    if (m_fileData)
+        return @[ [NSData dataWithBytes:m_fileData.data() length:m_fileData.size()] ];
+
+    auto dataArray = adoptNS([[NSMutableArray alloc] init]);
+    if (m_buffer->data.size())
+        [dataArray addObject:adoptNS([[WebCoreSharedBufferData alloc] initWithSharedBufferDataBuffer:m_buffer.ptr()]).get()];
+
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    for (auto& data : m_dataArray)
+        [dataArray addObject:(NSData *)data.get()];
+#else
+    // Cocoa platforms all currently USE(NETWORK_CFDATA_ARRAY_CALLBACK), so implementing a code path for copying segments would be dead code.
+    // If this ever changes, the following static_assert will detect it.
+    static_assert(false, "FIXME: Copy the segments into an array of NSData objects.");
+#endif
+
+    return WTFMove(dataArray);
 }
 
 }

@@ -137,6 +137,7 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SecurityOrigin.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URLParser.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/UserAgentQuirks.cpp

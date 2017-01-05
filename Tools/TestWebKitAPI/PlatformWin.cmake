@@ -58,6 +58,7 @@ set(TestWebCoreLib_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/ParsedContentRange.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SecurityOrigin.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBuffer.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/SharedBufferTest.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/TimeRanges.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/TransformationMatrix.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/URL.cpp

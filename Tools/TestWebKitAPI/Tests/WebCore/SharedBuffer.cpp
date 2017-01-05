@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
@@ -27,6 +27,7 @@
 
 #include "config.h"
 
+#include "SharedBufferTest.h"
 #include "Test.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
@@ -35,38 +36,6 @@
 using namespace WebCore;
 
 namespace TestWebKitAPI {
-
-const char* SharedBufferTestData = "This is a test";
-
-class SharedBufferTest : public testing::Test {
-public:
-    void SetUp() override
-    {
-        WTF::initializeMainThread();
-        
-        // create temp file
-        PlatformFileHandle handle;
-        m_tempFilePath = openTemporaryFile("tempTestFile", handle);
-        writeToFile(handle, SharedBufferTestData, strlen(SharedBufferTestData));
-        closeFile(handle); 
-
-        m_tempEmptyFilePath = openTemporaryFile("tempEmptyTestFile", handle);
-        closeFile(handle); 
-    }
-
-    void TearDown() override
-    {
-        deleteFile(m_tempFilePath);
-        deleteFile(m_tempEmptyFilePath);
-    }
-
-    const String& tempFilePath() { return m_tempFilePath; }
-    const String& tempEmptyFilePath() { return m_tempEmptyFilePath; }
-
-private:
-    String m_tempFilePath;
-    String m_tempEmptyFilePath;
-};
 
 TEST_F(SharedBufferTest, createWithContentsOfMissingFile)
 {
@@ -78,8 +47,8 @@ TEST_F(SharedBufferTest, createWithContentsOfExistingFile)
 {
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
-    EXPECT_TRUE(buffer->size() == strlen(SharedBufferTestData));
-    EXPECT_TRUE(String(SharedBufferTestData) == String(buffer->data(), buffer->size()));
+    EXPECT_TRUE(buffer->size() == strlen(SharedBufferTest::testData()));
+    EXPECT_TRUE(String(SharedBufferTest::testData()) == String(buffer->data(), buffer->size()));
 }
 
 TEST_F(SharedBufferTest, createWithContentsOfExistingEmptyFile)
@@ -113,9 +82,9 @@ TEST_F(SharedBufferTest, appendBufferCreatedWithContentsOfExistingFile)
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(tempFilePath());
     ASSERT_NOT_NULL(buffer);
     buffer->append("a", 1);
-    EXPECT_TRUE(buffer->size() == (strlen(SharedBufferTestData) + 1));
-    EXPECT_TRUE(!memcmp(buffer->data(), SharedBufferTestData, strlen(SharedBufferTestData)));
-    EXPECT_EQ('a', buffer->data()[strlen(SharedBufferTestData)]);
+    EXPECT_TRUE(buffer->size() == (strlen(SharedBufferTest::testData()) + 1));
+    EXPECT_TRUE(!memcmp(buffer->data(), SharedBufferTest::testData(), strlen(SharedBufferTest::testData())));
+    EXPECT_EQ('a', buffer->data()[strlen(SharedBufferTest::testData())]);
 }
 
 TEST_F(SharedBufferTest, createArrayBuffer)

@@ -1,3 +1,27 @@
+2017-01-04  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Teach SharedBuffer to return an NSArray of data segments to avoid flattening
+        https://bugs.webkit.org/show_bug.cgi?id=166696
+
+        Reviewed by Tim Horton.
+
+        Existing methods of extracting NSData from a SharedBuffer require either merging or copying
+        data segments. Since data segments are stored in CFDataRefs on Cocoa platforms, it should be
+        possible to retrieve an NSArray of the segments without having to first flatten to a single
+        buffer.
+
+        This patch implements such a method. This will be used in a follow-on patch, where I will
+        need to pass SharedBuffer data to QuickLook via an NSArray of NSData.
+
+        New API test: SharedBufferTest.createNSDataArray.
+
+        * platform/SharedBuffer.h: Declared createNSArrayData(), and exported two functions needed
+        by the API test.
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (WebCore::SharedBuffer::createNSDataArray): Added. Returns m_cfData or a copy of m_fileData
+        if either exist. Otherwise, adds m_buffer (wrapped in a WebCoreSharedBufferData object) and
+        the objects in m_dataArray to a NSMutableArray and returns it.
+
 2017-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210296.
