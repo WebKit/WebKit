@@ -1,5 +1,12 @@
 2017-01-05  Enrica Casucci  <enrica@apple.com>
 
+        Unreviewed build fix after https://trac.webkit.org/changeset/210360
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performDragOperation):
+
+2017-01-05  Enrica Casucci  <enrica@apple.com>
+
         Support File Promise during drag for macOS.
         https://bugs.webkit.org/show_bug.cgi?id=165204
         rdar://problem/19595567
