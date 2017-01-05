@@ -1,3 +1,40 @@
+2017-01-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Test.html should support globals reportInternalError, reportUnhandledRejection, reportUncaughtException
+        https://bugs.webkit.org/show_bug.cgi?id=161358
+        <rdar://problem/28066446>
+
+        Reviewed by Joseph Pecoraro.
+
+        Improve uncaught exception reporting and add some tests to document
+        new and existing behavior.
+
+        * http/tests/inspector/resources/inspector-test.js:
+        (runTest.runTestMethodInFrontend):
+        (runTest): Outsource reporting of an uncaught exception while injecting
+        a method into the frontend. By doing this, we can make the report using
+        the actual exception object since it doesn't go through window.onerror.
+
+        * inspector/unit-tests/async-test-suite-expected.txt:
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/sync-test-suite-expected.txt:
+        * inspector/unit-tests/sync-test-suite.html:
+        Rebaseline and force suppression of stack traces, which are not deterministic
+        across commits due to logging specific lines and columns in TestCombined.js.
+
+        * inspector/unit-tests/globals-uncaught-exception-from-timer-callback-expected.txt: Added.
+        * inspector/unit-tests/globals-uncaught-exception-from-timer-callback.html: Added.
+        * inspector/unit-tests/globals-uncaught-exception-in-test-function-expected.txt: Added.
+        * inspector/unit-tests/globals-uncaught-exception-in-test-function.html: Added.
+        * inspector/unit-tests/globals-uncaught-exception-in-test-suite-expected.txt: Added.
+        * inspector/unit-tests/globals-uncaught-exception-in-test-suite.html: Added.
+        * inspector/unit-tests/globals-unhandled-rejection-in-test-function-expected.txt: Added.
+        * inspector/unit-tests/globals-unhandled-rejection-in-test-function.html: Added.
+        * inspector/unit-tests/globals-unhandled-rejection-in-test-suite-expected.txt: Added.
+        * inspector/unit-tests/globals-unhandled-rejection-in-test-suite.html: Added.
+        * inspector/unit-tests/globals-unhandled-rejection-in-timer-callback-expected.txt: Added.
+        * inspector/unit-tests/globals-unhandled-rejection-in-timer-callback.html: Added.
+
 2017-01-05  Andreas Kling  <akling@apple.com>
 
         Skip fast/scrolling/page-cache-back-overflow-scroll-restore.html on iOS simulator.

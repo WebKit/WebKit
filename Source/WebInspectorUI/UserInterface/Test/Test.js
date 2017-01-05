@@ -115,3 +115,6 @@ window.InspectorTest = new FrontendTestHarness();
 InspectorTest.redirectConsoleToTestOutput();
 
 WebInspector.reportInternalError = (e) => { console.error(e); }
+
+window.reportUnhandledRejection = InspectorTest.reportUnhandledRejection.bind(InspectorTest);
+window.onerror = InspectorTest.reportUncaughtExceptionFromEvent.bind(InspectorTest);

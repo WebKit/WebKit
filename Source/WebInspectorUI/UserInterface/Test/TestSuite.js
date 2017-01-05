@@ -87,16 +87,28 @@ TestSuite = class TestSuite extends WebInspector.Object
         this.testcases.push(testcase);
     }
 
-    static messageFromThrownObject(e)
+    // Protected
+
+    logThrownObject(e)
     {
         let message = e;
-        if (e instanceof Error)
+        let stack = "(unknown)";
+        if (e instanceof Error) {
             message = e.message;
+            if (e.stack)
+                stack = e.stack;
+        }
 
         if (typeof message !== "string")
             message = JSON.stringify(message);
 
-        return message;
+        let sanitizedStack = this._harness.sanitizeStack(stack);
+
+        let result = `!! EXCEPTION: ${message}`;
+        if (stack)
+            result += `\nStack Trace: ${sanitizedStack}`;
+
+        this._harness.log(result);
     }
 };
 
@@ -154,8 +166,7 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
 
         return result.catch((e) => {
             this.failCount++;
-            let message = TestSuite.messageFromThrownObject(e);
-            this._harness.log(`!! EXCEPTION: ${message}`);
+            this.logThrownObject(e);
 
             throw e; // Reject this promise by re-throwing the error.
         });
@@ -196,12 +207,11 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
                 try {
                     let result = testcase.setup.call(null);
                     if (result === false) {
-                        this._harness.log("!! EXCEPTION");
+                        this._harness.log("!! SETUP FAILED");
                         return false;
                     }
                 } catch (e) {
-                    let message = TestSuite.messageFromThrownObject(e);
-                    this._harness.log(`!! EXCEPTION: ${message}`);
+                    this.logThrownObject(e);
                     return false;
                 }
             }
@@ -216,8 +226,7 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
                 }
             } catch (e) {
                 this.failCount++;
-                let message = TestSuite.messageFromThrownObject(e);
-                this._harness.log(`!! EXCEPTION: ${message}`);
+                this.logThrownObject(e);
                 return false;
             }
 
@@ -227,12 +236,11 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
                 try {
                     let result = testcase.teardown.call(null);
                     if (result === false) {
-                        this._harness.log("!! EXCEPTION:");
+                        this._harness.log("!! TEARDOWN FAILED");
                         return false;
                     }
                 } catch (e) {
-                    let message = TestSuite.messageFromThrownObject(e);
-                    this._harness.log(`!! EXCEPTION: ${message}`);
+                    this.logThrownObject(e);
                     return false;
                 }
             }

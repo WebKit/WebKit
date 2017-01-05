@@ -1,0 +1,7 @@
+Test that the unhandled hook will immediately terminate the test and print the associated exception and stack trace.
+
+Unhandled promise rejection in inspector page: This is an exception thrown in the inspector page.
+
+Stack Trace: (suppressed)
+
+

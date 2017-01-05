@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,9 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
 
         this._results = [];
         this._shouldResendResults = true;
+
+        // Options that are set per-test for debugging purposes.
+        this.dumpActivityToSystemConsole = false;
     }
 
     // TestHarness Overrides
@@ -151,25 +154,7 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
                 } catch (e) {
                     // Skip the first frame which is added by this function.
                     let frames = e.stack.split("\n").slice(1);
-                    let sanitizedFrames = frames.map((frame, i) => {
-                        // Most frames are of the form "functionName@file:///foo/bar/File.js:345".
-                        // But, some frames do not have a functionName. Get rid of the file path.
-                        let nameAndURLSeparator = frame.indexOf("@");
-                        let frameName = (nameAndURLSeparator > 0) ? frame.substr(0, nameAndURLSeparator) : "(anonymous)";
-
-                        let lastPathSeparator = Math.max(frame.lastIndexOf("/"), frame.lastIndexOf("\\"));
-                        let frameLocation = (lastPathSeparator > 0) ? frame.substr(lastPathSeparator + 1) : frame;
-                        if (!frameLocation.length)
-                            frameLocation = "unknown";
-
-                        // Clean up the location so it is bracketed or in parenthesis.
-                        if (frame.indexOf("[native code]") !== -1)
-                            frameLocation = "[native code]";
-                        else
-                            frameLocation = "(" + frameLocation + ")";
-
-                        return `#${i}: ${frameName} ${frameLocation}`;
-                    });
+                    let sanitizedFrames = frames.map(TestHarness.sanitizeStackFrame);
                     self.addResult("TRACE: " + Array.from(arguments).join(" "));
                     self.addResult(sanitizedFrames.join("\n"));
                 }
@@ -189,16 +174,56 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         window.console = redirectedMethods;
     }
 
-    reportUncaughtException(message, url, lineNumber, columnNumber)
+    reportUnhandledRejection(error)
     {
-        let result = `Uncaught exception in inspector page: ${message} [${url}:${lineNumber}:${columnNumber}]`;
+        let message = error.message;
+        let stack = error.stack;
+        let result = `Unhandled promise rejection in inspector page: ${message}\n`;
+        if (stack) {
+            let sanitizedStack = this.sanitizeStack(stack);
+            result += `\nStack Trace: ${sanitizedStack}\n`;
+        }
 
         // If the connection to the test page is not set up, then just dump to console and give up.
         // Errors encountered this early can be debugged by loading Test.html in a normal browser page.
-        if (this._originalConsole && !this._testPageHasLoaded()) {
+        if (this._originalConsole && !this._testPageHasLoaded())
             this._originalConsole["error"](result);
-            return false;
-        }
+
+        this.addResult(result);
+        this.completeTest();
+
+        // Stop default handler so we can empty InspectorBackend's message queue.
+        return true;
+    }
+
+    reportUncaughtExceptionFromEvent(message, url, lineNumber, columnNumber)
+    {
+        // An exception thrown from a timer callback does not report a URL.
+        if (url === "undefined")
+            url = "global";
+
+        return this.reportUncaughtException({message, url, lineNumber, columnNumber});
+    }
+
+    reportUncaughtException({message, url, lineNumber, columnNumber, stack, code})
+    {
+        let result;
+        let sanitizedURL = TestHarness.sanitizeURL(url);
+        let sanitizedStack = this.sanitizeStack(stack);
+        if (url || lineNumber || columnNumber)
+            result = `Uncaught exception in Inspector page: ${message} [${sanitizedURL}:${lineNumber}:${columnNumber}]\n`;
+        else
+            result = `Uncaught exception in Inspector page: ${message}\n`;
+
+        if (stack)
+            result += `\nStack Trace:\n${sanitizedStack}\n`;
+        if (code)
+            result += `\nEvaluated Code:\n${code}`;
+
+        // If the connection to the test page is not set up, then just dump to console and give up.
+        // Errors encountered this early can be debugged by loading Test.html in a normal browser page.
+        if (this._originalConsole && !this._testPageHasLoaded())
+            this._originalConsole["error"](result);
 
         this.addResult(result);
         this.completeTest();

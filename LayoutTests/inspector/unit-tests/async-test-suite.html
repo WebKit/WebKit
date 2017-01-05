@@ -5,6 +5,8 @@
 <script>
 function test()
 {
+    ProtocolTest.suppressStackTraces = true;
+
     try {
         let result = new AsyncTestSuite(this);
         ProtocolTest.log("FAIL: instantiating AsyncTestSuite requires name argument.");

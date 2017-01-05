@@ -1,3 +1,62 @@
+2017-01-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Test.html should support globals reportInternalError, reportUnhandledRejection, reportUncaughtException
+        https://bugs.webkit.org/show_bug.cgi?id=161358
+        <rdar://problem/28066446>
+
+        Reviewed by Joseph Pecoraro.
+
+        We have a hodgepodge of redundant code that reports uncaught exceptions in the inspector page.
+        There is better handling of uncaught exceptions in the inspected page, such as including stack traces.
+
+        This patch consolidates a lot of this code and makes it possible to report
+        unhandled promise rejections, top-level uncaught exceptions, and exceptions
+        caught in a try-catch block. The formatting and sanitization code for all of
+        these things is shared and consistent. Finally, some tests have been added to
+        catch regressions in unhandled rejection/uncaught exception reporting.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness): Explicitly set initial flag state here so it's easy to find all flags.
+
+        (FrontendTestHarness.prototype.redirectConsoleToTestOutput):
+        Extract this code to sanitize stack frames and put it in TestHarness. It is used
+        by other methods that need to print stack frames.
+
+        (FrontendTestHarness.prototype.reportUnhandledRejection):
+        (FrontendTestHarness.prototype.reportUncaughtException):
+        Added. Sanitize stack trace data so it is deterministic. Log the message to the
+        original window.console but don't exit early. Sometimes the test page is not
+        fully loaded if we throw an exception quite early in the test() method, and there's
+        no harm in not early returning. If we do early return in this case, then a test that
+        uses reportUncaughtException on purpose may not complete because the call to completeTest()
+        would be skipped by returning early.
+
+        (FrontendTestHarness.prototype.reportUncaughtExceptionFromEvent):
+        Renamed from reportUncaughtException since the signature of that method suggests
+        it should have a single exception argument rather than lots of data arguments.
+
+        * UserInterface/Test/Test.js: Add globals.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness): Document class flags.
+        (TestHarness.sanitizeURL):
+        (TestHarness.sanitizeStackFrame):
+        (TestHarness.prototype.sanitizeStack):
+        Extract this code from other parts of the test harness. Make sanitizeStack
+        an instance method so that there is only one place that needs to check the
+        'suppressStackTraces' flag.
+
+        * UserInterface/Test/TestSuite.js:
+        (TestSuite.prototype.logThrownObject):
+        (TestSuite):
+        (AsyncTestSuite.prototype.runTestCases):
+        (AsyncTestSuite):
+        (SyncTestSuite.prototype.runTestCases):
+        (SyncTestSuite):
+        (TestSuite.messageFromThrownObject): Deleted.
+        Inline some helpers with only one use-site and consolidate redundant code
+        for adding an exception and message to the test results.
+
 2017-01-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: application cache details not shown in Storage Tab

@@ -26,6 +26,7 @@ PASS: should not be able to run a test suite twice.
 -- Running test case: DummyTest3
 -- Running test case: FailingTest4
 !! EXCEPTION: [object Object]
+Stack Trace: (suppressed)
 PASS: Return value of sequentialExecutionSuite.runTestCases() should be false when a test case fails.
 PASS: sequentialExecutionSuite should have executed four tests.
 PASS: sequentialExecutionSuite should have passed three tests.
@@ -54,18 +55,20 @@ PASS: Test should see side effects of previous test's teardown() action.
 == Running test suite: SyncTestSuite.SetupException
 -- Running test setup.
 !! EXCEPTION: 
+Stack Trace: (suppressed)
 
 == Running test suite: SyncTestSuite.SetupFailure
 -- Running test setup.
-!! EXCEPTION
+!! SETUP FAILED
 
 == Running test suite: SyncTestSuite.TeardownException
 -- Running test case: TestWithExceptionDuringTeardown
 -- Running test teardown.
 !! EXCEPTION: 
+Stack Trace: (suppressed)
 
 == Running test suite: SyncTestSuite.TeardownFailure
 -- Running test case: TestWithExceptionDuringTeardown
 -- Running test teardown.
-!! EXCEPTION:
+!! TEARDOWN FAILED
 

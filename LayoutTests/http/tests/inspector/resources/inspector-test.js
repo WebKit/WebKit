@@ -88,9 +88,9 @@ function runTest()
         try {
             testFunction();
         } catch (e) {
-            // FIXME: the redirected console methods do not forward additional arguments.
-            console.error("Exception during test execution: " + e, e.stack || "(no stack trace)");
-            InspectorTest.completeTest();
+            // Using this instead of window.onerror will preserve the stack trace.
+            e.code = testFunction.toString();
+            InspectorTest.reportUncaughtException(e);
         }
     }
 

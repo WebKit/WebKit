@@ -26,6 +26,7 @@ PASS: AsyncTestSuite.RunTestCases() should return a Promise.
 -- Running test case: DummyTest3
 -- Running test case: FailingTest4
 !! EXCEPTION: [object Object]
+Stack Trace: (suppressed)
 PASS: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.
 PASS: Promise from sequentialExecutionSuite.runTestCases() should reject without altering its result value.
 PASS: sequentialExecutionSuite should have executed four tests.
@@ -37,6 +38,7 @@ PASS: sequentialExecutionSuite should have skipped zero tests.
 -- Running test case: PassingTest5
 -- Running test case: FailingTest6
 !! EXCEPTION: {"token":666}
+Stack Trace: (suppressed)
 PASS: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.
 PASS: Promise from abortOnFailureSuite.runTestCases() should reject without altering its result value.
 PASS: abortOnFailureSuite should have executed two tests.
@@ -58,22 +60,26 @@ PASS: Promise from setupAndTeardownTestSuite.runTestCases() should resolve.
 == Running test suite: AsyncTestSuite.SetupException
 -- Running test setup.
 !! EXCEPTION: 
+Stack Trace: (suppressed)
 PASS: Promise from setupExceptionTestSuite.runTestCases() should reject.
 
 == Running test suite: AsyncTestSuite.SetupFailure
 -- Running test setup.
 !! EXCEPTION: undefined
+Stack Trace: (suppressed)
 PASS: Promise from setupFailureTestSuite.runTestCases() should reject.
 
 == Running test suite: AsyncTestSuite.TeardownException
 -- Running test case: TestWithExceptionDuringTeardown
 -- Running test teardown.
 !! EXCEPTION: 
+Stack Trace: (suppressed)
 PASS: Promise from teardownExceptionTestSuite.runTestCases() should reject.
 
 == Running test suite: AsyncTestSuite.TeardownFailure
 -- Running test case: TestWithExceptionDuringTeardown
 -- Running test teardown.
 !! EXCEPTION: undefined
+Stack Trace: (suppressed)
 PASS: Promise from teardownFailureTestSuite.runTestCases() should reject.
 

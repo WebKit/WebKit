@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,12 @@ TestHarness = class TestHarness extends WebInspector.Object
         this._logCount = 0;
         this._failureObjects = new Map;
         this._failureObjectIdentifier = 1;
+
+        // Options that are set per-test for debugging purposes.
+        this.forceDebugLogging = false;
+
+        // Options that are set per-test to ensure deterministic output.
+        this.suppressStackTraces = false;
     }
 
     completeTest()
@@ -181,6 +187,55 @@ TestHarness = class TestHarness extends WebInspector.Object
             return message.textContent;
 
         return (typeof message !== "string") ? JSON.stringify(message) : message;
+    }
+
+    static sanitizeURL(url)
+    {
+        if (!url)
+            return "(unknown)";
+
+        let lastPathSeparator = Math.max(url.lastIndexOf("/"), url.lastIndexOf("\\"));
+        let location = (lastPathSeparator > 0) ? url.substr(lastPathSeparator + 1) : url;
+        if (!location.length)
+            location = "(unknown)";
+
+        // Clean up the location so it is bracketed or in parenthesis.
+        if (url.indexOf("[native code]") !== -1)
+            location = "[native code]";
+
+        return location;
+    }
+
+    static sanitizeStackFrame(frame, i)
+    {
+        // Most frames are of the form "functionName@file:///foo/bar/File.js:345".
+        // But, some frames do not have a functionName. Get rid of the file path.
+        let nameAndURLSeparator = frame.indexOf("@");
+        let frameName = (nameAndURLSeparator > 0) ? frame.substr(0, nameAndURLSeparator) : "(anonymous)";
+
+        let lastPathSeparator = Math.max(frame.lastIndexOf("/"), frame.lastIndexOf("\\"));
+        let frameLocation = (lastPathSeparator > 0) ? frame.substr(lastPathSeparator + 1) : frame;
+        if (!frameLocation.length)
+            frameLocation = "unknown";
+
+        // Clean up the location so it is bracketed or in parenthesis.
+        if (frame.indexOf("[native code]") !== -1)
+            frameLocation = "[native code]";
+        else
+            frameLocation = "(" + frameLocation + ")";
+
+        return `#${i}: ${frameName} ${frameLocation}`;
+    }
+
+    sanitizeStack(stack)
+    {
+        if (this.suppressStackTraces)
+            return "(suppressed)";
+
+        if (!stack || typeof stack !== "string")
+            return "(unknown)";
+
+        return stack.split("\n").map(TestHarness.sanitizeStackFrame).join("\n");
     }
 
     // Private
