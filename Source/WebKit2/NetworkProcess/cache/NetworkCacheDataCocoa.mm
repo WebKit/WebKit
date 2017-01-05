@@ -71,7 +71,7 @@ bool Data::isNull() const
     return !m_dispatchData;
 }
 
-bool Data::apply(const std::function<bool (const uint8_t*, size_t)>&& applier) const
+bool Data::apply(const Function<bool (const uint8_t*, size_t)>& applier) const
 {
     if (!m_size)
         return false;

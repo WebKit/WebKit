@@ -105,7 +105,7 @@ public:
     bool isEnabled() const { return !!m_storage; }
 
     // Completion handler may get called back synchronously on failure.
-    void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::function<void (std::unique_ptr<Entry>)>&&);
+    void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, Function<void (std::unique_ptr<Entry>)>&&);
     std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::SharedBuffer>&&, Function<void (MappedBody&)>&&);
     std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const GlobalFrameID&, const Entry&, const WebCore::ResourceResponse& validatingResponse);
@@ -119,7 +119,7 @@ public:
     void remove(const WebCore::ResourceRequest&);
 
     void clear();
-    void clear(std::chrono::system_clock::time_point modifiedSince, std::function<void ()>&& completionHandler);
+    void clear(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler);
 
     void dumpContentsToFile();
 

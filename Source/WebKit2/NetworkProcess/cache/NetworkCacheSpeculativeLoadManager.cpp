@@ -301,10 +301,10 @@ bool SpeculativeLoadManager::canUsePendingPreload(const SpeculativeLoad& load, c
     return requestsHeadersMatch(load.originalRequest(), actualRequest);
 }
 
-bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& storageKey, const WebCore::ResourceRequest& request, RetrieveCompletionHandler&& completionHandler)
+bool SpeculativeLoadManager::canRetrieve(const Key& storageKey, const WebCore::ResourceRequest& request, const GlobalFrameID& frameID) const
 {
     // Check already preloaded entries.
-    if (auto preloadedEntry = m_preloadedEntries.take(storageKey)) {
+    if (auto preloadedEntry = m_preloadedEntries.get(storageKey)) {
         if (!canUsePreloadedEntry(*preloadedEntry, request)) {
             LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Retrieval: Could not use preloaded entry to satisfy request for '%s' due to HTTP headers mismatch:", storageKey.identifier().utf8().data());
             logSpeculativeLoadingDiagnosticMessage(frameID, preloadedEntry->wasRevalidated() ? DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey() : DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey());
@@ -313,15 +313,13 @@ bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& s
 
         LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Retrieval: Using preloaded entry to satisfy request for '%s':", storageKey.identifier().utf8().data());
         logSpeculativeLoadingDiagnosticMessage(frameID, preloadedEntry->wasRevalidated() ? DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey() : DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
-
-        completionHandler(preloadedEntry->takeCacheEntry());
         return true;
     }
 
     // Check pending speculative revalidations.
     auto* pendingPreload = m_pendingPreloads.get(storageKey);
     if (!pendingPreload) {
-        if (m_notPreloadedEntries.remove(storageKey))
+        if (m_notPreloadedEntries.get(storageKey))
             logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::entryWronglyNotWarmedUpKey());
         else
             logSpeculativeLoadingDiagnosticMessage(frameID, DiagnosticLoggingKeys::unknownEntryRequestKey());
@@ -337,10 +335,21 @@ bool SpeculativeLoadManager::retrieve(const GlobalFrameID& frameID, const Key& s
 
     LOG(NetworkCacheSpeculativePreloading, "(NetworkProcess) Retrieval: revalidation already in progress for '%s':", storageKey.identifier().utf8().data());
 
-    // FIXME: This breaks incremental loading when the revalidation is not successful.
-    auto addResult = m_pendingRetrieveRequests.ensure(storageKey, [] { return std::make_unique<Vector<RetrieveCompletionHandler>>(); });
-    addResult.iterator->value->append(WTFMove(completionHandler));
     return true;
+}
+
+void SpeculativeLoadManager::retrieve(const Key& storageKey, RetrieveCompletionHandler&& completionHandler)
+{
+    if (auto preloadedEntry = m_preloadedEntries.take(storageKey)) {
+        completionHandler(preloadedEntry->takeCacheEntry());
+        return;
+    }
+    ASSERT(m_pendingPreloads.contains(storageKey));
+    // FIXME: This breaks incremental loading when the revalidation is not successful.
+    auto addResult = m_pendingRetrieveRequests.ensure(storageKey, [] {
+        return std::make_unique<Vector<RetrieveCompletionHandler>>();
+    });
+    addResult.iterator->value->append(WTFMove(completionHandler));
 }
 
 void SpeculativeLoadManager::registerLoad(const GlobalFrameID& frameID, const ResourceRequest& request, const Key& resourceKey)

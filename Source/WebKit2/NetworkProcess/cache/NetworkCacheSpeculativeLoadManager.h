@@ -51,8 +51,10 @@ public:
 
     void registerLoad(const GlobalFrameID&, const WebCore::ResourceRequest&, const Key& resourceKey);
 
-    typedef std::function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
-    bool retrieve(const GlobalFrameID&, const Key& storageKey, const WebCore::ResourceRequest&, RetrieveCompletionHandler&&);
+    typedef Function<void (std::unique_ptr<Entry>)> RetrieveCompletionHandler;
+
+    bool canRetrieve(const Key& storageKey, const WebCore::ResourceRequest&, const GlobalFrameID&) const;
+    void retrieve(const Key& storageKey, RetrieveCompletionHandler&&);
 
 private:
     class PreloadedEntry;

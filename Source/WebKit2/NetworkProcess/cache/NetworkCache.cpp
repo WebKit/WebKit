@@ -309,7 +309,7 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     return StoreDecision::Yes;
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, std::function<void (std::unique_ptr<Entry>)>&& completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, Function<void (std::unique_ptr<Entry>)>&& completionHandler)
 {
     ASSERT(isEnabled());
     ASSERT(request.url().protocolIsInHTTPFamily());
@@ -337,13 +337,15 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-    if (canUseSpeculativeRevalidation && m_speculativeLoadManager->retrieve(frameID, storageKey, request, [request, completionHandler](std::unique_ptr<Entry> entry) {
-        if (entry && WebCore::verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), request))
-            completionHandler(WTFMove(entry));
-        else
-            completionHandler(nullptr);
-    }))
+    if (canUseSpeculativeRevalidation && m_speculativeLoadManager->canRetrieve(storageKey, request, frameID)) {
+        m_speculativeLoadManager->retrieve(storageKey, [request, completionHandler = WTFMove(completionHandler)](std::unique_ptr<Entry> entry) {
+            if (entry && WebCore::verifyVaryingRequestHeaders(entry->varyingRequestHeaders(), request))
+                completionHandler(WTFMove(entry));
+            else
+                completionHandler(nullptr);
+        });
         return;
+    }
 #endif
 
     auto startTime = std::chrono::system_clock::now();
@@ -586,7 +588,7 @@ void Cache::deleteDumpFile()
     });
 }
 
-void Cache::clear(std::chrono::system_clock::time_point modifiedSince, std::function<void ()>&& completionHandler)
+void Cache::clear(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
 

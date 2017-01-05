@@ -128,7 +128,7 @@ public:
 
     Data subrange(size_t offset, size_t) const;
 
-    bool apply(const std::function<bool (const uint8_t*, size_t)>&&) const;
+    bool apply(const Function<bool (const uint8_t*, size_t)>&) const;
 
     Data mapToFile(const char* path) const;
 

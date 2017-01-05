@@ -53,9 +53,9 @@ static double computeRecordWorth(FileTimes);
 struct Storage::ReadOperation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ReadOperation(const Key& key, const RetrieveCompletionHandler& completionHandler)
+    ReadOperation(const Key& key, RetrieveCompletionHandler&& completionHandler)
         : key(key)
-        , completionHandler(completionHandler)
+        , completionHandler(WTFMove(completionHandler))
     { }
 
     void cancel();
@@ -804,7 +804,7 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
 {
     ASSERT(RunLoop::isMain());
     ASSERT(traverseHandler);
-    // Avoid non-thread safe std::function copies.
+    // Avoid non-thread safe Function copies.
 
     auto traverseOperationPtr = std::make_unique<TraverseOperation>(type, flags, WTFMove(traverseHandler));
     auto& traverseOperation = *traverseOperationPtr;
@@ -888,7 +888,7 @@ void Storage::setCapacity(size_t capacity)
     shrinkIfNeeded();
 }
 
-void Storage::clear(const String& type, std::chrono::system_clock::time_point modifiedSinceTime, std::function<void ()>&& completionHandler)
+void Storage::clear(const String& type, std::chrono::system_clock::time_point modifiedSinceTime, Function<void ()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
