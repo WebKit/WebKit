@@ -504,7 +504,7 @@ public:
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitForceSoftwareWebGLRenderingPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitPreferLowPowerWebGLRenderingPreferenceKey,
+        [NSNumber numberWithBool:YES],   WebKitPreferLowPowerWebGLRenderingPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitSubpixelCSSOMElementMetricsEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitResourceLoadStatisticsEnabledPreferenceKey,
