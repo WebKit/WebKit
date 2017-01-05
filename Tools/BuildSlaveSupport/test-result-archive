@@ -79,11 +79,11 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
         # deleting its contents, claiming "Directory not empty".
         # We can safely ignore this since it was the directory contents that
         # we are most interested in deleting.
-        # Python in Cygwin will also sometimes throw errno 2 if a process is
-        # holding a file open. There's no point in failing to create the
+        # Python in Cygwin will also sometimes throw errno 2 or 16 if a process
+        # is holding a file open. There's no point in failing to create the
         # archive just because some other process is behaving badly. See
-        # <http://webkit.org/b/55581>.
-        if e.errno != 90 and e.errno != 2:
+        # <http://webkit.org/b/55581> and <http://webkit.org/b/166720>.
+        if e.errno != 90 and e.errno != 2 and e.errno != 16:
             raise
 
 if __name__ == '__main__':

@@ -1,3 +1,16 @@
+2017-01-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Archive test result is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=166720
+
+        Reviewed by Alex Christensen.
+
+        Deleting the layout test result folder is sometimes failing
+        on Windows. This is not a critical error.
+
+        * BuildSlaveSupport/test-result-archive:
+        (archiveTestResults):
+
 2017-01-04  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Minibrowser: Add printing support
