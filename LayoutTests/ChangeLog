@@ -1,5 +1,21 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210122. rdar://problem/29763012
+
+    2016-12-22  Brent Fulgham  <bfulgham@apple.com>
+
+            Nested calls to setDocument can omit firing 'unload' events
+            https://bugs.webkit.org/show_bug.cgi?id=166422
+            <rdar://problem/29763012>
+
+            Reviewed by Alex Christensen.
+
+            * fast/loader/nested-document-handling-expected.txt: Added.
+            * fast/loader/nested-document-handling.html: Added.
+            * fast/loader/resources/subframe-success.html: Added.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210120. rdar://problem/29772233
 
     2016-12-22  Zalan Bujtas  <zalan@apple.com>
