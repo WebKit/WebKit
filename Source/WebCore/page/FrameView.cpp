@@ -879,17 +879,6 @@ void FrameView::clearBackingStores()
     compositor.clearBackingForAllLayers();
 }
 
-void FrameView::restoreBackingStores()
-{
-    RenderView* renderView = this->renderView();
-    if (!renderView)
-        return;
-
-    RenderLayerCompositor& compositor = renderView->compositor();
-    compositor.enableCompositingMode(true);
-    compositor.updateCompositingLayers(CompositingUpdateAfterLayout);
-}
-
 GraphicsLayer* FrameView::layerForScrolling() const
 {
     RenderView* renderView = this->renderView();

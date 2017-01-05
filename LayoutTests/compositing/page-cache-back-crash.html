@@ -1,0 +1,25 @@
+<style>
+.outer { position: fixed; }
+.inner { position: absolute; }
+</style>
+<div class=outer>-<div class=inner></div></div>
+Test passes if it doesn't crash.
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+    window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted)
+        testRunner.notifyDone();
+}, false);
+
+window.addEventListener("load", function() {
+    setTimeout(function() {
+        // Navigate to a helper page that will immediately navigate back here after loading.
+        window.location.href = "iframes/resources/page-cache-helper.html";
+    }, 0);
+});
+</script>
