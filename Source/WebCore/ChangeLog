@@ -1,5 +1,37 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210288. rdar://problem/29741862
+
+    2016-01-04  Brent Fulgham  <bfulgham@apple.com>
+
+            Correct DOMWindow handling during FrameLoader::clear
+            https://bugs.webkit.org/show_bug.cgi?id=166357
+            <rdar://problem/29741862>
+
+            Reviewed by Andy Estes.
+
+            Make sure that we always clean up the DOM window when clearing Window properties, even if the document will
+            remain in the page cache. Since 'clearWindowShell' is only used in FrameLoader, divide it's beahvior into
+            two steps:
+        
+            1. Rename 'clearWindowShell' to 'clearWIndowShellsNotMatchingDOMWindow' to better describe its function.
+            Switch to a modern C++ loop. Do not switch to the new DOMWindow here, but detach and clear existing
+            DOMWindow connections.
+
+            2. Add a new method 'setDOMWindowForWindowShell'. Complete switch to the new DOMWindow.
+
+            This change allows us to disconnect the old DOMWindow, perform the 'setDocument(nullptr)' operation, and then
+            connect to the new Window without leaving the loader in an inconsistent state.
+
+            * loader/bindings/js/ScriptController.cpp:
+            (WebCore::clearWindowShellsNotMatchingDOMWindow): Renamed from 'clearWindowShell'
+            (WebCore::setDOMWindowForWindowShell): Added.
+            * loader/bindings/js/ScriptController.h:
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::clear): Revise to use the new two-step DOMWindow switch logic.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210284. rdar://problem/29865854
 
     2017-01-04  Chris Dumez  <cdumez@apple.com>
