@@ -225,7 +225,7 @@ void ScriptController::setDOMWindowForWindowShell(DOMWindow* newDOMWindow)
     if (m_windowShells.isEmpty())
         return;
     
-    JSLockHolder lock(commonVM());
+    JSLockHolder lock(JSDOMWindowBase::commonVM());
     
     Vector<JSC::Strong<JSDOMWindowShell>> windowShells = this->windowShells();
     for (auto& windowShell : windowShells) {
