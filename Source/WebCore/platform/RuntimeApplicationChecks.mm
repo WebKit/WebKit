@@ -253,24 +253,6 @@ bool IOSApplication::isTheSecretSocietyHiddenMystery()
     return isTheSecretSocietyHiddenMystery;
 }
 
-bool IOSApplication::isBaiduNuomi()
-{
-    static bool isBaiduNuomi = applicationBundleIsEqualTo("com.renren-inc.nuomi");
-    return isBaiduNuomi;
-}
-
-bool IOSApplication::isAutoNaviAMap()
-{
-    static bool isBaiduNuomi = applicationBundleIsEqualTo("com.autonavi.amap");
-    return isBaiduNuomi;
-}
-
-bool IOSApplication::isFlipboard()
-{
-    static bool isFlipboard = applicationBundleIsEqualTo("com.flipboard.flipboard-ipad");
-    return isFlipboard;
-}
-
 #endif
 
 } // namespace WebCore

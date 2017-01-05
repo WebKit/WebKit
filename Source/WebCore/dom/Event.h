@@ -96,7 +96,6 @@ public:
     virtual ~Event();
 
     WEBCORE_EXPORT void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
-    ExceptionOr<void> initEventForBindings(ScriptExecutionContext&, const AtomicString& type, bool bubbles); // Quirk.
 
     bool isInitialized() const { return m_isInitialized; }
 

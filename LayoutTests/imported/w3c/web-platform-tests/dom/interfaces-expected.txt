@@ -46,7 +46,9 @@ PASS Event interface: document.createEvent("Event") must inherit property "defau
 PASS Event interface: document.createEvent("Event") must have own property "isTrusted" 
 PASS Event interface: document.createEvent("Event") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: document.createEvent("Event") must inherit property "initEvent" with the proper type (16) 
-PASS Event interface: calling initEvent(DOMString,boolean,boolean) on document.createEvent("Event") with too few arguments must throw TypeError 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on document.createEvent("Event") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 PASS Event must be primary interface of new Event("foo") 
 PASS Stringification of new Event("foo") 
 PASS Event interface: new Event("foo") must inherit property "type" with the proper type (0) 
@@ -66,7 +68,9 @@ PASS Event interface: new Event("foo") must inherit property "defaultPrevented" 
 PASS Event interface: new Event("foo") must have own property "isTrusted" 
 PASS Event interface: new Event("foo") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new Event("foo") must inherit property "initEvent" with the proper type (16) 
-PASS Event interface: calling initEvent(DOMString,boolean,boolean) on new Event("foo") with too few arguments must throw TypeError 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new Event("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 PASS CustomEvent interface: existence and properties of interface object 
 PASS CustomEvent interface object length 
 PASS CustomEvent interface object name 
@@ -96,7 +100,9 @@ PASS Event interface: new CustomEvent("foo") must inherit property "defaultPreve
 PASS Event interface: new CustomEvent("foo") must have own property "isTrusted" 
 PASS Event interface: new CustomEvent("foo") must inherit property "timeStamp" with the proper type (15) 
 PASS Event interface: new CustomEvent("foo") must inherit property "initEvent" with the proper type (16) 
-PASS Event interface: calling initEvent(DOMString,boolean,boolean) on new CustomEvent("foo") with too few arguments must throw TypeError 
+FAIL Event interface: calling initEvent(DOMString,boolean,boolean) on new CustomEvent("foo") with too few arguments must throw TypeError assert_throws: Called with 0 arguments function "function () {
+            fn.apply(obj, args);
+        }" did not throw
 PASS EventTarget interface: existence and properties of interface object 
 PASS EventTarget interface object length 
 PASS EventTarget interface object name 

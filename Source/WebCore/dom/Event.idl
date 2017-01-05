@@ -66,8 +66,7 @@ typedef unsigned long long DOMTimeStamp;
     void stopPropagation();
     void preventDefault();
 
-    void initEvent(DOMString type, boolean bubbles, boolean cancelable); // Standard.
-    [MayThrowException, ImplementedAs=initEventForBindings, CallWith=ScriptExecutionContext] void initEvent(DOMString type, optional boolean bubbles = false); // Quirk.
+    void initEvent(optional DOMString type = "undefined", optional boolean bubbles = false, optional boolean cancelable = false);
 
     readonly attribute boolean defaultPrevented;
     void stopImmediatePropagation();
