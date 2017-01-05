@@ -243,7 +243,6 @@ public:
 #endif
     virtual bool isSnapshottedPlugIn() const { return false; }
     virtual bool isProgress() const { return false; }
-    virtual bool isRenderSVGBlock() const { return false; };
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
@@ -351,6 +350,7 @@ public:
     // FIXME: Until all SVG renders can be subclasses of RenderSVGModelObject we have
     // to add SVG renderer methods to RenderObject with an ASSERT_NOT_REACHED() default implementation.
     virtual bool isRenderSVGModelObject() const { return false; }
+    virtual bool isRenderSVGBlock() const { return false; };
     virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
     virtual bool isSVGTransformableContainer() const { return false; }
