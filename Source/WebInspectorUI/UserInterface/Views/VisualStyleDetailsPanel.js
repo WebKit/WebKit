@@ -73,7 +73,7 @@ WebInspector.VisualStyleDetailsPanel = class VisualStyleDetailsPanel extends Web
     initialLayout()
     {
         // Selector Section
-        this._selectorSection = new WebInspector.VisualStyleSelectorSection(this);
+        this._selectorSection = new WebInspector.VisualStyleSelectorSection;
         this._selectorSection.addEventListener(WebInspector.VisualStyleSelectorSection.Event.SelectorChanged, this._updateSections, this);
         this.element.appendChild(this._selectorSection.element);
 
