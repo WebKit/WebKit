@@ -47,7 +47,7 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
         return '%sBackendDispatchers.h' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(ObjCGenerator.should_generate_domain_command_handler_filter(self.model()), Generator.domains_to_generate(self))
+        return filter(self.should_generate_commands_for_domain, Generator.domains_to_generate(self))
 
     def generate_output(self):
         headers = [
@@ -71,16 +71,17 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
     def _generate_objc_forward_declarations(self):
         lines = []
         for domain in self.domains_to_generate():
-            if domain.commands:
+            if self.commands_for_domain(domain):
                 lines.append('@protocol %s%sDomainHandler;' % (self.objc_prefix(), domain.domain_name))
         return '\n'.join(lines)
 
     def _generate_objc_handler_declarations_for_domain(self, domain):
-        if not domain.commands:
+        commands = self.commands_for_domain(domain)
+        if not commands:
             return ''
 
         command_declarations = []
-        for command in domain.commands:
+        for command in commands:
             command_declarations.append(self._generate_objc_handler_declaration_for_command(command))
 
         handler_args = {

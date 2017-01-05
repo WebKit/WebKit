@@ -45,7 +45,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         return "%sBackendDispatchers.cpp" % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(lambda domain: len(domain.commands) > 0, Generator.domains_to_generate(self))
+        return filter(lambda domain: len(self.commands_for_domain(domain)) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
@@ -92,12 +92,14 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         }
         implementations.append(Template(CppTemplates.BackendDispatcherImplementationDomainConstructor).substitute(None, **constructor_args))
 
-        if len(domain.commands) <= 5:
+        commands = self.commands_for_domain(domain)
+
+        if len(commands) <= 5:
             implementations.append(self._generate_small_dispatcher_switch_implementation_for_domain(domain))
         else:
             implementations.append(self._generate_large_dispatcher_switch_implementation_for_domain(domain))
 
-        for command in domain.commands:
+        for command in commands:
             if command.is_async:
                 implementations.append(self._generate_async_dispatcher_class_for_domain(command, domain))
             implementations.append(self._generate_dispatcher_implementation_for_command(command, domain))
@@ -105,10 +107,12 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         return self.wrap_with_guard_for_domain(domain, '\n\n'.join(implementations))
 
     def _generate_small_dispatcher_switch_implementation_for_domain(self, domain):
+        commands = self.commands_for_domain(domain)
+
         cases = []
-        cases.append('    if (method == "%s")' % domain.commands[0].command_name)
-        cases.append('        %s(requestId, WTFMove(parameters));' % domain.commands[0].command_name)
-        for command in domain.commands[1:]:
+        cases.append('    if (method == "%s")' % commands[0].command_name)
+        cases.append('        %s(requestId, WTFMove(parameters));' % commands[0].command_name)
+        for command in commands[1:]:
             cases.append('    else if (method == "%s")' % command.command_name)
             cases.append('        %s(requestId, WTFMove(parameters));' % command.command_name)
 
@@ -120,8 +124,10 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         return Template(CppTemplates.BackendDispatcherImplementationSmallSwitch).substitute(None, **switch_args)
 
     def _generate_large_dispatcher_switch_implementation_for_domain(self, domain):
+        commands = self.commands_for_domain(domain)
+
         cases = []
-        for command in domain.commands:
+        for command in commands:
             args = {
                 'domainName': domain.domain_name,
                 'commandName': command.command_name

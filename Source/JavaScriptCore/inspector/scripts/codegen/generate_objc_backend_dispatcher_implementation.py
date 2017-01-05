@@ -39,7 +39,7 @@ from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 log = logging.getLogger('global')
 
 
-class ObjCConfigurationImplementationGenerator(ObjCGenerator):
+class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
     def __init__(self, *args, **kwargs):
         ObjCGenerator.__init__(self, *args, **kwargs)
 
@@ -47,7 +47,7 @@ class ObjCConfigurationImplementationGenerator(ObjCGenerator):
         return '%sBackendDispatchers.mm' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(ObjCGenerator.should_generate_domain_command_handler_filter(self.model()), Generator.domains_to_generate(self))
+        return filter(self.should_generate_commands_for_domain, Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
@@ -70,11 +70,13 @@ class ObjCConfigurationImplementationGenerator(ObjCGenerator):
         return '\n\n'.join(sections)
 
     def _generate_handler_implementation_for_domain(self, domain):
-        if not domain.commands:
+        commands = self.commands_for_domain(domain)
+
+        if not commands:
             return ''
 
         command_declarations = []
-        for command in domain.commands:
+        for command in commands:
             command_declarations.append(self._generate_handler_implementation_for_command(domain, command))
 
         return '\n'.join(command_declarations)

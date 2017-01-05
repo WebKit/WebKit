@@ -63,11 +63,13 @@ class CppAlternateBackendDispatcherHeaderGenerator(CppGenerator):
         return '\n\n'.join(sections)
 
     def _generate_handler_declarations_for_domain(self, domain):
-        if not domain.commands:
+        commands = self.commands_for_domain(domain)
+
+        if not len(commands):
             return ''
 
         command_declarations = []
-        for command in domain.commands:
+        for command in commands:
             command_declarations.append(self._generate_handler_declaration_for_command(command))
 
         handler_args = {

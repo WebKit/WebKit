@@ -45,7 +45,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         return '%sEventDispatchers.mm' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model()), Generator.domains_to_generate(self))
+        return filter(self.should_generate_events_for_domain, Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
@@ -67,7 +67,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         return '\n\n'.join(sections)
 
     def _generate_event_dispatcher_implementations(self, domain):
-        if not domain.events:
+        if not self.should_generate_events_for_domain(domain):
             return ''
 
         lines = []
@@ -87,7 +87,7 @@ class ObjCFrontendDispatcherImplementationGenerator(ObjCGenerator):
         lines.append('    return self;')
         lines.append('}')
         lines.append('')
-        for event in domain.events:
+        for event in self.events_for_domain(domain):
             lines.append(self._generate_event(domain, event))
             lines.append('')
         lines.append('@end')

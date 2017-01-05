@@ -120,34 +120,37 @@ class ObjCGenerator(Generator):
 
     DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Page', 'Automation', 'GenericTypes']
 
-    @staticmethod
-    def should_generate_domain_types_filter(model):
-        def should_generate_domain_types(domain):
-            if model.framework is Frameworks.Test:
-                return True
-            whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-            whitelist.update(set(['Console', 'Debugger', 'Runtime']))
-            return domain.domain_name in whitelist
-        return should_generate_domain_types
+    def should_generate_types_for_domain(self, domain):
+        if not len(self.type_declarations_for_domain(domain)):
+            return False
 
-    @staticmethod
-    def should_generate_domain_command_handler_filter(model):
-        def should_generate_domain_command_handler(domain):
-            if model.framework is Frameworks.Test:
-                return True
-            whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-            return domain.domain_name in whitelist
-        return should_generate_domain_command_handler
+        if self.model().framework is Frameworks.Test:
+            return True
 
-    @staticmethod
-    def should_generate_domain_event_dispatcher_filter(model):
-        def should_generate_domain_event_dispatcher(domain):
-            if model.framework is Frameworks.Test:
-                return True
-            whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
-            whitelist.add('Console')
-            return domain.domain_name in whitelist
-        return should_generate_domain_event_dispatcher
+        whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
+        whitelist.update(set(['Console', 'Debugger', 'Runtime']))
+        return domain.domain_name in whitelist
+
+    def should_generate_commands_for_domain(self, domain):
+        if not len(self.commands_for_domain(domain)):
+            return False
+
+        if self.model().framework is Frameworks.Test:
+            return True
+
+        whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
+        return domain.domain_name in whitelist
+
+    def should_generate_events_for_domain(self, domain):
+        if not len(self.events_for_domain(domain)):
+            return False
+
+        if self.model().framework is Frameworks.Test:
+            return True
+
+        whitelist = set(ObjCGenerator.DOMAINS_TO_GENERATE)
+        whitelist.add('Console')
+        return domain.domain_name in whitelist
 
     # ObjC enum and type names.
 

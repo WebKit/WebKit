@@ -55,8 +55,7 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
             'includes': '\n'.join(['#import ' + header for header in sorted(headers)]),
         }
 
-        domains = self.domains_to_generate()
-        event_domains = filter(ObjCGenerator.should_generate_domain_event_dispatcher_filter(self.model()), domains)
+        event_domains = filter(self.should_generate_events_for_domain, self.domains_to_generate())
 
         sections = []
         sections.append(self.generate_license())
@@ -67,7 +66,7 @@ class ObjCInternalHeaderGenerator(ObjCGenerator):
 
     def _generate_event_dispatcher_private_interfaces(self, domain):
         lines = []
-        if domain.events:
+        if len(self.events_for_domain(domain)):
             objc_name = '%s%sDomainEventDispatcher' % (self.objc_prefix(), domain.domain_name)
             lines.append('@interface %s (Private)' % objc_name)
             lines.append('- (instancetype)initWithController:(Inspector::AugmentableInspectorController*)controller;')

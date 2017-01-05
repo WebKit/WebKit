@@ -1,3 +1,366 @@
+2016-12-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: teach the protocol generator about platform-specific types, events, and commands
+        https://bugs.webkit.org/show_bug.cgi?id=166003
+        <rdar://problem/28718990>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch implements parser, model, and generator-side changes to account for
+        platform-specific types, events, and commands. The 'platform' property is parsed
+        for top-level definitions and assumed to be the 'generic' platform if none is specified.
+
+        Since the generator's platform setting acts to filter definitions with an incompatible platform,
+        all generators must be modified to consult a list of filtered types/commands/events for
+        a domain instead of directly accessing Domain.{type_declarations, commands, events}. To prevent
+        accidental misuse, hide those fields behind accessors (e.g., `all_type_declarations()`) so that they
+        are still accessible if truly necessary, but not used by default and caused an error if not migrated.
+
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.domains_to_generate):
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.domains_to_generate):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_large_dispatcher_switch_implementation_for_domain):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator.domains_to_generate):
+        (CppFrontendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator.domains_to_generate):
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator._generate_forward_declarations):
+        (_generate_typedefs_for_domain):
+        (_generate_builders_for_domain):
+        (_generate_forward_declarations_for_binding_traits):
+        (_generate_declarations_for_enum_conversion_methods):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_open_field_names):
+        (CppProtocolTypesImplementationGenerator._generate_builders_for_domain):
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.should_generate_domain):
+        (JSBackendCommandsGenerator.domains_to_generate):
+        (JSBackendCommandsGenerator.generate_domain):
+        (JSBackendCommandsGenerator.domains_to_generate.should_generate_domain): Deleted.
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator.domains_to_generate):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_forward_declarations):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declarations_for_domain):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator):
+        (ObjCBackendDispatcherImplementationGenerator.domains_to_generate):
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_implementation_for_domain):
+        (ObjCConfigurationImplementationGenerator): Deleted.
+        (ObjCConfigurationImplementationGenerator.__init__): Deleted.
+        (ObjCConfigurationImplementationGenerator.output_filename): Deleted.
+        (ObjCConfigurationImplementationGenerator.domains_to_generate): Deleted.
+        (ObjCConfigurationImplementationGenerator.generate_output): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_handler_implementation_for_domain): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_handler_implementation_for_command): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command.and): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_conversions_for_command): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_conversions_for_command.in_param_expression): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_invocation_for_command): Deleted.
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator.generate_output):
+        (ObjCConfigurationHeaderGenerator._generate_properties_for_domain):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCConfigurationImplementationGenerator):
+        (ObjCConfigurationImplementationGenerator.generate_output):
+        (ObjCConfigurationImplementationGenerator._generate_configuration_implementation_for_domains):
+        (ObjCConfigurationImplementationGenerator._generate_ivars):
+        (ObjCConfigurationImplementationGenerator._generate_dealloc):
+        (ObjCBackendDispatcherImplementationGenerator): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator.__init__): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator.output_filename): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator.generate_output): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_configuration_implementation_for_domains): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_ivars): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_dealloc): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_setter_for_domain): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_event_dispatcher_getter_for_domain): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._variable_name_prefix_for_domain): Deleted.
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.domains_to_generate):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_dispatcher_implementations):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.generate_output):
+        (ObjCHeaderGenerator._generate_forward_declarations):
+        (ObjCHeaderGenerator._generate_enums):
+        (ObjCHeaderGenerator._generate_types):
+        (ObjCHeaderGenerator._generate_command_protocols):
+        (ObjCHeaderGenerator._generate_event_interfaces):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator.generate_output):
+        (ObjCInternalHeaderGenerator._generate_event_dispatcher_private_interfaces):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator.domains_to_generate):
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_conversion_functions):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator.domains_to_generate):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_interface):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_implementation):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.domains_to_generate):
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementations):
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.can_generate_platform):
+        (Generator):
+        (Generator.type_declarations_for_domain):
+        (Generator.commands_for_domain):
+        (Generator.events_for_domain):
+        These are the core methods for computing whether a definition can be used given a target platform.
+
+        (Generator.calculate_types_requiring_shape_assertions):
+        (Generator._traverse_and_assign_enum_values):
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_type_declaration):
+        (Protocol.parse_command):
+        (Protocol.parse_event):
+        (Protocol.resolve_types):
+
+        (Domain.__init__):
+        (Domain):
+        (Domain.all_type_declarations):
+        (Domain.all_commands):
+        (Domain.all_events):
+        Hide fields behind these accessors so it's really obvious when we are ignoring platform filtering.
+
+        (Domain.resolve_type_references):
+        (TypeDeclaration.__init__):
+        (Command.__init__):
+        (Event.__init__):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.should_generate_types_for_domain):
+        (ObjCGenerator):
+        (ObjCGenerator.should_generate_commands_for_domain):
+        (ObjCGenerator.should_generate_events_for_domain):
+        (ObjCGenerator.should_generate_domain_types_filter): Deleted.
+        (ObjCGenerator.should_generate_domain_types_filter.should_generate_domain_types): Deleted.
+        (ObjCGenerator.should_generate_domain_command_handler_filter): Deleted.
+        (ObjCGenerator.should_generate_domain_command_handler_filter.should_generate_domain_command_handler): Deleted.
+        (ObjCGenerator.should_generate_domain_event_dispatcher_filter): Deleted.
+        (ObjCGenerator.should_generate_domain_event_dispatcher_filter.should_generate_domain_event_dispatcher): Deleted.
+        Clean up some messy code that essentially did the same definition filtering as we must do for platforms.
+        This will be enhanced in a future patch so that platform filtering will take priority over the target framework.
+
+        The results above need rebaselining because the class names for two generators were swapped by accident.
+        Fixing the names causes the order of generated files to change, and this generates ugly diffs because every
+        generated file includes the same copyright block at the top.
+
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+
+        * inspector/scripts/tests/generic/expected/fail-on-command-with-invalid-platform.json-error: Added.
+        * inspector/scripts/tests/generic/expected/fail-on-type-with-invalid-platform.json-error: Added.
+        * inspector/scripts/tests/generic/fail-on-command-with-invalid-platform.json: Added.
+        * inspector/scripts/tests/generic/fail-on-type-with-invalid-platform.json: Added.
+
+        Add error test cases for invalid platforms in commands, types, and events.
+
+        * inspector/scripts/tests/generic/definitions-with-mac-platform.json: Added.
+        * inspector/scripts/tests/generic/expected/definitions-with-mac-platform.json-result: Added.
+        * inspector/scripts/tests/all/definitions-with-mac-platform.json: Added.
+        * inspector/scripts/tests/all/expected/definitions-with-mac-platform.json-result: Added.
+        * inspector/scripts/tests/ios/definitions-with-mac-platform.json: Added.
+        * inspector/scripts/tests/ios/expected/definitions-with-mac-platform.json-result: Added.
+        * inspector/scripts/tests/mac/definitions-with-mac-platform.json: Added.
+        * inspector/scripts/tests/mac/expected/definitions-with-mac-platform.json-result: Added.
+
+        Add a basic 4-way test that generates code for each platform from the same specification.
+        With 'macos' platform for each definition, only 'all' and 'mac' generate anything interesting.
+
+2017-01-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: teach the protocol generator about platform-specific types, events, and commands
+        https://bugs.webkit.org/show_bug.cgi?id=166003
+        <rdar://problem/28718990>
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch implements parser, model, and generator-side changes to account for
+        platform-specific types, events, and commands. The 'platform' property is parsed
+        for top-level definitions and assumed to be the 'generic' platform if none is specified.
+
+        Since the generator's platform setting acts to filter definitions with an incompatible platform,
+        all generators must be modified to consult a list of filtered types/commands/events for
+        a domain instead of directly accessing Domain.{type_declarations, commands, events}. To prevent
+        accidental misuse, hide those fields behind accessors (e.g., `all_type_declarations()`) so that they
+        are still accessible if truly necessary, but not used by default and caused an error if not migrated.
+
+        * inspector/scripts/codegen/generate_cpp_alternate_backend_dispatcher_header.py:
+        (CppAlternateBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator.domains_to_generate):
+        (CppBackendDispatcherHeaderGenerator._generate_handler_declarations_for_domain):
+        (CppBackendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_implementation.py:
+        (CppBackendDispatcherImplementationGenerator.domains_to_generate):
+        (CppBackendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_small_dispatcher_switch_implementation_for_domain):
+        (CppBackendDispatcherImplementationGenerator._generate_large_dispatcher_switch_implementation_for_domain):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator.domains_to_generate):
+        (CppFrontendDispatcherHeaderGenerator._generate_dispatcher_declarations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator.domains_to_generate):
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementations_for_domain):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator._generate_forward_declarations):
+        (_generate_typedefs_for_domain):
+        (_generate_builders_for_domain):
+        (_generate_forward_declarations_for_binding_traits):
+        (_generate_declarations_for_enum_conversion_methods):
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator._generate_enum_conversion_methods_for_domain):
+        (CppProtocolTypesImplementationGenerator._generate_open_field_names):
+        (CppProtocolTypesImplementationGenerator._generate_builders_for_domain):
+        * inspector/scripts/codegen/generate_js_backend_commands.py:
+        (JSBackendCommandsGenerator.should_generate_domain):
+        (JSBackendCommandsGenerator.domains_to_generate):
+        (JSBackendCommandsGenerator.generate_domain):
+        (JSBackendCommandsGenerator.domains_to_generate.should_generate_domain): Deleted.
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_header.py:
+        (ObjCBackendDispatcherHeaderGenerator.domains_to_generate):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_forward_declarations):
+        (ObjCBackendDispatcherHeaderGenerator._generate_objc_handler_declarations_for_domain):
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCBackendDispatcherImplementationGenerator):
+        (ObjCBackendDispatcherImplementationGenerator.domains_to_generate):
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_implementation_for_domain):
+        (ObjCConfigurationImplementationGenerator): Deleted.
+        (ObjCConfigurationImplementationGenerator.__init__): Deleted.
+        (ObjCConfigurationImplementationGenerator.output_filename): Deleted.
+        (ObjCConfigurationImplementationGenerator.domains_to_generate): Deleted.
+        (ObjCConfigurationImplementationGenerator.generate_output): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_handler_implementation_for_domain): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_handler_implementation_for_command): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command.and): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_conversions_for_command): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_conversions_for_command.in_param_expression): Deleted.
+        (ObjCConfigurationImplementationGenerator._generate_invocation_for_command): Deleted.
+        * inspector/scripts/codegen/generate_objc_configuration_header.py:
+        (ObjCConfigurationHeaderGenerator.generate_output):
+        (ObjCConfigurationHeaderGenerator._generate_properties_for_domain):
+        * inspector/scripts/codegen/generate_objc_configuration_implementation.py:
+        (ObjCConfigurationImplementationGenerator):
+        (ObjCConfigurationImplementationGenerator.generate_output):
+        (ObjCConfigurationImplementationGenerator._generate_configuration_implementation_for_domains):
+        (ObjCConfigurationImplementationGenerator._generate_ivars):
+        (ObjCConfigurationImplementationGenerator._generate_dealloc):
+        (ObjCBackendDispatcherImplementationGenerator): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator.__init__): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator.output_filename): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator.generate_output): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_configuration_implementation_for_domains): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_ivars): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_dealloc): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_handler_setter_for_domain): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._generate_event_dispatcher_getter_for_domain): Deleted.
+        (ObjCBackendDispatcherImplementationGenerator._variable_name_prefix_for_domain): Deleted.
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator.domains_to_generate):
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_dispatcher_implementations):
+        * inspector/scripts/codegen/generate_objc_header.py:
+        (ObjCHeaderGenerator.generate_output):
+        (ObjCHeaderGenerator._generate_forward_declarations):
+        (ObjCHeaderGenerator._generate_enums):
+        (ObjCHeaderGenerator._generate_types):
+        (ObjCHeaderGenerator._generate_command_protocols):
+        (ObjCHeaderGenerator._generate_event_interfaces):
+        * inspector/scripts/codegen/generate_objc_internal_header.py:
+        (ObjCInternalHeaderGenerator.generate_output):
+        (ObjCInternalHeaderGenerator._generate_event_dispatcher_private_interfaces):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_header.py:
+        (ObjCProtocolTypeConversionsHeaderGenerator.domains_to_generate):
+        (ObjCProtocolTypeConversionsHeaderGenerator._generate_enum_conversion_functions):
+        * inspector/scripts/codegen/generate_objc_protocol_type_conversions_implementation.py:
+        (ObjCProtocolTypeConversionsImplementationGenerator.domains_to_generate):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_interface):
+        (ObjCProtocolTypeConversionsImplementationGenerator._generate_type_factory_category_implementation):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator.domains_to_generate):
+        (ObjCProtocolTypesImplementationGenerator.generate_type_implementations):
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.can_generate_platform):
+        (Generator):
+        (Generator.type_declarations_for_domain):
+        (Generator.commands_for_domain):
+        (Generator.events_for_domain):
+        These are the core methods for computing whether a definition can be used given a target platform.
+
+        (Generator.calculate_types_requiring_shape_assertions):
+        (Generator._traverse_and_assign_enum_values):
+        * inspector/scripts/codegen/models.py:
+        (Protocol.parse_type_declaration):
+        (Protocol.parse_command):
+        (Protocol.parse_event):
+        (Protocol.resolve_types):
+
+        (Domain.__init__):
+        (Domain):
+        (Domain.all_type_declarations):
+        (Domain.all_commands):
+        (Domain.all_events):
+        Hide fields behind these accessors so it's really obvious when we are ignoring platform filtering.
+
+        (Domain.resolve_type_references):
+        (TypeDeclaration.__init__):
+        (Command.__init__):
+        (Event.__init__):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.should_generate_types_for_domain):
+        (ObjCGenerator):
+        (ObjCGenerator.should_generate_commands_for_domain):
+        (ObjCGenerator.should_generate_events_for_domain):
+        (ObjCGenerator.should_generate_domain_types_filter): Deleted.
+        (ObjCGenerator.should_generate_domain_types_filter.should_generate_domain_types): Deleted.
+        (ObjCGenerator.should_generate_domain_command_handler_filter): Deleted.
+        (ObjCGenerator.should_generate_domain_command_handler_filter.should_generate_domain_command_handler): Deleted.
+        (ObjCGenerator.should_generate_domain_event_dispatcher_filter): Deleted.
+        (ObjCGenerator.should_generate_domain_event_dispatcher_filter.should_generate_domain_event_dispatcher): Deleted.
+        Clean up some messy code that essentially did the same definition filtering as we must do for platforms.
+        This will be enhanced in a future patch so that platform filtering will take priority over the target framework.
+
+        The following results need rebaselining because the class names for two generators were swapped by accident.
+        Fixing the names causes the order of generated files to change, and this generates ugly diffs because every
+        generated file includes the same copyright block at the top.
+
+        * inspector/scripts/tests/generic/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/generic/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/generic/expected/enum-values.json-result:
+        * inspector/scripts/tests/generic/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/generic/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/generic/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/generic/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/generic/expected/type-requiring-runtime-casts.json-result:
+
 2017-01-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: teach the protocol generator about platform-specific types, events, and commands

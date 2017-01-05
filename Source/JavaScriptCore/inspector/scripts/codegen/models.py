@@ -400,7 +400,8 @@ class Protocol:
             raise ParseException("Malformed domain specification: type declaration for %s has duplicate member names" % json['id'])
 
         type_ref = TypeReference(json['type'], json.get('$ref'), json.get('enum'), json.get('items'))
-        return TypeDeclaration(json['id'], type_ref, json.get("description", ""), type_members)
+        platform = Platform.fromString(json.get('platform', 'generic'))
+        return TypeDeclaration(json['id'], type_ref, json.get("description", ""), platform, type_members)
 
     def parse_type_member(self, json):
         check_for_required_properties(['name'], json, "type member")
@@ -434,7 +435,8 @@ class Protocol:
             if len(duplicate_names) > 0:
                 raise ParseException("Malformed domain specification: return parameter list for command %s has duplicate parameter names" % json['name'])
 
-        return Command(json['name'], call_parameters, return_parameters, json.get('description', ""), json.get('async', False))
+        platform = Platform.fromString(json.get('platform', 'generic'))
+        return Command(json['name'], call_parameters, return_parameters, json.get('description', ""), platform, json.get('async', False))
 
     def parse_event(self, json):
         check_for_required_properties(['name'], json, "event")
@@ -451,7 +453,8 @@ class Protocol:
             if len(duplicate_names) > 0:
                 raise ParseException("Malformed domain specification: parameter list for event %s has duplicate parameter names" % json['name'])
 
-        return Event(json['name'], event_parameters, json.get('description', ""))
+        platform = Platform.fromString(json.get('platform', 'generic'))
+        return Event(json['name'], event_parameters, json.get('description', ""), platform)
 
     def parse_call_or_return_parameter(self, json):
         check_for_required_properties(['name'], json, "parameter")
@@ -471,7 +474,7 @@ class Protocol:
 
         # Gather qualified type names from type declarations in each domain.
         for domain in self.domains:
-            for declaration in domain.type_declarations:
+            for declaration in domain.all_type_declarations():
                 # Basic sanity checking.
                 if declaration.type_ref.referenced_type_name is not None:
                     raise TypecheckException("Type declarations must name a base type, not a type reference.")
@@ -555,21 +558,30 @@ class Domain:
         self.feature_guard = feature_guard
         self.availability = availability
         self.is_supplemental = isSupplemental
-        self.type_declarations = type_declarations
-        self.commands = commands
-        self.events = events
+        self._type_declarations = type_declarations
+        self._commands = commands
+        self._events = events
+
+    def all_type_declarations(self):
+        return self._type_declarations
+
+    def all_commands(self):
+        return self._commands
+
+    def all_events(self):
+        return self._events
 
     def resolve_type_references(self, protocol):
         log.debug("> Resolving type declarations for domain: %s" % self.domain_name)
-        for declaration in self.type_declarations:
+        for declaration in self._type_declarations:
             declaration.resolve_type_references(protocol, self)
 
         log.debug("> Resolving types in commands for domain: %s" % self.domain_name)
-        for command in self.commands:
+        for command in self._commands:
             command.resolve_type_references(protocol, self)
 
         log.debug("> Resolving types in events for domain: %s" % self.domain_name)
-        for event in self.events:
+        for event in self._events:
             event.resolve_type_references(protocol, self)
 
 
@@ -578,10 +590,11 @@ class Domains:
 
 
 class TypeDeclaration:
-    def __init__(self, type_name, type_ref, description, type_members):
+    def __init__(self, type_name, type_ref, description, platform, type_members):
         self.type_name = type_name
         self.type_ref = type_ref
         self.description = description
+        self.platform = platform
         self.type_members = type_members
 
         if self.type_name != ucfirst(self.type_name):
@@ -625,11 +638,12 @@ class Parameter:
 
 
 class Command:
-    def __init__(self, command_name, call_parameters, return_parameters, description, is_async):
+    def __init__(self, command_name, call_parameters, return_parameters, description, platform, is_async):
         self.command_name = command_name
         self.call_parameters = call_parameters
         self.return_parameters = return_parameters
         self.description = description
+        self.platform = platform
         self.is_async = is_async
 
     def resolve_type_references(self, protocol, domain):
@@ -643,10 +657,11 @@ class Command:
 
 
 class Event:
-    def __init__(self, event_name, event_parameters, description):
+    def __init__(self, event_name, event_parameters, description, platform):
         self.event_name = event_name
         self.event_parameters = event_parameters
         self.description = description
+        self.platform = platform
 
     def resolve_type_references(self, protocol, domain):
         log.debug(">> Resolving type references for parameters in event: %s" % self.event_name)

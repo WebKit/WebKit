@@ -50,7 +50,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
         return '%sTypeConversions.mm' % self.protocol_name()
 
     def domains_to_generate(self):
-        return filter(ObjCGenerator.should_generate_domain_types_filter(self.model()), Generator.domains_to_generate(self))
+        return filter(self.should_generate_types_for_domain, Generator.domains_to_generate(self))
 
     def generate_output(self):
         secondary_headers = [
@@ -80,7 +80,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
             lines.append('@interface %sTypeConversions (%sDomain)' % (self.protocol_name(), domain.domain_name))
             lines.append('')
 
-            for declaration in domain.type_declarations:
+            for declaration in self.type_declarations_for_domain(domain):
                 lines.append(self._generate_type_factory_method_declaration(domain, declaration))
 
             add_newline(lines)
@@ -104,7 +104,7 @@ class ObjCProtocolTypeConversionsImplementationGenerator(ObjCGenerator):
             lines.append('@implementation %sTypeConversions (%sDomain)' % (self.protocol_name(), domain.domain_name))
             lines.append('')
 
-            for declaration in domain.type_declarations:
+            for declaration in self.type_declarations_for_domain(domain):
                 lines.append(self._generate_type_factory_method_implementation(domain, declaration))
                 add_newline(lines)
             lines.append('@end')

@@ -83,7 +83,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         sections = []
 
         for domain in domains:
-            declaration_types = [decl.type for decl in domain.type_declarations]
+            declaration_types = [decl.type for decl in self.type_declarations_for_domain(domain)]
             object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
             enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
             sorted(object_types, key=methodcaller('raw_name'))
@@ -121,8 +121,9 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
 // End of typedefs.""" % '\n\n'.join(sections)
 
     def _generate_typedefs_for_domain(self, domain):
-        primitive_declarations = filter(lambda decl: isinstance(decl.type, AliasedType), domain.type_declarations)
-        array_declarations = filter(lambda decl: isinstance(decl.type, ArrayType), domain.type_declarations)
+        type_declarations = self.type_declarations_for_domain(domain)
+        primitive_declarations = filter(lambda decl: isinstance(decl.type, AliasedType), type_declarations)
+        array_declarations = filter(lambda decl: isinstance(decl.type, ArrayType), type_declarations)
         if len(primitive_declarations) == 0 and len(array_declarations) == 0:
             return ''
 
@@ -175,7 +176,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
     def _generate_builders_for_domain(self, domain):
         sections = []
 
-        for type_declaration in domain.type_declarations:
+        type_declarations = self.type_declarations_for_domain(domain)
+        for type_declaration in type_declarations:
             if isinstance(type_declaration.type, EnumType):
                 sections.append(self._generate_struct_for_enum_declaration(type_declaration))
             elif isinstance(type_declaration.type, ObjectType):
@@ -336,7 +338,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         type_arguments = []
 
         for domain in self.domains_to_generate():
-            declarations_to_generate = filter(lambda decl: self.type_needs_shape_assertions(decl.type), domain.type_declarations)
+            type_declarations = self.type_declarations_for_domain(domain)
+            declarations_to_generate = filter(lambda decl: self.type_needs_shape_assertions(decl.type), type_declarations)
 
             for type_declaration in declarations_to_generate:
                 for type_member in type_declaration.type_members:
@@ -385,7 +388,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
             return isinstance(type_member.type, EnumType) and type_member.type.is_anonymous
 
         for domain in self.domains_to_generate():
-            declaration_types = [decl.type for decl in domain.type_declarations]
+            type_declarations = self.type_declarations_for_domain(domain)
+            declaration_types = [decl.type for decl in type_declarations]
             object_types = filter(lambda _type: isinstance(_type, ObjectType), declaration_types)
             enum_types = filter(lambda _type: isinstance(_type, EnumType), declaration_types)
             if len(object_types) + len(enum_types) == 0:

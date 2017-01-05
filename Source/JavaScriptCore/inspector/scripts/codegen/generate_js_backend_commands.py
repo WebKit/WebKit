@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2016 Apple Inc. All rights reserved.
 # Copyright (c) 2014 University of Washington. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -43,12 +43,13 @@ class JSBackendCommandsGenerator(Generator):
     def output_filename(self):
         return "InspectorBackendCommands.js"
 
-    def domains_to_generate(self):
-        def should_generate_domain(domain):
-            domain_enum_types = filter(lambda declaration: isinstance(declaration.type, EnumType), domain.type_declarations)
-            return len(domain.commands) > 0 or len(domain.events) > 0 or len(domain_enum_types) > 0
+    def should_generate_domain(self, domain):
+        type_declarations = self.type_declarations_for_domain(domain)
+        domain_enum_types = filter(lambda declaration: isinstance(declaration.type, EnumType), type_declarations)
+        return len(self.commands_for_domain(domain)) > 0 or len(self.events_for_domain(domain)) > 0 or len(domain_enum_types) > 0
 
-        return filter(should_generate_domain, Generator.domains_to_generate(self))
+    def domains_to_generate(self):
+        return filter(self.should_generate_domain, Generator.domains_to_generate(self))
 
     def generate_output(self):
         sections = []
@@ -64,11 +65,15 @@ class JSBackendCommandsGenerator(Generator):
 
         lines.append('// %(domain)s.' % args)
 
-        has_async_commands = any(map(lambda command: command.is_async, domain.commands))
-        if len(domain.events) > 0 or has_async_commands:
+        type_declarations = self.type_declarations_for_domain(domain)
+        commands = self.commands_for_domain(domain)
+        events = self.events_for_domain(domain)
+
+        has_async_commands = any(map(lambda command: command.is_async, commands))
+        if len(events) > 0 or has_async_commands:
             lines.append('InspectorBackend.register%(domain)sDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "%(domain)s");' % args)
 
-        for declaration in domain.type_declarations:
+        for declaration in type_declarations:
             if declaration.type.is_enum():
                 enum_args = {
                     'domain': domain.domain_name,
@@ -91,7 +96,7 @@ class JSBackendCommandsGenerator(Generator):
         def is_anonymous_enum_param(param):
             return isinstance(param.type, EnumType) and param.type.is_anonymous
 
-        for event in domain.events:
+        for event in events:
             for param in filter(is_anonymous_enum_param, event.event_parameters):
                 enum_args = {
                     'domain': domain.domain_name,
@@ -107,7 +112,7 @@ class JSBackendCommandsGenerator(Generator):
             }
             lines.append('InspectorBackend.registerEvent("%(domain)s.%(eventName)s", [%(params)s]);' % event_args)
 
-        for command in domain.commands:
+        for command in commands:
             def generate_parameter_object(parameter):
                 optional_string = "true" if parameter.is_optional else "false"
                 pairs = []
@@ -124,7 +129,7 @@ class JSBackendCommandsGenerator(Generator):
             }
             lines.append('InspectorBackend.registerCommand("%(domain)s.%(commandName)s", [%(callParams)s], [%(returnParams)s]);' % command_args)
 
-        if domain.commands or domain.events:
+        if commands or events:
             activate_args = {
                 'domain': domain.domain_name,
                 'availability': domain.availability,
