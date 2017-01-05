@@ -1,3 +1,36 @@
+2017-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Limit thread name appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=166676
+
+        Reviewed by Sam Weinig.
+
+        In some platform, the max length of thread names are limited.
+        For example, the number of the max length is 32 in Windows and
+        16 in Linux. But the specified thread name is typically long
+        in WebKit like "com.apple.CoreIPC.ReceiveQueue"
+
+        We port the logic substring the thread name in
+        generic/WorkQueueGeneric.cpp to Threading. It retrieves the name
+        "ReceiveQueue" from "com.apple.CoreIPC.ReceiveQueue". And apply
+        the appropriate the thread name limit and use it on Linux and
+        Windows environment.
+
+        * wtf/Threading.cpp:
+        (WTF::normalizeThreadName):
+        (WTF::createThread):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeCurrentThreadInternal):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeCurrentThreadInternal):
+        * wtf/generic/WorkQueueGeneric.cpp:
+        (WorkQueue::platformInitialize):
+        * wtf/text/StringView.h:
+        (WTF::StringView::left):
+        (WTF::StringView::right):
+        (WTF::StringView::reverseFind):
+
 2017-01-04  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r210257): com.apple.WebKit.WebContent.Development crashed in com.apple.WebCore: WebCore::ExceptionOr<WTF::Ref<WebCore::Database> >::operator= + 14

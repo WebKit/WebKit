@@ -129,7 +129,7 @@ void initializeCurrentThreadInternal(const char* szThreadName)
 #else
     THREADNAME_INFO info;
     info.dwType = 0x1000;
-    info.szName = szThreadName;
+    info.szName = normalizeThreadName(szThreadName);
     info.dwThreadID = GetCurrentThreadId();
     info.dwFlags = 0;
 

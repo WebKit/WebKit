@@ -804,4 +804,52 @@ TEST(WTF, StringView8Bit)
     EXPECT_TRUE(StringView(emptyString().impl()).is8Bit());
 }
 
+TEST(WTF, StringViewRightBasic)
+{
+    auto reference = stringViewFromLiteral("Cappuccino");
+    EXPECT_TRUE(reference.right(0) == stringViewFromLiteral(""));
+    EXPECT_TRUE(reference.right(1) == stringViewFromLiteral("o"));
+    EXPECT_TRUE(reference.right(2) == stringViewFromLiteral("no"));
+    EXPECT_TRUE(reference.right(3) == stringViewFromLiteral("ino"));
+    EXPECT_TRUE(reference.right(4) == stringViewFromLiteral("cino"));
+    EXPECT_TRUE(reference.right(5) == stringViewFromLiteral("ccino"));
+    EXPECT_TRUE(reference.right(6) == stringViewFromLiteral("uccino"));
+    EXPECT_TRUE(reference.right(7) == stringViewFromLiteral("puccino"));
+    EXPECT_TRUE(reference.right(8) == stringViewFromLiteral("ppuccino"));
+    EXPECT_TRUE(reference.right(9) == stringViewFromLiteral("appuccino"));
+    EXPECT_TRUE(reference.right(10) == stringViewFromLiteral("Cappuccino"));
+}
+
+TEST(WTF, StringViewLeftBasic)
+{
+    auto reference = stringViewFromLiteral("Cappuccino");
+    EXPECT_TRUE(reference.left(0) == stringViewFromLiteral(""));
+    EXPECT_TRUE(reference.left(1) == stringViewFromLiteral("C"));
+    EXPECT_TRUE(reference.left(2) == stringViewFromLiteral("Ca"));
+    EXPECT_TRUE(reference.left(3) == stringViewFromLiteral("Cap"));
+    EXPECT_TRUE(reference.left(4) == stringViewFromLiteral("Capp"));
+    EXPECT_TRUE(reference.left(5) == stringViewFromLiteral("Cappu"));
+    EXPECT_TRUE(reference.left(6) == stringViewFromLiteral("Cappuc"));
+    EXPECT_TRUE(reference.left(7) == stringViewFromLiteral("Cappucc"));
+    EXPECT_TRUE(reference.left(8) == stringViewFromLiteral("Cappucci"));
+    EXPECT_TRUE(reference.left(9) == stringViewFromLiteral("Cappuccin"));
+    EXPECT_TRUE(reference.left(10) == stringViewFromLiteral("Cappuccino"));
+}
+
+TEST(WTF, StringViewReverseFindBasic)
+{
+    auto reference = stringViewFromLiteral("Cappuccino");
+    EXPECT_EQ(reference.reverseFind('o'), 9);
+    EXPECT_EQ(reference.reverseFind('n'), 8);
+    EXPECT_EQ(reference.reverseFind('c'), 6);
+    EXPECT_EQ(reference.reverseFind('p'), 3);
+    EXPECT_EQ(reference.reverseFind('k'), notFound);
+
+    EXPECT_EQ(reference.reverseFind('o', 8), notFound);
+    EXPECT_EQ(reference.reverseFind('c', 8), 6);
+    EXPECT_EQ(reference.reverseFind('c', 6), 6);
+    EXPECT_EQ(reference.reverseFind('c', 5), 5);
+    EXPECT_EQ(reference.reverseFind('c', 4), notFound);
+}
+
 } // namespace TestWebKitAPI

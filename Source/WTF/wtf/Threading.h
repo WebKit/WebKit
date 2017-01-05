@@ -77,6 +77,8 @@ ThreadIdentifier createThreadInternal(ThreadFunction, void*, const char* threadN
 // Helpful for platforms where the thread name must be set from within the thread.
 void initializeCurrentThreadInternal(const char* threadName);
 
+const char* normalizeThreadName(const char* threadName);
+
 } // namespace WTF
 
 using WTF::ThreadIdentifier;

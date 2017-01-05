@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StringView_h
-#define StringView_h
+#pragma once
 
+#include <limits.h>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -114,12 +114,16 @@ public:
     void getCharactersWithUpconvert(UChar*) const;
 
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
+    StringView left(unsigned len) const { return substring(0, len); }
+    StringView right(unsigned len) const { return substring(length() - len, len); }
     WTF_EXPORT_STRING_API Vector<StringView> split(UChar);
 
     size_t find(UChar, unsigned start = 0) const;
     size_t find(CharacterMatchFunction, unsigned start = 0) const;
 
     WTF_EXPORT_STRING_API size_t find(StringView, unsigned start) const;
+
+    size_t reverseFind(UChar, unsigned index = UINT_MAX) const;
 
     WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringView&) const;
     WTF_EXPORT_STRING_API size_t findIgnoringASCIICase(const StringView&, unsigned startOffset) const;
@@ -531,6 +535,13 @@ inline size_t StringView::find(CharacterMatchFunction matchFunction, unsigned st
     return WTF::find(characters16(), m_length, matchFunction, start);
 }
 
+inline size_t StringView::reverseFind(UChar character, unsigned index) const
+{
+    if (is8Bit())
+        return WTF::reverseFind(characters8(), m_length, character, index);
+    return WTF::reverseFind(characters16(), m_length, character, index);
+}
+
 #if !CHECK_STRINGVIEW_LIFETIME
 inline void StringView::invalidate(const StringImpl&)
 {
@@ -837,5 +848,3 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(StringView s
 using WTF::append;
 using WTF::equal;
 using WTF::StringView;
-
-#endif // StringView_h
