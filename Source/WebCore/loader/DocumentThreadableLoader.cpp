@@ -286,7 +286,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
 
     ASSERT(response.type() != ResourceResponse::Type::Error);
     if (response.type() == ResourceResponse::Type::Default) {
-        m_client->didReceiveResponse(identifier, ResourceResponse::filterResponse(response, tainting));
+        m_client->didReceiveResponse(identifier, options().filteringPolicy == ResponseFilteringPolicy::Enable ? ResourceResponse::filterResponse(response, tainting) : response);
         if (tainting == ResourceResponse::Tainting::Opaque && options().opaqueResponse == OpaqueResponseBodyPolicy::DoNotReceive) {
             clearResource();
             if (m_client)

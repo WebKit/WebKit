@@ -52,12 +52,13 @@ ThreadableLoaderOptions::~ThreadableLoaderOptions()
 {
 }
 
-ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator, OpaqueResponseBodyPolicy opaqueResponse)
+ThreadableLoaderOptions::ThreadableLoaderOptions(const ResourceLoaderOptions& baseOptions, PreflightPolicy preflightPolicy, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, String&& initiator, OpaqueResponseBodyPolicy opaqueResponse, ResponseFilteringPolicy filteringPolicy)
     : ResourceLoaderOptions(baseOptions)
     , preflightPolicy(preflightPolicy)
     , contentSecurityPolicyEnforcement(contentSecurityPolicyEnforcement)
     , initiator(WTFMove(initiator))
     , opaqueResponse(opaqueResponse)
+    , filteringPolicy(filteringPolicy)
 {
 }
 

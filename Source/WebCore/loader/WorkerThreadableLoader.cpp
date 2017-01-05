@@ -92,7 +92,7 @@ struct LoaderTaskOptions {
 };
 
 LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, Ref<SecurityOrigin>&& origin)
-    : options(options, options.preflightPolicy, options.contentSecurityPolicyEnforcement, options.initiator.isolatedCopy(), options.opaqueResponse)
+    : options(options, options.preflightPolicy, options.contentSecurityPolicyEnforcement, options.initiator.isolatedCopy(), options.opaqueResponse, options.filteringPolicy)
     , referrer(referrer.isolatedCopy())
     , origin(WTFMove(origin))
 {

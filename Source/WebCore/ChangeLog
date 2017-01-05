@@ -1,5 +1,36 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210279. rdar://problem/29607569
+
+    2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Cross Origin importScripts() scripts lack source URL, causes issues with Inspector showing Resource
+            https://bugs.webkit.org/show_bug.cgi?id=165569
+            <rdar://problem/29607569>
+
+            Reviewed by Youenn Fablet.
+
+            Test: http/tests/inspector/worker/blob-script-with-cross-domain-imported-scripts.html
+
+            * Modules/fetch/FetchLoader.cpp:
+            (WebCore::FetchLoader::start):
+            * loader/DocumentThreadableLoader.cpp:
+            (WebCore::DocumentThreadableLoader::didReceiveResponse):
+            * loader/ThreadableLoader.cpp:
+            (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):
+            * loader/ThreadableLoader.h:
+            * loader/WorkerThreadableLoader.cpp:
+            (WebCore::LoaderTaskOptions::LoaderTaskOptions):
+            Add a new ThreadableLoader option to avoid filtering the response.
+
+            * workers/WorkerScriptLoader.cpp:
+            (WebCore::WorkerScriptLoader::loadSynchronously):
+            (WebCore::WorkerScriptLoader::loadAsynchronously):
+            Disable filtering of the response. This is an internal load, we
+            don't want to filter data that would be valuable later.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210267. rdar://problem/29796608
 
     2017-01-03  Ryosuke Niwa  <rniwa@webkit.org>

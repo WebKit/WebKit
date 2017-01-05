@@ -66,6 +66,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
     options.mode = mode;
     options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
+    options.filteringPolicy = ResponseFilteringPolicy::Disable;
 
     WorkerThreadableLoader::loadResourceSynchronously(downcast<WorkerGlobalScope>(*scriptExecutionContext), WTFMove(*request), *this, options);
 }
@@ -91,6 +92,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.mode = mode;
     options.sendLoadCallbacks = SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
+    options.filteringPolicy = ResponseFilteringPolicy::Disable;
 
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);
