@@ -1,3 +1,16 @@
+2017-01-05  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r210226): overflow:scroll scroll position not restored on back navigation
+        <https://webkit.org/b/166724>
+
+        Reviewed by Antti Koivisto.
+
+        Add a test that navigates back to a page with a scrolled overflow:scroll element.
+        The test verifies that the scroll position is restored.
+
+        * fast/scrolling/page-cache-back-overflow-scroll-restore-expected.txt: Added.
+        * fast/scrolling/page-cache-back-overflow-scroll-restore.html: Added.
+
 2017-01-05  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening.

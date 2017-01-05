@@ -1,0 +1,43 @@
+<style>
+#puffin {
+    font: Ahem 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: scroll;
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+}
+</style>
+<div id="puffin">
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</div>
+<pre id="tree"></pre>
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    if (event.persisted) {
+        document.getElementById("tree").innerText = window.internals.elementRenderTreeAsText(document.getElementById("puffin"));
+        testRunner.notifyDone();
+    }
+}, false);
+
+window.addEventListener("load", function() {
+    setTimeout(function() {
+        eventSender.mouseMoveTo(10, 10);
+        eventSender.mouseScrollBy(0, -100);
+
+        setTimeout(function() {location.href = 'data:text/html,<script>alert("Going back.");history.back();</' + 'script>';}, 0);
+    }, 0);
+});
+</script>

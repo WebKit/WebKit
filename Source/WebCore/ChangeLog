@@ -1,3 +1,29 @@
+2017-01-05  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r210226): overflow:scroll scroll position not restored on back navigation
+        <https://webkit.org/b/166724>
+
+        Reviewed by Antti Koivisto.
+
+        Before r210226, the render tree being torn down and the document being destroyed
+        were roughly the same thing, since they would always happen together, from the
+        render tree's perspective.
+
+        Changing this caused us to skip over the code that saves the scroll position
+        for an element's RenderLayer when going into the page cache. Navigating back to
+        that page would then scroll the layer to (0,0) instead of the previous position.
+
+        The fix is simply to remove the check for documentBeingDestroyed() in ~RenderLayer().
+        Note that two checks are being removed, there was also a weird "optimization"
+        to avoid nulling out EventHandler's m_resizeLayer if it points to this layer.
+        That pointer would eventually get nulled out in EventHandler::clear() anyway,
+        but it feels better to not let that pointer dangle.
+
+        Test: fast/scrolling/page-cache-back-overflow-scroll-restore.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+
 2017-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Disable smooth playhead animation for main content media in the Touch Bar
