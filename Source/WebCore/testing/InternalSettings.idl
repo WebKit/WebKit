@@ -89,9 +89,6 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] DOMString systemLayoutDirection();
     [MayThrowException] void setSystemLayoutDirection(DOMString direction);
 
-    [MayThrowException] boolean variationFontsEnabled();
-    [MayThrowException] void setVariationFontsEnabled(boolean enabled);
-
     [MayThrowException] boolean deferredCSSParserEnabled();
     [MayThrowException] void setDeferredCSSParserEnabled(boolean enabled);
 

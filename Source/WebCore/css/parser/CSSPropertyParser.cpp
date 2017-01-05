@@ -3656,9 +3656,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontSynthesis(m_range);
 #if ENABLE(VARIATION_FONTS)
     case CSSPropertyFontVariationSettings:
-        if (m_context.variationFontsEnabled)
-            return consumeFontVariationSettings(m_range);
-        return nullptr;
+        return consumeFontVariationSettings(m_range);
 #endif
     case CSSPropertyLetterSpacing:
         return consumeLetterSpacing(m_range, m_context.mode);

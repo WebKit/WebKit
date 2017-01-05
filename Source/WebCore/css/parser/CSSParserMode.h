@@ -117,10 +117,6 @@ public:
             return URL(baseURL, url);
         return URL(baseURL, url, TextEncoding(charset));
     }
-
-#if ENABLE(VARIATION_FONTS)
-    bool variationFontsEnabled { false };
-#endif
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
@@ -146,11 +142,8 @@ struct CSSParserContextHash {
             & key.enforcesCSSMIMETypeInNoQuirksMode         << 5
             & key.useLegacyBackgroundSizeShorthandBehavior  << 6
             & key.springTimingFunctionEnabled               << 7
-#if ENABLE(VARIATION_FONTS)
-            & key.variationFontsEnabled                     << 8
-#endif
-            & key.deferredCSSParserEnabled                  << 9
-            & key.mode                                      << 10;
+            & key.deferredCSSParserEnabled                  << 8
+            & key.mode                                      << 9;
         hash ^= WTF::intHash(bits);
         return hash;
     }

@@ -90,9 +90,6 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 #endif
-#if ENABLE(VARIATION_FONTS)
-    , m_variationFontsEnabled(settings.variationFontsEnabled())
-#endif
     , m_deferredCSSParserEnabled(settings.deferredCSSParserEnabled())
     , m_inputEventsEnabled(settings.inputEventsEnabled())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
@@ -172,9 +169,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setYouTubeFlashPluginReplacementEnabled(m_youTubeFlashPluginReplacementEnabled);
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
-#endif
-#if ENABLE(VARIATION_FONTS)
-    settings.setVariationFontsEnabled(m_variationFontsEnabled);
 #endif
     settings.setDeferredCSSParserEnabled(m_deferredCSSParserEnabled);
     settings.setInputEventsEnabled(m_inputEventsEnabled);
@@ -732,29 +726,6 @@ ExceptionOr<void> InternalSettings::setSystemLayoutDirection(const String& direc
 void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)
 {
     Settings::setAllowsAnySSLCertificate(allowsAnyCertificate);
-}
-
-ExceptionOr<bool> InternalSettings::variationFontsEnabled()
-{
-    if (!m_page)
-        return Exception { INVALID_ACCESS_ERR };
-#if ENABLE(VARIATION_FONTS)
-    return settings().variationFontsEnabled();
-#else
-    return false;
-#endif
-}
-
-ExceptionOr<void> InternalSettings::setVariationFontsEnabled(bool enabled)
-{
-    if (!m_page)
-        return Exception { INVALID_ACCESS_ERR };
-#if ENABLE(VARIATION_FONTS)
-    settings().setVariationFontsEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-    return { };
 }
 
 ExceptionOr<bool> InternalSettings::deferredCSSParserEnabled()

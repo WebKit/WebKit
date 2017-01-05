@@ -1,3 +1,41 @@
+2017-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove runtime flag for variation fonts
+        https://bugs.webkit.org/show_bug.cgi?id=164251
+
+        Reviewed by Dean Jackson.
+
+        No new tests because there is no behavior change, but updated the following
+        tests to stop setting the flag:
+        - animations/font-variations/font-variation-settings-order.html:
+        - animations/font-variations/font-variation-settings-unlike.html:
+        - animations/font-variations/font-variation-settings.html:
+        - fast/text/variations/duplicate.html:
+        - fast/text/variations/exist.html:
+        - fast/text/variations/getComputedStyle.html:
+        - fast/text/variations/inheritance.html:
+        - fast/text/variations/order.html:
+        - fast/text/variations/outofbounds.html:
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContext::completeURL):
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::variationFontsEnabled): Deleted.
+        (WebCore::InternalSettings::setVariationFontsEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-01-04  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Teach SharedBuffer to return an NSArray of data segments to avoid flattening

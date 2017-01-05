@@ -92,10 +92,6 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
         textAutosizingEnabled = settings->textAutosizingEnabled();
 #endif
         springTimingFunctionEnabled = settings->springTimingFunctionEnabled();
-
-#if ENABLE(VARIATION_FONTS)
-        variationFontsEnabled = settings->variationFontsEnabled();
-#endif
         deferredCSSParserEnabled = settings->deferredCSSParserEnabled();
     }
 
@@ -119,9 +115,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
-#if ENABLE(VARIATION_FONTS)
-        && a.variationFontsEnabled == b.variationFontsEnabled
-#endif
         && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled;
 }

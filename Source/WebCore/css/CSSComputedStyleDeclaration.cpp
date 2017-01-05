@@ -2911,16 +2911,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         }
 #if ENABLE(VARIATION_FONTS)
         case CSSPropertyFontVariationSettings: {
-            if (styledElement->document().settings() && styledElement->document().settings()->variationFontsEnabled()) {
-                const FontVariationSettings& variationSettings = style->fontDescription().variationSettings();
-                if (variationSettings.isEmpty())
-                    return cssValuePool.createIdentifierValue(CSSValueNormal);
-                RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-                for (auto& feature : variationSettings)
-                    list->append(CSSFontVariationValue::create(feature.tag(), feature.value()));
-                return list;
-            }
-            break;
+            const FontVariationSettings& variationSettings = style->fontDescription().variationSettings();
+            if (variationSettings.isEmpty())
+                return cssValuePool.createIdentifierValue(CSSValueNormal);
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (auto& feature : variationSettings)
+                list->append(CSSFontVariationValue::create(feature.tag(), feature.value()));
+            return list;
         }
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)

@@ -96,8 +96,6 @@ public:
     ExceptionOr<void> setUserInterfaceDirectionPolicy(const String&);
     ExceptionOr<String> systemLayoutDirection();
     ExceptionOr<void> setSystemLayoutDirection(const String&);
-    ExceptionOr<bool> variationFontsEnabled();
-    ExceptionOr<void> setVariationFontsEnabled(bool);
     
     ExceptionOr<bool> deferredCSSParserEnabled();
     ExceptionOr<void> setDeferredCSSParserEnabled(bool);
@@ -176,9 +174,6 @@ private:
         bool m_inlineMediaPlaybackRequiresPlaysInlineAttribute;
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
         bool m_indexedDBWorkersEnabled;
-#endif
-#if ENABLE(VARIATION_FONTS)
-        bool m_variationFontsEnabled;
 #endif
         bool m_deferredCSSParserEnabled;
         bool m_inputEventsEnabled;

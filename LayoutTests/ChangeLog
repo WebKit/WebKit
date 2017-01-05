@@ -1,3 +1,28 @@
+2017-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove runtime flag for variation fonts
+        https://bugs.webkit.org/show_bug.cgi?id=164251
+
+        Reviewed by Dean Jackson.
+
+        * animations/font-variations/font-variation-settings-expected.html:
+        * animations/font-variations/font-variation-settings-order-expected.html:
+        * animations/font-variations/font-variation-settings-order.html:
+        * animations/font-variations/font-variation-settings-unlike-expected.html:
+        * animations/font-variations/font-variation-settings-unlike.html:
+        * animations/font-variations/font-variation-settings.html:
+        * fast/text/variations/duplicate-expected.html:
+        * fast/text/variations/duplicate.html:
+        * fast/text/variations/exist-expected-mismatch.html:
+        * fast/text/variations/exist.html:
+        * fast/text/variations/getComputedStyle.html:
+        * fast/text/variations/inheritance-expected.html:
+        * fast/text/variations/inheritance.html:
+        * fast/text/variations/order-expected.html:
+        * fast/text/variations/order.html:
+        * fast/text/variations/outofbounds-expected.html:
+        * fast/text/variations/outofbounds.html:
+
 2017-01-04  Nan Wang  <n_wang@apple.com>
 
         Many new HTML5 input types still exposed as generic AXTextfield
