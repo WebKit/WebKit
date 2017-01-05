@@ -26,14 +26,9 @@
 #import "config.h"
 #import "CustomProtocolManager.h"
 
-#import "ChildProcess.h"
 #import "CustomProtocolManagerMessages.h"
-#import "CustomProtocolManagerProxyMessages.h"
 #import "DataReference.h"
 #import "NetworkProcess.h"
-#import "NetworkProcessCreationParameters.h"
-#import "WebCoreArgumentCoders.h"
-#import "WebProcessCreationParameters.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/NSURLConnectionSPI.h>
 #import <WebCore/URL.h>
@@ -43,16 +38,6 @@
 #import <WebCore/TextEncoding.h>
 
 using namespace WebKit;
-
-namespace WebKit {
-
-static uint64_t generateCustomProtocolID()
-{
-    static uint64_t uniqueCustomProtocolID = 0;
-    return ++uniqueCustomProtocolID;
-}
-
-} // namespace WebKit
 
 @interface WKCustomProtocol : NSURLProtocol {
 @private
@@ -89,11 +74,11 @@ static uint64_t generateCustomProtocolID()
     self = [super initWithRequest:request cachedResponse:cachedResponse client:client];
     if (!self)
         return nil;
-    
-    _customProtocolID = generateCustomProtocolID();
-    _initializationRunLoop = CFRunLoopGetCurrent();
+
     if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
-        customProtocolManager->addCustomProtocol(self);
+        _customProtocolID = customProtocolManager->addCustomProtocol(self);
+    _initializationRunLoop = CFRunLoopGetCurrent();
+
     return self;
 }
 
@@ -105,14 +90,14 @@ static uint64_t generateCustomProtocolID()
 - (void)startLoading
 {
     if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>())
-        customProtocolManager->childProcess()->send(Messages::CustomProtocolManagerProxy::StartLoading(self.customProtocolID, [self request]), 0);
+        customProtocolManager->startLoading(self.customProtocolID, [self request]);
 }
 
 - (void)stopLoading
 {
     if (auto* customProtocolManager = NetworkProcess::singleton().supplement<CustomProtocolManager>()) {
-        customProtocolManager->childProcess()->send(Messages::CustomProtocolManagerProxy::StopLoading(self.customProtocolID), 0);
-        customProtocolManager->removeCustomProtocol(self);
+        customProtocolManager->stopLoading(self.customProtocolID);
+        customProtocolManager->removeCustomProtocol(self.customProtocolID);
     }
 }
 
@@ -120,45 +105,11 @@ static uint64_t generateCustomProtocolID()
 
 namespace WebKit {
 
-const char* CustomProtocolManager::supplementName()
-{
-    return "CustomProtocolManager";
-}
-
-CustomProtocolManager::CustomProtocolManager(ChildProcess* childProcess)
-    : m_childProcess(childProcess)
-    , m_messageQueue(WorkQueue::create("com.apple.WebKit.CustomProtocolManager"))
-{
-    WebCore::UTF8Encoding();
-}
-
-void CustomProtocolManager::initializeConnection(IPC::Connection* connection)
-{
-    connection->addWorkQueueMessageReceiver(Messages::CustomProtocolManager::messageReceiverName(), m_messageQueue.get(), this);
-}
-
-void CustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
+void CustomProtocolManager::registerProtocolClass()
 {
 #if !USE(NETWORK_SESSION)
     [NSURLProtocol registerClass:[WKCustomProtocol class]];
 #endif
-
-    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
-        registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
-}
-
-void CustomProtocolManager::addCustomProtocol(WKCustomProtocol *customProtocol)
-{
-    ASSERT(customProtocol);
-    LockHolder locker(m_customProtocolMapMutex);
-    m_customProtocolMap.add(customProtocol.customProtocolID, customProtocol);
-}
-
-void CustomProtocolManager::removeCustomProtocol(WKCustomProtocol *customProtocol)
-{
-    ASSERT(customProtocol);
-    LockHolder locker(m_customProtocolMapMutex);
-    m_customProtocolMap.remove(customProtocol.customProtocolID);
 }
 
 #if USE(NETWORK_SESSION)
@@ -174,7 +125,7 @@ void CustomProtocolManager::registerScheme(const String& scheme)
     LockHolder locker(m_registeredSchemesMutex);
     m_registeredSchemes.add(scheme);
 }
-    
+
 void CustomProtocolManager::unregisterScheme(const String& scheme)
 {
     ASSERT(!scheme.isNull());
@@ -210,7 +161,7 @@ void CustomProtocolManager::didFailWithError(uint64_t customProtocolID, const We
         [[protocol client] URLProtocol:protocol.get() didFailWithError:nsError.get()];
     });
 
-    removeCustomProtocol(protocol.get());
+    removeCustomProtocol(customProtocolID);
 }
 
 void CustomProtocolManager::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)
@@ -249,7 +200,7 @@ void CustomProtocolManager::didFinishLoading(uint64_t customProtocolID)
         [[protocol client] URLProtocolDidFinishLoading:protocol.get()];
     });
 
-    removeCustomProtocol(protocol.get());
+    removeCustomProtocol(customProtocolID);
 }
 
 void CustomProtocolManager::wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)

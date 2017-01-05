@@ -1,3 +1,19 @@
+2017-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network process crash in WebKit::CustomProtocolManagerImpl::didFailWithError
+        https://bugs.webkit.org/show_bug.cgi?id=165082
+
+        Reviewed by Alex Christensen.
+
+        Simplified WebKitSoupRequestGenericClient.
+
+        * platform/network/soup/WebKitSoupRequestGeneric.cpp:
+        (webkitSoupRequestGenericSendAsync):
+        (webkitSoupRequestGenericSendFinish):
+        (webkitSoupRequestGenericGetRequest):
+        * platform/network/soup/WebKitSoupRequestGeneric.h:
+        * platform/network/soup/WebKitSoupRequestGenericClient.h:
+
 2017-01-05  Chris Dumez  <cdumez@apple.com>
 
         Turn preferLowPowerWebGLRendering setting on by default

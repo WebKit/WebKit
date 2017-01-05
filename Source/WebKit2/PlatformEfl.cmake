@@ -1,7 +1,6 @@
 list(APPEND WebKit2_SOURCES
     DatabaseProcess/efl/DatabaseProcessMainEfl.cpp
 
-    NetworkProcess/CustomProtocols/soup/CustomProtocolManagerImpl.cpp
     NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
 
     NetworkProcess/Downloads/efl/DownloadSoupErrorsEfl.cpp

@@ -93,6 +93,8 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
 endif ()
 
 set(NetworkProcess_COMMON_SOURCES
+    NetworkProcess/CustomProtocols/CustomProtocolManager.cpp
+
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkDataTask.cpp
     NetworkProcess/NetworkDataTaskBlob.cpp

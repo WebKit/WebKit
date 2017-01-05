@@ -1,3 +1,63 @@
+2017-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network process crash in WebKit::CustomProtocolManagerImpl::didFailWithError
+        https://bugs.webkit.org/show_bug.cgi?id=165082
+
+        Reviewed by Alex Christensen.
+
+        CustomProtocolManager uses a Workqueue to receive the IPC messages since r149194. Then we added the Soup
+        implementation adopting that approach, but without making our implementation thread safe. The crash happens
+        because the CustomProtocolManager implementation is used by two threads at the same time, the main thread
+        because of a ping load (probably caused by an image load in the unload handler, I haven't been able to
+        reproduce the crash) and the work queue thread. The reasons to make CustomProtocolManager use a WorkQueue
+        are no longer valid because CustomProtocolManager is now only used in the network process and sync loads don't
+        use any nested run loop, they are just an IPC sync message. So this patch makes CustomProtocolManager a normal
+        message receiver again to ensure messages are handled in the main thread. It also adds the common implementation
+        to a new CustomProtocolManager.cpp file shared by Cocoa and Soup based ports.
+
+        * CMakeLists.txt: Add CustomProtocolManager.cpp.
+        * NetworkProcess/CustomProtocols/Cocoa/CustomProtocolManagerCocoa.mm:
+        (-[WKCustomProtocol initWithRequest:cachedResponse:client:]): Use new CustomProtocolManager API.
+        (-[WKCustomProtocol startLoading]): Ditto.
+        (-[WKCustomProtocol stopLoading]): Ditto.
+        (WebKit::CustomProtocolManager::registerProtocolClass): Register the NSURLProtocol class when not using the
+        network session.
+        (WebKit::CustomProtocolManager::didFailWithError): removeCustomProtocol now receives an ID.
+        (WebKit::CustomProtocolManager::didFinishLoading): Ditto.
+        * NetworkProcess/CustomProtocols/CustomProtocolManager.cpp: Added.
+        (WebKit::generateCustomProtocolID): Moved from CustomProtocolManagerCocoa.mm and CustomProtocolManagerSoup.cpp.
+        (WebKit::CustomProtocolManager::supplementName): Ditto.
+        (WebKit::CustomProtocolManager::CustomProtocolManager): Also removes the work queue initialization.
+        (WebKit::CustomProtocolManager::initialize): Copied and modernized the loop.
+        (WebKit::CustomProtocolManager::addCustomProtocol): Copied from CustomProtocolManagerCocoa.mm.
+        (WebKit::CustomProtocolManager::removeCustomProtocol): Ditto.
+        (WebKit::CustomProtocolManager::startLoading): Send the StartLoading message to the proxy.
+        (WebKit::CustomProtocolManager::stopLoading): Send the StopLoading message to the proxy.
+        * NetworkProcess/CustomProtocols/CustomProtocolManager.h:
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerImpl.cpp: Removed.
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerImpl.h: Removed.
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp: Moved the implementation from
+        CustomProtocolManagerImpl and updated to the new CustomProtocolManager API.
+        (WebKit::CustomProtocolManager::WebSoupRequestAsyncData::WebSoupRequestAsyncData):
+        (WebKit::CustomProtocolManager::WebSoupRequestAsyncData::~WebSoupRequestAsyncData):
+        (WebKit::CustomProtocolManager::registerProtocolClass):
+        (WebKit::CustomProtocolManager::registerScheme):
+        (WebKit::CustomProtocolManager::supportsScheme):
+        (WebKit::CustomProtocolManager::didFailWithError):
+        (WebKit::CustomProtocolManager::didLoadData):
+        (WebKit::CustomProtocolManager::didReceiveResponse):
+        (WebKit::CustomProtocolManager::didFinishLoading):
+        (WebKit::CustomProtocolManager::wasRedirectedToRequest):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::globalCustomProtocolManager):
+        (WebKit::NetworkSessionCocoa::defaultSession):
+        CustomProtocolManager is no longer refcounted, so just pass a pointer.
+        A static pointer has the same lifetime as the NetworkProcess object in the NetworkProcess,
+        and in the WebProcess it will remain nullptr, just like it used to.
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-01-05  Antti Koivisto  <antti@apple.com>
 
         Use WTF::Function instead of std::function in network cache code

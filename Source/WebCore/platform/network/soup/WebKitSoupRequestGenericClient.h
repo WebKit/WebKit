@@ -17,21 +17,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitSoupRequestGenericClient_h
-#define WebKitSoupRequestGenericClient_h
+#pragma once
 
-typedef struct _GError GError;
-typedef struct _GInputStream GInputStream;
+#include <wtf/glib/GRefPtr.h>
+
 typedef struct _GTask GTask;
 
 namespace WebCore {
 
 class WebKitSoupRequestGenericClient {
 public:
-    virtual void start(GTask*) = 0;
-    virtual GInputStream* finish(GTask*, GError**) = 0;
+    virtual void startRequest(GRefPtr<GTask>&&) = 0;
 };
 
 } // namespace WebCore
 
-#endif // WebKitSoupRequestGenericClient_h

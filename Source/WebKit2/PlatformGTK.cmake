@@ -28,7 +28,6 @@ set(WebKit2_USE_PREFIX_HEADER ON)
 list(APPEND WebKit2_SOURCES
     DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp
 
-    NetworkProcess/CustomProtocols/soup/CustomProtocolManagerImpl.cpp
     NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp
 
     NetworkProcess/Downloads/gtk/DownloadSoupErrorsGtk.cpp

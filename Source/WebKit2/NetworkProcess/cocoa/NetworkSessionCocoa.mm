@@ -320,10 +320,10 @@ static NSURLSessionConfiguration *configurationForSessionID(const WebCore::Sessi
     return [NSURLSessionConfiguration defaultSessionConfiguration];
 }
 
-static RefPtr<CustomProtocolManager>& globalCustomProtocolManager()
+static CustomProtocolManager*& globalCustomProtocolManager()
 {
-    static NeverDestroyed<RefPtr<CustomProtocolManager>> customProtocolManager;
-    return customProtocolManager.get();
+    static CustomProtocolManager* customProtocolManager { nullptr };
+    return customProtocolManager;
 }
 
 static RetainPtr<CFDataRef>& globalSourceApplicationAuditTokenData()
@@ -396,7 +396,7 @@ Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, Cu
 NetworkSession& NetworkSessionCocoa::defaultSession()
 {
     ASSERT(isMainThread());
-    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), globalCustomProtocolManager().get()).leakRef();
+    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), globalCustomProtocolManager()).leakRef();
     return *session;
 }
 

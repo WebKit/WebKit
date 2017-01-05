@@ -58,7 +58,7 @@ GType webkit_soup_request_generic_get_type();
 void webkitSoupRequestGenericSetContentLength(WebKitSoupRequestGeneric*, goffset contentLength);
 void webkitSoupRequestGenericSetContentType(WebKitSoupRequestGeneric*, const char* mimeType);
 void webkitSoupRequestGenericSetRequest(WebKitSoupRequestGeneric*, const WebCore::ResourceRequest&);
-const WebCore::ResourceRequest* webkitSoupRequestGenericGetRequest(WebKitSoupRequestGeneric*);
+const WebCore::ResourceRequest& webkitSoupRequestGenericGetRequest(WebKitSoupRequestGeneric*);
 
 G_END_DECLS
 

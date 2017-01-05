@@ -1108,6 +1108,7 @@
 		5CBC9B8D1C65279C00A8FDCF /* NetworkDataTaskCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */; };
 		5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */; };
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
+		5CFECB041E1ED1CC00F88504 /* CustomProtocolManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFECB031E1ED1C800F88504 /* CustomProtocolManager.cpp */; };
 		6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */; };
 		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3245,6 +3246,7 @@
 		5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTask.h; path = NetworkProcess/NetworkDataTask.h; sourceTree = "<group>"; };
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkDataTaskCocoa.mm; path = NetworkProcess/cocoa/NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CE85B1F1C88E6430070BFCE /* PingLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingLoad.h; path = NetworkProcess/PingLoad.h; sourceTree = "<group>"; };
+		5CFECB031E1ED1C800F88504 /* CustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomProtocolManager.cpp; path = NetworkProcess/CustomProtocols/CustomProtocolManager.cpp; sourceTree = "<group>"; };
 		5D442A5516D5856700AC3331 /* PluginService.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginService.entitlements; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
@@ -5921,6 +5923,7 @@
 		5C1426F21C23F82D00D41183 /* CustomProtocols */ = {
 			isa = PBXGroup;
 			children = (
+				5CFECB031E1ED1C800F88504 /* CustomProtocolManager.cpp */,
 				5C14271A1C23F8BF00D41183 /* Cocoa */,
 				5C1427141C23F8B000D41183 /* CustomProtocolManager.h */,
 				5C1427151C23F8B000D41183 /* CustomProtocolManager.messages.in */,
@@ -9490,6 +9493,7 @@
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
+				5CFECB041E1ED1CC00F88504 /* CustomProtocolManager.cpp in Sources */,
 				1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,
 				1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */,
 				1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */,
