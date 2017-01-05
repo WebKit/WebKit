@@ -28714,7 +28714,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRCROOT/Modules/modern-media-controls/images\" \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\ncd \"$SRCROOT/Modules/modern-media-controls\"\ncat controls/*.css > \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls/modern-media-controls.css\"\ncat `cat js-files` > \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls/modern-media-controls.js\"";
+			shellScript = "SRC_DIR=\"$SRCROOT/Modules/modern-media-controls\"\nDST_DIR=\"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/modern-media-controls\"\n\nmkdir -p \"$DST_DIR\"\n\nif [ \"${PLATFORM_NAME}\" == \"macosx\" ]; then\n    IMG_OS_PREFIX=\"macOS\"\nfi\n\nif [ \"${PLATFORM_NAME}\" == \"iphoneos\" ] || [ \"${PLATFORM_NAME}\" == \"iphonesimulator\" ]; then\n    IMG_OS_PREFIX=\"iOS\"\nfi\n\nif [ -n \"$IMG_OS_PREFIX\" ]; then\n    mkdir -p \"$DST_DIR/images\"\n    rsync -aq --exclude \".svn\" --exclude \".DS_Store\" \"$SRC_DIR/images/$IMG_OS_PREFIX\" \"$DST_DIR/images\"\nfi\n\ncd \"$SRC_DIR\"\ncat controls/*.css > \"$DST_DIR/modern-media-controls.css\"\ncat `cat js-files` > \"$DST_DIR/modern-media-controls.js\"";
 		};
 		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
