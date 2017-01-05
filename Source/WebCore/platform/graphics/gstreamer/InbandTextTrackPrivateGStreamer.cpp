@@ -113,7 +113,7 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
 
         GST_INFO("Track %d parsing sample: %.*s", m_index, static_cast<int>(info.size),
             reinterpret_cast<char*>(info.data));
-        client()->parseWebVTTCueData(this, reinterpret_cast<char*>(info.data), info.size);
+        client()->parseWebVTTCueData(reinterpret_cast<char*>(info.data), info.size);
         gst_buffer_unmap(buffer, &info);
     }
 }

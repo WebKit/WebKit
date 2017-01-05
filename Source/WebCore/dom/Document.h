@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2010, 2012-2013, 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -66,9 +66,7 @@
 
 namespace JSC {
 class ExecState;
-#if ENABLE(WEB_REPLAY)
 class InputCursor;
-#endif
 }
 
 namespace WebCore {
@@ -99,8 +97,8 @@ class DocumentParser;
 class DocumentSharedObjectPool;
 class DocumentType;
 class ExtensionStyleSheets;
-class FloatRect;
 class FloatQuad;
+class FloatRect;
 class FormController;
 class Frame;
 class FrameView;
@@ -121,11 +119,10 @@ class HTMLScriptElement;
 class HitTestRequest;
 class HitTestResult;
 class IntPoint;
+class JSNode;
 class LayoutPoint;
 class LayoutRect;
 class LiveNodeList;
-class ScriptModuleLoader;
-class JSNode;
 class Locale;
 class Location;
 class MediaCanStartListener;
@@ -133,7 +130,6 @@ class MediaPlaybackTarget;
 class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
-class ScriptModuleLoader;
 class MouseEventWithHitTestResults;
 class NamedFlowCollection;
 class NodeFilter;
@@ -143,23 +139,24 @@ class PlatformMouseEvent;
 class ProcessingInstruction;
 class QualifiedName;
 class Range;
-class RenderView;
 class RenderFullScreen;
-class ScriptableDocumentParser;
+class RenderView;
+class SVGDocumentExtensions;
+class SVGSVGElement;
 class ScriptElementData;
+class ScriptModuleLoader;
 class ScriptRunner;
+class ScriptableDocumentParser;
 class SecurityOrigin;
+class SegmentedString;
 class SelectorQuery;
 class SelectorQueryCache;
 class SerializedScriptValue;
-class SegmentedString;
 class Settings;
 class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
-class SVGDocumentExtensions;
-class SVGSVGElement;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;

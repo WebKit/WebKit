@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,43 +24,34 @@
  */
 
 #include "config.h"
+#include "InbandTextTrack.h"
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "InbandTextTrack.h"
-
-#include "Document.h"
-#include "Event.h"
 #include "HTMLMediaElement.h"
 #include "InbandDataTextTrack.h"
 #include "InbandGenericTextTrack.h"
 #include "InbandTextTrackPrivate.h"
 #include "InbandWebVTTTextTrack.h"
-#include "Logging.h"
-#include "TextTrackCueList.h"
-#include <math.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
-PassRefPtr<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext* context,
-    TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)
+Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
-    switch (trackPrivate->cueFormat()) {
+    switch (trackPrivate.cueFormat()) {
     case InbandTextTrackPrivate::Data:
         return InbandDataTextTrack::create(context, client, trackPrivate);
     case InbandTextTrackPrivate::Generic:
         return InbandGenericTextTrack::create(context, client, trackPrivate);
     case InbandTextTrackPrivate::WebVTT:
         return InbandWebVTTTextTrack::create(context, client, trackPrivate);
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
     }
+    ASSERT_NOT_REACHED();
+    return InbandDataTextTrack::create(context, client, trackPrivate);
 }
 
-InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)
-    : TextTrack(context, client, emptyAtom, trackPrivate->id(), trackPrivate->label(), trackPrivate->language(), InBand)
+InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+    : TextTrack(&context, &client, emptyAtom, trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
     , m_private(trackPrivate)
 {
     m_private->setClient(this);
@@ -72,12 +63,9 @@ InbandTextTrack::~InbandTextTrack()
     m_private->setClient(nullptr);
 }
 
-void InbandTextTrack::setPrivate(PassRefPtr<InbandTextTrackPrivate> trackPrivate)
+void InbandTextTrack::setPrivate(InbandTextTrackPrivate& trackPrivate)
 {
-    ASSERT(m_private);
-    ASSERT(trackPrivate);
-
-    if (m_private == trackPrivate)
+    if (m_private.ptr() == &trackPrivate)
         return;
 
     m_private->setClient(nullptr);
@@ -115,80 +103,60 @@ void InbandTextTrack::setModeInternal(Mode mode)
 
 bool InbandTextTrack::isClosedCaptions() const
 {
-    if (!m_private)
-        return false;
-
     return m_private->isClosedCaptions();
 }
 
 bool InbandTextTrack::isSDH() const
 {
-    if (!m_private)
-        return false;
-    
     return m_private->isSDH();
 }
 
 bool InbandTextTrack::containsOnlyForcedSubtitles() const
 {
-    if (!m_private)
-        return false;
-    
     return m_private->containsOnlyForcedSubtitles();
 }
 
 bool InbandTextTrack::isMainProgramContent() const
 {
-    if (!m_private)
-        return false;
-    
     return m_private->isMainProgramContent();
 }
 
 bool InbandTextTrack::isEasyToRead() const
 {
-    if (!m_private)
-        return false;
-    
     return m_private->isEasyToRead();
 }
     
 size_t InbandTextTrack::inbandTrackIndex()
 {
-    ASSERT(m_private);
     return m_private->trackIndex();
 }
 
 AtomicString InbandTextTrack::inBandMetadataTrackDispatchType() const
 {
-    ASSERT(m_private);
     return m_private->inBandMetadataTrackDispatchType();
 }
 
-void InbandTextTrack::idChanged(TrackPrivateBase* trackPrivate, const AtomicString& id)
+void InbandTextTrack::idChanged(const AtomicString& id)
 {
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setId(id);
 }
 
-void InbandTextTrack::labelChanged(TrackPrivateBase* trackPrivate, const AtomicString& label)
+void InbandTextTrack::labelChanged(const AtomicString& label)
 {
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLabel(label);
 }
 
-void InbandTextTrack::languageChanged(TrackPrivateBase* trackPrivate, const AtomicString& language)
+void InbandTextTrack::languageChanged(const AtomicString& language)
 {
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     setLanguage(language);
 }
 
-void InbandTextTrack::willRemove(TrackPrivateBase* trackPrivate)
+void InbandTextTrack::willRemove()
 {
-    if (!mediaElement())
+    auto* element = mediaElement();
+    if (!element)
         return;
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    mediaElement()->removeTextTrack(*this);
+    element->removeTextTrack(*this);
 }
 
 void InbandTextTrack::updateKindFromPrivate()
@@ -196,34 +164,30 @@ void InbandTextTrack::updateKindFromPrivate()
     switch (m_private->kind()) {
     case InbandTextTrackPrivate::Subtitles:
         setKind(Kind::Subtitles);
-        break;
+        return;
     case InbandTextTrackPrivate::Captions:
         setKind(Kind::Captions);
-        break;
+        return;
     case InbandTextTrackPrivate::Descriptions:
         setKind(Kind::Descriptions);
-        break;
+        return;
     case InbandTextTrackPrivate::Chapters:
         setKind(Kind::Chapters);
-        break;
+        return;
     case InbandTextTrackPrivate::Metadata:
         setKind(Kind::Metadata);
-        break;
+        return;
     case InbandTextTrackPrivate::Forced:
         setKind(Kind::Forced);
-        break;
+        return;
     case InbandTextTrackPrivate::None:
-    default:
-        ASSERT_NOT_REACHED();
         break;
     }
+    ASSERT_NOT_REACHED();
 }
 
 MediaTime InbandTextTrack::startTimeVariance() const
 {
-    if (!m_private)
-        return MediaTime::zeroTime();
-    
     return m_private->startTimeVariance();
 }
 

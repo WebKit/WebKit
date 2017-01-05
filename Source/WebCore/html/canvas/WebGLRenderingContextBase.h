@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,10 @@
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
 #include "Timer.h"
+#include "WebGLAny.h"
 #include "WebGLContextAttributes.h"
-#include "WebGLGetInfo.h"
-#include "WebGLObject.h"
 #include "WebGLTexture.h"
 #include <memory>
-#include <runtime/Float32Array.h>
-#include <runtime/Int32Array.h>
 
 namespace WebCore {
 
@@ -48,7 +45,6 @@ class EXTsRGB;
 class EXTFragDepth;
 class HTMLImageElement;
 class HTMLVideoElement;
-class ImageBuffer;
 class ImageData;
 class IntSize;
 class OESStandardDerivatives;
@@ -191,24 +187,24 @@ public:
     RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GC3Duint index);
     bool getAttachedShaders(WebGLProgram*, Vector<RefPtr<WebGLShader>>&);
     GC3Dint getAttribLocation(WebGLProgram*, const String& name);
-    WebGLGetInfo getBufferParameter(GC3Denum target, GC3Denum pname);
+    WebGLAny getBufferParameter(GC3Denum target, GC3Denum pname);
     std::optional<WebGLContextAttributes> getContextAttributes();
     GC3Denum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
-    virtual WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) = 0;
-    virtual WebGLGetInfo getParameter(GC3Denum pname) = 0;
-    WebGLGetInfo getProgramParameter(WebGLProgram*, GC3Denum pname);
+    virtual WebGLAny getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) = 0;
+    virtual WebGLAny getParameter(GC3Denum pname) = 0;
+    WebGLAny getProgramParameter(WebGLProgram*, GC3Denum pname);
     String getProgramInfoLog(WebGLProgram*);
-    WebGLGetInfo getRenderbufferParameter(GC3Denum target, GC3Denum pname);
-    WebGLGetInfo getShaderParameter(WebGLShader*, GC3Denum pname);
+    WebGLAny getRenderbufferParameter(GC3Denum target, GC3Denum pname);
+    WebGLAny getShaderParameter(WebGLShader*, GC3Denum pname);
     String getShaderInfoLog(WebGLShader*);
     RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType);
     String getShaderSource(WebGLShader*);
     virtual Vector<String> getSupportedExtensions() = 0;
-    WebGLGetInfo getTexParameter(GC3Denum target, GC3Denum pname);
-    WebGLGetInfo getUniform(WebGLProgram*, const WebGLUniformLocation*);
+    WebGLAny getTexParameter(GC3Denum target, GC3Denum pname);
+    WebGLAny getUniform(WebGLProgram*, const WebGLUniformLocation*);
     RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&);
-    WebGLGetInfo getVertexAttrib(GC3Duint index, GC3Denum pname);
+    WebGLAny getVertexAttrib(GC3Duint index, GC3Denum pname);
     long long getVertexAttribOffset(GC3Duint index, GC3Denum pname);
 
     virtual void hint(GC3Denum target, GC3Denum mode) = 0;
@@ -323,8 +319,8 @@ public:
     void paintRenderingResultsToCanvas() override;
     RefPtr<ImageData> paintRenderingResultsToImageData();
 
-    void removeSharedObject(WebGLSharedObject*);
-    void removeContextObject(WebGLContextObject*);
+    void removeSharedObject(WebGLSharedObject&);
+    void removeContextObject(WebGLContextObject&);
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
@@ -335,7 +331,7 @@ public:
 
 protected:
     WebGLRenderingContextBase(HTMLCanvasElement&, WebGLContextAttributes);
-    WebGLRenderingContextBase(HTMLCanvasElement&, RefPtr<GraphicsContext3D>&&, WebGLContextAttributes);
+    WebGLRenderingContextBase(HTMLCanvasElement&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);
 
     friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
@@ -360,8 +356,8 @@ protected:
     const char* activeDOMObjectName() const override;
     bool canSuspendForDocumentSuspension() const override;
 
-    void addSharedObject(WebGLSharedObject*);
-    void addContextObject(WebGLContextObject*);
+    void addSharedObject(WebGLSharedObject&);
+    void addContextObject(WebGLContextObject&);
     void detachAndRemoveAllObjects();
 
     void destroyGraphicsContext3D();
@@ -405,6 +401,8 @@ protected:
 
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
 
+    bool enableSupportedExtension(const char* extensionNameLiteral);
+
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
 
@@ -414,7 +412,7 @@ protected:
     // on how exactly the platform discovers that the context was lost. For better
     // portability we always defer the dispatch of the event.
     Timer m_dispatchContextLostEventTimer;
-    bool m_restoreAllowed;
+    bool m_restoreAllowed { false };
     Timer m_restoreTimer;
 
     bool m_needsUpdate;
@@ -432,12 +430,10 @@ protected:
 
     RefPtr<WebGLVertexArrayObjectBase> m_defaultVertexArrayObject;
     RefPtr<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;
-    void setBoundVertexArrayObject(PassRefPtr<WebGLVertexArrayObjectBase> arrayObject)
+
+    void setBoundVertexArrayObject(WebGLVertexArrayObjectBase* arrayObject)
     {
-        if (arrayObject)
-            m_boundVertexArrayObject = arrayObject;
-        else
-            m_boundVertexArrayObject = m_defaultVertexArrayObject;
+        m_boundVertexArrayObject = arrayObject ? arrayObject : m_defaultVertexArrayObject;
     }
     
     class VertexAttribValue {
@@ -493,12 +489,12 @@ protected:
         std::unique_ptr<std::unique_ptr<ImageBuffer>[]> m_buffers;
         int m_capacity;
     };
-    LRUImageBufferCache m_generatedImageCache;
+    LRUImageBufferCache m_generatedImageCache { 0 };
 
     GC3Dint m_maxTextureSize;
     GC3Dint m_maxCubeMapTextureSize;
     GC3Dint m_maxRenderbufferSize;
-    GC3Dint m_maxViewportDims[2];
+    GC3Dint m_maxViewportDims[2] { 0, 0 };
     GC3Dint m_maxTextureLevel;
     GC3Dint m_maxCubeMapTextureLevel;
 
@@ -513,8 +509,8 @@ protected:
     bool m_unpackFlipY;
     bool m_unpackPremultiplyAlpha;
     GC3Denum m_unpackColorspaceConversion;
-    bool m_contextLost;
-    LostContextMode m_contextLostMode;
+    bool m_contextLost { false };
+    LostContextMode m_contextLostMode { SyntheticLostContext };
     WebGLContextAttributes m_attributes;
 
     bool m_layerCleared;
@@ -535,17 +531,18 @@ protected:
     bool m_isDepthStencilSupported;
     bool m_isRobustnessEXTSupported;
 
-    bool m_synthesizedErrorsToConsole;
+    bool m_synthesizedErrorsToConsole { true };
     int m_numGLErrorsToConsoleAllowed;
 
     // A WebGLRenderingContext can be created in a state where it appears as
     // a valid and active context, but will not execute any important operations
     // until its load policy is completely resolved.
-    bool m_isPendingPolicyResolution;
-    bool m_hasRequestedPolicyResolution;
+    bool m_isPendingPolicyResolution { false };
+    bool m_hasRequestedPolicyResolution { false };
     bool isContextLostOrPending();
 
-    // Enabled extension objects. FIXME: Move these to WebGL1RenderingContext, not needed for WebGL2
+    // Enabled extension objects.
+    // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2
     std::unique_ptr<EXTFragDepth> m_extFragDepth;
     std::unique_ptr<EXTBlendMinMax> m_extBlendMinMax;
     std::unique_ptr<EXTsRGB> m_extsRGB;
@@ -568,15 +565,15 @@ protected:
     std::unique_ptr<WebGLDrawBuffers> m_webglDrawBuffers;
     std::unique_ptr<ANGLEInstancedArrays> m_angleInstancedArrays;
 
-    // Helpers for getParameter and others
-    WebGLGetInfo getBooleanParameter(GC3Denum);
-    WebGLGetInfo getBooleanArrayParameter(GC3Denum);
-    WebGLGetInfo getFloatParameter(GC3Denum);
-    WebGLGetInfo getIntParameter(GC3Denum);
-    WebGLGetInfo getUnsignedIntParameter(GC3Denum);
-    WebGLGetInfo getInt64Parameter(GC3Denum);
-    WebGLGetInfo getWebGLFloatArrayParameter(GC3Denum);
-    WebGLGetInfo getWebGLIntArrayParameter(GC3Denum);
+    // Helpers for getParameter and other similar functions.
+    bool getBooleanParameter(GC3Denum);
+    Vector<bool> getBooleanArrayParameter(GC3Denum);
+    float getFloatParameter(GC3Denum);
+    int getIntParameter(GC3Denum);
+    unsigned getUnsignedIntParameter(GC3Denum);
+    long long getInt64Parameter(GC3Denum);
+    RefPtr<Float32Array> getWebGLFloatArrayParameter(GC3Denum);
+    RefPtr<Int32Array> getWebGLIntArrayParameter(GC3Denum);
 
     // Clear the backbuffer if it was composited since the last operation.
     // clearMask is set to the bitfield of any clear that would happen anyway at this time

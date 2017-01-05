@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,25 +30,24 @@
 #include "InbandTextTrack.h"
 #include "WebVTTParser.h"
 #include <memory>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class InbandWebVTTTextTrack final : public InbandTextTrack, private WebVTTParserClient {
 public:
-    static Ref<InbandTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    static Ref<InbandTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandWebVTTTextTrack();
 
 private:
-    InbandWebVTTTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    InbandWebVTTTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
 
     WebVTTParser& parser();
-    void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) override;
-    void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
+    void parseWebVTTCueData(const char* data, unsigned length) final;
+    void parseWebVTTCueData(const ISOWebVTTCue&) final;
 
-    void newCuesParsed() override;
-    void newRegionsParsed() override;
-    void fileFailedToParse() override;
+    void newCuesParsed() final;
+    void newRegionsParsed() final;
+    void fileFailedToParse() final;
 
     std::unique_ptr<WebVTTParser> m_webVTTParser;
 };

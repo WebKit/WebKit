@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,6 @@
 #import <WebCore/ChromeClient.h>
 #import <WebCore/FocusDirection.h>
 #import <wtf/Forward.h>
-
-#if PLATFORM(IOS)
-#import <wtf/Platform.h>
-#import <wtf/text/WTFString.h>
-#import <WebCore/Chrome.h>
-#endif
 
 @class WebView;
 
@@ -125,7 +119,7 @@ public:
 #endif
 
     void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;
-    void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*) override;
+    void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader&) override;
 
 #if !PLATFORM(IOS)
     void setCursor(const WebCore::Cursor&) override;
@@ -214,11 +208,7 @@ public:
     bool hasRelevantSelectionServices(bool isTextOnly) const override;
 #endif
 
-#if PLATFORM(IOS)
     WebView* webView() const { return m_webView; }
-#else
-    WebView* webView() { return m_webView; }
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     void addPlaybackTargetPickerClient(uint64_t /*contextId*/) override;

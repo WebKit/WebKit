@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly <pmk@post.com>
- * Copyright (C) 2005-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
@@ -799,8 +799,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     newElement->beginParsingChildren();
 
-    ScriptElement* scriptElement = toScriptElementIfPossible(newElement.ptr());
-    if (scriptElement)
+    if (isScriptElement(newElement.get()))
         m_scriptStartPosition = textPosition();
 
     m_currentNode->parserAppendChild(newElement);
@@ -843,7 +842,7 @@ void XMLDocumentParser::endElementNs()
     if (hackAroundLibXMLEntityParsingBug() && context()->depth <= depthTriggeringEntityExpansion())
         setDepthTriggeringEntityExpansion(-1);
 
-    if (!scriptingContentIsAllowed(parserContentPolicy()) && is<Element>(*node) && toScriptElementIfPossible(downcast<Element>(node.get()))) {
+    if (!scriptingContentIsAllowed(parserContentPolicy()) && is<Element>(*node) && isScriptElement(downcast<Element>(*node))) {
         popCurrentNode();
         node->remove();
         return;
@@ -854,7 +853,7 @@ void XMLDocumentParser::endElementNs()
         return;
     }
 
-    Element& element = downcast<Element>(*node);
+    auto& element = downcast<Element>(*node);
 
     // The element's parent may have already been removed from document.
     // Parsing continues in this case, but scripts aren't executed.
@@ -863,8 +862,7 @@ void XMLDocumentParser::endElementNs()
         return;
     }
 
-    ScriptElement* scriptElement = toScriptElementIfPossible(&element);
-    if (!scriptElement) {
+    if (!isScriptElement(element)) {
         popCurrentNode();
         return;
     }
@@ -873,15 +871,16 @@ void XMLDocumentParser::endElementNs()
     ASSERT(!m_pendingScript);
     m_requestingScript = true;
 
-    if (scriptElement->prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute)) {
+    auto& scriptElement = downcastScriptElement(element);
+    if (scriptElement.prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute)) {
         // FIXME: Script execution should be shared between
         // the libxml2 and Qt XMLDocumentParser implementations.
 
-        if (scriptElement->readyToBeParserExecuted())
-            scriptElement->executeClassicScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
-        else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript()) {
-            m_pendingScript = PendingScript::create(element, *scriptElement->loadableScript());
-            m_pendingScript->setClient(this);
+        if (scriptElement.readyToBeParserExecuted())
+            scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.scriptContent(), document()->url(), m_scriptStartPosition));
+        else if (scriptElement.willBeParserExecuted() && scriptElement.loadableScript()) {
+            m_pendingScript = PendingScript::create(scriptElement, *scriptElement.loadableScript());
+            m_pendingScript->setClient(*this);
 
             // m_pendingScript will be nullptr if script was already loaded and setClient() executed it.
             if (m_pendingScript)
@@ -896,19 +895,19 @@ void XMLDocumentParser::endElementNs()
     popCurrentNode();
 }
 
-void XMLDocumentParser::characters(const xmlChar* s, int len)
+void XMLDocumentParser::characters(const xmlChar* characters, int length)
 {
     if (isStopped())
         return;
 
     if (m_parserPaused) {
-        m_pendingCallbacks->appendCharactersCallback(s, len);
+        m_pendingCallbacks->appendCharactersCallback(characters, length);
         return;
     }
 
     if (!m_leafTextNode)
         createLeafTextNode();
-    m_bufferedText.append(s, len);
+    m_bufferedText.append(characters, length);
 }
 
 void XMLDocumentParser::error(XMLErrors::ErrorType type, const char* message, va_list args)

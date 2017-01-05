@@ -340,9 +340,7 @@ private:
     // Therefore, all font operations must pass through the State.
     const FontProxy& fontProxy();
 
-#if ENABLE(DASHBOARD_SUPPORT)
     void clearPathForDashboardBackwardCompatibilityMode();
-#endif
 
     void beginCompositeLayer();
     void endCompositeLayer();

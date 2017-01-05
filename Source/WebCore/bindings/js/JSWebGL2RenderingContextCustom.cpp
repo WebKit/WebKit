@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,37 +35,6 @@
 using namespace JSC;
 
 namespace WebCore {
-
-// FIXME: There is a duplicate version of this function in JSWebGLRenderingContextBaseCustom.cpp,
-// but it is not exactly the same! We should merge these.
-static JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, const WebGLGetInfo& info)
-{
-    switch (info.getType()) {
-    case WebGLGetInfo::kTypeBool:
-        return jsBoolean(info.getBool());
-    case WebGLGetInfo::kTypeBoolArray: {
-        MarkedArgumentBuffer list;
-        for (auto& value : info.getBoolArray())
-            list.append(jsBoolean(value));
-        return constructArray(state, 0, globalObject, list);
-    }
-    case WebGLGetInfo::kTypeFloat:
-        return jsNumber(info.getFloat());
-    case WebGLGetInfo::kTypeInt:
-        return jsNumber(info.getInt());
-    case WebGLGetInfo::kTypeNull:
-        return jsNull();
-    case WebGLGetInfo::kTypeString:
-        return jsStringWithCache(state, info.getString());
-    case WebGLGetInfo::kTypeUnsignedInt:
-        return jsNumber(info.getUnsignedInt());
-    case WebGLGetInfo::kTypeInt64:
-        return jsNumber(info.getInt64());
-    default:
-        notImplemented();
-        return jsUndefined();
-    }
-}
 
 void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
@@ -104,7 +73,7 @@ JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
     unsigned index = state.uncheckedArgument(1).toInt32(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    return toJS(&state, globalObject(), wrapped().getIndexedParameter(pname, index));
+    return toJS(state, *globalObject(), wrapped().getIndexedParameter(pname, index));
 }
 
 JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState&)

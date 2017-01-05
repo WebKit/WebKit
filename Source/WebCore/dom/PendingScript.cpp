@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,30 +27,30 @@
 #include "config.h"
 #include "PendingScript.h"
 
-#include "Element.h"
 #include "PendingScriptClient.h"
+#include "ScriptElement.h"
 
 namespace WebCore {
 
-Ref<PendingScript> PendingScript::create(Element& element, LoadableScript& loadableScript)
+Ref<PendingScript> PendingScript::create(ScriptElement& element, LoadableScript& loadableScript)
 {
-    Ref<PendingScript> pendingScript = adoptRef(*new PendingScript(element, loadableScript));
+    auto pendingScript = adoptRef(*new PendingScript(element, loadableScript));
     loadableScript.addClient(pendingScript.get());
     return pendingScript;
 }
 
-Ref<PendingScript> PendingScript::create(Element& element, TextPosition scriptStartPosition)
+Ref<PendingScript> PendingScript::create(ScriptElement& element, TextPosition scriptStartPosition)
 {
     return adoptRef(*new PendingScript(element, scriptStartPosition));
 }
 
-PendingScript::PendingScript(Element& element, TextPosition startingPosition)
+PendingScript::PendingScript(ScriptElement& element, TextPosition startingPosition)
     : m_element(element)
     , m_startingPosition(startingPosition)
 {
 }
 
-PendingScript::PendingScript(Element& element, LoadableScript& loadableScript)
+PendingScript::PendingScript(ScriptElement& element, LoadableScript& loadableScript)
     : m_element(element)
     , m_loadableScript(&loadableScript)
 {
@@ -59,11 +60,6 @@ PendingScript::~PendingScript()
 {
     if (m_loadableScript)
         m_loadableScript->removeClient(*this);
-}
-
-LoadableScript* PendingScript::loadableScript() const
-{
-    return m_loadableScript.get();
 }
 
 void PendingScript::notifyClientFinished()
@@ -88,10 +84,10 @@ bool PendingScript::error() const
     return m_loadableScript && m_loadableScript->error();
 }
 
-void PendingScript::setClient(PendingScriptClient* client)
+void PendingScript::setClient(PendingScriptClient& client)
 {
     ASSERT(!m_client);
-    m_client = client;
+    m_client = &client;
     if (isLoaded())
         notifyClientFinished();
 }

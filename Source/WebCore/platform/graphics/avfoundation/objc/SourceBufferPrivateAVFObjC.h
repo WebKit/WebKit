@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SourceBufferPrivateAVFObjC_h
-#define SourceBufferPrivateAVFObjC_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
@@ -114,18 +113,18 @@ private:
     explicit SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC*);
 
     // SourceBufferPrivate overrides
-    void setClient(SourceBufferPrivateClient*) override;
-    void append(const unsigned char* data, unsigned length) override;
-    void abort() override;
-    void resetParserState() override;
-    void removedFromMediaSource() override;
-    MediaPlayer::ReadyState readyState() const override;
-    void setReadyState(MediaPlayer::ReadyState) override;
-    void flush(AtomicString trackID) override;
-    void enqueueSample(PassRefPtr<MediaSample>, AtomicString trackID) override;
-    bool isReadyForMoreSamples(AtomicString trackID) override;
-    void setActive(bool) override;
-    void notifyClientWhenReadyForMoreSamples(AtomicString trackID) override;
+    void setClient(SourceBufferPrivateClient*) final;
+    void append(const unsigned char* data, unsigned length) final;
+    void abort() final;
+    void resetParserState() final;
+    void removedFromMediaSource() final;
+    MediaPlayer::ReadyState readyState() const final;
+    void setReadyState(MediaPlayer::ReadyState) final;
+    void flush(const AtomicString& trackID) final;
+    void enqueueSample(Ref<MediaSample>&&, const AtomicString& trackID) final;
+    bool isReadyForMoreSamples(const AtomicString& trackID) final;
+    void setActive(bool) final;
+    void notifyClientWhenReadyForMoreSamples(const AtomicString& trackID) final;
 
     void didBecomeReadyForMoreSamples(int trackID);
     void appendCompleted();
@@ -155,21 +154,19 @@ private:
     OSObjectPtr<dispatch_group_t> m_isAppendingGroup;
 
     MediaSourcePrivateAVFObjC* m_mediaSource;
-    SourceBufferPrivateClient* m_client;
+    SourceBufferPrivateClient* m_client { nullptr };
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     CDMSessionMediaSourceAVFObjC* m_session { nullptr };
 #endif
 
     std::optional<FloatSize> m_cachedSize;
     FloatSize m_currentSize;
-    bool m_parsingSucceeded;
+    bool m_parsingSucceeded { true };
     bool m_parserStateWasReset { false };
-    int m_enabledVideoTrackID;
-    int m_protectedTrackID;
+    int m_enabledVideoTrackID { -1 };
+    int m_protectedTrackID { -1 };
 };
 
 }
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
-
-#endif

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +43,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 #if !LOG_DISABLED
+
 static String urlForLoggingTrack(const URL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
@@ -50,6 +52,7 @@ static String urlForLoggingTrack(const URL& url)
         return url.string();
     return url.string().substring(0, maximumURLLengthForLogging) + "...";
 }
+
 #endif
     
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document& document)
@@ -279,43 +282,43 @@ const AtomicString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
     return nullAtom;
 }
 
-void HTMLTrackElement::textTrackKindChanged(TextTrack* track)
+void HTMLTrackElement::textTrackKindChanged(TextTrack& track)
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto* parent = mediaElement())
         parent->textTrackKindChanged(track);
 }
 
-void HTMLTrackElement::textTrackModeChanged(TextTrack* track)
+void HTMLTrackElement::textTrackModeChanged(TextTrack& track)
 {
     // Since we've moved to a new parent, we may now be able to load.
     if (readyState() == HTMLTrackElement::NONE)
         scheduleLoad();
 
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto* parent = mediaElement())
         parent->textTrackModeChanged(track);
 }
 
-void HTMLTrackElement::textTrackAddCues(TextTrack* track, const TextTrackCueList* cues)
+void HTMLTrackElement::textTrackAddCues(TextTrack& track, const TextTrackCueList& cues)
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto* parent = mediaElement())
         parent->textTrackAddCues(track, cues);
 }
     
-void HTMLTrackElement::textTrackRemoveCues(TextTrack* track, const TextTrackCueList* cues)
+void HTMLTrackElement::textTrackRemoveCues(TextTrack& track, const TextTrackCueList& cues)
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto* parent = mediaElement())
         parent->textTrackRemoveCues(track, cues);
 }
     
-void HTMLTrackElement::textTrackAddCue(TextTrack* track, TextTrackCue& cue)
+void HTMLTrackElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto* parent = mediaElement())
         parent->textTrackAddCue(track, cue);
 }
     
-void HTMLTrackElement::textTrackRemoveCue(TextTrack* track, TextTrackCue& cue)
+void HTMLTrackElement::textTrackRemoveCue(TextTrack& track, TextTrackCue& cue)
 {
-    if (HTMLMediaElement* parent = mediaElement())
+    if (auto* parent = mediaElement())
         parent->textTrackRemoveCue(track, cue);
 }
 

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2009, 2010, 2011, 2012 Google Inc. All rights reserved.
@@ -482,11 +482,6 @@ bool InputType::shouldSubmitImplicitly(Event& event)
     return is<KeyboardEvent>(event) && event.type() == eventNames().keypressEvent && downcast<KeyboardEvent>(event).charCode() == '\r';
 }
 
-PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
-{
-    return element().form();
-}
-
 RenderPtr<RenderElement> InputType::createInputRenderer(RenderStyle&& style)
 {
     return RenderPtr<RenderElement>(RenderElement::createFor(element(), WTFMove(style)));
@@ -551,7 +546,7 @@ Chrome* InputType::chrome() const
 {
     if (Page* page = element().document().page())
         return &page->chrome();
-    return 0;
+    return nullptr;
 }
 
 bool InputType::canSetStringValue() const
@@ -636,7 +631,7 @@ bool InputType::canBeSuccessfulSubmitButton()
 
 HTMLElement* InputType::placeholderElement() const
 {
-    return 0;
+    return nullptr;
 }
 
 bool InputType::rendererIsNeeded()
@@ -646,10 +641,10 @@ bool InputType::rendererIsNeeded()
 
 FileList* InputType::files()
 {
-    return 0;
+    return nullptr;
 }
 
-void InputType::setFiles(PassRefPtr<FileList>)
+void InputType::setFiles(RefPtr<FileList>&&)
 {
 }
 
@@ -731,25 +726,29 @@ String InputType::sanitizeValue(const String& proposedValue) const
 }
 
 #if ENABLE(DRAG_SUPPORT)
+
 bool InputType::receiveDroppedFiles(const DragData&)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
+
 #endif
 
 Icon* InputType::icon() const
 {
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 #if PLATFORM(IOS)
+
 String InputType::displayString() const
 {
     ASSERT_NOT_REACHED();
     return String();
 }
+
 #endif
 
 bool InputType::shouldResetOnDocumentActivation()

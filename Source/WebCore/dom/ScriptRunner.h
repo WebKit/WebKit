@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +29,11 @@
 #include "PendingScriptClient.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Document;
-class PendingScript;
 class ScriptElement;
 class LoadableScript;
 
@@ -45,7 +44,7 @@ public:
     ~ScriptRunner();
 
     enum ExecutionType { ASYNC_EXECUTION, IN_ORDER_EXECUTION };
-    void queueScriptForExecution(ScriptElement*, LoadableScript&, ExecutionType);
+    void queueScriptForExecution(ScriptElement&, LoadableScript&, ExecutionType);
     bool hasPendingScripts() const { return !m_scriptsToExecuteSoon.isEmpty() || !m_scriptsToExecuteInOrder.isEmpty() || !m_pendingAsyncScripts.isEmpty(); }
     void suspend();
     void resume();

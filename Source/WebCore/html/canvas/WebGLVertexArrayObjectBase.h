@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,65 +32,47 @@ namespace WebCore {
 
 class WebGLVertexArrayObjectBase : public WebGLContextObject {
 public:
-    enum VAOType {
-        VAOTypeDefault,
-        VAOTypeUser,
-    };
-    
-    virtual ~WebGLVertexArrayObjectBase() { }
+    enum class Type { Default, User };
 
     // Cached values for vertex attrib range checks
     struct VertexAttribState {
-        VertexAttribState()
-            : enabled(false)
-            , bytesPerElement(0)
-            , size(4)
-            , type(GraphicsContext3D::FLOAT)
-            , normalized(false)
-            , stride(16)
-            , originalStride(0)
-            , offset(0)
-            , divisor(0)
-        {
-        }
-        
         bool isBound() const { return bufferBinding && bufferBinding->object(); }
         bool validateBinding() const { return !enabled || isBound(); }
         
-        bool enabled;
+        bool enabled { false };
         RefPtr<WebGLBuffer> bufferBinding;
-        GC3Dsizei bytesPerElement;
-        GC3Dint size;
-        GC3Denum type;
-        bool normalized;
-        GC3Dsizei stride;
-        GC3Dsizei originalStride;
-        GC3Dintptr offset;
-        GC3Duint divisor;
+        GC3Dsizei bytesPerElement { 0 };
+        GC3Dint size { 4 };
+        GC3Denum type { GraphicsContext3D::FLOAT };
+        bool normalized { false };
+        GC3Dsizei stride { 16 };
+        GC3Dsizei originalStride { 0 };
+        GC3Dintptr offset { 0 };
+        GC3Duint divisor { 0 };
     };
-    
-    bool isDefaultObject() const { return m_type == VAOTypeDefault; }
-    
+
+    bool isDefaultObject() const { return m_type == Type::Default; }
+
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
-    
-    PassRefPtr<WebGLBuffer> getElementArrayBuffer() const { return m_boundElementArrayBuffer; }
-    void setElementArrayBuffer(PassRefPtr<WebGLBuffer>);
-    
+
+    WebGLBuffer* getElementArrayBuffer() const { return m_boundElementArrayBuffer.get(); }
+    void setElementArrayBuffer(WebGLBuffer*);
+
     VertexAttribState& getVertexAttribState(int index) { return m_vertexAttribState[index]; }
-    void setVertexAttribState(GC3Duint, GC3Dsizei, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr, PassRefPtr<WebGLBuffer>);
-    void unbindBuffer(PassRefPtr<WebGLBuffer>);
-    
+    void setVertexAttribState(GC3Duint, GC3Dsizei, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr, WebGLBuffer&);
+    void unbindBuffer(WebGLBuffer&);
+
     void setVertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 protected:
-    WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, VAOType);
+    WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);
     void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override = 0;
-    
-    VAOType m_type;
-    bool m_hasEverBeenBound;
+
+    Type m_type;
+    bool m_hasEverBeenBound { false };
     RefPtr<WebGLBuffer> m_boundElementArrayBuffer;
     Vector<VertexAttribState> m_vertexAttribState;
 };
-    
+
 } // namespace WebCore

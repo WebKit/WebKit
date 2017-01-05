@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +44,7 @@ public:
 
     void resetInstance();
 
-    PassRefPtr<JSC::Bindings::Instance> getInstance();
+    JSC::Bindings::Instance* bindingsInstance();
 
     enum class PluginLoadingPolicy { DoNotLoad, Load };
     WEBCORE_EXPORT Widget* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
@@ -60,7 +60,7 @@ public:
     };
     DisplayState displayState() const { return m_displayState; }
     virtual void setDisplayState(DisplayState);
-    virtual void updateSnapshot(PassRefPtr<Image>) { }
+    virtual void updateSnapshot(Image*) { }
     virtual void dispatchPendingMouseClick() { }
     virtual bool isRestartedPlugin() const { return false; }
 

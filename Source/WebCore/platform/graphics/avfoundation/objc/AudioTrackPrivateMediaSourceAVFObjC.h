@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AudioTrackPrivateMediaSourceAVFObjC_h
-#define AudioTrackPrivateMediaSourceAVFObjC_h
+#pragma once
 
 #include "AudioTrackPrivateAVF.h"
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
 
 OBJC_CLASS AVAssetTrack;
-OBJC_CLASS AVPlayerItemTrack;
 
 namespace WebCore {
 
@@ -41,13 +39,12 @@ class SourceBufferPrivateAVFObjC;
 class AudioTrackPrivateMediaSourceAVFObjC final : public AudioTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateMediaSourceAVFObjC)
 public:
-    static RefPtr<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
+    static RefPtr<AudioTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack *track, SourceBufferPrivateAVFObjC* parent)
     {
         return adoptRef(new AudioTrackPrivateMediaSourceAVFObjC(track, parent));
     }
 
-    bool enabled() const override;
-    void setEnabled(bool) override;
+    void setEnabled(bool) final;
 
     void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack();
@@ -62,11 +59,8 @@ private:
     std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;
     SourceBufferPrivateAVFObjC* m_parent;
     int m_trackID;
-    bool m_enabled;
 };
 
 }
 
 #endif // ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
-
-#endif

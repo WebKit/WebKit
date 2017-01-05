@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +24,22 @@
  */
 
 #include "config.h"
+#include "WebGLVertexArrayObjectBase.h"
 
 #if ENABLE(WEBGL)
-#include "WebGLVertexArrayObjectBase.h"
 
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
 
-WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase& ctx, VAOType type)
-    : WebGLContextObject(ctx)
+WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase& context, Type type)
+    : WebGLContextObject(context)
     , m_type(type)
-    , m_hasEverBeenBound(false)
-    , m_boundElementArrayBuffer(0)
 {
-    m_vertexAttribState.resize(ctx.getMaxVertexAttribs());
+    m_vertexAttribState.resize(context.getMaxVertexAttribs());
 }
 
-void WebGLVertexArrayObjectBase::setElementArrayBuffer(PassRefPtr<WebGLBuffer> buffer)
+void WebGLVertexArrayObjectBase::setElementArrayBuffer(WebGLBuffer* buffer)
 {
     if (buffer)
         buffer->onAttached();
@@ -51,18 +49,17 @@ void WebGLVertexArrayObjectBase::setElementArrayBuffer(PassRefPtr<WebGLBuffer> b
     
 }
 
-void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei bytesPerElement, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset, PassRefPtr<WebGLBuffer> buffer)
+void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei bytesPerElement, GC3Dint size, GC3Denum type, GC3Dboolean normalized, GC3Dsizei stride, GC3Dintptr offset, WebGLBuffer& buffer)
 {
     GC3Dsizei validatedStride = stride ? stride : bytesPerElement;
     
-    VertexAttribState& state = m_vertexAttribState[index];
+    auto& state = m_vertexAttribState[index];
     
-    if (buffer)
-        buffer->onAttached();
+    buffer.onAttached();
     if (state.bufferBinding)
         state.bufferBinding->onDetached(context()->graphicsContext3D());
     
-    state.bufferBinding = buffer;
+    state.bufferBinding = &buffer;
     state.bytesPerElement = bytesPerElement;
     state.size = size;
     state.type = type;
@@ -72,17 +69,17 @@ void WebGLVertexArrayObjectBase::setVertexAttribState(GC3Duint index, GC3Dsizei 
     state.offset = offset;
 }
 
-void WebGLVertexArrayObjectBase::unbindBuffer(PassRefPtr<WebGLBuffer> buffer)
+void WebGLVertexArrayObjectBase::unbindBuffer(WebGLBuffer& buffer)
 {
-    if (m_boundElementArrayBuffer == buffer) {
+    if (m_boundElementArrayBuffer == &buffer) {
         m_boundElementArrayBuffer->onDetached(context()->graphicsContext3D());
         m_boundElementArrayBuffer = nullptr;
     }
     
     for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
-        VertexAttribState& state = m_vertexAttribState[i];
-        if (state.bufferBinding == buffer) {
-            buffer->onDetached(context()->graphicsContext3D());
+        auto& state = m_vertexAttribState[i];
+        if (state.bufferBinding == &buffer) {
+            buffer.onDetached(context()->graphicsContext3D());
             
             if (!i && !context()->isGLES2Compliant()) {
                 state.bufferBinding = context()->m_vertexAttrib0Buffer;
@@ -102,8 +99,7 @@ void WebGLVertexArrayObjectBase::unbindBuffer(PassRefPtr<WebGLBuffer> buffer)
 
 void WebGLVertexArrayObjectBase::setVertexAttribDivisor(GC3Duint index, GC3Duint divisor)
 {
-    VertexAttribState& state = m_vertexAttribState[index];
-    state.divisor = divisor;
+    m_vertexAttribState[index].divisor = divisor;
 }
     
 }

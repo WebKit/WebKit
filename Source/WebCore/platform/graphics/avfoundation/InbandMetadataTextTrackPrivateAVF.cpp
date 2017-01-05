@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "InbandMetadataTextTrackPrivateAVF.h"
 
 #if ENABLE(VIDEO) && ENABLE(DATACUE_VALUE) && (USE(AVFOUNDATION) || PLATFORM(IOS))
-#include "InbandMetadataTextTrackPrivateAVF.h"
 
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
@@ -54,6 +54,7 @@ InbandMetadataTextTrackPrivateAVF::~InbandMetadataTextTrackPrivateAVF()
 }
 
 #if ENABLE(DATACUE_VALUE)
+
 void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation> prpCueData, const String& type)
 {
     ASSERT(cueFormat() == Data);
@@ -66,7 +67,7 @@ void InbandMetadataTextTrackPrivateAVF::addDataCue(const MediaTime& start, const
     m_currentCueStartTime = start;
     if (end.isPositiveInfinite())
         m_incompleteCues.append(IncompleteMetaDataCue { cueData.get(), start });
-    client()->addDataCue(this, start, end, cueData, type);
+    client()->addDataCue(start, end, cueData.releaseNonNull(), type);
 }
 
 void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime& time)
@@ -77,7 +78,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
         if (client()) {
             for (auto& partialCue : m_incompleteCues) {
                 LOG(Media, "InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
-                client()->updateDataCue(this, partialCue.startTime, time, partialCue.cueData);
+                client()->updateDataCue(partialCue.startTime, time, *partialCue.cueData);
             }
         }
     } else
@@ -86,6 +87,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
     m_incompleteCues.resize(0);
     m_currentCueStartTime = MediaTime::zeroTime();
 }
+
 #endif
 
 void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
@@ -95,7 +97,7 @@ void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
 
     if (client()) {
         for (auto& partialCue : m_incompleteCues)
-            client()->removeDataCue(this, partialCue.startTime, MediaTime::positiveInfiniteTime(), partialCue.cueData);
+            client()->removeDataCue(partialCue.startTime, MediaTime::positiveInfiniteTime(), *partialCue.cueData);
     }
 
     m_incompleteCues.resize(0);

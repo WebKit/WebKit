@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,26 @@
 #pragma once
 
 #include "WebGLRenderingContextBase.h"
-#include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class GraphicsContext3D;
-class WebGLExtension;
-class WebGLSharedObject;
-class WebGLRenderingContextBase;
-
-class WebGLContextGroup final : public RefCounted<WebGLContextGroup> {
+class WebGLContextGroup : public RefCounted<WebGLContextGroup> {
 public:
     static Ref<WebGLContextGroup> create();
     ~WebGLContextGroup();
 
-    void addContext(WebGLRenderingContextBase*);
-    void removeContext(WebGLRenderingContextBase*);
+    void addContext(WebGLRenderingContextBase&);
+    void removeContext(WebGLRenderingContextBase&);
 
-    void addObject(WebGLSharedObject*);
-    void removeObject(WebGLSharedObject*);
+    void addObject(WebGLSharedObject&);
+    void removeObject(WebGLSharedObject&);
 
-    GraphicsContext3D* getAGraphicsContext3D();
+    GraphicsContext3D& getAGraphicsContext3D();
 
     void loseContextGroup(WebGLRenderingContextBase::LostContextMode);
 
-  private:
-    friend class WebGLObject;
-
-    WebGLContextGroup();
+private:
+    WebGLContextGroup() = default;
 
     void detachAndRemoveAllObjects();
 

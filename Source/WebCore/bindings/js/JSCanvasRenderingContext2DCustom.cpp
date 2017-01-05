@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -65,9 +65,9 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
         return CanvasStyle();
     JSObject* object = asObject(value);
     if (object->inherits(JSCanvasGradient::info()))
-        return CanvasStyle(&jsCast<JSCanvasGradient*>(object)->wrapped());
+        return jsCast<JSCanvasGradient*>(object)->wrapped();
     if (object->inherits(JSCanvasPattern::info()))
-        return CanvasStyle(&jsCast<JSCanvasPattern*>(object)->wrapped());
+        return jsCast<JSCanvasPattern*>(object)->wrapped();
     return CanvasStyle();
 }
 

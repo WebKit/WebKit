@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
@@ -438,7 +438,7 @@ void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
     m_client.runOpenPanel(frame, fileChooser);
 }
 
-void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
+void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {
     m_client.loadIconForFiles(filenames, loader);
 }

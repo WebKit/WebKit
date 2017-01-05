@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,15 +33,16 @@ class HTMLLegendElement final : public HTMLElement {
 public:
     static Ref<HTMLLegendElement> create(const QualifiedName&, Document&);
 
+    WEBCORE_EXPORT HTMLFormElement* form() const final;
+
 private:
     HTMLLegendElement(const QualifiedName&, Document&);
 
-    // Control in the legend's fieldset that gets focus and access key.
+    // Control in the legend's field set that gets focus and access key.
     HTMLFormControlElement* associatedControl();
 
     void accessKeyAction(bool sendMouseEvents) final;
     void focus(bool restorePreviousSelection, FocusDirection) final;
-    HTMLFormElement* virtualForm() const final;
 };
 
 } // namespace WebCore

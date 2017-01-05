@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,57 +29,41 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-
 namespace WebCore {
-
-VTTRegionList::VTTRegionList()
-{
-}
-
-unsigned long VTTRegionList::length() const
-{
-    return m_list.size();
-}
 
 VTTRegion* VTTRegionList::item(unsigned index) const
 {
-    if (index < m_list.size())
-        return m_list[index].get();
-
-    return 0;
+    if (index >= m_vector.size())
+        return nullptr;
+    return const_cast<VTTRegion*>(m_vector[index].ptr());
 }
 
 VTTRegion* VTTRegionList::getRegionById(const String& id) const
 {
+    // FIXME: Why is this special case needed?
     if (id.isEmpty())
-        return 0;
-
-    for (const auto& region : m_list) {
+        return nullptr;
+    for (auto& region : m_vector) {
         if (region->id() == id)
-            return region.get();
+            return const_cast<VTTRegion*>(region.ptr());
     }
-
-    return 0;
+    return nullptr;
 }
 
-void VTTRegionList::add(PassRefPtr<VTTRegion> region)
+void VTTRegionList::add(Ref<VTTRegion>&& region)
 {
-    m_list.append(region);
+    m_vector.append(WTFMove(region));
 }
 
-bool VTTRegionList::remove(VTTRegion* region)
+void VTTRegionList::remove(VTTRegion& region)
 {
-    size_t index = m_list.find(region);
-    if (index == notFound)
-        return false;
-
-    m_list.remove(index);
-    return true;
-}
-
-void VTTRegionList::clear()
-{
-    m_list.clear();
+    for (unsigned i = 0, size = m_vector.size(); i < size; ++i) {
+        if (m_vector[i].ptr() == &region) {
+            m_vector.remove(i);
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,19 +26,17 @@
 #include "LoadableScript.h"
 #include "LoadableScriptClient.h"
 #include "Timer.h"
-#include "URL.h"
 #include <wtf/text/TextPosition.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CachedModuleScript;
 class CachedScript;
 class ContainerNode;
 class Element;
 class PendingScript;
-class ScriptElement;
 class ScriptSourceCode;
-class CachedModuleScript;
+class URL;
 
 class ScriptElement {
 public:
@@ -72,6 +71,9 @@ public:
     // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
     enum class ScriptType { Classic, Module };
     ScriptType scriptType() const { return m_isModuleScript ? ScriptType::Module : ScriptType::Classic; }
+
+    void ref();
+    void deref();
 
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);
@@ -127,7 +129,8 @@ private:
     RefPtr<LoadableScript> m_loadableScript;
 };
 
-// FIXME: replace with downcast<ScriptElement>.
-ScriptElement* toScriptElementIfPossible(Element*);
+// FIXME: replace with is/downcast<ScriptElement>.
+bool isScriptElement(Element&);
+ScriptElement& downcastScriptElement(Element&);
 
 }

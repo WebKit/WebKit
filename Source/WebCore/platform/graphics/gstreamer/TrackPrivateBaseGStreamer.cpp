@@ -157,7 +157,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
         return;
 
     if (getTag(tags.get(), GST_TAG_TITLE, m_label))
-        client->labelChanged(m_owner, m_label);
+        client->labelChanged(m_label);
 
     AtomicString language;
     if (!getLanguageCode(tags.get(), language))
@@ -167,7 +167,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
         return;
 
     m_language = language;
-    client->languageChanged(m_owner, m_language);
+    client->languageChanged(m_language);
 }
 
 } // namespace WebCore

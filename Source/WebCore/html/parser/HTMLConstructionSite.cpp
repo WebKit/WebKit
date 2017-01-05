@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -174,7 +174,7 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
 
 void HTMLConstructionSite::attachLater(ContainerNode& parent, Ref<Node>&& child, bool selfClosing)
 {
-    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child.get()) || !toScriptElementIfPossible(downcast<Element>(child.ptr())));
+    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child.get()) || !isScriptElement(downcast<Element>(child.get())));
     ASSERT(pluginContentIsAllowed(m_parserContentPolicy) || !child->isPluginElement());
 
     if (shouldFosterParent()) {
@@ -541,7 +541,7 @@ void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken&& token, const A
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
 
     auto element = createElement(token, namespaceURI);
-    if (scriptingContentIsAllowed(m_parserContentPolicy) || !toScriptElementIfPossible(element.ptr()))
+    if (scriptingContentIsAllowed(m_parserContentPolicy) || !isScriptElement(element.get()))
         attachLater(currentNode(), element.copyRef(), token.selfClosing());
     if (!token.selfClosing())
         m_openElements.push(HTMLStackItem::create(WTFMove(element), WTFMove(token), namespaceURI));

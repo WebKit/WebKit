@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2010 Google Inc. All rights reserved.
@@ -1184,10 +1184,9 @@ void HTMLInputElement::defaultEventHandler(Event& event)
         if (wasChangedSinceLastFormControlChangeEvent())
             dispatchFormControlChangeEvent();
 
-        RefPtr<HTMLFormElement> formForSubmission = m_inputType->formForSubmission();
         // Form may never have been present, or may have been destroyed by code responding to the change event.
-        if (formForSubmission)
-            formForSubmission->submitImplicitly(event, canTriggerImplicitSubmission());
+        if (auto* formElement = form())
+            formElement->submitImplicitly(event, canTriggerImplicitSubmission());
 
         event.setDefaultHandled();
         return;
@@ -1342,9 +1341,9 @@ FileList* HTMLInputElement::files()
     return m_inputType->files();
 }
 
-void HTMLInputElement::setFiles(PassRefPtr<FileList> files)
+void HTMLInputElement::setFiles(RefPtr<FileList>&& files)
 {
-    m_inputType->setFiles(files);
+    m_inputType->setFiles(WTFMove(files));
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1869,7 +1868,7 @@ RadioButtonGroups* HTMLInputElement::radioButtonGroups() const
 {
     if (!isRadioButton())
         return nullptr;
-    if (HTMLFormElement* formElement = form())
+    if (auto* formElement = form())
         return &formElement->radioButtonGroups();
     if (inDocument())
         return &document().formController().radioButtonGroups();

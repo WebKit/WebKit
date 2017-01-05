@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -625,8 +625,8 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     ASSERT(!m_frame || effectiveViolatedDirective == ContentSecurityPolicyDirectiveNames::frameAncestors);
 
-    Document& document = is<Document>(m_scriptExecutionContext) ? downcast<Document>(*m_scriptExecutionContext) : *m_frame->document();
-    Frame* frame = document.frame();
+    auto& document = is<Document>(m_scriptExecutionContext) ? downcast<Document>(*m_scriptExecutionContext) : *m_frame->document();
+    auto* frame = document.frame();
     ASSERT(!m_frame || m_frame == frame);
     if (!frame)
         return;
@@ -646,13 +646,14 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     String originalPolicy = violatedDirectiveList.header();
     String referrer = document.referrer();
     ASSERT(document.loader());
+    // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short statusCode = document.url().protocolIs("http") && document.loader() ? document.loader()->response().httpStatusCode() : 0;
 
     String sourceFile;
     int lineNumber = 0;
     int columnNumber = 0;
-    RefPtr<ScriptCallStack> stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
-    const ScriptCallFrame* callFrame = stack->firstNonNativeCallFrame();
+    auto stack = createScriptCallStack(JSMainThreadExecState::currentState(), 2);
+    auto* callFrame = stack->firstNonNativeCallFrame();
     if (callFrame && callFrame->lineNumber()) {
         sourceFile = stripURLForUseInReport(document, URL(URL(), callFrame->sourceURL()));
         lineNumber = callFrame->lineNumber();
@@ -665,7 +666,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     document.enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, canBubble, cancelable, documentURI, referrer, blockedURI, violatedDirectiveText, effectiveViolatedDirective, originalPolicy, sourceFile, statusCode, lineNumber, columnNumber));
 
     // 2. Send violation report (if applicable).
-    const Vector<String>& reportURIs = violatedDirectiveList.reportURIs();
+    auto& reportURIs = violatedDirectiveList.reportURIs();
     if (reportURIs.isEmpty())
         return;
 
@@ -693,10 +694,10 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         cspReport->setInteger(ASCIILiteral("column-number"), columnNumber);
     }
 
-    RefPtr<InspectorObject> reportObject = InspectorObject::create();
+    auto reportObject = InspectorObject::create();
     reportObject->setObject(ASCIILiteral("csp-report"), WTFMove(cspReport));
 
-    RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8());
+    auto report = FormData::create(reportObject->toJSONString().utf8());
     for (const auto& url : reportURIs)
         PingLoader::sendViolationReport(*frame, is<Document>(m_scriptExecutionContext) ? document.completeURL(url) : document.completeURL(url, blockedURL), report.copyRef(), ViolationReportType::ContentSecurityPolicy);
 }

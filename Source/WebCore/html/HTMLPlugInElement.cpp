@@ -1,8 +1,8 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2014 Apple Inc.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,21 +108,20 @@ void HTMLPlugInElement::resetInstance()
     m_instance = nullptr;
 }
 
-PassRefPtr<JSC::Bindings::Instance> HTMLPlugInElement::getInstance()
+JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
 {
-    Frame* frame = document().frame();
+    auto* frame = document().frame();
     if (!frame)
-        return 0;
+        return nullptr;
 
     // If the host dynamically turns off JavaScript (or Java) we will still return
     // the cached allocated Bindings::Instance.  Not supporting this edge-case is OK.
-    if (m_instance)
-        return m_instance;
 
-    if (Widget* widget = pluginWidget())
-        m_instance = frame->script().createScriptInstanceForWidget(widget);
-
-    return m_instance;
+    if (!m_instance) {
+        if (auto* widget = pluginWidget())
+            m_instance = frame->script().createScriptInstanceForWidget(widget);
+    }
+    return m_instance.get();
 }
 
 bool HTMLPlugInElement::guardedDispatchBeforeLoadEvent(const String& sourceURL)
@@ -199,7 +198,7 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
         }
 
         if (is<RenderSnapshottedPlugIn>(*renderer) && displayState() < Restarting) {
-            downcast<RenderSnapshottedPlugIn>(*renderer).handleEvent(&event);
+            downcast<RenderSnapshottedPlugIn>(*renderer).handleEvent(event);
             HTMLFrameOwnerElement::defaultEventHandler(event);
             return;
         }

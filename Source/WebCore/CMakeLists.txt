@@ -1759,7 +1759,6 @@ set(WebCore_SOURCES
     html/ValidationMessage.cpp
     html/WeekInputType.cpp
 
-    html/canvas/ANGLEInstancedArrays.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPath.cpp
     html/canvas/CanvasPattern.cpp
@@ -1768,51 +1767,6 @@ set(WebCore_SOURCES
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
     html/canvas/DOMPath.cpp
-    html/canvas/EXTBlendMinMax.cpp
-    html/canvas/EXTFragDepth.cpp
-    html/canvas/EXTShaderTextureLOD.cpp
-    html/canvas/EXTTextureFilterAnisotropic.cpp
-    html/canvas/EXTsRGB.cpp
-    html/canvas/OESElementIndexUint.cpp
-    html/canvas/OESStandardDerivatives.cpp
-    html/canvas/OESTextureFloat.cpp
-    html/canvas/OESTextureFloatLinear.cpp
-    html/canvas/OESTextureHalfFloat.cpp
-    html/canvas/OESTextureHalfFloatLinear.cpp
-    html/canvas/OESVertexArrayObject.cpp
-    html/canvas/WebGL2RenderingContext.cpp
-    html/canvas/WebGLBuffer.cpp
-    html/canvas/WebGLCompressedTextureATC.cpp
-    html/canvas/WebGLCompressedTexturePVRTC.cpp
-    html/canvas/WebGLCompressedTextureS3TC.cpp
-    html/canvas/WebGLContextEvent.cpp
-    html/canvas/WebGLContextGroup.cpp
-    html/canvas/WebGLContextObject.cpp
-    html/canvas/WebGLDebugRendererInfo.cpp
-    html/canvas/WebGLDebugShaders.cpp
-    html/canvas/WebGLDepthTexture.cpp
-    html/canvas/WebGLDrawBuffers.cpp
-    html/canvas/WebGLExtension.cpp
-    html/canvas/WebGLFramebuffer.cpp
-    html/canvas/WebGLGetInfo.cpp
-    html/canvas/WebGLLoseContext.cpp
-    html/canvas/WebGLObject.cpp
-    html/canvas/WebGLProgram.cpp
-    html/canvas/WebGLQuery.cpp
-    html/canvas/WebGLRenderbuffer.cpp
-    html/canvas/WebGLRenderingContext.cpp
-    html/canvas/WebGLRenderingContextBase.cpp
-    html/canvas/WebGLSampler.cpp
-    html/canvas/WebGLShader.cpp
-    html/canvas/WebGLShaderPrecisionFormat.cpp
-    html/canvas/WebGLSharedObject.cpp
-    html/canvas/WebGLSync.cpp
-    html/canvas/WebGLTexture.cpp
-    html/canvas/WebGLTransformFeedback.cpp
-    html/canvas/WebGLUniformLocation.cpp
-    html/canvas/WebGLVertexArrayObject.cpp
-    html/canvas/WebGLVertexArrayObjectBase.cpp
-    html/canvas/WebGLVertexArrayObjectOES.cpp
 
     html/forms/FileIconLoader.cpp
 
@@ -3074,6 +3028,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureHalfFloatLinear.cpp
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/WebGL2RenderingContext.cpp
+        html/canvas/WebGLAny.cpp
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLCompressedTextureATC.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
@@ -3087,7 +3042,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLDrawBuffers.cpp
         html/canvas/WebGLExtension.cpp
         html/canvas/WebGLFramebuffer.cpp
-        html/canvas/WebGLGetInfo.cpp
         html/canvas/WebGLLoseContext.cpp
         html/canvas/WebGLObject.cpp
         html/canvas/WebGLProgram.cpp

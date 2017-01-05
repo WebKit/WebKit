@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,12 +30,12 @@
 
 namespace WebCore {
 
-class SVGScriptElement final : public SVGElement
-                             , public SVGURIReference
-                             , public SVGExternalResourcesRequired
-                             , public ScriptElement {
+class SVGScriptElement final : public SVGElement, public SVGURIReference, public SVGExternalResourcesRequired, public ScriptElement {
 public:
     static Ref<SVGScriptElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
+
+    using SVGElement::ref;
+    using SVGElement::deref;
 
 private:
     SVGScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);

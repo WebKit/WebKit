@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,26 +57,22 @@ ScriptRunner::~ScriptRunner()
     }
 }
 
-void ScriptRunner::queueScriptForExecution(ScriptElement* scriptElement, LoadableScript& loadableScript, ExecutionType executionType)
+void ScriptRunner::queueScriptForExecution(ScriptElement& scriptElement, LoadableScript& loadableScript, ExecutionType executionType)
 {
-    ASSERT(scriptElement);
-
-    Element& element = scriptElement->element();
-    ASSERT(element.inDocument());
+    ASSERT(scriptElement.element().inDocument());
 
     m_document.incrementLoadEventDelayCount();
 
-    Ref<PendingScript> pendingScript = PendingScript::create(element, loadableScript);
+    auto pendingScript = PendingScript::create(scriptElement, loadableScript);
     switch (executionType) {
     case ASYNC_EXECUTION:
         m_pendingAsyncScripts.add(pendingScript.copyRef());
         break;
-
     case IN_ORDER_EXECUTION:
         m_scriptsToExecuteInOrder.append(pendingScript.copyRef());
         break;
     }
-    pendingScript->setClient(this);
+    pendingScript->setClient(*this);
 }
 
 void ScriptRunner::suspend()
@@ -91,9 +88,7 @@ void ScriptRunner::resume()
 
 void ScriptRunner::notifyFinished(PendingScript& pendingScript)
 {
-    auto* scriptElement = toScriptElementIfPossible(&pendingScript.element());
-    ASSERT(scriptElement);
-    if (scriptElement->willExecuteInOrder())
+    if (pendingScript.element().willExecuteInOrder())
         ASSERT(!m_scriptsToExecuteInOrder.isEmpty());
     else {
         ASSERT(m_pendingAsyncScripts.contains(pendingScript));
@@ -122,10 +117,8 @@ void ScriptRunner::timerFired()
         // Paper over https://bugs.webkit.org/show_bug.cgi?id=144050
         if (!script)
             continue;
-        auto* scriptElement = toScriptElementIfPossible(&script->element());
-        ASSERT(scriptElement);
         ASSERT(script->needsLoading());
-        scriptElement->executePendingScript(*script);
+        script->element().executePendingScript(*script);
         m_document.decrementLoadEventDelayCount();
     }
 }

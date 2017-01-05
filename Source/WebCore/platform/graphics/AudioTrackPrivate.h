@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioTrackPrivate_h
-#define AudioTrackPrivate_h
+#pragma once
 
 #include "TrackPrivateBase.h"
 
@@ -36,7 +35,7 @@ class AudioTrackPrivate;
 
 class AudioTrackPrivateClient : public TrackPrivateBaseClient {
 public:
-    virtual void enabledChanged(AudioTrackPrivate*, bool) = 0;
+    virtual void enabledChanged(bool) = 0;
 };
 
 class AudioTrackPrivate : public TrackPrivateBase {
@@ -55,26 +54,22 @@ public:
             return;
         m_enabled = enabled;
         if (m_client)
-            m_client->enabledChanged(this, enabled);
-    };
-    virtual bool enabled() const { return m_enabled; }
+            m_client->enabledChanged(enabled);
+    }
+
+    bool enabled() const { return m_enabled; }
 
     enum Kind { Alternative, Description, Main, MainDesc, Translation, Commentary, None };
     virtual Kind kind() const { return None; }
 
 protected:
-    AudioTrackPrivate()
-        : m_client(0)
-        , m_enabled(false)
-    {
-    }
+    AudioTrackPrivate() = default;
 
 private:
-    AudioTrackPrivateClient* m_client;
-    bool m_enabled;
+    AudioTrackPrivateClient* m_client { nullptr };
+    bool m_enabled { false };
 };
 
 } // namespace WebCore
 
-#endif
 #endif

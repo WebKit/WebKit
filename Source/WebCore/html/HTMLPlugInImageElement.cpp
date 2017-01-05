@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -171,7 +171,7 @@ RenderPtr<RenderElement> HTMLPlugInImageElement::createElementRenderer(RenderSty
 
     if (displayState() == DisplayingSnapshot) {
         auto renderSnapshottedPlugIn = createRenderer<RenderSnapshottedPlugIn>(*this, WTFMove(style));
-        renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
+        renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage.get());
         return WTFMove(renderSnapshottedPlugIn);
     }
 
@@ -301,7 +301,7 @@ void HTMLPlugInImageElement::startLoadingImage()
     m_imageLoader->updateFromElement();
 }
 
-void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
+void HTMLPlugInImageElement::updateSnapshot(Image* image)
 {
     if (displayState() > DisplayingSnapshot)
         return;

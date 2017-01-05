@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,102 +65,99 @@ void GenericTextTrackCueMap::remove(TextTrackCue& cue)
         m_dataToCueMap.remove(data);
 }
 
-Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
-{
-    return adoptRef(*new InbandGenericTextTrack(context, client, playerPrivate));
-}
-
-InbandGenericTextTrack::InbandGenericTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> trackPrivate)
+inline InbandGenericTextTrack::InbandGenericTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
     : InbandTextTrack(context, client, trackPrivate)
 {
+}
+
+Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
+{
+    return adoptRef(*new InbandGenericTextTrack(context, client, trackPrivate));
 }
 
 InbandGenericTextTrack::~InbandGenericTextTrack()
 {
 }
 
-void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric* cue, GenericCueData* cueData)
+void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, GenericCueData& cueData)
 {
-    cue->willChange();
+    cue.willChange();
 
-    cue->setStartTime(cueData->startTime());
-    MediaTime endTime = cueData->endTime();
+    cue.setStartTime(cueData.startTime());
+    MediaTime endTime = cueData.endTime();
     if (endTime.isPositiveInfinite() && mediaElement())
         endTime = mediaElement()->durationMediaTime();
-    cue->setEndTime(endTime);
-    cue->setText(cueData->content());
-    cue->setId(cueData->id());
-    cue->setBaseFontSizeRelativeToVideoHeight(cueData->baseFontSize());
-    cue->setFontSizeMultiplier(cueData->relativeFontSize());
-    cue->setFontName(cueData->fontName());
+    cue.setEndTime(endTime);
+    cue.setText(cueData.content());
+    cue.setId(cueData.id());
+    cue.setBaseFontSizeRelativeToVideoHeight(cueData.baseFontSize());
+    cue.setFontSizeMultiplier(cueData.relativeFontSize());
+    cue.setFontName(cueData.fontName());
 
-    if (cueData->position() > 0)
-        cue->setPosition(std::round(cueData->position()));
-    if (cueData->line() > 0)
-        cue->setLine(std::round(cueData->line()));
-    if (cueData->size() > 0)
-        cue->setSize(std::round(cueData->size()));
-    if (cueData->backgroundColor().isValid())
-        cue->setBackgroundColor(cueData->backgroundColor().rgb());
-    if (cueData->foregroundColor().isValid())
-        cue->setForegroundColor(cueData->foregroundColor().rgb());
-    if (cueData->highlightColor().isValid())
-        cue->setHighlightColor(cueData->highlightColor().rgb());
+    if (cueData.position() > 0)
+        cue.setPosition(std::round(cueData.position()));
+    if (cueData.line() > 0)
+        cue.setLine(std::round(cueData.line()));
+    if (cueData.size() > 0)
+        cue.setSize(std::round(cueData.size()));
+    if (cueData.backgroundColor().isValid())
+        cue.setBackgroundColor(cueData.backgroundColor().rgb());
+    if (cueData.foregroundColor().isValid())
+        cue.setForegroundColor(cueData.foregroundColor().rgb());
+    if (cueData.highlightColor().isValid())
+        cue.setHighlightColor(cueData.highlightColor().rgb());
 
-    if (cueData->align() == GenericCueData::Start)
-        cue->setAlign(ASCIILiteral("start"));
-    else if (cueData->align() == GenericCueData::Middle)
-        cue->setAlign(ASCIILiteral("middle"));
-    else if (cueData->align() == GenericCueData::End)
-        cue->setAlign(ASCIILiteral("end"));
-    cue->setSnapToLines(false);
+    if (cueData.align() == GenericCueData::Start)
+        cue.setAlign(ASCIILiteral("start"));
+    else if (cueData.align() == GenericCueData::Middle)
+        cue.setAlign(ASCIILiteral("middle"));
+    else if (cueData.align() == GenericCueData::End)
+        cue.setAlign(ASCIILiteral("end"));
+    cue.setSnapToLines(false);
 
-    cue->didChange();
+    cue.didChange();
 }
 
-void InbandGenericTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate, PassRefPtr<GenericCueData> prpCueData)
+void InbandGenericTextTrack::addGenericCue(GenericCueData& cueData)
 {
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-
-    RefPtr<GenericCueData> cueData = prpCueData;
-    if (m_cueMap.find(*cueData))
+    if (m_cueMap.find(cueData))
         return;
 
-    auto cue = TextTrackCueGeneric::create(*scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
-    updateCueFromCueData(cue.ptr(), cueData.get());
+    auto cue = TextTrackCueGeneric::create(*scriptExecutionContext(), cueData.startTime(), cueData.endTime(), cueData.content());
+    updateCueFromCueData(cue.get(), cueData);
     if (hasCue(cue.ptr(), TextTrackCue::IgnoreDuration)) {
-        LOG(Media, "InbandGenericTextTrack::addGenericCue ignoring already added cue: start=%s, end=%s, content=\"%s\"\n", toString(cueData->startTime()).utf8().data(), toString(cueData->endTime()).utf8().data(), cueData->content().utf8().data());
+        LOG(Media, "InbandGenericTextTrack::addGenericCue ignoring already added cue: start=%s, end=%s, content=\"%s\"\n", toString(cueData.startTime()).utf8().data(), toString(cueData.endTime()).utf8().data(), cueData.content().utf8().data());
         return;
     }
 
-    LOG(Media, "InbandGenericTextTrack::addGenericCue added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->content().utf8().data());
+    LOG(Media, "InbandGenericTextTrack::addGenericCue added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData.startTime().toDouble(), cueData.endTime().toDouble(), cueData.content().utf8().data());
 
-    if (cueData->status() != GenericCueData::Complete)
-        m_cueMap.add(*cueData, cue);
+    if (cueData.status() != GenericCueData::Complete)
+        m_cueMap.add(cueData, cue);
 
     addCue(WTFMove(cue));
 }
 
-void InbandGenericTextTrack::updateGenericCue(InbandTextTrackPrivate*, GenericCueData* cueData)
+void InbandGenericTextTrack::updateGenericCue(GenericCueData& cueData)
 {
-    auto* cue = m_cueMap.find(*cueData);
+    auto* cue = m_cueMap.find(cueData);
     if (!cue)
         return;
 
-    updateCueFromCueData(cue, cueData);
+    updateCueFromCueData(*cue, cueData);
 
-    if (cueData->status() == GenericCueData::Complete)
-        m_cueMap.remove(*cueData);
+    if (cueData.status() == GenericCueData::Complete)
+        m_cueMap.remove(cueData);
 }
 
-void InbandGenericTextTrack::removeGenericCue(InbandTextTrackPrivate*, GenericCueData* cueData)
+void InbandGenericTextTrack::removeGenericCue(GenericCueData& cueData)
 {
-    auto* cue = m_cueMap.find(*cueData);
+    auto* cue = m_cueMap.find(cueData);
     if (cue) {
-        LOG(Media, "InbandGenericTextTrack::removeGenericCue removing cue: start=%s, end=%s, content=\"%s\"\n",  toString(cueData->startTime()).utf8().data(), toString(cueData->endTime()).utf8().data(), cueData->content().utf8().data());
+        LOG(Media, "InbandGenericTextTrack::removeGenericCue removing cue: start=%s, end=%s, content=\"%s\"\n",  toString(cueData.startTime()).utf8().data(), toString(cueData.endTime()).utf8().data(), cueData.content().utf8().data());
         removeCue(*cue);
     } else {
-        LOG(Media, "InbandGenericTextTrack::removeGenericCue UNABLE to find cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->content().utf8().data());
+        LOG(Media, "InbandGenericTextTrack::removeGenericCue UNABLE to find cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData.startTime().toDouble(), cueData.endTime().toDouble(), cueData.content().utf8().data());
     }
 }
 
@@ -179,15 +176,13 @@ WebVTTParser& InbandGenericTextTrack::parser()
     return *m_webVTTParser;
 }
 
-void InbandGenericTextTrack::parseWebVTTCueData(InbandTextTrackPrivate* trackPrivate, const ISOWebVTTCue& cueData)
+void InbandGenericTextTrack::parseWebVTTCueData(const ISOWebVTTCue& cueData)
 {
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     parser().parseCueData(cueData);
 }
 
-void InbandGenericTextTrack::parseWebVTTFileHeader(InbandTextTrackPrivate* trackPrivate, String&& header)
+void InbandGenericTextTrack::parseWebVTTFileHeader(String&& header)
 {
-    ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
     parser().parseFileHeader(WTFMove(header));
 }
 
@@ -214,7 +209,7 @@ void InbandGenericTextTrack::newRegionsParsed()
 
     for (auto& region : newRegions) {
         region->setTrack(this);
-        regions()->add(region);
+        regions()->add(region.releaseNonNull());
     }
 }
 

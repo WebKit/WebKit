@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,6 @@
 
 #include "TextTrackCue.h"
 #include "TrackBase.h"
-#include "VTTCue.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -44,12 +42,12 @@ class VTTRegionList;
 class TextTrackClient {
 public:
     virtual ~TextTrackClient() { }
-    virtual void textTrackKindChanged(TextTrack*) = 0;
-    virtual void textTrackModeChanged(TextTrack*) = 0;
-    virtual void textTrackAddCues(TextTrack*, const TextTrackCueList*) = 0;
-    virtual void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) = 0;
-    virtual void textTrackAddCue(TextTrack*, TextTrackCue&) = 0;
-    virtual void textTrackRemoveCue(TextTrack*, TextTrackCue&) = 0;
+    virtual void textTrackKindChanged(TextTrack&) = 0;
+    virtual void textTrackModeChanged(TextTrack&) = 0;
+    virtual void textTrackAddCues(TextTrack&, const TextTrackCueList&) = 0;
+    virtual void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) = 0;
+    virtual void textTrackAddCue(TextTrack&, TextTrackCue&) = 0;
+    virtual void textTrackRemoveCue(TextTrack&, TextTrackCue&) = 0;
 };
 
 class TextTrack : public TrackBase, public EventTargetWithInlineData {
@@ -167,8 +165,8 @@ private:
     TextTrackClient* m_client;
     TextTrackType m_trackType;
     ReadinessState m_readinessState { NotLoaded };
-    int m_trackIndex;
-    int m_renderedTrackIndex;
+    std::optional<int> m_trackIndex;
+    std::optional<int> m_renderedTrackIndex;
     bool m_hasBeenConfigured { false };
 };
 

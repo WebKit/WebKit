@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "WebGLSharedObject.h"
 
 #if ENABLE(WEBGL)
-
-#include "WebGLSharedObject.h"
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
@@ -35,30 +34,29 @@
 namespace WebCore {
 
 WebGLSharedObject::WebGLSharedObject(WebGLRenderingContextBase& context)
-    : WebGLObject(context)
-    , m_contextGroup(context.contextGroup())
+    : m_contextGroup(context.contextGroup())
 {
 }
 
 WebGLSharedObject::~WebGLSharedObject()
 {
     if (m_contextGroup)
-        m_contextGroup->removeObject(this);
+        m_contextGroup->removeObject(*this);
 }
 
 void WebGLSharedObject::detachContextGroup()
 {
     detach();
     if (m_contextGroup) {
-        deleteObject(0);
-        m_contextGroup->removeObject(this);
-        m_contextGroup = 0;
+        deleteObject(nullptr);
+        m_contextGroup->removeObject(*this);
+        m_contextGroup = nullptr;
     }
 }
 
 GraphicsContext3D* WebGLSharedObject::getAGraphicsContext3D() const
 {
-    return m_contextGroup ? m_contextGroup->getAGraphicsContext3D() : 0;
+    return m_contextGroup ? &m_contextGroup->getAGraphicsContext3D() : nullptr;
 }
 
 }

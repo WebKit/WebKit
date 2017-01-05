@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -58,30 +58,28 @@ Ref<HTMLLabelElement> HTMLLabelElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLLabelElement(tagName, document));
 }
 
-LabelableElement* HTMLLabelElement::control()
+LabelableElement* HTMLLabelElement::control() const
 {
-    const AtomicString& controlId = attributeWithoutSynchronization(forAttr);
+    auto& controlId = attributeWithoutSynchronization(forAttr);
     if (controlId.isNull()) {
         // Search the children and descendants of the label element for a form element.
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
         for (auto& labelableElement : descendantsOfType<LabelableElement>(*this)) {
             if (labelableElement.supportLabels())
-                return &labelableElement;
+                return const_cast<LabelableElement*>(&labelableElement);
         }
         return nullptr;
     }
-    
     return inDocument() ? firstElementWithIdIfLabelable(treeScope(), controlId) : nullptr;
 }
 
-HTMLFormElement* HTMLLabelElement::form()
+HTMLFormElement* HTMLLabelElement::form() const
 {
-    auto* labeledControl = control();
-    if (!labeledControl)
+    auto* control = this->control();
+    if (!is<HTMLFormControlElement>(control))
         return nullptr;
-
-    return is<HTMLFormControlElement>(*labeledControl) ? downcast<HTMLFormControlElement>(*labeledControl).form() : nullptr;
+    return downcast<HTMLFormControlElement>(*control).form();
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)

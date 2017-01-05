@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple, Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple, Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -275,7 +275,7 @@ public:
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
     // Asynchronous request to load an icon for specified filenames.
-    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) = 0;
+    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
         
     virtual void elementDidFocus(const Node*) { };
     virtual void elementDidBlur(const Node*) { };

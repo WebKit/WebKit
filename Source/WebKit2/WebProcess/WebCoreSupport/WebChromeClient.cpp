@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -761,9 +761,9 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     m_page->send(Messages::WebPageProxy::RunOpenPanel(webFrame->frameID(), SecurityOriginData::fromFrame(frame), fileChooser->settings()));
 }
 
-void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
+void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {
-    loader->notifyFinished(Icon::createIconForFiles(filenames));
+    loader.iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 #if !PLATFORM(IOS)

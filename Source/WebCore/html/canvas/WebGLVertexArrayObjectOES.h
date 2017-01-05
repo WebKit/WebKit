@@ -25,19 +25,17 @@
 
 #pragma once
 
-#include "WebGLBuffer.h"
-#include "WebGLContextObject.h"
 #include "WebGLVertexArrayObjectBase.h"
 
 namespace WebCore {
 
 class WebGLVertexArrayObjectOES final : public WebGLVertexArrayObjectBase {
 public:
-    static Ref<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase&, VAOType);
+    static Ref<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase&, Type);
     virtual ~WebGLVertexArrayObjectOES();
 private:
-    WebGLVertexArrayObjectOES(WebGLRenderingContextBase&, VAOType);
-    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
+    WebGLVertexArrayObjectOES(WebGLRenderingContextBase&, Type);
+    void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) final;
 };
 
 } // namespace WebCore

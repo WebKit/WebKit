@@ -1,3 +1,13 @@
+2017-01-04  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from the "html" directory, other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=166635
+
+        Reviewed by Alex Christensen.
+
+        * wtf/RefPtr.h:
+        (WTF::makeRefPtr): Added.
+
 2017-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed build fix after r210313

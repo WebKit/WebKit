@@ -1,3 +1,14 @@
+2017-01-04  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from the "html" directory, other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=166635
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::loadIconForFiles): Take a reference instead of a pointer.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+
 2017-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove runtime flag for variation fonts

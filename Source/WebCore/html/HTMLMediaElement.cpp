@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "HTMLMediaElement.h"
 
 #if ENABLE(VIDEO)
-
-#include "HTMLMediaElement.h"
 
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
@@ -269,22 +268,23 @@ static void removeElementFromDocumentMap(HTMLMediaElement& element, Document& do
 }
 
 #if ENABLE(VIDEO_TRACK)
+
 class TrackDisplayUpdateScope {
 public:
-    TrackDisplayUpdateScope(HTMLMediaElement* mediaElement)
+    TrackDisplayUpdateScope(HTMLMediaElement& element)
+        : m_element(element)
     {
-        m_mediaElement = mediaElement;
-        m_mediaElement->beginIgnoringTrackDisplayUpdateRequests();
+        m_element.beginIgnoringTrackDisplayUpdateRequests();
     }
     ~TrackDisplayUpdateScope()
     {
-        ASSERT(m_mediaElement);
-        m_mediaElement->endIgnoringTrackDisplayUpdateRequests();
+        m_element.endIgnoringTrackDisplayUpdateRequests();
     }
     
 private:
-    HTMLMediaElement* m_mediaElement;
+    HTMLMediaElement& m_element;
 };
+
 #endif
 
 struct HTMLMediaElement::TrackGroup {
@@ -1554,7 +1554,7 @@ static bool eventTimeCueCompare(const std::pair<MediaTime, TextTrackCue*>& a, co
     // 12 - Further sort tasks in events that have the same time by the
     // relative text track cue order of the text track cues associated
     // with these tasks.
-    return a.second->cueIndex() - b.second->cueIndex() < 0;
+    return a.second->isOrderedBefore(b.second);
 }
 
 static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
@@ -1817,22 +1817,21 @@ void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
     }
 }
 
-void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack* track)
+void HTMLMediaElement::audioTrackEnabledChanged(AudioTrack& track)
 {
-    ASSERT(track);
-    if (m_audioTracks && m_audioTracks->contains(*track))
+    if (m_audioTracks && m_audioTracks->contains(track))
         m_audioTracks->scheduleChangeEvent();
     if (ScriptController::processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
 }
 
-void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
+void HTMLMediaElement::textTrackModeChanged(TextTrack& track)
 {
     bool trackIsLoaded = true;
-    if (track->trackType() == TextTrack::TrackElement) {
+    if (track.trackType() == TextTrack::TrackElement) {
         trackIsLoaded = false;
         for (auto& trackElement : childrenOfType<HTMLTrackElement>(*this)) {
-            if (&trackElement.track() == track) {
+            if (&trackElement.track() == &track) {
                 if (trackElement.readyState() == HTMLTrackElement::LOADING || trackElement.readyState() == HTMLTrackElement::LOADED)
                     trackIsLoaded = true;
                 break;
@@ -1845,33 +1844,32 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
         m_textTracks = TextTrackList::create(this, ActiveDOMObject::scriptExecutionContext());
     
     // Mark this track as "configured" so configureTextTracks won't change the mode again.
-    track->setHasBeenConfigured(true);
+    track.setHasBeenConfigured(true);
     
-    if (track->mode() != TextTrack::Mode::Disabled && trackIsLoaded)
-        textTrackAddCues(track, track->cues());
+    if (track.mode() != TextTrack::Mode::Disabled && trackIsLoaded)
+        textTrackAddCues(track, *track.cues());
 
     configureTextTrackDisplay(AssumeTextTrackVisibilityChanged);
 
-    if (m_textTracks && m_textTracks->contains(*track))
+    if (m_textTracks && m_textTracks->contains(track))
         m_textTracks->scheduleChangeEvent();
 
 #if ENABLE(AVF_CAPTIONS)
-    if (track->trackType() == TextTrack::TrackElement && m_player)
+    if (track.trackType() == TextTrack::TrackElement && m_player)
         m_player->notifyTrackModeChanged();
 #endif
 }
 
-void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack* track)
+void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack& track)
 {
-    ASSERT(track);
-    if (m_videoTracks && m_videoTracks->contains(*track))
+    if (m_videoTracks && m_videoTracks->contains(track))
         m_videoTracks->scheduleChangeEvent();
 }
 
-void HTMLMediaElement::textTrackKindChanged(TextTrack* track)
+void HTMLMediaElement::textTrackKindChanged(TextTrack& track)
 {
-    if (track->kind() != TextTrack::Kind::Captions && track->kind() != TextTrack::Kind::Subtitles && track->mode() == TextTrack::Mode::Showing)
-        track->setMode(TextTrack::Mode::Hidden);
+    if (track.kind() != TextTrack::Kind::Captions && track.kind() != TextTrack::Kind::Subtitles && track.mode() == TextTrack::Mode::Showing)
+        track.setMode(TextTrack::Mode::Hidden);
 }
 
 void HTMLMediaElement::beginIgnoringTrackDisplayUpdateRequests()
@@ -1887,26 +1885,28 @@ void HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests()
         updateActiveTextTrackCues(currentMediaTime());
 }
 
-void HTMLMediaElement::textTrackAddCues(TextTrack* track, const TextTrackCueList* cues) 
+void HTMLMediaElement::textTrackAddCues(TextTrack& track, const TextTrackCueList& cues)
 {
-    if (track->mode() == TextTrack::Mode::Disabled)
+    if (track.mode() == TextTrack::Mode::Disabled)
         return;
 
-    TrackDisplayUpdateScope scope(this);
-    for (size_t i = 0; i < cues->length(); ++i)
-        textTrackAddCue(track, *cues->item(i));
+    TrackDisplayUpdateScope scope { *this };
+    for (unsigned i = 0; i < cues.length(); ++i)
+        textTrackAddCue(track, *cues.item(i));
 }
 
-void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* cues)
+void HTMLMediaElement::textTrackRemoveCues(TextTrack&, const TextTrackCueList& cues)
 {
-    TrackDisplayUpdateScope scope(this);
-    for (size_t i = 0; i < cues->length(); ++i)
-        textTrackRemoveCue(cues->item(i)->track(), *cues->item(i));
+    TrackDisplayUpdateScope scope { *this };
+    for (unsigned i = 0; i < cues.length(); ++i) {
+        auto& cue = *cues.item(i);
+        textTrackRemoveCue(*cue.track(), cue);
+    }
 }
 
-void HTMLMediaElement::textTrackAddCue(TextTrack* track, TextTrackCue& cue)
+void HTMLMediaElement::textTrackAddCue(TextTrack& track, TextTrackCue& cue)
 {
-    if (track->mode() == TextTrack::Mode::Disabled)
+    if (track.mode() == TextTrack::Mode::Disabled)
         return;
 
     // Negative duration cues need be treated in the interval tree as
@@ -1919,7 +1919,7 @@ void HTMLMediaElement::textTrackAddCue(TextTrack* track, TextTrackCue& cue)
     updateActiveTextTrackCues(currentMediaTime());
 }
 
-void HTMLMediaElement::textTrackRemoveCue(TextTrack*, TextTrackCue& cue)
+void HTMLMediaElement::textTrackRemoveCue(TextTrack&, TextTrackCue& cue)
 {
     // Negative duration cues need to be treated in the interval tree as
     // zero-length cues.
@@ -3212,6 +3212,7 @@ void HTMLMediaElement::pauseInternal()
 }
 
 #if ENABLE(MEDIA_SOURCE)
+
 void HTMLMediaElement::detachMediaSource()
 {
     if (!m_mediaSource)
@@ -3220,6 +3221,7 @@ void HTMLMediaElement::detachMediaSource()
     m_mediaSource->detachFromElement(*this);
     m_mediaSource = nullptr;
 }
+
 #endif
 
 bool HTMLMediaElement::loop() const
@@ -3508,14 +3510,14 @@ void HTMLMediaElement::mediaPlayerDidAddAudioTrack(AudioTrackPrivate& track)
     if (isPlaying() && !m_mediaSession->playbackPermitted(*this))
         pauseInternal();
 
-    addAudioTrack(AudioTrack::create(this, &track));
+    addAudioTrack(AudioTrack::create(*this, track));
 }
 
 void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
 {
     // 4.8.10.12.2 Sourcing in-band text tracks
     // 1. Associate the relevant data with a new text track and its corresponding new TextTrack object.
-    RefPtr<InbandTextTrack> textTrack = InbandTextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, &track);
+    auto textTrack = InbandTextTrack::create(*ActiveDOMObject::scriptExecutionContext(), *this, track);
     textTrack->setMediaElement(this);
     
     // 2. Set the new text track's kind, label, and language based on the semantics of the relevant data,
@@ -3541,12 +3543,12 @@ void HTMLMediaElement::mediaPlayerDidAddTextTrack(InbandTextTrackPrivate& track)
     // 9. Fire an event with the name addtrack, that does not bubble and is not cancelable, and that uses the TrackEvent
     // interface, with the track attribute initialized to the text track's TextTrack object, at the media element's
     // textTracks attribute's TextTrackList object.
-    addTextTrack(textTrack.releaseNonNull());
+    addTextTrack(WTFMove(textTrack));
 }
 
 void HTMLMediaElement::mediaPlayerDidAddVideoTrack(VideoTrackPrivate& track)
 {
-    addVideoTrack(VideoTrack::create(this, &track));
+    addVideoTrack(VideoTrack::create(*this, track));
 }
 
 void HTMLMediaElement::mediaPlayerDidRemoveAudioTrack(AudioTrackPrivate& track)
@@ -3603,9 +3605,9 @@ void HTMLMediaElement::removeAudioTrack(AudioTrack& track)
 
 void HTMLMediaElement::removeTextTrack(TextTrack& track, bool scheduleEvent)
 {
-    TrackDisplayUpdateScope scope(this);
-    if (TextTrackCueList* cues = track.cues())
-        textTrackRemoveCues(&track, cues);
+    TrackDisplayUpdateScope scope { *this };
+    if (auto* cues = track.cues())
+        textTrackRemoveCues(track, *cues);
     track.clearClient();
     if (m_textTracks)
         m_textTracks->remove(track, scheduleEvent);
@@ -3625,7 +3627,7 @@ void HTMLMediaElement::forgetResourceSpecificTracks()
         removeAudioTrack(*m_audioTracks->lastItem());
 
     if (m_textTracks) {
-        TrackDisplayUpdateScope scope(this);
+        TrackDisplayUpdateScope scope { *this };
         for (int i = m_textTracks->length() - 1; i >= 0; --i) {
             auto& track = *m_textTracks->item(i);
             if (track.trackType() == TextTrack::InBand)
@@ -6078,12 +6080,12 @@ MediaController* HTMLMediaElement::controller() const
     return m_mediaController.get();
 }
 
-void HTMLMediaElement::setController(PassRefPtr<MediaController> controller)
+void HTMLMediaElement::setController(RefPtr<MediaController>&& controller)
 {
     if (m_mediaController)
         m_mediaController->removeMediaElement(*this);
 
-    m_mediaController = controller;
+    m_mediaController = WTFMove(controller);
 
     if (m_mediaController)
         m_mediaController->addMediaElement(*this);

@@ -2612,8 +2612,8 @@
 		6E3FAE8E14733FDB00E42307 /* WebGLDepthTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FAE8C14733FDB00E42307 /* WebGLDepthTexture.cpp */; };
 		6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */; };
 		6E3FAE8F14733FDB00E42307 /* WebGLDepthTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42307 /* WebGLDepthTexture.h */; };
-		6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */; };
-		6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */; };
+		6E47E66010B7944B00B186C8 /* WebGLAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLAny.cpp */; };
+		6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLAny.h */; };
 		6E4ABCD4138EA0B70071D291 /* JSHTMLUnknownElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */; };
 		6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */; };
 		6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9902,8 +9902,8 @@
 		6E3FAE8D14733FDB00E42307 /* WebGLDepthTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLDepthTexture.h; sourceTree = "<group>"; };
 		6E3FAE9014733FEA00E42306 /* WebGLCompressedTextureS3TC.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLCompressedTextureS3TC.idl; sourceTree = "<group>"; };
 		6E3FAE9014733FEA00E42307 /* WebGLDepthTexture.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGLDepthTexture.idl; sourceTree = "<group>"; };
-		6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLGetInfo.cpp; sourceTree = "<group>"; };
-		6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLGetInfo.h; sourceTree = "<group>"; };
+		6E47E65E10B7944B00B186C8 /* WebGLAny.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLAny.cpp; sourceTree = "<group>"; };
+		6E47E65F10B7944B00B186C8 /* WebGLAny.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLAny.h; sourceTree = "<group>"; };
 		6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLUnknownElement.cpp; sourceTree = "<group>"; };
 		6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLUnknownElement.h; sourceTree = "<group>"; };
 		6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLContextAttributes.h; sourceTree = "<group>"; };
@@ -16916,8 +16916,8 @@
 				49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */,
 				49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */,
 				49C7B9B01042D32E0009D447 /* WebGLFramebuffer.idl */,
-				6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */,
-				6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */,
+				6E47E65E10B7944B00B186C8 /* WebGLAny.cpp */,
+				6E47E65F10B7944B00B186C8 /* WebGLAny.h */,
 				93F1D5B712D532C400832BEC /* WebGLLoseContext.cpp */,
 				93F1D5B812D532C400832BEC /* WebGLLoseContext.h */,
 				93F1D5B912D532C400832BEC /* WebGLLoseContext.idl */,
@@ -28230,7 +28230,7 @@
 				5B30695E18B3D3450099D5E8 /* WebGLDrawBuffers.h in Headers */,
 				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
 				49C7B9CF1042D32F0009D447 /* WebGLFramebuffer.h in Headers */,
-				6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */,
+				6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */,
 				49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */,
 				93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */,
 				49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */,
@@ -31718,7 +31718,7 @@
 				5B30695D18B3D3450099D5E8 /* WebGLDrawBuffers.cpp in Sources */,
 				6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */,
 				49C7B9CE1042D32F0009D447 /* WebGLFramebuffer.cpp in Sources */,
-				6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */,
+				6E47E66010B7944B00B186C8 /* WebGLAny.cpp in Sources */,
 				49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */,
 				93F1D5BA12D532C400832BEC /* WebGLLoseContext.cpp in Sources */,
 				49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +32,16 @@ namespace WebCore {
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
 public:
     WebGLRenderingContext(HTMLCanvasElement&, GraphicsContext3DAttributes);
-    WebGLRenderingContext(HTMLCanvasElement&, PassRefPtr<GraphicsContext3D>, GraphicsContext3DAttributes);
+    WebGLRenderingContext(HTMLCanvasElement&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
 
 private:
     bool isWebGL1() const final { return true; }
 
     WebGLExtension* getExtension(const String&) final;
-    WebGLGetInfo getParameter(GC3Denum pname) final;
+    WebGLAny getParameter(GC3Denum pname) final;
     Vector<String> getSupportedExtensions() final;
 
-    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;
+    WebGLAny getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;
     bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment) final;
     void hint(GC3Denum target, GC3Denum mode) final;

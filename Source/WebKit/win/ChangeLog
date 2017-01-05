@@ -1,3 +1,14 @@
+2017-01-04  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from the "html" directory, other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=166635
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::loadIconForFiles): Take a reference instead of a pointer.
+        * WebCoreSupport/WebChromeClient.h: Updated for the above.
+
 2016-12-30  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from the "dom" directory, related cleanup

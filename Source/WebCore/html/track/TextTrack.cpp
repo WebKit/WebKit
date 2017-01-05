@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
- * Copyright (C) 2011-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,10 +30,9 @@
  */
 
 #include "config.h"
+#include "TextTrack.h"
 
 #if ENABLE(VIDEO_TRACK)
-
-#include "TextTrack.h"
 
 #include "Event.h"
 #include "ExceptionCode.h"
@@ -45,8 +44,6 @@
 #include "VTTRegionList.h"
 
 namespace WebCore {
-
-static const int invalidTrackIndex = -1;
 
 const AtomicString& TextTrack::subtitlesKeyword()
 {
@@ -101,8 +98,6 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_scriptExecutionContext(context)
     , m_client(client)
     , m_trackType(type)
-    , m_trackIndex(invalidTrackIndex)
-    , m_renderedTrackIndex(invalidTrackIndex)
 {
     if (kind == captionsKeyword())
         m_kind = Kind::Captions;
@@ -120,8 +115,7 @@ TextTrack::~TextTrack()
 {
     if (m_cues) {
         if (m_client)
-            m_client->textTrackRemoveCues(this, m_cues.get());
-
+            m_client->textTrackRemoveCues(*this, *m_cues);
         for (size_t i = 0; i < m_cues->length(); ++i)
             m_cues->item(i)->setTrack(nullptr);
     }
@@ -189,7 +183,7 @@ void TextTrack::setKind(Kind newKind)
     // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
     // event named change at sourceBuffer.textTracks.
     if (m_sourceBuffer)
-        m_sourceBuffer->textTracks()->scheduleChangeEvent();
+        m_sourceBuffer->textTracks().scheduleChangeEvent();
 
     // 4. Queue a task to fire a simple event named change at the TextTrackList object referenced by
     // the textTracks attribute on the HTMLMediaElement.
@@ -198,7 +192,7 @@ void TextTrack::setKind(Kind newKind)
 #endif
 
     if (m_client && oldKind != m_kind)
-        m_client->textTrackKindChanged(this);
+        m_client->textTrackKindChanged(*this);
 }
 
 void TextTrack::setKindKeywordIgnoringASCIICase(StringView keyword)
@@ -236,7 +230,7 @@ void TextTrack::setMode(Mode mode)
     // If mode changes to disabled, remove this track's cues from the client
     // because they will no longer be accessible from the cues() function.
     if (mode == Mode::Disabled && m_client && m_cues)
-        m_client->textTrackRemoveCues(this, m_cues.get());
+        m_client->textTrackRemoveCues(*this, *m_cues);
 
     if (mode != Mode::Showing && m_cues) {
         for (size_t i = 0; i < m_cues->length(); ++i) {
@@ -249,7 +243,7 @@ void TextTrack::setMode(Mode mode)
     m_mode = mode;
 
     if (m_client)
-        m_client->textTrackModeChanged(this);
+        m_client->textTrackModeChanged(*this);
 }
 
 TextTrackCueList* TextTrack::cues()
@@ -270,7 +264,7 @@ void TextTrack::removeAllCues()
         return;
 
     if (m_client)
-        m_client->textTrackRemoveCues(this, m_cues.get());
+        m_client->textTrackRemoveCues(*this, *m_cues);
     
     for (size_t i = 0; i < m_cues->length(); ++i)
         m_cues->item(i)->setTrack(nullptr);
@@ -288,7 +282,7 @@ TextTrackCueList* TextTrack::activeCues() const
     // http://www.whatwg.org/specs/web-apps/current-work/#dom-texttrack-activecues
     if (!m_cues || m_mode == Mode::Disabled)
         return nullptr;
-    return m_cues->activeCues();
+    return &m_cues->activeCues();
 }
 
 ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
@@ -310,18 +304,21 @@ ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
 
     // The addCue(cue) method of TextTrack objects, when invoked, must run the following steps:
 
+    auto* cueTrack = cue->track();
+    if (cueTrack == this)
+        return { };
+
     // 1. If the given cue is in a text track list of cues, then remove cue from that text track
     // list of cues.
-    TextTrack* cueTrack = cue->track();
-    if (cueTrack && cueTrack != this)
+    if (cueTrack)
         cueTrack->removeCue(cue.get());
 
     // 2. Add cue to the method's TextTrack object's text track's text track list of cues.
     cue->setTrack(this);
-    ensureTextTrackCueList().add(cue.ptr());
+    ensureTextTrackCueList().add(cue.copyRef());
     
     if (m_client)
-        m_client->textTrackAddCue(this, cue);
+        m_client->textTrackAddCue(*this, cue);
 
     return { };
 }
@@ -338,12 +335,12 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
         return Exception { NOT_FOUND_ERR };
 
     // 2. Remove cue from the method's TextTrack object's text track's text track list of cues.
-    if (!m_cues || !m_cues->remove(&cue))
-        return Exception { INVALID_STATE_ERR };
-
+    ASSERT(m_cues);
+    m_cues->remove(cue);
+    cue.setIsActive(false);
     cue.setTrack(nullptr);
     if (m_client)
-        m_client->textTrackRemoveCue(this, cue);
+        m_client->textTrackRemoveCue(*this, cue);
 
     return { };
 }
@@ -392,10 +389,9 @@ void TextTrack::addRegion(RefPtr<VTTRegion>&& region)
         return;
     }
 
-    // Otherwise: add region to the method's TextTrack object's text track
-    // list of regions.
+    // Otherwise: add region to the method's TextTrack object's text track list of regions.
     region->setTrack(this);
-    regionList.add(WTFMove(region));
+    regionList.add(region.releaseNonNull());
 }
 
 ExceptionOr<void> TextTrack::removeRegion(VTTRegion* region)
@@ -408,9 +404,8 @@ ExceptionOr<void> TextTrack::removeRegion(VTTRegion* region)
     if (region->track() != this)
         return Exception { NOT_FOUND_ERR };
 
-    if (!m_regions || !m_regions->remove(region))
-        return Exception { INVALID_STATE_ERR };
-
+    ASSERT(m_regions);
+    m_regions->remove(*region);
     region->setTrack(nullptr);
     return { };
 }
@@ -422,7 +417,7 @@ void TextTrack::cueWillChange(TextTrackCue* cue)
 
     // The cue may need to be repositioned in the media element's interval tree, may need to
     // be re-rendered, etc, so remove it before the modification...
-    m_client->textTrackRemoveCue(this, *cue);
+    m_client->textTrackRemoveCue(*this, *cue);
 }
 
 void TextTrack::cueDidChange(TextTrackCue* cue)
@@ -431,26 +426,24 @@ void TextTrack::cueDidChange(TextTrackCue* cue)
         return;
 
     // Make sure the TextTrackCueList order is up-to-date.
-    ensureTextTrackCueList().updateCueIndex(cue);
+    ensureTextTrackCueList().updateCueIndex(*cue);
 
     // ... and add it back again.
-    m_client->textTrackAddCue(this, *cue);
+    m_client->textTrackAddCue(*this, *cue);
 }
 
 int TextTrack::trackIndex()
 {
     ASSERT(m_mediaElement);
-
-    if (m_trackIndex == invalidTrackIndex)
+    if (!m_trackIndex)
         m_trackIndex = m_mediaElement->textTracks().getTrackIndex(*this);
-
-    return m_trackIndex;
+    return m_trackIndex.value();
 }
 
 void TextTrack::invalidateTrackIndex()
 {
-    m_trackIndex = invalidTrackIndex;
-    m_renderedTrackIndex = invalidTrackIndex;
+    m_trackIndex = std::nullopt;
+    m_renderedTrackIndex = std::nullopt;
 }
 
 bool TextTrack::isRendered()
@@ -469,11 +462,9 @@ TextTrackCueList& TextTrack::ensureTextTrackCueList()
 int TextTrack::trackIndexRelativeToRenderedTracks()
 {
     ASSERT(m_mediaElement);
-    
-    if (m_renderedTrackIndex == invalidTrackIndex)
+    if (!m_renderedTrackIndex)
         m_renderedTrackIndex = m_mediaElement->textTracks().getTrackIndexRelativeToRenderedTracks(*this);
-    
-    return m_renderedTrackIndex;
+    return m_renderedTrackIndex.value();
 }
 
 bool TextTrack::hasCue(TextTrackCue* cue, TextTrackCue::CueMatchRules match)
@@ -565,7 +556,7 @@ void TextTrack::setLanguage(const AtomicString& language)
     // 3. If the sourceBuffer attribute on this track is not null, then queue a task to fire a simple
     // event named change at sourceBuffer.textTracks.
     if (m_sourceBuffer)
-        m_sourceBuffer->textTracks()->scheduleChangeEvent();
+        m_sourceBuffer->textTracks().scheduleChangeEvent();
 
     // 4. Queue a task to fire a simple event named change at the TextTrackList object referenced by
     // the textTracks attribute on the HTMLMediaElement.

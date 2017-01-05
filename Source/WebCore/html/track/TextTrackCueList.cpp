@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,117 +30,100 @@
 
 #include "TextTrackCueList.h"
 
+// Checking sorting is too slow for general use; turn it on explicitly when working on this class.
+#undef CHECK_SORTING
+
+#ifdef CHECK_SORTING
+#define ASSERT_SORTED(begin, end) ASSERT(std::is_sorted(begin, end, compareCues))
+#else
+#define ASSERT_SORTED(begin, end) ((void)0)
+#endif
+
 namespace WebCore {
 
-TextTrackCueList::TextTrackCueList()
+static inline bool compareCues(const RefPtr<TextTrackCue>& a, const RefPtr<TextTrackCue>& b)
 {
+    return a->isOrderedBefore(b.get());
 }
 
-unsigned long TextTrackCueList::length() const
+unsigned TextTrackCueList::cueIndex(TextTrackCue& cue) const
 {
-    return m_list.size();
-}
-
-unsigned long TextTrackCueList::getCueIndex(TextTrackCue* cue) const
-{
-    return m_list.find(cue);
+    ASSERT(m_vector.contains(&cue));
+    return m_vector.find(&cue);
 }
 
 TextTrackCue* TextTrackCueList::item(unsigned index) const
 {
-    if (index < m_list.size())
-        return m_list[index].get();
-    return 0;
+    if (index >= m_vector.size())
+        return nullptr;
+    return m_vector[index].get();
 }
 
 TextTrackCue* TextTrackCueList::getCueById(const String& id) const
 {
-    for (auto& cue : m_list) {
+    for (auto& cue : m_vector) {
         if (cue->id() == id)
             return cue.get();
     }
-    return 0;
+    return nullptr;
 }
 
-TextTrackCueList* TextTrackCueList::activeCues()
+TextTrackCueList& TextTrackCueList::activeCues()
 {
     if (!m_activeCues)
         m_activeCues = create();
 
-    m_activeCues->clear();
-    for (auto& cue : m_list) {
+    Vector<RefPtr<TextTrackCue>> activeCuesVector;
+    for (auto& cue : m_vector) {
         if (cue->isActive())
-            m_activeCues->add(cue);
+            activeCuesVector.append(cue);
     }
-    return m_activeCues.get();
+    ASSERT_SORTED(activeCuesVector.begin(), activeCuesVector.end());
+    m_activeCues->m_vector = WTFMove(activeCuesVector);
+
+    // FIXME: This list of active cues is not updated as cues are added, removed, become active, and become inactive.
+    // Instead it is only updated each time this function is called again. That is not consistent with other dynamic DOM lists.
+    return *m_activeCues;
 }
 
-bool TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
+void TextTrackCueList::add(Ref<TextTrackCue>&& cue)
 {
+    ASSERT(!m_vector.contains(cue.ptr()));
     ASSERT(cue->startMediaTime() >= MediaTime::zeroTime());
     ASSERT(cue->endMediaTime() >= MediaTime::zeroTime());
 
-    return add(cue, 0, m_list.size());
+    RefPtr<TextTrackCue> cueRefPtr { WTFMove(cue) };
+    unsigned insertionPosition = std::upper_bound(m_vector.begin(), m_vector.end(), cueRefPtr, compareCues) - m_vector.begin();
+    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    m_vector.insert(insertionPosition, WTFMove(cueRefPtr));
+    ASSERT_SORTED(m_vector.begin(), m_vector.end());
 }
 
-bool TextTrackCueList::add(PassRefPtr<TextTrackCue> prpCue, size_t start, size_t end)
+void TextTrackCueList::remove(TextTrackCue& cue)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(start <= m_list.size());
-    ASSERT_WITH_SECURITY_IMPLICATION(end <= m_list.size());
+    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+    m_vector.remove(cueIndex(cue));
+    ASSERT_SORTED(m_vector.begin(), m_vector.end());
+}
 
-    // Maintain text track cue order:
-    // http://www.whatwg.org/specs/web-apps/current-work/#text-track-cue-order
-    RefPtr<TextTrackCue> cue = prpCue;
-    if (start == end) {
-        if (!m_list.isEmpty() && (start > 0) && (m_list[start - 1].get() == cue.get()))
-            return false;
+void TextTrackCueList::updateCueIndex(TextTrackCue& cue)
+{
+    auto cuePosition = m_vector.begin() + cueIndex(cue);
+    auto afterCuePosition = cuePosition + 1;
 
-        m_list.insert(start, cue);
-        invalidateCueIndexes(start);
-        return true;
+    ASSERT_SORTED(m_vector.begin(), cuePosition);
+    ASSERT_SORTED(afterCuePosition, m_vector.end());
+
+    auto reinsertionPosition = std::upper_bound(m_vector.begin(), cuePosition, *cuePosition, compareCues);
+    if (reinsertionPosition != cuePosition)
+        std::rotate(reinsertionPosition, cuePosition, afterCuePosition);
+    else {
+        reinsertionPosition = std::upper_bound(afterCuePosition, m_vector.end(), *cuePosition, compareCues);
+        if (reinsertionPosition != afterCuePosition)
+            std::rotate(cuePosition, afterCuePosition, reinsertionPosition);
     }
 
-    size_t index = (start + end) / 2;
-    if (cue->isOrderedBefore(m_list[index].get()))
-        return add(WTFMove(cue), start, index);
-
-    return add(WTFMove(cue), index + 1, end);
-}
-
-bool TextTrackCueList::remove(TextTrackCue* cue)
-{
-    size_t index = m_list.find(cue);
-    if (index == notFound)
-        return false;
-
-    cue->setIsActive(false);
-    m_list.remove(index);
-    return true;
-}
-
-bool TextTrackCueList::contains(TextTrackCue* cue) const
-{
-    return m_list.contains(cue);
-}
-
-bool TextTrackCueList::updateCueIndex(TextTrackCue* cue)
-{
-    if (!contains(cue))
-        return false;
-    
-    remove(cue);
-    return add(cue);
-}
-
-void TextTrackCueList::clear()
-{
-    m_list.clear();
-}
-
-void TextTrackCueList::invalidateCueIndexes(size_t start)
-{
-    for (size_t i = start; i < m_list.size(); ++i)
-        m_list[i]->invalidateCueIndex();
+    ASSERT_SORTED(m_vector.begin(), m_vector.end());
 }
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,12 @@
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLScriptElement.h"
 #include "HTMLTableElement.h"
 #include "JSCustomElementInterface.h"
 #include "LocalizedStrings.h"
 #include "NotImplemented.h"
+#include "SVGScriptElement.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -57,10 +59,12 @@ CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElement
     : elementInterface(WTFMove(customElementInterface))
     , name(name)
     , attributes(WTFMove(attributes))
-{ }
+{
+}
 
 CustomElementConstructionData::~CustomElementConstructionData()
-{ }
+{
+}
 
 namespace {
 
@@ -318,7 +322,7 @@ inline HTMLStackItem& HTMLTreeBuilder::FragmentParsingContext::contextElementSta
     return *m_contextElementStackItem;
 }
 
-RefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPosition)
+RefPtr<ScriptElement> HTMLTreeBuilder::takeScriptToProcess(TextPosition& scriptStartPosition)
 {
     ASSERT(!m_destroyed);
 
@@ -2057,7 +2061,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken&& token)
             // Pause ourselves so that parsing stops until the script can be processed by the caller.
             ASSERT(m_tree.currentStackItem().hasTagName(scriptTag));
             if (scriptingContentIsAllowed(m_tree.parserContentPolicy()))
-                m_scriptToProcess = &m_tree.currentElement();
+                m_scriptToProcess = &downcast<HTMLScriptElement>(m_tree.currentElement());
             m_tree.openElements().pop();
             m_insertionMode = m_originalInsertionMode;
 
@@ -2787,7 +2791,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken&& token)
 
         if (token.name() == SVGNames::scriptTag && m_tree.currentStackItem().hasTagName(SVGNames::scriptTag)) {
             if (scriptingContentIsAllowed(m_tree.parserContentPolicy()))
-                m_scriptToProcess = &m_tree.currentElement();
+                m_scriptToProcess = &downcast<SVGScriptElement>(m_tree.currentElement());
             m_tree.openElements().pop();
             return;
         }

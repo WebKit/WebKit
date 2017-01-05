@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
+ * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +25,11 @@
  */
 
 #include "config.h"
+#include "LoadableTextTrack.h"
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "LoadableTextTrack.h"
-
-#include "Event.h"
 #include "HTMLTrackElement.h"
-#include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
 #include "VTTRegionList.h"
 
@@ -96,11 +94,11 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
 
     for (auto& newCue : newCues) {
         newCue->setTrack(this);
-        m_cues->add(newCue);
+        m_cues->add(newCue.releaseNonNull());
     }
 
     if (client())
-        client()->textTrackAddCues(this, m_cues.get());
+        client()->textTrackAddCues(*this, *m_cues);
 }
 
 void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadingFailed)
@@ -122,7 +120,7 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
 
     for (auto& newRegion : newRegions) {
         newRegion->setTrack(this);
-        regions()->add(newRegion);
+        regions()->add(newRegion.releaseNonNull());
     }
 }
 

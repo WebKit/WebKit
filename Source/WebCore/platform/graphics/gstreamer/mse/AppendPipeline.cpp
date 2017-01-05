@@ -676,7 +676,7 @@ void AppendPipeline::appsinkNewSample(GstSample* sample)
             mediaSample->applyPtsOffset(MediaTime::zeroTime());
         }
 
-        m_sourceBufferPrivate->didReceiveSample(mediaSample);
+        m_sourceBufferPrivate->didReceiveSample(*mediaSample);
         setAppendState(AppendState::Sampling);
         m_flowReturn = GST_FLOW_OK;
         m_newSampleCondition.notifyOne();

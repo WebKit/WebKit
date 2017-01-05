@@ -1,3 +1,772 @@
+2017-01-04  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from the "html" directory, other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=166635
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt: Removed the duplicate copies of all the WebGL-specific files
+        in the main list of source files; there is no value in listing them twice.
+        Replaced WebGLGetInfo.cpp with WebGLAny.cpp.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::removeSourceBuffer): Updates since the tracks functions
+        return references now.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateFastSeekTimeForMediaTime): Removed
+        unneeded SourceBufferPrivate* argument.
+        (WebCore::SourceBuffer::appendBufferTimerFired): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveRenderingError): Ditto.
+        (WebCore::SourceBuffer::videoTracks): Return a reference rather than a pointer.
+        (WebCore::SourceBuffer::audioTracks): Ditto.
+        (WebCore::SourceBuffer::textTracks): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+        Removed unneeded SourceBufferPrivate* argument.
+        (WebCore::SourceBuffer::validateInitializationSegment): Updated since tracks
+        functions now return a pointer.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Removed unneeded
+        SourceBufferPrivate* argument.
+        (WebCore::SourceBuffer::sourceBufferPrivateHasAudio): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateHasVideo): Ditto.
+        (WebCore::SourceBuffer::videoTrackSelectedChanged): Take a reference rather than
+        a pointer.
+        (WebCore::SourceBuffer::audioTrackEnabledChanged): Ditto.
+        (WebCore::SourceBuffer::textTrackModeChanged): Ditto.
+        (WebCore::SourceBuffer::textTrackAddCue): Ditto.
+        (WebCore::SourceBuffer::textTrackAddCues): Ditto.
+        (WebCore::SourceBuffer::textTrackRemoveCue): Ditto.
+        (WebCore::SourceBuffer::textTrackRemoveCues): Ditto.
+        (WebCore::SourceBuffer::textTrackKindChanged): Ditto.
+        (WebCore::SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples): Ditto.
+        (WebCore::SourceBuffer::provideMediaData): Ditto.
+        (WebCore::SourceBuffer::reenqueueMediaForTime): Ditto.
+        * Modules/mediasource/SourceBuffer.h: Updated for above changes.
+
+        * WebCore.xcodeproj/project.pbxproj: Replaced WebGLGetInfo with WebGLAny.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle): Removed explicit cast to CanvasStyle and unneeded
+        conversion to a pointer since CanvasStyle constructors now take references.
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginInstance): Updated since bindingsInstance now returns a raw pointer.
+        (WebCore::pluginScriptObject): Ditto.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::toJS): Moved to WebGLAny.h/cpp.
+        (WebCore::JSWebGL2RenderingContext::getIndexedParameter): Updated since the toJS
+        function in WebGLAny.h takes references, not pointers.
+
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp: Removed quite a few unneeded
+        includes and got rid of a lot of unneeded JSC prefixes.
+        (WebCore::toJS): Moved to WebGLAny.h/cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::objectParameter): Renamed from getObjectParameter and also changed to
+        take a pointer to member function so we don't need an enum and a switch statement.
+        (WebCore::toJS): Changed to take references rather than pointers.
+        (WebCore::JSWebGLRenderingContextBase::getAttachedShaders): Use a modern for loop.
+        (WebCore::JSWebGLRenderingContextBase::getBufferParameter): Use objectParameter.
+        (WebCore::JSWebGLRenderingContextBase::getRenderbufferParameter): Ditto.
+        (WebCore::JSWebGLRenderingContextBase::getVertexAttrib): Ditto.
+        (WebCore::toNumberVector): Renamed from toVector, since this is specifically for
+        vectors of numbers. Use uncheckedAppend instead of assignment.
+        (WebCore::functionForUniform): Marked this inline.
+        (WebCore::dataFunctionf): Updated for above changes.
+        (WebCore::dataFunctioni): Ditto.
+        (WebCore::dataFunctionMatrix): Ditto.
+
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::fetch): Moved assertions to the top of the function.
+        Also added a FIXME because it's unclear why these assertions are correct. Updated
+        to use downcastScriptElement instead of toScriptElementIfPossible.
+
+        * dom/Document.h: Sorted list of forward-declared classes. Removed duplicate
+        forward declaration of ScriptModuleLoader.
+
+        * dom/PendingScript.cpp:
+        (WebCore::PendingScript::create): Take a ScriptElement instead of an Element.
+        (WebCore::PendingScript::PendingScript): Ditto.
+        (WebCore::PendingScript::loadableScript): Moved inline to header and made inline.
+        (WebCore::PendingScript::setClient): Take a reference instead of a pointer.
+        * dom/PendingScript.h: UPdated for above changes.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript): Pass a reference instead of a pointer.
+        (WebCore::ScriptElement::ref): Added. Forwards ref/deref to the underlying element
+        so we can use Ref and RefPtr with this class.
+        (WebCore::ScriptElement::deref): Ditto.
+        (WebCore::isScriptElement): Added. Replaces one of the two uses of
+        toScriptElementIfPossible, and is similar in style to is<Element>.
+        (WebCore::downcastScriptElement): Ditto, but for downcast.
+        * dom/ScriptElement.h: Updated for above changes.
+
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::queueScriptForExecution): Take reference rather than
+        pointer, and pass ScriptElement rather than Element.
+        (WebCore::ScriptRunner::notifyFinished): Ditto.
+        (WebCore::ScriptRunner::timerFired): Ditto.
+        * dom/ScriptRunner.h: Updated for above changes.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::files): Updated since m_fileList is a Ref.
+        (WebCore::FileInputType::createFileList): Updated to return a Ref instead of
+        a PassRefPtr. Also use reserveInitialCapacity/uncheckedAppend.
+        (WebCore::FileInputType::requestIcon): Updated since the updateRendering
+        function is now called iconLoaded. Also use references instead of pointers.
+        (WebCore::FileInputType::setFiles): Take a RefPtr&& insted of a PassRefPtr.
+        Also put some conditional code inside an #if.
+        (WebCore::FileInputType::filesChosen): Updated for function name change.
+        (WebCore::FileInputType::iconLoaded): Renamed from updateRendering.
+        Changed argument to RefPtr&& from PassRefPtr.
+        (WebCore::FileInputType::defaultToolTip): Got rid of unneeded local variable
+        and used the correct type, unsigned, rather than size_t.
+        * html/FileInputType.h: Updated for the above changes, use final instead
+        of override, and use Ref instead of RefPtr.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::form): Renamed from virtualForm.
+        * html/HTMLElement.h: Replaced the form/virtualForm pair of functions with
+        just a form function. The old design dates back before we had "final" for
+        virtual functions, and now we can just use that instead.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::virtualForm): Deleted.
+        * html/HTMLFormControlElement.h: Mark the form function final, since it's
+        now both an inline function in this class, and an override of a virtual
+        function inherited from the base class. Deleted the virtualForm function.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Removed use of the
+        formForSubmission function, which was just another way to get the same
+        thing as the form function; perhaps they were different in the past.
+        (WebCore::HTMLInputElement::setFiles): Take a RefPtr&& rather than a PassRefPtr.
+        * html/HTMLInputElement.h: Updated for the above.
+
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control): Made this const.
+        (WebCore::HTMLLabelElement::form): Made this const, so it can be used to
+        override the const form function from the base class.
+        * html/HTMLLabelElement.h: Marked the form function final, since we want it
+        to override the form function inherited from HTMLElement.
+
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::form): Renamed from virtualForm.
+        * html/HTMLLegendElement.h: Override form instead of virtualForm and mark it final
+        This makes things more efficient if someone calls form directly on this class;
+        before it would make an unnecessary virtual function call.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::TrackDisplayUpdateScope::TrackDisplayUpdateScope): Take a reference
+        rather than a pointer.
+        (WebCore::TrackDisplayUpdateScope::~TrackDisplayUpdateScope): Ditto.
+        (WebCore::eventTimeCueCompare): Compare the cues the same way the cue list would
+        rather than using cueIndex.
+        (WebCore::HTMLMediaElement::audioTrackEnabledChanged): Take a reference.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLMediaElement::videoTrackSelectedChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackKindChanged): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCues): Ditto.
+        (WebCore::HTMLMediaElement::textTrackRemoveCues): Ditto.
+        (WebCore::HTMLMediaElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLMediaElement::textTrackRemoveCue): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack): Pass references.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddVideoTrack): Ditto.
+        (WebCore::HTMLMediaElement::removeTextTrack): Ditto.
+        (WebCore::HTMLMediaElement::forgetResourceSpecificTracks): Ditto.
+        (WebCore::HTMLMediaElement::setController): Take a RefPtr&& instead of PassRefPtr.
+        * html/HTMLMediaElement.h: Updated for above changes.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::virtualForm): Deleted.
+        * html/HTMLObjectElement.h: Made the form function inline and final, which
+        achieves the same thing we did before with using, but without requiring the
+        separate virtualForm function, now deleted.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::collectOptionInnerText): Use isScriptElement
+        instead of toScriptElementIfPossible.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::bindingsInstance): Renamed from getInstance and
+        changed the return type to a raw pointer.
+        * html/HTMLPlugInElement.h: Updated for the above changes. Also changed the
+        updateSnapshot function to take a raw pointer instead of a PassRefPtr.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::createElementRenderer): Pass a pointer
+        to updateSnapshot.
+        (WebCore::HTMLPlugInImageElement::updateSnapshot): Updated to take a raw
+        pointer instead of a PassRefPtr.
+        * html/HTMLPlugInImageElement.h: Updated for above changes.
+
+        * html/HTMLScriptElement.h: Added using to resolve the ambiguity with the
+        ref/deref from HTMLElement and from ScriptElement.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::selection): Return a RefPtr instead
+        of a PassRefPtr.
+        * html/HTMLTextFormControlElement.h: Updated for above changes.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::textTrackKindChanged): Take a reference.
+        (WebCore::HTMLTrackElement::textTrackModeChanged): Ditto.
+        (WebCore::HTMLTrackElement::textTrackAddCues): Ditto.
+        (WebCore::HTMLTrackElement::textTrackRemoveCues): Ditto.
+        (WebCore::HTMLTrackElement::textTrackAddCue): Ditto.
+        (WebCore::HTMLTrackElement::textTrackRemoveCue): Ditto.
+        * html/HTMLTrackElement.h: Updated for above changes.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::formForSubmission): Deleted.
+        (WebCore::InputType::setFiles): Take a RefPtr&& instead of a PassRefPtr.
+        * html/InputType.h: Updated for above changes.
+
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure): Pass a reference.
+        (WebCore::PluginDocument::setPluginElement): Take a reference rather than
+        a PassRefPtr.
+        * html/PluginDocument.h: Updated for above changes.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle): Pass a reference.
+        (WebCore::CanvasRenderingContext2D::setFillStyle): Ditto.
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Ditto.
+
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle): Rewrite all constructors to use the
+        m_style variant instead of separate m_type and other data members. Also
+        change from PassRefPtr to a reference.
+        (WebCore::CanvasStyle::createFromString): Update to use the variant.
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha): Ditto.
+        (WebCore::CanvasStyle::isEquivalentColor): Ditto.
+        (WebCore::CanvasStyle::isEquivalentRGBA): Ditto.
+        (WebCore::CanvasStyle::isEquivalentCMYKA): Ditto.
+        (WebCore::CanvasStyle::CanvasStyle): Deleted copy constructor; the compiler
+        can now generate a correct copy or move constructor.
+        (WebCore::CanvasStyle::~CanvasStyle): Deleted. Compiler generates this
+        properly now without help from us.
+        (WebCore::CanvasStyle::operator=): Deleted. The compiler can now generate
+        a correct copy of move assignment operator.
+        (WebCore::CanvasStyle::applyStrokeColor): Updated to take a reference and
+        use the variant.
+        (WebCore::CanvasStyle::applyFillColor): Ditto.
+
+        * html/canvas/CanvasStyle.h: Redid this class to use a variant instead of
+        a type enumeration and a union.
+
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::createVertexArrayOES): Updated use of enum
+        since it's now an enum class.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::WebGL2RenderingContext): Use Ref&& instead of
+        RefPtr&& for the GraphicsContext3D.
+        (WebCore::WebGL2RenderingContext::initializeVertexArrayObjects): Updated enum
+        and also use references.
+        (WebCore::WebGL2RenderingContext::getInternalformatParameter): Use nullptr to
+        return null rather than the old idiom (default-constructed WebGLGetInfo).
+        (WebCore::WebGL2RenderingContext::texStorage2D): Ditto.
+        (WebCore::WebGL2RenderingContext::getQueryParameter): Ditto.
+        (WebCore::WebGL2RenderingContext::getSamplerParameter): Ditto.
+        (WebCore::WebGL2RenderingContext::getSyncParameter): Ditto.
+        (WebCore::WebGL2RenderingContext::getIndexedParameter): Ditto.
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockParameter): Ditto.
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockName): Ditto.
+        (WebCore::WebGL2RenderingContext::createVertexArray): Updated enum and also
+        use reference.
+        (WebCore::WebGL2RenderingContext::getExtension): Rearranged logic in three ways:
+        (1) Moved checks for whether an extension is supported inside the case for that
+        extension, rather than combining the extension name check with the extensions
+        enabled check. (2) Used the new enableSupportedExtension function to simplify
+        many of the checks to avoid repeating the extension name twice. (3) Changed the
+        idiom so we set the pointers to nullptr explicitly, preparing for a future where
+        we might make the extension pointers use std::optional so we can cache a negative
+        for each extension too, not just a positive result.
+        (WebCore::WebGL2RenderingContext::getSupportedExtensions): Use ASCIILiteral.
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter): Use nullptr
+        as above. For non-null types, return the object without converting, letting the
+        WebGLAny class handle things, except for enumerations, which we need to explicitly
+        static_cast to an integral type, and things that will be stored in the variant in
+        a RefPtr, where we use makeRefPtr.
+        (WebCore::WebGL2RenderingContext::validateFramebufferFuncParameters):
+        Simplified and clarified the handling of COLOR_ATTACHMENT.
+        (WebCore::WebGL2RenderingContext::getParameter): Return WebGLAny, same idiom as
+        described above for getFramebufferAttachmentParameter.
+        * html/canvas/WebGL2RenderingContext.h: Updated for above changes.
+
+        * html/canvas/WebGLAny.cpp: Added.
+        (WebCore::toJS): Handles conversion to JavaScript types. This function is based
+        on the existing toJS functions from the two classes that were using WebGLGetInfo.
+        Eventually we can probably just get the bindings to automatically generate this,
+        but there is some work to do to get to that point.
+        * html/canvas/WebGLAny.h: Added. This type, a variant, replaces the WebGLGetInfo
+        class. Also includes the toJS function, which is the real point of this type, since
+        it's about returning a variant mapped appropriately to JavaScript types.
+
+        * html/canvas/WebGLContextGroup.cpp:
+        (WebCore::WebGLContextGroup::getAGraphicsContext3D): Changed to return a reference.
+        Droped unnecessary local variable with a long type name.
+        (WebCore::WebGLContextGroup::addContext): Take a reference.
+        (WebCore::WebGLContextGroup::removeContext): Ditto.
+        (WebCore::WebGLContextGroup::removeObject): Ditto.
+        (WebCore::WebGLContextGroup::addObject): Ditto.
+        (WebCore::WebGLContextGroup::detachAndRemoveAllObjects): Dropped unnecessary
+        local variable with a long type name.
+        * html/canvas/WebGLContextGroup.h: Updated for above changes.
+
+        * html/canvas/WebGLContextObject.cpp:
+        (WebCore::WebGLContextObject::~WebGLContextObject): Pass references.
+        (WebCore::WebGLContextObject::detachContext): Ditto.
+
+        * html/canvas/WebGLGetInfo.cpp: Removed.
+        * html/canvas/WebGLGetInfo.h: Removed.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext): Take a Ref&& instead
+        of as PassRefPtr.
+        (WebCore::WebGLRenderingContext::initializeVertexArrayObjects): Updated enum
+        and also use references.
+        (WebCore::WebGLRenderingContext::getExtension): Rearranged logic in three ways:
+        (1) Moved checks for whether an extension is supported inside the case for that
+        extension, rather than combining the extension name check with the extensions
+        enabled check. (2) Used the new enableSupportedExtension function to simplify
+        many of the checks to avoid repeating the extension name twice. (3) Changed the
+        idiom so we set the pointers to nullptr explicitly, preparing for a future where
+        we might make the extension pointers use std::optional so we can cache a negative
+        for each extension too, not just a positive result.
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): Use ASCIILiteral.
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter): Use nullptr
+        as above. For non-null types, return the object without converting, letting the
+        WebGLAny class handle things, except for enumerations, which we need to explicitly
+        static_cast to an integral type, and things that will be stored in the variant in
+        a RefPtr, where we use makeRefPtr.
+        (WebCore::WebGLRenderingContext::validateFramebufferFuncParameters):
+        Simplified and clarified the handling of COLOR_ATTACHMENT adding a FIXME about
+        something questionable.
+        (WebCore::WebGLRenderingContext::getParameter): Return WebGLAny, same idiom as
+        described above for getFramebufferAttachmentParameter.
+        * html/canvas/WebGLRenderingContext.h: Updated for above changes.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create): Updated to pass references
+        instead of pointers in a couple cases
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase): Changed graphics
+        context argument type from RefPtr&& to Ref&&. Also moved initialization of scalars
+        from the constructor to the class definition.
+        (WebCore::WebGLRenderingContextBase::~WebGLRenderingContextBase): Pass a reference.
+        (WebCore::WebGLRenderingContextBase::createBuffer): Pass a reference instead of a pointer.
+        (WebCore::WebGLRenderingContextBase::createFramebuffer): Ditto.
+        (WebCore::WebGLRenderingContextBase::createTexture): Ditto.
+        (WebCore::WebGLRenderingContextBase::createProgram): Ditto.
+        (WebCore::WebGLRenderingContextBase::createRenderbuffer): Ditto.
+        (WebCore::WebGLRenderingContextBase::createShader): Ditto.
+        (WebCore::WebGLRenderingContextBase::deleteBuffer): Ditto.
+        (WebCore::WebGLRenderingContextBase::getBufferParameter): Update to use WebGLAny.
+        (WebCore::WebGLRenderingContextBase::getProgramParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getRenderbufferParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getShaderParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getTexParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getUniform): Ditto.
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib): Ditto.
+        (WebCore::WebGLRenderingContextBase::getVertexAttribOffset): Removed unnneed
+        type casts.
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer): Pass a reference.
+        (WebCore::WebGLRenderingContextBase::removeSharedObject): Take a reference.
+        (WebCore::WebGLRenderingContextBase::addSharedObject): Ditto.
+        (WebCore::WebGLRenderingContextBase::removeContextObject): Ditto.
+        (WebCore::WebGLRenderingContextBase::addContextObject): Ditto.
+        (WebCore::WebGLRenderingContextBase::getBooleanParameter): Changed return type;
+        connversion to WebGLAny can happen at the point of use.
+        (WebCore::WebGLRenderingContextBase::getBooleanArrayParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getFloatParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getIntParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getUnsignedIntParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getInt64Parameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getWebGLFloatArrayParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::getWebGLIntArrayParameter): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateBufferDataParameters): Use
+        optional to simplify logic and get rid of a boolean.
+        (WebCore::WebGLRenderingContextBase::enableSupportedExtension): Added.
+        Helper used by the getExtension functions.
+        * html/canvas/WebGLRenderingContextBase.h: Updated for the above changes.
+        Also changed setBoundVertexArrayObject to take a raw pointer instead of
+        as PassRefPtr.
+
+        * html/canvas/WebGLSharedObject.cpp:
+        (WebCore::WebGLSharedObject::~WebGLSharedObject): Pass a reference.
+        (WebCore::WebGLSharedObject::detachContextGroup): Ditto.
+        (WebCore::WebGLSharedObject::getAGraphicsContext3D): Updated since the
+        underlying getAGraphicsContext3D function now returns a reference.
+
+        * html/canvas/WebGLSharedObject.h: Removed many unused "is" virtual functions.
+        * html/canvas/WebGLTransformFeedback.h: Ditto.
+
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        (WebCore::WebGLVertexArrayObject::create): Updated for new type enumeration.
+        (WebCore::WebGLVertexArrayObject::WebGLVertexArrayObject): Ditto.
+        (WebCore::WebGLVertexArrayObject::deleteObjectImpl): Ditto.
+        * html/canvas/WebGLVertexArrayObject.h: Updated for above changes.
+
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        (WebCore::WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase): Updated for new
+        type enumeration and moved initialization to class definition.
+        (WebCore::WebGLVertexArrayObjectBase::setElementArrayBuffer): Changed argument to
+        raw pointer instead of PassRefPtr.
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribState): Changed argument to
+        reference instead of PassRefPtr.
+        (WebCore::WebGLVertexArrayObjectBase::unbindBuffer): Changed arugment type to
+        reference instead of PassRefPtr.
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribDivisor): Removed unneeded
+        local variable.
+        * html/canvas/WebGLVertexArrayObjectBase.h: Updated for above changes.
+        Replaced VAOType with Type. Used class member initialization.
+
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::create): Updated for new type enumeration.
+        (WebCore::WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES): Ditto.
+        (WebCore::WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES) Ditto.:
+        (WebCore::WebGLVertexArrayObjectOES::deleteObjectImpl): Ditto.
+        * html/canvas/WebGLVertexArrayObjectOES.h: Updated for above changes.
+
+        * html/forms/FileIconLoader.cpp:
+        (WebCore::FileIconLoader::iconLoaded): Renamed from notifyFinished. Also changed
+        the name of the function this calls to iconLoaded. Changed the arguemnt to
+        RefPtr&& instead of PassRefPtr.
+        * html/forms/FileIconLoader.h: Updated for above changes.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::attachLater): Use isScriptElement instead of
+        toScriptElementIfPossible.
+        (WebCore::HTMLConstructionSite::insertForeignElement): Ditto.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Pass script
+        element as a Ref rather than RefPtr.
+        (WebCore::HTMLDocumentParser::watchForLoad): Pass a reference instead of a pointer.
+
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScript): Deleted. Moved the code
+        into the single call site, execute ParsingBlockingScripts.
+        (WebCore::HTMLScriptRunner::executePendingScriptAndDispatchEvent): Changed argument
+        type to a reference from a RefPtr; this funtion was not taking ownership. Also remove
+        call to toScriptElementIfPossible,
+        since pending scripts now contains script elements already.
+        (WebCore::HTMLScriptRunner::execute): Changed argument type to Ref<ScriptElement>&&
+        from PassRefPtr<Element>.
+        (WebCore::HTMLScriptRunner::executeParsingBlockingScripts): Moved code here from
+        executeParsingBlockingScript. Also pass a reference.
+        (WebCore::HTMLScriptRunner::executeScriptsWaitingForParsing): Pass a reference.
+        (WebCore::requestPendingScript): Changed argument type to ScriptElement& from
+        Element*.
+        (WebCore::HTMLScriptRunner::requestParsingBlockingScript): Ditto.
+        (WebCore::HTMLScriptRunner::requestDeferredScript): Ditto.
+        (WebCore::HTMLScriptRunner::runScript): Ditto.
+        * html/parser/HTMLScriptRunner.h: Updated for above changes.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::takeScriptToProcess): Changed return type from
+        RefPtr<Element> to RefPtr<ScriptElement>.
+        (WebCore::HTMLTreeBuilder::processEndTag): Downcast the script element to
+        HTMLScriptElement so we can store it as a ScriptElement.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent): Downcast the script
+        element to SVGScriptElement so we can store it as a script element.
+        * html/parser/HTMLTreeBuilder.h: Updated for above changes. Changed the type
+        of m_scriptToProcess to RefPtr<ScriptElement>.
+
+        * html/parser/TextDocumentParser.cpp: Added now-needed include.
+
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::generateViolationReport): Changed return type
+        to Ref from PassRefPtr.
+        * html/parser/XSSAuditorDelegate.h: Updated for above.
+
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::AudioTrack): Take references.
+        (WebCore::AudioTrack::setPrivate): Ditto.
+        (WebCore::AudioTrack::setEnabled): Removed redundant code to do what the
+        private setEnabled function is already going to do.
+        (WebCore::AudioTrack::inbandTrackIndex): Removed assertion since m_private
+        is now a Ref rather than RefPtr.
+        (WebCore::AudioTrack::enabledChanged): Added an early exit so we will only
+        call audioTrackEnabledChanged if m_enabled is actually changing. Also removed
+        the unneeded track private argument.
+        (WebCore::AudioTrack::idChanged): Ditto.
+        (WebCore::AudioTrack::labelChanged): Ditto.
+        (WebCore::AudioTrack::languageChanged): Ditto.
+        (WebCore::AudioTrack::willRemove): Ditto.
+        * html/track/AudioTrack.h: Updated for above changes.
+
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::addDataCue): Removed inband text track private
+        argument. Use contains instead of find/end.
+        (WebCore::InbandDataTextTrack::updateDataCue): Ditto. Use get instead of find/end.
+        (WebCore::InbandDataTextTrack::removeDataCue): Ditto.
+        * html/track/InbandDataTextTrack.h: Updated for above changes.
+
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::InbandGenericTextTrack): Take references.
+        (WebCore::InbandGenericTextTrack::create): Ditto.
+        (WebCore::InbandGenericTextTrack::updateCueFromCueData): Ditto.
+        (WebCore::InbandGenericTextTrack::addGenericCue): Ditto. Also removed unused
+        track private argument.
+        (WebCore::InbandGenericTextTrack::updateGenericCue): Ditto.
+        (WebCore::InbandGenericTextTrack::removeGenericCue): Ditto.
+        (WebCore::InbandGenericTextTrack::parseWebVTTCueData): Ditto.
+        (WebCore::InbandGenericTextTrack::parseWebVTTFileHeader): Ditto.
+        (WebCore::InbandGenericTextTrack::newRegionsParsed): Pass a reference.
+        * html/track/InbandGenericTextTrack.h: Updated for above changes.
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::create): Return a Ref instead of a PassRefPtr. Take
+        references.
+        (WebCore::InbandTextTrack::InbandTextTrack): Ditto.
+        (WebCore::InbandTextTrack::setPrivate): Take a reference instead of a PassRefPtr.
+        (WebCore::InbandTextTrack::isClosedCaptions): Removed check for null since m_private
+        is now a Ref and so never null.
+        (WebCore::InbandTextTrack::isSDH): Ditto.
+        (WebCore::InbandTextTrack::containsOnlyForcedSubtitles): Ditto.
+        (WebCore::InbandTextTrack::isMainProgramContent): Ditto.
+        (WebCore::InbandTextTrack::isEasyToRead): Ditto.
+        (WebCore::InbandTextTrack::inbandTrackIndex): Ditto.
+        (WebCore::InbandTextTrack::inBandMetadataTrackDispatchType): Ditto.
+        (WebCore::InbandTextTrack::idChanged): Removed unneeded track private argument.
+        (WebCore::InbandTextTrack::labelChanged): Ditto.
+        (WebCore::InbandTextTrack::languageChanged): Ditto.
+        (WebCore::InbandTextTrack::willRemove): Ditto.
+        (WebCore::InbandTextTrack::updateKindFromPrivate): Improved switch statement
+        by removing default so we get a warning if we forget to handle a kind value.
+        (WebCore::InbandTextTrack::startTimeVariance): Removed check for null.
+        * html/track/InbandTextTrack.h: Updated for above changes. Changed m_private from
+        a RefPtr to a Ref.
+
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::InbandWebVTTTextTrack): Take references.
+        (WebCore::InbandWebVTTTextTrack::create): Ditto.
+        (WebCore::InbandWebVTTTextTrack::parseWebVTTCueData): Removed unneeded track
+        private arguemnt.
+        (WebCore::InbandWebVTTTextTrack::newRegionsParsed): Pass a reference.
+        * html/track/InbandWebVTTTextTrack.h: Updated for above changes.
+
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newCuesAvailable): Pass references.
+        (WebCore::LoadableTextTrack::newRegionsAvailable): Ditto.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::~TextTrack): Use references.
+        (WebCore::TextTrack::setKind): Ditto.
+        (WebCore::TextTrack::setMode): Ditto.
+        (WebCore::TextTrack::removeAllCues): Ditto.
+        (WebCore::TextTrack::activeCues): Ditto.
+        (WebCore::TextTrack::addCue): Ditto.
+        (WebCore::TextTrack::removeCue): Removed unneeded code to handle a cue
+        that points to a track but is not in that track. Added a call to
+        setIsActive(false) here instead of having the remove function do it.
+        (WebCore::TextTrack::addRegion): Use references.
+        (WebCore::TextTrack::removeRegion): Removed unneeded code to handle a
+        region that points to a track but is not in that track.
+        (WebCore::TextTrack::cueWillChange): Use references.
+        (WebCore::TextTrack::cueDidChange): Ditto.
+        (WebCore::TextTrack::setLanguage): Ditto.
+        * html/track/TextTrack.h: Updated for above changes.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::TextTrackCue): Initialized the data members
+        in the class definition.
+        (WebCore::TextTrackCue::cueIndex): Deleted.
+        (WebCore::TextTrackCue::invalidateCueIndex): Deleted.
+        * html/track/TextTrackCue.h: Updated for the above. Removed m_cueIndex,
+        because it is not a good design to store these and try to keep them up
+        to date.
+
+        * html/track/TextTrackCueList.cpp:
+        (WebCore::compareCues): Added. Helper for sorting and checking sorting.
+        (WebCore::TextTrackCueList::TextTrackCueList): Deleted. Let the compiler
+        generate this.
+        (WebCore::TextTrackCueList::length): Moved to header.
+        (WebCore::TextTrackCueList::cueIndex): Renamed from getCueIndex.
+        Changed return type to unsigned rather than unsigned long.
+        (WebCore::TextTrackCueList::item): Updated for name change.
+        (WebCore::TextTrackCueList::getCueById): Ditto.
+        (WebCore::TextTrackCueList::activeCues): Build the vector directly
+        rather than wastefully adding with TextTrackCueList::add, which will
+        try to sort.
+        (WebCore::TextTrackCueList::add): Take a Ref&& instead of a PassRefPtr.
+        Also, keep sorted using std::upper_bound instead of the recursive
+        binary search this code was using before. Also remove the
+        invalidateCueIndexes call since there are no cue indices any more.
+        Also remove the boolean return value since no caller was using it.
+        (WebCore::TextTrackCueList::remove): Take a reference instead of a
+        pointer. Also remove the boolean return value since no caller was using it.
+        (WebCore::TextTrackCueList::contains): Deleted. Was unused.
+        (WebCore::TextTrackCueList::updateCueIndex): Reimplemented using the
+        std::upper_bound and std::rotate operations. The old code that used
+        remove and add was inefficient and also could cause a cue to be deallocated
+        if something else wasn't holding a reference to the cue. Also changed to take
+        a reference.
+        (WebCore::TextTrackCueList::clear): Deleted. Was unused.
+        (WebCore::TextTrackCueList::invalidateCueIndexes): Deleted. No longer
+        needed since we don't store cue indices in the cues any more.
+        * html/track/TextTrackCueList.h: Updated for the above changes.
+
+        * html/track/VTTRegionList.cpp:
+        (WebCore::VTTRegionList::VTTRegionList): Deleted. Let the compiler
+        generate this.
+        (WebCore::VTTRegionList::length): Moved to header.
+        (WebCore::VTTRegionList::item): Updated for name and type changes.
+        (WebCore::VTTRegionList::getRegionById): Ditto.
+        (WebCore::VTTRegionList::add): Changed to take a Ref&& instead of a
+        PassRefPtr.
+        (WebCore::VTTRegionList::remove): Updated.
+        (WebCore::VTTRegionList::clear): Deleted. Was unused.
+        * html/track/VTTRegionList.h: Updated for the above changes.
+        * html/track/VTTRegionList.idl: Made return values nullable to reflect
+        the actual semantic of the code.
+
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack): Use references.
+        (WebCore::VideoTrack::setPrivate): Ditto.
+        (WebCore::VideoTrack::setSelected): Ditto.
+        (WebCore::VideoTrack::inbandTrackIndex): Removed assertion since m_private
+        is now a Ref instead of a RefPtr.
+        (WebCore::VideoTrack::selectedChanged): Removed unneeded track private argument.
+        (WebCore::VideoTrack::idChanged): Ditto.
+        (WebCore::VideoTrack::labelChanged): Ditto.
+        (WebCore::VideoTrack::languageChanged): Ditto.
+        (WebCore::VideoTrack::willRemove): Ditto.
+        (WebCore::VideoTrack::setKind): Updated to use reference.
+        (WebCore::VideoTrack::setLanguage): Ditto.
+        * html/track/VideoTrack.h: Updated for the above. Changed derivation to private.
+        Removed unneeded defaultKindKeyword.
+
+        * loader/EmptyClients.h: Updated to use reference.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport): Take a Ref&& instead of RefPtr&&.
+        * loader/PingLoader.h: Updated for above change.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::loadIconForFiles): Take a reference.
+        * page/Chrome.h: Updated for above change.
+        * page/ChromeClient.h: Ditto.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation): Use auto.
+
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebPlaybackSessionModelMediaElement::selectAudioMediaOption): Simplified
+        algorithm by removing unneeded direct call to audioTrackEnabledChanged,
+        which will be called by setEnabled and doesn't need to be called again here.
+        (WebPlaybackSessionModelMediaElement::selectLegibleMediaOption): Removed
+        unhelpful assertion and unnneded initialization.
+
+        * platform/graphics/AudioTrackPrivate.h: Removed unnneeed track private
+        argument and initialized data members where they are defined.
+
+        * platform/graphics/InbandTextTrackPrivateClient.h: Use Ref instead of
+        PassRefPtr, initialize data members where they are defined, and removed
+        the unneeded track private arguments from the client functions.
+
+        * platform/graphics/SourceBufferPrivate.h: Fixed functions that were taking
+        AtomicString to take a const& instead. Use Ref&& instead of PassRefPtr.
+
+        * platform/graphics/SourceBufferPrivateClient.h: Removed unneded private pointer
+        arguments from client functions.
+
+        * platform/graphics/TrackPrivateBase.h: Removed unneeded private pointers
+        from client functions.
+        * platform/graphics/VideoTrackPrivate: Ditto.
+
+        * platform/graphics/avfoundation/AudioTrackPrivateAVF.h: Use
+        const AtomicString&.
+
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        (WebCore::InbandMetadataTextTrackPrivateAVF::addDataCue): Updated for change to arguments.
+        (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes): Ditto.
+        (WebCore::InbandMetadataTextTrackPrivateAVF::flushPartialCues): Ditto.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings): Ditto.
+        (WebCore::InbandTextTrackPrivateAVF::resetCueValues): Ditto.
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples): Ditto.
+
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp:
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC):
+        Moved initialization of data memebrs to where they are defined.
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::enabled): Deleted. No longer needed.
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::setEnabled): Changed to use the enabled
+        flag from the base class instead of a separate m_enabled in this class.
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.h:
+        Removed the enabled function and the m_enabled data member.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h: Marked functions
+        final instead of override and updated arguemnts.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset): Updated for change
+        to arguments.
+        (WebCore::SourceBufferPrivateAVFObjC::processCodedFrame): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::appendCompleted): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::hasVideo): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::hasAudio): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::layerDidReceiveError): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::flush): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::seekToTime): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples): Ditto.
+
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h: Updated for
+        changes to arguments.
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample): Ditto.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged): Ditto.
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkNewSample): Ditto.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::append): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::flush): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::enqueueSample): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::isReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::notifyReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::stopAskingForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveInitializationSegment): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveSample): Ditto.
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveAllPendingSamples): Ditto.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h: Ditto.
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockSourceBufferPrivate::append): Ditto.
+        (WebCore::MockSourceBufferPrivate::didReceiveInitializationSegment): Ditto.
+        (WebCore::MockSourceBufferPrivate::didReceiveSample): Ditto.
+        (WebCore::MockSourceBufferPrivate::enqueuedSamplesForTrackID): Ditto.
+        (WebCore::MockSourceBufferPrivate::enqueueSample): Ditto.
+        (WebCore::MockSourceBufferPrivate::hasVideo): Ditto.
+        (WebCore::MockSourceBufferPrivate::hasAudio): Ditto.
+        (WebCore::MockSourceBufferPrivate::fastSeekTimeForMediaTime): Ditto.
+        (WebCore::MockSourceBufferPrivate::seekToTime): Ditto.
+        * platform/mock/mediasource/MockSourceBufferPrivate.h: Ditto.
+
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot): Take raw pointer instead
+        of PassRefPtr.
+        * rendering/RenderSnapshottedPlugIn.h: Updated for above change.
+
+        * svg/SVGScriptElement.h: Added using to resolve the ambiguity with the
+        ref/deref from SVGElement and from ScriptElement.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::notifyFinished): Updated to simplify since
+        the pending script now has a script element.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs): Use isSciprtElement instead
+        of toScriptElementIfPossible.
+        (WebCore::XMLDocumentParser::endElementNs): Ditto. Also use downcastScriptElement.
+
 2017-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move editing history scripts to WebCore PrivateHeaders

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioTrackPrivateAVF_h
-#define AudioTrackPrivateAVF_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -35,7 +34,6 @@ namespace WebCore {
 class AudioTrackPrivateAVF : public AudioTrackPrivate {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVF)
 public:
-
     virtual Kind kind() const { return m_kind; }
     virtual AtomicString id() const { return m_id; }
     virtual AtomicString label() const { return m_label; }
@@ -44,26 +42,20 @@ public:
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }
-    void setId(AtomicString newId) { m_id = newId; }
-    void setLabel(AtomicString label) { m_label = label; }
-    void setLanguage(AtomicString language) { m_language = language; }
+    void setId(const AtomicString& newId) { m_id = newId; }
+    void setLabel(const AtomicString& label) { m_label = label; }
+    void setLanguage(const AtomicString& language) { m_language = language; }
     void setTrackIndex(int index) { m_index = index; }
 
-    Kind m_kind;
+    Kind m_kind { None };
     AtomicString m_id;
     AtomicString m_label;
     AtomicString m_language;
-    int m_index;
+    int m_index { 0 };
 
-    AudioTrackPrivateAVF()
-        : m_kind(None)
-        , m_index(0)
-    {
-    }
+    AudioTrackPrivateAVF() = default;
 };
 
 }
 
 #endif // ENABLE(VIDEO_TRACK)
-
-#endif // AudioTrackPrivateAVF_h

@@ -23,8 +23,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandMetadataTextTrackPrivateGStreamer_h
-#define InbandMetadataTextTrackPrivateGStreamer_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
 
@@ -50,13 +49,13 @@ public:
     void addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
     {
         ASSERT(cueFormat() == Data);
-        client()->addDataCue(this, start, end, data, length);
+        client()->addDataCue(start, end, data, length);
     }
 
     void addGenericCue(PassRefPtr<GenericCueData> data)
     {
         ASSERT(cueFormat() == Generic);
-        client()->addGenericCue(this, data);
+        client()->addGenericCue(*data);
     }
 
 private:
@@ -76,5 +75,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(VIDEO_TRACK)
-
-#endif // InbandMetadataTextTrackPrivateGStreamer_h

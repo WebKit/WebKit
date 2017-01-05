@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,7 +54,7 @@ public:
     using HTMLPlugInImageElement::ref;
     using HTMLPlugInImageElement::deref;
 
-    using FormAssociatedElement::form;
+    HTMLFormElement* form() const final { return FormAssociatedElement::form(); }
 
 private:
     HTMLObjectElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -91,7 +91,6 @@ private:
 
     void refFormAssociatedElement() final { ref(); }
     void derefFormAssociatedElement() final { deref(); }
-    HTMLFormElement* virtualForm() const final;
 
     FormNamedItem* asFormNamedItem() final { return this; }
     HTMLObjectElement& asHTMLElement() final { return *this; }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Cable Television Labs Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,23 +33,21 @@
 namespace WebCore {
 
 class DataCue;
-class InbandTextTrackPrivate;
-class SerializedPlatformRepresentation;
 
 class InbandDataTextTrack final : public InbandTextTrack {
 public:
-    static Ref<InbandDataTextTrack> create(ScriptExecutionContext*, TextTrackClient*, RefPtr<InbandTextTrackPrivate>&&);
+    static Ref<InbandDataTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandDataTextTrack();
 
 private:
-    InbandDataTextTrack(ScriptExecutionContext*, TextTrackClient*, RefPtr<InbandTextTrackPrivate>&&);
+    InbandDataTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
 
-    void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, const void*, unsigned) final;
+    void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned) final;
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>, const String&) final;
-    void updateDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) final;
-    void removeDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) final;
+    void addDataCue(const MediaTime& start, const MediaTime& end, Ref<SerializedPlatformRepresentation>&&, const String&) final;
+    void updateDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&) final;
+    void removeDataCue(const MediaTime& start, const MediaTime& end, SerializedPlatformRepresentation&) final;
     ExceptionOr<void> removeCue(TextTrackCue&) final;
 
     HashMap<RefPtr<SerializedPlatformRepresentation>, RefPtr<DataCue>> m_incompleteCueMap;

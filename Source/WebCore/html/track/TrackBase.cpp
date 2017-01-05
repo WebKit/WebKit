@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,7 @@ void MediaTrackBase::setKindInternal(const AtomicString& kind)
     if (isValidKind(kind))
         m_kind = kind;
     else
-        m_kind = defaultKindKeyword();
+        m_kind = emptyAtom;
 }
 
 } // namespace WebCore

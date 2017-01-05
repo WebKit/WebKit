@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -116,7 +116,7 @@ public:
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
+    virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader&);
 
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);

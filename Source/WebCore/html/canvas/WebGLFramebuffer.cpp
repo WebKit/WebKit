@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "WebGLFramebuffer.h"
 
 #if ENABLE(WEBGL)
-
-#include "WebGLFramebuffer.h"
 
 #include "Extensions3D.h"
 #include "WebGLContextGroup.h"
@@ -606,6 +605,9 @@ void WebGLFramebuffer::drawBuffers(const Vector<GC3Denum>& bufs)
 void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
 {
 #if ENABLE(WEBGL2)
+    // FIXME: The logic here seems wrong. If we don't have WebGL 2 enabled at all, then
+    // we skip the m_webglDrawBuffers check. But if we do have WebGL 2 enabled, then we
+    // perform this check, for WebGL 1 contexts only.
     if (!context()->m_webglDrawBuffers && !context()->isWebGL2())
         return;
 #endif

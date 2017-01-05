@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,21 +28,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SourceBufferPrivate_h
-#define SourceBufferPrivate_h
+
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayer.h"
-#include "TimeRanges.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class MediaSample;
 class SourceBufferPrivateClient;
-class TimeRanges;
 
 class SourceBufferPrivate : public RefCounted<SourceBufferPrivate> {
 public:
@@ -58,17 +54,16 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
 
-    virtual void flush(AtomicString) { }
-    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) { }
-    virtual bool isReadyForMoreSamples(AtomicString) { return false; }
+    virtual void flush(const AtomicString&) { }
+    virtual void enqueueSample(Ref<MediaSample>&&, const AtomicString&) { }
+    virtual bool isReadyForMoreSamples(const AtomicString&) { return false; }
     virtual void setActive(bool) { }
-    virtual void stopAskingForMoreSamples(AtomicString) { }
-    virtual void notifyClientWhenReadyForMoreSamples(AtomicString) { }
+    virtual void stopAskingForMoreSamples(const AtomicString&) { }
+    virtual void notifyClientWhenReadyForMoreSamples(const AtomicString&) { }
 
-    virtual Vector<String> enqueuedSamplesForTrackID(AtomicString) { return {}; }
+    virtual Vector<String> enqueuedSamplesForTrackID(const AtomicString&) { return { }; }
 };
 
 }
 
-#endif
 #endif

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -263,11 +263,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !asyncAttributeValue() && !m_forceAsync) {
         m_willExecuteInOrder = true;
         ASSERT(m_loadableScript);
-        document.scriptRunner()->queueScriptForExecution(this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
+        document.scriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
     } else if (hasSourceAttribute() || scriptType == ScriptType::Module) {
         ASSERT(m_loadableScript);
         ASSERT(asyncAttributeValue() || m_forceAsync);
-        document.scriptRunner()->queueScriptForExecution(this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
+        document.scriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
     } else if (!hasSourceAttribute() && m_parserInserted && !document.haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic);
         m_willBeParserExecuted = true;
@@ -487,15 +487,26 @@ String ScriptElement::scriptContent() const
     return result.toString();
 }
 
-ScriptElement* toScriptElementIfPossible(Element* element)
+void ScriptElement::ref()
 {
-    if (is<HTMLScriptElement>(*element))
+    m_element.ref();
+}
+
+void ScriptElement::deref()
+{
+    m_element.deref();
+}
+
+bool isScriptElement(Element& element)
+{
+    return is<HTMLScriptElement>(element) || is<SVGScriptElement>(element);
+}
+
+ScriptElement& downcastScriptElement(Element& element)
+{
+    if (is<HTMLScriptElement>(element))
         return downcast<HTMLScriptElement>(element);
-
-    if (is<SVGScriptElement>(*element))
-        return downcast<SVGScriptElement>(element);
-
-    return nullptr;
+    return downcast<SVGScriptElement>(element);
 }
 
 }

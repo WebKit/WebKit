@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2009, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,7 +70,7 @@ public:
     bool rendererIsNeeded(const RenderStyle&) override;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
 
-    HTMLFormElement* form() const { return virtualForm(); }
+    WEBCORE_EXPORT virtual HTMLFormElement* form() const;
 
     WEBCORE_EXPORT const AtomicString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomicString&);
@@ -132,8 +132,6 @@ private:
     String nodeName() const final;
 
     void mapLanguageAttributeToLocale(const AtomicString&, MutableStyleProperties&);
-
-    virtual HTMLFormElement* virtualForm() const;
 
     ExceptionOr<Ref<DocumentFragment>> textToFragment(const String&);
 

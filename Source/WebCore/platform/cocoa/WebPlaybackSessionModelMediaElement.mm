@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,24 +28,24 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#import "AudioTrackList.h"
+#import "Event.h"
+#import "EventListener.h"
+#import "EventNames.h"
+#import "HTMLElement.h"
+#import "HTMLMediaElement.h"
 #import "Logging.h"
 #import "MediaControlsHost.h"
+#import "Page.h"
+#import "PageGroup.h"
+#import "SoftLinking.h"
+#import "TextTrackList.h"
+#import "TimeRanges.h"
 #import "WebVideoFullscreenInterface.h"
 #import <QuartzCore/CoreAnimation.h>
-#import <WebCore/AudioTrackList.h>
-#import <WebCore/Event.h>
-#import <WebCore/EventListener.h>
-#import <WebCore/EventNames.h>
-#import <WebCore/HTMLElement.h>
-#import <WebCore/HTMLMediaElement.h>
-#import <WebCore/Page.h>
-#import <WebCore/PageGroup.h>
-#import <WebCore/SoftLinking.h>
-#import <WebCore/TextTrackList.h>
-#import <WebCore/TimeRanges.h>
 #import <wtf/NeverDestroyed.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 WebPlaybackSessionModelMediaElement::WebPlaybackSessionModelMediaElement()
     : EventListener(EventListener::CPPEventListenerType)
@@ -233,17 +233,8 @@ void WebPlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t select
     if (!m_mediaElement)
         return;
 
-    ASSERT(selectedAudioIndex < std::numeric_limits<size_t>::max());
-    AudioTrack* selectedAudioTrack = nullptr;
-
-    for (size_t index = 0; index < m_audioTracksForMenu.size(); ++index) {
-        auto& audioTrack = m_audioTracksForMenu[index];
-        audioTrack->setEnabled(index == static_cast<size_t>(selectedAudioIndex));
-        if (audioTrack->enabled())
-            selectedAudioTrack = audioTrack.get();
-    }
-
-    m_mediaElement->audioTrackEnabledChanged(selectedAudioTrack);
+    for (size_t i = 0, size = m_audioTracksForMenu.size(); i < size; ++i)
+        m_audioTracksForMenu[i]->setEnabled(i == selectedAudioIndex);
 }
 
 void WebPlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t index)
@@ -251,9 +242,7 @@ void WebPlaybackSessionModelMediaElement::selectLegibleMediaOption(uint64_t inde
     if (!m_mediaElement)
         return;
 
-    ASSERT(index < std::numeric_limits<size_t>::max());
-    TextTrack* textTrack = nullptr;
-
+    TextTrack* textTrack;
     if (index < m_legibleTracksForMenu.size())
         textTrack = m_legibleTracksForMenu[static_cast<size_t>(index)].get();
     else
@@ -469,6 +458,8 @@ String WebPlaybackSessionModelMediaElement::externalPlaybackLocalizedDeviceName(
 bool WebPlaybackSessionModelMediaElement::wirelessVideoPlaybackDisabled() const
 {
     return m_mediaElement && m_mediaElement->mediaSession().wirelessVideoPlaybackDisabled(*m_mediaElement);
+}
+
 }
 
 #endif

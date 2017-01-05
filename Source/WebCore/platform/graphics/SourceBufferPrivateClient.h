@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,11 @@
 
 namespace WebCore {
 
-class SourceBufferPrivate;
 class AudioTrackPrivate;
-class VideoTrackPrivate;
 class InbandTextTrackPrivate;
 class MediaSample;
 class MediaDescription;
+class VideoTrackPrivate;
 
 class SourceBufferPrivateClient {
 public:
@@ -64,23 +63,19 @@ public:
         };
         Vector<TextTrackInformation> textTracks;
     };
-    virtual void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&) = 0;
-    virtual void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, MediaSample&) = 0;
-    virtual bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const = 0;
-    virtual bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const = 0;
+    virtual void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) = 0;
+    virtual void sourceBufferPrivateDidReceiveSample(MediaSample&) = 0;
+    virtual bool sourceBufferPrivateHasAudio() const = 0;
+    virtual bool sourceBufferPrivateHasVideo() const = 0;
 
-    virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) = 0;
+    virtual void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID) = 0;
 
-    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime& time, const MediaTime&, const MediaTime&) { return time; }
-    virtual void sourceBufferPrivateSeekToTime(SourceBufferPrivate*, const MediaTime&) { };
+    virtual MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime& time, const MediaTime&, const MediaTime&) { return time; }
+    virtual void sourceBufferPrivateSeekToTime(const MediaTime&) { };
 
-    enum AppendResult {
-        AppendSucceeded,
-        ReadStreamFailed,
-        ParsingFailed,
-    };
-    virtual void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) = 0;
-    virtual void sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int errocCode) = 0;
+    enum AppendResult { AppendSucceeded, ReadStreamFailed, ParsingFailed };
+    virtual void sourceBufferPrivateAppendComplete(AppendResult) = 0;
+    virtual void sourceBufferPrivateDidReceiveRenderingError(int errorCode) = 0;
 };
 
 }

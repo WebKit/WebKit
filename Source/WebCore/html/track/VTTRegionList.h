@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,35 +29,42 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "VTTRegion.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class VTTRegionList : public RefCounted<VTTRegionList> {
 public:
-    static Ref<VTTRegionList> create()
-    {
-        return adoptRef(*new VTTRegionList);
-    }
+    static Ref<VTTRegionList> create();
 
-    ~VTTRegionList() { }
-
-    unsigned long length() const;
-
+    unsigned length() const;
     VTTRegion* item(unsigned index) const;
     VTTRegion* getRegionById(const String&) const;
 
-    void add(PassRefPtr<VTTRegion>);
-    bool remove(VTTRegion*);
+    void add(Ref<VTTRegion>&&);
+    void remove(VTTRegion&);
 
 private:
-    VTTRegionList();
+    VTTRegionList() = default;
+
     void clear();
 
-    Vector<RefPtr<VTTRegion>> m_list;
+    Vector<Ref<VTTRegion>> m_vector;
 };
+
+inline Ref<VTTRegionList> VTTRegionList::create()
+{
+    return adoptRef(*new VTTRegionList);
+}
+
+inline unsigned VTTRegionList::length() const
+{
+    return m_vector.size();
+}
+
+inline void VTTRegionList::clear()
+{
+    m_vector.clear();
+}
 
 } // namespace WebCore
 

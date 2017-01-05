@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "WebGLContextGroup.h"
 
 #if ENABLE(WEBGL)
-
-#include "WebGLContextGroup.h"
 
 #include "GraphicsContext3D.h"
 #include "WebGLRenderingContextBase.h"
@@ -37,11 +36,7 @@ namespace WebCore {
 
 Ref<WebGLContextGroup> WebGLContextGroup::create()
 {
-    return adoptRef(*new WebGLContextGroup());
-}
-
-WebGLContextGroup::WebGLContextGroup()
-{
+    return adoptRef(*new WebGLContextGroup);
 }
 
 WebGLContextGroup::~WebGLContextGroup()
@@ -49,43 +44,40 @@ WebGLContextGroup::~WebGLContextGroup()
     detachAndRemoveAllObjects();
 }
 
-GraphicsContext3D* WebGLContextGroup::getAGraphicsContext3D()
+GraphicsContext3D& WebGLContextGroup::getAGraphicsContext3D()
 {
     ASSERT(!m_contexts.isEmpty());
-    HashSet<WebGLRenderingContextBase*>::iterator it = m_contexts.begin();
-    return (*it)->graphicsContext3D();
+    return *(*m_contexts.begin())->graphicsContext3D();
 }
 
-void WebGLContextGroup::addContext(WebGLRenderingContextBase* context)
+void WebGLContextGroup::addContext(WebGLRenderingContextBase& context)
 {
-    m_contexts.add(context);
+    m_contexts.add(&context);
 }
 
-void WebGLContextGroup::removeContext(WebGLRenderingContextBase* context)
+void WebGLContextGroup::removeContext(WebGLRenderingContextBase& context)
 {
     // We must call detachAndRemoveAllObjects before removing the last context.
-    if (m_contexts.size() == 1 && m_contexts.contains(context))
+    if (m_contexts.size() == 1 && m_contexts.contains(&context))
         detachAndRemoveAllObjects();
 
-    m_contexts.remove(context);
+    m_contexts.remove(&context);
 }
 
-void WebGLContextGroup::removeObject(WebGLSharedObject* object)
+void WebGLContextGroup::removeObject(WebGLSharedObject& object)
 {
-    m_groupObjects.remove(object);
+    m_groupObjects.remove(&object);
 }
 
-void WebGLContextGroup::addObject(WebGLSharedObject* object)
+void WebGLContextGroup::addObject(WebGLSharedObject& object)
 {
-    m_groupObjects.add(object);
+    m_groupObjects.add(&object);
 }
 
 void WebGLContextGroup::detachAndRemoveAllObjects()
 {
-    while (!m_groupObjects.isEmpty()) {
-        HashSet<WebGLSharedObject*>::iterator it = m_groupObjects.begin();
-        (*it)->detachContextGroup();
-    }
+    while (!m_groupObjects.isEmpty())
+        (*m_groupObjects.begin())->detachContextGroup();
 }
 
 void WebGLContextGroup::loseContextGroup(WebGLRenderingContextBase::LostContextMode mode)

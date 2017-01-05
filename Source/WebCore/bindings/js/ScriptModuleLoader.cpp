@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -135,6 +135,10 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
 
 JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue initiator)
 {
+    // FIXME: What guarantees these are true? Why don't we need to check?
+    ASSERT(JSC::jsDynamicCast<JSElement*>(initiator));
+    ASSERT(isScriptElement(JSC::jsDynamicCast<JSElement*>(initiator)->wrapped()));
+
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
     auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
     auto deferred = DeferredPromise::create(globalObject, jsPromise);
@@ -156,17 +160,12 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
         return jsPromise.promise();
     }
 
-    ASSERT_WITH_MESSAGE(JSC::jsDynamicCast<JSElement*>(initiator), "Initiator should be an JSElement");
-    auto* scriptElement = toScriptElementIfPossible(&JSC::jsCast<JSElement*>(initiator)->wrapped());
-    ASSERT_WITH_MESSAGE(scriptElement, "Initiator should be ScriptElement.");
-
     if (auto* frame = m_document.frame()) {
         auto loader = CachedModuleScriptLoader::create(*this, deferred.get());
         m_loaders.add(loader.copyRef());
-        if (!loader->load(*scriptElement, completedURL)) {
+        if (!loader->load(downcastScriptElement(JSC::jsCast<JSElement*>(initiator)->wrapped()), completedURL)) {
             loader->clearClient();
             m_loaders.remove(WTFMove(loader));
-
             deferred->reject(frame->script().moduleLoaderAlreadyReportedErrorSymbol());
             return jsPromise.promise();
         }

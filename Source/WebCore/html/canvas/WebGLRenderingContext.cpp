@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "WebGLRenderingContext.h"
 
 #if ENABLE(WEBGL)
-#include "WebGLRenderingContext.h"
 
 #include "ANGLEInstancedArrays.h"
 #include "CachedImage.h"
@@ -70,16 +70,16 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement& passedCanvas, Gr
 {
 }
 
-WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement& passedCanvas, PassRefPtr<GraphicsContext3D> context,
-    GraphicsContext3DAttributes attributes) : WebGLRenderingContextBase(passedCanvas, context, attributes)
+WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement& passedCanvas, Ref<GraphicsContext3D>&& context, GraphicsContext3DAttributes attributes)
+    : WebGLRenderingContextBase(passedCanvas, WTFMove(context), attributes)
 {
     initializeVertexArrayObjects();
 }
 
 void WebGLRenderingContext::initializeVertexArrayObjects()
 {
-    m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(*this, WebGLVertexArrayObjectOES::VAOTypeDefault);
-    addContextObject(m_defaultVertexArrayObject.get());
+    m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(*this, WebGLVertexArrayObjectOES::Type::Default);
+    addContextObject(*m_defaultVertexArrayObject);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
     if (!isGLES2Compliant())
         initVertexAttrib0();
@@ -90,99 +90,91 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     if (isContextLostOrPending())
         return nullptr;
     
-    if (equalIgnoringASCIICase(name, "EXT_blend_minmax")
-        && m_context->getExtensions().supports("GL_EXT_blend_minmax")) {
+    if (equalIgnoringASCIICase(name, "EXT_blend_minmax")) {
         if (!m_extBlendMinMax) {
-            m_context->getExtensions().ensureEnabled("GL_EXT_blend_minmax");
-            m_extBlendMinMax = std::make_unique<EXTBlendMinMax>(*this);
+            m_extBlendMinMax = enableSupportedExtension("GL_EXT_blend_minmax")
+                ? std::make_unique<EXTBlendMinMax>(*this) : nullptr;
         }
         return m_extBlendMinMax.get();
     }
-    if (equalIgnoringASCIICase(name, "EXT_sRGB")
-        && m_context->getExtensions().supports("GL_EXT_sRGB")) {
+    if (equalIgnoringASCIICase(name, "EXT_sRGB")) {
         if (!m_extsRGB) {
-            m_context->getExtensions().ensureEnabled("GL_EXT_sRGB");
-            m_extsRGB = std::make_unique<EXTsRGB>(*this);
+            m_extsRGB = enableSupportedExtension("GL_EXT_sRGB")
+                ? std::make_unique<EXTsRGB>(*this) : nullptr;
         }
         return m_extsRGB.get();
     }
-    if (equalIgnoringASCIICase(name, "EXT_frag_depth")
-        && m_context->getExtensions().supports("GL_EXT_frag_depth")) {
+    if (equalIgnoringASCIICase(name, "EXT_frag_depth")) {
         if (!m_extFragDepth) {
-            m_context->getExtensions().ensureEnabled("GL_EXT_frag_depth");
-            m_extFragDepth = std::make_unique<EXTFragDepth>(*this);
+            m_extFragDepth = enableSupportedExtension("GL_EXT_frag_depth")
+                ? std::make_unique<EXTFragDepth>(*this) : nullptr;
         }
         return m_extFragDepth.get();
     }
-    if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod")
-        && (m_context->getExtensions().supports("GL_EXT_shader_texture_lod") || m_context->getExtensions().supports("GL_ARB_shader_texture_lod"))) {
+    if (equalIgnoringASCIICase(name, "EXT_shader_texture_lod")) {
         if (!m_extShaderTextureLOD) {
-            m_context->getExtensions().ensureEnabled("GL_EXT_shader_texture_lod");
-            m_extShaderTextureLOD = std::make_unique<EXTShaderTextureLOD>(*this);
+            if (!(m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_shader_texture_lod" }) || m_context->getExtensions().supports(ASCIILiteral { "GL_ARB_shader_texture_lod" })))
+                m_extShaderTextureLOD = nullptr;
+            else {
+                m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_EXT_shader_texture_lod" });
+                m_extShaderTextureLOD = std::make_unique<EXTShaderTextureLOD>(*this);
+            }
         }
         return m_extShaderTextureLOD.get();
     }
-    if ((equalIgnoringASCIICase(name, "EXT_texture_filter_anisotropic") || equalIgnoringASCIICase(name, "WEBKIT_EXT_texture_filter_anisotropic"))
-        && m_context->getExtensions().supports("GL_EXT_texture_filter_anisotropic")) {
+    if (equalIgnoringASCIICase(name, "EXT_texture_filter_anisotropic") || equalIgnoringASCIICase(name, "WEBKIT_EXT_texture_filter_anisotropic")) {
         if (!m_extTextureFilterAnisotropic) {
-            m_context->getExtensions().ensureEnabled("GL_EXT_texture_filter_anisotropic");
-            m_extTextureFilterAnisotropic = std::make_unique<EXTTextureFilterAnisotropic>(*this);
+            m_extTextureFilterAnisotropic = enableSupportedExtension("GL_EXT_texture_filter_anisotropic")
+                ? std::make_unique<EXTTextureFilterAnisotropic>(*this) : nullptr;
         }
         return m_extTextureFilterAnisotropic.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_standard_derivatives")
-        && m_context->getExtensions().supports("GL_OES_standard_derivatives")) {
+    if (equalIgnoringASCIICase(name, "OES_standard_derivatives")) {
         if (!m_oesStandardDerivatives) {
-            m_context->getExtensions().ensureEnabled("GL_OES_standard_derivatives");
-            m_oesStandardDerivatives = std::make_unique<OESStandardDerivatives>(*this);
+            m_oesStandardDerivatives = enableSupportedExtension("GL_OES_standard_derivatives")
+                ? std::make_unique<OESStandardDerivatives>(*this) : nullptr;
         }
         return m_oesStandardDerivatives.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_texture_float")
-        && m_context->getExtensions().supports("GL_OES_texture_float")) {
+    if (equalIgnoringASCIICase(name, "OES_texture_float")) {
         if (!m_oesTextureFloat) {
-            m_context->getExtensions().ensureEnabled("GL_OES_texture_float");
-            m_oesTextureFloat = std::make_unique<OESTextureFloat>(*this);
+            m_oesTextureFloat = enableSupportedExtension("GL_OES_texture_float")
+                ? std::make_unique<OESTextureFloat>(*this) : nullptr;
         }
         return m_oesTextureFloat.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_texture_float_linear")
-        && m_context->getExtensions().supports("GL_OES_texture_float_linear")) {
+    if (equalIgnoringASCIICase(name, "OES_texture_float_linear")) {
         if (!m_oesTextureFloatLinear) {
-            m_context->getExtensions().ensureEnabled("GL_OES_texture_float_linear");
-            m_oesTextureFloatLinear = std::make_unique<OESTextureFloatLinear>(*this);
+            m_oesTextureFloatLinear = enableSupportedExtension("GL_OES_texture_float_linear")
+                ? std::make_unique<OESTextureFloatLinear>(*this) : nullptr;
         }
         return m_oesTextureFloatLinear.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_texture_half_float")
-        && m_context->getExtensions().supports("GL_OES_texture_half_float")) {
+    if (equalIgnoringASCIICase(name, "OES_texture_half_float")) {
         if (!m_oesTextureHalfFloat) {
-            m_context->getExtensions().ensureEnabled("GL_OES_texture_half_float");
-            m_oesTextureHalfFloat = std::make_unique<OESTextureHalfFloat>(*this);
+            m_oesTextureHalfFloat = enableSupportedExtension("GL_OES_texture_half_float")
+                ? std::make_unique<OESTextureHalfFloat>(*this) : nullptr;
         }
         return m_oesTextureHalfFloat.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_texture_half_float_linear")
-        && m_context->getExtensions().supports("GL_OES_texture_half_float_linear")) {
+    if (equalIgnoringASCIICase(name, "OES_texture_half_float_linear")) {
         if (!m_oesTextureHalfFloatLinear) {
-            m_context->getExtensions().ensureEnabled("GL_OES_texture_half_float_linear");
-            m_oesTextureHalfFloatLinear = std::make_unique<OESTextureHalfFloatLinear>(*this);
+            m_oesTextureHalfFloatLinear = enableSupportedExtension("GL_OES_texture_half_float_linear")
+                ? std::make_unique<OESTextureHalfFloatLinear>(*this) : nullptr;
         }
         return m_oesTextureHalfFloatLinear.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_vertex_array_object")
-        && m_context->getExtensions().supports("GL_OES_vertex_array_object")) {
+    if (equalIgnoringASCIICase(name, "OES_vertex_array_object")) {
         if (!m_oesVertexArrayObject) {
-            m_context->getExtensions().ensureEnabled("GL_OES_vertex_array_object");
-            m_oesVertexArrayObject = std::make_unique<OESVertexArrayObject>(*this);
+            m_oesVertexArrayObject = enableSupportedExtension("GL_OES_vertex_array_object")
+                ? std::make_unique<OESVertexArrayObject>(*this) : nullptr;
         }
         return m_oesVertexArrayObject.get();
     }
-    if (equalIgnoringASCIICase(name, "OES_element_index_uint")
-        && m_context->getExtensions().supports("GL_OES_element_index_uint")) {
+    if (equalIgnoringASCIICase(name, "OES_element_index_uint")) {
         if (!m_oesElementIndexUint) {
-            m_context->getExtensions().ensureEnabled("GL_OES_element_index_uint");
-            m_oesElementIndexUint = std::make_unique<OESElementIndexUint>(*this);
+            m_oesElementIndexUint = enableSupportedExtension("GL_OES_element_index_uint")
+                ? std::make_unique<OESElementIndexUint>(*this) : nullptr;
         }
         return m_oesElementIndexUint.get();
     }
@@ -191,41 +183,53 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglLoseContext = std::make_unique<WebGLLoseContext>(*this);
         return m_webglLoseContext.get();
     }
-    if ((equalIgnoringASCIICase(name, "WEBKIT_WEBGL_compressed_texture_atc"))
-        && WebGLCompressedTextureATC::supported(*this)) {
-        if (!m_webglCompressedTextureATC)
-            m_webglCompressedTextureATC = std::make_unique<WebGLCompressedTextureATC>(*this);
+    if (equalIgnoringASCIICase(name, "WEBKIT_WEBGL_compressed_texture_atc")) {
+        if (!m_webglCompressedTextureATC) {
+            m_webglCompressedTextureATC = WebGLCompressedTextureATC::supported(*this)
+                ? std::make_unique<WebGLCompressedTextureATC>(*this) : nullptr;
+        }
         return m_webglCompressedTextureATC.get();
     }
-    if ((equalIgnoringASCIICase(name, "WEBKIT_WEBGL_compressed_texture_pvrtc"))
-        && WebGLCompressedTexturePVRTC::supported(*this)) {
-        if (!m_webglCompressedTexturePVRTC)
-            m_webglCompressedTexturePVRTC = std::make_unique<WebGLCompressedTexturePVRTC>(*this);
+    if (equalIgnoringASCIICase(name, "WEBKIT_WEBGL_compressed_texture_pvrtc")) {
+        if (!m_webglCompressedTexturePVRTC) {
+            m_webglCompressedTexturePVRTC = WebGLCompressedTexturePVRTC::supported(*this)
+                ? std::make_unique<WebGLCompressedTexturePVRTC>(*this) : nullptr;
+        }
         return m_webglCompressedTexturePVRTC.get();
     }
-    if (equalIgnoringASCIICase(name, "WEBGL_compressed_texture_s3tc")
-        && WebGLCompressedTextureS3TC::supported(*this)) {
-        if (!m_webglCompressedTextureS3TC)
-            m_webglCompressedTextureS3TC = std::make_unique<WebGLCompressedTextureS3TC>(*this);
+    if (equalIgnoringASCIICase(name, "WEBGL_compressed_texture_s3tc")) {
+        if (!m_webglCompressedTextureS3TC) {
+            m_webglCompressedTextureS3TC = WebGLCompressedTextureS3TC::supported(*this)
+                ? std::make_unique<WebGLCompressedTextureS3TC>(*this) : nullptr;
+        }
         return m_webglCompressedTextureS3TC.get();
     }
-    if (equalIgnoringASCIICase(name, "WEBGL_depth_texture")
-        && WebGLDepthTexture::supported(*graphicsContext3D())) {
-        if (!m_webglDepthTexture)
-            m_webglDepthTexture = std::make_unique<WebGLDepthTexture>(*this);
+    if (equalIgnoringASCIICase(name, "WEBGL_depth_texture")) {
+        if (!m_webglDepthTexture) {
+            m_webglDepthTexture = WebGLDepthTexture::supported(*m_context)
+                ? std::make_unique<WebGLDepthTexture>(*this) : nullptr;
+        }
         return m_webglDepthTexture.get();
     }
-    if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers") && supportsDrawBuffers()) {
+    if (equalIgnoringASCIICase(name, "WEBGL_draw_buffers")) {
         if (!m_webglDrawBuffers) {
-            m_context->getExtensions().ensureEnabled("GL_EXT_draw_buffers");
-            m_webglDrawBuffers = std::make_unique<WebGLDrawBuffers>(*this);
+            if (!supportsDrawBuffers())
+                m_webglDrawBuffers = nullptr;
+            else {
+                m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_EXT_draw_buffers" });
+                m_webglDrawBuffers = std::make_unique<WebGLDrawBuffers>(*this);
+            }
         }
         return m_webglDrawBuffers.get();
     }
-    if (equalIgnoringASCIICase(name, "ANGLE_instanced_arrays") && ANGLEInstancedArrays::supported(*this)) {
+    if (equalIgnoringASCIICase(name, "ANGLE_instanced_arrays")) {
         if (!m_angleInstancedArrays) {
-            m_context->getExtensions().ensureEnabled("GL_ANGLE_instanced_arrays");
-            m_angleInstancedArrays = std::make_unique<ANGLEInstancedArrays>(*this);
+            if (!ANGLEInstancedArrays::supported(*this))
+                m_angleInstancedArrays = nullptr;
+            else {
+                m_context->getExtensions().ensureEnabled(ASCIILiteral { "GL_ANGLE_instanced_arrays" });
+                m_angleInstancedArrays = std::make_unique<ANGLEInstancedArrays>(*this);
+            }
         }
         return m_angleInstancedArrays.get();
     }
@@ -234,10 +238,11 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglDebugRendererInfo = std::make_unique<WebGLDebugRendererInfo>(*this);
         return m_webglDebugRendererInfo.get();
     }
-    if (equalIgnoringASCIICase(name, "WEBGL_debug_shaders")
-        && m_context->getExtensions().supports("GL_ANGLE_translated_shader_source")) {
-        if (!m_webglDebugShaders)
-            m_webglDebugShaders = std::make_unique<WebGLDebugShaders>(*this);
+    if (equalIgnoringASCIICase(name, "WEBGL_debug_shaders")) {
+        if (!m_webglDebugShaders) {
+            m_webglDebugShaders = m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" })
+                ? std::make_unique<WebGLDebugShaders>(*this) : nullptr;
+        }
         return m_webglDebugShaders.get();
     }
 
@@ -251,109 +256,109 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_isPendingPolicyResolution)
         return result;
     
-    if (m_context->getExtensions().supports("GL_EXT_blend_minmax"))
-        result.append("EXT_blend_minmax");
-    if (m_context->getExtensions().supports("GL_EXT_sRGB"))
-        result.append("EXT_sRGB");
-    if (m_context->getExtensions().supports("GL_EXT_frag_depth"))
-        result.append("EXT_frag_depth");
-    if (m_context->getExtensions().supports("GL_OES_texture_float"))
-        result.append("OES_texture_float");
-    if (m_context->getExtensions().supports("GL_OES_texture_float_linear"))
-        result.append("OES_texture_float_linear");
-    if (m_context->getExtensions().supports("GL_OES_texture_half_float"))
-        result.append("OES_texture_half_float");
-    if (m_context->getExtensions().supports("GL_OES_texture_half_float_linear"))
-        result.append("OES_texture_half_float_linear");
-    if (m_context->getExtensions().supports("GL_OES_standard_derivatives"))
-        result.append("OES_standard_derivatives");
-    if (m_context->getExtensions().supports("GL_EXT_shader_texture_lod") || m_context->getExtensions().supports("GL_ARB_shader_texture_lod"))
-        result.append("EXT_shader_texture_lod");
-    if (m_context->getExtensions().supports("GL_EXT_texture_filter_anisotropic"))
-        result.append("EXT_texture_filter_anisotropic");
-    if (m_context->getExtensions().supports("GL_OES_vertex_array_object"))
-        result.append("OES_vertex_array_object");
-    if (m_context->getExtensions().supports("GL_OES_element_index_uint"))
-        result.append("OES_element_index_uint");
-    result.append("WEBGL_lose_context");
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_blend_minmax" }))
+        result.append(ASCIILiteral { "EXT_blend_minmax" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_sRGB" }))
+        result.append(ASCIILiteral { "EXT_sRGB" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_frag_depth" }))
+        result.append(ASCIILiteral { "EXT_frag_depth" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_float" }))
+        result.append(ASCIILiteral { "OES_texture_float" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_float_linear" }))
+        result.append(ASCIILiteral { "OES_texture_float_linear" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_half_float" }))
+        result.append(ASCIILiteral { "OES_texture_half_float" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_texture_half_float_linear" }))
+        result.append(ASCIILiteral { "OES_texture_half_float_linear" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_standard_derivatives" }))
+        result.append(ASCIILiteral { "OES_standard_derivatives" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_shader_texture_lod" }) || m_context->getExtensions().supports(ASCIILiteral { "GL_ARB_shader_texture_lod" }))
+        result.append(ASCIILiteral { "EXT_shader_texture_lod" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_EXT_texture_filter_anisotropic" }))
+        result.append(ASCIILiteral { "EXT_texture_filter_anisotropic" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_vertex_array_object" }))
+        result.append(ASCIILiteral { "OES_vertex_array_object" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_OES_element_index_uint" }))
+        result.append(ASCIILiteral { "OES_element_index_uint" });
+    result.append(ASCIILiteral { "WEBGL_lose_context" });
     if (WebGLCompressedTextureATC::supported(*this))
-        result.append("WEBKIT_WEBGL_compressed_texture_atc");
+        result.append(ASCIILiteral { "WEBKIT_WEBGL_compressed_texture_atc" });
     if (WebGLCompressedTexturePVRTC::supported(*this))
-        result.append("WEBKIT_WEBGL_compressed_texture_pvrtc");
+        result.append(ASCIILiteral { "WEBKIT_WEBGL_compressed_texture_pvrtc" });
     if (WebGLCompressedTextureS3TC::supported(*this))
         result.append("WEBGL_compressed_texture_s3tc");
-    if (WebGLDepthTexture::supported(*graphicsContext3D()))
-        result.append("WEBGL_depth_texture");
+    if (WebGLDepthTexture::supported(*m_context))
+        result.append(ASCIILiteral { "WEBGL_depth_texture" });
     if (supportsDrawBuffers())
-        result.append("WEBGL_draw_buffers");
+        result.append(ASCIILiteral { "WEBGL_draw_buffers" });
     if (ANGLEInstancedArrays::supported(*this))
-        result.append("ANGLE_instanced_arrays");
-    if (m_context->getExtensions().supports("GL_ANGLE_translated_shader_source"))
-        result.append("WEBGL_debug_shaders");
-    result.append("WEBGL_debug_renderer_info");
+        result.append(ASCIILiteral { "ANGLE_instanced_arrays" });
+    if (m_context->getExtensions().supports(ASCIILiteral { "GL_ANGLE_translated_shader_source" }))
+        result.append(ASCIILiteral { "WEBGL_debug_shaders" });
+    result.append(ASCIILiteral { "WEBGL_debug_renderer_info" });
 
     return result;
 }
 
-WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname)
+WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname)
 {
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
-        return WebGLGetInfo();
+        return nullptr;
     
     if (!m_framebufferBinding || !m_framebufferBinding->object()) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
-        return WebGLGetInfo();
+        return nullptr;
     }
     
-    WebGLSharedObject* object = m_framebufferBinding->getAttachmentObject(attachment);
+    auto* object = m_framebufferBinding->getAttachmentObject(attachment);
     if (!object) {
         if (pname == GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE)
-            return WebGLGetInfo(GraphicsContext3D::NONE);
+            return static_cast<unsigned>(GraphicsContext3D::NONE);
         // OpenGL ES 2.0 specifies INVALID_ENUM in this case, while desktop GL
         // specifies INVALID_OPERATION.
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
-        return WebGLGetInfo();
+        return nullptr;
     }
     
-    ASSERT(object->isTexture() || object->isRenderbuffer());
     if (object->isTexture()) {
         switch (pname) {
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-            return WebGLGetInfo(GraphicsContext3D::TEXTURE);
+            return static_cast<unsigned>(GraphicsContext3D::TEXTURE);
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return WebGLGetInfo(PassRefPtr<WebGLTexture>(reinterpret_cast<WebGLTexture*>(object)));
+            return makeRefPtr(reinterpret_cast<WebGLTexture&>(*object));
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
         case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
             GC3Dint value = 0;
             m_context->getFramebufferAttachmentParameteriv(target, attachment, pname, &value);
-            return WebGLGetInfo(value);
+            return value;
         }
         default:
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
-            return WebGLGetInfo();
+            return nullptr;
         }
     } else {
+        ASSERT(object->isRenderbuffer());
         switch (pname) {
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-            return WebGLGetInfo(GraphicsContext3D::RENDERBUFFER);
+            return static_cast<unsigned>(GraphicsContext3D::RENDERBUFFER);
         case GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(reinterpret_cast<WebGLRenderbuffer*>(object)));
+            return makeRefPtr(reinterpret_cast<WebGLRenderbuffer&>(*object));
         case Extensions3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
             if (!m_extsRGB) {
                 synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
-                return WebGLGetInfo();
+                return nullptr;
             }
             WebGLRenderbuffer* renderBuffer = reinterpret_cast<WebGLRenderbuffer*>(object);
             GC3Denum renderBufferFormat = renderBuffer->getInternalFormat();
             ASSERT(renderBufferFormat != Extensions3D::SRGB_EXT && renderBufferFormat != Extensions3D::SRGB_ALPHA_EXT);
             if (renderBufferFormat == Extensions3D::SRGB8_ALPHA8_EXT)
-                return WebGLGetInfo(Extensions3D::SRGB_EXT);
-            return WebGLGetInfo(GraphicsContext3D::LINEAR);
+                return static_cast<unsigned>(Extensions3D::SRGB_EXT);
+            return static_cast<unsigned>(GraphicsContext3D::LINEAR);
         }
         default:
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
-            return WebGLGetInfo();
+            return nullptr;
         }
     }
 }
@@ -364,21 +369,22 @@ bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functi
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid target");
         return false;
     }
+    // FIXME: Why does this return true unconditionally for COLOR_ATTACHMENT0,
+    // but false for other COLOR_ATTACHMENT values if m_webglDrawBuffers is false?
     switch (attachment) {
     case GraphicsContext3D::COLOR_ATTACHMENT0:
     case GraphicsContext3D::DEPTH_ATTACHMENT:
     case GraphicsContext3D::STENCIL_ATTACHMENT:
     case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-        break;
+        return true;
     default:
         if (m_webglDrawBuffers
-            && attachment > GraphicsContext3D::COLOR_ATTACHMENT0
+            && attachment >= GraphicsContext3D::COLOR_ATTACHMENT0
             && attachment < static_cast<GC3Denum>(GraphicsContext3D::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
-            break;
+            return true;
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
         return false;
     }
-    return true;
 }
     
 void WebGLRenderingContext::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
@@ -455,7 +461,7 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
         return;
     }
     const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContext3D(), &reason)) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(m_context.get(), &reason)) {
         synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
         return;
     }
@@ -464,11 +470,11 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
     markContextChanged();
 }
 
-WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
+WebGLAny WebGLRenderingContext::getParameter(GC3Denum pname)
 {
     if (isContextLostOrPending())
-        return WebGLGetInfo();
-    const int intZero = 0;
+        return nullptr;
+
     switch (pname) {
     case GraphicsContext3D::ACTIVE_TEXTURE:
         return getUnsignedIntParameter(pname);
@@ -479,7 +485,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::ALPHA_BITS:
         return getIntParameter(pname);
     case GraphicsContext3D::ARRAY_BUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundArrayBuffer));
+        return m_boundArrayBuffer;
     case GraphicsContext3D::BLEND:
         return getBooleanParameter(pname);
     case GraphicsContext3D::BLEND_COLOR:
@@ -503,16 +509,16 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::COLOR_WRITEMASK:
         return getBooleanArrayParameter(pname);
     case GraphicsContext3D::COMPRESSED_TEXTURE_FORMATS:
-        return WebGLGetInfo(PassRefPtr<Uint32Array>(Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size())));
+        return Uint32Array::create(m_compressedTextureFormats.data(), m_compressedTextureFormats.size());
     case GraphicsContext3D::CULL_FACE:
         return getBooleanParameter(pname);
     case GraphicsContext3D::CULL_FACE_MODE:
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::CURRENT_PROGRAM:
-        return WebGLGetInfo(PassRefPtr<WebGLProgram>(m_currentProgram));
+        return m_currentProgram;
     case GraphicsContext3D::DEPTH_BITS:
         if (!m_framebufferBinding && !m_attributes.depth)
-            return WebGLGetInfo(intZero);
+            return 0;
         return getIntParameter(pname);
     case GraphicsContext3D::DEPTH_CLEAR_VALUE:
         return getFloatParameter(pname);
@@ -527,9 +533,9 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::DITHER:
         return getBooleanParameter(pname);
     case GraphicsContext3D::ELEMENT_ARRAY_BUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLBuffer>(m_boundVertexArrayObject->getElementArrayBuffer()));
+        return makeRefPtr(m_boundVertexArrayObject->getElementArrayBuffer());
     case GraphicsContext3D::FRAMEBUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLFramebuffer>(m_framebufferBinding));
+        return m_framebufferBinding;
     case GraphicsContext3D::FRONT_FACE:
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::GENERATE_MIPMAP_HINT:
@@ -577,9 +583,9 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::RED_BITS:
         return getIntParameter(pname);
     case GraphicsContext3D::RENDERBUFFER_BINDING:
-        return WebGLGetInfo(PassRefPtr<WebGLRenderbuffer>(m_renderbufferBinding));
+        return m_renderbufferBinding;
     case GraphicsContext3D::RENDERER:
-        return WebGLGetInfo(String("WebKit WebGL"));
+        return String { ASCIILiteral { "WebKit WebGL" } };
     case GraphicsContext3D::SAMPLE_BUFFERS:
         return getIntParameter(pname);
     case GraphicsContext3D::SAMPLE_COVERAGE_INVERT:
@@ -593,7 +599,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContext3D::SHADING_LANGUAGE_VERSION:
-        return WebGLGetInfo("WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContext3D::SHADING_LANGUAGE_VERSION) + ")");
+        return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContext3D::SHADING_LANGUAGE_VERSION) + ")";
     case GraphicsContext3D::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BACK_FUNC:
@@ -610,7 +616,7 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
         return getUnsignedIntParameter(pname);
     case GraphicsContext3D::STENCIL_BITS:
         if (!m_framebufferBinding && !m_attributes.stencil)
-            return WebGLGetInfo(intZero);
+            return 0;
         return getIntParameter(pname);
     case GraphicsContext3D::STENCIL_CLEAR_VALUE:
         return getIntParameter(pname);
@@ -633,61 +639,61 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
     case GraphicsContext3D::SUBPIXEL_BITS:
         return getIntParameter(pname);
     case GraphicsContext3D::TEXTURE_BINDING_2D:
-        return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].texture2DBinding));
+        return m_textureUnits[m_activeTextureUnit].texture2DBinding;
     case GraphicsContext3D::TEXTURE_BINDING_CUBE_MAP:
-        return WebGLGetInfo(PassRefPtr<WebGLTexture>(m_textureUnits[m_activeTextureUnit].textureCubeMapBinding));
+        return m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
     case GraphicsContext3D::UNPACK_ALIGNMENT:
         return getIntParameter(pname);
     case GraphicsContext3D::UNPACK_FLIP_Y_WEBGL:
-        return WebGLGetInfo(m_unpackFlipY);
+        return m_unpackFlipY;
     case GraphicsContext3D::UNPACK_PREMULTIPLY_ALPHA_WEBGL:
-        return WebGLGetInfo(m_unpackPremultiplyAlpha);
+        return m_unpackPremultiplyAlpha;
     case GraphicsContext3D::UNPACK_COLORSPACE_CONVERSION_WEBGL:
-        return WebGLGetInfo(m_unpackColorspaceConversion);
+        return m_unpackColorspaceConversion;
     case GraphicsContext3D::VENDOR:
-        return WebGLGetInfo(String("WebKit"));
+        return String { ASCIILiteral { "WebKit" } };
     case GraphicsContext3D::VERSION:
-        return WebGLGetInfo("WebGL 1.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")");
+        return "WebGL 1.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")";
     case GraphicsContext3D::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
     case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
         if (m_oesStandardDerivatives)
             return getUnsignedIntParameter(Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, OES_standard_derivatives not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
         if (m_webglDebugRendererInfo)
-            return WebGLGetInfo(m_context->getString(GraphicsContext3D::RENDERER));
+            return m_context->getString(GraphicsContext3D::RENDERER);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
         if (m_webglDebugRendererInfo)
-            return WebGLGetInfo(m_context->getString(GraphicsContext3D::VENDOR));
+            return m_context->getString(GraphicsContext3D::VENDOR);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_debug_renderer_info not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     case Extensions3D::VERTEX_ARRAY_BINDING_OES: // OES_vertex_array_object
         if (m_oesVertexArrayObject) {
-            if (!m_boundVertexArrayObject->isDefaultObject())
-                return WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES>(static_cast<WebGLVertexArrayObjectOES*>(m_boundVertexArrayObject.get())));
-            return WebGLGetInfo();
+            if (m_boundVertexArrayObject->isDefaultObject())
+                return nullptr;
+            return makeRefPtr(static_cast<WebGLVertexArrayObjectOES&>(*m_boundVertexArrayObject));
         }
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, OES_vertex_array_object not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     case Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
         if (m_extTextureFilterAnisotropic)
             return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     case Extensions3D::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
         if (m_webglDrawBuffers)
-            return WebGLGetInfo(getMaxColorAttachments());
+            return getMaxColorAttachments();
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     case Extensions3D::MAX_DRAW_BUFFERS_EXT:
         if (m_webglDrawBuffers)
-            return WebGLGetInfo(getMaxDrawBuffers());
+            return getMaxDrawBuffers();
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, WEBGL_draw_buffers not enabled");
-        return WebGLGetInfo();
+        return nullptr;
     default:
         if (m_webglDrawBuffers
             && pname >= Extensions3D::DRAW_BUFFER0_EXT
@@ -697,10 +703,10 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname)
                 value = m_framebufferBinding->getDrawBuffer(pname);
             else // emulated backbuffer
                 value = m_backDrawBuffer;
-            return WebGLGetInfo(value);
+            return value;
         }
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name");
-        return WebGLGetInfo();
+        return nullptr;
     }
 }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -49,6 +49,7 @@ class AudioTrackList;
 class BufferSource;
 class MediaSource;
 class PlatformTimeRanges;
+class SourceBufferPrivate;
 class TextTrackList;
 class TimeRanges;
 class VideoTrackList;
@@ -64,9 +65,9 @@ public:
     ExceptionOr<void> setTimestampOffset(double);
 
 #if ENABLE(VIDEO_TRACK)
-    VideoTrackList* videoTracks();
-    AudioTrackList* audioTracks();
-    TextTrackList* textTracks();
+    VideoTrackList& videoTracks();
+    AudioTrackList& audioTracks();
+    TextTrackList& textTracks();
 #endif
 
     double appendWindowStart() const;
@@ -124,25 +125,24 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&) final;
-    void sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, MediaSample&) final;
-    bool sourceBufferPrivateHasAudio(const SourceBufferPrivate*) const final;
-    bool sourceBufferPrivateHasVideo(const SourceBufferPrivate*) const final;
-    void sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferPrivate*, AtomicString trackID) final;
-    MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(SourceBufferPrivate*, const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) final;
-    void sourceBufferPrivateAppendComplete(SourceBufferPrivate*, AppendResult) final;
-    void sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int errorCode) final;
+    void sourceBufferPrivateDidReceiveInitializationSegment(const InitializationSegment&) final;
+    void sourceBufferPrivateDidReceiveSample(MediaSample&) final;
+    bool sourceBufferPrivateHasAudio() const final;
+    bool sourceBufferPrivateHasVideo() const final;
+    void sourceBufferPrivateDidBecomeReadyForMoreSamples(const AtomicString& trackID) final;
+    MediaTime sourceBufferPrivateFastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold) final;
+    void sourceBufferPrivateAppendComplete(AppendResult) final;
+    void sourceBufferPrivateDidReceiveRenderingError(int errorCode) final;
 
-    void audioTrackEnabledChanged(AudioTrack*) final;
+    void audioTrackEnabledChanged(AudioTrack&) final;
+    void videoTrackSelectedChanged(VideoTrack&) final;
 
-    void videoTrackSelectedChanged(VideoTrack*) final;
-
-    void textTrackKindChanged(TextTrack*) final;
-    void textTrackModeChanged(TextTrack*) final;
-    void textTrackAddCues(TextTrack*, const TextTrackCueList*) final;
-    void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) final;
-    void textTrackAddCue(TextTrack*, TextTrackCue&) final;
-    void textTrackRemoveCue(TextTrack*, TextTrackCue&) final;
+    void textTrackKindChanged(TextTrack&) final;
+    void textTrackModeChanged(TextTrack&) final;
+    void textTrackAddCues(TextTrack&, const TextTrackCueList&) final;
+    void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) final;
+    void textTrackAddCue(TextTrack&, TextTrackCue&) final;
+    void textTrackRemoveCue(TextTrack&, TextTrackCue&) final;
 
     EventTargetInterface eventTargetInterface() const final { return SourceBufferEventTargetInterfaceType; }
 
@@ -157,8 +157,8 @@ private:
 
     bool validateInitializationSegment(const InitializationSegment&);
 
-    void reenqueueMediaForTime(TrackBuffer&, AtomicString trackID, const MediaTime&);
-    void provideMediaData(TrackBuffer&, AtomicString trackID);
+    void reenqueueMediaForTime(TrackBuffer&, const AtomicString& trackID, const MediaTime&);
+    void provideMediaData(TrackBuffer&, const AtomicString& trackID);
     void didDropSample();
     void evictCodedFrames(size_t newDataSize);
     size_t maximumBufferSize() const;

@@ -1,11 +1,9 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
- * Copyright (C) 2013 Cable Television Labs, Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
  * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
@@ -27,47 +25,49 @@
 
 #pragma once
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(WEBGL)
 
-#include <wtf/MediaTime.h>
-#include <wtf/text/AtomicString.h>
+#include "WebGLBuffer.h"
+#include "WebGLFramebuffer.h"
+#include "WebGLProgram.h"
+#include "WebGLRenderbuffer.h"
+#include "WebGLTexture.h"
+#include "WebGLVertexArrayObjectOES.h"
+#include <runtime/Float32Array.h>
+#include <runtime/Int32Array.h>
+#include <runtime/Uint32Array.h>
+#include <runtime/Uint8Array.h>
+
+#if ENABLE(WEBGL2)
+#include "WebGLVertexArrayObject.h"
+#endif
+
+namespace JSC {
+class ExecState;
+class JSValue;
+}
 
 namespace WebCore {
 
-class TrackPrivateBaseClient {
-public:
-    virtual ~TrackPrivateBaseClient() { }
-    virtual void idChanged(const AtomicString&) = 0;
-    virtual void labelChanged(const AtomicString&) = 0;
-    virtual void languageChanged(const AtomicString&) = 0;
-    virtual void willRemove() = 0;
-};
+class JSDOMGlobalObject;
 
-class TrackPrivateBase : public RefCounted<TrackPrivateBase> {
-    WTF_MAKE_NONCOPYABLE(TrackPrivateBase);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    virtual ~TrackPrivateBase() = default;
+using WebGLAny = Variant<std::nullptr_t, bool, int, unsigned, long long, float, String, Vector<bool>,
+    RefPtr<Float32Array>,
+    RefPtr<Int32Array>,
+    RefPtr<Uint32Array>,
+    RefPtr<Uint8Array>,
+    RefPtr<WebGLBuffer>,
+    RefPtr<WebGLFramebuffer>,
+    RefPtr<WebGLProgram>,
+    RefPtr<WebGLRenderbuffer>,
+    RefPtr<WebGLTexture>,
+    RefPtr<WebGLVertexArrayObjectOES>
+#if ENABLE(WEBGL2)
+    , RefPtr<WebGLVertexArrayObject>
+#endif
+>;
 
-    virtual TrackPrivateBaseClient* client() const = 0;
-
-    virtual AtomicString id() const { return emptyAtom; }
-    virtual AtomicString label() const { return emptyAtom; }
-    virtual AtomicString language() const { return emptyAtom; }
-
-    virtual int trackIndex() const { return 0; }
-
-    virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
-
-    void willBeRemoved()
-    {
-        if (auto* client = this->client())
-            client->willRemove();
-    }
-
-protected:
-    TrackPrivateBase() = default;
-};
+JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, const WebGLAny&);
 
 } // namespace WebCore
 

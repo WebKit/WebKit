@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -65,9 +65,6 @@ public:
     MediaTime endMediaTime() const { return m_endTime; }
     void setEndTime(const MediaTime&);
 
-    int cueIndex();
-    void invalidateCueIndex();
-
     bool isActive();
     virtual void setIsActive(bool);
 
@@ -82,9 +79,6 @@ public:
 
     enum CueMatchRules { MatchAllFields, IgnoreDuration };
     virtual bool isEqual(const TextTrackCue&, CueMatchRules) const;
-private:
-    virtual bool cueContentsMatch(const TextTrackCue&) const;
-public:
     virtual bool doesExtendCue(const TextTrackCue&) const;
 
     void willChange();
@@ -108,13 +102,14 @@ private:
     EventTargetInterface eventTargetInterface() const final { return TextTrackCueEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
 
+    virtual bool cueContentsMatch(const TextTrackCue&) const;
+
     String m_id;
     MediaTime m_startTime;
     MediaTime m_endTime;
-    int m_cueIndex;
-    int m_processingCueChanges;
+    int m_processingCueChanges { 0 };
 
-    TextTrack* m_track;
+    TextTrack* m_track { nullptr };
 
     ScriptExecutionContext& m_scriptExecutionContext;
 

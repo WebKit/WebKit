@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,33 +24,33 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEBGL) && ENABLE(WEBGL2)
 #include "WebGLVertexArrayObject.h"
+
+#if ENABLE(WEBGL2)
 
 #include "WebGL2RenderingContext.h"
 #include "WebGLContextGroup.h"
 
 namespace WebCore {
     
-Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase& ctx, VAOType type)
+Ref<WebGLVertexArrayObject> WebGLVertexArrayObject::create(WebGLRenderingContextBase& context, Type type)
 {
-    return adoptRef(*new WebGLVertexArrayObject(ctx, type));
+    return adoptRef(*new WebGLVertexArrayObject(context, type));
 }
 
 WebGLVertexArrayObject::~WebGLVertexArrayObject()
 {
-    deleteObject(0);
+    deleteObject(nullptr);
 }
 
-WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& ctx, VAOType type)
-    : WebGLVertexArrayObjectBase(ctx, type)
+WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& context, Type type)
+    : WebGLVertexArrayObjectBase(context, type)
 {
     switch (m_type) {
-    case VAOTypeDefault:
+    case Type::Default:
         break;
-    default:
-        setObject(context()->graphicsContext3D()->createVertexArray());
+    case Type::User:
+        setObject(this->context()->graphicsContext3D()->createVertexArray());
         break;
     }
 }
@@ -58,9 +58,9 @@ WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& ctx, V
 void WebGLVertexArrayObject::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
 {
     switch (m_type) {
-    case VAOTypeDefault:
+    case Type::Default:
         break;
-    default:
+    case Type::User:
         context3d->deleteVertexArray(object);
         break;
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
@@ -237,8 +237,7 @@ void XMLDocumentParser::notifyFinished(PendingScript& pendingScript)
     m_pendingScript = nullptr;
     pendingScript.clearClient();
 
-    auto& scriptElement = *toScriptElementIfPossible(&pendingScript.element());
-    scriptElement.executePendingScript(pendingScript);
+    pendingScript.element().executePendingScript(pendingScript);
 
     if (!isDetached() && !m_requestingScript)
         resumeParsing();

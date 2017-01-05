@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "AVFoundationSPI.h"
 #import "AudioTrackPrivateMediaStream.h"
 #import "Clock.h"
+#import "CoreMediaSoftLink.h"
 #import "GraphicsContext.h"
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
@@ -48,8 +49,6 @@
 #endif
 
 #pragma mark - Soft Linking
-
-#import "CoreMediaSoftLink.h"
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
@@ -380,10 +379,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 #endif
 
     for (const auto& track : m_audioTrackMap.values()) {
-        if (!track->enabled() || !track->streamTrack()->preview())
+        if (!track->enabled() || !track->streamTrack().preview())
             continue;
 
-        track->streamTrack()->preview()->play();
+        track->streamTrack().preview()->play();
     }
 
     m_haveEverPlayed = true;
@@ -411,10 +410,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 #endif
 
     for (const auto& track : m_audioTrackMap.values()) {
-        if (!track->enabled() || !track->streamTrack()->preview())
+        if (!track->enabled() || !track->streamTrack().preview())
             continue;
 
-        track->streamTrack()->preview()->pause();
+        track->streamTrack().preview()->pause();
     }
 
     updateDisplayMode();
@@ -435,10 +434,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::internalSetVolume(float volume, bool 
         return;
 
     for (const auto& track : m_audioTrackMap.values()) {
-        if (!track->enabled() || !track->streamTrack()->preview())
+        if (!track->enabled() || !track->streamTrack().preview())
             continue;
 
-        track->streamTrack()->preview()->setVolume(volume);
+        track->streamTrack().preview()->setVolume(volume);
     }
 }
 
@@ -617,6 +616,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
 }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
+
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, std::function<void()> completionHandler)
 {
     m_videoFullscreenLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, completionHandler);
@@ -626,6 +626,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoFullscreenFrame(FloatRect fra
 {
     m_videoFullscreenLayerManager->setVideoFullscreenFrame(frame);
 }
+
 #endif
 
 template <typename RefT, typename PassRefT>
@@ -644,12 +645,12 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
     }
 
     for (const auto& track : trackMap.values()) {
-        MediaStreamTrackPrivate* streamTrack = track->streamTrack();
-        if (currentTracks.contains(streamTrack))
+        auto& streamTrack = track->streamTrack();
+        if (currentTracks.contains(&streamTrack))
             continue;
 
         removedTracks.append(track);
-        trackMap.remove(streamTrack->id());
+        trackMap.remove(streamTrack.id());
     }
 
     for (auto& track : addedPrivateTracks) {
@@ -664,12 +665,12 @@ void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Ty
 
     for (auto& track : removedTracks) {
         (player->*removedFunction)(*track);
-        track->streamTrack()->removeObserver(*trackObserver);
+        track->streamTrack().removeObserver(*trackObserver);
     }
 
     for (auto& track : addedTracks) {
         (player->*addedFunction)(*track);
-        track->streamTrack()->addObserver(*trackObserver);
+        track->streamTrack().addObserver(*trackObserver);
     }
 }
 
@@ -680,14 +681,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     std::function<void(RefPtr<AudioTrackPrivateMediaStream>, int)> enableAudioTrack = [this](auto track, int index)
     {
         track->setTrackIndex(index);
-        track->setEnabled(track->streamTrack()->enabled() && !track->streamTrack()->muted());
+        track->setEnabled(track->streamTrack().enabled() && !track->streamTrack().muted());
     };
     updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, m_player, &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack, enableAudioTrack, (MediaStreamTrackPrivate::Observer*) this);
 
     std::function<void(RefPtr<VideoTrackPrivateMediaStream>, int)> enableVideoTrack = [this](auto track, int index)
     {
         track->setTrackIndex(index);
-        bool selected = track->streamTrack() == m_mediaStreamPrivate->activeVideoTrack();
+        bool selected = &track->streamTrack() == m_mediaStreamPrivate->activeVideoTrack();
         track->setSelected(selected);
 
         if (selected)

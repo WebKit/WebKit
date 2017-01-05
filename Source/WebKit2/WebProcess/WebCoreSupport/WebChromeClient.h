@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -182,7 +182,7 @@ private:
 #endif
 
     void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) override;
-    void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader*) override;
+    void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader&) override;
 
 #if !PLATFORM(IOS)
     void setCursor(const WebCore::Cursor&) override;

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode);
     void setSelectionRange(int start, int end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     WEBCORE_EXPORT void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
-    PassRefPtr<Range> selection() const;
+    RefPtr<Range> selection() const;
     String selectedText() const;
 
     void dispatchFormControlChangeEvent() final;

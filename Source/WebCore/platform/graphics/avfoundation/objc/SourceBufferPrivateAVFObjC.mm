@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -151,10 +151,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     RetainPtr<AVAsset*> protectedAsset = asset;
     callOnMainThread([parent = _parent, protectedAsset = WTFMove(protectedAsset)] {
@@ -166,10 +163,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset withDiscontinuity:(BOOL)discontinuity
 {
     UNUSED_PARAM(discontinuity);
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     RetainPtr<AVAsset*> protectedAsset = asset;
     callOnMainThread([parent = _parent, protectedAsset = WTFMove(protectedAsset)] {
@@ -180,10 +174,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didFailToParseStreamDataWithError:(NSError *)error
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     RetainPtr<NSError> protectedError = error;
     callOnMainThread([parent = _parent, protectedError = WTFMove(protectedError)] {
@@ -194,10 +185,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)sample forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType flags:(AVStreamDataParserOutputMediaDataFlags)flags
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     RetainPtr<CMSampleBufferRef> protectedSample = sample;
     String mediaType = nsMediaType;
@@ -209,10 +197,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didReachEndOfTrackWithTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     String mediaType = nsMediaType;
     callOnMainThread([parent = _parent, trackID, mediaType] {
@@ -223,10 +208,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 - (void)streamDataParserWillProvideContentKeyRequestInitializationData:(AVStreamDataParser *)streamDataParser forTrackID:(CMPersistentTrackID)trackID
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     // We must call synchronously to the main thread, as the AVStreamSession must be associated
     // with the streamDataParser before the delegate method returns.
@@ -238,10 +220,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSampleBufferDisplayLayerFailedToDecodeNotific
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeyRequestInitializationData:(NSData *)initData forTrackID:(CMPersistentTrackID)trackID
 {
-#if ASSERT_DISABLED
-    UNUSED_PARAM(streamDataParser);
-#endif
-    ASSERT(streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
 
     OSObjectPtr<dispatch_semaphore_t> hasSessionSemaphore = adoptOSObject(dispatch_semaphore_create(0));
     callOnMainThread([parent = _parent, protectedInitData = RetainPtr<NSData>(initData), trackID, hasSessionSemaphore] {
@@ -449,10 +428,6 @@ SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:this]))
     , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
     , m_mediaSource(parent)
-    , m_client(0)
-    , m_parsingSucceeded(true)
-    , m_enabledVideoTrackID(-1)
-    , m_protectedTrackID(-1)
 {
 }
 
@@ -512,10 +487,10 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
         m_mediaSource->player()->characteristicsChanged();
 
     if (m_client)
-        m_client->sourceBufferPrivateDidReceiveInitializationSegment(this, segment);
+        m_client->sourceBufferPrivateDidReceiveInitializationSegment(segment);
 }
 
-void SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError(NSError* error)
+void SourceBufferPrivateAVFObjC::didFailToParseStreamDataWithError(NSError *error)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(error);
@@ -531,10 +506,8 @@ struct ProcessCodedFrameInfo {
     const String& mediaType;
 };
 
-void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
+void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned)
 {
-    UNUSED_PARAM(flags);
-
     processCodedFrame(trackID, sampleBuffer, mediaType);
 }
 
@@ -549,16 +522,14 @@ bool SourceBufferPrivateAVFObjC::processCodedFrame(int trackID, CMSampleBufferRe
     if (m_client) {
         Ref<MediaSample> mediaSample = MediaSampleAVFObjC::create(sampleBuffer, trackID);
         LOG(MediaSourceSamples, "SourceBufferPrivateAVFObjC::processCodedFrame(%p) - sample(%s)", this, toString(mediaSample.get()).utf8().data());
-        m_client->sourceBufferPrivateDidReceiveSample(this, mediaSample);
+        m_client->sourceBufferPrivateDidReceiveSample(mediaSample);
     }
 
     return true;
 }
 
-void SourceBufferPrivateAVFObjC::didReachEndOfTrackWithTrackID(int trackID, const String& mediaType)
+void SourceBufferPrivateAVFObjC::didReachEndOfTrackWithTrackID(int, const String&)
 {
-    UNUSED_PARAM(mediaType);
-    UNUSED_PARAM(trackID);
     notImplemented();
 }
 
@@ -590,7 +561,6 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     if (!m_mediaSource)
         return;
 
-    UNUSED_PARAM(trackID);
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(%p) - track:%d", this, trackID);
     m_protectedTrackID = trackID;
@@ -607,6 +577,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 #else
     UNUSED_PARAM(initData);
+    UNUSED_PARAM(trackID);
     UNUSED_PARAM(hasSessionSemaphore);
 #endif
 }
@@ -659,7 +630,7 @@ void SourceBufferPrivateAVFObjC::appendCompleted()
         m_mediaSource->player()->setLoadingProgresssed(true);
 
     if (m_client)
-        m_client->sourceBufferPrivateAppendComplete(this, m_parsingSucceeded ? SourceBufferPrivateClient::AppendSucceeded : SourceBufferPrivateClient::ParsingFailed);
+        m_client->sourceBufferPrivateAppendComplete(m_parsingSucceeded ? SourceBufferPrivateClient::AppendSucceeded : SourceBufferPrivateClient::ParsingFailed);
 }
 
 void SourceBufferPrivateAVFObjC::abort()
@@ -735,18 +706,12 @@ void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyStat
 
 bool SourceBufferPrivateAVFObjC::hasVideo() const
 {
-    if (!m_client)
-        return false;
-
-    return m_client->sourceBufferPrivateHasVideo(this);
+    return m_client && m_client->sourceBufferPrivateHasVideo();
 }
 
 bool SourceBufferPrivateAVFObjC::hasAudio() const
 {
-    if (!m_client)
-        return false;
-
-    return m_client->sourceBufferPrivateHasAudio(this);
+    return m_client && m_client->sourceBufferPrivateHasAudio();
 }
 
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(VideoTrackPrivateMediaSourceAVFObjC* track)
@@ -874,7 +839,7 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
     int errorCode = [[[error userInfo] valueForKey:@"OSStatus"] intValue];
 
     if (m_client)
-        m_client->sourceBufferPrivateDidReceiveRenderingError(this, errorCode);
+        m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
 void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
@@ -895,7 +860,7 @@ void SourceBufferPrivateAVFObjC::rendererDidReceiveError(AVSampleBufferAudioRend
         return;
 }
 
-void SourceBufferPrivateAVFObjC::flush(AtomicString trackIDString)
+void SourceBufferPrivateAVFObjC::flush(const AtomicString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::flush(%p) - trackId: %d", this, trackID);
@@ -925,19 +890,17 @@ void SourceBufferPrivateAVFObjC::flush(AVSampleBufferAudioRenderer *renderer)
         m_mediaSource->player()->setHasAvailableAudioSample(renderer, false);
 }
 
-void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaSample, AtomicString trackIDString)
+void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomicString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
         return;
 
-    RefPtr<MediaSample> mediaSample = prpMediaSample;
-
-    PlatformSample platformSample = mediaSample->platformSample();
+    PlatformSample platformSample = sample->platformSample();
     if (platformSample.type != PlatformSample::CMSampleBufferType)
         return;
 
-    LOG(MediaSourceSamples, "SourceBufferPrivateAVFObjC::enqueueSample(%p) - sample(%s)", this, toString(*mediaSample).utf8().data());
+    LOG(MediaSourceSamples, "SourceBufferPrivateAVFObjC::enqueueSample(%p) - sample(%s)", this, toString(sample.get()).utf8().data());
 
     if (trackID == m_enabledVideoTrackID) {
         CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
@@ -950,22 +913,22 @@ void SourceBufferPrivateAVFObjC::enqueueSample(PassRefPtr<MediaSample> prpMediaS
                 if (sizeWasNull)
                     m_mediaSource->player()->setNaturalSize(formatSize);
                 else
-                    m_mediaSource->player()->sizeWillChangeAtTime(mediaSample->presentationTime(), formatSize);
+                    m_mediaSource->player()->sizeWillChangeAtTime(sample->presentationTime(), formatSize);
             }
         }
 
         [m_displayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
         if (m_mediaSource)
-            m_mediaSource->player()->setHasAvailableVideoFrame(!mediaSample->isNonDisplaying());
+            m_mediaSource->player()->setHasAvailableVideoFrame(!sample->isNonDisplaying());
     } else {
         auto renderer = m_audioRenderers.get(trackID);
         [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
         if (m_mediaSource)
-            m_mediaSource->player()->setHasAvailableAudioSample(renderer.get(), !mediaSample->isNonDisplaying());
+            m_mediaSource->player()->setHasAvailableAudioSample(renderer.get(), !sample->isNonDisplaying());
     }
 }
 
-bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(AtomicString trackIDString)
+bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomicString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     if (trackID == m_enabledVideoTrackID)
@@ -984,9 +947,9 @@ void SourceBufferPrivateAVFObjC::setActive(bool isActive)
 
 MediaTime SourceBufferPrivateAVFObjC::fastSeekTimeForMediaTime(MediaTime time, MediaTime negativeThreshold, MediaTime positiveThreshold)
 {
-    if (m_client)
-        return m_client->sourceBufferPrivateFastSeekTimeForMediaTime(this, time, negativeThreshold, positiveThreshold);
-    return time;
+    if (!m_client)
+        return time;
+    return m_client->sourceBufferPrivateFastSeekTimeForMediaTime(time, negativeThreshold, positiveThreshold);
 }
 
 void SourceBufferPrivateAVFObjC::willSeek()
@@ -1001,7 +964,7 @@ void SourceBufferPrivateAVFObjC::willSeek()
 void SourceBufferPrivateAVFObjC::seekToTime(MediaTime time)
 {
     if (m_client)
-        m_client->sourceBufferPrivateSeekToTime(this, time);
+        m_client->sourceBufferPrivateSeekToTime(time);
 }
 
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
@@ -1021,10 +984,10 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
     }
 
     if (m_client)
-        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(this, AtomicString::number(trackID));
+        m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(AtomicString::number(trackID));
 }
 
-void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(AtomicString trackIDString)
+void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomicString& trackIDString)
 {
     int trackID = trackIDString.toInt();
     if (trackID == m_enabledVideoTrackID) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,15 +53,13 @@ public:
 private:
     PluginDocumentParser(Document& document)
         : RawDataDocumentParser(document)
-        , m_embedElement(0)
     {
     }
 
-    void appendBytes(DocumentWriter&, const char*, size_t) override;
-
+    void appendBytes(DocumentWriter&, const char*, size_t) final;
     void createDocumentStructure();
 
-    HTMLEmbedElement* m_embedElement;
+    HTMLEmbedElement* m_embedElement { nullptr };
 };
 
 void PluginDocumentParser::createDocumentStructure()
@@ -104,7 +102,7 @@ void PluginDocumentParser::createDocumentStructure()
     if (auto* loader = document.loader())
         m_embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
 
-    document.setPluginElement(m_embedElement);
+    document.setPluginElement(*m_embedElement);
 
     body->appendChild(embedElement);
 }
@@ -116,7 +114,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 
     createDocumentStructure();
 
-    Frame* frame = document()->frame();
+    auto* frame = document()->frame();
     if (!frame)
         return;
 
@@ -142,7 +140,6 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
 
 PluginDocument::PluginDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url, PluginDocumentClass)
-    , m_shouldLoadPluginManually(true)
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
@@ -155,14 +152,17 @@ Ref<DocumentParser> PluginDocument::createParser()
 
 Widget* PluginDocument::pluginWidget()
 {
-    if (m_pluginElement && m_pluginElement->renderer())
-        return downcast<RenderEmbeddedObject>(*m_pluginElement->renderer()).widget();
-    return nullptr;
+    if (!m_pluginElement)
+        return nullptr;
+    auto* renderer = m_pluginElement->renderer();
+    if (!renderer)
+        return nullptr;
+    return downcast<RenderEmbeddedObject>(*m_pluginElement->renderer()).widget();
 }
 
-void PluginDocument::setPluginElement(PassRefPtr<HTMLPlugInElement> element)
+void PluginDocument::setPluginElement(HTMLPlugInElement& element)
 {
-    m_pluginElement = element;
+    m_pluginElement = &element;
 }
 
 void PluginDocument::detachFromPluginElement()
@@ -179,9 +179,10 @@ void PluginDocument::cancelManualPluginLoad()
     if (!shouldLoadPluginManually())
         return;
 
-    DocumentLoader* documentLoader = frame()->loader().activeDocumentLoader();
-    documentLoader->cancelMainResourceLoad(frame()->loader().cancelledError(documentLoader->request()));
-    setShouldLoadPluginManually(false);
+    auto& frameLoader = frame()->loader();
+    auto& documentLoader = *frameLoader.activeDocumentLoader();
+    documentLoader.cancelMainResourceLoad(frameLoader.cancelledError(documentLoader.request()));
+    m_shouldLoadPluginManually = false;
 }
 
 }

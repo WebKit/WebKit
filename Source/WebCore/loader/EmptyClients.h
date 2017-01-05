@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
- * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -172,7 +172,7 @@ public:
 #endif
 
     void runOpenPanel(Frame*, PassRefPtr<FileChooser>) override;
-    void loadIconForFiles(const Vector<String>&, FileIconLoader*) override { }
+    void loadIconForFiles(const Vector<String>&, FileIconLoader&) override { }
 
     void elementDidFocus(const Node*) override { }
     void elementDidBlur(const Node*) override { }

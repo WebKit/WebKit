@@ -26,6 +26,7 @@
 #include "TextDocumentParser.h"
 
 #include "HTMLTreeBuilder.h"
+#include "ScriptElement.h"
 
 namespace WebCore {
 

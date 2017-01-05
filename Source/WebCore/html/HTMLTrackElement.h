@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,12 +75,12 @@ private:
     HTMLMediaElement* mediaElement() const;
 
     // TextTrackClient
-    void textTrackModeChanged(TextTrack*) final;
-    void textTrackKindChanged(TextTrack*) final;
-    void textTrackAddCues(TextTrack*, const TextTrackCueList*) final;
-    void textTrackRemoveCues(TextTrack*, const TextTrackCueList*) final;
-    void textTrackAddCue(TextTrack*, TextTrackCue&) final;
-    void textTrackRemoveCue(TextTrack*, TextTrackCue&) final;
+    void textTrackModeChanged(TextTrack&) final;
+    void textTrackKindChanged(TextTrack&) final;
+    void textTrackAddCues(TextTrack&, const TextTrackCueList&) final;
+    void textTrackRemoveCues(TextTrack&, const TextTrackCueList&) final;
+    void textTrackAddCue(TextTrack&, TextTrackCue&) final;
+    void textTrackRemoveCue(TextTrack&, TextTrackCue&) final;
 
     bool canLoadURL(const URL&);
 

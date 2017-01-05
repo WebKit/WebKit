@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,6 @@
 
 namespace WebCore {
 
-class Document;
-class InbandTextTrackPrivate;
-
 class GenericTextTrackCueMap {
 public:
     void add(GenericCueData&, TextTrackCueGeneric&);
@@ -56,23 +53,22 @@ private:
 
 class InbandGenericTextTrack final : public InbandTextTrack, private WebVTTParserClient {
 public:
-    static Ref<InbandGenericTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    static Ref<InbandGenericTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandGenericTextTrack();
 
 private:
-    InbandGenericTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    InbandGenericTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
 
-    void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) final;
-    void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) final;
-    void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) final;
+    void addGenericCue(GenericCueData&) final;
+    void updateGenericCue(GenericCueData&) final;
+    void removeGenericCue(GenericCueData&) final;
     ExceptionOr<void> removeCue(TextTrackCue&) final;
 
-    PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
-    void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);
+    void updateCueFromCueData(TextTrackCueGeneric&, GenericCueData&);
 
     WebVTTParser& parser();
-    void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) final;
-    void parseWebVTTFileHeader(InbandTextTrackPrivate*, String&&) final;
+    void parseWebVTTCueData(const ISOWebVTTCue&) final;
+    void parseWebVTTFileHeader(String&&) final;
 
     void newCuesParsed() final;
     void newRegionsParsed() final;

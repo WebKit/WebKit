@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "EventTarget.h"
-#include <wtf/RefCounted.h>
-#include <wtf/TypeCasts.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -99,7 +97,6 @@ protected:
 
 private:
     virtual bool isValidKind(const AtomicString&) const = 0;
-    virtual const AtomicString& defaultKindKeyword() const = 0;
 
     AtomicString m_kind;
 };

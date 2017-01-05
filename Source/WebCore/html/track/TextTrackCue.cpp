@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,10 +30,9 @@
  */
 
 #include "config.h"
+#include "TextTrackCue.h"
 
 #if ENABLE(VIDEO_TRACK)
-
-#include "TextTrackCue.h"
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
@@ -49,8 +48,6 @@
 
 namespace WebCore {
 
-static const int invalidCueIndex = -1;
-
 const AtomicString& TextTrackCue::cueShadowPseudoId()
 {
     static NeverDestroyed<const AtomicString> cue("cue", AtomicString::ConstructFromLiteral);
@@ -60,9 +57,6 @@ const AtomicString& TextTrackCue::cueShadowPseudoId()
 TextTrackCue::TextTrackCue(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end)
     : m_startTime(start)
     , m_endTime(end)
-    , m_cueIndex(invalidCueIndex)
-    , m_processingCueChanges(0)
-    , m_track(0)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
     , m_pauseOnExit(false)
@@ -147,23 +141,6 @@ void TextTrackCue::setPauseOnExit(bool value)
         return;
     
     m_pauseOnExit = value;
-}
-
-int TextTrackCue::cueIndex()
-{
-    if (m_cueIndex == invalidCueIndex) {
-        ASSERT(track());
-        ASSERT(track()->cues());
-        if (TextTrackCueList* cueList = track()->cues())
-            m_cueIndex = cueList->getCueIndex(this);
-    }
-
-    return m_cueIndex;
-}
-
-void TextTrackCue::invalidateCueIndex()
-{
-    m_cueIndex = invalidCueIndex;
 }
 
 bool TextTrackCue::dispatchEvent(Event& event)

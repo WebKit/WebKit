@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
+#include "WebGLProgram.h"
 
 #if ENABLE(WEBGL)
 
-#include "WebGLProgram.h"
-
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebGLShader.h"
 
 namespace WebCore {
 
@@ -41,9 +41,6 @@ Ref<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase& ctx)
 
 WebGLProgram::WebGLProgram(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
-    , m_linkStatus(false)
-    , m_linkCount(0)
-    , m_infoValid(true)
 {
     setObject(ctx.graphicsContext3D()->createProgram());
 }

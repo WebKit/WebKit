@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2008, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -680,9 +680,9 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
 }
 
-void WebChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileIconLoader* loader)
+void WebChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileIconLoader& loader)
 {
-    loader->notifyFinished(Icon::createIconForFiles(filenames));
+    loader.iconLoaded(Icon::createIconForFiles(filenames));
 }
 
 void WebChromeClient::setCursor(const Cursor& cursor)

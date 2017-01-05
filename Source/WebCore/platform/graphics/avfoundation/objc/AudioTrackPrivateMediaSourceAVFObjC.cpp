@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,6 @@ namespace WebCore {
 AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
     : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(track))
     , m_parent(parent)
-    , m_trackID(-1)
-    , m_enabled(false)
 {
     resetPropertiesFromTrack();
 }
@@ -63,17 +61,12 @@ AVAssetTrack* AudioTrackPrivateMediaSourceAVFObjC::assetTrack()
     return m_impl->assetTrack();
 }
 
-bool AudioTrackPrivateMediaSourceAVFObjC::enabled() const
-{
-    return m_enabled;
-}
-
 void AudioTrackPrivateMediaSourceAVFObjC::setEnabled(bool enabled)
 {
-    if (m_enabled == enabled)
+    if (enabled == this->enabled())
         return;
 
-    m_enabled = enabled;
+    AudioTrackPrivateAVF::setEnabled(enabled);
     m_parent->trackDidChangeEnabled(this);
 }
 
