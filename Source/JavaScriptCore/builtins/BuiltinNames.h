@@ -166,6 +166,7 @@ namespace JSC {
     macro(Memory) \
     macro(Table) \
     macro(CompileError) \
+    macro(LinkError) \
     macro(RuntimeError) \
 
 

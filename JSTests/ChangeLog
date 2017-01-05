@@ -1,3 +1,32 @@
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210028. rdar://problem/29747874
+
+    2016-12-20  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly API: implement WebAssembly.LinkError
+            https://bugs.webkit.org/show_bug.cgi?id=165805
+            <rdar://problem/29747874>
+
+            Reviewed by Mark lam.
+
+            Update all exception sites which now throw WebAssembly.LinkError.
+
+            * wasm/js-api/element-data.js:
+            * wasm/js-api/element.js:
+            (assert.throws):
+            * wasm/js-api/global-error.js:
+            (new.Number):
+            * wasm/js-api/table.js:
+            (assert.throws):
+            (new.WebAssembly.Table):
+            * wasm/js-api/test_Data.js:
+            * wasm/js-api/test_basic_api.js:
+            (const.c.in.constructorProperties.switch):
+            * wasm/js-api/test_memory.js:
+            (test):
+            (test.testMemImportError): Deleted.
+
 2016-12-19  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r210010.

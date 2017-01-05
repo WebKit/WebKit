@@ -189,14 +189,14 @@ function assertBadTableImport(tableDescription, message) {
             .Code()
             .End();
         const module = new WebAssembly.Module(builder.WebAssembly().get());
-        assert.throws(() => new WebAssembly.Instance(module, {imp: {table}}), TypeError, message);
+        assert.throws(() => new WebAssembly.Instance(module, {imp: {table}}), WebAssembly.LinkError, message);
     }
 
     const badTables = [
-        [{initial: 100, maximum:100, element:"anyfunc"}, new WebAssembly.Table({initial:100, element: "anyfunc"}), "Table import does not have a 'maximum' but the module requires that it does"],
-        [{initial: 100, maximum:100, element:"anyfunc"}, new WebAssembly.Table({initial:100, maximum:101, element: "anyfunc"}), "Imported Table's 'maximum' is larger than the module's expected 'maximum'"],
-        [{initial: 100, element:"anyfunc"}, new WebAssembly.Table({initial:10, element: "anyfunc"}), "Table import provided an 'initial' that is too small"],
-        [{initial: 10, element:"anyfunc"}, new WebAssembly.Table({initial:9, element: "anyfunc"}), "Table import provided an 'initial' that is too small"],
+        [{initial: 100, maximum:100, element:"anyfunc"}, new WebAssembly.Table({initial:100, element: "anyfunc"}), "Table import does not have a 'maximum' but the module requires that it does (evaluating 'new WebAssembly.Instance(module, {imp: {table}})')"],
+        [{initial: 100, maximum:100, element:"anyfunc"}, new WebAssembly.Table({initial:100, maximum:101, element: "anyfunc"}), "Imported Table's 'maximum' is larger than the module's expected 'maximum' (evaluating 'new WebAssembly.Instance(module, {imp: {table}})')"],
+        [{initial: 100, element:"anyfunc"}, new WebAssembly.Table({initial:10, element: "anyfunc"}), "Table import provided an 'initial' that is too small (evaluating 'new WebAssembly.Instance(module, {imp: {table}})')"],
+        [{initial: 10, element:"anyfunc"}, new WebAssembly.Table({initial:9, element: "anyfunc"}), "Table import provided an 'initial' that is too small (evaluating 'new WebAssembly.Instance(module, {imp: {table}})')"],
     ];
     for (const [d, t, m] of badTables) {
         assertBadTableInstance(d, t, m);
@@ -251,7 +251,7 @@ function assertBadTableImport(tableDescription, message) {
             .Code()
             .End();
         const module = new WebAssembly.Module(builder.WebAssembly().get());
-        assert.throws(() => new WebAssembly.Instance(module, {imp: {table}}), TypeError, "Table import is not an instance of WebAssembly.Table");
+        assert.throws(() => new WebAssembly.Instance(module, {imp: {table}}), WebAssembly.LinkError, "Table import is not an instance of WebAssembly.Table (evaluating 'new WebAssembly.Instance(module, {imp: {table}})')");
     }
     assertBadTable(25);
     assertBadTable(new Object);

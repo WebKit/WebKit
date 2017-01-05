@@ -141,6 +141,6 @@ import * as assert from '../assert.js';
 
     for (let i = 19; i < 19 + 5; i++) {
         const table = new WebAssembly.Table({element: "anyfunc", initial: i});
-        badInstantiation(table, RangeError, "Element is trying to set an out of bounds table index");
+        badInstantiation(table, WebAssembly.LinkError, "Element is trying to set an out of bounds table index (evaluating 'new WebAssembly.Instance(module, {imp: {table: actualTable}})')");
     }
 }
