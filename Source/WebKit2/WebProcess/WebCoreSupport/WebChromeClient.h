@@ -236,10 +236,6 @@ private:
     PassRefPtr<WebCore::ScrollingCoordinator> createScrollingCoordinator(WebCore::Page*) const override;
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-    void needTouchEvents(bool) override { }
-#endif
-
 #if PLATFORM(IOS)
     void elementDidRefocus(const WebCore::Node*) override;
 #endif

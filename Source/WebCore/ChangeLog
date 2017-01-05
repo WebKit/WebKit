@@ -1,3 +1,23 @@
+2017-01-05  Andreas Kling  <akling@apple.com>
+
+        Remove ChromeClient::needTouchEvents().
+        <https://webkit.org/b/166723>
+
+        Rubber-stamped by Antti Koivisto.
+
+        Remove this hook since it's a no-op in every port.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didBecomeCurrentDocumentInFrame):
+        (WebCore::Document::didAddTouchEventHandler):
+        (WebCore::Document::didRemoveTouchEventHandler):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        * page/ChromeClient.h:
+
 2017-01-05  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from "bindings/scripts", "svg", "testing", and "workers"

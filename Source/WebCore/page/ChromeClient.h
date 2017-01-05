@@ -373,10 +373,6 @@ public:
     virtual void AXFinishFrameLoad() = 0;
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-    virtual void needTouchEvents(bool) = 0;
-#endif
-
     virtual bool selectItemWritingDirectionIsNatural() = 0;
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
     // Checks if there is an opened popup, called by RenderMenuList::showPopup().

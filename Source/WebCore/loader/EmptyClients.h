@@ -226,10 +226,6 @@ public:
     bool isStopping() override { return false; }
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-    void needTouchEvents(bool) override { }
-#endif
-    
     void wheelEventHandlersChanged(bool) override { }
     
     bool isEmptyChromeClient() const override { return true; }

@@ -48,11 +48,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(IOS) || ENABLE(TOUCH_EVENTS)
-#include "Chrome.h"
-#include "ChromeClient.h"
-#endif
-
 namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedFrameCounter, ("CachedFrame"));
@@ -124,11 +119,6 @@ void CachedFrameBase::restore()
     HistoryItem* historyItem = frame.loader().history().currentItem();
     if (historyItem && historyItem->stateObject())
         m_document->enqueuePopstateEvent(historyItem->stateObject());
-
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (m_document->hasTouchEventHandlers())
-        m_document->page()->chrome().client().needTouchEvents(true);
-#endif
 
     frame.view()->didRestoreFromPageCache();
 }

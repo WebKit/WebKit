@@ -1,3 +1,12 @@
+2017-01-05  Andreas Kling  <akling@apple.com>
+
+        Remove ChromeClient::needTouchEvents().
+        <https://webkit.org/b/166723>
+
+        Rubber-stamped by Antti Koivisto.
+
+        * WebCoreSupport/WebChromeClient.h:
+
 2017-01-04  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from the "html" directory, other improvements

@@ -2168,13 +2168,6 @@ void Document::didBecomeCurrentDocumentInFrame()
     if (page() && m_frame->isMainFrame())
         wheelEventHandlersChanged();
 
-#if ENABLE(TOUCH_EVENTS)
-    // FIXME: Doing this only for the main frame is insufficient.
-    // A subframe could have touch event handlers.
-    if (hasTouchEventHandlers() && page() && m_frame->isMainFrame())
-        page()->chrome().client().needTouchEvents(true);
-#endif
-
     // Ensure that the scheduled task state of the document matches the DOM suspension state of the frame. It can
     // be out of sync if the DOM suspension state changed while the document was not in the frame (possibly in the
     // page cache, or simply newly created).
@@ -6238,11 +6231,6 @@ void Document::didAddTouchEventHandler(Node& handler)
         parent->didAddTouchEventHandler(*this);
         return;
     }
-
-    if (Page* page = this->page()) {
-        if (m_touchEventTargets->size() == 1)
-            page->chrome().client().needTouchEvents(true);
-    }
 #else
     UNUSED_PARAM(handler);
 #endif
@@ -6256,23 +6244,8 @@ void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval rem
 
     removeHandlerFromSet(*m_touchEventTargets, handler, removal);
 
-    if (Document* parent = parentDocument()) {
+    if (Document* parent = parentDocument())
         parent->didRemoveTouchEventHandler(*this);
-        return;
-    }
-
-    Page* page = this->page();
-    if (!page)
-        return;
-    if (m_touchEventTargets->size())
-        return;
-
-    // FIXME: why can't we trust m_touchEventTargets?
-    for (const Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (frame->document() && frame->document()->hasTouchEventHandlers())
-            return;
-    }
-    page->chrome().client().needTouchEvents(false);
 #else
     UNUSED_PARAM(handler);
     UNUSED_PARAM(removal);

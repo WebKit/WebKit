@@ -143,10 +143,6 @@ public:
     void enableSuddenTermination() override;
     void disableSuddenTermination() override;
     
-#if ENABLE(TOUCH_EVENTS)
-    void needTouchEvents(bool) override { }
-#endif
-
     bool shouldReplaceWithGeneratedFileForUpload(const WTF::String& path, WTF::String &generatedFilename) override;
     WTF::String generateReplacementFile(const WTF::String& path) override;
 

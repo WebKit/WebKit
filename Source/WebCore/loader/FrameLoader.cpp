@@ -1915,11 +1915,6 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 
     setState(FrameStateCommittedPage);
 
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-    if (m_frame.isMainFrame())
-        m_frame.page()->chrome().client().needTouchEvents(false);
-#endif
-
     // Handle adding the URL to the back/forward list.
     DocumentLoader* dl = m_documentLoader.get();
 
