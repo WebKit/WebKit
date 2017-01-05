@@ -12,11 +12,11 @@
 		516ADBE61DE156BB00E2B98D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 516ADBB11DE155BD00E2B98D /* main.m */; };
 		516ADBF31DE157AD00E2B98D /* RewindAndPlaybackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 516ADBF21DE157AD00E2B98D /* RewindAndPlaybackTests.m */; };
 		517FD93C1DE18DC900A73673 /* DOMTestingUtil.js in Resources */ = {isa = PBXBuildFile; fileRef = 517FD93B1DE18DC900A73673 /* DOMTestingUtil.js */; };
-		51D394801DF2541D00ABE875 /* DumpEditingHistory.js in Resources */ = {isa = PBXBuildFile; fileRef = 51D3947E1DF2541D00ABE875 /* DumpEditingHistory.js */; };
-		51D394811DF2541D00ABE875 /* EditingHistoryUtil.js in Resources */ = {isa = PBXBuildFile; fileRef = 51D3947F1DF2541D00ABE875 /* EditingHistoryUtil.js */; };
 		51ECC3E71DEE33CE00CB267E /* TestUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 516ADBB51DE155BD00E2B98D /* TestUtil.m */; };
 		51ECC3E91DEE33D200CB267E /* WKWebViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 516ADBB71DE155BD00E2B98D /* WKWebViewAdditions.m */; };
 		51ECC3EA1DEE33DD00CB267E /* TestRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 516ADBB31DE155BD00E2B98D /* TestRunner.m */; };
+		F4BFB9891E1DE82D00862C24 /* DumpEditingHistory.js in Resources */ = {isa = PBXBuildFile; fileRef = F4BFB9871E1DE82D00862C24 /* DumpEditingHistory.js */; };
+		F4BFB98A1E1DE82D00862C24 /* EditingHistoryUtil.js in Resources */ = {isa = PBXBuildFile; fileRef = F4BFB9881E1DE82D00862C24 /* EditingHistoryUtil.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +47,8 @@
 		517FD93B1DE18DC900A73673 /* DOMTestingUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DOMTestingUtil.js; path = EditingHistory/Resources/DOMTestingUtil.js; sourceTree = SOURCE_ROOT; };
 		51D3947E1DF2541D00ABE875 /* DumpEditingHistory.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = ../../Source/WebCore/InternalScripts/DumpEditingHistory.js; sourceTree = SOURCE_ROOT; };
 		51D3947F1DF2541D00ABE875 /* EditingHistoryUtil.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = ../../Source/WebCore/InternalScripts/EditingHistoryUtil.js; sourceTree = SOURCE_ROOT; };
+		F4BFB9871E1DE82D00862C24 /* DumpEditingHistory.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = DumpEditingHistory.js; path = ../../Source/WebCore/Scripts/DumpEditingHistory.js; sourceTree = "<group>"; };
+		F4BFB9881E1DE82D00862C24 /* EditingHistoryUtil.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = EditingHistoryUtil.js; path = ../../Source/WebCore/Scripts/EditingHistoryUtil.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,8 @@
 		512D7A8A1DE0FBEF0028F0E6 = {
 			isa = PBXGroup;
 			children = (
+				F4BFB9871E1DE82D00862C24 /* DumpEditingHistory.js */,
+				F4BFB9881E1DE82D00862C24 /* EditingHistoryUtil.js */,
 				512D7A951DE0FBEF0028F0E6 /* EditingHistory */,
 				516ADBF11DE157AD00E2B98D /* EditingHistoryTests */,
 				512D7A941DE0FBEF0028F0E6 /* Products */,
@@ -204,11 +208,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51D394801DF2541D00ABE875 /* DumpEditingHistory.js in Resources */,
+				F4BFB9891E1DE82D00862C24 /* DumpEditingHistory.js in Resources */,
+				F4BFB98A1E1DE82D00862C24 /* EditingHistoryUtil.js in Resources */,
 				516ADBE21DE156A900E2B98D /* CaptureHarness.html in Resources */,
 				517FD93C1DE18DC900A73673 /* DOMTestingUtil.js in Resources */,
 				516ADBE51DE156A900E2B98D /* PlaybackHarness.html in Resources */,
-				51D394811DF2541D00ABE875 /* EditingHistoryUtil.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

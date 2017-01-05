@@ -1,3 +1,20 @@
+2017-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move editing history scripts to WebCore PrivateHeaders
+        https://bugs.webkit.org/show_bug.cgi?id=166709
+        <rdar://problem/29876612>
+
+        Reviewed by Dan Bernstein.
+
+        Move editing history scripts out of InternalScripts and into Scripts, and update the WebCore Copy Script build
+        phase to copy the editing scripts into PrivateHeaders.
+
+        No new tests, because there should be no behavior change.
+
+        * Scripts/DumpEditingHistory.js: Renamed from Source/WebCore/InternalScripts/DumpEditingHistory.js.
+        * Scripts/EditingHistoryUtil.js: Renamed from Source/WebCore/InternalScripts/EditingHistoryUtil.js.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: forced pseudo classes aren't cleared from inspected page when Inspector closes
