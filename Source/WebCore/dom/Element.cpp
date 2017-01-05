@@ -3236,6 +3236,9 @@ void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& 
 {
     ASSERT(oldName != newName);
 
+    if (isInShadowTree())
+        return;
+
     if (WindowNameCollection::elementMatchesIfNameAttributeMatch(*this)) {
         const AtomicString& id = WindowNameCollection::elementMatchesIfIdAttributeMatch(*this) ? getIdAttribute() : nullAtom;
         if (!oldName.isEmpty() && oldName != id)
@@ -3285,6 +3288,9 @@ void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& ol
 {
     ASSERT(inDocument());
     ASSERT(oldId != newId);
+
+    if (isInShadowTree())
+        return;
 
     if (WindowNameCollection::elementMatchesIfIdAttributeMatch(*this)) {
         const AtomicString& name = condition == UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute && WindowNameCollection::elementMatchesIfNameAttributeMatch(*this) ? getNameAttribute() : nullAtom;

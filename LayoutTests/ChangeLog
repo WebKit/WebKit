@@ -1,5 +1,24 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210284. rdar://problem/29865854
+
+    2017-01-04  Chris Dumez  <cdumez@apple.com>
+
+            Assertion hit on redfin.com: ASSERTION FAILED: collection->length() > 1
+            https://bugs.webkit.org/show_bug.cgi?id=166687
+            <rdar://problem/29865854>
+
+            Reviewed by Darin Adler.
+
+            Add layout test coverage.
+
+            * fast/shadow-dom/document-named-property-expected.txt: Added.
+            * fast/shadow-dom/document-named-property.html: Added.
+            * fast/shadow-dom/window-named-property-expected.txt: Added.
+            * fast/shadow-dom/window-named-property.html: Added.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210279. rdar://problem/29607569
 
     2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>

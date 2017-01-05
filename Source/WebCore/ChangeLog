@@ -1,5 +1,34 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210284. rdar://problem/29865854
+
+    2017-01-04  Chris Dumez  <cdumez@apple.com>
+
+            Assertion hit on redfin.com: ASSERTION FAILED: collection->length() > 1
+            https://bugs.webkit.org/show_bug.cgi?id=166687
+            <rdar://problem/29865854>
+
+            Reviewed by Darin Adler.
+
+            We were mistakenly calling Document::addWindowNamedItem() / Document::removeWindowNamedItem()
+            for elements in Shadow DOMs. As a result, the windowNamedItem DocumentOrderedMap would
+            contain elements in shadow DOMs. This would cause the assertion to be hit in window's
+            named property getter because of the length mismatch between the windowNamedItem
+            DocumentOrderedMap and the WindowNameCollection.
+
+            Tests: fast/shadow-dom/document-named-property.html
+                   fast/shadow-dom/window-named-property.html
+
+            * dom/Element.cpp:
+            (WebCore::Element::updateNameForDocument):
+            (WebCore::Element::updateIdForDocument):
+            * html/HTMLImageElement.cpp:
+            (WebCore::HTMLImageElement::parseAttribute):
+            * html/HTMLObjectElement.cpp:
+            (WebCore::HTMLObjectElement::updateDocNamedItem):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210279. rdar://problem/29607569
 
     2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>

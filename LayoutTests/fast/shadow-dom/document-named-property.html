@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src='../../resources/testharness.js'></script>
+<script src='../../resources/testharnessreport.js'></script>
+<div id="container"></div>
+<script>
+var container = document.getElementById('container');
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img id="foo" name="test2"></img>';
+    container.appendChild(header);
+
+    assert_equals(document.foo, undefined);
+}, "Document's named property getter should not return elements in shadow DOMs by id");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img id="foo1" name="test2"></img>';
+    container.appendChild(header);
+
+    var img = document.createElement("img");
+    img.id = 'foo1';
+    img.name = 'test1'
+    container.appendChild(img);
+
+    assert_equals(document.foo1, img);
+    assert_equals(shadowRoot.firstChild.id, 'foo1');
+    shadowRoot.removeChild(shadowRoot.firstChild);
+    assert_equals(document.foo1, img);
+}, "Document's named property getter should not return elements in shadow DOMs by id (duplicate id)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img name="test2"></img>';
+    container.appendChild(header);
+
+    assert_equals(document.foo2, undefined);
+    shadowRoot.firstChild.id = 'foo2';
+    assert_equals(document.foo2, undefined);
+
+}, "Document's named property getter should not return elements in shadow DOMs by id (id attribute update)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img name="test2"></img>';
+    container.appendChild(header);
+
+    var img = document.createElement("img");
+    img.id = 'foo3';
+    img.setAttribute('name', 'test1');
+    container.appendChild(img);
+
+    assert_equals(document.foo3, img);
+    shadowRoot.firstChild.id = 'foo3';
+    assert_equals(document.foo3, img);
+
+    shadowRoot.firstChild.id = 'other';
+    assert_equals(document.foo3, img);
+}, "Document's named property getter should not return elements in shadow DOMs by id (duplicate id attribute update)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img></img>';
+    container.appendChild(header);
+
+    assert_equals(document.foo4, undefined);
+    shadowRoot.firstChild.id = 'foo4';
+    assert_equals(document.foo4, undefined);
+    shadowRoot.firstChild.setAttribute('name', 'test3');
+    assert_equals(document.foo4, undefined);
+
+}, "Document's named property getter should not return elements in shadow DOMs by id (image name change)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img></img>';
+    container.appendChild(header);
+
+    var img = document.createElement("img");
+    img.id = 'foo5';
+    img.setAttribute('name', 'test1');
+    container.appendChild(img);
+
+    assert_equals(document.foo5, img);
+    shadowRoot.firstChild.id = 'foo5';
+    assert_equals(document.foo5, img);
+    shadowRoot.firstChild.setAttribute('name', 'test3');
+    assert_equals(document.foo5, img);
+
+    shadowRoot.firstChild.removeAttribute('name');
+    assert_equals(document.foo5, img);
+}, "Document's named property getter should not return elements in shadow DOMs by id (image name change with duplicate id)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<object id="foo6">text</object>';
+    container.appendChild(header);
+
+    assert_equals(document.foo6, undefined);
+    assert_equals(shadowRoot.firstChild.firstChild.data, "text");
+    shadowRoot.firstChild.removeChild(shadowRoot.firstChild.firstChild);
+    assert_equals(document.foo6, undefined);
+}, "Document's named property getter should not return elements in shadow DOMs by id (object children change)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<object id="foo7">text</object>';
+    container.appendChild(header);
+
+    var object = document.createElement("object");
+    object.id = 'foo7';
+    container.appendChild(object);
+
+    assert_equals(document.foo7, object);
+    assert_equals(shadowRoot.firstChild.firstChild.data, "text");
+    shadowRoot.firstChild.removeChild(shadowRoot.firstChild.firstChild);
+    assert_equals(document.foo7, object);
+    shadowRoot.firstChild.appendChild(document.createElement("a"));
+    assert_equals(document.foo7, object);
+}, "Document's named property getter should not return elements in shadow DOMs by id (object children change with duplicate id)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img name="bar"></img>';
+    document.body.appendChild(header);
+
+    assert_equals(document.bar, undefined);
+}, "Document's named property getter should not return elements in shadow DOMs by name");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img name="bar1"></img>';
+    document.body.appendChild(header);
+
+    var img = document.createElement("img");
+    img.setAttribute('name', 'bar1');
+    container.appendChild(img);
+
+    assert_equals(document.bar1, img);
+    assert_equals(shadowRoot.firstChild.getAttribute('name'), 'bar1');
+    shadowRoot.removeChild(shadowRoot.firstChild);
+    assert_equals(document.bar1, img);
+}, "Document's named property getter should not return elements in shadow DOMs by name (duplicate name)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img></img>';
+    document.body.appendChild(header);
+
+    assert_equals(document.bar2, undefined);
+    shadowRoot.firstChild.setAttribute('name', 'bar2');
+    assert_equals(document.bar2, undefined);
+}, "Document's named property getter should not return elements in shadow DOMs by name (name attribute update)");
+
+test(function () {
+    var header = document.createElement('header');
+    var shadowRoot = header.attachShadow({mode: 'open'});
+    shadowRoot.innerHTML = '<img></img>';
+    document.body.appendChild(header);
+
+    var img = document.createElement("img");
+    img.setAttribute('name', 'bar3');
+    container.appendChild(img);
+
+    assert_equals(document.bar3, img);
+    shadowRoot.firstChild.setAttribute('name', 'bar3');
+    assert_equals(document.bar3, img);
+
+    shadowRoot.firstChild.setAttribute('name', 'other');
+    assert_equals(document.bar3, img);
+}, "Document's named property getter should not return elements in shadow DOMs by name (duplicate name attribute update)");
+</script>
+</body>
+</html>
