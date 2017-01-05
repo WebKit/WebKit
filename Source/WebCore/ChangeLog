@@ -1,5 +1,22 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210372. rdar://problem/29870033
+
+    2017-01-05  Chris Dumez  <cdumez@apple.com>
+
+            Turn preferLowPowerWebGLRendering setting on by default
+            https://bugs.webkit.org/show_bug.cgi?id=166737
+            <rdar://problem/29870033>
+
+            Reviewed by Dean Jackson.
+
+            Temporarily turn preferLowPowerWebGLRendering setting on by default until
+            we deal better with WebGL content in background tabs.
+
+            * page/Settings.in:
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210369. rdar://problem/29100419
 
     2017-01-05  Zalan Bujtas  <zalan@apple.com>
