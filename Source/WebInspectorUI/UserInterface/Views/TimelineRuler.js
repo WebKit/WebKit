@@ -218,6 +218,8 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
         if (!isNaN(this._duration))
             this._endTime = this._startTime + this._duration;
 
+        this._currentDividers = null;
+
         this.needsLayout();
     }
 
@@ -264,6 +266,7 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
 
         this._secondsPerPixel = x;
         this._endTimePinned = false;
+        this._currentDividers = null;
         this._currentSliceTime = 0;
 
         this.needsLayout();
@@ -444,11 +447,11 @@ WebInspector.TimelineRuler = class TimelineRuler extends WebInspector.View
             sliceTime = this._currentSliceTime;
         }
 
-        let firstDividerTime = (Math.ceil((this._startTime - this._zeroTime) / sliceTime) * sliceTime) + this._zeroTime;
-        let lastDividerTime = this._endTime;
-
         // Calculate the divider count now based on the final slice time.
-        dividerCount = Math.ceil((lastDividerTime - firstDividerTime) / sliceTime);
+        dividerCount = Math.floor(visibleWidth * this.secondsPerPixel / sliceTime);
+
+        let firstDividerTime = (Math.ceil((this._startTime - this._zeroTime) / sliceTime) * sliceTime) + this._zeroTime;
+        let lastDividerTime = firstDividerTime + sliceTime * dividerCount;
 
         // Make an extra divider in case the last one is partially visible.
         if (!this._endTimePinned)
