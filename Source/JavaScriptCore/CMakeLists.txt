@@ -3,6 +3,7 @@ include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "JavaScriptCore")
 
 set(JavaScriptCore_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/.."
     "${JAVASCRIPTCORE_DIR}/API"

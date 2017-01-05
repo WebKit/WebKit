@@ -17,6 +17,7 @@ set(WebKit_SOURCES
 )
 
 set(WebKit_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}"
     "${WEBKIT_DIR}/Storage"
     "${WEBKIT_DIR}/WebCoreSupport"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore"
