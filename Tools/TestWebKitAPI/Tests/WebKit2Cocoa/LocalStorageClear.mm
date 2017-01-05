@@ -61,15 +61,17 @@ TEST(WKWebView, LocalStorageClear)
     [configuration _setNeedsStorageAccessFromFileURLsQuirk:NO];
     [configuration _setAllowUniversalAccessFromFileURLs:YES];
 
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    @autoreleasepool {
+        RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageClear" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"LocalStorageClear" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+        [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&readyToContinue);
-    readyToContinue = false;
+        TestWebKitAPI::Util::run(&readyToContinue);
+        readyToContinue = false;
 
-    webView = nil;
+        webView = nil;
+    }
 
     NSString *dbPath = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/LocalStorage/file__0.localstorage" stringByExpandingTildeInPath];
     NSString *dbSHMPath = [@"~/Library/WebKit/TestWebKitAPI/WebsiteData/LocalStorage/file__0.localstorage-shm" stringByExpandingTildeInPath];
