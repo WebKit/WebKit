@@ -1,5 +1,24 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210311. rdar://problem/29871716
+
+    2017-01-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: application cache details not shown in Storage Tab
+            https://bugs.webkit.org/show_bug.cgi?id=166699
+            <rdar://problem/29871716>
+
+            Reviewed by Brian Burg.
+
+            Fix a ternary operator precedence. The following expression throws an exception:
+
+                true || false ? i.dont.exist : false
+
+            * UserInterface/Views/ApplicationCacheFrameTreeElement.js:
+            (WebInspector.ApplicationCacheFrameTreeElement.prototype.updateTitles):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210252. rdar://problem/29854762
 
     2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>

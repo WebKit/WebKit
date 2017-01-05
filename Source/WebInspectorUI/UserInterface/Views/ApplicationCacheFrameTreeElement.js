@@ -56,7 +56,7 @@ WebInspector.ApplicationCacheFrameTreeElement = class ApplicationCacheFrameTreeE
             currentAncestor = currentAncestor.parent;
         }
 
-        var subtitleIsDuplicate = subtitle === this._mainTitle || manifestTreeElement ? subtitle === manifestTreeElement.subtitle : false;
+        var subtitleIsDuplicate = subtitle === this._mainTitle || (manifestTreeElement && manifestTreeElement.subtitle === subtitle);
         this.subtitle = subtitleIsDuplicate ? null : subtitle;
     }
 };
