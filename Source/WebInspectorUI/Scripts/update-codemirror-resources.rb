@@ -14,7 +14,7 @@ def verify_code_mirror_repository_path(path)
   end
 
   Dir.chdir(path) do
-    results = `git config --list | grep 'marijnh/CodeMirror\.git'`
+    results = `git config --list | grep 'codemirror/CodeMirror\.git'`
     if $?.exitstatus != 0 || results.split("\n").empty?
       puts "ERROR: Provided CodeMirror path does not appear to be a CodeMirror checkout."
       exit 1
@@ -29,6 +29,7 @@ web_inspector_user_interface_path = File.expand_path File.join(File.dirname(__FI
 web_inspector_code_mirror_resources_path = File.join web_inspector_user_interface_path, "/External/CodeMirror"
 
 CODE_MIRROR_FILES_TO_COPY = %w(
+  LICENSE
   addon/comment/comment.js
   addon/display/placeholder.js
   addon/edit/closebrackets.js

@@ -1,3 +1,45 @@
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210032. rdar://problem/29744608
+
+    2016-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Update CodeMirror to support async/await keyword and other ES2017 features
+            https://bugs.webkit.org/show_bug.cgi?id=165677
+
+            Rubber-stamped by Brian Burg.
+
+            Update CodeMirror from version 5.5.1 to 5.21.1. Highlights include:
+
+              - Syntax highlighting for ES2017 features (async/await)
+              - Syntax highlighting improvements for some ES6 features (new.target)
+              - Syntax highlighting for CSS4 #rrggbbaa and #rgba colors
+
+            As well as a number of smaller bug fixes.
+
+            Had to add a few semicolons to codemirror.js so that our minifier
+            didn't choke in a few places due to ASI behavior.
+
+            * Scripts/update-codemirror-resources.rb:
+            * UserInterface/External/CodeMirror/LICENSE:
+            * UserInterface/External/CodeMirror/clojure.js:
+            * UserInterface/External/CodeMirror/closebrackets.js:
+            * UserInterface/External/CodeMirror/codemirror.css:
+            * UserInterface/External/CodeMirror/codemirror.js:
+            * UserInterface/External/CodeMirror/coffeescript.js:
+            * UserInterface/External/CodeMirror/comment.js:
+            * UserInterface/External/CodeMirror/css.js:
+            * UserInterface/External/CodeMirror/htmlmixed.js:
+            * UserInterface/External/CodeMirror/javascript.js:
+            * UserInterface/External/CodeMirror/livescript.js:
+            * UserInterface/External/CodeMirror/matchbrackets.js:
+            * UserInterface/External/CodeMirror/overlay.js:
+            * UserInterface/External/CodeMirror/placeholder.js:
+            * UserInterface/External/CodeMirror/runmode.js:
+            * UserInterface/External/CodeMirror/sql.js:
+            * UserInterface/External/CodeMirror/sublime.js:
+            * UserInterface/External/CodeMirror/xml.js:
+
 2016-12-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         JSContext Inspector: Avoid some possible exceptions inspecting a JSContext
