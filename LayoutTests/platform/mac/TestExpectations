@@ -279,18 +279,12 @@ fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
 # Pointer Lock can only check some of the API at the moment.
 pointer-lock/bug90391-move-then-window-open-crash.html
-pointer-lock/lock-already-locked.html
-pointer-lock/lock-element-not-in-dom.html
 pointer-lock/locked-element-iframe-removed-from-dom.html
 pointer-lock/locked-element-removed-from-dom.html
 pointer-lock/mouse-event-delivery.html
 pointer-lock/pointerlockchange-event-on-lock-lost.html
 pointer-lock/pointerlockchange-pointerlockerror-events.html
 pointer-lock/pointerlockelement-null-when-pending.html
-pointer-lock/lock-lost-on-navigation.html [ Pass ]
-http/tests/pointer-lock/
-
-pointer-lock/lock-lost-on-alert.html [ Pass ]
 
 webkit.org/b/82763 fast/forms/textarea-placeholder-set-attribute.html
 
