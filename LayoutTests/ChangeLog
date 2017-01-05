@@ -1,3 +1,14 @@
+2017-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        Mark the dedicated root linebox for trailing floats in empty inlines dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=166732
+        <rdar://problem/29100419>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/trailing-floats-inline-crash2-expected.txt: Added.
+        * fast/inline/trailing-floats-inline-crash2.html: Added.
+
 2017-01-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Test.html should support globals reportInternalError, reportUnhandledRejection, reportUncaughtException

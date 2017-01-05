@@ -1,3 +1,23 @@
+2017-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        Mark the dedicated root linebox for trailing floats in empty inlines dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=166732
+        <rdar://problem/29100419>
+
+        Reviewed by Antti Koivisto.
+
+        We normally attach floating boxes to the last root linebox. However when the floatbox is preceded by a <br>
+        we generate a dedicated root linebox (TrailingFloatsRootInlineBox) for the floatbox.
+        When this floatbox is a RenderInline descendant and this RenderInline does not generate lineboxes (it's ancestor RenderBlockFlow does)
+        we have to make sure that this special root linebox gets marked dirty when the associated floatbox changes.
+        (Unfortunately through the recursive calls on dirtyLinesFromChangedChild(), we lose the information about
+        the "changed child" since the inlines propagates the marking logic to the RenderBlockFlow, see FIXME.)
+
+        Test: fast/inline/trailing-floats-inline-crash2.html
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+
 2017-01-05  Antoine Quint  <graouts@apple.com>
 
         [Cocoa] Both modern-media-controls/images/iOS modern-media-controls/images/macOS are installed on both platforms

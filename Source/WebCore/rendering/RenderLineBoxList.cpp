@@ -323,8 +323,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         return;
     }
 
-    // Try to figure out which line box we belong in.  First try to find a previous
-    // line box by examining our siblings.  If we didn't find a line box, then use our 
+    // Try to figure out which line box we belong in. First try to find a previous
+    // line box by examining our siblings. If we didn't find a line box, then use our
     // parent's first line box.
     RootInlineBox* box = nullptr;
     RenderObject* current;
@@ -370,11 +370,11 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
     if (box) {
         box->markDirty();
 
-        // dirty the adjacent lines that might be affected
+        // Dirty the adjacent lines that might be affected.
         // NOTE: we dirty the previous line because RootInlineBox objects cache
         // the address of the first object on the next line after a BR, which we may be
-        // invalidating here.  For more info, see how RenderBlock::layoutInlineChildren
-        // calls setLineBreakInfo with the result of findNextLineBreak.  findNextLineBreak,
+        // invalidating here. For more info, see how RenderBlock::layoutInlineChildren
+        // calls setLineBreakInfo with the result of findNextLineBreak. findNextLineBreak,
         // despite the name, actually returns the first RenderObject after the BR.
         // <rdar://problem/3849947> "Typing after pasting line does not appear until after window resize."
         if (RootInlineBox* prevBox = box->prevRootBox())
@@ -384,11 +384,13 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         // necessary some of the time, in situations involving BRs.
         if (RootInlineBox* nextBox = box->nextRootBox()) {
             nextBox->markDirty();
-
-            // Special root box for floats may be added at the end of the list. If this occurs with BRs we need to invalidate it explicitly.
-            if (auto* nextNextBox = nextBox->nextRootBox()) {
-                if (nextNextBox->isTrailingFloatsRootInlineBox())
-                    nextNextBox->markDirty();
+            // Dedicated linebox for floats may be added as the last rootbox. If this occurs with BRs inside inlines that propagte their lineboxes to
+            // the parent flow, we need to invalidate it explicitly.
+            // FIXME: We should be able to figure out the actual "changed child" even when we are calling through empty inlines recursively.
+            if (is<RenderInline>(child) && !downcast<RenderInline>(child).firstLineBoxIncludingCulling()) {
+                auto* lastRootBox = nextBox->blockFlow().lastRootBox();
+                if (lastRootBox->isTrailingFloatsRootInlineBox() && !lastRootBox->isDirty())
+                    lastRootBox->markDirty();
             }
         }
     }
