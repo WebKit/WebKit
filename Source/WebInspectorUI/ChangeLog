@@ -1,5 +1,52 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210033. rdar://problem/29755339
+
+    2016-12-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Console could be made useful for very simple await expressions
+            https://bugs.webkit.org/show_bug.cgi?id=165681
+            <rdar://problem/29755339>
+
+            Reviewed by Brian Burg.
+
+            Normally await expressions are only allowed inside of async functions.
+            They make dealing with async operations easy, but can't be used directly
+            in Web Inspector's console without making your own async function wrapper.
+
+            This change allows simple await expressions to be run in the console.
+            The supported syntaxes are (simple expression with optional assignment):
+
+                await <expr>
+                x = await <expr>
+                let x = await <expr>
+
+            Web Inspector's console will automatically wrap this in an async
+            function and report the resulting value or exception. For instance
+            in the last example above:
+
+                let x;
+                (async function() {
+                    try {
+                        x = await <expr>;
+                        console.info("%o", x);
+                    } catch (e) {
+                        console.error(e);
+                    }
+                })();
+                undefined
+
+            This way users can get the convenience of await in the Console.
+            This also gives users a nice way of extracting a value out of
+            a Promise without writing their own handlers.
+
+            * UserInterface/Controllers/RuntimeManager.js:
+            (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+            (WebInspector.RuntimeManager.prototype._tryApplyAwaitConvenience):
+            Wrap simple await expressions into a function that will log the result.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210032. rdar://problem/29744608
 
     2016-12-20  Joseph Pecoraro  <pecoraro@apple.com>

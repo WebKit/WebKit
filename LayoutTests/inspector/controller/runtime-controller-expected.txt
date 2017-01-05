@@ -1,4 +1,13 @@
-Tests for the Runtime.parse command.
+CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: line 9: Thrown exception
+CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: line 9: Promise.reject
+CONSOLE MESSAGE: line 9: Rejection
+CONSOLE MESSAGE: line 7: %o
+CONSOLE MESSAGE: line 7: %o
+Tests for RuntimeManager operations.
 
 
 == Running test suite: RuntimeManager
@@ -19,4 +28,33 @@ Source: ;{a:1, b:2}
 PASS: Evaluation should produce an exception.
 Source: ;{ let a = 1; a += 1; a }
 PASS: Evaluation should produce the labeled statement's value.
+
+-- Running test case: RuntimeManager.prototype.evaluateInInspectedWindow.AwaitConvenience
+
+Source: await 1
+PASS: Transformed. Should log the value or an exception.
+Source:    await 2   
+PASS: Transformed. Should log the value or an exception.
+Source: var x = await 3
+PASS: Transformed. Should log the value or an exception.
+Source: await causeExceptionImmediately()
+PASS: Transformed. Should log the value or an exception.
+Source: await Promise.resolve(4)
+PASS: Transformed. Should log the value or an exception.
+Source: await Promise.reject('Promise.reject')
+PASS: Transformed. Should log the value or an exception.
+Source: await rejectedEventually()
+PASS: Transformed. Should log the value or an exception.
+Source: await asyncOperation()
+PASS: Transformed. Should log the value or an exception.
+Source: x = await asyncOperation()
+PASS: Transformed. Should log the value or an exception.
+Source: return 10
+PASS: Exception. Should not get transformed and produce a SyntaxError.
+Source: await 10; 1
+PASS: Exception. Should not get transformed and produce a SyntaxError.
+Source: 1; await 10;
+PASS: Exception. Should not get transformed and produce a SyntaxError.
+Source: x = y = await 10
+PASS: Exception. Should not get transformed and produce a SyntaxError.
 
