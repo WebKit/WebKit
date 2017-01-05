@@ -1,3 +1,14 @@
+2017-01-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error.
+        https://bugs.webkit.org/show_bug.cgi?id=166726
+
+        Reviewed by Alex Christensen.
+
+        Add include folder.
+
+        * CMakeLists.txt:
+
 2017-01-05  Milan Crha  <mcrha@redhat.com>
 
         [SOUP] AddressSanitizer: heap-use-after-free under WTF::String::fromUTF8()
