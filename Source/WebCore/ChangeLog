@@ -1,5 +1,30 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210083. rdar://problem/25391382
+
+    2016-12-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+            WebKit should set Original URL of a download request correctly
+            https://bugs.webkit.org/show_bug.cgi?id=166394
+            <rdar://problem/25391382>
+
+            Reviewed by Alex Christensen.
+
+            WebKit should set Original URL of a download request correctly if the download
+            is initiated by clicking on a link with target=_blank.
+
+            Manually tested as the requested test infrastructure doesn't exist yet. We need actual
+            loading process for API test such that we could simulate the real situation which
+            PolicyDownload is only set when we receive responds. Currently we can only set
+            PolicyDownload in a NavigationDelegate when the load starts. Hence we cannot simulate
+            the following process: load starts -> PolicyUse -> creates a new WebView ->
+            respond receives -> PolicyDownload -> downloads.
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::setOriginalURLForDownloadRequest):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210061. rdar://problem/29763143
 
     2016-12-21  Eric Carlson  <eric.carlson@apple.com>

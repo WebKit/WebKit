@@ -2363,7 +2363,14 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
 {
     // FIXME: Rename firstPartyForCookies back to mainDocumentURL. It was a mistake to think that it was only used for cookies.
     // The originalURL is defined as the URL of the page where the download was initiated.
-    URL originalURL = m_frame.document() ? m_frame.document()->firstPartyForCookies() : URL();
+    URL originalURL;
+    if (m_frame.document()) {
+        originalURL = m_frame.document()->firstPartyForCookies();
+        // If there is no main document URL, it means that this document is newly opened and just for download purpose.
+        // In this case, we need to set the originalURL to this document's opener's main document URL.
+        if (originalURL.isEmpty() && opener() && opener()->document())
+            originalURL = opener()->document()->firstPartyForCookies();
+    }
     // If the originalURL is the same as the requested URL, we are processing a download
     // initiated directly without a page and do not need to specify the originalURL.
     if (originalURL == request.url())
