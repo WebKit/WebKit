@@ -1,3 +1,10 @@
+2017-01-05  Andreas Kling  <akling@apple.com>
+
+        Skip fast/scrolling/page-cache-back-overflow-scroll-restore.html on iOS simulator.
+        <https://webkit.org/b/166736>
+
+        * platform/ios-simulator/TestExpectations:
+
 2017-01-05  Chris Dumez  <cdumez@apple.com>
 
         Form validation: Align email validation with the latest HTML specification
