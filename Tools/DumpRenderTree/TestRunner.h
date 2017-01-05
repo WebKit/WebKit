@@ -373,6 +373,8 @@ public:
     void setDumpJSConsoleLogInStdErr(bool inStdErr) { m_dumpJSConsoleLogInStdErr = inStdErr; }
     bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; }
 
+    void setSpellCheckerLoggingEnabled(bool);
+
 private:
     TestRunner(const std::string& testURL, const std::string& expectedPixelHash);
 

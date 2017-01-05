@@ -1,5 +1,37 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210266. rdar://problem/29447824
+
+    2017-01-03  Tim Horton  <timothy_horton@apple.com>
+
+            NSSpellChecker's recordResponse isn't called for unseen automatic corrections
+            https://bugs.webkit.org/show_bug.cgi?id=166450
+            <rdar://problem/29447824>
+
+            Reviewed by Darin Adler.
+
+            * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+            * DumpRenderTree/TestRunner.cpp:
+            (TestRunner::staticFunctions):
+            * DumpRenderTree/mac/TestRunnerMac.mm:
+            (setSpellCheckerLoggingEnabledCallback):
+            * DumpRenderTree/win/TestRunnerWin.cpp:
+            (setSpellCheckerLoggingEnabledCallback):
+            * DumpRenderTree/mac/DumpRenderTree.mm:
+            (resetWebViewToConsistentStateBeforeTesting):
+            * DumpRenderTree/mac/DumpRenderTreeSpellChecker.h: Added.
+            * DumpRenderTree/mac/DumpRenderTreeSpellChecker.mm: Added.
+            (stringForCorrectionResponse):
+            (drt_NSSpellChecker_recordResponseToCorrection):
+            (swizzleNSSpellCheckerMethodsIfNeeded):
+            (setSpellCheckerLoggingEnabled):
+            Add a new testRunner method, setSpellCheckerLoggingEnabled, which, when
+            set to true, logs to stdout (which ends up in the test result) whenever
+            NSSpellChecker recordResponse:toCorrection:forWord:language:inSpellDocumentWithTag:
+            is called, and then calls the original method. It is reset to false between tests.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210101. rdar://problem/28475977
 
     2016-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>

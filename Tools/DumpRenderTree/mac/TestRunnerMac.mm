@@ -31,6 +31,7 @@
 #import "TestRunner.h"
 
 #import "DefaultPolicyDelegate.h"
+#import "DumpRenderTreeSpellChecker.h"
 #import "EditingDelegate.h"
 #import "MockGeolocationProvider.h"
 #import "MockWebNotificationProvider.h"
@@ -208,6 +209,11 @@ void TestRunner::clearAllDatabases()
 void TestRunner::setStorageDatabaseIdleInterval(double interval)
 {
     [WebStorageManager setStorageDatabaseIdleInterval:interval];
+}
+
+void TestRunner::setSpellCheckerLoggingEnabled(bool enabled)
+{
+    ::setSpellCheckerLoggingEnabled(enabled);
 }
 
 void TestRunner::closeIdleLocalStorageDatabases()

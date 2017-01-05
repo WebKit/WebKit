@@ -41,7 +41,7 @@ public:
     ~CorrectionPanel();
     void show(WebView*, WebCore::AlternativeTextType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     String dismiss(WebCore::ReasonForDismissingAlternativeText);
-    static void recordAutocorrectionResponse(WebView*, NSCorrectionResponse, const String& replacedString, const String& replacementString);
+    static void recordAutocorrectionResponse(NSInteger spellCheckerDocumentTag, NSCorrectionResponse, const String& replacedString, const String& replacementString);
 
 private:
     bool isShowing() const { return m_view; }

@@ -1,5 +1,30 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210266. rdar://problem/29447824
+
+    2017-01-03  Tim Horton  <timothy_horton@apple.com>
+
+            NSSpellChecker's recordResponse isn't called for unseen automatic corrections
+            https://bugs.webkit.org/show_bug.cgi?id=166450
+            <rdar://problem/29447824>
+
+            Reviewed by Darin Adler.
+
+            * editing/editing.js:
+            (runEditingTest):
+            (runEditingTestWithCallbackLogging):
+            Add a way to run an editing test without enabling noisy editing callback logging.
+
+            * editing/mac/spelling/accept-unseen-candidate-records-acceptance-expected.txt: Added.
+            * editing/mac/spelling/accept-unseen-candidate-records-acceptance.html: Added.
+            Add a test that ensures that we correctly inform NSSpellChecker of an
+            accepted unseen correction.
+
+            * platform/mac-wk2/TestExpectations:
+            Disable the test because spelling tests don't work in WebKit2 at all.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210142. rdar://problem/29109053
 
     2016-12-23  Andreas Kling  <akling@apple.com>

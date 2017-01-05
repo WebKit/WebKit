@@ -69,9 +69,9 @@ String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlter
     return result;
 }
 
-void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
+void WebAlternativeTextClient::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(responseType, replacedString, replacementString));
+    m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(static_cast<int32_t>(response), replacedString, replacementString));
 }
 #endif
 

@@ -1,5 +1,37 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210266. rdar://problem/29447824
+
+    2017-01-03  Tim Horton  <timothy_horton@apple.com>
+
+            NSSpellChecker's recordResponse isn't called for unseen automatic corrections
+            https://bugs.webkit.org/show_bug.cgi?id=166450
+            <rdar://problem/29447824>
+
+            Reviewed by Darin Adler.
+
+            Test: editing/mac/spelling/accept-unseen-candidate-records-acceptance.html
+
+            * editing/AlternativeTextController.cpp:
+            (WebCore::AlternativeTextController::recordAutocorrectionResponse):
+            (WebCore::AlternativeTextController::recordAutocorrectionResponseReversed): Deleted.
+            * editing/AlternativeTextController.h:
+            Add recordAutocorrectionResponse, which takes a AutocorrectionResponseType, instead of having
+            a function specifically for reverted autocorrections. Also, get rid of the unnecessary indirection
+            of the private overload of recordAutocorrectionResponseReversed, since there's only one caller.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::markAndReplaceFor):
+            Call recordAutocorrectionResponse with Accepted when performing an auto-autocorrection.
+
+            (WebCore::Editor::changeBackToReplacedString):
+            Adopt recordAutocorrectionResponse.
+
+            * page/AlternativeTextClient.h:
+            Add an "AutocorrectionAccepted" response type.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210142. rdar://problem/29109053
 
     2016-12-23  Andreas Kling  <akling@apple.com>
