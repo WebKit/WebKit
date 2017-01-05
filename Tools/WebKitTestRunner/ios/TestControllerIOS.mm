@@ -29,6 +29,7 @@
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"
+#import "UIKitSPI.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -88,6 +89,7 @@ void TestController::platformResetStateToConsistentValues()
     if (PlatformWebView* webView = mainWebView()) {
         webView->platformView()._stableStateOverride = nil;
         UIScrollView *scrollView = webView->platformView().scrollView;
+        [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
         [scrollView setContentOffset:CGPointZero];
     }
