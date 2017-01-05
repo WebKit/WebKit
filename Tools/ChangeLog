@@ -1,3 +1,20 @@
+2017-01-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: teach the protocol generator about platform-specific types, events, and commands
+        https://bugs.webkit.org/show_bug.cgi?id=166003
+        <rdar://problem/28718990>
+
+        Reviewed by Joseph Pecoraro.
+
+        Teach run-inspector-generator-tests to generate test output using the platform name
+        derived from the directory that the test is in. For example, tests in the /generic/
+        subdirectory will pass `--platform generic` to generate-inspector-protocol-bindings.py.
+
+        * Scripts/webkitpy/inspector/main.py:
+        (InspectorGeneratorTests.generate_from_json):
+        (InspectorGeneratorTests.run_tests):
+        (InspectorGeneratorTests.main):
+
 2017-01-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed cmake buildfix after r210266.
