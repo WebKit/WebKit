@@ -1,5 +1,19 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210312. rdar://problem/29876342
+
+    2017-01-04  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: sections with the same name are allowed
+            https://bugs.webkit.org/show_bug.cgi?id=166708
+
+            Reviewed by Saam Barati.
+
+            * wasm/self-test/test_BuilderJSON.js:
+            (SectionsWithSameCustomName):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210028. rdar://problem/29747874
 
     2016-12-20  JF Bastien  <jfbastien@apple.com>
