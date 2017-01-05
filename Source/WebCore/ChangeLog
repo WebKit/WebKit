@@ -1,3 +1,40 @@
+2017-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: forced pseudo classes aren't cleared from inspected page when Inspector closes
+        https://bugs.webkit.org/show_bug.cgi?id=108823
+        <rdar://problem/13143550>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::documentDetached):
+        Clear the document from all of the different Document sets.
+
+        (WebCore::InspectorCSSAgent::didRemoveDocument): Deleted.
+        Use documentDetached, which is more direct.
+
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        Update the set of Documents with psuedo element changes. So when we
+        reset forced styles we know which documents to refresh styles.
+
+        (WebCore::InspectorCSSAgent::resetPseudoStates):
+        Use the list of documents we've already computed.
+
+        (WebCore::InspectorCSSAgent::didRemoveDOMNode):
+        (WebCore::InspectorCSSAgent::didModifyDOMAttr):
+        Change to take a reference and more data to avoid extra work.
+
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+        Eliminated didRemoveDocument.
+
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::didRemoveDOMAttr):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        Pass a references to the DOM listener client, these are never null.
+
 2017-01-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove runtime flag for variation fonts

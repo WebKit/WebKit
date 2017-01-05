@@ -158,9 +158,8 @@ private:
     RefPtr<Inspector::Protocol::CSS::NamedFlow> buildObjectForNamedFlow(ErrorString&, WebKitNamedFlow*, int documentNodeId);
 
     // InspectorDOMAgent::DOMListener implementation
-    void didRemoveDocument(Document*) override;
-    void didRemoveDOMNode(Node*) override;
-    void didModifyDOMAttr(Element*) override;
+    void didRemoveDOMNode(Node&, int nodeId) override;
+    void didModifyDOMAttr(Element&) override;
 
     // InspectorCSSAgent::Listener implementation
     void styleSheetChanged(InspectorStyleSheet*) override;
@@ -177,6 +176,7 @@ private:
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
     HashMap<Document*, HashSet<CSSStyleSheet*>> m_documentToKnownCSSStyleSheets;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
+    HashSet<Document*> m_documentsWithForcedPseudoStates;
     HashSet<int> m_namedFlowCollectionsRequested;
     std::unique_ptr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
