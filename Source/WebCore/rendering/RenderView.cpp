@@ -168,11 +168,8 @@ void RenderView::unscheduleLazyRepaint(RenderBox& renderer)
 
 void RenderView::lazyRepaintTimerFired()
 {
-    bool shouldRepaint = document().pageCacheState() == Document::NotInPageCache;
-
     for (auto& renderer : m_renderersNeedingLazyRepaint) {
-        if (shouldRepaint)
-            renderer->repaint();
+        renderer->repaint();
         renderer->setRenderBoxNeedsLazyRepaint(false);
     }
     m_renderersNeedingLazyRepaint.clear();

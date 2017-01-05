@@ -1,5 +1,26 @@
 2017-01-05  Andreas Kling  <akling@apple.com>
 
+        Remove some unnecessary page cache checks in render tree code.
+        <https://webkit.org/b/166728>
+
+        Reviewed by Antti Koivisto.
+
+        There is no render tree in the page cache, so we don't need to be checking
+        for it in renderer code.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::shouldRepaintForImageAnimation):
+        (WebCore::RenderElement::newImageAnimationFrameAvailable):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderObject.cpp:
+        (WebCore::printRenderTreeForLiveDocuments):
+        (WebCore::printLayerTreeForLiveDocuments):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::lazyRepaintTimerFired):
+
+2017-01-05  Andreas Kling  <akling@apple.com>
+
         REGRESSION(r210226): overflow:scroll scroll position not restored on back navigation
         <https://webkit.org/b/166724>
 
