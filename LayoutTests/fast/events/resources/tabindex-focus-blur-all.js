@@ -55,7 +55,7 @@ function test()
     var homeBase = window.frames[1].document.getElementsByClassName('homebase');
     homeBase[0].focus();
 
-    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 333 / 333 ";
+    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 336 / 336 ";
     resultSummary += (focusCount==blurCount) ? "<span style='color:green'>PASSED</span><br>" : "<span style='color:red'>FAILED</span><br>";
     resultSummary += "Total of "+failedTestCount+" focus test(s) failed.";
     if (failedTestCount)
@@ -101,7 +101,7 @@ Array.prototype.find = function(element) {
 function testProgrammaticFocus(elem)
 {
     var elemThatShouldFocus = null;
-    var OKtoFocusOtherElement = false;
+    var shouldFocusOtherElement = false;
     focusedElem = null;
 
     if (elem.tabIndex == elem.getAttribute("tabindex")) // this means tabindex was explicitly set
@@ -117,13 +117,11 @@ function testProgrammaticFocus(elem)
     if (elem.tabIndex == -1 && elem.tagName == "AREA")
         elemThatShouldFocus = null;
 
-    if (tagNamesTransferFocused.find(elem.tagName)) {
-        elemThatShouldFocus = null;
-        OKtoFocusOtherElement = true;
-    }
+    if (tagNamesTransferFocused.find(elem.tagName) && elemThatShouldFocus == null)
+        shouldFocusOtherElement = true;
 
     elem.focus();
-    if (elemThatShouldFocus == focusedElem || (!elemThatShouldFocus && OKtoFocusOtherElement))
+    if ((!shouldFocusOtherElement && elemThatShouldFocus == focusedElem) || (shouldFocusOtherElement && elem != focusedElem))
         printToConsole("<"+elem.tagName+"> "+elem.id+" PASSED focus test");
     else {
         failedTestCount++;
