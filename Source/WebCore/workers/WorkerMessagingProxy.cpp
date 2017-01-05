@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@
 #include "DedicatedWorkerThread.h"
 #include "Document.h"
 #include "ErrorEvent.h"
-#include "Event.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
 #include "PageGroup.h"
@@ -48,21 +47,16 @@
 
 namespace WebCore {
 
-WorkerGlobalScopeProxy* WorkerGlobalScopeProxy::create(Worker* worker)
+WorkerGlobalScopeProxy& WorkerGlobalScopeProxy::create(Worker& worker)
 {
-    return new WorkerMessagingProxy(worker);
+    return *new WorkerMessagingProxy(worker);
 }
 
-WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
-    : m_scriptExecutionContext(workerObject->scriptExecutionContext())
-    , m_inspectorProxy(std::make_unique<WorkerInspectorProxy>(workerObject->identifier()))
-    , m_workerObject(workerObject)
-    , m_mayBeDestroyed(false)
-    , m_unconfirmedMessageCount(0)
-    , m_workerThreadHadPendingActivity(false)
-    , m_askedToTerminate(false)
+WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
+    : m_scriptExecutionContext(workerObject.scriptExecutionContext())
+    , m_inspectorProxy(std::make_unique<WorkerInspectorProxy>(workerObject.identifier()))
+    , m_workerObject(&workerObject)
 {
-    ASSERT(m_workerObject);
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && currentThread() == downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().threadID()));
 }
@@ -94,12 +88,12 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
     SocketProvider* socketProvider = nullptr;
 #endif
 
-    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), proxy, socketProvider, runtimeFlags);
+    auto thread = DedicatedWorkerThread::create(scriptURL, identifier, userAgent, sourceCode, *this, *this, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, document.topOrigin(), proxy, socketProvider, runtimeFlags);
 
-    workerThreadCreated(thread);
+    workerThreadCreated(thread.get());
     thread->start();
 
-    m_inspectorProxy->workerStarted(m_scriptExecutionContext.get(), thread.get(), scriptURL);
+    m_inspectorProxy->workerStarted(m_scriptExecutionContext.get(), thread.ptr(), scriptURL);
 }
 
 void WorkerMessagingProxy::postMessageToWorkerObject(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
@@ -174,9 +168,9 @@ void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
     });
 }
 
-void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread> workerThread)
+void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThread)
 {
-    m_workerThread = workerThread;
+    m_workerThread = &workerThread;
 
     if (m_askedToTerminate) {
         // Worker.terminate() could be called from JS before the thread was created.

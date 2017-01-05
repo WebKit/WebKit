@@ -153,7 +153,7 @@ enum EventThrottlingBehavior {
     [MayThrowException] DOMString inspectorHighlightObject();
 
     [MayThrowException] unsigned long markerCountForNode(Node node, DOMString markerType);
-    [MayThrowException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
+    [MayThrowException] Range? markerRangeForNode(Node node, DOMString markerType, unsigned long index);
     [MayThrowException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
     [MayThrowException] DOMString dumpMarkerRects(DOMString markerType);
     void addTextMatchMarker(Range range, boolean isActive);
@@ -187,12 +187,12 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 
-    Range rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
+    Range? rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
     unsigned long locationFromRange(Element scope, Range range);
     unsigned long lengthFromRange(Element scope, Range range);
     DOMString rangeAsText(Range range);
     Range subrange(Range range, long rangeLocation, long rangeLength);
-    [MayThrowException] Range rangeForDictionaryLookupAtLocation(long x, long y);
+    [MayThrowException] Range? rangeForDictionaryLookupAtLocation(long x, long y);
 
     [MayThrowException] void setDelegatesScrolling(boolean enabled);
 
@@ -208,7 +208,7 @@ enum EventThrottlingBehavior {
     [MayThrowException] unsigned long wheelEventHandlerCount();
     [MayThrowException] unsigned long touchEventHandlerCount();
 
-    [MayThrowException] NodeList nodesFromRect(Document document, long x, long y,
+    [MayThrowException] NodeList? nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
         boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent);
 
@@ -253,7 +253,7 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] DOMString scrollingStateTreeAsText();
     [MayThrowException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
-    [MayThrowException] ClientRectList nonFastScrollableRects();
+    [MayThrowException] ClientRectList? nonFastScrollableRects();
 
     [MayThrowException] DOMString repaintRectsAsText();
 
@@ -283,7 +283,7 @@ enum EventThrottlingBehavior {
 
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
-    DOMWindow openDummyInspectorFrontend(DOMString url);
+    DOMWindow? openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
     [MayThrowException] void setInspectorIsUnderTest(boolean isUnderTest);
 
@@ -369,7 +369,7 @@ enum EventThrottlingBehavior {
     DOMString toolTipFromElement(Element element);
 
     SerializedScriptValue deserializeBuffer(ArrayBuffer buffer);
-    ArrayBuffer serializeObject(SerializedScriptValue obj);
+    ArrayBuffer serializeObject(SerializedScriptValue object);
 
     boolean isFromCurrentWorld(any obj);
 
@@ -446,7 +446,7 @@ enum EventThrottlingBehavior {
 
     void setPageDefersLoading(boolean defersLoading);
 
-    File createFile(DOMString url);
+    File? createFile(DOMString url);
     void queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
 
@@ -488,7 +488,7 @@ enum EventThrottlingBehavior {
     
     boolean isProcessingUserGesture();
 
-    GCObservation observeGC(any observed);
+    GCObservation? observeGC(any observed);
 
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
     void setBaseWritingDirection(BaseWritingDirection direction);

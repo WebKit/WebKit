@@ -1,3 +1,58 @@
+2017-01-05  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from "bindings/scripts", "svg", "testing", and "workers"
+        https://bugs.webkit.org/show_bug.cgi?id=166718
+
+        Reviewed by Alex Christensen.
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp: Removed. Stale unused test
+        result expectation file.
+        * bindings/scripts/test/JS/JSFloat64Array.h: Ditto.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::removeEventListener): Fix comment that incorrectly
+        mentions PassRefPtr.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::computedStyleIncludingVisitedInfo): Return Ref instead
+        of RefPtr.
+        (WebCore::Internals::serializeObject): Ditto.
+        (WebCore::Internals::deserializeBuffer): Ditto.
+        (WebCore::Internals::observeGC): Streamlined code a bit.
+        * testing/Internals.h: Updated for above changes.
+        * testing/Internals.idl: Marked various function results as nullable.
+
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope): Take a RefPtr&&
+        instead of a PassRefPtr.
+        * workers/DedicatedWorkerThread.h: Updated for above change.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker): Passs a reference to WorkerGlobalScopeProxy::create.
+        (WebCore::Worker::~Worker): Updated since m_contentProxy is a reference.
+        (WebCore::Worker::postMessage): Ditto.
+        (WebCore::Worker::terminate): Ditto.
+        (WebCore::Worker::hasPendingActivity): Ditto.
+        (WebCore::Worker::notifyNetworkStateChange): Ditto.
+        (WebCore::Worker::notifyFinished): Ditto.
+        * workers/Worker.h: Made m_contextProxy a reference rather than a pointer.
+
+        * workers/WorkerGlobalScopeProxy.h: Reduced includes. Made destructor
+        protected instead of public since this class destroys itself.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerGlobalScopeProxy::create): Take and return a reference.
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy): Moved most initialization
+        to the calass definition. Take a reference instead of a pointer.
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope): Use auto.
+        (WebCore::WorkerMessagingProxy::workerThreadCreated): Take a reference
+        rather than a PassRefPtr.
+        * workers/WorkerMessagingProxy.h: Updated for above changes.
+        (WebCore::WorkerMessagingProxy::askedToTerminate): Deleted.
+        (WebCore::WorkerMessagingProxy::workerObject): Deleted.
+
+        * workers/WorkerThread.h: Take a RefPtr&& instead of a PassRefPtr.
+
 2017-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Addressing post-review comments after r21005.

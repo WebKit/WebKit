@@ -537,7 +537,7 @@ bool SVGElement::removeEventListener(const AtomicString& eventType, EventListene
     if (containingShadowRoot())
         return Node::removeEventListener(eventType, listener, options);
 
-    // EventTarget::removeEventListener creates a PassRefPtr around the given EventListener
+    // EventTarget::removeEventListener creates a Ref around the given EventListener
     // object when creating a temporary RegisteredEventListener object used to look up the
     // event listener in a cache. If we want to be able to call removeEventListener() multiple
     // times on different nodes, we have to delay its immediate destruction, which would happen
