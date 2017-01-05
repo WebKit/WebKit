@@ -3671,7 +3671,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
         createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
     }
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    else if (![types containsObject:WebArchivePboardType] && [types containsObject:NSFilesPromisePboardType]) {
+    else if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:NSFilesPromisePboardType]) {
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:NSFilesPromisePboardType];
         if (![files isKindOfClass:[NSArray class]]) {
             delete dragData;

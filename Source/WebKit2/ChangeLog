@@ -1,5 +1,16 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210363. rdar://problem/19595567
+
+    2017-01-05  Enrica Casucci  <enrica@apple.com>
+
+            Unreviewed build fix after https://trac.webkit.org/changeset/210360
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::performDragOperation):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210360. rdar://problem/19595567
 
     2017-01-05  Enrica Casucci  <enrica@apple.com>
