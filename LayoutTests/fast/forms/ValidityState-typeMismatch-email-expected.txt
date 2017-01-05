@@ -10,7 +10,6 @@ PASS "someone@127.0.0.1" is a valid email address.
 PASS "a@b.b" is a valid email address. 
 PASS "a/b@domain.com" is a valid email address. 
 PASS "{}@domain.com" is a valid email address. 
-PASS "ddjk-s-jk@asl-.com" is a valid email address. 
 PASS "m*'!%@something.sa" is a valid email address. 
 PASS "tu!!7n7.ad##0!!!@company.ca" is a valid email address. 
 PASS "%@com.com" is a valid email address. 
@@ -18,8 +17,6 @@ PASS "!#$%&'*+/=?^_`{|}~.-@com.com" is a valid email address.
 PASS ".wooly@example.com" is a valid email address. 
 PASS "wo..oly@example.com" is a valid email address. 
 PASS "someone@do-ma-in.com" is a valid email address. 
-PASS "someone@do-.com" is a valid email address. 
-PASS "somebody@-.com" is a valid email address. 
 PASS "somebody@example" is a valid email address. 
 PASS "
 a@p.com
@@ -39,6 +36,8 @@ PASS " a@p.com " is a valid email address. It was sanitized to "a@p.com".
 PASS " a@p.com " is a valid email address. It was sanitized to "a@p.com".
 PASS "	a@p.com	" is a valid email address. It was sanitized to "a@p.com".
 PASS "a@p.com" is a valid email address. It was sanitized to "a@p.com".
+PASS "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@p.com" is a valid email address. 
+PASS "a@ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" is a valid email address. 
 Invalid single addresses when 'multiple' attribute is not set.
 PASS "invalid:email@example.com" is a invalid email address. 
 PASS "@somewhere.com" is a invalid email address. 
@@ -63,6 +62,11 @@ PASS "a@p.com" is a invalid email address.
 PASS "a@p.com" is a invalid email address. 
 PASS "a @p.com" is a invalid email address. 
 PASS "a　@p.com" is a invalid email address. 
+PASS "ddjk-s-jk@asl-.com" is a invalid email address. 
+PASS "someone@do-.com" is a invalid email address. 
+PASS "somebody@-.com" is a invalid email address. 
+PASS "a@pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.com" is a invalid email address. 
+PASS "a@p.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" is a invalid email address. 
 Valid single addresses when 'multiple' attribute is set.
 PASS "something@something.com" is a valid email address list. 
 PASS "someone@localhost.localdomain" is a valid email address list. 
@@ -70,7 +74,6 @@ PASS "someone@127.0.0.1" is a valid email address list.
 PASS "a@b.b" is a valid email address list. 
 PASS "a/b@domain.com" is a valid email address list. 
 PASS "{}@domain.com" is a valid email address list. 
-PASS "ddjk-s-jk@asl-.com" is a valid email address list. 
 PASS "m*'!%@something.sa" is a valid email address list. 
 PASS "tu!!7n7.ad##0!!!@company.ca" is a valid email address list. 
 PASS "%@com.com" is a valid email address list. 
@@ -78,8 +81,6 @@ PASS "!#$%&'*+/=?^_`{|}~.-@com.com" is a valid email address list.
 PASS ".wooly@example.com" is a valid email address list. 
 PASS "wo..oly@example.com" is a valid email address list. 
 PASS "someone@do-ma-in.com" is a valid email address list. 
-PASS "someone@do-.com" is a valid email address list. 
-PASS "somebody@-.com" is a valid email address list. 
 PASS "somebody@example" is a valid email address list. 
 PASS " a@p.com " is a valid email address list. It was sanitized to "a@p.com".
 PASS "	a@p.com	" is a valid email address list. It was sanitized to "a@p.com".
@@ -99,6 +100,8 @@ PASS " " is a valid email address list. It was sanitized to "".
 PASS " a@p.com" is a valid email address list. It was sanitized to "a@p.com".
 PASS "a@p.com " is a valid email address list. It was sanitized to "a@p.com".
 PASS " a@p.com " is a valid email address list. It was sanitized to "a@p.com".
+PASS "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@p.com" is a valid email address list. 
+PASS "a@ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" is a valid email address list. 
 Invalid single addresses when 'multiple' attribute is set.
 PASS "invalid:email@example.com" is a invalid email address list. 
 PASS "@somewhere.com" is a invalid email address list. 
@@ -126,6 +129,11 @@ PASS "a@p.com" is a invalid email address list.
 PASS "a@p.com" is a invalid email address list. 
 PASS "a @p.com" is a invalid email address list. 
 PASS "a　@p.com" is a invalid email address list. 
+PASS "ddjk-s-jk@asl-.com" is a invalid email address list. 
+PASS "someone@do-.com" is a invalid email address list. 
+PASS "somebody@-.com" is a invalid email address list. 
+PASS "a@pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.com" is a invalid email address list. 
+PASS "a@p.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" is a invalid email address list. 
 Valid multiple addresses when 'multiple' attribute is set.
 PASS "someone@somewhere.com,john@doe.com,a@b.c,a/b@c.c,ualla@ualla.127" is a valid email address list. 
 PASS "tu!!7n7.ad##0!!!@company.ca,F/s/f/a@feo-re.com,m*'@a.b" is a valid email address list. 
