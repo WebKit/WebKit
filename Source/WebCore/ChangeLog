@@ -1,3 +1,20 @@
+2017-01-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix crash clamping grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=166637
+
+        Reviewed by Darin Adler.
+
+        Avoid issues with very big values for the grid lines clamping them on GridPosition.
+
+        Test: fast/css-grid-layout/grid-position-crash.html
+
+        * rendering/style/GridArea.h: Move kGridMaxTracks definition to GridPosition.
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::setExplicitPosition): Use new setIntegerPosition().
+        (WebCore::GridPosition::setSpanPosition): Ditto.
+        (WebCore::GridPosition::setIntegerPosition): Clamp the position using kGridMaxTracks.
+
 2017-01-04  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from the "html" directory, other improvements

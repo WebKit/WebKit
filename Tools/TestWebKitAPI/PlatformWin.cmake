@@ -50,6 +50,7 @@ set(TestWebCoreLib_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatRect.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatPoint.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/FloatSize.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/GridPosition.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/HTMLParserIdioms.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/IntRect.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/IntPoint.cpp

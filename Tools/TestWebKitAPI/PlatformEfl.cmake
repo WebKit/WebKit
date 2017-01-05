@@ -57,6 +57,7 @@ list(APPEND TestJavaScriptCore_LIBRARIES
 
 set(test_webcore_BINARIES
     CSSParser
+    GridPosition
     HTMLParserIdioms
     LayoutUnit
     URL

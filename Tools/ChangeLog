@@ -1,3 +1,20 @@
+2017-01-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix crash clamping grid lines
+        https://bugs.webkit.org/show_bug.cgi?id=166637
+
+        Reviewed by Darin Adler.
+
+        Creates new unit test to verify that the maximum tracks limit
+        is used in GridPosition too.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/GridPosition.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2017-01-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move editing history scripts to WebCore PrivateHeaders

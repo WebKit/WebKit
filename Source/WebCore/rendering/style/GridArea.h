@@ -39,9 +39,6 @@
 
 namespace WebCore {
 
-// Recommended maximum size for both explicit and implicit grids.
-const int kGridMaxTracks = 1000000;
-
 // A span in a single direction (either rows or columns). Note that |startLine|
 // and |endLine| are grid lines' indexes.
 // Despite line numbers in the spec start in "1", the indexes here start in "0".
