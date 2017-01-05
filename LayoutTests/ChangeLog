@@ -1,3 +1,18 @@
+2017-01-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r209990. rdar://problem/29705967
+
+    2016-12-18  Brent Fulgham  <bfulgham@apple.com>
+
+            Side effects while restting form elements
+            https://bugs.webkit.org/show_bug.cgi?id=165959
+            <rdar://problem/29705967>
+
+            Reviewed by Anders Carlsson.
+
+            * fast/html/form-mutate-expected.txt: Added.
+            * fast/html/form-mutate.html: Added.
+
 2017-01-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening.
