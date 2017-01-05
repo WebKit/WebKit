@@ -1,3 +1,16 @@
+2017-01-05  Zalan Bujtas  <zalan@apple.com>
+
+        Start hittesting a clean tree in RenderEmbeddedObject::isReplacementObscured
+        https://bugs.webkit.org/show_bug.cgi?id=166743
+        <rdar://problem/29024384>
+
+        Reviewed by Simon Fraser.
+
+        Unable to reproduce.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+
 2017-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash inside Editor::styleForSelectionStart
