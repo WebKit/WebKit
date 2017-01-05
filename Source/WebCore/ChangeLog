@@ -1,3 +1,20 @@
+2017-01-05  Keith Rollin  <krollin@apple.com>
+
+        Add WebCore::URL::protocolHostAndPort
+        https://bugs.webkit.org/show_bug.cgi?id=166426
+
+        Reviewed by Alex Christensen.
+
+        Added to support record/replay mechanism, which needs it in order to
+        implement fuzzy-matching of URLs that are similar to each other but
+        that nonetheless come from the same source/host.
+
+        Updated TestWebKitAPI/Tests/WebCore/URL.cpp.
+
+        * platform/URL.cpp:
+        (WebCore::URL::protocolHostAndPort):
+        * platform/URL.h:
+
 2017-01-05  Chris Dumez  <cdumez@apple.com>
 
         Form validation: Align email validation with the latest HTML specification

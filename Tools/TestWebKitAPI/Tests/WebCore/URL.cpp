@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WTFStringUtilities.h"
 #include <WebCore/URL.h>
+#include <WebCore/URLParser.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
@@ -68,6 +69,53 @@ TEST_F(URLTest, URLConstructorConstChar)
     EXPECT_EQ(String("var=val"), kurl.query());
     EXPECT_TRUE(kurl.hasFragmentIdentifier());
     EXPECT_EQ(String("fragment"), kurl.fragmentIdentifier());
+}
+
+TEST_F(URLTest, URLProtocolHostAndPort)
+{
+    auto createURL = [](const char* urlAsString) {
+        URLParser parser(urlAsString);
+        return parser.result();
+    };
+
+    auto url = createURL("http://username:password@www.example.com:8080/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
+
+    url = createURL("http://username:@www.example.com:8080/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
+
+    url = createURL("http://:password@www.example.com:8080/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
+
+    url = createURL("http://username@www.example.com:8080/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
+
+    url = createURL("http://www.example.com:8080/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
+
+    url = createURL("http://www.example.com:/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com"), url.protocolHostAndPort());
+
+    url = createURL("http://www.example.com/index.html?var=val#fragment");
+    EXPECT_EQ(String("http://www.example.com"), url.protocolHostAndPort());
+
+    url = createURL("file:///a/b/c");
+    EXPECT_EQ(String("file://"), url.protocolHostAndPort());
+
+    url = createURL("file:///a/b");
+    EXPECT_EQ(String("file://"), url.protocolHostAndPort());
+
+    url = createURL("file:///a");
+    EXPECT_EQ(String("file://"), url.protocolHostAndPort());
+
+    url = createURL("file:///a");
+    EXPECT_EQ(String("file://"), url.protocolHostAndPort());
+
+    url = createURL("asdf://username:password@www.example.com:8080/index.html?var=val#fragment");
+    EXPECT_EQ(String("asdf://www.example.com:8080"), url.protocolHostAndPort());
+
+    url = createURL("asdf:///a/b/c");
+    EXPECT_EQ(String("asdf://"), url.protocolHostAndPort());
 }
 
 TEST_F(URLTest, URLDataURIStringSharing)

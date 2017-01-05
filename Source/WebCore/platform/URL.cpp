@@ -717,6 +717,18 @@ String URL::hostAndPort() const
     return host();
 }
 
+String URL::protocolHostAndPort() const
+{
+    String result = m_string.substring(0, m_portEnd);
+
+    if (m_passwordEnd - m_userStart > 0) {
+        const int allowForTrailingAtSign = 1;
+        result.remove(m_userStart, m_passwordEnd - m_userStart + allowForTrailingAtSign);
+    }
+
+    return result;
+}
+
 String URL::user() const
 {
     return decodeURLEscapeSequences(m_string.substring(m_userStart, m_userEnd - m_userStart));

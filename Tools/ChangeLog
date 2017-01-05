@@ -1,3 +1,15 @@
+2017-01-05  Keith Rollin  <krollin@apple.com>
+
+        Add WebCore::URL::protocolHostAndPort
+        https://bugs.webkit.org/show_bug.cgi?id=166426
+
+        Reviewed by Alex Christensen.
+
+        Add test for protocolHostAndPort.
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-01-05  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Archive test result is failing.
