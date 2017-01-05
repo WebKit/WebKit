@@ -60,7 +60,7 @@ void PlatformMediaSessionManager::updateSessionState()
     if (!Settings::shouldManageAudioSessionCategory())
         return;
 
-    if (has(PlatformMediaSession::Video) || has(PlatformMediaSession::Audio)) {
+    if (has(PlatformMediaSession::VideoAudio) || has(PlatformMediaSession::Audio)) {
         if (canProduceAudio())
             AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
         else
