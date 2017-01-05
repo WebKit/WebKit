@@ -1,3 +1,16 @@
+2017-01-05  Chris Dumez  <cdumez@apple.com>
+
+        Turn preferLowPowerWebGLRendering setting on by default
+        https://bugs.webkit.org/show_bug.cgi?id=166737
+        <rdar://problem/29870033>
+
+        Reviewed by Dean Jackson.
+
+        Temporarily turn preferLowPowerWebGLRendering setting on by default until
+        we deal better with WebGL content in background tabs.
+
+        * page/Settings.in:
+
 2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Variation fonts without variations specified are not rendered as if the default variations were specified
