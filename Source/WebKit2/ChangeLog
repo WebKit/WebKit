@@ -1,5 +1,32 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210360. rdar://problem/19595567
+
+    2017-01-05  Enrica Casucci  <enrica@apple.com>
+
+            Support File Promise during drag for macOS.
+            https://bugs.webkit.org/show_bug.cgi?id=165204
+            rdar://problem/19595567
+
+            Reviewed by Tim Horton.
+
+            Adds support for dropping a File Promise in a WKWebView.
+            The implementation uses new File Promise API available in Sierra.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<DragData>::encode):
+            (IPC::ArgumentCoder<DragData>::decode):
+            * Shared/mac/PasteboardTypes.mm:
+            (WebKit::PasteboardTypes::forURL):
+            * UIProcess/Cocoa/WebViewImpl.h:
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::createSandboxExtensionsIfNeeded):
+            (WebKit::WebViewImpl::performDragOperation):
+            (WebKit::maybeCreateSandboxExtensionFromPasteboard): Deleted.
+            (WebKit::createSandboxExtensionsForFileUpload): Deleted.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210266. rdar://problem/29447824
 
     2017-01-03  Tim Horton  <timothy_horton@apple.com>

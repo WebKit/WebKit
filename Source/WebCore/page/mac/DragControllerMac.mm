@@ -61,7 +61,7 @@ bool DragController::isCopyKeyDown(const DragData& dragData)
     
 DragOperation DragController::dragOperation(const DragData& dragData)
 {
-    if ((dragData.flags() & DragApplicationIsModal) || !dragData.containsURL())
+    if ((dragData.flags() & DragApplicationIsModal) || !(dragData.containsURL() || dragData.containsPromise()))
         return DragOperationNone;
 
     if (!m_documentUnderMouse || (!(dragData.flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
