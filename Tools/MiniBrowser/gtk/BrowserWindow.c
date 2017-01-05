@@ -516,6 +516,22 @@ static gboolean toggleFullScreen(BrowserWindow *window, gpointer user_data)
     return TRUE;
 }
 
+static void webKitPrintOperationFailedCallback(WebKitPrintOperation *printOperation, GError *error)
+{
+    g_warning("Print failed: '%s'", error->message);
+}
+
+static gboolean printPage(BrowserWindow *window, gpointer user_data)
+{
+    WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
+    WebKitPrintOperation *printOperation = webkit_print_operation_new(webView);
+
+    g_signal_connect(printOperation, "failed", G_CALLBACK(webKitPrintOperationFailedCallback), NULL);
+    webkit_print_operation_run_dialog(printOperation, GTK_WINDOW(window));
+    g_object_unref(printOperation);
+
+    return TRUE;
+}
 static void editingCommandCallback(GtkWidget*widget, BrowserWindow *window)
 {
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
@@ -861,6 +877,10 @@ static void browser_window_init(BrowserWindow *window)
         g_cclosure_new_swap(G_CALLBACK(gtk_widget_destroy), window, NULL));
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
         g_cclosure_new_swap(G_CALLBACK(gtk_widget_destroy), window, NULL));
+
+    /* Print */
+    gtk_accel_group_connect(window->accelGroup, GDK_KEY_P, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
+        g_cclosure_new_swap(G_CALLBACK(printPage), window, NULL));
 
     g_signal_connect(webkit_web_context_get_default(), "download-started", G_CALLBACK(downloadStarted), window);
 
