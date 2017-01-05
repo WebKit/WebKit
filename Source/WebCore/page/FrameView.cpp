@@ -1876,7 +1876,7 @@ void FrameView::updateLayoutViewport()
 
     LayoutRect layoutViewport = layoutViewportRect();
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport()");
+    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport() totalContentSize " << totalContentsSize() << " unscaledDocumentRect " << (renderView() ? renderView()->unscaledDocumentRect() : IntRect()) << " header height " << headerHeight() << " footer height " << footerHeight());
     LOG_WITH_STREAM(Scrolling, stream << "layoutViewport: " << layoutViewport);
     LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewportRect());
     LOG_WITH_STREAM(Scrolling, stream << "scroll positions: min: " << unscaledMinimumScrollPosition() << " max: "<< unscaledMaximumScrollPosition());
@@ -1895,7 +1895,9 @@ LayoutPoint FrameView::minStableLayoutViewportOrigin() const
 
 LayoutPoint FrameView::maxStableLayoutViewportOrigin() const
 {
-    return unscaledMaximumScrollPosition();
+    LayoutPoint maxPosition = unscaledMaximumScrollPosition();
+    maxPosition = (maxPosition - LayoutSize(0, headerHeight() + footerHeight())).expandedTo({ });
+    return maxPosition;
 }
 
 IntPoint FrameView::unscaledScrollOrigin() const
@@ -1915,12 +1917,29 @@ LayoutRect FrameView::layoutViewportRect() const
     return LayoutRect(m_layoutViewportOrigin, renderView() ? renderView()->size() : size());
 }
 
+// visibleContentRect is in the bounds of the scroll view content. That consists of an
+// optional header, the document, and an optional footer. Only the document is scaled,
+// so we have to compute the visible part of the document in unscaled document coordinates.
+// On iOS, pageScaleFactor is always 1 here, and we never have headers and footers.
+LayoutRect FrameView::visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor)
+{
+    FloatRect visibleDocumentRect = visibleContentRect;
+
+    float contentsHeight = totalContentsSize.height() - headerHeight - footerHeight;
+
+    float visibleScaledDocumentTop = std::max<float>(visibleContentRect.y() - headerHeight, 0);
+    float visibleScaledDocumentBottom = std::min<float>(visibleContentRect.maxY() - headerHeight, contentsHeight);
+
+    visibleDocumentRect.setY(visibleScaledDocumentTop);
+    visibleDocumentRect.setHeight(std::max<float>(visibleScaledDocumentBottom - visibleScaledDocumentTop, 0));
+    visibleDocumentRect.scale(1 / pageScaleFactor);
+    return LayoutRect(visibleDocumentRect);
+}
+
 LayoutRect FrameView::visualViewportRect() const
 {
-    // This isn't visibleContentRect(), because that uses a scaled scroll origin. Confused? Me too.
     FloatRect visibleContentRect = this->visibleContentRect(LegacyIOSDocumentVisibleRect);
-    visibleContentRect.scale(1 / frameScaleFactor()); // Note that frameScaleFactor() returns 1 for delegated scrolling (e.g. iOS WK2)
-    return LayoutRect(visibleContentRect);
+    return visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), frameScaleFactor());
 }
 
 LayoutRect FrameView::viewportConstrainedVisibleContentRect() const

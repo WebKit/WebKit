@@ -1,0 +1,55 @@
+This test zooms and scrolls the page and checks the positions of fixed-position objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+JSON.stringify(internals.layoutViewportRect()) is {"top":0,"right":800,"bottom":600,"left":0,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":0,"right":400,"bottom":257,"left":0,"width":400,"height":257}
+client rect of top:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":0,"right":800,"bottom":100,"left":0,"width":800,"height":100}
+client rect of bottom:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":500,"right":800,"bottom":600,"left":0,"width":800,"height":100}
+client rect of left:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":0,"right":100,"bottom":600,"left":0,"width":100,"height":600}
+client rect of right:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":0,"right":800,"bottom":600,"left":700,"width":100,"height":600}
+
+Scrolled to 475, 525
+JSON.stringify(internals.layoutViewportRect()) is {"top":0,"right":800,"bottom":600,"left":0,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":482,"right":875,"bottom":782,"left":475,"width":400,"height":300}
+client rect of top:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-525,"right":325,"bottom":-425,"left":-475,"width":800,"height":100}
+client rect of bottom:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-25,"right":325,"bottom":75,"left":-475,"width":800,"height":100}
+client rect of left:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-525,"right":-375,"bottom":75,"left":-475,"width":100,"height":600}
+client rect of right:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-525,"right":325,"bottom":75,"left":225,"width":100,"height":600}
+
+Scrolled to 100, 776
+JSON.stringify(internals.layoutViewportRect()) is {"top":0,"right":800,"bottom":600,"left":0,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":733,"right":500,"bottom":1033,"left":100,"width":400,"height":300}
+client rect of top:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-776,"right":700,"bottom":-676,"left":-100,"width":800,"height":100}
+client rect of bottom:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-276,"right":700,"bottom":-176,"left":-100,"width":800,"height":100}
+client rect of left:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-776,"right":0,"bottom":-176,"left":-100,"width":100,"height":600}
+client rect of right:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-776,"right":700,"bottom":-176,"left":600,"width":100,"height":600}
+
+Scrolled to 50, 300
+JSON.stringify(internals.layoutViewportRect()) is {"top":0,"right":800,"bottom":600,"left":0,"width":800,"height":600}
+JSON.stringify(internals.visualViewportRect()) is {"top":257,"right":450,"bottom":557,"left":50,"width":400,"height":300}
+client rect of top:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-300,"right":750,"bottom":-200,"left":-50,"width":800,"height":100}
+client rect of bottom:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":200,"right":750,"bottom":300,"left":-50,"width":800,"height":100}
+client rect of left:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-300,"right":50,"bottom":300,"left":-50,"width":100,"height":600}
+client rect of right:
+JSON.stringify(fixedElement.getBoundingClientRect()) is {"top":-300,"right":750,"bottom":300,"left":650,"width":100,"height":600}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

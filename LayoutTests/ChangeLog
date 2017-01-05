@@ -1,5 +1,22 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210059. rdar://problem/29727145
+
+    2016-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+            Fixed bars are positioned incorrectly when there are header and footer banners
+            https://bugs.webkit.org/show_bug.cgi?id=166302
+            rdar://problem/29727145
+
+            Reviewed by Tim Horton.
+
+            * fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt: Added.
+            * fast/visual-viewport/zoomed-fixed-header-and-footer.html: Added.
+            * platform/ios-simulator/fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt: Added.
+            * tiled-drawing/scrolling/fixed/four-bars-with-header-and-footer-expected.txt:
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210035. rdar://problem/29704862
 
     2016-12-20  Zalan Bujtas  <zalan@apple.com>
