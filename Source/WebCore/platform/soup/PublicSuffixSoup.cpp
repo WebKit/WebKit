@@ -47,7 +47,8 @@ String topPrivatelyControlledDomain(const String& domain)
         return String();
 
     GUniqueOutPtr<GError> error;
-    if (const char* baseDomain = soup_tld_get_base_domain(domain.utf8().data(), &error.outPtr()))
+    CString domainUTF8 = domain.utf8();
+    if (const char* baseDomain = soup_tld_get_base_domain(domainUTF8.data(), &error.outPtr()))
         return String::fromUTF8(baseDomain);
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN) || g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NOT_ENOUGH_DOMAINS))

@@ -1,3 +1,16 @@
+2017-01-05  Milan Crha  <mcrha@redhat.com>
+
+        [SOUP] AddressSanitizer: heap-use-after-free under WTF::String::fromUTF8()
+        https://bugs.webkit.org/show_bug.cgi?id=166722
+
+        Reviewed by Alex Christensen.
+
+        * platform/soup/PublicSuffixSoup.cpp:
+        (WebCore::topPrivatelyControlledDomain):
+        Use a variable to hold UTF-8 version of the domain, because
+        the soup_tld_get_base_domain() returns a pointer into the passed-in
+        string, which could be freed due to the temporary object being freed.
+
 2017-01-05  Andreas Kling  <akling@apple.com>
 
         Remove some unnecessary page cache checks in render tree code.
