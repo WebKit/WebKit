@@ -3616,43 +3616,24 @@ bool WebViewImpl::prepareForDragOperation(id <NSDraggingInfo>)
     return true;
 }
 
-// FIXME: This code is more or less copied from Pasteboard::getBestURL.
-// It would be nice to be able to share the code somehow.
-static bool maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, SandboxExtension::Handle& sandboxExtensionHandle)
+void WebViewImpl::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& handle, SandboxExtension::HandleArray& handles)
 {
-    NSArray *types = pasteboard.types;
-    if (![types containsObject:NSFilenamesPboardType])
-        return false;
-
-    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
-    if (files.count != 1)
-        return false;
-
-    NSString *file = [files objectAtIndex:0];
-    BOOL isDirectory;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory])
-        return false;
-
-    if (isDirectory)
-        return false;
-
-    SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
-    return true;
-}
-
-static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, SandboxExtension::HandleArray& handles)
-{
-    NSArray *types = pasteboard.types;
-    if (![types containsObject:NSFilenamesPboardType])
+    if (!files.size())
         return;
 
-    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
-    handles.allocate(files.count);
-    for (unsigned i = 0; i < files.count; i++) {
-        NSString *file = [files objectAtIndex:i];
+    if (files.size() == 1) {
+        BOOL isDirectory;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
+            SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, handle);
+            m_page->process().willAcquireUniversalFileReadSandboxExtension();
+        }
+    }
+
+    handles.allocate(files.size());
+    for (size_t i = 0; i< files.size(); i++) {
+        NSString *file = files[i];
         if (![[NSFileManager defaultManager] fileExistsAtPath:file])
             continue;
-        SandboxExtension::Handle handle;
         SandboxExtension::createHandle(file, SandboxExtension::ReadOnly, handles[i]);
     }
 }
@@ -3661,17 +3642,66 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, m_view.window));
-    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
+    WebCore::DragData *dragData = new WebCore::DragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view, draggingInfo));
 
+    NSArray *types = draggingInfo.draggingPasteboard.types;
     SandboxExtension::Handle sandboxExtensionHandle;
-    bool createdExtension = maybeCreateSandboxExtensionFromPasteboard(draggingInfo.draggingPasteboard, sandboxExtensionHandle);
-    if (createdExtension)
-        m_page->process().willAcquireUniversalFileReadSandboxExtension();
-
     SandboxExtension::HandleArray sandboxExtensionForUpload;
-    createSandboxExtensionsForFileUpload(draggingInfo.draggingPasteboard, sandboxExtensionForUpload);
 
-    m_page->performDragOperation(dragData, draggingInfo.draggingPasteboard.name, sandboxExtensionHandle, sandboxExtensionForUpload);
+    if ([types containsObject:NSFilenamesPboardType]) {
+        NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:NSFilenamesPboardType];
+        if (![files isKindOfClass:[NSArray class]]) {
+            delete dragData;
+            return false;
+        }
+
+        Vector<String> fileNames;
+
+        for (NSString *file in files)
+            fileNames.append(file);
+        createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
+    }
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    else if (![types containsObject:WebArchivePboardType] && [types containsObject:NSFilesPromisePboardType]) {
+        NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:NSFilesPromisePboardType];
+        if (![files isKindOfClass:[NSArray class]]) {
+            delete dragData;
+            return false;
+        }
+        size_t fileCount = files.count;
+        Vector<String> *fileNames = new Vector<String>;
+        NSURL *dropLocation = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+        String pasteboardName = draggingInfo.draggingPasteboard.name;
+        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) {
+            NSFilePromiseReceiver *item = draggingItem.item;
+            NSDictionary *options = @{ };
+
+            [item receivePromisedFilesAtDestination:dropLocation options:options operationQueue:[NSOperationQueue new] reader:^(NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) {
+                if (errorOrNil)
+                    return;
+
+                dispatch_async(dispatch_get_main_queue(), [this, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData, pasteboardName] {
+                    fileNames->append(path.get());
+                    if (fileNames->size() == fileCount) {
+                        SandboxExtension::Handle sandboxExtensionHandle;
+                        SandboxExtension::HandleArray sandboxExtensionForUpload;
+
+                        createSandboxExtensionsIfNeeded(*fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
+                        dragData->setFileNames(*fileNames);
+                        m_page->performDragOperation(*dragData, pasteboardName, sandboxExtensionHandle, sandboxExtensionForUpload);
+                        delete dragData;
+                        delete fileNames;
+                    }
+                });
+            }];
+        }];
+
+        return true;
+    }
+#endif
+
+    m_page->performDragOperation(*dragData, draggingInfo.draggingPasteboard.name, sandboxExtensionHandle, sandboxExtensionForUpload);
+    delete dragData;
 
     return true;
 }
