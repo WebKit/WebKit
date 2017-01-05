@@ -33,7 +33,6 @@ emailCheck("someone@127.0.0.1", "someone@127.0.0.1", expectValid);
 emailCheck("a@b.b", "a@b.b", expectValid);
 emailCheck("a/b@domain.com", "a/b@domain.com", expectValid);
 emailCheck("{}@domain.com", "{}@domain.com", expectValid);
-emailCheck("ddjk-s-jk@asl-.com", "ddjk-s-jk@asl-.com", expectValid);
 emailCheck("m*'!%@something.sa", "m*'!%@something.sa", expectValid);
 emailCheck("tu!!7n7.ad##0!!!@company.ca", "tu!!7n7.ad##0!!!@company.ca", expectValid);
 emailCheck("%@com.com", "%@com.com", expectValid);
@@ -41,8 +40,6 @@ emailCheck("!#$%&'*+/=?^_`{|}~.-@com.com", "!#$%&'*+/=?^_`{|}~.-@com.com", expec
 emailCheck(".wooly@example.com", ".wooly@example.com", expectValid);
 emailCheck("wo..oly@example.com", "wo..oly@example.com", expectValid);
 emailCheck("someone@do-ma-in.com", "someone@do-ma-in.com", expectValid);
-emailCheck("someone@do-.com", "someone@do-.com", expectValid);
-emailCheck("somebody@-.com", "somebody@-.com", expectValid);
 emailCheck("somebody@example", "somebody@example", expectValid);
 emailCheck("\u000Aa@p.com\u000A", "a@p.com", expectValid);
 emailCheck("\u000Da@p.com\u000D", "a@p.com", expectValid);
@@ -56,6 +53,8 @@ emailCheck(" a@p.com ", "a@p.com", expectValid);
 emailCheck("\u0020a@p.com\u0020", "a@p.com", expectValid);
 emailCheck("\u0009a@p.com\u0009", "a@p.com", expectValid);
 emailCheck("\u000Ca@p.com\u000C", "a@p.com", expectValid);
+emailCheck("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@p.com", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@p.com", expectValid); // 64 characters in left part.
+emailCheck("a@ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "a@ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", expectValid); // Labels with 63 characters.
 
 debug("Invalid single addresses when 'multiple' attribute is not set.");
 emailCheck("invalid:email@example.com", "invalid:email@example.com", expectInvalid);
@@ -81,6 +80,11 @@ emailCheck("a\u000B@p.com", "a\u000B@p.com", expectInvalid);
 emailCheck("a\u000C@p.com", "a\u000C@p.com", expectInvalid);
 emailCheck("a\u2003@p.com", "a\u2003@p.com", expectInvalid);
 emailCheck("a\u3000@p.com", "a\u3000@p.com", expectInvalid);
+emailCheck("ddjk-s-jk@asl-.com", "ddjk-s-jk@asl-.com", expectInvalid); // Domain should end with a letter or a digit.
+emailCheck("someone@do-.com", "someone@do-.com", expectInvalid); // Domain should end with a letter or a digit.
+emailCheck("somebody@-.com", "somebody@-.com", expectInvalid); // Domain should start with a letter or a digit.
+emailCheck("a@pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.com", "a@pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.com", expectInvalid); // Label with 64 characters.
+emailCheck("a@p.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "a@p.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", expectInvalid); // Label with 64 characters.
 
 debug("Valid single addresses when 'multiple' attribute is set.");
 emailCheck("something@something.com", "something@something.com", expectValid, multiple);
@@ -89,7 +93,6 @@ emailCheck("someone@127.0.0.1", "someone@127.0.0.1", expectValid, multiple);
 emailCheck("a@b.b", "a@b.b", expectValid, multiple);
 emailCheck("a/b@domain.com", "a/b@domain.com", expectValid, multiple);
 emailCheck("{}@domain.com", "{}@domain.com", expectValid, multiple);
-emailCheck("ddjk-s-jk@asl-.com", "ddjk-s-jk@asl-.com", expectValid, multiple);
 emailCheck("m*'!%@something.sa", "m*'!%@something.sa", expectValid, multiple);
 emailCheck("tu!!7n7.ad##0!!!@company.ca", "tu!!7n7.ad##0!!!@company.ca", expectValid, multiple);
 emailCheck("%@com.com", "%@com.com", expectValid, multiple);
@@ -97,8 +100,6 @@ emailCheck("!#$%&'*+/=?^_`{|}~.-@com.com", "!#$%&'*+/=?^_`{|}~.-@com.com", expec
 emailCheck(".wooly@example.com", ".wooly@example.com", expectValid, multiple);
 emailCheck("wo..oly@example.com", "wo..oly@example.com", expectValid, multiple);
 emailCheck("someone@do-ma-in.com", "someone@do-ma-in.com", expectValid, multiple);
-emailCheck("someone@do-.com", "someone@do-.com", expectValid, multiple);
-emailCheck("somebody@-.com", "somebody@-.com", expectValid, multiple);
 emailCheck("somebody@example", "somebody@example", expectValid, multiple);
 emailCheck("\u0020a@p.com\u0020", "a@p.com", expectValid, multiple);
 emailCheck("\u0009a@p.com\u0009", "a@p.com", expectValid, multiple);
@@ -112,6 +113,8 @@ emailCheck(" ", "", expectValid, multiple);
 emailCheck(" a@p.com", "a@p.com", expectValid, multiple);
 emailCheck("a@p.com ", "a@p.com", expectValid, multiple);
 emailCheck(" a@p.com ", "a@p.com", expectValid, multiple);
+emailCheck("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@p.com", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@p.com", expectValid, multiple); // 64 characters in left part.
+emailCheck("a@ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "a@ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", expectValid, multiple); // Labels with 63 characters.
 
 debug("Invalid single addresses when 'multiple' attribute is set.");
 emailCheck("invalid:email@example.com", "invalid:email@example.com", expectInvalid, multiple);
@@ -140,6 +143,11 @@ emailCheck("a\u000B@p.com", "a\u000B@p.com", expectInvalid, multiple);
 emailCheck("a\u000C@p.com", "a\u000C@p.com", expectInvalid, multiple);
 emailCheck("a\u2003@p.com", "a\u2003@p.com", expectInvalid, multiple);
 emailCheck("a\u3000@p.com", "a\u3000@p.com", expectInvalid, multiple);
+emailCheck("ddjk-s-jk@asl-.com", "ddjk-s-jk@asl-.com", expectInvalid, multiple); // Domain should end with a letter or a digit.
+emailCheck("someone@do-.com", "someone@do-.com", expectInvalid, multiple); // Domain should end with a letter or a digit.
+emailCheck("somebody@-.com", "somebody@-.com", expectInvalid, multiple); // Domain should start with a letter or a digit.
+emailCheck("a@pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.com", "a@pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp.com", expectInvalid, multiple); // Label with 64 characters.
+emailCheck("a@p.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "a@p.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", expectInvalid, multiple); // Label with 64 characters.
 
 debug("Valid multiple addresses when 'multiple' attribute is set.");
 emailCheck("someone@somewhere.com,john@doe.com,a@b.c,a/b@c.c,ualla@ualla.127", "someone@somewhere.com,john@doe.com,a@b.c,a/b@c.c,ualla@ualla.127", expectValid, multiple);

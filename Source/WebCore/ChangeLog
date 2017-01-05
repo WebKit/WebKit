@@ -1,3 +1,22 @@
+2017-01-05  Chris Dumez  <cdumez@apple.com>
+
+        Form validation: Align email validation with the latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=166697
+        <rdar://problem/29870245>
+
+        Reviewed by Alex Christensen.
+
+        Align email validation with the latest HTML specification:
+        - https://html.spec.whatwg.org/#valid-e-mail-address
+
+        It particular, the following changes were made:
+        - The first and last character of the domain now needs to be a letter or a digit
+        - Parts of the domain can only be 63 characters in length
+
+        No new tests, extended existing test.
+
+        * html/EmailInputType.cpp:
+
 2017-01-05  Enrica Casucci  <enrica@apple.com>
 
         Support File Promise during drag for macOS.

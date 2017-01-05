@@ -1,3 +1,16 @@
+2017-01-05  Chris Dumez  <cdumez@apple.com>
+
+        Form validation: Align email validation with the latest HTML specification
+        https://bugs.webkit.org/show_bug.cgi?id=166697
+        <rdar://problem/29870245>
+
+        Reviewed by Alex Christensen.
+
+        Extended / updated existing layout test to cover behavior changes.
+
+        * fast/forms/ValidityState-typeMismatch-email-expected.txt:
+        * fast/forms/resources/ValidityState-typeMismatch-email.js:
+
 2017-01-05  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r210226): overflow:scroll scroll position not restored on back navigation
