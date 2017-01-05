@@ -37,6 +37,10 @@ extern DumpRenderTreeBrowserView *gWebBrowserView;
 extern DumpRenderTreeWebScrollView *gWebScrollView;
 
 namespace WTR {
+    
+void UIScriptController::checkForOutstandingCallbacks()
+{
+}
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
 {

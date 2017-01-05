@@ -53,6 +53,12 @@ static NSDictionary *toNSDictionary(CGRect rect)
         @"height": @(rect.size.height)
     };
 }
+    
+void UIScriptController::checkForOutstandingCallbacks()
+{
+    if (![[HIDEventGenerator sharedHIDEventGenerator] checkForOutstandingCallbacks])
+        [NSException raise:@"WebKitTestRunnerTestProblem" format:@"The test completed before all synthesized events had been handled. Perhaps you're calling notifyDone() too early?"];
+}
 
 void UIScriptController::doAsyncTask(JSValueRef callback)
 {

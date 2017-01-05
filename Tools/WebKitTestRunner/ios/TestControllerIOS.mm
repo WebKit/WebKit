@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "HIDEventGenerator.h"
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
 #import "TestRunnerWKWebView.h"

@@ -1,5 +1,35 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210048. rdar://problem/29316054
+
+    2016-12-20  Megan Gardner  <megan_gardner@apple.com>
+
+            Throw Exception when test doesn't clean up HID Events properly
+            https://bugs.webkit.org/show_bug.cgi?id=166271
+
+            Reviewed by Simon Fraser.
+
+            Add in a check when UIScriptController is deleted to make sure that the HID event
+            callback dictionary is empty. If it is not, and a HID event is hit, this will cause
+            the program to crash without any good information. Crashes are race-y, and will still
+            happen with malformed test, but the information will be much more helpful.
+
+            * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+            (WTR::UIScriptController::checkForClean):
+            * TestRunnerShared/UIScriptContext/UIScriptContext.cpp:
+            (UIScriptContext::~UIScriptContext):
+            * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+            (WTR::UIScriptController::checkForClean):
+            * TestRunnerShared/UIScriptContext/UIScriptController.h:
+            * WebKitTestRunner/ios/HIDEventGenerator.h:
+            * WebKitTestRunner/ios/HIDEventGenerator.mm:
+            (-[HIDEventGenerator checkHIDCallbacksClear]):
+            * WebKitTestRunner/ios/TestControllerIOS.mm:
+            * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+            (WTR::UIScriptController::checkForClean):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210273. rdar://problem/29834093
 
     2017-01-04  Tim Horton  <timothy_horton@apple.com>
