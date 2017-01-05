@@ -1,3 +1,12 @@
+2017-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Addressing post-review comments after r21005.
+
+        Simplify cairo_glyph_t initialization as suggested by Said.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::CairoGlyphToPathTranslator::path):
+
 2017-01-04  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix crash clamping grid lines
