@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we don't destroy the fragment anonymous block while cleaning up the render tree.</title> 
+<style>
+li { 
+  -webkit-flow-from: foobar;
+}
+
+q {
+  display: list-item;
+  -webkit-flow-from: foobar;
+}
+
+.fuzz0::before{
+  display: block;
+}
+</style>
+</head>
+<body>
+PASS if no crash or assert.
+<li></li><q></q>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+document.getElementsByTagName("q")[0].className = "fuzz0";
+document.body.offsetHeight;
+</script>
+</body>
+</html>

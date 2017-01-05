@@ -1,5 +1,20 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210120. rdar://problem/29772233
+
+    2016-12-22  Zalan Bujtas  <zalan@apple.com>
+
+            Do not destroy the RenderNamedFlowFragment as leftover anonymous block.
+            https://bugs.webkit.org/show_bug.cgi?id=166436
+            rdar://problem/29772233
+
+            Reviewed by Simon Fraser.
+
+            * fast/regions/flow-fragment-as-anonymous-block-crash-expected.txt: Added.
+            * fast/regions/flow-fragment-as-anonymous-block-crash.html: Added.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210112. rdar://problem/29742039
 
     2016-12-22  Daniel Bates  <dabates@apple.com>
