@@ -95,6 +95,10 @@
     position: relative;
 }
 
+.CodeMirror .cm-invalidchar {
+    display: none;
+}
+
 .show-whitespace-characters .CodeMirror .cm-tab::before {
     position: absolute;
     width: 90%;
@@ -175,5 +179,5 @@
 }
 
 .show-invalid-characters .CodeMirror .cm-invalidchar {
-    display: none;
+    display: initial;
 }

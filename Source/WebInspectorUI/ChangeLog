@@ -1,5 +1,21 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210252. rdar://problem/29854762
+
+    2017-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: "Invalid Characters" setting does the opposite of the checkbox
+            https://bugs.webkit.org/show_bug.cgi?id=166664
+
+            Reviewed by Brian Burg.
+
+            * UserInterface/Views/CodeMirrorOverrides.css:
+            (.CodeMirror .cm-invalidchar):
+            (.show-invalid-characters .CodeMirror .cm-invalidchar):
+            Hide invalid characters by default, and show them with the show class.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210046. rdar://problem/27553228
 
     2016-12-20  Matt Baker  <mattbaker@apple.com>
