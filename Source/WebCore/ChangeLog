@@ -1,3 +1,17 @@
+2017-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Disable smooth playhead animation for main content media in the Touch Bar
+        https://bugs.webkit.org/show_bug.cgi?id=166715
+        <rdar://problem/29870673>
+
+        Reviewed by Eric Carlson.
+
+        Passing in a non-zero playback rate to WebPlaybackControlsManager's timing property causes unintended effects
+        further down the stack. Please see the Radar for more details.
+
+        * platform/mac/WebPlaybackSessionInterfaceMac.mm:
+        (WebCore::WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming):
+
 2017-01-05  Andreas Kling  <akling@apple.com>
 
         Fix iOS build due to missing #include's.
