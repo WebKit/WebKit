@@ -1,3 +1,23 @@
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r209995. rdar://problem/29626731
+
+    2016-12-19  Anders Carlsson  <andersca@apple.com>
+
+            REGRESSION: Crash in com.apple.WebKit:IPC::Connection::platformCanSendOutgoingMessages() const + 0
+            https://bugs.webkit.org/show_bug.cgi?id=165817
+            rdar://problem/29626731
+
+            Reviewed by Dan Bernstein.
+
+            If the receive right is invalidated before we send the message, the kernel won't be able to create a send right,
+            and we'll crash due to mach_msg returning MACH_SEND_INVALID_RIGHT.
+
+            Fix this by immediately creating a send right, and passing MACH_MSG_TYPE_MOVE_SEND to the attachment constructor.
+
+            * WebProcess/WebPage/WebInspector.cpp:
+            (WebKit::WebInspector::openFrontendConnection):
+
 2016-12-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r210031.
