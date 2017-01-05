@@ -1,3 +1,17 @@
+2017-01-04  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Fully update TestExpectations
+
+        Unreviewed EFL gardening.
+
+        EFL layout test has been broken too long time. Besides many tests have not maintained
+        as well. Now many tests are passingi, or some tests are being failed, crash, or timeout.
+        To update current test results, this patch updates all test results in TextExpectation.
+
+        After this update, I hope to track layout test failures efficiently.
+
+        * platform/efl/TestExpectations:
+
 2017-01-04  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix crash clamping grid lines
