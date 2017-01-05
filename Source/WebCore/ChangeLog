@@ -1,3 +1,15 @@
+2017-01-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r210287.
+
+        This change caused editing test failures on macOS.
+
+        Reverted changeset:
+
+        "Support File Promise during drag for macOS."
+        https://bugs.webkit.org/show_bug.cgi?id=165204
+        http://trac.webkit.org/changeset/210287
+
 2017-01-04  Jer Noble  <jer.noble@apple.com>
 
         Check for the existence of AVSampleBufferDisplayLayer_Private.h in AVFoundationSPI.h

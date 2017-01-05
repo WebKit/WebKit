@@ -113,9 +113,6 @@ static NSArray *_writableTypesForImageWithArchive (void)
         WebURLNamePboardType,
         NSStringPboardType,
         NSFilenamesPboardType,
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-        NSFilesPromisePboardType,
-#endif
         nil];
 }
 

@@ -73,23 +73,19 @@ bool DragData::containsFiles() const
 {
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    return types.contains(String(NSFilenamesPboardType)) || types.contains(String(NSFilesPromisePboardType));
+    return types.contains(String(NSFilenamesPboardType));
 }
 
 unsigned DragData::numberOfFiles() const
 {
     Vector<String> files;
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilenamesPboardType), m_pasteboardName);
-    if (!files.size())
-        platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilesPromisePboardType), m_pasteboardName);
     return files.size();
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
     platformStrategies()->pasteboardStrategy()->getPathnamesForType(result, String(NSFilenamesPboardType), m_pasteboardName);
-    if (!result.size())
-        result = fileNames();
 }
 
 bool DragData::containsPlainText() const
@@ -132,7 +128,6 @@ bool DragData::containsCompatibleContent() const
     return types.contains(String(WebArchivePboardType))
         || types.contains(String(NSHTMLPboardType))
         || types.contains(String(NSFilenamesPboardType))
-        || types.contains(String(NSFilesPromisePboardType))
         || types.contains(String(NSTIFFPboardType))
         || types.contains(String(NSPDFPboardType))
         || types.contains(String(NSURLPboardType))
@@ -142,14 +137,7 @@ bool DragData::containsCompatibleContent() const
         || types.contains(String(NSColorPboardType))
         || types.contains(String(kUTTypePNG));
 }
-
-bool DragData::containsPromise() const
-{
-    Vector<String> files;
-    platformStrategies()->pasteboardStrategy()->getPathnamesForType(files, String(NSFilesPromisePboardType), m_pasteboardName);
-    return files.size() == 1;
-}
-
+    
 bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
 {
     return !asURL(filenamePolicy).isEmpty();
@@ -196,10 +184,7 @@ String DragData::asURL(FilenameConversionPolicy, String* title) const
             return [URLByCanonicalizingURL([NSURL fileURLWithPath:files[0]]) absoluteString];
         }
     }
-
-    if (types.contains(String(NSFilesPromisePboardType)) && fileNames().size() == 1)
-        return [URLByCanonicalizingURL([NSURL fileURLWithPath:fileNames()[0]]) absoluteString];
-
+    
     return String();        
 }
 
