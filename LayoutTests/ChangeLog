@@ -1,3 +1,17 @@
+2017-01-06  Chris Dumez  <cdumez@apple.com>
+
+        [Form Validation] "character" in maxlength validation message should be singular when maxlength is 1
+        https://bugs.webkit.org/show_bug.cgi?id=166712
+        <rdar://problem/29872292>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/forms/validation-message-maxLength-expected.txt: Added.
+        * fast/forms/validation-message-maxLength.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2017-01-06  Jer Noble  <jer.noble@apple.com>
 
         Add support for MediaKeySystemAccess.createMediaKeys()

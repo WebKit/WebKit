@@ -1146,10 +1146,14 @@ String validationMessageTooShortText(int, int minLength)
     return formatLocalizedString(WEB_UI_STRING("Use at least %d characters", "Validation message for form control elements with a value shorter than minimum allowed length"), minLength);
 }
 
+#if !PLATFORM(COCOA)
+
 String validationMessageTooLongText(int, int maxLength)
 {
     return formatLocalizedString(WEB_UI_STRING("Use no more than %d characters", "Validation message for form control elements with a value shorter than maximum allowed length"), maxLength);
 }
+
+#endif
 
 String validationMessageRangeUnderflowText(const String& minimum)
 {
