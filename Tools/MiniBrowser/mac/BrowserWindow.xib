@@ -7,7 +7,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserWindowController">
             <connections>
-                <outlet property="Share" destination="dJx-dw-gcC" id="j0J-ps-exa"/>
                 <outlet property="backButton" destination="40" id="46"/>
                 <outlet property="containerView" destination="9" id="37"/>
                 <outlet property="findPanelWindow" destination="70" id="77"/>
@@ -15,7 +14,6 @@
                 <outlet property="progressIndicator" destination="21" id="33"/>
                 <outlet property="reloadButton" destination="23" id="34"/>
                 <outlet property="share" destination="1hB-AH-eUl" id="si4-8e-DsM"/>
-                <outlet property="shareButton" destination="S1v-UD-QhI" id="t4L-Uq-paq"/>
                 <outlet property="toggleUseShrinkToFitButton" destination="82" id="9w7-AB-Ye3"/>
                 <outlet property="toolbar" destination="48" id="67"/>
                 <outlet property="urlText" destination="10" id="32"/>

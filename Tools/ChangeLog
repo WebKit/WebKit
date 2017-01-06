@@ -1,3 +1,21 @@
+2017-01-06  Tim Horton  <timothy_horton@apple.com>
+
+        Warning about unconnectable outlets when opening a MiniBrowser window
+        https://bugs.webkit.org/show_bug.cgi?id=166756
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        When launching MiniBrowser, it says:
+        Failed to connect (Share) outlet from (WK1BrowserWindowController) to
+            (MBToolbarItem): missing setter or instance variable
+        Failed to connect (shareButton) outlet from (WK1BrowserWindowController) to
+            (NSButtonCell): missing setter or instance variable.
+
+        It looks like someone added the connection from the share button
+        to the BrowserWindowController three times; only one of the connections
+        is valid. Remove the other two.
+
 2017-01-05  Keith Rollin  <krollin@apple.com>
 
         Add WebCore::URL::protocolHostAndPort
