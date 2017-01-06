@@ -52,15 +52,19 @@ public:
         {
             switch (type()) {
             case BlockType::If:
-                out.print("If:    ");
+                out.print("If:       ");
                 break;
             case BlockType::Block:
-                out.print("Block: ");
+                out.print("Block:    ");
                 break;
             case BlockType::Loop:
-                out.print("Loop:  ");
+                out.print("Loop:     ");
+                break;
+            case BlockType::TopLevel:
+                out.print("TopLevel: ");
                 break;
             }
+            out.print(makeString(signature()));
         }
 
         bool hasNonVoidSignature() const { return m_signature != Void; }
@@ -116,13 +120,14 @@ public:
     Result WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
+    ControlData WARN_UNUSED_RETURN addTopLevel(Type signature);
     ControlData WARN_UNUSED_RETURN addBlock(Type signature);
     ControlData WARN_UNUSED_RETURN addLoop(Type signature);
     Result WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
     Result WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
     Result WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
-    Result WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
+    Result WARN_UNUSED_RETURN addReturn(ControlData& topLevel, const ExpressionList& returnValues);
     Result WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& expressionStack);
     Result WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack);
     Result WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
@@ -136,9 +141,8 @@ public:
 
     bool hasMemory() const { return !!m_module.memory; }
 
-    Validate(ExpressionType returnType, const ModuleInformation& module)
-        : m_returnType(returnType)
-        , m_module(module)
+    Validate(const ModuleInformation& module)
+        : m_module(module)
     {
     }
 
@@ -150,7 +154,6 @@ private:
 
     Result checkBranchTarget(ControlData& target, const ExpressionList& expressionStack);
 
-    ExpressionType m_returnType;
     Vector<Type> m_locals;
     const ModuleInformation& m_module;
 };
@@ -206,6 +209,11 @@ auto Validate::setGlobal(uint32_t index, ExpressionType value) -> Result
     return { };
 }
 
+Validate::ControlType Validate::addTopLevel(Type signature)
+{
+    return ControlData(BlockType::TopLevel, signature);
+}
+
 Validate::ControlType Validate::addBlock(Type signature)
 {
     return ControlData(BlockType::Block, signature);
@@ -244,12 +252,13 @@ auto Validate::addElseToUnreachable(ControlType& current) -> Result
     return { };
 }
 
-auto Validate::addReturn(const ExpressionList& returnValues) -> Result
+auto Validate::addReturn(ControlType& topLevel, const ExpressionList& returnValues) -> Result
 {
-    if (m_returnType == Void)
+    ASSERT(topLevel.type() == BlockType::TopLevel);
+    if (topLevel.signature() == Void)
         return { };
     ASSERT(returnValues.size() == 1);
-    WASM_VALIDATOR_FAIL_IF(m_returnType != returnValues[0], "return type ", returnValues[0], " doesn't match function's return type ", m_returnType);
+    WASM_VALIDATOR_FAIL_IF(topLevel.signature() != returnValues[0], "return type ", returnValues[0], " doesn't match function's return type ", topLevel.signature());
     return { };
 }
 
@@ -355,7 +364,7 @@ void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
 
 Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& module)
 {
-    Validate context(signature->returnType(), module);
+    Validate context(module);
     FunctionParser<Validate> validator(vm, context, source, length, signature, functionIndexSpace, module);
     WASM_FAIL_IF_HELPER_FAILS(validator.parse());
     return { };

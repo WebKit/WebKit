@@ -96,7 +96,7 @@ bool Plan::parseAndValidateModule()
                     dataLog(RawPointer(reinterpret_cast<void*>(functionStart[i])), ", ");
                 dataLogLn();
             }
-            m_errorMessage = validationResult.error(); // FIXME make this an Expected.
+            m_errorMessage = makeString(validationResult.error(), ", in function at index ", String::number(functionIndex)); // FIXME make this an Expected.
             return false;
         }
     }
@@ -178,7 +178,7 @@ void Plan::run()
                 auto locker = holdLock(m_lock);
                 if (!m_errorMessage) {
                     // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-                    m_errorMessage = parseAndCompileResult.error(); // FIXME make this an Expected.
+                    m_errorMessage = makeString(parseAndCompileResult.error(), ", in function at index ", String::number(functionIndex)); // FIXME make this an Expected.
                 }
                 m_currentIndex = m_functionLocationInBinary.size();
 

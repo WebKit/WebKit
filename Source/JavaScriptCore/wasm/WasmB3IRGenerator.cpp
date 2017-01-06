@@ -87,13 +87,16 @@ public:
         {
             switch (type()) {
             case BlockType::If:
-                out.print("If:    ");
+                out.print("If:       ");
                 break;
             case BlockType::Block:
-                out.print("Block: ");
+                out.print("Block:    ");
                 break;
             case BlockType::Loop:
-                out.print("Loop:  ");
+                out.print("Loop:     ");
+                break;
+            case BlockType::TopLevel:
+                out.print("TopLevel: ");
                 break;
             }
             out.print("Continuation: ", *continuation, ", Special: ");
@@ -178,13 +181,14 @@ public:
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
+    ControlData WARN_UNUSED_RETURN addTopLevel(Type signature);
     ControlData WARN_UNUSED_RETURN addBlock(Type signature);
     ControlData WARN_UNUSED_RETURN addLoop(Type signature);
     PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, Type signature, ControlData& result);
     PartialResult WARN_UNUSED_RETURN addElse(ControlData&, const ExpressionList&);
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
-    PartialResult WARN_UNUSED_RETURN addReturn(const ExpressionList& returnValues);
+    PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const ExpressionList& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTargets, const ExpressionList& expressionStack);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
@@ -553,6 +557,11 @@ B3IRGenerator::ExpressionType B3IRGenerator::addConstant(Type type, uint64_t val
     return nullptr;
 }
 
+B3IRGenerator::ControlData B3IRGenerator::addTopLevel(Type signature)
+{
+    return ControlData(m_proc, signature, BlockType::TopLevel, m_proc.addBlock());
+}
+
 B3IRGenerator::ControlData B3IRGenerator::addBlock(Type signature)
 {
     return ControlData(m_proc, signature, BlockType::Block, m_proc.addBlock());
@@ -601,7 +610,7 @@ auto B3IRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
     return { };
 }
 
-auto B3IRGenerator::addReturn(const ExpressionList& returnValues) -> PartialResult
+auto B3IRGenerator::addReturn(const ControlData&, const ExpressionList& returnValues) -> PartialResult
 {
     ASSERT(returnValues.size() <= 1);
     if (returnValues.size())
@@ -670,6 +679,10 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry) -> PartialResult
 
     for (Variable* result : data.result)
         entry.enclosedExpressionStack.append(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, Origin(), result));
+
+    // TopLevel does not have any code after this so we need to make sure we emit a return here.
+    if (data.type() == BlockType::TopLevel)
+        return addReturn(entry.controlData, entry.enclosedExpressionStack);
 
     return { };
 }
