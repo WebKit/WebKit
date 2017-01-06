@@ -1,5 +1,16 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210202. rdar://problem/29803676
+
+    2016-12-28  Saam Barati  <sbarati@apple.com>
+
+            Unreviewed. Fix jsc.cpp build error.
+
+            * jsc.cpp:
+            (functionTestWasmModuleFunctions):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210201. rdar://problem/29803676
 
     2016-12-28  Saam Barati  <sbarati@apple.com>
