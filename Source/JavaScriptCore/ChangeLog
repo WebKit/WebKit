@@ -1,5 +1,13 @@
 2017-01-06  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Disable WebAssembly. rdar://problem/29890343
+
+        Landed on behalf of JF Bastien.
+
+        * runtime/Options.h:
+
+2017-01-06  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210276. rdar://problem/28867002
 
     2017-01-04  Saam Barati  <sbarati@apple.com>
