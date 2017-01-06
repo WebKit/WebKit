@@ -1,3 +1,21 @@
+2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Carets can split up marriages and families
+        https://bugs.webkit.org/show_bug.cgi?id=166711
+        <rdar://problem/29019333>
+
+        Reviewed by Alex Christensen.
+
+        AFAICT we don't have a test where we arrow-through a set of emoji. We do
+        have tests where we backspace-through a set of emoji. Add a new test for
+        the arrow keys.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/editing/caret/emoji-expected.txt: Added.
+        * editing/caret/emoji.html: Added.
+        * editing/caret/ios/emoji-expected.txt: Added.
+        * editing/caret/ios/emoji.html: Added.
+
 2017-01-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/canvas/webgl/context-creation-attributes.html after r210372.

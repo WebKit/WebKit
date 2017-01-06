@@ -2770,3 +2770,6 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 
 webkit.org/b/166736 fast/scrolling/page-cache-back-overflow-scroll-restore.html [ Skip ]
+
+# editing/caret/ios/emoji.html is used instead.
+editing/caret/emoji.html [ Failure ]
