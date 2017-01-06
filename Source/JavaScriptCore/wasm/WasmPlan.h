@@ -48,6 +48,8 @@ public:
     JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t);
     JS_EXPORT_PRIVATE ~Plan();
 
+    bool parseAndValidateModule();
+
     JS_EXPORT_PRIVATE void run();
 
     JS_EXPORT_PRIVATE void initializeCallees(JSGlobalObject*, std::function<void(unsigned, JSWebAssemblyCallee*, JSWebAssemblyCallee*)>);

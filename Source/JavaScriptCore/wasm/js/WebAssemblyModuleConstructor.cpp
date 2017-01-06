@@ -35,6 +35,7 @@
 #include "JSTypedArrays.h"
 #include "JSWebAssemblyCallee.h"
 #include "JSWebAssemblyCompileError.h"
+#include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyModule.h"
 #include "SymbolTable.h"
 #include "WasmPlan.h"
@@ -52,34 +53,40 @@ const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_in
  @end
  */
 
-static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* state)
+static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
+    RETURN_IF_EXCEPTION(throwScope, { });
+    throwScope.release();
+    return JSValue::encode(WebAssemblyModuleConstructor::createModule(exec, structure));
+}
+
+static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)
 {
     VM& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue val = state->argument(0);
+    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Module"));
+}
 
-    // If the given bytes argument is not a BufferSource, a TypeError exception is thrown.
-    JSArrayBuffer* arrayBuffer = val.getObject() ? jsDynamicCast<JSArrayBuffer*>(val.getObject()) : nullptr;
-    JSArrayBufferView* arrayBufferView = val.getObject() ? jsDynamicCast<JSArrayBufferView*>(val.getObject()) : nullptr;
-    if (!(arrayBuffer || arrayBufferView))
-        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("first argument to WebAssembly.Module must be an ArrayBufferView or an ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(val))));
+JSValue WebAssemblyModuleConstructor::createModule(ExecState* state, Structure* structure)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (arrayBufferView ? arrayBufferView->isNeutered() : arrayBuffer->impl()->isNeutered())
-        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("underlying TypedArray has been detatched from the ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(val))));
-
-    size_t byteOffset = arrayBufferView ? arrayBufferView->byteOffset() : 0;
-    size_t byteSize = arrayBufferView ? arrayBufferView->length() : arrayBuffer->impl()->byteLength();
-    const auto* base = arrayBufferView ? static_cast<uint8_t*>(arrayBufferView->vector()) : static_cast<uint8_t*>(arrayBuffer->impl()->data());
+    size_t byteOffset;
+    size_t byteSize;
+    uint8_t* base = getWasmBufferFromValue(state, state->argument(0), byteOffset, byteSize);
+    RETURN_IF_EXCEPTION(scope, { });
 
     Wasm::Plan plan(&vm, base + byteOffset, byteSize);
     // On failure, a new WebAssembly.CompileError is thrown.
     plan.run();
     if (plan.failed())
-        return JSValue::encode(throwException(state, scope, createWebAssemblyCompileError(state, plan.errorMessage())));
+        return throwException(state, scope, createWebAssemblyCompileError(state, plan.errorMessage()));
 
     // On success, a new WebAssembly.Module object is returned with [[Module]] set to the validated Ast.module.
-    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->jsCallee())->globalObject()->WebAssemblyModuleStructure());
-    RETURN_IF_EXCEPTION(scope, { });
 
     // The export symbol table is the same for all Instances of a Module.
     SymbolTable* exportSymbolTable = SymbolTable::create(vm);
@@ -96,14 +103,8 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* stat
             result->setJSEntrypointCallee(vm, calleeIndex, jsEntrypointCallee);
             result->setWasmEntrypointCallee(vm, calleeIndex, wasmEntrypointCallee);
         });
-    return JSValue::encode(result);
-}
 
-static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Module"));
+    return result;
 }
 
 WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)
