@@ -287,7 +287,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
 #if USE(NEW_THEME)
-    float pageScaleFactor = box.document().page() ? box.document().page()->pageScaleFactor() : 1.0f;
+    float pageScaleFactor = box.page().pageScaleFactor();
     
     switch (part) {
     case CheckboxPart:
@@ -753,7 +753,7 @@ void RenderTheme::updateControlStatesForRenderer(const RenderBox& box, ControlSt
     ControlStates newStates = extractControlStatesForRenderer(box);
     controlStates.setStates(newStates.states());
     if (isFocused(box))
-        controlStates.setTimeSinceControlWasFocused(box.document().page()->focusController().timeSinceFocusWasSet());
+        controlStates.setTimeSinceControlWasFocused(box.page().focusController().timeSinceFocusWasSet());
 }
 
 ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
@@ -784,13 +784,9 @@ ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderO
     return states;
 }
 
-bool RenderTheme::isActive(const RenderObject& o) const
+bool RenderTheme::isActive(const RenderObject& renderer) const
 {
-    Page* page = o.document().page();
-    if (!page)
-        return false;
-
-    return page->focusController().isActive();
+    return renderer.page().focusController().isActive();
 }
 
 bool RenderTheme::isChecked(const RenderObject& o) const

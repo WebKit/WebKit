@@ -134,6 +134,8 @@ public:
     void addChild(RenderLayer* newChild, RenderLayer* beforeChild = nullptr);
     RenderLayer* removeChild(RenderLayer*);
 
+    Page& page() const { return renderer().page(); }
+
     void removeOnlyThisLayer();
     void insertOnlyThisLayer();
 

@@ -365,10 +365,8 @@ RenderLayer::~RenderLayer()
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
 
-    if (renderer().frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = renderer().frame().page()->scrollingCoordinator())
-            scrollingCoordinator->willDestroyScrollableArea(*this);
-    }
+    if (auto* scrollingCoordinator = renderer().page().scrollingCoordinator())
+        scrollingCoordinator->willDestroyScrollableArea(*this);
 
     if (m_reflection)
         removeReflection();
@@ -1525,8 +1523,7 @@ bool RenderLayer::isRubberBandInProgress() const
 
 bool RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    Page* page = renderer().frame().page();
-    return page && page->settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
+    return renderer().frame().settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
 }
 
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
@@ -2586,8 +2583,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
             // This only has an effect on the Mac platform in applications
             // that put web views into scrolling containers, such as Mac OS X Mail.
             // The canAutoscroll function in EventHandler also knows about this.
-            if (Page* page = frameView.frame().page())
-                page->chrome().scrollRectIntoView(snappedIntRect(absoluteRect));
+            page().chrome().scrollRectIntoView(snappedIntRect(absoluteRect));
         }
     }
     
@@ -2850,8 +2846,7 @@ IntSize RenderLayer::overhangAmount() const
 
 bool RenderLayer::isActive() const
 {
-    Page* page = renderer().frame().page();
-    return page && page->focusController().isActive();
+    return page().focusController().isActive();
 }
 
 static int cornerStart(const RenderLayer& layer, int minX, int maxX, int thickness)
@@ -3000,21 +2995,18 @@ bool RenderLayer::shouldSuspendScrollAnimations() const
 #if PLATFORM(IOS)
 void RenderLayer::didStartScroll()
 {
-    if (Page* page = renderer().frame().page())
-        page->chrome().client().didStartOverflowScroll();
+    page().chrome().client().didStartOverflowScroll();
 }
 
 void RenderLayer::didEndScroll()
 {
-    if (Page* page = renderer().frame().page())
-        page->chrome().client().didEndOverflowScroll();
+    page().chrome().client().didEndOverflowScroll();
 }
     
 void RenderLayer::didUpdateScroll()
 {
     // Send this notification when we scroll, since this is how we keep selection updated.
-    if (Page* page = renderer().frame().page())
-        page->chrome().client().didLayout(ChromeClient::Scroll);
+    page().chrome().client().didLayout(ChromeClient::Scroll);
 }
 #endif
 
@@ -3158,10 +3150,8 @@ Ref<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
     else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
         didAddScrollbar(widget.get(), orientation);
-        if (Page* page = renderer().frame().page()) {
-            if (page->expectsWheelEventTriggers())
-                scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
-        }
+        if (page().expectsWheelEventTriggers())
+            scrollAnimator().setWheelEventTestTrigger(page().testTrigger());
     }
     renderer().view().frameView().addChild(widget.get());
     return widget.releaseNonNull();
@@ -4081,18 +4071,14 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext& context, bool& 
 
     bool scrollingOnMainThread = true;
 #if ENABLE(ASYNC_SCROLLING)
-    if (Page* page = renderer().frame().page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-            scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(renderer().view().frameView());
-    }
+    if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
+        scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(renderer().view().frameView());
 #endif
 
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
     // things on the scrolling thread.
     bool contentsScrollByPainting = (renderer().hasOverflowClip() && !usesCompositedScrolling()) || (renderer().frame().ownerElement());
-    bool isZooming = false;
-    if (Page* page = renderer().frame().page())
-        isZooming = !page->chrome().client().hasStablePageScaleFactor();
+    bool isZooming = !page().chrome().client().hasStablePageScaleFactor();
     if (scrollingOnMainThread || contentsScrollByPainting || isZooming) {
         didQuantizeFonts = context.shouldSubpixelQuantizeFonts();
         context.setShouldSubpixelQuantizeFonts(false);
@@ -7008,14 +6994,14 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
     Frame& frame = renderer().frame();
     if (!filterInfo.renderer()) {
         RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
-        filterRenderer->setFilterScale(frame.page()->deviceScaleFactor());
+        filterRenderer->setFilterScale(page().deviceScaleFactor());
         filterRenderer->setRenderingMode(frame.settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated);
         filterInfo.setRenderer(WTFMove(filterRenderer));
         
         // We can optimize away code paths in other places if we know that there are no software filters.
         renderer().view().setHasSoftwareFilters(true);
-    } else if (filterInfo.renderer()->filterScale() != frame.page()->deviceScaleFactor()) {
-        filterInfo.renderer()->setFilterScale(frame.page()->deviceScaleFactor());
+    } else if (filterInfo.renderer()->filterScale() != page().deviceScaleFactor()) {
+        filterInfo.renderer()->setFilterScale(page().deviceScaleFactor());
         filterInfo.renderer()->clearIntermediateResults();
     }
 

@@ -497,14 +497,12 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             paintSelection(context, boxOrigin, lineStyle, font, selectionPaintStyle.fillColor);
     }
 
-    if (Page* page = renderer().frame().page()) {
-        // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
-        // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
-        // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
-        // renderers and Page currently relies on each unpainted object having a unique renderer.
-        if (paintInfo.phase == PaintPhaseForeground)
-            page->addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
-    }
+    // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
+    // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
+    // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
+    // renderers and Page currently relies on each unpainted object having a unique renderer.
+    if (paintInfo.phase == PaintPhaseForeground)
+        renderer().page().addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
 
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
     String alternateStringToRender;

@@ -787,6 +787,17 @@ void Frame::willDetachPage()
 
     script().clearScriptObjects();
     script().updatePlatformScriptObjects();
+
+    // We promise that the Frame is always connected to a Page while the render tree is live.
+    //
+    // The render tree can be torn down in a few different ways, but the two important ones are:
+    //
+    // - When calling Frame::setView() with a null FrameView*. This is always done before calling
+    //   Frame::willDetachPage (this function.) Hence the assertion below.
+    //
+    // - When adding a document to the page cache, the tree is torn down before instantiating
+    //   the CachedPage+CachedFrame object tree.
+    ASSERT(!document() || !document()->renderView());
 }
 
 void Frame::disconnectOwnerElement()

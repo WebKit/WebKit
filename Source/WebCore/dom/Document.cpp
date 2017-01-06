@@ -2195,6 +2195,8 @@ void Document::frameDestroyed()
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
+    ASSERT(frame());
+    ASSERT(page());
 
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;

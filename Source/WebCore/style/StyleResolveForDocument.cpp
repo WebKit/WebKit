@@ -95,7 +95,7 @@ RenderStyle resolveForDocument(const Document& document)
         documentStyle.setColumnGap(pagination.gap);
         if (renderView.multiColumnFlowThread())
             renderView.updateColumnProgressionFromStyle(documentStyle);
-        if (renderView.frame().page()->paginationLineGridEnabled()) {
+        if (renderView.page().paginationLineGridEnabled()) {
             documentStyle.setLineGrid("-webkit-default-pagination-grid");
             documentStyle.setLineSnap(LineSnapContain);
         }

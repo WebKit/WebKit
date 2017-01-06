@@ -734,16 +734,12 @@ int RenderListBox::scrollTop() const
     return m_indexOffset * itemHeight();
 }
 
-static void setupWheelEventTestTrigger(RenderListBox& renderer, Frame* frame)
+static void setupWheelEventTestTrigger(RenderListBox& renderer)
 {
-    if (!frame)
+    if (!renderer.page().expectsWheelEventTriggers())
         return;
 
-    Page* page = frame->page();
-    if (!page || !page->expectsWheelEventTriggers())
-        return;
-
-    renderer.scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+    renderer.scrollAnimator().setWheelEventTestTrigger(renderer.page().testTrigger());
 }
 
 void RenderListBox::setScrollTop(int newTop)
@@ -752,7 +748,7 @@ void RenderListBox::setScrollTop(int newTop)
     int index = newTop / itemHeight();
     if (index < 0 || index >= numItems() || index == m_indexOffset)
         return;
-    setupWheelEventTestTrigger(*this, document().frame());
+    setupWheelEventTestTrigger(*this);
     scrollToOffsetWithoutAnimation(VerticalScrollbar, index);
 }
 
@@ -792,8 +788,7 @@ LayoutRect RenderListBox::controlClipRect(const LayoutPoint& additionalOffset) c
 
 bool RenderListBox::isActive() const
 {
-    Page* page = frame().page();
-    return page && page->focusController().isActive();
+    return page().focusController().isActive();
 }
 
 void RenderListBox::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect& rect)
@@ -861,8 +856,7 @@ bool RenderListBox::shouldSuspendScrollAnimations() const
 
 bool RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    Page* page = frame().page();
-    return page && page->settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
+    return frame().settings().forceUpdateScrollbarsOnMainThreadForPerformanceTesting();
 }
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const
@@ -905,10 +899,8 @@ Ref<Scrollbar> RenderListBox::createScrollbar()
     else {
         widget = Scrollbar::createNativeScrollbar(*this, VerticalScrollbar, theme().scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);
-        if (Page* page = frame().page()) {
-            if (page->expectsWheelEventTriggers())
-                scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
-        }
+        if (page().expectsWheelEventTriggers())
+            scrollAnimator().setWheelEventTestTrigger(page().testTrigger());
     }
     view().frameView().addChild(widget.get());
     return widget.releaseNonNull();

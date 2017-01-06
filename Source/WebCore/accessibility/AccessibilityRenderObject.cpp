@@ -1421,11 +1421,7 @@ double AccessibilityRenderObject::estimatedLoadingProgress() const
     if (isLoaded())
         return 1.0;
     
-    Page* page = m_renderer->document().page();
-    if (!page)
-        return 0;
-    
-    return page->progress().estimatedProgress();
+    return m_renderer->page().progress().estimatedProgress();
 }
     
 int AccessibilityRenderObject::layoutCount() const

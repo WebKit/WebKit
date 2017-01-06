@@ -435,7 +435,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlowThread())
             downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
         
-        if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && frame().page()->paginationLineGridEnabled()) {
+        if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && page().paginationLineGridEnabled()) {
             // Propagate the body font back up to the RenderView and use it as
             // the basis of the grid.
             if (newStyle.fontDescription() != view().style().fontDescription()) {
@@ -599,23 +599,19 @@ int RenderBox::scrollTop() const
     return hasOverflowClip() && layer() ? layer()->scrollPosition().y() : 0;
 }
 
-static void setupWheelEventTestTrigger(RenderLayer& layer, Frame* frame)
+static void setupWheelEventTestTrigger(RenderLayer& layer)
 {
-    if (!frame)
+    Page& page = layer.renderer().page();
+    if (!page.expectsWheelEventTriggers())
         return;
-
-    Page* page = frame->page();
-    if (!page || !page->expectsWheelEventTriggers())
-        return;
-
-    layer.scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
+    layer.scrollAnimator().setWheelEventTestTrigger(page.testTrigger());
 }
 
 void RenderBox::setScrollLeft(int newLeft)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventTestTrigger(*layer(), document().frame());
+    setupWheelEventTestTrigger(*layer());
     layer()->scrollToXPosition(newLeft, RenderLayer::ScrollOffsetClamped);
 }
 
@@ -623,7 +619,7 @@ void RenderBox::setScrollTop(int newTop)
 {
     if (!hasOverflowClip() || !layer())
         return;
-    setupWheelEventTestTrigger(*layer(), document().frame());
+    setupWheelEventTestTrigger(*layer());
     layer()->scrollToYPosition(newTop, RenderLayer::ScrollOffsetClamped);
 }
 

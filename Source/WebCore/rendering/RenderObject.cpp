@@ -142,8 +142,7 @@ RenderObject::~RenderObject()
 
 RenderTheme& RenderObject::theme() const
 {
-    ASSERT(document().page());
-    return document().page()->theme();
+    return page().theme();
 }
 
 bool RenderObject::isDescendantOf(const RenderObject* ancestor) const

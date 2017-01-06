@@ -1,3 +1,140 @@
+2017-01-06  Andreas Kling  <akling@apple.com>
+
+        Give RenderObject a Page& getter.
+        <https://webkit.org/b/166735>
+
+        Reviewed by Darin Adler.
+
+        The render tree should now only ever be live while in a Frame that's connected to a Page.
+        Hence we can give RenderObject a Page& getter and simplify a lot of code that previously
+        had to get the Page from Document (or Frame) and perform null checks on it.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree): Assert that the Page is present when we tear the render tree down.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage): Assert that there's no render tree when we're about to detach from the Page.
+        Also added a comment explaining the two main ways that render trees die.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::page): Added. So neat!
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::estimatedLoadingProgress):
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::chooseInterpolationQuality):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::layout):
+        (WebCore::RenderAttachment::baselinePosition):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::setupWheelEventTestTrigger):
+        (WebCore::RenderBox::setScrollLeft):
+        (WebCore::RenderBox::setScrollTop):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintFocusRing):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::shouldUnavailablePluginMessageBeButton):
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        (WebCore::RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent):
+        (WebCore::RenderEmbeddedObject::getCursor):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::flattenFrame):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintAreaElementFocusRing):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::isActive):
+        (WebCore::RenderLayer::didStartScroll):
+        (WebCore::RenderLayer::didEndScroll):
+        (WebCore::RenderLayer::didUpdateScroll):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::setupFontSubpixelQuantization):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::createGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::shouldAggressivelyRetainTiles):
+        (WebCore::RenderLayerBacking::shouldTemporarilyRetainTileCohorts):
+        (WebCore::RenderLayerBacking::useGiantTiles):
+        (WebCore::RenderLayerBacking::verifyNotPainting):
+        (WebCore::RenderLayerBacking::startAnimation):
+        (WebCore::scrollingCoordinatorFromLayer): Deleted.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        (WebCore::RenderLayerCompositor::scheduleLayerFlushNow):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::updateScrollingLayerWithClient):
+        (WebCore::RenderLayerCompositor::updateCustomLayersAfterFlush):
+        (WebCore::RenderLayerCompositor::notifyFlushBeforeDisplayRefresh):
+        (WebCore::RenderLayerCompositor::layerTiledBackingUsageChanged):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::appendDocumentOverlayLayers):
+        (WebCore::RenderLayerCompositor::layerBecameNonComposited):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::pageScaleFactor):
+        (WebCore::RenderLayerCompositor::zoomedOutPageScaleFactor):
+        (WebCore::RenderLayerCompositor::contentsScaleMultiplierForNewTiles):
+        (WebCore::RenderLayerCompositor::updateLayerForHeader):
+        (WebCore::RenderLayerCompositor::updateLayerForFooter):
+        (WebCore::RenderLayerCompositor::setRootExtendedBackgroundColor):
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::rootLayerAttachmentChanged):
+        (WebCore::RenderLayerCompositor::registerAllScrollingLayers):
+        (WebCore::RenderLayerCompositor::scrollingCoordinator):
+        (WebCore::RenderLayerCompositor::graphicsLayerFactory):
+        (WebCore::RenderLayerCompositor::createDisplayRefreshMonitor):
+        (WebCore::RenderLayerCompositor::page):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::setupWheelEventTestTrigger):
+        (WebCore::RenderListBox::setScrollTop):
+        (WebCore::RenderListBox::isActive):
+        (WebCore::RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::theme):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::page):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::addSearchResult):
+        (WebCore::RenderSearchField::showPopup):
+        (WebCore::RenderSearchField::valueChanged):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::updateSnapshot):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::updateControlStatesForRenderer):
+        (WebCore::RenderTheme::isActive):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pageNumberForBlockProgressionOffset):
+        (WebCore::RenderView::pageCount):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2017-01-05  Zalan Bujtas  <zalan@apple.com>
 
         TextFragmentIterator::runWidth does not need typename CharacterType<> anymore.

@@ -410,7 +410,7 @@ private:
     void updateScrollCoordinatedLayersAfterFlushIncludingSubframes();
     void updateScrollCoordinatedLayersAfterFlush();
     
-    Page* page() const;
+    Page& page() const;
     
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
@@ -437,9 +437,6 @@ private:
     bool requiresCompositingForScrolling(const RenderLayer&) const;
 
     void updateCustomLayersAfterFlush();
-
-    ChromeClient* chromeClient() const;
-
 #endif
 
     void updateScrollCoordinationForThisFrame(ScrollingNodeID);

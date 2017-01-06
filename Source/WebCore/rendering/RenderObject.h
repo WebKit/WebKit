@@ -515,6 +515,7 @@ public:
 
     Document& document() const { return m_node.document(); }
     Frame& frame() const;
+    Page& page() const;
 
     // Returns the object containing this one. Can be different from parent for positioned elements.
     // If repaintContainer and repaintContainerSkipped are not null, on return *repaintContainerSkipped
@@ -1005,6 +1006,14 @@ private:
 inline Frame& RenderObject::frame() const
 {
     return *document().frame();
+}
+
+inline Page& RenderObject::page() const
+{
+    // The render tree will always be torn down before Frame is disconnected from Page,
+    // so it's safe to assume Frame::page() is non-null as long as there are live RenderObjects.
+    ASSERT(frame().page());
+    return *frame().page();
 }
 
 inline AnimationController& RenderObject::animation() const
