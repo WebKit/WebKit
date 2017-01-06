@@ -25,7 +25,7 @@ const numPages = 10;
     const foo = new WebAssembly.Instance(module, {a: {b: new WebAssembly.Memory({initial: numPages})}}).exports.foo;
 
     for (let i = 0; i < 10000; i++)
-        assert.throws(() => foo(i, numPages * pageSize + 1), WebAssembly.RuntimeError, "Out of bounds memory access (evaluating 'func(...args)')");
+        assert.throws(() => foo(i, numPages * pageSize + 1), WebAssembly.RuntimeError, "Out of bounds memory access");
 }
 
 

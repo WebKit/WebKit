@@ -1235,6 +1235,7 @@
 		2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ADFA26218EF3540004F9FCC /* GCLogging.cpp */; };
 		2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AF7382A18BBBF92008A5A37 /* StructureIDTable.cpp */; };
 		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 425BA1337E4344E1B269A671 /* SourceOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371D842D17C98B6E00ECF994 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 371D842C17C98B6E00ECF994 /* libz.dylib */; };
 		412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		412952781D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2025,6 +2026,7 @@
 		AD7438C01E0457A400FD0C2A /* WasmSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7438BF1E04579200FD0C2A /* WasmSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD7438C11E0457AA00FD0C2A /* WasmSignature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */; };
 		AD86A93E1AA4D88D002FE77F /* WeakGCMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		ADB6F67D1E15D7600082F384 /* WasmPageCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADB6F67C1E15D7500082F384 /* WasmPageCount.cpp */; };
 		ADBC54D41DF8EA2B005BF738 /* WebAssemblyToJSCallee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADBC54D21DF8EA00005BF738 /* WebAssemblyToJSCallee.cpp */; };
 		ADBC54D51DF8EA2B005BF738 /* WebAssemblyToJSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = ADBC54D31DF8EA00005BF738 /* WebAssemblyToJSCallee.h */; };
 		ADDB1F6318D77DBE009B58A8 /* OpaqueRootSet.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3637,6 +3639,7 @@
 		412952751D2CF6AC00E78B89 /* builtins_generate_wrapper_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_wrapper_header.py; sourceTree = "<group>"; };
 		412952761D2CF6AC00E78B89 /* builtins_generate_wrapper_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_wrapper_implementation.py; sourceTree = "<group>"; };
 		41DEA1311B9F3154006D65DD /* BuiltinUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinUtils.h; sourceTree = "<group>"; };
+		425BA1337E4344E1B269A671 /* SourceOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceOrigin.h; sourceTree = "<group>"; };
 		4319DA011C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3LowerMacrosAfterOptimizations.cpp; path = b3/B3LowerMacrosAfterOptimizations.cpp; sourceTree = "<group>"; };
 		4319DA021C1BE3C1001D260B /* B3LowerMacrosAfterOptimizations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3LowerMacrosAfterOptimizations.h; path = b3/B3LowerMacrosAfterOptimizations.h; sourceTree = "<group>"; };
 		4340A4821A9051AF00D73CCA /* MathCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathCommon.cpp; sourceTree = "<group>"; };
@@ -4509,6 +4512,7 @@
 		AD7438BE1E04579200FD0C2A /* WasmSignature.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmSignature.cpp; sourceTree = "<group>"; };
 		AD7438BF1E04579200FD0C2A /* WasmSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignature.h; sourceTree = "<group>"; };
 		AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMapInlines.h; sourceTree = "<group>"; };
+		ADB6F67C1E15D7500082F384 /* WasmPageCount.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmPageCount.cpp; sourceTree = "<group>"; };
 		ADBC54D21DF8EA00005BF738 /* WebAssemblyToJSCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyToJSCallee.cpp; path = js/WebAssemblyToJSCallee.cpp; sourceTree = "<group>"; };
 		ADBC54D31DF8EA00005BF738 /* WebAssemblyToJSCallee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyToJSCallee.h; path = js/WebAssemblyToJSCallee.h; sourceTree = "<group>"; };
 		ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpaqueRootSet.h; sourceTree = "<group>"; };
@@ -6045,6 +6049,7 @@
 				79B759721DFA4C600052174C /* WasmMemoryInformation.h */,
 				53F40E961D5A7BEC0099A1B6 /* WasmModuleParser.cpp */,
 				53F40E941D5A7AEF0099A1B6 /* WasmModuleParser.h */,
+				ADB6F67C1E15D7500082F384 /* WasmPageCount.cpp */,
 				79B759731DFA4C600052174C /* WasmPageCount.h */,
 				53F40E8C1D5901F20099A1B6 /* WasmParser.h */,
 				531374BE1D5CE95000AF7A0B /* WasmPlan.cpp */,
@@ -9699,6 +9704,7 @@
 				0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */,
 				14280863107EC11A0013E7B2 /* BooleanConstructor.cpp in Sources */,
 				14280864107EC11A0013E7B2 /* BooleanObject.cpp in Sources */,
+				ADB6F67D1E15D7600082F384 /* WasmPageCount.cpp in Sources */,
 				14280865107EC11A0013E7B2 /* BooleanPrototype.cpp in Sources */,
 				DE26E9071CB5DEFB00D2BE82 /* BuiltinExecutableCreator.cpp in Sources */,
 				A7D801A41880D66E0026C39B /* BuiltinExecutables.cpp in Sources */,

@@ -76,8 +76,7 @@ bool Plan::parseAndValidateModule()
         }
         m_moduleInformation = WTFMove(parseResult->module);
         m_functionLocationInBinary = WTFMove(parseResult->functionLocationInBinary);
-        m_functionIndexSpace.size = parseResult->functionIndexSpace.size();
-        m_functionIndexSpace.buffer = parseResult->functionIndexSpace.releaseBuffer();
+        m_moduleSignatureIndicesToUniquedSignatureIndices = WTFMove(parseResult->moduleSignatureIndicesToUniquedSignatureIndices);
     }
 
     for (unsigned functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); ++functionIndex) {
@@ -89,7 +88,7 @@ bool Plan::parseAndValidateModule()
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
 
-        auto validationResult = validateFunction(m_vm, functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation);
+        auto validationResult = validateFunction(m_vm, functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices);
         if (!validationResult) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -127,7 +126,7 @@ void Plan::run()
         return true;
     };
 
-    if (!tryReserveCapacity(m_wasmToJSStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
+    if (!tryReserveCapacity(m_wasmExitStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
         || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, m_functionLocationInBinary.size(), " unlinked WebAssembly to WebAssembly calls")
         || !tryReserveCapacity(m_wasmInternalFunctions, m_functionLocationInBinary.size(), " WebAssembly functions")
         || !tryReserveCapacity(m_compilationContexts, m_functionLocationInBinary.size(), " compilation contexts"))
@@ -141,12 +140,11 @@ void Plan::run()
         Import* import = &m_moduleInformation->imports[importIndex];
         if (import->kind != ExternalKind::Function)
             continue;
-        unsigned importFunctionIndex = m_wasmToJSStubs.size();
+        unsigned importFunctionIndex = m_wasmExitStubs.size();
         if (verbose)
             dataLogLn("Processing import function number ", importFunctionIndex, ": ", import->module, ": ", import->field);
         SignatureIndex signatureIndex = m_moduleInformation->importFunctionSignatureIndices.at(import->kindIndex);
-        m_wasmToJSStubs.uncheckedAppend(importStubGenerator(m_vm, m_callLinkInfos, signatureIndex, importFunctionIndex));
-        m_functionIndexSpace.buffer.get()[importFunctionIndex].code = m_wasmToJSStubs[importFunctionIndex].code().executableAddress();
+        m_wasmExitStubs.uncheckedAppend(exitStubGenerator(m_vm, m_callLinkInfos, signatureIndex, importFunctionIndex));
     }
 
     m_currentIndex = 0;
@@ -167,12 +165,12 @@ void Plan::run()
             ASSERT(functionLength <= m_sourceLength);
             SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
             const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
-            unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
-            ASSERT_UNUSED(functionIndexSpace, m_functionIndexSpace.buffer.get()[functionIndexSpace].signatureIndex == signatureIndex);
-            ASSERT(validateFunction(m_vm, functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation));
+            unsigned functionIndexSpace = m_wasmExitStubs.size() + functionIndex;
+            ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
+            ASSERT(validateFunction(m_vm, functionStart, functionLength, signature, *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices));
 
             m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
-            auto parseAndCompileResult = parseAndCompile(*m_vm, m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], m_functionIndexSpace, *m_moduleInformation);
+            auto parseAndCompileResult = parseAndCompile(*m_vm, m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], *m_moduleInformation, m_moduleSignatureIndicesToUniquedSignatureIndices);
 
             if (UNLIKELY(!parseAndCompileResult)) {
                 auto locker = holdLock(m_lock);
@@ -209,10 +207,12 @@ void Plan::run()
     for (uint32_t functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); functionIndex++) {
         {
             CompilationContext& context = m_compilationContexts[functionIndex];
+            SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
+            String signatureDescription = SignatureInformation::get(m_vm, signatureIndex)->toString();
             {
                 LinkBuffer linkBuffer(*m_vm, *context.wasmEntrypointJIT, nullptr);
                 m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation =
-                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("Wasm function")), WTFMove(context.wasmEntrypointByproducts));
+                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("WebAssembly function[%i] %s", functionIndex, signatureDescription.ascii().data())), WTFMove(context.wasmEntrypointByproducts));
             }
 
             {
@@ -220,12 +220,9 @@ void Plan::run()
                 linkBuffer.link(context.jsEntrypointToWasmEntrypointCall, FunctionPtr(m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress()));
 
                 m_wasmInternalFunctions[functionIndex]->jsToWasmEntrypoint.compilation =
-                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("Wasm JS entrypoint")), WTFMove(context.jsEntrypointByproducts));
+                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("JavaScript->WebAssembly entrypoint[%i] %s", functionIndex, signatureDescription.ascii().data())), WTFMove(context.jsEntrypointByproducts));
             }
         }
-
-        unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
-        m_functionIndexSpace.buffer.get()[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress();
     }
 
     if (verbose || Options::reportCompileTimes()) {
@@ -235,8 +232,19 @@ void Plan::run()
 
     // Patch the call sites for each WebAssembly function.
     for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
-        for (auto& call : unlinked)
-            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_functionIndexSpace.buffer.get()[call.functionIndex].code));
+        for (auto& call : unlinked) {
+            void* executableAddress;
+            if (m_moduleInformation->isImportedFunctionFromFunctionIndexSpace(call.functionIndex)) {
+                // FIXME imports could have been linked in B3, instead of generating a patchpoint. This condition should be replaced by a RELEASE_ASSERT. https://bugs.webkit.org/show_bug.cgi?id=166462
+                executableAddress = call.target == UnlinkedWasmToWasmCall::Target::ToJs
+                    ? m_wasmExitStubs.at(call.functionIndex).wasmToJs.code().executableAddress()
+                    : m_wasmExitStubs.at(call.functionIndex).wasmToWasm.code().executableAddress();
+            } else {
+                ASSERT(call.target != UnlinkedWasmToWasmCall::Target::ToJs);
+                executableAddress = m_wasmInternalFunctions.at(call.functionIndex - m_wasmExitStubs.size())->wasmEntrypoint.compilation->code().executableAddress();
+            }
+            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(executableAddress));
+        }
     }
 
     m_failed = false;

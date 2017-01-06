@@ -1,5 +1,134 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210229. rdar://problem/29760322
+
+    2017-01-02  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: handle and optimize wasm export → wasm import calls
+            https://bugs.webkit.org/show_bug.cgi?id=165282
+
+            Reviewed by Saam Barati.
+
+              - Add a new JSType for WebAssemblyFunction, and use it when creating its
+                structure. This will is used to quickly detect from wasm whether the import
+                call is to another wasm module, or whether it's to JS.
+              - Generate two stubs from the import stub generator: one for wasm->JS and one
+                for wasm -> wasm. This is done at Module time. Which is called will only be
+                known at Instance time, once we've received the import object. We want to
+                avoid codegen at Instance time, so having both around is great.
+              - Restore the WebAssembly global state (VM top Instance, and pinned registers)
+                after call / call_indirect, and in the JS->wasm entry stub.
+              - Pinned registers are now a global thing, not per-Memory, because the wasm ->
+                wasm stubs are generated at Module time where we don't really have enough
+                information to do the right thing (doing so would generate too much code).
+
+            * CMakeLists.txt:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * runtime/JSType.h: add WebAssemblyFunctionType as a JSType
+            * wasm/WasmB3IRGenerator.cpp: significantly rework how calls which
+            could be external work, and how we save / restore global state:
+            VM's top Instance, and pinned registers
+            (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+            (JSC::Wasm::getMemoryBaseAndSize):
+            (JSC::Wasm::restoreWebAssemblyGlobalState):
+            (JSC::Wasm::createJSToWasmWrapper):
+            (JSC::Wasm::parseAndCompile):
+            * wasm/WasmB3IRGenerator.h:
+            * wasm/WasmBinding.cpp:
+            (JSC::Wasm::materializeImportJSCell):
+            (JSC::Wasm::wasmToJS):
+            (JSC::Wasm::wasmToWasm): the main goal of this patch was adding this function
+            (JSC::Wasm::exitStubGenerator):
+            * wasm/WasmBinding.h:
+            * wasm/WasmFormat.h: Get rid of much of the function index space:
+            we already have all of its information elsewhere, and as-is it
+            provides no extra efficiency.
+            (JSC::Wasm::ModuleInformation::functionIndexSpaceSize):
+            (JSC::Wasm::ModuleInformation::isImportedFunctionFromFunctionIndexSpace):
+            (JSC::Wasm::ModuleInformation::signatureIndexFromFunctionIndexSpace):
+            * wasm/WasmFunctionParser.h:
+            (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+            * wasm/WasmMemory.cpp: Add some logging.
+            (JSC::Wasm::Memory::dump): this was nice when debugging
+            (JSC::Wasm::Memory::makeString):
+            (JSC::Wasm::Memory::Memory):
+            (JSC::Wasm::Memory::~Memory):
+            (JSC::Wasm::Memory::grow):
+            * wasm/WasmMemory.h: don't use extra indirection, it wasn't
+            needed. Reorder some of the fields which are looked up at runtime
+            so they're more cache-friendly.
+            (JSC::Wasm::Memory::Memory):
+            (JSC::Wasm::Memory::mode):
+            (JSC::Wasm::Memory::offsetOfSize):
+            * wasm/WasmMemoryInformation.cpp: Pinned registers are now a
+            global thing for all of JSC, not a per-Memory thing
+            anymore. wasm->wasm calls are more complex otherwise: they have to
+            figure out how to bridge between the caller and callee's
+            special-snowflake pinning.
+            (JSC::Wasm::PinnedRegisterInfo::get):
+            (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+            (JSC::Wasm::MemoryInformation::MemoryInformation):
+            * wasm/WasmMemoryInformation.h:
+            * wasm/WasmModuleParser.cpp:
+            * wasm/WasmModuleParser.h:
+            * wasm/WasmPageCount.cpp: Copied from Source/JavaScriptCore/wasm/WasmBinding.h.
+            (JSC::Wasm::PageCount::dump): nice for debugging
+            * wasm/WasmPageCount.h:
+            * wasm/WasmPlan.cpp:
+            (JSC::Wasm::Plan::parseAndValidateModule):
+            (JSC::Wasm::Plan::run):
+            * wasm/WasmPlan.h:
+            (JSC::Wasm::Plan::takeWasmExitStubs):
+            * wasm/WasmSignature.cpp:
+            (JSC::Wasm::Signature::toString):
+            (JSC::Wasm::Signature::dump):
+            * wasm/WasmSignature.h:
+            * wasm/WasmValidate.cpp:
+            (JSC::Wasm::validateFunction):
+            * wasm/WasmValidate.h:
+            * wasm/js/JSWebAssemblyInstance.h:
+            (JSC::JSWebAssemblyInstance::offsetOfTable):
+            (JSC::JSWebAssemblyInstance::offsetOfImportFunctions):
+            (JSC::JSWebAssemblyInstance::offsetOfImportFunction):
+            * wasm/js/JSWebAssemblyMemory.cpp:
+            (JSC::JSWebAssemblyMemory::create):
+            (JSC::JSWebAssemblyMemory::JSWebAssemblyMemory):
+            (JSC::JSWebAssemblyMemory::buffer):
+            (JSC::JSWebAssemblyMemory::grow):
+            * wasm/js/JSWebAssemblyMemory.h:
+            (JSC::JSWebAssemblyMemory::memory):
+            (JSC::JSWebAssemblyMemory::offsetOfMemory):
+            (JSC::JSWebAssemblyMemory::offsetOfSize):
+            * wasm/js/JSWebAssemblyModule.cpp:
+            (JSC::JSWebAssemblyModule::create):
+            (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+            * wasm/js/JSWebAssemblyModule.h:
+            (JSC::JSWebAssemblyModule::signatureIndexFromFunctionIndexSpace):
+            (JSC::JSWebAssemblyModule::functionImportCount):
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::callWebAssemblyFunction):
+            (JSC::WebAssemblyFunction::create):
+            (JSC::WebAssemblyFunction::createStructure):
+            (JSC::WebAssemblyFunction::WebAssemblyFunction):
+            (JSC::WebAssemblyFunction::finishCreation):
+            * wasm/js/WebAssemblyFunction.h:
+            (JSC::WebAssemblyFunction::wasmEntrypoint):
+            (JSC::WebAssemblyFunction::offsetOfInstance):
+            (JSC::WebAssemblyFunction::offsetOfWasmEntryPointCode):
+            * wasm/js/WebAssemblyInstanceConstructor.cpp:
+            (JSC::constructJSWebAssemblyInstance): always start with a dummy
+            memory, so wasm->wasm calls don't need to null-check
+            * wasm/js/WebAssemblyMemoryConstructor.cpp:
+            (JSC::constructJSWebAssemblyMemory):
+            * wasm/js/WebAssemblyModuleConstructor.cpp:
+            (JSC::WebAssemblyModuleConstructor::createModule):
+            * wasm/js/WebAssemblyModuleRecord.cpp:
+            (JSC::WebAssemblyModuleRecord::link):
+            (JSC::WebAssemblyModuleRecord::evaluate):
+            * wasm/js/WebAssemblyModuleRecord.h:
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210202. rdar://problem/29803676
 
     2016-12-28  Saam Barati  <sbarati@apple.com>

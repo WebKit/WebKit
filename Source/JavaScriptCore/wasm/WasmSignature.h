@@ -82,6 +82,7 @@ public:
     }
     Type argument(SignatureArgCount i) const { return const_cast<Signature*>(this)->argument(i); }
 
+    WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
     bool operator==(const Signature& rhs) const
     {

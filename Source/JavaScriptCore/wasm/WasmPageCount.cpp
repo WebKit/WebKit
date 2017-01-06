@@ -23,32 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WasmPageCount.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
-#include "CCallHelpers.h"
-#include "VM.h"
-#include "WasmFormat.h"
-#include <wtf/Expected.h>
-
-extern "C" void dumpProcedure(void*);
+#include <wtf/PrintStream.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Wasm {
 
-class MemoryInformation;
+void PageCount::dump(PrintStream& out) const
+{
+    out.print(String::number(bytes()), "B");
+}
 
-struct CompilationContext {
-    std::unique_ptr<CCallHelpers> jsEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> jsEntrypointByproducts;
-    std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
-    std::unique_ptr<B3::OpaqueByproducts> wasmEntrypointByproducts;
-    CCallHelpers::Call jsEntrypointToWasmEntrypointCall;
-};
+} // namespace JSC
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM&, CompilationContext&, const uint8_t*, size_t, const Signature*, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, const Vector<SignatureIndex>&, unsigned optLevel = 1);
-
-} } // namespace JSC::Wasm
+} // namespace Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

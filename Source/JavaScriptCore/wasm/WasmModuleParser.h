@@ -36,8 +36,8 @@ namespace JSC { namespace Wasm {
 
 struct ModuleParserResult {
     std::unique_ptr<ModuleInformation> module;
-    FunctionIndexSpace functionIndexSpace;
     Vector<FunctionLocationInBinary> functionLocationInBinary;
+    Vector<SignatureIndex> moduleSignatureIndicesToUniquedSignatureIndices;
 };
 
 class ModuleParser : public Parser<ModuleParserResult> {

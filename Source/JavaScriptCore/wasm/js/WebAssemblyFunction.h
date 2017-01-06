@@ -54,8 +54,11 @@ public:
 
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
     Wasm::SignatureIndex signatureIndex() const { return m_signatureIndex; }
-    void* wasmEntrypoint() { return m_wasmEntrypoint->entrypoint(); }
+    void* wasmEntrypoint() { return m_wasmEntryPointCode; }
     void* jsEntrypoint() { return m_jsEntrypoint->entrypoint(); }
+
+    static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_instance); }
+    static ptrdiff_t offsetOfWasmEntryPointCode() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmEntryPointCode); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -63,9 +66,10 @@ protected:
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint);
 
 private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::SignatureIndex);
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, JSWebAssemblyCallee*, Wasm::SignatureIndex);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
+    void* m_wasmEntryPointCode; // Cache code pointer: allows the wasm -> wasm stub to do a single load and jump instead of having dependent loads.
     WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
     WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
     Wasm::SignatureIndex m_signatureIndex;

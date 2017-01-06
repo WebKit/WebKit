@@ -155,7 +155,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&, const ImmutableFunctionIndexSpace&);
+    B3IRGenerator(VM&, const ModuleInformation&, Procedure&, WasmInternalFunction*, Vector<UnlinkedWasmToWasmCall>&);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const Signature*);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -205,8 +205,6 @@ public:
 
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
 
-    void emitReloadPinnedRegisters();
-
 private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
     ExpressionType emitLoadOp(LoadOpType, Origin, ExpressionType pointer, uint32_t offset);
@@ -219,7 +217,6 @@ private:
     void emitChecksForModOrDiv(B3::Opcode, ExpressionType left, ExpressionType right);
 
     VM& m_vm;
-    const ImmutableFunctionIndexSpace& m_functionIndexSpace;
     const ModuleInformation& m_info;
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
@@ -231,9 +228,8 @@ private:
     Value* m_instanceValue;
 };
 
-B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace)
+B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& procedure, WasmInternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls)
     : m_vm(vm)
-    , m_functionIndexSpace(functionIndexSpace)
     , m_info(info)
     , m_proc(procedure)
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
@@ -254,14 +250,16 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
         }
     }
 
-    if (info.hasMemory()) {
-        m_memoryBaseGPR = info.memory.pinnedRegisters().baseMemoryPointer;
-        m_proc.pinRegister(m_memoryBaseGPR);
-        ASSERT(!info.memory.pinnedRegisters().sizeRegisters[0].sizeOffset);
-        m_memorySizeGPR = info.memory.pinnedRegisters().sizeRegisters[0].sizeRegister;
-        for (const PinnedSizeRegisterInfo& regInfo : info.memory.pinnedRegisters().sizeRegisters)
-            m_proc.pinRegister(regInfo.sizeRegister);
+    // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
+    const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
+    m_memoryBaseGPR = pinnedRegs.baseMemoryPointer;
+    m_proc.pinRegister(m_memoryBaseGPR);
+    ASSERT(!pinnedRegs.sizeRegisters[0].sizeOffset);
+    m_memorySizeGPR = pinnedRegs.sizeRegisters[0].sizeRegister;
+    for (const PinnedSizeRegisterInfo& regInfo : pinnedRegs.sizeRegisters)
+        m_proc.pinRegister(regInfo.sizeRegister);
 
+    if (info.hasMemory()) {
         m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
@@ -273,6 +271,56 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
 
     m_instanceValue = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(),
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), &m_vm.topJSWebAssemblyInstance));
+}
+
+struct MemoryBaseAndSize {
+    Value* base;
+    Value* size;
+};
+
+static MemoryBaseAndSize getMemoryBaseAndSize(VM& vm, Value* instance, Procedure& proc, BasicBlock* block)
+{
+    Value* memoryObject = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), instance, JSWebAssemblyInstance::offsetOfMemory());
+
+    static_assert(sizeof(decltype(vm.topJSWebAssemblyInstance->memory()->memory()->memory())) == sizeof(void*), "codegen relies on this size");
+    static_assert(sizeof(decltype(vm.topJSWebAssemblyInstance->memory()->memory()->size())) == sizeof(uint64_t), "codegen relies on this size");
+    MemoryBaseAndSize result;
+    result.base = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(), memoryObject, JSWebAssemblyMemory::offsetOfMemory());
+    result.size = block->appendNew<MemoryValue>(proc, Load, Int64, Origin(), memoryObject, JSWebAssemblyMemory::offsetOfSize());
+
+    return result;
+}
+
+static void restoreWebAssemblyGlobalState(VM& vm, const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block)
+{
+    block->appendNew<MemoryValue>(proc, Store, Origin(), instance, block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topJSWebAssemblyInstance));
+
+    if (!!memory) {
+        const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
+        RegisterSet clobbers;
+        clobbers.set(pinnedRegs->baseMemoryPointer);
+        for (auto info : pinnedRegs->sizeRegisters)
+            clobbers.set(info.sizeRegister);
+
+        B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Void, Origin());
+        patchpoint->effects = Effects::none();
+        patchpoint->effects.writesPinned = true;
+        patchpoint->clobber(clobbers);
+
+        patchpoint->append(instance, ValueRep::SomeRegister);
+
+        patchpoint->setGenerator([pinnedRegs] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            GPRReg baseMemory = pinnedRegs->baseMemoryPointer;
+            jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfMemory()), baseMemory);
+            const auto& sizeRegs = pinnedRegs->sizeRegisters;
+            ASSERT(sizeRegs.size() >= 1);
+            ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister);
+            jit.loadPtr(CCallHelpers::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory);
+            for (unsigned i = 1; i < sizeRegs.size(); ++i)
+                jit.add64(CCallHelpers::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
+        });
+    }
 }
 
 void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
@@ -338,49 +386,6 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
     return { };
 }
 
-static void reloadPinnedRegisters(Procedure& proc, BasicBlock* block, const ModuleInformation& info, Value* instance)
-{
-    if (!info.hasMemory())
-        return;
-
-    const MemoryInformation* memory = &info.memory;
-
-    RegisterSet clobbers;
-    clobbers.set(memory->pinnedRegisters().baseMemoryPointer);
-    for (auto info : memory->pinnedRegisters().sizeRegisters)
-        clobbers.set(info.sizeRegister);
-
-    B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Void, Origin());
-    patchpoint->effects = Effects::none();
-    patchpoint->effects.writesPinned = true;
-    patchpoint->clobber(clobbers);
-    patchpoint->numGPScratchRegisters = 1;
-
-    patchpoint->append(instance, ValueRep::SomeRegister);
-
-    patchpoint->setGenerator([memory] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-
-        GPRReg scratch = params.gpScratch(0);
-        jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfMemory()), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, JSWebAssemblyMemory::offsetOfMemory()), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, Memory::offsetOfMemory()), memory->pinnedRegisters().baseMemoryPointer);
-
-        jit.load64(CCallHelpers::Address(scratch, Memory::offsetOfSize()), scratch);
-        for (unsigned i = 0; i < memory->pinnedRegisters().sizeRegisters.size(); i++) {
-            GPRReg sizeReg = memory->pinnedRegisters().sizeRegisters[i].sizeRegister;
-            jit.move(scratch, sizeReg);
-            jit.sub64(CCallHelpers::TrustedImm32(memory->pinnedRegisters().sizeRegisters[i].sizeOffset), sizeReg);
-        }
-    });
-}
-
-void B3IRGenerator::emitReloadPinnedRegisters()
-{
-    reloadPinnedRegisters(m_proc, m_currentBlock, m_info, m_instanceValue);
-}
-
-
 auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
 {
     int32_t (*growMemory) (ExecState*, int32_t) = [] (ExecState* exec, int32_t delta) -> int32_t {
@@ -389,7 +394,6 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
 
         JSWebAssemblyInstance* instance = vm.topJSWebAssemblyInstance;
         JSWebAssemblyMemory* wasmMemory = instance->memory();
-        RELEASE_ASSERT(wasmMemory); // This would fail validation otherwise.
 
         if (delta < 0)
             return -1;
@@ -407,21 +411,19 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
         m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), bitwise_cast<void*>(growMemory)),
         m_currentBlock->appendNew<B3::Value>(m_proc, B3::FramePointer, Origin()), delta);
 
-    emitReloadPinnedRegisters();
+    restoreWebAssemblyGlobalState(m_vm, m_info.memory, m_instanceValue, m_proc, m_currentBlock);
 
     return { };
 }
 
 auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
-    Value* jsMemory = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfMemory());
-    Value* wasmMemory = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), jsMemory, JSWebAssemblyMemory::offsetOfMemory());
-    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, Origin(), wasmMemory, Memory::offsetOfSize());
+    auto memoryValue = getMemoryBaseAndSize(m_vm, m_instanceValue, m_proc, m_currentBlock);
 
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1 << shiftValue, "This must hold for the code below to be correct.");
     Value* numPages = m_currentBlock->appendNew<Value>(m_proc, ZShr, Origin(),
-        size, m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), shiftValue));
+        memoryValue.size, m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), shiftValue));
 
     result = m_currentBlock->appendNew<Value>(m_proc, Trunc, Origin(), numPages);
 
@@ -832,26 +834,75 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
     ASSERT(signature->argumentCount() == args.size());
 
     Type returnType = signature->returnType();
+    Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
-    result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(returnType),
-        [&] (PatchpointValue* patchpoint) {
-            patchpoint->effects.writesPinned = true;
-            patchpoint->effects.readsPinned = true;
+    if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
+        // FIXME imports can be linked here, instead of generating a patchpoint, because all import stubs are generated before B3 compilation starts. https://bugs.webkit.org/show_bug.cgi?id=166462
+        Value* functionImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfImportFunction(functionIndex));
+        Value* jsTypeOfImport = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Origin(), functionImport, JSCell::typeInfoTypeOffset());
+        Value* isWasmCall = m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), jsTypeOfImport, m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), WebAssemblyFunctionType));
 
-            Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
-            patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
+        BasicBlock* isWasmBlock = m_proc.addBlock();
+        BasicBlock* isJSBlock = m_proc.addBlock();
+        BasicBlock* continuation = m_proc.addBlock();
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, Origin(), isWasmCall, FrequentedBlock(isWasmBlock), FrequentedBlock(isJSBlock));
 
-                CCallHelpers::Call call = jit.call();
-
-                jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
-                    unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex });
+        Value* wasmCallResult = wasmCallingConvention().setupCall(m_proc, isWasmBlock, Origin(), args, toB3Type(returnType),
+            [&] (PatchpointValue* patchpoint) {
+                patchpoint->effects.writesPinned = true;
+                patchpoint->effects.readsPinned = true;
+                patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+                    CCallHelpers::Call call = jit.call();
+                    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex, UnlinkedWasmToWasmCall::Target::ToWasm });
+                    });
                 });
             });
-        });
+        UpsilonValue* wasmCallResultUpsilon = returnType == Void ? nullptr : isWasmBlock->appendNew<UpsilonValue>(m_proc, Origin(), wasmCallResult);
+        isWasmBlock->appendNewControlValue(m_proc, Jump, Origin(), continuation);
 
-    if (functionIndex < m_info.importFunctionCount())
-        emitReloadPinnedRegisters();
+        Value* jsCallResult = wasmCallingConvention().setupCall(m_proc, isJSBlock, Origin(), args, toB3Type(returnType),
+            [&] (PatchpointValue* patchpoint) {
+                patchpoint->effects.writesPinned = true;
+                patchpoint->effects.readsPinned = true;
+                patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+                    CCallHelpers::Call call = jit.call();
+                    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex, UnlinkedWasmToWasmCall::Target::ToJs });
+                    });
+                });
+            });
+        UpsilonValue* jsCallResultUpsilon = returnType == Void ? nullptr : isJSBlock->appendNew<UpsilonValue>(m_proc, Origin(), jsCallResult);
+        isJSBlock->appendNewControlValue(m_proc, Jump, Origin(), continuation);
+
+        m_currentBlock = continuation;
+
+        if (returnType == Void)
+            result = nullptr;
+        else {
+            result = continuation->appendNew<Value>(m_proc, Phi, toB3Type(returnType), Origin());
+            wasmCallResultUpsilon->setPhi(result);
+            jsCallResultUpsilon->setPhi(result);
+        }
+
+        // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
+        restoreWebAssemblyGlobalState(m_vm, m_info.memory, m_instanceValue, m_proc, continuation);
+    } else {
+        result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(returnType),
+            [&] (PatchpointValue* patchpoint) {
+                patchpoint->effects.writesPinned = true;
+                patchpoint->effects.readsPinned = true;
+                patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                    AllowMacroScratchRegisterUsage allowScratch(jit);
+                    CCallHelpers::Call call = jit.call();
+                    jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
+                        unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex, UnlinkedWasmToWasmCall::Target::ToWasm });
+                    });
+                });
+            });
+    }
 
     return { };
 }
@@ -929,7 +980,8 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, SignatureIndex s
             });
         });
 
-    emitReloadPinnedRegisters();
+    // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
+    restoreWebAssemblyGlobalState(m_vm, m_info.memory, m_instanceValue, m_proc, m_currentBlock);
 
     return { };
 }
@@ -998,12 +1050,10 @@ static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext
         });
     }
 
-    // Move memory values to the approriate places, if needed.
-    {
-        Value* instance = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(),
-            block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topJSWebAssemblyInstance));
-        reloadPinnedRegisters(proc, block, info, instance);
-    }
+    // FIXME The instance is currently set by the C++ code in WebAssemblyFunction::call. We shouldn't go through the extra C++ hoop. https://bugs.webkit.org/show_bug.cgi?id=166486
+    Value* instance = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(),
+        block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topJSWebAssemblyInstance));
+    restoreWebAssemblyGlobalState(vm, info.memory, instance, proc, block);
 
     // Get our arguments.
     Vector<Value*> arguments;
@@ -1046,7 +1096,7 @@ static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext
     function.jsToWasmEntrypoint.calleeSaveRegisters = proc.calleeSaveRegisters();
 }
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
 
@@ -1054,8 +1104,8 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>(&vm);
 
     Procedure procedure;
-    B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
-    FunctionParser<B3IRGenerator> parser(&vm, context, functionStart, functionLength, signature, functionIndexSpace, info);
+    B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls);
+    FunctionParser<B3IRGenerator> parser(&vm, context, functionStart, functionLength, signature, info, moduleSignatureIndicesToUniquedSignatureIndices);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
     procedure.resetReachability();

@@ -37,9 +37,9 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
 
-JSWebAssemblyMemory* JSWebAssemblyMemory::create(VM& vm, Structure* structure, std::unique_ptr<Wasm::Memory>&& memory)
+JSWebAssemblyMemory* JSWebAssemblyMemory::create(VM& vm, Structure* structure, Wasm::Memory&& memory)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyMemory>(vm.heap)) JSWebAssemblyMemory(vm, structure, WTFMove(memory));
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyMemory>(vm.heap)) JSWebAssemblyMemory(vm, structure, std::forward<Wasm::Memory>(memory));
     instance->finishCreation(vm);
     return instance;
 }
@@ -49,7 +49,7 @@ Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure, std::unique_ptr<Wasm::Memory>&& memory)
+JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure, Wasm::Memory&& memory)
     : Base(vm, structure)
     , m_memory(WTFMove(memory))
 {
@@ -72,7 +72,7 @@ JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
     auto destructor = [] (void*) {
         // We don't need to do anything here to destroy the memory.
         // The ArrayBuffer backing the JSArrayBuffer is only owned by us,
-        // so we guarantee its lifecylce.
+        // so we guarantee its lifecycle.
     };
     m_buffer = ArrayBuffer::createFromBytes(memory()->memory(), memory()->size(), WTFMove(destructor));
     m_bufferWrapper.set(vm, this, JSArrayBuffer::create(vm, globalObject->m_arrayBufferStructure.get(), m_buffer.get()));
@@ -85,7 +85,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(ExecState* exec, uint32_t delta, bool 
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    Wasm::PageCount oldPageCount = m_memory->sizeInPages();
+    Wasm::PageCount oldPageCount = memory()->sizeInPages();
 
     if (!Wasm::PageCount::isValid(delta)) {
         if (shouldThrowExceptionsOnFailure)
@@ -101,7 +101,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(ExecState* exec, uint32_t delta, bool 
     }
 
     if (delta) {
-        bool success = m_memory->grow(newSize);
+        bool success = memory()->grow(newSize);
         if (!success) {
             if (shouldThrowExceptionsOnFailure)
                 throwException(exec, throwScope, createOutOfMemoryError(exec));

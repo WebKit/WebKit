@@ -41,12 +41,22 @@ const bool verbose = false;
 
 const constexpr SignatureIndex Signature::invalidIndex;
 
+String Signature::toString() const
+{
+    String result(makeString(returnType()));
+    result.append(" (");
+    for (SignatureArgCount arg = 0; arg < argumentCount(); ++arg) {
+        if (arg)
+            result.append(", ");
+        result.append(makeString(argument(arg)));
+    }
+    result.append(')');
+    return result;
+}
+
 void Signature::dump(PrintStream& out) const
 {
-    out.print(makeString(returnType()), " (");
-    for (SignatureArgCount arg = 0; arg < argumentCount(); ++arg)
-        out.print((arg ? ", " : ""), makeString(argument(arg)));
-    out.print(")");
+    out.print(toString());
 }
 
 unsigned Signature::hash() const

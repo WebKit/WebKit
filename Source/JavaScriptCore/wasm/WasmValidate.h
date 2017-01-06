@@ -36,7 +36,7 @@ class VM;
 
 namespace Wasm {
 
-Expected<void, String> validateFunction(VM*, const uint8_t*, size_t, const Signature*, const ImmutableFunctionIndexSpace&, const ModuleInformation&);
+Expected<void, String> validateFunction(VM*, const uint8_t*, size_t, const Signature*, const ModuleInformation&, const Vector<SignatureIndex>&);
 
 } } // namespace JSC::Wasm
 

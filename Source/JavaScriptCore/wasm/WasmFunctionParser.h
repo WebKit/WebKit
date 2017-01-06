@@ -46,7 +46,7 @@ public:
     typedef typename Context::ControlType ControlType;
     typedef typename Context::ExpressionList ExpressionList;
 
-    FunctionParser(VM*, Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const ImmutableFunctionIndexSpace&, const ModuleInformation&);
+    FunctionParser(VM*, Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const ModuleInformation&, const Vector<SignatureIndex>&);
 
     Result WARN_UNUSED_RETURN parse();
 
@@ -82,18 +82,18 @@ private:
     ExpressionList m_expressionStack;
     Vector<ControlEntry> m_controlStack;
     const Signature* m_signature;
-    const ImmutableFunctionIndexSpace& m_functionIndexSpace;
     const ModuleInformation& m_info;
+    const Vector<SignatureIndex>& m_moduleSignatureIndicesToUniquedSignatureIndices;
     unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(VM* vm, Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info)
+FunctionParser<Context>::FunctionParser(VM* vm, Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
     : Parser(vm, functionStart, functionLength)
     , m_context(context)
     , m_signature(signature)
-    , m_functionIndexSpace(functionIndexSpace)
     , m_info(info)
+    , m_moduleSignatureIndicesToUniquedSignatureIndices(moduleSignatureIndicesToUniquedSignatureIndices)
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
@@ -308,9 +308,9 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     case Call: {
         uint32_t functionIndex;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse call's function index");
-        WASM_PARSER_FAIL_IF(functionIndex >= m_functionIndexSpace.size, "call function index ", functionIndex, " exceeds function index space ", m_functionIndexSpace.size);
+        WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "call function index ", functionIndex, " exceeds function index space ", m_info.functionIndexSpaceSize());
 
-        SignatureIndex calleeSignatureIndex = m_functionIndexSpace.buffer.get()[functionIndex].signatureIndex;
+        SignatureIndex calleeSignatureIndex = m_info.signatureIndexFromFunctionIndexSpace(functionIndex);
         const Signature* calleeSignature = SignatureInformation::get(m_vm, calleeSignatureIndex);
         WASM_PARSER_FAIL_IF(calleeSignature->argumentCount() > m_expressionStack.size(), "call function index ", functionIndex, " has ", calleeSignature->argumentCount(), " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
@@ -337,9 +337,9 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index");
         WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't get call_indirect's reserved byte");
         WASM_PARSER_FAIL_IF(reserved, "call_indirect's 'reserved' varuint1 must be 0x0");
-        WASM_PARSER_FAIL_IF(m_info.signatureIndices.size() <= signatureIndex, "call_indirect's signature index ", signatureIndex, " exceeds known signatures ", m_info.signatureIndices.size());
+        WASM_PARSER_FAIL_IF(m_moduleSignatureIndicesToUniquedSignatureIndices.size() <= signatureIndex, "call_indirect's signature index ", signatureIndex, " exceeds known signatures ", m_moduleSignatureIndicesToUniquedSignatureIndices.size());
 
-        SignatureIndex calleeSignatureIndex = m_info.signatureIndices[signatureIndex];
+        SignatureIndex calleeSignatureIndex = m_moduleSignatureIndicesToUniquedSignatureIndices[signatureIndex];
         const Signature* calleeSignature = SignatureInformation::get(m_vm, calleeSignatureIndex);
         size_t argumentCount = calleeSignature->argumentCount() + 1; // Add the callee's index.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_indirect expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");

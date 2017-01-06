@@ -1,5 +1,44 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210229. rdar://problem/29760322
+
+    2017-01-02  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: handle and optimize wasm export → wasm import calls
+            https://bugs.webkit.org/show_bug.cgi?id=165282
+
+            Reviewed by Saam Barati.
+
+            * wasm/Builder.js: Add a Proxy to Builder.js, which intercepts
+            unknown property lookups. This creates way better error messages
+            on typos than 'undefined is not a function', which happens
+            semi-frequently as I typo opcode names (and which one is a typo is
+            hard to find because we chain builders).
+            (const._isValidValue):
+            (get target):
+            (const._importFunctionContinuation):
+            (const._importMemoryContinuation):
+            (const._importTableContinuation):
+            (const._exportFunctionContinuation):
+            (export.default.Builder.prototype._registerSectionBuilders.const.section.in.WASM.description.section.switch.section.case.string_appeared_here.this.section):
+            (export.default.Builder.prototype._registerSectionBuilders.this.Unknown):
+            * wasm/LowLevelBinary.js: Add limited support for var{u}int64 (only the 32-bit values)
+            (export.default.LowLevelBinary.prototype.varint32):
+            (export.default.LowLevelBinary.prototype.varuint64):
+            (export.default.LowLevelBinary.prototype.varint64):
+            * wasm/function-tests/exceptions.js: update error message
+            * wasm/function-tests/trap-load.js: update error message
+            * wasm/function-tests/trap-store.js: update error message
+            * wasm/js-api/wasm-to-wasm-bad-signature.js: Added. Test a bunch of bad wasm->wasm import signatures
+            (const.makeImportee.signature.switch):
+            (BadSignatureDropStartParams):
+            * wasm/js-api/wasm-to-wasm.js: Added. Test 64-bit wasm->wasm import calls
+            (const.callerModule):
+            (const.calleeModule):
+            (WasmToWasm):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210201. rdar://problem/29803676
 
     2016-12-28  Saam Barati  <sbarati@apple.com>

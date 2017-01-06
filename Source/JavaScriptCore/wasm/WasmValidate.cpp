@@ -381,10 +381,10 @@ void Validate::dump(const Vector<ControlEntry>& controlStack, const ExpressionLi
     dataLogLn();
 }
 
-Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& module)
+Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature* signature, const ModuleInformation& module, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
 {
     Validate context(module);
-    FunctionParser<Validate> validator(vm, context, source, length, signature, functionIndexSpace, module);
+    FunctionParser<Validate> validator(vm, context, source, length, signature, module, moduleSignatureIndicesToUniquedSignatureIndices);
     WASM_FAIL_IF_HELPER_FAILS(validator.parse());
     return { };
 }
