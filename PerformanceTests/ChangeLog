@@ -1,3 +1,120 @@
+2017-01-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename the directory and the files of MotionMark from Animometer to MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=166659
+
+        Reviewed by Jon Lee.
+        
+        Rename the directory and the files of the benchmark to its new name.
+
+        * MotionMark/developer.html: Renamed from PerformanceTests/Animometer/developer.html.
+        * MotionMark/index.html: Renamed from PerformanceTests/Animometer/index.html.
+        * MotionMark/resources/debug-runner/d3.min.js: Renamed from PerformanceTests/Animometer/resources/debug-runner/d3.min.js.
+        * MotionMark/resources/debug-runner/graph.js: Renamed from PerformanceTests/Animometer/resources/debug-runner/graph.js.
+        * MotionMark/resources/debug-runner/motionmark.css: Renamed from PerformanceTests/Animometer/resources/debug-runner/animometer.css.
+        * MotionMark/resources/debug-runner/motionmark.js: Renamed from PerformanceTests/Animometer/resources/debug-runner/animometer.js.
+        * MotionMark/resources/debug-runner/tests.js: Renamed from PerformanceTests/Animometer/resources/debug-runner/tests.js.
+        * MotionMark/resources/extensions.js: Renamed from PerformanceTests/Animometer/resources/extensions.js.
+        * MotionMark/resources/runner/benchmark-runner.js: Renamed from PerformanceTests/Animometer/resources/runner/benchmark-runner.js.
+        * MotionMark/resources/runner/crystal.svg: Renamed from PerformanceTests/Animometer/resources/runner/crystal.svg.
+        * MotionMark/resources/runner/lines.svg: Renamed from PerformanceTests/Animometer/resources/runner/lines.svg.
+        * MotionMark/resources/runner/logo.svg: Renamed from PerformanceTests/Animometer/resources/runner/logo.svg.
+        * MotionMark/resources/runner/motionmark.css: Renamed from PerformanceTests/Animometer/resources/runner/animometer.css.
+        * MotionMark/resources/runner/motionmark.js: Renamed from PerformanceTests/Animometer/resources/runner/animometer.js.
+        * MotionMark/resources/runner/tests.js: Renamed from PerformanceTests/Animometer/resources/runner/tests.js.
+        * MotionMark/resources/statistics.js: Renamed from PerformanceTests/Animometer/resources/statistics.js.
+        * MotionMark/resources/strings.js: Renamed from PerformanceTests/Animometer/resources/strings.js.
+        * MotionMark/tests/3d/resources/webgl.js: Renamed from PerformanceTests/Animometer/tests/3d/resources/webgl.js.
+        * MotionMark/tests/3d/webgl.html: Renamed from PerformanceTests/Animometer/tests/3d/webgl.html.
+        * MotionMark/tests/bouncing-particles/bouncing-canvas-images.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-canvas-images.html.
+        * MotionMark/tests/bouncing-particles/bouncing-canvas-shapes.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-canvas-shapes.html.
+        * MotionMark/tests/bouncing-particles/bouncing-css-images.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-css-images.html.
+        * MotionMark/tests/bouncing-particles/bouncing-css-shapes.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-css-shapes.html.
+        * MotionMark/tests/bouncing-particles/bouncing-svg-images.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-svg-images.html.
+        * MotionMark/tests/bouncing-particles/bouncing-svg-shapes.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-svg-shapes.html.
+        * MotionMark/tests/bouncing-particles/bouncing-tagged-images.html: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/bouncing-tagged-images.html.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-images.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-canvas-images.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-particles.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-canvas-particles.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-canvas-shapes.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-css-images.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-css-images.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-css-shapes.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-css-shapes.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-images.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-svg-images.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-particles.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-svg-particles.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-svg-shapes.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-svg-shapes.js.
+        * MotionMark/tests/bouncing-particles/resources/bouncing-tagged-images.js: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/bouncing-tagged-images.js.
+        * MotionMark/tests/bouncing-particles/resources/image1.jpg: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/image1.jpg.
+        * MotionMark/tests/bouncing-particles/resources/image2.jpg: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/image2.jpg.
+        * MotionMark/tests/bouncing-particles/resources/image3.jpg: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/image3.jpg.
+        * MotionMark/tests/bouncing-particles/resources/image4.jpg: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/image4.jpg.
+        * MotionMark/tests/bouncing-particles/resources/image5.jpg: Renamed from PerformanceTests/Animometer/tests/bouncing-particles/resources/image5.jpg.
+        * MotionMark/tests/dom/compositing-transforms.html: Renamed from PerformanceTests/Animometer/tests/dom/compositing-transforms.html.
+        * MotionMark/tests/dom/focus.html: Renamed from PerformanceTests/Animometer/tests/dom/focus.html.
+        * MotionMark/tests/dom/leaves.html: Renamed from PerformanceTests/Animometer/tests/dom/leaves.html.
+        * MotionMark/tests/dom/particles.html: Renamed from PerformanceTests/Animometer/tests/dom/particles.html.
+        * MotionMark/tests/dom/resources/compositing-transforms.js: Renamed from PerformanceTests/Animometer/tests/dom/resources/compositing-transforms.js.
+        * MotionMark/tests/dom/resources/dom-particles.js: Renamed from PerformanceTests/Animometer/tests/dom/resources/dom-particles.js.
+        * MotionMark/tests/dom/resources/focus.js: Renamed from PerformanceTests/Animometer/tests/dom/resources/focus.js.
+        * MotionMark/tests/dom/resources/leaves.js: Renamed from PerformanceTests/Animometer/tests/dom/resources/leaves.js.
+        * MotionMark/tests/master/canvas-stage.html: Renamed from PerformanceTests/Animometer/tests/master/canvas-stage.html.
+        * MotionMark/tests/master/focus.html: Renamed from PerformanceTests/Animometer/tests/master/focus.html.
+        * MotionMark/tests/master/image-data.html: Renamed from PerformanceTests/Animometer/tests/master/image-data.html.
+        * MotionMark/tests/master/leaves.html: Renamed from PerformanceTests/Animometer/tests/master/leaves.html.
+        * MotionMark/tests/master/multiply.html: Renamed from PerformanceTests/Animometer/tests/master/multiply.html.
+        * MotionMark/tests/master/resources/canvas-stage.js: Renamed from PerformanceTests/Animometer/tests/master/resources/canvas-stage.js.
+        * MotionMark/tests/master/resources/canvas-tests.js: Renamed from PerformanceTests/Animometer/tests/master/resources/canvas-tests.js.
+        * MotionMark/tests/master/resources/compass.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/compass.svg.
+        * MotionMark/tests/master/resources/compass100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/compass100.png.
+        * MotionMark/tests/master/resources/console.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/console.svg.
+        * MotionMark/tests/master/resources/console100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/console100.png.
+        * MotionMark/tests/master/resources/contribute.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/contribute.svg.
+        * MotionMark/tests/master/resources/contribute100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/contribute100.png.
+        * MotionMark/tests/master/resources/debugger.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/debugger.svg.
+        * MotionMark/tests/master/resources/debugger100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/debugger100.png.
+        * MotionMark/tests/master/resources/focus.js: Renamed from PerformanceTests/Animometer/tests/master/resources/focus.js.
+        * MotionMark/tests/master/resources/image-data.js: Renamed from PerformanceTests/Animometer/tests/master/resources/image-data.js.
+        * MotionMark/tests/master/resources/inspector.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/inspector.svg.
+        * MotionMark/tests/master/resources/inspector100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/inspector100.png.
+        * MotionMark/tests/master/resources/layout.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/layout.svg.
+        * MotionMark/tests/master/resources/layout100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/layout100.png.
+        * MotionMark/tests/master/resources/leaves.js: Renamed from PerformanceTests/Animometer/tests/master/resources/leaves.js.
+        * MotionMark/tests/master/resources/multiply.js: Renamed from PerformanceTests/Animometer/tests/master/resources/multiply.js.
+        * MotionMark/tests/master/resources/particles.js: Renamed from PerformanceTests/Animometer/tests/master/resources/particles.js.
+        * MotionMark/tests/master/resources/performance.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/performance.svg.
+        * MotionMark/tests/master/resources/performance100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/performance100.png.
+        * MotionMark/tests/master/resources/script.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/script.svg.
+        * MotionMark/tests/master/resources/script100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/script100.png.
+        * MotionMark/tests/master/resources/shortcuts.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/shortcuts.svg.
+        * MotionMark/tests/master/resources/shortcuts100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/shortcuts100.png.
+        * MotionMark/tests/master/resources/standards.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/standards.svg.
+        * MotionMark/tests/master/resources/standards100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/standards100.png.
+        * MotionMark/tests/master/resources/storage.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/storage.svg.
+        * MotionMark/tests/master/resources/storage100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/storage100.png.
+        * MotionMark/tests/master/resources/styles.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/styles.svg.
+        * MotionMark/tests/master/resources/styles100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/styles100.png.
+        * MotionMark/tests/master/resources/svg-particles.js: Renamed from PerformanceTests/Animometer/tests/master/resources/svg-particles.js.
+        * MotionMark/tests/master/resources/text.js: Renamed from PerformanceTests/Animometer/tests/master/resources/text.js.
+        * MotionMark/tests/master/resources/timeline.svg: Renamed from PerformanceTests/Animometer/tests/master/resources/timeline.svg.
+        * MotionMark/tests/master/resources/timeline100.png: Renamed from PerformanceTests/Animometer/tests/master/resources/timeline100.png.
+        * MotionMark/tests/master/svg-particles.html: Renamed from PerformanceTests/Animometer/tests/master/svg-particles.html.
+        * MotionMark/tests/master/text.html: Renamed from PerformanceTests/Animometer/tests/master/text.html.
+        * MotionMark/tests/resources/main.js: Renamed from PerformanceTests/Animometer/tests/resources/main.js.
+        * MotionMark/tests/resources/math.js: Renamed from PerformanceTests/Animometer/tests/resources/math.js.
+        * MotionMark/tests/resources/stage.css: Renamed from PerformanceTests/Animometer/tests/resources/stage.css.
+        * MotionMark/tests/resources/star.svg: Renamed from PerformanceTests/Animometer/tests/resources/star.svg.
+        * MotionMark/tests/resources/yin-yang.png: Renamed from PerformanceTests/Animometer/tests/resources/yin-yang.png.
+        * MotionMark/tests/resources/yin-yang.svg: Renamed from PerformanceTests/Animometer/tests/resources/yin-yang.svg.
+        * MotionMark/tests/simple/resources/simple-canvas-paths.js: Renamed from PerformanceTests/Animometer/tests/simple/resources/simple-canvas-paths.js.
+        * MotionMark/tests/simple/resources/simple-canvas.js: Renamed from PerformanceTests/Animometer/tests/simple/resources/simple-canvas.js.
+        * MotionMark/tests/simple/resources/tiled-canvas-image.js: Renamed from PerformanceTests/Animometer/tests/simple/resources/tiled-canvas-image.js.
+        * MotionMark/tests/simple/simple-canvas-paths.html: Renamed from PerformanceTests/Animometer/tests/simple/simple-canvas-paths.html.
+        * MotionMark/tests/simple/tiled-canvas-image.html: Renamed from PerformanceTests/Animometer/tests/simple/tiled-canvas-image.html.
+        * MotionMark/tests/template/resources/template-canvas.js: Renamed from PerformanceTests/Animometer/tests/template/resources/template-canvas.js.
+        * MotionMark/tests/template/resources/template-css.js: Renamed from PerformanceTests/Animometer/tests/template/resources/template-css.js.
+        * MotionMark/tests/template/resources/template-svg.js: Renamed from PerformanceTests/Animometer/tests/template/resources/template-svg.js.
+        * MotionMark/tests/template/template-canvas.html: Renamed from PerformanceTests/Animometer/tests/template/template-canvas.html.
+        * MotionMark/tests/template/template-css.html: Renamed from PerformanceTests/Animometer/tests/template/template-css.html.
+        * MotionMark/tests/template/template-svg.html: Renamed from PerformanceTests/Animometer/tests/template/template-svg.html.
+
 2016-12-13  Brady Eidson  <beidson@apple.com>
 
         Add a PerfTest targeting IDBObjectStore.get().
