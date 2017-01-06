@@ -1,3 +1,46 @@
+2016-12-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DeferGC::~DeferGC should be super cheap
+        https://bugs.webkit.org/show_bug.cgi?id=166626
+
+        Reviewed by Saam Barati.
+        
+        Right now, ~DeferGC requires running the collector's full collectIfNecessaryOrDefer()
+        hook, which is super big. Normally, that hook would only be called from GC slow paths,
+        so it ought to be possible to add complex logic to it. It benefits the GC algorithm to
+        make that code smart, not necessarily fast.
+
+        The right thing for it to do is to have ~DeferGC check a boolean to see if
+        collectIfNecessaryOrDefer() had previously deferred anything, and only call it if that
+        is true. That's what this patch does.
+        
+        Unfortunately, this means that we lose the collectAccordingToDeferGCProbability mode,
+        which we used for two tests. Since I could only see two tests that used this mode, I
+        felt that it was better to enhance the GC than to keep the tests. I filed bug 166627 to
+        bring back something like that mode.
+        
+        Although this patch does make some paths faster, its real goal is to ensure that bug
+        165963 can add more logic to collectIfNecessaryOrDefer() without introducing a big
+        regression. Until then, I wouldn't be surprised if this patch was a progression, but I'm
+        not betting on it.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeededSlow):
+        (JSC::Heap::canCollect): Deleted.
+        (JSC::Heap::shouldCollectHeuristic): Deleted.
+        (JSC::Heap::shouldCollect): Deleted.
+        (JSC::Heap::collectAccordingToDeferGCProbability): Deleted.
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded): Deleted.
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::incrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        (JSC::Heap::mayNeedToStop):
+        (JSC::Heap::stopIfNecessary):
+        * runtime/Options.h:
+
 2017-01-05  Filip Pizlo  <fpizlo@apple.com>
 
         AutomaticThread timeout shutdown leaves a small window where notify() would think that the thread is still running

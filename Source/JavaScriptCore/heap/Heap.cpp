@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2009, 2011, 2013-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -2023,29 +2023,6 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
     addToRememberedSet(from);
 }
 
-bool Heap::canCollect()
-{
-    if (isDeferred())
-        return false;
-    if (!m_isSafeToCollect)
-        return false;
-    if (mutatorState() == MutatorState::HelpingGC)
-        return false;
-    return true;
-}
-
-bool Heap::shouldCollectHeuristic()
-{
-    if (Options::gcMaxHeapSize())
-        return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize();
-    return m_bytesAllocatedThisCycle > m_maxEdenSize;
-}
-
-bool Heap::shouldCollect()
-{
-    return canCollect() && shouldCollectHeuristic();
-}
-
 bool Heap::isCurrentThreadBusy()
 {
     return mayBeGCThread() || mutatorState() != MutatorState::Running;
@@ -2077,47 +2054,53 @@ void Heap::reportExternalMemoryVisited(size_t size)
 
 bool Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 {
-    if (!canCollect())
+    ASSERT(!DisallowGC::isGCDisallowedOnCurrentThread());
+
+    if (!m_isSafeToCollect)
+        return false;
+    if (mutatorState() == MutatorState::HelpingGC)
+        return false;
+    if (!Options::useGC())
         return false;
     
-    if (deferralContext) {
-        deferralContext->m_shouldGC |=
-            !!(m_worldState.load() & (shouldStopBit | needFinalizeBit | gcDidJITBit));
-    } else
-        stopIfNecessary();
+    if (mayNeedToStop()) {
+        if (deferralContext)
+            deferralContext->m_shouldGC = true;
+        else if (isDeferred())
+            m_didDeferGCWork = true;
+        else
+            stopIfNecessary();
+    }
     
-    if (!shouldCollectHeuristic())
-        return false;
+    if (UNLIKELY(Options::gcMaxHeapSize())) {
+        if (m_bytesAllocatedThisCycle <= Options::gcMaxHeapSize())
+            return false;
+    } else {
+        if (m_bytesAllocatedThisCycle <= m_maxEdenSize)
+            return false;
+    }
 
     if (deferralContext)
         deferralContext->m_shouldGC = true;
+    else if (isDeferred())
+        m_didDeferGCWork = true;
     else
         collectAsync();
     return true;
 }
 
-void Heap::collectAccordingToDeferGCProbability()
+void Heap::decrementDeferralDepthAndGCIfNeededSlow()
 {
-    if (isDeferred() || !m_isSafeToCollect || collectionScope() || mutatorState() == MutatorState::HelpingGC)
+    // Can't do anything if we're still deferred.
+    if (m_deferralDepth)
         return;
-
-    if (randomNumber() < Options::deferGCProbability()) {
-        collectAsync();
-        return;
-    }
-
-    // If our coin flip told us not to GC, we still might GC,
-    // but we GC according to our memory pressure markers.
+    
+    ASSERT(!isDeferred());
+    
+    m_didDeferGCWork = false;
+    // FIXME: Bring back something like the DeferGCProbability mode.
+    // https://bugs.webkit.org/show_bug.cgi?id=166627
     collectIfNecessaryOrDefer();
-}
-
-void Heap::decrementDeferralDepthAndGCIfNeeded()
-{
-    decrementDeferralDepth();
-    if (UNLIKELY(Options::deferGCShouldCollectWithProbability()))
-        collectAccordingToDeferGCProbability();
-    else
-        collectIfNecessaryOrDefer();
 }
 
 void Heap::registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback)

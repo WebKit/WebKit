@@ -1,3 +1,13 @@
+2016-12-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DeferGC::~DeferGC should be super cheap
+        https://bugs.webkit.org/show_bug.cgi?id=166626
+
+        Reviewed by Saam Barati.
+
+        * stress/slow-path-generator-updating-current-node-dfg.js:
+        * stress/unshift-array-storage.js:
+
 2017-01-04  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: sections with the same name are allowed
