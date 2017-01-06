@@ -77,13 +77,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
 
     Identifier moduleKey = Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
     WebAssemblyModuleRecord* moduleRecord = WebAssemblyModuleRecord::create(exec, vm, globalObject->webAssemblyModuleRecordStructure(), moduleKey, moduleInformation);
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     Structure* instanceStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), globalObject->WebAssemblyInstanceStructure());
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, instanceStructure, jsModule, moduleRecord->getModuleNamespace(exec));
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     // Let funcs, memories and tables be initially-empty lists of callable JavaScript objects, WebAssembly.Memory objects and WebAssembly.Table objects, respectively.
     // Let imports be an initially-empty list of external values.
@@ -96,7 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     for (auto& import : moduleInformation.imports) {
         // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
         JSValue importModuleValue = importObject->get(exec, import.module);
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         // 2. If Type(o) is not Object, throw a TypeError.
         if (!importModuleValue.isObject())
             return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("import must be an object"), defaultSourceAppender, runtimeTypeForValue(importModuleValue))));
@@ -104,7 +104,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
         // 3. Let v be the value of performing Get(o, i.item_name)
         JSObject* object = jsCast<JSObject*>(importModuleValue);
         JSValue value = object->get(exec, import.field);
-        RETURN_IF_EXCEPTION(throwScope, { });
+        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
         switch (import.kind) {
         case Wasm::ExternalKind::Function: {
@@ -271,13 +271,13 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     }
 
     moduleRecord->link(exec, instance);
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     if (verbose)
         moduleRecord->dump();
     JSValue startResult = moduleRecord->evaluate(exec);
     UNUSED_PARAM(startResult);
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     return JSValue::encode(instance);
 }

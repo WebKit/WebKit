@@ -79,7 +79,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         case Wasm::Anyfunc:
             RELEASE_ASSERT_NOT_REACHED();
         }
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         boxedArgs.append(arg);
     }
 

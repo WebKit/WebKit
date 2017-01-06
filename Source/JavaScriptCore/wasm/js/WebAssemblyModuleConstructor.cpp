@@ -58,7 +58,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* exec
     VM& vm = exec->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     throwScope.release();
     return JSValue::encode(WebAssemblyModuleConstructor::createModule(exec, structure));
 }

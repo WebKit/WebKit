@@ -1,5 +1,45 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210038. rdar://problem/29759741
+
+    2016-12-20  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: construct 32-bit encodedJSValue properly
+            https://bugs.webkit.org/show_bug.cgi?id=166199
+
+            Reviewed by Mark Lam.
+
+            Constructing an encodedJSValue using `{ }` yields the wrong value
+            on 32-bit platforms. WebAssembly doesn't currently target 32-bit
+            platforms, but we may as well get it right.
+
+            * wasm/JSWebAssembly.cpp:
+            (JSC::webAssemblyCompileFunc):
+            (JSC::webAssemblyValidateFunc):
+            * wasm/js/JSWebAssemblyHelpers.h:
+            (JSC::toNonWrappingUint32):
+            * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+            (JSC::constructJSWebAssemblyCompileError):
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::callWebAssemblyFunction):
+            * wasm/js/WebAssemblyInstanceConstructor.cpp:
+            (JSC::constructJSWebAssemblyInstance):
+            * wasm/js/WebAssemblyMemoryConstructor.cpp:
+            (JSC::constructJSWebAssemblyMemory):
+            * wasm/js/WebAssemblyModuleConstructor.cpp:
+            (JSC::constructJSWebAssemblyModule):
+            * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+            (JSC::constructJSWebAssemblyRuntimeError):
+            * wasm/js/WebAssemblyTableConstructor.cpp:
+            (JSC::constructJSWebAssemblyTable):
+            * wasm/js/WebAssemblyTablePrototype.cpp:
+            (JSC::webAssemblyTableProtoFuncLength):
+            (JSC::webAssemblyTableProtoFuncGrow):
+            (JSC::webAssemblyTableProtoFuncGet):
+            (JSC::webAssemblyTableProtoFuncSet):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210026. rdar://problem/29735737
 
     2016-12-20  JF Bastien  <jfbastien@apple.com>
