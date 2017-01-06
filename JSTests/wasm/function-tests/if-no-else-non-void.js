@@ -13,4 +13,4 @@ const builder = (new Builder())
       .End();
 
 const bin = builder.WebAssembly().get();
-assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: If-block had a non-void result type: I32 but had no else-block, in function at index 0 (evaluating 'new WebAssembly.Module(bin)')");
+assert.throws(() => new WebAssembly.Module(bin), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: If-block had a non-void result type: I32 but had no else-block (evaluating 'new WebAssembly.Module(bin)')");

@@ -67,7 +67,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncLength(ExecState* exec)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
     return JSValue::encode(jsNumber(table->size()));
 }
 
@@ -77,10 +77,10 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGrow(ExecState* exec)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
     if (!table->grow(index)) {
         throwException(exec, throwScope,
             createTypeError(exec, ASCIILiteral("WebAssembly.Table.prototype.grow could not grow the table")));
@@ -96,10 +96,10 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncGet(ExecState* exec)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
     if (index >= table->size()) {
         throwException(exec, throwScope,
             createRangeError(exec, ASCIILiteral("WebAssembly.Table.prototype.get expects an integer less than the size of the table")));
@@ -117,7 +117,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyTable* table = getTable(exec, vm, exec->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     JSValue value = exec->argument(1);
     WebAssemblyFunction* function = jsDynamicCast<WebAssemblyFunction*>(value);
@@ -128,7 +128,7 @@ EncodedJSValue JSC_HOST_CALL webAssemblyTableProtoFuncSet(ExecState* exec)
     }
 
     uint32_t index = toNonWrappingUint32(exec, exec->argument(0));
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     if (index >= table->size()) {
         throwException(exec, throwScope,

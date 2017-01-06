@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSArrayBuffer.h"
 #include "JSCJSValue.h"
 
 namespace JSC {
@@ -45,30 +44,6 @@ ALWAYS_INLINE uint32_t toNonWrappingUint32(ExecState* exec, JSValue value)
     }
 
     return static_cast<uint32_t>(doubleValue);
-}
-
-ALWAYS_INLINE uint8_t* getWasmBufferFromValue(ExecState* exec, JSValue value, size_t& byteOffset, size_t& byteSize)
-{
-    VM& vm = exec->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    // If the given bytes argument is not a BufferSource, a TypeError exception is thrown.
-    JSArrayBuffer* arrayBuffer = value.getObject() ? jsDynamicCast<JSArrayBuffer*>(value.getObject()) : nullptr;
-    JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(value.getObject()) : nullptr;
-    if (!(arrayBuffer || arrayBufferView)) {
-        throwException(exec, throwScope, createTypeError(exec,
-            ASCIILiteral("first argument must be an ArrayBufferView or an ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(value)));
-        return nullptr;
-    }
-
-    if (arrayBufferView ? arrayBufferView->isNeutered() : arrayBuffer->impl()->isNeutered()) {
-        throwException(exec, throwScope, createTypeError(exec,
-            ASCIILiteral("underlying TypedArray has been detatched from the ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(value)));
-        return nullptr;
-    }
-
-    byteOffset = arrayBufferView ? arrayBufferView->byteOffset() : 0;
-    byteSize = arrayBufferView ? arrayBufferView->length() : arrayBuffer->impl()->byteLength();
-    return arrayBufferView ? static_cast<uint8_t*>(arrayBufferView->vector()) : static_cast<uint8_t*>(arrayBuffer->impl()->data());
 }
 
 } // namespace JSC

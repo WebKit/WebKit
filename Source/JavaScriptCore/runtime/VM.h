@@ -147,11 +147,6 @@ class Database;
 namespace DOMJIT {
 class Signature;
 }
-#if ENABLE(WEBASSEMBLY)
-namespace Wasm {
-class SignatureInformation;
-}
-#endif
 
 struct HashTable;
 struct Instruction;
@@ -301,6 +296,8 @@ public:
     // https://bugs.webkit.org/show_bug.cgi?id=160441
     ExecState* topCallFrame;
     JSWebAssemblyInstance* topJSWebAssemblyInstance;
+    void* topWasmMemoryPointer;
+    uint32_t topWasmMemorySize;
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
     Strong<Structure> terminatedExecutionErrorStructure;
@@ -356,11 +353,6 @@ public:
 
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
-
-#if ENABLE(WEBASSEMBLY)
-    std::once_flag m_wasmSignatureInformationOnceFlag;
-    std::unique_ptr<Wasm::SignatureInformation> m_wasmSignatureInformation;
-#endif
 
     AtomicStringTable* m_atomicStringTable;
     WTF::SymbolRegistry m_symbolRegistry;

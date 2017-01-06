@@ -28,140 +28,37 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include <wtf/HexNumber.h>
-#include <wtf/PrintStream.h>
-#include <wtf/text/WTFString.h>
-
 namespace JSC { namespace Wasm {
 
-namespace {
-const bool verbose = false;
-}
-
-void Memory::dump(PrintStream& out) const
-{
-    String memoryHex;
-    WTF::appendUnsigned64AsHex((uint64_t)(uintptr_t)m_memory, memoryHex);
-    out.print("Memory at 0x", memoryHex, ", size ", m_size, "B capacity ", m_mappedCapacity, "B, initial ", m_initial, " maximum ", m_maximum, " mode ", makeString(m_mode));
-}
-
-const char* Memory::makeString(Mode mode) const
-{
-    switch (mode) {
-    case Mode::BoundsChecking: return "BoundsChecking";
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return "";
-}
-
-static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^32 which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
-
-Memory::Memory(PageCount initial, PageCount maximum, bool& failed)
-    : m_size(initial.bytes())
+Memory::Memory(PageCount initial, PageCount maximum)
+    : m_mode(Mode::BoundsChecking)
+    , m_size(initial.bytes())
+    , m_capacity(maximum ? maximum.bytes() : PageCount::max().bytes())
     , m_initial(initial)
     , m_maximum(maximum)
-    , m_mode(Mode::BoundsChecking)
     // FIXME: If we add signal based bounds checking then we need extra space for overflow on load.
     // see: https://bugs.webkit.org/show_bug.cgi?id=162693
 {
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
 
-    m_mappedCapacity = maximum ? maximum.bytes() : PageCount::max().bytes();
-    if (!m_mappedCapacity) {
-        // This means we specified a zero as maximum (which means we also have zero as initial size).
-        RELEASE_ASSERT(m_size == 0);
-        m_memory = nullptr;
-        m_mappedCapacity = 0;
-        failed = false;
-        if (verbose)
-            dataLogLn("Memory::Memory allocating nothing ", *this);
-        return;
-    }
-
+    m_mappedCapacity = m_capacity;
     // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
-    void* result = Options::simulateWebAssemblyLowMemory() ? MAP_FAILED : mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    void* result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
     if (result == MAP_FAILED) {
         // Try again with a different number.
-        if (verbose)
-            dataLogLn("Memory::Memory mmap failed once for capacity, trying again", *this);
         m_mappedCapacity = m_size;
-        if (!m_mappedCapacity) {
-            m_memory = nullptr;
-            failed = false;
-            if (verbose)
-                dataLogLn("Memory::Memory mmap not trying again because size is zero ", *this);
-            return;
-        }
-
         result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (result == MAP_FAILED) {
-            if (verbose)
-                dataLogLn("Memory::Memory mmap failed twice ", *this);
-            failed = true;
+        if (result == MAP_FAILED)
             return;
-        }
     }
 
     ASSERT(m_size <= m_mappedCapacity);
-    {
-        bool success = !mprotect(result, static_cast<size_t>(m_size), PROT_READ | PROT_WRITE);
-        RELEASE_ASSERT(success);
+    if (mprotect(result, m_size, PROT_READ | PROT_WRITE)) {
+        munmap(result, m_mappedCapacity);
+        return;
     }
 
     m_memory = result;
-    failed = false;
-    if (verbose)
-        dataLogLn("Memory::Memory mmap succeeded ", *this);
-}
-
-Memory::~Memory()
-{
-    if (verbose)
-        dataLogLn("Memory::~Memory ", *this);
-    if (m_memory) {
-        if (munmap(m_memory, m_mappedCapacity))
-            CRASH();
-    }
-}
-
-bool Memory::grow(PageCount newSize)
-{
-    RELEASE_ASSERT(newSize > PageCount::fromBytes(m_size));
-
-    if (verbose)
-        dataLogLn("Memory::grow to ", newSize, " from ", *this);
-
-    if (maximum() && newSize > maximum())
-        return false;
-
-    uint64_t desiredSize = newSize.bytes();
-
-    if (m_memory && desiredSize <= m_mappedCapacity) {
-        bool success = !mprotect(static_cast<uint8_t*>(m_memory) + m_size, static_cast<size_t>(desiredSize - m_size), PROT_READ | PROT_WRITE);
-        RELEASE_ASSERT(success);
-        m_size = desiredSize;
-        if (verbose)
-            dataLogLn("Memory::grow in-place ", *this);
-        return true;
-    }
-
-    // Otherwise, let's try to make some new memory.
-    void* newMemory = mmap(nullptr, desiredSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (newMemory == MAP_FAILED)
-        return false;
-
-    if (m_memory) {
-        memcpy(newMemory, m_memory, m_size);
-        bool success = !munmap(m_memory, m_mappedCapacity);
-        RELEASE_ASSERT(success);
-    }
-    m_memory = newMemory;
-    m_mappedCapacity = desiredSize;
-    m_size = desiredSize;
-
-    if (verbose)
-        dataLogLn("Memory::grow ", *this);
-    return true;
 }
 
 } // namespace JSC

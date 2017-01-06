@@ -1,3 +1,30 @@
+2017-01-06  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Revert the following merges as part of disabling Web Assembly. rdar://problem/29890343
+
+        rdar://problem/29735737
+        rdar://problem/29747874
+        rdar://problem/29758107
+        rdar://problem/29759741
+        rdar://problem/29760322
+        rdar://problem/29760326
+        rdar://problem/29760386
+        rdar://problem/29760621
+        rdar://problem/29762017
+        rdar://problem/29782821
+        rdar://problem/29782833
+        rdar://problem/29784532
+        rdar://problem/29791695
+        rdar://problem/29793220
+        rdar://problem/29793949
+        rdar://problem/29795709
+        rdar://problem/29803676
+        rdar://problem/29814999
+        rdar://problem/29815000
+        rdar://problem/29841541
+        rdar://problem/29844107
+        rdar://problem/29856455
+
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210087. rdar://problem/29760621

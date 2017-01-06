@@ -1,5 +1,9 @@
 import Builder from '../Builder.js'
-import * as assert from '../assert.js'
+
+function assert(b) {
+    if (!b)
+        throw new Error("Bad")
+}
 
 const pageSize = 64 * 1024;
 const numPages = 10;
@@ -24,8 +28,17 @@ const numPages = 10;
     const module = new WebAssembly.Module(bin);
     const foo = new WebAssembly.Instance(module, {a: {b: new WebAssembly.Memory({initial: numPages})}}).exports.foo;
 
-    for (let i = 0; i < 10000; i++)
-        assert.throws(() => foo(i, numPages * pageSize + 1), WebAssembly.RuntimeError, "Out of bounds memory access");
+    for (let i = 0; i < 10000; i++) {
+        let threw = false;
+        try {
+            foo(i, numPages * pageSize + 1);
+        } catch(e) {
+            assert(e instanceof WebAssembly.RuntimeError);
+            assert(e.message === "Out of bounds memory access");
+            threw = true;
+        }
+        assert(threw);
+    }
 }
 
 

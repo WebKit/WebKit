@@ -170,18 +170,6 @@ export default class LowLevelBinary {
             this.uint8(0x80 | b);
         } while (true);
     }
-    varuint64(v) {
-        assert.isNumber(v);
-        if (v < varuint32Min || varuint32Max < v)
-            throw new RangeError(`unimplemented: varuint64 larger than 32-bit`);
-        this.varuint32(v); // FIXME implement 64-bit var{u}int https://bugs.webkit.org/show_bug.cgi?id=163420
-    }
-    varint64(v) {
-        assert.isNumber(v);
-        if (v < varint32Min || varint32Max < v)
-            throw new RangeError(`unimplemented: varint64 larger than 32-bit`);
-        this.varint32(v); // FIXME implement 64-bit var{u}int https://bugs.webkit.org/show_bug.cgi?id=163420
-    }
     varuint1(v) {
         if (v !== 0 && v !== 1)
             throw new RangeError(`Invalid varuint1 ${v} range is [0, 1]`);

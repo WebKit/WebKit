@@ -41,6 +41,10 @@ namespace B3 {
 class Compilation;
 }
 
+namespace Wasm {
+struct Signature;
+}
+
 class WebAssemblyFunction : public JSFunction {
 public:
     typedef JSFunction Base;
@@ -49,30 +53,30 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::SignatureIndex);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JSWebAssemblyInstance* instance() const { return m_instance.get(); }
-    Wasm::SignatureIndex signatureIndex() const { return m_signatureIndex; }
-    void* wasmEntrypoint() { return m_wasmEntryPointCode; }
-    void* jsEntrypoint() { return m_jsEntrypoint->entrypoint(); }
-
-    static ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_instance); }
-    static ptrdiff_t offsetOfWasmEntryPointCode() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_wasmEntryPointCode); }
+    Wasm::Signature* signature()
+    { 
+        ASSERT(m_signature);
+        return m_signature;
+    }
+    EncodedJSValue call(VM&, ProtoCallFrame*);
+    void* wasmEntrypoint() { return m_wasmEntrypoint->entrypoint(); }
 
 protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint);
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*, JSWebAssemblyCallee* jsEntrypoint, JSWebAssemblyCallee* wasmEntrypoint, Wasm::Signature*);
 
 private:
-    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, JSWebAssemblyCallee*, Wasm::SignatureIndex);
+    WebAssemblyFunction(VM&, JSGlobalObject*, Structure*);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
-    void* m_wasmEntryPointCode; // Cache code pointer: allows the wasm -> wasm stub to do a single load and jump instead of having dependent loads.
     WriteBarrier<JSWebAssemblyCallee> m_jsEntrypoint;
     WriteBarrier<JSWebAssemblyCallee> m_wasmEntrypoint;
-    Wasm::SignatureIndex m_signatureIndex;
+    Wasm::Signature* m_signature;
 };
 
 } // namespace JSC

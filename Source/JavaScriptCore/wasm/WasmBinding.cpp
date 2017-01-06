@@ -36,21 +36,12 @@
 
 namespace JSC { namespace Wasm {
 
-typedef AssemblyHelpers JIT;
-
-static void materializeImportJSCell(VM* vm, JIT& jit, unsigned importIndex, GPRReg result)
-{
-    // We're calling out of the current WebAssembly.Instance, which is identified on VM. That Instance has a list of all its import functions.
-    jit.loadPtr(&vm->topJSWebAssemblyInstance, result);
-    jit.loadPtr(JIT::Address(result, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
-}
-
-static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+WasmToJSStub importStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signature* signature, unsigned importIndex)
 {
     const WasmCallingConvention& wasmCC = wasmCallingConvention();
     const JSCCallingConvention& jsCC = jscCallingConvention();
-    const Signature* signature = SignatureInformation::get(vm, signatureIndex);
-    unsigned argCount = signature->argumentCount();
+    unsigned argCount = signature->arguments.size();
+    typedef AssemblyHelpers JIT;
     JIT jit(vm, nullptr);
 
     // Below, we assume that the JS calling convention is always on the stack.
@@ -74,151 +65,81 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     const unsigned stackOffset = WTF::roundUpToMultipleOf(stackAlignmentBytes(), numberOfBytesForCall);
     jit.subPtr(MacroAssembler::TrustedImm32(stackOffset), MacroAssembler::stackPointerRegister);
     JIT::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
-    
+
+    // FIXME make this a loop which switches on Signature if there are many arguments on the stack. It'll otherwise be huge for huge signatures. https://bugs.webkit.org/show_bug.cgi?id=165547
+    unsigned marshalledGPRs = 0;
+    unsigned marshalledFPRs = 0;
+    unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
+    unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
     for (unsigned argNum = 0; argNum < argCount; ++argNum) {
-        Type argType = signature->argument(argNum);
+        Type argType = signature->arguments[argNum];
         switch (argType) {
         case Void:
         case Func:
         case Anyfunc:
-        case I64: {
-            // FIXME: Figure out the correct behavior here. I suspect we want such a stub to throw an exception immediately.
+        case I64:
+            // FIXME: Figure out the correct behavior here. I suspect we want such a stub to throw an exception immediately
             // if called. https://bugs.webkit.org/show_bug.cgi?id=165991
             jit.breakpoint();
-            LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-            return FINALIZE_CODE(patchBuffer, ("WebAssembly import[%i] stub for signature %i", importIndex, signatureIndex));
+            break;
+        case I32: {
+            GPRReg gprReg;
+            if (marshalledGPRs < wasmCC.m_gprArgs.size())
+                gprReg = wasmCC.m_gprArgs[marshalledGPRs].gpr();
+            else {
+                // We've already spilled all arguments, these registers are available as scratch.
+                gprReg = GPRInfo::argumentGPR0;
+                jit.load64(JIT::Address(GPRInfo::callFrameRegister, frOffset), gprReg);
+                frOffset += sizeof(Register);
+            }
+            ++marshalledGPRs;
+            jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
+            jit.store64(gprReg, calleeFrame.withOffset(calleeFrameOffset));
+            calleeFrameOffset += sizeof(Register);
+            break;
         }
-        case I32:
-        case F32:
-        case F64:
-            continue;
+        case F32: {
+            FPRReg fprReg;
+            if (marshalledFPRs < wasmCC.m_fprArgs.size())
+                fprReg = wasmCC.m_fprArgs[marshalledFPRs].fpr();
+            else {
+                // We've already spilled all arguments, these registers are available as scratch.
+                fprReg = FPRInfo::argumentFPR0;
+                jit.loadFloat(JIT::Address(GPRInfo::callFrameRegister, frOffset), fprReg);
+                frOffset += sizeof(Register);
+            }
+            jit.convertFloatToDouble(fprReg, fprReg);
+            jit.purifyNaN(fprReg);
+            jit.storeDouble(fprReg, calleeFrame.withOffset(calleeFrameOffset));
+            calleeFrameOffset += sizeof(Register);
+            ++marshalledFPRs;
+            break;
         }
-    }
-
-    // FIXME make these loops which switch on Signature if there are many arguments on the stack. It'll otherwise be huge for huge signatures. https://bugs.webkit.org/show_bug.cgi?id=165547
-    
-    // First go through the integer parameters, freeing up their register for use afterwards.
-    {
-        unsigned marshalledGPRs = 0;
-        unsigned marshalledFPRs = 0;
-        unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        for (unsigned argNum = 0; argNum < argCount; ++argNum) {
-            Type argType = signature->argument(argNum);
-            switch (argType) {
-            case Void:
-            case Func:
-            case Anyfunc:
-            case I64:
-                RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case I32: {
-                GPRReg gprReg;
-                if (marshalledGPRs < wasmCC.m_gprArgs.size())
-                    gprReg = wasmCC.m_gprArgs[marshalledGPRs].gpr();
-                else {
-                    // We've already spilled all arguments, these registers are available as scratch.
-                    gprReg = GPRInfo::argumentGPR0;
-                    jit.load64(JIT::Address(GPRInfo::callFrameRegister, frOffset), gprReg);
-                    frOffset += sizeof(Register);
-                }
-                ++marshalledGPRs;
-                jit.boxInt32(gprReg, JSValueRegs(gprReg), DoNotHaveTagRegisters);
-                jit.store64(gprReg, calleeFrame.withOffset(calleeFrameOffset));
-                calleeFrameOffset += sizeof(Register);
-                break;
+        case F64: {
+            FPRReg fprReg;
+            if (marshalledFPRs < wasmCC.m_fprArgs.size())
+                fprReg = wasmCC.m_fprArgs[marshalledFPRs].fpr();
+            else {
+                // We've already spilled all arguments, these registers are available as scratch.
+                fprReg = FPRInfo::argumentFPR0;
+                jit.loadDouble(JIT::Address(GPRInfo::callFrameRegister, frOffset), fprReg);
+                frOffset += sizeof(Register);
             }
-            case F32:
-            case F64:
-                // Skipped: handled below.
-                if (marshalledFPRs >= wasmCC.m_fprArgs.size())
-                    frOffset += sizeof(Register);
-                ++marshalledFPRs;
-                calleeFrameOffset += sizeof(Register);
-                break;
-            }
+            jit.purifyNaN(fprReg);
+            jit.storeDouble(fprReg, calleeFrame.withOffset(calleeFrameOffset));
+            calleeFrameOffset += sizeof(Register);
+            ++marshalledFPRs;
+            break;
         }
-    }
-    
-    {
-        // Integer registers have already been spilled, these are now available.
-        GPRReg doubleEncodeOffsetGPRReg = GPRInfo::argumentGPR0;
-        GPRReg scratch = GPRInfo::argumentGPR1;
-        bool hasMaterializedDoubleEncodeOffset = false;
-        auto materializeDoubleEncodeOffset = [&hasMaterializedDoubleEncodeOffset, &jit] (GPRReg dest) {
-            if (!hasMaterializedDoubleEncodeOffset) {
-                static_assert(DoubleEncodeOffset == 1ll << 48, "codegen assumes this below");
-                jit.move(JIT::TrustedImm32(1), dest);
-                jit.lshift64(JIT::TrustedImm32(48), dest);
-                hasMaterializedDoubleEncodeOffset = true;
-            }
-        };
-
-        unsigned marshalledGPRs = 0;
-        unsigned marshalledFPRs = 0;
-        unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        for (unsigned argNum = 0; argNum < argCount; ++argNum) {
-            Type argType = signature->argument(argNum);
-            switch (argType) {
-            case Void:
-            case Func:
-            case Anyfunc:
-            case I64:
-                RELEASE_ASSERT_NOT_REACHED(); // Handled above.
-            case I32:
-                // Skipped: handled above.
-                if (marshalledGPRs < wasmCC.m_gprArgs.size())
-                    frOffset += sizeof(Register);
-                ++marshalledGPRs;
-                calleeFrameOffset += sizeof(Register);
-                break;
-            case F32: {
-                FPRReg fprReg;
-                if (marshalledFPRs < wasmCC.m_fprArgs.size())
-                    fprReg = wasmCC.m_fprArgs[marshalledFPRs].fpr();
-                else {
-                    // We've already spilled all arguments, these registers are available as scratch.
-                    fprReg = FPRInfo::argumentFPR0;
-                    jit.loadFloat(JIT::Address(GPRInfo::callFrameRegister, frOffset), fprReg);
-                    frOffset += sizeof(Register);
-                }
-                jit.convertFloatToDouble(fprReg, fprReg);
-                jit.purifyNaN(fprReg);
-                jit.moveDoubleTo64(fprReg, scratch);
-                materializeDoubleEncodeOffset(doubleEncodeOffsetGPRReg);
-                jit.add64(doubleEncodeOffsetGPRReg, scratch);
-                jit.store64(scratch, calleeFrame.withOffset(calleeFrameOffset));
-                calleeFrameOffset += sizeof(Register);
-                ++marshalledFPRs;
-                break;
-            }
-            case F64: {
-                FPRReg fprReg;
-                if (marshalledFPRs < wasmCC.m_fprArgs.size())
-                    fprReg = wasmCC.m_fprArgs[marshalledFPRs].fpr();
-                else {
-                    // We've already spilled all arguments, these registers are available as scratch.
-                    fprReg = FPRInfo::argumentFPR0;
-                    jit.loadDouble(JIT::Address(GPRInfo::callFrameRegister, frOffset), fprReg);
-                    frOffset += sizeof(Register);
-                }
-                jit.purifyNaN(fprReg);
-                jit.moveDoubleTo64(fprReg, scratch);
-                materializeDoubleEncodeOffset(doubleEncodeOffsetGPRReg);
-                jit.add64(doubleEncodeOffsetGPRReg, scratch);
-                jit.store64(scratch, calleeFrame.withOffset(calleeFrameOffset));
-                calleeFrameOffset += sizeof(Register);
-                ++marshalledFPRs;
-                break;
-            }
-            }
         }
     }
 
     GPRReg importJSCellGPRReg = GPRInfo::regT0; // Callee needs to be in regT0 for slow path below.
     ASSERT(!wasmCC.m_calleeSaveRegisters.get(importJSCellGPRReg));
 
-    materializeImportJSCell(vm, jit, importIndex, importJSCellGPRReg);
+    // Each JS -> wasm entry sets the WebAssembly.Instance whose export is being called. We're calling out of this Instance, and can therefore figure out the import being called.
+    jit.loadPtr(&vm->topJSWebAssemblyInstance, importJSCellGPRReg);
+    jit.loadPtr(JIT::Address(importJSCellGPRReg, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), importJSCellGPRReg);
 
     uint64_t thisArgument = ValueUndefined; // FIXME what does the WebAssembly spec say this should be? https://bugs.webkit.org/show_bug.cgi?id=165471
     jit.store64(importJSCellGPRReg, calleeFrame.withOffset(CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
@@ -240,7 +161,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     JIT::Call slowCall = jit.nearCall();
     done.link(&jit);
 
-    switch (signature->returnType()) {
+    switch (signature->returnType) {
     case Void:
         // Discard.
         break;
@@ -309,56 +230,7 @@ static MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, 
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
     CodeLocationNearCall hotPathOther = patchBuffer.locationOfNearCall(fastCall);
     callLinkInfo->setCallLocations(callReturnLocation, hotPathBegin, hotPathOther);
-    String signatureDescription = SignatureInformation::get(vm, signatureIndex)->toString();
-    return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signatureDescription.ascii().data()));
-}
-
-static MacroAssemblerCodeRef wasmToWasm(VM* vm, unsigned importIndex)
-{
-    const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
-    JIT jit(vm, nullptr);
-
-    GPRReg scratch = GPRInfo::nonPreservedNonArgumentGPR;
-
-    // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
-    materializeImportJSCell(vm, jit, importIndex, scratch);
-
-    // Get the callee's WebAssembly.Instance and set it as vm.topJSWebAssemblyInstance. The caller will take care of restoring its own Instance.
-    GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-    ASSERT(baseMemory != scratch);
-    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfInstance()), baseMemory); // Instance*.
-    jit.storePtr(baseMemory, &vm->topJSWebAssemblyInstance);
-
-    // FIXME the following code assumes that all WebAssembly.Instance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
-    // Set up the callee's baseMemory register as well as the memory size registers.
-    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
-    const auto& sizeRegs = pinnedRegs.sizeRegisters;
-    ASSERT(sizeRegs.size() >= 1);
-    ASSERT(sizeRegs[0].sizeRegister != baseMemory);
-    ASSERT(sizeRegs[0].sizeRegister != scratch);
-    ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
-    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
-    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.
-    for (unsigned i = 1; i < sizeRegs.size(); ++i) {
-        ASSERT(sizeRegs[i].sizeRegister != baseMemory);
-        ASSERT(sizeRegs[i].sizeRegister != scratch);
-        jit.add64(JIT::TrustedImm32(-sizeRegs[i].sizeOffset), sizeRegs[0].sizeRegister, sizeRegs[i].sizeRegister);
-    }
-
-    // Tail call into the callee WebAssembly function.
-    jit.loadPtr(JIT::Address(scratch, WebAssemblyFunction::offsetOfWasmEntryPointCode()), scratch);
-    jit.jump(scratch);
-
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, ("WebAssembly->WebAssembly import[%i]", importIndex));
-}
-
-WasmExitStubs exitStubGenerator(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
-{
-    WasmExitStubs stubs;
-    stubs.wasmToJs = wasmToJs(vm, callLinkInfos, signatureIndex, importIndex);
-    stubs.wasmToWasm = wasmToWasm(vm, importIndex);
-    return stubs;
+    return FINALIZE_CODE(patchBuffer, ("WebAssembly import[%i] stub for signature %p", importIndex, signature));
 }
 
 } } // namespace JSC::Wasm

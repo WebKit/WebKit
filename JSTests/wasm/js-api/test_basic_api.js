@@ -53,7 +53,7 @@ for (const c in constructorProperties) {
     switch (c) {
     case "Module":
         for (const invalid of invalidConstructorInputs)
-            assert.throws(() => new WebAssembly[c](invalid), TypeError, `first argument must be an ArrayBufferView or an ArrayBuffer (evaluating 'new WebAssembly[c](invalid)')`);
+            assert.throws(() => new WebAssembly[c](invalid), TypeError, `first argument to WebAssembly.Module must be an ArrayBufferView or an ArrayBuffer (evaluating 'new WebAssembly[c](invalid)')`);
         for (const buffer of [new ArrayBuffer(), new DataView(new ArrayBuffer()), new Int8Array(), new Uint8Array(), new Uint8ClampedArray(), new Int16Array(), new Uint16Array(), new Int32Array(), new Uint32Array(), new Float32Array(), new Float64Array()])
             // FIXME the following should be WebAssembly.CompileError. https://bugs.webkit.org/show_bug.cgi?id=163768
             assert.throws(() => new WebAssembly[c](buffer), Error, `WebAssembly.Module doesn't parse at byte 0 / 0: expected a module of at least 8 bytes (evaluating 'new WebAssembly[c](buffer)')`);
@@ -98,4 +98,9 @@ for (const c in constructorProperties) {
     } break;
     default: throw new Error(`Implementation error: unexpected constructor property "${c}"`);
     }
+}
+
+// FIXME Implement and test these APIs further. For now they just throw. https://bugs.webkit.org/show_bug.cgi?id=159775
+for (const f in functionProperties) {
+    assert.throws(() => WebAssembly[f](), Error, `WebAssembly doesn't yet implement the ${f} function property`);
 }

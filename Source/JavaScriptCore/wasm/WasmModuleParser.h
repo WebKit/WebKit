@@ -36,15 +36,16 @@ namespace JSC { namespace Wasm {
 
 struct ModuleParserResult {
     std::unique_ptr<ModuleInformation> module;
+    FunctionIndexSpace functionIndexSpace;
     Vector<FunctionLocationInBinary> functionLocationInBinary;
-    Vector<SignatureIndex> moduleSignatureIndicesToUniquedSignatureIndices;
 };
 
 class ModuleParser : public Parser<ModuleParserResult> {
 public:
 
     ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
-        : Parser(vm, sourceBuffer, sourceLength)
+        : Parser(sourceBuffer, sourceLength)
+        , m_vm(vm)
     {
     }
     ModuleParser(VM* vm, const Vector<uint8_t>& sourceBuffer)
@@ -60,13 +61,13 @@ private:
     FOR_EACH_WASM_SECTION(WASM_SECTION_DECLARE_PARSER)
 #undef WASM_SECTION_DECLARE_PARSER
 
-    PartialResult WARN_UNUSED_RETURN parseCustom(uint32_t);
     PartialResult WARN_UNUSED_RETURN parseGlobalType(Global&);
     PartialResult WARN_UNUSED_RETURN parseMemoryHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseTableHelper(bool isImport);
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
-    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&, Type& initExprType);
+    PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&);
 
+    VM* m_vm;
     ModuleParserResult m_result;
     bool m_hasTable { false };
 };

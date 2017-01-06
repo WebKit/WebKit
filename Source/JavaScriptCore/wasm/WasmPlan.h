@@ -29,7 +29,6 @@
 
 #include "CompilationResult.h"
 #include "VM.h"
-#include "WasmB3IRGenerator.h"
 #include "WasmFormat.h"
 #include <wtf/Bag.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -48,8 +47,6 @@ public:
     JS_EXPORT_PRIVATE Plan(VM*, Vector<uint8_t>);
     JS_EXPORT_PRIVATE Plan(VM*, const uint8_t*, size_t);
     JS_EXPORT_PRIVATE ~Plan();
-
-    bool parseAndValidateModule();
 
     JS_EXPORT_PRIVATE void run();
 
@@ -86,29 +83,31 @@ public:
         return WTFMove(m_callLinkInfos);
     }
 
-    Vector<WasmExitStubs>&& takeWasmExitStubs()
+    Vector<WasmToJSStub>&& takeWasmToJSStubs()
     {
         RELEASE_ASSERT(!failed());
-        return WTFMove(m_wasmExitStubs);
+        return WTFMove(m_wasmToJSStubs);
+    }
+
+    ImmutableFunctionIndexSpace&& takeFunctionIndexSpace()
+    {
+        RELEASE_ASSERT(!failed());
+        return WTFMove(m_functionIndexSpace);
     }
 
 private:
     std::unique_ptr<ModuleInformation> m_moduleInformation;
     Vector<FunctionLocationInBinary> m_functionLocationInBinary;
-    Vector<SignatureIndex> m_moduleSignatureIndicesToUniquedSignatureIndices;
     Bag<CallLinkInfo> m_callLinkInfos;
-    Vector<WasmExitStubs> m_wasmExitStubs;
+    Vector<WasmToJSStub> m_wasmToJSStubs;
     Vector<std::unique_ptr<WasmInternalFunction>> m_wasmInternalFunctions;
-    Vector<CompilationContext> m_compilationContexts;
+    ImmutableFunctionIndexSpace m_functionIndexSpace;
 
     VM* m_vm;
-    Vector<Vector<UnlinkedWasmToWasmCall>> m_unlinkedWasmToWasmCalls;
     const uint8_t* m_source;
     const size_t m_sourceLength;
     bool m_failed { true };
     String m_errorMessage;
-    uint32_t m_currentIndex;
-    Lock m_lock;
 };
 
 } } // namespace JSC::Wasm

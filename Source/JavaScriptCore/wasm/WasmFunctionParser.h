@@ -35,8 +35,7 @@ namespace JSC { namespace Wasm {
 enum class BlockType {
     If,
     Block,
-    Loop,
-    TopLevel
+    Loop
 };
 
 template<typename Context>
@@ -46,7 +45,7 @@ public:
     typedef typename Context::ControlType ControlType;
     typedef typename Context::ExpressionList ExpressionList;
 
-    FunctionParser(VM*, Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const ModuleInformation&, const Vector<SignatureIndex>&);
+    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const ImmutableFunctionIndexSpace&, const ModuleInformation&);
 
     Result WARN_UNUSED_RETURN parse();
 
@@ -61,6 +60,7 @@ private:
     PartialResult WARN_UNUSED_RETURN parseBody();
     PartialResult WARN_UNUSED_RETURN parseExpression(OpType);
     PartialResult WARN_UNUSED_RETURN parseUnreachableExpression(OpType);
+    PartialResult WARN_UNUSED_RETURN addReturn();
     PartialResult WARN_UNUSED_RETURN unifyControl(Vector<ExpressionType>&, unsigned level);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
@@ -82,18 +82,18 @@ private:
     ExpressionList m_expressionStack;
     Vector<ControlEntry> m_controlStack;
     const Signature* m_signature;
+    const ImmutableFunctionIndexSpace& m_functionIndexSpace;
     const ModuleInformation& m_info;
-    const Vector<SignatureIndex>& m_moduleSignatureIndicesToUniquedSignatureIndices;
     unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(VM* vm, Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const ModuleInformation& info, const Vector<SignatureIndex>& moduleSignatureIndicesToUniquedSignatureIndices)
-    : Parser(vm, functionStart, functionLength)
+FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info)
+    : Parser(functionStart, functionLength)
     , m_context(context)
     , m_signature(signature)
+    , m_functionIndexSpace(functionIndexSpace)
     , m_info(info)
-    , m_moduleSignatureIndicesToUniquedSignatureIndices(moduleSignatureIndicesToUniquedSignatureIndices)
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
@@ -104,7 +104,7 @@ auto FunctionParser<Context>::parse() -> Result
 {
     uint32_t localCount;
 
-    WASM_PARSER_FAIL_IF(!m_context.addArguments(m_signature), "can't add ", m_signature->argumentCount(), " arguments to Function");
+    WASM_PARSER_FAIL_IF(!m_context.addArguments(m_signature->arguments), "can't add ", m_signature->arguments.size(), " arguments to Function");
     WASM_PARSER_FAIL_IF(!parseVarUInt32(localCount), "can't get local count");
     WASM_PARSER_FAIL_IF(localCount == std::numeric_limits<uint32_t>::max(), "Function section's local count is too big ", localCount);
 
@@ -126,15 +126,20 @@ auto FunctionParser<Context>::parse() -> Result
 template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
-    m_controlStack.append({ ExpressionList(), m_context.addTopLevel(m_signature->returnType()) });
-    uint8_t op;
-    while (m_controlStack.size()) {
+    while (true) {
+        uint8_t op;
         WASM_PARSER_FAIL_IF(!parseUInt8(op), "can't decode opcode");
         WASM_PARSER_FAIL_IF(!isValidOpType(op), "invalid opcode ", op);
 
         if (verbose) {
             dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
-            m_context.dump(m_controlStack, &m_expressionStack);
+            m_context.dump(m_controlStack, m_expressionStack);
+        }
+
+        if (op == End && !m_controlStack.size()) {
+            if (m_unreachableBlocks)
+                return { };
+            return addReturn();
         }
 
         if (m_unreachableBlocks)
@@ -143,7 +148,21 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseExpression(static_cast<OpType>(op)));
     }
 
-    ASSERT(op == OpType::End);
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+template<typename Context>
+auto FunctionParser<Context>::addReturn() -> PartialResult
+{
+    ExpressionList returnValues;
+    if (m_signature->returnType != Void) {
+        ExpressionType returnValue;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(returnValue, "return");
+        returnValues.append(returnValue);
+    }
+
+    m_unreachableBlocks = 1;
+    WASM_TRY_ADD_TO_CONTEXT(addReturn(returnValues));
     return { };
 }
 
@@ -308,15 +327,14 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     case Call: {
         uint32_t functionIndex;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(functionIndex), "can't parse call's function index");
-        WASM_PARSER_FAIL_IF(functionIndex >= m_info.functionIndexSpaceSize(), "call function index ", functionIndex, " exceeds function index space ", m_info.functionIndexSpaceSize());
+        WASM_PARSER_FAIL_IF(functionIndex >= m_functionIndexSpace.size, "call function index ", functionIndex, " exceeds function index space ", m_functionIndexSpace.size);
 
-        SignatureIndex calleeSignatureIndex = m_info.signatureIndexFromFunctionIndexSpace(functionIndex);
-        const Signature* calleeSignature = SignatureInformation::get(m_vm, calleeSignatureIndex);
-        WASM_PARSER_FAIL_IF(calleeSignature->argumentCount() > m_expressionStack.size(), "call function index ", functionIndex, " has ", calleeSignature->argumentCount(), " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
+        const Signature* calleeSignature = m_functionIndexSpace.buffer.get()[functionIndex].signature;
+        WASM_PARSER_FAIL_IF(calleeSignature->arguments.size() > m_expressionStack.size(), "call function index ", functionIndex, " has ", calleeSignature->arguments.size(), " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
-        size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature->argumentCount();
+        size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature->arguments.size();
         Vector<ExpressionType> args;
-        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(calleeSignature->argumentCount()), "can't allocate enough memory for call's ", calleeSignature->argumentCount(), " arguments");
+        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(calleeSignature->arguments.size()), "can't allocate enough memory for call's ", calleeSignature->arguments.size(), " arguments");
         for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i)
             args.uncheckedAppend(m_expressionStack[i]);
         m_expressionStack.shrink(firstArgumentIndex);
@@ -337,11 +355,10 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(signatureIndex), "can't get call_indirect's signature index");
         WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't get call_indirect's reserved byte");
         WASM_PARSER_FAIL_IF(reserved, "call_indirect's 'reserved' varuint1 must be 0x0");
-        WASM_PARSER_FAIL_IF(m_moduleSignatureIndicesToUniquedSignatureIndices.size() <= signatureIndex, "call_indirect's signature index ", signatureIndex, " exceeds known signatures ", m_moduleSignatureIndicesToUniquedSignatureIndices.size());
+        WASM_PARSER_FAIL_IF(m_info.signatures.size() <= signatureIndex, "call_indirect's signature index ", signatureIndex, " exceeds known signatures ", m_info.signatures.size());
 
-        SignatureIndex calleeSignatureIndex = m_moduleSignatureIndicesToUniquedSignatureIndices[signatureIndex];
-        const Signature* calleeSignature = SignatureInformation::get(m_vm, calleeSignatureIndex);
-        size_t argumentCount = calleeSignature->argumentCount() + 1; // Add the callee's index.
+        const Signature* calleeSignature = &m_info.signatures[signatureIndex];
+        size_t argumentCount = calleeSignature->arguments.size() + 1; // Add the callee's index.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_indirect expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
         Vector<ExpressionType> args;
@@ -352,7 +369,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         m_expressionStack.shrink(firstArgumentIndex);
 
         ExpressionType result = Context::emptyExpression;
-        WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(calleeSignature, calleeSignatureIndex, args, result));
+        WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(calleeSignature, args, result));
 
         if (result != Context::emptyExpression)
             m_expressionStack.append(result);
@@ -389,7 +406,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     }
 
     case Else: {
-        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use else block at the top-level of a function");
+        WASM_PARSER_FAIL_IF(m_controlStack.isEmpty(), "can't use else block at the top-level of a function");
         WASM_TRY_ADD_TO_CONTEXT(addElse(m_controlStack.last().controlData, m_expressionStack));
         m_expressionStack.shrink(0);
         return { };
@@ -414,13 +431,12 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
 
     case BrTable: {
         uint32_t numberOfTargets;
-        uint32_t defaultTarget;
         ExpressionType condition;
-        Vector<ControlType*> targets;
-
+        uint32_t defaultTarget;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfTargets), "can't get the number of targets for br_table");
         WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big ", numberOfTargets);
 
+        Vector<ControlType*> targets;
         WASM_PARSER_FAIL_IF(!targets.tryReserveCapacity(numberOfTargets), "can't allocate memory for ", numberOfTargets, " br_table targets");
         for (uint32_t i = 0; i < numberOfTargets; ++i) {
             uint32_t target;
@@ -431,7 +447,6 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTarget), "can't get default target for br_table");
         WASM_PARSER_FAIL_IF(defaultTarget >= m_controlStack.size(), "br_table's default target ", defaultTarget, " exceeds control stack size ", m_controlStack.size());
-
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "br_table condition");
         WASM_TRY_ADD_TO_CONTEXT(addSwitch(condition, targets, m_controlStack[m_controlStack.size() - 1 - defaultTarget].controlData, m_expressionStack));
 
@@ -440,16 +455,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     }
 
     case Return: {
-        ExpressionList returnValues;
-        if (m_signature->returnType() != Void) {
-            ExpressionType returnValue;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(returnValue, "return");
-            returnValues.append(returnValue);
-        }
-
-        WASM_TRY_ADD_TO_CONTEXT(addReturn(m_controlStack[0].controlData, returnValues));
-        m_unreachableBlocks = 1;
-        return { };
+        return addReturn();
     }
 
     case End: {
@@ -478,36 +484,12 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         return { };
     }
 
-    case GrowMemory: {
-        WASM_PARSER_FAIL_IF(!m_info.memory, "grow_memory is only valid if a memory is defined or imported");
+    case GrowMemory:
+        return fail("not yet implemented: grow_memory"); // FIXME: Not yet implemented.
 
-        uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for grow_memory");
-        WASM_PARSER_FAIL_IF(reserved != 0, "reserved varUint1 for grow_memory must be zero");
+    case CurrentMemory:
+        return fail("not yet implemented: current_memory"); // FIXME: Not yet implemented.
 
-        ExpressionType delta;
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(delta, "expect an i32 argument to grow_memory on the stack");
-
-        ExpressionType result;
-        WASM_TRY_ADD_TO_CONTEXT(addGrowMemory(delta, result));
-        m_expressionStack.append(result);
-
-        return { };
-    }
-
-    case CurrentMemory: {
-        WASM_PARSER_FAIL_IF(!m_info.memory, "current_memory is only valid if a memory is defined or imported");
-
-        uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for current_memory");
-        WASM_PARSER_FAIL_IF(reserved != 0, "reserved varUint1 for current_memory must be zero");
-
-        ExpressionType result;
-        WASM_TRY_ADD_TO_CONTEXT(addCurrentMemory(result));
-        m_expressionStack.append(result);
-
-        return { };
-    }
     }
 
     ASSERT_NOT_REACHED();
@@ -571,18 +553,6 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
-    case F32Const: {
-        uint32_t unused;
-        WASM_PARSER_FAIL_IF(!parseUInt32(unused), "can't parse 32-bit floating-point constant");
-        return { };
-    }
-
-    case F64Const: {
-        uint64_t constant;
-        WASM_PARSER_FAIL_IF(!parseUInt64(constant), "can't parse 64-bit floating-point constant");
-        return { };
-    }
-
     // two immediate cases
     FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE)
     FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
@@ -593,7 +563,9 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     }
 
     // one immediate cases
+    case F32Const:
     case I32Const:
+    case F64Const:
     case I64Const:
     case SetLocal:
     case GetLocal:
@@ -608,13 +580,6 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
         return { };
     }
 
-    case GrowMemory:
-    case CurrentMemory: {
-        uint8_t reserved;
-        WASM_PARSER_FAIL_IF(!parseVarUInt1(reserved), "can't parse reserved varUint1 for grow_memory/current_memory");
-        return { };
-    }
-
     // no immediate cases
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
@@ -622,7 +587,9 @@ auto FunctionParser<Context>::parseUnreachableExpression(OpType op) -> PartialRe
     case Nop:
     case Return:
     case Select:
-    case Drop: {
+    case Drop:
+    case GrowMemory:
+    case CurrentMemory: {
         return { };
     }
     }

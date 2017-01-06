@@ -3,6 +3,7 @@ import Builder from '../Builder.js'
 const b = new Builder();
 b.Type().End()
     .Function().End()
+    .Memory().InitialMaxPages(1, 1).End()
     .Code()
     .Function({ params: ["i32"], ret: "i32" }, [])
     .GetLocal(0)

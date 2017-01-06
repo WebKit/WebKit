@@ -28,56 +28,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "Exception.h"
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
-#include "JSPromiseDeferred.h"
-#include "JSWebAssemblyHelpers.h"
-#include "WasmPlan.h"
-#include "WebAssemblyModuleConstructor.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
-
-EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState*);
-EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState*);
-
-EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
-
-    JSPromiseDeferred* promise = JSPromiseDeferred::create(exec, exec->lexicalGlobalObject());
-    RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
-
-    // FIXME: Make this truly asynchronous:
-    // https://bugs.webkit.org/show_bug.cgi?id=166016
-    JSValue module = WebAssemblyModuleConstructor::createModule(exec, exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
-    if (Exception* exception = catchScope.exception()) {
-        catchScope.clearException();
-        promise->reject(exec, exception);
-        return JSValue::encode(promise->promise());
-    }
-
-    promise->resolve(exec, module);
-    return JSValue::encode(promise->promise());
-}
-
-EncodedJSValue JSC_HOST_CALL webAssemblyValidateFunc(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    size_t byteOffset;
-    size_t byteSize;
-    uint8_t* base = getWasmBufferFromValue(exec, exec->argument(0), byteOffset, byteSize);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    Wasm::Plan plan(&vm, base + byteOffset, byteSize);
-    // FIXME: We might want to throw an OOM exception here if we detect that something will OOM.
-    // https://bugs.webkit.org/show_bug.cgi?id=166015
-    return JSValue::encode(jsBoolean(plan.parseAndValidateModule()));
-}
 
 const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssembly) };
 
@@ -93,12 +49,10 @@ Structure* JSWebAssembly::createStructure(VM& vm, JSGlobalObject* globalObject, 
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
+void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("validate", webAssemblyValidateFunc, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("compile", webAssemblyCompileFunc, DontEnum, 1);
 }
 
 JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)

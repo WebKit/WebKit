@@ -26,52 +26,13 @@
 #include "config.h"
 #include "WasmMemoryInformation.h"
 
-#if ENABLE(WEBASSEMBLY)
-
 #include "WasmCallingConvention.h"
-#include <wtf/NeverDestroyed.h>
+
+#if ENABLE(WEBASSEMBLY)
 
 namespace JSC { namespace Wasm {
 
-const PinnedRegisterInfo& PinnedRegisterInfo::get()
-{
-    static LazyNeverDestroyed<PinnedRegisterInfo> staticPinnedRegisterInfo;
-    static std::once_flag staticPinnedRegisterInfoFlag;
-    std::call_once(staticPinnedRegisterInfoFlag, [] () {
-        Vector<PinnedSizeRegisterInfo> sizeRegisters;
-        GPRReg baseMemoryPointer;
-
-        // FIXME: We should support more than one memory size register, and we should allow different
-        //        WebAssembly.Instance to have different pins. Right now we take a vector with only one entry.
-        //        If we have more than one size register, we can have one for each load size class.
-        //        see: https://bugs.webkit.org/show_bug.cgi?id=162952
-        Vector<unsigned> pinnedSizes = { 0 };
-        unsigned remainingPinnedRegisters = pinnedSizes.size() + 1;
-        jscCallingConvention().m_calleeSaveRegisters.forEach([&] (Reg reg) {
-            GPRReg gpr = reg.gpr();
-            if (!remainingPinnedRegisters || RegisterSet::stackRegisters().get(reg))
-                return;
-            if (remainingPinnedRegisters == 1) {
-                baseMemoryPointer = gpr;
-                remainingPinnedRegisters--;
-            } else
-                sizeRegisters.append({ gpr, pinnedSizes[--remainingPinnedRegisters - 1] });
-        });
-
-        ASSERT(!remainingPinnedRegisters);
-        staticPinnedRegisterInfo.construct(WTFMove(sizeRegisters), baseMemoryPointer);
-    });
-
-    return staticPinnedRegisterInfo.get();
-}
-
-PinnedRegisterInfo::PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&& sizeRegisters, GPRReg baseMemoryPointer)
-    : sizeRegisters(WTFMove(sizeRegisters))
-    , baseMemoryPointer(baseMemoryPointer)
-{
-}
-
-MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum,  bool isImport)
+MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum,  const Vector<unsigned>& pinnedSizeRegisters, bool isImport)
     : m_initial(initial)
     , m_maximum(maximum)
     , m_isImport(isImport)
@@ -79,6 +40,20 @@ MemoryInformation::MemoryInformation(PageCount initial, PageCount maximum,  bool
     RELEASE_ASSERT(!!m_initial);
     RELEASE_ASSERT(!m_maximum || m_maximum >= m_initial);
     ASSERT(!!*this);
+
+    unsigned remainingPinnedRegisters = pinnedSizeRegisters.size() + 1;
+    jscCallingConvention().m_calleeSaveRegisters.forEach([&] (Reg reg) {
+        GPRReg gpr = reg.gpr();
+        if (!remainingPinnedRegisters || RegisterSet::stackRegisters().get(reg))
+            return;
+        if (remainingPinnedRegisters == 1) {
+            m_pinnedRegisters.baseMemoryPointer = gpr;
+            remainingPinnedRegisters--;
+        } else
+            m_pinnedRegisters.sizeRegisters.append({ gpr, pinnedSizeRegisters[--remainingPinnedRegisters - 1] });
+    });
+
+    ASSERT(!remainingPinnedRegisters);
 }
 
 } } // namespace JSC::Wasm

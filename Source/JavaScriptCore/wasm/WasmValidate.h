@@ -30,13 +30,9 @@
 #include "WasmFormat.h"
 #include <wtf/Expected.h>
 
-namespace JSC {
+namespace JSC { namespace Wasm {
 
-class VM;
-
-namespace Wasm {
-
-Expected<void, String> validateFunction(VM*, const uint8_t*, size_t, const Signature*, const ModuleInformation&, const Vector<SignatureIndex>&);
+Expected<void, String> validateFunction(const uint8_t*, size_t, const Signature*, const ImmutableFunctionIndexSpace&, const ModuleInformation&);
 
 } } // namespace JSC::Wasm
 

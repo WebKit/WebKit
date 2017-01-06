@@ -39,11 +39,6 @@ namespace JSC { namespace B3 { namespace Air {
 class Code;
 
 struct GenerationContext {
-    WTF_MAKE_NONCOPYABLE(GenerationContext);
-public:
-
-    GenerationContext() = default;
-
     typedef void LatePathFunction(CCallHelpers&, GenerationContext&);
     typedef SharedTask<LatePathFunction> LatePath;
 

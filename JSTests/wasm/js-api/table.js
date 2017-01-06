@@ -42,7 +42,7 @@ import * as assert from '../assert.js';
                 .CallIndirect(0, 0)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 4 / 7: call_indirect is only valid when a table is defined or imported, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 4 / 7: call_indirect is only valid when a table is defined or imported (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {
@@ -61,7 +61,7 @@ import * as assert from '../assert.js';
                 .CallIndirect(0, 1)
             .End()
         .End();
-    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6 / 7: call_indirect's 'reserved' varuint1 must be 0x0, in function at index 0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
+    assert.throws(() => new WebAssembly.Module(builder.WebAssembly().get()), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 6 / 7: call_indirect's 'reserved' varuint1 must be 0x0 (evaluating 'new WebAssembly.Module(builder.WebAssembly().get())')");
 }
 
 {

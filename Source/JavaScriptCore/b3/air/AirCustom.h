@@ -313,7 +313,7 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
         CCallHelpers::Jump outOfBounds = Inst(Air::Branch64, value, Arg::relCond(CCallHelpers::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
 
         context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
-            [outOfBounds, value] (CCallHelpers& jit, Air::GenerationContext& context) {
+            [=] (CCallHelpers& jit, Air::GenerationContext&) {
                 outOfBounds.link(&jit);
                 context.code->wasmBoundsCheckGenerator()->run(jit, value->pinnedGPR(), value->offset());
             }));

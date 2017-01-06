@@ -61,28 +61,28 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
     {
         Identifier elementIdent = Identifier::fromString(&vm, "element");
         JSValue elementValue = memoryDescriptor->get(exec, elementIdent);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        RETURN_IF_EXCEPTION(throwScope, { });
         String elementString = elementValue.toWTFString(exec);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        RETURN_IF_EXCEPTION(throwScope, { });
         if (elementString != "anyfunc")
             return JSValue::encode(throwException(exec, throwScope, createTypeError(exec, ASCIILiteral("WebAssembly.Table expects its 'element' field to be the string 'anyfunc'"))));
     }
 
     Identifier initialIdent = Identifier::fromString(&vm, "initial");
     JSValue initialSizeValue = memoryDescriptor->get(exec, initialIdent);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
     uint32_t initial = toNonWrappingUint32(exec, initialSizeValue);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
 
     std::optional<uint32_t> maximum;
     Identifier maximumIdent = Identifier::fromString(&vm, "maximum");
     bool hasProperty = memoryDescriptor->hasProperty(exec, maximumIdent);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
     if (hasProperty) {
         JSValue maxSizeValue = memoryDescriptor->get(exec, maximumIdent);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        RETURN_IF_EXCEPTION(throwScope, { });
         maximum = toNonWrappingUint32(exec, maxSizeValue);
-        RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+        RETURN_IF_EXCEPTION(throwScope, { });
 
         if (initial > *maximum) {
             return JSValue::encode(throwException(exec, throwScope,

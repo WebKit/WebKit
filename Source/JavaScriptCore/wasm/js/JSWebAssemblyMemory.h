@@ -41,26 +41,21 @@ class JSWebAssemblyMemory : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyMemory* create(VM&, Structure*, Wasm::Memory&&);
+    static JSWebAssemblyMemory* create(VM&, Structure*, std::unique_ptr<Wasm::Memory>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    Wasm::Memory* memory() { return &m_memory; }
+    Wasm::Memory* memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
-    Wasm::PageCount grow(ExecState*, uint32_t delta, bool shouldThrowExceptionsOnFailure);
-
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memory) + Wasm::Memory::offsetOfMemory(); }
-    static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memory) + Wasm::Memory::offsetOfSize(); }
 
 protected:
-    JSWebAssemblyMemory(VM&, Structure*, Wasm::Memory&&);
-    ~JSWebAssemblyMemory();
+    JSWebAssemblyMemory(VM&, Structure*, std::unique_ptr<Wasm::Memory>&&);
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    Wasm::Memory m_memory;
+    std::unique_ptr<Wasm::Memory> m_memory;
     WriteBarrier<JSArrayBuffer> m_bufferWrapper;
     RefPtr<ArrayBuffer> m_buffer;
 };

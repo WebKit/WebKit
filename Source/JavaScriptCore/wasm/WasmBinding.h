@@ -38,7 +38,7 @@ class CallLinkInfo;
 
 namespace Wasm {
 
-WasmExitStubs exitStubGenerator(VM*, Bag<CallLinkInfo>&, SignatureIndex, unsigned);
+WasmToJSStub importStubGenerator(VM*, Bag<CallLinkInfo>&, Signature*, unsigned);
 
 } } // namespace JSC::Wasm
 

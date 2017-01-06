@@ -35,10 +35,10 @@ class JSWebAssemblyRuntimeError : public ErrorInstance {
 public:
     typedef ErrorInstance Base;
 
-    static JSWebAssemblyRuntimeError* create(ExecState*, VM&, Structure*, const String&);
-    static JSWebAssemblyRuntimeError* create(ExecState* state, VM& vm, Structure* structure, JSValue message)
+    static JSWebAssemblyRuntimeError* create(ExecState*, Structure*, const String&, bool useCurrentFrame = true);
+    static JSWebAssemblyRuntimeError* create(ExecState* exec, Structure* structure, JSValue message, bool useCurrentFrame)
     {
-        return create(state, vm, structure, message.isUndefined() ? String() : message.toWTFString(state));
+        return create(exec, structure, message.isUndefined() ? String() : message.toWTFString(exec), useCurrentFrame);
     }
 
     DECLARE_INFO;

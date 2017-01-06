@@ -67,7 +67,7 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, uint32_t in
     m_jsFunctions = MallocPtr<WriteBarrier<WebAssemblyFunction>>::malloc(sizeof(WriteBarrier<WebAssemblyFunction>) * static_cast<size_t>(m_size));
     for (uint32_t i = 0; i < m_size; ++i) {
         new (&m_functions.get()[i]) Wasm::CallableFunction();
-        ASSERT(m_functions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+        ASSERT(!m_functions.get()[i].signature); // We rely on this in compiled code.
         new (&m_jsFunctions.get()[i]) WriteBarrier<WebAssemblyFunction>();
     }
 }
@@ -121,14 +121,14 @@ void JSWebAssemblyTable::clearFunction(uint32_t index)
     RELEASE_ASSERT(index < m_size);
     m_jsFunctions.get()[index] = WriteBarrier<WebAssemblyFunction>();
     m_functions.get()[index] = Wasm::CallableFunction();
-    ASSERT(m_functions.get()[index].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+    ASSERT(!m_functions.get()[index].signature); // We rely on this in compiled code.
 }
 
 void JSWebAssemblyTable::setFunction(VM& vm, uint32_t index, WebAssemblyFunction* function)
 {
     RELEASE_ASSERT(index < m_size);
     m_jsFunctions.get()[index].set(vm, this, function);
-    m_functions.get()[index] = Wasm::CallableFunction(function->signatureIndex(), function->wasmEntrypoint());
+    m_functions.get()[index] = Wasm::CallableFunction(function->signature(), function->wasmEntrypoint());
 }
 
 } // namespace JSC

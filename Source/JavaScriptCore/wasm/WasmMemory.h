@@ -30,9 +30,7 @@
 #include "WasmCallingConvention.h"
 #include "WasmPageCount.h"
 
-namespace WTF {
-class PrintStream;
-}
+#include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
 
@@ -40,50 +38,50 @@ class Memory {
     WTF_MAKE_NONCOPYABLE(Memory);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void dump(WTF::PrintStream&) const;
 
     // FIXME: We should support other modes. see: https://bugs.webkit.org/show_bug.cgi?id=162693
     enum class Mode {
         BoundsChecking
     };
-    const char* makeString(Mode) const;
 
-    Memory() = default;
-    JS_EXPORT_PRIVATE Memory(PageCount initial, PageCount maximum, bool& failed);
-    Memory(Memory&& other)
-        : m_memory(other.m_memory)
-        , m_size(other.m_size)
-        , m_initial(other.m_initial)
-        , m_maximum(other.m_maximum)
-        , m_mappedCapacity(other.m_mappedCapacity)
-        , m_mode(other.m_mode)
+    JS_EXPORT_PRIVATE Memory(PageCount initial, PageCount maximum);
+
+    ~Memory()
     {
-        // Moving transfers ownership of the allocated memory.
-        other.m_memory = nullptr;
+        if (m_memory)
+            munmap(m_memory, m_mappedCapacity);
     }
-    ~Memory();
+
+    bool isValid() const { return !!m_memory; }
 
     void* memory() const { return m_memory; }
-    uint64_t size() const { return m_size; }
-    PageCount sizeInPages() const { return PageCount::fromBytes(m_size); }
+    uint32_t size() const { return m_size; }
+
+    Mode mode() const { return m_mode; }
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
 
-    Mode mode() const { return m_mode; }
+    bool grow(uint32_t newSize)
+    {
+        ASSERT(m_memory);
+        if (newSize > m_capacity)
+            return false;
 
-    bool grow(PageCount);
+        return !mprotect(m_memory, newSize, PROT_READ | PROT_WRITE);
+    }
 
-    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Memory, m_memory); }
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Memory, m_size); }
+
     
 private:
     void* m_memory { nullptr };
-    uint64_t m_size { 0 };
+    Mode m_mode;
+    uint32_t m_size { 0 };
+    uint32_t m_capacity { 0 };
     PageCount m_initial;
     PageCount m_maximum;
     uint64_t m_mappedCapacity { 0 };
-    Mode m_mode { Mode::BoundsChecking };
 };
 
 } } // namespace JSC::Wasm
