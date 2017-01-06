@@ -1,5 +1,33 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210244. rdar://problem/29844107
+
+    2017-01-03  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly JS API: check and test in-call / out-call values
+            https://bugs.webkit.org/show_bug.cgi?id=164876
+            <rdar://problem/29844107>
+
+            Reviewed by Saam Barati.
+
+            * wasm/WasmBinding.cpp:
+            (JSC::Wasm::wasmToJs): fix the wasm -> JS call coercions for f32 /
+            f64 which the assotiated tests inadvertently tripped on: the
+            previous code wasn't correctly performing JSValue boxing for
+            "double" values. This change is slightly involved because it
+            requires two scratch registers to materialize the
+            `DoubleEncodeOffset` value. This change therefore reorganizes the
+            code to first generate traps, then handle all integers (freeing
+            all GPRs), and then all the floating-point values.
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::callWebAssemblyFunction): Implement the defined semantics
+            for mismatched arities when JS calls wasm:
+            https://github.com/WebAssembly/design/blob/master/JS.md#exported-function-exotic-objects
+              - i32 is 0, f32 / f64 are NaN.
+              - wasm functions which return "void" are "undefined" in JS.
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210228. rdar://problem/29841541
 
     2017-01-02  Saam Barati  <sbarati@apple.com>
