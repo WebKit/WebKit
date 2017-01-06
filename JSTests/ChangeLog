@@ -1,3 +1,19 @@
+2017-01-06  Michael Saboff  <msaboff@apple.com>
+
+        @putByValDirect in Array.of and Array.from overwrites non-writable/configurable properties
+        https://bugs.webkit.org/show_bug.cgi?id=153486
+
+        Reviewed by Saam Barati.
+
+        New regression test.
+
+        * stress/regress-153486.js: Added.
+        (shouldEqual):
+        (makeUnwriteableUnconfigurableObject):
+        (testArrayOf):
+        (testArrayFrom):
+        (runTest):
+
 2016-12-30  Filip Pizlo  <fpizlo@apple.com>
 
         DeferGC::~DeferGC should be super cheap
