@@ -1,5 +1,29 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210126. rdar://problem/29793949
+
+    2016-12-22  Saam Barati  <sbarati@apple.com>
+
+            WebAssembly: Make calling Wasm functions that returns or takes an i64 as a parameter an early exception
+            https://bugs.webkit.org/show_bug.cgi?id=166437
+            <rdar://problem/29793949>
+
+            Reviewed by Keith Miller.
+
+            This patch makes it so that we throw an exception before we do
+            anything else if we call a wasm function that either takes an
+            i64 as an argument or returns an i64.
+
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::callWebAssemblyFunction):
+            (JSC::WebAssemblyFunction::WebAssemblyFunction):
+            (JSC::WebAssemblyFunction::call): Deleted.
+            * wasm/js/WebAssemblyFunction.h:
+            (JSC::WebAssemblyFunction::signatureIndex):
+            (JSC::WebAssemblyFunction::jsEntrypoint):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210115. rdar://problem/29793220
 
     2016-12-22  Saam Barati  <sbarati@apple.com>

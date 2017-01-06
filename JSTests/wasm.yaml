@@ -188,7 +188,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/unreachable.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/unwind.wast.js
   cmd: runWebAssemblySpecTest :skip
