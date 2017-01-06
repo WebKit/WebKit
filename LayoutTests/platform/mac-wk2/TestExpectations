@@ -609,3 +609,7 @@ webkit.org/b/164870 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/idbcurso
 webkit.org/b/165352 fast/dom/Window/window-resize-contents.html [ Pass Timeout ]
 
 webkit.org/b/165392 [ ElCapitan Release ] imported/mathml-in-html5/mathml/presentation-markup/fractions/frac-parameters-1.html [ Pass Failure ]
+
+webkit.org/b/166765 [ Debug ] http/tests/pointer-lock/iframe-sandboxed-nested-allow-pointer-lock.html [ Crash ]
+webkit.org/b/166765 [ Debug ] http/tests/pointer-lock/pointerlockelement-same-origin.html [ Crash ]
+webkit.org/b/166765 [ Debug ] pointer-lock/lock-lost-on-alert.html [ Crash ]
