@@ -1,5 +1,695 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210087. rdar://problem/29782821
+
+    2016-12-21  Saam Barati  <sbarati@apple.com>
+
+            WebAssembly: Import spec tests
+            https://bugs.webkit.org/show_bug.cgi?id=166395
+
+            Rubber stamped by Keith Miller.
+
+            This patch implements the Wasm spec's tests found here:
+            https://github.com/WebAssembly/spec/tree/master/interpreter/test
+
+            These tests are in .wast s-epxression format. To convert
+            them to JS, I use a script from the wabt library, found here:
+            https://github.com/WebAssembly/wabt/blob/master/test/run-gen-spec-js.py
+
+            I also added a script that automatically imports the tests as
+            JS files. The inputs to the script is the path to the Wasm spec
+            git repo and the path to the wabt git repo. This will make importing
+            new tests easy in the future.
+
+            The wasm spec imported is at commit: b055d01ea1dfdd7a5231ae779095435f836de97f
+            The wabt used to do the import is at commit: 622b42dced6d793e9d49e9b1fd1d1524defd1387
+
+            * wasm.yaml:
+            * wasm/import-spec-tests.rb: Added.
+            * wasm/spec-tests: Added.
+            * wasm/spec-tests/address.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/binary.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/block.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/br.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/br_if.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/br_table.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/break-drop.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/call.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/call_indirect.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/comments.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/conversions.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/custom_section.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/endianness.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/exports.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/f32.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/f32_cmp.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/f64.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/f64_cmp.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/fac.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/float_exprs.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/float_literals.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/float_memory.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/float_misc.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/forward.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/func.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/func_ptrs.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/get_local.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/globals.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/i32.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/i64.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/imports.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/int_exprs.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/int_literals.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/left-to-right.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/linking.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/loop.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/memory.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/memory_redundancy.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/memory_trap.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/names.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/nop.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/resizing.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/return.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/select.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/set_local.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/skip-stack-guard-page.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/stack.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/start.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/store_retval.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/switch.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/tee_local.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/traps.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/typecheck.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/unreachable.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+            * wasm/spec-tests/unwind.wast.js: Added.
+            (register):
+            (module):
+            (instance):
+            (assert_malformed):
+            (assert_invalid):
+            (assert_soft_invalid):
+            (assert_unlinkable):
+            (assert_uninstantiable):
+            (assert_trap):
+            (assert_return):
+            (assert_return_nan):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210026. rdar://problem/29735737
 
     2016-12-20  JF Bastien  <jfbastien@apple.com>
