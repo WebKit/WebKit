@@ -1155,8 +1155,7 @@ MacroAssemblerCodeRef throwExceptionFromWasmThunkGenerator(VM* vm)
             auto throwScope = DECLARE_THROW_SCOPE(*vm);
             JSGlobalObject* globalObject = vm->topJSWebAssemblyInstance->globalObject();
 
-            JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(
-                exec, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
+            JSWebAssemblyRuntimeError* error = JSWebAssemblyRuntimeError::create(exec, *vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
             throwException(exec, throwScope, error);
         }
 

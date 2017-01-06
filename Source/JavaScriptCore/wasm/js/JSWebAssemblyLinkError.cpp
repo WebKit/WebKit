@@ -32,11 +32,12 @@
 
 namespace JSC {
 
-JSWebAssemblyLinkError* JSWebAssemblyLinkError::create(ExecState* state, VM* vm, Structure* structure, const String& message)
+JSWebAssemblyLinkError* JSWebAssemblyLinkError::create(ExecState* state, VM& vm, Structure* structure, const String& message)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyLinkError>(vm->heap)) JSWebAssemblyLinkError(*vm, structure);
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyLinkError>(vm.heap)) JSWebAssemblyLinkError(vm, structure);
     instance->m_sourceAppender = defaultSourceAppender;
-    instance->finishCreation(state, *vm, message, true);
+    bool useCurrentFrame = true;
+    instance->finishCreation(state, vm, message, useCurrentFrame);
     return instance;
 }
 
@@ -48,7 +49,7 @@ JSWebAssemblyLinkError::JSWebAssemblyLinkError(VM& vm, Structure* structure)
 const ClassInfo JSWebAssemblyLinkError::s_info = { "WebAssembly.LinkError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyLinkError) };
 
     
-JSObject* createJSWebAssemblyLinkError(ExecState* state, VM* vm, const String& message)
+JSObject* createJSWebAssemblyLinkError(ExecState* state, VM& vm, const String& message)
 {
     ASSERT(!message.isEmpty());
     JSGlobalObject* globalObject = state->lexicalGlobalObject();

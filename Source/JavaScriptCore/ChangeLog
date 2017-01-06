@@ -1,5 +1,44 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210073. rdar://problem/29762017
+
+    2016-12-21  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly JS API: cleanup & pass VM around to {Compile/Runtime}Error
+            https://bugs.webkit.org/show_bug.cgi?id=166295
+            <rdar://problem/29762017>
+
+            Reviewed by Mark Lam.
+
+            Rename the create* functions, and pass VM around, as suggested for
+            LinkError in #165805.
+
+            At the same time, use the default source appender when
+            constructing these error types, which gives a nice map back to the
+            original source as part of the error message. This is clearer when
+            using the current frame, so add that as well.
+
+            * jit/ThunkGenerators.cpp:
+            (JSC::throwExceptionFromWasmThunkGenerator):
+            * wasm/js/JSWebAssemblyCompileError.cpp:
+            (JSC::JSWebAssemblyCompileError::create):
+            (JSC::createJSWebAssemblyCompileError):
+            (JSC::createWebAssemblyCompileError): Deleted.
+            * wasm/js/JSWebAssemblyCompileError.h:
+            (JSC::JSWebAssemblyCompileError::create):
+            * wasm/js/JSWebAssemblyRuntimeError.cpp:
+            (JSC::JSWebAssemblyRuntimeError::create):
+            * wasm/js/JSWebAssemblyRuntimeError.h:
+            (JSC::JSWebAssemblyRuntimeError::create):
+            * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+            (JSC::constructJSWebAssemblyCompileError):
+            * wasm/js/WebAssemblyModuleConstructor.cpp:
+            (JSC::WebAssemblyModuleConstructor::createModule):
+            * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+            (JSC::constructJSWebAssemblyRuntimeError):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210244. rdar://problem/29844107
 
     2017-01-03  JF Bastien  <jfbastien@apple.com>

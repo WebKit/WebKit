@@ -51,7 +51,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyCompileError(ExecState
     JSValue message = state->argument(0);
     auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->jsCallee())->globalObject()->WebAssemblyCompileErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSWebAssemblyCompileError::create(state, structure, message, false));
+    return JSValue::encode(JSWebAssemblyCompileError::create(state, vm, structure, message));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyCompileError(ExecState* state)

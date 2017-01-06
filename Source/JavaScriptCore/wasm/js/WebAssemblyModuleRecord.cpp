@@ -197,7 +197,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
 }
 
 template <typename Scope, typename N, typename ...Args>
-NEVER_INLINE static JSValue dataSegmentFail(ExecState* state, VM* vm, Scope& scope, N memorySize, N segmentSize, N offset, Args... args)
+NEVER_INLINE static JSValue dataSegmentFail(ExecState* state, VM& vm, Scope& scope, N memorySize, N segmentSize, N offset, Args... args)
 {
     return throwException(state, scope, createJSWebAssemblyLinkError(state, vm, makeString(ASCIILiteral("Invalid data segment initialization: segment of "), String::number(segmentSize), ASCIILiteral(" bytes memory of "), String::number(memorySize), ASCIILiteral(" bytes, at offset "), String::number(offset), args...)));
 }
@@ -223,7 +223,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
             uint32_t tableIndex = element.offset;
             uint64_t lastWrittenIndex = static_cast<uint64_t>(tableIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
             if (lastWrittenIndex >= table->size())
-                return throwException(state, scope, createJSWebAssemblyLinkError(state, &vm, ASCIILiteral("Element is trying to set an out of bounds table index")));
+                return throwException(state, scope, createJSWebAssemblyLinkError(state, vm, ASCIILiteral("Element is trying to set an out of bounds table index")));
 
             for (uint32_t i = 0; i < element.functionIndices.size(); ++i) {
                 // FIXME: This essentially means we're exporting an import.
@@ -264,9 +264,9 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
             for (auto& segment : data) {
                 if (segment->sizeInBytes) {
                     if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
-                        return dataSegmentFail(state, &vm, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment is too big"));
+                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment is too big"));
                     if (UNLIKELY(segment->offset > sizeInBytes - segment->sizeInBytes))
-                        return dataSegmentFail(state, &vm, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment writes outside of memory"));
+                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment writes outside of memory"));
                     memcpy(memory + segment->offset, &segment->byte(0), segment->sizeInBytes);
                 }
             }
