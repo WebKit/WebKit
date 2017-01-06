@@ -104,13 +104,13 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/func_ptrs.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/get_local.wast.js
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/globals.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/i32.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -122,7 +122,7 @@
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/int_exprs.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/int_literals.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -158,7 +158,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/select.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/set_local.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -182,7 +182,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/traps.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/typecheck.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -191,5 +191,5 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/unwind.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
