@@ -1,5 +1,124 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210026. rdar://problem/29735737
+
+    2016-12-20  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: unique function signatures
+            https://bugs.webkit.org/show_bug.cgi?id=165957
+            <rdar://problem/29735737>
+
+            Reviewed by Saam Barati.
+
+            Signatures in a Module's Type section can be duplicated, we
+            therefore need to unique them so that call_indirect only needs to
+            do a single integer compare to check that a callee's Signature is
+            the same as the Signature declared at the call site. Without
+            uniquing we'd either trap when duplicate Signatures are used, or
+            we'd need to do multiple comparisons. This patch makes that narrow
+            usecase function correctly.
+
+            There's further complication when calling from wasm to
+            wasm, in which case the Signatures must also match. Such
+            cross-instance calls will be improved in bug #165282, but this
+            patch sets the groundwork for it:
+
+            - Signatures are now owned by SignatureInformation which lives on
+              VM, and is shared by all Modules.
+            - When parsing a Module, a Signature is created for every Type
+              entry, and then uniqued by SignatureInformation's adopt
+              method. Duplicate Signatures are dropped and the previous
+              SignatureIndex is returned, new Signatures are adopted and a new
+              SignatureIndex is created.
+            - The SignatureIndex values are monotonic. 0 is used to represent
+              invalid indices, which trap. This can only occur through Table.
+            - SignatureInformation is used while generating code to map a
+              SignatureIndex back to the Signature* when return / argument
+              information is needed. This is a simple lookup into a Vector. It
+              isn't used at runtime.
+            - These Signatures live forever on VM because the bookkeeping
+              likely isn't worth it. We may want to empty things out if all
+              Modules die, this is tracked in bug #166037.
+            - We can further improve things by bit-packing SignatureIndex with
+              Code*, which is tracked by bug #165511.
+
+            * CMakeLists.txt:
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * runtime/VM.h: wasm signatures are uniqued here, but aren't accessed frequently (only during parsing) so indirection is fine
+            * wasm/WasmB3IRGenerator.cpp: use SignatureIndex instead of Signature* when appropriate, and when still using Signature* do so with its new API
+            (JSC::Wasm::createJSToWasmWrapper):
+            (JSC::Wasm::parseAndCompile):
+            * wasm/WasmBinding.cpp:
+            (JSC::Wasm::importStubGenerator): use SignatureIndex
+            * wasm/WasmBinding.h:
+            * wasm/WasmCallingConvention.h:
+            (JSC::Wasm::CallingConvention::loadArguments):
+            * wasm/WasmFormat.cpp: drive-by move of alloc/free functions to the implementation file, allows the .h file to drop an FastMalloc.h
+            (JSC::Wasm::Segment::create):
+            (JSC::Wasm::Segment::destroy):
+            (JSC::Wasm::Segment::createPtr):
+            * wasm/WasmFormat.h: move Signature to its own file
+            (JSC::Wasm::CallableFunction::CallableFunction):
+            * wasm/WasmFunctionParser.h:
+            (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+            * wasm/WasmModuleParser.cpp:
+            * wasm/WasmModuleParser.h:
+            (JSC::Wasm::ModuleParser::ModuleParser):
+            * wasm/WasmParser.h:
+            (JSC::Wasm::Parser<SuccessType>::Parser):
+            * wasm/WasmPlan.cpp:
+            (JSC::Wasm::Plan::parseAndValidateModule):
+            (JSC::Wasm::Plan::run):
+            * wasm/WasmSignature.cpp: Added.
+            (JSC::Wasm::Signature::dump):
+            (JSC::Wasm::Signature::hash):
+            (JSC::Wasm::Signature::create):
+            (JSC::Wasm::Signature::createInvalid):
+            (JSC::Wasm::Signature::destroy):
+            (JSC::Wasm::SignatureInformation::~SignatureInformation):
+            (JSC::Wasm::SignatureInformation::adopt):
+            (JSC::Wasm::SignatureInformation::get):
+            * wasm/WasmSignature.h: Added.
+            (JSC::Wasm::Signature::Signature):
+            (JSC::Wasm::Signature::storage):
+            (JSC::Wasm::Signature::allocatedSize):
+            (JSC::Wasm::Signature::returnType):
+            (JSC::Wasm::Signature::returnCount):
+            (JSC::Wasm::Signature::argumentCount):
+            (JSC::Wasm::Signature::argument):
+            (JSC::Wasm::Signature::operator==):
+            (JSC::Wasm::SignatureHash::empty):
+            (JSC::Wasm::SignatureHash::deleted):
+            (JSC::Wasm::SignatureHash::SignatureHash):
+            (JSC::Wasm::SignatureHash::operator==):
+            (JSC::Wasm::SignatureHash::equal):
+            (JSC::Wasm::SignatureHash::hash):
+            (JSC::Wasm::SignatureHash::isHashTableDeletedValue):
+            * wasm/WasmValidate.cpp:
+            (JSC::Wasm::validateFunction):
+            * wasm/WasmValidate.h:
+            * wasm/js/JSWebAssemblyInstance.cpp:
+            (JSC::JSWebAssemblyInstance::create):
+            * wasm/js/JSWebAssemblyModule.h:
+            (JSC::JSWebAssemblyModule::signatureForFunctionIndexSpace):
+            * wasm/js/JSWebAssemblyTable.cpp:
+            (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+            (JSC::JSWebAssemblyTable::clearFunction):
+            (JSC::JSWebAssemblyTable::setFunction):
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::callWebAssemblyFunction):
+            (JSC::WebAssemblyFunction::call):
+            (JSC::WebAssemblyFunction::create):
+            (JSC::WebAssemblyFunction::WebAssemblyFunction):
+            (JSC::WebAssemblyFunction::finishCreation):
+            * wasm/js/WebAssemblyFunction.h:
+            (JSC::WebAssemblyFunction::signatureIndex):
+            * wasm/js/WebAssemblyModuleRecord.cpp:
+            (JSC::WebAssemblyModuleRecord::link):
+            (JSC::WebAssemblyModuleRecord::evaluate):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r209979. rdar://problem/29735737
 
     2016-12-18  Saam Barati  <sbarati@apple.com>

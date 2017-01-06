@@ -92,7 +92,7 @@ public:
         return fail(__VA_ARGS__);                   \
     } while (0)
 
-    Result WARN_UNUSED_RETURN addArguments(const Vector<Type>&);
+    Result WARN_UNUSED_RETURN addArguments(const Signature*);
     Result WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type type, uint64_t) { return type; }
 
@@ -132,7 +132,7 @@ public:
 
     // Calls
     Result WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);
-    Result WARN_UNUSED_RETURN addCallIndirect(const Signature*, const Vector<ExpressionType>& args, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCallIndirect(const Signature*, SignatureIndex, const Vector<ExpressionType>& args, ExpressionType& result);
 
     bool hasMemory() const { return !!m_module.memory; }
 
@@ -155,10 +155,10 @@ private:
     const ModuleInformation& m_module;
 };
 
-auto Validate::addArguments(const Vector<Type>& args) -> Result
+auto Validate::addArguments(const Signature* signature) -> Result
 {
-    for (Type arg : args)
-        WASM_FAIL_IF_HELPER_FAILS(addLocal(arg, 1));
+    for (size_t i = 0; i < signature->argumentCount(); ++i)
+        WASM_FAIL_IF_HELPER_FAILS(addLocal(signature->argument(i), 1));
     return { };
 }
 
@@ -310,26 +310,28 @@ auto Validate::addEndToUnreachable(ControlEntry& entry) -> Result
 
 auto Validate::addCall(unsigned, const Signature* signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
-    WASM_VALIDATOR_FAIL_IF(signature->arguments.size() != args.size(), "arity mismatch in call, got ", args.size(), " arguments, expected ", signature->arguments.size());
+    WASM_VALIDATOR_FAIL_IF(signature->argumentCount() != args.size(), "arity mismatch in call, got ", args.size(), " arguments, expected ", signature->argumentCount());
 
     for (unsigned i = 0; i < args.size(); ++i)
-        WASM_VALIDATOR_FAIL_IF(args[i] != signature->arguments[i], "argument type mismatch in call, got ", args[i], ", expected ", signature->arguments[i]);
+        WASM_VALIDATOR_FAIL_IF(args[i] != signature->argument(i), "argument type mismatch in call, got ", args[i], ", expected ", signature->argument(i));
 
-    result = signature->returnType;
+    result = signature->returnType();
     return { };
 }
 
-auto Validate::addCallIndirect(const Signature* signature, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
+auto Validate::addCallIndirect(const Signature* signature, SignatureIndex signatureIndex, const Vector<ExpressionType>& args, ExpressionType& result) -> Result
 {
-    const auto argumentCount = signature->arguments.size();
+    UNUSED_PARAM(signatureIndex);
+    ASSERT(signatureIndex != Signature::invalidIndex);
+    const auto argumentCount = signature->argumentCount();
     WASM_VALIDATOR_FAIL_IF(argumentCount != args.size() - 1, "arity mismatch in call_indirect, got ", args.size() - 1, " arguments, expected ", argumentCount);
 
     for (unsigned i = 0; i < argumentCount; ++i)
-        WASM_VALIDATOR_FAIL_IF(args[i] != signature->arguments[i], "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature->arguments[i]);
+        WASM_VALIDATOR_FAIL_IF(args[i] != signature->argument(i), "argument type mismatch in call_indirect, got ", args[i], ", expected ", signature->argument(i));
 
     WASM_VALIDATOR_FAIL_IF(args.last() != I32, "non-i32 call_indirect index ", args.last());
 
-    result = signature->returnType;
+    result = signature->returnType();
     return { };
 }
 
@@ -351,10 +353,10 @@ void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
     // Think of this as penance for the sin of bad error messages.
 }
 
-Expected<void, String> validateFunction(const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& module)
+Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& module)
 {
-    Validate context(signature->returnType, module);
-    FunctionParser<Validate> validator(context, source, length, signature, functionIndexSpace, module);
+    Validate context(signature->returnType(), module);
+    FunctionParser<Validate> validator(vm, context, source, length, signature, functionIndexSpace, module);
     WASM_FAIL_IF_HELPER_FAILS(validator.parse());
     return { };
 }

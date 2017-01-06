@@ -907,6 +907,7 @@ set(JavaScriptCore_SOURCES
     wasm/WasmMemoryInformation.cpp
     wasm/WasmModuleParser.cpp
     wasm/WasmPlan.cpp
+    wasm/WasmSignature.cpp
     wasm/WasmValidate.cpp
 
     wasm/js/JSWebAssemblyCallee.cpp

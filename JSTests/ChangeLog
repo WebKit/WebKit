@@ -1,5 +1,24 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210026. rdar://problem/29735737
+
+    2016-12-20  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: unique function signatures
+            https://bugs.webkit.org/show_bug.cgi?id=165957
+            <rdar://problem/29735737>
+
+            Reviewed by Saam Barati.
+
+            * wasm/function-tests/table-basic.js: FIXME is now addressed,
+            though instance to instance calls still need work which bug
+            #165282 will address
+            (i.assert.eq.foo):
+            * wasm/js-api/unique-signature.js: Added.
+            (CallIndirectWithDuplicateSignatures):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r209979. rdar://problem/29735737
 
     2016-12-18  Saam Barati  <sbarati@apple.com>

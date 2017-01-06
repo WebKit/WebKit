@@ -79,9 +79,10 @@ bool Plan::parseAndValidateModule()
         const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
         size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
         ASSERT(Checked<uintptr_t>(bitwise_cast<uintptr_t>(functionStart)) + functionLength <= Checked<uintptr_t>(bitwise_cast<uintptr_t>(m_source)) + m_sourceLength);
-        Signature* signature = m_moduleInformation->internalFunctionSignatures[functionIndex];
+        SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
+        const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
 
-        auto validationResult = validateFunction(functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation);
+        auto validationResult = validateFunction(m_vm, functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation);
         if (!validationResult) {
             if (verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
@@ -114,7 +115,7 @@ void Plan::run()
     };
 
     Vector<Vector<UnlinkedWasmToWasmCall>> unlinkedWasmToWasmCalls;
-    if (!tryReserveCapacity(m_wasmToJSStubs, m_moduleInformation->importFunctions.size(), " WebAssembly to JavaScript stubs")
+    if (!tryReserveCapacity(m_wasmToJSStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
         || !tryReserveCapacity(unlinkedWasmToWasmCalls, m_functionLocationInBinary.size(), " unlinked WebAssembly to WebAssembly calls")
         || !tryReserveCapacity(m_wasmInternalFunctions, m_functionLocationInBinary.size(), " WebAssembly functions"))
         return;
@@ -126,8 +127,8 @@ void Plan::run()
         unsigned importFunctionIndex = m_wasmToJSStubs.size();
         if (verbose)
             dataLogLn("Processing import function number ", importFunctionIndex, ": ", import->module, ": ", import->field);
-        Signature* signature = m_moduleInformation->importFunctions.at(import->kindIndex);
-        m_wasmToJSStubs.uncheckedAppend(importStubGenerator(m_vm, m_callLinkInfos, signature, importFunctionIndex));
+        SignatureIndex signatureIndex = m_moduleInformation->importFunctionSignatureIndices.at(import->kindIndex);
+        m_wasmToJSStubs.uncheckedAppend(importStubGenerator(m_vm, m_callLinkInfos, signatureIndex, importFunctionIndex));
         m_functionIndexSpace.buffer.get()[importFunctionIndex].code = m_wasmToJSStubs[importFunctionIndex].code().executableAddress();
     }
 
@@ -137,11 +138,12 @@ void Plan::run()
         const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
         size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
-        Signature* signature = m_moduleInformation->internalFunctionSignatures[functionIndex];
+        SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
+        const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
         unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
-        ASSERT(m_functionIndexSpace.buffer.get()[functionIndexSpace].signature == signature);
+        ASSERT(m_functionIndexSpace.buffer.get()[functionIndexSpace].signatureIndex == signatureIndex);
 
-        ASSERT(validateFunction(functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation));
+        ASSERT(validateFunction(m_vm, functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation));
 
         unlinkedWasmToWasmCalls.uncheckedAppend(Vector<UnlinkedWasmToWasmCall>());
         auto parseAndCompileResult = parseAndCompile(*m_vm, functionStart, functionLength, signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace, *m_moduleInformation);

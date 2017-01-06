@@ -44,8 +44,7 @@ class ModuleParser : public Parser<ModuleParserResult> {
 public:
 
     ModuleParser(VM* vm, const uint8_t* sourceBuffer, size_t sourceLength)
-        : Parser(sourceBuffer, sourceLength)
-        , m_vm(vm)
+        : Parser(vm, sourceBuffer, sourceLength)
     {
     }
     ModuleParser(VM* vm, const Vector<uint8_t>& sourceBuffer)
@@ -67,7 +66,6 @@ private:
     PartialResult WARN_UNUSED_RETURN parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum);
     PartialResult WARN_UNUSED_RETURN parseInitExpr(uint8_t&, uint64_t&);
 
-    VM* m_vm;
     ModuleParserResult m_result;
     bool m_hasTable { false };
 };
