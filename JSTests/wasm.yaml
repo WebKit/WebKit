@@ -59,7 +59,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/conversions.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/custom_section.wast.js
   cmd: runWebAssemblySpecTest :skip
@@ -113,10 +113,10 @@
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/i32.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/i64.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/imports.wast.js
   cmd: runWebAssemblySpecTest :skip

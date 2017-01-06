@@ -38,6 +38,8 @@ namespace Wasm {
     macro(BadSignature, "call_indirect to a signature that does not match") \
     macro(OutOfBoundsTrunc, "Out of bounds Trunc operation") \
     macro(Unreachable, "Unreachable code should not be executed") \
+    macro(DivisionByZero, "Division by zero") \
+    macro(IntegerOverflow, "Integer overflow")
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,

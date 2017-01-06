@@ -212,6 +212,8 @@ private:
     void unifyValuesWithBlock(const ExpressionList& resultStack, ResultList& stack);
     Value* zeroForType(Type);
 
+    void emitChecksForModOrDiv(B3::Opcode, ExpressionType left, ExpressionType right);
+
     VM& m_vm;
     const ImmutableFunctionIndexSpace& m_functionIndexSpace;
     const ModuleInformation& m_info;
@@ -992,6 +994,109 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
 }
 
 // Custom wasm ops. These are the ones too messy to do in wasm.json.
+
+void B3IRGenerator::emitChecksForModOrDiv(B3::Opcode operation, ExpressionType left, ExpressionType right)
+{
+    ASSERT(operation == Div || operation == Mod || operation == UDiv || operation == UMod);
+    const B3::Type type = left->type();
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), right,
+                m_currentBlock->appendIntConstant(m_proc, Origin(), type, 0)));
+
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::DivisionByZero);
+        });
+    }
+
+    if (operation == Div) {
+        int64_t min = type == Int32 ? std::numeric_limits<int32_t>::min() : std::numeric_limits<int64_t>::min();
+
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, Origin(),
+            m_currentBlock->appendNew<Value>(m_proc, BitAnd, Origin(),
+                m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), left,
+                    m_currentBlock->appendIntConstant(m_proc, Origin(), type, min)),
+                m_currentBlock->appendNew<Value>(m_proc, Equal, Origin(), right,
+                    m_currentBlock->appendIntConstant(m_proc, Origin(), type, -1))));
+
+        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::IntegerOverflow);
+        });
+    }
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I32DivS>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = Div;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, op, Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I32RemS>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = Mod;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, chill(op), Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I32DivU>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = UDiv;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, op, Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I32RemU>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = UMod;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, op, Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I64DivS>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = Div;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, op, Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I64RemS>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = Mod;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, chill(op), Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I64DivU>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = UDiv;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, op, Origin(), left, right);
+    return { };
+}
+
+template<>
+auto B3IRGenerator::addOp<OpType::I64RemU>(ExpressionType left, ExpressionType right, ExpressionType& result) -> PartialResult
+{
+    const B3::Opcode op = UMod;
+    emitChecksForModOrDiv(op, left, right);
+    result = m_currentBlock->appendNew<Value>(m_proc, op, Origin(), left, right);
+    return { };
+}
 
 template<>
 auto B3IRGenerator::addOp<OpType::I32Ctz>(ExpressionType arg, ExpressionType& result) -> PartialResult
