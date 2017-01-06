@@ -30,35 +30,87 @@
 
 namespace JSC { namespace Wasm {
 
-Memory::Memory(PageCount initial, PageCount maximum)
+static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^32 which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
+
+Memory::Memory(PageCount initial, PageCount maximum, bool& failed)
     : m_mode(Mode::BoundsChecking)
-    , m_size(initial.bytes())
-    , m_capacity(maximum ? maximum.bytes() : PageCount::max().bytes())
     , m_initial(initial)
     , m_maximum(maximum)
+    , m_size(initial.bytes())
     // FIXME: If we add signal based bounds checking then we need extra space for overflow on load.
     // see: https://bugs.webkit.org/show_bug.cgi?id=162693
 {
     RELEASE_ASSERT(!maximum || maximum >= initial); // This should be guaranteed by our caller.
 
-    m_mappedCapacity = m_capacity;
-    // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
-    void* result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
-    if (result == MAP_FAILED) {
-        // Try again with a different number.
-        m_mappedCapacity = m_size;
-        result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
-        if (result == MAP_FAILED)
-            return;
-    }
-
-    ASSERT(m_size <= m_mappedCapacity);
-    if (mprotect(result, m_size, PROT_READ | PROT_WRITE)) {
-        munmap(result, m_mappedCapacity);
+    m_mappedCapacity = maximum ? maximum.bytes() : PageCount::max().bytes();
+    if (!m_mappedCapacity) {
+        // This means we specified a zero as maximum (which means we also have zero as initial size).
+        RELEASE_ASSERT(m_size == 0);
+        m_mappedCapacity = 0;
+        m_memory = nullptr;
+        failed = false;
         return;
     }
 
+    // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
+    void* result = Options::simulateWebAssemblyLowMemory() ? MAP_FAILED : mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (result == MAP_FAILED) {
+        // Try again with a different number.
+        m_mappedCapacity = m_size;
+        if (!m_mappedCapacity) {
+            m_memory = nullptr;
+            failed = false;
+            return;
+        }
+
+        result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (result == MAP_FAILED) {
+            failed = true;
+            return;
+        }
+    }
+
+    ASSERT(m_size <= m_mappedCapacity);
+    {
+        bool success = !mprotect(result, static_cast<size_t>(m_size), PROT_READ | PROT_WRITE);
+        RELEASE_ASSERT(success);
+    }
+
     m_memory = result;
+    failed = false;
+}
+
+bool Memory::grow(PageCount newSize)
+{
+    RELEASE_ASSERT(newSize > PageCount::fromBytes(m_size));
+
+    if (maximum() && newSize > maximum())
+        return false;
+
+    uint64_t desiredSize = newSize.bytes();
+
+    if (m_memory && desiredSize <= m_mappedCapacity) {
+        bool success = !mprotect(static_cast<uint8_t*>(m_memory) + m_size, static_cast<size_t>(desiredSize - m_size), PROT_READ | PROT_WRITE);
+        RELEASE_ASSERT(success);
+        m_size = desiredSize;
+        return true;
+    }
+
+    // Otherwise, let's try to make some new memory.
+    void* newMemory = mmap(nullptr, desiredSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (newMemory == MAP_FAILED)
+        return false;
+
+    if (m_memory) {
+        memcpy(newMemory, m_memory, m_size);
+        bool success = !munmap(m_memory, m_mappedCapacity);
+        RELEASE_ASSERT(success);
+    }
+    m_memory = newMemory;
+    m_mappedCapacity = desiredSize;
+    m_size = desiredSize;
+
+    return true;
 }
 
 } // namespace JSC

@@ -95,7 +95,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     const Wasm::ModuleInformation& moduleInformation = module->moduleInformation();
 
     SymbolTable* exportSymbolTable = module->exportSymbolTable();
-    unsigned importCount = module->importCount();
+    unsigned functionImportCount = module->functionImportCount();
 
     // FIXME wire up the imports. https://bugs.webkit.org/show_bug.cgi?id=165118
 
@@ -108,7 +108,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
             // 1. If e is a closure c:
             //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
             //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
-            if (exp.kindIndex < importCount) {
+            if (exp.kindIndex < functionImportCount) {
                 // FIXME Implement re-exporting an import. https://bugs.webkit.org/show_bug.cgi?id=165510
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -180,7 +180,7 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
         // The start function must not take any arguments or return anything. This is enforced by the parser.
         ASSERT(!signature->argumentCount());
         ASSERT(signature->returnType() == Wasm::Void);
-        if (startFunctionIndexSpace < module->importCount()) {
+        if (startFunctionIndexSpace < module->functionImportCount()) {
             JSCell* startFunction = instance->importFunction(startFunctionIndexSpace)->get();
             m_startFunction.set(vm, this, startFunction);
         } else {
@@ -196,8 +196,8 @@ void WebAssemblyModuleRecord::link(ExecState* state, JSWebAssemblyInstance* inst
     m_moduleEnvironment.set(vm, this, moduleEnvironment);
 }
 
-template <typename Scope, typename N, typename ...Args>
-NEVER_INLINE static JSValue dataSegmentFail(ExecState* state, VM& vm, Scope& scope, N memorySize, N segmentSize, N offset, Args... args)
+template <typename Scope, typename M, typename N, typename ...Args>
+NEVER_INLINE static JSValue dataSegmentFail(ExecState* state, VM& vm, Scope& scope, M memorySize, N segmentSize, N offset, Args... args)
 {
     return throwException(state, scope, createJSWebAssemblyLinkError(state, vm, makeString(ASCIILiteral("Invalid data segment initialization: segment of "), String::number(segmentSize), ASCIILiteral(" bytes memory of "), String::number(memorySize), ASCIILiteral(" bytes, at offset "), String::number(offset), args...)));
 }
@@ -231,7 +231,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
                 // for the import.
                 // https://bugs.webkit.org/show_bug.cgi?id=165510
                 uint32_t functionIndex = element.functionIndices[i];
-                if (functionIndex < module->importCount()) {
+                if (functionIndex < module->functionImportCount()) {
                     return JSValue::decode(
                         throwVMRangeError(state, scope, ASCIILiteral("Element is setting the table value with an import. This is not yet implemented. FIXME.")));
                 }
@@ -259,15 +259,21 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* state)
         if (!data.isEmpty()) {
             RELEASE_ASSERT(jsMemory); // It is a validation error for a Data section to exist without a Memory section or import.
             uint8_t* memory = reinterpret_cast<uint8_t*>(jsMemory->memory()->memory());
-            RELEASE_ASSERT(memory);
-            auto sizeInBytes = jsMemory->memory()->size();
+            uint64_t sizeInBytes = jsMemory->memory()->size();
             for (auto& segment : data) {
                 if (segment->sizeInBytes) {
+                    uint32_t offset;
+                    if (segment->offset.isGlobalImport())
+                        offset = static_cast<uint32_t>(m_instance->loadI32Global(segment->offset.globalImportIndex()));
+                    else
+                        offset = segment->offset.constValue();
+
                     if (UNLIKELY(sizeInBytes < segment->sizeInBytes))
-                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment is too big"));
-                    if (UNLIKELY(segment->offset > sizeInBytes - segment->sizeInBytes))
-                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, segment->offset, ASCIILiteral(", segment writes outside of memory"));
-                    memcpy(memory + segment->offset, &segment->byte(0), segment->sizeInBytes);
+                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment is too big"));
+                    if (UNLIKELY(offset > sizeInBytes - segment->sizeInBytes))
+                        return dataSegmentFail(state, vm, scope, sizeInBytes, segment->sizeInBytes, offset, ASCIILiteral(", segment writes outside of memory"));
+                    RELEASE_ASSERT(memory);
+                    memcpy(memory + offset, &segment->byte(0), segment->sizeInBytes);
                 }
             }
         }

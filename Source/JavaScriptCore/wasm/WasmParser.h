@@ -235,8 +235,10 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseVarUInt1(uint8_t& result)
     uint32_t temp;
     if (!parseVarUInt32(temp))
         return false;
+    if (temp > 1)
+        return false;
     result = static_cast<uint8_t>(temp);
-    return temp <= 1;
+    return true;
 }
 
 template<typename SuccessType>

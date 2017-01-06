@@ -34,7 +34,7 @@
 
 namespace JSC { namespace Wasm {
 
-Segment* Segment::create(uint32_t offset, uint32_t sizeInBytes)
+Segment* Segment::create(I32InitExpr offset, uint32_t sizeInBytes)
 {
     auto allocated = tryFastCalloc(sizeof(Segment) + sizeInBytes, 1);
     Segment* segment;

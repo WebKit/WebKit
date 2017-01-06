@@ -44,7 +44,7 @@ public:
         BoundsChecking
     };
 
-    JS_EXPORT_PRIVATE Memory(PageCount initial, PageCount maximum);
+    JS_EXPORT_PRIVATE Memory(PageCount initial, PageCount maximum, bool& failed);
 
     ~Memory()
     {
@@ -52,35 +52,26 @@ public:
             munmap(m_memory, m_mappedCapacity);
     }
 
-    bool isValid() const { return !!m_memory; }
-
     void* memory() const { return m_memory; }
-    uint32_t size() const { return m_size; }
+    uint64_t size() const { return m_size; }
+    PageCount sizeInPages() const { return PageCount::fromBytes(m_size); }
 
     Mode mode() const { return m_mode; }
 
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
 
-    bool grow(uint32_t newSize)
-    {
-        ASSERT(m_memory);
-        if (newSize > m_capacity)
-            return false;
-
-        return !mprotect(m_memory, newSize, PROT_READ | PROT_WRITE);
-    }
+    bool grow(PageCount);
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Memory, m_size); }
-
+    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Memory, m_memory); }
     
 private:
     void* m_memory { nullptr };
     Mode m_mode;
-    uint32_t m_size { 0 };
-    uint32_t m_capacity { 0 };
     PageCount m_initial;
     PageCount m_maximum;
+    uint64_t m_size { 0 };
     uint64_t m_mappedCapacity { 0 };
 };
 

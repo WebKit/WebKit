@@ -48,9 +48,13 @@ public:
 
     Wasm::Memory* memory() { return m_memory.get(); }
     JSArrayBuffer* buffer(VM& vm, JSGlobalObject*);
+    Wasm::PageCount grow(ExecState*, uint32_t delta, bool shouldThrowExceptionsOnFailure);
+
+    static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memory); }
 
 protected:
     JSWebAssemblyMemory(VM&, Structure*, std::unique_ptr<Wasm::Memory>&&);
+    ~JSWebAssemblyMemory();
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);

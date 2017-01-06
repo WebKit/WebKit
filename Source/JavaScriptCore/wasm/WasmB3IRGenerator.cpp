@@ -172,6 +172,8 @@ public:
     // Memory
     PartialResult WARN_UNUSED_RETURN load(LoadOpType, ExpressionType pointer, ExpressionType& result, uint32_t offset);
     PartialResult WARN_UNUSED_RETURN store(StoreOpType, ExpressionType pointer, ExpressionType value, uint32_t offset);
+    PartialResult WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
 
     // Basic operators
     template<OpType>
@@ -202,6 +204,8 @@ public:
     void dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack);
 
     void emitExceptionCheck(CCallHelpers&, ExceptionType);
+
+    void emitReloadPinnedRegisters();
 
 private:
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -250,7 +254,7 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
         }
     }
 
-    if (!!info.memory) {
+    if (info.hasMemory()) {
         m_memoryBaseGPR = info.memory.pinnedRegisters().baseMemoryPointer;
         m_proc.pinRegister(m_memoryBaseGPR);
         ASSERT(!info.memory.pinnedRegisters().sizeRegisters[0].sizeOffset);
@@ -331,6 +335,96 @@ auto B3IRGenerator::addUnreachable() -> PartialResult
         this->emitExceptionCheck(jit, ExceptionType::Unreachable);
     });
     unreachable->effects.terminal = true;
+    return { };
+}
+
+static void reloadPinnedRegisters(Procedure& proc, BasicBlock* block, const ModuleInformation& info, Value* instance)
+{
+    if (!info.hasMemory())
+        return;
+
+    const MemoryInformation* memory = &info.memory;
+
+    RegisterSet clobbers;
+    clobbers.set(memory->pinnedRegisters().baseMemoryPointer);
+    for (auto info : memory->pinnedRegisters().sizeRegisters)
+        clobbers.set(info.sizeRegister);
+
+    B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Void, Origin());
+    patchpoint->effects = Effects::none();
+    patchpoint->effects.writesPinned = true;
+    patchpoint->clobber(clobbers);
+    patchpoint->numGPScratchRegisters = 1;
+
+    patchpoint->append(instance, ValueRep::SomeRegister);
+
+    patchpoint->setGenerator([memory] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+
+        GPRReg scratch = params.gpScratch(0);
+        jit.loadPtr(CCallHelpers::Address(params[0].gpr(), JSWebAssemblyInstance::offsetOfMemory()), scratch);
+        jit.loadPtr(CCallHelpers::Address(scratch, JSWebAssemblyMemory::offsetOfMemory()), scratch);
+        jit.loadPtr(CCallHelpers::Address(scratch, Memory::offsetOfMemory()), memory->pinnedRegisters().baseMemoryPointer);
+
+        jit.load64(CCallHelpers::Address(scratch, Memory::offsetOfSize()), scratch);
+        for (unsigned i = 0; i < memory->pinnedRegisters().sizeRegisters.size(); i++) {
+            GPRReg sizeReg = memory->pinnedRegisters().sizeRegisters[i].sizeRegister;
+            jit.move(scratch, sizeReg);
+            jit.sub64(CCallHelpers::TrustedImm32(memory->pinnedRegisters().sizeRegisters[i].sizeOffset), sizeReg);
+        }
+    });
+}
+
+void B3IRGenerator::emitReloadPinnedRegisters()
+{
+    reloadPinnedRegisters(m_proc, m_currentBlock, m_info, m_instanceValue);
+}
+
+
+auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) -> PartialResult
+{
+    int32_t (*growMemory) (ExecState*, int32_t) = [] (ExecState* exec, int32_t delta) -> int32_t {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        JSWebAssemblyInstance* instance = vm.topJSWebAssemblyInstance;
+        JSWebAssemblyMemory* wasmMemory = instance->memory();
+        RELEASE_ASSERT(wasmMemory); // This would fail validation otherwise.
+
+        if (delta < 0)
+            return -1;
+
+        bool shouldThrowExceptionsOnFailure = false;
+        PageCount result = wasmMemory->grow(exec, static_cast<uint32_t>(delta), shouldThrowExceptionsOnFailure);
+        RELEASE_ASSERT(!scope.exception());
+        if (!result)
+            return -1;
+
+        return result.pageCount();
+    };
+
+    result = m_currentBlock->appendNew<CCallValue>(m_proc, Int32, Origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, Origin(), bitwise_cast<void*>(growMemory)),
+        m_currentBlock->appendNew<B3::Value>(m_proc, B3::FramePointer, Origin()), delta);
+
+    emitReloadPinnedRegisters();
+
+    return { };
+}
+
+auto B3IRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
+{
+    Value* jsMemory = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), m_instanceValue, JSWebAssemblyInstance::offsetOfMemory());
+    Value* wasmMemory = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), jsMemory, JSWebAssemblyMemory::offsetOfMemory());
+    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, B3::Int64, Origin(), wasmMemory, Memory::offsetOfSize());
+
+    constexpr uint32_t shiftValue = 16;
+    static_assert(PageCount::pageSize == 1 << shiftValue, "This must hold for the code below to be correct.");
+    Value* numPages = m_currentBlock->appendNew<Value>(m_proc, ZShr, Origin(),
+        size, m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), shiftValue));
+
+    result = m_currentBlock->appendNew<Value>(m_proc, Trunc, Origin(), numPages);
+
     return { };
 }
 
@@ -755,6 +849,10 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
                 });
             });
         });
+
+    if (functionIndex < m_info.importFunctionCount())
+        emitReloadPinnedRegisters();
+
     return { };
 }
 
@@ -831,6 +929,8 @@ auto B3IRGenerator::addCallIndirect(const Signature* signature, SignatureIndex s
             });
         });
 
+    emitReloadPinnedRegisters();
+
     return { };
 }
 
@@ -871,7 +971,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn();
 }
 
-static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext, WasmInternalFunction& function, const Signature* signature, const MemoryInformation& memory)
+static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext, WasmInternalFunction& function, const Signature* signature, const ModuleInformation& info)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
@@ -899,18 +999,10 @@ static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext
     }
 
     // Move memory values to the approriate places, if needed.
-    Value* baseMemory = nullptr;
-    Vector<Value*> sizes;
-    if (!!memory) {
-        baseMemory = block->appendNew<MemoryValue>(proc, Load, Int64, Origin(),
-            block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topWasmMemoryPointer));
-        Value* size = block->appendNew<MemoryValue>(proc, Load, Int32, Origin(),
-            block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topWasmMemorySize));
-        sizes.reserveCapacity(memory.pinnedRegisters().sizeRegisters.size());
-        for (auto info : memory.pinnedRegisters().sizeRegisters) {
-            sizes.append(block->appendNew<Value>(proc, Sub, origin, size,
-                block->appendNew<Const32Value>(proc, origin, info.sizeOffset)));
-        }
+    {
+        Value* instance = block->appendNew<MemoryValue>(proc, Load, pointerType(), Origin(),
+            block->appendNew<ConstPtrValue>(proc, Origin(), &vm.topJSWebAssemblyInstance));
+        reloadPinnedRegisters(proc, block, info, instance);
     }
 
     // Get our arguments.
@@ -921,13 +1013,6 @@ static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext
 
     // Move the arguments into place.
     Value* result = wasmCallingConvention().setupCall(proc, block, origin, arguments, toB3Type(signature->returnType()), [&] (PatchpointValue* patchpoint) {
-        if (!!memory) {
-            ASSERT(sizes.size() == memory.pinnedRegisters().sizeRegisters.size());
-            patchpoint->append(ConstrainedValue(baseMemory, ValueRep::reg(memory.pinnedRegisters().baseMemoryPointer)));
-            for (unsigned i = 0; i < sizes.size(); ++i)
-                patchpoint->append(ConstrainedValue(sizes[i], ValueRep::reg(memory.pinnedRegisters().sizeRegisters[i].sizeRegister)));
-        }
-
         CompilationContext* context = &compilationContext;
         patchpoint->setGenerator([context] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -989,7 +1074,7 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
         result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
     }
 
-    createJSToWasmWrapper(vm, compilationContext, *result, signature, info.memory);
+    createJSToWasmWrapper(vm, compilationContext, *result, signature, info);
     return WTFMove(result);
 }
 

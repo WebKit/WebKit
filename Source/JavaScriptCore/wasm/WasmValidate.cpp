@@ -132,6 +132,8 @@ public:
     Result WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, const ExpressionList& expressionStack);
     Result WARN_UNUSED_RETURN endBlock(ControlEntry&, ExpressionList& expressionStack);
     Result WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&);
+    Result WARN_UNUSED_RETURN addGrowMemory(ExpressionType delta, ExpressionType& result);
+    Result WARN_UNUSED_RETURN addCurrentMemory(ExpressionType& result);
 
     Result WARN_UNUSED_RETURN addUnreachable() { return { }; }
 
@@ -290,6 +292,19 @@ auto Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& t
         WASM_VALIDATOR_FAIL_IF(defaultTarget.signature() != target->signature(), "br_table target type mismatch");
 
     return checkBranchTarget(defaultTarget, expressionStack);
+}
+
+auto Validate::addGrowMemory(ExpressionType delta, ExpressionType& result) -> Result
+{
+    WASM_VALIDATOR_FAIL_IF(delta != I32, "grow_memory with non-i32 delta");
+    result = I32;
+    return { };
+}
+
+auto Validate::addCurrentMemory(ExpressionType& result) -> Result
+{
+    result = I32;
+    return { };
 }
 
 auto Validate::endBlock(ControlEntry& entry, ExpressionList& stack) -> Result

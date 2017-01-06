@@ -39,6 +39,14 @@
 
 namespace JSC { namespace Wasm {
 
+ALWAYS_INLINE I32InitExpr makeI32InitExpr(uint8_t opcode, uint32_t bits)
+{
+    RELEASE_ASSERT(opcode == I32Const || opcode == GetGlobal);
+    if (opcode == I32Const)
+        return I32InitExpr::constValue(bits);
+    return I32InitExpr::globalImport(bits);
+}
+
 auto ModuleParser::parse() -> Result
 {
     m_result.module = std::make_unique<ModuleInformation>();
@@ -289,7 +297,7 @@ auto ModuleParser::parseTable() -> PartialResult
 
 auto ModuleParser::parseMemoryHelper(bool isImport) -> PartialResult
 {
-    WASM_PARSER_FAIL_IF(m_result.module->memory, "Memory section cannot exist if an Import has a memory");
+    WASM_PARSER_FAIL_IF(!!m_result.module->memory, "Memory section cannot exist if an Import has a memory");
 
     PageCount initialPageCount;
     PageCount maximumPageCount;
@@ -342,32 +350,12 @@ auto ModuleParser::parseGlobal() -> PartialResult
         uint8_t initOpcode;
 
         WASM_FAIL_IF_HELPER_FAILS(parseGlobalType(global));
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, global.initialBitsOrImportNumber));
-
-        global.initializationType = Global::FromExpression;
         Type typeForInitOpcode;
-        switch (initOpcode) {
-        case I32Const:
-            typeForInitOpcode = I32;
-            break;
-        case I64Const:
-            typeForInitOpcode = I64;
-            break;
-        case F32Const:
-            typeForInitOpcode = F32;
-            break;
-        case F64Const:
-            typeForInitOpcode = F64;
-            break;
-        case GetGlobal:
-            WASM_PARSER_FAIL_IF(global.initialBitsOrImportNumber >= m_result.module->firstInternalGlobal, globalIndex, "th Global uses get_global ", global.initialBitsOrImportNumber, " which exceeds the first internal global ", m_result.module->firstInternalGlobal);
-            typeForInitOpcode = m_result.module->globals[global.initialBitsOrImportNumber].type;
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, global.initialBitsOrImportNumber, typeForInitOpcode));
+        if (initOpcode == GetGlobal)
             global.initializationType = Global::FromGlobalImport;
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-
+        else
+            global.initializationType = Global::FromExpression;
         WASM_PARSER_FAIL_IF(typeForInitOpcode != global.type, "Global init_expr opcode of type ", typeForInitOpcode, " doesn't match global's type ", global.type);
 
         m_result.module->globals.uncheckedAppend(WTFMove(global));
@@ -454,7 +442,8 @@ auto ModuleParser::parseElement() -> PartialResult
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
         WASM_PARSER_FAIL_IF(tableIndex, "Element section can only have one Table for now");
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, offset));
+        Type initExprType;
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, offset, initExprType));
         WASM_PARSER_FAIL_IF(initOpcode != OpType::I32Const, "Element section doesn't support non-i32 init_expr opcode for now, got ", initOpcode);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(indexCount), "can't get ", elementNum, "th index count for Element section");
         WASM_PARSER_FAIL_IF(indexCount == std::numeric_limits<uint32_t>::max(), "Element section's ", elementNum, "th index count is too big ", indexCount);
@@ -512,7 +501,7 @@ auto ModuleParser::parseCode() -> PartialResult
     return { };
 }
 
-auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber) -> PartialResult
+auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber, Type& resultType) -> PartialResult
 {
     WASM_PARSER_FAIL_IF(!parseUInt8(opcode), "can't get init_expr's opcode");
 
@@ -521,6 +510,7 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber) 
         int32_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt32(constant), "can't get constant value for init_expr's i32.const");
         bitsOrImportNumber = static_cast<uint64_t>(constant);
+        resultType = I32;
         break;
     }
 
@@ -528,6 +518,7 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber) 
         int64_t constant;
         WASM_PARSER_FAIL_IF(!parseVarInt64(constant), "can't get constant value for init_expr's i64.const");
         bitsOrImportNumber = constant;
+        resultType = I64;
         break;
     }
 
@@ -535,6 +526,7 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber) 
         uint32_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt32(constant), "can't get constant value for init_expr's f32.const");
         bitsOrImportNumber = constant;
+        resultType = F32;
         break;
     }
 
@@ -542,6 +534,7 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber) 
         uint64_t constant;
         WASM_PARSER_FAIL_IF(!parseUInt64(constant), "can't get constant value for init_expr's f64.const");
         bitsOrImportNumber = constant;
+        resultType = F64;
         break;
     }
 
@@ -554,7 +547,7 @@ auto ModuleParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber) 
         WASM_PARSER_FAIL_IF(import.kindIndex >= m_result.module->firstInternalGlobal, "get_global import kind index ", import.kindIndex, " exceeds the first internal global ", m_result.module->firstInternalGlobal);
 
         ASSERT(m_result.module->globals[import.kindIndex].mutability == Global::Immutable);
-
+        resultType = m_result.module->globals[index].type;
         bitsOrImportNumber = index;
         break;
     }
@@ -589,18 +582,19 @@ auto ModuleParser::parseData() -> PartialResult
 
     for (uint32_t segmentNumber = 0; segmentNumber < segmentCount; ++segmentNumber) {
         uint32_t index;
-        uint64_t offset;
+        uint64_t initExprBits;
         uint8_t initOpcode;
         uint32_t dataByteLength;
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get ", segmentNumber, "th Data segment's index");
         WASM_PARSER_FAIL_IF(index, segmentNumber, "th Data segment has non-zero index ", index);
-        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, offset));
-        WASM_PARSER_FAIL_IF(initOpcode != OpType::I32Const, segmentNumber, "th Data segment has opcode ", initOpcode, " expected i32.const");
+        Type initExprType;
+        WASM_FAIL_IF_HELPER_FAILS(parseInitExpr(initOpcode, initExprBits, initExprType));
+        WASM_PARSER_FAIL_IF(initExprType != I32, segmentNumber, "th Data segment's init_expr must produce an i32");
         WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
         WASM_PARSER_FAIL_IF(dataByteLength == std::numeric_limits<uint32_t>::max(), segmentNumber, "th Data segment's data byte length is too big ", dataByteLength);
 
-        Segment* segment = Segment::create(offset, dataByteLength);
+        Segment* segment = Segment::create(makeI32InitExpr(initOpcode, initExprBits), dataByteLength);
         WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
         m_result.module->data.uncheckedAppend(Segment::adoptPtr(segment));
         for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {

@@ -42,11 +42,20 @@ public:
         : m_pageCount(pageCount)
     { }
 
-    size_t bytes() { return m_pageCount * pageSize; }
+    uint64_t bytes() const { return static_cast<uint64_t>(m_pageCount) * static_cast<uint64_t>(pageSize); }
+    uint32_t pageCount() const { return m_pageCount; }
 
     static bool isValid(uint32_t pageCount)
     {
         return pageCount <= maxPageCount;
+    }
+
+    static PageCount fromBytes(uint64_t bytes)
+    {
+        RELEASE_ASSERT(bytes % pageSize == 0);
+        uint32_t numPages = bytes / pageSize;
+        RELEASE_ASSERT(PageCount::isValid(numPages));
+        return PageCount(numPages);
     }
 
     static PageCount max()
@@ -62,9 +71,18 @@ public:
     bool operator<(const PageCount& other) const { return m_pageCount < other.m_pageCount; }
     bool operator>(const PageCount& other) const { return m_pageCount > other.m_pageCount; }
     bool operator>=(const PageCount& other) const { return m_pageCount >= other.m_pageCount; }
+    PageCount operator+(const PageCount& other) const
+    {
+        if (sumOverflows<uint32_t>(m_pageCount, other.m_pageCount))
+            return PageCount();
+        uint32_t newCount = m_pageCount + other.m_pageCount;
+        if (!PageCount::isValid(newCount))
+            return PageCount();
+        return PageCount(newCount);
+    }
 
-private:
     static constexpr uint32_t pageSize = 64 * KB;
+private:
     static constexpr uint32_t maxPageCount = static_cast<uint32_t>((1ull << 32) / pageSize);
 
     uint32_t m_pageCount;

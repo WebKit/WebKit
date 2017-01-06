@@ -138,16 +138,51 @@ struct FunctionLocationInBinary {
     size_t end;
 };
 
+class I32InitExpr {
+    enum Type : uint8_t {
+        Global,
+        Const
+    };
+
+    I32InitExpr(Type type, uint32_t bits)
+        : m_bits(bits)
+        , m_type(type)
+    { }
+
+public:
+    I32InitExpr() = delete;
+
+    static I32InitExpr globalImport(uint32_t globalImportNumber) { return I32InitExpr(Global, globalImportNumber); }
+    static I32InitExpr constValue(uint32_t constValue) { return I32InitExpr(Const, constValue); }
+
+    bool isConst() const { return m_type == Const; }
+    bool isGlobalImport() const { return m_type == Global; }
+    uint32_t constValue() const
+    {
+        RELEASE_ASSERT(isConst());
+        return m_bits;
+    }
+    uint32_t globalImportIndex() const
+    {
+        RELEASE_ASSERT(isGlobalImport());
+        return m_bits;
+    }
+
+private:
+    uint32_t m_bits;
+    Type m_type;
+};
+
 struct Segment {
-    uint32_t offset;
     uint32_t sizeInBytes;
+    I32InitExpr offset;
     // Bytes are allocated at the end.
     uint8_t& byte(uint32_t pos)
     {
         ASSERT(pos < sizeInBytes);
-        return *reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(this) + sizeof(offset) + sizeof(sizeInBytes) + pos);
+        return *reinterpret_cast<uint8_t*>(reinterpret_cast<char*>(this) + sizeof(Segment) + pos);
     }
-    static Segment* create(uint32_t, uint32_t);
+    static Segment* create(I32InitExpr, uint32_t);
     static void destroy(Segment*);
     typedef std::unique_ptr<Segment, decltype(&Segment::destroy)> Ptr;
     static Ptr adoptPtr(Segment*);
@@ -191,7 +226,9 @@ struct ModuleInformation {
     Vector<Import> imports;
     Vector<SignatureIndex> importFunctionSignatureIndices;
     Vector<SignatureIndex> internalFunctionSignatureIndices;
+
     MemoryInformation memory;
+
     Vector<Export> exports;
     std::optional<uint32_t> startFunctionIndexSpace;
     Vector<Segment::Ptr> data;
@@ -199,6 +236,9 @@ struct ModuleInformation {
     TableInformation tableInformation;
     Vector<Global> globals;
     unsigned firstInternalGlobal { 0 };
+
+    uint32_t importFunctionCount() const { return importFunctionSignatureIndices.size(); }
+    bool hasMemory() const { return !!memory; }
 
     ~ModuleInformation();
 };

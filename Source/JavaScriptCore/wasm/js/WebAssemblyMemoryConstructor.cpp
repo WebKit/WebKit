@@ -96,8 +96,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         }
     }
 
-    std::unique_ptr<Wasm::Memory> memory = std::make_unique<Wasm::Memory>(initialPageCount, maximumPageCount);
-    if (!memory->isValid())
+    bool failed;
+    std::unique_ptr<Wasm::Memory> memory = std::make_unique<Wasm::Memory>(initialPageCount, maximumPageCount, failed);
+    if (failed)
         return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
 
     return JSValue::encode(JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));

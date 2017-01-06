@@ -229,8 +229,9 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
         if (moduleInformation.memory && !hasMemoryImport) {
             RELEASE_ASSERT(!moduleInformation.memory.isImport());
             // We create a memory when it's a memory definition.
-            std::unique_ptr<Wasm::Memory> memory = std::make_unique<Wasm::Memory>(moduleInformation.memory.initial(), moduleInformation.memory.maximum());
-            if (!memory->isValid())
+            bool failed;
+            std::unique_ptr<Wasm::Memory> memory = std::make_unique<Wasm::Memory>(moduleInformation.memory.initial(), moduleInformation.memory.maximum(), failed);
+            if (failed)
                 return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
             instance->setMemory(vm,
                JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), WTFMove(memory)));

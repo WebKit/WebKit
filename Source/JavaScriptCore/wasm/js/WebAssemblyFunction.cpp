@@ -114,15 +114,6 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(nullptr, wasmFunction, firstArgument, argCount, remainingArgs);
 
-    if (JSWebAssemblyMemory* memory = wasmFunction->instance()->memory()) {
-        Wasm::Memory* wasmMemory = memory->memory();
-        vm.topWasmMemoryPointer = wasmMemory->memory();
-        vm.topWasmMemorySize = wasmMemory->size();
-    } else {
-        vm.topWasmMemoryPointer = nullptr;
-        vm.topWasmMemorySize = 0;
-    }
-
     JSWebAssemblyInstance* prevJSWebAssemblyInstance = vm.topJSWebAssemblyInstance;
     vm.topJSWebAssemblyInstance = wasmFunction->instance();
     ASSERT(wasmFunction->instance());
