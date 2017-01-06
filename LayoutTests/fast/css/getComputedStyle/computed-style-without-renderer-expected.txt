@@ -36,6 +36,8 @@ caption-side: top
 clear: none
 clip: auto
 color: rgb(0, 0, 0)
+counter-increment: none
+counter-reset: none
 content: 
 cursor: auto
 direction: ltr
@@ -47,6 +49,7 @@ font-style: normal
 font-synthesis: style weight small-caps
 font-variant: normal
 font-weight: normal
+hanging-punctuation: none
 height: 100px
 image-rendering: auto
 left: auto
@@ -63,11 +66,15 @@ max-height: none
 max-width: none
 min-height: 0px
 min-width: 0px
+object-fit: fill
+object-position: 50% 50%
 opacity: 1
 orphans: auto
 outline-color: rgb(0, 0, 0)
+outline-offset: 0px
 outline-style: none
 outline-width: 0px
+overflow-wrap: normal
 overflow-x: visible
 overflow-y: visible
 padding-bottom: 0px
@@ -95,12 +102,17 @@ top: auto
 transform: none
 transform-origin: 50% 50%
 transform-style: flat
+transition-delay: 0s
+transition-duration: 0s
+transition-property: all
+transition-timing-function: ease
 unicode-bidi: normal
 vertical-align: baseline
 visibility: visible
 white-space: normal
 widows: auto
 width: 50%
+will-change: auto
 word-break: normal
 word-spacing: 0px
 word-wrap: normal
@@ -143,7 +155,11 @@ align-content: normal
 align-items: normal
 align-self: normal
 filter: none
+flex-basis: auto
 flex-direction: row
+flex-flow: row nowrap
+flex-grow: 0
+flex-shrink: 1
 flex-wrap: nowrap
 justify-content: normal
 justify-self: normal
@@ -202,6 +218,7 @@ perspective: none
 perspective-origin: 50% 50%
 -webkit-print-color-adjust: economy
 -webkit-rtl-ordering: logical
+shape-outside: none
 -webkit-text-combine: none
 -webkit-text-decorations-in-effect: none
 -webkit-text-emphasis-color: rgb(0, 0, 0)
@@ -216,9 +233,15 @@ perspective-origin: 50% 50%
 -webkit-user-drag: auto
 -webkit-user-modify: read-only
 -webkit-user-select: text
+shape-image-threshold: 0
+shape-margin: 0px
+shape-outside: none
+shape-rendering: auto
+buffered-rendering: auto
 clip-path: none
 clip-rule: nonzero
 mask: none
+mask-type: luminance
 filter: none
 flood-color: rgb(0, 0, 0)
 flood-opacity: 1
@@ -234,7 +257,7 @@ fill-rule: nonzero
 marker-end: none
 marker-mid: none
 marker-start: none
-shape-rendering: auto
+paint-order: normal
 stroke: none
 stroke-dasharray: none
 stroke-dashoffset: 0px

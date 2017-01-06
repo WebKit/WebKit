@@ -3,11 +3,11 @@
 <script src="../../../resources/js-test-pre.js"></script>
 </head>
 <body>
-    <div id="console"></div>
-    <script>
-        var style = window.getComputedStyle(document.body, null);
-        shouldBe("style.counterIncrement", "'';");
-        shouldBe("style.counterReset", "'';");
-    </script>
+<div id="console"></div>
+<script>
+var style = window.getComputedStyle(document.body, null);
+shouldBeEqualToString("style.counterIncrement", "none");
+shouldBeEqualToString("style.counterReset", "none");
+</script>
 </body>
 </html>

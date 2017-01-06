@@ -1,3 +1,24 @@
+2017-01-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add some missing longhand properties to CSSComputedStyleDeclaration and fix default values
+        https://bugs.webkit.org/show_bug.cgi?id=166674
+        <rdar://problem/6026159>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/getComputedStyle/computed-style-font-family.html:
+        Skip font-variation-settings which is only available if the feature flag is enabled.
+
+        * fast/css/getComputedStyle/counterIncrement-without-counter-expected.txt:
+        * fast/css/getComputedStyle/counterIncrement-without-counter.html:
+        Fix the default value to be "none" instead of the empty string.
+
+        * svg/css/getComputedStyle-basic-expected.txt:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        Add some always expected to be available longhand properties to check.
+
 2017-01-06  Chris Dumez  <cdumez@apple.com>
 
         [Form Validation] "character" in maxlength validation message should be singular when maxlength is 1

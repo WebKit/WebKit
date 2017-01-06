@@ -7,7 +7,7 @@ function test()
     var text = "";
     for (var i = 0; i != style.length; ++i) {
         var name = style.item(i);
-        if (!name.match(/^font/))
+        if (!name.match(/^font/) || name === "font-variation-settings")
             continue;
         var value = style.getPropertyValue(name);
         text += name + ": " + value + ";\n";

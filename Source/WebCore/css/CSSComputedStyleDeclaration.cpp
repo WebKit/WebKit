@@ -147,6 +147,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyClear,
     CSSPropertyClip,
     CSSPropertyColor,
+    CSSPropertyCounterIncrement,
+    CSSPropertyCounterReset,
     CSSPropertyContent,
     CSSPropertyCursor,
     CSSPropertyDirection,
@@ -159,6 +161,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFontSynthesis,
     CSSPropertyFontVariant,
     CSSPropertyFontWeight,
+    CSSPropertyHangingPunctuation,
     CSSPropertyHeight,
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     CSSPropertyImageOrientation,
@@ -181,6 +184,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyMaxWidth,
     CSSPropertyMinHeight,
     CSSPropertyMinWidth,
+    CSSPropertyObjectFit,
+    CSSPropertyObjectPosition,
     CSSPropertyOpacity,
     CSSPropertyOrphans,
     CSSPropertyOutlineColor,
@@ -234,6 +239,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWhiteSpace,
     CSSPropertyWidows,
     CSSPropertyWidth,
+    CSSPropertyWillChange,
     CSSPropertyWordBreak,
     CSSPropertyWordSpacing,
     CSSPropertyWordWrap,
@@ -308,9 +314,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyAlignSelf,
     CSSPropertyFilter,
     CSSPropertyFlexBasis,
+    CSSPropertyFlexDirection,
+    CSSPropertyFlexFlow,
     CSSPropertyFlexGrow,
     CSSPropertyFlexShrink,
-    CSSPropertyFlexDirection,
     CSSPropertyFlexWrap,
     CSSPropertyJustifyContent,
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -328,6 +335,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyFontVariantNumeric,
     CSSPropertyFontVariantAlternates,
     CSSPropertyFontVariantEastAsian,
+#if ENABLE(VARIATION_FONTS)
+    CSSPropertyFontVariationSettings,
+#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyGridAutoColumns,
     CSSPropertyGridAutoFlow,
@@ -417,14 +427,17 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRegionBreakInside,
     CSSPropertyWebkitRegionFragment,
 #endif
-    CSSPropertyShapeMargin,
     CSSPropertyShapeImageThreshold,
+    CSSPropertyShapeMargin,
+    CSSPropertyShapeOutside,
+    CSSPropertyShapeRendering,
     CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
     CSSPropertyClipRule,
     CSSPropertyCx,
     CSSPropertyCy,
     CSSPropertyMask,
+    CSSPropertyMaskType,
     CSSPropertyFilter,
     CSSPropertyFloodColor,
     CSSPropertyFloodOpacity,
@@ -440,12 +453,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyMarkerEnd,
     CSSPropertyMarkerMid,
     CSSPropertyMarkerStart,
-    CSSPropertyMaskType,
     CSSPropertyPaintOrder,
     CSSPropertyR,
     CSSPropertyRx,
     CSSPropertyRy,
-    CSSPropertyShapeRendering,
     CSSPropertyStroke,
     CSSPropertyStrokeDasharray,
     CSSPropertyStrokeDashoffset,
@@ -1847,11 +1858,11 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle* style)
     return list;
 }
 
-static RefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPropertyID propertyID)
+static Ref<CSSValue> counterToCSSValue(const RenderStyle* style, CSSPropertyID propertyID)
 {
     const CounterDirectiveMap* map = style->counterDirectives();
     if (!map)
-        return nullptr;
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
