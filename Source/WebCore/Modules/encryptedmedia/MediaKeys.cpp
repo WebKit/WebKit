@@ -31,12 +31,21 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDM.h"
+#include "CDMInstance.h"
 #include "MediaKeySession.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-MediaKeys::MediaKeys() = default;
+MediaKeys::MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, std::unique_ptr<CDMInstance>&& instance)
+    : m_useDistinctiveIdentifier(useDistinctiveIdentifier)
+    , m_persistentStateAllowed(persistentStateAllowed)
+    , m_supportedSessionTypes(supportedSessionTypes)
+    , m_implementation(WTFMove(implementation))
+    , m_instance(WTFMove(instance))
+{
+}
 
 MediaKeys::~MediaKeys() = default;
 

@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+class CDM;
+class CDMInstance;
 class BufferSource;
 class MediaKeySession;
 
@@ -45,19 +47,25 @@ class MediaKeys : public RefCounted<MediaKeys> {
 public:
     using KeySessionType = MediaKeySessionType;
 
-    static Ref<MediaKeys> create()
+    static Ref<MediaKeys> create(bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, std::unique_ptr<CDMInstance>&& instance)
     {
-        return adoptRef(*new MediaKeys);
+        return adoptRef(*new MediaKeys(useDistinctiveIdentifier, persistentStateAllowed, supportedSessionTypes, WTFMove(implementation), WTFMove(instance)));
     }
 
-    virtual ~MediaKeys();
+    ~MediaKeys();
 
     ExceptionOr<Ref<MediaKeySession>> createSession(MediaKeySessionType);
 
     void setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&);
 
 protected:
-    MediaKeys();
+    MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>&, Ref<CDM>&&, std::unique_ptr<CDMInstance>&&);
+
+    bool m_useDistinctiveIdentifier;
+    bool m_persistentStateAllowed;
+    Vector<MediaKeySessionType> m_supportedSessionTypes;
+    Ref<CDM> m_implementation;
+    std::unique_ptr<CDMInstance> m_instance;
 };
 
 } // namespace WebCore

@@ -63,6 +63,7 @@ std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(CDM&)
 
 MockCDM::MockCDM(WeakPtr<MockCDMFactory> factory)
     : m_factory(WTFMove(factory))
+    , m_weakPtrFactory(this)
 {
 }
 
@@ -117,6 +118,59 @@ bool MockCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKe
 {
     // NOTE: Implement;
     return true;
+}
+
+std::unique_ptr<CDMInstance> MockCDM::createInstance()
+{
+    if (m_factory && !m_factory->canCreateInstances())
+        return nullptr;
+    return std::unique_ptr<CDMInstance>(new MockCDMInstance(m_weakPtrFactory.createWeakPtr()));
+}
+
+void MockCDM::loadAndInitialize()
+{
+    // No-op.
+}
+
+MockCDMInstance::MockCDMInstance(WeakPtr<MockCDM> cdm)
+    : m_cdm(cdm)
+{
+}
+
+CDMInstance::SuccessValue MockCDMInstance::initializeWithConfiguration(const MediaKeySystemConfiguration& configuration)
+{
+    if (!m_cdm || !m_cdm->supportsConfiguration(configuration))
+        return Failed;
+
+    return Succeeded;
+}
+
+CDMInstance::SuccessValue MockCDMInstance::setDistinctiveIdentifiersAllowed(bool distinctiveIdentifiersAllowed)
+{
+    if (m_distinctiveIdentifiersAllowed == distinctiveIdentifiersAllowed)
+        return Succeeded;
+
+    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+
+    if (!factory || (!distinctiveIdentifiersAllowed && factory->distinctiveIdentifiersRequirement() == MediaKeysRequirement::Required))
+        return Failed;
+
+    m_distinctiveIdentifiersAllowed = distinctiveIdentifiersAllowed;
+    return Succeeded;
+}
+
+CDMInstance::SuccessValue MockCDMInstance::setPersistentStateAllowed(bool persistentStateAllowed)
+{
+    if (m_persistentStateAllowed == persistentStateAllowed)
+        return Succeeded;
+
+    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+
+    if (!factory || (!persistentStateAllowed && factory->persistentStateRequirement() == MediaKeysRequirement::Required))
+        return Failed;
+
+    m_persistentStateAllowed = persistentStateAllowed;
+    return Succeeded;
 }
 
 }

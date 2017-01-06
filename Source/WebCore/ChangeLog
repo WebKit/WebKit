@@ -1,3 +1,48 @@
+2017-01-06  Jer Noble  <jer.noble@apple.com>
+
+        Add support for MediaKeySystemAccess.createMediaKeys()
+        https://bugs.webkit.org/show_bug.cgi?id=166749
+
+        Reviewed by Eric Carlson.
+
+        Test: media/encrypted-media/mock-MediaKeySystemAccess.html
+
+        Implement MediaKeySystemAccess::createMediaKeys(). This requires some
+        additions to CDM, CDMPrivate, and a new interface CDMInstance to support
+        eventual platform adoption and to implement mock support for testing.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::loadAndInitialize):
+        (WebCore::CDM::createInstance):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMInstance.h:
+        (WebCore::CDMInstance::~CDMInstance):
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        (WebCore::MediaKeySystemAccess::createMediaKeys):
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::MediaKeys):
+        * Modules/encryptedmedia/MediaKeys.h:
+        (WebCore::MediaKeys::create):
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/encryptedmedia/NavigatorEME.cpp:
+        (WebCore::tryNextSupportedConfiguration):
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDM::MockCDM):
+        (WebCore::MockCDM::createInstance):
+        (WebCore::MockCDM::loadAndInitialize):
+        (WebCore::MockCDMInstance::MockCDMInstance):
+        (WebCore::MockCDMInstance::initializeWithConfiguration):
+        (WebCore::MockCDMInstance::setDistinctiveIdentifiersAllowed):
+        (WebCore::MockCDMInstance::setPersistentStateAllowed):
+        * testing/MockCDMFactory.h:
+        (WebCore::MockCDMFactory::canCreateInstances):
+        (WebCore::MockCDMFactory::setCanCreateInstances):
+        (WebCore::MockCDM::factory):
+        * testing/MockCDMFactory.idl:
+
 2017-01-06  Andreas Kling  <akling@apple.com>
 
         Give RenderObject a Page& getter.

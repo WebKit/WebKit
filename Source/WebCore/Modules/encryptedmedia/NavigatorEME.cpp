@@ -90,7 +90,7 @@ static void tryNextSupportedConfiguration(RefPtr<CDM>&& implementation, Vector<M
                 // 6.3.3.1.3. Let the cdm implementation value be implementation.
                 auto access = MediaKeySystemAccess::create(implementation->keySystem(), WTFMove(supportedConfiguration.value()), implementation.releaseNonNull());
                 // 6.3.3.2. Resolve promise with access and abort the parallel steps of this algorithm.
-                promise->resolve<IDLInterface<MediaKeySystemAccess>>(access.get());
+                promise->resolveWithNewlyCreated<IDLInterface<MediaKeySystemAccess>>(WTFMove(access));
                 return;
             }
 

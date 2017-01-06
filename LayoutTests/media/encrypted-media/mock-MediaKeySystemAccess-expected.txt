@@ -1,0 +1,41 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["mock"])
+
+RUN(capabilities.initDataTypes = ["mock"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+RUN(mock.canCreateInstances = false)
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise rejected correctly OK
+
+RUN(mock.canCreateInstances = true)
+RUN(capabilities.distinctiveIdentifier = "not-allowed")
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+RUN(mock.distinctiveIdentifiersRequirement = "required")
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise rejected correctly OK
+
+RUN(mock.distinctiveIdentifiersRequirement = "optional")
+RUN(capabilities.persistentState = "not-allowed")
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+RUN(mock.persistentStateRequirement = "required")
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise rejected correctly OK
+END OF TEST
+

@@ -28,6 +28,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "CDM.h"
+#include "CDMInstance.h"
 #include "CDMPrivate.h"
 #include "MediaKeysRequirement.h"
 #include <wtf/RefCounted.h>
@@ -53,6 +54,9 @@ public:
     MediaKeysRequirement persistentStateRequirement() const { return m_persistentStateRequirement; }
     void setPersistentStateRequirement(MediaKeysRequirement requirement) { m_persistentStateRequirement = requirement; }
 
+    bool canCreateInstances() const { return m_canCreateInstances; }
+    void setCanCreateInstances(bool flag) { m_canCreateInstances = flag; }
+
     void unregister();
 
 private:
@@ -65,6 +69,7 @@ private:
     Vector<String> m_supportedDataTypes;
     Vector<String> m_supportedRobustness;
     bool m_registered { true };
+    bool m_canCreateInstances { true };
     WeakPtrFactory<MockCDMFactory> m_weakPtrFactory;
 };
 
@@ -72,7 +77,11 @@ class MockCDM : public CDMPrivate {
 public:
     MockCDM(WeakPtr<MockCDMFactory>);
 
+    MockCDMFactory* factory() { return m_factory.get(); }
+
 private:
+    friend class MockCDMInstance;
+
     bool supportsInitDataType(const String&) final;
     bool supportsConfiguration(const MediaKeySystemConfiguration&) final;
     bool supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) final;
@@ -81,8 +90,25 @@ private:
     MediaKeysRequirement distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) final;
     MediaKeysRequirement persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) final;
+    std::unique_ptr<CDMInstance> createInstance() final;
+    void loadAndInitialize() final;
 
     WeakPtr<MockCDMFactory> m_factory;
+    WeakPtrFactory<MockCDM> m_weakPtrFactory;
+};
+
+class MockCDMInstance : public CDMInstance {
+public:
+    MockCDMInstance(WeakPtr<MockCDM>);
+
+private:
+    SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) final;
+    SuccessValue setDistinctiveIdentifiersAllowed(bool) final;
+    SuccessValue setPersistentStateAllowed(bool) final;
+
+    WeakPtr<MockCDM> m_cdm;
+    bool m_distinctiveIdentifiersAllowed { true };
+    bool m_persistentStateAllowed { true };
 };
 
 }

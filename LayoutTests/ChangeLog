@@ -1,3 +1,14 @@
+2017-01-06  Jer Noble  <jer.noble@apple.com>
+
+        Add support for MediaKeySystemAccess.createMediaKeys()
+        https://bugs.webkit.org/show_bug.cgi?id=166749
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/mock-MediaKeySystemAccess-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeySystemAccess.html: Added.
+        * platform/mac/TestExpectations:
+
 2017-01-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add pass expectation for fast/text/emoji-num-glyphs.html on Sierra.

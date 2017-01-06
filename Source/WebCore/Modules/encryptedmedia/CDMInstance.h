@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +27,24 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMInstance.h"
-#include "MediaKeySessionType.h"
-#include "MediaKeysRequirement.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 struct MediaKeySystemConfiguration;
-struct MediaKeysRestrictions;
 
-class CDMPrivate {
+class CDMInstance {
 public:
-    virtual ~CDMPrivate() { }
+    virtual ~CDMInstance() { }
 
-    virtual bool supportsInitDataType(const String&) = 0;
-    virtual bool supportsConfiguration(const MediaKeySystemConfiguration&) = 0;
-    virtual bool supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) = 0;
-    virtual bool supportsSessionTypeWithConfiguration(MediaKeySessionType&, const MediaKeySystemConfiguration&) = 0;
-    virtual bool supportsRobustness(const String&) = 0;
-    virtual MediaKeysRequirement distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) = 0;
-    virtual MediaKeysRequirement persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) = 0;
-    virtual bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) = 0;
-    virtual std::unique_ptr<CDMInstance> createInstance() = 0;
-    virtual void loadAndInitialize() = 0;
+    enum SuccessValue {
+        Failed,
+        Succeeded,
+    };
+
+    virtual SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) = 0;
+    virtual SuccessValue setDistinctiveIdentifiersAllowed(bool) = 0;
+    virtual SuccessValue setPersistentStateAllowed(bool) = 0;
 };
 
 }

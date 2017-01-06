@@ -611,6 +611,19 @@ void CDM::getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguratio
     });
 }
 
+void CDM::loadAndInitialize()
+{
+    if (m_private)
+        m_private->loadAndInitialize();
+}
+
+std::unique_ptr<CDMInstance> CDM::createInstance()
+{
+    if (!m_private)
+        return nullptr;
+    return m_private->createInstance();
+}
+
 }
 
 #endif

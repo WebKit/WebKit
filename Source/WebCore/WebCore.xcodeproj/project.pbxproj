@@ -13738,6 +13738,7 @@
 		CD8B5A48180E138B008B8E65 /* TextTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackMediaSource.h; sourceTree = "<group>"; };
 		CD8B5A4A180E17A3008B8E65 /* AudioTrackMediaSource.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioTrackMediaSource.idl; sourceTree = "<group>"; };
 		CD8B5A4B180E17C0008B8E65 /* AudioTrackMediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackMediaSource.h; sourceTree = "<group>"; };
+		CD9D05421E1EFA12003B4C4F /* CDMInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMInstance.h; sourceTree = "<group>"; };
 		CD9D82731C7AE535006FF066 /* TextureCacheCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextureCacheCV.mm; path = ../cv/TextureCacheCV.mm; sourceTree = "<group>"; };
 		CD9D82741C7AE535006FF066 /* TextureCacheCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureCacheCV.h; path = ../cv/TextureCacheCV.h; sourceTree = "<group>"; };
 		CD9D82771C7B8EE1006FF066 /* VideoTextureCopierCV.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoTextureCopierCV.cpp; path = ../cv/VideoTextureCopierCV.cpp; sourceTree = "<group>"; };
@@ -22754,6 +22755,7 @@
 				2D0621461DA639EC00A7FB26 /* legacy */,
 				CDF4B7131E00B7E500E235A2 /* CDM.cpp */,
 				CDF4B7141E00B7E500E235A2 /* CDM.h */,
+				CD9D05421E1EFA12003B4C4F /* CDMInstance.h */,
 				CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */,
 				2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */,
 				2D9BF7301DBFDC0F007A7D99 /* MediaKeyMessageEvent.h */,

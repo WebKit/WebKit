@@ -32,6 +32,7 @@
     attribute sequence<DOMString> supportedRobustness;
     attribute MediaKeysRequirement distinctiveIdentifiersRequirement;
     attribute MediaKeysRequirement persistentStateRequirement;
+    attribute boolean canCreateInstances;
 
     void unregister();
 };

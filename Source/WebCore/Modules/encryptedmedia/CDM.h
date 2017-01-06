@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class CDM;
+class CDMInstance;
 class CDMPrivate;
 class Document;
 class ScriptExecutionContext;
@@ -67,6 +68,9 @@ public:
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
 
     const String& keySystem() const { return m_keySystem; }
+
+    void loadAndInitialize();
+    std::unique_ptr<CDMInstance> createInstance();
 
 private:
     CDM(Document&, const String& keySystem);
