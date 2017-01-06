@@ -1,3 +1,15 @@
+2017-01-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Merge r210377.
+
+    2017-01-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Rebaseline fast/canvas/webgl/context-creation-attributes.html after r210372.
+
+            Unreviewed test gardening.
+
+            * fast/canvas/webgl/context-creation-attributes-expected.txt:
+
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210369. rdar://problem/29100419
