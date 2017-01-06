@@ -385,8 +385,8 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
         CFNumberRef defaultValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisDefaultValueKey));
         CFNumberRef minimumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMinimumValueKey));
         CFNumberRef maximumValue = static_cast<CFNumberRef>(CFDictionaryGetValue(axis, kCTFontVariationAxisMaximumValueKey));
-        int64_t rawAxisIdentifier = 0;
-        Boolean success = CFNumberGetValue(axisIdentifier, kCFNumberSInt64Type, &rawAxisIdentifier);
+        uint32_t rawAxisIdentifier = 0;
+        Boolean success = CFNumberGetValue(axisIdentifier, kCFNumberSInt32Type, &rawAxisIdentifier);
         ASSERT_UNUSED(success, success);
         float rawDefaultValue = 0;
         float rawMinimumValue = 0;
@@ -411,10 +411,6 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
         auto b2 = (rawAxisIdentifier & 0xFF0000) >> 16;
         auto b3 = (rawAxisIdentifier & 0xFF00) >> 8;
         auto b4 = rawAxisIdentifier & 0xFF;
-        ASSERT(b1 >= 0 && b1 <= std::numeric_limits<char>::max());
-        ASSERT(b2 >= 0 && b2 <= std::numeric_limits<char>::max());
-        ASSERT(b3 >= 0 && b3 <= std::numeric_limits<char>::max());
-        ASSERT(b4 >= 0 && b4 <= std::numeric_limits<char>::max());
         FontTag resultKey = {{ static_cast<char>(b1), static_cast<char>(b2), static_cast<char>(b3), static_cast<char>(b4) }};
         VariationDefaults resultValues = { rawDefaultValue, rawMinimumValue, rawMaximumValue };
         result.set(resultKey, resultValues);

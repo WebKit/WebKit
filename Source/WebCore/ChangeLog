@@ -1,3 +1,21 @@
+2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CoreText variation axis identifiers don't work with 64-bit numbers
+        https://bugs.webkit.org/show_bug.cgi?id=166745
+        <rdar://problem/29856541>
+        <rdar://problem/29848883>
+
+        Reviewed by Tim Horton.
+
+        There is a bug where some CFNumbers are getting garbage results when
+        being placed into a 64-bit field. Luckily, we don't need the full
+        64-bits; 32-bits is sufficient.
+
+        Test: fast/text/international/system-language/hindi-system-font-punctuation.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::defaultVariationValues):
+
 2017-01-05  Zalan Bujtas  <zalan@apple.com>
 
         Start hittesting a clean tree in RenderEmbeddedObject::isReplacementObscured
