@@ -134,7 +134,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
 
         if (verbose) {
             dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), ", ", makeString(static_cast<OpType>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
-            m_context.dump(m_controlStack, m_expressionStack);
+            m_context.dump(m_controlStack, &m_expressionStack);
         }
 
         if (m_unreachableBlocks)
@@ -389,7 +389,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     }
 
     case Else: {
-        WASM_PARSER_FAIL_IF(m_controlStack.isEmpty(), "can't use else block at the top-level of a function");
+        WASM_PARSER_FAIL_IF(m_controlStack.size() == 1, "can't use else block at the top-level of a function");
         WASM_TRY_ADD_TO_CONTEXT(addElse(m_controlStack.last().controlData, m_expressionStack));
         m_expressionStack.shrink(0);
         return { };

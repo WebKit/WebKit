@@ -146,13 +146,12 @@ public:
     {
     }
 
-    void dump(const Vector<ControlEntry>&, const ExpressionList&);
+    void dump(const Vector<ControlEntry>&, const ExpressionList*);
 
 private:
-    Result unify(Type, Type);
-    Result unify(const ExpressionList&, const ControlData&);
+    Result WARN_UNUSED_RETURN unify(const ExpressionList&, const ControlData&);
 
-    Result checkBranchTarget(ControlData& target, const ExpressionList& expressionStack);
+    Result WARN_UNUSED_RETURN checkBranchTarget(ControlData& target, const ExpressionList& expressionStack);
 
     Vector<Type> m_locals;
     const ModuleInformation& m_module;
@@ -295,16 +294,8 @@ auto Validate::addSwitch(ExpressionType condition, const Vector<ControlData*>& t
 
 auto Validate::endBlock(ControlEntry& entry, ExpressionList& stack) -> Result
 {
-    ControlData& block = entry.controlData;
-    if (block.signature() == Void)
-        return { };
-
-    WASM_VALIDATOR_FAIL_IF(block.type() == BlockType::If, "If-block had a non-void result type: ", block.signature(), " but had no else-block");
-    WASM_VALIDATOR_FAIL_IF(stack.isEmpty(), "typed block falls through on empty stack");
-    WASM_VALIDATOR_FAIL_IF(block.signature() != stack.last(), "block fallthrough doesn't match its declared type");
-
-    entry.enclosedExpressionStack.append(block.signature());
-    return { };
+    WASM_FAIL_IF_HELPER_FAILS(unify(stack, entry.controlData));
+    return addEndToUnreachable(entry);
 }
 
 auto Validate::addEndToUnreachable(ControlEntry& entry) -> Result
@@ -346,20 +337,33 @@ auto Validate::addCallIndirect(const Signature* signature, SignatureIndex signat
 
 auto Validate::unify(const ExpressionList& values, const ControlType& block) -> Result
 {
-    ASSERT(values.size() <= 1);
-    if (block.signature() == Void)
+    if (block.signature() == Void) {
+        WASM_VALIDATOR_FAIL_IF(!values.isEmpty(), "void block should end with an empty stack");
         return { };
+    }
 
-    WASM_VALIDATOR_FAIL_IF(values.isEmpty(), "non-void block ends with an empty stack");
+    WASM_VALIDATOR_FAIL_IF(values.size() != 1, "block with type: ", block.signature(), " ends with a stack containing more than one value");
     WASM_VALIDATOR_FAIL_IF(values[0] != block.signature(), "control flow returns with unexpected type");
-
     return { };
 }
 
-void Validate::dump(const Vector<ControlEntry>&, const ExpressionList&)
+static void dumpExpressionStack(const CommaPrinter& comma, const Validate::ExpressionList& expressionStack)
 {
-    // If you need this then you should fix the validator's error messages instead...
-    // Think of this as penance for the sin of bad error messages.
+    dataLog(comma, " ExpressionStack:");
+    for (const auto& expression : expressionStack)
+        dataLog(comma, makeString(expression));
+}
+
+void Validate::dump(const Vector<ControlEntry>& controlStack, const ExpressionList* expressionStack)
+{
+    for (size_t i = controlStack.size(); i--;) {
+        dataLog("  ", controlStack[i].controlData);
+        CommaPrinter comma(", ", "");
+        dumpExpressionStack(comma, *expressionStack);
+        expressionStack = &controlStack[i].enclosedExpressionStack;
+        dataLogLn();
+    }
+    dataLogLn();
 }
 
 Expected<void, String> validateFunction(VM* vm, const uint8_t* source, size_t length, const Signature* signature, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& module)
