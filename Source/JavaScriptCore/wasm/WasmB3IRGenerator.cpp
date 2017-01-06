@@ -257,12 +257,6 @@ B3IRGenerator::B3IRGenerator(VM& vm, const ModuleInformation& info, Procedure& p
             ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
-
-        B3::PatchpointValue* foo = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, Origin());
-        foo->setGenerator(
-            [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                AllowMacroScratchRegisterUsage allowScratch(jit);
-            });
     }
 
     wasmCallingConvention().setupFrameInPrologue(&compilation->wasmCalleeMoveLocation, m_proc, Origin(), m_currentBlock);
@@ -277,7 +271,7 @@ void B3IRGenerator::emitExceptionCheck(CCallHelpers& jit, ExceptionType type)
     auto jumpToExceptionStub = jit.jump();
 
     VM* vm = &m_vm;
-    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+    jit.addLinkTask([vm, jumpToExceptionStub] (LinkBuffer& linkBuffer) {
         linkBuffer.link(jumpToExceptionStub, CodeLocationLabel(vm->getCTIStub(throwExceptionFromWasmThunkGenerator).code()));
     });
 }
@@ -691,13 +685,14 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const Signature* signature, 
             patchpoint->effects.writesPinned = true;
             patchpoint->effects.readsPinned = true;
 
-            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
+            patchpoint->setGenerator([unlinkedWasmToWasmCalls, functionIndex] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 CCallHelpers::Call call = jit.call();
 
-                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                    m_unlinkedWasmToWasmCalls.append({ linkBuffer.locationOf(call), functionIndex });
+                jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndex] (LinkBuffer& linkBuffer) {
+                    unlinkedWasmToWasmCalls->append({ linkBuffer.locationOf(call), functionIndex });
                 });
             });
         });
@@ -819,7 +814,7 @@ void B3IRGenerator::dump(const Vector<ControlEntry>& controlStack, const Express
     dataLogLn("\n");
 }
 
-static std::unique_ptr<B3::Compilation> createJSToWasmWrapper(VM& vm, WasmInternalFunction& function, const Signature* signature, MacroAssemblerCodePtr mainFunction, const MemoryInformation& memory)
+static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext, WasmInternalFunction& function, const Signature* signature, const MemoryInformation& memory)
 {
     Procedure proc;
     BasicBlock* block = proc.addBlock();
@@ -876,13 +871,12 @@ static std::unique_ptr<B3::Compilation> createJSToWasmWrapper(VM& vm, WasmIntern
                 patchpoint->append(ConstrainedValue(sizes[i], ValueRep::reg(memory.pinnedRegisters().sizeRegisters[i].sizeRegister)));
         }
 
-        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        CompilationContext* context = &compilationContext;
+        patchpoint->setGenerator([context] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
             CCallHelpers::Call call = jit.call();
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(call, FunctionPtr(mainFunction.executableAddress()));
-            });
+            context->jsEntrypointToWasmEntrypointCall = call;
         });
     });
 
@@ -904,14 +898,18 @@ static std::unique_ptr<B3::Compilation> createJSToWasmWrapper(VM& vm, WasmIntern
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    auto jsEntrypoint = std::make_unique<Compilation>(B3::compile(vm, proc));
+    B3::prepareForGeneration(proc);
+    B3::generate(proc, *compilationContext.jsEntrypointJIT);
+    compilationContext.jsEntrypointByproducts = proc.releaseByproducts();
     function.jsToWasmEntrypoint.calleeSaveRegisters = proc.calleeSaveRegisters();
-    return jsEntrypoint;
 }
 
-Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
+Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, CompilationContext& compilationContext, const uint8_t* functionStart, size_t functionLength, const Signature* signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ImmutableFunctionIndexSpace& functionIndexSpace, const ModuleInformation& info, unsigned optLevel)
 {
     auto result = std::make_unique<WasmInternalFunction>();
+
+    compilationContext.jsEntrypointJIT = std::make_unique<CCallHelpers>(&vm);
+    compilationContext.wasmEntrypointJIT = std::make_unique<CCallHelpers>(&vm);
 
     Procedure procedure;
     B3IRGenerator context(vm, info, procedure, result.get(), unlinkedWasmToWasmCalls, functionIndexSpace);
@@ -927,10 +925,14 @@ Expected<std::unique_ptr<WasmInternalFunction>, String> parseAndCompile(VM& vm, 
     if (verbose)
         dataLog("Post SSA: ", procedure);
 
-    result->wasmEntrypoint.compilation = std::make_unique<B3::Compilation>(B3::compile(vm, procedure, optLevel));
-    result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
+    {
+        B3::prepareForGeneration(procedure, optLevel);
+        B3::generate(procedure, *compilationContext.wasmEntrypointJIT);
+        compilationContext.wasmEntrypointByproducts = procedure.releaseByproducts();
+        result->wasmEntrypoint.calleeSaveRegisters = procedure.calleeSaveRegisters();
+    }
 
-    result->jsToWasmEntrypoint.compilation = createJSToWasmWrapper(vm, *result, signature, result->wasmEntrypoint.compilation->code(), info.memory);
+    createJSToWasmWrapper(vm, compilationContext, *result, signature, info.memory);
     return WTFMove(result);
 }
 

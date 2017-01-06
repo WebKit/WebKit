@@ -1,5 +1,38 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210047. rdar://problem/29758107
+
+    2016-12-20  Saam Barati  <sbarati@apple.com>
+
+            WebAssembly: We should compile wasm functions in parallel
+            https://bugs.webkit.org/show_bug.cgi?id=165993
+
+            Reviewed by Keith Miller.
+
+            This patch adds a very simple parallel compiler for Wasm code.
+            This patch speeds up compiling the Unity headless benchmark by
+            slightly more than 4x on my MBP. To make this safe, I perform
+            all linking on the main thread. I also had to change some code
+            inside Wasmb3IRGenerator to be thread safe.
+
+            * b3/air/AirCustom.h:
+            (JSC::B3::Air::WasmBoundsCheckCustom::generate):
+            * b3/air/AirGenerationContext.h:
+            * wasm/WasmB3IRGenerator.cpp:
+            (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+            (JSC::Wasm::B3IRGenerator::emitExceptionCheck):
+            (JSC::Wasm::createJSToWasmWrapper):
+            (JSC::Wasm::parseAndCompile):
+            * wasm/WasmB3IRGenerator.h:
+            * wasm/WasmCallingConvention.h:
+            (JSC::Wasm::CallingConvention::setupFrameInPrologue):
+            * wasm/WasmPlan.cpp:
+            (JSC::Wasm::Plan::parseAndValidateModule):
+            (JSC::Wasm::Plan::run):
+            * wasm/WasmPlan.h:
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210038. rdar://problem/29759741
 
     2016-12-20  JF Bastien  <jfbastien@apple.com>

@@ -95,7 +95,7 @@ public:
             [=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 GPRReg result = params[0].gpr();
                 MacroAssembler::DataLabelPtr moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), result);
-                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                jit.addLinkTask([calleeMoveLocation, moveLocation] (LinkBuffer& linkBuffer) {
                     *calleeMoveLocation = linkBuffer.locationOf(moveLocation);
                 });
             });

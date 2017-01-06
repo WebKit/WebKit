@@ -39,6 +39,9 @@
 #include "WasmModuleParser.h"
 #include "WasmValidate.h"
 #include <wtf/DataLog.h>
+#include <wtf/Locker.h>
+#include <wtf/MonotonicTime.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -60,6 +63,10 @@ Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength)
 
 bool Plan::parseAndValidateModule()
 {
+    MonotonicTime startTime;
+    if (verbose || Options::reportCompileTimes())
+        startTime = MonotonicTime::now();
+
     {
         ModuleParser moduleParser(m_vm, m_source, m_sourceLength);
         auto parseResult = moduleParser.parse();
@@ -78,7 +85,7 @@ bool Plan::parseAndValidateModule()
             dataLogLn("Processing function starting at: ", m_functionLocationInBinary[functionIndex].start, " and ending at: ", m_functionLocationInBinary[functionIndex].end);
         const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
         size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
-        ASSERT(Checked<uintptr_t>(bitwise_cast<uintptr_t>(functionStart)) + functionLength <= Checked<uintptr_t>(bitwise_cast<uintptr_t>(m_source)) + m_sourceLength);
+        ASSERT(functionLength <= m_sourceLength);
         SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
         const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
 
@@ -94,9 +101,15 @@ bool Plan::parseAndValidateModule()
         }
     }
 
+    if (verbose || Options::reportCompileTimes())
+        dataLogLn("Took ", (MonotonicTime::now() - startTime).microseconds(), " us to validate module");
     return true;
 }
 
+// We are creating a bunch of threads that touch the main thread's stack. This will make ASAN unhappy.
+// The reason this is OK is that we guarantee that the main thread doesn't continue until all threads
+// that could touch its stack are done executing.
+SUPPRESS_ASAN 
 void Plan::run()
 {
     if (!parseAndValidateModule())
@@ -114,11 +127,15 @@ void Plan::run()
         return true;
     };
 
-    Vector<Vector<UnlinkedWasmToWasmCall>> unlinkedWasmToWasmCalls;
     if (!tryReserveCapacity(m_wasmToJSStubs, m_moduleInformation->importFunctionSignatureIndices.size(), " WebAssembly to JavaScript stubs")
-        || !tryReserveCapacity(unlinkedWasmToWasmCalls, m_functionLocationInBinary.size(), " unlinked WebAssembly to WebAssembly calls")
-        || !tryReserveCapacity(m_wasmInternalFunctions, m_functionLocationInBinary.size(), " WebAssembly functions"))
+        || !tryReserveCapacity(m_unlinkedWasmToWasmCalls, m_functionLocationInBinary.size(), " unlinked WebAssembly to WebAssembly calls")
+        || !tryReserveCapacity(m_wasmInternalFunctions, m_functionLocationInBinary.size(), " WebAssembly functions")
+        || !tryReserveCapacity(m_compilationContexts, m_functionLocationInBinary.size(), " compilation contexts"))
         return;
+
+    m_unlinkedWasmToWasmCalls.resize(m_functionLocationInBinary.size());
+    m_wasmInternalFunctions.resize(m_functionLocationInBinary.size());
+    m_compilationContexts.resize(m_functionLocationInBinary.size());
 
     for (unsigned importIndex = 0; importIndex < m_moduleInformation->imports.size(); ++importIndex) {
         Import* import = &m_moduleInformation->imports[importIndex];
@@ -132,31 +149,92 @@ void Plan::run()
         m_functionIndexSpace.buffer.get()[importFunctionIndex].code = m_wasmToJSStubs[importFunctionIndex].code().executableAddress();
     }
 
-    for (unsigned functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); ++functionIndex) {
-        if (verbose)
-            dataLogLn("Processing function starting at: ", m_functionLocationInBinary[functionIndex].start, " and ending at: ", m_functionLocationInBinary[functionIndex].end);
-        const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
-        size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
-        ASSERT(functionLength <= m_sourceLength);
-        SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
-        const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
-        unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
-        ASSERT(m_functionIndexSpace.buffer.get()[functionIndexSpace].signatureIndex == signatureIndex);
+    m_currentIndex = 0;
 
-        ASSERT(validateFunction(m_vm, functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation));
+    auto doWork = [this] {
+        while (true) {
+            uint32_t functionIndex;
+            {
+                auto locker = holdLock(m_lock);
+                if (m_currentIndex >= m_functionLocationInBinary.size())
+                    return;
+                functionIndex = m_currentIndex;
+                ++m_currentIndex;
+            }
 
-        unlinkedWasmToWasmCalls.uncheckedAppend(Vector<UnlinkedWasmToWasmCall>());
-        auto parseAndCompileResult = parseAndCompile(*m_vm, functionStart, functionLength, signature, unlinkedWasmToWasmCalls.at(functionIndex), m_functionIndexSpace, *m_moduleInformation);
-        if (UNLIKELY(!parseAndCompileResult)) {
-            m_errorMessage = parseAndCompileResult.error();
-            return; // FIXME make this an Expected.
+            const uint8_t* functionStart = m_source + m_functionLocationInBinary[functionIndex].start;
+            size_t functionLength = m_functionLocationInBinary[functionIndex].end - m_functionLocationInBinary[functionIndex].start;
+            ASSERT(functionLength <= m_sourceLength);
+            SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
+            const Signature* signature = SignatureInformation::get(m_vm, signatureIndex);
+            unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
+            ASSERT_UNUSED(functionIndexSpace, m_functionIndexSpace.buffer.get()[functionIndexSpace].signatureIndex == signatureIndex);
+            ASSERT(validateFunction(m_vm, functionStart, functionLength, signature, m_functionIndexSpace, *m_moduleInformation));
+
+            m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
+            auto parseAndCompileResult = parseAndCompile(*m_vm, m_compilationContexts[functionIndex], functionStart, functionLength, signature, m_unlinkedWasmToWasmCalls[functionIndex], m_functionIndexSpace, *m_moduleInformation);
+
+            if (UNLIKELY(!parseAndCompileResult)) {
+                auto locker = holdLock(m_lock);
+                if (!m_errorMessage) {
+                    // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
+                    m_errorMessage = parseAndCompileResult.error(); // FIXME make this an Expected.
+                }
+                m_currentIndex = m_functionLocationInBinary.size();
+
+                // We will terminate on the next execution.
+                continue; 
+            }
+
+            m_wasmInternalFunctions[functionIndex] = WTFMove(*parseAndCompileResult);
         }
-        m_wasmInternalFunctions.uncheckedAppend(WTFMove(*parseAndCompileResult));
+    };
+
+    MonotonicTime startTime;
+    if (verbose || Options::reportCompileTimes())
+        startTime = MonotonicTime::now();
+
+    uint32_t threadCount = WTF::numberOfProcessorCores();
+    uint32_t numWorkerThreads = threadCount - 1;
+    Vector<ThreadIdentifier> threads;
+    threads.reserveCapacity(numWorkerThreads);
+    for (uint32_t i = 0; i < numWorkerThreads; i++)
+        threads.uncheckedAppend(createThread("jsc.wasm-b3-compilation.thread", doWork));
+
+    doWork(); // Let the main thread do some work too.
+
+    for (uint32_t i = 0; i < numWorkerThreads; i++)
+        waitForThreadCompletion(threads[i]);
+
+    for (uint32_t functionIndex = 0; functionIndex < m_functionLocationInBinary.size(); functionIndex++) {
+        {
+            CompilationContext& context = m_compilationContexts[functionIndex];
+            {
+                LinkBuffer linkBuffer(*m_vm, *context.wasmEntrypointJIT, nullptr);
+                m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation =
+                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("Wasm function")), WTFMove(context.wasmEntrypointByproducts));
+            }
+
+            {
+                LinkBuffer linkBuffer(*m_vm, *context.jsEntrypointJIT, nullptr);
+                linkBuffer.link(context.jsEntrypointToWasmEntrypointCall, FunctionPtr(m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress()));
+
+                m_wasmInternalFunctions[functionIndex]->jsToWasmEntrypoint.compilation =
+                    std::make_unique<B3::Compilation>(FINALIZE_CODE(linkBuffer, ("Wasm JS entrypoint")), WTFMove(context.jsEntrypointByproducts));
+            }
+        }
+
+        unsigned functionIndexSpace = m_wasmToJSStubs.size() + functionIndex;
         m_functionIndexSpace.buffer.get()[functionIndexSpace].code = m_wasmInternalFunctions[functionIndex]->wasmEntrypoint.compilation->code().executableAddress();
     }
 
+    if (verbose || Options::reportCompileTimes()) {
+        dataLogLn("Took ", (MonotonicTime::now() - startTime).microseconds(),
+            " us to compile and link the module");
+    }
+
     // Patch the call sites for each WebAssembly function.
-    for (auto& unlinked : unlinkedWasmToWasmCalls) {
+    for (auto& unlinked : m_unlinkedWasmToWasmCalls) {
         for (auto& call : unlinked)
             MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_functionIndexSpace.buffer.get()[call.functionIndex].code));
     }
