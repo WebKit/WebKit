@@ -188,10 +188,7 @@ void WebPlaybackSessionInterfaceMac::updatePlaybackControlsManagerTiming(double 
         || (manager.rate < 0 && model->playbackStartedTime() <= currentTime))
         effectivePlaybackRate = 0;
 
-    // FIXME: The timing value should ideally use the effective playback rate, but this causes AVKit to indefinitely fire a repeating timer.
-    // More investigation will be required before we re-enable smooth playhead animation -- for now, we should just pretend that the playback
-    // rate is always 0.
-    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:0];
+    manager.timing = [getAVValueTimingClass() valueTimingWithAnchorValue:currentTime anchorTimeStamp:effectiveAnchorTime rate:effectivePlaybackRate];
 }
 
 }
