@@ -38,13 +38,13 @@
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/br.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/br_if.wast.js
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/br_table.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/break-drop.wast.js
   cmd: runWebAssemblySpecTest :normal
@@ -155,7 +155,7 @@
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/return.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/select.wast.js
   cmd: runWebAssemblySpecTest :skip
