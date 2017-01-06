@@ -57,7 +57,7 @@ object3 = makeObject([], otherIterator);
 object4 = makeObject([], totalIter);
 objectThrow = makeObject([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], throwingIter);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 3000; i++) {
     count = 0;
     testFunction(0, ...[1, 2, 3], ...[4], 5, 6, ...[7, 8, 9]);
     testFunction(...[0, 1], 2, 3, ...[4, 5, 6, 7, 8], 9);
