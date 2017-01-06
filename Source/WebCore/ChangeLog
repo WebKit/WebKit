@@ -1,3 +1,21 @@
+2017-01-06  Zalan Bujtas  <zalan@apple.com>
+
+        Text highlight causes Yoon Gothic webfont to reflow.
+        https://bugs.webkit.org/show_bug.cgi?id=166753
+
+        Reviewed by Darin Adler.
+
+        Add word-break: keep-all; support for CJK and breaking NBSPs.
+
+        Add test later. Need to figure out what font file to use.
+
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style):
+        (WebCore::SimpleLineLayout::TextFragmentIterator::nextBreakablePosition): Use BreakingContext's helper functions
+        to figure out the next breakable position.
+        (WebCore::SimpleLineLayout::TextFragmentIterator::skipToNextPosition):
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+
 2017-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add some missing longhand properties to CSSComputedStyleDeclaration and fix default values

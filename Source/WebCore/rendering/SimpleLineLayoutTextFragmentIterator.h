@@ -103,6 +103,8 @@ public:
         bool wrapLines;
         bool breakAnyWordOnOverflow;
         bool breakFirstWordOnOverflow;
+        bool breakNBSP;
+        bool keepAllWordsForCJK;
         float spaceWidth;
         float wordSpacing;
         unsigned tabWidth;
@@ -116,7 +118,7 @@ private:
     unsigned skipToNextPosition(PositionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment);
     bool isSoftLineBreak(unsigned position) const;
     bool isHardLineBreak(const FlowContents::Iterator& segment) const;
-    template <typename CharacterType> unsigned nextBreakablePosition(const FlowContents::Segment&, unsigned startPosition);
+    unsigned nextBreakablePosition(const FlowContents::Segment&, unsigned startPosition);
     template <typename CharacterType> unsigned nextNonWhitespacePosition(const FlowContents::Segment&, unsigned startPosition);
     float runWidth(const FlowContents::Segment&, unsigned startPosition, unsigned endPosition, float xPosition) const;
 

@@ -41,6 +41,8 @@ TextFragmentIterator::Style::Style(const RenderStyle& style)
     , wrapLines(style.autoWrap())
     , breakAnyWordOnOverflow(style.wordBreak() == BreakAllWordBreak && wrapLines)
     , breakFirstWordOnOverflow(breakAnyWordOnOverflow || (style.breakWords() && (wrapLines || preserveNewline)))
+    , breakNBSP(wrapLines && style.nbspMode() == SPACE)
+    , keepAllWordsForCJK(style.wordBreak() == KeepAllWordBreak)
     , spaceWidth(font.width(TextRun(StringView(&space, 1))))
     , wordSpacing(font.wordSpacing())
     , tabWidth(collapseWhitespace ? 0 : style.tabSize())
@@ -110,7 +112,25 @@ void TextFragmentIterator::revertToEndOfFragment(const TextFragment& fragment)
     m_atEndOfSegment = false;
 }
 
-template <typename CharacterType>
+static unsigned nextBreakablePositionInSegment(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, bool breakNBSP, bool keepAllWordsForCJK)
+{
+    if (keepAllWordsForCJK) {
+        if (breakNBSP)
+            return nextBreakablePositionKeepingAllWords(lineBreakIterator, startPosition);
+        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIterator, startPosition);
+    }
+
+    if (lineBreakIterator.isLooseCJKMode()) {
+        if (breakNBSP)
+            return nextBreakablePositionLoose(lineBreakIterator, startPosition);
+        return nextBreakablePositionIgnoringNBSPLoose(lineBreakIterator, startPosition);
+    }
+        
+    if (breakNBSP)
+        return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
+    return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
+}
+
 unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment& segment, unsigned startPosition)
 {
     ASSERT(startPosition < segment.end);
@@ -123,10 +143,8 @@ unsigned TextFragmentIterator::nextBreakablePosition(const FlowContents::Segment
         m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
         m_lineBreakIterator.resetStringAndReleaseIterator(segment.text, m_style.locale, LineBreakIteratorMode::Default);
     }
-    const auto* characters = segment.text.characters<CharacterType>();
-    unsigned segmentLength = segment.end - segment.start;
     unsigned segmentPosition = startPosition - segment.start;
-    return segment.start + nextBreakablePositionNonLoosely<CharacterType, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(m_lineBreakIterator, characters, segmentLength, segmentPosition);
+    return segment.start + nextBreakablePositionInSegment(m_lineBreakIterator, segmentPosition, m_style.breakNBSP, m_style.keepAllWordsForCJK);
 }
 
 template <typename CharacterType>
@@ -165,7 +183,7 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     if (positionType == NonWhitespace)
         nextPosition = m_currentSegment->text.is8Bit() ? nextNonWhitespacePosition<LChar>(*m_currentSegment, currentPosition) : nextNonWhitespacePosition<UChar>(*m_currentSegment, currentPosition);
     else if (positionType == Breakable) {
-        nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition);
+        nextPosition = nextBreakablePosition(*m_currentSegment, currentPosition);
         // nextBreakablePosition returns the same position for certain characters such as hyphens. Call next again with modified position unless we are at the end of the segment.
         bool skipCurrentPosition = nextPosition == currentPosition;
         if (skipCurrentPosition) {
@@ -174,13 +192,13 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
             if (currentPosition == m_currentSegment->end - 1)
                 nextPosition = m_currentSegment->end;
             else
-                nextPosition = m_currentSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*m_currentSegment, currentPosition + 1) : nextBreakablePosition<UChar>(*m_currentSegment, currentPosition + 1);
+                nextPosition = nextBreakablePosition(*m_currentSegment, currentPosition + 1);
         }
         // We need to know whether the word actually finishes at the end of this renderer or not.
         if (nextPosition == m_currentSegment->end) {
             const auto nextSegment = m_currentSegment + 1;
             if (nextSegment != m_flowContents.end() && !isHardLineBreak(nextSegment))
-                overlappingFragment = nextPosition < (nextSegment->text.is8Bit() ? nextBreakablePosition<LChar>(*nextSegment, nextPosition) : nextBreakablePosition<UChar>(*nextSegment, nextPosition));
+                overlappingFragment = nextPosition < nextBreakablePosition(*nextSegment, nextPosition);
         }
     }
     width = 0;
