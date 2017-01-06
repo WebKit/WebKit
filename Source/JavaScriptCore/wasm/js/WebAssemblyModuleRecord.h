@@ -59,7 +59,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<WebAssemblyFunction> m_startFunction;
+    WriteBarrier<JSCell> m_startFunction;
 };
 
 } // namespace JSC

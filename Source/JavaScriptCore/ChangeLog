@@ -1,5 +1,38 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210102. rdar://problem/29784532
+
+    2016-12-22  Saam Barati  <sbarati@apple.com>
+
+            WebAssembly: Make the spec-tests/start.wast.js test pass
+            https://bugs.webkit.org/show_bug.cgi?id=166416
+            <rdar://problem/29784532>
+
+            Reviewed by Yusuke Suzuki.
+
+            To make the test run, I had to fix two bugs:
+
+            1. We weren't properly finding the start function. There was code
+            that would try to find the start function from the list of *exported*
+            functions. This is wrong; the start function is an index into the
+            function index space, which is the space for *imports* and *local*
+            functions. So the code was just wrong in this respect, and I've
+            fixed it do the right thing. We weren't sure if this was originally
+            allowed or not in the spec, but it has been decided that it is allowed
+            and the spec-tests test for it: https://github.com/WebAssembly/design/issues/896
+
+            2. We were emitting a breakpoint for Unreachable. Instead of crashing,
+            this opcode needs to throw an exception when executing.
+
+            * wasm/WasmB3IRGenerator.cpp:
+            * wasm/WasmExceptionType.h:
+            * wasm/js/WebAssemblyModuleRecord.cpp:
+            (JSC::WebAssemblyModuleRecord::link):
+            (JSC::WebAssemblyModuleRecord::evaluate):
+            * wasm/js/WebAssemblyModuleRecord.h:
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210091. rdar://problem/29782833
 
     2016-12-21  Keith Miller  <keith_miller@apple.com>
