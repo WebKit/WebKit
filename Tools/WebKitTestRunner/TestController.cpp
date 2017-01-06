@@ -920,11 +920,15 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
     return false;
 }
 
-static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std::string& pathOrURL)
+static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std::string& pathOrURL, const std::string& absolutePath)
 {
-    // Gross. Need to reduce conversions between all the string types and URLs.
-    WKRetainPtr<WKURLRef> wkURL(AdoptWK, createTestURL(pathOrURL.c_str()));
-    std::string filename = testPath(wkURL.get());
+    std::string filename = absolutePath;
+    if (filename.empty()) {
+        // Gross. Need to reduce conversions between all the string types and URLs.
+        WKRetainPtr<WKURLRef> wkURL(AdoptWK, createTestURL(pathOrURL.c_str()));
+        filename = testPath(wkURL.get());
+    }
+
     if (filename.empty())
         return;
 
@@ -982,15 +986,15 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
     }
 }
 
-TestOptions TestController::testOptionsForTest(const std::string& pathOrURL) const
+TestOptions TestController::testOptionsForTest(const TestCommand& command) const
 {
-    TestOptions options(pathOrURL);
+    TestOptions options(command.pathOrURL);
 
     options.useRemoteLayerTree = m_shouldUseRemoteLayerTree;
     options.shouldShowWebView = m_shouldShowWebView;
 
-    updatePlatformSpecificTestOptionsForTest(options, pathOrURL);
-    updateTestOptionsFromTestHeader(options, pathOrURL);
+    updatePlatformSpecificTestOptionsForTest(options, command.pathOrURL);
+    updateTestOptionsFromTestHeader(options, command.pathOrURL, command.absolutePath);
 
     return options;
 }
@@ -1020,14 +1024,6 @@ void TestController::configureViewForTest(const TestInvocation& test)
 
     platformConfigureViewForTest(test);
 }
-
-struct TestCommand {
-    std::string pathOrURL;
-    bool shouldDumpPixels { false };
-    std::string expectedPixelHash;
-    int timeout { 0 };
-    bool dumpJSConsoleLogInStdErr { false };
-};
 
 class CommandTokenizer {
 public:
@@ -1101,6 +1097,8 @@ TestCommand parseInputLine(const std::string& inputLine)
                 result.expectedPixelHash = tokenizer.next();
         } else if (arg == std::string("--dump-jsconsolelog-in-stderr"))
             result.dumpJSConsoleLogInStdErr = true;
+        else if (arg == std::string("--absolutePath"))
+            result.absolutePath = tokenizer.next();
         else
             die(inputLine);
     }
@@ -1114,7 +1112,7 @@ bool TestController::runTest(const char* inputLine)
 
     m_state = RunningTest;
     
-    TestOptions options = testOptionsForTest(command.pathOrURL);
+    TestOptions options = testOptionsForTest(command);
 
     WKRetainPtr<WKURLRef> wkURL(AdoptWK, createTestURL(command.pathOrURL.c_str()));
     m_currentInvocation = std::make_unique<TestInvocation>(wkURL.get(), options);

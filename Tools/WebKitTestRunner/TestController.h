@@ -44,6 +44,7 @@ class TestInvocation;
 class OriginSettings;
 class PlatformWebView;
 class EventSenderProxy;
+struct TestCommand;
 struct TestOptions;
 
 // FIXME: Rename this TestRunner?
@@ -177,7 +178,7 @@ private:
     void initializeTestPluginDirectory();
 
     void ensureViewSupportsOptionsForTest(const TestInvocation&);
-    TestOptions testOptionsForTest(const std::string& pathOrURL) const;
+    TestOptions testOptionsForTest(const TestCommand&) const;
     void updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string& pathOrURL) const;
 
     void updateWebViewSizeForTest(const TestInvocation&);
@@ -351,6 +352,15 @@ private:
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 
     WorkQueueManager m_workQueueManager;
+};
+
+struct TestCommand {
+    std::string pathOrURL;
+    std::string absolutePath;
+    bool shouldDumpPixels { false };
+    std::string expectedPixelHash;
+    int timeout { 0 };
+    bool dumpJSConsoleLogInStdErr { false };
 };
 
 } // namespace WTR

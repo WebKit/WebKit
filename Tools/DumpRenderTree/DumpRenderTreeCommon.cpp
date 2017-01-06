@@ -104,6 +104,8 @@ TestCommand parseInputLine(const std::string& inputLine)
                 result.expectedPixelHash = tokenizer.next();
         } else if (arg == "--dump-jsconsolelog-in-stderr")
             result.dumpJSConsoleLogInStdErr = true;
+        else if (arg == std::string("--absolutePath"))
+            tokenizer.next();
         else
             die(inputLine);
     }

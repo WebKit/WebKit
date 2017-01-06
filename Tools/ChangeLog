@@ -1,3 +1,30 @@
+2017-01-06  Antoine Quint  <graouts@apple.com>
+
+        Support webkit-test-runner key-value pairs in http tests
+        https://bugs.webkit.org/show_bug.cgi?id=149812
+
+        Reviewed by Alex Christensen.
+
+        We pass the absolute path for a test through to WKTR so that we can parse
+        tests that are running as URLs for webkit-test-runner options.
+
+        * DumpRenderTree/DumpRenderTreeCommon.cpp:
+        (parseInputLine):
+
+        Explicitly skip the --absolute-path option in DRT or else we'd crash.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_from_driver_input):
+
+        Pass the absolute path to the file through the CLI.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::testOptionsForTest):
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+
 2017-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Warning about unconnectable outlets when opening a MiniBrowser window
