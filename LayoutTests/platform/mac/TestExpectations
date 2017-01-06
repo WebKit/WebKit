@@ -1468,3 +1468,5 @@ media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
+
+webkit.org/b/166672 [ Sierra+ ] fast/text/variations/advances.html [ Failure ]
