@@ -153,7 +153,7 @@ float TextFragmentIterator::textWidth(unsigned from, unsigned to, float xPositio
         return 0;
     if (m_style.font.isFixedPitch() || (from == segment.start && to == segment.end))
         return downcast<RenderText>(segment.renderer).width(from - segment.start, to - from, m_style.font, xPosition, nullptr, nullptr);
-    return segment.text.is8Bit() ? runWidth<LChar>(segment, from, to, xPosition) : runWidth<UChar>(segment, from, to, xPosition);
+    return runWidth(segment, from, to, xPosition);
 }
 
 unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, unsigned startPosition, float& width, float xPosition, bool& overlappingFragment)
@@ -195,7 +195,6 @@ unsigned TextFragmentIterator::skipToNextPosition(PositionType positionType, uns
     return nextPosition;
 }
 
-template <typename CharacterType>
 float TextFragmentIterator::runWidth(const FlowContents::Segment& segment, unsigned startPosition, unsigned endPosition, float xPosition) const
 {
     ASSERT(m_style.font.size());

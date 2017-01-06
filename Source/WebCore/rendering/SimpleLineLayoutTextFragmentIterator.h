@@ -118,7 +118,7 @@ private:
     bool isHardLineBreak(const FlowContents::Iterator& segment) const;
     template <typename CharacterType> unsigned nextBreakablePosition(const FlowContents::Segment&, unsigned startPosition);
     template <typename CharacterType> unsigned nextNonWhitespacePosition(const FlowContents::Segment&, unsigned startPosition);
-    template <typename CharacterType> float runWidth(const FlowContents::Segment&, unsigned startPosition, unsigned endPosition, float xPosition) const;
+    float runWidth(const FlowContents::Segment&, unsigned startPosition, unsigned endPosition, float xPosition) const;
 
     FlowContents m_flowContents;
     FlowContents::Iterator m_currentSegment;
