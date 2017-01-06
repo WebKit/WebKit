@@ -220,6 +220,11 @@ private:
     bool m_isImport { false };
     bool m_isValid { false };
 };
+    
+struct CustomSection {
+    String name;
+    Vector<uint8_t> payload;
+};
 
 struct ModuleInformation {
     Vector<Import> imports;
@@ -235,6 +240,8 @@ struct ModuleInformation {
     TableInformation tableInformation;
     Vector<Global> globals;
     unsigned firstInternalGlobal { 0 };
+    Vector<CustomSection> customSections;
+
     size_t functionIndexSpaceSize() const { return importFunctionSignatureIndices.size() + internalFunctionSignatureIndices.size(); }
     bool isImportedFunctionFromFunctionIndexSpace(size_t functionIndex) const
     {

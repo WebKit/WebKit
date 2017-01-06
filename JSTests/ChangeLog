@@ -1,5 +1,24 @@
 2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210282. rdar://problem/29760326
+
+    2017-01-04  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly JS API: add Module.sections
+            https://bugs.webkit.org/show_bug.cgi?id=165159
+            <rdar://problem/29760326>
+
+            Reviewed by Mark Lam.
+
+            As described here: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblymodulecustomsections
+
+            * wasm/Builder.js: allow custom sections to be duplicated
+            * wasm/js-api/Module.customSection.js: Added.
+            (assert.throws.WebAssembly.Module.prototype.customSections):
+            (assert.eq):
+
+2017-01-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210229. rdar://problem/29760322
 
     2017-01-02  JF Bastien  <jfbastien@apple.com>
