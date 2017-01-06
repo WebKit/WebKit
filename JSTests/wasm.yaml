@@ -71,13 +71,13 @@
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/f32.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/f32_cmp.wast.js
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/f64.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/f64_cmp.wast.js
   cmd: runWebAssemblySpecTest :normal
