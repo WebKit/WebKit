@@ -420,29 +420,29 @@ inline Value* B3IRGenerator::emitLoadOp(LoadOpType op, Origin origin, Expression
     }
 
     case LoadOpType::I32Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer, offset);
     }
 
     case LoadOpType::I64Load32U: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin, value);
     }
 
     case LoadOpType::I64Load32S: {
-        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer);
+        Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin, pointer, offset);
         return m_currentBlock->appendNew<Value>(m_proc, SExt32, origin, value);
     }
 
     case LoadOpType::I64Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin, pointer);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin, pointer, offset);
     }
 
     case LoadOpType::F32Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Float, origin, pointer);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Float, origin, pointer, offset);
     }
 
     case LoadOpType::F64Load: {
-        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Double, origin, pointer);
+        return m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Double, origin, pointer, offset);
     }
 
     // FIXME: B3 doesn't support Load16Z yet. We should lower to that value when

@@ -149,10 +149,10 @@
   cmd: runWebAssemblySpecTest :skip
 
 - path: wasm/spec-tests/nop.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/resizing.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/return.wast.js
   cmd: runWebAssemblySpecTest :normal
