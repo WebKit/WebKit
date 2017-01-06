@@ -3132,7 +3132,7 @@ RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange,
             searchRange->setEnd(startInReferenceRange ? referenceRange->endPosition() : referenceRange->startPosition());
     }
 
-    RefPtr<Node> shadowTreeRoot = referenceRange ? referenceRange->startContainer().nonBoundaryShadowTreeRootNode() : nullptr;
+    RefPtr<ShadowRoot> shadowTreeRoot = referenceRange ? referenceRange->startContainer().containingShadowRoot() : nullptr;
     if (shadowTreeRoot) {
         if (forward)
             searchRange->setEnd(*shadowTreeRoot, shadowTreeRoot->countChildNodes());

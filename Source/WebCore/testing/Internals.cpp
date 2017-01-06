@@ -1822,23 +1822,76 @@ void Internals::toggleOverwriteModeEnabled()
     document->frame()->editor().toggleOverwriteModeEnabled();
 }
 
-unsigned Internals::countMatchesForText(const String& text, unsigned findOptions, const String& markMatches)
+static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionList)
+{
+    const struct {
+        const char* name;
+        FindOptionFlag value;
+    } flagList[] = {
+        {"CaseInsensitive", CaseInsensitive},
+        {"AtWordStarts", AtWordStarts},
+        {"TreatMedialCapitalAsWordStart", TreatMedialCapitalAsWordStart},
+        {"Backwards", Backwards},
+        {"WrapAround", WrapAround},
+        {"StartInSelection", StartInSelection},
+        {"DoNotRevealSelection", DoNotRevealSelection},
+        {"AtWordEnds", AtWordEnds},
+        {"DoNotTraverseFlatTree", DoNotTraverseFlatTree},
+    };
+    FindOptions result = 0;
+    for (auto& option : optionList) {
+        bool found = false;
+        for (auto& flag : flagList) {
+            if (flag.name == option) {
+                result |= flag.value;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            return Exception { SYNTAX_ERR };
+    }
+    return result;
+}
+
+ExceptionOr<RefPtr<Range>> Internals::rangeOfString(const String& text, RefPtr<Range>&& referenceRange, const Vector<String>& findOptions)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
-        return 0;
+        return Exception { INVALID_ACCESS_ERR };
 
-    bool mark = markMatches == "mark";
-    return document->frame()->editor().countMatchesForText(text, nullptr, findOptions, 1000, mark, nullptr);
+    auto parsedOptions = parseFindOptions(findOptions);
+    if (parsedOptions.hasException())
+        return parsedOptions.releaseException();
+
+    return document->frame()->editor().rangeOfString(text, referenceRange.get(), parsedOptions.releaseReturnValue());
 }
 
-unsigned Internals::countFindMatches(const String& text, unsigned findOptions)
+ExceptionOr<unsigned> Internals::countMatchesForText(const String& text, const Vector<String>& findOptions, const String& markMatches)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { INVALID_ACCESS_ERR };
+
+    auto parsedOptions = parseFindOptions(findOptions);
+    if (parsedOptions.hasException())
+        return parsedOptions.releaseException();
+
+    bool mark = markMatches == "mark";
+    return document->frame()->editor().countMatchesForText(text, nullptr, parsedOptions.releaseReturnValue(), 1000, mark, nullptr);
+}
+
+ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vector<String>& findOptions)
 {
     Document* document = contextDocument();
     if (!document || !document->page())
-        return 0;
+        return Exception { INVALID_ACCESS_ERR };
 
-    return document->page()->countFindMatches(text, findOptions, 1000);
+    auto parsedOptions = parseFindOptions(findOptions);
+    if (parsedOptions.hasException())
+        return parsedOptions.releaseException();
+
+    return document->page()->countFindMatches(text, parsedOptions.releaseReturnValue(), 1000);
 }
 
 unsigned Internals::numberOfLiveNodes() const

@@ -37,9 +37,10 @@ enum FindOptionFlag {
     WrapAround = 1 << 4,
     StartInSelection = 1 << 5,
     DoNotRevealSelection = 1 << 6,
-    AtWordEnds = 1 << 7
+    AtWordEnds = 1 << 7,
+    DoNotTraverseFlatTree = 1 << 8,
 };
 
-typedef unsigned char FindOptions;
+typedef unsigned short FindOptions;
 
 } // namespace WebCore

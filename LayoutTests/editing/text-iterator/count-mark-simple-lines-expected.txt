@@ -1,8 +1,8 @@
-PASS internals.countMatchesForText('Catilina', 23, 'mark') is 3
+PASS internals.countMatchesForText('Catilina', findOptions, 'mark') is 3
 PASS internals.markerCountForNode(text, 'all') is 3
-PASS internals.countMatchesForText('Roma', 23, 'mark') is 3
+PASS internals.countMatchesForText('Roma', findOptions, 'mark') is 3
 PASS internals.markerCountForNode(text, 'all') is 6
-PASS internals.countMatchesForText('uid', 23, 'mark') is 2
+PASS internals.countMatchesForText('uid', findOptions, 'mark') is 2
 PASS internals.markerCountForNode(text, 'all') is 8
 PASS successfullyParsed is true
 

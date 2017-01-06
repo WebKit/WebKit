@@ -1207,7 +1207,7 @@ bool DOMWindow::find(const String& string, bool caseSensitive, bool backwards, b
 
     // FIXME (13016): Support wholeWord, searchInFrames and showDialog.    
     FindOptions options = (backwards ? Backwards : 0) | (caseSensitive ? 0 : CaseInsensitive) | (wrap ? WrapAround : 0);
-    return m_frame->editor().findString(string, options);
+    return m_frame->editor().findString(string, options | DoNotTraverseFlatTree);
 }
 
 bool DOMWindow::offscreenBuffering() const

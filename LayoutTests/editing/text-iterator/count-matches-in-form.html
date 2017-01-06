@@ -3,6 +3,6 @@
 <body>
 <fieldset><input value="rule"></fieldset>
 <script>
-shouldBe("internals.countMatchesForText('rule', 23, '')", "1");
+shouldBe("internals.countMatchesForText('rule', ['CaseInsensitive', 'AtWordStarts', 'TreatMedialCapitalAsWordStart', 'WrapAround'], '')", "1");
 </script>
 <script src="../../resources/js-test-post.js"></script>

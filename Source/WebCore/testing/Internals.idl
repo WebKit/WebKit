@@ -178,8 +178,10 @@ enum EventThrottlingBehavior {
     void setEditingValue(HTMLInputElement inputElement, DOMString value);
     void setAutofilled(HTMLInputElement inputElement, boolean enabled);
     void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
-    unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
-    unsigned long countFindMatches(DOMString text, unsigned long findOptions);
+
+    [MayThrowException] Range? rangeOfString(DOMString text, Range? referenceRange, sequence<DOMString> findOptions);
+    [MayThrowException] unsigned long countMatchesForText(DOMString text, sequence<DOMString> findOptions, DOMString markMatches);
+    [MayThrowException] unsigned long countFindMatches(DOMString text, sequence<DOMString> findOptions);
 
     [MayThrowException] DOMString autofillFieldName(Element formControlElement);
 
