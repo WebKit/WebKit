@@ -795,7 +795,7 @@ input[type="checkbox"] {
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
 input[type="radio"] {
     -webkit-appearance: radio;
-    border-radius: 8px;
+    border-radius: 50%;
     width: 16px;
     height: 16px;
     padding: 0px;

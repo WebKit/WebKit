@@ -1,3 +1,13 @@
+2017-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Radio buttons have a fixed border radius making them look square when resized
+        https://bugs.webkit.org/show_bug.cgi?id=148676
+
+        Reviewed by Tim Horton.
+
+        * fast/forms/ios/large-radio-button-is-round-expected.html: Added.
+        * fast/forms/ios/large-radio-button-is-round.html: Added.
+
 2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Carets can split up marriages and families

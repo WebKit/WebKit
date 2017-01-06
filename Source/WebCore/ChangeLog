@@ -1,3 +1,19 @@
+2017-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Radio buttons have a fixed border radius making them look square when resized
+        https://bugs.webkit.org/show_bug.cgi?id=148676
+        rdar://problem/29889892
+
+        Reviewed by Tim Horton.
+
+        Change the 8px border-radius of iOS radio buttons to 50% so they remain circular
+        when the page overrides the size.
+
+        Test: fast/forms/ios/large-radio-button-is-round.html
+
+        * css/html.css:
+        (#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS):
+
 2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CoreText variation axis identifiers don't work with 64-bit numbers
