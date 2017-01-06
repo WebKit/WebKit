@@ -1,3 +1,9 @@
+2017-01-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, teach run-javascriptcore-tests that this is a slow test.
+
+        * js/script-tests/regress-139548.js:
+
 2017-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Radio buttons have a fixed border radius making them look square when resized
