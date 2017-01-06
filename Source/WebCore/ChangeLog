@@ -1,3 +1,22 @@
+2017-01-05  Chris Dumez  <cdumez@apple.com>
+
+        [Form Validation] lengthy validation messages should be truncated with an ellipsis
+        https://bugs.webkit.org/show_bug.cgi?id=166747
+        <rdar://problem/29872021>
+
+        Reviewed by Simon Fraser.
+
+        Lengthy HTML validation messages should be truncated with an ellipsis.
+        Previously, they were truncated but there was no ellipsis.
+
+        No new tests, not easily testable. Manually tested on
+        - http://codepen.io/cdumez/full/zoOZmZ/ (last field)
+
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+        * platform/mac/ValidationBubbleMac.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+
 2017-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Radio buttons have a fixed border radius making them look square when resized
