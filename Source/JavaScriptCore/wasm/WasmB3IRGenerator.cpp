@@ -1064,6 +1064,16 @@ static void createJSToWasmWrapper(VM& vm, CompilationContext& compilationContext
     // Move the arguments into place.
     Value* result = wasmCallingConvention().setupCall(proc, block, origin, arguments, toB3Type(signature->returnType()), [&] (PatchpointValue* patchpoint) {
         CompilationContext* context = &compilationContext;
+
+        // wasm -> wasm calls clobber pinned registers unconditionally. This JS -> wasm transition must therefore restore these pinned registers (which are usually callee-saved) to account for this.
+        const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
+        RegisterSet clobbers;
+        clobbers.set(pinnedRegs->baseMemoryPointer);
+        for (auto info : pinnedRegs->sizeRegisters)
+            clobbers.set(info.sizeRegister);
+        patchpoint->effects.writesPinned = true;
+        patchpoint->clobber(clobbers);
+
         patchpoint->setGenerator([context] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
 
