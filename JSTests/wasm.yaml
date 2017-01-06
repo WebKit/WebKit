@@ -68,7 +68,7 @@
   cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/exports.wast.js
-  cmd: runWebAssemblySpecTest :skip
+  cmd: runWebAssemblySpecTest :normal
 
 - path: wasm/spec-tests/f32.wast.js
   cmd: runWebAssemblySpecTest :normal
