@@ -123,7 +123,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
     return nullptr;
 }
 
-RetainPtr<NSArray> SharedBuffer::createNSDataArray()
+RetainPtr<NSArray> SharedBuffer::createNSDataArray() const
 {
     if (auto platformData = (NSData *)m_cfData.get())
         return @[ platformData ];

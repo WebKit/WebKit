@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,10 +75,6 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 @interface NSURLRequest ()
 - (CFURLRequestRef) _CFURLRequest;
 @end
-#endif
-
-#if USE(QUICK_LOOK)
-#import "QuickLook.h"
 #endif
 
 using namespace WebCore;
@@ -751,13 +747,6 @@ void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, Networ
 #endif
     
 #endif // ENABLE(WEB_TIMING)
-
-#if USE(QUICK_LOOK)
-void ResourceHandle::setQuickLookHandle(std::unique_ptr<QuickLookHandle> handle)
-{
-    m_quickLook = WTFMove(handle);
-}
-#endif
 
 } // namespace WebCore
 

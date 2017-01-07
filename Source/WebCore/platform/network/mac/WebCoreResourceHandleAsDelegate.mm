@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,6 @@
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "WebCoreURLResponse.h"
-
-#if USE(QUICK_LOOK)
-#import "QuickLook.h"
-#endif
 
 using namespace WebCore;
 
@@ -146,20 +142,8 @@ using namespace WebCore;
         [response _setMIMEType:@"text/html"];
 #endif
 
-#if USE(QUICK_LOOK)
-    bool isQuickLookPreview = false;
-    m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, connection, response, self));
-    if (m_handle->quickLookHandle()) {
-        response = m_handle->quickLookHandle()->nsResponse();
-        isQuickLookPreview = true;
-    }
-#endif
-
     ResourceResponse resourceResponse(response);
     resourceResponse.setSource(ResourceResponse::Source::Network);
-#if USE(QUICK_LOOK)
-    resourceResponse.setIsQuickLook(isQuickLookPreview);
-#endif
 #if ENABLE(WEB_TIMING)
     ResourceHandle::getConnectionTimingData(connection, resourceResponse.networkLoadTiming());
 #else
@@ -180,11 +164,6 @@ using namespace WebCore;
 
     if (!m_handle || !m_handle->client())
         return;
-
-#if USE(QUICK_LOOK)
-    if (m_handle->quickLookHandle() && m_handle->quickLookHandle()->didReceiveDataArray(reinterpret_cast<CFArrayRef>(dataArray)))
-        return;
-#endif
 
     m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapCFDataArray(reinterpret_cast<CFArrayRef>(dataArray)), -1);
     // The call to didReceiveData above can cancel a load, and if so, the delegate (self) could have been deallocated by this point.
@@ -208,11 +187,6 @@ using namespace WebCore;
     // FIXME: If we get more than 2B bytes in a single chunk, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
-
-#if USE(QUICK_LOOK)
-    if (m_handle->quickLookHandle() && m_handle->quickLookHandle()->didReceiveData(reinterpret_cast<CFDataRef>(data)))
-        return;
-#endif
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
     // -1 means we do not provide any data about transfer size to inspector so it would use
@@ -241,11 +215,6 @@ using namespace WebCore;
     if (!m_handle || !m_handle->client())
         return;
 
-#if USE(QUICK_LOOK)
-    if (m_handle->quickLookHandle() && m_handle->quickLookHandle()->didFinishLoading())
-        return;
-#endif
-
     m_handle->client()->didFinishLoading(m_handle, 0);
 }
 
@@ -257,11 +226,6 @@ using namespace WebCore;
 
     if (!m_handle || !m_handle->client())
         return;
-
-#if USE(QUICK_LOOK)
-    if (m_handle->quickLookHandle())
-        m_handle->quickLookHandle()->didFail();
-#endif
 
     m_handle->client()->didFail(m_handle, error);
 }

@@ -1,3 +1,74 @@
+2017-01-07  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Consolidate usage of QuickLookHandle into SubresourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=166713
+
+        Reviewed by Alex Christensen.
+
+        QuickLook conversion was originally implemented by intercepting document loads at the
+        ResourceHandle level, with separate paths for NSURLConnection and CFURLConnection handles.
+        When QuickLook was ported to WebKit2, a third path was added in WebResourceLoader.
+        
+        This change removes these three separate paths and implements a single conversion path in
+        SubresourceLoader, where QuickLook can intercept document loads regardless of the networking
+        API being used.
+
+        No change in behavior. Covered by existing tests.
+
+        * loader/ResourceLoader.h: Removed override from didCreateQuickLookHandle() since this
+        function is no longer declared in ResourceHandleClient.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::shouldCreateQuickLookHandleForResponse): Added a helper
+        function to check if a QuickLookHandle should be created for a response.
+        (WebCore::SubresourceLoader::didReceiveResponse): Created a QuickLookHandle if necessary
+        and stored it in the DocumentLoader.
+        (WebCore::SubresourceLoader::didReceiveData): If there is a QuickLookHandle, call
+        QuickLookHandle::didReceiveBuffer(), and return early if QuickLook is converting.
+        (WebCore::SubresourceLoader::didReceiveBuffer): Ditto for QuickLookHandle::didReceiveBuffer().
+        (WebCore::SubresourceLoader::didFinishLoading): Ditto for QuickLookHandle::didFinishLoading().
+        (WebCore::SubresourceLoader::didFail): If there is a QuickLookHandle, call QuickLookHandle::didFail().
+        * loader/SubresourceLoader.h: Declared shouldCreateQuickLookHandleForResponse().
+        * loader/ios/QuickLook.h: Removed declarations used by the ResourceHandles and declared new
+        functions used by SubresourceLoader.
+        * loader/ios/QuickLook.mm:
+        (WebCore::QuickLookHandle::QuickLookHandle): Removed the NSURLConnection * parameter, since
+        we’d now always pass nil.
+        (WebCore::QuickLookHandle::create): Removed create() functions used by ResourceHandles.
+        (WebCore::QuickLookHandle::didReceiveData): Added. Copies the data into an NSData, wraps it
+        in an NSArray, and passes it to didReceiveDataArray().
+        (WebCore::QuickLookHandle::didReceiveBuffer): Added. Creates a NSArray of NSData from the
+        SharedBuffer and passes it to didReceiveDataArray().
+        (-[WebQuickLookHandleAsDelegate initWithConnectionDelegate:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connection:didReceiveDataArray:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connection:didReceiveData:lengthReceived:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connectionDidFinishLoading:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connection:didFailWithError:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate detachHandle]): Deleted.
+        (WebCore::QuickLookHandle::cfResponse): Deleted.
+        (WebCore::QuickLookHandle::didReceiveDataArray): Passed dataArray to m_converter and m_client.
+        * platform/SharedBuffer.h: Const-qualified createNSDataArray().
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (WebCore::SharedBuffer::createNSDataArray): Ditto.
+        * platform/network/ResourceHandle.cpp: Stopped including QuickLook.h.
+        * platform/network/ResourceHandle.h: Removed m_quickLook.
+        (WebCore::ResourceHandle::quickLookHandle): Deleted.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didCreateQuickLookHandle): Deleted.
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse): Removed QuickLook code.
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveData): Ditto.
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didFinishLoading): Ditto.
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didFail): Ditto.
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveDataArray): Ditto.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::setQuickLookHandle): Deleted.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Removed QuickLook code.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveDataArray:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveData:lengthReceived:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]): Ditto.
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]): Ditto.
+
 2017-01-06  Daniel Bates  <dabates@apple.com>
 
         Ensure navigation only allowed for documents not in the page cache

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,11 +147,6 @@ public:
     static void setClientCertificate(const String& host, CFDataRef);
 #endif
 
-#if USE(QUICK_LOOK)
-    QuickLookHandle* quickLookHandle() { return m_quickLook.get(); }
-    void setQuickLookHandle(std::unique_ptr<QuickLookHandle>);
-#endif
-
 #if PLATFORM(WIN) && USE(CURL)
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificateInfo(const String&, const String&, const String&);
@@ -280,10 +275,6 @@ private:
 
     friend class ResourceHandleInternal;
     std::unique_ptr<ResourceHandleInternal> d;
-
-#if USE(QUICK_LOOK)
-    std::unique_ptr<QuickLookHandle> m_quickLook;
-#endif
 };
 
 }

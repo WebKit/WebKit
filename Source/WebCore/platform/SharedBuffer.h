@@ -65,7 +65,7 @@ public:
     
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData();
-    WEBCORE_EXPORT RetainPtr<NSArray> createNSDataArray();
+    WEBCORE_EXPORT RetainPtr<NSArray> createNSDataArray() const;
     WEBCORE_EXPORT static Ref<SharedBuffer> wrapNSData(NSData *);
 #endif
 #if USE(CF)

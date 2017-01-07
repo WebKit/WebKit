@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007, 2009, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,10 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ResourceLoadInfo.h"
+#endif
+
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
 #endif
 
 namespace WebCore {
@@ -247,10 +251,30 @@ void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long 
     m_resource->didSendData(bytesSent, totalBytesToBeSent);
 }
 
+#if USE(QUICK_LOOK)
+bool SubresourceLoader::shouldCreateQuickLookHandleForResponse(const ResourceResponse& response) const
+{
+    if (m_resource->type() != CachedResource::MainResource)
+        return false;
+
+    if (m_documentLoader->quickLookHandle())
+        return false;
+
+    return QuickLookHandle::shouldCreateForMIMEType(response.mimeType());
+}
+#endif
+
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 {
     ASSERT(!response.isNull());
     ASSERT(m_state == Initialized);
+
+#if USE(QUICK_LOOK)
+    if (shouldCreateQuickLookHandleForResponse(response)) {
+        m_documentLoader->setQuickLookHandle(QuickLookHandle::create(*this, response));
+        return;
+    }
+#endif
 
     // We want redirect responses to be processed through willSendRequestInternal. The only exception is redirection with no Location headers.
     ASSERT(response.httpStatusCode() < 300 || response.httpStatusCode() >= 400 || response.httpStatusCode() == 304 || !response.httpHeaderField(HTTPHeaderName::Location));
@@ -325,11 +349,25 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
 
 void SubresourceLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
+#if USE(QUICK_LOOK)
+    if (auto quickLookHandle = m_documentLoader->quickLookHandle()) {
+        if (quickLookHandle->didReceiveData(data, length))
+            return;
+    }
+#endif
+
     didReceiveDataOrBuffer(data, length, nullptr, encodedDataLength, dataPayloadType);
 }
 
 void SubresourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
+#if USE(QUICK_LOOK)
+    if (auto quickLookHandle = m_documentLoader->quickLookHandle()) {
+        if (quickLookHandle->didReceiveBuffer(buffer.get()))
+            return;
+    }
+#endif
+
     didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
@@ -468,6 +506,13 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
 
 void SubresourceLoader::didFinishLoading(double finishTime)
 {
+#if USE(QUICK_LOOK)
+    if (auto quickLookHandle = m_documentLoader->quickLookHandle()) {
+        if (quickLookHandle->didFinishLoading())
+            return;
+    }
+#endif
+
     if (m_state != Initialized)
         return;
     ASSERT(!reachedTerminalState());
@@ -510,6 +555,11 @@ void SubresourceLoader::didFinishLoading(double finishTime)
 
 void SubresourceLoader::didFail(const ResourceError& error)
 {
+#if USE(QUICK_LOOK)
+    if (auto quickLookHandle = m_documentLoader->quickLookHandle())
+        quickLookHandle->didFail();
+#endif
+
     if (m_state != Initialized)
         return;
     ASSERT(!reachedTerminalState());

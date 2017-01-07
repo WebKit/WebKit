@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,6 +100,10 @@ private:
     void didReceiveDataOrBuffer(const char*, int, RefPtr<SharedBuffer>&&, long long encodedDataLength, DataPayloadType);
 
     void notifyDone();
+
+#if USE(QUICK_LOOK)
+    bool shouldCreateQuickLookHandleForResponse(const ResourceResponse&) const;
+#endif
 
     enum SubresourceLoaderState {
         Uninitialized,

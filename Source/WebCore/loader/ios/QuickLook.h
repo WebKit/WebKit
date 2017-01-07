@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,23 +33,22 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSFileHandle;
 OBJC_CLASS NSSet;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
-OBJC_CLASS NSURLConnection;
 OBJC_CLASS NSURLRequest;
 OBJC_CLASS NSURLResponse;
 OBJC_CLASS QLPreviewConverter;
 
 namespace WebCore {
 
-class ResourceHandle;
 class ResourceLoader;
 class ResourceResponse;
-class SynchronousResourceHandleCFURLConnectionDelegate;
+class SharedBuffer;
 class URL;
 
 WEBCORE_EXPORT NSSet *QLPreviewGetSupportedMIMETypesSet();
@@ -74,26 +73,16 @@ WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 class QuickLookHandle {
     WTF_MAKE_NONCOPYABLE(QuickLookHandle);
 public:
-    WEBCORE_EXPORT static bool shouldCreateForMIMEType(const String&);
+    static bool shouldCreateForMIMEType(const String&);
+    static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
+    ~QuickLookHandle();
 
-    static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, NSURLConnection *, NSURLResponse *, id delegate);
-#if USE(CFURLCONNECTION)
-    static std::unique_ptr<QuickLookHandle> create(ResourceHandle*, SynchronousResourceHandleCFURLConnectionDelegate*, CFURLResponseRef);
-#endif
-    // FIXME: Use of ResourceLoader here is a platform violation.
-    WEBCORE_EXPORT static std::unique_ptr<QuickLookHandle> create(ResourceLoader&, const ResourceResponse&);
-
-    WEBCORE_EXPORT ~QuickLookHandle();
-
-    WEBCORE_EXPORT bool didReceiveDataArray(CFArrayRef);
-    WEBCORE_EXPORT bool didReceiveData(CFDataRef);
-    WEBCORE_EXPORT bool didFinishLoading();
-    WEBCORE_EXPORT void didFail();
+    bool didReceiveData(const char* data, unsigned length);
+    bool didReceiveBuffer(const SharedBuffer&);
+    bool didFinishLoading();
+    void didFail();
 
     WEBCORE_EXPORT NSURLResponse *nsResponse();
-#if USE(CFURLCONNECTION)
-    CFURLResponseRef cfResponse();
-#endif
 
     void setClient(PassRefPtr<QuickLookHandleClient> client) { m_client = client; }
 
@@ -104,7 +93,9 @@ public:
     QLPreviewConverter *converter() const { return m_converter.get(); }
 
 private:
-    QuickLookHandle(NSURL *, NSURLConnection *, NSURLResponse *, id delegate);
+    QuickLookHandle(NSURL *, NSURLResponse *, id delegate);
+
+    void didReceiveDataArray(NSArray *);
 
     RetainPtr<NSURL> m_firstRequestURL;
     RetainPtr<QLPreviewConverter> m_converter;
