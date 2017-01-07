@@ -62,6 +62,8 @@ WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef 
     case WebsiteAutoplayPolicy::UseHeuristics:
         return kWKWebsiteAutoplayPolicyUseHeuristics;
     }
+    ASSERT_NOT_REACHED();
+    return kWKWebsiteAutoplayPolicyUseHeuristics;
 }
 
 void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies, WKWebsiteAutoplayPolicy autoplayPolicy)
@@ -69,12 +71,13 @@ void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies, WK
     switch (autoplayPolicy) {
     case kWKWebsiteAutoplayPolicyAlwaysAllow:
         toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::AlwaysAllow);
-        break;
+        return;
     case kWKWebsiteAutoplayPolicyAlwaysDeny:
         toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::AlwaysDeny);
-        break;
+        return;
     case kWKWebsiteAutoplayPolicyUseHeuristics:
         toImpl(websitePolicies)->setAutoplayPolicy(WebsiteAutoplayPolicy::UseHeuristics);
-        break;
+        return;
     }
+    ASSERT_NOT_REACHED();
 }

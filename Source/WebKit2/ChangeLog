@@ -1,3 +1,14 @@
+2017-01-06  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the EFL build following <http://trac.webkit.org/changeset/210461>
+        (https://bugs.webkit.org/show_bug.cgi?id=166781)
+
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetAutoplayPolicy): Invoke ASSERT_NOT_REACHED() and return kWKWebsiteAutoplayPolicyUseHeuristics
+        if the specified policy is not covered by a switch case.
+        (WKWebsitePoliciesSetAutoplayPolicy): Substituted "return" for "break" in each switch case and
+        invoke ASSERT_NOT_REACHED() if the specified policy is not covered by a switch case.
+
 2017-01-06  Matt Rajca  <mrajca@apple.com>
 
         Add infrastructure for sending autoplay website policies to WebKit
