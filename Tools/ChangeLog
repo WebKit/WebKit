@@ -1,3 +1,29 @@
+2017-01-06  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Consolidate duplicate copies of WebArchiveDumpSupport in DRT and WKTR into WebCoreTestSupport
+        https://bugs.webkit.org/show_bug.cgi?id=166789
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/PlatformMac.cmake:
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp: Removed.
+        * DumpRenderTree/cf/WebArchiveDumpSupport.h: Removed.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        Called WebCoreTestSupport::createXMLStringFromWebArchiveData() instead of
+        createXMLStringFromWebArchiveData().
+        * DumpRenderTree/mac/WebArchiveDumpSupportMac.mm: Removed.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        Added $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport to HEADER_SEARCH_PATHS.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dumpDOMAsWebArchive):
+        Called WebCoreTestSupport::createXMLStringFromWebArchiveData() instead of
+        createXMLStringFromWebArchiveData().
+        * WebKitTestRunner/InjectedBundle/cocoa/WebArchiveDumpSupportCocoa.mm: Removed.
+        * WebKitTestRunner/PlatformMac.cmake:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/cf/WebArchiveDumpSupport.h: Removed.
+
 2017-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Minor cleanups to IndentOutdentCommand and related code

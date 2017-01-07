@@ -81,8 +81,6 @@ list(APPEND DumpRenderTree_ObjC_SOURCES
 )
 
 list(APPEND DumpRenderTree_Cpp_SOURCES
-    cf/WebArchiveDumpSupport.cpp
-
     cg/PixelDumpSupportCG.cpp
 )
 
@@ -112,7 +110,6 @@ list(APPEND DumpRenderTree_ObjCpp_SOURCES
     mac/TestRunnerMac.mm
     mac/UIDelegate.mm
     mac/UIScriptControllerMac.mm
-    mac/WebArchiveDumpSupportMac.mm
     mac/WorkQueueItemMac.mm
 )
 

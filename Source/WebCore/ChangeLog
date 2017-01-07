@@ -1,3 +1,22 @@
+2017-01-06  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Consolidate duplicate copies of WebArchiveDumpSupport in DRT and WKTR into WebCoreTestSupport
+        https://bugs.webkit.org/show_bug.cgi?id=166789
+
+        Reviewed by Alex Christensen.
+
+        There were duplicate implementations of WebArchiveDumpSupport in DumpRenderTree and
+        WebKitTestRunner. This change consolidates these into a single implementation in
+        WebCoreTestSupport.
+
+        * PlatformMac.cmake: Added WebArchiveDumpSupport.mm to WebCoreTestSupport.
+        * WebCore.xcodeproj/project.pbxproj: Ditto. Also made WebArchiveDumpSupport.h a Private header.
+        * platform/spi/cf/CFNetworkSPI.h: Moved CFNetwork forward declarations from
+        WebArchiveDumpSupport to here.
+        * testing/cocoa/WebArchiveDumpSupport.h: Added.
+        * testing/cocoa/WebArchiveDumpSupport.mm: Merged WebArchiveDumpSupport.cpp and
+        WebArchiveDumpSupport{Cocoa,Mac}.mm into a single file.
+
 2017-01-06  Tim Horton  <timothy_horton@apple.com>
 
         Minor cleanups to IndentOutdentCommand and related code

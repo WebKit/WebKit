@@ -78,8 +78,6 @@
 		5641E2D014335E95008307E5 /* JSTextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5641E2CE14335E95008307E5 /* JSTextInputController.cpp */; };
 		5664A49A14326384008881BE /* TextInputController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5664A49814326384008881BE /* TextInputController.cpp */; };
 		5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5670B8271386FCA5002EB355 /* EventSenderProxy.mm */; };
-		5C45C30F17398E290079714E /* WebArchiveDumpSupportCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C30E17398E290079714E /* WebArchiveDumpSupportCocoa.mm */; };
-		5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
 		6510A78511EC643800410867 /* WebKitWeightWatcher200.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */; };
@@ -272,9 +270,6 @@
 		5670B8271386FCA5002EB355 /* EventSenderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventSenderProxy.mm; sourceTree = "<group>"; };
 		583913D014335E95008307E5 /* JSAccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAccessibilityController.cpp; sourceTree = "<group>"; };
 		583913D114335E95008307E5 /* JSAccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAccessibilityController.h; sourceTree = "<group>"; };
-		5C45C30E17398E290079714E /* WebArchiveDumpSupportCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveDumpSupportCocoa.mm; sourceTree = "<group>"; };
-		5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebArchiveDumpSupport.cpp; path = cf/WebArchiveDumpSupport.cpp; sourceTree = SOURCE_ROOT; };
-		5C45C31217398E480079714E /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchiveDumpSupport.h; path = cf/WebArchiveDumpSupport.h; sourceTree = SOURCE_ROOT; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
 		6510A77A11EC643800410867 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
@@ -506,7 +501,6 @@
 			children = (
 				65EB859F11EC67CC0034D300 /* ActivateFontsCocoa.mm */,
 				0FEB909E1905A776000FDBF3 /* InjectedBundlePageCocoa.mm */,
-				5C45C30E17398E290079714E /* WebArchiveDumpSupportCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -598,15 +592,6 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
-		5C45C31017398E370079714E /* cf */ = {
-			isa = PBXGroup;
-			children = (
-				5C45C31117398E480079714E /* WebArchiveDumpSupport.cpp */,
-				5C45C31217398E480079714E /* WebArchiveDumpSupport.h */,
-			);
-			name = cf;
-			sourceTree = "<group>";
-		};
 		65EB859E11EC67CC0034D300 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -640,7 +625,6 @@
 			isa = PBXGroup;
 			children = (
 				BC952C0A11F3B939003398B4 /* Bindings */,
-				5C45C31017398E370079714E /* cf */,
 				0FEB909D1905A75D000FDBF3 /* cocoa */,
 				BC14E4E0120E02F900826C0C /* Controllers */,
 				BC952D3A11F3BF1F003398B4 /* Derived Sources */,
@@ -1036,8 +1020,6 @@
 				2E63EDA61891BDC0002A7AFC /* TestRunner.cpp in Sources */,
 				C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */,
 				5664A49A14326384008881BE /* TextInputController.cpp in Sources */,
-				5C45C31317398E480079714E /* WebArchiveDumpSupport.cpp in Sources */,
-				5C45C30F17398E290079714E /* WebArchiveDumpSupportCocoa.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

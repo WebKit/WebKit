@@ -55,6 +55,13 @@ typedef CF_ENUM(int64_t, _TimingDataOptions)
     _TimingDataOptionsEnableW3CNavigationTiming = (1 << 0)
 };
 
+enum CFURLCacheStoragePolicy {
+    kCFURLCacheStorageAllowed = 0,
+    kCFURLCacheStorageAllowedInMemoryOnly = 1,
+    kCFURLCacheStorageNotAllowed = 2
+};
+typedef enum CFURLCacheStoragePolicy CFURLCacheStoragePolicy;
+
 typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 typedef const struct _CFURLCache* CFURLCacheRef;
 typedef const struct _CFURLCredential* CFURLCredentialRef;
@@ -151,8 +158,8 @@ void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef
 void CFURLConnectionInvalidateConnectionCache();
 
 extern CFStringRef const kCFHTTPCookieLocalFileDomain;
+extern const CFStringRef kCFHTTPVersion1_1;
 extern const CFStringRef kCFURLRequestAllowAllPOSTCaching;
-
 extern const CFStringRef _kCFURLConnectionPropertyShouldSniff;
 
 CFHTTPCookieStorageRef _CFHTTPCookieStorageGetDefault(CFAllocatorRef);
@@ -174,6 +181,13 @@ CFURLRef CFURLResponseGetURL(CFURLResponseRef);
 void CFURLResponseSetMIMEType(CFURLResponseRef, CFStringRef);
 CFHTTPCookieStorageRef _CFURLStorageSessionCopyCookieStorage(CFAllocatorRef, CFURLStorageSessionRef);
 CFArrayRef _CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL(CFHTTPCookieStorageRef inCookieStorage, CFURLRef inURL, CFURLRef inMainDocumentURL, Boolean sendSecureCookies);
+CFStringRef CFURLResponseGetTextEncodingName(CFURLResponseRef);
+SInt64 CFURLResponseGetExpectedContentLength(CFURLResponseRef);
+CFTypeID CFURLResponseGetTypeID();
+CFURLResponseRef CFURLResponseCreate(CFAllocatorRef, CFURLRef, CFStringRef mimeType, SInt64 expectedContentLength, CFStringRef textEncodingName, CFURLCacheStoragePolicy);
+void CFURLResponseSetExpectedContentLength(CFURLResponseRef, SInt64 length);
+CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef, CFURLRef, CFHTTPMessageRef, CFURLCacheStoragePolicy);
+
 #endif // !PLATFORM(WIN)
 
 WTF_EXTERN_C_END
