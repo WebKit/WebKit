@@ -190,7 +190,7 @@ static JSValue toJS(ExecState& state, JSDOMGlobalObject& globalObject, WebGLExte
     return jsNull();
 }
 
-bool JSWebGLRenderingContextBaseOwner::isReachableFromOpaqueRoots(Handle<Unknown> handle, void*, SlotVisitor& visitor)
+bool JSWebGLRenderingContextBaseOwner::isReachableFromOpaqueRoots(Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSWebGLRenderingContextBase* jsWebGLRenderingContext = jsCast<JSWebGLRenderingContextBase*>(handle.slot()->asCell());
     void* root = WebCore::root(jsWebGLRenderingContext->wrapped().canvas());
