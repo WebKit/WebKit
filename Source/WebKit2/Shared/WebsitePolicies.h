@@ -27,9 +27,16 @@
 
 namespace WebKit {
 
+enum class WebsiteAutoplayPolicy {
+    UseHeuristics,
+    AlwaysAllow,
+    AlwaysDeny
+};
+
 struct WebsitePolicies {
 
     bool contentBlockersEnabled { true };
+    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::UseHeuristics };
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, WebsitePolicies&);
@@ -38,11 +45,14 @@ struct WebsitePolicies {
 template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;
+    encoder.encodeEnum(autoplayPolicy);
 }
 
 template<class Decoder> bool WebsitePolicies::decode(Decoder& decoder, WebsitePolicies& result)
 {
     if (!decoder.decode(result.contentBlockersEnabled))
+        return false;
+    if (!decoder.decodeEnum(result.autoplayPolicy))
         return false;
     return true;
 }

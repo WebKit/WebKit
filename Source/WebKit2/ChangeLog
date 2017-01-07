@@ -1,3 +1,23 @@
+2017-01-06  Matt Rajca  <mrajca@apple.com>
+
+        Add infrastructure for sending autoplay website policies to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=166781
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::encode):
+        (WebKit::WebsitePolicies::decode):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetAutoplayPolicy):
+        (WKWebsitePoliciesSetAutoplayPolicy):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAutoplayPolicy:]):
+        (-[_WKWebsitePolicies autoplayPolicy]):
+
 2017-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Network process crash in WebKit::CustomProtocolManagerImpl::didFailWithError

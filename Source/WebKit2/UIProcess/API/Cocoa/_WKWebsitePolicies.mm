@@ -57,6 +57,33 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
+- (void)setAutoplayPolicy:(_WKWebsiteAutoplayPolicy)autoplayPolicy
+{
+    switch (autoplayPolicy) {
+    case _WKWebsiteAutoplayPolicyUseHeuristics:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::UseHeuristics);
+        break;
+    case _WKWebsiteAutoplayPolicyAlwaysAllow:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::AlwaysAllow);
+        break;
+    case _WKWebsiteAutoplayPolicyAlwaysDeny:
+        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::AlwaysDeny);
+        break;
+    }
+}
+
+- (_WKWebsiteAutoplayPolicy)autoplayPolicy
+{
+    switch (_websitePolicies->autoplayPolicy()) {
+    case WebKit::WebsiteAutoplayPolicy::UseHeuristics:
+        return _WKWebsiteAutoplayPolicyUseHeuristics;
+    case WebKit::WebsiteAutoplayPolicy::AlwaysAllow:
+        return _WKWebsiteAutoplayPolicyAlwaysAllow;
+    case WebKit::WebsiteAutoplayPolicy::AlwaysDeny:
+        return _WKWebsiteAutoplayPolicyAlwaysDeny;
+    }
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; contentBlockersEnabled = %d>", NSStringFromClass(self.class), self, self.contentBlockersEnabled];
