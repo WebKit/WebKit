@@ -124,24 +124,6 @@ static const int testFooterBannerHeight = 58;
     [_webView loadRequest:[NSURLRequest requestWithURL:[NSURL _webkit_URLWithUserTypedString:[urlText stringValue]]]];
 }
 
-- (IBAction)showHideWebView:(id)sender
-{
-    BOOL hidden = ![_webView isHidden];
-    
-    [_webView setHidden:hidden];
-}
-
-- (IBAction)removeReinsertWebView:(id)sender
-{
-    if ([_webView window]) {
-        [_webView retain];
-        [_webView removeFromSuperview]; 
-    } else {
-        [containerView addSubview:_webView];
-        [_webView release];
-    }
-}
-
 - (IBAction)setPageScale:(id)sender
 {
     CGFloat scale = [self pageScaleForMenuItemTag:[sender tag]];

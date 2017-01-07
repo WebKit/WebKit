@@ -1,3 +1,24 @@
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        Share the implementation of MiniBrowser view hiding functionality
+        https://bugs.webkit.org/show_bug.cgi?id=166800
+
+        Reviewed by Andy Estes.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController showHideWebView:]):
+        (-[BrowserWindowController removeReinsertWebView:]):
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController showHideWebView:]): Deleted.
+        (-[WK1BrowserWindowController removeReinsertWebView:]): Deleted.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController showHideWebView:]): Deleted.
+        (-[WK2BrowserWindowController removeReinsertWebView:]): Deleted.
+        Move the implementation of these two things to the shared superclass,
+        since they don't depend on WebKit-specific things.
+        Also, there was no reason to retain the (WK)WebView while it was unparented,
+        as the BrowserWindowController maintains a reference the entire time.
+
 2017-01-06  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Consolidate duplicate copies of WebArchiveDumpSupport in DRT and WKTR into WebCoreTestSupport

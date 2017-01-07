@@ -86,24 +86,6 @@
     [[_webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
-- (IBAction)showHideWebView:(id)sender
-{
-    BOOL hidden = ![_webView isHidden];
-    
-    [_webView setHidden:hidden];
-}
-
-- (IBAction)removeReinsertWebView:(id)sender
-{
-    if ([_webView window]) {
-        [_webView retain];
-        [_webView removeFromSuperview]; 
-    } else {
-        [containerView addSubview:_webView];
-        [_webView release];
-    }
-}
-
 - (IBAction)setPageScale:(id)sender
 {
     CGFloat scale = [self pageScaleForMenuItemTag:[sender tag]];

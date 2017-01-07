@@ -111,12 +111,15 @@
 
 - (IBAction)showHideWebView:(id)sender
 {
-    [self doesNotRecognizeSelector:_cmd];
+    self.mainContentView.hidden = !self.mainContentView.isHidden;
 }
 
 - (IBAction)removeReinsertWebView:(id)sender
 {
-    [self doesNotRecognizeSelector:_cmd];
+    if (self.mainContentView.window)
+        [self.mainContentView removeFromSuperview];
+    else
+        [containerView addSubview:self.mainContentView];
 }
 
 - (IBAction)zoomIn:(id)sender
