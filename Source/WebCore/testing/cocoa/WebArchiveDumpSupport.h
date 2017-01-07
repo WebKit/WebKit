@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include "WebCoreTestSupport.h"
 #include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCoreTestSupport {
 
-CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData) TEST_SUPPORT_EXPORT;
+CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData) WTF_EXPORT_PRIVATE;
 
 } // namespace WebCoreTestSupport
