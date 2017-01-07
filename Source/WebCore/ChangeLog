@@ -1,3 +1,33 @@
+2017-01-06  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings from CanvasRenderingContext2D
+        https://bugs.webkit.org/show_bug.cgi?id=166793
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move JSCanvasRenderingContext2DCustom.cpp to the GC only group.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toJS): Deleted.
+        (WebCore::toHTMLCanvasStyle): Deleted.
+        (WebCore::JSCanvasRenderingContext2D::strokeStyle): Deleted.
+        (WebCore::JSCanvasRenderingContext2D::setStrokeStyle): Deleted.
+        (WebCore::JSCanvasRenderingContext2D::fillStyle): Deleted.
+        (WebCore::JSCanvasRenderingContext2D::setFillStyle): Deleted.
+        Remove non-GC related custom bindings.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::toStyle):
+        (WebCore::CanvasRenderingContext2D::strokeStyle):
+        (WebCore::CanvasRenderingContext2D::fillStyle):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        Made existing setStrokeStyle/setFillStyle functions (which take CanvasStyle's) 
+        private, and implemented new ones that operate on Variants, matching the spec.
+
 2017-01-05  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from "rendering" directory, other improvements

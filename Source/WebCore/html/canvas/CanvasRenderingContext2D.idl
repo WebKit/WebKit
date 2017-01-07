@@ -166,8 +166,8 @@ typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
     [MayThrowException] ImageData createImageData(ImageData? imagedata);
     [MayThrowException] ImageData createImageData(float sw, float sh);
 
-    [Custom] attribute custom strokeStyle;
-    [Custom] attribute custom fillStyle;
+    attribute (DOMString or CanvasGradient or CanvasPattern) strokeStyle;
+    attribute (DOMString or CanvasGradient or CanvasPattern) fillStyle;
     [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
     [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);

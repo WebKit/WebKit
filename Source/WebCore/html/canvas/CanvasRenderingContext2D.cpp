@@ -1704,6 +1704,43 @@ void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient& gradi
 #endif
 }
 
+static CanvasRenderingContext2D::Style toStyle(const CanvasStyle& style)
+{
+    if (auto* gradient = style.canvasGradient())
+        return RefPtr<CanvasGradient> { gradient };
+    if (auto* pattern = style.canvasPattern())
+        return RefPtr<CanvasPattern> { pattern };
+    return style.color();
+}
+
+CanvasRenderingContext2D::Style CanvasRenderingContext2D::strokeStyle() const
+{
+    return toStyle(state().strokeStyle);
+}
+
+void CanvasRenderingContext2D::setStrokeStyle(CanvasRenderingContext2D::Style&& style)
+{
+    WTF::switchOn(style,
+        [this] (const String& string) { this->setStrokeColor(string); },
+        [this] (const RefPtr<CanvasGradient>& gradient) { this->setStrokeStyle(CanvasStyle(*gradient)); },
+        [this] (const RefPtr<CanvasPattern>& pattern) { this->setStrokeStyle(CanvasStyle(*pattern)); }
+    );
+}
+
+CanvasRenderingContext2D::Style CanvasRenderingContext2D::fillStyle() const
+{
+    return toStyle(state().fillStyle);
+}
+
+void CanvasRenderingContext2D::setFillStyle(CanvasRenderingContext2D::Style&& style)
+{
+    WTF::switchOn(style,
+        [this] (const String& string) { this->setFillColor(string); },
+        [this] (const RefPtr<CanvasGradient>& gradient) { this->setFillStyle(CanvasStyle(*gradient)); },
+        [this] (const RefPtr<CanvasPattern>& pattern) { this->setFillStyle(CanvasStyle(*pattern)); }
+    );
+}
+
 ExceptionOr<Ref<CanvasGradient>> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1)
 {
     if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1))

@@ -18324,6 +18324,7 @@
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
 				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
 				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
+				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				AD726FE916D9F40A003A4E6D /* JSCSSRuleCustom.h */,
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
@@ -22092,7 +22093,6 @@
 			children = (
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
 				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
-				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
 				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				7CEF26181D6A92E300BE905D /* JSCryptoCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,

@@ -66,12 +66,6 @@ public:
     CanvasRenderingContext2D(HTMLCanvasElement&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();
 
-    const CanvasStyle& strokeStyle() const { return state().strokeStyle; }
-    void setStrokeStyle(CanvasStyle);
-
-    const CanvasStyle& fillStyle() const { return state().fillStyle; }
-    void setFillStyle(CanvasStyle);
-
     float lineWidth() const;
     void setLineWidth(float);
 
@@ -171,6 +165,12 @@ public:
     void setAlpha(float);
 
     void setCompositeOperation(const String&);
+
+    using Style = Variant<String, RefPtr<CanvasGradient>, RefPtr<CanvasPattern>>;
+    Style strokeStyle() const;
+    void setStrokeStyle(Style&&);
+    Style fillStyle() const;
+    void setFillStyle(Style&&);
 
     ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
     ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
@@ -320,6 +320,9 @@ private:
 
     void applyStrokePattern();
     void applyFillPattern();
+
+    void setStrokeStyle(CanvasStyle);
+    void setFillStyle(CanvasStyle);
 
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, bool repeatX, bool repeatY);
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLCanvasElement&, bool repeatX, bool repeatY);
