@@ -40,6 +40,7 @@
 }
 
 - (void)loadURLString:(NSString *)urlString;
+- (void)loadHTMLString:(NSString *)HTMLString;
 - (NSString *)addProtocolIfNecessary:(NSString *)address;
 
 - (void)applicationTerminating;
@@ -78,6 +79,9 @@
 - (NSView *)mainContentView;
 
 - (CGFloat)pageScaleForMenuItemTag:(NSInteger)tag;
+
+@property (nonatomic, assign, getter=isEditable) BOOL editable;
+- (IBAction)toggleEditable:(id)sender;
 
 @end
 

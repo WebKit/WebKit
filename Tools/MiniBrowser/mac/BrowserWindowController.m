@@ -58,6 +58,10 @@
 {
 }
 
+- (void)loadHTMLString:(NSString *)HTMLString
+{
+}
+
 - (void)applicationTerminating
 {
 }
@@ -209,6 +213,11 @@
 {
     [self doesNotRecognizeSelector:_cmd];
     return nil;
+}
+
+- (IBAction)toggleEditable:(id)sender
+{
+    self.editable = !self.isEditable;
 }
 
 #pragma mark -

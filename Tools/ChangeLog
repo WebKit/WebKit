@@ -1,5 +1,40 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        Add the ability to create empty contentEditable windows in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=166801
+
+        Reviewed by Wenson Hsieh.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate createBrowserWindowController:]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate newEditorWindow:]):
+        (-[BrowserAppDelegate openDocument:]):
+        (-[BrowserAppDelegate _updateNewWindowKeyEquivalents]):
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController loadHTMLString:]):
+        (-[BrowserWindowController toggleEditable:]):
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        (-[WK1BrowserWindowController loadHTMLString:]):
+        (-[WK1BrowserWindowController validateMenuItem:]):
+        (-[WK1BrowserWindowController setEditable:]):
+        (-[WK1BrowserWindowController updateTitle:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController setEditable:]):
+        (-[WK2BrowserWindowController updateTitle:]):
+        (-[WK2BrowserWindowController loadHTMLString:]):
+        Merge more functionality from WebEditingTester.
+        Add two menu items for creating empty editable WebKit1/2 windows.
+        Add a menu item to the Edit menu to toggle editability on any window.
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         Implement find-in-page in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=166799
 

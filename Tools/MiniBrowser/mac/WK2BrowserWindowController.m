@@ -69,6 +69,7 @@ static const int testFooterBannerHeight = 58;
 
     _webView.allowsMagnification = YES;
     _webView.allowsBackForwardNavigationGestures = YES;
+    _webView._editable = self.isEditable;
 
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [containerView addSubview:_webView];
@@ -201,6 +202,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
+    else if (action == @selector(toggleEditable:))
+        [menuItem setState:self.isEditable ? NSOnState : NSOffState];
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _pageScale], [self pageScaleForMenuItemTag:[menuItem tag]])];
@@ -282,6 +285,12 @@ static BOOL areEssentiallyEqual(double a, double b)
 - (NSView *)mainContentView
 {
     return _webView;
+}
+
+- (void)setEditable:(BOOL)editable
+{
+    [super setEditable:editable];
+    _webView._editable = editable;
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -415,7 +424,7 @@ static BOOL areEssentiallyEqual(double a, double b)
         title = url.lastPathComponent ?: url._web_userVisibleString;
     }
 
-    self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier];
+    self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]%@", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier, _webView._editable ? @" [Editable]" : @""];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -523,6 +532,11 @@ static BOOL areEssentiallyEqual(double a, double b)
     // FIXME: We shouldn't have to set the url text here.
     [urlText setStringValue:urlString];
     [self fetch:nil];
+}
+
+- (void)loadHTMLString:(NSString *)HTMLString
+{
+    [_webView loadHTMLString:HTMLString baseURL:nil];
 }
 
 static NSSet *dataTypes()
