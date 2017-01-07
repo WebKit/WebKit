@@ -221,6 +221,17 @@ WKPreferences *defaultPreferences()
     return nil;
 }
 
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+    BrowserWindowController *controller = [self createBrowserWindowController:nil];
+    if (!controller)
+        return NO;
+
+    [controller.window makeKeyAndOrderFront:self];
+    [controller loadURLString:[NSURL fileURLWithPath:filename].absoluteString];
+    return YES;
+}
+
 - (IBAction)openDocument:(id)sender
 {
     BrowserWindowController *browserWindowController = [self frontmostBrowserWindowController];

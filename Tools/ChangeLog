@@ -1,5 +1,18 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        Make it possible to drop HTML files on the MiniBrowser icon
+        https://bugs.webkit.org/show_bug.cgi?id=166802
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate application:openFile:]):
+        * MiniBrowser/mac/Info.plist:
+        If you're using an editable window, the usual trick of dropping on the
+        window doesn't work anymore (it makes an <attachment> instead).
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         MiniBrowser window gets smaller each time it is instantiated
         https://bugs.webkit.org/show_bug.cgi?id=166807
 
