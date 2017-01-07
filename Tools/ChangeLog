@@ -1,5 +1,19 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        MiniBrowser window gets smaller each time it is instantiated
+        https://bugs.webkit.org/show_bug.cgi?id=166807
+
+        Reviewed by Andy Estes.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+        * MiniBrowser/mac/BrowserWindow.xib:
+        Turn on full-window content view support with IB, instead of waiting
+        until after the views have been loaded. This seems to resolve the
+        longstanding ever-shrinking-window problem.
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         Add indent/outdent items to MiniBrowser's new format menu
         https://bugs.webkit.org/show_bug.cgi?id=166805
 

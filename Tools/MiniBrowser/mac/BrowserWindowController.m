@@ -38,8 +38,6 @@
 
 - (void)windowDidLoad
 {
-    self.window.styleMask |= NSWindowStyleMaskFullSizeContentView;
-
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     [share sendActionOn:NSEventMaskLeftMouseDown];
 #else
