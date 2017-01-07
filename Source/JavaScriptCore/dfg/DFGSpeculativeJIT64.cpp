@@ -3462,6 +3462,11 @@ void SpeculativeJIT::compile(Node* node)
         }
         break;
     }
+
+    case ArraySlice: {
+        compileArraySlice(node);
+        break;
+    }
         
     case ArrayPop: {
         ASSERT(node->arrayMode().isJSArray());

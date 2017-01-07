@@ -678,6 +678,7 @@ private:
 
         case ArrayPop:
         case ArrayPush:
+        case ArraySlice:
         case RegExpExec:
         case RegExpTest:
         case StringReplace:

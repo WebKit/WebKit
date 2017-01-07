@@ -2680,6 +2680,7 @@ public:
     void compileSpread(Node*);
     void compileNewArrayWithSpread(Node*);
     void compileGetRestLength(Node*);
+    void compileArraySlice(Node*);
     void compileNotifyWrite(Node*);
     bool compileRegExpExec(Node*);
     void compileIsObjectOrNull(Node*);

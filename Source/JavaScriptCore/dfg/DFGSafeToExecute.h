@@ -402,6 +402,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetArrayLength:
     case ArrayPush:
     case ArrayPop:
+    case ArraySlice:
     case StringCharAt:
     case StringCharCodeAt:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(node->child1()));

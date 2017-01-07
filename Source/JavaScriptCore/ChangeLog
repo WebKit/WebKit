@@ -1,3 +1,92 @@
+2017-01-06  Saam Barati  <sbarati@apple.com>
+
+        Add a slice intrinsic to the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=166707
+
+        Reviewed by Filip Pizlo.
+
+        The gist of this patch is to inline Array.prototype.slice
+        into the DFG/FTL. The implementation in the DFG-backend
+        and FTLLowerDFGToB3 is just a straight forward implementation
+        of what the C function is doing. The more interesting bits
+        of this patch are setting up the proper watchpoints and conditions
+        in the executing code to prove that its safe to skip all of the
+        observable JS actions that Array.prototype.slice normally does.
+        
+        We perform the following proofs:
+        1. Array.prototype.constructor has not changed (via a watchpoint).
+        2. That Array.prototype.constructor[Symbol.species] has not changed (via a watchpoint).
+        3. The global object is not having a bad time.
+        3. The array that is being sliced has an original array structure.
+        5. Array.prototype/Object.prototype have not transitioned.
+        
+        Conditions 1, 2, and 3 are strictly required.
+        
+        4 is ensuring a couple things:
+        1. That a "constructor" property hasn't been added to the array
+        we're slicing since we're supposed to perform a Get(array, "constructor").
+        2. That we're not slicing an instance of a subclass of Array.
+        
+        We could relax 4.1 in the future if we find other ways to test if
+        the incoming array hasn't changed the "constructor" property.
+        
+        I'm seeing a 5% speedup on crypto-pbkdf2 and often a 1% speedup on
+        the total benchmark (the results are sometimes noisy).
+
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::speciesWatchpointIsValid):
+        (JSC::speciesConstructArray):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        (JSC::ArrayPrototype::initializeSpeciesWatchpoint):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        (JSC::speciesWatchpointsValid): Deleted.
+        (JSC::ArrayPrototype::attemptToInitializeSpeciesWatchpoint): Deleted.
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::speciesWatchpointStatus): Deleted.
+        (): Deleted.
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arraySpeciesWatchpoint):
+
 2017-01-06  Mark Lam  <mark.lam@apple.com>
 
         The ObjC API's JSVirtualMachine's map tables need to be guarded by a lock.

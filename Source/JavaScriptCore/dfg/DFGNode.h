@@ -1472,6 +1472,7 @@ public:
         case GetArgument:
         case ArrayPop:
         case ArrayPush:
+        case ArraySlice:
         case RegExpExec:
         case RegExpTest:
         case GetGlobalVar:
@@ -1796,6 +1797,7 @@ public:
         case Arrayify:
         case ArrayifyToStructure:
         case ArrayPush:
+        case ArraySlice:
         case ArrayPop:
         case HasIndexedProperty:
             return true;

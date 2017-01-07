@@ -706,6 +706,9 @@ private:
         case ArrayPop:
             compileArrayPop();
             break;
+        case ArraySlice:
+            compileArraySlice();
+            break;
         case CreateActivation:
             compileCreateActivation();
             break;
@@ -3859,6 +3862,83 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad array type");
             return;
         }
+    }
+
+    void compileArraySlice()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+
+        LValue sourceStorage = lowStorage(m_node->numChildren() == 3 ? m_graph.varArgChild(m_node, 2) : m_graph.varArgChild(m_node, 3));
+        LValue inputLength = m_out.load32(sourceStorage, m_heaps.Butterfly_publicLength);
+
+        LValue endBoundary;
+        if (m_node->numChildren() == 3)
+            endBoundary = m_out.load32(sourceStorage, m_heaps.Butterfly_publicLength);
+        else {
+            endBoundary = lowInt32(m_graph.varArgChild(m_node, 2));
+            endBoundary = m_out.select(m_out.greaterThanOrEqual(endBoundary, m_out.constInt32(0)),
+                m_out.select(m_out.above(endBoundary, inputLength), inputLength, endBoundary),
+                m_out.select(m_out.lessThan(m_out.add(inputLength, endBoundary), m_out.constInt32(0)), m_out.constInt32(0), m_out.add(inputLength, endBoundary)));
+        }
+
+        LValue startIndex = lowInt32(m_graph.varArgChild(m_node, 1));
+        startIndex = m_out.select(m_out.greaterThanOrEqual(startIndex, m_out.constInt32(0)),
+            m_out.select(m_out.above(startIndex, inputLength), inputLength, startIndex),
+            m_out.select(m_out.lessThan(m_out.add(inputLength, startIndex), m_out.constInt32(0)), m_out.constInt32(0), m_out.add(inputLength, startIndex)));
+
+        LValue resultLength = m_out.select(m_out.below(startIndex, endBoundary),
+            m_out.sub(endBoundary, startIndex),
+            m_out.constInt32(0));
+
+        IndexingType indexingType;
+        switch (m_node->arrayMode().type()) {
+        case Array::Int32:
+            indexingType = ArrayWithInt32;
+            break;
+        case Array::Contiguous:
+            indexingType = ArrayWithContiguous;
+            break;
+        case Array::Double:
+            indexingType = ArrayWithDouble;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+        auto arrayResult = allocateJSArray(resultLength, structure, false, false);
+
+        LBasicBlock loop = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        resultLength = m_out.zeroExtPtr(resultLength);
+        ValueFromBlock startLoadIndex = m_out.anchor(m_out.zeroExtPtr(startIndex));
+        ValueFromBlock startStoreIndex = m_out.anchor(m_out.constIntPtr(0));
+
+        m_out.branch(
+            m_out.below(m_out.constIntPtr(0), resultLength), unsure(loop), unsure(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(loop, continuation);
+        LValue storeIndex = m_out.phi(pointerType(), startStoreIndex);
+        LValue loadIndex = m_out.phi(pointerType(), startLoadIndex);
+        IndexedAbstractHeap& heap = m_heaps.forArrayType(m_node->arrayMode().type());
+        if (indexingType == ArrayWithDouble) {
+            LValue value = m_out.loadDouble(m_out.baseIndex(heap, sourceStorage, loadIndex));
+            m_out.storeDouble(value, m_out.baseIndex(heap, arrayResult.butterfly, storeIndex));
+        } else {
+            LValue value = m_out.load64(m_out.baseIndex(heap, sourceStorage, loadIndex));
+            m_out.store64(value, m_out.baseIndex(heap, arrayResult.butterfly, storeIndex));
+        }
+        LValue nextStoreIndex = m_out.add(storeIndex, m_out.constIntPtr(1));
+        m_out.addIncomingToPhi(storeIndex, m_out.anchor(nextStoreIndex));
+        m_out.addIncomingToPhi(loadIndex, m_out.anchor(m_out.add(loadIndex, m_out.constIntPtr(1))));
+        m_out.branch(
+            m_out.below(nextStoreIndex, resultLength), unsure(loop), unsure(continuation));
+
+        m_out.appendTo(continuation, lastNext);
+
+        mutatorFence();
+        setJSValue(arrayResult.array);
     }
     
     void compileArrayPop()

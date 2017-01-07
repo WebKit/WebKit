@@ -1650,6 +1650,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBytecodeNumber);
         break;
+
+    case ArraySlice:
+        IndexingType indexingType;
+        switch (node->arrayMode().type()) {
+        case Array::Double:
+            indexingType = ArrayWithDouble;
+            break;
+        case Array::Int32:
+            indexingType = ArrayWithInt32;
+            break;
+        case Array::Contiguous:
+            indexingType = ArrayWithContiguous;
+            break;
+        default:
+            DFG_CRASH(m_graph, node, "Bad array mode.");
+        }
+
+        forNode(node).set(m_graph, m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(indexingType));
+        break;
             
     case ArrayPop:
         clobberWorld(node->origin.semantic, clobberLimit);
