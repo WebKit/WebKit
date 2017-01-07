@@ -309,10 +309,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             if (!properties.length)
                 return false;
 
-            this._resetContent();
-
-            for (let property of properties)
-                this._uncommentProperty(property);
+            for (var property of properties) {
+                if (property._commentRange) {
+                    this._uncommentRange(property._commentRange);
+                    property._commentRange = null;
+                }
+            }
 
             return true;
         }
@@ -1270,6 +1272,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (!range)
             return;
 
+        property._commentRange = range;
+        property._commentRange.to.ch += 6; // Number of characters added by comments.
+
         var text = this._codeMirror.getRange(range.from, range.to);
 
         function update()
@@ -1286,19 +1291,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _propertyCommentCheckboxChanged(event)
     {
-        this._uncommentProperty(event.target);
-    }
-
-    _uncommentProperty(property)
-    {
-        let textMarker = property.__propertyTextMarker;
-        console.assert(textMarker);
-        if (!textMarker)
+        var commentTextMarker = event.target.__commentTextMarker;
+        console.assert(commentTextMarker);
+        if (!commentTextMarker)
             return;
 
-        // Check if the property has been removed already, like from double-clicking
-        // the checkbox and calling this event listener multiple times.
-        let range = textMarker.find();
+        // Check if the comment has been removed already, like from double-clicking
+        // the checkbox and calling event listener multiple times.
+        var range = commentTextMarker.find();
         if (!range)
             return;
 
