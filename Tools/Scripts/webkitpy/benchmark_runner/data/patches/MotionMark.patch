@@ -1,8 +1,8 @@
-diff --git a/resources/runner/animometer.js b/resources/runner/animometer.js
-index b20a1c9..e434e89 100644
---- a/resources/runner/animometer.js
-+++ b/resources/runner/animometer.js
-@@ -320,6 +320,61 @@ window.benchmarkRunnerClient = {
+diff --git a/resources/runner/motionmark.js b/resources/runner/motionmark.js
+index 65e8c54..1643e70 100644
+--- a/resources/runner/motionmark.js
++++ b/resources/runner/motionmark.js
+@@ -393,6 +393,61 @@ window.benchmarkRunnerClient = {
      didFinishLastIteration: function()
      {
          benchmarkController.showResults();
@@ -41,7 +41,7 @@ index b20a1c9..e434e89 100644
 +            options: benchmarkRunnerClient.results.options,
 +            data: benchmarkRunnerClient.results.data,
 +        }
-+        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports }, "debugOutput": debugOutput};
++        return {"MotionMark": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports }, "debugOutput": debugOutput};
 +    },
 +
 +    didFinishLastIteration: function()
@@ -63,13 +63,13 @@ index b20a1c9..e434e89 100644
 +        xhr.send(results);
      }
  };
-
-@@ -357,7 +408,7 @@ window.sectionsManager =
+ 
+@@ -436,7 +491,7 @@ window.sectionsManager =
  window.benchmarkController = {
      initialize: function()
      {
 -        benchmarkController.addOrientationListenerIfNecessary();
 +        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
      },
-
-     addOrientationListenerIfNecessary: function() {
+ 
+     determineCanvasSize: function() {
