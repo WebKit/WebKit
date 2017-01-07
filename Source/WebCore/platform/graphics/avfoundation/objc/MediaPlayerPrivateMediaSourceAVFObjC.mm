@@ -712,11 +712,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime&
 {
     auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr();
     NSArray* times = @[[NSValue valueWithCMTime:toCMTime(time)]];
-    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis, size] {
+    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[this, weakThis, size] {
         if (!weakThis)
             return;
-        weakThis->m_sizeChangeObservers.removeFirst();
-        weakThis->setNaturalSize(size);
+
+        ASSERT(!m_sizeChangeObservers.isEmpty());
+        if (!m_sizeChangeObservers.isEmpty()) {
+            RetainPtr<id> observer = m_sizeChangeObservers.takeFirst();
+            [m_synchronizer removeTimeObserver:observer.get()];
+        }
+        setNaturalSize(size);
     }];
     m_sizeChangeObservers.append(WTFMove(observer));
 
