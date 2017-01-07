@@ -37,6 +37,7 @@
     IBOutlet NSButton *toggleUseShrinkToFitButton;
 
     BOOL _zoomTextOnly;
+    BOOL _editable;
 }
 
 - (void)loadURLString:(NSString *)urlString;

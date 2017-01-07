@@ -30,7 +30,7 @@
 
 @implementation BrowserWindowController
 
-@synthesize editable;
+@synthesize editable=_editable;
 
 - (id)initWithWindow:(NSWindow *)window
 {

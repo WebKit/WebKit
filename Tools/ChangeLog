@@ -2,6 +2,13 @@
 
         Fix the 32-bit build.
 
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the 32-bit build.
+
         * MiniBrowser/mac/BrowserWindowController.m:
 
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
