@@ -1,3 +1,19 @@
+2017-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering rebuilds for minor changes of CSSProperties.json
+        https://bugs.webkit.org/show_bug.cgi?id=166810
+
+        Reviewed by Daniel Bates.
+
+        We expect to make lots of metadata-related changes to CSSProperties.json, and
+        these should not trigger rebuilds.
+        
+        Have makeprop.pl write to temporary files first, then only replace the generated
+        files if the contents differ.
+
+        * css/makeprop.pl:
+        (replaceFileIfChanged):
+
 2017-01-06  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr use from "inspector", "platform/sql", and "platform/text"
