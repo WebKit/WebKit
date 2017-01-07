@@ -1,5 +1,36 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        Implement find-in-page in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=166799
+
+        Reviewed by Andy Estes.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController find:]): Deleted.
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController toggleShrinkToFit:]):
+        (-[WK1BrowserWindowController find:]): Deleted.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController validateMenuItem:]):
+        (-[WK2BrowserWindowController performTextFinderAction:]):
+        (-[WK2BrowserWindowController findBarView]):
+        (-[WK2BrowserWindowController setFindBarView:]):
+        (-[WK2BrowserWindowController isFindBarVisible]):
+        (-[WK2BrowserWindowController setFindBarVisible:]):
+        (-[WK2BrowserWindowController contentView]):
+        (-[WK2BrowserWindowController findBarViewDidChangeHeight]):
+        (-[WK2BrowserWindowController performFindPanelAction:]): Deleted.
+        (-[WK2BrowserWindowController find:]): Deleted.
+        Implement find-in-page using WKWebView's conformance to the NSTextFinderClient
+        protocol. At first glance, it's pretty broken, but vaguely works.
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         Share the implementation of MiniBrowser view hiding functionality
         https://bugs.webkit.org/show_bug.cgi?id=166800
 

@@ -231,11 +231,6 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (IBAction)toggleShrinkToFit:(id)sender
 {
-
-}
-
-- (IBAction)find:(id)sender
-{
 }
 
 - (IBAction)dumpSourceToConsole:(id)sender

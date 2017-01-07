@@ -46,7 +46,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 static const int testHeaderBannerHeight = 42;
 static const int testFooterBannerHeight = 58;
 
-@interface WK2BrowserWindowController () <WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate>
+@interface WK2BrowserWindowController () <NSTextFinderBarContainer, WKNavigationDelegate, WKUIDelegate, _WKIconLoadingDelegate>
 @end
 
 @implementation WK2BrowserWindowController {
@@ -56,6 +56,10 @@ static const int testFooterBannerHeight = 58;
     BOOL _isPrivateBrowsingWindow;
 
     BOOL _useShrinkToFit;
+
+    NSTextFinder *_textFinder;
+    NSView *_textFindBarView;
+    BOOL _findBarVisible;
 }
 
 - (void)awakeFromNib
@@ -90,6 +94,12 @@ static const int testFooterBannerHeight = 58;
         | _WKRenderingProgressEventFirstPaintAfterSuppressedIncrementalRendering;
 
     _zoomTextOnly = NO;
+
+    _textFinder = [[NSTextFinder alloc] init];
+    _textFinder.incrementalSearchingEnabled = YES;
+    _textFinder.incrementalSearchingShouldDimContentView = YES;
+    _textFinder.client = _webView;
+    _textFinder.findBarContainer = self;
 }
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
@@ -110,6 +120,8 @@ static const int testFooterBannerHeight = 58;
     
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
+
+    [_textFinder release];
 
     [_webView release];
     [_configuration release];
@@ -169,7 +181,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    SEL action = [menuItem action];
+    SEL action = menuItem.action;
 
     if (action == @selector(zoomIn:))
         return [self canZoomIn];
@@ -180,7 +192,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     
     // Disabled until missing WK2 functionality is exposed via API/SPI.
     if (action == @selector(dumpSourceToConsole:)
-        || action == @selector(find:)
         || action == @selector(forceRepaint:))
         return NO;
     
@@ -514,15 +525,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     [self fetch:nil];
 }
 
-- (IBAction)performFindPanelAction:(id)sender
-{
-    [findPanelWindow makeKeyAndOrderFront:sender];
-}
-
-- (IBAction)find:(id)sender
-{
-}
-
 static NSSet *dataTypes()
 {
     return [WKWebsiteDataStore allWebsiteDataTypes];
@@ -655,6 +657,51 @@ static NSSet *dataTypes()
     completionHandler(^void (NSData *data) {
         LOG(@"Icon URL %@ received icon data of length %u", parameters.url, (unsigned)data.length);
     });
+}
+
+#pragma mark Find in Page
+
+- (IBAction)performTextFinderAction:(id)sender
+{
+    [_textFinder performAction:[sender tag]];
+}
+
+- (NSView *)findBarView
+{
+    return _textFindBarView;
+}
+
+- (void)setFindBarView:(NSView *)findBarView
+{
+    if (_textFindBarView)
+        [_textFindBarView removeFromSuperview];
+    _textFindBarView = findBarView;
+    _findBarVisible = YES;
+    [containerView addSubview:_textFindBarView];
+    [_textFindBarView setFrame:NSMakeRect(0, 0, containerView.bounds.size.width, _textFindBarView.frame.size.height)];
+}
+
+- (BOOL)isFindBarVisible
+{
+    return _findBarVisible;
+}
+
+- (void)setFindBarVisible:(BOOL)findBarVisible
+{
+    _findBarVisible = findBarVisible;
+    if (findBarVisible)
+        [containerView addSubview:_textFindBarView];
+    else
+        [_textFindBarView removeFromSuperview];
+}
+
+- (NSView *)contentView
+{
+    return _webView;
+}
+
+- (void)findBarViewDidChangeHeight
+{
 }
 
 @end

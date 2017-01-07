@@ -35,8 +35,6 @@
     IBOutlet NSTextField *urlText;
     IBOutlet NSView *containerView;
     IBOutlet NSButton *toggleUseShrinkToFitButton;
-    
-    IBOutlet NSWindow *findPanelWindow;
 
     BOOL _zoomTextOnly;
 }
@@ -73,7 +71,6 @@
 - (IBAction)toggleShrinkToFit:(id)sender;
 
 - (IBAction)dumpSourceToConsole:(id)sender;
-- (IBAction)find:(id)sender;
 
 - (void)didChangeSettings;
 

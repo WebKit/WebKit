@@ -194,11 +194,6 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
-- (IBAction)find:(id)sender
-{
-    [self doesNotRecognizeSelector:_cmd];
-}
-
 - (void)didChangeSettings
 {
     [self doesNotRecognizeSelector:_cmd];
