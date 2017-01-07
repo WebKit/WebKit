@@ -30,6 +30,8 @@
 
 @implementation BrowserWindowController
 
+@synthesize editable;
+
 - (id)initWithWindow:(NSWindow *)window
 {
     self = [super initWithWindow:window];
