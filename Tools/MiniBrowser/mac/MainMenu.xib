@@ -547,6 +547,17 @@
                                                 <action selector="alignRight:" target="-1" id="WCu-Uc-5dx"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="231-fw-Azp"/>
+                                        <menuItem title="Indent" keyEquivalent="]" id="OcZ-mE-dy8">
+                                            <connections>
+                                                <action selector="indent:" target="-1" id="lSG-0g-DFM"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Outdent" keyEquivalent="[" id="Ayh-5B-HWu">
+                                            <connections>
+                                                <action selector="outdent:" target="-1" id="Ayh-5B-HWM"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="GNO-k5-c2C"/>
                                         <menuItem title="Writing Direction" id="Dxv-9Y-sNO">
                                             <modifierMask key="keyEquivalentModifierMask"/>
