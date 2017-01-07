@@ -4755,7 +4755,7 @@ sub GenerateCallbackImplementationContent
         push(@$contentRef, "    : ${name}()\n");
     }
     push(@$contentRef, "    , ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
-    push(@$contentRef, "    , m_data(new ${callbackDataType}(callback, this))\n");
+    push(@$contentRef, "    , m_data(new ${callbackDataType}(callback, globalObject, this))\n");
     push(@$contentRef, "{\n");
     push(@$contentRef, "}\n\n");
 

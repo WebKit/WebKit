@@ -40,7 +40,7 @@ namespace WebCore {
 JSTestCallbackInterface::JSTestCallbackInterface(JSObject* callback, JSDOMGlobalObject* globalObject)
     : TestCallbackInterface()
     , ActiveDOMCallback(globalObject->scriptExecutionContext())
-    , m_data(new JSCallbackDataStrong(callback, this))
+    , m_data(new JSCallbackDataStrong(callback, globalObject, this))
 {
 }
 

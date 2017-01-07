@@ -46,10 +46,13 @@ class JSCallbackData {
 public:
     enum class CallbackType { Function, Object, FunctionOrObject };
 
+    JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
+
 protected:
-    JSCallbackData()
+    explicit JSCallbackData(JSDOMGlobalObject* globalObject)
+        : m_globalObject(globalObject)
 #ifndef NDEBUG
-        : m_thread(currentThread())
+        , m_thread(currentThread())
 #endif
     {
     }
@@ -61,9 +64,10 @@ protected:
 #endif
     }
     
-    static JSC::JSValue invokeCallback(JSC::JSObject* callback, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
+    static JSC::JSValue invokeCallback(JSDOMGlobalObject&, JSC::JSObject* callback, JSC::MarkedArgumentBuffer&, CallbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException);
 
 private:
+    JSC::Weak<JSDOMGlobalObject> m_globalObject;
 #ifndef NDEBUG
     ThreadIdentifier m_thread;
 #endif
@@ -71,17 +75,21 @@ private:
 
 class JSCallbackDataStrong : public JSCallbackData {
 public:
-    JSCallbackDataStrong(JSC::JSObject* callback, void*)
-        : m_callback(callback->globalObject()->vm(), callback)
+    JSCallbackDataStrong(JSC::JSObject* callback, JSDOMGlobalObject* globalObject, void*)
+        : JSCallbackData(globalObject)
+        , m_callback(globalObject->vm(), callback)
     {
     }
 
     JSC::JSObject* callback() { return m_callback.get(); }
-    JSDOMGlobalObject* globalObject() { return JSC::jsCast<JSDOMGlobalObject*>(m_callback->globalObject()); }
 
     JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer& args, CallbackType callbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
     {
-        return JSCallbackData::invokeCallback(callback(), args, callbackType, functionName, returnedException);
+        auto* globalObject = this->globalObject();
+        if (!globalObject)
+            return { };
+
+        return JSCallbackData::invokeCallback(*globalObject, callback(), args, callbackType, functionName, returnedException);
     }
 
 private:
@@ -90,17 +98,21 @@ private:
 
 class JSCallbackDataWeak : public JSCallbackData {
 public:
-    JSCallbackDataWeak(JSC::JSObject* callback, void* owner)
-        : m_callback(callback, &m_weakOwner, owner)
+    JSCallbackDataWeak(JSC::JSObject* callback, JSDOMGlobalObject* globalObject, void* owner)
+        : JSCallbackData(globalObject)
+        , m_callback(callback, &m_weakOwner, owner)
     {
     }
 
     JSC::JSObject* callback() { return m_callback.get(); }
-    JSDOMGlobalObject* globalObject() { return JSC::jsCast<JSDOMGlobalObject*>(m_callback->globalObject()); }
 
     JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer& args, CallbackType callbackType, JSC::PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
     {
-        return JSCallbackData::invokeCallback(callback(), args, callbackType, functionName, returnedException);
+        auto* globalObject = this->globalObject();
+        if (!globalObject)
+            return { };
+
+        return JSCallbackData::invokeCallback(*globalObject, callback(), args, callbackType, functionName, returnedException);
     }
 
 private:

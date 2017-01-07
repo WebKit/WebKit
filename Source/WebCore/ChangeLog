@@ -1,3 +1,31 @@
+2017-01-06  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r189230): DOM Callbacks may use wrong global object
+        https://bugs.webkit.org/show_bug.cgi?id=166784
+
+        Reviewed by Mark Lam.
+
+        DOM Callbacks could end up using the wrong global object after r189230
+        because we were getting the globalObject from the callback object
+        instead of the one at the point the callback object was passed in by
+        JavaScript. This patch fixes the issue.
+
+        Test: fast/frames/frame-window-as-callback.html
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCallbackData.h:
+        (WebCore::JSCallbackData::globalObject):
+        (WebCore::JSCallbackData::JSCallbackData):
+        (WebCore::JSCallbackDataStrong::JSCallbackDataStrong):
+        (WebCore::JSCallbackDataStrong::callback):
+        (WebCore::JSCallbackDataStrong::invokeCallback):
+        (WebCore::JSCallbackDataWeak::JSCallbackDataWeak):
+        (WebCore::JSCallbackDataWeak::callback):
+        (WebCore::JSCallbackDataWeak::invokeCallback):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementationContent):
+
 2017-01-06  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Consolidate duplicate copies of WebArchiveDumpSupport in DRT and WKTR into WebCoreTestSupport
