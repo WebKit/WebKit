@@ -1,5 +1,18 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        Add a stock Format menu to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=166804
+
+        Reviewed by Andy Estes.
+
+        * MiniBrowser/mac/MainMenu.xib:
+        Many of the features automatically work with editable web views.
+        However, this seems to expose a bug where none of the font-related features
+        (Cmd-B, for example) work until the first time the font panel is shown,
+        per process, which will need to be investigated separately.
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         Remove unused applicationWillTerminate methods from MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=166803
 
