@@ -23,6 +23,7 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore
     ${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore
+    ${WEBCORE_DIR}/testing/cocoa
     ${WEBKIT_TESTRUNNER_DIR}/cf
     ${WEBKIT_TESTRUNNER_DIR}/cg
     ${WEBKIT_TESTRUNNER_DIR}/cocoa
