@@ -184,10 +184,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     [self autorelease];
 }
 
-- (void)applicationTerminating
-{
-}
-
 - (double)currentZoomFactor
 {
     return 1;

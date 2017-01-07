@@ -205,12 +205,6 @@ WKPreferences *defaultPreferences()
     [self newWindow:self];
 }
 
-- (void)applicationWillTerminate:(NSNotification *)notification
-{
-    for (BrowserWindowController* controller in _browserWindowControllers)
-        [controller applicationTerminating];
-}
-
 - (BrowserWindowController *)frontmostBrowserWindowController
 {
     for (NSWindow* window in [NSApp windows]) {

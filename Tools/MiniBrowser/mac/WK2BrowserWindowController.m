@@ -319,10 +319,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     [self autorelease];
 }
 
-- (void)applicationTerminating
-{
-}
-
 #define DefaultMinimumZoomFactor (.5)
 #define DefaultMaximumZoomFactor (3.0)
 #define DefaultZoomFactorRatio (1.2)

@@ -43,8 +43,6 @@
 - (void)loadHTMLString:(NSString *)HTMLString;
 - (NSString *)addProtocolIfNecessary:(NSString *)address;
 
-- (void)applicationTerminating;
-
 - (IBAction)openLocation:(id)sender;
 
 - (IBAction)fetch:(id)sender;

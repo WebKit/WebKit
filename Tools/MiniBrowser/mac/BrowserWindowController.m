@@ -62,10 +62,6 @@
 {
 }
 
-- (void)applicationTerminating
-{
-}
-
 - (NSString *)addProtocolIfNecessary:(NSString *)address
 {
     if ([address rangeOfString:@"://"].length > 0)

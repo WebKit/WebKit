@@ -1,5 +1,22 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        Remove unused applicationWillTerminate methods from MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=166803
+
+        Reviewed by Andy Estes.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate applicationWillTerminate:]): Deleted.
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController applicationTerminating]): Deleted.
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController applicationTerminating]): Deleted.
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController applicationTerminating]): Deleted.
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         Add the ability to create empty contentEditable windows in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=166801
 
