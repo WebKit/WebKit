@@ -30,7 +30,9 @@
 #import "MIMETypeRegistry.h"
 #import <CFNetwork/CFHTTPMessage.h>
 #import <CFNetwork/CFNetwork.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 using namespace WebCore;
 
@@ -111,14 +113,42 @@ static void normalizeHTTPResponseHeaderFields(CFMutableDictionaryRef fields)
     CFDictionaryRemoveValue(fields, CFSTR("Keep-Alive"));
 }
 
+#if USE(QUICK_LOOK)
+using QuickLookURLReplacementVector = Vector<std::pair<RetainPtr<CFStringRef>, RetainPtr<CFStringRef>>>;
+static QuickLookURLReplacementVector& quickLookURLReplacements()
+{
+    static NeverDestroyed<QuickLookURLReplacementVector> urlReplacements;
+    return urlReplacements.get();
+}
+#endif
+
 static void normalizeWebResourceURL(CFMutableStringRef webResourceURL)
 {
-    static CFIndex fileUrlLength = CFStringGetLength(CFSTR("file://"));
-    CFRange layoutTestsWebArchivePathRange = CFStringFind(webResourceURL, CFSTR("/LayoutTests/"), kCFCompareBackwards);
-    if (layoutTestsWebArchivePathRange.location == kCFNotFound)
+    static CFStringRef fileScheme = CFSTR("file://");
+    static CFIndex fileSchemeLength = CFStringGetLength(fileScheme);
+    if (CFStringFind(webResourceURL, fileScheme, kCFCompareAnchored).location != kCFNotFound) {
+        CFRange layoutTestsWebArchivePathRange = CFStringFind(webResourceURL, CFSTR("/LayoutTests/"), kCFCompareBackwards);
+        if (layoutTestsWebArchivePathRange.location == kCFNotFound)
+            return;
+        CFRange currentWorkingDirectoryRange = CFRangeMake(fileSchemeLength, layoutTestsWebArchivePathRange.location - fileSchemeLength);
+        CFStringReplace(webResourceURL, currentWorkingDirectoryRange, CFSTR(""));
         return;
-    CFRange currentWorkingDirectoryRange = CFRangeMake(fileUrlLength, layoutTestsWebArchivePathRange.location - fileUrlLength);
-    CFStringReplace(webResourceURL, currentWorkingDirectoryRange, CFSTR(""));
+    }
+
+#if USE(QUICK_LOOK)
+    static CFStringRef quickLookScheme = CFSTR("x-apple-ql-id://");
+    static CFIndex quickLookSchemeLength = CFStringGetLength(quickLookScheme);
+    if (CFStringFind(webResourceURL, quickLookScheme, kCFCompareAnchored).location == kCFNotFound)
+        return;
+
+    CFIndex replacementEnd = CFStringFind(webResourceURL, CFSTR("."), kCFCompareBackwards).location;
+    if (replacementEnd == kCFNotFound)
+        replacementEnd = CFStringGetLength(webResourceURL);
+
+    auto oldResourceURL = adoptCF(CFStringCreateCopy(kCFAllocatorDefault, webResourceURL));
+    CFStringReplace(webResourceURL, CFRangeMake(quickLookSchemeLength, replacementEnd - quickLookSchemeLength), CFSTR("resource"));
+    quickLookURLReplacements().append(std::make_pair(WTFMove(oldResourceURL), webResourceURL));
+#endif
 }
 
 static void convertWebResourceResponseToDictionary(CFMutableDictionaryRef propertyList)
@@ -230,7 +260,13 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 
     // Replace "Apple Computer" with "Apple" in the DTD declaration.
     CFStringFindAndReplace(string.get(), CFSTR("-//Apple Computer//"), CFSTR("-//Apple//"), CFRangeMake(0, CFStringGetLength(string.get())), 0);
-    
+
+#if USE(QUICK_LOOK)
+    for (auto& replacement : quickLookURLReplacements())
+        CFStringFindAndReplace(string.get(), replacement.first.get(), replacement.second.get(), CFRangeMake(0, CFStringGetLength(string.get())), 0);
+    quickLookURLReplacements().clear();
+#endif
+
     return string.leakRef();
 }
 

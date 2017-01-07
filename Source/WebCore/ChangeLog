@@ -1,5 +1,27 @@
 2017-01-07  Andy Estes  <aestes@apple.com>
 
+        [QuickLook] Update quicklook test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=166798
+        <rdar://problem/26477735>
+
+        Reviewed by Alex Christensen.
+
+        QuickLook uses UUIDs to generate x-apple-ql-id: URLs, so they will differ each time a
+        document is previewed. Since these URLs are included in QuickLook layout test results,
+        WebArchiveDumpSupport needs to replace them with predictable values when dumping a web
+        archive.
+
+        * testing/cocoa/WebArchiveDumpSupport.mm:
+        (WebCoreTestSupport::quickLookURLReplacements): Created a static Vector of CFStringRef pairs
+        to store x-apple-ql-id: URLs and their replacement values.
+        (WebCoreTestSupport::normalizeWebResourceURL): If the URL starts with “x-apple-ql-id://”,
+        replace the text between the scheme and the file extension with “resource”. Store the
+        original URL along with its replacement in quickLookURLReplacements().
+        (WebCoreTestSupport::createXMLStringFromWebArchiveData): Replaced all QuickLook URLs in the
+        final XML text with their replacement URLs. 
+
+2017-01-07  Andy Estes  <aestes@apple.com>
+
         [QuickLook] Consolidate usage of QuickLookHandle into SubresourceLoader
         https://bugs.webkit.org/show_bug.cgi?id=166713
 

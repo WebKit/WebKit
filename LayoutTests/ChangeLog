@@ -1,3 +1,70 @@
+2017-01-07  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Update quicklook test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=166798
+        <rdar://problem/26477735>
+
+        Reviewed by Alex Christensen.
+
+        For documents that generate HTML previews, updated the expected results to be web archives.
+        Web archives capture the same information that the expected HTML files did, but allow for
+        easy rebasing with --reset-results.
+
+        For documents that generate PDF previews, a webarchive expected result is inappropriate
+        since the generated PDF will differ between runs due to changing metadata (e.g. creation
+        date). These tests were kept as reftests but with updated expected results.
+
+        * platform/ios-simulator/TestExpectations: Unskipped quicklook/.
+        * quicklook/excel-expected.html: Removed.
+        * quicklook/excel-expected.txt: Added.
+        * quicklook/excel-legacy-expected.html: Removed.
+        * quicklook/excel-legacy-expected.txt: Added.
+        * quicklook/excel-legacy.html: Updated to dump as webarchive.
+        * quicklook/excel.html: Ditto.
+        * quicklook/keynote-09-expected.html: Removed.
+        * quicklook/keynote-09-expected.txt: Added.
+        * quicklook/keynote-09.html: Updated to dump as webarchive.
+        * quicklook/numbers-09-expected.html: Removed.
+        * quicklook/numbers-09-expected.txt: Added.
+        * quicklook/numbers-09.html: Updated to dump as webarchive.
+        * quicklook/pages-09-expected.html: Removed.
+        * quicklook/pages-09-expected.txt: Added.
+        * quicklook/pages-09.html: Updated to dump as webarchive.
+        * quicklook/powerpoint-expected.html: Removed.
+        * quicklook/powerpoint-expected.txt: Added.
+        * quicklook/powerpoint-legacy-expected.html: Removed.
+        * quicklook/powerpoint-legacy-expected.txt: Added.
+        * quicklook/powerpoint-legacy.html: Updated to dump as webarchive.
+        * quicklook/powerpoint.html: Updated to dump as webarchive.
+        * quicklook/resources/excel-expected.html: Removed.
+        * quicklook/resources/excel-legacy-expected.html: Removed.
+        * quicklook/resources/keynote-09-expected/index.css: Removed.
+        * quicklook/resources/keynote-09-expected/index.html: Removed.
+        * quicklook/resources/keynote-09-expected/index.js: Removed.
+        * quicklook/resources/keynote-expected.pdf: Updated.
+        * quicklook/resources/numbers-09-expected/canvas.js: Removed.
+        * quicklook/resources/numbers-09-expected/index.html: Removed.
+        * quicklook/resources/numbers-09-expected/navigation.css: Removed.
+        * quicklook/resources/numbers-09-expected/navigation.html: Removed.
+        * quicklook/resources/numbers-09-expected/sheet_1.html: Removed.
+        * quicklook/resources/numbers-expected.pdf: Updated.
+        * quicklook/resources/pages-09-expected/index.css: Removed.
+        * quicklook/resources/pages-09-expected/index.html: Removed.
+        * quicklook/resources/pages-expected.pdf: Updated.
+        * quicklook/resources/powerpoint-expected.html: Removed.
+        * quicklook/resources/powerpoint-legacy-expected.html: Removed.
+        * quicklook/resources/webkit-icon.pdf: Removed.
+        * quicklook/resources/webkit-icon.png: Removed.
+        * quicklook/resources/webkit-icon.tiff: Removed.
+        * quicklook/resources/word-expected.html: Removed.
+        * quicklook/resources/word-legacy-expected.html: Removed.
+        * quicklook/word-expected.html: Removed.
+        * quicklook/word-expected.txt: Added.
+        * quicklook/word-legacy-expected.html: Removed.
+        * quicklook/word-legacy-expected.txt: Added.
+        * quicklook/word-legacy.html: Updated to dump as webarchive.
+        * quicklook/word.html: Updated to dump as webarchive.
+
 2017-01-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r189230): DOM Callbacks may use wrong global object

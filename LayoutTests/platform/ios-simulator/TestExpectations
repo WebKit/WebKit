@@ -11,6 +11,7 @@ displaylists [ Pass ]
 http/tests/quicklook [ Pass ]
 media/controls/ipad [ Pass ]
 media/ios [ Pass ]
+quicklook [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
 fast/zooming/ios [ Pass ]
@@ -2691,9 +2692,6 @@ fast/events/webkit-media-key-events-constructor.html [ Failure ]
 webkit.org/b/161143 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-samedoc.html [ Pass Failure ]
 
 webkit.org/b/161395 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
-
-# rdar://problem/26477735
-quicklook
 
 # rdar://problem/27954577
 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-fetch-in-main-frame.html [ Failure ]
