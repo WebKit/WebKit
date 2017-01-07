@@ -13,5 +13,8 @@ This tests indenting an empty paragraph when the typing style was Bold. The word
 This tests outdenting an empty paragraph with bold already applied to it. The word below should be bold.
 <b>Bold</b>
 
-This tests indenting an empty paragraph when the typing style was Bold. The word below should be bold.
+This tests outdenting an empty paragraph when the typing style was Bold. The word below should be bold.
+<b>Bold</b>
+
+This tests outdenting an non-indented empty paragraph when the typing style was Bold. The word below should be bold.
 <b>Bold</b>

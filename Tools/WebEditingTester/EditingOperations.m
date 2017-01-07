@@ -102,6 +102,7 @@ NSArray *editingOperations()
         @"moveWordLeftAndModifySelection:",
         @"moveWordRight:",
         @"moveWordRightAndModifySelection:",
+        @"outdent:",
         @"outline:",
         @"pageDown:",
         @"pageDownAndModifySelection:",

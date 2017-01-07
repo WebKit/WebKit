@@ -33,15 +33,15 @@ namespace WebCore {
 class IndentOutdentCommand : public ApplyBlockElementCommand {
 public:
     enum EIndentType { Indent, Outdent };
-    static Ref<IndentOutdentCommand> create(Document& document, EIndentType type, int marginInPixels = 0)
+    static Ref<IndentOutdentCommand> create(Document& document, EIndentType type)
     {
-        return adoptRef(*new IndentOutdentCommand(document, type, marginInPixels));
+        return adoptRef(*new IndentOutdentCommand(document, type));
     }
 
     bool preservesTypingStyle() const override { return true; }
 
 private:
-    IndentOutdentCommand(Document&, EIndentType, int marginInPixels);
+    IndentOutdentCommand(Document&, EIndentType);
 
     EditAction editingAction() const override { return m_typeOfAction == Indent ? EditActionIndent : EditActionOutdent; }
 
@@ -55,7 +55,6 @@ private:
     void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>& blockquoteForNextIndent) override;
 
     EIndentType m_typeOfAction;
-    int m_marginInPixels;
 };
 
 } // namespace WebCore
