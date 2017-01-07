@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,20 +36,18 @@ namespace WebCore {
 std::unique_ptr<ContentData> ContentData::clone() const
 {
     auto result = cloneInternal();
-    
-    ContentData* lastNewData = result.get();
-    for (const ContentData* contentData = next(); contentData; contentData = contentData->next()) {
+    auto* lastNewData = result.get();
+    for (auto* contentData = next(); contentData; contentData = contentData->next()) {
         auto newData = contentData->cloneInternal();
         lastNewData->setNext(WTFMove(newData));
         lastNewData = lastNewData->next();
     }
-        
     return result;
 }
 
 RenderPtr<RenderObject> ImageContentData::createContentRenderer(Document& document, const RenderStyle& pseudoStyle) const
 {
-    auto image = createRenderer<RenderImage>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), m_image.get());
+    auto image = createRenderer<RenderImage>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), const_cast<StyleImage*>(m_image.ptr()));
     image->initializeStyle();
     image->setAltText(altText());
     return WTFMove(image);

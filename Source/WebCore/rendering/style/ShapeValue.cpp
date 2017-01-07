@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +24,30 @@
  */
 
 #include "config.h"
-
 #include "ShapeValue.h"
 
 #include "CachedImage.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
 bool ShapeValue::isImageValid() const
 {
-    if (!image())
+    if (!m_image)
         return false;
-    if (image()->isCachedImage())
-        return image()->cachedImage() && image()->cachedImage()->hasImage();
-    return image()->isGeneratedImage();
-}
-
-template <typename T>
-bool pointersOrValuesEqual(T p1, T p2)
-{
-    if (p1 == p2)
-        return true;
-    
-    if (!p1 || !p2)
-        return false;
-    
-    return *p1 == *p2;
+    if (m_image->isCachedImage()) {
+        auto* cachedImage = m_image->cachedImage();
+        return cachedImage && cachedImage->hasImage();
+    }
+    return m_image->isGeneratedImage();
 }
 
 bool ShapeValue::operator==(const ShapeValue& other) const
 {
-    if (m_type != other.m_type || m_cssBox != other.m_cssBox)
-        return false;
-
-    return pointersOrValuesEqual(m_shape.get(), other.m_shape.get())
-        && pointersOrValuesEqual(m_image.get(), other.m_image.get());
+    return m_type == other.m_type
+        && m_cssBox == other.m_cssBox
+        && arePointingToEqualData(m_shape, other.m_shape)
+        && arePointingToEqualData(m_image, other.m_image);
 }
-
 
 } // namespace WebCore

@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-static DataRef<NinePieceImageData>& defaultData()
+inline DataRef<NinePieceImage::Data>& NinePieceImage::defaultData()
 {
-    static NeverDestroyed<DataRef<NinePieceImageData>> data(NinePieceImageData::create());
+    static NeverDestroyed<DataRef<Data>> data { Data::create() };
     return data.get();
 }
 
@@ -44,16 +44,9 @@ NinePieceImage::NinePieceImage()
 {
 }
 
-NinePieceImage::NinePieceImage(PassRefPtr<StyleImage> image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule)
-    : m_data(NinePieceImageData::create())
+NinePieceImage::NinePieceImage(RefPtr<StyleImage>&& image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule)
+    : m_data(Data::create(WTFMove(image), imageSlices, fill, borderSlices, outset, horizontalRule, verticalRule))
 {
-    m_data.access()->image = image;
-    m_data.access()->imageSlices = WTFMove(imageSlices);
-    m_data.access()->borderSlices = WTFMove(borderSlices);
-    m_data.access()->outset = WTFMove(outset);
-    m_data.access()->fill = fill;
-    m_data.access()->horizontalRule = horizontalRule;
-    m_data.access()->verticalRule = verticalRule;
 }
 
 LayoutUnit NinePieceImage::computeSlice(Length length, LayoutUnit width, LayoutUnit slice, LayoutUnit extent)
@@ -195,7 +188,8 @@ Vector<FloatSize> NinePieceImage::computeTileScales(const Vector<FloatRect>& des
 void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator op) const
 {
     StyleImage* styleImage = image();
-    ASSERT(styleImage && styleImage->isLoaded());
+    ASSERT(styleImage);
+    ASSERT(styleImage->isLoaded());
 
     LayoutBoxExtent sourceSlices = computeSlices(source, imageSlices(), styleImage->imageScaleFactor());
     LayoutBoxExtent destinationSlices = computeSlices(destination.size(), borderSlices(), style.borderWidth(), sourceSlices);
@@ -225,19 +219,26 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* rend
     }
 }
 
-NinePieceImageData::NinePieceImageData()
+inline NinePieceImage::Data::Data()
     : fill(false)
     , horizontalRule(StretchImageRule)
     , verticalRule(StretchImageRule)
-    , image(nullptr)
-    , imageSlices(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent))
-    , borderSlices(Length(1, Relative), Length(1, Relative), Length(1, Relative), Length(1, Relative))
-    , outset(0)
 {
 }
 
-inline NinePieceImageData::NinePieceImageData(const NinePieceImageData& other)
-    : RefCounted<NinePieceImageData>()
+inline NinePieceImage::Data::Data(RefPtr<StyleImage>&& image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule)
+    : fill(fill)
+    , horizontalRule(horizontalRule)
+    , verticalRule(verticalRule)
+    , image(WTFMove(image))
+    , imageSlices(imageSlices)
+    , borderSlices(borderSlices)
+    , outset(outset)
+{
+}
+
+inline NinePieceImage::Data::Data(const Data& other)
+    : RefCounted<Data>()
     , fill(other.fill)
     , horizontalRule(other.horizontalRule)
     , verticalRule(other.verticalRule)
@@ -248,12 +249,22 @@ inline NinePieceImageData::NinePieceImageData(const NinePieceImageData& other)
 {
 }
 
-Ref<NinePieceImageData> NinePieceImageData::copy() const
+inline Ref<NinePieceImage::Data> NinePieceImage::Data::create()
 {
-    return adoptRef(*new NinePieceImageData(*this));
+    return adoptRef(*new Data);
 }
 
-bool NinePieceImageData::operator==(const NinePieceImageData& other) const
+inline Ref<NinePieceImage::Data> NinePieceImage::Data::create(RefPtr<StyleImage>&& image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule horizontalRule, ENinePieceImageRule verticalRule)
+{
+    return adoptRef(*new Data(WTFMove(image), imageSlices, fill, borderSlices, outset, horizontalRule, verticalRule));
+}
+
+Ref<NinePieceImage::Data> NinePieceImage::Data::copy() const
+{
+    return adoptRef(*new Data(*this));
+}
+
+bool NinePieceImage::Data::operator==(const Data& other) const
 {
     return arePointingToEqualData(image, other.image)
         && imageSlices == other.imageSlices

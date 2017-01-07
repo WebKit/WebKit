@@ -2433,11 +2433,11 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
 
     ASSERT(shapeValue->type() == ShapeValue::Type::Shape);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    auto list = CSSValueList::createSpaceSeparated();
     list->append(valueForBasicShape(style, *shapeValue->shape()));
     if (shapeValue->cssBox() != BoxMissing)
         list->append(CSSValuePool::singleton().createValue(shapeValue->cssBox()));
-    return list.releaseNonNull();
+    return WTFMove(list);
 }
 
 static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSelfAlignmentData& data)

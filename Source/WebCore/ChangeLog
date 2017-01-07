@@ -1,3 +1,87 @@
+2017-01-05  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from "rendering" directory, other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=166717
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue): Use auto.
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image): Use auto. Pass references.
+        (WebCore::CSSFilterImageValue::filterImageChanged): Use modern for loop.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertShapeValue): Use overloaded
+        ShapeValue::create function instead of differently named functions.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Ditto.
+
+        * platform/graphics/filters/Filter.h: Added a protected constructor that takes
+        a filter resolution.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer): Use new constructor so
+        we don't have to call setFilterResolution and can initialize m_sourceGraphic.
+        (WebCore::FilterEffectRenderer::create): Moved here from the header.
+        (WebCore::FilterEffectRenderer::buildReferenceFilter): Take references and not
+        PssRefPtr. Use auto and references.
+        (WebCore::FilterEffectRenderer::build): Take a reference. Updated to work with
+        references rather than pointer. Use auto.
+        (WebCore::FilterEffectRenderer::allocateBackingStoreIfNeeded): Use early return.
+        (WebCore::FilterEffectRenderer::clearIntermediateResults): Use modern for loop.
+        (WebCore::FilterEffectRenderer::apply): Use references.
+        (WebCore::FilterEffectRenderer::output): Moved here from header.
+        (WebCore::FilterEffectRenderer::setMaxEffectRects): Moved here from header.
+        (WebCore::FilterEffectRenderer::outputRect): Moved here from header.
+        (WebCore::FilterEffectRendererHelper::prepareFilterEffect): Take references.
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect): Use auto and references.
+        (WebCore::FilterEffectRendererHelper::applyFilterEffect): Ditto.
+        * rendering/FilterEffectRenderer.h: Updated for the above changes. Made a lot more
+        things private.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::filterPainter): Added. Helper so setupFilters does not
+        have to do things twice.
+        (WebCore::RenderLayer::hasFilterThatIsPainting): Updated to call filterPainter.
+        (WebCore::RenderLayer::setupFilters): Ditto.
+        (WebCore::RenderLayer::calculateClipRects): Pass reference.
+        * rendering/RenderLayer.h: Updated for the above changes.
+
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::clone): Use auto.
+        (WebCore::ImageContentData::createContentRenderer): Updated for reference.
+        * rendering/style/ContentData.h: Use Ref&& instead of PassRefPtr. Made more
+        things private.
+
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::defaultData): Made this a static member so it can
+        get at the now-private class NinePieceImage::Data.
+        (WebCore::NinePieceImage::NinePieceImage): Use RefPtr&& instead of PassRefPtr.
+        Use construction instead of calling m_data.access() over and over again.
+        (WebCore::NinePieceImage::Data::Data): Renamed from NinePieceImageData.
+        Moved initialization to class definition. Added a new overload for the normal
+        creation case.
+        (WebCore::NinePieceImage::Data::create): Ditto.
+        (WebCore::NinePieceImage::Data::copy): Ditto.
+        (WebCore::NinePieceImage::Data::operator==): Ditto.
+        * rendering/style/NinePieceImage.h: Cut down on includes. Moved the class
+        named NinePieceImageData in to become the private struct NinePieceImage::Data.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent): Pass Ref&& instead of RefPtr&& when
+        creating ImageContentData.
+
+        * rendering/style/ShapeValue.cpp:
+        (WebCore::ShapeValue::isImageValid): Tighten up by using data member directly
+        and using a local variabel.
+        (WebCore::pointersOrValuesEqual): Deleted.
+        (WebCore::ShapeValue::operator==): Use arePointingToEqualData instead the
+        above deleted function template. Wrote as a single return statement for clarity.
+        * rendering/style/ShapeValue.h: Changed all the create function names to just
+        create, using overloading instead of separate names. Use Ref&& instead of PassRefPtr.
+        Removed unused constructor that took a type but no data.
+
 2017-01-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r189230): DOM Callbacks may use wrong global object

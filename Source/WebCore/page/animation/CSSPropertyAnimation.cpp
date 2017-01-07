@@ -161,7 +161,7 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
     if (!fromShape.canBlend(toShape))
         return to;
 
-    return ShapeValue::createShapeValue(toShape.blend(fromShape, progress), to->cssBox());
+    return ShapeValue::create(toShape.blend(fromShape, progress), to->cssBox());
 }
 
 static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* animation, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
@@ -365,8 +365,7 @@ static inline NinePieceImage blendFunc(const AnimationBase* anim, const NinePiec
     if (from.image()->imageSize(anim->renderer(), 1.0) != to.image()->imageSize(anim->renderer(), 1.0))
         return to;
 
-    RefPtr<StyleImage> newContentImage = blendFunc(anim, from.image(), to.image(), progress);
-
+    auto newContentImage = blendFunc(anim, from.image(), to.image(), progress);
     return NinePieceImage(newContentImage, from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 

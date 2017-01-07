@@ -1012,11 +1012,11 @@ void RenderStyle::setContent(RefPtr<StyleImage>&& image, bool add)
         return;
         
     if (add) {
-        appendContent(std::make_unique<ImageContentData>(image));
+        appendContent(std::make_unique<ImageContentData>(image.releaseNonNull()));
         return;
     }
 
-    rareNonInheritedData.access()->m_content = std::make_unique<ImageContentData>(WTFMove(image));
+    rareNonInheritedData.access()->m_content = std::make_unique<ImageContentData>(image.releaseNonNull());
     if (!rareNonInheritedData.access()->m_altText.isNull())
         rareNonInheritedData.access()->m_content->setAltText(rareNonInheritedData.access()->m_altText);
 }

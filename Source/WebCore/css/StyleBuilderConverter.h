@@ -766,7 +766,7 @@ inline RefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver
     }
 
     if (isImageShape(value))
-        return ShapeValue::createImageValue(styleResolver.styleImage(value));
+        return ShapeValue::create(styleResolver.styleImage(value));
 
     RefPtr<BasicShape> shape;
     CSSBoxType referenceBox = BoxMissing;
@@ -786,10 +786,10 @@ inline RefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver
     }
 
     if (shape)
-        return ShapeValue::createShapeValue(WTFMove(shape), referenceBox);
+        return ShapeValue::create(WTFMove(shape), referenceBox);
 
     if (referenceBox != BoxMissing)
-        return ShapeValue::createBoxShapeValue(referenceBox);
+        return ShapeValue::create(referenceBox);
 
     ASSERT_NOT_REACHED();
     return nullptr;

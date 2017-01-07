@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -459,13 +459,13 @@ bool RenderLayer::requiresFullLayerImageForFilters() const
 {
     if (!paintsWithFilters())
         return false;
-    FilterEffectRenderer* renderer = filterRenderer();
+    auto* renderer = filterRenderer();
     return renderer && renderer->hasFilterThatMovesPixels();
 }
 
 FilterEffectRenderer* RenderLayer::filterRenderer() const
 {
-    FilterInfo* filterInfo = FilterInfo::getIfExists(*this);
+    auto* filterInfo = FilterInfo::getIfExists(*this);
     return filterInfo ? filterInfo->renderer() : nullptr;
 }
 
@@ -4184,36 +4184,43 @@ bool RenderLayer::setupClipPath(GraphicsContext& context, const LayerPaintingInf
     return false;
 }
 
-bool RenderLayer::hasFilterThatIsPainting(GraphicsContext& context, PaintLayerFlags paintFlags) const
+std::pair<RenderLayer::FilterInfo*, std::unique_ptr<FilterEffectRendererHelper>> RenderLayer::filterPainter(GraphicsContext& context, PaintLayerFlags paintFlags) const
 {
     if (context.paintingDisabled())
-        return false;
+        return { };
 
     if (paintFlags & PaintLayerPaintingOverlayScrollbars)
-        return false;
+        return { };
 
-    FilterInfo* filterInfo = FilterInfo::getIfExists(*this);
-    bool hasPaintedFilter = filterInfo && filterInfo->renderer() && paintsWithFilters();
-    if (!hasPaintedFilter)
-        return false;
+    if (!paintsWithFilters())
+        return { };
 
-    auto filterPainter = std::make_unique<FilterEffectRendererHelper>(hasPaintedFilter, context);
-    if (!filterPainter->haveFilterEffect())
-        return false;
+    auto* info = FilterInfo::getIfExists(*this);
+    if (!info || !info->renderer())
+        return { };
 
-    return true;
+    auto helper = std::make_unique<FilterEffectRendererHelper>(true, context);
+    if (!helper->haveFilterEffect())
+        return { };
+
+    return { info, WTFMove(helper) };
+}
+
+bool RenderLayer::hasFilterThatIsPainting(GraphicsContext& context, PaintLayerFlags paintFlags) const
+{
+    return !!filterPainter(context, paintFlags).first;
 }
 
 std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext& context, LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
 {
-    if (!hasFilterThatIsPainting(context, paintFlags))
+    auto painter = filterPainter(context, paintFlags);
+    if (!painter.first)
         return nullptr;
 
-    FilterInfo* filterInfo = FilterInfo::getIfExists(*this);
-    bool hasPaintedFilter = filterInfo && filterInfo->renderer() && paintsWithFilters();
-    auto filterPainter = std::make_unique<FilterEffectRendererHelper>(hasPaintedFilter, context);
+    auto& filterInfo = *painter.first;
+    auto& filterPainter = *painter.second;
 
-    LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
+    LayoutRect filterRepaintRect = filterInfo.dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
     if (!rootRelativeBoundsComputed) {
@@ -4221,24 +4228,23 @@ std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsCo
         rootRelativeBoundsComputed = true;
     }
 
-    if (filterPainter->prepareFilterEffect(this, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect))) {
-        // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
-        filterInfo->resetDirtySourceRect();
+    if (!filterPainter.prepareFilterEffect(*this, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect)))
+        return nullptr;
 
-        if (!filterPainter->beginFilterEffect())
-            return nullptr;
+    // Now we know for sure that the source image will be updated, so we can revert our tracking repaint rect back to zero.
+    filterInfo.resetDirtySourceRect();
 
-        // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
-        ASSERT(filterPainter->hasStartedFilterEffect());
+    if (!filterPainter.beginFilterEffect())
+        return nullptr;
 
-        paintingInfo.paintDirtyRect = filterPainter->repaintRect();
-        // If the filter needs the full source image, we need to avoid using the clip rectangles.
-        // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
-        // Note that we will still apply the clipping on the final rendering of the filter.
-        paintingInfo.clipToDirtyRect = !filterInfo->renderer()->hasFilterThatMovesPixels();
-        return filterPainter;
-    }
-    return nullptr;
+    paintingInfo.paintDirtyRect = filterPainter.repaintRect();
+
+    // If the filter needs the full source image, we need to avoid using the clip rectangles.
+    // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
+    // Note that we will still apply the clipping on the final rendering of the filter.
+    paintingInfo.clipToDirtyRect = !filterInfo.renderer()->hasFilterThatMovesPixels();
+
+    return WTFMove(painter.second);
 }
 
 void RenderLayer::applyFilters(FilterEffectRendererHelper* filterPainter, GraphicsContext& originalContext, const LayerPaintingInfo& paintingInfo, const LayerFragments& layerFragments)
@@ -7007,7 +7013,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
-    if (!filterInfo.renderer()->build(&renderer(), renderer().style().filter(), FilterProperty))
+    if (!filterInfo.renderer()->build(renderer(), renderer().style().filter(), FilterProperty))
         filterInfo.setRenderer(nullptr);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,45 +26,31 @@
 #pragma once
 
 #include "Filter.h"
-#include "FilterEffect.h"
-#include "FilterOperations.h"
-#include "FloatRect.h"
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
 #include "IntRectExtent.h"
 #include "LayoutRect.h"
-#include "SVGFilterBuilder.h"
-#include "SourceGraphic.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Document;
+class FilterEffect;
+class FilterOperations;
 class GraphicsContext;
+class ReferenceFilterOperation;
 class RenderElement;
 class RenderLayer;
+class SourceGraphic;
 
-typedef Vector<RefPtr<FilterEffect>> FilterEffectList;
-
-enum FilterConsumer {
-    FilterProperty,
-    FilterFunction
-};
+enum FilterConsumer { FilterProperty, FilterFunction };
 
 class FilterEffectRendererHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FilterEffectRendererHelper(bool haveFilterEffect, GraphicsContext& targetContext)
-        : m_targetContext(targetContext)
-        , m_haveFilterEffect(haveFilterEffect)
-    {
-    }
-    
+    FilterEffectRendererHelper(bool haveFilterEffect, GraphicsContext& targetContext);
+
     bool haveFilterEffect() const { return m_haveFilterEffect; }
     bool hasStartedFilterEffect() const { return m_startedFilterEffect; }
 
-    bool prepareFilterEffect(RenderLayer*, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
+    bool prepareFilterEffect(RenderLayer&, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
     bool beginFilterEffect();
     void applyFilterEffect(GraphicsContext& destinationContext);
     
@@ -84,67 +70,65 @@ private:
 class FilterEffectRenderer final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<FilterEffectRenderer> create()
-    {
-        return adoptRef(new FilterEffectRenderer);
-    }
+    friend class FilterEffectRendererHelper;
 
-    void setSourceImageRect(const FloatRect& sourceImageRect)
-    { 
-        m_sourceDrawingRegion = sourceImageRect;
-        setMaxEffectRects(sourceImageRect);
-        setFilterRegion(sourceImageRect);
-        m_graphicsBufferAttached = false;
-    }
-    FloatRect sourceImageRect() const override { return m_sourceDrawingRegion; }
+    static Ref<FilterEffectRenderer> create();
 
+    void setSourceImageRect(const FloatRect&);
     void setFilterRegion(const FloatRect& filterRegion) { m_filterRegion = filterRegion; }
-    FloatRect filterRegion() const override { return m_filterRegion; }
 
-    GraphicsContext* inputContext();
-    ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
+    ImageBuffer* output() const;
 
-    bool build(RenderElement*, const FilterOperations&, FilterConsumer);
-    RefPtr<FilterEffect> buildReferenceFilter(RenderElement*, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
-    bool updateBackingStoreRect(const FloatRect& filterRect);
-    void allocateBackingStoreIfNeeded(const GraphicsContext&);
+    bool build(RenderElement&, const FilterOperations&, FilterConsumer);
     void clearIntermediateResults();
     void apply();
-    
-    IntRect outputRect() const { return lastEffect()->hasResult() ? lastEffect()->requestedRegionOfInputImageData(IntRect(m_filterRegion)) : IntRect(); }
 
     bool hasFilterThatMovesPixels() const { return m_hasFilterThatMovesPixels; }
-    LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
 
 private:
-    void setMaxEffectRects(const FloatRect& effectRect)
-    {
-        for (size_t i = 0; i < m_effects.size(); ++i) {
-            RefPtr<FilterEffect> effect = m_effects.at(i);
-            effect->setMaxEffectRect(effectRect);
-        }
-    }
-
-    FilterEffect* lastEffect() const
-    {
-        if (!m_effects.isEmpty())
-            return m_effects.last().get();
-        return nullptr;
-    }
-
     FilterEffectRenderer();
     virtual ~FilterEffectRenderer();
-    
+
+    FloatRect sourceImageRect() const final { return m_sourceDrawingRegion; }
+    FloatRect filterRegion() const final { return m_filterRegion; }
+
+    RefPtr<FilterEffect> buildReferenceFilter(RenderElement&, FilterEffect& previousEffect, ReferenceFilterOperation&);
+
+    void setMaxEffectRects(const FloatRect&);
+
+    GraphicsContext* inputContext();
+
+    bool updateBackingStoreRect(const FloatRect& filterRect);
+    void allocateBackingStoreIfNeeded(const GraphicsContext&);
+
+    IntRect outputRect() const;
+
+    LayoutRect computeSourceImageRectForDirtyRect(const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect);
+
     FloatRect m_sourceDrawingRegion;
     FloatRect m_filterRegion;
-    
-    FilterEffectList m_effects;
-    RefPtr<SourceGraphic> m_sourceGraphic;
-    
+
+    Vector<Ref<FilterEffect>> m_effects;
+    Ref<SourceGraphic> m_sourceGraphic;
+
     IntRectExtent m_outsets;
 
     bool m_graphicsBufferAttached { false };
     bool m_hasFilterThatMovesPixels { false };
 };
+
+inline FilterEffectRendererHelper::FilterEffectRendererHelper(bool haveFilterEffect, GraphicsContext& targetContext)
+    : m_targetContext(targetContext)
+    , m_haveFilterEffect(haveFilterEffect)
+{
+}
+
+inline void FilterEffectRenderer::setSourceImageRect(const FloatRect& sourceImageRect)
+{
+    m_sourceDrawingRegion = sourceImageRect;
+    setMaxEffectRects(sourceImageRect);
+    setFilterRegion(sourceImageRect);
+    m_graphicsBufferAttached = false;
+}
 
 } // namespace WebCore

@@ -783,6 +783,8 @@ private:
 
     bool setupClipPath(GraphicsContext&, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
 
+    class FilterInfo;
+    std::pair<FilterInfo*, std::unique_ptr<FilterEffectRendererHelper>> filterPainter(GraphicsContext&, PaintLayerFlags) const;
     bool hasFilterThatIsPainting(GraphicsContext&, PaintLayerFlags) const;
     std::unique_ptr<FilterEffectRendererHelper> setupFilters(GraphicsContext&, LayerPaintingInfo&, PaintLayerFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
     void applyFilters(FilterEffectRendererHelper*, GraphicsContext& originalContext, const LayerPaintingInfo&, const LayerFragments&);
@@ -1148,8 +1150,6 @@ private:
     IntRect m_blockSelectionGapsBounds;
 
     std::unique_ptr<RenderLayerBacking> m_backing;
-
-    class FilterInfo;
 };
 
 inline void RenderLayer::clearZOrderLists()
