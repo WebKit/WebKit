@@ -1,3 +1,15 @@
+2017-01-06  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from "inspector", "platform/sql", and "platform/text"
+        https://bugs.webkit.org/show_bug.cgi?id=166797
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebEditorClient.h: Updated to take a reference.
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::requestCheckingOfString): Take a reference
+        instead of a PassRefPtr.
+
 2017-01-05  Chris Dumez  <cdumez@apple.com>
 
         Turn preferLowPowerWebGLRendering setting on by default

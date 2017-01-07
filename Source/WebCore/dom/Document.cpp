@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -1452,7 +1452,7 @@ Element* Document::scrollingElement()
 
 template<typename CharacterType> static inline String canonicalizedTitle(Document& document, const String& title)
 {
-    // FIXME: Compiling a separate copy of this for each character type is likely unnecessary.
+    // FIXME: Compiling a separate copy of this for LChar and UChar is likely unnecessary.
     // FIXME: Missing an optimized case for when title is fine as-is. This unnecessarily allocates
     // and keeps around a new copy, and it's even the less optimal type of StringImpl with a separate buffer.
     // Could probably just use StringBuilder instead.
@@ -1463,13 +1463,20 @@ template<typename CharacterType> static inline String canonicalizedTitle(Documen
     StringBuffer<CharacterType> buffer { length };
     unsigned bufferLength = 0;
 
-    // Collapse runs of HTML spaces into single space characters; strip leading and trailing spaces.
+    auto* decoder = document.decoder();
+    auto backslashAsCurrencySymbol = decoder ? decoder->encoding().backslashAsCurrencySymbol() : '\\';
+
+    // Collapse runs of HTML spaces into single space characters.
+    // Strip leading and trailing spaces.
+    // Replace backslashes with currency symbols.
     bool previousCharacterWasHTMLSpace = false;
     for (unsigned i = 0; i < length; ++i) {
         auto character = characters[i];
         if (isHTMLSpace(character))
             previousCharacterWasHTMLSpace = true;
         else {
+            if (character == '\\')
+                character = backslashAsCurrencySymbol;
             if (previousCharacterWasHTMLSpace && bufferLength)
                 buffer[bufferLength++] = ' ';
             buffer[bufferLength++] = character;
@@ -1478,12 +1485,8 @@ template<typename CharacterType> static inline String canonicalizedTitle(Documen
     }
     if (!bufferLength)
         return { };
+
     buffer.shrink(bufferLength);
-
-    // Replace backslashes with currency symbols if the encoding requires it.
-    if (auto* decoder = document.decoder())
-        decoder->encoding().displayBuffer(buffer.characters(), bufferLength);
-
     return String::adopt(WTFMove(buffer));
 }
 
@@ -5460,8 +5463,6 @@ void Document::scriptedAnimationControllerSetThrottled(bool isThrottled)
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    UNUSED_PARAM(displayID);
-
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->windowScreenDidChange(displayID);
@@ -5473,11 +5474,11 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
     }
 }
 
-String Document::displayStringModifiedByEncoding(const String& str) const
+String Document::displayStringModifiedByEncoding(const String& string) const
 {
-    if (m_decoder)
-        return m_decoder->encoding().displayString(str.impl()).get();
-    return str;
+    if (!m_decoder)
+        return string;
+    return String { string }.replace('\\', m_decoder->encoding().backslashAsCurrencySymbol());
 }
 
 void Document::enqueuePageshowEvent(PageshowEventPersistence persisted)

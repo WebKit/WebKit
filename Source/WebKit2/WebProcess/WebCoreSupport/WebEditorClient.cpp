@@ -526,14 +526,12 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
     m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::GetGuessesForWord::Reply(guesses));
 }
 
-void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<TextCheckingRequest> prpRequest, const WebCore::VisibleSelection& currentSelection)
+void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, const WebCore::VisibleSelection& currentSelection)
 {
-    RefPtr<TextCheckingRequest> request = prpRequest;
-
     uint64_t requestID = generateTextCheckingRequestID();
-    m_page->addTextCheckingRequest(requestID, request);
+    m_page->addTextCheckingRequest(requestID, &request);
 
-    m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request->data(), insertionPointFromCurrentSelection(currentSelection)));
+    m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request.data(), insertionPointFromCurrentSelection(currentSelection)));
 }
 
 void WebEditorClient::willSetInputMethodState()

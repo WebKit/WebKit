@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2009, 2010 Apple Inc. All right reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,26 +19,20 @@
  *
  */
 
-#ifndef BidiContext_h
-#define BidiContext_h
+#pragma once
 
 #include <unicode/uchar.h>
-#include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-enum BidiEmbeddingSource {
-    FromStyleOrDOM,
-    FromUnicode
-};
+enum BidiEmbeddingSource { FromStyleOrDOM, FromUnicode };
 
 // Used to keep track of explicit embeddings.
 class BidiContext : public RefCounted<BidiContext> {
 public:
-    WEBCORE_EXPORT static Ref<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = 0);
+    WEBCORE_EXPORT static Ref<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = nullptr);
 
     BidiContext* parent() const { return m_parent.get(); }
     unsigned char level() const { return m_level; }
@@ -46,16 +40,10 @@ public:
     bool override() const { return m_override; }
     BidiEmbeddingSource source() const { return static_cast<BidiEmbeddingSource>(m_source); }
 
-    WEBCORE_EXPORT PassRefPtr<BidiContext> copyStackRemovingUnicodeEmbeddingContexts();
+    WEBCORE_EXPORT Ref<BidiContext> copyStackRemovingUnicodeEmbeddingContexts();
+
 private:
-    BidiContext(unsigned char level, UCharDirection direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
-        : m_level(level)
-        , m_direction(direction)
-        , m_override(override)
-        , m_source(source)
-        , m_parent(parent)
-    {
-    }
+    BidiContext(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
     static Ref<BidiContext> createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
@@ -79,5 +67,3 @@ inline unsigned char nextGreaterEvenLevel(unsigned char level)
 bool operator==(const BidiContext&, const BidiContext&);
 
 } // namespace WebCore
-
-#endif // BidiContext_h

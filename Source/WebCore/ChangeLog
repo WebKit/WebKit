@@ -1,3 +1,73 @@
+2017-01-06  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from "inspector", "platform/sql", and "platform/text"
+        https://bugs.webkit.org/show_bug.cgi?id=166797
+
+        Reviewed by Alex Christensen.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::performOpenAndVerify): Pass a reference instead of a pointer.
+
+        * dom/Document.cpp:
+        (WebCore::canonicalizedTitle): Map backslashes to currency symbols inside the
+        existing loop through the characters instead of calling a function confusingly
+        named "displayBuffer" to do it. More straightforward, possibly more efficient,
+        one less function.
+        (WebCore::Document::displayStringModifiedByEncoding): Call replace to map
+        backslashes to currency symbols instead of calling a special displayString
+        function. There was no real benefit to using that function; the String::replace
+        function has all the same optimizations, and this was also the only call site.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::invokeRequest): Pass a reference instead of a pointer.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage): Call createEmptyEditorClient instead
+        of using the class EmptyEditorClient directly.
+
+        * loader/EmptyClients.cpp: Moved most of the empty clients here from the header.
+        Also made lots more things private.
+        (WebCore::createEmptyEditorClient): Added.
+        (WebCore::emptyDiagnosticLoggingClient): Added.
+        * loader/EmptyClients.h: Updated for above changes. Made more things private.
+
+        * page/DatabaseProvider.h: Removed unneeded include.
+        * page/MainFrame.cpp: Ditto.
+
+        * page/Page.cpp:
+        (WebCore::Page::diagnosticLoggingClient): Call emptyDiagnosticLoggingClient
+        instead of using the class EmptyDiagnosticLoggingClient directly.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setAuthorizer): Take a reference instead of a
+        PassRefPtr.
+        * platform/sql/SQLiteDatabase.h: Updated for above.
+
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::BidiContext): Moved this function here from the header.
+        (WebCore::copyContextAndRebaselineLevel): Return a Ref instead of a PassRefPtr,
+        and take a reference rather than a raw pointer.
+        (WebCore::BidiContext::copyStackRemovingUnicodeEmbeddingContexts): Return a
+        Ref instead of a PassRefPtr.
+        * platform/text/BidiContext.h: Updated for the above changes.
+
+        * platform/text/BidiResolver.h: Simplify initialization, use more references,
+        auto, modern for loops, refer to derived class as that rather than the non-C++
+        term subclass.
+
+        * platform/text/TextCheckerClient.h: Changd argument from PassRefPtr to a
+        reference.
+
+        * platform/text/TextEncoding.h:
+        (WebCore::TextEncoding::displayString): Deleted.
+        (WebCore::TextEncoding::displayBuffer): Deleted.
+
+        * rendering/RootInlineBox.cpp: Style tweaks and use a modern for loop.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged): Call createEmptyEditorClient instead
+        of using the class EmptyEditorClient directly.
+
 2017-01-07  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Update quicklook test expectations

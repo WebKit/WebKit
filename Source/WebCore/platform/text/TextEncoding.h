@@ -23,77 +23,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextEncoding_h
-#define TextEncoding_h
+#pragma once
 
 #include "TextCodec.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-    class TextEncoding {
-    public:
-        TextEncoding() : m_name(0) { }
-        TextEncoding(const char* name);
-        WEBCORE_EXPORT TextEncoding(const String& name);
+class TextEncoding {
+public:
+    TextEncoding() = default;
+    TextEncoding(const char* name);
+    WEBCORE_EXPORT TextEncoding(const String& name);
 
-        bool isValid() const { return m_name; }
-        const char* name() const { return m_name; }
-        WEBCORE_EXPORT const char* domName() const; // name exposed via DOM
-        bool usesVisualOrdering() const;
-        bool isJapanese() const;
-        
-        PassRefPtr<StringImpl> displayString(PassRefPtr<StringImpl> str) const
-        {
-            if (m_backslashAsCurrencySymbol == '\\' || !str)
-                return str;
-            return str->replace('\\', m_backslashAsCurrencySymbol);
-        }
-        template <typename CharacterType>
-        void displayBuffer(CharacterType* characters, unsigned len) const
-        {
-            if (m_backslashAsCurrencySymbol == '\\')
-                return;
-            for (unsigned i = 0; i < len; ++i) {
-                if (characters[i] == '\\')
-                    characters[i] = m_backslashAsCurrencySymbol;
-            }
-        }
+    bool isValid() const { return m_name; }
+    const char* name() const { return m_name; }
+    WEBCORE_EXPORT const char* domName() const; // name exposed via DOM
+    bool usesVisualOrdering() const;
+    bool isJapanese() const;
 
-        const TextEncoding& closestByteBasedEquivalent() const;
-        const TextEncoding& encodingForFormSubmission() const;
+    const TextEncoding& closestByteBasedEquivalent() const;
+    const TextEncoding& encodingForFormSubmission() const;
 
-        String decode(const char* str, size_t length) const
-        {
-            bool ignored;
-            return decode(str, length, false, ignored);
-        }
-        WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
-        CString encode(StringView, UnencodableHandling) const;
+    WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
+    String decode(const char*, size_t length) const;
+    CString encode(StringView, UnencodableHandling) const;
 
-        UChar backslashAsCurrencySymbol() const;
-        bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }
+    UChar backslashAsCurrencySymbol() const;
+    bool isByteBasedEncoding() const { return !isNonByteBasedEncoding(); }
 
-    private:
-        bool isNonByteBasedEncoding() const;
-        bool isUTF7Encoding() const;
+private:
+    bool isNonByteBasedEncoding() const;
+    bool isUTF7Encoding() const;
 
-        const char* m_name;
-        UChar m_backslashAsCurrencySymbol;
-    };
+    const char* m_name { nullptr };
+    UChar m_backslashAsCurrencySymbol;
+};
 
-    inline bool operator==(const TextEncoding& a, const TextEncoding& b) { return a.name() == b.name(); }
-    inline bool operator!=(const TextEncoding& a, const TextEncoding& b) { return a.name() != b.name(); }
+inline bool operator==(const TextEncoding& a, const TextEncoding& b) { return a.name() == b.name(); }
+inline bool operator!=(const TextEncoding& a, const TextEncoding& b) { return a.name() != b.name(); }
 
-    const TextEncoding& ASCIIEncoding();
-    const TextEncoding& Latin1Encoding();
-    const TextEncoding& UTF16BigEndianEncoding();
-    const TextEncoding& UTF16LittleEndianEncoding();
-    const TextEncoding& UTF32BigEndianEncoding();
-    const TextEncoding& UTF32LittleEndianEncoding();
-    WEBCORE_EXPORT const TextEncoding& UTF8Encoding();
-    WEBCORE_EXPORT const TextEncoding& WindowsLatin1Encoding();
+const TextEncoding& ASCIIEncoding();
+const TextEncoding& Latin1Encoding();
+const TextEncoding& UTF16BigEndianEncoding();
+const TextEncoding& UTF16LittleEndianEncoding();
+const TextEncoding& UTF32BigEndianEncoding();
+const TextEncoding& UTF32LittleEndianEncoding();
+WEBCORE_EXPORT const TextEncoding& UTF8Encoding();
+WEBCORE_EXPORT const TextEncoding& WindowsLatin1Encoding();
+
+inline String TextEncoding::decode(const char* characters, size_t length) const
+{
+    bool ignored;
+    return decode(characters, length, false, ignored);
+}
 
 } // namespace WebCore
-
-#endif // TextEncoding_h

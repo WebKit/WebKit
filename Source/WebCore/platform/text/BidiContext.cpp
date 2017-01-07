@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003, 2004, 2006, 2007, 2009, 2010 Apple Inc. All right reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "BidiContext.h"
+
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -31,6 +32,15 @@ struct SameSizeAsBidiContext : public RefCounted<SameSizeAsBidiContext> {
 };
 
 COMPILE_ASSERT(sizeof(BidiContext) == sizeof(SameSizeAsBidiContext), BidiContext_should_stay_small);
+
+inline BidiContext::BidiContext(unsigned char level, UCharDirection direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
+    : m_level(level)
+    , m_direction(direction)
+    , m_override(override)
+    , m_source(source)
+    , m_parent(parent)
+{
+}
 
 inline Ref<BidiContext> BidiContext::createUncached(unsigned char level, UCharDirection direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
 {
@@ -64,35 +74,31 @@ Ref<BidiContext> BidiContext::create(unsigned char level, UCharDirection directi
     return rtlOverrideContext;
 }
 
-static inline PassRefPtr<BidiContext> copyContextAndRebaselineLevel(BidiContext* context, BidiContext* parent)
+static inline Ref<BidiContext> copyContextAndRebaselineLevel(BidiContext& context, BidiContext* parent)
 {
-    ASSERT(context);
-    unsigned char newLevel = parent ? parent->level() : 0;
-    if (context->dir() == U_RIGHT_TO_LEFT)
+    auto newLevel = parent ? parent->level() : 0;
+    if (context.dir() == U_RIGHT_TO_LEFT)
         newLevel = nextGreaterOddLevel(newLevel);
     else if (parent)
         newLevel = nextGreaterEvenLevel(newLevel);
-
-    return BidiContext::create(newLevel, context->dir(), context->override(), context->source(), parent);
+    return BidiContext::create(newLevel, context.dir(), context.override(), context.source(), parent);
 }
 
 // The BidiContext stack must be immutable -- they're re-used for re-layout after
-// DOM modification/editing -- so we copy all the non-unicode contexts, and
+// DOM modification/editing -- so we copy all the non-Unicode contexts, and
 // recalculate their levels.
-PassRefPtr<BidiContext> BidiContext::copyStackRemovingUnicodeEmbeddingContexts()
+Ref<BidiContext> BidiContext::copyStackRemovingUnicodeEmbeddingContexts()
 {
     Vector<BidiContext*, 64> contexts;
-    for (BidiContext* iter = this; iter; iter = iter->parent()) {
-        if (iter->source() != FromUnicode)
-            contexts.append(iter);
+    for (auto* ancestor = this; ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->source() != FromUnicode)
+            contexts.append(ancestor);
     }
     ASSERT(contexts.size());
- 
-    RefPtr<BidiContext> topContext = copyContextAndRebaselineLevel(contexts.last(), 0);
-    for (int i = contexts.size() - 1; i > 0; --i)
-        topContext = copyContextAndRebaselineLevel(contexts[i - 1], topContext.get());
-
-    return WTFMove(topContext);
+    auto topContext = copyContextAndRebaselineLevel(*contexts.last(), nullptr);
+    for (unsigned i = contexts.size() - 1; i; --i)
+        topContext = copyContextAndRebaselineLevel(*contexts[i - 1], topContext.ptr());
+    return topContext;
 }
 
 bool operator==(const BidiContext& c1, const BidiContext& c2)

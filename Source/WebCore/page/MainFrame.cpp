@@ -27,7 +27,6 @@
 #include "MainFrame.h"
 
 #include "Element.h"
-#include "EmptyClients.h"
 #include "PageConfiguration.h"
 #include "PageOverlayController.h"
 #include "PaymentCoordinator.h"

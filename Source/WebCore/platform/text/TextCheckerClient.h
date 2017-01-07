@@ -25,15 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextCheckerClient_h
-#define TextCheckerClient_h
+#pragma once
 
 #include "TextChecking.h"
-
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -41,7 +35,7 @@ class VisibleSelection;
 
 class TextCheckerClient {
 public:
-    virtual ~TextCheckerClient() {}
+    virtual ~TextCheckerClient() { }
 
     virtual bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const = 0;
     virtual void ignoreWordInSpellDocument(const String&) = 0;
@@ -58,9 +52,7 @@ public:
     // provide more accurate correction suggestions. Caller can pass in more text in "context" to aid such spellcheckers on language
     // identification. Noramlly it's the text surrounding the "word" for which we are getting correction suggestions.
     virtual void getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses) = 0;
-    virtual void requestCheckingOfString(PassRefPtr<TextCheckingRequest>, const VisibleSelection& currentSelection) = 0;
+    virtual void requestCheckingOfString(TextCheckingRequest&, const VisibleSelection& currentSelection) = 0;
 };
 
 }
-
-#endif // TextCheckerClient_h

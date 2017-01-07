@@ -166,7 +166,7 @@ private:
 
     void willSetInputMethodState() final;
     void setInputMethodState(bool enabled) final;
-    void requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest>, const WebCore::VisibleSelection& currentSelection) final;
+    void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     void requestCandidatesForSelection(const WebCore::VisibleSelection&) final;

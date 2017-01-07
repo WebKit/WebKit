@@ -83,6 +83,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include "SocketProvider.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
@@ -774,10 +775,8 @@ void Page::setInLowQualityImageInterpolationMode(bool mode)
 
 DiagnosticLoggingClient& Page::diagnosticLoggingClient() const
 {
-    static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyClient;
     if (!settings().diagnosticLoggingEnabled() || !m_diagnosticLoggingClient)
-        return dummyClient;
-
+        return emptyDiagnosticLoggingClient();
     return *m_diagnosticLoggingClient;
 }
 

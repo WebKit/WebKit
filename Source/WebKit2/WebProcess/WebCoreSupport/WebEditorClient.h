@@ -149,7 +149,7 @@ private:
     void getGuessesForWord(const String& word, const String& context, const WebCore::VisibleSelection& currentSelection, Vector<String>& guesses) final;
     void willSetInputMethodState() final;
     void setInputMethodState(bool enabled) final;
-    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>, const WebCore::VisibleSelection& currentSelection) final;
+    void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection& currentSelection) final;
 
 #if PLATFORM(GTK)
     bool shouldShowUnicodeMenu() final;

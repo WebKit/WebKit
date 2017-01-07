@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,52 +31,80 @@
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "ColorChooser.h"
-#include "DOMWrapperWorld.h"
+#include "ContextMenuClient.h"
 #include "DatabaseProvider.h"
+#include "DiagnosticLoggingClient.h"
+#include "DocumentFragment.h"
 #include "DocumentLoader.h"
+#include "DragClient.h"
+#include "EditorClient.h"
 #include "FileChooser.h"
 #include "FormState.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameNetworkingContext.h"
 #include "HTMLFormElement.h"
 #include "InProcessIDBServer.h"
+#include "InspectorClient.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PaymentCoordinatorClient.h"
 #include "PluginInfoProvider.h"
+#include "ProgressTrackerClient.h"
 #include "SecurityOriginData.h"
 #include "StorageArea.h"
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
+#include "TextCheckerClient.h"
 #include "ThreadableWebSocketChannel.h"
 #include "UserContentProvider.h"
+#include "VisitedLinkStore.h"
 #include <heap/HeapInlines.h>
 #include <wtf/NeverDestroyed.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "CompiledContentExtension.h"
+#endif
+
 namespace WebCore {
 
-#if ENABLE(APPLE_PAY)
-class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
-    bool supportsVersion(unsigned) override { return false; }
-    bool canMakePayments() override { return false; }
-    void canMakePaymentsWithActiveCard(const String&, const String&, std::function<void (bool)> completionHandler) override { callOnMainThread([completionHandler] { completionHandler(false); }); }
-    void openPaymentSetup(const String&, const String&, std::function<void (bool)> completionHandler) override { callOnMainThread([completionHandler] { completionHandler(false); }); }
+class UserMessageHandlerDescriptor;
 
-    bool showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) override { return false; }
-    void completeMerchantValidation(const PaymentMerchantSession&) override { }
-
-    void completeShippingMethodSelection(PaymentAuthorizationStatus, std::optional<PaymentRequest::TotalAndLineItems>) override { }
-    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>&, std::optional<PaymentRequest::TotalAndLineItems>) override { }
-    void completePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems>) override { }
-    void completePaymentSession(PaymentAuthorizationStatus) override { }
-    void abortPaymentSession() override { }
-    void paymentCoordinatorDestroyed() override { }
+class EmptyBackForwardClient final : public BackForwardClient {
+    void addItem(Ref<HistoryItem>&&) final { }
+    void goToItem(HistoryItem*) final { }
+    HistoryItem* itemAtIndex(int) final { return nullptr; }
+    int backListCount() final { return 0; }
+    int forwardListCount() final { return 0; }
+    void close() final { }
 };
+
+#if ENABLE(CONTEXT_MENUS)
+
+class EmptyContextMenuClient final : public ContextMenuClient {
+    void contextMenuDestroyed() final { }
+
+    void downloadURL(const URL&) final { }
+    void searchWithGoogle(const Frame*) final { }
+    void lookUpInDictionary(Frame*) final { }
+    bool isSpeaking() final { return false; }
+    void speak(const String&) final { }
+    void stopSpeaking() final { }
+
+#if PLATFORM(COCOA)
+    void searchWithSpotlight() final { }
 #endif
+
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+    void showContextMenu() final { }
+#endif
+};
+
+#endif // ENABLE(CONTEXT_MENUS)
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
-    virtual IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const SessionID&)
+    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const SessionID&) final
     {
         static NeverDestroyed<Ref<InProcessIDBServer>> sharedConnection(InProcessIDBServer::create());
         return sharedConnection.get()->connectionToServer();
@@ -84,147 +112,461 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
 #endif
 };
 
-class EmptyPluginInfoProvider final : public PluginInfoProvider {
-    void refreshPlugins() override { };
-    void getPluginInfo(Page&, Vector<PluginInfo>&) override { }
-    void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) override { }
+class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
+    void logDiagnosticMessage(const String&, const String&, ShouldSample) final { }
+    void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
+    void logDiagnosticMessageWithValue(const String&, const String&, const String&, ShouldSample) final { }
 };
-
-class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
-    struct EmptyStorageArea : public StorageArea {
-        unsigned length() override { return 0; }
-        String key(unsigned) override { return String(); }
-        String item(const String&) override { return String(); }
-        void setItem(Frame*, const String&, const String&, bool&) override { }
-        void removeItem(Frame*, const String&) override { }
-        void clear(Frame*) override { }
-        bool contains(const String&) override { return false; }
-        bool canAccessStorage(Frame*) override { return false; }
-        StorageType storageType() const override { return LocalStorage; }
-        size_t memoryBytesUsedByCache() override { return 0; }
-        SecurityOriginData securityOrigin() const override { return { }; }
-    };
-
-    struct EmptyStorageNamespace final : public StorageNamespace {
-        RefPtr<StorageArea> storageArea(const SecurityOriginData&) override { return adoptRef(new EmptyStorageArea); }
-        RefPtr<StorageNamespace> copy(Page*) override { return adoptRef(new EmptyStorageNamespace); }
-    };
-
-    RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) override
-    {
-        return adoptRef(new EmptyStorageNamespace);
-    }
-
-    RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned) override
-    {
-        return adoptRef(new EmptyStorageNamespace);
-    }
-
-    RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) override
-    {
-        return adoptRef(new EmptyStorageNamespace);
-    }
-};
-
-class EmptyUserContentProvider final : public UserContentProvider {
-    void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const override { }
-    void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const override { }
-#if ENABLE(USER_MESSAGE_HANDLERS)
-    void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const override { }
-#endif
-#if ENABLE(CONTENT_EXTENSIONS)
-    ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() override { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };
-#endif
-};
-
-class EmptyVisitedLinkStore final : public VisitedLinkStore {
-    bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) override { return false; }
-    void addVisitedLink(Page&, LinkHash) override { }
-};
-
-class EmptyBackForwardClient final : public BackForwardClient {
-    void addItem(Ref<HistoryItem>&&) override { }
-    void goToItem(HistoryItem*) override { }
-    HistoryItem* itemAtIndex(int) override { return nullptr; }
-    int backListCount() override { return 0; }
-    int forwardListCount() override { return 0; }
-    void close() override { }
-};
-
-void fillWithEmptyClients(PageConfiguration& pageConfiguration)
-{
-    static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
-    pageConfiguration.chromeClient = &dummyChromeClient.get();
-
-#if ENABLE(APPLE_PAY)
-    static NeverDestroyed<EmptyPaymentCoordinatorClient> dummyPaymentCoordinatorClient;
-    pageConfiguration.paymentCoordinatorClient = &dummyPaymentCoordinatorClient.get();
-#endif
-
-#if ENABLE(CONTEXT_MENUS)
-    static NeverDestroyed<EmptyContextMenuClient> dummyContextMenuClient;
-    pageConfiguration.contextMenuClient = &dummyContextMenuClient.get();
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
-    static NeverDestroyed<EmptyDragClient> dummyDragClient;
-    pageConfiguration.dragClient = &dummyDragClient.get();
+
+class EmptyDragClient final : public DragClient {
+    void willPerformDragDestinationAction(DragDestinationAction, const DragData&) final { }
+    void willPerformDragSourceAction(DragSourceAction, const IntPoint&, DataTransfer&) final { }
+    DragDestinationAction actionMaskForDrag(const DragData&) final { return DragDestinationActionNone; }
+    DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) final { return DragSourceActionNone; }
+    void startDrag(DragImageRef, const IntPoint&, const IntPoint&, DataTransfer&, Frame&, bool) final { }
+    void dragControllerDestroyed() final { }
+};
+
+#endif // ENABLE(DRAG_SUPPORT)
+
+class EmptyEditorClient final : public EditorClient {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    EmptyEditorClient() = default;
+
+private:
+    bool shouldDeleteRange(Range*) final { return false; }
+    bool smartInsertDeleteEnabled() final { return false; }
+    bool isSelectTrailingWhitespaceEnabled() final { return false; }
+    bool isContinuousSpellCheckingEnabled() final { return false; }
+    void toggleContinuousSpellChecking() final { }
+    bool isGrammarCheckingEnabled() final { return false; }
+    void toggleGrammarChecking() final { }
+    int spellCheckerDocumentTag() final { return -1; }
+
+    bool shouldBeginEditing(Range*) final { return false; }
+    bool shouldEndEditing(Range*) final { return false; }
+    bool shouldInsertNode(Node*, Range*, EditorInsertAction) final { return false; }
+    bool shouldInsertText(const String&, Range*, EditorInsertAction) final { return false; }
+    bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) final { return false; }
+
+    bool shouldApplyStyle(StyleProperties*, Range*) final { return false; }
+    void didApplyStyle() final { }
+    bool shouldMoveRangeAfterDelete(Range*, Range*) final { return false; }
+
+    void didBeginEditing() final { }
+    void respondToChangedContents() final { }
+    void respondToChangedSelection(Frame*) final { }
+    void didChangeSelectionAndUpdateLayout() final { }
+    void updateEditorStateAfterLayoutIfEditabilityChanged() final { }
+    void discardedComposition(Frame*) final { }
+    void canceledComposition() final { }
+    void didEndEditing() final { }
+    void willWriteSelectionToPasteboard(Range*) final { }
+    void didWriteSelectionToPasteboard() final { }
+    void getClientPasteboardDataForRange(Range*, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) final { }
+    void requestCandidatesForSelection(const VisibleSelection&) final { }
+    void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) final { }
+
+    void registerUndoStep(PassRefPtr<UndoStep>) final;
+    void registerRedoStep(PassRefPtr<UndoStep>) final;
+    void clearUndoRedoOperations() final { }
+
+    bool canCopyCut(Frame*, bool defaultValue) const final { return defaultValue; }
+    bool canPaste(Frame*, bool defaultValue) const final { return defaultValue; }
+    bool canUndo() const final { return false; }
+    bool canRedo() const final { return false; }
+
+    void undo() final { }
+    void redo() final { }
+
+    void handleKeyboardEvent(KeyboardEvent*) final { }
+    void handleInputMethodKeydown(KeyboardEvent*) final { }
+
+    void textFieldDidBeginEditing(Element*) final { }
+    void textFieldDidEndEditing(Element*) final { }
+    void textDidChangeInTextField(Element*) final { }
+    bool doTextFieldCommandFromEvent(Element*, KeyboardEvent*) final { return false; }
+    void textWillBeDeletedInTextField(Element*) final { }
+    void textDidChangeInTextArea(Element*) final { }
+    void overflowScrollPositionChanged() final { }
+
+#if PLATFORM(IOS)
+    void startDelayingAndCoalescingContentChangeNotifications() final { }
+    void stopDelayingAndCoalescingContentChangeNotifications() final { }
+    void writeDataToPasteboard(NSDictionary*) final { }
+    NSArray* supportedPasteboardTypesForCurrentSelection() final { return nullptr; }
+    NSArray* readDataFromPasteboard(NSString*, int) final { return nullptr; }
+    bool hasRichlyEditableSelection() final { return false; }
+    int getPasteboardItemsCount() final { return 0; }
+    RefPtr<DocumentFragment> documentFragmentFromDelegate(int) final { return nullptr; }
+    bool performsTwoStepPaste(DocumentFragment*) final { return false; }
+    int pasteboardChangeCount() final { return 0; }
 #endif
 
-    static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;
-    pageConfiguration.inspectorClient = &dummyInspectorClient.get();
+#if PLATFORM(COCOA)
+    NSString *userVisibleString(NSURL *) final { return nullptr; }
+    void setInsertionPasteboard(const String&) final { };
+    NSURL *canonicalizeURL(NSURL *) final { return nullptr; }
+    NSURL *canonicalizeURLString(NSString *) final { return nullptr; }
+#endif
 
-    static NeverDestroyed<EmptyFrameLoaderClient> dummyFrameLoaderClient;
-    pageConfiguration.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
+#if USE(APPKIT)
+    void uppercaseWord() final { }
+    void lowercaseWord() final { }
+    void capitalizeWord() final { }
+#endif
 
-    static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
-    pageConfiguration.progressTrackerClient = &dummyProgressTrackerClient.get();
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    void showSubstitutionsPanel(bool) final { }
+    bool substitutionsPanelIsShowing() final { return false; }
+    void toggleSmartInsertDelete() final { }
+    bool isAutomaticQuoteSubstitutionEnabled() final { return false; }
+    void toggleAutomaticQuoteSubstitution() final { }
+    bool isAutomaticLinkDetectionEnabled() final { return false; }
+    void toggleAutomaticLinkDetection() final { }
+    bool isAutomaticDashSubstitutionEnabled() final { return false; }
+    void toggleAutomaticDashSubstitution() final { }
+    bool isAutomaticTextReplacementEnabled() final { return false; }
+    void toggleAutomaticTextReplacement() final { }
+    bool isAutomaticSpellingCorrectionEnabled() final { return false; }
+    void toggleAutomaticSpellingCorrection() final { }
+#endif
 
-    pageConfiguration.backForwardClient = adoptRef(new EmptyBackForwardClient);
-    pageConfiguration.diagnosticLoggingClient = std::make_unique<EmptyDiagnosticLoggingClient>();
+#if PLATFORM(GTK)
+    bool shouldShowUnicodeMenu() final { return false; }
+#endif
 
-    pageConfiguration.applicationCacheStorage = ApplicationCacheStorage::create(String(), String());
-    pageConfiguration.databaseProvider = adoptRef(new EmptyDatabaseProvider);
-    pageConfiguration.pluginInfoProvider = adoptRef(new EmptyPluginInfoProvider);
-    pageConfiguration.storageNamespaceProvider = adoptRef(new EmptyStorageNamespaceProvider);
-    pageConfiguration.userContentProvider = adoptRef(new EmptyUserContentProvider);
-    pageConfiguration.visitedLinkStore = adoptRef(new EmptyVisitedLinkStore);
-}
+    TextCheckerClient* textChecker() final { return &m_textCheckerClient; }
+
+    void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) final { }
+    void updateSpellingUIWithMisspelledWord(const String&) final { }
+    void showSpellingUI(bool) final { }
+    bool spellingUIIsShowing() final { return false; }
+
+    void willSetInputMethodState() final { }
+    void setInputMethodState(bool) final { }
+
+    class EmptyTextCheckerClient final : public TextCheckerClient {
+        bool shouldEraseMarkersAfterChangeSelection(TextCheckingType) const final { return true; }
+        void ignoreWordInSpellDocument(const String&) final { }
+        void learnWord(const String&) final { }
+        void checkSpellingOfString(StringView, int*, int*) final { }
+        String getAutoCorrectSuggestionForMisspelledWord(const String&) final { return { }; }
+        void checkGrammarOfString(StringView, Vector<GrammarDetail>&, int*, int*) final { }
+
+#if USE(UNIFIED_TEXT_CHECKING)
+        Vector<TextCheckingResult> checkTextOfParagraph(StringView, TextCheckingTypeMask, const VisibleSelection&) final { return Vector<TextCheckingResult>(); }
+#endif
+
+        void getGuessesForWord(const String&, const String&, const VisibleSelection&, Vector<String>&) final { }
+        void requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&) final;
+    };
+
+    EmptyTextCheckerClient m_textCheckerClient;
+};
+
+class EmptyFrameLoaderClient final : public FrameLoaderClient {
+    void frameLoaderDestroyed() final { }
+
+    bool hasWebView() const final { return true; } // mainly for assertions
+
+    void makeRepresentation(DocumentLoader*) final { }
+#if PLATFORM(IOS)
+    bool forceLayoutOnRestoreFromPageCache() final { return false; }
+#endif
+    void forceLayoutForNonHTML() final { }
+
+    void setCopiesOnScroll() final { }
+
+    void detachedFromParent2() final { }
+    void detachedFromParent3() final { }
+
+    void convertMainResourceLoadToDownload(DocumentLoader*, SessionID, const ResourceRequest&, const ResourceResponse&) final { }
+
+    void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) final { }
+    bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) final { return false; }
+    void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&) final { }
+    void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) final { }
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    bool canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&) final { return false; }
+#endif
+
+#if PLATFORM(IOS)
+    RetainPtr<CFDictionaryRef> connectionProperties(DocumentLoader*, unsigned long) final { return nullptr; }
+#endif
+
+    void dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&) final { }
+    void dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int) final { }
+    void dispatchDidFinishLoading(DocumentLoader*, unsigned long) final { }
+#if ENABLE(DATA_DETECTION)
+    void dispatchDidFinishDataDetection(NSArray *) final { }
+#endif
+    void dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&) final { }
+    bool dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int) final { return false; }
+
+    void dispatchDidDispatchOnloadEvents() final { }
+    void dispatchDidReceiveServerRedirectForProvisionalLoad() final { }
+    void dispatchDidCancelClientRedirect() final { }
+    void dispatchWillPerformClientRedirect(const URL&, double, double) final { }
+    void dispatchDidChangeLocationWithinPage() final { }
+    void dispatchDidPushStateWithinPage() final { }
+    void dispatchDidReplaceStateWithinPage() final { }
+    void dispatchDidPopStateWithinPage() final { }
+    void dispatchWillClose() final { }
+    void dispatchDidReceiveIcon() final { }
+    void dispatchDidStartProvisionalLoad() final { }
+    void dispatchDidReceiveTitle(const StringWithDirection&) final { }
+    void dispatchDidCommitLoad(std::optional<HasInsecureContent>) final { }
+    void dispatchDidFailProvisionalLoad(const ResourceError&) final { }
+    void dispatchDidFailLoad(const ResourceError&) final { }
+    void dispatchDidFinishDocumentLoad() final { }
+    void dispatchDidFinishLoad() final { }
+    void dispatchDidReachLayoutMilestone(LayoutMilestones) final { }
+
+    Frame* dispatchCreatePage(const NavigationAction&) final { return nullptr; }
+    void dispatchShow() final { }
+
+    void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction) final { }
+    void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&, FramePolicyFunction) final;
+    void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, FramePolicyFunction) final;
+    void cancelPolicyCheck() final { }
+
+    void dispatchUnableToImplementPolicy(const ResourceError&) final { }
+
+    void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) final;
+    void dispatchWillSubmitForm(PassRefPtr<FormState>, FramePolicyFunction) final;
+
+    void revertToProvisionalState(DocumentLoader*) final { }
+    void setMainDocumentError(DocumentLoader*, const ResourceError&) final { }
+
+    void setMainFrameDocumentReady(bool) final { }
+
+    void startDownload(const ResourceRequest&, const String&) final { }
+
+    void willChangeTitle(DocumentLoader*) final { }
+    void didChangeTitle(DocumentLoader*) final { }
+
+    void willReplaceMultipartContent() final { }
+    void didReplaceMultipartContent() final { }
+
+    void committedLoad(DocumentLoader*, const char*, int) final { }
+    void finishedLoading(DocumentLoader*) final { }
+
+    ResourceError cancelledError(const ResourceRequest&) final { return { ResourceError::Type::Cancellation }; }
+    ResourceError blockedError(const ResourceRequest&) final { return { }; }
+    ResourceError blockedByContentBlockerError(const ResourceRequest&) final { return { }; }
+    ResourceError cannotShowURLError(const ResourceRequest&) final { return { }; }
+    ResourceError interruptedForPolicyChangeError(const ResourceRequest&) final { return { }; }
+#if ENABLE(CONTENT_FILTERING)
+    ResourceError blockedByContentFilterError(const ResourceRequest&) final { return { }; }
+#endif
+
+    ResourceError cannotShowMIMETypeError(const ResourceResponse&) final { return { }; }
+    ResourceError fileDoesNotExistError(const ResourceResponse&) final { return { }; }
+    ResourceError pluginWillHandleLoadError(const ResourceResponse&) final { return { }; }
+
+    bool shouldFallBack(const ResourceError&) final { return false; }
+
+    bool canHandleRequest(const ResourceRequest&) const final { return false; }
+    bool canShowMIMEType(const String&) const final { return false; }
+    bool canShowMIMETypeAsHTML(const String&) const final { return false; }
+    bool representationExistsForURLScheme(const String&) const final { return false; }
+    String generatedMIMETypeForURLScheme(const String&) const final { return emptyString(); }
+
+    void frameLoadCompleted() final { }
+    void restoreViewState() final { }
+    void provisionalLoadStarted() final { }
+    void didFinishLoad() final { }
+    void prepareForDataSourceReplacement() final { }
+
+    Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) final;
+    void updateCachedDocumentLoader(DocumentLoader&) final { }
+    void setTitle(const StringWithDirection&, const URL&) final { }
+
+    String userAgent(const URL&) final { return emptyString(); }
+
+    void savePlatformDataToCachedFrame(CachedFrame*) final { }
+    void transitionToCommittedFromCachedFrame(CachedFrame*) final { }
+#if PLATFORM(IOS)
+    void didRestoreFrameHierarchyForCachedFrame() final { }
+#endif
+    void transitionToCommittedForNewPage() final { }
+
+    void didSaveToPageCache() final { }
+    void didRestoreFromPageCache() final { }
+
+    void dispatchDidBecomeFrameset(bool) final { }
+
+    void updateGlobalHistory() final { }
+    void updateGlobalHistoryRedirectLinks() final { }
+    bool shouldGoToHistoryItem(HistoryItem*) const final { return false; }
+    void updateGlobalHistoryItemForPage() final { }
+    void saveViewStateToItem(HistoryItem&) final { }
+    bool canCachePage() const final { return false; }
+    void didDisplayInsecureContent() final { }
+    void didRunInsecureContent(SecurityOrigin*, const URL&) final { }
+    void didDetectXSS(const URL&, bool) final { }
+    RefPtr<Frame> createFrame(const URL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int) final;
+    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) final;
+    void recreatePlugin(Widget*) final;
+    PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL&, const Vector<String>&, const Vector<String>&) final;
+
+    ObjectContentType objectContentType(const URL&, const String&) final { return ObjectContentType::None; }
+    String overrideMediaType() const final { return { }; }
+
+    void redirectDataToPlugin(Widget*) final { }
+    void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) final { }
+
+    void registerForIconNotification(bool) final { }
+
+#if PLATFORM(COCOA)
+    RemoteAXObjectRef accessibilityRemoteObject() final { return nullptr; }
+    NSCachedURLResponse *willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse *response) const final { return response; }
+#endif
+
+#if PLATFORM(WIN) && USE(CFURLCONNECTION)
+    bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) final { return true; }
+#endif
+
+    PassRefPtr<FrameNetworkingContext> createNetworkingContext() final;
+
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    void didRequestAutocomplete(PassRefPtr<FormState>) final { }
+#endif
+
+    bool isEmptyFrameLoaderClient() final { return true; }
+    void prefetchDNS(const String&) final { }
+};
+
+class EmptyInspectorClient final : public InspectorClient {
+    void inspectedPageDestroyed() final { }
+    Inspector::FrontendChannel* openLocalFrontend(InspectorController*) final { return nullptr; }
+    void bringFrontendToFront() final { }
+    void highlight() final { }
+    void hideHighlight() final { }
+};
+
+#if ENABLE(APPLE_PAY)
+
+class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
+    bool supportsVersion(unsigned) final { return false; }
+    bool canMakePayments() final { return false; }
+    void canMakePaymentsWithActiveCard(const String&, const String&, std::function<void(bool)> completionHandler) final { callOnMainThread([completionHandler] { completionHandler(false); }); }
+    void openPaymentSetup(const String&, const String&, std::function<void(bool)> completionHandler) final { callOnMainThread([completionHandler] { completionHandler(false); }); }
+    bool showPaymentUI(const URL&, const Vector<URL>&, const PaymentRequest&) final { return false; }
+    void completeMerchantValidation(const PaymentMerchantSession&) final { }
+    void completeShippingMethodSelection(PaymentAuthorizationStatus, std::optional<PaymentRequest::TotalAndLineItems>) final { }
+    void completeShippingContactSelection(PaymentAuthorizationStatus, const Vector<PaymentRequest::ShippingMethod>&, std::optional<PaymentRequest::TotalAndLineItems>) final { }
+    void completePaymentMethodSelection(std::optional<WebCore::PaymentRequest::TotalAndLineItems>) final { }
+    void completePaymentSession(PaymentAuthorizationStatus) final { }
+    void abortPaymentSession() final { }
+    void paymentCoordinatorDestroyed() final { }
+};
+
+#endif
+
+class EmptyPluginInfoProvider final : public PluginInfoProvider {
+    void refreshPlugins() final { };
+    void getPluginInfo(Page&, Vector<PluginInfo>&) final { }
+    void getWebVisiblePluginInfo(Page&, Vector<PluginInfo>&) final { }
+};
 
 class EmptyPopupMenu : public PopupMenu {
 public:
-    void show(const IntRect&, FrameView*, int) override { }
-    void hide() override { }
-    void updateFromElement() override { }
-    void disconnectClient() override { }
+    EmptyPopupMenu() = default;
+private:
+    void show(const IntRect&, FrameView*, int) final { }
+    void hide() final { }
+    void updateFromElement() final { }
+    void disconnectClient() final { }
+};
+
+class EmptyProgressTrackerClient final : public ProgressTrackerClient {
+    void willChangeEstimatedProgress() final { }
+    void didChangeEstimatedProgress() final { }
+    void progressStarted(Frame&) final { }
+    void progressEstimateChanged(Frame&) final { }
+    void progressFinished(Frame&) final { }
 };
 
 class EmptySearchPopupMenu : public SearchPopupMenu {
 public:
-    PopupMenu* popupMenu() override { return m_popup.get(); }
-    void saveRecentSearches(const AtomicString&, const Vector<RecentSearch>&) override { }
-    void loadRecentSearches(const AtomicString&, Vector<RecentSearch>&) override { }
-    bool enabled() override { return false; }
+    EmptySearchPopupMenu()
+        : m_popup(adoptRef(*new EmptyPopupMenu))
+    {
+    }
 
 private:
-    RefPtr<EmptyPopupMenu> m_popup;
+    PopupMenu* popupMenu() final { return m_popup.ptr(); }
+    void saveRecentSearches(const AtomicString&, const Vector<RecentSearch>&) final { }
+    void loadRecentSearches(const AtomicString&, Vector<RecentSearch>&) final { }
+    bool enabled() final { return false; }
+
+    Ref<EmptyPopupMenu> m_popup;
+};
+
+class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
+    struct EmptyStorageArea : public StorageArea {
+        unsigned length() final { return 0; }
+        String key(unsigned) final { return { }; }
+        String item(const String&) final { return { }; }
+        void setItem(Frame*, const String&, const String&, bool&) final { }
+        void removeItem(Frame*, const String&) final { }
+        void clear(Frame*) final { }
+        bool contains(const String&) final { return false; }
+        bool canAccessStorage(Frame*) final { return false; }
+        StorageType storageType() const final { return LocalStorage; }
+        size_t memoryBytesUsedByCache() final { return 0; }
+        SecurityOriginData securityOrigin() const final { return { }; }
+    };
+
+    struct EmptyStorageNamespace final : public StorageNamespace {
+        RefPtr<StorageArea> storageArea(const SecurityOriginData&) final { return adoptRef(*new EmptyStorageArea); }
+        RefPtr<StorageNamespace> copy(Page*) final { return adoptRef(*new EmptyStorageNamespace); }
+    };
+
+    RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) final;
+    RefPtr<StorageNamespace> createLocalStorageNamespace(unsigned) final;
+    RefPtr<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned) final;
+};
+
+class EmptyUserContentProvider final : public UserContentProvider {
+    void forEachUserScript(const std::function<void(DOMWrapperWorld&, const UserScript&)>&) const final { }
+    void forEachUserStyleSheet(const std::function<void(const UserStyleSheet&)>&) const final { }
+#if ENABLE(USER_MESSAGE_HANDLERS)
+    void forEachUserMessageHandler(const std::function<void(const UserMessageHandlerDescriptor&)>&) const final { }
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() final { static NeverDestroyed<ContentExtensions::ContentExtensionsBackend> backend; return backend.get(); };
+#endif
+};
+
+class EmptyVisitedLinkStore final : public VisitedLinkStore {
+    bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) final { return false; }
+    void addVisitedLink(Page&, LinkHash) final { }
 };
 
 RefPtr<PopupMenu> EmptyChromeClient::createPopupMenu(PopupMenuClient*) const
 {
-    return adoptRef(new EmptyPopupMenu());
+    return adoptRef(*new EmptyPopupMenu);
 }
 
 RefPtr<SearchPopupMenu> EmptyChromeClient::createSearchPopupMenu(PopupMenuClient*) const
 {
-    return adoptRef(new EmptySearchPopupMenu());
+    return adoptRef(*new EmptySearchPopupMenu);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
+
 std::unique_ptr<ColorChooser> EmptyChromeClient::createColorChooser(ColorChooserClient*, const Color&)
 {
     return nullptr;
 }
+
 #endif
 
 void EmptyChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
@@ -276,7 +618,7 @@ PassRefPtr<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingConte
     return PassRefPtr<FrameNetworkingContext>();
 }
 
-void EmptyTextCheckerClient::requestCheckingOfString(PassRefPtr<TextCheckingRequest>, const VisibleSelection&)
+void EmptyEditorClient::EmptyTextCheckerClient::requestCheckingOfString(TextCheckingRequest&, const VisibleSelection&)
 {
 }
 
@@ -286,6 +628,72 @@ void EmptyEditorClient::registerUndoStep(PassRefPtr<UndoStep>)
 
 void EmptyEditorClient::registerRedoStep(PassRefPtr<UndoStep>)
 {
+}
+
+RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createSessionStorageNamespace(Page&, unsigned)
+{
+    return adoptRef(*new EmptyStorageNamespace);
+}
+
+RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createLocalStorageNamespace(unsigned)
+{
+    return adoptRef(*new EmptyStorageNamespace);
+}
+
+RefPtr<StorageNamespace> EmptyStorageNamespaceProvider::createTransientLocalStorageNamespace(SecurityOrigin&, unsigned)
+{
+    return adoptRef(*new EmptyStorageNamespace);
+}
+
+void fillWithEmptyClients(PageConfiguration& pageConfiguration)
+{
+    static NeverDestroyed<EmptyChromeClient> dummyChromeClient;
+    pageConfiguration.chromeClient = &dummyChromeClient.get();
+
+#if ENABLE(APPLE_PAY)
+    static NeverDestroyed<EmptyPaymentCoordinatorClient> dummyPaymentCoordinatorClient;
+    pageConfiguration.paymentCoordinatorClient = &dummyPaymentCoordinatorClient.get();
+#endif
+
+#if ENABLE(CONTEXT_MENUS)
+    static NeverDestroyed<EmptyContextMenuClient> dummyContextMenuClient;
+    pageConfiguration.contextMenuClient = &dummyContextMenuClient.get();
+#endif
+
+#if ENABLE(DRAG_SUPPORT)
+    static NeverDestroyed<EmptyDragClient> dummyDragClient;
+    pageConfiguration.dragClient = &dummyDragClient.get();
+#endif
+
+    static NeverDestroyed<EmptyInspectorClient> dummyInspectorClient;
+    pageConfiguration.inspectorClient = &dummyInspectorClient.get();
+
+    static NeverDestroyed<EmptyFrameLoaderClient> dummyFrameLoaderClient;
+    pageConfiguration.loaderClientForMainFrame = &dummyFrameLoaderClient.get();
+
+    static NeverDestroyed<EmptyProgressTrackerClient> dummyProgressTrackerClient;
+    pageConfiguration.progressTrackerClient = &dummyProgressTrackerClient.get();
+
+    pageConfiguration.backForwardClient = adoptRef(*new EmptyBackForwardClient);
+    pageConfiguration.diagnosticLoggingClient = std::make_unique<EmptyDiagnosticLoggingClient>();
+
+    pageConfiguration.applicationCacheStorage = ApplicationCacheStorage::create({ }, { });
+    pageConfiguration.databaseProvider = adoptRef(*new EmptyDatabaseProvider);
+    pageConfiguration.pluginInfoProvider = adoptRef(*new EmptyPluginInfoProvider);
+    pageConfiguration.storageNamespaceProvider = adoptRef(*new EmptyStorageNamespaceProvider);
+    pageConfiguration.userContentProvider = adoptRef(*new EmptyUserContentProvider);
+    pageConfiguration.visitedLinkStore = adoptRef(*new EmptyVisitedLinkStore);
+}
+
+UniqueRef<EditorClient> createEmptyEditorClient()
+{
+    return makeUniqueRef<EmptyEditorClient>();
+}
+
+DiagnosticLoggingClient& emptyDiagnosticLoggingClient()
+{
+    static NeverDestroyed<EmptyDiagnosticLoggingClient> client;
+    return client;
 }
 
 }

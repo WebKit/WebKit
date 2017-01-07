@@ -1,3 +1,15 @@
+2017-01-06  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr use from "inspector", "platform/sql", and "platform/text"
+        https://bugs.webkit.org/show_bug.cgi?id=166797
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::requestCheckingOfString): Take a reference
+        instead of a PassRefPtr.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Updated for above change.
+
 2017-01-07  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Consolidate usage of QuickLookHandle into SubresourceLoader

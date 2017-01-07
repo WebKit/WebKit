@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef SQLiteDatabase_h
-#define SQLiteDatabase_h
+#pragma once
 
 #include <functional>
 #include <sqlite3.h>
@@ -101,14 +100,15 @@ public:
     WEBCORE_EXPORT int lastError();
     WEBCORE_EXPORT const char* lastErrorMsg();
     
-    sqlite3* sqlite3Handle() const {
+    sqlite3* sqlite3Handle() const
+    {
 #if !PLATFORM(IOS)
         ASSERT(m_sharable || currentThread() == m_openingThread || !m_db);
 #endif
         return m_db;
     }
     
-    void setAuthorizer(PassRefPtr<DatabaseAuthorizer>);
+    void setAuthorizer(DatabaseAuthorizer&);
 
     Lock& databaseMutex() { return m_lockingMutex; }
     bool isAutoCommitOn() const;
@@ -166,5 +166,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

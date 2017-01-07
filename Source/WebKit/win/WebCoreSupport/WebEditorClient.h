@@ -113,7 +113,7 @@ public:
 
     void willSetInputMethodState() override;
     void setInputMethodState(bool) override;
-    void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>, const WebCore::VisibleSelection&) override { }
+    void requestCheckingOfString(WebCore::TextCheckingRequest&, const WebCore::VisibleSelection&) override { }
 
     WebCore::TextCheckerClient* textChecker() override { return this; }
 

@@ -1323,11 +1323,11 @@ void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
 
 #endif
 
-void WebEditorClient::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> request, const VisibleSelection& currentSelection)
+void WebEditorClient::requestCheckingOfString(WebCore::TextCheckingRequest& request, const VisibleSelection& currentSelection)
 {
 #if !PLATFORM(IOS)
     ASSERT(!m_textCheckingRequest);
-    m_textCheckingRequest = request;
+    m_textCheckingRequest = &request;
 
     int sequence = m_textCheckingRequest->data().sequence();
     NSRange range = NSMakeRange(0, m_textCheckingRequest->data().text().length());

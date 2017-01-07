@@ -32,6 +32,7 @@
 #include "CommonVM.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
+#include "EditorClient.h"
 #include "ElementIterator.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -51,6 +52,7 @@
 #include "SVGImageElement.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
+#include "SocketProvider.h"
 #include "TextStream.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
@@ -412,7 +414,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
 
     if (allDataReceived) {
-        PageConfiguration pageConfiguration(makeUniqueRef<EmptyEditorClient>(), SocketProvider::create());
+        PageConfiguration pageConfiguration(createEmptyEditorClient(), SocketProvider::create());
         fillWithEmptyClients(pageConfiguration);
         m_chromeClient = std::make_unique<SVGImageChromeClient>(this);
         pageConfiguration.chromeClient = m_chromeClient.get();
