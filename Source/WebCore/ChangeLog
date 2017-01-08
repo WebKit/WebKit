@@ -3,6 +3,15 @@
         Avoid triggering rebuilds for minor changes of CSSProperties.json
         https://bugs.webkit.org/show_bug.cgi?id=166810
 
+        Post-review cleanup suggested by Darin Adler.
+
+        * css/makeprop.pl:
+
+2017-01-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering rebuilds for minor changes of CSSProperties.json
+        https://bugs.webkit.org/show_bug.cgi?id=166810
+
         Reviewed by Daniel Bates.
 
         We expect to make lots of metadata-related changes to CSSProperties.json, and
