@@ -1,3 +1,27 @@
+2017-01-08  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Introduce CPU(X86_SSE2) instead of various SSE2 checks
+        https://bugs.webkit.org/show_bug.cgi?id=166808
+
+        Reviewed by Michael Catanzaro.
+
+        Now copyLCharsFromUCharSource can use SSE2 implementation on non-Darwin
+        OSes, and all SSE2 code paths are available for MSVC on x86 if /arch:SSE2
+        or higher is enabled, and for MSVC on x86_64.
+
+        No new tests needed.
+
+        * platform/audio/SincResampler.cpp:
+        (WebCore::SincResampler::process):
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::vsma):
+        (WebCore::VectorMath::vsmul):
+        (WebCore::VectorMath::vadd):
+        (WebCore::VectorMath::vmul):
+        (WebCore::VectorMath::zvmul):
+        (WebCore::VectorMath::vsvesq):
+        (WebCore::VectorMath::vmaxmgv):
+
 2017-01-07  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid triggering rebuilds for minor changes of CSSProperties.json
