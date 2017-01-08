@@ -34,6 +34,7 @@
 @property (nonatomic, readonly) NSMenu *menu;
 
 @property (nonatomic, readonly) BOOL useWebKit2ByDefault;
+@property (nonatomic, readonly) BOOL createEditorByDefault;
 @property (nonatomic, readonly) BOOL useTransparentWindows;
 @property (nonatomic, readonly) BOOL usePaginatedMode;
 @property (nonatomic, readonly) BOOL layerBordersVisible;

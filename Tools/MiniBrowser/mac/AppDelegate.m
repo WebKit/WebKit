@@ -128,9 +128,10 @@ WKPreferences *defaultPreferences()
     BOOL useWebKit2 = NO;
     BOOL makeEditable = NO;
 
-    if (![sender respondsToSelector:@selector(tag)])
+    if (![sender respondsToSelector:@selector(tag)]) {
         useWebKit2 = [SettingsController shared].useWebKit2ByDefault;
-    else {
+        makeEditable = [SettingsController shared].createEditorByDefault;
+    } else {
         useWebKit2 = [sender tag] == WebKit2NewWindowTag || [sender tag] == WebKit2NewEditorTag;
         makeEditable = [sender tag] == WebKit1NewEditorTag || [sender tag] == WebKit2NewEditorTag;
     }
@@ -202,7 +203,10 @@ WKPreferences *defaultPreferences()
 
     [self _updateNewWindowKeyEquivalents];
 
-    [self newWindow:self];
+    if ([SettingsController shared].createEditorByDefault)
+        [self newEditorWindow:self];
+    else
+        [self newWindow:self];
 }
 
 - (BrowserWindowController *)frontmostBrowserWindowController
@@ -275,10 +279,18 @@ WKPreferences *defaultPreferences()
     NSEventModifierFlags webKit1Flags = [SettingsController shared].useWebKit2ByDefault ? NSEventModifierFlagOption : 0;
     NSEventModifierFlags webKit2Flags = [SettingsController shared].useWebKit2ByDefault ? 0 : NSEventModifierFlagOption;
 
+    NSString *normalWindowEquivalent = [SettingsController shared].createEditorByDefault ? @"N" : @"n";
+    NSString *editorEquivalent = [SettingsController shared].createEditorByDefault ? @"n" : @"N";
+
     _newWebKit1WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit1Flags;
     _newWebKit2WindowItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit2Flags;
     _newWebKit1EditorItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit1Flags;
     _newWebKit2EditorItem.keyEquivalentModifierMask = NSEventModifierFlagCommand | webKit2Flags;
+
+    _newWebKit1WindowItem.keyEquivalent = normalWindowEquivalent;
+    _newWebKit2WindowItem.keyEquivalent = normalWindowEquivalent;
+    _newWebKit1EditorItem.keyEquivalent = editorEquivalent;
+    _newWebKit2EditorItem.keyEquivalent = editorEquivalent;
 }
 
 - (IBAction)showExtensionsManager:(id)sender

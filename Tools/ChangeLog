@@ -1,5 +1,25 @@
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
+        Add a setting to create editable MiniBrowser windows by default
+        https://bugs.webkit.org/show_bug.cgi?id=166806
+
+        Reviewed by Beth Dakin.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate createBrowserWindowController:]):
+        (-[BrowserAppDelegate applicationDidFinishLaunching:]):
+        (-[BrowserAppDelegate _updateNewWindowKeyEquivalents]):
+        * MiniBrowser/mac/SettingsController.h:
+        * MiniBrowser/mac/SettingsController.m:
+        (-[SettingsController _populateMenu]):
+        (-[SettingsController validateMenuItem:]):
+        (-[SettingsController toggleCreateEditorByDefault:]):
+        (-[SettingsController createEditorByDefault]):
+        Add a setting and update the key equivalents accordingly.
+        Also make sure to make the right kind of window on launch.
+
+2017-01-07  Tim Horton  <timothy_horton@apple.com>
+
         Fix the 32-bit build.
 
         * MiniBrowser/mac/BrowserWindowController.h:
