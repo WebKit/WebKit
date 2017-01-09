@@ -470,3 +470,19 @@ function linkAndEvaluateModule(key, initiator)
     this.link(entry, initiator);
     return this.moduleEvaluation(entry.module, initiator);
 }
+
+function importModule(moduleName, referrer, initiator)
+{
+    "use strict";
+
+    // Loader.resolve hook point.
+    // resolve: moduleName => Promise(moduleKey)
+    // Take the name and resolve it to the unique identifier for the resource location.
+    // For example, take the "jquery" and return the URL for the resource.
+    return this.resolve(moduleName, referrer, initiator).then((key) => {
+        return this.requestInstantiateAll(key, initiator);
+    }).then((entry) => {
+        this.linkAndEvaluateModule(entry.key, initiator);
+        return this.getModuleNamespaceObject(entry.module);
+    });
+}

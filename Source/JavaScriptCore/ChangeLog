@@ -1,3 +1,102 @@
+2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Prototype dynamic-import
+        https://bugs.webkit.org/show_bug.cgi?id=165724
+
+        Reviewed by Saam Barati.
+
+        In this patch, we implement stage3 dynamic-import proposal[1].
+        This patch adds a new special operator `import`. And by using it, we can import
+        the module dynamically from modules and scripts. Before this feature, the module
+        is always imported statically and before executing the modules, importing the modules
+        needs to be done. And especially, the module can only be imported from the module.
+        So the classic script cannot import and use the modules. This dynamic-import relaxes
+        the above restrictions.
+
+        The typical dynamic-import form is the following.
+
+            import("...").then(function (namespace) { ... });
+
+        You can pass any AssignmentExpression for the import operator. So you can determine
+        the importing modules dynamically.
+
+            import(value).then(function (namespace) { ... });
+
+        And previously the module import declaration is only allowed in the top level statements.
+        But this import operator is just an expression. So you can use it in the function.
+        And you can use it conditionally.
+
+            async function go(cond)
+            {
+                if (cond)
+                    return import("...");
+                return undefined;
+            }
+            await go(true);
+
+        Currently, this patch just implements this feature only for the JSC shell.
+        JSC module loader requires a new hook, `importModule`. And the JSC shell implements
+        this hook. So, for now, this dynamic-import is not available in the browser side.
+        If you write this `import` call, it always returns the rejected promise.
+
+        import is implemented like a special operator similar to `super`.
+        This is because import is context-sensitive. If you call the `import`, the module
+        key resolution is done based on the caller's running context.
+
+        For example, if you are running the script which filename is "./ok/hello.js", the module
+        key for the call`import("./resource/syntax.js")` becomes `"./ok/resource/syntax.js"`.
+        But if you write the completely same import form in the script "./error/hello.js", the
+        key becomes "./error/resource/syntax.js". So exposing this feature as the `import`
+        function is misleading: this function becomes caller's context-sensitive. That's why
+        dynamic-import is specified as a special operator.
+
+        To resolve the module key, we need the caller's context information like the filename of
+        the caller. This is provided by the SourceOrigin implemented in r210149.
+        In the JSC shell implementation, this SourceOrigin holds the filename of the caller. So
+        based on this implementation, the module loader resolve the module key.
+        In the near future, we will extend this SourceOrigin to hold more information needed for
+        the browser-side import implementation.
+
+        [1]: https://tc39.github.io/proposal-dynamic-import/
+
+        * builtins/ModuleLoaderPrototype.js:
+        (importModule):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        (JSC::BytecodeGenerator::emitGetGlobalPrivate):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ImportNode::emitBytecode):
+        * jsc.cpp:
+        (absolutePath):
+        (GlobalObject::moduleLoaderImportModule):
+        (functionRun):
+        (functionLoad):
+        (functionCheckSyntax):
+        (runWithScripts):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createImportExpr):
+        * parser/NodeConstructors.h:
+        (JSC::ImportNode::ImportNode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isImportNode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createImportExpr):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncImportModule):
+        * runtime/JSGlobalObjectFunctions.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::importModule):
+        (JSC::JSModuleLoader::getModuleNamespaceObject):
+        * runtime/JSModuleLoader.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeGetModuleNamespaceObject):
+
 2017-01-08  Filip Pizlo  <fpizlo@apple.com>
 
         Make the collector's fixpoint smart about scheduling work

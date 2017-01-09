@@ -190,6 +190,17 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     return generator.moveToDestinationIfNeeded(generator.finalDestination(dst), result);
 }
 
+// ------------------------------ ImportNode -------------------------------------
+
+RegisterID* ImportNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> importModule = generator.emitGetGlobalPrivate(generator.newTemporary(), generator.propertyNames().builtinNames().importModulePrivateName());
+    CallArguments arguments(generator, nullptr, 1);
+    generator.emitLoad(arguments.thisRegister(), jsUndefined());
+    generator.emitNode(arguments.argumentRegister(0), m_expr);
+    return generator.emitCall(generator.finalDestination(dst, importModule.get()), importModule.get(), NoExpectedFunction, arguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+}
+
 // ------------------------------ NewTargetNode ----------------------------------
 
 RegisterID* NewTargetNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

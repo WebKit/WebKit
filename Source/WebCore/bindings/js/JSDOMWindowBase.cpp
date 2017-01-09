@@ -64,6 +64,7 @@ const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = {
     &javaScriptRuntimeFlags,
     &queueTaskToEventLoop,
     &shouldInterruptScriptBeforeTimeout,
+    nullptr,
     &moduleLoaderResolve,
     &moduleLoaderFetch,
     nullptr,

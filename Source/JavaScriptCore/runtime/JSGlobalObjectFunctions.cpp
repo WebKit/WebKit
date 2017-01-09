@@ -27,10 +27,14 @@
 
 #include "CallFrame.h"
 #include "EvalExecutable.h"
+#include "Exception.h"
 #include "IndirectEvalExecutable.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
+#include "JSInternalPromise.h"
+#include "JSModuleLoader.h"
+#include "JSPromiseDeferred.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
 #include "Lexer.h"
@@ -923,6 +927,41 @@ EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState* exec)
 {
     dataLog(exec->argument(0).toWTFString(exec), "\n");
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+    auto* globalObject = exec->lexicalGlobalObject();
+
+    auto* promise = JSPromiseDeferred::create(exec, globalObject);
+    RETURN_IF_EXCEPTION(catchScope, { });
+
+    auto sourceOrigin = exec->callerSourceOrigin();
+    if (sourceOrigin.isNull()) {
+        promise->reject(exec, createError(exec, ASCIILiteral("Could not resolve the module specifier.")));
+        return JSValue::encode(promise->promise());
+    }
+
+    RELEASE_ASSERT(exec->argumentCount() == 1);
+    auto* specifier = exec->uncheckedArgument(0).toString(exec);
+    if (Exception* exception = catchScope.exception()) {
+        catchScope.clearException();
+        promise->reject(exec, exception);
+        return JSValue::encode(promise->promise());
+    }
+
+    auto* internalPromise = globalObject->moduleLoader()->importModule(exec, specifier, sourceOrigin);
+    if (Exception* exception = catchScope.exception()) {
+        catchScope.clearException();
+        promise->reject(exec, exception);
+        return JSValue::encode(promise->promise());
+    }
+    promise->resolve(exec, internalPromise);
+
+    return JSValue::encode(promise->promise());
 }
 
 } // namespace JSC

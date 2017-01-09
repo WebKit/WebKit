@@ -184,6 +184,9 @@ struct GlobalObjectMethodTable {
     typedef bool (*ShouldInterruptScriptBeforeTimeoutPtr)(const JSGlobalObject*);
     ShouldInterruptScriptBeforeTimeoutPtr shouldInterruptScriptBeforeTimeout;
 
+    typedef JSInternalPromise* (*ModuleLoaderImportModulePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSString*, const SourceOrigin&);
+    ModuleLoaderImportModulePtr moduleLoaderImportModule;
+
     typedef JSInternalPromise* (*ModuleLoaderResolvePtr)(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
     ModuleLoaderResolvePtr moduleLoaderResolve;
 

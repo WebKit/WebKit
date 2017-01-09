@@ -71,7 +71,7 @@ public:
     enum { NoneExpr = 0,
         ResolveEvalExpr, ResolveExpr, IntegerExpr, DoubleExpr, StringExpr,
         ThisExpr, NullExpr, BoolExpr, RegExpExpr, ObjectLiteralExpr,
-        FunctionExpr, ClassExpr, SuperExpr, BracketExpr, DotExpr, CallExpr,
+        FunctionExpr, ClassExpr, SuperExpr, ImportExpr, BracketExpr, DotExpr, CallExpr,
         NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
         ConditionalExpr, AssignmentExpr, TypeofExpr, NewTargetExpr,
         DeleteExpr, ArrayLiteralExpr, BindingDestructuring, RestParameter,
@@ -156,6 +156,7 @@ public:
     ExpressionType createLogicalNot(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createUnaryPlus(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createVoid(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
+    ExpressionType createImportExpr(const JSTokenLocation&, ExpressionType, int, int, int) { return ImportExpr; }
     ExpressionType createThisExpr(const JSTokenLocation&) { return ThisExpr; }
     ExpressionType createSuperExpr(const JSTokenLocation&) { return SuperExpr; }
     ExpressionType createNewTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }

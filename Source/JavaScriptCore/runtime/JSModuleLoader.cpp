@@ -134,6 +134,30 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
     return call(exec, function, callType, callData, this, arguments);
 }
 
+JSInternalPromise* JSModuleLoader::importModule(ExecState* exec, JSString* moduleName, const SourceOrigin& referrer)
+{
+    if (Options::dumpModuleLoadingState())
+        dataLog("Loader [import] ", printableModuleKey(exec, moduleName), "\n");
+
+    auto* globalObject = exec->lexicalGlobalObject();
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
+        return globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, exec, this, moduleName, referrer);
+
+    auto* deferred = JSInternalPromiseDeferred::create(exec, globalObject);
+    auto moduleNameString = moduleName->value(exec);
+    if (UNLIKELY(scope.exception())) {
+        JSValue exception = scope.exception()->value();
+        scope.clearException();
+        deferred->reject(exec, exception);
+        return deferred->promise();
+    }
+    deferred->reject(exec, createError(exec, makeString("Could not import the module '", moduleNameString, "'.")));
+    return deferred->promise();
+}
+
 JSInternalPromise* JSModuleLoader::resolve(ExecState* exec, JSValue name, JSValue referrer, JSValue initiator)
 {
     if (Options::dumpModuleLoadingState())
@@ -195,6 +219,21 @@ JSValue JSModuleLoader::evaluate(ExecState* exec, JSValue key, JSValue moduleRec
     if (!moduleRecord)
         return jsUndefined();
     return moduleRecord->evaluate(exec);
+}
+
+JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(ExecState* exec, JSValue moduleRecordValue)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(moduleRecordValue);
+    if (!moduleRecord) {
+        throwTypeError(exec, scope);
+        return nullptr;
+    }
+
+    scope.release();
+    return moduleRecord->getModuleNamespace(exec);
 }
 
 } // namespace JSC

@@ -4261,20 +4261,22 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         cookedStrings.append(templateString->value()->cooked().impl());
     }
 
-    RefPtr<RegisterID> getTemplateObject = nullptr;
-    Variable var = variable(propertyNames().builtinNames().getTemplateObjectPrivateName());
-    if (RegisterID* local = var.local())
-        getTemplateObject = emitMove(newTemporary(), local);
-    else {
-        getTemplateObject = newTemporary();
-        RefPtr<RegisterID> scope = newTemporary();
-        moveToDestinationIfNeeded(scope.get(), emitResolveScope(scope.get(), var));
-        emitGetFromScope(getTemplateObject.get(), scope.get(), var, ThrowIfNotFound);
-    }
-
+    RefPtr<RegisterID> getTemplateObject = emitGetGlobalPrivate(newTemporary(), propertyNames().builtinNames().getTemplateObjectPrivateName());
     CallArguments arguments(*this, nullptr);
     emitLoad(arguments.thisRegister(), JSValue(addTemplateRegistryKeyConstant(m_vm->templateRegistryKeyTable().createKey(rawStrings, cookedStrings))));
     return emitCall(dst, getTemplateObject.get(), NoExpectedFunction, arguments, taggedTemplate->divot(), taggedTemplate->divotStart(), taggedTemplate->divotEnd(), DebuggableCall::No);
+}
+
+RegisterID* BytecodeGenerator::emitGetGlobalPrivate(RegisterID* dst, const Identifier& property)
+{
+    dst = tempDestination(dst);
+    Variable var = variable(property);
+    if (RegisterID* local = var.local())
+        return emitMove(dst, local);
+
+    RefPtr<RegisterID> scope = newTemporary();
+    moveToDestinationIfNeeded(scope.get(), emitResolveScope(scope.get(), var));
+    return emitGetFromScope(dst, scope.get(), var, ThrowIfNotFound);
 }
 
 RegisterID* BytecodeGenerator::emitGetEnumerableLength(RegisterID* dst, RegisterID* base)

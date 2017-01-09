@@ -37,6 +37,7 @@
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleLoader.h"
+#include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "ModuleAnalyzer.h"
 #include "Nodes.h"
@@ -52,6 +53,7 @@ static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeModuleDeclarationInstan
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeResolve(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeFetch(ExecState*);
 static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeInstantiate(ExecState*);
+static EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeGetModuleNamespaceObject(ExecState*);
 
 }
 
@@ -85,6 +87,8 @@ const ClassInfo ModuleLoaderPrototype::s_info = { "ModuleLoader", &Base::s_info,
     loadAndEvaluateModule          JSBuiltin                                           DontEnum|Function 3
     loadModule                     JSBuiltin                                           DontEnum|Function 3
     linkAndEvaluateModule          JSBuiltin                                           DontEnum|Function 2
+    importModule                   JSBuiltin                                           DontEnum|Function 3
+    getModuleNamespaceObject       moduleLoaderPrototypeGetModuleNamespaceObject       DontEnum|Function 1
     parseModule                    moduleLoaderPrototypeParseModule                    DontEnum|Function 2
     requestedModules               moduleLoaderPrototypeRequestedModules               DontEnum|Function 1
     resolve                        moduleLoaderPrototypeResolve                        DontEnum|Function 2
@@ -209,6 +213,19 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeInstantiate(ExecState* exec)
     if (!loader)
         return JSValue::encode(jsUndefined());
     return JSValue::encode(loader->instantiate(exec, exec->argument(0), exec->argument(1), exec->argument(2)));
+}
+
+EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeGetModuleNamespaceObject(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* loader = jsDynamicCast<JSModuleLoader*>(exec->thisValue());
+    if (!loader)
+        return JSValue::encode(jsUndefined());
+    auto* moduleNamespaceObject = loader->getModuleNamespaceObject(exec, exec->argument(0));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    return JSValue::encode(moduleNamespaceObject);
 }
 
 // ------------------- Additional Hook Functions ---------------------------

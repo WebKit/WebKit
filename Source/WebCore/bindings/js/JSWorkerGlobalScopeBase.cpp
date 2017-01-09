@@ -57,6 +57,7 @@ const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable
     nullptr,
     nullptr,
     nullptr,
+    nullptr,
     &defaultLanguage
 };
 

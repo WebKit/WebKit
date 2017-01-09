@@ -4343,7 +4343,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     bool baseIsSuper = match(SUPER);
-    semanticFailIfTrue(baseIsSuper && newCount, "Cannot use new with super");
+    bool baseIsImport = match(IMPORT);
+    semanticFailIfTrue((baseIsSuper || baseIsImport) && newCount, "Cannot use new with ", getToken());
 
     bool baseIsNewTarget = false;
     if (newCount && match(DOT)) {
@@ -4383,6 +4384,14 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 semanticFailIfTrue(functionSuperBinding == SuperBinding::NotNeeded, "super is not valid in this context");
             }
         }
+    } else if (baseIsImport) {
+        JSTextPosition expressionEnd = lastTokenEndPosition();
+        next();
+        consumeOrFail(OPENPAREN, "import call expects exactly one argument");
+        TreeExpression expr = parseAssignmentExpression(context);
+        failIfFalse(expr, "Cannot parse expression");
+        consumeOrFail(CLOSEPAREN, "import call expects exactly one argument");
+        return context.createImportExpr(location, expr, expressionStart, expressionEnd, lastTokenEndPosition());
     } else if (!baseIsNewTarget) {
         const bool isAsync = match(ASYNC);
 

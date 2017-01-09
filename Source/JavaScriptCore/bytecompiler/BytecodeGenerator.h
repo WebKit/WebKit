@@ -678,6 +678,7 @@ namespace JSC {
         void emitEnumeration(ThrowableExpressionData* enumerationNode, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* = nullptr, RegisterID* forLoopSymbolTable = nullptr);
 
         RegisterID* emitGetTemplateObject(RegisterID* dst, TaggedTemplateNode*);
+        RegisterID* emitGetGlobalPrivate(RegisterID* dst, const Identifier& property);
 
         enum class ReturnFrom { Normal, Finally };
         RegisterID* emitReturn(RegisterID* src, ReturnFrom = ReturnFrom::Normal);

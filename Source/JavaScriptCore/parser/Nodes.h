@@ -186,6 +186,7 @@ namespace JSC {
         virtual bool isBoolean() const { return false; }
         virtual bool isSpreadExpression() const { return false; }
         virtual bool isSuperNode() const { return false; }
+        virtual bool isImportNode() const { return false; }
         virtual bool isNewTarget() const { return false; }
         virtual bool isBytecodeIntrinsicNode() const { return false; }
 
@@ -568,6 +569,17 @@ namespace JSC {
     private:
         bool isSuperNode() const override { return true; }
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+    };
+
+    class ImportNode : public ExpressionNode, public ThrowableExpressionData {
+    public:
+        ImportNode(const JSTokenLocation&, ExpressionNode*);
+
+    private:
+        bool isImportNode() const override { return true; }
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_expr;
     };
 
     class NewTargetNode final : public ExpressionNode {

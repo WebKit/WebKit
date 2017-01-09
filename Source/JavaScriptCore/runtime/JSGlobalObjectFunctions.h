@@ -50,6 +50,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(Ex
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState*);
 
 static const double mantissaOverflowLowerBound = 9007199254740992.0;
 double parseIntOverflow(const LChar*, unsigned length, int radix);

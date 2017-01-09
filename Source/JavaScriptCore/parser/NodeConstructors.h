@@ -167,6 +167,12 @@ namespace JSC {
     {
     }
 
+    inline ImportNode::ImportNode(const JSTokenLocation& location, ExpressionNode* expr)
+        : ExpressionNode(location)
+        , m_expr(expr)
+    {
+    }
+
     inline NewTargetNode::NewTargetNode(const JSTokenLocation& location)
         : ExpressionNode(location)
     {

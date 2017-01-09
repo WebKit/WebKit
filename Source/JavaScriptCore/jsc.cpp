@@ -25,6 +25,7 @@
 #include "ArrayBuffer.h"
 #include "ArrayPrototype.h"
 #include "BuiltinExecutableCreator.h"
+#include "BuiltinNames.h"
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "Completion.h"
@@ -48,6 +49,7 @@
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseDeferred.h"
 #include "JSLock.h"
+#include "JSModuleLoader.h"
 #include "JSNativeStdFunction.h"
 #include "JSONObject.h"
 #include "JSProxy.h"
@@ -1101,10 +1103,10 @@ static inline String stringFromUTF(const Vector& utf8)
 }
 
 template<typename Vector>
-static inline SourceCode jscSource(const Vector& utf8, const String& filename)
+static inline SourceCode jscSource(const Vector& utf8, const SourceOrigin& sourceOrigin, const String& filename)
 {
     String str = stringFromUTF(utf8);
-    return makeSource(str, SourceOrigin { filename }, filename);
+    return makeSource(str, sourceOrigin, filename);
 }
 
 class GlobalObject : public JSGlobalObject {
@@ -1277,6 +1279,7 @@ protected:
         putDirect(vm, identifier, JSFunction::create(vm, this, arguments, identifier.string(), function, NoIntrinsic, function));
     }
 
+    static JSInternalPromise* moduleLoaderImportModule(JSGlobalObject*, ExecState*, JSModuleLoader*, JSString*, const SourceOrigin&);
     static JSInternalPromise* moduleLoaderResolve(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue, JSValue);
     static JSInternalPromise* moduleLoaderFetch(JSGlobalObject*, ExecState*, JSModuleLoader*, JSValue, JSValue);
 };
@@ -1288,6 +1291,7 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &javaScriptRuntimeFlags,
     nullptr,
     &shouldInterruptScriptBeforeTimeout,
+    &moduleLoaderImportModule,
     &moduleLoaderResolve,
     &moduleLoaderFetch,
     nullptr,
@@ -1418,6 +1422,29 @@ static String resolvePath(const DirectoryName& directoryName, const ModuleName& 
             builder.append(pathSeparator());
     }
     return builder.toString();
+}
+
+static String absolutePath(const String& fileName)
+{
+    auto directoryName = currentWorkingDirectory();
+    if (!directoryName)
+        return fileName;
+    return resolvePath(directoryName.value(), ModuleName(fileName.impl()));
+}
+
+JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject*, ExecState* exec, JSModuleLoader* moduleLoader, JSString* moduleName, const SourceOrigin& sourceOrigin)
+{
+    auto* function = jsCast<JSObject*>(moduleLoader->get(exec, exec->propertyNames().builtinNames().importModulePublicName()));
+    CallData callData;
+    auto callType = JSC::getCallData(function, callData);
+    ASSERT(callType != CallType::None);
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(moduleName);
+    arguments.append(jsString(exec, sourceOrigin.string()));
+    arguments.append(jsUndefined());
+
+    return jsCast<JSInternalPromise*>(call(exec, function, callType, callData, moduleLoader, arguments));
 }
 
 JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue keyValue, JSValue referrerValue, JSValue)
@@ -1924,7 +1951,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     NakedPtr<Exception> exception;
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), exception);
+    evaluate(globalObject->globalExec(), jscSource(script, SourceOrigin { absolutePath(fileName) }, fileName), JSValue(), exception);
     stopWatch.stop();
 
     if (exception) {
@@ -1976,7 +2003,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
     NakedPtr<Exception> evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), jscSource(script, fileName), JSValue(), evaluationException);
+    JSValue result = evaluate(globalObject->globalExec(), jscSource(script, SourceOrigin { absolutePath(fileName) }, fileName), JSValue(), evaluationException);
     if (evaluationException)
         throwException(exec, scope, evaluationException);
     return JSValue::encode(result);
@@ -2047,7 +2074,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     stopWatch.start();
 
     JSValue syntaxException;
-    bool validSyntax = checkSyntax(globalObject->globalExec(), jscSource(script, fileName), &syntaxException);
+    bool validSyntax = checkSyntax(globalObject->globalExec(), jscSource(script, SourceOrigin { absolutePath(fileName) }, fileName), &syntaxException);
     stopWatch.stop();
 
     if (!validSyntax)
@@ -2909,7 +2936,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         bool isLastFile = i == scripts.size() - 1;
         if (isModule) {
             if (!promise)
-                promise = loadAndEvaluateModule(globalObject->globalExec(), jscSource(scriptBuffer, fileName));
+                promise = loadAndEvaluateModule(globalObject->globalExec(), jscSource(scriptBuffer, SourceOrigin { absolutePath(fileName) }, fileName));
             scope.clearException();
 
             JSFunction* fulfillHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [&, isLastFile](ExecState* exec) {
@@ -2926,7 +2953,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             vm.drainMicrotasks();
         } else {
             NakedPtr<Exception> evaluationException;
-            JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(scriptBuffer, fileName), JSValue(), evaluationException);
+            JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(scriptBuffer, SourceOrigin { absolutePath(fileName) }, fileName), JSValue(), evaluationException);
             ASSERT(!scope.exception());
             if (evaluationException)
                 returnValue = evaluationException->value();
@@ -2999,7 +3026,7 @@ static void runInteractive(GlobalObject* globalObject)
             break;
 
         NakedPtr<Exception> evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, sourceOrigin.string()), JSValue(), evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), jscSource(line, sourceOrigin, sourceOrigin.string()), JSValue(), evaluationException);
 #endif
         if (evaluationException)
             printf("Exception: %s\n", evaluationException->value().toWTFString(globalObject->globalExec()).utf8().data());

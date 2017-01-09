@@ -107,25 +107,25 @@ checkModuleSyntaxError(String.raw`
 function noTopLevel() {
     import * as from from "Cocoa"
 }
-`, `SyntaxError: Unexpected keyword 'import':3`);
+`, `SyntaxError: Unexpected token '*'. import call expects exactly one argument.:3`);
 
 checkModuleSyntaxError(String.raw`
 if (noTopLevel) {
     import * as from from "Cocoa"
 }
-`, `SyntaxError: Unexpected keyword 'import':3`);
+`, `SyntaxError: Unexpected token '*'. import call expects exactly one argument.:3`);
 
 checkModuleSyntaxError(String.raw`
 {
     import * as from from "Cocoa"
 }
-`, `SyntaxError: Unexpected keyword 'import':3`);
+`, `SyntaxError: Unexpected token '*'. import call expects exactly one argument.:3`);
 
 checkModuleSyntaxError(String.raw`
 for (var i = 0; i < 1000; ++i) {
     import * as from from "Cocoa"
 }
-`, `SyntaxError: Unexpected keyword 'import':3`);
+`, `SyntaxError: Unexpected token '*'. import call expects exactly one argument.:3`);
 
 checkModuleSyntaxError(String.raw`
 import for from "Cocoa";
