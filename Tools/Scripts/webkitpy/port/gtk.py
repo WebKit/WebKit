@@ -1,5 +1,6 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2013 Samsung Electronics.  All rights reserved.
+# Copyright (C) 2017 Igalia S.L. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -40,6 +41,7 @@ from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
 from webkitpy.port.xorgdriver import XorgDriver
+from webkitpy.port.waylanddriver import WaylandDriver
 from webkitpy.port.linux_get_crash_log import GDBCrashLogGenerator
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
@@ -52,10 +54,7 @@ class GtkPort(Port):
     def __init__(self, *args, **kwargs):
         super(GtkPort, self).__init__(*args, **kwargs)
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
-        self._wayland = self.get_option("wayland")
-        self._nativexorg = False
-        if os.environ.get("USE_NATIVE_XDISPLAY"):
-            self._nativexorg = True
+        self._display_server = self.get_option("display_server")
 
         if self.get_option("leaks"):
             self._leakdetector = LeakDetectorValgrind(self._executive, self._filesystem, self.results_directory())
@@ -80,9 +79,12 @@ class GtkPort(Port):
 
     @memoized
     def _driver_class(self):
-        if self._wayland:
+        if self._display_server == "weston":
             return WestonDriver
-        if self._nativexorg:
+        if self._display_server == "wayland":
+            return WaylandDriver
+        # FIXME: re-configure the perf bot to pass --display-server=xorg
+        if self._display_server == "xorg" or os.environ.get("USE_NATIVE_XDISPLAY"):
             return XorgDriver
         return XvfbDriver
 
@@ -190,7 +192,7 @@ class GtkPort(Port):
 
     def _search_paths(self):
         search_paths = []
-        if self._wayland:
+        if self._driver_class() in [WaylandDriver, WestonDriver]:
             search_paths.append(self.port_name + "-wayland")
         search_paths.append(self.port_name)
         search_paths.append('wk2')

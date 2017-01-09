@@ -1,3 +1,33 @@
+2017-01-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][Wayland] Allow running the layout tests under a native Wayland environment.
+        https://bugs.webkit.org/show_bug.cgi?id=165232
+
+        Reviewed by Michael Catanzaro.
+
+        Add a new WaylandDriver to run the tests in the user current wayland session.
+
+        Also merge all the configuration options for selecting the display server inside one
+        switch --display-server=xvfb/xorg/wayland/weston (defaulting to xvfb).
+
+        This switch is supported on the scripts: run-gtk-tests, run-perf-tests and run-webkit-tests.
+
+        * Scripts/run-gtk-tests: Add missing logging.basicConfig() initialization for the error logger.
+        (TestRunner._create_driver):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__):
+        (GtkPort._driver_class):
+        (GtkPort._search_paths):
+        * Scripts/webkitpy/port/waylanddriver.py: Added.
+        (WaylandDriver):
+        (WaylandDriver.check_driver):
+        (WaylandDriver._setup_environ_for_test):
+        (WaylandDriver._start):
+
 2017-01-09  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Add a layout test for webkit.org/b/135651

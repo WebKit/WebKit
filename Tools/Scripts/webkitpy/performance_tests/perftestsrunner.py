@@ -135,6 +135,9 @@ class PerfTestsRunner(object):
                 help="wrapper command to insert before invocations of "
                  "DumpRenderTree or WebKitTestRunner; option is split on whitespace before "
                  "running. (Example: --wrapper='valgrind --smc-check=all')"),
+            optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+                help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
+                     '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 

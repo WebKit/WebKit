@@ -17,6 +17,7 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+import logging
 import subprocess
 import os
 import sys
@@ -209,10 +210,7 @@ class TestRunner:
         return True
 
     def _create_driver(self, port_options=[]):
-        if self._options.use_wayland:
-            self._port._wayland = True
-        else:
-            self._port._nativexorg = not self._options.use_xvfb
+        self._port._display_server = self._options.display_server
         driver = self._port.create_driver(worker_number=0, no_timeout=True)._make_driver(pixel_tests=False)
         if not driver.check_driver(self._port):
             raise RuntimeError("Failed to check driver %s" %driver.__class__.__name__)
@@ -486,11 +484,12 @@ if __name__ == "__main__":
     option_parser.add_option('-t', '--timeout',
                              action='store', type='int', dest='timeout', default=10,
                              help='Time in seconds until a test times out')
-    option_parser.add_option('--no-xvfb', action='store_false', dest='use_xvfb', default=True,
-                             help='Do not run tests under Xvfb')
-    option_parser.add_option('--wayland', action='store_true', dest='use_wayland', default=False,
-                             help='Run the layout tests inside a (virtualized) weston')
+    option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+                             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
+                                  '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
     options, args = option_parser.parse_args()
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     runner = TestRunner(options, args)
     sys.exit(runner.run_tests())

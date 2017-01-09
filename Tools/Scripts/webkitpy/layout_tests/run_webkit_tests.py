@@ -289,8 +289,9 @@ def parse_args(args):
         optparse.make_option("--profiler", action="store",
             help="Output per-test profile information, using the specified profiler."),
         optparse.make_option("--no-timeout", action="store_true", default=False, help="Disable test timeouts"),
-        optparse.make_option("--wayland",  action="store_true", default=False,
-            help="Run the layout tests inside a (virtualized) weston compositor (GTK only)."),
+        optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+            help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
+                 '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
     ]))
 
     option_group_definitions.append(("iOS Simulator Options", [
