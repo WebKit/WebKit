@@ -41,12 +41,16 @@ static bool parseBooleanTestHeaderValue(const std::string& value)
     return false;
 }
 
-TestOptions::TestOptions(NSURL *testURL)
+TestOptions::TestOptions(NSURL *testURL, const TestCommand& command)
 {
-    if (![testURL isFileURL])
-        return;
+    std::string path = command.absolutePath;
+    if (path.empty() && [testURL isFileURL])
+        path = [testURL fileSystemRepresentation];
+    else
+        path = command.pathOrURL;
 
-    std::string path = [testURL fileSystemRepresentation];
+    if (path.empty())
+        return;
 
     std::string options;
     std::ifstream testFile(path.data());

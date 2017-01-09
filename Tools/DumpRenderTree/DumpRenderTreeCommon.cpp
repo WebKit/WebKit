@@ -105,7 +105,7 @@ TestCommand parseInputLine(const std::string& inputLine)
         } else if (arg == "--dump-jsconsolelog-in-stderr")
             result.dumpJSConsoleLogInStdErr = true;
         else if (arg == std::string("--absolutePath"))
-            tokenizer.next();
+            result.absolutePath = tokenizer.next();
         else
             die(inputLine);
     }

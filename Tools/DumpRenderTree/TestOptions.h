@@ -24,6 +24,7 @@
  */
 
 #pragma once
+#include "DumpRenderTree.h"
 
 @class NSURL;
 
@@ -32,5 +33,5 @@ struct TestOptions {
     bool enableModernMediaControls { false };
     bool enablePointerLock { false };
 
-    TestOptions(NSURL *testURL);
+    TestOptions(NSURL*, const TestCommand&);
 };

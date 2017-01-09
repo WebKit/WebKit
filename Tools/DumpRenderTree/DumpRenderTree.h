@@ -58,6 +58,7 @@ void displayWebView();
 
 struct TestCommand {
     std::string pathOrURL;
+    std::string absolutePath;
     bool shouldDumpPixels { false };
     std::string expectedPixelHash;
     int timeout { 30000 }; // in ms
