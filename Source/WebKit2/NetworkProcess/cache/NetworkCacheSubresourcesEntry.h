@@ -28,8 +28,6 @@
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 
-#include "NetworkCacheDecoder.h"
-#include "NetworkCacheEncoder.h"
 #include "NetworkCacheStorage.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/URL.h>
@@ -41,8 +39,8 @@ namespace NetworkCache {
 class SubresourceInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void encode(Encoder&) const;
-    static bool decode(Decoder&, SubresourceInfo&);
+    void encode(WTF::Persistence::Encoder&) const;
+    static bool decode(WTF::Persistence::Decoder&, SubresourceInfo&);
 
     SubresourceInfo() = default;
     SubresourceInfo(const WebCore::ResourceRequest& request, bool isTransient = false)

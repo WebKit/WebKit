@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "NetworkCacheEncoder.h"
+#include "Encoder.h"
 
-#if ENABLE(NETWORK_CACHE)
+#include "SHA1.h"
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 Encoder::Encoder()
 {
@@ -124,5 +124,3 @@ void Encoder::encodeChecksum()
 
 }
 }
-
-#endif

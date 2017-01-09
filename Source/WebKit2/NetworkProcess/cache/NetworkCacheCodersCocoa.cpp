@@ -34,8 +34,8 @@
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 static void encodeCFData(Encoder& encoder, CFDataRef data)
 {

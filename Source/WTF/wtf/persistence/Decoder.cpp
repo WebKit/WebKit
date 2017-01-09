@@ -24,14 +24,12 @@
  */
 
 #include "config.h"
-#include "NetworkCacheDecoder.h"
+#include "Decoder.h"
 
-#if ENABLE(NETWORK_CACHE)
+#include <wtf/persistence/Encoder.h>
 
-#include "NetworkCacheEncoder.h"
-
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 Decoder::Decoder(const uint8_t* buffer, size_t bufferSize)
     : m_buffer(buffer)
@@ -133,5 +131,3 @@ bool Decoder::verifyChecksum()
 
 }
 }
-
-#endif

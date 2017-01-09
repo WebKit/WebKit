@@ -30,13 +30,11 @@
 
 #include "NetworkCacheData.h"
 #include <wtf/SHA1.h>
+#include <wtf/persistence/Coder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 namespace NetworkCache {
-
-class Encoder;
-class Decoder;
 
 class Key {
 public:
@@ -69,8 +67,8 @@ public:
     String hashAsString() const { return hashAsString(m_hash); }
     String partitionHashAsString() const { return hashAsString(m_partitionHash); }
 
-    void encode(Encoder&) const;
-    static bool decode(Decoder&, Key&);
+    void encode(WTF::Persistence::Encoder&) const;
+    static bool decode(WTF::Persistence::Decoder&, Key&);
 
     bool operator==(const Key&) const;
     bool operator!=(const Key& other) const { return !(*this == other); }

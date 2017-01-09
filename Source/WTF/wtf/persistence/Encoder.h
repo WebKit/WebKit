@@ -23,17 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheEncoder_h
-#define NetworkCacheEncoder_h
+#pragma once
 
-#if ENABLE(NETWORK_CACHE)
-
-#include "NetworkCacheCoder.h"
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
+#include <wtf/persistence/Coder.h>
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 class Encoder;
 class DataReference;
@@ -41,11 +38,11 @@ class DataReference;
 class Encoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Encoder();
-    virtual ~Encoder();
+    WTF_EXPORT_PRIVATE Encoder();
+    WTF_EXPORT_PRIVATE ~Encoder();
 
-    void encodeChecksum();
-    void encodeFixedLengthData(const uint8_t*, size_t);
+    WTF_EXPORT_PRIVATE void encodeChecksum();
+    WTF_EXPORT_PRIVATE void encodeFixedLengthData(const uint8_t*, size_t);
 
     template<typename T> void encodeEnum(T t)
     {
@@ -68,21 +65,21 @@ public:
     const uint8_t* buffer() const { return m_buffer.data(); }
     size_t bufferSize() const { return m_buffer.size(); }
 
-    static void updateChecksumForData(SHA1&, const uint8_t*, size_t);
+    WTF_EXPORT_PRIVATE static void updateChecksumForData(SHA1&, const uint8_t*, size_t);
     template <typename Type> static void updateChecksumForNumber(SHA1&, Type);
 
     static const bool isIPCEncoder = false;
 
 private:
-    void encode(bool);
-    void encode(uint8_t);
-    void encode(uint16_t);
-    void encode(uint32_t);
-    void encode(uint64_t);
-    void encode(int32_t);
-    void encode(int64_t);
-    void encode(float);
-    void encode(double);
+    WTF_EXPORT_PRIVATE void encode(bool);
+    WTF_EXPORT_PRIVATE void encode(uint8_t);
+    WTF_EXPORT_PRIVATE void encode(uint16_t);
+    WTF_EXPORT_PRIVATE void encode(uint32_t);
+    WTF_EXPORT_PRIVATE void encode(uint64_t);
+    WTF_EXPORT_PRIVATE void encode(int32_t);
+    WTF_EXPORT_PRIVATE void encode(int64_t);
+    WTF_EXPORT_PRIVATE void encode(float);
+    WTF_EXPORT_PRIVATE void encode(double);
 
     template<typename Type> void encodeNumber(Type);
 
@@ -115,6 +112,3 @@ void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)
 
 }
 }
-
-#endif
-#endif

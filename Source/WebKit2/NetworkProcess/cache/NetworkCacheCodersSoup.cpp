@@ -28,8 +28,8 @@
 
 #if ENABLE(NETWORK_CACHE)
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {

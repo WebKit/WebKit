@@ -1,3 +1,62 @@
+2017-01-08  Antti Koivisto  <antti@apple.com>
+
+        Move cache coders to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=166825
+
+        Rubber-stamped by Sam Weinig.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheCoder.h: Removed.
+        * NetworkProcess/cache/NetworkCacheCoders.cpp:
+        (WebKit::NetworkCache::Coder<AtomicString>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<AtomicString>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<CString>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<CString>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<String>::encode): Deleted.
+        (WebKit::NetworkCache::decodeStringText): Deleted.
+        (WebKit::NetworkCache::Coder<String>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<SHA1::Digest>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<SHA1::Digest>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::HTTPHeaderMap>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::HTTPHeaderMap>::decode): Deleted.
+        * NetworkProcess/cache/NetworkCacheCoders.h:
+        (): Deleted.
+        (WebKit::NetworkCache::Coder<std::optional<T>>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<std::optional<T>>::decode): Deleted.
+        * NetworkProcess/cache/NetworkCacheCodersCocoa.cpp:
+        (WebKit::NetworkCache::encodeCFData): Deleted.
+        (WebKit::NetworkCache::decodeCFData): Deleted.
+        (WebKit::NetworkCache::encodeSecTrustRef): Deleted.
+        (WebKit::NetworkCache::decodeSecTrustRef): Deleted.
+        (WebKit::NetworkCache::encodeCertificateChain): Deleted.
+        (WebKit::NetworkCache::decodeCertificateChain): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::CertificateInfo>::decode): Deleted.
+        * NetworkProcess/cache/NetworkCacheDecoder.cpp: Removed.
+        * NetworkProcess/cache/NetworkCacheDecoder.h: Removed.
+        * NetworkProcess/cache/NetworkCacheEncoder.cpp: Removed.
+        * NetworkProcess/cache/NetworkCacheEncoder.h: Removed.
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::Entry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheKey.cpp:
+        (WebKit::NetworkCache::Key::encode):
+        (WebKit::NetworkCache::Key::decode):
+        * NetworkProcess/cache/NetworkCacheKey.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::decodeRecordMetaData):
+        (WebKit::NetworkCache::encodeRecordMetaData):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::encode):
+        (WebKit::NetworkCache::SubresourceInfo::decode):
+        (WebKit::NetworkCache::SubresourcesEntry::encodeAsStorageRecord):
+        (WebKit::NetworkCache::SubresourcesEntry::decodeStorageRecord):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::encodeContentExtensionMetaData):
+        (API::decodeContentExtensionMetaData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-01-09  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Replace WebKitWebSettings with WebKitSettings in documentation

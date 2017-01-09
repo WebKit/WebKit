@@ -380,7 +380,7 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
 {
     bool success = false;
     fileData.apply([&metaData, &success](const uint8_t* data, size_t size) {
-        Decoder decoder(data, size);
+        WTF::Persistence::Decoder decoder(data, size);
         if (!decoder.decode(metaData.cacheStorageVersion))
             return false;
         if (!decoder.decode(metaData.key))
@@ -464,7 +464,7 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
 
 static Data encodeRecordMetaData(const RecordMetaData& metaData)
 {
-    Encoder encoder;
+    WTF::Persistence::Encoder encoder;
 
     encoder << metaData.cacheStorageVersion;
     encoder << metaData.key;

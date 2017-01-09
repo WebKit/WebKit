@@ -30,8 +30,6 @@
 
 #include "APIUserContentExtension.h"
 #include "NetworkCacheData.h"
-#include "NetworkCacheDecoder.h"
-#include "NetworkCacheEncoder.h"
 #include "NetworkCacheFileSystem.h"
 #include "SharedMemory.h"
 #include "WebCompiledContentExtension.h"
@@ -41,6 +39,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/persistence/Decoder.h>
+#include <wtf/persistence/Encoder.h>
 
 using namespace WebKit::NetworkCache;
 
@@ -99,7 +99,7 @@ struct ContentExtensionMetaData {
 
 static Data encodeContentExtensionMetaData(const ContentExtensionMetaData& metaData)
 {
-    WebKit::NetworkCache::Encoder encoder;
+    WTF::Persistence::Encoder encoder;
 
     encoder << metaData.version;
     encoder << metaData.actionsSize;
@@ -120,7 +120,7 @@ static bool decodeContentExtensionMetaData(ContentExtensionMetaData& metaData, c
         if (size != fileData.size())
             return false;
 
-        WebKit::NetworkCache::Decoder decoder(data, size);
+        WTF::Persistence::Decoder decoder(data, size);
         if (!decoder.decode(metaData.version))
             return false;
         if (!decoder.decode(metaData.actionsSize))

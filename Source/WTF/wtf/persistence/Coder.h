@@ -23,13 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheCoder_h
-#define NetworkCacheCoder_h
+#pragma once
 
-#if ENABLE(NETWORK_CACHE)
-
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 class Decoder;
 class Encoder;
@@ -48,6 +45,3 @@ template<typename T> struct Coder {
 
 }
 }
-
-#endif
-#endif

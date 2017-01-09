@@ -23,39 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheDecoder_h
-#define NetworkCacheDecoder_h
+#pragma once
 
-#if ENABLE(NETWORK_CACHE)
-
-#include "NetworkCacheCoder.h"
 #include <wtf/SHA1.h>
+#include <wtf/persistence/Coder.h>
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WTF {
+namespace Persistence {
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Decoder(const uint8_t* buffer, size_t bufferSize);
-    virtual ~Decoder();
+    WTF_EXPORT_PRIVATE Decoder(const uint8_t* buffer, size_t bufferSize);
+    WTF_EXPORT_PRIVATE ~Decoder();
 
     size_t length() const { return m_bufferEnd - m_buffer; }
     size_t currentOffset() const { return m_bufferPosition - m_buffer; }
 
-    bool verifyChecksum();
+    WTF_EXPORT_PRIVATE bool verifyChecksum();
 
-    bool decodeFixedLengthData(uint8_t*, size_t);
+    WTF_EXPORT_PRIVATE bool decodeFixedLengthData(uint8_t*, size_t);
 
-    bool decode(bool&);
-    bool decode(uint8_t&);
-    bool decode(uint16_t&);
-    bool decode(uint32_t&);
-    bool decode(uint64_t&);
-    bool decode(int32_t&);
-    bool decode(int64_t&);
-    bool decode(float&);
-    bool decode(double&);
+    WTF_EXPORT_PRIVATE bool decode(bool&);
+    WTF_EXPORT_PRIVATE bool decode(uint8_t&);
+    WTF_EXPORT_PRIVATE bool decode(uint16_t&);
+    WTF_EXPORT_PRIVATE bool decode(uint32_t&);
+    WTF_EXPORT_PRIVATE bool decode(uint64_t&);
+    WTF_EXPORT_PRIVATE bool decode(int32_t&);
+    WTF_EXPORT_PRIVATE bool decode(int64_t&);
+    WTF_EXPORT_PRIVATE bool decode(float&);
+    WTF_EXPORT_PRIVATE bool decode(double&);
 
     template<typename T> bool decodeEnum(T& result)
     {
@@ -88,7 +85,7 @@ public:
     static const bool isIPCDecoder = false;
 
 private:
-    bool bufferIsLargeEnoughToContain(size_t) const;
+    WTF_EXPORT_PRIVATE bool bufferIsLargeEnoughToContain(size_t) const;
     template<typename Type> bool decodeNumber(Type&);
 
     const uint8_t* m_buffer;
@@ -101,5 +98,3 @@ private:
 } 
 }
 
-#endif
-#endif

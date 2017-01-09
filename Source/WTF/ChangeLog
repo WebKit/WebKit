@@ -1,3 +1,63 @@
+2017-01-08  Antti Koivisto  <antti@apple.com>
+
+        Move cache coders to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=166825
+
+        Rubber-stamped by Sam Weinig.
+
+        Make it possible to use robust serialization of WTF types on the lower levels of the stack.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/persistence: Added.
+        * wtf/persistence/Coder.h: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheCoder.h.
+        (WebKit::NetworkCache::Coder::encode): Deleted.
+        (WebKit::NetworkCache::Coder::decode): Deleted.
+        * wtf/persistence/Coders.cpp: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheCoders.cpp.
+        (WebKit::NetworkCache::Coder<AtomicString>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<AtomicString>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<CString>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<CString>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<String>::encode): Deleted.
+        (WebKit::NetworkCache::decodeStringText): Deleted.
+        (WebKit::NetworkCache::Coder<String>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<SHA1::Digest>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<SHA1::Digest>::decode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::HTTPHeaderMap>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<WebCore::HTTPHeaderMap>::decode): Deleted.
+        * wtf/persistence/Coders.h: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheCoders.h.
+        (WebKit::NetworkCache::Coder<std::optional<T>>::encode): Deleted.
+        (WebKit::NetworkCache::Coder<std::optional<T>>::decode): Deleted.
+        * wtf/persistence/Decoder.cpp: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheDecoder.cpp.
+        (WebKit::NetworkCache::Decoder::Decoder): Deleted.
+        (WebKit::NetworkCache::Decoder::~Decoder): Deleted.
+        (WebKit::NetworkCache::Decoder::bufferIsLargeEnoughToContain): Deleted.
+        (WebKit::NetworkCache::Decoder::decodeFixedLengthData): Deleted.
+        (WebKit::NetworkCache::Decoder::decodeNumber): Deleted.
+        (WebKit::NetworkCache::Decoder::decode): Deleted.
+        (WebKit::NetworkCache::Decoder::verifyChecksum): Deleted.
+        * wtf/persistence/Decoder.h: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheDecoder.h.
+        (WebKit::NetworkCache::Decoder::length): Deleted.
+        (WebKit::NetworkCache::Decoder::currentOffset): Deleted.
+        (WebKit::NetworkCache::Decoder::decodeEnum): Deleted.
+        (WebKit::NetworkCache::Decoder::decode): Deleted.
+        (WebKit::NetworkCache::Decoder::bufferIsLargeEnoughToContain): Deleted.
+        * wtf/persistence/Encoder.cpp: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheEncoder.cpp.
+        (WebKit::NetworkCache::Encoder::Encoder): Deleted.
+        (WebKit::NetworkCache::Encoder::~Encoder): Deleted.
+        (WebKit::NetworkCache::Encoder::grow): Deleted.
+        (WebKit::NetworkCache::Encoder::updateChecksumForData): Deleted.
+        (WebKit::NetworkCache::Encoder::encodeFixedLengthData): Deleted.
+        (WebKit::NetworkCache::Encoder::encodeNumber): Deleted.
+        (WebKit::NetworkCache::Encoder::encode): Deleted.
+        (WebKit::NetworkCache::Encoder::encodeChecksum): Deleted.
+        * wtf/persistence/Encoder.h: Copied from Source/WebKit2/NetworkProcess/cache/NetworkCacheEncoder.h.
+        (WebKit::NetworkCache::Encoder::encodeEnum): Deleted.
+        (WebKit::NetworkCache::Encoder::encode): Deleted.
+        (WebKit::NetworkCache::Encoder::operator<<): Deleted.
+        (WebKit::NetworkCache::Encoder::buffer): Deleted.
+        (WebKit::NetworkCache::Encoder::bufferSize): Deleted.
+        (WebKit::NetworkCache::Encoder::updateChecksumForNumber): Deleted.
+
 2017-01-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         Introduce CPU(X86_SSE2) instead of various SSE2 checks

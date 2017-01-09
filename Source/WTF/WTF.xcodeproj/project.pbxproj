@@ -353,6 +353,13 @@
 		DE5A09FC1BA36992003D4424 /* CommonCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */; };
 		E15556F518A0CC18006F48FB /* CryptographicUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */; };
 		E15556F618A0CC18006F48FB /* CryptographicUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E15556F418A0CC18006F48FB /* CryptographicUtilities.h */; };
+		E43A46951E228B9100276B05 /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46901E228B9100276B05 /* Decoder.h */; };
+		E43A46961E228B9100276B05 /* Encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46911E228B9100276B05 /* Encoder.h */; };
+		E43A46971E228B9100276B05 /* Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43A46921E228B9100276B05 /* Decoder.cpp */; };
+		E43A46981E228B9100276B05 /* Encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43A46931E228B9100276B05 /* Encoder.cpp */; };
+		E43A46991E228B9100276B05 /* Coder.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A46941E228B9100276B05 /* Coder.h */; };
+		E43A469B1E228FB200276B05 /* Coders.h in Headers */ = {isa = PBXBuildFile; fileRef = E43A469A1E228FB200276B05 /* Coders.h */; };
+		E43A469D1E228FD500276B05 /* Coders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E43A469C1E228FD500276B05 /* Coders.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3A1A96245500536DF6 /* WorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A0AD381A96245500536DF6 /* WorkQueue.h */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
@@ -725,6 +732,13 @@
 		DE5A09FB1BA36992003D4424 /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		E15556F318A0CC18006F48FB /* CryptographicUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicUtilities.cpp; sourceTree = "<group>"; };
 		E15556F418A0CC18006F48FB /* CryptographicUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptographicUtilities.h; sourceTree = "<group>"; };
+		E43A46901E228B9100276B05 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
+		E43A46911E228B9100276B05 /* Encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encoder.h; sourceTree = "<group>"; };
+		E43A46921E228B9100276B05 /* Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decoder.cpp; sourceTree = "<group>"; };
+		E43A46931E228B9100276B05 /* Encoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encoder.cpp; sourceTree = "<group>"; };
+		E43A46941E228B9100276B05 /* Coder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coder.h; sourceTree = "<group>"; };
+		E43A469A1E228FB200276B05 /* Coders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coders.h; sourceTree = "<group>"; };
+		E43A469C1E228FD500276B05 /* Coders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Coders.cpp; sourceTree = "<group>"; };
 		E4A0AD371A96245500536DF6 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueCocoa.cpp; sourceTree = "<group>"; };
@@ -869,6 +883,7 @@
 				A8A47281151A825A004123FF /* dtoa */,
 				1FA47C87152502DA00568D1B /* ios */,
 				A8A472C4151A825A004123FF /* mac */,
+				E43A46851E228B5700276B05 /* persistence */,
 				CEF4820C19DA347600CC04B8 /* spi */,
 				A8A4731B151A825B004123FF /* text */,
 				A8A47339151A825B004123FF /* threads */,
@@ -1277,6 +1292,20 @@
 			name = cf;
 			sourceTree = "<group>";
 		};
+		E43A46851E228B5700276B05 /* persistence */ = {
+			isa = PBXGroup;
+			children = (
+				E43A46941E228B9100276B05 /* Coder.h */,
+				E43A469A1E228FB200276B05 /* Coders.h */,
+				E43A469C1E228FD500276B05 /* Coders.cpp */,
+				E43A46921E228B9100276B05 /* Decoder.cpp */,
+				E43A46901E228B9100276B05 /* Decoder.h */,
+				E43A46931E228B9100276B05 /* Encoder.cpp */,
+				E43A46911E228B9100276B05 /* Encoder.h */,
+			);
+			path = persistence;
+			sourceTree = "<group>";
+		};
 		E4A0AD3B1A96251900536DF6 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -1329,6 +1358,7 @@
 				A8A47391151A825B004123FF /* BumpPointerAllocator.h in Headers */,
 				EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */,
 				A8A473AD151A825B004123FF /* cached-powers.h in Headers */,
+				E43A469B1E228FB200276B05 /* Coders.h in Headers */,
 				DCEE21FB1CEA7538000C2396 /* CFBundleSPI.h in Headers */,
 				A8A4745E151A825B004123FF /* CharacterNames.h in Headers */,
 				A8A47394151A825B004123FF /* CheckedArithmetic.h in Headers */,
@@ -1362,6 +1392,7 @@
 				A8A473B2151A825B004123FF /* double.h in Headers */,
 				A8A473A7151A825B004123FF /* DoublyLinkedList.h in Headers */,
 				A8A473BB151A825B004123FF /* dtoa.h in Headers */,
+				E43A46961E228B9100276B05 /* Encoder.h in Headers */,
 				93DDE9321CDC052D00FD3491 /* dyldSPI.h in Headers */,
 				1AEA88E21D6BBCF400E5AD64 /* EnumTraits.h in Headers */,
 				AD7C434B1DD2A4A70026888B /* Expected.h in Headers */,
@@ -1508,6 +1539,7 @@
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
 				0F66B2911DC97BAB004A1D3F /* TimeWithDynamicClockType.h in Headers */,
+				E43A46951E228B9100276B05 /* Decoder.h in Headers */,
 				553071CA1C40427200384898 /* TinyLRUCache.h in Headers */,
 				0FED67B61B22D4D80066CE15 /* TinyPtrSet.h in Headers */,
 				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
@@ -1535,6 +1567,7 @@
 				A8A47446151A825B004123FF /* WTFString.h in Headers */,
 				A8A47487151A825B004123FF /* WTFThreadData.h in Headers */,
 				CE73E02519DCB7AB00580D5C /* XPCSPI.h in Headers */,
+				E43A46991E228B9100276B05 /* Coder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1693,8 +1726,10 @@
 				A8A47414151A825B004123FF /* RandomNumber.cpp in Sources */,
 				A8A4741A151A825B004123FF /* RefCountedLeakCounter.cpp in Sources */,
 				2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */,
+				E43A46981E228B9100276B05 /* Encoder.cpp in Sources */,
 				2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */,
 				1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */,
+				E43A469D1E228FD500276B05 /* Coders.cpp in Sources */,
 				1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */,
 				1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */,
 				0F66B28E1DC97BAB004A1D3F /* Seconds.cpp in Sources */,
@@ -1709,6 +1744,7 @@
 				A5BA15FC182435A600A82E69 /* StringImplCF.cpp in Sources */,
 				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,
 				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
+				E43A46971E228B9100276B05 /* Decoder.cpp in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
