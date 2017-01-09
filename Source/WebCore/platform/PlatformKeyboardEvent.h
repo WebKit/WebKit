@@ -161,6 +161,8 @@ namespace WebCore {
         const CompositionResults& compositionResults() const { return m_compositionResults; }
 
         // Used by WebKit2
+        static String keyValueForGdkKeyCode(unsigned);
+        static String keyCodeForHardwareKeyCode(unsigned);
         static String keyIdentifierForGdkKeyCode(unsigned);
         static int windowsKeyCodeForGdkKeyCode(unsigned);
         static String singleCharacterString(unsigned);
