@@ -1,3 +1,18 @@
+2017-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        Unindenting text inside a blockquote can result in the text being reordered
+        https://bugs.webkit.org/show_bug.cgi?id=166813
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        * editing/execCommand/unindent-nested-blockquote-with-inner-div-expected.txt: Added.
+        * editing/execCommand/unindent-nested-blockquote-with-inner-div.html: Added.
+
+        Old test output:
+        second<br><blockquote><div><blockquote>first</blockquote><br></div></blockquote>
+        New test output:
+        <blockquote><div><blockquote>first</blockquote><br></div></blockquote>second
+
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Prototype dynamic-import

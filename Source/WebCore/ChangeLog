@@ -1,3 +1,18 @@
+2017-01-09  Tim Horton  <timothy_horton@apple.com>
+
+        Unindenting text inside a blockquote can result in the text being reordered
+        https://bugs.webkit.org/show_bug.cgi?id=166813
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Test: editing/execCommand/unindent-nested-blockquote-with-inner-div.html
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        Start splitting the tree at the beginning of the content being unindented,
+        not at the containing block flow element, which could e.g. contain other
+        elements (or even other blockquotes).
+
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Prototype dynamic-import
