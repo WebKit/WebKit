@@ -1,3 +1,10 @@
+2017-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, since this test is slow it should run in fewer configurations. This resolves the
+        occasional timeouts I was seeing.
+
+        * js/script-tests/regress-139548.js:
+
 2017-01-07  Andy Estes  <aestes@apple.com>
 
         [QuickLook] Update quicklook test expectations
