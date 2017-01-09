@@ -1,3 +1,27 @@
+2017-01-08  Andreas Kling  <akling@apple.com>
+
+        Inject MarkedSpace size classes for a few more high-volume objects.
+        <https://webkit.org/b/166815>
+
+        Reviewed by Darin Adler.
+
+        Add the following classes to the list of manually injected size classes:
+
+            - JSString
+            - JSFunction
+            - PropertyTable
+            - Structure
+
+        Only Structure actually ends up with a new size class, the others already
+        can't get any tighter due to the current MarkedBlock::atomSize being 16.
+        I've put them in anyway to ensure that we have optimally carved-out cells
+        for them in the future, should they grow.
+
+        With this change, Structures get allocated in 128-byte cells instead of
+        160-byte cells, giving us 25% more Structures per MarkedBlock.
+
+        * heap/MarkedSpace.cpp:
+
 2017-01-06  Saam Barati  <sbarati@apple.com>
 
         Add a slice intrinsic to the DFG/FTL
