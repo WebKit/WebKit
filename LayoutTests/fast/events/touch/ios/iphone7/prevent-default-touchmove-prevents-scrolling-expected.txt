@@ -1,0 +1,10 @@
+Test that preventing default on touchmove will prevent scrolling in overflow:scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('scroller').scrollTop is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,13 @@
+2017-01-09  Beth Dakin  <bdakin@apple.com>
+
+        Add a test to ensure that preventDefault on touchmove prevents scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=166790
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/iphone7/prevent-default-touchmove-prevents-scrolling-expected.txt: Added.
+        * fast/events/touch/ios/iphone7/prevent-default-touchmove-prevents-scrolling.html: Added.
+
 2017-01-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline W3C test for ios-simulator after r210468.
