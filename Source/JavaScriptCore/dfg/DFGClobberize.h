@@ -503,29 +503,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(MiscFields);
         def(HeapLocation(IsFunctionLoc, MiscFields, node->child1()), LazyNode(node));
         return;
-
-    case ArraySlice:
-        read(MiscFields);
-        read(JSCell_indexingType);
-        read(JSCell_structureID);
-        read(JSObject_butterfly);
-        read(Butterfly_publicLength);
-        switch (node->arrayMode().type()) {
-        case Array::Double:
-            read(IndexedDoubleProperties);
-            break;
-        case Array::Int32:
-            read(IndexedInt32Properties);
-            break;
-        case Array::Contiguous:
-            read(IndexedContiguousProperties);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-        read(HeapObjectCount);
-        write(HeapObjectCount);
-        return;
         
     case GetById:
     case GetByIdFlush:

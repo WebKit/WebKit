@@ -332,7 +332,6 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_arrayIteratorProtocolWatchpoint(IsWatched)
-    , m_arraySpeciesWatchpoint(IsWatched)
     , m_templateRegistry(vm)
     , m_evalEnabled(true)
     , m_runtimeFlags()
@@ -945,8 +944,6 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
             m_arrayPrototypeSymbolIteratorWatchpoint = std::make_unique<ArrayIteratorAdaptiveWatchpoint>(condition, this);
             m_arrayPrototypeSymbolIteratorWatchpoint->install();
         }
-
-        this->arrayPrototype()->initializeSpeciesWatchpoint(exec);
     }
 
     resetPrototype(vm, getPrototypeDirect());

@@ -447,7 +447,6 @@ void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs res
 void AssemblyHelpers::emitLoadStructure(RegisterID source, RegisterID dest, RegisterID scratch)
 {
 #if USE(JSVALUE64)
-    ASSERT(dest != scratch);
     load32(MacroAssembler::Address(source, JSCell::structureIDOffset()), dest);
     loadPtr(vm()->heap.structureIDTable().base(), scratch);
     loadPtr(MacroAssembler::BaseIndex(scratch, dest, MacroAssembler::TimesEight), dest);

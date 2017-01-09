@@ -98,7 +98,7 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("reverse", arrayProtoFuncReverse, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().shiftPublicName(), arrayProtoFuncShift, DontEnum, 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().shiftPrivateName(), arrayProtoFuncShift, DontEnum | DontDelete | ReadOnly, 0);
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayProtoFuncSlice, DontEnum, 2, ArraySliceIntrinsic);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayProtoFuncSlice, DontEnum, 2);
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("sort", arrayPrototypeSortCodeGenerator, DontEnum);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("splice", arrayProtoFuncSplice, DontEnum, 2);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("unshift", arrayProtoFuncUnShift, DontEnum, 1);
@@ -191,12 +191,21 @@ static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsi
         throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
-inline bool speciesWatchpointIsValid(JSObject* thisObject)
+inline bool speciesWatchpointsValid(ExecState* exec, JSObject* thisObject)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     ArrayPrototype* arrayPrototype = thisObject->globalObject()->arrayPrototype();
+    ArrayPrototype::SpeciesWatchpointStatus status = arrayPrototype->speciesWatchpointStatus();
+    if (UNLIKELY(status == ArrayPrototype::SpeciesWatchpointStatus::Uninitialized)) {
+        status = arrayPrototype->attemptToInitializeSpeciesWatchpoint(exec);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
+    ASSERT(status != ArrayPrototype::SpeciesWatchpointStatus::Uninitialized);
     return !thisObject->hasCustomProperties()
         && arrayPrototype == thisObject->getPrototypeDirect()
-        && arrayPrototype->globalObject()->arraySpeciesWatchpoint().isStillValid();
+        && status == ArrayPrototype::SpeciesWatchpointStatus::Initialized;
 }
 
 enum class SpeciesConstructResult {
@@ -221,7 +230,8 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
     if (LIKELY(thisIsArray)) {
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
-        bool isValid = speciesWatchpointIsValid(thisObject);
+        bool isValid = speciesWatchpointsValid(exec, thisObject);
+        RETURN_IF_EXCEPTION(scope, exceptionResult());
         if (LIKELY(isValid))
             return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 
@@ -910,29 +920,29 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
 {
-    // https://tc39.github.io/ecma262/#sec-array.prototype.slice
+    // http://developer.netscape.com/docs/manuals/js/client/jsref/array.htm#1193713 or 15.4.4.10
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
-        return { };
+        return encodedJSValue();
     unsigned length = getLength(exec, thisObj);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned end = argumentClampedIndexFromStartOrEnd(exec, 1, length, length);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, end - begin);
     // We can only get an exception if we call some user function.
     ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
-        return { };
+        return encodedJSValue();
 
     bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (LIKELY(okToDoFastPath)) {
         if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
             return JSValue::encode(result);
@@ -943,16 +953,16 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         result = speciesResult.second;
     else {
         result = constructEmptyArray(exec, nullptr, end - begin);
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
     unsigned n = 0;
     for (unsigned k = begin; k < end; k++, n++) {
         JSValue v = getProperty(exec, thisObj, k);
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (v) {
             result->putDirectIndex(exec, n, v, 0, PutDirectIndexShouldThrow);
-            RETURN_IF_EXCEPTION(scope, { });
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
     }
     scope.release();
@@ -1239,7 +1249,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return JSValue::encode(jsNull());
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
-    bool isValid = speciesWatchpointIsValid(firstArray);
+    bool isValid = speciesWatchpointsValid(exec, firstArray);
+    ASSERT(!scope.exception() || !isValid);
     if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());
 
@@ -1331,18 +1342,15 @@ private:
     ArrayPrototype* m_arrayPrototype;
 };
 
-void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
+ArrayPrototype::SpeciesWatchpointStatus ArrayPrototype::attemptToInitializeSpeciesWatchpoint(ExecState* exec)
 {
+    ASSERT(m_speciesWatchpointStatus == SpeciesWatchpointStatus::Uninitialized);
+
     VM& vm = exec->vm();
-
-    RELEASE_ASSERT(!m_constructorWatchpoint);
-    RELEASE_ASSERT(!m_constructorSpeciesWatchpoint);
-
     auto scope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(scope);
 
     if (verbose)
-        dataLog("Initializing Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
+        dataLog("Attempting to initialize Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
     // First we need to make sure that the Array.prototype.constructor property points to Array
     // and that Array[Symbol.species] is the primordial GetterSetter.
 
@@ -1356,22 +1364,24 @@ void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
     ArrayConstructor* arrayConstructor = globalObject->arrayConstructor();
 
     PropertySlot constructorSlot(this, PropertySlot::InternalMethodType::VMInquiry);
-    this->getOwnPropertySlot(this, exec, vm.propertyNames->constructor, constructorSlot);
-    ASSERT(!scope.exception());
-    ASSERT(constructorSlot.slotBase() == this);
-    ASSERT(constructorSlot.isCacheableValue());
-    RELEASE_ASSERT(constructorSlot.getValue(exec, vm.propertyNames->constructor) == arrayConstructor);
+    JSValue(this).get(exec, vm.propertyNames->constructor, constructorSlot);
+    if (UNLIKELY(scope.exception())
+        || constructorSlot.slotBase() != this
+        || !constructorSlot.isCacheableValue()
+        || constructorSlot.getValue(exec, vm.propertyNames->constructor) != arrayConstructor)
+        return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
 
     Structure* constructorStructure = arrayConstructor->structure(vm);
     if (constructorStructure->isDictionary())
         constructorStructure = constructorStructure->flattenDictionaryStructure(vm, arrayConstructor);
 
     PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
-    arrayConstructor->getOwnPropertySlot(arrayConstructor, exec, vm.propertyNames->speciesSymbol, speciesSlot);
-    ASSERT(!scope.exception());
-    ASSERT(speciesSlot.slotBase() == arrayConstructor);
-    ASSERT(speciesSlot.isCacheableGetter());
-    RELEASE_ASSERT(speciesSlot.getterSetter() == globalObject->speciesGetterSetter());
+    JSValue(arrayConstructor).get(exec, vm.propertyNames->speciesSymbol, speciesSlot);
+    if (UNLIKELY(scope.exception())
+        || speciesSlot.slotBase() != arrayConstructor
+        || !speciesSlot.isCacheableGetter()
+        || speciesSlot.getterSetter() != globalObject->speciesGetterSetter())
+        return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
 
     // Now we need to setup the watchpoints to make sure these conditions remain valid.
     prototypeStructure->startWatchingPropertyForReplacements(vm, constructorSlot.cachedOffset());
@@ -1380,14 +1390,16 @@ void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
     ObjectPropertyCondition constructorCondition = ObjectPropertyCondition::equivalence(vm, this, this, vm.propertyNames->constructor.impl(), arrayConstructor);
     ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, this, arrayConstructor, vm.propertyNames->speciesSymbol.impl(), globalObject->speciesGetterSetter());
 
-    RELEASE_ASSERT(constructorCondition.isWatchable());
-    RELEASE_ASSERT(speciesCondition.isWatchable());
+    if (!constructorCondition.isWatchable() || !speciesCondition.isWatchable())
+        return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Fired;
 
     m_constructorWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(constructorCondition, this);
     m_constructorWatchpoint->install();
 
     m_constructorSpeciesWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(speciesCondition, this);
     m_constructorSpeciesWatchpoint->install();
+
+    return m_speciesWatchpointStatus = SpeciesWatchpointStatus::Initialized;
 }
 
 ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferredPropertyWatchpoint(const ObjectPropertyCondition& key, ArrayPrototype* prototype)
@@ -1406,8 +1418,7 @@ void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(const FireDeta
     if (verbose)
         WTF::dataLog(stringDetail, "\n");
 
-    JSGlobalObject* globalObject = m_arrayPrototype->globalObject();
-    globalObject->arraySpeciesWatchpoint().fireAll(globalObject->vm(), stringDetail);
+    m_arrayPrototype->m_speciesWatchpointStatus = ArrayPrototype::SpeciesWatchpointStatus::Fired;
 }
 
 } // namespace JSC

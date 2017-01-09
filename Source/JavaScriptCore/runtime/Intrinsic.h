@@ -40,7 +40,6 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     TanIntrinsic,
     ArrayPushIntrinsic,
     ArrayPopIntrinsic,
-    ArraySliceIntrinsic,
     CharCodeAtIntrinsic,
     CharAtIntrinsic,
     FromCharCodeIntrinsic,

@@ -3550,11 +3550,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case ArraySlice: {
-        compileArraySlice(node);
-        break;
-    }
-
     case DFG::Jump: {
         jump(node->targetBlock());
         noResult(node);
