@@ -453,8 +453,8 @@ HRESULT UIDelegate::webViewFrame(_In_opt_ IWebView* /*sender*/, _Out_ RECT* fram
 HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView* /*sender*/, _In_ BSTR message)
 {
     if (!done) {
-        printf("ALERT: %S\n", message ? message : L"");
-        fflush(stdout);
+        fprintf(testResult, "ALERT: %S\n", message ? message : L"");
+        fflush(testResult);
     }
 
     return S_OK;
@@ -463,7 +463,7 @@ HRESULT UIDelegate::runJavaScriptAlertPanelWithMessage(_In_opt_ IWebView* /*send
 HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, _Out_ BOOL* result)
 {
     if (!done)
-        printf("CONFIRM: %S\n", message ? message : L"");
+        fprintf(testResult, "CONFIRM: %S\n", message ? message : L"");
 
     *result = TRUE;
 
@@ -473,7 +473,7 @@ HRESULT UIDelegate::runJavaScriptConfirmPanelWithMessage(_In_opt_ IWebView* /*se
 HRESULT UIDelegate::runJavaScriptTextInputPanelWithPrompt(_In_opt_ IWebView* /*sender*/, _In_ BSTR message, _In_ BSTR defaultText, __deref_opt_out BSTR* result)
 {
     if (!done)
-        printf("PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
+        fprintf(testResult, "PROMPT: %S, default text: %S\n", message ? message : L"", defaultText ? defaultText : L"");
 
     *result = SysAllocString(defaultText);
 
@@ -486,7 +486,7 @@ HRESULT UIDelegate::runBeforeUnloadConfirmPanelWithMessage(_In_opt_ IWebView* /*
         return E_POINTER;
 
     if (!done)
-        printf("CONFIRM NAVIGATION: %S\n", message ? message : L"");
+        fprintf(testResult, "CONFIRM NAVIGATION: %S\n", message ? message : L"");
 
     *result = !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
 
@@ -507,7 +507,7 @@ HRESULT UIDelegate::webViewAddMessageToConsole(_In_opt_ IWebView* /*sender*/, _I
             newMessage = newMessage.substr(0, fileProtocol) + lastPathComponent(newMessage.substr(fileProtocol + fileURL.size()));
     }
 
-    auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : stdout;
+    auto out = gTestRunner->dumpJSConsoleLogInStdErr() ? stderr : testResult;
     fprintf(out, "CONSOLE MESSAGE: ");
     if (lineNumber)
         fprintf(out, "line %d: ", lineNumber);
@@ -594,7 +594,7 @@ HRESULT UIDelegate::exceededDatabaseQuota(_In_opt_ IWebView* sender, _In_opt_ IW
     origin->port(&port);
 
     if (!done && gTestRunner->dumpDatabaseCallbacks())
-        printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%S\n", static_cast<const char*>(protocol), static_cast<const char*>(host), port, databaseIdentifier);
+        fprintf(testResult, "UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%S\n", static_cast<const char*>(protocol), static_cast<const char*>(host), port, databaseIdentifier);
 
     unsigned long long defaultQuota = 5 * 1024 * 1024;
     double testDefaultQuota = gTestRunner->databaseDefaultQuota();
@@ -626,7 +626,7 @@ HRESULT UIDelegate::exceededDatabaseQuota(_In_opt_ IWebView* sender, _In_opt_ IW
     if (maxQuota >= 0) {
         if (defaultQuota < expectedSize && expectedSize <= maxQuota) {
             newQuota = expectedSize;
-            printf("UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
+            fprintf(testResult, "UI DELEGATE DATABASE CALLBACK: increased quota to %llu\n", newQuota);
         }
     }
     origin->setQuota(newQuota);
@@ -660,7 +660,7 @@ HRESULT UIDelegate::webViewDidInvalidate(_In_opt_ IWebView* /*sender*/)
 HRESULT UIDelegate::setStatusText(_In_opt_ IWebView*, _In_ BSTR text)
 { 
     if (gTestRunner->dumpStatusCallbacks())
-        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
+        fprintf(testResult, "UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
     return S_OK;
 }
 
@@ -693,6 +693,6 @@ HRESULT UIDelegate::decidePolicyForGeolocationRequest(_In_opt_ IWebView* /*sende
 
 HRESULT UIDelegate::didPressMissingPluginButton(_In_opt_ IDOMElement* /*element*/)
 {
-    printf("MISSING PLUGIN BUTTON PRESSED\n");
+    fprintf(testResult, "MISSING PLUGIN BUTTON PRESSED\n");
     return S_OK;
 }

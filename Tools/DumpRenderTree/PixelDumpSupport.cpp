@@ -43,6 +43,10 @@
 #include "PixelDumpSupportCairo.h"
 #endif
 
+#if !PLATFORM(WIN)
+#define testResult stdout
+#endif
+
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
 {
     RefPtr<BitmapContext> context;
@@ -57,14 +61,14 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
     // Compute the hash of the bitmap context pixels
     char actualHash[33];
     computeMD5HashStringForBitmapContext(context.get(), actualHash);
-    printf("\nActualHash: %s\n", actualHash); // FIXME: No need for the leading newline.
+    fprintf(testResult, "\nActualHash: %s\n", actualHash); // FIXME: No need for the leading newline.
 
     // Check the computed hash against the expected one and dump image on mismatch
     bool dumpImage = true;
     if (expectedHash.length() > 0) {
         ASSERT(expectedHash.length() == 32);
 
-        printf("\nExpectedHash: %s\n", expectedHash.c_str()); // FIXME: No need for the leading newline.
+        fprintf(testResult, "\nExpectedHash: %s\n", expectedHash.c_str()); // FIXME: No need for the leading newline.
         
         if (expectedHash == actualHash) // FIXME: do case insensitive compare
             dumpImage = false;
@@ -114,20 +118,20 @@ void printPNG(const unsigned char* data, const size_t dataLength, const char* ch
     Vector<unsigned char> bytesToAdd;
     convertChecksumToPNGComment(checksum, bytesToAdd);
 
-    printf("Content-Type: %s\n", "image/png");
-    printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength + bytesToAdd.size()));
+    fprintf(testResult, "Content-Type: image/png\n");
+    fprintf(testResult, "Content-Length: %lu\n", static_cast<unsigned long>(dataLength + bytesToAdd.size()));
 
     size_t insertOffset = offsetAfterIHDRChunk(data, dataLength);
 
-    fwrite(data, 1, insertOffset, stdout);
-    fwrite(bytesToAdd.data(), 1, bytesToAdd.size(), stdout);
+    fwrite(data, 1, insertOffset, testResult);
+    fwrite(bytesToAdd.data(), 1, bytesToAdd.size(), testResult);
 
     const size_t bytesToWriteInOneChunk = 1 << 15;
     data += insertOffset;
     size_t dataRemainingToWrite = dataLength - insertOffset;
     while (dataRemainingToWrite) {
         size_t bytesToWriteInThisChunk = std::min(dataRemainingToWrite, bytesToWriteInOneChunk);
-        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);
+        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, testResult);
         if (bytesWritten != bytesToWriteInThisChunk)
             break;
         dataRemainingToWrite -= bytesWritten;

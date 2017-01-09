@@ -80,12 +80,12 @@ HRESULT DRTDesktopNotificationPresenter::showDesktopNotification(_In_opt_ IWebDe
 
     if (SUCCEEDED(notification->isHTML(&html)) && html) {
         notification->contentsURL(&url.GetBSTR());    
-        printf("DESKTOP NOTIFICATION: contents at %S\n", static_cast<wchar_t*>(url));
+        fprintf(testResult, "DESKTOP NOTIFICATION: contents at %S\n", static_cast<wchar_t*>(url));
     } else {
         notification->iconURL(&url.GetBSTR());
         notification->title(&title.GetBSTR());
         notification->text(&text.GetBSTR());
-        printf("DESKTOP NOTIFICATION: icon %S, title %S, text %S\n", static_cast<wchar_t*>(url), static_cast<wchar_t*>(title), static_cast<wchar_t*>(text));
+        fprintf(testResult, "DESKTOP NOTIFICATION: icon %S, title %S, text %S\n", static_cast<wchar_t*>(url), static_cast<wchar_t*>(title), static_cast<wchar_t*>(text));
     }
 
     // In this stub implementation, the notification is displayed immediately;
@@ -105,7 +105,7 @@ HRESULT DRTDesktopNotificationPresenter::cancelDesktopNotification(_In_opt_ IWeb
     else
         notification->title(&identifier.GetBSTR());
 
-    printf("DESKTOP NOTIFICATION CLOSED: %S\n", static_cast<wchar_t*>(identifier));
+    fprintf(testResult, "DESKTOP NOTIFICATION CLOSED: %S\n", static_cast<wchar_t*>(identifier));
     notification->notifyClose(false);
 
     return S_OK;
@@ -141,6 +141,6 @@ HRESULT DRTDesktopNotificationPresenter::checkNotificationPermission(_In_ BSTR /
 
 HRESULT DRTDesktopNotificationPresenter::requestNotificationPermission(_In_ BSTR origin)
 {
-    printf("DESKTOP NOTIFICATION PERMISSION REQUESTED: %S\n", origin ? origin : L"");
+    fprintf(testResult, "DESKTOP NOTIFICATION PERMISSION REQUESTED: %S\n", origin ? origin : L"");
     return S_OK;
 }

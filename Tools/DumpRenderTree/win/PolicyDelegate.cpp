@@ -139,7 +139,7 @@ HRESULT PolicyDelegate::decidePolicyForNavigationAction(_In_opt_ IWebView*, _In_
         }
     }
 
-    printf("%S\n", message.c_str());
+    fprintf(testResult, "%S\n", message.c_str());
 
     if (m_permissiveDelegate)
         listener->use();
@@ -166,7 +166,7 @@ HRESULT PolicyDelegate::unableToImplementPolicyWithError(_In_opt_ IWebView*, _In
     _bstr_t frameName;
     frame->name(&frameName.GetBSTR());
     
-    printf("Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'\n", static_cast<wchar_t*>(domainStr), code, static_cast<TCHAR*>(frameName));
+    fprintf(testResult, "Policy delegate: unable to implement policy with error domain '%S', error code %d, in frame '%S'\n", static_cast<wchar_t*>(domainStr), code, static_cast<TCHAR*>(frameName));
     
     return S_OK;
 }

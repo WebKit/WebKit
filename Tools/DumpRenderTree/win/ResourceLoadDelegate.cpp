@@ -236,7 +236,7 @@ HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView* webView, unsign
     *newRequest = nullptr;
 
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
-        printf("%S - willSendRequest %S redirectResponse %S\n", 
+        fprintf(testResult, "%S - willSendRequest %S redirectResponse %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(request).c_str(),
             descriptionSuitableForTestResult(redirectResponse).c_str());
@@ -246,13 +246,13 @@ HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView* webView, unsign
         return S_OK;
 
     if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
-        printf("Returning null for this redirect\n");
+        fprintf(testResult, "Returning null for this redirect\n");
         return S_OK;
     }
 
     _bstr_t urlBstr;
     if (FAILED(request->URL(&urlBstr.GetBSTR()))) {
-        printf("Request has no URL\n");
+        fprintf(testResult, "Request has no URL\n");
         return E_FAIL;
     }
 
@@ -274,7 +274,7 @@ HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView* webView, unsign
                 testHost = adoptCF(CFURLCopyHostName(testPathURL.get()));
             }
             if (!isLocalhost(host.get()) && !hostIsUsedBySomeTestsToGenerateError(host.get()) && (!testHost || isLocalhost(testHost.get()))) {
-                printf("Blocked access to external URL %s\n", static_cast<const char*>(urlBstr));
+                fprintf(testResult, "Blocked access to external URL %s\n", static_cast<const char*>(urlBstr));
                 return S_OK;
             }
         }
@@ -300,7 +300,7 @@ HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebVie
         return E_FAIL;
 
     if (!gTestRunner->handlesAuthenticationChallenges()) {
-        printf("%S - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n", descriptionSuitableForTestResult(identifier).c_str());
+        fprintf(testResult, "%S - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n", descriptionSuitableForTestResult(identifier).c_str());
         sender->continueWithoutCredentialForAuthenticationChallenge(challenge);
         return S_OK;
     }
@@ -308,7 +308,7 @@ HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebVie
     const char* user = gTestRunner->authenticationUsername().c_str();
     const char* password = gTestRunner->authenticationPassword().c_str();
 
-    printf("%S - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
+    fprintf(testResult, "%S - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
 
     COMPtr<IWebURLCredential> credential;
     if (FAILED(WebKitCreateInstance(CLSID_WebURLCredential, 0, IID_IWebURLCredential, (void**)&credential)))
@@ -323,7 +323,7 @@ HRESULT ResourceLoadDelegate::didReceiveResponse(_In_opt_ IWebView* webView, uns
     _In_opt_ IWebURLResponse* response, _In_opt_ IWebDataSource* dataSource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
-        printf("%S - didReceiveResponse %S\n",
+        fprintf(testResult, "%S - didReceiveResponse %S\n",
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(response).c_str());
     }
@@ -338,7 +338,7 @@ HRESULT ResourceLoadDelegate::didReceiveResponse(_In_opt_ IWebView* webView, uns
     
         wstring url = wstringFromBSTR(urlBSTR);
 
-        printf("%S has MIME type %S\n", lastPathComponent(url).c_str(), static_cast<wchar_t*>(mimeTypeBSTR));
+        fprintf(testResult, "%S has MIME type %S\n", lastPathComponent(url).c_str(), static_cast<wchar_t*>(mimeTypeBSTR));
     }
 
     return S_OK;
@@ -348,7 +348,7 @@ HRESULT ResourceLoadDelegate::didReceiveResponse(_In_opt_ IWebView* webView, uns
 HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(_In_opt_ IWebView* webView, unsigned long identifier, _In_opt_ IWebDataSource* dataSource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
-        printf("%S - didFinishLoading\n",
+        fprintf(testResult, "%S - didFinishLoading\n",
             descriptionSuitableForTestResult(identifier).c_str());
     }
 
@@ -360,7 +360,7 @@ HRESULT ResourceLoadDelegate::didFinishLoadingFromDataSource(_In_opt_ IWebView* 
 HRESULT ResourceLoadDelegate::didFailLoadingWithError(_In_opt_ IWebView* webView, unsigned long identifier, _In_opt_ IWebError* error, _In_opt_ IWebDataSource* dataSource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
-        printf("%S - didFailLoadingWithError: %S\n", 
+        fprintf(testResult, "%S - didFailLoadingWithError: %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(error, identifier).c_str());
     }

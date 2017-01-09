@@ -43,6 +43,8 @@ extern PolicyDelegate* policyDelegate;
 
 extern HWND webViewWindow;
 
+extern FILE* testResult;
+
 #include <WebCore/COMPtr.h>
 #include <string>
 #include <wtf/HashMap.h>

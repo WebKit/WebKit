@@ -42,6 +42,10 @@
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 
+#include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/FileSystem.h>
+#include <WebKit/WebKit.h>
+#include <WebKit/WebKitCOMAPI.h>
 #include <comutil.h>
 #include <cstdio>
 #include <cstring>
@@ -52,15 +56,13 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <tchar.h>
+#include <windows.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
-#include <windows.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <WebCore/FileSystem.h>
-#include <WebKit/WebKit.h>
-#include <WebKit/WebKitCOMAPI.h>
+#include <wtf/text/StringHash.h>
 
 #if USE(CFURLCONNECTION)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
@@ -120,6 +122,8 @@ HWND webViewWindow;
 RefPtr<TestRunner> gTestRunner;
 
 UINT_PTR waitToDumpWatchdog = 0;
+
+FILE* testResult = nullptr;
 
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {
@@ -405,9 +409,9 @@ void dumpFrameScrollPosition(IWebFrame* frame)
             _bstr_t name;
             if (FAILED(frame->name(&name.GetBSTR())))
                 return;
-            printf("frame '%S' ", static_cast<wchar_t*>(name));
+            fprintf(testResult, "frame '%S' ", static_cast<wchar_t*>(name));
         }
-        printf("scrolled to %.f,%.f\n", (double)scrollPosition.cx, (double)scrollPosition.cy);
+        fprintf(testResult, "scrolled to %.f,%.f\n", (double)scrollPosition.cx, (double)scrollPosition.cy);
     }
 
     if (::gTestRunner->dumpChildFrameScrollPositions()) {
@@ -506,11 +510,11 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
 
     int start = 0;
     if (current) {
-        printf("curr->");
+        fprintf(testResult, "curr->");
         start = 6;
     }
     for (int i = start; i < indent; i++)
-        putchar(' ');
+        fputc(' ', testResult);
 
     _bstr_t url;
     if (FAILED(item->URLString(&url.GetBSTR())))
@@ -531,7 +535,7 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
         url = _bstr_t(L"(file test):") + _bstr_t(start);
     }
 
-    printf("%S", static_cast<wchar_t*>(url));
+    fprintf(testResult, "%S", static_cast<wchar_t*>(url));
 
     COMPtr<IWebHistoryItemPrivate> itemPrivate;
     if (FAILED(item->QueryInterface(&itemPrivate)))
@@ -541,13 +545,13 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
     if (FAILED(itemPrivate->target(&target.GetBSTR())))
         return;
     if (target.length())
-        printf(" (in frame \"%S\")", static_cast<wchar_t*>(target));
+        fprintf(testResult, " (in frame \"%S\")", static_cast<wchar_t*>(target));
     BOOL isTargetItem = FALSE;
     if (FAILED(itemPrivate->isTargetItem(&isTargetItem)))
         return;
     if (isTargetItem)
-        printf("  **nav target**");
-    putchar('\n');
+        fprintf(testResult, "  **nav target**");
+    fputc('\n', testResult);
 
     unsigned kidsCount;
     SAFEARRAY* arrPtr;
@@ -595,7 +599,7 @@ static void dumpBackForwardList(IWebView* webView)
 {
     ASSERT(webView);
 
-    printf("\n============== Back Forward List ==============\n");
+    fprintf(testResult, "\n============== Back Forward List ==============\n");
 
     COMPtr<IWebBackForwardList> bfList;
     if (FAILED(webView->backForwardList(&bfList)))
@@ -652,7 +656,7 @@ static void dumpBackForwardList(IWebView* webView)
         dumpHistoryItem(historyItemToPrint.get(), 8, i == currentItemIndex);
     }
 
-    printf("===============================================\n");
+    fprintf(testResult, "===============================================\n");
 }
 
 static void dumpBackForwardListForAllWindows()
@@ -711,7 +715,7 @@ void dump()
             int bufferSize = ::WideCharToMultiByte(CP_UTF8, 0, resultString, stringLength, 0, 0, 0, 0);
             char* buffer = (char*)malloc(bufferSize + 1);
             ::WideCharToMultiByte(CP_UTF8, 0, resultString, stringLength, buffer, bufferSize + 1, 0, 0);
-            fwrite(buffer, 1, bufferSize, stdout);
+            fwrite(buffer, 1, bufferSize, testResult);
             free(buffer);
 
             if (!::gTestRunner->dumpAsText() && !::gTestRunner->dumpDOMAsWebArchive() && !::gTestRunner->dumpSourceAsWebArchive() && !::gTestRunner->dumpAsAudio())
@@ -720,10 +724,10 @@ void dump()
             if (::gTestRunner->dumpBackForwardList())
                 dumpBackForwardListForAllWindows();
         } else
-            printf("ERROR: nil result from %s", ::gTestRunner->dumpAsText() ? "IDOMElement::innerText" : "IFrameViewPrivate::renderTreeAsExternalRepresentation");
+            fprintf(testResult, "ERROR: nil result from %s", ::gTestRunner->dumpAsText() ? "IDOMElement::innerText" : "IFrameViewPrivate::renderTreeAsExternalRepresentation");
 
         if (printSeparators)
-            puts("#EOF"); // terminate the content block
+            fputs("#EOF\n", testResult); // terminate the content block
     }
 
     if (dumpPixelsForCurrentTest && ::gTestRunner->generatePixelResults()) {
@@ -731,8 +735,8 @@ void dump()
         dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
     }
 
-    puts("#EOF");   // terminate the (possibly empty) pixels block
-    fflush(stdout);
+    fputs("#EOF\n", testResult); // terminate the (possibly empty) pixels block
+    fflush(testResult);
 
 fail:
     // This will exit from our message loop.
@@ -1110,6 +1114,12 @@ static void runTest(const string& inputLine)
     _bstr_t urlBStr(reinterpret_cast<wchar_t*>(buffer.data()));
     ASSERT(urlBStr.length() == length);
 
+    // Check that test has not already run
+    static HashSet<String> testUrls;
+    if (testUrls.contains(String(inputLine.c_str())))
+        fprintf(stderr, "Test has already run \"%s\"\n", inputLine.c_str());
+    testUrls.add(String(inputLine.c_str()));
+
     CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
     Vector<char> testURL(maximumURLLengthAsUTF8 + 1, 0);
     CFStringGetCString(str, testURL.data(), maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
@@ -1455,6 +1465,14 @@ int main(int argc, const char* argv[])
     _setmode(1, _O_BINARY);
     _setmode(2, _O_BINARY);
 
+    // Some tests are flaky because certain DLLs are writing to stdout, giving incorrect test results.
+    // We work around that here by duplicating and redirecting stdout.
+    int fdStdout = _dup(1);
+    _setmode(fdStdout, _O_BINARY);
+    testResult = fdopen(fdStdout, "a+b");
+    // Redirect stdout to stderr.
+    int result = _dup2(_fileno(stderr), 1);
+
     initialize();
 
     setDefaultsToConsistentValuesForTesting();
@@ -1487,7 +1505,7 @@ int main(int argc, const char* argv[])
         BOOL threeDTransformsAvailable = FALSE;
 #endif
 
-        printf("SupportedFeatures:%s %s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing" : "", threeDTransformsAvailable ? "3DTransforms" : "");
+        fprintf(testResult, "SupportedFeatures:%s %s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing" : "", threeDTransformsAvailable ? "3DTransforms" : "");
         return 0;
     }
 

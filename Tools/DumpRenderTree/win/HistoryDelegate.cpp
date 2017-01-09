@@ -140,7 +140,7 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(_In_opt_ IWebView* webVie
 
     bool wasFailure = hasSubstituteData || (httpResponse && statusCode >= 400);
         
-    printf("WebView navigated to url \"%S\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%S.\n", 
+    fprintf(testResult, "WebView navigated to url \"%S\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%S.\n", 
         url.c_str(), 
         static_cast<char*>(titleBSTR),
         static_cast<char*>(httpMethodBSTR),
@@ -164,7 +164,7 @@ HRESULT HistoryDelegate::didPerformClientRedirectFromURL(_In_opt_ IWebView*, _In
     if (destinationURL)
         destination = urlSuitableForTestResult(wstringFromBSTR(destinationURL));
 
-    printf("WebView performed a client redirect from \"%S\" to \"%S\".\n", source.c_str(), destination.c_str());
+    fprintf(testResult, "WebView performed a client redirect from \"%S\" to \"%S\".\n", source.c_str(), destination.c_str());
     return S_OK;
 }
     
@@ -181,7 +181,7 @@ HRESULT HistoryDelegate::didPerformServerRedirectFromURL(_In_opt_ IWebView* webV
     if (destinationURL)
         destination = urlSuitableForTestResult(wstringFromBSTR(destinationURL));
 
-    printf("WebView performed a server redirect from \"%S\" to \"%S\".\n", source.c_str(), destination.c_str());
+    fprintf(testResult, "WebView performed a server redirect from \"%S\" to \"%S\".\n", source.c_str(), destination.c_str());
     return S_OK;
 }
 
@@ -194,7 +194,7 @@ HRESULT HistoryDelegate::updateHistoryTitle(_In_opt_ IWebView* webView, _In_ BST
     if (urlBSTR)
         url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
 
-    printf("WebView updated the title for history URL \"%S\" to \"%S\".\n", url.c_str(), titleBSTR ? titleBSTR : L"");
+    fprintf(testResult, "WebView updated the title for history URL \"%S\" to \"%S\".\n", url.c_str(), titleBSTR ? titleBSTR : L"");
     return S_OK;
 }
     
@@ -212,7 +212,7 @@ HRESULT HistoryDelegate::populateVisitedLinksForWebView(_In_opt_ IWebView* webVi
         url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
 
     if (gTestRunner->dumpVisitedLinksCallback())
-        printf("Asked to populate visited links for WebView \"%S\"\n", url.c_str());
+        fprintf(testResult, "Asked to populate visited links for WebView \"%S\"\n", url.c_str());
 
     return S_OK;
 }

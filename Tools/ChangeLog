@@ -1,3 +1,112 @@
+2017-01-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Some tests are flaky because certain DLLs are writing to stdout.
+        https://bugs.webkit.org/show_bug.cgi?id=166760
+
+        Reviewed by Darin Adler.
+
+        Some tests are flaky because certain DLLs are writing to stdout, giving incorrect test results.
+        We can work around that by duplicating and redirecting stdout.
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        (printPNG):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (logEventProc):
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+        (DRTDesktopNotificationPresenter::showDesktopNotification):
+        (DRTDesktopNotificationPresenter::cancelDesktopNotification):
+        (DRTDesktopNotificationPresenter::requestNotificationPermission):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dumpFrameScrollPosition):
+        (dumpHistoryItem):
+        (dumpBackForwardList):
+        (dump):
+        (runTest):
+        (main):
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        (EditingDelegate::shouldBeginEditingInDOMRange):
+        (EditingDelegate::shouldEndEditingInDOMRange):
+        (EditingDelegate::shouldInsertNode):
+        (EditingDelegate::shouldInsertText):
+        (EditingDelegate::shouldDeleteDOMRange):
+        (EditingDelegate::shouldChangeSelectedDOMRange):
+        (EditingDelegate::shouldApplyStyle):
+        (EditingDelegate::shouldChangeTypingStyle):
+        (EditingDelegate::doPlatformCommand):
+        (EditingDelegate::webViewDidBeginEditing):
+        (EditingDelegate::webViewDidChange):
+        (EditingDelegate::webViewDidEndEditing):
+        (EditingDelegate::webViewDidChangeTypingStyle):
+        (EditingDelegate::webViewDidChangeSelection):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didStartProvisionalLoadForFrame):
+        (FrameLoadDelegate::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (FrameLoadDelegate::didChangeLocationWithinPageForFrame):
+        (FrameLoadDelegate::didFailProvisionalLoadWithError):
+        (FrameLoadDelegate::didCommitLoadForFrame):
+        (FrameLoadDelegate::didReceiveTitle):
+        (FrameLoadDelegate::didFinishLoadForFrame):
+        (FrameLoadDelegate::didFailLoadWithError):
+        (FrameLoadDelegate::willPerformClientRedirectToURL):
+        (FrameLoadDelegate::didCancelClientRedirectForFrame):
+        (FrameLoadDelegate::windowScriptObjectAvailable):
+        (FrameLoadDelegate::didFinishDocumentLoadForFrame):
+        (FrameLoadDelegate::didHandleOnloadEventsForFrame):
+        (FrameLoadDelegate::didDisplayInsecureContent):
+        (FrameLoadDelegate::didRunInsecureContent):
+        (FrameLoadDelegate::webViewProgressFinishedNotification):
+        * DumpRenderTree/win/HistoryDelegate.cpp:
+        (HistoryDelegate::didNavigateWithNavigationData):
+        (HistoryDelegate::didPerformClientRedirectFromURL):
+        (HistoryDelegate::didPerformServerRedirectFromURL):
+        (HistoryDelegate::updateHistoryTitle):
+        (HistoryDelegate::populateVisitedLinksForWebView):
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        (PolicyDelegate::decidePolicyForNavigationAction):
+        (PolicyDelegate::unableToImplementPolicyWithError):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+        (ResourceLoadDelegate::didReceiveResponse):
+        (ResourceLoadDelegate::didFinishLoadingFromDataSource):
+        (ResourceLoadDelegate::didFailLoadingWithError):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::addDisallowedURL):
+        (TestRunner::originsWithApplicationCache):
+        (TestRunner::setStorageDatabaseIdleInterval):
+        (TestRunner::closeIdleLocalStorageDatabases):
+        (TestRunner::copyDecodedHostName):
+        (TestRunner::copyEncodedHostName):
+        (TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (TestRunner::isGeolocationProviderActive):
+        (TestRunner::pathToLocalResource):
+        (TestRunner::setMockDeviceOrientation):
+        (TestRunner::setMockGeolocationPosition):
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        (TestRunner::setSpatialNavigationEnabled):
+        (TestRunner::setAutomaticLinkDetectionEnabled):
+        (TestRunner::isCommandEnabled):
+        (TestRunner::authenticateSession):
+        (TestRunner::addChromeInputField):
+        (TestRunner::removeChromeInputField):
+        (TestRunner::focusWebView):
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::denyWebNotificationPermission):
+        (TestRunner::removeAllWebNotificationPermissions):
+        (TestRunner::simulateWebNotificationClick):
+        (TestRunner::imageCountInGeneralPasteboard):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::runJavaScriptAlertPanelWithMessage):
+        (UIDelegate::runJavaScriptConfirmPanelWithMessage):
+        (UIDelegate::runJavaScriptTextInputPanelWithPrompt):
+        (UIDelegate::runBeforeUnloadConfirmPanelWithMessage):
+        (UIDelegate::webViewAddMessageToConsole):
+        (UIDelegate::exceededDatabaseQuota):
+        (UIDelegate::setStatusText):
+        (UIDelegate::didPressMissingPluginButton):
+
 2017-01-07  Tim Horton  <timothy_horton@apple.com>
 
         Add a setting to create editable MiniBrowser windows by default

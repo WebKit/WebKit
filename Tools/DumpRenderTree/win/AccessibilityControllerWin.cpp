@@ -192,11 +192,11 @@ static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG id
 
     switch (event) {
         case EVENT_OBJECT_FOCUS:
-            printf("Received focus event for object '%S'.\n", name.c_str());
+            fprintf(testResult, "Received focus event for object '%S'.\n", name.c_str());
             break;
 
         case EVENT_OBJECT_SELECTION:
-            printf("Received selection event for object '%S'.\n", name.c_str());
+            fprintf(testResult, "Received selection event for object '%S'.\n", name.c_str());
             break;
 
         case EVENT_OBJECT_VALUECHANGE: {
@@ -205,16 +205,16 @@ static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG id
             ASSERT(SUCCEEDED(hr));
             wstring value(valueBSTR, valueBSTR.length());
 
-            printf("Received value change event for object '%S', value '%S'.\n", name.c_str(), value.c_str());
+            fprintf(testResult, "Received value change event for object '%S', value '%S'.\n", name.c_str(), value.c_str());
             break;
         }
 
         case EVENT_SYSTEM_SCROLLINGSTART:
-            printf("Received scrolling start event for object '%S'.\n", name.c_str());
+            fprintf(testResult, "Received scrolling start event for object '%S'.\n", name.c_str());
             break;
 
         default:
-            printf("Received unknown event for object '%S'.\n", name.c_str());
+            fprintf(testResult, "Received unknown event for object '%S'.\n", name.c_str());
             break;
     }
 }
