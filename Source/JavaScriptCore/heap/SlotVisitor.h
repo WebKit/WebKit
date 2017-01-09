@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,8 @@ public:
 
     size_t bytesVisited() const { return m_bytesVisited; }
     size_t visitCount() const { return m_visitCount; }
+    
+    void addToVisitCount(size_t value) { m_visitCount += value; }
 
     void donate();
     void drain(MonotonicTime timeout = MonotonicTime::infinity());
@@ -151,6 +153,10 @@ public:
     void didRace(JSCell* cell, const char* reason) { didRace(VisitRaceKey(cell, reason)); }
     void didNotRace(const VisitRaceKey&);
     void didNotRace(JSCell* cell, const char* reason) { didNotRace(VisitRaceKey(cell, reason)); }
+    
+    void visitAsConstraint(const JSCell*);
+    
+    bool didReachTermination();
 
 private:
     friend class ParallelModeEnabler;
@@ -180,8 +186,8 @@ private:
     void donateKnownParallel();
     void donateKnownParallel(MarkStackArray& from, MarkStackArray& to);
     
-    bool hasWork();
-    bool didReachTermination();
+    bool hasWork(const LockHolder&);
+    bool didReachTermination(const LockHolder&);
 
     MarkStackArray m_collectorStack;
     MarkStackArray m_mutatorStack;

@@ -202,8 +202,6 @@ typedef const char* optionString;
     v(double, maximumMutatorUtilization, 0.7, Normal, nullptr) \
     v(double, concurrentGCMaxHeadroom, 1.5, Normal, nullptr) \
     v(double, concurrentGCPeriodMS, 2, Normal, nullptr) \
-    v(bool, collectorShouldResumeFirst, false, Normal, nullptr) \
-    v(double, collectorPermittedIdleRatio, 0, Normal, nullptr) \
     v(bool, scribbleFreeCells, false, Normal, nullptr) \
     v(double, sizeClassProgression, 1.4, Normal, nullptr) \
     v(unsigned, largeAllocationCutoff, 100000, Normal, nullptr) \

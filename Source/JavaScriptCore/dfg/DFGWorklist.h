@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,8 +57,8 @@ public:
     // worklist->completeAllReadyPlansForVM(vm);
     void completeAllPlansForVM(VM&);
 
-    void markCodeBlocks(VM&, SlotVisitor&);
-    void rememberCodeBlocks(VM&);
+    template<typename Func>
+    void iterateCodeBlocksForGC(VM&, const Func&);
 
     void waitUntilAllPlansForVMAreReady(VM&);
     State completeAllReadyPlansForVM(VM&, CompilationKey = CompilationKey());
@@ -168,7 +168,9 @@ inline Worklist& existingWorklistForIndex(unsigned index)
 
 void completeAllPlansForVM(VM&);
 void markCodeBlocks(VM&, SlotVisitor&);
-void rememberCodeBlocks(VM&);
+
+template<typename Func>
+void iterateCodeBlocksForGC(VM&, const Func&);
 
 } } // namespace JSC::DFG
 

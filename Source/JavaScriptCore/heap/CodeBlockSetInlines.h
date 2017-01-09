@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,31 @@ inline void CodeBlockSet::mark(const LockHolder&, CodeBlock* codeBlock)
         return;
 
     m_currentlyExecuting.add(codeBlock);
+}
+
+template<typename Functor>
+void CodeBlockSet::iterate(const Functor& functor)
+{
+    LockHolder locker(m_lock);
+    for (auto& codeBlock : m_oldCodeBlocks) {
+        bool done = functor(codeBlock);
+        if (done)
+            return;
+    }
+    
+    for (auto& codeBlock : m_newCodeBlocks) {
+        bool done = functor(codeBlock);
+        if (done)
+            return;
+    }
+}
+
+template<typename Functor>
+void CodeBlockSet::iterateCurrentlyExecuting(const Functor& functor)
+{
+    LockHolder locker(&m_lock);
+    for (CodeBlock* codeBlock : m_currentlyExecuting)
+        functor(codeBlock);
 }
 
 } // namespace JSC

@@ -1,3 +1,249 @@
+2017-01-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Make the collector's fixpoint smart about scheduling work
+        https://bugs.webkit.org/show_bug.cgi?id=165910
+
+        Reviewed by Keith Miller.
+        
+        Prior to this change, every time the GC would run any constraints in markToFixpoint, it
+        would run all of the constraints. It would always run them in the same order. That means
+        that so long as any one constraint was generating new work, we'd pay the price of all
+        constraints. This is usually OK because most constraints are cheap but it artificially
+        inflates the cost of slow constraints - especially ones that are expensive but usually
+        generate no new work.
+        
+        This patch redoes how the GC runs constraints by applying ideas from data flow analysis.
+        The GC now builds a MarkingConstraintSet when it boots up, and this contains all of the
+        constraints as well as some meta-data about them. Now, markToFixpoint just calls into
+        MarkingConstraintSet to execute constraints. Because constraint execution and scheduling
+        need to be aware of each other, I rewrote markToFixpoint in such a way that it's more
+        obvious how the GC goes between constraint solving, marking with stopped mutator, and
+        marking with resumed mutator. This also changes the scheduler API in such a way that a
+        synchronous stop-the-world collection no longer needs to do fake stop/resume - instead we
+        just swap the space-time scheduler for the stop-the-world scheduler.
+        
+        This is a big streamlining of the GC. This is a speed-up in GC-heavy tests because we
+        now execute most constraints exactly twice regardless of how many total fixpoint
+        iterations we do. Now, when we run out of marking work, the constraint solver will just
+        run the constraint that is most likely to generate new visiting work, and if it does
+        generate work, then the GC now goes back to marking. Before, it would run *all*
+        constraints and then go back to marking. The constraint solver is armed with three
+        information signals that it uses to sort the constraints in order of descending likelihood
+        to generate new marking work. Then it runs them in that order until it there is new
+        marking work. The signals are:
+        
+        1) Whether the constraint is greyed by marking or execution. We call this the volatility
+           of the constraint. For example, weak reference constraints have GreyedByMarking as
+           their volatility because they are most likely to have something to say after we've done
+           some marking. On the other hand, conservative roots have GreyedByExecution as their
+           volatility because they will give new information anytime we let the mutator run. The
+           constraint solver will only run GreyedByExecution constraints as roots and after the
+           GreyedByMarking constraints go silent. This ensures that we don't try to scan
+           conservative roots every time we need to re-run weak references and vice-versa.
+           
+           Another way to look at it is that the constraint solver tries to predict if the
+           wavefront is advancing or retreating. The wavefront is almost certainly advancing so
+           long as the mark stacks are non-empty or so long as at least one of the GreyedByMarking
+           constraints is still producing work. Otherwise the wavefront is almost certainly
+           retreating. It's most profitable to run GreyedByMarking constraints when the wavefront
+           is advancing, and most profitable to run GreyedByExecution constraints when the
+           wavefront is retreating.
+           
+           We use the predicted wavefront direction and the volatility of constraints as a
+           first-order signal of constraint profitability.
+        
+        2) How much visiting work was created the last time the constraint ran. The solver
+           remembers the lastVisitCount, and uses it to predict how much work the constraint will
+           generate next time. In practice this means we will keep re-running the one interesting
+           constraint until it shuts up.
+        
+        3) Optional work predictors for some constraints. The constraint that shuffles the mutator
+           mark stack into the main SlotVisitor's mutator mark stack always knows exactly how much
+           work it will create.
+           
+           The sum of (2) and (3) are used as a second-order signal of constraint profitability.
+        
+        The constraint solver will always run all of the GreyedByExecution constraints at GC
+        start, since these double as the GC's roots. The constraint solver will always run all of
+        the GreyedByMarking constraints the first time that marking stalls. Other than that, the
+        solver will keep running constraints, sorted according to their likelihood to create work,
+        until either work is created or we run out of constraints to run. GC termination happens
+        when we run out of constraints to run.
+        
+        This new infrastructure means that we have a much better chance of dealing with worst-case
+        DOM pathologies. If we can intelligently factor different evil DOM things into different
+        constraints with the right work predictions then this could reduce the cost of those DOM
+        things by a factor of N where N is the number of fixpoint iterations the GC typically
+        does. N is usually around 5-6 even for simple heaps.
+        
+        My perf measurements say:
+        
+        PLT3: 0.02% faster with 5.3% confidence.
+        JetStream: 0.15% faster with 17% confidence.
+        Speedometer: 0.58% faster with 82% confidence.
+        
+        Here are the details from JetStream:
+        
+        splay: 1.02173x faster with 0.996841 confidence
+        splay-latency: 1.0617x faster with 0.987462 confidence
+        towers.c: 1.01852x faster with 0.92128 confidence
+        crypto-md5: 1.06058x faster with 0.482363 confidence
+        score: 1.00152x faster with 0.16892 confidence
+        
+        I think that Speedometer is legitimately benefiting from this change based on looking at
+        --logGC=true output. We are now spending less time reexecuting expensive constraints. I
+        think that JetStream/splay is also benefiting, because although the constraints it sees
+        are cheap, it spends 30% of its time in GC so even small improvements matter.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::markCodeBlocks): Deleted.
+        (JSC::DFG::Plan::rememberCodeBlocks): Deleted.
+        * dfg/DFGPlan.h:
+        * dfg/DFGPlanInlines.h: Added.
+        (JSC::DFG::Plan::iterateCodeBlocksForGC):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::markCodeBlocks): Deleted.
+        (JSC::DFG::Worklist::rememberCodeBlocks): Deleted.
+        (JSC::DFG::rememberCodeBlocks): Deleted.
+        * dfg/DFGWorklist.h:
+        * dfg/DFGWorklistInlines.h: Added.
+        (JSC::DFG::iterateCodeBlocksForGC):
+        (JSC::DFG::Worklist::iterateCodeBlocksForGC):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::writeBarrierCurrentlyExecuting): Deleted.
+        * heap/CodeBlockSet.h:
+        (JSC::CodeBlockSet::iterate): Deleted.
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterate):
+        (JSC::CodeBlockSet::iterateCurrentlyExecuting):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocks):
+        (JSC::Heap::iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks):
+        (JSC::Heap::assertSharedMarkStacksEmpty):
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::endMarking):
+        (JSC::Heap::collectInThread):
+        (JSC::Heap::stopIfNecessarySlow):
+        (JSC::Heap::acquireAccessSlow):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::buildConstraintSet):
+        (JSC::Heap::notifyIsSafeToCollect):
+        (JSC::Heap::ResumeTheWorldScope::ResumeTheWorldScope): Deleted.
+        (JSC::Heap::ResumeTheWorldScope::~ResumeTheWorldScope): Deleted.
+        (JSC::Heap::harvestWeakReferences): Deleted.
+        (JSC::Heap::visitConservativeRoots): Deleted.
+        (JSC::Heap::visitCompilerWorklistWeakReferences): Deleted.
+        * heap/Heap.h:
+        * heap/MarkingConstraint.cpp: Added.
+        (JSC::MarkingConstraint::MarkingConstraint):
+        (JSC::MarkingConstraint::~MarkingConstraint):
+        (JSC::MarkingConstraint::resetStats):
+        (JSC::MarkingConstraint::execute):
+        * heap/MarkingConstraint.h: Added.
+        (JSC::MarkingConstraint::index):
+        (JSC::MarkingConstraint::abbreviatedName):
+        (JSC::MarkingConstraint::name):
+        (JSC::MarkingConstraint::lastVisitCount):
+        (JSC::MarkingConstraint::quickWorkEstimate):
+        (JSC::MarkingConstraint::workEstimate):
+        (JSC::MarkingConstraint::volatility):
+        * heap/MarkingConstraintSet.cpp: Added.
+        (JSC::MarkingConstraintSet::ExecutionContext::ExecutionContext):
+        (JSC::MarkingConstraintSet::ExecutionContext::didVisitSomething):
+        (JSC::MarkingConstraintSet::ExecutionContext::shouldTimeOut):
+        (JSC::MarkingConstraintSet::ExecutionContext::drain):
+        (JSC::MarkingConstraintSet::ExecutionContext::didExecute):
+        (JSC::MarkingConstraintSet::ExecutionContext::execute):
+        (JSC::MarkingConstraintSet::MarkingConstraintSet):
+        (JSC::MarkingConstraintSet::~MarkingConstraintSet):
+        (JSC::MarkingConstraintSet::resetStats):
+        (JSC::MarkingConstraintSet::add):
+        (JSC::MarkingConstraintSet::executeBootstrap):
+        (JSC::MarkingConstraintSet::executeConvergence):
+        (JSC::MarkingConstraintSet::isWavefrontAdvancing):
+        (JSC::MarkingConstraintSet::executeConvergenceImpl):
+        (JSC::MarkingConstraintSet::executeAll):
+        * heap/MarkingConstraintSet.h: Added.
+        (JSC::MarkingConstraintSet::isWavefrontRetreating):
+        * heap/MutatorScheduler.cpp: Added.
+        (JSC::MutatorScheduler::MutatorScheduler):
+        (JSC::MutatorScheduler::~MutatorScheduler):
+        (JSC::MutatorScheduler::didStop):
+        (JSC::MutatorScheduler::willResume):
+        (JSC::MutatorScheduler::didExecuteConstraints):
+        (JSC::MutatorScheduler::log):
+        (JSC::MutatorScheduler::shouldStop):
+        (JSC::MutatorScheduler::shouldResume):
+        * heap/MutatorScheduler.h: Added.
+        * heap/OpaqueRootSet.h:
+        (JSC::OpaqueRootSet::add):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::visitAsConstraint):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::didReachTermination):
+        (JSC::SlotVisitor::hasWork):
+        (JSC::SlotVisitor::drainFromShared):
+        (JSC::SlotVisitor::drainInParallelPassively):
+        (JSC::SlotVisitor::addOpaqueRoot):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::addToVisitCount):
+        * heap/SpaceTimeMutatorScheduler.cpp: Copied from Source/JavaScriptCore/heap/SpaceTimeScheduler.cpp.
+        (JSC::SpaceTimeMutatorScheduler::Snapshot::Snapshot):
+        (JSC::SpaceTimeMutatorScheduler::Snapshot::now):
+        (JSC::SpaceTimeMutatorScheduler::Snapshot::bytesAllocatedThisCycle):
+        (JSC::SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler):
+        (JSC::SpaceTimeMutatorScheduler::~SpaceTimeMutatorScheduler):
+        (JSC::SpaceTimeMutatorScheduler::state):
+        (JSC::SpaceTimeMutatorScheduler::beginCollection):
+        (JSC::SpaceTimeMutatorScheduler::didStop):
+        (JSC::SpaceTimeMutatorScheduler::willResume):
+        (JSC::SpaceTimeMutatorScheduler::didExecuteConstraints):
+        (JSC::SpaceTimeMutatorScheduler::timeToStop):
+        (JSC::SpaceTimeMutatorScheduler::timeToResume):
+        (JSC::SpaceTimeMutatorScheduler::log):
+        (JSC::SpaceTimeMutatorScheduler::endCollection):
+        (JSC::SpaceTimeMutatorScheduler::bytesAllocatedThisCycleImpl):
+        (JSC::SpaceTimeMutatorScheduler::bytesSinceBeginningOfCycle):
+        (JSC::SpaceTimeMutatorScheduler::maxHeadroom):
+        (JSC::SpaceTimeMutatorScheduler::headroomFullness):
+        (JSC::SpaceTimeMutatorScheduler::mutatorUtilization):
+        (JSC::SpaceTimeMutatorScheduler::collectorUtilization):
+        (JSC::SpaceTimeMutatorScheduler::elapsedInPeriod):
+        (JSC::SpaceTimeMutatorScheduler::phase):
+        (JSC::SpaceTimeMutatorScheduler::shouldBeResumed):
+        (JSC::SpaceTimeScheduler::Decision::targetMutatorUtilization): Deleted.
+        (JSC::SpaceTimeScheduler::Decision::targetCollectorUtilization): Deleted.
+        (JSC::SpaceTimeScheduler::Decision::elapsedInPeriod): Deleted.
+        (JSC::SpaceTimeScheduler::Decision::phase): Deleted.
+        (JSC::SpaceTimeScheduler::Decision::shouldBeResumed): Deleted.
+        (JSC::SpaceTimeScheduler::Decision::timeToResume): Deleted.
+        (JSC::SpaceTimeScheduler::Decision::timeToStop): Deleted.
+        (JSC::SpaceTimeScheduler::SpaceTimeScheduler): Deleted.
+        (JSC::SpaceTimeScheduler::snapPhase): Deleted.
+        (JSC::SpaceTimeScheduler::currentDecision): Deleted.
+        * heap/SpaceTimeMutatorScheduler.h: Copied from Source/JavaScriptCore/heap/SpaceTimeScheduler.h.
+        (JSC::SpaceTimeScheduler::Decision::operator bool): Deleted.
+        * heap/SpaceTimeScheduler.cpp: Removed.
+        * heap/SpaceTimeScheduler.h: Removed.
+        * heap/SynchronousStopTheWorldMutatorScheduler.cpp: Added.
+        (JSC::SynchronousStopTheWorldMutatorScheduler::SynchronousStopTheWorldMutatorScheduler):
+        (JSC::SynchronousStopTheWorldMutatorScheduler::~SynchronousStopTheWorldMutatorScheduler):
+        (JSC::SynchronousStopTheWorldMutatorScheduler::state):
+        (JSC::SynchronousStopTheWorldMutatorScheduler::beginCollection):
+        (JSC::SynchronousStopTheWorldMutatorScheduler::timeToStop):
+        (JSC::SynchronousStopTheWorldMutatorScheduler::timeToResume):
+        (JSC::SynchronousStopTheWorldMutatorScheduler::endCollection):
+        * heap/SynchronousStopTheWorldMutatorScheduler.h: Added.
+        * heap/VisitingTimeout.h: Added.
+        (JSC::VisitingTimeout::VisitingTimeout):
+        (JSC::VisitingTimeout::visitCount):
+        (JSC::VisitingTimeout::didVisitSomething):
+        (JSC::VisitingTimeout::shouldTimeOut):
+        * runtime/Options.h:
+
 2017-01-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210476.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -608,36 +608,6 @@ void Plan::finalizeAndNotifyCallback()
 CompilationKey Plan::key()
 {
     return CompilationKey(codeBlock->alternative(), mode);
-}
-
-void Plan::markCodeBlocks(SlotVisitor& slotVisitor)
-{
-    if (!isKnownToBeLiveDuringGC())
-        return;
-    
-    // Compilation writes lots of values to a CodeBlock without performing
-    // an explicit barrier. So, we need to be pessimistic and assume that
-    // all our CodeBlocks must be visited during GC.
-
-    slotVisitor.appendUnbarriered(codeBlock);
-    slotVisitor.appendUnbarriered(codeBlock->alternative());
-    if (profiledDFGCodeBlock)
-        slotVisitor.appendUnbarriered(profiledDFGCodeBlock);
-}
-
-void Plan::rememberCodeBlocks(VM& vm)
-{
-    if (!isKnownToBeLiveDuringGC())
-        return;
-    
-    // Compilation writes lots of values to a CodeBlock without performing
-    // an explicit barrier. So, we need to be pessimistic and assume that
-    // all our CodeBlocks must be visited during GC.
-
-    vm.heap.writeBarrier(codeBlock);
-    vm.heap.writeBarrier(codeBlock->alternative());
-    if (profiledDFGCodeBlock)
-        vm.heap.writeBarrier(profiledDFGCodeBlock);
 }
 
 void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)

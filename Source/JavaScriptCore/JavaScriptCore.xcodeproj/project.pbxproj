@@ -127,6 +127,13 @@
 		0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A431534CBAD000F9456 /* DFGArgumentPosition.h */; };
 		0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */; };
 		0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */; };
+		0F1FB38E1E173A6500A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */; };
+		0F1FB38F1E173A6700A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */; };
+		0F1FB3901E173A6B00A9BE50 /* MutatorScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1FB38C1E173A6200A9BE50 /* MutatorScheduler.cpp */; };
+		0F1FB3931E177A7200A9BE50 /* VisitingTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3921E177A6F00A9BE50 /* VisitingTimeout.h */; };
+		0F1FB3961E1AF7E100A9BE50 /* DFGPlanInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3941E1AF7DF00A9BE50 /* DFGPlanInlines.h */; };
+		0F1FB3971E1AF7E300A9BE50 /* DFGWorklistInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3951E1AF7DF00A9BE50 /* DFGWorklistInlines.h */; };
+		0F1FB3991E1F65FB00A9BE50 /* MutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FB3981E1F65F900A9BE50 /* MutatorScheduler.h */; };
 		0F1FE51C1922A3BC006987C5 /* AbortReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F1FE51B1922A3BC006987C5 /* AbortReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F20177F1DCADC3300EA5950 /* DFGFlowIndexing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F20177D1DCADC3000EA5950 /* DFGFlowIndexing.cpp */; };
 		0F2017801DCADC3500EA5950 /* DFGFlowIndexing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F20177E1DCADC3000EA5950 /* DFGFlowIndexing.h */; };
@@ -455,6 +462,10 @@
 		0F64B2791A7957B2006E4E66 /* CallEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F64B2771A7957B2006E4E66 /* CallEdge.cpp */; };
 		0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2781A7957B2006E4E66 /* CallEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */; };
+		0F660E371E0517B90031462C /* MarkingConstraint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F660E331E0517B70031462C /* MarkingConstraint.cpp */; };
+		0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F660E341E0517B70031462C /* MarkingConstraint.h */; };
+		0F660E391E0517BF0031462C /* MarkingConstraintSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */; };
+		0F660E3A1E0517C10031462C /* MarkingConstraintSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F660E361E0517B80031462C /* MarkingConstraintSet.h */; };
 		0F664CE81DA304EF00B00A11 /* CodeBlockSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F664CE71DA304ED00B00A11 /* CodeBlockSetInlines.h */; };
 		0F666EC0183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -753,8 +764,8 @@
 		0FDDBFB51666EED800C55FEF /* DFGVariableAccessDataDump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */; };
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; };
 		0FDE87F91DFD0C760064C390 /* CellContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */; };
-		0FDE87FC1DFE6E510064C390 /* SpaceTimeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */; };
-		0FDE87FD1DFE6E540064C390 /* SpaceTimeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */; };
+		0FDE87FC1DFE6E510064C390 /* SpaceTimeMutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDE87FB1DFE6E500064C390 /* SpaceTimeMutatorScheduler.h */; };
+		0FDE87FD1DFE6E540064C390 /* SpaceTimeMutatorScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDE87FA1DFE6E500064C390 /* SpaceTimeMutatorScheduler.cpp */; };
 		0FDF67D21D9C6D27001B9825 /* B3Kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF67D11D9C6086001B9825 /* B3Kind.h */; };
 		0FDF67D31D9C6D2A001B9825 /* B3Kind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D01D9C6086001B9825 /* B3Kind.cpp */; };
 		0FDF67D61D9DC440001B9825 /* AirKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D41D9DC43E001B9825 /* AirKind.cpp */; };
@@ -2559,6 +2570,13 @@
 		0F1E3A441534CBAD000F9456 /* DFGDoubleFormatState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDoubleFormatState.h; path = dfg/DFGDoubleFormatState.h; sourceTree = "<group>"; };
 		0F1E3A501537C2CB000F9456 /* DFGSlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSlowPathGenerator.h; path = dfg/DFGSlowPathGenerator.h; sourceTree = "<group>"; };
 		0F1E3A65153A21DF000F9456 /* DFGSilentRegisterSavePlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSilentRegisterSavePlan.h; path = dfg/DFGSilentRegisterSavePlan.h; sourceTree = "<group>"; };
+		0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousStopTheWorldMutatorScheduler.cpp; sourceTree = "<group>"; };
+		0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronousStopTheWorldMutatorScheduler.h; sourceTree = "<group>"; };
+		0F1FB38C1E173A6200A9BE50 /* MutatorScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutatorScheduler.cpp; sourceTree = "<group>"; };
+		0F1FB3921E177A6F00A9BE50 /* VisitingTimeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitingTimeout.h; sourceTree = "<group>"; };
+		0F1FB3941E1AF7DF00A9BE50 /* DFGPlanInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPlanInlines.h; path = dfg/DFGPlanInlines.h; sourceTree = "<group>"; };
+		0F1FB3951E1AF7DF00A9BE50 /* DFGWorklistInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGWorklistInlines.h; path = dfg/DFGWorklistInlines.h; sourceTree = "<group>"; };
+		0F1FB3981E1F65F900A9BE50 /* MutatorScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutatorScheduler.h; sourceTree = "<group>"; };
 		0F1FE51B1922A3BC006987C5 /* AbortReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbortReason.h; sourceTree = "<group>"; };
 		0F20177D1DCADC3000EA5950 /* DFGFlowIndexing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlowIndexing.cpp; path = dfg/DFGFlowIndexing.cpp; sourceTree = "<group>"; };
 		0F20177E1DCADC3000EA5950 /* DFGFlowIndexing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlowIndexing.h; path = dfg/DFGFlowIndexing.h; sourceTree = "<group>"; };
@@ -2884,6 +2902,10 @@
 		0F64B2771A7957B2006E4E66 /* CallEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallEdge.cpp; sourceTree = "<group>"; };
 		0F64B2781A7957B2006E4E66 /* CallEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdge.h; sourceTree = "<group>"; };
 		0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirArgInlines.h; path = b3/air/AirArgInlines.h; sourceTree = "<group>"; };
+		0F660E331E0517B70031462C /* MarkingConstraint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkingConstraint.cpp; sourceTree = "<group>"; };
+		0F660E341E0517B70031462C /* MarkingConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkingConstraint.h; sourceTree = "<group>"; };
+		0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkingConstraintSet.cpp; sourceTree = "<group>"; };
+		0F660E361E0517B80031462C /* MarkingConstraintSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkingConstraintSet.h; sourceTree = "<group>"; };
 		0F664CE71DA304ED00B00A11 /* CodeBlockSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockSetInlines.h; sourceTree = "<group>"; };
 		0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeLivenessAnalysisInlines.h; sourceTree = "<group>"; };
 		0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullBytecodeLiveness.h; sourceTree = "<group>"; };
@@ -3193,8 +3215,8 @@
 		0FDDBFB21666EED500C55FEF /* DFGVariableAccessDataDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGVariableAccessDataDump.cpp; path = dfg/DFGVariableAccessDataDump.cpp; sourceTree = "<group>"; };
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
 		0FDE87F81DFD0C6D0064C390 /* CellContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CellContainer.cpp; sourceTree = "<group>"; };
-		0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceTimeScheduler.cpp; sourceTree = "<group>"; };
-		0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceTimeScheduler.h; sourceTree = "<group>"; };
+		0FDE87FA1DFE6E500064C390 /* SpaceTimeMutatorScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpaceTimeMutatorScheduler.cpp; sourceTree = "<group>"; };
+		0FDE87FB1DFE6E500064C390 /* SpaceTimeMutatorScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpaceTimeMutatorScheduler.h; sourceTree = "<group>"; };
 		0FDF67D01D9C6086001B9825 /* B3Kind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Kind.cpp; path = b3/B3Kind.cpp; sourceTree = "<group>"; };
 		0FDF67D11D9C6086001B9825 /* B3Kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Kind.h; path = b3/B3Kind.h; sourceTree = "<group>"; };
 		0FDF67D41D9DC43E001B9825 /* AirKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirKind.cpp; path = b3/air/AirKind.cpp; sourceTree = "<group>"; };
@@ -5751,8 +5773,14 @@
 				14D2F3D8139F4BE200491031 /* MarkedSpace.cpp */,
 				14D2F3D9139F4BE200491031 /* MarkedSpace.h */,
 				0F7C5FB91D8895050044F5E2 /* MarkedSpaceInlines.h */,
+				0F660E331E0517B70031462C /* MarkingConstraint.cpp */,
+				0F660E341E0517B70031462C /* MarkingConstraint.h */,
+				0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */,
+				0F660E361E0517B80031462C /* MarkingConstraintSet.h */,
 				142D6F0E13539A4100B02E86 /* MarkStack.cpp */,
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
+				0F1FB38C1E173A6200A9BE50 /* MutatorScheduler.cpp */,
+				0F1FB3981E1F65F900A9BE50 /* MutatorScheduler.h */,
 				0FA762021DB9242300B7A2FD /* MutatorState.cpp */,
 				0FA762031DB9242300B7A2FD /* MutatorState.h */,
 				ADDB1F6218D77DB7009B58A8 /* OpaqueRootSet.h */,
@@ -5761,14 +5789,17 @@
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */,
-				0FDE87FA1DFE6E500064C390 /* SpaceTimeScheduler.cpp */,
-				0FDE87FB1DFE6E500064C390 /* SpaceTimeScheduler.h */,
+				0FDE87FA1DFE6E500064C390 /* SpaceTimeMutatorScheduler.cpp */,
+				0FDE87FB1DFE6E500064C390 /* SpaceTimeMutatorScheduler.h */,
 				0F7CF9501DC027D70098CC12 /* StopIfNecessaryTimer.cpp */,
 				0F7CF9511DC027D70098CC12 /* StopIfNecessaryTimer.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
+				0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */,
+				0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
 				0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */,
+				0F1FB3921E177A6F00A9BE50 /* VisitingTimeout.h */,
 				0F952A9F1DF7860700E06FBD /* VisitRaceKey.cpp */,
 				0F952AA01DF7860700E06FBD /* VisitRaceKey.h */,
 				1ACF7376171CA6FB00C9BB1E /* Weak.cpp */,
@@ -6995,6 +7026,7 @@
 				0F2B9CDF19D0BA7D00B1D1B5 /* DFGPhiChildren.h */,
 				A78A9772179738B8009DF744 /* DFGPlan.cpp */,
 				A78A9773179738B8009DF744 /* DFGPlan.h */,
+				0F1FB3941E1AF7DF00A9BE50 /* DFGPlanInlines.h */,
 				DC00039019D8BE6F00023EB0 /* DFGPreciseLocalClobberize.h */,
 				0FBE0F6D16C1DB010082C5E8 /* DFGPredictionInjectionPhase.cpp */,
 				0FBE0F6E16C1DB010082C5E8 /* DFGPredictionInjectionPhase.h */,
@@ -7083,6 +7115,7 @@
 				0FC97F3C18202119002C9B26 /* DFGWatchpointCollectionPhase.h */,
 				0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */,
 				0FDB2CE6174830A2007B3C1B /* DFGWorklist.h */,
+				0F1FB3951E1AF7DF00A9BE50 /* DFGWorklistInlines.h */,
 			);
 			name = dfg;
 			sourceTree = "<group>";
@@ -7945,6 +7978,7 @@
 				0FB7F39815ED8E4600F167B2 /* ButterflyInlines.h in Headers */,
 				C2FCAE1117A9C24E0034C735 /* BytecodeBasicBlock.h in Headers */,
 				0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */,
+				0F1FB3931E177A7200A9BE50 /* VisitingTimeout.h in Headers */,
 				969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */,
 				E328DAE81D38D005001A2529 /* BytecodeGeneratorification.h in Headers */,
 				E328DAE91D38D005001A2529 /* BytecodeGraph.h in Headers */,
@@ -8478,6 +8512,7 @@
 				A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */,
 				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
 				A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */,
+				0F1FB3971E1AF7E300A9BE50 /* DFGWorklistInlines.h in Headers */,
 				708EBE241CE8F35800453146 /* IntlObjectInlines.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */,
@@ -8562,7 +8597,9 @@
 				0F2B66EF17B6B5AB00A7AE3F /* JSFloat32Array.h in Headers */,
 				0F2B66F017B6B5AB00A7AE3F /* JSFloat64Array.h in Headers */,
 				BC18C41F0E16F5CD00B34460 /* JSFunction.h in Headers */,
+				0F660E3A1E0517C10031462C /* MarkingConstraintSet.h in Headers */,
 				A72028BA1797603D0098028C /* JSFunctionInlines.h in Headers */,
+				0F660E381E0517BB0031462C /* MarkingConstraint.h in Headers */,
 				70B7919C1C024A49002481E2 /* JSGeneratorFunction.h in Headers */,
 				0F2B66F117B6B5AB00A7AE3F /* JSGenericTypedArrayView.h in Headers */,
 				0F2B66F217B6B5AB00A7AE3F /* JSGenericTypedArrayViewConstructor.h in Headers */,
@@ -8674,6 +8711,7 @@
 				AD2FCBEB1DB58DAD00B3E736 /* JSWebAssemblyTable.h in Headers */,
 				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,
 				86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */,
+				0F1FB38F1E173A6700A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h in Headers */,
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
 				BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */,
 				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
@@ -8719,6 +8757,7 @@
 				863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */,
 				E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */,
 				86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */,
+				0F1FB3961E1AF7E100A9BE50 /* DFGPlanInlines.h in Headers */,
 				FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */,
 				860161E40F3A83C100F84710 /* MacroAssemblerX86.h in Headers */,
 				860161E50F3A83C100F84710 /* MacroAssemblerX86_64.h in Headers */,
@@ -8901,7 +8940,7 @@
 				BC18C4630E16F5CD00B34460 /* SourceProvider.h in Headers */,
 				E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */,
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
-				0FDE87FC1DFE6E510064C390 /* SpaceTimeScheduler.h in Headers */,
+				0FDE87FC1DFE6E510064C390 /* SpaceTimeMutatorScheduler.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
@@ -8934,6 +8973,7 @@
 				BCCF0D080EF0AAB900413C8F /* StructureStubInfo.h in Headers */,
 				BC9041480EB9250900FE26FA /* StructureTransitionTable.h in Headers */,
 				0F4A38FA1C8E13DF00190318 /* SuperSampler.h in Headers */,
+				0F1FB3991E1F65FB00A9BE50 /* MutatorScheduler.h in Headers */,
 				705B41AC1A6E501E00716757 /* Symbol.h in Headers */,
 				705B41AE1A6E501E00716757 /* SymbolConstructor.h in Headers */,
 				996B73271BDA08EF00331B84 /* SymbolConstructor.lut.h in Headers */,
@@ -9743,6 +9783,7 @@
 				A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */,
 				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
 				0F6FC750196110A800E1D02D /* ComplexGetStatus.cpp in Sources */,
+				0F1FB38E1E173A6500A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp in Sources */,
 				146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */,
 				A5B6A74D18C6DBA600F11E91 /* ConsoleClient.cpp in Sources */,
 				A5FD0079189B051000633231 /* ConsoleMessage.cpp in Sources */,
@@ -9758,6 +9799,7 @@
 				147F39C4107EC37600427A48 /* DateConversion.cpp in Sources */,
 				147F39C5107EC37600427A48 /* DateInstance.cpp in Sources */,
 				147F39C6107EC37600427A48 /* DatePrototype.cpp in Sources */,
+				0F660E391E0517BF0031462C /* MarkingConstraintSet.cpp in Sources */,
 				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
 				A5FC84B31D1DDAD9006B5C46 /* DebuggerLocation.cpp in Sources */,
@@ -10346,7 +10388,7 @@
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */,
 				E49DC16B12EF293E00184A1F /* SourceProviderCache.cpp in Sources */,
-				0FDE87FD1DFE6E540064C390 /* SpaceTimeScheduler.cpp in Sources */,
+				0FDE87FD1DFE6E540064C390 /* SpaceTimeMutatorScheduler.cpp in Sources */,
 				0F0CD4C415F6B6BB0032F1C0 /* SparseArrayValueMap.cpp in Sources */,
 				0F5541B11613C1FB00CE3E25 /* SpecialPointer.cpp in Sources */,
 				0FD82E86141F3FF100179C94 /* SpeculatedType.cpp in Sources */,
@@ -10356,6 +10398,7 @@
 				A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */,
 				14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */,
 				70EC0EC61AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp in Sources */,
+				0F1FB3901E173A6B00A9BE50 /* MutatorScheduler.cpp in Sources */,
 				14469DEC107EC7E700650446 /* StringObject.cpp in Sources */,
 				14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */,
 				9335F24D12E6765B002B5553 /* StringRecursionChecker.cpp in Sources */,
@@ -10407,6 +10450,7 @@
 				0F24E55817F74EDB00ABB217 /* ValueRecovery.cpp in Sources */,
 				79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */,
 				0F6C73501AC9F99F00BE1682 /* VariableWriteFireDetail.cpp in Sources */,
+				0F660E371E0517B90031462C /* MarkingConstraint.cpp in Sources */,
 				0FE0502C1AA9095600D33B33 /* VarOffset.cpp in Sources */,
 				0F20C2591A8013AB00DA3229 /* VirtualRegister.cpp in Sources */,
 				0F952AA21DF7860D00E06FBD /* VisitRaceKey.cpp in Sources */,

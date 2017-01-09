@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,6 @@
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
-
-static const bool verbose = false;
 
 CodeBlockSet::CodeBlockSet()
 {
@@ -112,15 +110,6 @@ bool CodeBlockSet::contains(const LockHolder&, void* candidateCodeBlock)
     if (!HashSet<CodeBlock*>::isValidValue(codeBlock))
         return false;
     return m_oldCodeBlocks.contains(codeBlock) || m_newCodeBlocks.contains(codeBlock) || m_currentlyExecuting.contains(codeBlock);
-}
-
-void CodeBlockSet::writeBarrierCurrentlyExecuting(Heap* heap)
-{
-    LockHolder locker(&m_lock);
-    if (verbose)
-        dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
-    for (CodeBlock* codeBlock : m_currentlyExecuting)
-        heap->writeBarrier(codeBlock);
 }
 
 void CodeBlockSet::clearCurrentlyExecuting()
