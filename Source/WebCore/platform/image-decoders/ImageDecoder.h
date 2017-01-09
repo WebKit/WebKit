@@ -34,7 +34,6 @@
 #include "PlatformScreen.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
-#include <wtf/Lock.h>
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -215,7 +214,6 @@ namespace WebCore {
 #endif
         bool m_isAllDataReceived { false };
         bool m_failed { false };
-        Lock m_lock;
     };
 
 } // namespace WebCore

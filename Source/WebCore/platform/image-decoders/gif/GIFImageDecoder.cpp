@@ -306,6 +306,7 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
     if (failed())
         return;
 
+    LockHolder locker(m_decodeLock);
     if (!m_reader) {
         m_reader = std::make_unique<GIFImageReader>(this);
         m_reader->setData(m_data.get());

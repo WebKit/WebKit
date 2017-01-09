@@ -1,3 +1,24 @@
+2017-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebProcess from WebKitGtk+ 2.15.2 SIGSEGVs in std::unique_ptr<SoupBuffer, WTF::GPtrDeleter<SoupBuffer> >::get() const () at /usr/include/c++/6/bits/unique_ptr.h:305
+        https://bugs.webkit.org/show_bug.cgi?id=165848
+
+        Reviewed by Michael Catanzaro.
+
+        In r208881 several locks were added to ImageDecoder to prevent frameBufferAtIndex() from being called by multiple
+        threads at the same time, but I forgot isSizeAvailable() also calls frameBufferAtIndex(). However, what we
+        really need to protect is the GIFImageDecoder, to never allow decoding from more than one thread at the same
+        time. This patch reverts r208881 and adds a lock to GIFImageDecoder::decode() instead.
+
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+
 2017-01-09  Alejandro G. Castro  <alex@igalia.com>
 
         [OWR] Unskip fast/mediastream/MediaStream-video-element-track-stop.html
