@@ -1,3 +1,18 @@
+2017-01-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r210260.
+        https://bugs.webkit.org/show_bug.cgi?id=166860
+
+        new colorpicker UI doesn't seem to work in trunk,
+        investigating offline (Requested by brrian on #webkit).
+
+        Reverted changeset:
+
+        "Web Inspector: color picker should feature an editable CSS
+        value"
+        https://bugs.webkit.org/show_bug.cgi?id=124356
+        http://trac.webkit.org/changeset/210260
+
 2017-01-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210110.
