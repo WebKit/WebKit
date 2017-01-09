@@ -1,3 +1,14 @@
+2017-01-09  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Add a layout test for webkit.org/b/135651
+        https://bugs.webkit.org/show_bug.cgi?id=166855
+
+        Reviewed by Andreas Kling.
+
+        * quicklook/nil-response-mime-type-expected.txt: Added.
+        * quicklook/nil-response-mime-type.html: Added.
+        * quicklook/resources/nil-response-mime-type.xls: Added.
+
 2017-01-09  Beth Dakin  <bdakin@apple.com>
 
         Add a test to ensure that preventDefault on touchmove prevents scrolling

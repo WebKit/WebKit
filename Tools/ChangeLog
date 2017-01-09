@@ -1,3 +1,17 @@
+2017-01-09  Andy Estes  <aestes@apple.com>
+
+        [QuickLook] Add a layout test for webkit.org/b/135651
+        https://bugs.webkit.org/show_bug.cgi?id=166855
+
+        Reviewed by Andreas Kling.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]): Added output for
+        errors with code WebKitErrorCannotShowURL.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame): Made the error output
+        not specific to WebKit2 error codes.
+
 2017-01-09  Antoine Quint  <graouts@apple.com>
 
         Support webkit-test-runner key-value pairs in http tests in DumpRenderTree

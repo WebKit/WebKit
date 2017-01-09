@@ -703,7 +703,7 @@ void InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRe
         dumpLoadEvent(frame, "didFailProvisionalLoadWithError");
         auto code = WKErrorGetErrorCode(error);
         if (code == kWKErrorCodeCannotShowURL)
-            dumpLoadEvent(frame, "(kWKErrorCodeCannotShowURL)");
+            dumpLoadEvent(frame, "(ErrorCodeCannotShowURL)");
         else if (code == kWKErrorCodeFrameLoadBlockedByContentBlocker)
             dumpLoadEvent(frame, "(kWKErrorCodeFrameLoadBlockedByContentBlocker)");
     }
