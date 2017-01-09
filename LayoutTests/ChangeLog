@@ -1,3 +1,12 @@
+2017-01-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline W3C test for ios-simulator after r210468.
+        https://bugs.webkit.org/show_bug.cgi?id=166850
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin-expected.txt:
+
 2017-01-09  Lucas Forschler  <lforschler@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=166839
