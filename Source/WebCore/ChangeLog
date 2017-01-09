@@ -1,3 +1,23 @@
+2017-01-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r210493 and r210495.
+        https://bugs.webkit.org/show_bug.cgi?id=166842
+
+        Causes makeprops.pl to run on every build (Requested by smfr
+        on #webkit).
+
+        Reverted changesets:
+
+        "Avoid triggering rebuilds for minor changes of
+        CSSProperties.json"
+        https://bugs.webkit.org/show_bug.cgi?id=166810
+        http://trac.webkit.org/changeset/210493
+
+        "Avoid triggering rebuilds for minor changes of
+        CSSProperties.json"
+        https://bugs.webkit.org/show_bug.cgi?id=166810
+        http://trac.webkit.org/changeset/210495
+
 2017-01-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Should support key and code properties on keyboard events
