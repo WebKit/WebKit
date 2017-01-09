@@ -1,3 +1,18 @@
+2017-01-09  Lucas Forschler  <lforschler@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=166839
+        Add php7 support for macOS.
+        Mirror the debian logic to look for a php7 module on disk, and return the appropriate apache config file.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port._is_darwin_php_version_7):
+        (Port._debian_php_version):
+        (Port):
+        (Port._darwin_php_version):
+        (Port._apache_config_file_name_for_platform):
+
 2017-01-06  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Should support key and code properties on keyboard events
