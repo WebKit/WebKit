@@ -1,3 +1,32 @@
+2017-01-09  Youenn Fablet  <youennf@gmail.com>
+
+        Merging ThreadableLoader redundant options on filtering responses
+
+        Merge OpaqueResponseBodyPolicy and ResponseFilteringPolicy ThreadableLoader options
+        https://bugs.webkit.org/show_bug.cgi?id=166843
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        Removing OpaqueResponseBodyPolicy option.
+        When ResponseFilteringPolicy is set to Enable, the body is filtered out in DocumentThreadableLoader.
+
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::start):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse): Implementing body filtering based on ResponseFilteringPolicy option.
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):
+        * loader/ThreadableLoader.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::LoaderTaskOptions::LoaderTaskOptions):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2017-01-09  Daniel Bates  <dabates@apple.com>
 
         Evaluating window named element may return wrong result

@@ -669,6 +669,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
     options.initiator = cachedResourceRequestInitiators().xmlhttprequest;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.filteringPolicy = ResponseFilteringPolicy::Enable;
 
     if (m_timeoutMilliseconds) {
         if (!m_async)

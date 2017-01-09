@@ -281,13 +281,18 @@ void DocumentThreadableLoader::responseReceived(CachedResource& resource, const 
 void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response, ResourceResponse::Tainting tainting)
 {
     ASSERT(m_client);
+    ASSERT(response.type() != ResourceResponse::Type::Error);
 
     InspectorInstrumentation::didReceiveThreadableLoaderResponse(*this, identifier);
 
-    ASSERT(response.type() != ResourceResponse::Type::Error);
+    if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
+        m_client->didReceiveResponse(identifier, response);
+        return;
+    }
+
     if (response.type() == ResourceResponse::Type::Default) {
-        m_client->didReceiveResponse(identifier, options().filteringPolicy == ResponseFilteringPolicy::Enable ? ResourceResponse::filterResponse(response, tainting) : response);
-        if (tainting == ResourceResponse::Tainting::Opaque && options().opaqueResponse == OpaqueResponseBodyPolicy::DoNotReceive) {
+        m_client->didReceiveResponse(identifier, ResourceResponse::filterResponse(response, tainting));
+        if (tainting == ResourceResponse::Tainting::Opaque) {
             clearResource();
             if (m_client)
                 m_client->didFinishLoading(identifier, 0.0);
