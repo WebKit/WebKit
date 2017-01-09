@@ -1,3 +1,14 @@
+2017-01-09  Daniel Bates  <dabates@apple.com>
+
+        Evaluating window named element may return wrong result
+        https://bugs.webkit.org/show_bug.cgi?id=166792
+        <rdar://problem/29801059>
+
+        Reviewed by Chris Dumez.
+
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter):
+
 2017-01-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r178955): Touching Settings.in doesn't cause JSInternalSettingsGenerated.cpp to be updated on first build

@@ -50,6 +50,9 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
         return true;
     }
 
+    if (!BindingSecurity::shouldAllowAccessToFrame(exec, &frame, ThrowSecurityError))
+        return false;
+
     // FIXME: Search the whole frame hierarchy somewhere around here.
     // We need to test the correct priority order.
 
