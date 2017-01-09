@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L
+ * Copyright (C) 2015,2016 Igalia S.L
  * Copyright (C) 2015 Metrological
  *
  * All rights reserved.
@@ -32,68 +32,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RealtimeMediaSourceOwr_h
-#define RealtimeMediaSourceOwr_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)
 
-#include "GRefPtrGStreamer.h"
-#include "RealtimeMediaSource.h"
-#include <owr/owr_media_source.h>
-#include <wtf/HashMap.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#include "RealtimeMediaSourceOwr.h"
 
 namespace WebCore {
 
-class RealtimeMediaSourceCapabilities;
-
-class RealtimeMediaSourceOwr : public RealtimeMediaSource {
+class RealtimeVideoSourceOwr : public RealtimeMediaSourceOwr {
 public:
-RealtimeMediaSourceOwr(OwrMediaSource* mediaSource, const String& id, RealtimeMediaSource::Type type, const String& name)
-    : RealtimeMediaSource(id, type, name)
-    , m_mediaSource(mediaSource)
-    {
-        if (!mediaSource)
-            m_muted = true;
-    }
-
-RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const String& name)
-    : RealtimeMediaSource(id, type, name)
-    , m_mediaSource(nullptr)
+RealtimeVideoSourceOwr(OwrMediaSource* mediaSource, const String& id, RealtimeMediaSource::Type type, const String& name)
+    : RealtimeMediaSourceOwr(mediaSource, id, type, name)
     {
     }
 
-    virtual ~RealtimeMediaSourceOwr() { }
-
-    void swapOutShallowSource(OwrMediaSource& realSource)
+RealtimeVideoSourceOwr(const String& id, RealtimeMediaSource::Type type, const String& name)
+    : RealtimeMediaSourceOwr(id, type, name)
     {
-        m_mediaSource = &realSource;
-        setMuted(false);
     }
 
-    RefPtr<RealtimeMediaSourceCapabilities> capabilities() const override { return m_capabilities; }
-    const RealtimeMediaSourceSettings& settings() const override;
+    virtual ~RealtimeVideoSourceOwr() { }
 
-    OwrMediaSource* mediaSource() const { return m_mediaSource; }
+    bool applySize(const IntSize&) final { return true; }
 
 protected:
-    virtual void initializeSettings() { };
-    virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) { };
-    RealtimeMediaSourceSupportedConstraints& supportedConstraints();
+    void initializeSettings() final {
+        if (m_currentSettings.deviceId().isEmpty())
+            m_currentSettings.setSupportedConstraits(supportedConstraints());
 
-    RealtimeMediaSourceSettings m_currentSettings;
+        m_currentSettings.setDeviceId(id());
 
-private:
-    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
-    RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
-    OwrMediaSource* m_mediaSource;
+        m_currentSettings.setFrameRate(frameRate());
+        m_currentSettings.setWidth(size().width());
+        m_currentSettings.setHeight(size().height());
+    }
+
+    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints& supportedConstraints) final {
+        supportedConstraints.setSupportsFacingMode(RealtimeMediaSourceSettings::Unknown);
+        supportedConstraints.setSupportsWidth(true);
+        supportedConstraints.setSupportsHeight(true);
+        supportedConstraints.setSupportsAspectRatio(true);
+        supportedConstraints.setSupportsFrameRate(true);
+    }
 };
-
-typedef HashMap<String, RefPtr<RealtimeMediaSourceOwr>> RealtimeMediaSourceOwrMap;
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && USE(OPENWEBRTC)
-
-#endif // RealtimeMediaSourceOwr_h

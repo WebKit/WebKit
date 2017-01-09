@@ -40,7 +40,9 @@
 #include "MediaStreamPrivate.h"
 #include "NotImplemented.h"
 #include "OpenWebRTCUtilities.h"
+#include "RealtimeAudioSourceOwr.h"
 #include "RealtimeMediaSourceCapabilities.h"
+#include "RealtimeVideoSourceOwr.h"
 #include "UUID.h"
 #include <owr/owr.h>
 #include <owr/owr_local.h>
@@ -149,16 +151,21 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
             ASSERT_NOT_REACHED();
         }
 
-        auto mediaSource = adoptRef(*new RealtimeMediaSourceOwr(source, id, mediaSourceType, sourceName));
+        RefPtr<RealtimeMediaSourceOwr> mediaSource;
+        if (mediaSourceType == RealtimeMediaSource::Audio)
+            mediaSource = adoptRef(new RealtimeAudioSourceOwr(source, id, mediaSourceType, sourceName));
+        else
+            mediaSource = adoptRef(new RealtimeVideoSourceOwr(source, id, mediaSourceType, sourceName));
 
         RealtimeMediaSourceOwrMap::iterator sourceIterator = m_sourceMap.find(id);
         if (sourceIterator == m_sourceMap.end())
             m_sourceMap.add(id, mediaSource.copyRef());
 
         if (mediaType & OWR_MEDIA_TYPE_AUDIO)
-            audioSources.append(WTFMove(mediaSource));
+            audioSources.append(mediaSource.releaseNonNull());
         else if (mediaType & OWR_MEDIA_TYPE_VIDEO)
-            videoSources.append(WTFMove(mediaSource));
+            videoSources.append(mediaSource.releaseNonNull());
+
     }
 
     if (videoSources.isEmpty() && audioSources.isEmpty())

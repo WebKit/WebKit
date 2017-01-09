@@ -1,3 +1,82 @@
+2017-01-09  Alejandro G. Castro  <alex@igalia.com>
+
+        [OWR] Unskip fast/mediastream/MediaStream-video-element-track-stop.html
+        https://bugs.webkit.org/show_bug.cgi?id=165316
+
+        Reviewed by Philippe Normand.
+
+        Fixed the ended support of the video element in the OWR player and
+        fixed the videoTracks support. Now the OW player properly adds and
+        removes the audio and video tracks. Added the getSettings support
+        to the mediastream interface. Solved also the size handling in
+        some of the enable/muted situations.
+
+        Unskipping fast/mediastream/MediaStream-video-element-track-stop.html.
+
+        * platform/GStreamer.cmake: Added the new
+        RealtimeMediaSourceOwr.cpp with the new code handling the
+        settings.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::~MediaPlayerPrivateGStreamerOwr):
+        Release the new video and audio maps that creates a relationship
+        of the mediastream tracks with the mediatracks of the video element.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::play): Set ended to
+        false when we start playing.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::load): Create the media
+        tracks to the player so that the videoTracks API returns it, and
+        add an entry in the map to be able to restore it using the
+        mediastream track.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::disableMediaTracks):
+        Move some part of the stop function to this one in order to use it
+        in pause method and avoid changing the video selection in that
+        case.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::stop): Now we call the
+        function disableMediaTracks and we also change teh selected
+        videoTrack.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnded): For
+        videoTrack reset the size and the selected element. In case there
+        is no media playing we Make sure we set the ended variable to true
+        and call the timeChange to modify the state of the player.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnabledChanged):
+        Handle properly the situation when the user changed the enabled
+        value, we disable the media.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::setSize): Modify the
+        size of the source.
+        (WebCore::MediaPlayerPrivateGStreamerOwr::naturalSize): Overrided
+        to make sure we return a size even when the sample is not ready
+        for gst.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.h:
+        Added the ended attribute and the maps.
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::createMutedRemoteSource): Use the new
+        realtime video and audio sources classes, this new classes
+        implement the settings of each type of media element.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable):
+        Use the new audio and video source classes instead of the general
+        one in order to handle the settings properly.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.cpp: Added
+        (WebCore::RealtimeMediaSourceOwr::settings): Initialize using the
+        subclass and return the new currentSettings attribute.
+        (WebCore::RealtimeMediaSourceOwr::supportedConstraints): Call the
+        subclass initialization of the supportedSettings.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+        (WebCore::RealtimeMediaSourceOwr::initializeSettings): Added to
+        initialize the settings before returning the value. Implemented in
+        the subclass.
+        (WebCore::RealtimeMediaSourceOwr::initializeSupportedConstraints):
+        Added to initialize the supported settings of the
+        media. Implemented in the subclass.
+        (WebCore::RealtimeMediaSourceOwr::settings): Moved to the cpp
+        file, implemented using the initialize functions of the subclass
+        * platform/mediastream/openwebrtc/RealtimeVideoSourceOwr.h: Added
+        this new class to handle the settings of the video elements. The
+        class initializes the settings and the supportedSettings.
+        * platform/mediastream/openwebrtc/RealtimeAudioSourceOwr.h: Added
+        this new class to handle the settings of the audio elements. The
+        class initializes the settings and the supportedSettings.
+
+
 2017-01-08  Konstantin Tokarev  <annulen@yandex.ru>
 
         Introduce CPU(X86_SSE2) instead of various SSE2 checks
