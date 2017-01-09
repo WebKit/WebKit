@@ -1,3 +1,32 @@
+2017-01-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r178955): Touching Settings.in doesn't cause JSInternalSettingsGenerated.cpp to be updated on first build
+        https://bugs.webkit.org/show_bug.cgi?id=166814
+
+        Reviewed by Darin Adler.
+
+        Stop using .INTERMEDIATE in DerivedSources.make was it seems to break dependency
+        chains for some reason. We started using .INTERMEDIATE for scripts that generate
+        several targets when run a single time. It avoided running the script several
+        times (once per target) unnecessarily, and fixed issues with parallel builds.
+
+        To address the same issue without using .INTERMEDIATE, we now use pattern rules
+        (i.e. rules that have '%'). As per the documentation [1]:
+        "Pattern rules may have more than one target. Unlike normal rules, this does not
+         act as many different rules with the same prerequisites and recipe. If a pattern
+         rule has multiple targets, make knows that the rule’s recipe is responsible for
+         making all of the targets. The recipe is executed only once to make all the
+         targets".
+
+         We are therefore solving the same problem as with .INTERMEDIATE. However, I have
+         confirmed that using pattern rules does not break dependency chains. For example,
+         modifying Settings.in re-generates both InternalSettingsGenerated.idl *and*
+         JSInternalSettingsGenerated.cpp.
+
+         [1] https://www.gnu.org/software/make/manual/html_node/Pattern-Intro.html#Pattern-Intro
+
+        * DerivedSources.make:
+
 2017-01-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210493 and r210495.

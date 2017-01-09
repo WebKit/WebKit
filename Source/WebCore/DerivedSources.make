@@ -954,15 +954,13 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCS
 WEBCORE_CSS_VALUE_KEYWORDS_DEFINES := $(FEATURE_DEFINES) $(ADDITIONAL_CSS_VALUE_KEYWORDS_DEFINES)
 WEBCORE_CSS_PROPERTIES_DEFINES := $(FEATURE_DEFINES) $(ADDITIONAL_CSS_PROPERTIES_DEFINES)
 
-CSSPropertyNames.h CSSPropertyNames.cpp StyleBuilder.cpp StylePropertyShorthandFunctions.h StylePropertyShorthandFunctions.cpp : makeprop.intermediate
-.INTERMEDIATE : makeprop.intermediate
-makeprop.intermediate : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(PLATFORM_FEATURE_DEFINES)
+all : CSSPropertyNames.h CSSPropertyNames.cpp StyleBuilder.cpp StylePropertyShorthandFunctions.h StylePropertyShorthandFunctions.cpp
+CSSPropertyNames%h CSSPropertyNames%cpp StyleBuilder%cpp StylePropertyShorthandFunctions%h StylePropertyShorthandFunctions%cpp : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSProperties.json
 	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(WEBCORE_CSS_PROPERTIES_DEFINES)"
 
-CSSValueKeywords.h CSSValueKeywords.cpp : makevalues.intermediate
-.INTERMEDIATE : makevalues.intermediate
-makevalues.intermediate : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
+all : CSSValueKeywords.h CSSValueKeywords.cpp
+CSSValueKeywords%h CSSValueKeywords%cpp : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	$(PERL) "$(WebCore)/css/makevalues.pl" --defines "$(WEBCORE_CSS_VALUE_KEYWORDS_DEFINES)"
 
@@ -1111,9 +1109,8 @@ PlugInsResources.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.p
 
 # --------
 
-WebKitFontFamilyNames.cpp WebKitFontFamilyNames.h: WebKitFontFamilyMakeNames.intermediate
-.INTERMEDIATE : WebKitFontFamilyMakeNames.intermediate
-WebKitFontFamilyMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm css/WebKitFontFamilyNames.in
+all : WebKitFontFamilyNames.cpp WebKitFontFamilyNames.h
+WebKitFontFamilyNames%cpp WebKitFontFamilyNames%h: dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm css/WebKitFontFamilyNames.in
 	$(PERL) $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in
 
 # HTML tag and attribute names
@@ -1154,17 +1151,16 @@ ifeq ($(findstring ENABLE_ENCRYPTED_MEDIA,$(FEATURE_DEFINES)), ENABLE_ENCRYPTED_
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_ENCRYPTED_MEDIA=1
 endif
 
-JSHTMLElementWrapperFactory.cpp JSHTMLElementWrapperFactory.h HTMLElementFactory.cpp HTMLElementFactory.h HTMLElementTypeHelpers.h HTMLNames.cpp HTMLNames.h : htmlMakeNames.intermediate
-.INTERMEDIATE : htmlMakeNames.intermediate
+all : JSHTMLElementWrapperFactory.cpp JSHTMLElementWrapperFactory.h HTMLElementFactory.cpp HTMLElementFactory.h HTMLElementTypeHelpers.h HTMLNames.cpp HTMLNames.h
 
 ifdef HTML_FLAGS
 
-htmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
+JSHTMLElementWrapperFactory%cpp JSHTMLElementWrapperFactory%h HTMLElementFactory%cpp HTMLElementFactory%h HTMLElementTypeHelpers%h HTMLNames%cpp HTMLNames%h : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
 	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --extraDefines "$(HTML_FLAGS)"
 
 else
 
-htmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
+JSHTMLElementWrapperFactory%cpp JSHTMLElementWrapperFactory%h HTMLElementFactory%cpp HTMLElementFactory%h HTMLElementTypeHelpers%h HTMLNames%cpp HTMLNames%h : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
 	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
 endif
@@ -1185,15 +1181,14 @@ endif
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 
-JSSVGElementWrapperFactory.cpp JSSVGElementWrapperFactory.h SVGElementFactory.cpp SVGElementFactory.h SVGElementTypeHelpers.h SVGNames.cpp SVGNames.h : svgMakeNames.intermediate
-.INTERMEDIATE : svgMakeNames.intermediate
+all : JSSVGElementWrapperFactory.cpp JSSVGElementWrapperFactory.h SVGElementFactory.cpp SVGElementFactory.h SVGElementTypeHelpers.h SVGNames.cpp SVGNames.h
 
 ifdef SVG_FLAGS
-svgMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
+JSSVGElementWrapperFactory%cpp JSSVGElementWrapperFactory%h SVGElementFactory%cpp SVGElementFactory%h SVGElementTypeHelpers%h SVGNames%cpp SVGNames%h : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" --factory --wrapperFactory
 else
 
-svgMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
+JSSVGElementWrapperFactory%cpp JSSVGElementWrapperFactory%h SVGElementFactory%cpp SVGElementFactory%h SVGElementTypeHelpers%h SVGNames%cpp SVGNames%h : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
 	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
 endif
@@ -1207,39 +1202,34 @@ XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/S
 
 EVENT_NAMES = EventNames.in $(ADDITIONAL_EVENT_NAMES)
 
-EventFactory.cpp EventHeaders.h EventInterfaces.h : EventFactory.intermediate
-.INTERMEDIATE : EventFactory.intermediate
-EventFactory.intermediate : dom/make_event_factory.pl $(EVENT_NAMES)
+all : EventFactory.cpp EventHeaders.h EventInterfaces.h
+EventFactory%cpp EventHeaders%h EventInterfaces%h : dom/make_event_factory.pl $(EVENT_NAMES)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
 EVENT_TARGET_FACTORY = EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
 
-EventTargetHeaders.h EventTargetInterfaces.h : EventTargetFactory.intermediate
-.INTERMEDIATE : EventTargetFactory.intermediate
-EventTargetFactory.intermediate : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
+all : EventTargetHeaders.h EventTargetInterfaces.h
+EventTargetHeaders%h EventTargetInterfaces%h : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
-ExceptionCodeDescription.cpp ExceptionCodeDescription.h ExceptionHeaders.h ExceptionInterfaces.h : MakeDOMExceptions.intermediate
-.INTERMEDIATE : MakeDOMExceptions.intermediate
-MakeDOMExceptions.intermediate : dom/make_dom_exceptions.pl dom/DOMExceptions.in
+all : ExceptionCodeDescription.cpp ExceptionCodeDescription.h ExceptionHeaders.h ExceptionInterfaces.h
+ExceptionCodeDescription%cpp ExceptionCodeDescription%h ExceptionHeaders%h ExceptionInterfaces%h : dom/make_dom_exceptions.pl dom/DOMExceptions.in
 	$(PERL) $< --input $(WebCore)/dom/DOMExceptions.in
 
 # --------
 
 # MathML tag and attribute names, and element factory
 
-JSMathMLElementWrapperFactory.cpp JSMathMLElementWrapperFactory.h MathMLElementFactory.cpp MathMLElementFactory.h MathMLElementTypeHelpers.h MathMLNames.cpp MathMLNames.h : mathmlMakeNames.intermediate
-.INTERMEDIATE : mathmlMakeNames.intermediate
-mathmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm mathml/mathtags.in mathml/mathattrs.in
+all : JSMathMLElementWrapperFactory.cpp JSMathMLElementWrapperFactory.h MathMLElementFactory.cpp MathMLElementFactory.h MathMLElementTypeHelpers.h MathMLNames.cpp MathMLNames.h
+JSMathMLElementWrapperFactory%cpp JSMathMLElementWrapperFactory%h MathMLElementFactory%cpp MathMLElementFactory%h MathMLElementTypeHelpers%h MathMLNames%cpp MathMLNames%h : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm mathml/mathtags.in mathml/mathattrs.in
 	$(PERL) $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
 
 # --------
 
 # Internal Settings
 
-InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h SettingsMacros.h : MakeSettings.intermediate
-.INTERMEDIATE : MakeSettings.intermediate
-MakeSettings.intermediate : page/make_settings.pl page/Settings.in
+all : InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h SettingsMacros.h
+InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h SettingsMacros%h : page/make_settings.pl page/Settings.in
 	$(PERL) $< --input $(WebCore)/page/Settings.in
 
 # --------
@@ -1302,7 +1292,7 @@ $(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(
 	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	$(DELETE) $(IDL_FILES_TMP)
 
-JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
+JS%.cpp JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)
