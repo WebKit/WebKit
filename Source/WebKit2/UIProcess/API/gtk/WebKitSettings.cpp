@@ -679,7 +679,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:default-font-family:
+     * WebKitSettings:default-font-family:
      *
      * The font family to use as the default for content that does not specify a font.
      */
@@ -692,7 +692,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:monospace-font-family:
+     * WebKitSettings:monospace-font-family:
      *
      * The font family used as the default for content using a monospace font.
      *
@@ -706,7 +706,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:serif-font-family:
+     * WebKitSettings:serif-font-family:
      *
      * The font family used as the default for content using a serif font.
      */
@@ -719,7 +719,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:sans-serif-font-family:
+     * WebKitSettings:sans-serif-font-family:
      *
      * The font family used as the default for content using a sans-serif font.
      */
@@ -732,7 +732,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:cursive-font-family:
+     * WebKitSettings:cursive-font-family:
      *
      * The font family used as the default for content using a cursive font.
      */
@@ -745,7 +745,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:fantasy-font-family:
+     * WebKitSettings:fantasy-font-family:
      *
      * The font family used as the default for content using a fantasy font.
      */
@@ -758,7 +758,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:pictograph-font-family:
+     * WebKitSettings:pictograph-font-family:
      *
      * The font family used as the default for content using a pictograph font.
      */
@@ -771,7 +771,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:default-font-size:
+     * WebKitSettings:default-font-size:
      *
      * The default font size in pixels to use for content displayed if
      * no font size is specified.
@@ -785,7 +785,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                       readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:default-monospace-font-size:
+     * WebKitSettings:default-monospace-font-size:
      *
      * The default font size in pixels to use for content displayed in
      * monospace font if no font size is specified.
@@ -799,7 +799,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                       readWriteConstructParamFlags));
 
     /**
-     * WebKitWebSettings:minimum-font-size:
+     * WebKitSettings:minimum-font-size:
      *
      * The minimum font size in points used to display text. This setting
      * controls the absolute smallest size. Values other than 0 can
