@@ -10,6 +10,26 @@ window.UIHelper = class UIHelper {
         return window.testRunner.isWebKit2;
     }
 
+    static tapAt(x, y)
+    {
+        console.assert(this.isIOS());
+
+        if (!this.isWebKit2()) {
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            testRunner.runUIScript(`
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete('Done');
+                });`, resolve);
+        });
+    }
+
     static activateAt(x, y)
     {
         if (!this.isWebKit2() || !this.isIOS()) {

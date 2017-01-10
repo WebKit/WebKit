@@ -1,3 +1,19 @@
+2017-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an iOS test for tapping on a text node assigned to a slot
+        https://bugs.webkit.org/show_bug.cgi?id=166877
+
+        Reviewed by Andy Estes.
+
+        Add a test for tapping on a text node assigned to a slot.
+        touchstart event must be fired on a parent of the slot with a touch event handler.
+
+        * TestExpectations:
+        * fast/shadow-dom/touch-event-on-text-assigned-to-slot-expected.txt: Added.
+        * fast/shadow-dom/touch-event-on-text-assigned-to-slot.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.tapAt): Added.
+
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement JSSourceCode to propagate SourceCode in module pipeline

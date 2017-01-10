@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Tests for tapping on a text node assigned to a slot. touchstart should fire on the slot.</p>
+<div id="target">Tap here</div>
+<div id="result"></div>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+
+var target = document.getElementById('target');
+var result = document.getElementById('result');
+
+let shadowRoot = target.attachShadow({mode: 'closed'});
+shadowRoot.innerHTML = `<span><slot></slot></span>`;
+shadowRoot.querySelector('span').addEventListener('touchstart', (event) => {
+    result.textContent = 'PASS';
+});
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    UIHelper.wait(UIHelper.tapAt(target.offsetLeft + 5, target.offsetTop + 5).then(() => {
+        if (!result.textContent)
+            result.textContent = 'FAIL';
+    }));
+}
+
+</script>
+</body>
+</html>
