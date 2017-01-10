@@ -1,3 +1,35 @@
+2017-01-09  Filip Pizlo  <fpizlo@apple.com>
+
+        JSArray has some object scanning races
+        https://bugs.webkit.org/show_bug.cgi?id=166874
+
+        Reviewed by Mark Lam.
+        
+        This fixes two separate bugs, both of which I detected by running
+        array-splice-contiguous.js in extreme anger:
+        
+        1) Some of the paths of shifting and unshifting were not grabbing the internal cell
+           lock. This was causing the array storage scan to crash, even though it was well
+           synchronized (the scan does hold the lock). The fix is just to hold the lock anywhere
+           that memmoves the innards of the butterfly.
+        
+        2) Out of line property scanning was synchronized using double collect snapshot. Array
+           storage scanning was synchronized using locks. But what if array storage
+           transformations messed up the out of line properties? It turns out that we actually
+           need to hoist the array storage scanner's locking up into the double collect
+           snapshot.
+        
+        I don't know how to write a test that does any better of a job of catching this than
+        array-splice-contiguous.js.
+
+        * heap/DeferGC.h: Make DisallowGC usable even if NDEBUG.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::unshiftCountWithArrayStorage):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterflyImpl):
+
 2017-01-10  Andreas Kling  <akling@apple.com>
 
         Crash when GC heap grows way too large.

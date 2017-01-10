@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,31 +67,41 @@ private:
     Heap& m_heap;
 };
 
-#ifndef NDEBUG
 class DisallowGC {
     WTF_MAKE_NONCOPYABLE(DisallowGC);
 public:
     DisallowGC()
     {
+#ifndef NDEBUG
         WTF::threadSpecificSet(s_isGCDisallowedOnCurrentThread, reinterpret_cast<void*>(true));
+#endif
     }
 
     ~DisallowGC()
     {
+#ifndef NDEBUG
         WTF::threadSpecificSet(s_isGCDisallowedOnCurrentThread, reinterpret_cast<void*>(false));
+#endif
     }
 
     static bool isGCDisallowedOnCurrentThread()
     {
+#ifndef NDEBUG
         return !!WTF::threadSpecificGet(s_isGCDisallowedOnCurrentThread);
+#else
+        return false;
+#endif
     }
     static void initialize()
     {
+#ifndef NDEBUG
         WTF::threadSpecificKeyCreate(&s_isGCDisallowedOnCurrentThread, 0);
+#endif
     }
 
+#ifndef NDEBUG
     JS_EXPORT_PRIVATE static WTF::ThreadSpecificKey s_isGCDisallowedOnCurrentThread;
+#endif
 };
-#endif // NDEBUG
 
 } // namespace JSC
