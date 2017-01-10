@@ -1,3 +1,14 @@
+2017-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        svn-apply failed to apply a patch (deleting file with svn property)
+        https://bugs.webkit.org/show_bug.cgi?id=165953
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/VCSUtils.pm:
+        (parseSvnPropertyValue): The beginning of a diff will cause an early exit in the case of no empty newlines.
+        * Scripts/webkitperl/VCSUtils_unittest/parseSvnProperty.pl: Add tests without break between diffs for properties.
+
 2017-01-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update flakiness dashboard configuration.

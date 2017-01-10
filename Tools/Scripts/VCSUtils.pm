@@ -1565,7 +1565,7 @@ sub parseSvnPropertyValue($$)
     }
 
     while (<$fileHandle>) {
-        if (/^[\r\n]+$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/ || /$svnPropertyValueNoNewlineRegEx/) {
+        if (/^[\r\n]+$/ || /$svnPropertyValueStartRegEx/ || /$svnPropertyStartRegEx/ || /$svnPropertyValueNoNewlineRegEx/ || /$svnDiffStartRegEx/) {
             # Note, we may encounter an empty line before the contents of a binary patch.
             # Also, we check for $svnPropertyValueStartRegEx because a '-' property may be
             # followed by a '+' property in the case of a "Modified" or "Name" property.
