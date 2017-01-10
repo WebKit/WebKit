@@ -1,0 +1,75 @@
+diff --git a/resources/runner/animometer.js b/resources/runner/animometer.js
+index b20a1c9..e434e89 100644
+--- a/resources/runner/animometer.js
++++ b/resources/runner/animometer.js
+@@ -320,6 +320,61 @@ window.benchmarkRunnerClient = {
+     didFinishLastIteration: function()
+     {
+         benchmarkController.showResults();
++    },
++
++    _computeTestReport: function(testName, testResults)
++    {
++        return [testResults[Strings.json.score]];
++    },
++
++    _computeSuiteReports: function(suiteName, suiteResults)
++    {
++        var testsReports = {};
++        for (var testName in suiteResults) {
++            var testReports = this._computeTestReport(testName, suiteResults[testName]);
++            testsReports[testName] = { "metrics": { "Score": { "current": testReports } } };
++        }
++        return testsReports;
++    },
++
++    _computeIterationReports: function(iterationResults)
++    {
++        var suitesReports = {};
++        for (var suiteName in iterationResults[Strings.json.results.tests]) {
++            var testsReports = this._computeSuiteReports(suiteName, iterationResults[Strings.json.results.tests][suiteName]);
++            suitesReports[suiteName] = { "metrics": { "Score": ["Geometric"] }, "tests": testsReports };
++        }
++        return suitesReports;
++    },
++
++    _computeResultsReports: function()
++    {
++        var results = this.results.results[0];
++        var iterationReports = this._computeIterationReports(results);
++        var debugOutput = {
++            options: benchmarkRunnerClient.results.options,
++            data: benchmarkRunnerClient.results.data,
++        }
++        return {"Animometer": {"metrics" : {"Score" : ["Geometric"]}, "tests" : iterationReports }, "debugOutput": debugOutput};
++    },
++
++    didFinishLastIteration: function()
++    {
++        // submit result to server
++        var results = JSON.stringify(this._computeResultsReports());
++        var xhr = new XMLHttpRequest();
++        xhr.open("POST", "/report");
++        xhr.setRequestHeader("Content-type", "application/json");
++        xhr.setRequestHeader("Content-length", results.length);
++        xhr.setRequestHeader("Connection", "close");
++        xhr.onreadystatechange = function() {
++            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                closeRequest = new XMLHttpRequest();
++                closeRequest.open("GET", "/shutdown");
++                closeRequest.send()
++            }
++        }
++        xhr.send(results);
+     }
+ };
+
+@@ -357,7 +408,7 @@ window.sectionsManager =
+ window.benchmarkController = {
+     initialize: function()
+     {
+-        benchmarkController.addOrientationListenerIfNecessary();
++        setTimeout(benchmarkController.startBenchmark.bind(benchmarkController), 3000);
+     },
+
+     addOrientationListenerIfNecessary: function() {

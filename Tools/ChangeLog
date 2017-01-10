@@ -1,3 +1,9 @@
+2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Temporarily add back the file removed in r210463 to unbreak internal bots.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch: Copied from Tools/Scripts/webkitpy/benchmark_runner/data/patches/Animometer.patch.
+
 2017-01-10  Jonathan Bedard  <jbedard@apple.com>
 
         svn-apply failed to apply a patch (deleting file with svn property)
