@@ -1,3 +1,16 @@
+2017-01-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r189555): ImageDocument title no longer includes the size of the image
+        https://bugs.webkit.org/show_bug.cgi?id=166876
+        <rdar://problem/29939970>
+
+        Reviewed by Tim Horton.
+
+        Add layout test coverage.
+
+        * fast/images/imageDocument-title-expected.txt: Added.
+        * fast/images/imageDocument-title.html: Added.
+
 2017-01-09  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: newLogicalTop >= logicalTop in WebCore::RenderBlockFlow::getClearDelta

@@ -1,3 +1,22 @@
+2017-01-09  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r189555): ImageDocument title no longer includes the size of the image
+        https://bugs.webkit.org/show_bug.cgi?id=166876
+        <rdar://problem/29939970>
+
+        Reviewed by Tim Horton.
+
+        ImageDocument title no longer included the size of the image after r189555.
+        This is because Document::setTitle() is a no-op if the document does not
+        have a <head> element. To address the issue, we now include a <head>
+        element in ImageDocuments so that their title element properly gets added
+        to it.
+
+        Test: fast/images/imageDocument-title.html
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+
 2017-01-09  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: newLogicalTop >= logicalTop in WebCore::RenderBlockFlow::getClearDelta
