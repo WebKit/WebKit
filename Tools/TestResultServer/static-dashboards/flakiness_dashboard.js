@@ -43,12 +43,6 @@ var PLATFORMS = {
             'MAC': {
                 expectationsDirectory: 'mac',
                 subPlatforms: {
-                    'YOSEMITE': {
-                        subPlatforms: {
-                            'WK1': { fallbackPlatforms: ['APPLE_MAC_YOSEMITE', 'APPLE_MAC'] },
-                            'WK2': { fallbackPlatforms: ['APPLE_MAC_YOSEMITE', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
-                        }
-                    },
                     'ELCAPITAN': {
                         subPlatforms: {
                             'WK1': { fallbackPlatforms: ['APPLE_MAC_ELCAPITAN', 'APPLE_MAC'] },
@@ -358,8 +352,6 @@ function determineBuilderPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'SIERRA');
     if (string.contains(builderNameUpperCase, 'EL CAPITAN'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_ELCAPITAN');
-    if (string.contains(builderNameUpperCase, 'YOSEMITE'))
-        return determineWKPlatform(builderNameUpperCase, 'APPLE_YOSEMITE');
     if (string.contains(builderNameUpperCase, 'MAVERICKS'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAVERICKS');
     if (string.contains(builderNameUpperCase, 'LION'))

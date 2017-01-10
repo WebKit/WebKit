@@ -1,3 +1,13 @@
+2017-01-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update flakiness dashboard configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=166869
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2017-01-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Stop honoring the environment variable USE_NATIVE_XDISPLAY
