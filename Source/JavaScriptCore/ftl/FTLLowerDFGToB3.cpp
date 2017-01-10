@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12960,8 +12960,13 @@ private:
 
     void emitStoreBarrier(LValue base, bool isFenced)
     {
+        LBasicBlock recheckPath = nullptr;
+        if (isFenced)
+            recheckPath = m_out.newBlock();
         LBasicBlock slowPath = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
+        
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(isFenced ? recheckPath : slowPath);
 
         LValue threshold;
         if (isFenced)
@@ -12971,76 +12976,23 @@ private:
         
         m_out.branch(
             m_out.above(loadCellState(base), threshold),
-            usually(continuation), rarely(slowPath));
-
-        LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
+            usually(continuation), rarely(isFenced ? recheckPath : slowPath));
         
-        // We emit the store barrier slow path lazily. In a lot of cases, this will never fire. And
-        // when it does fire, it makes sense for us to generate this code using our JIT rather than
-        // wasting B3's time optimizing it.
-        PatchpointValue* patchpoint = lazySlowPath(
-            [=] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
-                GPRReg baseGPR = locations[1].directGPR();
+        if (isFenced) {
+            m_out.appendTo(recheckPath, slowPath);
+            
+            m_out.fence(&m_heaps.root, &m_heaps.JSCell_cellState);
+            
+            m_out.branch(
+                m_out.above(loadCellState(base), m_out.constInt32(blackThreshold)),
+                usually(continuation), rarely(slowPath));
+        }
 
-                return LazySlowPath::createGenerator(
-                    [=] (CCallHelpers& jit, LazySlowPath::GenerationParams& params) {
-                        if (isFenced) {
-                            CCallHelpers::Jump noFence = jit.jumpIfMutatorFenceNotNeeded();
-                            jit.memoryFence();
-                            params.doneJumps.append(jit.barrierBranchWithoutFence(baseGPR));
-                            noFence.link(&jit);
-                        }
-                        
-                        RegisterSet usedRegisters = params.lazySlowPath->usedRegisters();
-                        ScratchRegisterAllocator scratchRegisterAllocator(usedRegisters);
-                        scratchRegisterAllocator.lock(baseGPR);
-
-                        GPRReg scratch1 = scratchRegisterAllocator.allocateScratchGPR();
-                        GPRReg scratch2 = scratchRegisterAllocator.allocateScratchGPR();
-
-                        ScratchRegisterAllocator::PreservedState preservedState =
-                            scratchRegisterAllocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
-
-                        // We've already saved these, so when we make a slow path call, we don't have
-                        // to save them again.
-                        usedRegisters.exclude(RegisterSet(scratch1, scratch2));
-
-                        WriteBarrierBuffer& writeBarrierBuffer = jit.vm()->heap.writeBarrierBuffer();
-                        jit.load32(writeBarrierBuffer.currentIndexAddress(), scratch2);
-                        CCallHelpers::Jump needToFlush = jit.branch32(
-                            CCallHelpers::AboveOrEqual, scratch2,
-                            CCallHelpers::TrustedImm32(writeBarrierBuffer.capacity()));
-
-                        jit.add32(CCallHelpers::TrustedImm32(1), scratch2);
-                        jit.store32(scratch2, writeBarrierBuffer.currentIndexAddress());
-
-                        jit.move(CCallHelpers::TrustedImmPtr(writeBarrierBuffer.buffer()), scratch1);
-                        jit.storePtr(
-                            baseGPR,
-                            CCallHelpers::BaseIndex(
-                                scratch1, scratch2, CCallHelpers::ScalePtr,
-                                static_cast<int32_t>(-sizeof(void*))));
-
-                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, preservedState);
-
-                        params.doneJumps.append(jit.jump());
-
-                        needToFlush.link(&jit);
-                        callOperation(
-                            usedRegisters, jit, params.lazySlowPath->callSiteIndex(),
-                            params.exceptionJumps, operationFlushWriteBarrierBuffer, InvalidGPRReg,
-                            baseGPR);
-                        scratchRegisterAllocator.restoreReusedRegistersByPopping(jit, preservedState);
-                        params.doneJumps.append(jit.jump());
-                    });
-            },
-            base);
+        m_out.appendTo(slowPath, continuation);
         
-        if (isFenced)
-            m_heaps.decoratePatchpointRead(&m_heaps.root, patchpoint);
-        else
-            m_heaps.decoratePatchpointRead(&m_heaps.JSCell_cellState, patchpoint);
-        m_heaps.decoratePatchpointWrite(&m_heaps.JSCell_cellState, patchpoint);
+        LValue call = vmCall(Void, m_out.operation(operationWriteBarrierSlowPath), m_callFrame, base);
+        m_heaps.decorateCCallRead(&m_heaps.root, call);
+        m_heaps.decorateCCallWrite(&m_heaps.JSCell_cellState, call);
         
         m_out.jump(continuation);
 

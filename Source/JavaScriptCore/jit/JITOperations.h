@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -426,7 +426,6 @@ void JIT_OPERATION operationPutToScope(ExecState*, Instruction* bytecodePC) WTF_
 char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitialCapacity(ExecState*, JSObject*) WTF_INTERNAL;
 char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*, JSObject*, size_t newSize) WTF_INTERNAL;
 
-void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState*, JSCell*);
 void JIT_OPERATION operationWriteBarrierSlowPath(ExecState*, JSCell*);
 void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
 

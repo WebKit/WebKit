@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,17 +29,20 @@
 
 namespace JSC {
 
+// The CellState of a cell is a kind of hint about what the state of the cell is.
 enum class CellState : uint8_t {
     // The object is either currently being scanned, or it has finished being scanned, or this
     // is a full collection and it's actually a white object (you'd know because its mark bit
     // would be clear).
-    PossiblyOldOrBlack = 0,
+    PossiblyBlack = 0,
     
     // The object is in eden. During GC, this means that the object has not been marked yet.
-    DefinitelyNewAndWhite = 1,
+    DefinitelyWhite = 1,
 
-    // The object is grey - i.e. it will be scanned.
-    DefinitelyGrey = 2,
+    // This sorta means that the object is grey - i.e. it will be scanned. Or it could be white
+    // during a full collection if its mark bit is clear. That would happen if it had been black,
+    // got barriered, and we did a full collection.
+    PossiblyGrey = 2
 };
 
 static const unsigned blackThreshold = 0; // x <= blackThreshold means x is PossiblyOldOrBlack.

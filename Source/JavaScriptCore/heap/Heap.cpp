@@ -263,7 +263,6 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_codeBlocks(std::make_unique<CodeBlockSet>())
     , m_jitStubRoutines(std::make_unique<JITStubRoutineSet>())
     , m_isSafeToCollect(false)
-    , m_writeBarrierBuffer(256)
     , m_vm(vm)
     // We seed with 10ms so that GCActivityCallback::didAllocate doesn't continuously 
     // schedule the timer if we've never done a collection.
@@ -584,7 +583,7 @@ void Heap::markToFixpoint(double gcStartTime)
     
     for (unsigned iteration = 1; ; ++iteration) {
         if (Options::logGC())
-            dataLog("i#", iteration, " ", slotVisitor.collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + slotVisitor.mutatorMarkStack().size(), " b=", m_barriersExecuted, " ");
+            dataLog("i#", iteration, " b=", m_barriersExecuted, " ");
         
         if (slotVisitor.didReachTermination()) {
             assertSharedMarkStacksEmpty();
@@ -609,6 +608,9 @@ void Heap::markToFixpoint(double gcStartTime)
             
             m_scheduler->didExecuteConstraints();
         }
+        
+        if (Options::logGC())
+            dataLog(slotVisitor.collectorMarkStack().size(), "+", m_mutatorMarkStack->size() + slotVisitor.mutatorMarkStack().size(), " ");
         
         {
             ParallelModeEnabler enabler(slotVisitor);
@@ -940,24 +942,58 @@ void Heap::deleteUnmarkedCompiledCode()
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 
-void Heap::addToRememberedSet(const JSCell* cell)
+void Heap::addToRememberedSet(const JSCell* constCell)
 {
+    JSCell* cell = const_cast<JSCell*>(constCell);
     ASSERT(cell);
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
     m_barriersExecuted++;
-    if (!Heap::isMarkedConcurrently(cell)) {
-        // During a full collection a store into an unmarked object that had surivived past
-        // collections will manifest as a store to an unmarked black object. If the object gets
-        // marked at some time after this then it will go down the normal marking path. We can
-        // safely ignore these stores.
-        return;
-    }
+    if (m_mutatorShouldBeFenced) {
+        WTF::loadLoadFence();
+        if (!isMarkedConcurrently(cell)) {
+            // During a full collection a store into an unmarked object that had surivived past
+            // collections will manifest as a store to an unmarked PossiblyBlack object. If the
+            // object gets marked at some time after this then it will go down the normal marking
+            // path. So, we don't have to remember this object. We could return here. But we go
+            // further and attempt to re-white the object.
+            
+            RELEASE_ASSERT(m_collectionScope == CollectionScope::Full);
+            
+            if (cell->atomicCompareExchangeCellStateStrong(CellState::PossiblyBlack, CellState::DefinitelyWhite) == CellState::PossiblyBlack) {
+                // Now we protect against this race:
+                //
+                //     1) Object starts out black + unmarked.
+                //     --> We do isMarkedConcurrently here.
+                //     2) Object is marked and greyed.
+                //     3) Object is scanned and blacked.
+                //     --> We do atomicCompareExchangeCellStateStrong here.
+                //
+                // In this case we would have made the object white again, even though it should
+                // be black. This check lets us correct our mistake. This relies on the fact that
+                // isMarkedConcurrently converges monotonically to true.
+                if (isMarkedConcurrently(cell)) {
+                    // It's difficult to work out whether the object should be grey or black at
+                    // this point. We say black conservatively.
+                    cell->setCellState(CellState::PossiblyBlack);
+                }
+                
+                // Either way, we can return. Most likely, the object was not marked, and so the
+                // object is now labeled white. This means that future barrier executions will not
+                // fire. In the unlikely event that the object had become marked, we can still
+                // return anyway, since we proved that the object was not marked at the time that
+                // we executed this slow path.
+            }
+            
+            return;
+        }
+    } else
+        ASSERT(Heap::isMarkedConcurrently(cell));
     // It could be that the object was *just* marked. This means that the collector may set the
     // state to DefinitelyGrey and then to PossiblyOldOrBlack at any time. It's OK for us to
     // race with the collector here. If we win then this is accurate because the object _will_
     // get scanned again. If we lose then someone else will barrier the object again. That would
     // be unfortunate but not the end of the world.
-    cell->setCellState(CellState::DefinitelyGrey);
+    cell->setCellState(CellState::PossiblyGrey);
     m_mutatorMarkStack->append(cell);
 }
 
@@ -1177,7 +1213,6 @@ void Heap::stopTheWorld()
     
     vm()->shadowChicken().update(*vm(), vm()->topCallFrame);
     
-    flushWriteBarrierBuffer();
     m_structureIDTable.flushOldTables();
     m_objectSpace.stopAllocating();
     
@@ -1597,11 +1632,6 @@ void Heap::willStartCollection(std::optional<CollectionScope> scope)
         observer->willGarbageCollect();
 }
 
-void Heap::flushWriteBarrierBuffer()
-{
-    m_writeBarrierBuffer.flush(*this);
-}
-
 void Heap::prepareForMarking()
 {
     m_objectSpace.prepareForMarking();
@@ -1882,12 +1912,6 @@ void Heap::zombifyDeadObjects()
     m_objectSpace.forEachDeadCell(iterationScope, Zombify());
 }
 
-void Heap::flushWriteBarrierBuffer(JSCell* cell)
-{
-    m_writeBarrierBuffer.flush(*this);
-    m_writeBarrierBuffer.add(cell);
-}
-
 bool Heap::shouldDoFullCollection(std::optional<CollectionScope> scope) const
 {
     if (!Options::useGenerationalGC())
@@ -1965,7 +1989,7 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
         // In this case, the barrierThreshold is the tautological threshold, so from could still be
         // not black. But we can't know for sure until we fire off a fence.
         WTF::storeLoadFence();
-        if (from->cellState() != CellState::PossiblyOldOrBlack)
+        if (from->cellState() != CellState::PossiblyBlack)
             return;
     }
     
@@ -2213,7 +2237,7 @@ void Heap::buildConstraintSet()
                 [&] (CodeBlock* codeBlock) {
                     // Visit the CodeBlock as a constraint only if it's black.
                     if (Heap::isMarked(codeBlock)
-                        && codeBlock->cellState() == CellState::PossiblyOldOrBlack)
+                        && codeBlock->cellState() == CellState::PossiblyBlack)
                         slotVisitor.visitAsConstraint(codeBlock);
                 });
         },

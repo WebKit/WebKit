@@ -1,3 +1,47 @@
+2017-01-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Streamline the GC barrier slowpath
+        https://bugs.webkit.org/show_bug.cgi?id=166878
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+        
+        This implements two optimizations to the barrier:
+        
+        - Removes the write barrier buffer. This was just overhead.
+        
+        - Teaches the slow path how to white an object that was black but unmarked, ensuring that
+          we don't take slow path for this object again.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStoreBarrier):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::emitStoreBarrier):
+        * heap/CellState.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markToFixpoint):
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::stopTheWorld):
+        (JSC::Heap::writeBarrierSlowPath):
+        (JSC::Heap::buildConstraintSet):
+        (JSC::Heap::flushWriteBarrierBuffer): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrierBuffer): Deleted.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+        (JSC::SlotVisitor::setMarkedAndAppendToMarkStack):
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        * heap/WriteBarrierBuffer.cpp: Removed.
+        * heap/WriteBarrierBuffer.h: Removed.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::JSCell):
+        * runtime/StructureIDBlob.h:
+        (JSC::StructureIDBlob::StructureIDBlob):
+
 2017-01-10  Mark Lam  <mark.lam@apple.com>
 
         Property setters should not be called for bound arguments list entries.

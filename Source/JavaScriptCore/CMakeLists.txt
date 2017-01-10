@@ -510,7 +510,6 @@ set(JavaScriptCore_SOURCES
     heap/WeakBlock.cpp
     heap/WeakHandleOwner.cpp
     heap/WeakSet.cpp
-    heap/WriteBarrierBuffer.cpp
     heap/WriteBarrierSupport.cpp
 
     inspector/ConsoleMessage.cpp

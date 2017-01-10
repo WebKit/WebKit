@@ -43,7 +43,6 @@
 #include "VisitRaceKey.h"
 #include "WeakHandleOwner.h"
 #include "WeakReferenceHarvester.h"
-#include "WriteBarrierBuffer.h"
 #include "WriteBarrierSupport.h"
 #include <wtf/AutomaticThread.h>
 #include <wtf/Deque.h>
@@ -125,9 +124,6 @@ public:
     // Take this if you know that from->cellState() < barrierThreshold.
     JS_EXPORT_PRIVATE void writeBarrierSlowPath(const JSCell* from);
 
-    WriteBarrierBuffer& writeBarrierBuffer() { return m_writeBarrierBuffer; }
-    void flushWriteBarrierBuffer(JSCell*);
-    
     void writeBarrierOpaqueRoot(void*);
 
     Heap(VM*, HeapType);
@@ -445,7 +441,6 @@ private:
     
     void suspendCompilerThreads();
     void willStartCollection(std::optional<CollectionScope>);
-    void flushWriteBarrierBuffer();
     void prepareForMarking();
     
     void markToFixpoint(double gcStartTime);
@@ -564,7 +559,6 @@ private:
     
     bool m_isSafeToCollect;
 
-    WriteBarrierBuffer m_writeBarrierBuffer;
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };
     Vector<bool*> m_mutatorShouldBeFencedCaches;
