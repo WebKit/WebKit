@@ -1,3 +1,26 @@
+2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        :active and :hover states may not be updated across slots
+        https://bugs.webkit.org/show_bug.cgi?id=166881
+        <rdar://problem/29944582>
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by updateHoverActiveState not updating :hover and :active states on elements
+        when nodes are assigned to slots because they were walking up the tree using parentOrShadowHostElement
+        and parentNode. Fixed the bug by using parentElementInComposedTree instead since :hover and :active
+        states need to be updated in accordance with the render tree, which is created from the "flat tree"
+        or the "composed tree" in WebKit's terminology (this is old terminology in the spec).
+
+        Tests: fast/shadow-dom/clear-active-state-in-shadow.html
+               fast/shadow-dom/hover-over-nested-slotted-content.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState): Fixed the bug.
+        * dom/Node.cpp:
+        (WebCore::Node::parentElementInComposedTree): Added.
+        * dom/Node.h:
+
 2017-01-10  Keith Rollin  <krollin@apple.com>
 
         Missing logging in IconLoader::startLoading

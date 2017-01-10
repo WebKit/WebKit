@@ -1139,6 +1139,19 @@ ContainerNode* Node::parentInComposedTree() const
     return parentNode();
 }
 
+Element* Node::parentElementInComposedTree() const
+{
+    if (auto* slot = assignedSlot())
+        return slot;
+    if (auto* parent = parentNode()) {
+        if (is<ShadowRoot>(*parent))
+            return downcast<ShadowRoot>(*parent).host();
+        if (is<Element>(*parent))
+            return downcast<Element>(parent);
+    }
+    return nullptr;
+}
+
 bool Node::isInUserAgentShadowTree() const
 {
     auto* shadowRoot = containingShadowRoot();
