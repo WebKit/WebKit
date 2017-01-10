@@ -1,3 +1,16 @@
+2017-01-10  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r189555): ImageDocument title no longer includes the size of the image
+        https://bugs.webkit.org/show_bug.cgi?id=166876
+        <rdar://problem/29939970>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a code comment to clarify fix that was made in r210536.
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::createDocumentStructure):
+
 2017-01-10  Jer Noble  <jer.noble@apple.com>
 
         Add support for MediaKeys.generateRequest().

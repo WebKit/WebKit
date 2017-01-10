@@ -216,6 +216,7 @@ void ImageDocument::createDocumentStructure()
 
     frame()->injectUserScripts(InjectAtDocumentStart);
 
+    // We need a <head> so that the call to setTitle() later on actually has an <head> to append to <title> to.
     auto head = HTMLHeadElement::create(*this);
     rootElement->appendChild(head);
 
