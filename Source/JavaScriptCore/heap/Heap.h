@@ -507,6 +507,8 @@ private:
     
     void assertSharedMarkStacksEmpty();
 
+    NO_RETURN_DUE_TO_CRASH void didExceedHeapSizeLimit();
+
     const HeapType m_heapType;
     const size_t m_ramSize;
     const size_t m_minBytesPerCycle;

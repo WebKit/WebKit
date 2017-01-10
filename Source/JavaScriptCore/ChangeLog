@@ -1,3 +1,18 @@
+2017-01-10  Andreas Kling  <akling@apple.com>
+
+        Crash when GC heap grows way too large.
+        <https://webkit.org/b/166875>
+        <rdar://problem/27896585>
+
+        Reviewed by Mark Lam.
+
+        Hard cap the JavaScript heap at 4GB of live objects (determined post-GC.)
+        If we go past this limit, crash with a recognizable signature.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::didExceedHeapSizeLimit):
+        (JSC::Heap::updateAllocationLimits):
+
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement JSSourceCode to propagate SourceCode in module pipeline
