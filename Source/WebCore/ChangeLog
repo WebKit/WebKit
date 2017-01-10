@@ -1,3 +1,15 @@
+2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TextureMapper] TextureMapperPlatformLayerProxy::swapBuffers() should hold the lock throughout invocation
+        https://bugs.webkit.org/show_bug.cgi?id=166852
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::swapBuffer): Append to previous buffer
+        to the m_usedBuffers Vector while the object's lock is held. Everywhere else the
+        m_usedBuffers Vector is used under the lock, no reason to not do the same here.
+
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement JSSourceCode to propagate SourceCode in module pipeline
