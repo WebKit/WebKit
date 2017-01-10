@@ -38,7 +38,6 @@ class ChildClass extends BaseClass {
     }
 }
 
-// FIXME: super bindings in async arrow functions are broken
 shouldBeAsync("BaseClassValue", new ChildClass().asyncSuperProp());
 shouldBeAsync("BaseClassValue", new ChildClass().asyncSuperProp2());
 

@@ -1,3 +1,19 @@
+2017-01-10  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Calling async arrow function which is in a class's member function will cause error
+        https://bugs.webkit.org/show_bug.cgi?id=166879
+
+        Reviewed by Saam Barati.
+
+        Current patch fixed loading 'super' in async arrow function. Errored appear becuase 
+        super was loaded always nevertherless if it used in async arrow function or not, but bytecompiler
+        put to arrow function context only if it used within arrow function. So to fix this issue we need to 
+        check if super was used in arrow function. 
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+
 2017-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210537.

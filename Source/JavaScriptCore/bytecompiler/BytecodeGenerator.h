@@ -905,10 +905,10 @@ namespace JSC {
         void emitNewFunctionExpressionCommon(RegisterID*, FunctionMetadataNode*);
         
         bool isNewTargetUsedInInnerArrowFunction();
-        bool isSuperUsedInInnerArrowFunction();
         bool isArgumentsUsedInInnerArrowFunction();
 
     public:
+        bool isSuperUsedInInnerArrowFunction();
         bool isSuperCallUsedInInnerArrowFunction();
         bool isThisUsedInInnerArrowFunction();
         void pushLexicalScope(VariableEnvironmentNode*, TDZCheckOptimization, NestedScopeType = NestedScopeType::IsNotNested, RegisterID** constantSymbolTableResult = nullptr, bool shouldInitializeBlockScopedFunctions = true);

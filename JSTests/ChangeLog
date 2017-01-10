@@ -1,3 +1,35 @@
+2017-01-10  Skachkov Oleksandr  <gskachkov@gmail.com>
+
+        Calling async arrow function which is in a class's member function will cause error
+        https://bugs.webkit.org/show_bug.cgi?id=166879
+
+        Reviewed by Saam Barati.
+
+        * stress/async-arrow-functions-lexical-binding-in-class.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (BaseClass.prototype.baseClassValue):
+        (BaseClass.prototype.get property):
+        (BaseClass):
+        (runSomething):
+        (ChildClass.prototype.classValue):
+        (ChildClass.prototype.get classProperty):
+        (ChildClass.prototype.asyncValueExp):
+        (ChildClass.prototype.asyncValueBody):
+        (ChildClass.prototype.asyncThisPropExp):
+        (ChildClass.prototype.asyncThisPropBody):
+        (ChildClass.prototype.asyncThisPropInEvalExp):
+        (ChildClass.prototype.asyncThisPropInEvalBody):
+        (ChildClass.prototype.asyncThisValueExp):
+        (ChildClass.prototype.asyncThisValueBody):
+        (ChildClass.prototype.asyncThisValueInEvalExp):
+        (ChildClass.prototype.asyncThisValueInEvalBody):
+        (ChildClass):
+        (ChildClass2):
+        (ChildClass2.prototype.classValue):
+        (ChildClass2.prototype.get classProperty):
+        * stress/async-arrow-functions-lexical-super-binding.js:
+
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Prototype dynamic-import
