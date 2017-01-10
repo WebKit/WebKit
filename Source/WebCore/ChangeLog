@@ -1,5 +1,39 @@
 2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [CoordinatedGraphics] TextureMapperPlatformLayerProxy is constantly getting activated
+        https://bugs.webkit.org/show_bug.cgi?id=166856
+
+        Reviewed by Michael Catanzaro.
+
+        When CoordinatedGraphicsLayer::setContentsNeedsDisplay() is called, currently with
+        the threaded CoordinatedGraphics mode the platform layer is marked for synchronizing.
+        This means that at flush-time this layer swaps the buffer of the wrapped platform
+        layer and updates the layer state to indicate that the underlying
+        TextureMapperPlatformLayerProxy object has to be activated on the composition thread.
+
+        This current logic results in the TextureMapperPlatformLayerProxy object being
+        reactivated for every display request that arrives via setContentsNeedsDisplay().
+        This is pretty wasteful since this activation heap-allocates a RunLoop::Timer object
+        which internally also locks up the GLib main context to attach a new source, and
+        that's only after the source on the previous RunLoop::Timer was detached before
+        that RunLoop::Timer was destroyed.
+
+        To avoid this, CoordinatedGraphicsLayer::setContentsNeedsDisplay() sets a new flag,
+        m_shouldUpdatePlatformLayer. During flush, this flag is checked in
+        CoordinatedGraphicsLayer::updatePlatformLayer(), with the buffer swap performed in
+        case it's set. CoordinatedGraphicsLayer::syncPlatformLayer() now only sets the
+        platform layer proxy object for that layer's state.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::syncPlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::updatePlatformLayer):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
+2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Use WTF::Function in TextureMapperPlatformLayerProxy
         https://bugs.webkit.org/show_bug.cgi?id=166853
 
