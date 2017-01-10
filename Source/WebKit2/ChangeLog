@@ -1,3 +1,14 @@
+2017-01-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Drop VNodeTracker
+        https://bugs.webkit.org/show_bug.cgi?id=166868
+        <rdar://problem/29937587>
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2017-01-09  Enrica Casucci  <enrica@apple.com>
 
         Selection animation flashing on editable content when zooming.

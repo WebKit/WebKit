@@ -36,7 +36,6 @@ namespace WebCore {
 SharedBuffer::SharedBuffer(CFDataRef cfData)
     : m_buffer(adoptRef(*new DataBuffer))
     , m_cfData(cfData)
-    , m_vnodeToken(VNodeTracker::singleton().token())
 {
 }
 

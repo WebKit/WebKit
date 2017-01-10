@@ -1,3 +1,24 @@
+2017-01-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Drop VNodeTracker
+        https://bugs.webkit.org/show_bug.cgi?id=166868
+        <rdar://problem/29937587>
+
+        Reviewed by Andreas Kling.
+
+        Drop VNodeTracker on iOS. This was introduced a while back to try and
+        address vnode exhaustion issues in long running page load tests.
+        However, there was no evidence that the VNodeTracker functionality
+        helped so there is little point in keeping the extra code complexity.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/SharedBuffer.h:
+        * platform/VNodeTracker.cpp: Removed.
+        * platform/VNodeTracker.h: Removed.
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        * platform/cocoa/VNodeTrackerCocoa.cpp: Removed.
+
 2017-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         File scheme should not allow access of a resource on a different volume.

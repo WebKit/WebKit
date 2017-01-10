@@ -61,7 +61,6 @@ list(APPEND WebCore_SOURCES
     platform/KillRingNone.cpp
     platform/LocalizedStrings.cpp
     platform/StaticPasteboard.cpp
-    platform/VNodeTracker.cpp
 
     platform/audio/PlatformMediaSessionManager.cpp
 

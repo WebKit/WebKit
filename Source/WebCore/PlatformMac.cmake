@@ -288,7 +288,6 @@ list(APPEND WebCore_SOURCES
     platform/LocalizedStrings.cpp
     platform/RuntimeApplicationChecks.mm
     platform/ScrollableArea.cpp
-    platform/VNodeTracker.cpp
 
     platform/audio/AudioSession.cpp
 
@@ -331,7 +330,6 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/SystemVersion.mm
     platform/cocoa/TelephoneNumberDetectorCocoa.cpp
     platform/cocoa/ThemeCocoa.mm
-    platform/cocoa/VNodeTrackerCocoa.cpp
     platform/cocoa/WebCoreNSErrorExtras.mm
 
     platform/crypto/commoncrypto/CryptoDigestCommonCrypto.cpp

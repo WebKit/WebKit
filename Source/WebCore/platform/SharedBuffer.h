@@ -35,7 +35,6 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
-#include "VNodeTracker.h"
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -172,7 +171,6 @@ private:
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
     RetainPtr<CFDataRef> m_cfData;
-    VNodeTracker::Token m_vnodeToken;
 #endif
 
 #if USE(SOUP)
