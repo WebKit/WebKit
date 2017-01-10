@@ -78,6 +78,11 @@ void CoordinatedLayerTreeHost::scheduleLayerFlush()
     if (!m_layerFlushSchedulingEnabled)
         return;
 
+    if (m_isWaitingForRenderer) {
+        m_scheduledWhileWaitingForRenderer = true;
+        return;
+    }
+
     if (!m_layerFlushTimer.isActive())
         m_layerFlushTimer.startOneShot(0);
 }
@@ -146,8 +151,13 @@ void CoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, con
 void CoordinatedLayerTreeHost::renderNextFrame()
 {
     m_isWaitingForRenderer = false;
-    scheduleLayerFlush();
+    bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
     m_coordinator.renderNextFrame();
+
+    if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive()) {
+        m_layerFlushTimer.stop();
+        layerFlushTimerFired();
+    }
 }
 
 void CoordinatedLayerTreeHost::didFlushRootLayer(const FloatRect& visibleContentRect)
