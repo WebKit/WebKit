@@ -28,6 +28,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -37,7 +38,7 @@ namespace WebCore {
 
 struct MediaKeySystemConfiguration;
 
-class CDMInstance {
+class CDMInstance : public RefCounted<CDMInstance> {
 public:
     virtual ~CDMInstance() { }
 

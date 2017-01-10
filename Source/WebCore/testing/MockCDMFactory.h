@@ -45,6 +45,9 @@ public:
     const Vector<String>& supportedDataTypes() const { return m_supportedDataTypes; }
     void setSupportedDataTypes(Vector<String>&& types) { m_supportedDataTypes = WTFMove(types); }
 
+    const Vector<MediaKeySessionType>& supportedSessionTypes() const { return m_supportedSessionTypes; }
+    void setSupportedSessionTypes(Vector<MediaKeySessionType>&& types) { m_supportedSessionTypes = WTFMove(types); }
+
     const Vector<String>& supportedRobustness() const { return m_supportedRobustness; }
     void setSupportedRobustness(Vector<String>&& robustness) { m_supportedRobustness = WTFMove(robustness); }
 
@@ -60,6 +63,9 @@ public:
     bool supportsServerCertificates() const { return m_supportsServerCertificates; }
     void setSupportsServerCertificates(bool flag) { m_supportsServerCertificates = flag; }
 
+    bool supportsSessions() const { return m_supportsSessions; }
+    void setSupportsSessions(bool flag) { m_supportsSessions = flag; }
+
     void unregister();
 
 private:
@@ -70,10 +76,12 @@ private:
     MediaKeysRequirement m_distinctiveIdentifiersRequirement { MediaKeysRequirement::Optional };
     MediaKeysRequirement m_persistentStateRequirement { MediaKeysRequirement::Optional };
     Vector<String> m_supportedDataTypes;
+    Vector<MediaKeySessionType> m_supportedSessionTypes;
     Vector<String> m_supportedRobustness;
     bool m_registered { true };
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };
+    bool m_supportsSessions { true };
     WeakPtrFactory<MockCDMFactory> m_weakPtrFactory;
 };
 
@@ -94,9 +102,10 @@ private:
     MediaKeysRequirement distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) final;
     MediaKeysRequirement persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) final;
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) final;
-    std::unique_ptr<CDMInstance> createInstance() final;
+    RefPtr<CDMInstance> createInstance() final;
     void loadAndInitialize() final;
     bool supportsServerCertificates() const final;
+    bool supportsSessions() const final;
 
     WeakPtr<MockCDMFactory> m_factory;
     WeakPtrFactory<MockCDM> m_weakPtrFactory;

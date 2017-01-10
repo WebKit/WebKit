@@ -49,9 +49,10 @@ public:
     virtual MediaKeysRequirement distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) = 0;
     virtual MediaKeysRequirement persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) = 0;
     virtual bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) = 0;
-    virtual std::unique_ptr<CDMInstance> createInstance() = 0;
+    virtual RefPtr<CDMInstance> createInstance() = 0;
     virtual void loadAndInitialize() = 0;
     virtual bool supportsServerCertificates() const = 0;
+    virtual bool supportsSessions() const = 0;
 };
 
 }

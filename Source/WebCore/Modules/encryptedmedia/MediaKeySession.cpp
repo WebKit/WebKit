@@ -31,41 +31,67 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDM.h"
+#include "CDMInstance.h"
 #include "MediaKeyStatusMap.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
 
-Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context)
+Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
 {
-    auto session = adoptRef(*new MediaKeySession(context));
+    auto session = adoptRef(*new MediaKeySession(context, sessionType, useDistinctiveIdentifier, WTFMove(implementation), WTFMove(instance)));
     session->suspendIfNeeded();
     return session;
 }
 
-MediaKeySession::MediaKeySession(ScriptExecutionContext& context)
+MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     : ActiveDOMObject(&context)
+    , m_expiration(std::numeric_limits<double>::quiet_NaN())
+    , m_keyStatuses(MediaKeyStatusMap::create())
+    , m_useDistinctiveIdentifier(useDistinctiveIdentifier)
+    , m_sessionType(sessionType)
+    , m_implementation(WTFMove(implementation))
+    , m_instance(WTFMove(instance))
 {
+    // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
+    // W3C Editor's Draft 09 November 2016
+    // createSession(), ctd.
+
+    // 3.1. Let the sessionId attribute be the empty string.
+    // 3.2. Let the expiration attribute be NaN.
+    // 3.3. Let the closed attribute be a new promise.
+    // 3.4. Let key status be a new empty MediaKeyStatusMap object, and initialize it as follows:
+    // 3.4.1. Let the size attribute be 0.
+    // 3.5. Let the session type value be sessionType.
+    // 3.6. Let the uninitialized value be true.
+    // 3.7. Let the callable value be false.
+    // 3.8. Let the use distinctive identifier value be this object's use distinctive identifier value.
+    // 3.9. Let the cdm implementation value be this object's cdm implementation.
+    // 3.10. Let the cdm instance value be this object's cdm instance.
+
+    UNUSED_PARAM(m_callable);
+    UNUSED_PARAM(m_sessionType);
+    UNUSED_PARAM(m_useDistinctiveIdentifier);
+    UNUSED_PARAM(m_closed);
+    UNUSED_PARAM(m_uninitialized);
 }
 
 MediaKeySession::~MediaKeySession() = default;
 
 const String& MediaKeySession::sessionId() const
 {
-    notImplemented();
-    return emptyString();
+    return m_sessionId;
 }
 
 double MediaKeySession::expiration() const
 {
-    notImplemented();
-    return 0;
+    return m_expiration;
 }
 
-RefPtr<MediaKeyStatusMap> MediaKeySession::keyStatuses() const
+Ref<MediaKeyStatusMap> MediaKeySession::keyStatuses() const
 {
-    notImplemented();
-    return nullptr;
+    return m_keyStatuses.copyRef();
 }
 
 void MediaKeySession::generateRequest(const String&, const BufferSource&, Ref<DeferredPromise>&&)

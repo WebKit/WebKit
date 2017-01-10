@@ -617,7 +617,7 @@ void CDM::loadAndInitialize()
         m_private->loadAndInitialize();
 }
 
-std::unique_ptr<CDMInstance> CDM::createInstance()
+RefPtr<CDMInstance> CDM::createInstance()
 {
     if (!m_private)
         return nullptr;
@@ -627,6 +627,11 @@ std::unique_ptr<CDMInstance> CDM::createInstance()
 bool CDM::supportsServerCertificates() const
 {
     return m_private && m_private->supportsServerCertificates();
+}
+
+bool CDM::supportsSessions() const
+{
+    return m_private && m_private->supportsSessions();
 }
 
 }

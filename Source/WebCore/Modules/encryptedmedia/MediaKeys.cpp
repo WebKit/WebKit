@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-MediaKeys::MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, std::unique_ptr<CDMInstance>&& instance)
+MediaKeys::MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed, const Vector<MediaKeySessionType>& supportedSessionTypes, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     : m_useDistinctiveIdentifier(useDistinctiveIdentifier)
     , m_persistentStateAllowed(persistentStateAllowed)
     , m_supportedSessionTypes(supportedSessionTypes)
@@ -50,10 +50,24 @@ MediaKeys::MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed,
 
 MediaKeys::~MediaKeys() = default;
 
-ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(MediaKeySessionType)
+ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContext& context, MediaKeySessionType sessionType)
 {
-    notImplemented();
-    return Exception { NOT_SUPPORTED_ERR };
+    // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
+    // W3C Editor's Draft 09 November 2016
+
+    // When this method is invoked, the user agent must run the following steps:
+    // 1. If this object's supported session types value does not contain sessionType, throw [WebIDL] a NotSupportedError.
+    if (!m_supportedSessionTypes.contains(sessionType))
+        return Exception(NOT_SUPPORTED_ERR);
+
+    // 2. If the implementation does not support MediaKeySession operations in the current state, throw [WebIDL] an InvalidStateError.
+    if (!m_implementation->supportsSessions())
+        return Exception(INVALID_STATE_ERR);
+
+    // 3. Let session be a new MediaKeySession object, and initialize it as follows:
+    // NOTE: Continued in MediaKeySession.
+    // 4. Return session.
+    return MediaKeySession::create(context, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), m_instance.copyRef());
 }
 
 void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)

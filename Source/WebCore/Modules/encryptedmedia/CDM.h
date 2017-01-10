@@ -70,8 +70,9 @@ public:
     const String& keySystem() const { return m_keySystem; }
 
     void loadAndInitialize();
-    std::unique_ptr<CDMInstance> createInstance();
+    RefPtr<CDMInstance> createInstance();
     bool supportsServerCertificates() const;
+    bool supportsSessions() const;
 
 private:
     CDM(Document&, const String& keySystem);

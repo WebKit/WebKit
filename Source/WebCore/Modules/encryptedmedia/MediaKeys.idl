@@ -31,6 +31,6 @@
     EnabledAtRuntime=EncryptedMediaAPI,
     ImplementationLacksVTable,
 ] interface MediaKeys {
-    [MayThrowException] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
+    [CallWith=ScriptExecutionContext, MayThrowException] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
     Promise<bool> setServerCertificate(BufferSource serverCertificate);
 };

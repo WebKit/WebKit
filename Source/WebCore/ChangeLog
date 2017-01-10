@@ -1,5 +1,43 @@
 2017-01-10  Jer Noble  <jer.noble@apple.com>
 
+        Add support for MediaKeys.createSession().
+        https://bugs.webkit.org/show_bug.cgi?id=166796
+
+        Reviewed by Eric Carlson.
+
+        Test: media/encrypted-media/mock-MediaKeys-createSession.html
+
+        Implement MediaKeys::createSession(). This requires some additions to
+        CDM, CDMPrivate, and CDMInstance to support platform adoption and to
+        implement mock support for testing. Because the CDMInstance will now
+        be shared between MediaKeys and MediaKeySession, it cannot be a unique_ptr.
+        Make CDMInterface ref-counted and store it as a Ref.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::createInstance):
+        (WebCore::CDM::supportsSessions):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::create):
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::sessionId):
+        (WebCore::MediaKeySession::expiration):
+        (WebCore::MediaKeySession::keyStatuses):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeySessionType.idl:
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        (WebCore::MediaKeySystemAccess::createMediaKeys):
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::MediaKeys):
+        (WebCore::MediaKeys::createSession):
+        * Modules/encryptedmedia/MediaKeys.h:
+        (WebCore::MediaKeys::create):
+        * Modules/encryptedmedia/MediaKeys.idl:
+
+2017-01-10  Jer Noble  <jer.noble@apple.com>
+
         Add support for MediaKeys.setServerCertificate()
         https://bugs.webkit.org/show_bug.cgi?id=166772
 

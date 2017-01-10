@@ -34,7 +34,8 @@
 namespace WebCore {
 
 MockCDMFactory::MockCDMFactory()
-    : m_weakPtrFactory(this)
+    : m_supportedSessionTypes({ MediaKeySessionType::Temporary, MediaKeySessionType::PersistentUsageRecord, MediaKeySessionType::PersistentLicense })
+    , m_weakPtrFactory(this)
 {
     CDM::registerCDMFactory(*this);
 }
@@ -88,9 +89,12 @@ bool MockCDM::supportsConfigurationWithRestrictions(const MediaKeySystemConfigur
     return true;
 }
 
-bool MockCDM::supportsSessionTypeWithConfiguration(MediaKeySessionType&, const MediaKeySystemConfiguration&)
+bool MockCDM::supportsSessionTypeWithConfiguration(MediaKeySessionType& sessionType, const MediaKeySystemConfiguration&)
 {
-    // NOTE: Implement;
+    if (!m_factory || !m_factory->supportedSessionTypes().contains(sessionType))
+        return false;
+
+    // NOTE: Implement configuration checking;
     return true;
 }
 
@@ -121,11 +125,11 @@ bool MockCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKe
     return true;
 }
 
-std::unique_ptr<CDMInstance> MockCDM::createInstance()
+RefPtr<CDMInstance> MockCDM::createInstance()
 {
     if (m_factory && !m_factory->canCreateInstances())
         return nullptr;
-    return std::unique_ptr<CDMInstance>(new MockCDMInstance(m_weakPtrFactory.createWeakPtr()));
+    return adoptRef(new MockCDMInstance(m_weakPtrFactory.createWeakPtr()));
 }
 
 void MockCDM::loadAndInitialize()
@@ -136,6 +140,11 @@ void MockCDM::loadAndInitialize()
 bool MockCDM::supportsServerCertificates() const
 {
     return m_factory && m_factory->supportsServerCertificates();
+}
+
+bool MockCDM::supportsSessions() const
+{
+    return m_factory && m_factory->supportsSessions();
 }
 
 MockCDMInstance::MockCDMInstance(WeakPtr<MockCDM> cdm)

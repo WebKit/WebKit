@@ -1,5 +1,16 @@
 2017-01-10  Jer Noble  <jer.noble@apple.com>
 
+        Add support for MediaKeys.createSession().
+        https://bugs.webkit.org/show_bug.cgi?id=166796
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/mock-MediaKeys-createSession-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeys-createSession.html: Added.
+        * platform/mac/TestExpectations:
+
+2017-01-10  Jer Noble  <jer.noble@apple.com>
+
         Add support for MediaKeys.setServerCertificate()
         https://bugs.webkit.org/show_bug.cgi?id=166772
 

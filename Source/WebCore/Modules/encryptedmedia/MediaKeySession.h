@@ -41,12 +41,14 @@
 namespace WebCore {
 
 class BufferSource;
+class CDM;
+class CDMInstance;
 class MediaKeyStatusMap;
 class MediaKeys;
 
 class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<MediaKeySession> create(ScriptExecutionContext&);
+    static Ref<MediaKeySession> create(ScriptExecutionContext&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
     virtual ~MediaKeySession();
 
     using RefCounted<MediaKeySession>::ref;
@@ -54,7 +56,7 @@ public:
 
     const String& sessionId() const;
     double expiration() const;
-    RefPtr<MediaKeyStatusMap> keyStatuses() const;
+    Ref<MediaKeyStatusMap> keyStatuses() const;
 
     void generateRequest(const String&, const BufferSource&, Ref<DeferredPromise>&&);
     void load(const String&, Ref<DeferredPromise>&&);
@@ -63,7 +65,7 @@ public:
     void remove(Ref<DeferredPromise>&&);
 
 private:
-    MediaKeySession(ScriptExecutionContext&);
+    MediaKeySession(ScriptExecutionContext&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstance>&&);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
@@ -76,6 +78,17 @@ private:
     const char* activeDOMObjectName() const override;
     bool canSuspendForDocumentSuspension() const override;
     void stop() override;
+
+    String m_sessionId;
+    double m_expiration;
+    Ref<MediaKeyStatusMap> m_keyStatuses;
+    bool m_closed { false };
+    bool m_uninitialized { true };
+    bool m_callable { false };
+    bool m_useDistinctiveIdentifier;
+    MediaKeySessionType m_sessionType;
+    Ref<CDM> m_implementation;
+    Ref<CDMInstance> m_instance;
 };
 
 } // namespace WebCore
