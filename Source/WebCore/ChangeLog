@@ -1,5 +1,20 @@
 2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        [TexMap] Use WTF::Function in TextureMapperPlatformLayerProxy
+        https://bugs.webkit.org/show_bug.cgi?id=166853
+
+        Reviewed by Michael Catanzaro.
+
+        Use WTF::Function in the TextureMapperPlatformLayerProxy, instead of
+        the std::function bloat.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp:
+        (WebCore::TextureMapperPlatformLayerProxy::scheduleUpdateOnCompositorThread):
+        (WebCore::TextureMapperPlatformLayerProxy::compositorThreadUpdateTimerFired):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+
+2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [TextureMapper] TextureMapperPlatformLayerProxy::swapBuffers() should hold the lock throughout invocation
         https://bugs.webkit.org/show_bug.cgi?id=166852
 
