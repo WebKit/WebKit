@@ -1,3 +1,12 @@
+2017-01-10  Mark Lam  <mark.lam@apple.com>
+
+        Property setters should not be called for bound arguments list entries.
+        https://bugs.webkit.org/show_bug.cgi?id=165631
+
+        Reviewed by Filip Pizlo.
+
+        * stress/property-setters-should-not-be-called-for-bound-arguments-list-entries.js: Added.
+
 2017-01-10  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         Calling async arrow function which is in a class's member function will cause error

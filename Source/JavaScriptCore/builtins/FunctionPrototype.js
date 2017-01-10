@@ -72,7 +72,7 @@ function bind(thisValue)
         numBoundArgs = argumentCount - 1;
         boundArgs = @newArrayWithSize(numBoundArgs);
         for (let i = 0; i < numBoundArgs; i++)
-            boundArgs[i] = arguments[i + 1];
+            @putByValDirect(boundArgs, i, arguments[i + 1]);
     }
 
     let length = 0;

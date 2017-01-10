@@ -137,12 +137,8 @@ EncodedJSValue JSC_HOST_CALL IntlDateTimeFormatPrototypeGetterFormat(ExecState* 
         // a. Let F be a new built-in function object as defined in 12.3.4.
         // b. The value of F’s length property is 1. (Note: F’s length property was 0 in ECMA-402 1.0)
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, ASCIILiteral("format"), IntlDateTimeFormatFuncFormatDateTime, NoIntrinsic);
-        JSArray* boundArgs = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), 0);
-        if (!boundArgs)
-            return JSValue::encode(throwOutOfMemoryError(state, scope));
-
         // c. Let bf be BoundFunctionCreate(F, «this value»).
-        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, dtf, boundArgs, 1, ASCIILiteral("format"));
+        boundFormat = JSBoundFunction::create(vm, state, globalObject, targetObject, dtf, nullptr, 1, ASCIILiteral("format"));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         // d. Set dtf.[[boundFormat]] to bf.
         dtf->setBoundFormat(vm, boundFormat);
