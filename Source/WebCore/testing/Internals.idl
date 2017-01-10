@@ -456,6 +456,7 @@ enum EventThrottlingBehavior {
 
 #if defined(ENABLE_CSS_SCROLL_SNAP) && ENABLE_CSS_SCROLL_SNAP
     [MayThrowException] DOMString scrollSnapOffsets(Element element);
+    void setPlatformMomentumScrollingPredictionEnabled(boolean enabled);
 #endif
 
     [MayThrowException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);

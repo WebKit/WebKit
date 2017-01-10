@@ -48,7 +48,7 @@ namespace WebCore {
 struct SameSizeAsScrollableArea {
     virtual ~SameSizeAsScrollableArea();
 #if ENABLE(CSS_SCROLL_SNAP)
-    void* pointers[4];
+    void* pointers[3];
     unsigned currentIndices[2];
 #else
     void* pointer[2];
@@ -425,35 +425,90 @@ bool ScrollableArea::hasLayerForScrollCorner() const
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void ScrollableArea::setHorizontalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> horizontalSnapOffsets)
+ScrollSnapOffsetsInfo<LayoutUnit>& ScrollableArea::ensureSnapOffsetsInfo()
 {
-    ASSERT(horizontalSnapOffsets);
-    // Consider having a non-empty set of snap offsets as a cue to initialize the ScrollAnimator.
-    if (horizontalSnapOffsets->size())
-        scrollAnimator();
-
-    m_horizontalSnapOffsets = WTFMove(horizontalSnapOffsets);
+    if (!m_snapOffsetsInfo)
+        m_snapOffsetsInfo = std::make_unique<ScrollSnapOffsetsInfo<LayoutUnit>>();
+    return *m_snapOffsetsInfo;
 }
 
-void ScrollableArea::setVerticalSnapOffsets(std::unique_ptr<Vector<LayoutUnit>> verticalSnapOffsets)
+const Vector<LayoutUnit>* ScrollableArea::horizontalSnapOffsets() const
 {
-    ASSERT(verticalSnapOffsets);
+    if (!m_snapOffsetsInfo)
+        return nullptr;
+
+    return &m_snapOffsetsInfo->horizontalSnapOffsets;
+}
+
+const Vector<ScrollOffsetRange<LayoutUnit>>* ScrollableArea::horizontalSnapOffsetRanges() const
+{
+    if (!m_snapOffsetsInfo)
+        return nullptr;
+
+    return &m_snapOffsetsInfo->horizontalSnapOffsetRanges;
+}
+
+const Vector<ScrollOffsetRange<LayoutUnit>>* ScrollableArea::verticalSnapOffsetRanges() const
+{
+    if (!m_snapOffsetsInfo)
+        return nullptr;
+
+    return &m_snapOffsetsInfo->verticalSnapOffsetRanges;
+}
+
+const Vector<LayoutUnit>* ScrollableArea::verticalSnapOffsets() const
+{
+    if (!m_snapOffsetsInfo)
+        return nullptr;
+
+    return &m_snapOffsetsInfo->verticalSnapOffsets;
+}
+
+void ScrollableArea::setHorizontalSnapOffsets(const Vector<LayoutUnit>& horizontalSnapOffsets)
+{
     // Consider having a non-empty set of snap offsets as a cue to initialize the ScrollAnimator.
-    if (verticalSnapOffsets->size())
+    if (horizontalSnapOffsets.size())
         scrollAnimator();
 
-    m_verticalSnapOffsets = WTFMove(verticalSnapOffsets);
+    ensureSnapOffsetsInfo().horizontalSnapOffsets = horizontalSnapOffsets;
+}
+
+void ScrollableArea::setVerticalSnapOffsets(const Vector<LayoutUnit>& verticalSnapOffsets)
+{
+    // Consider having a non-empty set of snap offsets as a cue to initialize the ScrollAnimator.
+    if (verticalSnapOffsets.size())
+        scrollAnimator();
+
+    ensureSnapOffsetsInfo().verticalSnapOffsets = verticalSnapOffsets;
+}
+
+void ScrollableArea::setHorizontalSnapOffsetRanges(const Vector<ScrollOffsetRange<LayoutUnit>>& horizontalRanges)
+{
+    ensureSnapOffsetsInfo().horizontalSnapOffsetRanges = horizontalRanges;
+}
+
+void ScrollableArea::setVerticalSnapOffsetRanges(const Vector<ScrollOffsetRange<LayoutUnit>>& verticalRanges)
+{
+    ensureSnapOffsetsInfo().verticalSnapOffsetRanges = verticalRanges;
 }
 
 void ScrollableArea::clearHorizontalSnapOffsets()
 {
-    m_horizontalSnapOffsets = nullptr;
+    if (!m_snapOffsetsInfo)
+        return;
+
+    m_snapOffsetsInfo->horizontalSnapOffsets = { };
+    m_snapOffsetsInfo->horizontalSnapOffsetRanges = { };
     m_currentHorizontalSnapPointIndex = 0;
 }
 
 void ScrollableArea::clearVerticalSnapOffsets()
 {
-    m_verticalSnapOffsets = nullptr;
+    if (!m_snapOffsetsInfo)
+        return;
+
+    m_snapOffsetsInfo->verticalSnapOffsets = { };
+    m_snapOffsetsInfo->verticalSnapOffsetRanges = { };
     m_currentVerticalSnapPointIndex = 0;
 }
 

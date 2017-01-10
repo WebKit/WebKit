@@ -37,6 +37,7 @@
 
 #if ENABLE(CSS_SCROLL_SNAP)
 #include "ScrollSnapAnimatorState.h"
+#include "ScrollSnapOffsetsInfo.h"
 #endif
 
 namespace WebCore {
@@ -133,7 +134,7 @@ public:
     bool isScrollSnapInProgress() const;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&);
+    void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
     void setActiveScrollSnapIndicesForOffset(int x, int y);
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }

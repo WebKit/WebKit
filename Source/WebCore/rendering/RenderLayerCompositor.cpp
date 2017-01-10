@@ -3907,6 +3907,10 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
                 scrollingGeometry.horizontalSnapOffsets = *offsets;
             if (const Vector<LayoutUnit>* offsets = layer.verticalSnapOffsets())
                 scrollingGeometry.verticalSnapOffsets = *offsets;
+            if (const Vector<ScrollOffsetRange<LayoutUnit>>* ranges = layer.horizontalSnapOffsetRanges())
+                scrollingGeometry.horizontalSnapOffsetRanges = *ranges;
+            if (const Vector<ScrollOffsetRange<LayoutUnit>>* ranges = layer.verticalSnapOffsetRanges())
+                scrollingGeometry.verticalSnapOffsetRanges = *ranges;
             scrollingGeometry.currentHorizontalSnapPointIndex = layer.currentHorizontalSnapPointIndex();
             scrollingGeometry.currentVerticalSnapPointIndex = layer.currentVerticalSnapPointIndex();
 #endif

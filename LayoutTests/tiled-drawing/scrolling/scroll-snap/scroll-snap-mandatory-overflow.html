@@ -167,6 +167,7 @@
         {
             if (window.eventSender) {
                 eventSender.monitorWheelEvents();
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(function() { scrollGlideTest('horizontalTarget') }, 0);
             } else {
                 var messageLocationH = document.getElementById('itemH0');

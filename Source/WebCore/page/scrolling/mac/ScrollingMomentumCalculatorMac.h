@@ -36,15 +36,19 @@ namespace WebCore {
 
 class ScrollingMomentumCalculatorMac final : public ScrollingMomentumCalculator {
 public:
-    ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
 private:
     FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
+    FloatSize predictedDestinationOffset() final;
+    void retargetedScrollOffsetDidChange() final;
     _NSScrollingMomentumCalculator *ensurePlatformMomentumCalculator();
+    bool requiresMomentumScrolling();
 
     RetainPtr<_NSScrollingMomentumCalculator> m_platformMomentumCalculator;
-    bool m_requiresMomentumScrolling { true };
+    std::optional<bool> m_requiresMomentumScrolling;
+    FloatPoint m_initialDestinationOrigin;
 };
 
 } // namespace WebCore

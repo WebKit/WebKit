@@ -44,6 +44,7 @@
                 return;
             }
 
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
             eventSender.monitorWheelEvents();
             eventSender.mouseMoveTo(250, 250);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(0, -1, "began", "none");

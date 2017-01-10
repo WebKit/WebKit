@@ -91,6 +91,7 @@
 
             if (window.eventSender) {
                 eventSender.monitorWheelEvents();
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(scrollGlideTest, 0);
             } else {
                 var messageLocation = document.getElementById('item0');

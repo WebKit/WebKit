@@ -34,6 +34,7 @@
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
             eventSender.monitorWheelEvents();
+            internals.setPlatformMomentumScrollingPredictionEnabled(false);
             eventSender.mouseMoveTo(container.offsetLeft + container.clientWidth / 2, container.offsetTop + container.clientHeight / 2);
 
             write("Scrolling without momentum to the same position several times")

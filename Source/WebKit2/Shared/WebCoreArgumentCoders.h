@@ -30,6 +30,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/PaymentHeaders.h>
+#include <WebCore/ScrollSnapOffsetsInfo.h>
 
 namespace WTF {
 class MonotonicTime;
@@ -595,6 +596,15 @@ template<> struct ArgumentCoder<WebCore::CaptureDevice> {
 template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
     static void encode(Encoder&, const WebCore::IDBKeyPath&);
     static bool decode(Decoder&, WebCore::IDBKeyPath&);
+};
+
+#endif
+
+#if ENABLE(CSS_SCROLL_SNAP)
+
+template<> struct ArgumentCoder<WebCore::ScrollOffsetRange<float>> {
+    static void encode(Encoder&, const WebCore::ScrollOffsetRange<float>&);
+    static bool decode(Decoder&, WebCore::ScrollOffsetRange<float>&);
 };
 
 #endif

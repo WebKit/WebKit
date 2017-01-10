@@ -127,6 +127,8 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
 #if ENABLE(CSS_SCROLL_SNAP)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::HorizontalSnapOffsets, horizontalSnapOffsets)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::VerticalSnapOffsets, verticalSnapOffsets)
+    SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::HorizontalSnapOffsetRanges, horizontalSnapOffsetRanges)
+    SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::VerticalSnapOffsetRanges, verticalSnapOffsetRanges)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex, currentHorizontalSnapPointIndex)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::CurrentVerticalSnapOffsetIndex, currentVerticalSnapPointIndex)
 #endif
@@ -202,6 +204,8 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
 #if ENABLE(CSS_SCROLL_SNAP)
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::HorizontalSnapOffsets, Vector<float>, setHorizontalSnapOffsets);
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::VerticalSnapOffsets, Vector<float>, setVerticalSnapOffsets);
+    SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::HorizontalSnapOffsetRanges, Vector<ScrollOffsetRange<float>>, setHorizontalSnapOffsetRanges)
+    SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::VerticalSnapOffsetRanges, Vector<ScrollOffsetRange<float>>, setVerticalSnapOffsetRanges)
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex, unsigned, setCurrentHorizontalSnapPointIndex);
     SCROLLING_NODE_DECODE(ScrollingStateScrollingNode::CurrentVerticalSnapOffsetIndex, unsigned, setCurrentVerticalSnapPointIndex);
 #endif

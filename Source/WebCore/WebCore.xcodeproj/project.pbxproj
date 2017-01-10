@@ -6487,6 +6487,7 @@
 		F44EBBDB1DB5DD9D00277334 /* StaticRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44EBBDA1DB5DD9D00277334 /* StaticRange.cpp */; };
 		F45C231D1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */; };
 		F45C231E1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F478755419983AFF0024A287 /* ScrollSnapAnimatorState.h in Headers */ = {isa = PBXBuildFile; fileRef = F478755219983AFF0024A287 /* ScrollSnapAnimatorState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F478755519983AFF0024A287 /* ScrollSnapAnimatorState.mm in Sources */ = {isa = PBXBuildFile; fileRef = F478755319983AFF0024A287 /* ScrollSnapAnimatorState.mm */; };
 		F47A5E3E195B8C8A00483100 /* StyleScrollSnapPoints.h in Headers */ = {isa = PBXBuildFile; fileRef = F47A5E3B195B8C8A00483100 /* StyleScrollSnapPoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14509,6 +14510,7 @@
 		F44EBBDA1DB5DD9D00277334 /* StaticRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticRange.cpp; sourceTree = "<group>"; };
 		F45C231B1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AxisScrollSnapOffsets.cpp; sourceTree = "<group>"; };
 		F45C231C1995B73B00A6E2E3 /* AxisScrollSnapOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AxisScrollSnapOffsets.h; sourceTree = "<group>"; };
+		F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollSnapOffsetsInfo.h; sourceTree = "<group>"; };
 		F478755219983AFF0024A287 /* ScrollSnapAnimatorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollSnapAnimatorState.h; sourceTree = "<group>"; };
 		F478755319983AFF0024A287 /* ScrollSnapAnimatorState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollSnapAnimatorState.mm; sourceTree = "<group>"; };
 		F47A5E3A195B8C8A00483100 /* StyleScrollSnapPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScrollSnapPoints.cpp; sourceTree = "<group>"; };
@@ -16039,6 +16041,7 @@
 				0FEA3E7E191B3169000F1B55 /* ScrollingTreeOverflowScrollingNode.h */,
 				9391A99A1629D6FF00297330 /* ScrollingTreeScrollingNode.cpp */,
 				9391A99B1629D70000297330 /* ScrollingTreeScrollingNode.h */,
+				F46729251E0DE5AB00ACC3D8 /* ScrollSnapOffsetsInfo.h */,
 				7AAFE8CD19CB8672000F56D8 /* ScrollLatchingState.cpp */,
 				7AAFE8CE19CB8672000F56D8 /* ScrollLatchingState.h */,
 				0F6383DB18615B29003E5DB5 /* ThreadedScrollingTree.cpp */,
@@ -26183,6 +26186,7 @@
 				0F4710C01DB56BE8002DCEC3 /* JSDOMRectReadOnly.h in Headers */,
 				BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */,
 				C5137CF311A58378004ADB99 /* JSDOMStringList.h in Headers */,
+				F46729281E0DE68500ACC3D8 /* ScrollSnapOffsetsInfo.h in Headers */,
 				BC64649811D82349006455B0 /* JSDOMStringMap.h in Headers */,
 				7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */,
 				2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */,

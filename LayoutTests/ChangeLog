@@ -1,3 +1,54 @@
+2017-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement "proximity" scroll snapping
+        https://bugs.webkit.org/show_bug.cgi?id=135994
+        <rdar://problem/18162418>
+
+        Reviewed by Dean Jackson.
+
+        Adds 3 new layout tests for proximity scroll snapping. Also tweaks some existing tests that test scroll snapping
+        after scrolling with momentum to use the custom heuristic for predicting scroll destination instead of platform
+        momentum scrolling. This ensures that the results of our layout tests that depend on predicting momentum scroll
+        destination are consistent across runs.
+
+        * tiled-drawing/scrolling/latched-div-with-scroll-snap.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-hidden-scrollbars.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-slow-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow-stateless.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html:
+
+        Force these tests to use platform-independent scrolling momentum prediction, by multiplying the last scroll
+        delta upon release by a constant factor.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-then-proximity-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-then-proximity.html: Added.
+
+        Tests that after changing scroll-snap-type from mandatory to proximity, swiping downwards no longer snaps the
+        scroll offset to the second box, but instead leaves the scroll offset somewhere in the middle of the first box.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html: Added.
+
+        Tests that when scroll-snap-type is proximity in the mainframe, scrolling slightly downwards snaps the scroll
+        offset back up to the top; scrolling somewhere in the middle of the first box does not snap the scroll offset;
+        and scrolling near the end of the first box snaps the scroll offset to the second box.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-overflow-expected.txt: Added.
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-overflow.html: Added.
+
+        Similar to scroll-snap-proximity-mainframe.html, except for overflow scrolling instead of the mainframe.
+
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-scrolling-jumps-to-top.html:
+
 2017-01-10  Chris Dumez  <cdumez@apple.com>
 
         Make Event.initEvent()'s first parameter mandatory

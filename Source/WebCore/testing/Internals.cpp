@@ -117,6 +117,7 @@
 #include "SchemeRegistry.h"
 #include "ScriptedAnimationController.h"
 #include "ScrollingCoordinator.h"
+#include "ScrollingMomentumCalculator.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -3340,6 +3341,11 @@ static void appendOffsets(StringBuilder& builder, const Vector<LayoutUnit>& snap
     builder.appendLiteral(" }");
 }
     
+void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
+{
+    ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(enabled);
+}
+
 ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
 {
     if (!element.renderBox())
@@ -3367,17 +3373,21 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     
     StringBuilder result;
 
-    if (scrollableArea->horizontalSnapOffsets()) {
-        result.appendLiteral("horizontal = ");
-        appendOffsets(result, *scrollableArea->horizontalSnapOffsets());
+    if (auto* offsets = scrollableArea->horizontalSnapOffsets()) {
+        if (offsets->size()) {
+            result.appendLiteral("horizontal = ");
+            appendOffsets(result, *offsets);
+        }
     }
 
-    if (scrollableArea->verticalSnapOffsets()) {
-        if (result.length())
-            result.appendLiteral(", ");
+    if (auto* offsets = scrollableArea->verticalSnapOffsets()) {
+        if (offsets->size()) {
+            if (result.length())
+                result.appendLiteral(", ");
 
-        result.appendLiteral("vertical = ");
-        appendOffsets(result, *scrollableArea->verticalSnapOffsets());
+            result.appendLiteral("vertical = ");
+            appendOffsets(result, *offsets);
+        }
     }
 
     return result.toString();

@@ -29,6 +29,7 @@
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -170,6 +171,8 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
         Vector<LayoutUnit> horizontalSnapOffsets;
         Vector<LayoutUnit> verticalSnapOffsets;
+        Vector<ScrollOffsetRange<LayoutUnit>> horizontalSnapOffsetRanges;
+        Vector<ScrollOffsetRange<LayoutUnit>> verticalSnapOffsetRanges;
         unsigned currentHorizontalSnapPointIndex;
         unsigned currentVerticalSnapPointIndex;
 #endif

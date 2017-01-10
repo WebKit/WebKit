@@ -74,6 +74,7 @@
             return new Promise(resolve => {
                 write(`* Swiping ${momentum ? "with" : "without"} momentum in ${element.id} with scroll offset ${element.scrollLeft}`);
                 let location = locationInWindowCoordinates(element);
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 eventSender.monitorWheelEvents();
                 eventSender.mouseMoveTo(location.x, location.y);
                 eventSender.mouseScrollByWithWheelAndMomentumPhases(-1, 0, "began", "none");

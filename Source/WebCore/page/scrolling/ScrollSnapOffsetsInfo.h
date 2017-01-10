@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,27 @@
 
 #pragma once
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
-#include "LayoutUnit.h"
-#include "ScrollSnapOffsetsInfo.h"
-#include "ScrollTypes.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class HTMLElement;
-class RenderBox;
-class RenderStyle;
-class ScrollableArea;
+template <typename T>
+struct ScrollOffsetRange {
+    T start;
+    T end;
+};
 
-void updateSnapOffsetsForScrollableArea(ScrollableArea&, HTMLElement& scrollingElement, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle);
+template <typename T>
+struct ScrollSnapOffsetsInfo {
+    Vector<T> horizontalSnapOffsets;
+    Vector<T> verticalSnapOffsets;
 
-const unsigned invalidSnapOffsetIndex = UINT_MAX;
-WEBCORE_EXPORT LayoutUnit closestSnapOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, LayoutUnit scrollDestination, float velocity, unsigned& activeSnapIndex);
-WEBCORE_EXPORT float closestSnapOffset(const Vector<float>& snapOffsets, const Vector<ScrollOffsetRange<float>>& snapOffsetRanges, float scrollDestination, float velocity, unsigned& activeSnapIndex);
+    // Snap offset ranges represent non-empty ranges of scroll offsets in which scrolling may rest after scroll snapping.
+    // These are used in two cases: (1) for proximity scroll snapping, where portions of areas between adjacent snap offsets
+    // may emit snap offset ranges, and (2) in the case where the snap area is larger than the snap port, in which case areas
+    // where the snap port fits within the snap area are considered to be valid snap positions.
+    Vector<ScrollOffsetRange<T>> horizontalSnapOffsetRanges;
+    Vector<ScrollOffsetRange<T>> verticalSnapOffsetRanges;
+};
 
-} // namespace WebCore
-
-#endif // ENABLE(CSS_SCROLL_SNAP)
+}; // namespace WebCore

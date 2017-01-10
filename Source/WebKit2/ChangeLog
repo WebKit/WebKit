@@ -1,3 +1,33 @@
+2017-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement "proximity" scroll snapping
+        https://bugs.webkit.org/show_bug.cgi?id=135994
+        <rdar://problem/18162418>
+
+        Reviewed by Dean Jackson.
+
+        Adds boilerplate support for plumbing lists of snap offset ranges from the web process to the UI process
+        alongside the list of snap offsets.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ScrollOffsetRange<float>>::encode):
+        (IPC::ArgumentCoder<ScrollOffsetRange<float>>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+
+        Adjust mainframe proximity scroll snapping logic to not subtract out the top content inset when there is no
+        active snap offset (i.e. when snapping rests in a snap offset range). Attempting to subtract out the top inset
+        in this case caused the scroll offset to jump after ending a drag with no momentum in a snap offset range.
+
+        (WebKit::RemoteScrollingCoordinatorProxy::adjustTargetContentOffsetForSnapping):
+        (WebKit::RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling):
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling):
+
 2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
         ThreadedCoordinatedLayerTreeHost::renderNextFrame() should short-cut to layer flushing

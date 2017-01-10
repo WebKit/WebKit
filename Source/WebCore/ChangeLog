@@ -1,3 +1,187 @@
+2017-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement "proximity" scroll snapping
+        https://bugs.webkit.org/show_bug.cgi?id=135994
+        <rdar://problem/18162418>
+
+        Reviewed by Dean Jackson.
+
+        Adds support for proximity scroll snapping. To do this, we introduce scroll offset ranges, a list of scroll
+        offset ranges that are plumbed alongside the list of scroll snap offsets. Similar to a snap offset, a snap
+        offset range contains scroll offsets on which scrolling is allowed to come to a rest within a scroll snapping
+        container. However, unlike normal snap offsets, scrolling may only come to rest within a snap offset range if
+        the predicted scroll offset already lies within the range. The new algorithm for selecting a target scroll snap
+        position given a destination offset is now:
+
+        -   If the scroll destination lies within a snap offset range, return the scroll destination
+        -   Otherwise, compute the nearest lower/upper snap offsets and lower/upper snap offset ranges
+        -   If scrolling ended with no velocity, return the nearest snap offset
+        -   If scrolling ended with positive velocity, choose the upper snap offset only if there is no snap offset
+            range in between the scroll destination and the snap offset; else, choose the lower snap offset
+        -   If scrolling ended with negative velocity, choose the lower snap offset only if there is no snap offset
+            range in between the scroll destination and the snap offset; else, choose the upper snap offset
+
+        The extra rule accounting for scroll offset ranges in between the scroll destination and a potential snap offset
+        handles the corner case where the user scrolls with momentum very lightly away from a snap offset, such that the
+        predicted scroll destination is still within proximity of the snap offset. In this case, the regular (mandatory
+        scroll snapping) behavior would be to snap to the next offset in the direction of momentum scrolling, but
+        instead, it is more intuitive to return to the original snap position.
+
+        We also move scrolling prediction logic into ScrollingMomentumCalculator and adopt the platform
+        _NSScrollingMomentumCalculator's destinationOrigin property when computing the predicted scroll destination.
+        Previously, we were simply multiplying by an empirically-derived constant to approximate the scroll destination,
+        but now that we are supporting proximity scroll snapping, we need more exact scroll destinaton prediction in
+        order to make sure that scrolling to a snap offset range feels natural.
+
+        Tests: tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-then-proximity.html
+               tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html
+               tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-overflow.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::setStateScrollingNodeSnapOffsetsAsFloat):
+        (WebCore::AsyncScrollingCoordinator::updateOverflowScrollingNode):
+        (WebCore::AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView):
+
+        Make boilerplate changes to plumb lists of horizontal and vertical snap offset ranges alongside the lists of
+        horizontal and vertical snap offsets.
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::snapOffsetRangesToString):
+        (WebCore::indicesOfNearestSnapOffsetRanges):
+        (WebCore::indicesOfNearestSnapOffsets):
+        (WebCore::adjustAxisSnapOffsetsForScrollExtent):
+        (WebCore::computeAxisProximitySnapOffsetRanges):
+        (WebCore::updateSnapOffsetsForScrollableArea):
+        (WebCore::closestSnapOffset):
+
+        Adjust the snap offset selection algorithm to take snap offset ranges into account. See above for more details.
+        Additionally, augment snap offset update logic to emit snap offset ranges for proximity scroll snapping. To do
+        this, we run the following steps on the final list of processed snap offsets:
+        -   Compute the proximity distance, which (for now) is arbitrarily 0.3 * the length or width of the scroll snap
+            port, depending on whether scroll snapping is taking place in the X or Y axis.
+        -   For each pair of adjacent snap offsets, if they are more than 2 * proximity distance away from each other,
+            emit a snap offset range starting from (lower snap offset + proximity distance) and ending on (upper snap
+            offset + proximity distance).
+
+        * page/scrolling/AxisScrollSnapOffsets.h:
+        (WebCore::closestSnapOffset): Deleted.
+        * page/scrolling/ScrollSnapOffsetsInfo.h:
+
+        Introduce ScrollSnapOffsetsInfo, a struct which contains data relevant to scroll snapping. This includes
+        vertical and horizontal snap offsets, as well as vertical and horizontal snap offset ranges. Snap offset ranges
+        consist of a vector of ranges of scroll offsets.
+
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingMomentumCalculator.cpp:
+        (WebCore::projectedInertialScrollDistance):
+        (WebCore::ScrollingMomentumCalculator::ScrollingMomentumCalculator):
+        (WebCore::ScrollingMomentumCalculator::setRetargetedScrollOffset):
+        (WebCore::ScrollingMomentumCalculator::predictedDestinationOffset):
+        (WebCore::ScrollingMomentumCalculator::create):
+        (WebCore::ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled):
+        (WebCore::BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator):
+        (WebCore::BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress):
+        (WebCore::BasicScrollingMomentumCalculator::initializeInterpolationCoefficientsIfNecessary):
+        (WebCore::BasicScrollingMomentumCalculator::initializeSnapProgressCurve):
+        * page/scrolling/ScrollingMomentumCalculator.h:
+        (WebCore::ScrollingMomentumCalculator::retargetedScrollOffset):
+        (WebCore::ScrollingMomentumCalculator::retargetedScrollOffsetDidChange):
+
+        Currently, the ScrollingMomentumCalculator is responsible for taking an initial position, initial velocity, and
+        target position and animating the scroll offset from the initial to target position. Now, we refactor the
+        ScrollingMomentumCalculator interface to no longer take a target offset upon initialization, and instead compute
+        the predicted scroll destination given initial position and velocity; clients of the ScrollingMomentumCalculator
+        then use this predicted scroll destination to compute a retargeted scroll offset and then call
+        setRetargetedScrollOffset on the calculator, which sets up an animation curve to the new retargeted offset. This
+        allows both the AppKit-based scrolling momentum calculator and platform-invariant momentum calculator to be used
+        interchangeably, while still allowing them to compute a destination offset from initial parameters of the
+        scroll.
+
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setHorizontalSnapOffsets):
+        (WebCore::ScrollingStateScrollingNode::setVerticalSnapOffsets):
+        (WebCore::ScrollingStateScrollingNode::setHorizontalSnapOffsetRanges):
+        (WebCore::ScrollingStateScrollingNode::setVerticalSnapOffsetRanges):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::horizontalSnapOffsets):
+        (WebCore::ScrollingStateScrollingNode::verticalSnapOffsets):
+        (WebCore::ScrollingStateScrollingNode::horizontalSnapOffsetRanges):
+        (WebCore::ScrollingStateScrollingNode::verticalSnapOffsetRanges):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreeScrollingNode::dumpProperties):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (WebCore::ScrollingTreeScrollingNode::horizontalSnapOffsets):
+        (WebCore::ScrollingTreeScrollingNode::verticalSnapOffsets):
+        (WebCore::ScrollingTreeScrollingNode::horizontalSnapOffsetRanges):
+        (WebCore::ScrollingTreeScrollingNode::verticalSnapOffsetRanges):
+
+        Add more boilerplate support for snap offset ranges.
+
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.h:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        (WebCore::ScrollingMomentumCalculator::create):
+        (WebCore::ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled):
+        (WebCore::ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac):
+        (WebCore::ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime):
+        (WebCore::ScrollingMomentumCalculatorMac::predictedDestinationOffset):
+        (WebCore::ScrollingMomentumCalculatorMac::retargetedScrollOffsetDidChange):
+        (WebCore::ScrollingMomentumCalculatorMac::animationDuration):
+        (WebCore::ScrollingMomentumCalculatorMac::requiresMomentumScrolling):
+        (WebCore::ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator):
+
+        Hook into AppKit momentum scroll offset prediction.
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::convertToLayoutUnits):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ensureSnapOffsetsInfo):
+        (WebCore::ScrollableArea::horizontalSnapOffsets):
+        (WebCore::ScrollableArea::horizontalSnapOffsetRanges):
+        (WebCore::ScrollableArea::verticalSnapOffsetRanges):
+        (WebCore::ScrollableArea::verticalSnapOffsets):
+        (WebCore::ScrollableArea::setHorizontalSnapOffsets):
+        (WebCore::ScrollableArea::setVerticalSnapOffsets):
+        (WebCore::ScrollableArea::setHorizontalSnapOffsetRanges):
+        (WebCore::ScrollableArea::setVerticalSnapOffsetRanges):
+        (WebCore::ScrollableArea::clearHorizontalSnapOffsets):
+        (WebCore::ScrollableArea::clearVerticalSnapOffsets):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::horizontalSnapOffsets): Deleted.
+        (WebCore::ScrollableArea::verticalSnapOffsets): Deleted.
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::processWheelEventForScrollSnap):
+
+        Fix an issue where initial scrolling velocity would be set to zero at the end of a drag gesture.
+
+        (WebCore::ScrollController::updateScrollSnapState):
+        (WebCore::ScrollController::updateScrollSnapPoints):
+        (WebCore::ScrollController::setNearestScrollSnapIndexForAxisAndOffset):
+        * platform/cocoa/ScrollSnapAnimatorState.h:
+        (WebCore::ScrollSnapAnimatorState::snapOffsetsForAxis):
+        (WebCore::ScrollSnapAnimatorState::snapOffsetRangesForAxis):
+        (WebCore::ScrollSnapAnimatorState::setSnapOffsetsAndPositionRangesForAxis):
+        (WebCore::ScrollSnapAnimatorState::setSnapOffsetsForAxis): Deleted.
+        * platform/cocoa/ScrollSnapAnimatorState.mm:
+        (WebCore::ScrollSnapAnimatorState::setupAnimationForState):
+        (WebCore::ScrollSnapAnimatorState::targetOffsetForStartOffset):
+        (WebCore::projectedInertialScrollDistance): Deleted.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPlatformMomentumScrollingPredictionEnabled):
+
+        Add a new hook for layout tests to force scrolling momentum calculators to use the platform-invariant momentum
+        scrolling prediction heuristic instead of the platform-dependent one.
+
+        (WebCore::Internals::scrollSnapOffsets):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-01-10  Chris Dumez  <cdumez@apple.com>
 
         Make Event.initEvent()'s first parameter mandatory

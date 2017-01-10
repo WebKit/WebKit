@@ -52,6 +52,7 @@
         function onLoad() {
             if (window.eventSender) {
                 eventSender.monitorWheelEvents();
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
                 setTimeout(scrollSnapTest, 0);
             } else {
                 var messageLocation = document.getElementById('item0');

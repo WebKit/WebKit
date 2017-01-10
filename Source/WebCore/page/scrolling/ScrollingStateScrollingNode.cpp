@@ -47,8 +47,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
 #if ENABLE(CSS_SCROLL_SNAP)
-    , m_horizontalSnapOffsets(stateNode.horizontalSnapOffsets())
-    , m_verticalSnapOffsets(stateNode.verticalSnapOffsets())
+    , m_snapOffsetsInfo(stateNode.m_snapOffsetsInfo)
 #endif
     , m_scrollableAreaParameters(stateNode.scrollableAreaParameters())
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
@@ -108,20 +107,38 @@ void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
 #if ENABLE(CSS_SCROLL_SNAP)
 void ScrollingStateScrollingNode::setHorizontalSnapOffsets(const Vector<float>& snapOffsets)
 {
-    if (m_horizontalSnapOffsets == snapOffsets)
+    if (m_snapOffsetsInfo.horizontalSnapOffsets == snapOffsets)
         return;
 
-    m_horizontalSnapOffsets = snapOffsets;
+    m_snapOffsetsInfo.horizontalSnapOffsets = snapOffsets;
     setPropertyChanged(HorizontalSnapOffsets);
 }
 
 void ScrollingStateScrollingNode::setVerticalSnapOffsets(const Vector<float>& snapOffsets)
 {
-    if (m_verticalSnapOffsets == snapOffsets)
+    if (m_snapOffsetsInfo.verticalSnapOffsets == snapOffsets)
         return;
 
-    m_verticalSnapOffsets = snapOffsets;
+    m_snapOffsetsInfo.verticalSnapOffsets = snapOffsets;
     setPropertyChanged(VerticalSnapOffsets);
+}
+
+void ScrollingStateScrollingNode::setHorizontalSnapOffsetRanges(const Vector<ScrollOffsetRange<float>>& scrollOffsetRanges)
+{
+    if (m_snapOffsetsInfo.horizontalSnapOffsetRanges == scrollOffsetRanges)
+        return;
+
+    m_snapOffsetsInfo.horizontalSnapOffsetRanges = scrollOffsetRanges;
+    setPropertyChanged(HorizontalSnapOffsetRanges);
+}
+
+void ScrollingStateScrollingNode::setVerticalSnapOffsetRanges(const Vector<ScrollOffsetRange<float>>& scrollOffsetRanges)
+{
+    if (m_snapOffsetsInfo.verticalSnapOffsetRanges == scrollOffsetRanges)
+        return;
+
+    m_snapOffsetsInfo.verticalSnapOffsetRanges = scrollOffsetRanges;
+    setPropertyChanged(VerticalSnapOffsetRanges);
 }
 
 void ScrollingStateScrollingNode::setCurrentHorizontalSnapPointIndex(unsigned index)

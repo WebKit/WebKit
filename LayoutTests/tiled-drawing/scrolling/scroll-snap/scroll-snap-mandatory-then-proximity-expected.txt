@@ -1,0 +1,7 @@
+Scrolling in container with scroll-snap-type: y mandatory
+- Did the scrolling snap to the top? NO
+- Did scrolling snap to the second box? YES
+Scrolling in container with scroll-snap-type: y proximity
+- Did the scrolling snap to the top? NO
+- Did scrolling snap to the second box? NO
+

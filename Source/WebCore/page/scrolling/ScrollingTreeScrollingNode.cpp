@@ -70,10 +70,16 @@ void ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
 
 #if ENABLE(CSS_SCROLL_SNAP)
     if (state.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsets))
-        m_horizontalSnapOffsets = state.horizontalSnapOffsets();
+        m_snapOffsetsInfo.horizontalSnapOffsets = state.horizontalSnapOffsets();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets))
-        m_verticalSnapOffsets = state.verticalSnapOffsets();
+        m_snapOffsetsInfo.verticalSnapOffsets = state.verticalSnapOffsets();
+
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsetRanges))
+        m_snapOffsetsInfo.horizontalSnapOffsetRanges = state.horizontalSnapOffsetRanges();
+
+    if (state.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsetRanges))
+        m_snapOffsetsInfo.verticalSnapOffsetRanges = state.verticalSnapOffsetRanges();
 
     if (state.hasChangedProperty(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex))
         m_currentHorizontalSnapPointIndex = state.currentHorizontalSnapPointIndex();
@@ -139,14 +145,14 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
         ts.dumpProperty("scrollable area size", m_scrollOrigin);
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (m_horizontalSnapOffsets.size())
-        ts.dumpProperty("horizontal snap offsets", m_horizontalSnapOffsets);
+    if (m_snapOffsetsInfo.horizontalSnapOffsets.size())
+        ts.dumpProperty("horizontal snap offsets", m_snapOffsetsInfo.horizontalSnapOffsets);
 
-    if (m_verticalSnapOffsets.size())
-        ts.dumpProperty("horizontal snap offsets", m_verticalSnapOffsets);
+    if (m_snapOffsetsInfo.verticalSnapOffsets.size())
+        ts.dumpProperty("horizontal snap offsets", m_snapOffsetsInfo.verticalSnapOffsets);
 
     if (m_currentHorizontalSnapPointIndex)
-        ts.dumpProperty("current horizontal snap point index", m_verticalSnapOffsets);
+        ts.dumpProperty("current horizontal snap point index", m_currentHorizontalSnapPointIndex);
 
     if (m_currentVerticalSnapPointIndex)
         ts.dumpProperty("current vertical snap point index", m_currentVerticalSnapPointIndex);

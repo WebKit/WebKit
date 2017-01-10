@@ -2472,4 +2472,29 @@ bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
 }
 #endif
 
+#if ENABLE(CSS_SCROLL_SNAP)
+
+void ArgumentCoder<ScrollOffsetRange<float>>::encode(Encoder& encoder, const ScrollOffsetRange<float>& range)
+{
+    encoder << range.start;
+    encoder << range.end;
+}
+
+bool ArgumentCoder<ScrollOffsetRange<float>>::decode(Decoder& decoder, ScrollOffsetRange<float>& range)
+{
+    float start;
+    if (!decoder.decode(start))
+        return false;
+
+    float end;
+    if (!decoder.decode(end))
+        return false;
+
+    range.start = start;
+    range.end = end;
+    return true;
+}
+
+#endif
+
 } // namespace IPC

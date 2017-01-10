@@ -32,34 +32,62 @@
 namespace WebCore {
 
 static const Seconds scrollSnapAnimationDuration = 1_s;
+static inline float projectedInertialScrollDistance(float initialWheelDelta)
+{
+    // On macOS 10.10 and earlier, we don't have a platform scrolling momentum calculator, so we instead approximate the scroll destination
+    // by multiplying the initial wheel delta by a constant factor. By running a few experiments (i.e. logging scroll destination and initial
+    // wheel delta for many scroll gestures) we determined that this is a reasonable way to approximate where scrolling will take us without
+    // using _NSScrollingMomentumCalculator.
+    const static double inertialScrollPredictionFactor = 16.7;
+    return inertialScrollPredictionFactor * initialWheelDelta;
+}
 
-ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+ScrollingMomentumCalculator::ScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
     : m_initialDelta(initialDelta)
     , m_initialVelocity(initialVelocity)
     , m_initialScrollOffset(initialOffset.x(), initialOffset.y())
-    , m_targetScrollOffset(targetOffset.x(), targetOffset.y())
     , m_viewportSize(viewportSize)
     , m_contentSize(contentSize)
 {
 }
 
+void ScrollingMomentumCalculator::setRetargetedScrollOffset(const FloatSize& target)
+{
+    if (m_retargetedScrollOffset && m_retargetedScrollOffset == target)
+        return;
+
+    m_retargetedScrollOffset = target;
+    retargetedScrollOffsetDidChange();
+}
+
+FloatSize ScrollingMomentumCalculator::predictedDestinationOffset()
+{
+    float initialOffsetX = clampTo<float>(m_initialScrollOffset.width() + projectedInertialScrollDistance(m_initialDelta.width()), 0, m_contentSize.width() - m_viewportSize.width());
+    float initialOffsetY = clampTo<float>(m_initialScrollOffset.height() + projectedInertialScrollDistance(m_initialDelta.height()), 0, m_contentSize.height() - m_viewportSize.height());
+    return { initialOffsetX, initialOffsetY };
+}
+
 #if !HAVE(NSSCROLLING_FILTERS)
 
-std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
 {
-    return std::make_unique<BasicScrollingMomentumCalculator>(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity);
+    return std::make_unique<BasicScrollingMomentumCalculator>(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
+}
+
+void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(bool)
+{
 }
 
 #endif
 
-BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
-    : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity)
+BasicScrollingMomentumCalculator::BasicScrollingMomentumCalculator(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+    : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity)
 {
 }
 
-FloatSize BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress(float progress) const
+FloatSize BasicScrollingMomentumCalculator::linearlyInterpolatedOffsetAtProgress(float progress)
 {
-    return m_initialScrollOffset + progress * (m_targetScrollOffset - m_initialScrollOffset);
+    return m_initialScrollOffset + progress * (retargetedScrollOffset() - m_initialScrollOffset);
 }
 
 FloatSize BasicScrollingMomentumCalculator::cubicallyInterpolatedOffsetAtProgress(float progress) const
@@ -120,7 +148,7 @@ void BasicScrollingMomentumCalculator::initializeInterpolationCoefficientsIfNece
         return;
     }
 
-    FloatSize startToEndVector = m_targetScrollOffset - m_initialScrollOffset;
+    FloatSize startToEndVector = retargetedScrollOffset() - m_initialScrollOffset;
     float startToEndDistance = startToEndVector.diagonalLength();
     if (!startToEndDistance) {
         // The start and end positions are the same, so we shouldn't try to interpolate a path.
@@ -140,7 +168,7 @@ void BasicScrollingMomentumCalculator::initializeInterpolationCoefficientsIfNece
     m_snapAnimationCurveCoefficients[0] = m_initialScrollOffset;
     m_snapAnimationCurveCoefficients[1] = 3 * (controlVector1 - m_initialScrollOffset);
     m_snapAnimationCurveCoefficients[2] = 3 * (m_initialScrollOffset - 2 * controlVector1 + controlVector2);
-    m_snapAnimationCurveCoefficients[3] = 3 * (controlVector1 - controlVector2) - m_initialScrollOffset + m_targetScrollOffset;
+    m_snapAnimationCurveCoefficients[3] = 3 * (controlVector1 - controlVector2) - m_initialScrollOffset + retargetedScrollOffset();
     m_forceLinearAnimationCurve = false;
 }
 
@@ -179,10 +207,10 @@ void BasicScrollingMomentumCalculator::initializeSnapProgressCurve()
     static const float minScrollSnapInitialProgress = 0.1;
     static const float maxScrollSnapInitialProgress = 0.5;
 
-    FloatSize alignmentVector = m_initialDelta * (m_targetScrollOffset - m_initialScrollOffset);
+    FloatSize alignmentVector = m_initialDelta * (retargetedScrollOffset() - m_initialScrollOffset);
     float initialProgress;
     if (alignmentVector.width() + alignmentVector.height() > 0)
-        initialProgress = clampTo(m_initialDelta.diagonalLength() / (m_targetScrollOffset - m_initialScrollOffset).diagonalLength(), minScrollSnapInitialProgress, maxScrollSnapInitialProgress);
+        initialProgress = clampTo(m_initialDelta.diagonalLength() / (retargetedScrollOffset() - m_initialScrollOffset).diagonalLength(), minScrollSnapInitialProgress, maxScrollSnapInitialProgress);
     else
         initialProgress = minScrollSnapInitialProgress;
 

@@ -32,31 +32,62 @@
 
 namespace WebCore {
 
-std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+static bool gEnablePlatformMomentumScrollingPrediction = true;
+
+std::unique_ptr<ScrollingMomentumCalculator> ScrollingMomentumCalculator::create(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
 {
-    return std::make_unique<ScrollingMomentumCalculatorMac>(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity);
+    return std::make_unique<ScrollingMomentumCalculatorMac>(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity);
 }
 
-ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatPoint& targetOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
-    : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, targetOffset, initialDelta, initialVelocity)
-    , m_requiresMomentumScrolling(initialOffset != targetOffset || initialVelocity.area())
+void ScrollingMomentumCalculator::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
+{
+    gEnablePlatformMomentumScrollingPrediction = enabled;
+}
+
+ScrollingMomentumCalculatorMac::ScrollingMomentumCalculatorMac(const FloatSize& viewportSize, const FloatSize& contentSize, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity)
+    : ScrollingMomentumCalculator(viewportSize, contentSize, initialOffset, initialDelta, initialVelocity)
 {
 }
 
 FloatPoint ScrollingMomentumCalculatorMac::scrollOffsetAfterElapsedTime(Seconds elapsedTime)
 {
-    if (!m_requiresMomentumScrolling)
-        return { m_targetScrollOffset.width(), m_targetScrollOffset.height() };
+    if (!requiresMomentumScrolling())
+        return { retargetedScrollOffset().width(), retargetedScrollOffset().height() };
 
     return [ensurePlatformMomentumCalculator() positionAfterDuration:elapsedTime.value()];
 }
 
+FloatSize ScrollingMomentumCalculatorMac::predictedDestinationOffset()
+{
+    if (!gEnablePlatformMomentumScrollingPrediction)
+        return ScrollingMomentumCalculator::predictedDestinationOffset();
+
+    ensurePlatformMomentumCalculator();
+    return { m_initialDestinationOrigin.x(), m_initialDestinationOrigin.y() };
+}
+
+void ScrollingMomentumCalculatorMac::retargetedScrollOffsetDidChange()
+{
+    _NSScrollingMomentumCalculator *calculator = ensurePlatformMomentumCalculator();
+    calculator.destinationOrigin = NSMakePoint(retargetedScrollOffset().width(), retargetedScrollOffset().height());
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    [calculator calculateToReachDestination];
+#endif
+}
+
 Seconds ScrollingMomentumCalculatorMac::animationDuration()
 {
-    if (!m_requiresMomentumScrolling)
+    if (!requiresMomentumScrolling())
         return 0_s;
 
     return Seconds([ensurePlatformMomentumCalculator() durationUntilStop]);
+}
+
+bool ScrollingMomentumCalculatorMac::requiresMomentumScrolling()
+{
+    if (m_requiresMomentumScrolling == std::nullopt)
+        m_requiresMomentumScrolling = m_initialScrollOffset != retargetedScrollOffset() || m_initialVelocity.area();
+    return m_requiresMomentumScrolling.value();
 }
 
 _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMomentumCalculator()
@@ -68,10 +99,7 @@ _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMo
     NSRect contentFrame = NSMakeRect(0, 0, m_contentSize.width(), m_contentSize.height());
     NSPoint velocity = NSMakePoint(m_initialVelocity.width(), m_initialVelocity.height());
     m_platformMomentumCalculator = adoptNS([[_NSScrollingMomentumCalculator alloc] initWithInitialOrigin:origin velocity:velocity documentFrame:contentFrame constrainedClippingOrigin:NSZeroPoint clippingSize:m_viewportSize tolerance:NSMakeSize(1, 1)]);
-    [m_platformMomentumCalculator setDestinationOrigin:NSMakePoint(m_targetScrollOffset.width(), m_targetScrollOffset.height())];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    [m_platformMomentumCalculator calculateToReachDestination];
-#endif
+    m_initialDestinationOrigin = [m_platformMomentumCalculator destinationOrigin];
     return m_platformMomentumCalculator.get();
 }
 

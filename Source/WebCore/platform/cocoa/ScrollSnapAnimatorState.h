@@ -33,6 +33,7 @@
 #include "FloatSize.h"
 #include "LayoutPoint.h"
 #include "PlatformWheelEvent.h"
+#include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "ScrollingMomentumCalculator.h"
 #include <wtf/MonotonicTime.h>
@@ -48,17 +49,25 @@ enum class ScrollSnapState {
 
 class ScrollSnapAnimatorState {
 public:
-    Vector<LayoutUnit> snapOffsetsForAxis(ScrollEventAxis axis) const
+    const Vector<LayoutUnit>& snapOffsetsForAxis(ScrollEventAxis axis) const
     {
         return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsX : m_snapOffsetsY;
     }
 
-    void setSnapOffsetsForAxis(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets)
+    const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRangesForAxis(ScrollEventAxis axis) const
     {
-        if (axis == ScrollEventAxis::Horizontal)
+        return axis == ScrollEventAxis::Horizontal ? m_snapOffsetRangesX : m_snapOffsetRangesY;
+    }
+
+    void setSnapOffsetsAndPositionRangesForAxis(ScrollEventAxis axis, const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges)
+    {
+        if (axis == ScrollEventAxis::Horizontal) {
             m_snapOffsetsX = snapOffsets;
-        else
+            m_snapOffsetRangesX = snapOffsetRanges;
+        } else {
             m_snapOffsetsY = snapOffsets;
+            m_snapOffsetRangesY = snapOffsetRanges;
+        }
     }
 
     ScrollSnapState currentState() const { return m_currentState; }
@@ -85,15 +94,17 @@ public:
     void transitionToDestinationReachedState();
 
 private:
-    float targetOffsetForStartOffset(ScrollEventAxis, float maxScrollOffset, float startOffset, float pageScale, float delta, unsigned& outActiveSnapIndex) const;
+    float targetOffsetForStartOffset(const Vector<LayoutUnit>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges, float maxScrollOffset, float startOffset, float predictedOffset, float pageScale, float delta, unsigned& outActiveSnapIndex) const;
     void teardownAnimationForState(ScrollSnapState);
     void setupAnimationForState(ScrollSnapState, const FloatSize& contentSize, const FloatSize& viewportSize, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
     Vector<LayoutUnit> m_snapOffsetsX;
+    Vector<ScrollOffsetRange<LayoutUnit>> m_snapOffsetRangesX;
     unsigned m_activeSnapIndexX { 0 };
     Vector<LayoutUnit> m_snapOffsetsY;
+    Vector<ScrollOffsetRange<LayoutUnit>> m_snapOffsetRangesY;
     unsigned m_activeSnapIndexY { 0 };
 
     MonotonicTime m_startTime;

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                overflow-x: none;
+                overflow-y: scroll;
+                position: absolute;
+                scroll-snap-type: y proximity;
+                -webkit-scroll-snap-type: proximity;
+                scroll-snap-type: proximity;
+            }
+
+            .area {
+                width: 100%;
+                height: 100%;
+                float: left;
+                opacity: 0.5;
+                scroll-snap-align: start;
+                -webkit-scroll-snap-coordinate: 0 0;
+                scroll-snap-coordinate: 0 0;
+            }
+
+            #output {
+                position: fixed;
+            }
+        </style>
+        <script>
+        let write = s => output.innerHTML += s + "<br>";
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function verticalScrollInBody(dragDeltas)
+        {
+            return new Promise(resolve => {
+                write(`Scrolling body with ${dragDeltas.length} drag ticks`);
+                eventSender.monitorWheelEvents();
+                internals.setPlatformMomentumScrollingPredictionEnabled(false);
+                eventSender.mouseMoveTo(window.innerWidth / 2, window.innerHeight / 2);
+                dragDeltas.forEach((delta, i) => eventSender.mouseScrollByWithWheelAndMomentumPhases(0, delta, i == 0 ? "began" : "changed", "none"));
+                eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+                eventSender.callAfterScrollingCompletes(() => {
+                    let areaHeight = document.querySelector(".area").clientHeight;
+                    write(`- Did the scrolling snap to the top? ${document.body.scrollTop == 0 ? "YES" : "NO"}`);
+                    write(`- Did scrolling snap to the second box? ${document.body.scrollTop == areaHeight ? "YES" : "NO"}`);
+                    document.body.scrollTop = 0;
+                    setTimeout(resolve, 0);
+                });
+            });
+        }
+
+        function run() {
+            if (!window.testRunner || !window.eventSender) {
+                write("To manually test, verify that scrolling near one of the boundaries between the colored boxes");
+                write("snaps to the edge of the nearest colored box, but scrolling somewhere near the middle of two");
+                write("boxes does not cause the scroll offset to snap.");
+                return;
+            }
+
+            let areaHeight = document.querySelector(".area").clientHeight;
+            verticalScrollInBody(new Array(2).fill(-1))
+                .then(() => verticalScrollInBody(new Array(Math.round(areaHeight / 20)).fill(-1)))
+                .then(() => verticalScrollInBody(new Array(Math.round(areaHeight / 10)).fill(-1)))
+                .then(() => testRunner.notifyDone());
+        }
+        </script>
+    </head>
+    <body onload=run()>
+        <div class="area" style="background-color: red;"></div>
+        <div class="area" style="background-color: green;"></div>
+        <div class="area" style="background-color: blue;"></div>
+        <div class="area" style="background-color: aqua;"></div>
+        <div class="area" style="background-color: yellow;"></div>
+        <div class="area" style="background-color: fuchsia;"></div>
+    </body>
+    <div id="output"></div>
+</html>
