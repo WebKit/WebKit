@@ -1646,11 +1646,6 @@ void Heap::notifyIncrementalSweeper()
     m_sweeper->startSweeping();
 }
 
-NEVER_INLINE void Heap::didExceedHeapSizeLimit()
-{
-    CRASH();
-}
-
 void Heap::updateAllocationLimits()
 {
     static const bool verbose = false;
@@ -1682,12 +1677,6 @@ void Heap::updateAllocationLimits()
 
     if (verbose)
         dataLog("extraMemorySize() = ", extraMemorySize(), ", currentHeapSize = ", currentHeapSize, "\n");
-
-#if USE(JSVALUE64)
-    // If the heap has grown larger than 4GB, just crash before things get out of control.
-    if (currentHeapSize > 4096 * MB)
-        didExceedHeapSizeLimit();
-#endif
     
     if (Options::gcMaxHeapSize() && currentHeapSize > Options::gcMaxHeapSize())
         HeapStatistics::exitWithFailure();
