@@ -29,6 +29,10 @@
 
 #include <wtf/Forward.h>
 
+namespace JSC {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 struct MediaKeySystemConfiguration;
@@ -45,6 +49,7 @@ public:
     virtual SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) = 0;
     virtual SuccessValue setDistinctiveIdentifiersAllowed(bool) = 0;
     virtual SuccessValue setPersistentStateAllowed(bool) = 0;
+    virtual SuccessValue setServerCertificate(JSC::ArrayBuffer&) = 0;
 };
 
 }

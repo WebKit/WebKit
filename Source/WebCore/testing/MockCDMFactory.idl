@@ -33,6 +33,7 @@
     attribute MediaKeysRequirement distinctiveIdentifiersRequirement;
     attribute MediaKeysRequirement persistentStateRequirement;
     attribute boolean canCreateInstances;
+    attribute boolean supportsServerCertificates;
 
     void unregister();
 };

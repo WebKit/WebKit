@@ -1,3 +1,32 @@
+2017-01-10  Jer Noble  <jer.noble@apple.com>
+
+        Add support for MediaKeys.setServerCertificate()
+        https://bugs.webkit.org/show_bug.cgi?id=166772
+
+        Reviewed by Darin Adler.
+
+        Test: media/encrypted-media/mock-MediaKeys-setServerCertificate.html
+
+        Implement MediaKeys::setServerCertificate(). This requires some additions
+        to CDM, CDMPrivate, and CDMInstance to support platform adoption and to
+        implement mock support for testing.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::supportsServerCertificates):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::setServerCertificate):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDM::supportsServerCertificates):
+        (WebCore::MockCDMInstance::setServerCertificate):
+        * testing/MockCDMFactory.h:
+        (WebCore::MockCDMFactory::supportsServerCertificates):
+        (WebCore::MockCDMFactory::setSupportsServerCertificates):
+        * testing/MockCDMFactory.idl:
+
 2017-01-10  Youenn Fablet  <youenn@apple.com>
 
         CachedScript cloning does not clone encodedSize

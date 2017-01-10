@@ -1467,6 +1467,7 @@ webkit.org/b/165874 [ Debug ] streams/pipe-to.html [ Pass Failure ]
 # New Encrypted Media API not enabled on Mac
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
+media/encrypted-media/mock-MediaKeys-setServerCertificate.html [ Skip ]
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
 

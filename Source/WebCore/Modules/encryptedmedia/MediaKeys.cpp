@@ -35,6 +35,7 @@
 #include "CDMInstance.h"
 #include "MediaKeySession.h"
 #include "NotImplemented.h"
+#include <runtime/ArrayBuffer.h>
 
 namespace WebCore {
 
@@ -55,9 +56,44 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(MediaKeySessionType)
     return Exception { NOT_SUPPORTED_ERR };
 }
 
-void MediaKeys::setServerCertificate(const BufferSource&, Ref<DeferredPromise>&&)
+void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)
 {
-    notImplemented();
+    // https://w3c.github.io/encrypted-media/#dom-mediakeys-setservercertificate
+    // W3C Editor's Draft 09 November 2016
+
+    // When this method is invoked, the user agent must run the following steps:
+    // 1. If the Key System implementation represented by this object's cdm implementation value does not support
+    //    server certificates, return a promise resolved with false.
+    if (!m_implementation->supportsServerCertificates()) {
+        promise->reject(false);
+        return;
+    }
+
+    // 2. If serverCertificate is an empty array, return a promise rejected with a new a newly created TypeError.
+    if (!serverCertificate.length()) {
+        promise->reject(TypeError);
+        return;
+    }
+
+    // 3. Let certificate be a copy of the contents of the serverCertificate parameter.
+    auto certificate = ArrayBuffer::create(serverCertificate.data(), serverCertificate.length());
+
+    // 4. Let promise be a new promise.
+    // 5. Run the following steps in parallel:
+
+    m_taskQueue.enqueueTask([this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
+        // 5.1. Use this object's cdm instance to process certificate.
+        if (m_instance->setServerCertificate(certificate) == CDMInstance::Failed) {
+            // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
+            promise->reject(INVALID_STATE_ERR);
+            return;
+        }
+
+        // 5.1. Resolve promise with true.
+        promise->resolve<IDLBoolean>(true);
+    });
+
+    // 6. Return promise.
 }
 
 } // namespace WebCore

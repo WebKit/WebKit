@@ -28,7 +28,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include <wtf/NeverDestroyed.h>
+#include <runtime/ArrayBuffer.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -132,6 +133,11 @@ void MockCDM::loadAndInitialize()
     // No-op.
 }
 
+bool MockCDM::supportsServerCertificates() const
+{
+    return m_factory && m_factory->supportsServerCertificates();
+}
+
 MockCDMInstance::MockCDMInstance(WeakPtr<MockCDM> cdm)
     : m_cdm(cdm)
 {
@@ -150,7 +156,7 @@ CDMInstance::SuccessValue MockCDMInstance::setDistinctiveIdentifiersAllowed(bool
     if (m_distinctiveIdentifiersAllowed == distinctiveIdentifiersAllowed)
         return Succeeded;
 
-    MockCDMFactory* factory = m_cdm ? m_cdm->factory() : nullptr;
+    auto* factory = m_cdm ? m_cdm->factory() : nullptr;
 
     if (!factory || (!distinctiveIdentifiersAllowed && factory->distinctiveIdentifiersRequirement() == MediaKeysRequirement::Required))
         return Failed;
@@ -171,6 +177,15 @@ CDMInstance::SuccessValue MockCDMInstance::setPersistentStateAllowed(bool persis
 
     m_persistentStateAllowed = persistentStateAllowed;
     return Succeeded;
+}
+
+CDMInstance::SuccessValue MockCDMInstance::setServerCertificate(ArrayBuffer& certificate)
+{
+    StringView certificateStringView(static_cast<const LChar*>(certificate.data()), certificate.byteLength());
+
+    if (equalIgnoringASCIICase(certificateStringView, "valid"))
+        return Succeeded;
+    return Failed;
 }
 
 }

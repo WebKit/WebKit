@@ -1,0 +1,25 @@
+RUN(internals.initializeMockMediaSource())
+RUN(mock = internals.registerMockCDM())
+RUN(mock.supportedDataTypes = ["mock"])
+RUN(capabilities.initDataTypes = ["mock"])
+RUN(capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] )
+RUN(promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities]))
+Promise resolved OK
+
+RUN(promise = mediaKeySystemAccess.createMediaKeys())
+Promise resolved OK
+
+RUN(promise = mediaKeys.setServerCertificate(new ArrayBuffer()))
+Promise rejected correctly OK
+
+RUN(promise = mediaKeys.setServerCertificate(stringToUInt8Array("invalid")))
+Promise rejected correctly OK
+
+RUN(promise = mediaKeys.setServerCertificate(stringToUInt8Array("valid")))
+Promise resolved OK
+
+RUN(mock.supportsServerCertificates = false)
+RUN(promise = mediaKeys.setServerCertificate(stringToUInt8Array("valid")))
+Promise rejected correctly OK
+END OF TEST
+

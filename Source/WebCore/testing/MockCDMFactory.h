@@ -57,6 +57,9 @@ public:
     bool canCreateInstances() const { return m_canCreateInstances; }
     void setCanCreateInstances(bool flag) { m_canCreateInstances = flag; }
 
+    bool supportsServerCertificates() const { return m_supportsServerCertificates; }
+    void setSupportsServerCertificates(bool flag) { m_supportsServerCertificates = flag; }
+
     void unregister();
 
 private:
@@ -70,6 +73,7 @@ private:
     Vector<String> m_supportedRobustness;
     bool m_registered { true };
     bool m_canCreateInstances { true };
+    bool m_supportsServerCertificates { true };
     WeakPtrFactory<MockCDMFactory> m_weakPtrFactory;
 };
 
@@ -92,6 +96,7 @@ private:
     bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) final;
     std::unique_ptr<CDMInstance> createInstance() final;
     void loadAndInitialize() final;
+    bool supportsServerCertificates() const final;
 
     WeakPtr<MockCDMFactory> m_factory;
     WeakPtrFactory<MockCDM> m_weakPtrFactory;
@@ -105,6 +110,7 @@ private:
     SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) final;
     SuccessValue setDistinctiveIdentifiersAllowed(bool) final;
     SuccessValue setPersistentStateAllowed(bool) final;
+    SuccessValue setServerCertificate(JSC::ArrayBuffer&) final;
 
     WeakPtr<MockCDM> m_cdm;
     bool m_distinctiveIdentifiersAllowed { true };

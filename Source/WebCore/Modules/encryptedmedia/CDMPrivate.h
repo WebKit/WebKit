@@ -51,6 +51,7 @@ public:
     virtual bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) = 0;
     virtual std::unique_ptr<CDMInstance> createInstance() = 0;
     virtual void loadAndInitialize() = 0;
+    virtual bool supportsServerCertificates() const = 0;
 };
 
 }

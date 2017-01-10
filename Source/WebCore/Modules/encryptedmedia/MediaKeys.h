@@ -31,6 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "ExceptionOr.h"
+#include "GenericTaskQueue.h"
 #include "JSDOMPromise.h"
 #include "MediaKeySessionType.h"
 #include <wtf/Ref.h>
@@ -66,6 +67,7 @@ protected:
     Vector<MediaKeySessionType> m_supportedSessionTypes;
     Ref<CDM> m_implementation;
     std::unique_ptr<CDMInstance> m_instance;
+    GenericTaskQueue<Timer> m_taskQueue;
 };
 
 } // namespace WebCore

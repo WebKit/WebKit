@@ -74,7 +74,7 @@ void MediaKeySystemAccess::createMediaKeys(Ref<DeferredPromise>&& promise)
         m_implementation->loadAndInitialize();
 
         // 2.5. Let instance be a new instance of the Key System implementation represented by this object's cdm implementation value.
-        std::unique_ptr<CDMInstance> instance = m_implementation->createInstance();
+        auto instance = m_implementation->createInstance();
         if (!instance) {
             promise->reject(INVALID_STATE_ERR);
             return;

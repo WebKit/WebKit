@@ -624,6 +624,11 @@ std::unique_ptr<CDMInstance> CDM::createInstance()
     return m_private->createInstance();
 }
 
+bool CDM::supportsServerCertificates() const
+{
+    return m_private && m_private->supportsServerCertificates();
+}
+
 }
 
 #endif

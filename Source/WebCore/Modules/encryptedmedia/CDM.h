@@ -71,6 +71,7 @@ public:
 
     void loadAndInitialize();
     std::unique_ptr<CDMInstance> createInstance();
+    bool supportsServerCertificates() const;
 
 private:
     CDM(Document&, const String& keySystem);
