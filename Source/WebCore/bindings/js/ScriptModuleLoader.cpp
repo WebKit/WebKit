@@ -40,7 +40,6 @@
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/JSModuleRecord.h>
-#include <runtime/JSSourceCode.h>
 #include <runtime/JSString.h>
 #include <runtime/Symbol.h>
 
@@ -246,10 +245,8 @@ void ScriptModuleLoader::notifyFinished(CachedModuleScriptLoader& loader, RefPtr
     }
 
     m_requestURLToResponseURLMap.add(cachedScript.url(), cachedScript.response().url());
-    ScriptSourceCode scriptSourceCode(&cachedScript, JSC::SourceProviderSourceType::Module);
-    promise->resolveWithCallback([] (JSC::ExecState& state, JSDOMGlobalObject&, JSC::SourceCode sourceCode) {
-        return JSC::JSSourceCode::create(state.vm(), WTFMove(sourceCode));
-    }, scriptSourceCode.jsSourceCode());
+    // FIXME: Let's wrap around ScriptSourceCode to propagate it directly through the module pipeline.
+    promise->resolve<IDLDOMString>(ScriptSourceCode(&cachedScript, JSC::SourceProviderSourceType::Module).source().toString());
 }
 
 }

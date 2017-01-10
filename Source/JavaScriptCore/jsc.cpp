@@ -53,7 +53,6 @@
 #include "JSNativeStdFunction.h"
 #include "JSONObject.h"
 #include "JSProxy.h"
-#include "JSSourceCode.h"
 #include "JSString.h"
 #include "JSTypedArrays.h"
 #include "JSWebAssemblyCallee.h"
@@ -1577,7 +1576,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     if (!fetchModuleFromLocalFileSystem(moduleKey, utf8))
         return deferred->reject(exec, createError(exec, makeString("Could not open file '", moduleKey, "'.")));
 
-    return deferred->resolve(exec, JSSourceCode::create(exec->vm(), makeSource(stringFromUTF(utf8), SourceOrigin { moduleKey })));
+    return deferred->resolve(exec, jsString(exec, stringFromUTF(utf8)));
 }
 
 

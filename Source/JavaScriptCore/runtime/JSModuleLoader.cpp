@@ -38,7 +38,6 @@
 #include "JSMap.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleRecord.h"
-#include "JSSourceCode.h"
 #include "ModuleAnalyzer.h"
 #include "ModuleLoaderPrototype.h"
 #include "Nodes.h"
@@ -76,19 +75,17 @@ static String printableModuleKey(ExecState* exec, JSValue key)
     return exec->propertyNames().emptyIdentifier.impl();
 }
 
-JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, const SourceCode& sourceCode)
+JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, const String& source)
 {
-    VM& vm = exec->vm();
     JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().providePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);
 
-    SourceCode source { sourceCode };
     MarkedArgumentBuffer arguments;
     arguments.append(key);
     arguments.append(jsNumber(status));
-    arguments.append(JSSourceCode::create(vm, WTFMove(source)));
+    arguments.append(jsString(exec, source));
 
     return call(exec, function, callType, callData, this, arguments);
 }

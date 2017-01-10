@@ -39,7 +39,6 @@
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
-#include "JSSourceCode.h"
 #include "ModuleAnalyzer.h"
 #include "Nodes.h"
 #include "Parser.h"
@@ -113,10 +112,10 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     const Identifier moduleKey = exec->argument(0).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    auto* jsSourceCode = jsDynamicCast<JSSourceCode*>(exec->argument(1));
-    if (!jsSourceCode)
-        return throwVMTypeError(exec, scope);
-    SourceCode sourceCode = jsSourceCode->sourceCode();
+    String source = exec->argument(1).toWTFString(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    SourceCode sourceCode = makeSource(source, SourceOrigin { moduleKey.impl() }, moduleKey.impl(), TextPosition(), SourceProviderSourceType::Module);
 
     CodeProfiling profile(sourceCode);
 

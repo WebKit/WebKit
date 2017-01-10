@@ -32,7 +32,6 @@ namespace JSC {
 
 class JSInternalPromise;
 class JSModuleNamespaceObject;
-class SourceCode;
 
 class JSModuleLoader : public JSNonFinalObject {
 private:
@@ -63,7 +62,7 @@ public:
     }
 
     // APIs to control the module loader.
-    JSValue provide(ExecState*, JSValue key, Status, const SourceCode&);
+    JSValue provide(ExecState*, JSValue key, Status, const String&);
     JSInternalPromise* loadAndEvaluateModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue initiator);
     JSInternalPromise* loadModule(ExecState*, JSValue moduleName, JSValue referrer, JSValue initiator);
     JSValue linkAndEvaluateModule(ExecState*, JSValue moduleKey, JSValue initiator);

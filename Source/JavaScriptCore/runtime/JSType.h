@@ -50,7 +50,6 @@ enum JSType : uint8_t {
     UnlinkedFunctionCodeBlockType,
 
     JSFixedArrayType,
-    JSSourceCodeType,
 
     // The ObjectType value must come before any JSType that is a subclass of JSObject.
     ObjectType,
