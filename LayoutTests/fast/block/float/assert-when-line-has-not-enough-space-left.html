@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can handle float placement even when the float takes over the entire line.</title>
+<style>
+th {
+    margin: 100000000px;
+}
+tr, th {
+    float: left;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+PASS if no crash or hang.
+<table><tr><th></th><td></td></tr></table>
+</body>
+</html>

@@ -1,3 +1,14 @@
+2017-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: newLogicalTop >= logicalTop in WebCore::RenderBlockFlow::getClearDelta
+        https://bugs.webkit.org/show_bug.cgi?id=151202
+        <rdar://problem/27711822>
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/block/float/assert-when-line-has-not-enough-space-left-expected.txt: Added.
+        * fast/block/float/assert-when-line-has-not-enough-space-left.html: Added.
+
 2017-01-09  Tim Horton  <timothy_horton@apple.com>
 
         Unindenting text inside a blockquote can result in the text being reordered

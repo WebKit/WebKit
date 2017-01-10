@@ -185,39 +185,35 @@ public:
     FindNextFloatLogicalBottomAdapter(const RenderBlockFlow& renderer, LayoutUnit belowLogicalHeight)
         : m_renderer(renderer)
         , m_belowLogicalHeight(belowLogicalHeight)
-        , m_aboveLogicalHeight(LayoutUnit::max())
-        , m_nextLogicalBottom(LayoutUnit::max())
-        , m_nextShapeLogicalBottom(LayoutUnit::max())
     {
     }
 
     LayoutUnit lowValue() const { return m_belowLogicalHeight; }
-    LayoutUnit highValue() const { return m_aboveLogicalHeight; }
+    LayoutUnit highValue() const { return LayoutUnit::max(); }
     void collectIfNeeded(const IntervalType&);
 
-    LayoutUnit nextLogicalBottom() { return m_nextLogicalBottom == LayoutUnit::max() ? LayoutUnit() : m_nextLogicalBottom; }
-    LayoutUnit nextShapeLogicalBottom() { return m_nextShapeLogicalBottom == LayoutUnit::max() ? nextLogicalBottom() : m_nextShapeLogicalBottom; }
+    LayoutUnit nextLogicalBottom() const { return m_nextLogicalBottom.value_or(0); }
+    LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
     const RenderBlockFlow& m_renderer;
     LayoutUnit m_belowLogicalHeight;
-    LayoutUnit m_aboveLogicalHeight;
-    LayoutUnit m_nextLogicalBottom;
-    LayoutUnit m_nextShapeLogicalBottom;
+    std::optional<LayoutUnit> m_nextLogicalBottom;
+    std::optional<LayoutUnit> m_nextShapeLogicalBottom;
 };
 
 inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalType& interval)
 {
     const auto& floatingObject = *interval.data();
-    if (!rangesIntersect(interval.low(), interval.high(), m_belowLogicalHeight, m_aboveLogicalHeight))
+    if (!rangesIntersect(interval.low(), interval.high(), m_belowLogicalHeight, LayoutUnit::max()))
         return;
 
     // All the objects returned from the tree should be already placed.
     ASSERT(floatingObject.isPlaced());
-    ASSERT(rangesIntersect(m_renderer.logicalTopForFloat(floatingObject), m_renderer.logicalBottomForFloat(floatingObject), m_belowLogicalHeight, m_aboveLogicalHeight));
+    ASSERT(rangesIntersect(m_renderer.logicalTopForFloat(floatingObject), m_renderer.logicalBottomForFloat(floatingObject), m_belowLogicalHeight, LayoutUnit::max()));
 
     LayoutUnit floatBottom = m_renderer.logicalBottomForFloat(floatingObject);
-    if (m_nextLogicalBottom < floatBottom)
+    if (m_nextLogicalBottom && m_nextLogicalBottom.value() < floatBottom)
         return;
 
     if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {

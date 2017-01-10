@@ -1,3 +1,26 @@
+2017-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: newLogicalTop >= logicalTop in WebCore::RenderBlockFlow::getClearDelta
+        https://bugs.webkit.org/show_bug.cgi?id=151202
+        <rdar://problem/27711822>
+
+        Reviewed by Myles C. Maxfield.
+
+        FindNextFloatLogicalBottomAdapter uses LayoutUnit::max() to flag m_nextLogicalBottom uninitialized.        
+        However LayoutUnit::max() can also be a valid value for m_nextLogicalBottom.
+        FindNextFloatLogicalBottomAdapter::nextLogicalBottom() returns 0 instead of the actual value when
+        it sees m_nextLogicalBottom uninitialized. In certain cases, it confuses the caller and we end up
+        with a runaway loop.
+
+        Test: fast/block/float/assert-when-line-has-not-enough-space-left.html
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FindNextFloatLogicalBottomAdapter::FindNextFloatLogicalBottomAdapter):
+        (WebCore::FindNextFloatLogicalBottomAdapter::highValue):
+        (WebCore::FindNextFloatLogicalBottomAdapter::nextLogicalBottom):
+        (WebCore::FindNextFloatLogicalBottomAdapter::nextShapeLogicalBottom):
+        (WebCore::FindNextFloatLogicalBottomAdapter::collectIfNeeded):
+
 2017-01-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210531.
