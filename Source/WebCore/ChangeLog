@@ -1,3 +1,18 @@
+2017-01-10  Youenn Fablet  <youenn@apple.com>
+
+        CachedScript cloning does not clone encodedSize
+        https://bugs.webkit.org/show_bug.cgi?id=166865
+
+        Reviewed by Darin Adler.
+
+        Covered by updated test.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setBodyDataFrom): set encoded size based on being cloned resource.
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::setBodyDataFrom): Making use of CachedResource::setBodyDataFrom for complete cloning.
+
 2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed. Remove the unused gReadyStateTimerInterval global from
