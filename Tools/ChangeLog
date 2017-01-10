@@ -1,3 +1,21 @@
+2017-01-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Add a new release test bot for Wayland and pass --display-server=xorg to the GTK Perf bot.
+        https://bugs.webkit.org/show_bug.cgi?id=166872
+
+        Reviewed by Michael Catanzaro.
+
+        Add the new wayland release test bot as a test-only bot. It will download the built product from the release build-only bot.
+        Define the required "--display-server=driver" in the bot additionalArguments config entry.
+        Implement support for honoring additionalArguments on the RunGtkAPITests and RunAndUploadPerfTests steps.
+        The step RunWebKitTests already has support for it.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests.start):
+        (RunAndUploadPerfTests.start):
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+
 2017-01-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210531.

@@ -70,6 +70,7 @@
                     { "name": "gtk-linux-slave-6", "platform": "gtk" },
                     { "name": "gtk-linux-slave-7", "platform": "gtk" },
                     { "name": "gtk-linux-slave-8", "platform": "gtk" },
+                    { "name": "gtk-linux-slave-9", "platform": "gtk" },
 
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
@@ -266,7 +267,7 @@
                     {
                       "name": "GTK Linux 64-bit Release (Build)", "type": "Build", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-perf-tests"],
+                      "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
                       "slavenames": ["gtk-linux-slave-2"]
                     },
                     {
@@ -293,7 +294,14 @@
                     {
                       "name": "GTK Linux 64-bit Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "gtk-linux-64-release-perf-tests",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--display-server=xorg"],
                       "slavenames": ["gtk-linux-slave-8"]
+                    },
+                    {
+                      "name": "GTK Linux 64-bit Release Wayland (Tests)", "type": "Test", "builddir": "gtk-linux-64-release-wayland-tests",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--display-server=wayland"],
+                      "slavenames": ["gtk-linux-slave-9"]
                     },
                     {
                       "name": "WinCairo 64-Bit Release", "type": "Build", "builddir": "win-cairo-release",
@@ -419,6 +427,9 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-perf-tests",
                       "builderNames": ["GTK Linux 64-bit Release (Perf)"]
+                    },
+                    { "type": "Triggerable", "name": "gtk-linux-64-release-wayland-tests",
+                      "builderNames": ["GTK Linux 64-bit Release Wayland (Tests)"]
                     }
                   ]
 }
