@@ -62,9 +62,6 @@ static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
     }
 }
 
-// Max interval in seconds to stay in the READY state on manual state change requests.
-static const unsigned gReadyStateTimerInterval = 60;
-
 GST_DEBUG_CATEGORY(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
 

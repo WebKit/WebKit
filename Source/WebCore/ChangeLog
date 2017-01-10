@@ -1,5 +1,13 @@
 2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed. Remove the unused gReadyStateTimerInterval global from
+        the MediaPlayerPrivateGStreamerMSE implementation file as it's only
+        springing up a compiler warning.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+
+2017-01-10  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordinatedGraphics] TextureMapperPlatformLayerProxy is constantly getting activated
         https://bugs.webkit.org/show_bug.cgi?id=166856
 
