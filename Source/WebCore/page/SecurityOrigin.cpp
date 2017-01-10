@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -229,22 +229,19 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     }
 
     if (canAccess && isLocal())
-        canAccess = passesFileCheck(*other);
+       canAccess = passesFileCheck(other);
 
     return canAccess;
 }
 
-bool SecurityOrigin::passesFileCheck(const SecurityOrigin& other) const
+bool SecurityOrigin::passesFileCheck(const SecurityOrigin* other) const
 {
-    ASSERT(isLocal() && other.isLocal());
+    ASSERT(isLocal() && other->isLocal());
 
-    if (!filesHaveSameVolume(m_filePath, other.m_filePath))
-        return false;
-
-    if (!m_enforceFilePathSeparation && !other.m_enforceFilePathSeparation)
+    if (!m_enforceFilePathSeparation && !other->m_enforceFilePathSeparation)
         return true;
 
-    return (m_filePath == other.m_filePath);
+    return (m_filePath == other->m_filePath);
 }
 
 bool SecurityOrigin::canRequest(const URL& url) const
@@ -306,11 +303,6 @@ bool SecurityOrigin::canDisplay(const URL& url) const
 {
     if (m_universalAccess)
         return true;
-
-    if (isLocal() && url.isLocalFile()) {
-        if (!filesHaveSameVolume(m_filePath, url.path()))
-            return false;
-    }
 
     if (isFeedWithNestedProtocolInHTTPFamily(url))
         return true;
@@ -531,7 +523,7 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
     if (m_port != other->m_port)
         return false;
 
-    if (isLocal() && !passesFileCheck(*other))
+    if (isLocal() && !passesFileCheck(other))
         return false;
 
     return true;

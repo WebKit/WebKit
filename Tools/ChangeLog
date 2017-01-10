@@ -1,3 +1,17 @@
+2017-01-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r210531.
+
+        This change broke the 32-bit macOS build and caused LayoutTest
+        failures.
+
+        Reverted changeset:
+
+        "File scheme should not allow access of a resource on a
+        different volume."
+        https://bugs.webkit.org/show_bug.cgi?id=158552
+        http://trac.webkit.org/changeset/210531
+
 2017-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         File scheme should not allow access of a resource on a different volume.

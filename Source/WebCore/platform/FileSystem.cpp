@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -231,39 +231,6 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
     } while (true);
 
     ASSERT_NOT_REACHED();
-}
-
-    
-bool filesHaveSameVolume(const String& fileA, const String& fileB)
-{
-    auto fsRepFileA = fileSystemRepresentation(fileA);
-    auto fsRepFileB = fileSystemRepresentation(fileB);
-    
-    if (fsRepFileA.isNull() || fsRepFileB.isNull())
-        return false;
-
-    auto handleA = openFile(fsRepFileA.data(), OpenForRead);
-    if (!isHandleValid(handleA))
-        return false;
-
-    auto handleB = openFile(fsRepFileB.data(), OpenForRead);
-    if (!isHandleValid(handleB)) {
-        closeFile(handleA);
-        return false;
-    }
-
-    bool result = false;
-
-    auto fileADev = getFileDeviceId(handleA);
-    auto fileBDev = getFileDeviceId(handleB);
-
-    if (fileADev && fileBDev)
-        result = (fileADev == fileBDev);
-    
-    closeFile(handleA);
-    closeFile(handleB);
-    
-    return result;
 }
 
 #if !PLATFORM(MAC)
