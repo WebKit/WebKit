@@ -4385,8 +4385,8 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             }
         }
     } else if (baseIsImport) {
-        JSTextPosition expressionEnd = lastTokenEndPosition();
         next();
+        JSTextPosition expressionEnd = lastTokenEndPosition();
         consumeOrFail(OPENPAREN, "import call expects exactly one argument");
         TreeExpression expr = parseAssignmentExpression(context);
         failIfFalse(expr, "Cannot parse expression");
