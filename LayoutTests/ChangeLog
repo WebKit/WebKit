@@ -1,3 +1,15 @@
+2017-01-10  Chris Dumez  <cdumez@apple.com>
+
+        Make Event.initEvent()'s first parameter mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=166894
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/events/initEvent-parameters-expected.txt: Added.
+        * fast/events/initEvent-parameters.html: Added.
+
 2017-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210537.
