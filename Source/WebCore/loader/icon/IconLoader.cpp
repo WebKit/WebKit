@@ -76,6 +76,12 @@ void IconLoader::startLoading()
 
     ResourceRequest resourceRequest = m_documentLoader ? m_url :  m_frame->loader().icon().url();
     resourceRequest.setPriority(ResourceLoadPriority::Low);
+#if !ERROR_DISABLED
+    // Copy this because we may want to access it after transferring the
+    // `resourceRequest` to the `request`. If we don't, then the LOG_ERROR
+    // below won't print a URL.
+    auto resourceRequestURL = resourceRequest.url();
+#endif
 
     // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
     CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
@@ -87,7 +93,7 @@ void IconLoader::startLoading()
     if (m_resource)
         m_resource->addClient(*this);
     else
-        LOG_ERROR("Failed to start load for icon at url %s", resourceRequest.url().string().ascii().data());
+        LOG_ERROR("Failed to start load for icon at url %s", resourceRequestURL.string().ascii().data());
 }
 
 void IconLoader::stopLoading()

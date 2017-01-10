@@ -1,3 +1,20 @@
+2017-01-10  Keith Rollin  <krollin@apple.com>
+
+        Missing logging in IconLoader::startLoading
+        https://bugs.webkit.org/show_bug.cgi?id=166904
+
+        Reviewed by Sam Weinig.
+
+        The LOG_ERROR in startLoading references 'resourceRequest', which has
+        been WTF::Moved as part of a preceding function call. As such, the
+        logging statement doesn't print out a possibly useful URL. Fix this by
+        making a copy of the URL before it's affected by the Move.
+
+        No new tests -- change only affects logging code.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+
 2017-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement "proximity" scroll snapping
