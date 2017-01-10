@@ -1,5 +1,26 @@
 2017-01-10  Jer Noble  <jer.noble@apple.com>
 
+        Add support for MediaKeys.generateRequest().
+        https://bugs.webkit.org/show_bug.cgi?id=166880
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add shouldResolve() and shouldReject() to video-test.js and update existing
+        tests to use these new functions.
+
+        * media/encrypted-media/mock-MediaKeys-createSession-expected.txt: Added.
+        * media/encrypted-media/mock-MediaKeys-createSession.html: Added.
+        * media/encrypted-media/mock-MediaKeys-setServerCertificate.html:
+        * media/encrypted-media/mock-MediaKeySession-generateRequest.html:
+        * media/encrypted-media/mock-MediaKeySystemAccess.html:
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html:
+        * media/video-test.js:
+        (shouldResolve):
+        (shouldReject):
+        * platform/mac/TestExpectations:
+
+2017-01-10  Jer Noble  <jer.noble@apple.com>
+
         Add support for MediaKeys.createSession().
         https://bugs.webkit.org/show_bug.cgi?id=166796
 

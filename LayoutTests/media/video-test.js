@@ -416,3 +416,28 @@ function runWithKeyDown(fn)
             eventSender.mouseDown();
     }
 }
+
+function shouldResolve(promise) {
+    return new Promise((resolve, reject) => {
+        promise.then(result => {
+            logResult(Success, 'Promise resolved');
+            resolve(result);
+        }).catch((error) => {
+            logResult(Failed, 'Promise rejected');
+            reject(error);
+        });
+    });
+}
+
+function shouldReject(promise) {
+    return new Promise((resolve, reject) => {
+        promise.then(result => {
+            logResult(Failed, 'Promise resolved incorrectly');
+            reject(result);
+        }).catch((error) => {
+            logResult(Success, 'Promise rejected correctly');
+            resolve(error);
+        });
+    });
+
+}

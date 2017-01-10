@@ -35,7 +35,7 @@
 #include "CDMInstance.h"
 #include "MediaKeySession.h"
 #include "NotImplemented.h"
-#include <runtime/ArrayBuffer.h>
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -90,14 +90,14 @@ void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<
     }
 
     // 3. Let certificate be a copy of the contents of the serverCertificate parameter.
-    auto certificate = ArrayBuffer::create(serverCertificate.data(), serverCertificate.length());
+    auto certificate = SharedBuffer::create(serverCertificate.data(), serverCertificate.length());
 
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
 
     m_taskQueue.enqueueTask([this, certificate = WTFMove(certificate), promise = WTFMove(promise)] () mutable {
         // 5.1. Use this object's cdm instance to process certificate.
-        if (m_instance->setServerCertificate(certificate) == CDMInstance::Failed) {
+        if (m_instance->setServerCertificate(WTFMove(certificate)) == CDMInstance::Failed) {
             // 5.2. If the preceding step failed, resolve promise with a new DOMException whose name is the appropriate error name.
             promise->reject(INVALID_STATE_ERR);
             return;

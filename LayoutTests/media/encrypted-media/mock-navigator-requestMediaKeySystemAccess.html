@@ -34,33 +34,18 @@
     }
 
     function passingTestWithCapabilities(capabilities, success) {
-        testWithCapabilities(capabilities);
-        promise.then(mediaKeySystemAccess => {
-            logResult(Success, 'Promise resolved');
-            success(mediaKeySystemAccess);
-            next();
-        }, () => {
-            logResult(Failed, 'Promise rejected');
-            next();
-        });
+        shouldResolve(testWithCapabilities(capabilities)).then(success).then(next, next);
     }
 
     function failingTestWithCapabilities(capabilities, failure) {
-        testWithCapabilities(capabilities);
-        promise.then(() => {
-            logResult(Failed, 'Promise resolved incorrectly');
-            next();
-        }, exceptionCode => {
-            logResult(Success, 'Promise rejected correctly');
-            failure(exceptionCode)
-            next();
-        });
+        shouldReject(testWithCapabilities(capabilities)).then(failure).then(next, next);
     }
 
     function testWithCapabilities(capabilities) {
         window.capabilities = capabilities;
         consoleWrite(`SET capabilities = '${ JSON.stringify(capabilities, null, 1) }'`);
         run('promise  = navigator.requestMediaKeySystemAccess("org.webkit.mock", capabilities)');
+        return promise;
     }
 
     tests = [

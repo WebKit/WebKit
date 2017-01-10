@@ -1469,6 +1469,7 @@ media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
 media/encrypted-media/mock-MediaKeys-setServerCertificate.html [ Skip ]
 media/encrypted-media/mock-MediaKeys-createSession.html [ Skip ]
+media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Skip ]
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
 

@@ -7,7 +7,9 @@
     var promise;
     var mediaKeySystemAccess;
     var mediaKeys;
+    var mediaKeySession;
     var capabilities = {};
+    var kids;
 
     function doTest()
     {
@@ -18,8 +20,8 @@
 
         run('internals.initializeMockMediaSource()');
         run('mock = internals.registerMockCDM()');
-        run('mock.supportedDataTypes = ["mock"]');
-        run('capabilities.initDataTypes = ["mock"]');
+        run('mock.supportedDataTypes = ["keyids"]');
+        run('capabilities.initDataTypes = ["keyids"]');
         run(`capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] `);
         run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities])');
         shouldResolve(promise).then(gotMediaKeySystemAccess, failTest);
@@ -62,24 +64,42 @@
         },
 
         function() {
-            run('promise = mediaKeys.setServerCertificate(new ArrayBuffer())');
+            consoleWrite('Using an invalid initDataType string should reject.')
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            testExpected('typeof mediaKeySession', 'object')
+            run('promise = mediaKeySession.generateRequest("invalid", stringToUInt8Array("invalid"))');
             shouldReject(promise).then(next, next);
         },
 
         function() {
-            run('promise = mediaKeys.setServerCertificate(stringToUInt8Array("invalid"))');
+            consoleWrite('Re-using a failed mediaKeySession should reject.')
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
             shouldReject(promise).then(next, next);
         },
 
         function() {
-            run('promise = mediaKeys.setServerCertificate(stringToUInt8Array("valid"))');
+            consoleWrite('Using a new mediaKeySession should resolve.')
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU=" ] })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
             shouldResolve(promise).then(next, next);
         },
 
         function() {
-            run('mock.supportsServerCertificates = false');
-            run('promise = mediaKeys.setServerCertificate(stringToUInt8Array("valid"))');
+            consoleWrite('Using invalid initData should reject.')
+            run('kids = JSON.stringify({ invalid: "invalid" })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
             shouldReject(promise).then(next, next);
+        },
+
+        function() {
+            consoleWrite('Using initData with extraneous information should resolve.')
+            run('kids = JSON.stringify({ kids: [ "MTIzNDU="], invalid: "invalid" })');
+            run('mediaKeySession = mediaKeys.createSession("temporary")');
+            run('promise = mediaKeySession.generateRequest("keyids", stringToUInt8Array(kids))');
+            shouldResolve(promise).then(next, next);
         },
     ];
     </script>

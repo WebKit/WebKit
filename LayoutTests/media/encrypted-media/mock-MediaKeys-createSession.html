@@ -23,7 +23,7 @@
         run('capabilities.initDataTypes = ["mock"]');
         run(`capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] `);
         run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities])');
-        promise.then(gotMediaKeySystemAccess).catch(failTest);
+        shouldResolve(promise).then(gotMediaKeySystemAccess, failTest);
     }
 
     function next() {
@@ -38,34 +38,12 @@
         nextTest();
     }
 
-    function shouldResolve(promise) {
-        promise.then(mediaKeySystemAccess => {
-            logResult(Success, 'Promise resolved');
-            next();
-        }, () => {
-            logResult(Failed, 'Promise rejected');
-            next();
-        });
-    }
-
-    function shouldReject(promise) {
-        promise.then(() => {
-            logResult(Failed, 'Promise resolved incorrectly');
-            next();
-        }, exceptionCode => {
-            logResult(Success, 'Promise rejected correctly');
-            next();
-        });
-    }
-
     function gotMediaKeySystemAccess(result) {
-        logResult(Success, 'Promise resolved');
         mediaKeySystemAccess = result;
         next();
     }
 
     function gotMediaKeys(result) {
-        logResult(Success, 'Promise resolved');
         mediaKeys = result;
         next();
     }
@@ -81,7 +59,7 @@
     tests = [
         function() {
             run('promise = mediaKeySystemAccess.createMediaKeys()');
-            promise.then(gotMediaKeys).catch(failTest);
+            shouldResolve(promise).then(gotMediaKeys, failTest);
         },
 
         function() {

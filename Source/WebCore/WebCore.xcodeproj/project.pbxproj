@@ -5717,6 +5717,8 @@
 		CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51015F613060048CDD6 /* DeviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC2B51115F613060048CDD6 /* DeviceController.cpp */; };
 		CCC2B51615F613060048CDD6 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51215F613060048CDD6 /* DeviceController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD063F821E23FA8900812BE3 /* InitDataRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */; };
+		CD063F831E23FA8900812BE3 /* InitDataRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = CD063F811E23FA8900812BE3 /* InitDataRegistry.h */; };
 		CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */; };
 		CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */; };
 		CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13643,6 +13645,8 @@
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		CCC2B51115F613060048CDD6 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		CCC2B51215F613060048CDD6 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InitDataRegistry.cpp; sourceTree = "<group>"; };
+		CD063F811E23FA8900812BE3 /* InitDataRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitDataRegistry.h; sourceTree = "<group>"; };
 		CD0EEE0A14743E34003EAFA2 /* AudioDestinationIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDestinationIOS.h; sourceTree = "<group>"; };
 		CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDestinationIOS.cpp; sourceTree = "<group>"; };
 		CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFullScreenWindow.h; sourceTree = "<group>"; };
@@ -22773,6 +22777,8 @@
 				CDF4B7141E00B7E500E235A2 /* CDM.h */,
 				CD9D05421E1EFA12003B4C4F /* CDMInstance.h */,
 				CDF4B7251E03C15B00E235A2 /* CDMPrivate.h */,
+				CD063F801E23FA8900812BE3 /* InitDataRegistry.cpp */,
+				CD063F811E23FA8900812BE3 /* InitDataRegistry.h */,
 				2D9BF72F1DBFDC0F007A7D99 /* MediaKeyMessageEvent.cpp */,
 				2D9BF7301DBFDC0F007A7D99 /* MediaKeyMessageEvent.h */,
 				2D9BF6F51DBFB71F007A7D99 /* MediaKeyMessageEvent.idl */,
@@ -27867,6 +27873,7 @@
 				7CE58D501DD69A1E00128552 /* SVGNumber.h in Headers */,
 				B2227A510D00BF220071B782 /* SVGNumberList.h in Headers */,
 				B2227A570D00BF220071B782 /* SVGParserUtilities.h in Headers */,
+				CD063F831E23FA8900812BE3 /* InitDataRegistry.h in Headers */,
 				2D3A0E3613A7D76100E85AF0 /* SVGParsingError.h in Headers */,
 				84C6784D1214814700A92902 /* SVGPathBlender.h in Headers */,
 				8476C9EB11DF6A2900555B02 /* SVGPathBuilder.h in Headers */,
@@ -30820,6 +30827,7 @@
 				B27535630B053814002CE64F /* PathCG.cpp in Sources */,
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 				2D5002FB1B56D7990020AAF7 /* PathUtilities.cpp in Sources */,
+				CD063F821E23FA8900812BE3 /* InitDataRegistry.cpp in Sources */,
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				1A8A646C1D19FF8700D0E00F /* PaymentCocoa.mm in Sources */,

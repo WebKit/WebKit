@@ -1,5 +1,74 @@
 2017-01-10  Jer Noble  <jer.noble@apple.com>
 
+        Add support for MediaKeys.generateRequest().
+        https://bugs.webkit.org/show_bug.cgi?id=166880
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Test: media/encrypted-media/mock-MediaKeySession-generateRequest.html
+
+        Implement MediaKeySession::generateRequest(). This requires some additions
+        to CDM, CDMPrivate, and CDMInstance to support platform adoption and to
+        implement mock support for testing. Additionally, add an InitDataRegistry
+        object which can sanitize and extract key data from various initData types.
+        (At the moment, only the "keyids" initData type is implemented.)
+
+        Drive-by fixes: Change all instances of initDataType from String -> AtomicString.
+        Add "const" flags to all CDMPrivate methods that might be called from a const
+        reference.
+
+        * CMakeLists.txt:
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::supportsInitDataType):
+        (WebCore::CDM::sanitizeInitData):
+        (WebCore::CDM::supportsInitData):
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/CDMInstance.h:
+        * Modules/encryptedmedia/CDMPrivate.h:
+        * Modules/encryptedmedia/InitDataRegistry.cpp: Added.
+        (WebCore::extractKeyIDsKeyids):
+        (WebCore::sanitizeKeyids):
+        (WebCore::sanitizeCenc):
+        (WebCore::extractKeyIDsCenc):
+        (WebCore::sanitizeWebM):
+        (WebCore::extractKeyIDsWebM):
+        (WebCore::InitDataRegistry::shared):
+        (WebCore::InitDataRegistry::InitDataRegistry):
+        (WebCore::InitDataRegistry::sanitizeInitData):
+        (WebCore::InitDataRegistry::extractKeyIDs):
+        (WebCore::InitDataRegistry::registerInitDataType):
+        * Modules/encryptedmedia/InitDataRegistry.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::messageEventName):
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::enqueueMessage):
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::setServerCertificate):
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::addKeysToSessionWithID):
+        (WebCore::MockCDMFactory::setSupportedDataTypes):
+        (WebCore::MockCDM::supportsInitDataType):
+        (WebCore::MockCDM::supportsConfiguration):
+        (WebCore::MockCDM::supportsConfigurationWithRestrictions):
+        (WebCore::MockCDM::supportsSessionTypeWithConfiguration):
+        (WebCore::MockCDM::supportsRobustness):
+        (WebCore::MockCDM::distinctiveIdentifiersRequirement):
+        (WebCore::MockCDM::persistentStateRequirement):
+        (WebCore::MockCDM::distinctiveIdentifiersAreUniquePerOriginAndClearable):
+        (WebCore::MockCDM::supportsInitData):
+        (WebCore::MockCDMInstance::setServerCertificate):
+        (WebCore::MockCDMInstance::requestLicense):
+        * testing/MockCDMFactory.h:
+        (WebCore::MockCDMFactory::supportedDataTypes):
+        (WebCore::MockCDMFactory::hasSessionWithID):
+        (WebCore::MockCDMFactory::removeSessionWithID):
+        (WebCore::MockCDMFactory::setSupportedDataTypes): Deleted.
+
+2017-01-10  Jer Noble  <jer.noble@apple.com>
+
         Add support for MediaKeys.createSession().
         https://bugs.webkit.org/show_bug.cgi?id=166796
 

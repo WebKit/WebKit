@@ -30,6 +30,7 @@
 
 #include "CDMPrivate.h"
 #include "Document.h"
+#include "InitDataRegistry.h"
 #include "MediaKeysRestrictions.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
@@ -632,6 +633,21 @@ bool CDM::supportsServerCertificates() const
 bool CDM::supportsSessions() const
 {
     return m_private && m_private->supportsSessions();
+}
+
+bool CDM::supportsInitDataType(const AtomicString& initDataType) const
+{
+    return m_private && m_private->supportsInitDataType(initDataType);
+}
+
+RefPtr<SharedBuffer> CDM::sanitizeInitData(const AtomicString& initDataType, const SharedBuffer& initData)
+{
+    return InitDataRegistry::shared().sanitizeInitData(initDataType, initData);
+}
+
+bool CDM::supportsInitData(const AtomicString& initDataType, const SharedBuffer& initData)
+{
+    return m_private && m_private->supportsInitData(initDataType, initData);
 }
 
 }

@@ -27,38 +27,42 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
-struct MediaKeySystemConfiguration;
 class SharedBuffer;
 
-class CDMInstance : public RefCounted<CDMInstance> {
+class InitDataRegistry {
 public:
-    virtual ~CDMInstance() { }
+    WEBCORE_EXPORT static InitDataRegistry& shared();
+    friend class NeverDestroyed<InitDataRegistry>;
 
-    enum SuccessValue {
-        Failed,
-        Succeeded,
+    RefPtr<SharedBuffer> sanitizeInitData(const AtomicString& initDataType, const SharedBuffer&);
+    WEBCORE_EXPORT Vector<Ref<SharedBuffer>> extractKeyIDs(const AtomicString& initDataType, const SharedBuffer&);
+
+    struct InitDataTypeCallbacks {
+        using SanitizeInitDataCallback = Function<RefPtr<SharedBuffer>(const SharedBuffer&)>;
+        using ExtractKeyIDsCallback = Function<Vector<Ref<SharedBuffer>>(const SharedBuffer&)>;
+
+        SanitizeInitDataCallback sanitizeInitData;
+        ExtractKeyIDsCallback extractKeyIDs;
     };
+    void registerInitDataType(const AtomicString& initDataType, InitDataTypeCallbacks&&);
 
-    virtual SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) = 0;
-    virtual SuccessValue setDistinctiveIdentifiersAllowed(bool) = 0;
-    virtual SuccessValue setPersistentStateAllowed(bool) = 0;
-    virtual SuccessValue setServerCertificate(Ref<SharedBuffer>&&) = 0;
+private:
+    InitDataRegistry();
+    ~InitDataRegistry();
 
-    enum class LicenseType {
-        Temporary,
-        Persistable,
-        UsageRecord,
-    };
-
-    using LicenseCallback = Function<void(Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, SuccessValue succeeded)>;
-    virtual void requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback) = 0;
+    HashMap<AtomicString, InitDataTypeCallbacks> m_types;
 };
 
 }
 
-#endif
+#endif // ENABLE(ENCRYPTED_MEDIA)
