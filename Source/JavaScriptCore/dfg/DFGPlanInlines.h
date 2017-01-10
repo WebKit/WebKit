@@ -29,6 +29,8 @@
 
 namespace JSC { namespace DFG {
 
+#if ENABLE(DFG_JIT)
+
 template<typename Func>
 void Plan::iterateCodeBlocksForGC(const Func& func)
 {
@@ -44,6 +46,8 @@ void Plan::iterateCodeBlocksForGC(const Func& func)
     if (profiledDFGCodeBlock)
         func(profiledDFGCodeBlock);
 }
+
+#endif // ENABLE(DFG_JIT)
 
 } } // namespace JSC::DFG
 
