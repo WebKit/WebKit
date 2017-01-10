@@ -1,3 +1,31 @@
+2017-01-10  Keith Rollin  <krollin@apple.com>
+
+        Record/replay: fix range used for fuzzy matching
+        https://bugs.webkit.org/show_bug.cgi?id=166041
+
+        Reviewed by Darin Adler and Alex Christensen.
+
+        Because of two bugs, the attempt to determine the range of URLs to
+        check as part of the process of fuzzy matching was failing. The intent
+        was to find the range of URLs that started with the same
+        <scheme://host:port> as a given URL. However, because of a reversed
+        test, the upper end of the range ended up being the "end()" iterator
+        of the entire collection of URLs. With that fixed, there was another
+        bug due to one URL being given as <scheme://host:port> and the other
+        given as <scheme://host:port/> (note the trailing slash). Both of
+        these issues are now fixed.
+
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::initialize):
+        (WebKit::NetworkCapture::Manager::findBestFuzzyMatch):
+        (WebKit::NetworkCapture::Manager::urlIdentifyingCommonDomain):
+        * NetworkProcess/capture/NetworkCaptureManager.h:
+        * NetworkProcess/capture/NetworkCaptureResource.cpp:
+        (WebKit::NetworkCapture::Resource::url):
+        (WebKit::NetworkCapture::Resource::urlIdentifyingCommonDomain):
+        (WebKit::NetworkCapture::Resource::baseURL): Deleted.
+        * NetworkProcess/capture/NetworkCaptureResource.h:
+
 2017-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement "proximity" scroll snapping

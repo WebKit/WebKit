@@ -56,14 +56,14 @@ public:
     Resource(const String& eventFilePath);
 
     const WebCore::URL& url();
-    const WebCore::URL& baseURL();
+    const String& urlIdentifyingCommonDomain();
     WebCore::URLParser::URLEncodedForm queryParameters();
     EventStream eventStream();
 
 private:
     String m_eventFilePath;
-    std::optional<WebCore::URL> m_url;
-    std::optional<WebCore::URL> m_baseURL;
+    WebCore::URL m_url;
+    String m_urlIdentifyingCommonDomain;
     std::optional<WebCore::URLParser::URLEncodedForm> m_queryParameters;
 };
 

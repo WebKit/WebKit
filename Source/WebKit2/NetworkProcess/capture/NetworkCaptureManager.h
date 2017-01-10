@@ -83,6 +83,7 @@ public:
     WebCore::FileHandle openCacheFile(const String&, WebCore::FileOpenMode);
 
     String requestToPath(const WebCore::ResourceRequest&);
+    static String urlIdentifyingCommonDomain(const WebCore::URL&);
 
 private:
     Manager() = default;

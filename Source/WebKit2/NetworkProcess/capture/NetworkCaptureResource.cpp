@@ -30,6 +30,7 @@
 
 #include "NetworkCaptureEvent.h"
 #include "NetworkCaptureLogging.h"
+#include "NetworkCaptureManager.h"
 #include "NetworkCaptureRecorder.h"
 
 namespace WebKit {
@@ -42,7 +43,7 @@ Resource::Resource(const String& eventFilePath)
 
 const WebCore::URL& Resource::url()
 {
-    if (!m_url) {
+    if (!m_url.isValid()) {
         auto events = eventStream();
         auto event = events.nextEvent();
         if (!event)
@@ -56,19 +57,15 @@ const WebCore::URL& Resource::url()
         }
     }
 
-    return *m_url;
+    return m_url;
 }
 
-const WebCore::URL& Resource::baseURL()
+const String& Resource::urlIdentifyingCommonDomain()
 {
-    if (!m_baseURL) {
-        auto pathStart = url().pathStart();
-        auto baseURLStr = url().string().left(pathStart);
-        WebCore::URLParser parser(baseURLStr);
-        m_baseURL = parser.result();
-    }
+    if (m_urlIdentifyingCommonDomain.isNull())
+        m_urlIdentifyingCommonDomain = Manager::urlIdentifyingCommonDomain(url());
 
-    return *m_baseURL;
+    return m_urlIdentifyingCommonDomain;
 }
 
 WebCore::URLParser::URLEncodedForm Resource::queryParameters()
