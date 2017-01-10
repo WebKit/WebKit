@@ -1,3 +1,20 @@
+2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement JSSourceCode to propagate SourceCode in module pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=166861
+
+        Reviewed by Saam Barati.
+
+        Now SourceOrigin is correctly propagated through the module pipeline.
+        So the error reported by http/tests/security/contentSecurityPolicy/module-eval-blocked-expected.html
+        is updated.
+
+        * ForwardingHeaders/runtime/JSSourceCode.h: Added.
+        * bindings/js/JSDOMPromise.h:
+        (WebCore::DeferredPromise::resolveWithCallback):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::notifyFinished):
+
 2017-01-09  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r189555): ImageDocument title no longer includes the size of the image

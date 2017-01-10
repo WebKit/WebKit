@@ -1,5 +1,47 @@
 2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Implement JSSourceCode to propagate SourceCode in module pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=166861
+
+        Reviewed by Saam Barati.
+
+        Instead of propagating source code string, we propagate JSSourceCode
+        cell in the module pipeline. This allows us to attach a metadata
+        to the propagated source code string. In particular, it propagates
+        SourceOrigin through the module pipeline.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ModuleLoaderPrototype.js:
+        (fulfillFetch):
+        (requestFetch):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderFetch):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::provide):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSSourceCode.cpp: Added.
+        (JSC::JSSourceCode::destroy):
+        * runtime/JSSourceCode.h: Added.
+        (JSC::JSSourceCode::createStructure):
+        (JSC::JSSourceCode::create):
+        (JSC::JSSourceCode::sourceCode):
+        (JSC::JSSourceCode::JSSourceCode):
+        * runtime/JSType.h:
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
+2017-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         REGRESSION (r210522): ASSERTION FAILED: divot.offset >= divotStart.offset seen with stress/import-basic.js and stress/import-from-eval.js
         https://bugs.webkit.org/show_bug.cgi?id=166873
 
