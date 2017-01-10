@@ -1,5 +1,21 @@
 2017-01-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [GTK] Stop honoring the environment variable USE_NATIVE_XDISPLAY
+        https://bugs.webkit.org/show_bug.cgi?id=165232
+
+        Unreviewed follow-up patch after r210539 and r210523.
+
+        Instead of using that environment variable, the argument
+        --display-server=xorg should be passed now.
+
+        The GTK+ performance bot was the only bot using this, and is
+        already passing --display-server=xorg after r210539.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._driver_class):
+
+2017-01-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [GTK] Add a new release test bot for Wayland and pass --display-server=xorg to the GTK Perf bot.
         https://bugs.webkit.org/show_bug.cgi?id=166872
 

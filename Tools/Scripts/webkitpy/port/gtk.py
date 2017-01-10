@@ -83,8 +83,7 @@ class GtkPort(Port):
             return WestonDriver
         if self._display_server == "wayland":
             return WaylandDriver
-        # FIXME: re-configure the perf bot to pass --display-server=xorg
-        if self._display_server == "xorg" or os.environ.get("USE_NATIVE_XDISPLAY"):
+        if self._display_server == "xorg":
             return XorgDriver
         return XvfbDriver
 
