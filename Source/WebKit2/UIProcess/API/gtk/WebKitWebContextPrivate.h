@@ -48,5 +48,6 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, Web
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext*);
+void webkitWebContextInitializeNotificationPermissions(WebKitWebContext*);
 
 #endif // WebKitWebContextPrivate_h

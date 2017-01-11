@@ -41,6 +41,7 @@
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitSecurityManagerPrivate.h"
+#include "WebKitSecurityOriginPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
@@ -110,6 +111,7 @@ enum {
 enum {
     DOWNLOAD_STARTED,
     INITIALIZE_WEB_EXTENSIONS,
+    INITIALIZE_NOTIFICATION_PERMISSIONS,
 
     LAST_SIGNAL
 };
@@ -285,7 +287,7 @@ static void webkitWebContextConstructed(GObject* object)
     priv->geolocationProvider = WebKitGeolocationProvider::create(priv->processPool->supplement<WebGeolocationManagerProxy>());
 #endif
 #if ENABLE(NOTIFICATIONS)
-    priv->notificationProvider = WebKitNotificationProvider::create(priv->processPool->supplement<WebNotificationManagerProxy>());
+    priv->notificationProvider = WebKitNotificationProvider::create(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
 #endif
 }
 
@@ -383,6 +385,30 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             G_TYPE_FROM_CLASS(gObjectClass),
             G_SIGNAL_RUN_LAST,
             G_STRUCT_OFFSET(WebKitWebContextClass, initialize_web_extensions),
+            nullptr, nullptr,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebContext::initialize-notification-permissions:
+     * @context: the #WebKitWebContext
+     *
+     * This signal is emitted when a #WebKitWebContext needs to set
+     * initial notification permissions for a web process. It is emitted
+     * when a new web process is about to be launched, and signals the
+     * most appropriate moment to use
+     * webkit_web_context_initialize_notification_permissions(). If no
+     * notification permissions have changed since the last time this
+     * signal was emitted, then there is no need to call
+     * webkit_web_context_initialize_notification_permissions() again.
+     *
+     * Since: 2.16
+     */
+    signals[INITIALIZE_NOTIFICATION_PERMISSIONS] =
+        g_signal_new("initialize-notification-permissions",
+            G_TYPE_FROM_CLASS(gObjectClass),
+            G_SIGNAL_RUN_LAST,
+            G_STRUCT_OFFSET(WebKitWebContextClass, initialize_notification_permissions),
             nullptr, nullptr,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
@@ -1216,6 +1242,54 @@ guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
 
     return context->priv->processCountLimit;
+}
+
+static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, RefPtr<API::Object>>* map, bool allowed)
+{
+    String string = webkitSecurityOriginGetSecurityOrigin(origin).toString();
+    if (string != "null")
+        map->set(string, API::Boolean::create(allowed));
+}
+
+/**
+ * webkit_web_context_initialize_notification_permissions:
+ * @context: the #WebKitWebContext
+ * @allowed_origins: (element-type WebKitSecurityOrigin): a #GList of security origins
+ * @disallowed_origins: (element-type WebKitSecurityOrigin): a #GList of security origins
+ *
+ * Sets initial desktop notification permissions for the @context.
+ * @allowed_origins and @disallowed_origins must each be #GList of
+ * #WebKitSecurityOrigin objects representing origins that will,
+ * respectively, either always or never have permission to show desktop
+ * notifications. No #WebKitNotificationPermissionRequest will ever be
+ * generated for any of the security origins represented in
+ * @allowed_origins or @disallowed_origins. This function is necessary
+ * because some webpages proactively check whether they have permission
+ * to display notifications without ever creating a permission request.
+ *
+ * This function only affects web processes that have not already been
+ * created. The best time to call it is when handling
+ * #WebKitWebContext::initialize-notification-permissions so as to
+ * ensure that new web processes receive the most recent set of
+ * permissions.
+ *
+ * Since: 2.16
+ */
+void webkit_web_context_initialize_notification_permissions(WebKitWebContext* context, GList* allowedOrigins, GList* disallowedOrigins)
+{
+    HashMap<String, RefPtr<API::Object>> map;
+    g_list_foreach(allowedOrigins, [](gpointer data, gpointer userData) {
+        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, RefPtr<API::Object>>*>(userData), true);
+    }, &map);
+    g_list_foreach(disallowedOrigins, [](gpointer data, gpointer userData) {
+        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, RefPtr<API::Object>>*>(userData), false);
+    }, &map);
+    context->priv->notificationProvider->setNotificationPermissions(WTFMove(map));
+}
+
+void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)
+{
+    g_signal_emit(context, signals[INITIALIZE_NOTIFICATION_PERMISSIONS], 0);
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)

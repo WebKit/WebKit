@@ -632,7 +632,17 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
 
 class NotificationWebViewTest: public WebViewTest {
 public:
-    MAKE_GLIB_TEST_FIXTURE(NotificationWebViewTest);
+    MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(NotificationWebViewTest, setup, teardown);
+
+    static void setup()
+    {
+        WebViewTest::shouldInitializeWebViewInConstructor = false;
+    }
+
+    static void teardown()
+    {
+        WebViewTest::shouldInitializeWebViewInConstructor = true;
+    }
 
     enum NotificationEvent {
         None,
@@ -647,6 +657,7 @@ public:
     static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionRequest *request, NotificationWebViewTest* test)
     {
         g_assert(WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST(request));
+        g_assert(test->m_isExpectingPermissionRequest);
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(request));
 
         test->m_event = Permission;
@@ -699,10 +710,9 @@ public:
         g_main_loop_quit(test->m_mainLoop);
     }
 
-    NotificationWebViewTest()
-        : m_notification(nullptr)
-        , m_event(None)
+    void initialize()
     {
+        initializeWebView();
         g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequestCallback), this);
         g_signal_connect(m_webView, "show-notification", G_CALLBACK(showNotificationCallback), this);
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "notifications");
@@ -716,9 +726,18 @@ public:
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "notifications");
     }
 
+    bool hasPermission()
+    {
+        auto* result = runJavaScriptAndWaitUntilFinished("Notification.permission;", nullptr);
+        g_assert(result);
+        GUniquePtr<char> value(javascriptResultToCString(result));
+        return !g_strcmp0(value.get(), "granted");
+    }
+
    void requestPermissionAndWaitUntilGiven()
     {
         m_event = None;
+        m_isExpectingPermissionRequest = true;
         webkit_web_view_run_javascript(m_webView, "Notification.requestPermission();", nullptr, nullptr, nullptr);
         g_main_loop_run(m_mainLoop);
     }
@@ -769,18 +788,24 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
-    NotificationEvent m_event;
-    WebKitNotification* m_notification;
+    NotificationEvent m_event { None };
+    WebKitNotification* m_notification { nullptr };
+    bool m_isExpectingPermissionRequest { false };
+    bool m_hasPermission { false };
 };
 
 static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer)
 {
+    test->initialize();
+
     // Notifications don't work with local or special schemes.
     test->loadURI(gServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
+    g_assert(!test->hasPermission());
 
     test->requestPermissionAndWaitUntilGiven();
     g_assert(test->m_event == NotificationWebViewTest::Permission);
+    g_assert(test->hasPermission());
 
     static const char* title = "This is a notification";
     static const char* body = "This is the body.";
@@ -816,6 +841,45 @@ static void testWebViewNotification(NotificationWebViewTest* test, gconstpointer
     test->loadURI(gServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     g_assert(test->m_event == NotificationWebViewTest::Closed);
+}
+
+static void setInitialNotificationPermissionsAllowedCallback(WebKitWebContext* context, NotificationWebViewTest* test)
+{
+    GUniquePtr<char> baseURI(soup_uri_to_string(gServer->baseURI(), FALSE));
+    GList* allowedOrigins = g_list_prepend(nullptr, webkit_security_origin_new_for_uri(baseURI.get()));
+    webkit_web_context_initialize_notification_permissions(test->m_webContext.get(), allowedOrigins, nullptr);
+    g_list_free_full(allowedOrigins, reinterpret_cast<GDestroyNotify>(webkit_security_origin_unref));
+}
+
+static void setInitialNotificationPermissionsDisallowedCallback(WebKitWebContext* context, NotificationWebViewTest* test)
+{
+    GUniquePtr<char> baseURI(soup_uri_to_string(gServer->baseURI(), FALSE));
+    GList* disallowedOrigins = g_list_prepend(nullptr, webkit_security_origin_new_for_uri(baseURI.get()));
+    webkit_web_context_initialize_notification_permissions(test->m_webContext.get(), nullptr, disallowedOrigins);
+    g_list_free_full(disallowedOrigins, reinterpret_cast<GDestroyNotify>(webkit_security_origin_unref));
+}
+
+static void testWebViewNotificationInitialPermissionAllowed(NotificationWebViewTest* test, gconstpointer)
+{
+    g_signal_connect(test->m_webContext.get(), "initialize-notification-permissions", G_CALLBACK(setInitialNotificationPermissionsAllowedCallback), test);
+    test->initialize();
+
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert(test->hasPermission());
+
+    test->requestNotificationAndWaitUntilShown("This is a notification", "This is the body.");
+    g_assert(test->m_event == NotificationWebViewTest::Shown);
+}
+
+static void testWebViewNotificationInitialPermissionDisallowed(NotificationWebViewTest* test, gconstpointer)
+{
+    g_signal_connect(test->m_webContext.get(), "initialize-notification-permissions", G_CALLBACK(setInitialNotificationPermissionsDisallowedCallback), test);
+    test->initialize();
+
+    test->loadURI(gServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished();
+    g_assert(!test->hasPermission());
 }
 
 static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpointer)
@@ -915,6 +979,8 @@ void beforeAll()
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
+    NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-allowed", testWebViewNotificationInitialPermissionAllowed);
+    NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-disallowed", testWebViewNotificationInitialPermissionDisallowed);
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
     WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);

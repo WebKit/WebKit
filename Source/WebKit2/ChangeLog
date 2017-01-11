@@ -1,3 +1,42 @@
+2017-01-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] No way for applications to set notification permissions without waiting for permission request
+        https://bugs.webkit.org/show_bug.cgi?id=163366
+
+        Reviewed by Carlos Garcia Campos.
+
+        Websites can check the Notification.permission DOM property to check if they have permission
+        to show notifications *without triggering a permission request*. But the WebKitGTK+ API has
+        no way to affirmatively indicate notifications are allowed without a permission request. The
+        only way is via the permission request API, which is too late. It's a problem for Epiphany.
+        For example, open the Riot Matrix client in a web app; you will immediately see an info bar
+        informing the user that Riot does not have permission to send desktop notifications, even
+        though Epiphany automatically grants notification permission in web app mode when requested.
+        This problem is not exclusive to web apps; there is simply no way for notification
+        permission to be set correctly prior to a permission request for it. Fix this by introducing
+        a webkit_web_context_initialize_notification_permissions() API, and add a signal
+        WebKitWebContext::initialize-notification-permissions to indicate when it should be called.
+
+        * UIProcess/API/gtk/WebKitNotificationProvider.cpp:
+        (notificationPermissionsCallback):
+        (WebKitNotificationProvider::create):
+        (WebKitNotificationProvider::WebKitNotificationProvider):
+        (WebKitNotificationProvider::notificationPermissions):
+        (WebKitNotificationProvider::setNotificationPermissions):
+        * UIProcess/API/gtk/WebKitNotificationProvider.h:
+        * UIProcess/API/gtk/WebKitSecurityOrigin.cpp:
+        (webkitSecurityOriginGetSecurityOrigin):
+        * UIProcess/API/gtk/WebKitSecurityOriginPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_class_init):
+        (addOriginToMap):
+        (webkit_web_context_initialize_notification_permissions):
+        (webkitWebContextInitializeNotificationPermissions):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+
 2017-01-10  Keith Rollin  <krollin@apple.com>
 
         Record/replay: fix range used for fuzzy matching

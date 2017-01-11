@@ -43,6 +43,25 @@
         g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
     }
 
+#define MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(ClassName, setup, teardown) \
+    static void setUp(ClassName* fixture, gconstpointer data) \
+    { \
+        if (setup) \
+            setup(); \
+        new (fixture) ClassName; \
+    } \
+    static void tearDown(ClassName* fixture, gconstpointer data) \
+    { \
+        fixture->~ClassName(); \
+        if (teardown) \
+            teardown(); \
+    } \
+    static void add(const char* suiteName, const char* testName, void (*testFunc)(ClassName*, const void*)) \
+    { \
+        GUniquePtr<gchar> testPath(g_strdup_printf("/webkit2/%s/%s", suiteName, testName)); \
+        g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
+    }
+
 #define ASSERT_CMP_CSTRING(s1, cmp, s2) \
     do {                                                                 \
         CString __s1 = (s1);                                             \

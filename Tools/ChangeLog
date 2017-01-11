@@ -1,3 +1,23 @@
+2017-01-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] No way for applications to set notification permissions without waiting for permission request
+        https://bugs.webkit.org/show_bug.cgi?id=163366
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewNotification):
+        (setInitialNotificationPermissionsAllowedCallback):
+        (setInitialNotificationPermissionsDisallowedCallback):
+        (testWebViewNotificationInitialPermissionAllowed):
+        (testWebViewNotificationInitialPermissionDisallowed):
+        (beforeAll):
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::WebViewTest):
+        (WebViewTest::initializeWebView):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2017-01-10  Tim Horton  <timothy_horton@apple.com>
 
         MobileMiniBrowser tests don't work by default

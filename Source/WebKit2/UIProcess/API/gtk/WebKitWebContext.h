@@ -128,16 +128,16 @@ struct _WebKitWebContext {
 struct _WebKitWebContextClass {
     GObjectClass parent;
 
-    void (* download_started)          (WebKitWebContext *context,
-                                        WebKitDownload   *download);
-    void (* initialize_web_extensions) (WebKitWebContext *context);
+    void (* download_started)                    (WebKitWebContext *context,
+                                                  WebKitDownload   *download);
+    void (* initialize_web_extensions)           (WebKitWebContext *context);
+    void (* initialize_notification_permissions) (WebKitWebContext *context);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
-    void (*_webkit_reserved5) (void);
 };
 
 WEBKIT_API GType
@@ -263,6 +263,12 @@ webkit_web_context_set_process_model                (WebKitWebContext           
 
 WEBKIT_API WebKitProcessModel
 webkit_web_context_get_process_model                (WebKitWebContext              *context);
+
+WEBKIT_API void
+webkit_web_context_initialize_notification_permissions
+                                                    (WebKitWebContext              *context,
+                                                     GList                         *allowed_origins,
+                                                     GList                         *disallowed_origins);
 
 G_END_DECLS
 

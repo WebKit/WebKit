@@ -70,6 +70,12 @@ WebKitSecurityOrigin* webkitSecurityOriginCreate(Ref<WebCore::SecurityOrigin>&& 
     return origin;
 }
 
+WebCore::SecurityOrigin& webkitSecurityOriginGetSecurityOrigin(WebKitSecurityOrigin* origin)
+{
+    ASSERT(origin);
+    return origin->securityOrigin.get();
+}
+
 /**
  * webkit_security_origin_new:
  * @protocol: The protocol for the new origin

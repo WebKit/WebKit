@@ -22,6 +22,7 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitNotification.h"
+#include "WebKitWebContext.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -35,14 +36,17 @@ namespace WebKit {
 class WebKitNotificationProvider : public RefCounted<WebKitNotificationProvider> {
 public:
     virtual ~WebKitNotificationProvider();
-    static Ref<WebKitNotificationProvider> create(WebNotificationManagerProxy*);
+    static Ref<WebKitNotificationProvider> create(WebNotificationManagerProxy*, WebKitWebContext*);
 
     void show(WebPageProxy*, const WebNotification&);
     void cancel(const WebNotification&);
     void clearNotifications(const API::Array*);
 
+    RefPtr<API::Dictionary> notificationPermissions();
+    void setNotificationPermissions(HashMap<String, RefPtr<API::Object>>&&);
+
 private:
-    WebKitNotificationProvider(WebNotificationManagerProxy*);
+    WebKitNotificationProvider(WebNotificationManagerProxy*, WebKitWebContext*);
 
     void cancelNotificationByID(uint64_t);
     static void notificationCloseCallback(WebKitNotification*, WebKitNotificationProvider*);
@@ -50,6 +54,8 @@ private:
 
     void withdrawAnyPreviousNotificationMatchingTag(const CString&);
 
+    WebKitWebContext* m_webContext;
+    RefPtr<API::Dictionary> m_notificationPermissions;
     RefPtr<WebNotificationManagerProxy> m_notificationManager;
     HashMap<uint64_t, GRefPtr<WebKitNotification>> m_notifications;
 };

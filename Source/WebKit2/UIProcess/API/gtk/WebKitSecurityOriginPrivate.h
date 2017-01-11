@@ -30,3 +30,4 @@
 #include <WebCore/SecurityOrigin.h>
 
 WebKitSecurityOrigin* webkitSecurityOriginCreate(Ref<WebCore::SecurityOrigin>&&);
+WebCore::SecurityOrigin& webkitSecurityOriginGetSecurityOrigin(WebKitSecurityOrigin*);

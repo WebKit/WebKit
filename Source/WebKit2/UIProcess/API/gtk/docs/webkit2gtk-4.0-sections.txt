@@ -59,6 +59,7 @@ webkit_web_context_set_disk_cache_directory
 webkit_web_context_allow_tls_certificate_for_host
 webkit_web_context_get_process_model
 webkit_web_context_set_process_model
+webkit_web_context_initialize_notification_permissions
 
 <SUBSECTION URI Scheme>
 WebKitURISchemeRequestCallback
