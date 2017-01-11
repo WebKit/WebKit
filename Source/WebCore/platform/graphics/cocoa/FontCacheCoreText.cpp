@@ -419,6 +419,14 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
 }
 #endif
 
+static inline bool fontIsSystemFont(CTFontRef font)
+{
+    if (CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
+        return true;
+    auto name = adoptCF(CTFontCopyPostScriptName(font));
+    return CFStringGetLength(name.get()) > 0 && CFStringGetCharacterAtIndex(name.get(), 0) == '.';
+}
+
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, const FontVariationSettings& variations)
 {
     bool alwaysAddVariations = false;
@@ -428,8 +436,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
 #if ENABLE(VARIATION_FONTS)
     auto defaultValues = defaultVariationValues(originalFont);
 #if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
-    bool isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(originalFont)).get());
-    alwaysAddVariations = !isSystemFont && !defaultValues.isEmpty();
+    alwaysAddVariations = !defaultValues.isEmpty();
 #endif
 #endif
 
@@ -495,9 +502,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
     }
 
 #if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
-    for (auto& defaultValue : defaultValues) {
-        if (!variationsToBeApplied.contains(defaultValue.key))
-            applyVariationValue(defaultValue.key, defaultValue.value.defaultValue, true);
+    if (!fontIsSystemFont(originalFont)) {
+        for (auto& defaultValue : defaultValues) {
+            if (!variationsToBeApplied.contains(defaultValue.key))
+                applyVariationValue(defaultValue.key, defaultValue.value.defaultValue, true);
+        }
     }
 #endif
 #undef WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
