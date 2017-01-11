@@ -1,3 +1,16 @@
+2017-01-10  Sam Weinig  <sam@webkit.org>
+
+        Rename JSCustomSQLStatementErrorCallback.cpp to JSSQLStatementErrorCallbackCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=166913
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp: Removed.
+        * bindings/js/JSSQLStatementErrorCallbackCustom.cpp: Copied from Source/WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp.
+        Rename to match conventions.
+
 2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210571.
