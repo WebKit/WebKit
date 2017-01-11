@@ -5327,7 +5327,7 @@ sub NativeToJSValueDOMConvertNeedsState
 {
     my ($type, $context) = @_;
 
-    # FIXME: We need a more robost way to specify this requirement so as not
+    # FIXME: We need a more robust way to specify this requirement so as not
     # to require specializing each type. Perhaps just requiring all override
     # types to take both state and the global object would work?
     if ($context->extendedAttributes->{OverrideIDLType}) {
@@ -5359,7 +5359,7 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
 {
     my ($type, $context) = @_;
     
-    # FIXME: We need a more robost way to specify this requirement so as not
+    # FIXME: We need a more robust way to specify this requirement so as not
     # to require specializing each type. Perhaps just requiring all override
     # types to take both state and the global object would work?
     if ($context->extendedAttributes->{OverrideIDLType}) {
