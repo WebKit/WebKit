@@ -36,8 +36,9 @@ namespace WebCore {
 class CachedModuleScriptLoaderClient;
 class CachedScript;
 class DeferredPromise;
+class Document;
 class JSDOMGlobalObject;
-class ScriptElement;
+class LoadableScript;
 class URL;
 
 class CachedModuleScriptLoader final : public RefCounted<CachedModuleScriptLoader>, private CachedResourceClient {
@@ -46,7 +47,7 @@ public:
 
     virtual ~CachedModuleScriptLoader();
 
-    bool load(ScriptElement&, const URL& sourceURL);
+    bool load(Document&, LoadableScript&, const URL& sourceURL);
 
     CachedScript* cachedScript() { return m_cachedScript.get(); }
 

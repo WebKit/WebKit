@@ -26,7 +26,12 @@
 #include "config.h"
 #include "LoadableScript.h"
 
+#include "CachedResourceLoader.h"
+#include "CachedScript.h"
+#include "ContentSecurityPolicy.h"
+#include "Document.h"
 #include "LoadableScriptClient.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -53,6 +58,27 @@ void LoadableScript::notifyClientFinished()
         vector.append(pair.key);
     for (auto& client : vector)
         client->notifyFinished(*this);
+}
+
+CachedResourceHandle<CachedScript> LoadableScript::requestScriptWithCache(Document& document, const URL& sourceURL) const
+{
+    auto* settings = document.settings();
+    if (settings && !settings->isScriptEnabled())
+        return nullptr;
+
+    ASSERT(document.contentSecurityPolicy());
+    bool hasKnownNonce = document.contentSecurityPolicy()->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+
+    CachedResourceRequest request(ResourceRequest(sourceURL), options);
+    request.setAsPotentiallyCrossOrigin(m_crossOriginMode, document);
+    request.upgradeInsecureRequestIfNeeded(document);
+
+    request.setCharset(m_charset);
+    request.setInitiator(m_initiatorName);
+
+    return document.cachedResourceLoader().requestScript(WTFMove(request));
 }
 
 }

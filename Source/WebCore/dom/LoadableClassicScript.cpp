@@ -33,26 +33,26 @@
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(CachedResourceHandle<CachedScript>&& cachedScript)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
 {
-    ASSERT(cachedScript);
-    auto script = adoptRef(*new LoadableClassicScript(WTFMove(cachedScript)));
-    cachedScript->addClient(script.get());
-    return script;
+    return adoptRef(*new LoadableClassicScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree));
 }
 
 LoadableClassicScript::~LoadableClassicScript()
 {
-    m_cachedScript->removeClient(*this);
+    if (m_cachedScript)
+        m_cachedScript->removeClient(*this);
 }
 
 bool LoadableClassicScript::isLoaded() const
 {
+    ASSERT(m_cachedScript);
     return m_cachedScript->isLoaded();
 }
 
 std::optional<LoadableScript::Error> LoadableClassicScript::error() const
 {
+    ASSERT(m_cachedScript);
     if (m_error)
         return m_error;
 
@@ -64,11 +64,13 @@ std::optional<LoadableScript::Error> LoadableClassicScript::error() const
 
 bool LoadableClassicScript::wasCanceled() const
 {
+    ASSERT(m_cachedScript);
     return m_cachedScript->wasCanceled();
 }
 
 void LoadableClassicScript::notifyFinished(CachedResource& resource)
 {
+    ASSERT(m_cachedScript);
     if (resource.resourceError().isAccessControl()) {
         static NeverDestroyed<String> consoleMessage(ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         m_error = Error {
@@ -103,6 +105,16 @@ void LoadableClassicScript::execute(ScriptElement& scriptElement)
 {
     ASSERT(!error());
     scriptElement.executeClassicScript(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::Program));
+}
+
+bool LoadableClassicScript::load(Document& document, const URL& sourceURL)
+{
+    ASSERT(!m_cachedScript);
+    m_cachedScript = requestScriptWithCache(document, sourceURL);
+    if (!m_cachedScript)
+        return false;
+    m_cachedScript->addClient(*this);
+    return true;
 }
 
 }

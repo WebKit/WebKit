@@ -345,24 +345,24 @@ const SlowPutArrayStorageShape = 0x0C
 # Type constants.
 const StringType = 6
 const SymbolType = 7
-const ObjectType = 22
-const FinalObjectType = 23
-const JSFunctionType = 25
-const ArrayType = 33
-const DerivedArrayType = 34
-const ProxyObjectType = 52
+const ObjectType = 23
+const FinalObjectType = 24
+const JSFunctionType = 26
+const ArrayType = 34
+const DerivedArrayType = 35
+const ProxyObjectType = 53
 
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.
-const Int8ArrayType = 35
-const Int16ArrayType = 36
-const Int32ArrayType = 37
-const Uint8ArrayType = 38
-const Uint8ClampedArrayType = 39
-const Uint16ArrayType = 40
-const Uint32ArrayType = 41
-const Float32ArrayType = 42
-const Float64ArrayType = 43
+const Int8ArrayType = 36
+const Int16ArrayType = 37
+const Int32ArrayType = 38
+const Uint8ArrayType = 39
+const Uint8ClampedArrayType = 40
+const Uint16ArrayType = 41
+const Uint32ArrayType = 42
+const Float32ArrayType = 43
+const Float64ArrayType = 44
 
 const FirstArrayType = Int8ArrayType
 const LastArrayType = Float64ArrayType

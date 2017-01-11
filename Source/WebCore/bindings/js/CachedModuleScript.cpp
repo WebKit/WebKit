@@ -29,38 +29,30 @@
 #include "CachedModuleScriptClient.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Element.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "ScriptController.h"
-#include "ScriptElement.h"
 #include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 
 namespace WebCore {
 
-Ref<CachedModuleScript> CachedModuleScript::create(const String& nonce, const String& crossOriginMode)
+Ref<CachedModuleScript> CachedModuleScript::create()
 {
-    return adoptRef(*new CachedModuleScript(nonce, crossOriginMode));
+    return adoptRef(*new CachedModuleScript());
 }
 
-CachedModuleScript::CachedModuleScript(const String& nonce, const String& crossOriginMode)
-    : m_nonce(nonce)
-    , m_crossOriginMode(crossOriginMode)
+void CachedModuleScript::load(Document& document, const URL& rootURL, LoadableScript& loadableScript)
 {
+    if (auto* frame = document.frame())
+        frame->script().loadModuleScript(*this, rootURL.string(), loadableScript);
 }
 
-void CachedModuleScript::load(Element& initiator, const URL& rootURL)
+void CachedModuleScript::load(Document& document, const ScriptSourceCode& sourceCode, LoadableScript& loadableScript)
 {
-    if (auto* frame = initiator.document().frame())
-        frame->script().loadModuleScript(*this, rootURL.string(), initiator);
-}
-
-void CachedModuleScript::load(Element& initiator, const ScriptSourceCode& sourceCode)
-{
-    if (auto* frame = initiator.document().frame())
-        frame->script().loadModuleScript(*this, sourceCode, initiator);
+    if (auto* frame = document.frame())
+        frame->script().loadModuleScript(*this, sourceCode, loadableScript);
 }
 
 void CachedModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)

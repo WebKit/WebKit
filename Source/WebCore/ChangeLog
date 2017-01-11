@@ -1,3 +1,80 @@
+2017-01-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Decouple module loading initiator from ScriptElement
+        https://bugs.webkit.org/show_bug.cgi?id=166888
+
+        Reviewed by Saam Barati and Ryosuke Niwa.
+
+        Previously, we use ScriptElement (JSElement for ScriptElement) as the module loading initiator.
+        This element is used to transfer the metadata like charset throughout the module pipeline.
+        As a result, our module loader in the browser side is tightly coupled with ScriptElement.
+        It is not good since it prevent us from using the module loader in the non-DOM environment like
+        Web Workers.
+
+        So we decouple the necessary informations from ScriptElement. We move these information to
+        LoadableScript. And we use JSScriptFetcher to transfer LoadableScript through the JS implemented
+        module loader pipeline. We select LoadableScript instead of LoadableModuleScript since this initiator
+        information will be leveraged even in classic scripts once we implement the dynamic import.
+
+        No behavior change.
+
+        * ForwardingHeaders/runtime/JSScriptFetcher.h: Copied from Source/WebCore/dom/LoadableScript.cpp.
+        * ForwardingHeaders/runtime/ScriptFetcher.h: Copied from Source/WebCore/dom/LoadableScript.cpp.
+        * bindings/js/CachedModuleScript.cpp:
+        (WebCore::CachedModuleScript::create):
+        (WebCore::CachedModuleScript::load):
+        (WebCore::CachedModuleScript::CachedModuleScript): Deleted.
+        * bindings/js/CachedModuleScript.h:
+        Now we can merge CachedModuleScript to LoadableScript. But we do not do this in this patch since
+        we focus on decoupling the initiator information from ScriptElement.
+
+        (WebCore::CachedModuleScript::nonce): Deleted.
+        (WebCore::CachedModuleScript::crossOriginMode): Deleted.
+        * bindings/js/CachedModuleScriptLoader.cpp:
+        (WebCore::CachedModuleScriptLoader::load):
+        * bindings/js/CachedModuleScriptLoader.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::moduleLoaderResolve):
+        (WebCore::JSDOMWindowBase::moduleLoaderFetch):
+        (WebCore::JSDOMWindowBase::moduleLoaderEvaluate):
+        * bindings/js/JSMainThreadExecState.h:
+        (WebCore::JSMainThreadExecState::loadModule):
+        (WebCore::JSMainThreadExecState::linkAndEvaluateModule):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::loadModuleScript):
+        (WebCore::ScriptController::linkAndEvaluateModuleScriptInWorld):
+        (WebCore::ScriptController::linkAndEvaluateModuleScript):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::fetch):
+        * bindings/js/ScriptModuleLoader.h:
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::create):
+        (WebCore::LoadableClassicScript::~LoadableClassicScript):
+        (WebCore::LoadableClassicScript::isLoaded):
+        (WebCore::LoadableClassicScript::error):
+        (WebCore::LoadableClassicScript::wasCanceled):
+        (WebCore::LoadableClassicScript::notifyFinished):
+        (WebCore::LoadableClassicScript::load):
+        * dom/LoadableClassicScript.h:
+        * dom/LoadableModuleScript.cpp:
+        (WebCore::LoadableModuleScript::create):
+        (WebCore::LoadableModuleScript::LoadableModuleScript):
+        (WebCore::LoadableModuleScript::load):
+        * dom/LoadableModuleScript.h:
+        * dom/LoadableScript.cpp:
+        (WebCore::LoadableScript::requestScriptWithCache):
+        * dom/LoadableScript.h:
+        (WebCore::LoadableScript::LoadableScript):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestClassicScript):
+        (WebCore::ScriptElement::requestModuleScript):
+        (WebCore::ScriptElement::executeModuleScript):
+        (WebCore::ScriptElement::requestScriptWithCacheForModuleScript): Deleted.
+        (WebCore::ScriptElement::requestScriptWithCache): Deleted.
+        * dom/ScriptElement.h:
+
 2017-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Use smart pointers and modernize code in WebKitWebAudioSourceGStreamer

@@ -1,3 +1,54 @@
+2017-01-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Decouple module loading initiator from ScriptElement
+        https://bugs.webkit.org/show_bug.cgi?id=166888
+
+        Reviewed by Saam Barati and Ryosuke Niwa.
+
+        Add ScriptFetcher and JSScriptFetcher.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ModuleLoaderPrototype.js:
+        (requestFetch):
+        (requestInstantiate):
+        (requestSatisfy):
+        (requestInstantiateAll):
+        (requestLink):
+        (moduleEvaluation):
+        (loadAndEvaluateModule):
+        (importModule):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/Completion.cpp:
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::linkAndEvaluateModule):
+        * runtime/Completion.h:
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::resolve):
+        (JSC::JSModuleLoader::fetch):
+        (JSC::JSModuleLoader::instantiate):
+        (JSC::JSModuleLoader::evaluate):
+        * runtime/JSModuleLoader.h:
+        * runtime/JSScriptFetcher.cpp: Copied from Source/WebCore/dom/LoadableScript.cpp.
+        (JSC::JSScriptFetcher::destroy):
+        * runtime/JSScriptFetcher.h: Added.
+        (JSC::JSScriptFetcher::createStructure):
+        (JSC::JSScriptFetcher::create):
+        (JSC::JSScriptFetcher::fetcher):
+        (JSC::JSScriptFetcher::JSScriptFetcher):
+        * runtime/JSType.h:
+        * runtime/ScriptFetcher.h: Copied from Source/WebCore/dom/LoadableScript.cpp.
+        (JSC::ScriptFetcher::~ScriptFetcher):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2017-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement JSSourceCode to propagate SourceCode in module pipeline

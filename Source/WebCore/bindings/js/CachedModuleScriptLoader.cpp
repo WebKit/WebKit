@@ -26,14 +26,13 @@
 #include "config.h"
 #include "CachedModuleScriptLoader.h"
 
-#include "CachedResourceLoader.h"
 #include "CachedScript.h"
 #include "DOMWrapperWorld.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
+#include "LoadableScript.h"
 #include "ResourceLoaderOptions.h"
 #include "ScriptController.h"
-#include "ScriptElement.h"
 #include "ScriptModuleLoader.h"
 #include "ScriptSourceCode.h"
 
@@ -58,10 +57,10 @@ CachedModuleScriptLoader::~CachedModuleScriptLoader()
     }
 }
 
-bool CachedModuleScriptLoader::load(ScriptElement& scriptElement, const URL& sourceURL)
+bool CachedModuleScriptLoader::load(Document& document, LoadableScript& loadableScript, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
-    m_cachedScript = scriptElement.requestScriptWithCacheForModuleScript(sourceURL);
+    m_cachedScript = loadableScript.requestScriptWithCache(document, sourceURL);
     if (!m_cachedScript)
         return false;
 

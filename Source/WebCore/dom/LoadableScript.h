@@ -25,17 +25,22 @@
 
 #pragma once
 
+#include "CachedResourceHandle.h"
 #include <runtime/ConsoleTypes.h>
+#include <runtime/JSScriptFetcher.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CachedScript;
+class Document;
 class LoadableScriptClient;
 class ScriptElement;
+class URL;
 
-class LoadableScript : public RefCounted<LoadableScript> {
+class LoadableScript : public JSC::ScriptFetcher {
 public:
     enum class ErrorType {
         CachedScript,
@@ -68,10 +73,27 @@ public:
     virtual bool isClassicScript() const { return false; }
     virtual bool isModuleScript() const { return false; }
 
+    CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL) const;
+
 protected:
+    LoadableScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+        : m_nonce(nonce)
+        , m_crossOriginMode(crossOriginMode)
+        , m_charset(charset)
+        , m_initiatorName(initiatorName)
+        , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
+    {
+    }
+
     void notifyClientFinished();
 
 private:
+    String m_nonce;
+    String m_crossOriginMode;
+    String m_charset;
+    AtomicString m_initiatorName;
+    bool m_isInUserAgentShadowTree { false };
+
     HashCountedSet<LoadableScriptClient*> m_clients;
 };
 

@@ -31,15 +31,14 @@
 #include "Document.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
-#include "JSElement.h"
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
 #include "ScriptController.h"
-#include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/JSModuleRecord.h>
+#include <runtime/JSScriptFetcher.h>
 #include <runtime/JSSourceCode.h>
 #include <runtime/JSString.h>
 #include <runtime/Symbol.h>
@@ -134,11 +133,9 @@ JSC::JSInternalPromise* ScriptModuleLoader::resolve(JSC::JSGlobalObject* jsGloba
     return jsPromise.promise();
 }
 
-JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue initiator)
+JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalObject, JSC::ExecState* exec, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSValue scriptFetcher)
 {
-    // FIXME: What guarantees these are true? Why don't we need to check?
-    ASSERT(JSC::jsDynamicCast<JSElement*>(initiator));
-    ASSERT(isScriptElement(JSC::jsDynamicCast<JSElement*>(initiator)->wrapped()));
+    ASSERT(JSC::jsDynamicCast<JSC::JSScriptFetcher*>(scriptFetcher));
 
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(jsGlobalObject);
     auto& jsPromise = *JSC::JSInternalPromiseDeferred::create(exec, &globalObject);
@@ -164,7 +161,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::fetch(JSC::JSGlobalObject* jsGlobalO
     if (auto* frame = m_document.frame()) {
         auto loader = CachedModuleScriptLoader::create(*this, deferred.get());
         m_loaders.add(loader.copyRef());
-        if (!loader->load(downcastScriptElement(JSC::jsCast<JSElement*>(initiator)->wrapped()), completedURL)) {
+        if (!loader->load(m_document, *static_cast<LoadableScript*>(JSC::jsCast<JSC::JSScriptFetcher*>(scriptFetcher)->fetcher()), completedURL)) {
             loader->clearClient();
             m_loaders.remove(WTFMove(loader));
             deferred->reject(frame->script().moduleLoaderAlreadyReportedErrorSymbol());

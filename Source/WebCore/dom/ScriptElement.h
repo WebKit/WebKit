@@ -66,8 +66,6 @@ public:
     bool willExecuteInOrder() const { return m_willExecuteInOrder; }
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
 
-    CachedResourceHandle<CachedScript> requestScriptWithCacheForModuleScript(const URL&);
-
     // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
     enum class ScriptType { Classic, Module };
     ScriptType scriptType() const { return m_isModuleScript ? ScriptType::Module : ScriptType::Classic; }

@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-Ref<LoadableModuleScript> LoadableModuleScript::create(CachedModuleScript& moduleScript)
+Ref<LoadableModuleScript> LoadableModuleScript::create(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
 {
-    auto script = adoptRef(*new LoadableModuleScript(moduleScript));
-    moduleScript.addClient(script.get());
-    return script;
+    return adoptRef(*new LoadableModuleScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, CachedModuleScript::create()));
 }
 
-LoadableModuleScript::LoadableModuleScript(CachedModuleScript& moduleScript)
-    : m_moduleScript(moduleScript)
+LoadableModuleScript::LoadableModuleScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree, Ref<CachedModuleScript>&& moduleScript)
+    : LoadableScript(nonce, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
+    , m_moduleScript(WTFMove(moduleScript))
 {
+    m_moduleScript->addClient(*this);
 }
 
 LoadableModuleScript::~LoadableModuleScript()
@@ -70,6 +70,16 @@ void LoadableModuleScript::notifyFinished(CachedModuleScript&)
 void LoadableModuleScript::execute(ScriptElement& scriptElement)
 {
     scriptElement.executeModuleScript(m_moduleScript.get());
+}
+
+void LoadableModuleScript::load(Document& document, const URL& rootURL)
+{
+    m_moduleScript->load(document, rootURL, *this);
+}
+
+void LoadableModuleScript::load(Document& document, const ScriptSourceCode& sourceCode)
+{
+    m_moduleScript->load(document, sourceCode, *this);
 }
 
 }

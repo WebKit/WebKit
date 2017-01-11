@@ -36,7 +36,7 @@ class LoadableModuleScript final : public LoadableScript, private CachedModuleSc
 public:
     virtual ~LoadableModuleScript();
 
-    static Ref<LoadableModuleScript> create(CachedModuleScript&);
+    static Ref<LoadableModuleScript> create(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree);
 
     bool isLoaded() const final;
     std::optional<Error> error() const final;
@@ -49,8 +49,11 @@ public:
 
     void setError(Error&&);
 
+    void load(Document&, const URL& rootURL);
+    void load(Document&, const ScriptSourceCode&);
+
 private:
-    LoadableModuleScript(CachedModuleScript&);
+    LoadableModuleScript(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree, Ref<CachedModuleScript>&&);
 
     void notifyFinished(CachedModuleScript&) final;
 

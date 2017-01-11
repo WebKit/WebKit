@@ -32,14 +32,12 @@
 namespace WebCore {
 
 class CachedModuleScriptClient;
-class Element;
+class Document;
 class ScriptSourceCode;
 
 class CachedModuleScript : public RefCounted<CachedModuleScript> {
 public:
     UniquedStringImpl* moduleKey() { return m_moduleKey.get(); }
-
-    void evaluate(Element&);
 
     void notifyLoadCompleted(UniquedStringImpl& moduleKey);
     void notifyLoadFailed(LoadableScript::Error&&);
@@ -52,23 +50,16 @@ public:
     void addClient(CachedModuleScriptClient&);
     void removeClient(CachedModuleScriptClient&);
 
-    static Ref<CachedModuleScript> create(const String& nonce, const String& crossOriginMode);
+    static Ref<CachedModuleScript> create();
 
-    void load(Element& initiator, const URL& rootURL);
-    void load(Element& initiator, const ScriptSourceCode&);
-
-    const String& nonce() const { return m_nonce; }
-    const String& crossOriginMode() const { return m_crossOriginMode; }
+    void load(Document&, const URL& rootURL, LoadableScript&);
+    void load(Document&, const ScriptSourceCode&, LoadableScript&);
 
 private:
-    CachedModuleScript(const String& nonce, const String& crossOriginMode);
-
     void notifyClientFinished();
 
     RefPtr<UniquedStringImpl> m_moduleKey;
     HashCountedSet<CachedModuleScriptClient*> m_clients;
-    String m_nonce;
-    String m_crossOriginMode;
     std::optional<LoadableScript::Error> m_error;
     bool m_wasCanceled { false };
     bool m_isLoaded { false };

@@ -292,11 +292,14 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
-        String nonceAttribute = m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr);
-        String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
-        auto request = requestScriptWithCache(m_element.document().completeURL(sourceURL), nonceAttribute, crossOriginMode);
-        if (request) {
-            m_loadableScript = LoadableClassicScript::create(WTFMove(request));
+        auto script = LoadableClassicScript::create(
+            m_element.attributeWithoutSynchronization(HTMLNames::nonceAttr),
+            m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
+            scriptCharset(),
+            m_element.localName(),
+            m_element.isInUserAgentShadowTree());
+        if (script->load(m_element.document(), m_element.document().completeURL(sourceURL))) {
+            m_loadableScript = WTFMove(script);
             m_isExternalScript = true;
         }
     }
@@ -339,9 +342,9 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         }
 
         m_isExternalScript = true;
-        auto moduleScript = CachedModuleScript::create(nonce, crossOriginMode);
-        m_loadableScript = LoadableModuleScript::create(moduleScript.get());
-        moduleScript->load(m_element, moduleScriptRootURL);
+        auto script = LoadableModuleScript::create(nonce, crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
+        script->load(m_element.document(), moduleScriptRootURL);
+        m_loadableScript = WTFMove(script);
         return true;
     }
 
@@ -354,40 +357,10 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     if (!contentSecurityPolicy.allowInlineScript(m_element.document().url(), m_startLineNumber, sourceCode.source().toStringWithoutCopying(), hasKnownNonce))
         return false;
 
-    auto moduleScript = CachedModuleScript::create(nonce, crossOriginMode);
-    m_loadableScript = LoadableModuleScript::create(moduleScript.get());
-    moduleScript->load(m_element, sourceCode);
+    auto script = LoadableModuleScript::create(nonce, crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
+    script->load(m_element.document(), sourceCode);
+    m_loadableScript = WTFMove(script);
     return true;
-}
-
-CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCacheForModuleScript(const URL& sourceURL)
-{
-    ASSERT(m_loadableScript);
-    ASSERT(is<LoadableModuleScript>(*m_loadableScript));
-    auto& moduleScript = downcast<LoadableModuleScript>(*m_loadableScript);
-    return requestScriptWithCache(sourceURL, moduleScript.moduleScript().nonce(), moduleScript.moduleScript().crossOriginMode());
-}
-
-CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const URL& sourceURL, const String& nonceAttribute, const String& crossOriginMode)
-{
-    Document& document = m_element.document();
-    auto* settings = document.settings();
-    if (settings && !settings->isScriptEnabled())
-        return nullptr;
-
-    ASSERT(document.contentSecurityPolicy());
-    bool hasKnownNonce = document.contentSecurityPolicy()->allowScriptWithNonce(nonceAttribute, m_element.isInUserAgentShadowTree());
-    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-
-    CachedResourceRequest request(ResourceRequest(sourceURL), options);
-    request.setAsPotentiallyCrossOrigin(crossOriginMode, document);
-    request.upgradeInsecureRequestIfNeeded(document);
-
-    request.setCharset(scriptCharset());
-    request.setInitiator(&element());
-
-    return document.cachedResourceLoader().requestScript(WTFMove(request));
 }
 
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
@@ -430,7 +403,7 @@ void ScriptElement::executeModuleScript(CachedModuleScript& moduleScript)
     IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(&document);
     CurrentScriptIncrementer currentScriptIncrementer(document, m_element);
 
-    frame->script().linkAndEvaluateModuleScript(moduleScript, element());
+    frame->script().linkAndEvaluateModuleScript(moduleScript);
 }
 
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)

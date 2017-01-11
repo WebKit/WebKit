@@ -55,6 +55,7 @@ class CachedModuleScript;
 class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
+class LoadableScript;
 class SecurityOrigin;
 class ScriptSourceCode;
 class Widget;
@@ -113,13 +114,13 @@ public:
     JSC::JSValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
     JSC::JSValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
 
-    void loadModuleScriptInWorld(CachedModuleScript&, const String& moduleName, DOMWrapperWorld&, Element&);
-    void loadModuleScript(CachedModuleScript&, const String& moduleName, Element&);
-    void loadModuleScriptInWorld(CachedModuleScript&, const ScriptSourceCode&, DOMWrapperWorld&, Element&);
-    void loadModuleScript(CachedModuleScript&, const ScriptSourceCode&, Element&);
+    void loadModuleScriptInWorld(CachedModuleScript&, const String& moduleName, LoadableScript&, DOMWrapperWorld&);
+    void loadModuleScript(CachedModuleScript&, const String& moduleName, LoadableScript&);
+    void loadModuleScriptInWorld(CachedModuleScript&, const ScriptSourceCode&, LoadableScript&, DOMWrapperWorld&);
+    void loadModuleScript(CachedModuleScript&, const ScriptSourceCode&, LoadableScript&);
 
-    JSC::JSValue linkAndEvaluateModuleScriptInWorld(CachedModuleScript& , DOMWrapperWorld&, Element&);
-    JSC::JSValue linkAndEvaluateModuleScript(CachedModuleScript&, Element&);
+    JSC::JSValue linkAndEvaluateModuleScriptInWorld(CachedModuleScript& , DOMWrapperWorld&);
+    JSC::JSValue linkAndEvaluateModuleScript(CachedModuleScript&);
 
     JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&, DOMWrapperWorld&);
     JSC::JSValue evaluateModule(const URL&, JSC::JSModuleRecord&);
