@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
@@ -146,6 +146,7 @@ String homeDirectoryPath();
 WEBCORE_EXPORT String pathGetFileName(const String&);
 WEBCORE_EXPORT String directoryName(const String&);
 WEBCORE_EXPORT bool getVolumeFreeSpace(const String&, uint64_t&);
+WEBCORE_EXPORT std::optional<int32_t> getFileDeviceId(PlatformFileHandle);
 
 WEBCORE_EXPORT void setMetadataURL(String& URLString, const String& referrer, const String& path);
 
@@ -192,6 +193,8 @@ bool unloadModule(PlatformModule);
 // Encode a string for use within a file name.
 WEBCORE_EXPORT String encodeForFileName(const String&);
 String decodeFromFilename(const String&);
+
+bool filesHaveSameVolume(const String&, const String&);
 
 #if USE(CF)
 RetainPtr<CFURLRef> pathAsURL(const String&);
