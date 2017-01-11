@@ -1,3 +1,14 @@
+2017-01-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Update TestExpectation file for Ubuntu 16.04.
+
+        Unreviewed EFL gardening.
+
+        After bumping Ubuntu version to 16.04, there are many tests are failed.
+        This gardening is to update all failure tests on Ubuntu 16.04.
+
+        * platform/efl/TestExpectations:
+
 2017-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement JSSourceCode to propagate SourceCode in module pipeline
