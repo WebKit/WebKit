@@ -127,7 +127,7 @@ function forceFulfillPromise(promise, value)
         @fulfillPromise(promise, value);
 }
 
-function fulfillFetch(entry, payload)
+function fulfillFetch(entry, source)
 {
     // https://whatwg.github.io/loader/#fulfill-fetch
 
@@ -135,7 +135,7 @@ function fulfillFetch(entry, payload)
 
     if (!entry.fetch)
         entry.fetch = @newPromiseCapability(@InternalPromise).@promise;
-    this.forceFulfillPromise(entry.fetch, payload);
+    this.forceFulfillPromise(entry.fetch, source);
     @setStateToMax(entry, @ModuleInstantiate);
 }
 
@@ -220,9 +220,9 @@ function requestFetch(key, initiator)
     //     Take the key and fetch the resource actually.
     //     For example, JavaScriptCore shell can provide the hook fetching the resource
     //     from the local file system.
-    var fetchPromise = this.fetch(key, initiator).then((payload) => {
+    var fetchPromise = this.fetch(key, initiator).then((source) => {
         @setStateToMax(entry, @ModuleInstantiate);
-        return payload;
+        return source;
     });
     entry.fetch = fetchPromise;
     return fetchPromise;
