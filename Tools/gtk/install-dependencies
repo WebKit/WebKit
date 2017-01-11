@@ -147,6 +147,7 @@ function installDependenciesWithApt {
         apache2 \
         curl \
         dbus-x11 \
+        gdb \
         libapache2-mod-bw \
         $(aptIfElse libapache2-mod-php7.0 libapache2-mod-php5) \
         libgpg-error-dev \
@@ -291,6 +292,7 @@ function installDependenciesWithPacman {
     packages="$packages \
         apache \
         curl \
+        gdb \
         hunspell \
         hunspell-en \
         php-apache \
@@ -413,6 +415,7 @@ function installDependenciesWithDnf {
     packages="$packages \
         curl \
         dbus-x11 \
+        gdb \
         hunspell-en \
         httpd \
         libgpg-error-devel \
