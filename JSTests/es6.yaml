@@ -1187,7 +1187,7 @@
 - path: es6/typed_arrays_ArrayBuffer[Symbol.species].js
   cmd: runES6 :normal
 - path: es6/typed_arrays_correct_prototype_chains.js
-  cmd: runES6 :normal
+  cmd: runES6 :fail
 - path: es6/WeakMap_iterator_closing.js
   cmd: runES6 :normal
 - path: es6/WeakSet_iterator_closing.js
