@@ -1,8 +1,5 @@
 
-FAIL ForEach Check params.forEach is not a function. (In 'params.forEach(function(value, key) {
-        keys.push(key);
-        values.push(value);
-    })', 'params.forEach' is undefined)
-FAIL For-of Check i of b is not a function. (In 'i of b', 'i of b' is undefined)
-FAIL empty i of b is not a function. (In 'i of b', 'i of b' is undefined)
+PASS ForEach Check 
+PASS For-of Check 
+PASS empty 
 

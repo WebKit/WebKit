@@ -1,3 +1,15 @@
+2017-01-11  Chris Dumez  <cdumez@apple.com>
+
+        Iterating over URLSearchParams does not work
+        https://bugs.webkit.org/show_bug.cgi?id=166921
+        <rdar://problem/29970907>
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/url/urlsearchparams-foreach-expected.txt:
+
 2017-01-10  Chris Dumez  <cdumez@apple.com>
 
         Make Event.initEvent()'s first parameter mandatory

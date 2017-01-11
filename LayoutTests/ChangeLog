@@ -1,5 +1,18 @@
 2017-01-11  Chris Dumez  <cdumez@apple.com>
 
+        Iterating over URLSearchParams does not work
+        https://bugs.webkit.org/show_bug.cgi?id=166921
+        <rdar://problem/29970907>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage.
+
+        * fast/dom/DOMURL/searchparams-iterable-expected.txt: Added.
+        * fast/dom/DOMURL/searchparams-iterable.html: Added.
+
+2017-01-11  Chris Dumez  <cdumez@apple.com>
+
         [iOS][WK2] KeyboardEvent.key always returns an empty string
         https://bugs.webkit.org/show_bug.cgi?id=166918
         <rdar://problem/29861147>

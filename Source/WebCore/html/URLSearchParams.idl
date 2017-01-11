@@ -34,7 +34,7 @@
     sequence<USVString> getAll(USVString name);
     boolean has(USVString name);
     void set(USVString name, USVString value);
-    // FIXME: This should be iterable.
+    iterable<USVString, USVString>;
 
     // FIXME: This should just be stringifier once that is supported in the bindings generator
     DOMString toString();
