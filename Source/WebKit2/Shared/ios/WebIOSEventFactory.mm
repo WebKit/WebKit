@@ -55,6 +55,7 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(WebIOSEvent 
     WebKit::WebEvent::Type type = (event.type == WebEventKeyUp) ? WebKit::WebEvent::KeyUp : WebKit::WebEvent::KeyDown;
     String text = event.characters;
     String unmodifiedText = event.charactersIgnoringModifiers;
+    String key = WebCore::keyForKeyEvent(event);
     String keyIdentifier = WebCore::keyIdentifierForKeyEvent(event);
     int windowsVirtualKeyCode = event.keyCode;
     int nativeVirtualKeyCode = event.keyCode;
@@ -83,7 +84,7 @@ WebKit::WebKeyboardEvent WebIOSEventFactory::createWebKeyboardEvent(WebIOSEvent 
         unmodifiedText = text;
     }
 
-    return WebKit::WebKeyboardEvent(type, text, unmodifiedText, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
+    return WebKit::WebKeyboardEvent(type, text, unmodifiedText, key, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, macCharCode, autoRepeat, isKeypad, isSystemKey, modifiers, timestamp);
 }
 
 #endif // PLATFORM(IOS)

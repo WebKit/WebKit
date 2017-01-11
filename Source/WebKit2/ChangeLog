@@ -1,3 +1,19 @@
+2017-01-11  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] KeyboardEvent.key always returns an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=166918
+        <rdar://problem/29861147>
+
+        Reviewed by Wenson Hsieh.
+
+        Make sure that KeyboardEvent.key gets properly initialized on iOS / WK2.
+
+        * Shared/WebEvent.h:
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+
 2017-01-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] No way for applications to set notification permissions without waiting for permission request

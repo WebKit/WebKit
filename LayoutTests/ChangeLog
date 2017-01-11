@@ -1,3 +1,16 @@
+2017-01-11  Chris Dumez  <cdumez@apple.com>
+
+        [iOS][WK2] KeyboardEvent.key always returns an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=166918
+        <rdar://problem/29861147>
+
+        Reviewed by Wenson Hsieh.
+
+        Add layout test coverage.
+
+        * fast/events/ios/keyboard-event-key-attribute-expected.txt: Added.
+        * fast/events/ios/keyboard-event-key-attribute.html: Added.
+
 2017-01-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Update TestExpectation file for Ubuntu 16.04.
