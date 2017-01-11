@@ -897,8 +897,9 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             if (unsigned length = renderText.textLength()) {
                 if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
                     totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
-                ASSERT(run->m_stop > 0);
-                needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1)) && run->m_stop == length;
+                // run->m_start == run->m_stop should only be true iff the run is a replaced run for bidi: isolate.
+                ASSERT(run->m_stop > 0 || run->m_start == run->m_stop);
+                needsWordSpacing = run->m_stop == length && !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1));
             }
 
             setLogicalWidthForTextRun(lineBox, run, renderText, totalLogicalWidth, lineInfo, textBoxDataMap, verticalPositionCache, wordMeasurements);

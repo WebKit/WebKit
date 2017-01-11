@@ -1,3 +1,24 @@
+2017-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: run->m_stop > 0 in *WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment
+        https://bugs.webkit.org/show_bug.cgi?id=166030
+
+        Reviewed by Ryosuke Niwa.
+
+        Ordinarily, we don't process empty BiDi runs (because we filter them out).
+        However, when using isolates, we invoke extra machinery to create a
+        placeholder BiDi run, and replace it with the runs for the isolate. The
+        isolate's runs, though, can be empty, and rather than just deleting the
+        placeholder run, we will keep it around so that the m_logicallyLastRun is
+        still valid. This means that it is possible when all is said and done to
+        have empty runs, and computeInlineDirectionPositionsForSegment() needs to
+        not ASSERT() in this case.
+
+        Test: fast/text/bidi-isolate-empty-run.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+
 2017-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         File scheme should not allow access of a resource on a different volume.
