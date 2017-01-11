@@ -31,7 +31,7 @@ public:
 
     static ObjectPrototype* create(VM&, JSGlobalObject*, Structure*);
 
-    DECLARE_INFO;
+    DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {

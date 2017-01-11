@@ -7,7 +7,7 @@ PASS shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == s
 PASS getError was expected value: NO_ERROR : 
 PASS gl.getAttachedShaders(null) is null
 PASS getError was expected value: INVALID_VALUE : 
-PASS gl.getAttachedShaders(standardVert) threw exception TypeError: Type error.
+PASS gl.getAttachedShaders(standardVert) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContextBase.getAttachedShaders must be an instance of WebGLProgram.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE) is 16
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE) is gl.DYNAMIC_DRAW

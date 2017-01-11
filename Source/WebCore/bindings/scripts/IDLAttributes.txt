@@ -99,6 +99,7 @@ NewObject
 NoInterfaceObject
 NotEnumerable
 OverrideBuiltins
+OverrideIDLType=*
 PassContext
 PrimaryGlobal
 PrivateIdentifier

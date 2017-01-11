@@ -5083,7 +5083,11 @@ sub GetIDLUnionMemberTypes
 
 sub GetBaseIDLType
 {
-    my ($interface, $type) = @_;
+    my ($interface, $type, $context) = @_;
+
+    if ($context && $context->extendedAttributes->{OverrideIDLType}) {
+        return $context->extendedAttributes->{OverrideIDLType};
+    }
 
     my %IDLTypes = (
         "any" => "IDLAny",
@@ -5108,7 +5112,6 @@ sub GetBaseIDLType
         # Non-WebIDL extensions
         "Date" => "IDLDate",
         "EventListener" => "IDLEventListener<JSEventListener>",
-        "IDBKey" => "IDLIDBKey<IDBKey>",
         "JSON" => "IDLJSON",
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
         "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
@@ -5133,9 +5136,9 @@ sub GetBaseIDLType
 
 sub GetIDLType
 {
-    my ($interface, $type) = @_;
+    my ($interface, $type, $context) = @_;
 
-    my $baseIDLType = GetBaseIDLType($interface, $type);
+    my $baseIDLType = GetBaseIDLType($interface, $type, $context);
     return "IDLNullable<" . $baseIDLType . ">" if $type->isNullable;
     return $baseIDLType;
 }
@@ -5322,8 +5325,19 @@ sub UnsafeToNative
 
 sub NativeToJSValueDOMConvertNeedsState
 {
-    my ($type) = @_;
-    
+    my ($type, $context) = @_;
+
+    # FIXME: We need a more robost way to specify this requirement so as not
+    # to require specializing each type. Perhaps just requiring all override
+    # types to take both state and the global object would work?
+    if ($context->extendedAttributes->{OverrideIDLType}) {
+        my $overrideTypeName = $context->extendedAttributes->{OverrideIDLType};
+        return 1 if $overrideTypeName eq "IDLIDBKey";
+        return 1 if $overrideTypeName eq "IDLWebGLAny";
+
+        return 0;
+    }
+
     # FIXME: This should actually check if all the sub-objects of the union need the state.
     return 1 if $type->isUnion;
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($type);
@@ -5334,7 +5348,6 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $codeGenerator->IsInterfaceType($type);
     return 1 if $codeGenerator->IsTypedArrayType($type);
     return 1 if $type->name eq "Date";
-    return 1 if $type->name eq "IDBKey";
     return 1 if $type->name eq "JSON";
     return 1 if $type->name eq "SerializedScriptValue";
     return 1 if $type->name eq "XPathNSResolver";
@@ -5344,8 +5357,19 @@ sub NativeToJSValueDOMConvertNeedsState
 
 sub NativeToJSValueDOMConvertNeedsGlobalObject
 {
-    my ($type) = @_;
+    my ($type, $context) = @_;
     
+    # FIXME: We need a more robost way to specify this requirement so as not
+    # to require specializing each type. Perhaps just requiring all override
+    # types to take both state and the global object would work?
+    if ($context->extendedAttributes->{OverrideIDLType}) {
+        my $overrideTypeName = $context->extendedAttributes->{OverrideIDLType};
+        return 1 if $overrideTypeName eq "IDLIDBKey";
+        return 1 if $overrideTypeName eq "IDLWebGLAny";
+
+        return 0;
+    }
+
     # FIXME: This should actually check if all the sub-objects of the union need the global object.
     return 1 if $type->isUnion;
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($type);
@@ -5353,7 +5377,6 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
     return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
     return 1 if $codeGenerator->IsTypedArrayType($type);
-    return 1 if $type->name eq "IDBKey";
     return 1 if $type->name eq "SerializedScriptValue";
     return 1 if $type->name eq "XPathNSResolver";
 
@@ -5410,11 +5433,11 @@ sub NativeToJSValue
 
     $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)" if $context->extendedAttributes->{CheckSecurityForNode};
 
-    my $IDLType = GetIDLType($interface, $type);
+    my $IDLType = GetIDLType($interface, $type, $context);
 
     my @conversionArguments = ();
-    push(@conversionArguments, $stateReference) if NativeToJSValueDOMConvertNeedsState($type) || $mayThrowException;
-    push(@conversionArguments, $globalObjectReference) if NativeToJSValueDOMConvertNeedsGlobalObject($type);
+    push(@conversionArguments, $stateReference) if NativeToJSValueDOMConvertNeedsState($type, $context) || $mayThrowException;
+    push(@conversionArguments, $globalObjectReference) if NativeToJSValueDOMConvertNeedsGlobalObject($type, $context);
     push(@conversionArguments, "throwScope") if $mayThrowException;
     push(@conversionArguments, $value);
 

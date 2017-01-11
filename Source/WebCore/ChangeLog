@@ -1,3 +1,168 @@
+2017-01-10  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove most of the custom bindings for the WebGL code
+        https://bugs.webkit.org/show_bug.cgi?id=166834
+
+        Reviewed by Alex Christensen.
+
+        Removes all but one custom getter (getExtension) from the WebGL code.
+
+        * Modules/indexeddb/IDBKeyRange.idl:
+        Replace use of non-standard type, with new OverrideIDLType extended attribute, allowing us
+        to stay more consistent with the IDL files spec's provide.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move JSWebGL2RenderingContextCustom to the GC/Wrapping only group.
+
+        * bindings/IDLTypes.h:
+        Add IDLWebGLAny, and simplify IDLIDBKey to not be templatized.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLLong>::convert):
+        (WebCore::Converter<IDLFloat>::convert):
+        (WebCore::Converter<IDLUnrestrictedFloat>::convert):
+        (WebCore::Converter<IDLDouble>::convert):
+        (WebCore::Converter<IDLUnrestrictedDouble>::convert):
+        Add overloads of convert that convert a double to the numeric type.
+
+        (WebCore::Detail::GenericSequenceConverter::convert):
+        Add optimized specialization for JSArrays that does not use the iterator protocol.
+
+        (WebCore::Detail::NumericSequenceConverter::convert):
+        Add an even more optimized specialization for numeric types, which checks to see
+        if the array's butterfly has an optimized shape, and extracts the numeric values
+        from that.
+
+        (WebCore::Detail::SequenceConverter::convert):
+        (WebCore::Detail::SequenceConverter<IDLLong>::convert):
+        (WebCore::Detail::SequenceConverter<IDLFloat>::convert):
+        (WebCore::Detail::SequenceConverter<IDLUnrestrictedFloat>::convert):
+        (WebCore::Detail::SequenceConverter<IDLDouble>::convert):
+        (WebCore::Detail::SequenceConverter<IDLUnrestrictedDouble>::convert):
+        Select the right specialization based on type.
+
+        (WebCore::Converter<IDLSequence<T>>::convert):
+        (WebCore::Converter<IDLFrozenArray<T>>::convert):
+        Rename converter to be more accurate.
+
+        (WebCore::JSConverter<IDLWebGLAny>::convert):
+        Added. Calls through to converter in WebGLAny.h. We should replace this with a
+        call to the IDLUnion JSConverter when feasible.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::JSWebGL2RenderingContext::getInternalformatParameter): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getQueryParameter): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getSamplerParameter): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getSyncParameter): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getIndexedParameter): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getActiveUniformBlockParameter): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getActiveUniformBlockName): Deleted.
+        Remove unnecessary custom functions.
+
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::objectParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getAttachedShaders): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getBufferParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getFramebufferAttachmentParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getProgramParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getRenderbufferParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getShaderParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getSupportedExtensions): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getTexParameter): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getUniform): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::getVertexAttrib): Deleted.
+        (WebCore::toNumberVector): Deleted.
+        (WebCore::functionForUniform): Deleted.
+        (WebCore::dataFunctionf): Deleted.
+        (WebCore::dataFunctioni): Deleted.
+        (WebCore::dataFunctionMatrix): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform1fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform1iv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform2fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform2iv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform3fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform3iv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform4fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniform4iv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniformMatrix2fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniformMatrix3fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::uniformMatrix4fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::vertexAttrib1fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::vertexAttrib2fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::vertexAttrib3fv): Deleted.
+        (WebCore::JSWebGLRenderingContextBase::vertexAttrib4fv): Deleted.
+        Remove unnecessary custom functions.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        Remove specialization of IDBKey.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetBaseIDLType):
+        (GetIDLType):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        (NativeToJSValue):
+        Allow IDL files to override the type of signature using a new OverrideIDLType
+        extended attribute. Currently this only works conversion to JS, but could be
+        extended to support more.
+
+        * bindings/scripts/IDLAttributes.txt:
+        Add OverrideIDLType.
+
+        * html/canvas/WebGL2RenderingContext.idl:
+        Add OverrideIDLType=IDLWebGLAny annotations to remove the need for custom functions.
+
+        * html/canvas/WebGLAny.cpp:
+        (WebCore::convertToJSValue):
+        (WebCore::toJS): Deleted.
+        * html/canvas/WebGLAny.h:
+        Rename the toJS function to convertToJSValue to avoid a template specialization issue.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getAttachedShaders):
+        Update signature to match IDL, replacing bool return value plus out parameter with an
+        optional return value. Modernize the code a bit.
+
+        (WebCore::WebGLRenderingContextBase::uniform2f):
+        (WebCore::WebGLRenderingContextBase::uniform3f):
+        (WebCore::WebGLRenderingContextBase::uniform4f):
+        (WebCore::WebGLRenderingContextBase::uniform1i):
+        (WebCore::WebGLRenderingContextBase::uniform3i):
+        (WebCore::WebGLRenderingContextBase::uniform4i):
+        (WebCore::WebGLRenderingContextBase::uniform1fv):
+        (WebCore::WebGLRenderingContextBase::uniform2fv):
+        (WebCore::WebGLRenderingContextBase::uniform3fv):
+        (WebCore::WebGLRenderingContextBase::uniform4fv):
+        (WebCore::WebGLRenderingContextBase::uniform1iv):
+        (WebCore::WebGLRenderingContextBase::uniform2iv):
+        (WebCore::WebGLRenderingContextBase::uniform3iv):
+        (WebCore::WebGLRenderingContextBase::uniform4iv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib4f):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib1fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib2fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib3fv):
+        (WebCore::WebGLRenderingContextBase::vertexAttrib4fv):
+        (WebCore::WebGLRenderingContextBase::validateUniformParameters):
+        (WebCore::WebGLRenderingContextBase::validateUniformMatrixParameters):
+        (WebCore::WebGLRenderingContextBase::vertexAttribfvImpl):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::TypedList::TypedList):
+        (WebCore::WebGLRenderingContextBase::TypedList::data):
+        (WebCore::WebGLRenderingContextBase::TypedList::length):
+        Re-order/group to match order in the IDL file. Remove overloads taking a pointer and 
+        length, and replace it by having the main function take a specialized TypedList. TypedList
+        allows the bindings to pass the correct Variant type, but then the code to only think in
+        terms of the data() and length() functions.
+
+        * html/canvas/WebGLRenderingContextBase.idl:
+        Remove [Custom] annotations and re-order/group to match the spec. Update types of uniform*fv/iv
+        functions to take typedef'd unions.
+
 2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         :active and :hover states may not be updated across slots

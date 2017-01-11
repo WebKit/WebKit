@@ -31,6 +31,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WEBGL)
+#include "WebGLAny.h"
+#endif
+
 namespace JSC {
 class ArrayBuffer;
 class ArrayBufferView;
@@ -41,6 +45,7 @@ template<typename> class Strong;
 
 namespace WebCore {
 
+class IDBKey;
 template<typename> class DOMPromise;
 
 template<typename T>
@@ -83,13 +88,11 @@ struct IDLUnsignedLong : IDLInteger<uint32_t> { };
 struct IDLLongLong : IDLInteger<int64_t> { };
 struct IDLUnsignedLongLong : IDLInteger<uint64_t> { };
 
-template<typename FloatingPointType, bool unrestricted = false> struct IDLFloatingPoint : IDLNumber<FloatingPointType> {
-    static constexpr bool isUnrestricted = unrestricted;
-};
+template<typename FloatingPointType> struct IDLFloatingPoint : IDLNumber<FloatingPointType> { };
 struct IDLFloat : IDLFloatingPoint<float> { };
-struct IDLUnrestrictedFloat : IDLFloatingPoint<float, true> { };
+struct IDLUnrestrictedFloat : IDLFloatingPoint<float> { };
 struct IDLDouble : IDLFloatingPoint<double> { };
-struct IDLUnrestrictedDouble : IDLFloatingPoint<double, true> { };
+struct IDLUnrestrictedDouble : IDLFloatingPoint<double> { };
 
 struct IDLString : IDLType<String> {
     using ParameterType = const String&;
@@ -190,7 +193,12 @@ struct IDLJSON : IDLType<String> {
 template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
 template<typename T> struct IDLEventListener : IDLWrapper<T> { };
 template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };
-template<typename T> struct IDLIDBKey : IDLWrapper<T> { };
+
+struct IDLIDBKey : IDLWrapper<IDBKey> { };
+
+#if ENABLE(WEBGL)
+struct IDLWebGLAny : IDLType<WebGLAny> { };
+#endif
 
 // Non-WebIDL convenience type aliases
 
@@ -222,5 +230,8 @@ struct IsIDLNumber : public std::integral_constant<bool, WTF::IsBaseOfTemplate<I
 
 template<typename T>
 struct IsIDLInteger : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLInteger, T>::value> { };
+
+template<typename T>
+struct IsIDLFloatingPoint : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLFloatingPoint, T>::value> { };
 
 } // namespace WebCore

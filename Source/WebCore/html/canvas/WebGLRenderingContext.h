@@ -39,7 +39,7 @@ private:
 
     WebGLExtension* getExtension(const String&) final;
     WebGLAny getParameter(GC3Denum pname) final;
-    Vector<String> getSupportedExtensions() final;
+    std::optional<Vector<String>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;

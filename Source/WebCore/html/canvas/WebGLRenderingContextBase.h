@@ -31,9 +31,18 @@
 #include "ImageBuffer.h"
 #include "Timer.h"
 #include "WebGLAny.h"
+#include "WebGLBuffer.h"
 #include "WebGLContextAttributes.h"
+#include "WebGLFramebuffer.h"
+#include "WebGLProgram.h"
+#include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
+#include "WebGLVertexArrayObjectOES.h"
 #include <memory>
+
+#if ENABLE(WEBGL2)
+#include "WebGLVertexArrayObject.h"
+#endif
 
 namespace WebCore {
 
@@ -55,7 +64,6 @@ class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
 class OESElementIndexUint;
 class WebGLActiveInfo;
-class WebGLBuffer;
 class WebGLContextGroup;
 class WebGLContextObject;
 class WebGLCompressedTextureATC;
@@ -66,16 +74,12 @@ class WebGLDebugShaders;
 class WebGLDepthTexture;
 class WebGLDrawBuffers;
 class WebGLExtension;
-class WebGLFramebuffer;
 class WebGLLoseContext;
 class WebGLObject;
-class WebGLProgram;
-class WebGLRenderbuffer;
 class WebGLShader;
 class WebGLSharedObject;
 class WebGLShaderPrecisionFormat;
 class WebGLUniformLocation;
-class WebGLVertexArrayObjectOES;
 
 inline void clip1D(GC3Dint start, GC3Dsizei range, GC3Dsizei sourceRange, GC3Dint* clippedStart, GC3Dsizei* clippedRange)
 {
@@ -185,7 +189,7 @@ public:
 
     RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, GC3Duint index);
     RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GC3Duint index);
-    bool getAttachedShaders(WebGLProgram*, Vector<RefPtr<WebGLShader>>&);
+    std::optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram*);
     GC3Dint getAttribLocation(WebGLProgram*, const String& name);
     WebGLAny getBufferParameter(GC3Denum target, GC3Denum pname);
     std::optional<WebGLContextAttributes> getContextAttributes();
@@ -200,7 +204,7 @@ public:
     String getShaderInfoLog(WebGLShader*);
     RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType);
     String getShaderSource(WebGLShader*);
-    virtual Vector<String> getSupportedExtensions() = 0;
+    virtual std::optional<Vector<String>> getSupportedExtensions() = 0;
     WebGLAny getTexParameter(GC3Denum target, GC3Denum pname);
     WebGLAny getUniform(WebGLProgram*, const WebGLUniformLocation*);
     RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&);
@@ -245,52 +249,76 @@ public:
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&);
     ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, std::optional<TexImageSource>&&);
 
+    template <class TypedArray, class DataType>
+    class TypedList {
+    public:
+        using VariantType = Variant<RefPtr<TypedArray>, Vector<DataType>>;
+
+        TypedList(VariantType&& variant)
+            : m_variant(WTFMove(variant))
+        {
+        }
+
+        DataType* data() const
+        {
+            return WTF::switchOn(m_variant,
+                [] (const RefPtr<TypedArray>& typedArray) -> DataType* { return typedArray->data(); },
+                [] (const Vector<DataType>& vector) -> DataType* { return const_cast<Vector<DataType>&>(vector).data(); }
+            );
+        }
+
+        GC3Dsizei length() const
+        {
+            return WTF::switchOn(m_variant,
+                [] (const RefPtr<TypedArray>& typedArray) -> GC3Dsizei { return typedArray->length(); },
+                [] (const Vector<DataType>& vector) -> GC3Dsizei { return vector.size(); }
+            );
+        }
+
+    private:
+        VariantType m_variant;
+    };
+
+    using Float32List = TypedList<Float32Array, float>;
+    using Int32List = TypedList<Int32Array, int>;
+
     void uniform1f(const WebGLUniformLocation*, GC3Dfloat x);
-    void uniform1fv(const WebGLUniformLocation*, Float32Array& v);
-    void uniform1fv(const WebGLUniformLocation*, GC3Dfloat* v, GC3Dsizei);
-    void uniform1i(const WebGLUniformLocation*, GC3Dint x);
-    void uniform1iv(const WebGLUniformLocation*, Int32Array& v);
-    void uniform1iv(const WebGLUniformLocation*, GC3Dint* v, GC3Dsizei);
     void uniform2f(const WebGLUniformLocation*, GC3Dfloat x, GC3Dfloat y);
-    void uniform2fv(const WebGLUniformLocation*, Float32Array& v);
-    void uniform2fv(const WebGLUniformLocation*, GC3Dfloat* v, GC3Dsizei);
-    void uniform2i(const WebGLUniformLocation*, GC3Dint x, GC3Dint y);
-    void uniform2iv(const WebGLUniformLocation*, Int32Array& v);
-    void uniform2iv(const WebGLUniformLocation*, GC3Dint* v, GC3Dsizei);
     void uniform3f(const WebGLUniformLocation*, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void uniform3fv(const WebGLUniformLocation*, Float32Array& v);
-    void uniform3fv(const WebGLUniformLocation*, GC3Dfloat* v, GC3Dsizei);
-    void uniform3i(const WebGLUniformLocation*, GC3Dint x, GC3Dint y, GC3Dint z);
-    void uniform3iv(const WebGLUniformLocation*, Int32Array& v);
-    void uniform3iv(const WebGLUniformLocation*, GC3Dint* v, GC3Dsizei);
     void uniform4f(const WebGLUniformLocation*, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void uniform4fv(const WebGLUniformLocation*, Float32Array& v);
-    void uniform4fv(const WebGLUniformLocation*, GC3Dfloat* v, GC3Dsizei);
+
+    void uniform1i(const WebGLUniformLocation*, GC3Dint x);
+    void uniform2i(const WebGLUniformLocation*, GC3Dint x, GC3Dint y);
+    void uniform3i(const WebGLUniformLocation*, GC3Dint x, GC3Dint y, GC3Dint z);
     void uniform4i(const WebGLUniformLocation*, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
-    void uniform4iv(const WebGLUniformLocation*, Int32Array& v);
-    void uniform4iv(const WebGLUniformLocation*, GC3Dint* v, GC3Dsizei);
-    void uniformMatrix2fv(const WebGLUniformLocation*, GC3Dboolean transpose, Float32Array& value);
-    void uniformMatrix2fv(const WebGLUniformLocation*, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei);
-    void uniformMatrix3fv(const WebGLUniformLocation*, GC3Dboolean transpose, Float32Array& value);
-    void uniformMatrix3fv(const WebGLUniformLocation*, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei);
-    void uniformMatrix4fv(const WebGLUniformLocation*, GC3Dboolean transpose, Float32Array& value);
-    void uniformMatrix4fv(const WebGLUniformLocation*, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei);
+
+    void uniform1fv(const WebGLUniformLocation*, Float32List&&);
+    void uniform2fv(const WebGLUniformLocation*, Float32List&&);
+    void uniform3fv(const WebGLUniformLocation*, Float32List&&);
+    void uniform4fv(const WebGLUniformLocation*, Float32List&&);
+
+    void uniform1iv(const WebGLUniformLocation*, Int32List&&);
+    void uniform2iv(const WebGLUniformLocation*, Int32List&&);
+    void uniform3iv(const WebGLUniformLocation*, Int32List&&);
+    void uniform4iv(const WebGLUniformLocation*, Int32List&&);
+
+    void uniformMatrix2fv(const WebGLUniformLocation*, GC3Dboolean transpose, Float32List&&);
+    void uniformMatrix3fv(const WebGLUniformLocation*, GC3Dboolean transpose, Float32List&&);
+    void uniformMatrix4fv(const WebGLUniformLocation*, GC3Dboolean transpose, Float32List&&);
 
     void useProgram(WebGLProgram*);
     void validateProgram(WebGLProgram*);
 
     void vertexAttrib1f(GC3Duint index, GC3Dfloat x);
-    void vertexAttrib1fv(GC3Duint index, Float32Array& values);
-    void vertexAttrib1fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
     void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y);
-    void vertexAttrib2fv(GC3Duint index, Float32Array& values);
-    void vertexAttrib2fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
     void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void vertexAttrib3fv(GC3Duint index, Float32Array& values);
-    void vertexAttrib3fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
     void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void vertexAttrib4fv(GC3Duint index, Float32Array& values);
-    void vertexAttrib4fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
+
+    void vertexAttrib1fv(GC3Duint index, Float32List&&);
+    void vertexAttrib2fv(GC3Duint index, Float32List&&);
+    void vertexAttrib3fv(GC3Duint index, Float32List&&);
+    void vertexAttrib4fv(GC3Duint index, Float32List&&);
+
     void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized,
         GC3Dsizei stride, long long offset);
 
@@ -729,10 +757,10 @@ protected:
     virtual bool validateCapability(const char* functionName, GC3Denum) = 0;
 
     // Helper function to validate input parameters for uniform functions.
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, Float32Array&, GC3Dsizei mod);
-    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, Int32Array&, GC3Dsizei mod);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Float32List&, GC3Dsizei mod);
+    bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, const Int32List&, GC3Dsizei mod);
     bool validateUniformParameters(const char* functionName, const WebGLUniformLocation*, void*, GC3Dsizei, GC3Dsizei mod);
-    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, Float32Array&, GC3Dsizei mod);
+    bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, const Float32List&, GC3Dsizei mod);
     bool validateUniformMatrixParameters(const char* functionName, const WebGLUniformLocation*, GC3Dboolean transpose, void*, GC3Dsizei, GC3Dsizei mod);
 
     // Helper function to validate parameters for bufferData.
@@ -748,8 +776,7 @@ protected:
 
     // Helper functions for vertexAttribNf{v}.
     void vertexAttribfImpl(const char* functionName, GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat);
-    void vertexAttribfvImpl(const char* functionName, GC3Duint index, Float32Array&, GC3Dsizei expectedSize);
-    void vertexAttribfvImpl(const char* functionName, GC3Duint index, GC3Dfloat*, GC3Dsizei, GC3Dsizei expectedSize);
+    void vertexAttribfvImpl(const char* functionName, GC3Duint index, Float32List&&, GC3Dsizei expectedSize);
 
     // Helper function for delete* (deleteBuffer, deleteProgram, etc) functions.
     // Return false if caller should return without further processing.

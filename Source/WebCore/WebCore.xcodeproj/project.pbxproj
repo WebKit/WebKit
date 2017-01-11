@@ -2610,7 +2610,7 @@
 		6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42306 /* WebGLCompressedTextureS3TC.h */; };
 		6E3FAE8F14733FDB00E42307 /* WebGLDepthTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E3FAE8D14733FDB00E42307 /* WebGLDepthTexture.h */; };
 		6E47E66010B7944B00B186C8 /* WebGLAny.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLAny.cpp */; };
-		6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLAny.h */; };
+		6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLAny.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E4ABCD4138EA0B70071D291 /* JSHTMLUnknownElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */; };
 		6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */; };
 		6E4E91AF10F7FB3100A2779C /* WebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18362,6 +18362,7 @@
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
+				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */,
 				836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */,
@@ -22155,7 +22156,6 @@
 				07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */,
 				7C73FB17191EF808007DE061 /* JSUserMessageHandlersNamespaceCustom.cpp */,
 				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
-				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
 				D3F3D35A1A69A3B00059FC2B /* JSWebGLRenderingContextBaseCustom.cpp */,
 				E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */,
 				E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */,

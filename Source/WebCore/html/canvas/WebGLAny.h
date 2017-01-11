@@ -27,20 +27,10 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebGLBuffer.h"
-#include "WebGLFramebuffer.h"
-#include "WebGLProgram.h"
-#include "WebGLRenderbuffer.h"
-#include "WebGLTexture.h"
-#include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
 #include <runtime/Uint32Array.h>
 #include <runtime/Uint8Array.h>
-
-#if ENABLE(WEBGL2)
-#include "WebGLVertexArrayObject.h"
-#endif
 
 namespace JSC {
 class ExecState;
@@ -50,8 +40,23 @@ class JSValue;
 namespace WebCore {
 
 class JSDOMGlobalObject;
+class WebGLBuffer;
+class WebGLFramebuffer;
+class WebGLProgram;
+class WebGLRenderbuffer;
+class WebGLTexture;
+class WebGLVertexArrayObject;
+class WebGLVertexArrayObjectOES;
 
-using WebGLAny = Variant<std::nullptr_t, bool, int, unsigned, long long, float, String, Vector<bool>,
+using WebGLAny = Variant<
+    std::nullptr_t,
+    bool,
+    int,
+    unsigned,
+    long long,
+    float,
+    String,
+    Vector<bool>,
     RefPtr<Float32Array>,
     RefPtr<Int32Array>,
     RefPtr<Uint32Array>,
@@ -67,7 +72,7 @@ using WebGLAny = Variant<std::nullptr_t, bool, int, unsigned, long long, float, 
 #endif
 >;
 
-JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, const WebGLAny&);
+JSC::JSValue convertToJSValue(JSC::ExecState&, JSDOMGlobalObject&, const WebGLAny&);
 
 } // namespace WebCore
 

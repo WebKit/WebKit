@@ -173,7 +173,7 @@ private:
 
     // Extensions
     WebGLExtension* getExtension(const String&) final;
-    Vector<String> getSupportedExtensions() final;
+    std::optional<Vector<String>> getSupportedExtensions() final;
     WebGLAny getParameter(GC3Denum pname) final;
 
     void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;

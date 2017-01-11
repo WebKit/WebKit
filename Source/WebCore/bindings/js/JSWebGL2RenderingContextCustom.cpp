@@ -28,9 +28,7 @@
 #if ENABLE(WEBGL) && ENABLE(WEBGL2)
 
 #include "JSWebGL2RenderingContext.h"
-#include "NotImplemented.h"
 #include <heap/HeapInlines.h>
-#include <runtime/Error.h>
 
 using namespace JSC;
 
@@ -39,51 +37,6 @@ namespace WebCore {
 void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&wrapped());
-}
-
-JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState&)
-{
-    return jsUndefined();
-}
-
-JSValue JSWebGL2RenderingContext::getQueryParameter(ExecState&)
-{
-    return jsUndefined();
-}
-
-JSValue JSWebGL2RenderingContext::getSamplerParameter(ExecState&)
-{
-    return jsUndefined();
-}
-
-JSValue JSWebGL2RenderingContext::getSyncParameter(ExecState&)
-{
-    return jsUndefined();
-}
-
-JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (state.argumentCount() < 2)
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    unsigned pname = state.uncheckedArgument(0).toInt32(&state);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    unsigned index = state.uncheckedArgument(1).toInt32(&state);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    return toJS(state, *globalObject(), wrapped().getIndexedParameter(pname, index));
-}
-
-JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState&)
-{
-    return jsUndefined();
-}
-
-JSValue JSWebGL2RenderingContext::getActiveUniformBlockName(ExecState&)
-{
-    return jsUndefined();
 }
 
 } // namespace WebCore

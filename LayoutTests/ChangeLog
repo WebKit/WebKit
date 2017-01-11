@@ -1,3 +1,13 @@
+2017-01-10  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove most of the custom bindings for the WebGL code
+        https://bugs.webkit.org/show_bug.cgi?id=166834
+
+        Reviewed by Alex Christensen.
+
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt:
+        Update result for better error message.
+
 2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         :active and :hover states may not be updated across slots

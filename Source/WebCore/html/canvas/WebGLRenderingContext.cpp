@@ -249,8 +249,11 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     return nullptr;
 }
 
-Vector<String> WebGLRenderingContext::getSupportedExtensions()
+std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 {
+    if (isContextLost())
+        return std::nullopt;
+
     Vector<String> result;
     
     if (m_isPendingPolicyResolution)
