@@ -118,6 +118,13 @@ TEST(WebKit2, MSEIsPlayingAudio)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
 
+    bool keepOnKeepingOn = true;
+    size_t i = 0;
+    while (keepOnKeepingOn) {
+        ++i;
+        sleep(1);
+    }
+    
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MSEIsPlayingAudioPageGroup").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetMediaSourceEnabled(preferences, true);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,15 @@
 #include "FileMetadata.h"
 #include "NotImplemented.h"
 #include "PathWalker.h"
+#include <io.h>
+#include <shlobj.h>
+#include <shlwapi.h>
+#include <sys/stat.h>
+#include <windows.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 
-#include <windows.h>
-#include <shlobj.h>
-#include <shlwapi.h>
 
 namespace WebCore {
 
@@ -450,6 +452,23 @@ bool getVolumeFreeSpace(const String&, uint64_t&)
 {
     notImplemented();
     return false;
+}
+
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
+{
+    auto handle = openFile(fsFile.data(), OpenForRead);
+    if (!isHandleValid(handle))
+        return std::nullopt;
+
+    BY_HANDLE_FILE_INFORMATION fileInformation = { };
+    if (!::GetFileInformationByHandle(handle, &fileInformation)) {
+        closeFile(handle);
+        return std::nullopt;
+    }
+
+    closeFile(handle);
+
+    return fileInformation.dwVolumeSerialNumber;
 }
 
 } // namespace WebCore

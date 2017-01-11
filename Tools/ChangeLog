@@ -1,3 +1,15 @@
+2017-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+        File scheme should not allow access of a resource on a different volume.
+        https://bugs.webkit.org/show_bug.cgi?id=158552
+        <rdar://problem/15307582>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add new files.
+        * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.html: Added.
+        * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm: Added.
+
 2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r210571.
