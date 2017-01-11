@@ -1,3 +1,15 @@
+2017-01-10  Mark Lam  <mark.lam@apple.com>
+
+        Reverting run-jsc-stress-tests' $buildType to use string values.
+        https://bugs.webkit.org/show_bug.cgi?id=166912
+
+        Rubber stamped by Filip Pizlo.
+
+        This is so that we can test for it in the tests e.g.
+        //@ if $buildType == "debug" then runDefault("--maxSingleAllocationSize=1048576") else skip end
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Temporarily add back the file removed in r210463 to unbreak internal bots.

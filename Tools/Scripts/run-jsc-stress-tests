@@ -117,7 +117,7 @@ $hostOS = nil
 $filter = nil
 $envVars = []
 $quickMode = false
-$buildType = :release
+$buildType = "release"
 $forceCollectContinuously = false
 
 def usage
@@ -231,9 +231,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--quick'
         $quickMode = true
     when '--debug'
-        $buildType = :debug
+        $buildType = "debug"
     when '--release'
-        $buildType = :release
+        $buildType = "release"
     end
 }
 
@@ -257,7 +257,7 @@ end
 unless jscArg
     # If we're not provided a JSC path, try to come up with a sensible JSC path automagically.
     command = SCRIPTS_PATH.join("webkit-build-directory").to_s
-    command += ($buildType == :release) ? " --release" : " --debug"
+    command += ($buildType == "release") ? " --release" : " --debug"
     command += " --executablePath"
 
     output = `#{command}`.split("\n")
@@ -431,7 +431,7 @@ NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100
 FTL_OPTIONS = ["--useFTLJIT=true"]
 
 def shouldCollectContinuously?
-    $buildType == :release or $forceCollectContinuously
+    $buildType == "release" or $forceCollectContinuously
 end
 
 COLLECT_CONTINUOUSLY_OPTIONS = shouldCollectContinuously? ? ["--collectContinuously=true", "--useGenerationalGC=false"] : []
