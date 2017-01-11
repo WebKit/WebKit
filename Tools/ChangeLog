@@ -1,3 +1,13 @@
+2017-01-10  Tim Horton  <timothy_horton@apple.com>
+
+        MobileMiniBrowser tests don't work by default
+        https://bugs.webkit.org/show_bug.cgi?id=166910
+
+        Reviewed by Alex Christensen.
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/xcshareddata/xcschemes/MobileMiniBrowserUITests.xcscheme: Added.
+        Add a shared scheme; the Makefile depends on the MobileMiniBrowserUITests scheme existing, at the very least.
+
 2017-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         File scheme should not allow access of a resource on a different volume.
