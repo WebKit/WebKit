@@ -421,7 +421,19 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMode textRenderingMode, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, const FontFeatureSettings& features, const FontVariantSettings& variantSettings, const FontVariationSettings& variations)
 {
-    if (!originalFont || (!features.size() && variations.isEmpty() && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
+    bool alwaysAddVariations = false;
+
+    // FIXME: Remove when <rdar://problem/29859207> is fixed
+#define WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
+#if ENABLE(VARIATION_FONTS)
+    auto defaultValues = defaultVariationValues(originalFont);
+#if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
+    bool isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(originalFont)).get());
+    alwaysAddVariations = !isSystemFont && !defaultValues.isEmpty();
+#endif
+#endif
+
+    if (!originalFont || (!features.size() && (!alwaysAddVariations && variations.isEmpty()) && (textRenderingMode == AutoTextRendering) && variantSettings.isAllNormal()
         && (!fontFaceFeatures || !fontFaceFeatures->size()) && (!fontFaceVariantSettings || fontFaceVariantSettings->isAllNormal())))
         return originalFont;
 
@@ -458,26 +470,39 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
 #if ENABLE(VARIATION_FONTS)
-    auto defaultValues = defaultVariationValues(originalFont);
-
     VariationsMap variationsToBeApplied;
-    for (auto& newVariation : variations) {
-        auto iterator = defaultValues.find(newVariation.tag());
-        if (iterator != defaultValues.end()) {
-            float valueToApply = std::max(std::min(newVariation.value(), iterator->value.maximumValue), iterator->value.minimumValue);
 
-            // FIXME: Remove when <rdar://problem/28707822> is fixed
+    auto applyVariationValue = [&](const FontTag& tag, float value, bool isDefaultValue) {
+        // FIXME: Remove when <rdar://problem/28707822> is fixed
 #define WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
 #if WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG
-            if (valueToApply == iterator->value.defaultValue)
-                valueToApply += 0.0001;
+        if (isDefaultValue)
+            value += 0.0001;
+#else
+        UNUSED_PARAM(isDefaultValue);
 #endif
 #undef WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG
+        variationsToBeApplied.set(tag, value);
+    };
 
-            variationsToBeApplied.set(newVariation.tag(), valueToApply);
-        }
+    for (auto& newVariation : variations) {
+        auto iterator = defaultValues.find(newVariation.tag());
+        if (iterator == defaultValues.end())
+            continue;
+        float valueToApply = clampTo(newVariation.value(), iterator->value.minimumValue, iterator->value.maximumValue);
+        bool isDefaultValue = valueToApply == iterator->value.defaultValue;
+        applyVariationValue(newVariation.tag(), valueToApply, isDefaultValue);
+    }
+
+#if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
+    for (auto& defaultValue : defaultValues) {
+        if (!variationsToBeApplied.contains(defaultValue.key))
+            applyVariationValue(defaultValue.key, defaultValue.value.defaultValue, true);
     }
 #endif
+#undef WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
+
+#endif // ENABLE(VARIATION_FONTS)
 
     RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if (!featuresToBeApplied.isEmpty()) {

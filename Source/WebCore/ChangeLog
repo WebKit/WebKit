@@ -1,3 +1,22 @@
+2017-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Variation fonts without variations specified are not rendered as if the default variations were specified
+        https://bugs.webkit.org/show_bug.cgi?id=166672
+        <rdar://problem/29779119>
+        <rdar://problem/29848883>
+
+        Reviewed by Simon Fraser.
+
+        CoreText has a bug (<rdar://problem/29859207>) where variation fonts without
+        a specified variation value are rendered as if the minimum value is specified,
+        rather than the default value. The solution is to apply default values where
+        they are omitted.
+
+        Test: fast/text/variations/advances.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+
 2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Attempt to fix the Windows build after r210588.
