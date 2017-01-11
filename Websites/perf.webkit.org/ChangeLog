@@ -1,5 +1,11 @@
 2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix. Always use UTC when expressing commit times in UNIX-epoch timestamps.
+
+        * public/api/measurement-set.php:
+
+2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo in the previous commit.
 
         * public/api/measurement-set.php:

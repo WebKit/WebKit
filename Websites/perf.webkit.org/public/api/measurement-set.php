@@ -170,8 +170,8 @@ class MeasurementSetFetcher {
     function execute_query($config_id) {
         return $this->db->query('
             SELECT test_runs.*, build_id, build_number, build_builder, build_time,
-            array_agg((commit_id, commit_repository, commit_revision, extract(epoch from commit_time) * 1000)) AS revisions,
-            extract(epoch from max(commit_time)) * 1000 AS revision_time, max(commit_order) AS revision_order
+            array_agg((commit_id, commit_repository, commit_revision, extract(epoch from commit_time at time zone \'utc\') * 1000)) AS revisions,
+            extract(epoch from max(commit_time at time zone \'utc\')) * 1000 AS revision_time, max(commit_order) AS revision_order
                 FROM builds
                     LEFT OUTER JOIN build_commits ON commit_build = build_id
                     LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
