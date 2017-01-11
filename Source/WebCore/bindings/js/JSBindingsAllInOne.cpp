@@ -44,7 +44,7 @@
 #include "JSCommandLineAPIHostCustom.cpp"
 #include "JSCryptoCustom.cpp"
 #include "JSCustomEventCustom.cpp"
-#include "JSCustomSQLStatementErrorCallback.cpp"
+#include "JSSQLStatementErrorCallbackCustom.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDOMBinding.cpp"
 #include "JSDOMGlobalObject.cpp"

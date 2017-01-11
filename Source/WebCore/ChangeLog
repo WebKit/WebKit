@@ -1,3 +1,11 @@
+2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Attempt to fix the Windows build after r210588.
+
+        Unreviewed build fix.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
 2017-01-11  Sam Weinig  <sam@webkit.org>
 
         Address some feedback from r210567.
