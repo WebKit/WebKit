@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2014 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #if PLATFORM(COCOA)
 
-#import "FileSystem.h"
 #import "FormDataStreamMac.h"
 #import "HTTPHeaderNames.h"
 #import "ResourceRequestCFNet.h"
@@ -201,21 +200,6 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (!partition.isNull() && !partition.isEmpty()) {
         NSString *partitionValue = [NSString stringWithUTF8String:partition.utf8().data()];
         [NSURLProtocol setProperty:partitionValue forKey:(NSString *)wkCachePartitionKey() inRequest:nsRequest];
-    }
-#endif
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-    if (m_url.isLocalFile()) {
-        auto fsRepFile = fileSystemRepresentation(m_url.fileSystemPath());
-        if (!fsRepFile.isNull()) {
-            auto handle = openFile(fsRepFile.data(), OpenForRead);
-            if (isHandleValid(handle)) {
-                auto fileDevice = getFileDeviceId(handle);
-                closeFile(handle);
-                if (fileDevice && fileDevice.value())
-                    [nsRequest _setProperty:[NSNumber numberWithInteger:fileDevice.value()] forKey:@"NSURLRequestFileProtocolExpectedDevice"];
-            }
-        }
     }
 #endif
 

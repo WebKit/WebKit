@@ -1,3 +1,17 @@
+2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r210571.
+
+        This change broke the 32-bit macOS build and caused LayoutTest
+        failures.
+
+        Reverted changeset:
+
+        "File scheme should not allow access of a resource on a
+        different volume."
+        https://bugs.webkit.org/show_bug.cgi?id=158552
+        http://trac.webkit.org/changeset/210571
+
 2017-01-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Decouple module loading initiator from ScriptElement
