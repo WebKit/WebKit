@@ -1,3 +1,9 @@
+2017-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed GTK buildfix after r210571.
+
+        * PlatformGTK.cmake:
+
 2017-01-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement JSSourceCode to propagate SourceCode in module pipeline
