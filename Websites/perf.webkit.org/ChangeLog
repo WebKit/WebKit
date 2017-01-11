@@ -1,3 +1,13 @@
+2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fixes for older versions of Postgres.
+
+        Also redirect / and /# to /v3/ as intended in r200820.
+
+        * public/api/measurement-set.php:
+        * public/api/runs.php:
+        * public/index.html:
+
 2016-10-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         Update test cases for change r206465.

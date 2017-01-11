@@ -4,7 +4,7 @@
 <title>Perf Monitor is Loading...</title>
 <script>
 
-if (location.hash.indexOf('#mode=dashboard') >= 0)
+if (location.hash.indexOf('#mode=dashboard') >= 0 || !location.hash || location.hash == '#')
     location.href = '/v3/';
 
 </script>
