@@ -1,3 +1,12 @@
+2017-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r210571.
+
+        Add getFileDeviceId implementation to FileSystemGlib.cpp.
+
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::getFileDeviceId):
+
 2017-01-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed GTK buildfix after r210571.
