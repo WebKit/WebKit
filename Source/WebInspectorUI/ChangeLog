@@ -1,3 +1,15 @@
+2017-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: fix UIString for Print Styles button
+        https://bugs.webkit.org/show_bug.cgi?id=166892
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        Changed UIString to better match documentation.
+
 2017-01-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r210260.

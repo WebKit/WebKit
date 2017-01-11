@@ -47,7 +47,7 @@ WebInspector.DOMTreeContentView = class DOMTreeContentView extends WebInspector.
         this._showShadowDOMSettingChanged();
 
         WebInspector.showPrintStylesSetting.addEventListener(WebInspector.Setting.Event.Changed, this._showPrintStylesSettingChanged, this);
-        this._showPrintStylesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("print-styles", WebInspector.UIString("Enable print styles"), WebInspector.UIString("Disable print styles"), "Images/Printer.svg", 16, 16);
+        this._showPrintStylesButtonNavigationItem = new WebInspector.ActivateButtonNavigationItem("print-styles", WebInspector.UIString("Force Print Media Styles"), WebInspector.UIString("Use Default Media Styles"), "Images/Printer.svg", 16, 16);
         this._showPrintStylesButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._togglePrintStylesSetting, this);
         this._showPrintStylesSettingChanged();
 
