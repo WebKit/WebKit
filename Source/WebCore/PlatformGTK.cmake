@@ -163,8 +163,6 @@ list(APPEND WebCore_SOURCES
     platform/network/soup/SynchronousLoaderClientSoup.cpp
     platform/network/soup/WebKitSoupRequestGeneric.cpp
 
-    platform/posix/FileSystemPOSIX.cpp
-
     platform/soup/PublicSuffixSoup.cpp
     platform/soup/SharedBufferSoup.cpp
     platform/soup/URLSoup.cpp

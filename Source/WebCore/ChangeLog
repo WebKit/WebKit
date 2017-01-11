@@ -1,5 +1,16 @@
 2017-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed, rolling out r210579.
+
+        That was not the right fix
+
+        Reverted changeset:
+
+        "Unreviewed GTK buildfix after r210571."
+        http://trac.webkit.org/changeset/210579
+
+2017-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r210571.
 
         Add getFileDeviceId implementation to FileSystemGlib.cpp.
