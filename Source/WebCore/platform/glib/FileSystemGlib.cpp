@@ -408,12 +408,14 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
 #endif
 }
 
-std::optional<int32_t> getFileDeviceId(PlatformFileHandle handle)
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
-    if (!isHandleValid(handle))
+    GUniquePtr<gchar> filename = unescapedFilename(fsFile);
+    if (!filename)
         return std::nullopt;
 
-    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_io_stream_query_info(handle, G_FILE_ATTRIBUTE_UNIX_DEVICE, nullptr, nullptr));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(filename.get()));
+    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_io_stream_query_info(file.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE, nullptr, nullptr));
     if (!fileInfo)
         return std::nullopt;
 
