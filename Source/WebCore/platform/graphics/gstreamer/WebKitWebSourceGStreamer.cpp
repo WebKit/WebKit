@@ -865,7 +865,7 @@ char* StreamingClient::createReadBuffer(size_t requestedSize, size_t& actualSize
 
     GstBuffer* buffer = gst_buffer_new_and_alloc(requestedSize);
 
-    mapGstBuffer(buffer);
+    mapGstBuffer(buffer, GST_MAP_WRITE);
 
     WTF::GMutexLocker<GMutex> locker(*GST_OBJECT_GET_LOCK(src));
     priv->buffer = adoptGRef(buffer);

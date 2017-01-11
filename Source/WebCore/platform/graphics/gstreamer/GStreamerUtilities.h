@@ -58,7 +58,7 @@ bool getSampleVideoInfo(GstSample*, GstVideoInfo&);
 GstBuffer* createGstBuffer(GstBuffer*);
 GstBuffer* createGstBufferForData(const char* data, int length);
 char* getGstBufferDataPointer(GstBuffer*);
-void mapGstBuffer(GstBuffer*);
+void mapGstBuffer(GstBuffer*, uint32_t);
 void unmapGstBuffer(GstBuffer*);
 bool initializeGStreamer();
 unsigned getGstPlayFlag(const char* nick);

@@ -1,3 +1,30 @@
+2017-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] Use smart pointers and modernize code in WebKitWebAudioSourceGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=166886
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch doesn't change the behavior, so it's covered by existing Web Audio tests. It replaces pointers with
+        smart pointers, uses WTF::Vector instead of GSList and simplifies the code to map/unmap GstBuffers.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcConstructed):
+        (webKitWebAudioSrcFinalize):
+        (webKitWebAudioSrcLoop):
+        (webKitWebAudioSrcChangeState):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::derefGPtr<GstBufferList>):
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstBufferPool>):
+        (WTF::derefGPtr<GstBufferPool>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::mapGstBuffer):
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::createReadBuffer):
+
 2017-01-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r182947.

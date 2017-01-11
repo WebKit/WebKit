@@ -221,6 +221,26 @@ template<> void derefGPtr<GstBufferList>(GstBufferList* ptr)
         gst_buffer_list_unref(ptr);
 }
 
+template<> GRefPtr<GstBufferPool> adoptGRef(GstBufferPool* ptr)
+{
+    ASSERT(!ptr || !g_object_is_floating(ptr));
+    return GRefPtr<GstBufferPool>(ptr, GRefPtrAdopt);
+}
+
+template<> GstBufferPool* refGPtr<GstBufferPool>(GstBufferPool* ptr)
+{
+    if (ptr)
+        gst_object_ref_sink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstBufferPool>(GstBufferPool* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr)
 {
     return GRefPtr<GstSample>(ptr, GRefPtrAdopt);
