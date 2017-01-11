@@ -1,3 +1,17 @@
+2017-01-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r182947.
+        https://bugs.webkit.org/show_bug.cgi?id=166922
+
+        Caused huge memory leak see https://webkit.org/b/166884
+        (Requested by KaL on #webkit).
+
+        Reverted changeset:
+
+        "[GStreamer] Silent WebAudio buffers support"
+        https://bugs.webkit.org/show_bug.cgi?id=143869
+        http://trac.webkit.org/changeset/182947
+
 2017-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r210579.
