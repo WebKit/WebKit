@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,13 +168,10 @@ protected:
     // when the thread dies. These methods let you do this. You can override these methods, and you
     // can be sure that the default ones don't do anything (so you don't need a super call).
     virtual void threadDidStart();
-    virtual void threadWillStop();
+    virtual void threadIsStopping(const LockHolder&);
     
 private:
     friend class AutomaticThreadCondition;
-    
-    class ThreadScope;
-    friend class ThreadScope;
     
     void start(const LockHolder&);
     
