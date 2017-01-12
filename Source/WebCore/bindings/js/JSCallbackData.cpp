@@ -39,14 +39,11 @@ using namespace JSC;
     
 namespace WebCore {
 
-JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
+JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject* callback, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
 {
     ASSERT(callback);
 
-    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(callback->globalObject());
-    ASSERT(globalObject);
-
-    ExecState* exec = globalObject->globalExec();
+    ExecState* exec = globalObject.globalExec();
     JSValue function;
     CallData callData;
     CallType callType = CallType::None;
@@ -73,7 +70,7 @@ JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer&
     ASSERT(!function.isEmpty());
     ASSERT(callType != CallType::None);
 
-    ScriptExecutionContext* context = globalObject->scriptExecutionContext();
+    ScriptExecutionContext* context = globalObject.scriptExecutionContext();
     // We will fail to get the context if the frame has been detached.
     if (!context)
         return JSValue();

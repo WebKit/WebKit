@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests that we are using the right global object for DOM callbacks.");
+jsTestIsAsync = true;
+
+document.result = "PASS: Global object was the right one.";
+var f = document.body.appendChild(document.createElement("iframe"));
+f.onload = function() {
+    f.onload = null;
+
+    try {
+        var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ALL, f.contentWindow);
+        iterator.nextNode();
+    } catch(e) {
+        e.constructor.constructor("debug(document.result)")();
+    }
+
+    finishJSTest();
+};
+
+f.src = "resources/wrong-global-object.html";
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
