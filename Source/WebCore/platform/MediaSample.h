@@ -54,8 +54,10 @@ public:
     virtual ~MediaSample() { }
 
     virtual MediaTime presentationTime() const = 0;
+    virtual MediaTime outputPresentationTime() const { return presentationTime(); }
     virtual MediaTime decodeTime() const = 0;
     virtual MediaTime duration() const = 0;
+    virtual MediaTime outputDuration() const { return duration(); }
     virtual AtomicString trackID() const = 0;
     virtual void setTrackID(const String&) = 0;
     virtual size_t sizeInBytes() const = 0;

@@ -42,7 +42,6 @@
 #include "MediaSample.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
-#include "RealtimeMediaSourcePreview.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -129,7 +128,6 @@ public:
 
     virtual RefPtr<Image> currentFrameImage() { return nullptr; }
     virtual void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) { }
-    virtual RefPtr<RealtimeMediaSourcePreview> preview() { return nullptr; }
 
     void setWidth(int);
     void setHeight(int);

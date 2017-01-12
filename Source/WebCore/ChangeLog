@@ -1,3 +1,146 @@
+2017-01-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream, Mac] Render media stream audio buffers
+        https://bugs.webkit.org/show_bug.cgi?id=159836
+        <rdar://problem/27380390>
+
+        Reviewed by Jer Noble.
+
+        No new tests, it isn't possible to test audio rendering directly. A follow-up patch will
+        add a mock audio source that will enable audio testing.
+
+        * platform/cf/CoreMediaSoftLink.cpp: Include new functions used.
+        * platform/cf/CoreMediaSoftLink.h:
+
+        * WebCore.xcodeproj/project.pbxproj: Remove references to the deleted previews.
+
+        * platform/Logging.h: Add MediaCaptureSamples.
+
+        * platform/MediaSample.h: Add outputPresentationTime and outputDuration.
+
+        * platform/cf/CoreMediaSoftLink.cpp: Add CMSampleBufferGetOutputDuration, CMSampleBufferGetOutputPresentationTimeStamp,
+        CMTimeConvertScale, CMTimebaseGetEffectiveRate, CMAudioSampleBufferCreateWithPacketDescriptions, 
+        CMSampleBufferSetDataBufferFromAudioBufferList, CMSampleBufferSetDataReady, 
+        CMAudioFormatDescriptionCreate, CMClockGetHostTimeClock, and CMClockGetTime.
+        * platform/cf/CoreMediaSoftLink.h:
+
+        Create and use an AVSampleBufferAudioRenderer each audio stream track, when it is available,
+        to render for audio samples. Store the offset between the first sample received from a track's
+        output presentation and the synchronizer time so we can adjust sample timestamps to be 
+        relative to the synchronizer's timeline regardless of their source. Remove the use of source
+        previews because not all sources will have them.
+
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        
+        Add an ObjC helper to catch renderer status changes.
+        (-[WebAVSampleBufferStatusChangeListener initWithParent:]): 
+        (-[WebAVSampleBufferStatusChangeListener dealloc]):
+        (-[WebAVSampleBufferStatusChangeListener invalidate]):
+        (-[WebAVSampleBufferStatusChangeListener beginObservingLayer:]):
+        (-[WebAVSampleBufferStatusChangeListener stopObservingLayer:]):
+        (-[WebAVSampleBufferStatusChangeListener beginObservingRenderer:]):
+        (-[WebAVSampleBufferStatusChangeListener stopObservingRenderer:]):
+        (-[WebAVSampleBufferStatusChangeListener observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::removeOldSamplesFromPendingQueue):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::addSampleToPendingQueue):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateSampleTimes):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForAudioData):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::createAudioRenderer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyAudioRenderers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::audioSourceProvider):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::rendererStatusDidChange):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::platformLayer):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentDisplayMode):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSampleBufferFromTrack): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForMediaData): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBuffer): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::prepareVideoSampleBufferFromTrack): Deleted.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::internalSetVolume): Deleted.
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::outputPresentationTime): New.
+        (WebCore::MediaSampleAVFObjC::outputDuration): New.
+        (WebCore::MediaSampleAVFObjC::dump): Log outputPresentationTime.
+
+        * platform/mediastream/AudioTrackPrivateMediaStream.h: Add timelineOffset.
+
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::setEnabled): No more m_preview.
+        (WebCore::MediaStreamTrackPrivate::endTrack): Ditto.
+        (WebCore::MediaStreamTrackPrivate::preview): Deleted.
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WebCore::RealtimeMediaSource::preview): Deleted.
+
+        * platform/mediastream/RealtimeMediaSourcePreview.h: Removed.
+
+        * platform/mediastream/VideoTrackPrivateMediaStream.h: Add timelineOffset.
+
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::updateSettings):
+        (WebCore::AVAudioCaptureSource::captureOutputDidOutputSampleBufferFromConnection): Pass the
+        sample buffer up the chain.
+        (WebCore::AVAudioSourcePreview::create): Deleted.
+        (WebCore::AVAudioSourcePreview::AVAudioSourcePreview): Deleted.
+        (WebCore::AVAudioSourcePreview::invalidate): Deleted.
+        (WebCore::AVAudioSourcePreview::play): Deleted.
+        (WebCore::AVAudioSourcePreview::pause): Deleted.
+        (WebCore::AVAudioSourcePreview::setEnabled): Deleted.
+        (WebCore::AVAudioSourcePreview::setVolume): Deleted.
+        (WebCore::AVAudioSourcePreview::updateState): Deleted.
+        (WebCore::AVAudioCaptureSource::createPreview): Deleted.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        (WebCore::AVMediaSourcePreview): Deleted.
+        (WebCore::AVMediaCaptureSource::createWeakPtr): Deleted.
+
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        (WebCore::AVMediaCaptureSource::AVMediaCaptureSource): No more preview.
+        (WebCore::AVMediaCaptureSource::reset):
+        (WebCore::AVMediaCaptureSource::preview): Deleted.
+        (WebCore::AVMediaCaptureSource::removePreview): Deleted.
+        (WebCore::AVMediaSourcePreview::AVMediaSourcePreview): Deleted.
+        (WebCore::AVMediaSourcePreview::~AVMediaSourcePreview): Deleted.
+        (WebCore::AVMediaSourcePreview::invalidate): Deleted.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::processNewFrame): Don't set the "display immediately" attachment.
+        (WebCore::AVVideoSourcePreview::create): Deleted.
+        (WebCore::AVVideoSourcePreview::AVVideoSourcePreview): Deleted.
+        (WebCore::AVVideoSourcePreview::backgroundLayerBoundsChanged): Deleted.
+        (WebCore::AVVideoSourcePreview::invalidate): Deleted.
+        (WebCore::AVVideoSourcePreview::play): Deleted.
+        (WebCore::AVVideoSourcePreview::pause): Deleted.
+        (WebCore::AVVideoSourcePreview::setPaused): Deleted.
+        (WebCore::AVVideoSourcePreview::setEnabled): Deleted.
+        (WebCore::AVVideoCaptureSource::createPreview): Deleted.
+        (-[WebCoreAVVideoCaptureSourceObserver setParent:]): Deleted.
+        (-[WebCoreAVVideoCaptureSourceObserver observeValueForKeyPath:ofObject:change:context:]): Deleted.
+
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer): Use a more typical video
+        time scale. Set the sample decode time.
+        (WebCore::MockRealtimeVideoSourceMac::pixelBufferFromCGImage): Use a static for colorspace
+        instead of fetching it for every frame.
+
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp: Add outputPresentationTime and outputDuration.
+
 2017-01-11  Youenn Fablet  <youenn@apple.com>
 
         Remove request.formData property until it gets implemented

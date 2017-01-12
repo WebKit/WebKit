@@ -100,9 +100,6 @@ void MediaStreamTrackPrivate::setEnabled(bool enabled)
     // Always update the enabled state regardless of the track being ended.
     m_isEnabled = enabled;
 
-    if (m_preview)
-        m_preview->setEnabled(enabled);
-
     for (auto& observer : m_observers)
         observer->trackEnabledChanged(*this);
 }
@@ -117,7 +114,6 @@ void MediaStreamTrackPrivate::endTrack()
     // trackEnded method once.
     m_isEnded = true;
 
-    m_preview = nullptr;
     m_source->requestStop(this);
 
     for (auto& observer : m_observers)
@@ -161,15 +157,6 @@ void MediaStreamTrackPrivate::paintCurrentFrameInContext(GraphicsContext& contex
         IntRect paintRect(IntPoint(0, 0), IntSize(rect.width(), rect.height()));
         context.fillRect(paintRect, Color::black);
     }
-}
-
-RealtimeMediaSourcePreview* MediaStreamTrackPrivate::preview()
-{
-    if (m_preview)
-        return m_preview.get();
-
-    m_preview = m_source->preview();
-    return m_preview.get();
 }
 
 void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::SuccessHandler successHandler, RealtimeMediaSource::FailureHandler failureHandler)

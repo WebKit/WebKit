@@ -213,6 +213,9 @@ void ScriptProcessorNode::process(size_t framesToProcess)
             m_isRequestOutstanding = true;
 
             callOnMainThread([this] {
+                if (!m_hasAudioProcessListener)
+                    return;
+
                 fireProcessEvent();
 
                 // De-reference to match the ref() call in process().

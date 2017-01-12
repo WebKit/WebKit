@@ -129,7 +129,6 @@ AVMediaCaptureSource::AVMediaCaptureSource(AVCaptureDeviceTypedef* device, const
     : RealtimeMediaSource(id, type, emptyString())
     , m_objcObserver(adoptNS([[WebCoreAVMediaCaptureSourceObserver alloc] initWithCallback:this]))
     , m_device(device)
-    , m_weakPtrFactory(this)
 {
     setName(device.localizedName);
     setPersistentID(device.uniqueID);
@@ -240,12 +239,6 @@ void AVMediaCaptureSource::reset()
     for (NSString *keyName in sessionKVOProperties())
         [m_session removeObserver:m_objcObserver.get() forKeyPath:keyName];
 
-    for (const auto& preview : m_previews) {
-        if (preview)
-            preview->invalidate();
-    }
-    m_previews.clear();
-
     shutdownCaptureSession();
     m_session = nullptr;
 }
@@ -275,45 +268,6 @@ AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
 {
     ASSERT_NOT_REACHED();
     return nullptr;
-}
-
-RefPtr<RealtimeMediaSourcePreview> AVMediaCaptureSource::preview()
-{
-    RefPtr<AVMediaSourcePreview> preview = createPreview();
-    if (!preview)
-        return nullptr;
-
-    m_previews.append(preview->createWeakPtr());
-    return preview.leakRef();
-}
-
-void AVMediaCaptureSource::removePreview(AVMediaSourcePreview* preview)
-{
-    size_t index;
-    for (index = 0; index < m_previews.size(); ++index) {
-        if (m_previews[index].get() == preview)
-            break;
-    }
-
-    if (index < m_previews.size())
-        m_previews.remove(index);
-}
-
-AVMediaSourcePreview::AVMediaSourcePreview(AVMediaCaptureSource* parent)
-    : m_parent(parent->createWeakPtr())
-{
-}
-
-AVMediaSourcePreview::~AVMediaSourcePreview()
-{
-    if (m_parent)
-        m_parent->removePreview(this);
-}
-
-void AVMediaSourcePreview::invalidate()
-{
-    m_parent = nullptr;
-    RealtimeMediaSourcePreview::invalidate();
 }
 
 NSArray* sessionKVOProperties()

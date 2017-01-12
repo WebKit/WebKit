@@ -37,6 +37,11 @@ MediaTime MediaSampleAVFObjC::presentationTime() const
     return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get()));
 }
 
+MediaTime MediaSampleAVFObjC::outputPresentationTime() const
+{
+    return toMediaTime(CMSampleBufferGetOutputPresentationTimeStamp(m_sample.get()));
+}
+
 MediaTime MediaSampleAVFObjC::decodeTime() const
 {
     return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get()));
@@ -45,6 +50,11 @@ MediaTime MediaSampleAVFObjC::decodeTime() const
 MediaTime MediaSampleAVFObjC::duration() const
 {
     return toMediaTime(CMSampleBufferGetDuration(m_sample.get()));
+}
+
+MediaTime MediaSampleAVFObjC::outputDuration() const
+{
+    return toMediaTime(CMSampleBufferGetOutputDuration(m_sample.get()));
 }
 
 size_t MediaSampleAVFObjC::sizeInBytes() const
@@ -111,7 +121,7 @@ FloatSize MediaSampleAVFObjC::presentationSize() const
 
 void MediaSampleAVFObjC::dump(PrintStream& out) const
 {
-    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
+    out.print("{PTS(", presentationTime(), "), OPTS(", outputPresentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
 }
 
 void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)

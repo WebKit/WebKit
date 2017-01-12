@@ -79,7 +79,6 @@ private:
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
 
-    RefPtr<AVMediaSourcePreview> createPreview() final;
     RetainPtr<CGImageRef> currentFrameCGImage();
     RefPtr<Image> currentFrameImage() final;
 

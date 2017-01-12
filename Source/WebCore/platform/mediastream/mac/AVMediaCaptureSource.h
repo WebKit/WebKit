@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,19 +47,6 @@ namespace WebCore {
 
 class AVMediaCaptureSource;
 
-class AVMediaSourcePreview: public RealtimeMediaSourcePreview {
-public:
-    virtual ~AVMediaSourcePreview();
-
-    void invalidate() override;
-
-protected:
-    AVMediaSourcePreview(AVMediaCaptureSource*);
-
-private:
-    WeakPtr<AVMediaCaptureSource> m_parent;
-};
-
 class AVMediaCaptureSource : public RealtimeMediaSource {
 public:
     virtual ~AVMediaCaptureSource();
@@ -75,10 +62,6 @@ public:
     void startProducingData() final;
     void stopProducingData() final;
     bool isProducingData() const final { return m_isRunning; }
-
-    RefPtr<RealtimeMediaSourcePreview> preview() final;
-    void removePreview(AVMediaSourcePreview*);
-    WeakPtr<AVMediaCaptureSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type);
@@ -99,8 +82,6 @@ protected:
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
 
-    virtual RefPtr<AVMediaSourcePreview> createPreview() = 0;
-
 private:
     void setupSession();
     void reset() final;
@@ -117,8 +98,6 @@ private:
     RefPtr<RealtimeMediaSourceCapabilities> m_capabilities;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
-    Vector<WeakPtr<RealtimeMediaSourcePreview>> m_previews;
-    WeakPtrFactory<AVMediaCaptureSource> m_weakPtrFactory;
     bool m_isRunning { false};
 };
 
