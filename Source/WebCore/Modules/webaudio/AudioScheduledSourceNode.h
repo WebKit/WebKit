@@ -29,6 +29,7 @@
 #pragma once
 
 #include "AudioNode.h"
+#include "GenericEventQueue.h"
 
 namespace WebCore {
 
@@ -83,6 +84,7 @@ protected:
     double m_endTime; // in seconds
 
     bool m_hasEndedListener { false };
+    GenericEventQueue m_eventQueue;
 
     static const double UnknownTime;
 

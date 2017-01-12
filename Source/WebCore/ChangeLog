@@ -1,3 +1,15 @@
+2017-01-12  Jer Noble  <jer.noble@apple.com>
+
+        Use GenericEventQueue rather than callOnMainThread to schedule events in AudioScheduledSourceNode.
+        https://bugs.webkit.org/show_bug.cgi?id=166983
+
+        Reviewed by Brent Fulgham.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+
 2017-01-12  Youenn Fablet  <youenn@apple.com>
 
         OneDrive application crashes upon launch
