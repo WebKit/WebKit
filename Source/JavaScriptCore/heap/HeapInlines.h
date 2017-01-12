@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -315,14 +315,45 @@ inline void Heap::releaseSoon(RetainPtr<T>&& object)
 
 inline void Heap::incrementDeferralDepth()
 {
-    RELEASE_ASSERT(m_deferralDepth < 100); // Sanity check to make sure this doesn't get ridiculous.
+    ASSERT(!mayBeGCThread() || m_collectorBelievesThatTheWorldIsStopped);
     m_deferralDepth++;
 }
 
 inline void Heap::decrementDeferralDepth()
 {
-    RELEASE_ASSERT(m_deferralDepth >= 1);
+    ASSERT(!mayBeGCThread() || m_collectorBelievesThatTheWorldIsStopped);
     m_deferralDepth--;
+}
+
+inline void Heap::decrementDeferralDepthAndGCIfNeeded()
+{
+    ASSERT(!mayBeGCThread() || m_collectorBelievesThatTheWorldIsStopped);
+    m_deferralDepth--;
+    
+    if (UNLIKELY(m_didDeferGCWork)) {
+        decrementDeferralDepthAndGCIfNeededSlow();
+        
+        // Here are the possible relationships between m_deferralDepth and m_didDeferGCWork.
+        // Note that prior to the call to decrementDeferralDepthAndGCIfNeededSlow,
+        // m_didDeferGCWork had to have been true. Now it can be either false or true. There is
+        // nothing we can reliably assert.
+        //
+        // Possible arrangements of m_didDeferGCWork and !!m_deferralDepth:
+        //
+        // Both false: We popped out of all DeferGCs and we did whatever work was deferred.
+        //
+        // Only m_didDeferGCWork is true: We stopped for GC and the GC did DeferGC. This is
+        // possible because of how we handle the baseline JIT's worklist. It's also perfectly
+        // safe because it only protects reportExtraMemory. We can just ignore this.
+        //
+        // Only !!m_deferralDepth is true: m_didDeferGCWork had been set spuriously. It is only
+        // cleared by decrementDeferralDepthAndGCIfNeededSlow(). So, if we had deferred work but
+        // then decrementDeferralDepth()'d, then we might have the bit set even if we GC'd since
+        // then.
+        //
+        // Both true: We're in a recursive ~DeferGC. We wanted to do something about the
+        // deferred work, but were unable to.
+    }
 }
 
 inline HashSet<MarkedArgumentBuffer*>& Heap::markListSet()
@@ -363,11 +394,15 @@ inline void Heap::releaseAccess()
     releaseAccessSlow();
 }
 
+inline bool Heap::mayNeedToStop()
+{
+    return m_worldState.loadRelaxed() != hasAccessBit;
+}
+
 inline void Heap::stopIfNecessary()
 {
-    if (m_worldState.loadRelaxed() == hasAccessBit)
-        return;
-    stopIfNecessarySlow();
+    if (mayNeedToStop())
+        stopIfNecessarySlow();
 }
 
 inline void Heap::writeBarrierOpaqueRoot(void* root)

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2009, 2013-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -185,9 +185,7 @@ public:
     JS_EXPORT_PRIVATE void collectAllGarbageIfNotDoneRecently();
     JS_EXPORT_PRIVATE void collectAllGarbage();
 
-    bool canCollect();
     bool shouldCollectHeuristic();
-    bool shouldCollect();
     
     // Queue up a collection. Returns immediately. This will not queue a collection if a collection
     // of equal or greater strength exists. Full collections are stronger than std::nullopt collections
@@ -204,7 +202,6 @@ public:
     JS_EXPORT_PRIVATE void collectSync(std::optional<CollectionScope> = std::nullopt);
     
     bool collectIfNecessaryOrDefer(GCDeferralContext* = nullptr); // Returns true if it did collect.
-    void collectAccordingToDeferGCProbability();
 
     void completeAllJITPlans();
     
@@ -268,7 +265,7 @@ public:
     
     void addReference(JSCell*, ArrayBuffer*);
     
-    bool isDeferred() const { return !!m_deferralDepth || !Options::useGC(); }
+    bool isDeferred() const { return !!m_deferralDepth; }
 
     StructureIDTable& structureIDTable() { return m_structureIDTable; }
 
@@ -340,6 +337,8 @@ public:
     // discipline (i.e. you don't block the runloop) then you can be sure that stopIfNecessary() will
     // already be called for you at the right times.
     void stopIfNecessary();
+    
+    bool mayNeedToStop();
     
     // This is a much stronger kind of stopping of the collector, and it may require waiting for a
     // while. This is meant to be a legacy API for clients of collectAllGarbage that expect that there
@@ -488,7 +487,8 @@ private:
 
     void incrementDeferralDepth();
     void decrementDeferralDepth();
-    JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeeded();
+    void decrementDeferralDepthAndGCIfNeeded();
+    JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeededSlow();
 
     size_t threadVisitCount();
     size_t threadBytesVisited();
@@ -579,6 +579,7 @@ private:
     Vector<HeapObserver*> m_observers;
 
     unsigned m_deferralDepth;
+    bool m_didDeferGCWork { false };
 
     std::unique_ptr<HeapVerifier> m_verifier;
 

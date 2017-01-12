@@ -1,3 +1,17 @@
+2017-01-11  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210451. rdar://problem/29909812
+
+    2016-12-30  Filip Pizlo  <fpizlo@apple.com>
+
+            DeferGC::~DeferGC should be super cheap
+            https://bugs.webkit.org/show_bug.cgi?id=166626
+
+            Reviewed by Saam Barati.
+
+            * stress/slow-path-generator-updating-current-node-dfg.js:
+            * stress/unshift-array-storage.js:
+
 2017-01-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Rollout r210336. rdar://problem/29912353

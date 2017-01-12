@@ -77,8 +77,6 @@ void ScriptExecutable::installCode(CodeBlock* codeBlock)
 
 void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType codeType, CodeSpecializationKind kind)
 {
-    ASSERT(vm.heap.isDeferred());
-    
     if (genericCodeBlock)
         CODEBLOCK_LOG_EVENT(genericCodeBlock, "installCode", ());
     
