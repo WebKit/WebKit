@@ -271,6 +271,8 @@ private:
 
     bool m_hardClosedForUserDelete { false };
     RefPtr<UniqueIDBDatabase> m_hardCloseProtector;
+
+    HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabase>> m_prefetchProtectors;
 };
 
 } // namespace IDBServer

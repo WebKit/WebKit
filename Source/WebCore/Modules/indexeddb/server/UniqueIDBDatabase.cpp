@@ -1233,8 +1233,13 @@ void UniqueIDBDatabase::performIterateCursor(uint64_t callbackIdentifier, const 
     IDBGetResult result;
     IDBError error = m_backingStore->iterateCursor(transactionIdentifier, cursorIdentifier, data, result);
 
-    if (error.isNull())
-        postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
+    if (error.isNull()) {
+        auto addResult = m_prefetchProtectors.add(cursorIdentifier, nullptr);
+        if (addResult.isNewEntry) {
+            addResult.iterator->value = this;
+            postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
+        }
+    }
 
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformIterateCursor, callbackIdentifier, error, result));
 }
@@ -1242,10 +1247,13 @@ void UniqueIDBDatabase::performIterateCursor(uint64_t callbackIdentifier, const 
 void UniqueIDBDatabase::performPrefetchCursor(const IDBResourceIdentifier& transactionIdentifier, const IDBResourceIdentifier& cursorIdentifier)
 {
     ASSERT(!isMainThread());
+    ASSERT(m_prefetchProtectors.contains(cursorIdentifier));
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performPrefetchCursor");
 
     if (m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
         postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
+    else
+        postDatabaseTaskReply(Function<void ()>([prefetchProtector = m_prefetchProtectors.take(cursorIdentifier)]() { }));
 }
 
 void UniqueIDBDatabase::didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
