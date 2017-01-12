@@ -132,8 +132,10 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
         else if (event.altKey)
             shift /= 10;
 
+        let value = parseFloat(event.target.value) || 0;
+        this._changeSpringForInput(event.target, value + shift);
+
         event.preventDefault();
-        this._changeSpringForInput(event.target, parseFloat(event.target.value) + shift);
     }
 
     _handleNumberSliderInput(event)
@@ -153,30 +155,43 @@ WebInspector.SpringEditor = class SpringEditor extends WebInspector.Object
 
     _changeSpringForInput(target, value)
     {
-        value = parseFloat(value);
+        value = parseFloat(value) || 0;
 
         switch (target) {
         case this._massInput:
         case this._massSlider:
+            if (this._spring.mass === value)
+                return;
+
             this._spring.mass = Math.max(1, value);
             this._massInput.value = this._massSlider.value = this._spring.mass.maxDecimals(3);
             break;
         case this._stiffnessInput:
         case this._stiffnessSlider:
+            if (this._spring.stiffness === value)
+                return;
+
             this._spring.stiffness = Math.max(1, value);
             this._stiffnessInput.value = this._stiffnessSlider.value = this._spring.stiffness.maxDecimals(3);
             break;
         case this._dampingInput:
         case this._dampingSlider:
+            if (this._spring.damping === value)
+                return;
+
             this._spring.damping = Math.max(0, value);
             this._dampingInput.value = this._dampingSlider.value = this._spring.damping.maxDecimals(3);
             break;
         case this._initialVelocityInput:
         case this._initialVelocitySlider:
+            if (this._spring.initialVelocity === value)
+                return;
+
             this._spring.initialVelocity = value;
             this._initialVelocityInput.value = this._initialVelocitySlider.value = this._spring.initialVelocity.maxDecimals(3);
             break;
         default:
+            WebInspector.reportInternalError("Input event fired for unrecognized element");
             return;
         }
 

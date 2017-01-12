@@ -1,5 +1,34 @@
 2017-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: spring function editor has unusual layout, should have left-aligned labels and slider tracks
+        https://bugs.webkit.org/show_bug.cgi?id=166933
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Main.css:
+        (input[type=range]::-webkit-slider-thumb):
+        (input[type=range]::-webkit-slider-runnable-track):
+        (input[type=range]::-webkit-slider-runnable-track::before): Deleted.
+        Fix slider styles.
+
+        * UserInterface/Views/SpringEditor.css:
+        (.spring-editor):
+        (.spring-editor > .spring-preview):
+        (.spring-editor > .spring-timing):
+        (.spring-editor > .number-input-container > .number-input-row > .number-input-row-title):
+        (.spring-editor > .number-input-container > .number-input-row > input):
+        (.spring-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button):
+        (.spring-editor > .number-input-container > .number-input-row > input[type="range"]):
+        Decrease spacing and left-align text.
+
+        * UserInterface/Views/SpringEditor.js:
+        (WebInspector.SpringEditor.prototype._handleNumberInputKeydown):
+        (WebInspector.SpringEditor.prototype._changeSpringForInput):
+        Only update editor values when the new value of any input has changed.  This allows users to
+        enter decimal values ("." was being stripped by `parseFloat`).
+
+2017-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: color, gradient, cubic-bezier, spring editors should be dismissable using ESC
         https://bugs.webkit.org/show_bug.cgi?id=166934
 

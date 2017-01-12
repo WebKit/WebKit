@@ -102,12 +102,14 @@ input[type=range] {
     -webkit-appearance: none;
 }
 
-input[type=range]::-webkit-slider-runnable-track::before {
-    content: "";
-    display: block;
-    background: var(--selected-background-color);
+input[type=range]::-webkit-slider-thumb {
+    margin-top: -7px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
     height: 1px;
-    margin: 8px 2px -8px 2px;
+    margin-top: 1px;
+    background-color: var(--selected-background-color);
 }
 
 #main {

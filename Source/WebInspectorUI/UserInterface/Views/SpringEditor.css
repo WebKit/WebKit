@@ -25,13 +25,14 @@
 
 .spring-editor {
     width: 200px;
-    height: 210px;
+    height: 200px;
+    --spring-editor-horizontal-margin: 5px;
 }
 
 .spring-editor > .spring-preview {
     width: calc(100% - 10px);
     height: 25px;
-    margin: 5px 5px 0;
+    margin: 5px var(--spring-editor-horizontal-margin) 0;
     border-bottom: 1px solid lightgrey;
 }
 
@@ -45,7 +46,8 @@
 
 .spring-editor > .spring-timing {
     position: relative;
-    margin: -0.5px 11px 0;
+    margin: -0.5px calc(2 * var(--spring-editor-horizontal-margin)) 10px;
+    padding: 0 1px;
 }
 
 .spring-editor > .spring-timing > div {
@@ -88,15 +90,20 @@
 
 .spring-editor > .number-input-container > .number-input-row > .number-input-row-title {
     width: 100%;
-    margin: 7px 0 3px;
-    text-align: center;
+    margin: 5px var(--spring-editor-horizontal-margin) 0;
 }
 
 .spring-editor > .number-input-container > .number-input-row > input {
-    width: calc(50% - 10px);
-    margin: 0 5px;
+    width: calc(25% - 2 * var(--spring-editor-horizontal-margin));
+    text-align: right;
+    margin: 0 var(--spring-editor-horizontal-margin);
+}
+
+.spring-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
 
 .spring-editor > .number-input-container > .number-input-row > input[type="range"] {
+    width: calc(75% - 2 * var(--spring-editor-horizontal-margin));
     background-color: transparent;
 }
