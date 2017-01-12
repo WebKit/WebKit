@@ -1,3 +1,30 @@
+2017-01-12  Sam Weinig  <sam@webkit.org>
+
+        Add the ability to filter the set of bindings tests you want to run
+        https://bugs.webkit.org/show_bug.cgi?id=166977
+
+        Reviewed by Tim Horton.
+
+        Allows doing things like:
+            run-bindings-tests TestObj* TestCEReactions*
+        
+        to run only those tests that match the patterns.
+
+        * Scripts/run-bindings-tests:
+        (main):
+        Switch to using optparse and pass the remaining args as the filters.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.__init__):
+        Store the pattens.
+
+        (BindingsTests.test_matches_patterns):
+        Add helper predicate to determine if a test should be run. When no
+        patterns are present, all tests should run.
+
+        (BindingsTests.run_tests):
+        Filter tests using the passed in patterns.
+
 2017-01-12  Per Arne Vollan  <pvollan@apple.com>
 
         Followup fix after r210503.

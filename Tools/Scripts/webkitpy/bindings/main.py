@@ -22,6 +22,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+import fnmatch
 import os
 import os.path
 import shutil
@@ -34,11 +35,12 @@ from webkitpy.common.system.executive import ScriptError
 
 class BindingsTests:
 
-    def __init__(self, reset_results, generators, executive, verbose):
+    def __init__(self, reset_results, generators, executive, verbose, patterns):
         self.reset_results = reset_results
         self.generators = generators
         self.executive = executive
         self.verbose = verbose
+        self.patterns = patterns
 
     def generate_from_idl(self, generator, idl_file, output_directory, supplemental_dependency_file):
         cmd = ['perl', '-w',
@@ -116,6 +118,14 @@ class BindingsTests:
                 print 'PASS: (%s) %s' % (generator, output_file)
         return changes_found
 
+    def test_matches_patterns(self, test):
+        if not self.patterns:
+            return True
+        for pattern in self.patterns:
+            if fnmatch.fnmatch(test, pattern):
+                return True
+        return False
+
     def run_tests(self, generator, input_directory, reference_directory, supplemental_dependency_file):
         work_directory = reference_directory
 
@@ -124,6 +134,10 @@ class BindingsTests:
             (name, extension) = os.path.splitext(input_file)
             if extension != '.idl':
                 continue
+
+            if not self.test_matches_patterns(input_file):
+                continue
+
             # Generate output into the work directory (either the given one or a
             # temp one if not reset_results is performed)
             if not self.reset_results:
