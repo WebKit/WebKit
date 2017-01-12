@@ -381,6 +381,69 @@ TextIterator::~TextIterator()
 {
 }
 
+static HTMLSlotElement* assignedAuthorSlot(Node& node)
+{
+    auto* slot = node.assignedSlot();
+    if (!slot || slot->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+    return slot;
+}
+
+static ShadowRoot* authorShadowRoot(Node& node)
+{
+    auto* shadowRoot = node.shadowRoot();
+    if (!shadowRoot || shadowRoot->mode() == ShadowRootMode::UserAgent)
+        return nullptr;
+    return shadowRoot;
+}
+
+// FIXME: Use ComposedTreeIterator instead. These functions are more expensive because they might do O(n) work.
+static inline Node* firstChildInFlatTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* shadowRoot = authorShadowRoot(node))
+        return shadowRoot->firstChild();
+    if (is<HTMLSlotElement>(node)) {
+        if (auto* assignedNodes = downcast<HTMLSlotElement>(node).assignedNodes())
+            return assignedNodes->at(0);
+    }
+    return node.firstChild();
+}
+
+static inline Node* nextSiblingInFlatTreeIgnoringUserAgentShadow(Node& node)
+{
+    if (auto* slot = assignedAuthorSlot(node)) {
+        auto* assignedNodes = slot->assignedNodes();
+        ASSERT(assignedNodes);
+        auto nodeIndex = assignedNodes->find(&node);
+        ASSERT(nodeIndex != notFound);
+        if (assignedNodes->size() > nodeIndex + 1)
+            return assignedNodes->at(nodeIndex + 1);
+        return nullptr;
+    }
+    return node.nextSibling();
+}
+
+static inline Node* firstChild(TextIteratorBehavior options, Node& node)
+{
+    if (UNLIKELY(options & TextIteratorTraversesFlatTree))
+        return firstChildInFlatTreeIgnoringUserAgentShadow(node);
+    return node.firstChild();
+}
+
+static inline Node* nextSibling(TextIteratorBehavior options, Node& node)
+{
+    if (UNLIKELY(options & TextIteratorTraversesFlatTree))
+        return nextSiblingInFlatTreeIgnoringUserAgentShadow(node);
+    return node.nextSibling();
+}
+
+static inline Node* parentNodeOrShadowHost(TextIteratorBehavior options, Node& node)
+{
+    if (UNLIKELY(options & TextIteratorTraversesFlatTree))
+        return node.parentInComposedTree();
+    return node.parentOrShadowHostNode();
+}
+
 void TextIterator::advance()
 {
     ASSERT(!atEnd());
@@ -430,7 +493,7 @@ void TextIterator::advance()
         auto* renderer = m_node->renderer();
         if (!renderer) {
             m_handledNode = true;
-            m_handledChildren = true;
+            m_handledChildren = !((m_behavior & TextIteratorTraversesFlatTree) && is<Element>(*m_node) && downcast<Element>(*m_node).hasDisplayContents());
         } else {
             // handle current node according to its type
             if (!m_handledNode) {
@@ -447,13 +510,13 @@ void TextIterator::advance()
 
         // find a new current node to handle in depth-first manner,
         // calling exitNode() as we come back thru a parent node
-        Node* next = m_handledChildren ? nullptr : m_node->firstChild();
+        Node* next = m_handledChildren ? nullptr : firstChild(m_behavior, *m_node);
         m_offset = 0;
         if (!next) {
-            next = m_node->nextSibling();
+            next = nextSibling(m_behavior, *m_node);
             if (!next) {
                 bool pastEnd = NodeTraversal::next(*m_node) == m_pastEndNode;
-                Node* parentNode = m_node->parentOrShadowHostNode();
+                Node* parentNode = parentNodeOrShadowHost(m_behavior, *m_node);
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(*parentNode))
                         return;
@@ -461,7 +524,7 @@ void TextIterator::advance()
                     Node* exitedNode = m_node;
                     m_node = parentNode;
                     m_fullyClippedStack.pop();
-                    parentNode = m_node->parentOrShadowHostNode();
+                    parentNode = parentNodeOrShadowHost(m_behavior, *m_node);
                     if (haveRenderer)
                         exitNode(exitedNode);
                     if (m_positionNode) {
@@ -469,7 +532,7 @@ void TextIterator::advance()
                         m_handledChildren = true;
                         return;
                     }
-                    next = m_node->nextSibling();
+                    next = nextSibling(m_behavior, *m_node);
                 }
             }
             m_fullyClippedStack.pop();            
@@ -2640,6 +2703,8 @@ Ref<Range> findPlainText(const Range& range, const String& target, FindOptions o
 
     bool searchForward = !(options & Backwards);
     TextIteratorBehavior iteratorOptions = TextIteratorEntersTextControls | TextIteratorClipsToFrameAncestors;
+    if (!(options & DoNotTraverseFlatTree))
+        iteratorOptions |= TextIteratorTraversesFlatTree;
 
     CharacterIterator findIterator(range, iteratorOptions);
     auto result = findPlainTextOffset(buffer, findIterator, searchForward);

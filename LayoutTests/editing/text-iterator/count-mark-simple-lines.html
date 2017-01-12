@@ -46,11 +46,12 @@ esse praedixeram.
 </p>
 <script>
 var text = document.getElementById('test').firstChild;
-shouldBe("internals.countMatchesForText('Catilina', 23, 'mark')", "3");
+var findOptions = ['CaseInsensitive', 'AtWordStarts', 'TreatMedialCapitalAsWordStart', 'WrapAround'];
+shouldBe("internals.countMatchesForText('Catilina', findOptions, 'mark')", "3");
 shouldBe("internals.markerCountForNode(text, 'all')", "3");
-shouldBe("internals.countMatchesForText('Roma', 23, 'mark')", "3");
+shouldBe("internals.countMatchesForText('Roma', findOptions, 'mark')", "3");
 shouldBe("internals.markerCountForNode(text, 'all')", "6");
-shouldBe("internals.countMatchesForText('uid', 23, 'mark')", "2");
+shouldBe("internals.countMatchesForText('uid', findOptions, 'mark')", "2");
 shouldBe("internals.markerCountForNode(text, 'all')", "8");
 </script>
 <script src="../../resources/js-test-post.js"></script>

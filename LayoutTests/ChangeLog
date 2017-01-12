@@ -1,3 +1,33 @@
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210432. rdar://problem/29633667
+
+    2017-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Finding text doesn't work across shadow boundary
+            https://bugs.webkit.org/show_bug.cgi?id=158503
+
+            Reviewed by Antti Koivisto.
+
+            Updated the existing tests per changes to use an array of find options instead of raw bit mask,
+            and added a regression test for finding text by traversing flat tree along with testing
+            window.find and execCommand('FindString', false, ~) not walking across shadow boundaries.
+
+            * editing/text-iterator/count-mark-lineboxes-expected.txt:
+            * editing/text-iterator/count-mark-lineboxes.html:
+            * editing/text-iterator/count-mark-simple-lines-expected.txt:
+            * editing/text-iterator/count-mark-simple-lines.html:
+            * editing/text-iterator/count-matches-in-form-expected.txt:
+            * editing/text-iterator/count-matches-in-form.html:
+            * editing/text-iterator/count-matches-in-frames.html:
+            * editing/text-iterator/find-string-on-flat-tree-expected.txt: Added.
+            * editing/text-iterator/find-string-on-flat-tree.html: Added.
+            * fast/text/mark-matches-broken-line-rendering.html:
+            * fast/text/mark-matches-overflow-clip.html:
+            * fast/text/mark-matches-rendering-simple-lines-expected.html:
+            * fast/text/mark-matches-rendering-simple-lines.html:
+            * fast/text/mark-matches-rendering.html:
+
 2017-01-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Merge r210377.

@@ -17,7 +17,7 @@ window.onload = function () {
     }
 
     testRunner.dumpAsText();
-    internals.countMatchesForText("tandem", 0, "mark");
+    internals.countMatchesForText("tandem", [], "mark");
     
     var markedNode = document.getElementsByTagName("span")[0].firstChild;
     document.write(internals.dumpMarkerRects("TextMatch"));

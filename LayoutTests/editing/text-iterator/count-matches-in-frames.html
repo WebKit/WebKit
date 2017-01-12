@@ -25,7 +25,7 @@ function findInFrame(frameHostStyle, shouldFindInFrame)
 
     frame.contentDocument.body.innerHTML = findString;
 
-    assert_equals(internals.countFindMatches(findString, 0, ''), shouldFindInFrame ? 2 : 1);
+    assert_equals(internals.countFindMatches(findString, [], ''), shouldFindInFrame ? 2 : 1);
 }
 
 test(function () {

@@ -1,5 +1,60 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210432. rdar://problem/29633667
+
+    2017-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Finding text doesn't work across shadow boundary
+            https://bugs.webkit.org/show_bug.cgi?id=158503
+
+            Reviewed by Antti Koivisto.
+
+            Added a new TextIterator behavior flag, TextIteratorTraversesFlatTree, which makes TextIterator traverse
+            the flat tree instead of the DOM tree, and made this behavior default in findPlainText.
+
+            Also added a new find options flag, DoNotTraverseFlatTree, to suppress this behavior in window.find(~)
+            and execCommand('FindString', false, ~) as they should not be able to peek information inside shadow trees.
+            Unfortunately these APIs have been deprecated in the standards so there is no specification to follow.
+
+            For now, we don't support finding a word or a keyword across a shadow boundary as this would require
+            making rangeOfString and other related functions return a Range-like object that can cross shadow boundaries.
+
+            Also added internals.rangeOfString to test Editor::rangeOfString, and replaced the bit-flag arguments
+            to internals.countMatchesForText and internals.countFindMatches by an array of strings for better portability.
+
+            Test: editing/text-iterator/find-string-on-flat-tree.html
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::rangeOfString): Use the modern containingShadowRoot instead of nonBoundaryShadowTreeRootNode
+            since the start container can be a shadow root, which nonBoundaryShadowTreeRootNode asserts not be the case.
+            * editing/Editor.h:
+            * editing/EditorCommand.cpp:
+            (WebCore::executeFindString): Don't traverse across shadow boundaries.
+            * editing/FindOptions.h: Added DoNotTraverseFlatTree.
+            * editing/TextIterator.cpp:
+            (WebCore::assignedAuthorSlot): Added.
+            (WebCore::authorShadowRoot): Added.
+            (WebCore::firstChildInFlatTreeIgnoringUserAgentShadow): Added.
+            (WebCore::nextSiblingInFlatTreeIgnoringUserAgentShadow): Added.
+            (WebCore::firstChild): Added. Traverses the flat tree when TextIteratorTraversesFlatTree is set.
+            (WebCore::nextSibling): Ditto.
+            (WebCore::parentNodeOrShadowHost): Ditto.
+            (WebCore::TextIterator::advance): Don't set m_handledChildren to true when the current node has display: contents.
+            (WebCore::findPlainText): Use TextIteratorTraversesFlatTree unless DoNotTraverseFlatTree is set.
+            * editing/TextIteratorBehavior.h: Added TextIteratorTraversesFlatTree.
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::find): Don't traverse across shadow boundaries.
+            * testing/Internals.cpp:
+            (WebCore::parseFindOptions): Added.
+            (WebCore::Internals::rangeOfString): Added.
+            (WebCore::Internals::countMatchesForText): Replaced the find options by an array of strings instead of a bit mask.
+            (WebCore::Internals::countFindMatches): Ditto.
+            * testing/Internals.h:
+            * testing/Internals.idl: Added rangeOfString, and replaced find options bit-flag in countMatchesForText and
+            countFindMatches by an array of strings so that the tests themselves don't rely on a specific value of each bit flag.
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210131. rdar://problem/29633667
 
     2016-12-23  Ryosuke Niwa  <rniwa@webkit.org>
