@@ -299,6 +299,7 @@ void CachedResource::setBodyDataFrom(const CachedResource& resource)
     m_data = resource.m_data;
     m_response = resource.m_response;
     setDecodedSize(resource.decodedSize());
+    setEncodedSize(resource.encodedSize());
 }
 
 void CachedResource::checkNotify()

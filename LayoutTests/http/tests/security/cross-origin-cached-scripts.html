@@ -11,6 +11,10 @@
     <iframe id="iframe3"></iframe>
     <iframe id="iframe4"></iframe>
 </div>
+<div>
+    <iframe id="iframe5"></iframe>
+    <iframe id="iframe6"></iframe>
+</div>
 <script>
 if (window.testRunner) {
    testRunner.dumpAsText();
@@ -27,27 +31,38 @@ var iframeURL8080 = "http://localhost:8080/security/resources/cross-origin-cache
 
 var allow8000Script1 = "http://127.0.0.1:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js";
 var allow8000Script2 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2Flocalhost%3A8000&name=notify-loaded.js";
+var allow8000Script3 = "http://127.0.0.1:8080/security/resources/allow-if-origin.php?allowCache&origin=*&name=notify-loaded.js";
 
 var counter = 0;
 function loadNextFrame()
 {
     counter++;
-    // Four first tests try to load an image with a given origin and then the same image (in cache) with a different origin.
+    // Two first tests try to load a script with a given origin and then the same script (in cache) with a different origin.
     if (counter == 1)
         document.getElementById('iframe1').src = iframeURL8000 + "#" +
             encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script1, shouldPass: true, crossOrigin: "anonymous", id: 1}));
-    // Fourth image load should fail since requesting image from localhost:8080 while only allowed from localhost:8000.
+    // Load should fail since requesting script from localhost:8080 while only allowed from localhost:8000.
     else if (counter == 2)
         document.getElementById('iframe2').src = iframeURL8080 + "#" +
             encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script1, shouldPass: false, crossOrigin: "anonymous", id: 2}));
 
-    // Four next tests try to load a cross-origin image without cors and then with cors.
+    // Next two tests try to load a cross-origin script without cors and then with cors.
     else if (counter == 3)
         document.getElementById('iframe3').src = iframeURL8080 + "#" +
             encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script2, shouldPass:true, id: 3}));
     else if (counter == 4)
         document.getElementById('iframe4').src = iframeURL8080 + "#" +
             encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script2, shouldPass:false, crossOrigin: "anonymous", id: 4}));
+
+    // Next two tests try to load a script with a given origin and then the same script (in cache) with a different origin.
+    else if (counter == 5)
+        document.getElementById('iframe5').src = iframeURL8000 + "#" +
+            encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script3, shouldPass: true, crossOrigin: "anonymous", id: 5}));
+    // Load should succeed since cached script is allowed for all origins.
+    else if (counter == 6)
+        document.getElementById('iframe6').src = iframeURL8080 + "#" +
+            encodeURIComponent(JSON.stringify({node: "script", url: allow8000Script3, shouldPass: true, crossOrigin: "anonymous", id: 6}));
+
     else if (window.testRunner)
         testRunner.notifyDone();
 }
