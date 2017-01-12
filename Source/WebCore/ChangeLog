@@ -1,3 +1,75 @@
+2017-01-12  Jer Noble  <jer.noble@apple.com>
+
+        Protect MediaPlayer from being destroyed mid-load()
+        https://bugs.webkit.org/show_bug.cgi?id=166976
+
+        Reviewed by Eric Carlson.
+
+        It's possible for a message sent by MediaPlayer to HTMLMediaElement to cause
+        MediaPlayer to be destroyed before MediaPlayer::load() completes. We have
+        previously protected against this same problem in HTMLMediaElement::loadResource()
+        by ref'ing at the beginning of the function and deref'ing on exit. To do the
+        same in MediaPlayer, it must become RefCounted.
+
+        To keep the same semantics about m_client in MediaPlayer (always available without
+        requiring a null-check), make a new static MediaPlayerClient object which can
+        replace the real (HTMLMediaElement) client when the MediaPlayer is invalidated.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::nullMediaPlayerClient):
+        (WebCore::MediaPlayer::create):
+        (WebCore::MediaPlayer::MediaPlayer):
+        (WebCore::MediaPlayer::invalidate):
+        (WebCore::MediaPlayer::load):
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::inMediaDocument):
+        (WebCore::MediaPlayer::fullscreenMode):
+        (WebCore::MediaPlayer::requestedRate):
+        (WebCore::MediaPlayer::currentPlaybackTargetIsWirelessChanged):
+        (WebCore::MediaPlayer::networkStateChanged):
+        (WebCore::MediaPlayer::readyStateChanged):
+        (WebCore::MediaPlayer::volumeChanged):
+        (WebCore::MediaPlayer::muteChanged):
+        (WebCore::MediaPlayer::timeChanged):
+        (WebCore::MediaPlayer::sizeChanged):
+        (WebCore::MediaPlayer::repaint):
+        (WebCore::MediaPlayer::durationChanged):
+        (WebCore::MediaPlayer::rateChanged):
+        (WebCore::MediaPlayer::playbackStateChanged):
+        (WebCore::MediaPlayer::firstVideoFrameAvailable):
+        (WebCore::MediaPlayer::characteristicChanged):
+        (WebCore::MediaPlayer::cachedKeyForKeyId):
+        (WebCore::MediaPlayer::keyNeeded):
+        (WebCore::MediaPlayer::mediaKeysStorageDirectory):
+        (WebCore::MediaPlayer::referrer):
+        (WebCore::MediaPlayer::userAgent):
+        (WebCore::MediaPlayer::graphicsDeviceAdapter):
+        (WebCore::MediaPlayer::cachedResourceLoader):
+        (WebCore::MediaPlayer::createResourceLoader):
+        (WebCore::MediaPlayer::addAudioTrack):
+        (WebCore::MediaPlayer::removeAudioTrack):
+        (WebCore::MediaPlayer::addTextTrack):
+        (WebCore::MediaPlayer::removeTextTrack):
+        (WebCore::MediaPlayer::addVideoTrack):
+        (WebCore::MediaPlayer::removeVideoTrack):
+        (WebCore::MediaPlayer::outOfBandTrackSources):
+        (WebCore::MediaPlayer::shouldWaitForResponseToAuthenticationChallenge):
+        (WebCore::MediaPlayer::handlePlaybackCommand):
+        (WebCore::MediaPlayer::sourceApplicationIdentifier):
+        (WebCore::MediaPlayer::preferredAudioCharacteristics):
+        (WebCore::MediaPlayer::doesHaveAttribute):
+        (WebCore::MediaPlayer::mediaPlayerNetworkInterfaceName):
+        (WebCore::MediaPlayer::getRawCookies):
+        (WebCore::MediaPlayer::shouldDisableSleep):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayer::platformVolumeConfigurationRequired):
+        (WebCore::MediaPlayer::client):
+
 2017-01-12  Sam Weinig  <sam@webkit.org>
 
         Update bindings test results.
