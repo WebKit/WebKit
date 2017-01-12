@@ -235,6 +235,10 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
         return;
 
     ResourceLoader::willSendRequestInternal(newRequest, redirectResponse);
+
+    if (reachedTerminalState())
+        return;
+
     if (newRequest.isNull()) {
         cancel();
         return;
