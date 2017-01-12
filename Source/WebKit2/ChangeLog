@@ -1,3 +1,13 @@
+2017-01-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Correct license on WebKitSecurityOrigin headers
+
+        These ought to be LGPLv2+, because the rest of the GTK+ API is LPGLv2+.
+
+        * UIProcess/API/gtk/WebKitSecurityOrigin.cpp:
+        * UIProcess/API/gtk/WebKitSecurityOrigin.h:
+        * UIProcess/API/gtk/WebKitSecurityOriginPrivate.h:
+
 2017-01-12  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream, Mac] Render media stream audio buffers
