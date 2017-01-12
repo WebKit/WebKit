@@ -1,5 +1,13 @@
 2017-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [EFL] Gardening on 13th Jan.
+
+        Unreviewed EFL Gardening. Update crash and timeout tests after bumping Ubuntu version.
+
+        * platform/efl/TestExpectations:
+
+2017-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         [EFL] Second update TestExpectation file for Ubuntu 16.04.
 
         Unreviewed EFL gardening.
