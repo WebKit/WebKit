@@ -406,19 +406,9 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
             removeTilesInCohort(currCohort);
     }
 
-    // Ensure primary tile coverage tiles.
-    m_primaryTileCoverageRect = ensureTilesForRect(coverageRect, CoverageType::PrimaryTiles);
-
     if (validationPolicy & PruneSecondaryTiles) {
         removeAllSecondaryTiles();
         m_cohortList.clear();
-    } else {
-        for (auto& secondaryCoverageRect : m_secondaryTileCoverageRects) {
-            FloatRect secondaryRectInLayerCoordinates(secondaryCoverageRect);
-            secondaryRectInLayerCoordinates.scale(1 / m_scale);
-            ensureTilesForRect(secondaryRectInLayerCoordinates, CoverageType::SecondaryTiles);
-        }
-        m_secondaryTileCoverageRects.clear();
     }
 
     if (m_controller.unparentsOffscreenTiles() && (validationPolicy & UnparentAllTiles)) {
@@ -463,6 +453,19 @@ void TileGrid::revalidateTiles(TileValidationPolicy validationPolicy)
             }
             removeTiles(tilesToRemove);
         }
+    }
+
+    // Ensure primary tile coverage tiles.
+    m_primaryTileCoverageRect = ensureTilesForRect(coverageRect, CoverageType::PrimaryTiles);
+
+    // Ensure secondary tiles (requested via prepopulateRect).
+    if (!(validationPolicy & PruneSecondaryTiles)) {
+        for (auto& secondaryCoverageRect : m_secondaryTileCoverageRects) {
+            FloatRect secondaryRectInLayerCoordinates(secondaryCoverageRect);
+            secondaryRectInLayerCoordinates.scale(1 / m_scale);
+            ensureTilesForRect(secondaryRectInLayerCoordinates, CoverageType::SecondaryTiles);
+        }
+        m_secondaryTileCoverageRects.clear();
     }
 
     m_controller.didRevalidateTiles();
