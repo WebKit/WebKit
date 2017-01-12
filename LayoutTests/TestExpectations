@@ -33,6 +33,8 @@ media/ios [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
 
+fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
+
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
