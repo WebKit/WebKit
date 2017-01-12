@@ -1230,8 +1230,6 @@
 		2A111246192FCE79005EE18D /* CustomGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A111244192FCE79005EE18D /* CustomGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A48D1911772365B00C65A5F /* APICallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = C211B574176A224D000E2A23 /* APICallbackFunction.h */; };
 		2A4BB7F318A41179008A0FCD /* JSManagedValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A4BB7F218A41179008A0FCD /* JSManagedValueInternal.h */; };
-		2A4EC90B1860D6C20094F782 /* WriteBarrierBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A4EC9091860D6C20094F782 /* WriteBarrierBuffer.cpp */; };
-		2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A7A58EF1808A4C40020BDF7 /* DeferGC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */; };
 		2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */; };
 		2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3629,8 +3627,6 @@
 		2A343F7418A1748B0039B085 /* GCSegmentedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCSegmentedArray.h; sourceTree = "<group>"; };
 		2A343F7718A1749D0039B085 /* GCSegmentedArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCSegmentedArrayInlines.h; sourceTree = "<group>"; };
 		2A4BB7F218A41179008A0FCD /* JSManagedValueInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSManagedValueInternal.h; sourceTree = "<group>"; };
-		2A4EC9091860D6C20094F782 /* WriteBarrierBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteBarrierBuffer.cpp; sourceTree = "<group>"; };
-		2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteBarrierBuffer.h; sourceTree = "<group>"; };
 		2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferGC.cpp; sourceTree = "<group>"; };
 		2A83638318D7D0EE0000EBCC /* EdenGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EdenGCActivityCallback.cpp; sourceTree = "<group>"; };
 		2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EdenGCActivityCallback.h; sourceTree = "<group>"; };
@@ -5798,8 +5794,6 @@
 				14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */,
 				14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */,
 				14150132154BB13F005D8C98 /* WeakSetInlines.h */,
-				2A4EC9091860D6C20094F782 /* WriteBarrierBuffer.cpp */,
-				2A4EC90A1860D6C20094F782 /* WriteBarrierBuffer.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
 			);
@@ -9076,7 +9070,6 @@
 				ADBC54D51DF8EA2B005BF738 /* WebAssemblyToJSCallee.h in Headers */,
 				BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */,
 				A7DCB97312E5193F00911940 /* WriteBarrier.h in Headers */,
-				2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */,
 				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
@@ -10461,7 +10454,6 @@
 				AD2FCBFC1DB58DAD00B3E736 /* WebAssemblyTableConstructor.cpp in Sources */,
 				AD2FCBFE1DB58DAD00B3E736 /* WebAssemblyTablePrototype.cpp in Sources */,
 				ADBC54D41DF8EA2B005BF738 /* WebAssemblyToJSCallee.cpp in Sources */,
-				2A4EC90B1860D6C20094F782 /* WriteBarrierBuffer.cpp in Sources */,
 				0FC8150B14043C0E00CFA603 /* WriteBarrierSupport.cpp in Sources */,
 				A7E5AB3A1799E4B200D2833D /* X86Disassembler.cpp in Sources */,
 				863C6D9C1521111A00585E4E /* YarrCanonicalizeUCS2.cpp in Sources */,

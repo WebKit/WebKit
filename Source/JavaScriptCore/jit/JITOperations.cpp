@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2186,13 +2186,6 @@ char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     Butterfly* result = object->allocateMoreOutOfLineStorage(vm, object->structure()->outOfLineCapacity(), newSize);
     object->nukeStructureAndSetButterfly(vm, object->structureID(), result);
     return reinterpret_cast<char*>(result);
-}
-
-void JIT_OPERATION operationFlushWriteBarrierBuffer(ExecState* exec, JSCell* cell)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    vm->heap.flushWriteBarrierBuffer(cell);
 }
 
 void JIT_OPERATION operationOSRWriteBarrier(ExecState* exec, JSCell* cell)

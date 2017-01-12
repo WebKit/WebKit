@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,6 @@
 #include "RegExpConstructor.h"
 #include "ScopedArguments.h"
 #include "ScratchRegisterAllocator.h"
-#include "WriteBarrierBuffer.h"
 #include <wtf/BitVector.h>
 #include <wtf/Box.h>
 #include <wtf/MathExtras.h>
@@ -8906,11 +8905,9 @@ void SpeculativeJIT::compileStoreBarrier(Node* node)
     
     SpeculateCellOperand base(this, node->child1());
     GPRTemporary scratch1(this);
-    GPRTemporary scratch2(this);
     
     GPRReg baseGPR = base.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
-    GPRReg scratch2GPR = scratch2.gpr();
     
     JITCompiler::JumpList ok;
     
@@ -8924,22 +8921,8 @@ void SpeculativeJIT::compileStoreBarrier(Node* node)
     } else
         ok.append(m_jit.barrierBranchWithoutFence(baseGPR));
 
-    WriteBarrierBuffer& writeBarrierBuffer = m_jit.vm()->heap.m_writeBarrierBuffer;
-    m_jit.load32(writeBarrierBuffer.currentIndexAddress(), scratch2GPR);
-    JITCompiler::Jump needToFlush = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2GPR, MacroAssembler::TrustedImm32(writeBarrierBuffer.capacity()));
-
-    m_jit.add32(TrustedImm32(1), scratch2GPR);
-    m_jit.store32(scratch2GPR, writeBarrierBuffer.currentIndexAddress());
-
-    m_jit.move(TrustedImmPtr(writeBarrierBuffer.buffer()), scratch1GPR);
-    // We use an offset of -sizeof(void*) because we already added 1 to scratch2.
-    m_jit.storePtr(baseGPR, MacroAssembler::BaseIndex(scratch1GPR, scratch2GPR, MacroAssembler::ScalePtr, static_cast<int32_t>(-sizeof(void*))));
-
-    ok.append(m_jit.jump());
-    needToFlush.link(&m_jit);
-
     silentSpillAllRegisters(InvalidGPRReg);
-    callOperation(operationFlushWriteBarrierBuffer, baseGPR);
+    callOperation(operationWriteBarrierSlowPath, baseGPR);
     silentFillAllRegisters(InvalidGPRReg);
 
     ok.link(&m_jit);

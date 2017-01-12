@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ public:
         u.fields.indexingTypeIncludingHistory = indexingTypeIncludingHistory;
         u.fields.type = typeInfo.type();
         u.fields.inlineTypeFlags = typeInfo.inlineTypeFlags();
-        u.fields.defaultCellState = CellState::DefinitelyNewAndWhite;
+        u.fields.defaultCellState = CellState::DefinitelyWhite;
     }
 
     void operator=(const StructureIDBlob& other) { u.doubleWord = other.u.doubleWord; }
