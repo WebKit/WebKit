@@ -1,3 +1,16 @@
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210471. rdar://problem/29859121
+
+    2017-01-06  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, rebaseline W3C test after r210468.
+
+            The test now fails differently due the the behavior change in r210468.
+            The test fails because we do not support History.scrollRestoration.
+
+            * web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-cross-origin-expected.txt:
+
 2017-01-04  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210045. rdar://problem/29560853
