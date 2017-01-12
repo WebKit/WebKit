@@ -43,10 +43,6 @@
 #include "PixelDumpSupportCairo.h"
 #endif
 
-#if !PLATFORM(WIN)
-#define testResult stdout
-#endif
-
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
 {
     RefPtr<BitmapContext> context;

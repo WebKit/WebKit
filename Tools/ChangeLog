@@ -1,3 +1,23 @@
+2017-01-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Followup fix after r210503.
+        https://bugs.webkit.org/show_bug.cgi?id=166887
+
+        Reviewed by Alex Christensen.
+
+        After <http://trac.webkit.org/changeset/210503>, test results are written to a
+        duplicated file handle on Windows. This patch fixes the remaining call sites.
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::waitToDumpWatchdogTimerFired):
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setSpellCheckerLoggingEnabled):
+
 2017-01-11  Megan Gardner  <megan_gardner@apple.com>
 
         Add committer status for Megan

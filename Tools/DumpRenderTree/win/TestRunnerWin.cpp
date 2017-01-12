@@ -1394,5 +1394,5 @@ unsigned TestRunner::imageCountInGeneralPasteboard() const
 
 void TestRunner::setSpellCheckerLoggingEnabled(bool enabled)
 {
-    printf("ERROR: TestRunner::setSpellCheckerLoggingEnabled() not implemented\n");
+    fprintf(testResult, "ERROR: TestRunner::setSpellCheckerLoggingEnabled() not implemented\n");
 }

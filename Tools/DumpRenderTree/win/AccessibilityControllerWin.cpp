@@ -29,6 +29,7 @@
 #include "AccessibilityUIElement.h"
 #include "DumpRenderTree.h"
 #include "FrameLoadDelegate.h"
+#include "TestRunner.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>

@@ -60,6 +60,8 @@
 #include <Carbon/Carbon.h>
 #endif
 
+FILE* testResult = stdout;
+
 const unsigned TestRunner::viewWidth = 800;
 const unsigned TestRunner::viewHeight = 600;
 
@@ -2284,12 +2286,12 @@ void TestRunner::ignoreLegacyWebNotificationPermissionRequests()
 void TestRunner::waitToDumpWatchdogTimerFired()
 {
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
-    fprintf(stdout, "%s", message);
+    fprintf(testResult, "%s", message);
 
     auto accumulatedLogs = getAndResetAccumulatedLogs();
     if (!accumulatedLogs.isEmpty()) {
         const char* message = "Logs accumulated during test run:\n";
-        fprintf(stdout, "%s%s\n", message, accumulatedLogs.utf8().data());
+        fprintf(testResult, "%s%s\n", message, accumulatedLogs.utf8().data());
     }
 
     notifyDone();

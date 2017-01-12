@@ -36,6 +36,8 @@
 #include <vector>
 #include <wtf/RefCounted.h>
 
+extern FILE* testResult;
+
 class TestRunner : public WTR::UIScriptContextDelegate, public RefCounted<TestRunner> {
     WTF_MAKE_NONCOPYABLE(TestRunner);
 public:
