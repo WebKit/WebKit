@@ -40,7 +40,6 @@
 @property (readonly) BOOL webkitFullscreenEnabled;
 @property (readonly, strong) DOMElement *webkitFullscreenElement;
 #endif
-@property (readonly, strong) DOMElement *pointerLockElement;
 @property (readonly, copy) NSString *visibilityState;
 @property (readonly) BOOL hidden;
 @property (readonly, strong) DOMHTMLScriptElement *currentScript;
