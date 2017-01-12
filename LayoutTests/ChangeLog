@@ -1,3 +1,10 @@
+2017-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Rebaseline two tests after r210599.
+
+        * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt:
+        * storage/domstorage/sessionstorage/blocked-file-access-expected.txt:
+
 2017-01-11  Nan Wang  <n_wang@apple.com>
 
         AX: role=treeitem accessible name not spoken to VoiceOver macOS when using string contained inside element
