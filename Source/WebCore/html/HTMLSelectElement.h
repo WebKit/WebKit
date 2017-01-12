@@ -80,7 +80,8 @@ public:
 
     WEBCORE_EXPORT void setSize(unsigned);
 
-    ExceptionOr<void> setOption(unsigned index, HTMLOptionElement&);
+    // Called by the bindings for the unnamed index-setter.
+    ExceptionOr<void> setItem(unsigned index, HTMLOptionElement*);
     ExceptionOr<void> setLength(unsigned);
 
     WEBCORE_EXPORT HTMLOptionElement* namedItem(const AtomicString& name);

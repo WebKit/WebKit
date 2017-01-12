@@ -20,12 +20,13 @@
 
 [
     InterfaceName=Plugin,
+    LegacyUnenumerableNamedProperties
 ] interface DOMPlugin {
     readonly attribute DOMString name;
     readonly attribute DOMString filename;
     readonly attribute DOMString description;
     readonly attribute unsigned long length;
-    getter DOMMimeType item(unsigned long index);
-    getter DOMMimeType namedItem(DOMString name);
+    getter DOMMimeType? item(unsigned long index);
+    getter DOMMimeType? namedItem(DOMString name);
 };
 

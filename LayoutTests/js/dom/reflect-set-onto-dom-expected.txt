@@ -110,7 +110,7 @@ PASS Reflect.set(select, 42, option) is true
 PASS Reflect.get(select, "length") is 42
 PASS Reflect.set(select, 44, option2) is true
 PASS Reflect.get(select, 44).value is "kilimanjaro"
-PASS Reflect.set(select, 20, "Kilimanjaro") threw exception TypeMismatchError (DOM Exception 17): The type of an object was incompatible with the expected type of the parameter associated to the object..
+PASS Reflect.set(select, 20, "Kilimanjaro") threw exception TypeError: Type error.
 CustomIndexedSetter ignores the receiver. These methods only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.
 PASS Reflect.set(select, 0, option3, receiver) is true
 PASS Reflect.get(receiver, 0) is undefined

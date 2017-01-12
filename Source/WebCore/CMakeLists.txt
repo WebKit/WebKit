@@ -1101,10 +1101,6 @@ set(WebCore_SOURCES
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMGlobalObject.cpp
     bindings/js/JSDOMGlobalObjectTask.cpp
-    bindings/js/JSDOMMimeTypeArrayCustom.cpp
-    bindings/js/JSDOMNamedFlowCollectionCustom.cpp
-    bindings/js/JSDOMPluginArrayCustom.cpp
-    bindings/js/JSDOMPluginCustom.cpp
     bindings/js/JSDOMPromise.cpp
     bindings/js/JSDOMStringMapCustom.cpp
     bindings/js/JSDOMWindowBase.cpp
@@ -1130,7 +1126,6 @@ set(WebCore_SOURCES
     bindings/js/JSHTMLElementCustom.cpp
     bindings/js/JSHTMLEmbedElementCustom.cpp
     bindings/js/JSHTMLFormControlsCollectionCustom.cpp
-    bindings/js/JSHTMLFormElementCustom.cpp
     bindings/js/JSHTMLFrameElementCustom.cpp
     bindings/js/JSHTMLFrameSetElementCustom.cpp
     bindings/js/JSHTMLInputElementCustom.cpp
@@ -1156,7 +1151,6 @@ set(WebCore_SOURCES
     bindings/js/JSMessagePortCustom.cpp
     bindings/js/JSMutationCallback.cpp
     bindings/js/JSMutationObserverCustom.cpp
-    bindings/js/JSNamedNodeMapCustom.cpp
     bindings/js/JSNodeCustom.cpp
     bindings/js/JSNodeFilterCustom.cpp
     bindings/js/JSNodeIteratorCustom.cpp
@@ -1166,12 +1160,10 @@ set(WebCore_SOURCES
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSReadableStreamPrivateConstructors.cpp
     bindings/js/JSReadableStreamSourceCustom.cpp
-    bindings/js/JSRTCStatsResponseCustom.cpp
     bindings/js/JSSQLStatementErrorCallbackCustom.cpp
     bindings/js/JSSVGPathSegCustom.cpp
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
-    bindings/js/JSStyleSheetListCustom.cpp
     bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp
     bindings/js/JSTextTrackCueCustom.cpp

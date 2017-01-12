@@ -26,11 +26,14 @@
 [
     GenerateIsReachable=ImplElementRoot,
     CustomDeleteProperty,
-    CustomEnumerateProperty,
     CustomNamedSetter,
-    JSCustomGetOwnPropertySlotAndDescriptor,
     OverrideBuiltins,
     SkipVTableValidation,
 ] interface DOMStringMap {
+    getter DOMString (DOMString name);
+
+    // FIXME: Add support for the setter and deleter specials.
+    // [CEReactions] setter void (DOMString name, DOMString value);
+    // [CEReactions] deleter void (DOMString name);
 };
 

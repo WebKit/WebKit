@@ -27,5 +27,5 @@
     Conditional=WEB_RTC,
 ] interface RTCStatsResponse {
     sequence<RTCStatsReport> result();
-    getter RTCStatsReport namedItem(DOMString name);
+    getter RTCStatsReport? namedItem(DOMString name);
 };

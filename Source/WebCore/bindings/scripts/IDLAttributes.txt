@@ -90,6 +90,7 @@ JSCustomToNativeObject
 JSGenerateToJSObject
 JSGenerateToNativeObject
 JSLegacyParent=*
+LegacyUnenumerableNamedProperties
 LenientThis
 MasqueradesAsUndefined
 MayThrowException

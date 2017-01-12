@@ -1,3 +1,168 @@
+2017-01-12  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Autogenerate named getters
+        https://bugs.webkit.org/show_bug.cgi?id=166835
+
+        Reviewed by Alex Christensen.
+
+        * Modules/mediastream/RTCStatsResponse.idl:
+        Update type to be nullable, since generator expects that for now.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp: Removed.
+        * bindings/js/JSDOMMimeTypeArrayCustom.cpp: Removed.
+        * bindings/js/JSDOMNamedFlowCollectionCustom.cpp: Removed.
+        * bindings/js/JSDOMPluginArrayCustom.cpp: Removed.
+        * bindings/js/JSDOMPluginCustom.cpp: Removed.
+        * bindings/js/JSNamedNodeMapCustom.cpp: Removed.
+        * bindings/js/JSRTCStatsResponseCustom.cpp: Removed.
+        * bindings/js/JSStyleSheetListCustom.cpp: Removed.
+        Remove deleted files.
+
+        * bindings/js/JSSQLStatementErrorCallbackCustom.cpp: 
+        Renamed from Source/WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp for consistency.
+
+        * bindings/IDLTypes.h:
+        (WebCore::IDLNullable::nullValue):
+        (WebCore::IDLNullable::isNullValue):
+        (WebCore::IDLNullable::extractValueFromNullable):
+        Add Nullable traits for IDLNullable, that call down to the underlying type. This allows
+        us to more easily tests for nullability without stripping the IDLNullable off.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertySlotDelegate): Deleted.
+        (WebCore::JSDOMStringMap::getOwnPropertyNames): Deleted.
+        Remove overriden getOwnPropertySlot and getOwnPropertyNames.
+
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::nameGetter): Deleted.
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter): Deleted.
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::nameGetter): Deleted.
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter): Deleted.
+        Remove custom name getters.
+
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::selectElementIndexSetter):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setItem):
+        (WebCore::HTMLSelectElement::setLength):
+        (WebCore::HTMLSelectElement::setOption): Deleted.
+        * html/HTMLSelectElement.h:
+        Add implementation of HTMLSelectElement::setItem() that does properly
+        removes if the option is null. Re-implement selectElementIndexSetter to
+        use it and switch conversion code to use JSDOMConvert.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateIndexedGetter):
+        (GenerateNamedGetter):
+        Extract typed getter generation into their own functions.
+
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertySlotBodyByIndex):
+        Extract getOwnPropertySlotBody / getOwnPropertySlotBodyByIndex generation
+        into their own functions. Add support for generating name getters.
+
+        (GenerateGetOwnPropertyNames):
+        Extract getOwnPropertyNames generation into its own function, adding support
+        for respecting the LegacyUnenumerableNamedProperties attribute and switching
+        the default to not include named properties in the enumerated names.
+
+        (GeneratePut):
+        (GeneratePutByIndex):
+        Extract put / putByIndex generators into their own functions in preparation
+        of supporting namedSetters in the future.
+
+        (GetIndexedSetterFunction):
+        (GetNamedSetterFunction):
+        (GetNamedDeleterFunction):
+        Add helper getter functions to extract named/index setter/deleters.
+
+        (InstanceOverridesPut):
+        Add helper predicate to determine if an interface needs an implementation
+        of put.
+
+        (GenerateHeader):
+        Place custom helper functions (e.g. nameGetter/putDelegate/etc.) together
+        in the generated header.
+
+        (GenerateImplementation):
+        (GenerateCallbackImplementationContent):
+        Replace inline generation with calls to the new helper generator functions.
+
+        (NativeToJSValueUsingReferences):
+        (NativeToJSValueUsingPointers):
+        (NativeToJSValue):
+        Remove unused inFunctionCall parameter, and add new suppressExceptionCheck
+        parameter, which is used for nameGetters.
+
+        * bindings/scripts/IDLAttributes.txt:
+        Add LegacyUnenumerableNamedProperties.
+    
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::namedItem):
+        (WebCore::StyleSheetList::getNamedItem): Deleted.
+        * css/StyleSheetList.h:
+        * css/StyleSheetList.idl:
+        Rename getNamedItem to namedItem, and make it return a CSSStyleSheet*
+        which is what the bindings specify.
+
+        * dom/DOMNamedFlowCollection.idl:
+        Add LegacyUnenumerableNamedProperties to match existing behavior.
+
+        * dom/DOMStringMap.h:
+        Switch from typedef to type alias.
+
+        * dom/DOMStringMap.idl:
+        Remove CustomEnumerateProperty and JSCustomGetOwnPropertySlotAndDescriptor
+        and add the getter. Also add the missing setter and deleter commented out.
+
+        * dom/DatasetDOMStringMap.h:
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::supportedPropertyNames):
+        (WebCore::DatasetDOMStringMap::names): Deleted.
+        Rename names to supportedPropertyNames to support the bindings.
+
+        (WebCore::DatasetDOMStringMap::item):
+        (WebCore::DatasetDOMStringMap::namedItem):
+        Add namedItems (to support the bindings), and rework item to return
+        an optional rather than using a bool out parameter.
+
+        * dom/NamedNodeMap.idl:
+        Add LegacyUnenumerableNamedProperties matching the spec.
+
+        * html/HTMLAllCollection.idl:
+        Add CustomNamedGetter and LegacyUnenumerableNamedProperties. Update signatures
+        to match the spec. Commenting out ones not implemented yet.
+
+        * html/HTMLCollection.idl:
+        Add LegacyUnenumerableNamedProperties matching the spec.
+
+        * html/HTMLFormControlsCollection.idl:
+        Add CustomNamedGetter. Update signature of the getter to match the spec.
+        The reason this can't be generated yet is that we don't have a good strategy
+        for functions with differing return types that shadow each other.
+
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::namedItem):
+        (WebCore::HTMLFormElement::supportedPropertyNames):
+        Add implementation of namedItem and stub of supportedPropertyNames.
+
+        * html/HTMLFormElement.idl:
+        Add LegacyUnenumerableNamedProperties and remove CustomNamedGetter. Update
+        the signatures to match the spec.
+
+        * page/DOMWindow.idl:
+        Add LegacyUnenumerableNamedProperties matching the spec.
+
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.idl:
+        Add LegacyUnenumerableNamedProperties and add nullability to return types.
+
 2017-01-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS][WK1] Fix initialization of CADisplayLink::preferredFramesPerSecond

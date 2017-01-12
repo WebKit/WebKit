@@ -37,26 +37,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDOMStringMap::getOwnPropertySlotDelegate(ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    if (propertyName.isSymbol())
-        return false;
-    bool nameIsValid;
-    const AtomicString& item = wrapped().item(propertyNameToString(propertyName), nameIsValid);
-    if (nameIsValid) {
-        slot.setValue(this, 0, toJS<IDLDOMString>(*state, item));
-        return true;
-    }
-    return false;
-}
-
-void JSDOMStringMap::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    for (auto& name : jsCast<JSDOMStringMap*>(object)->wrapped().names())
-        propertyNames.add(Identifier::fromString(state, name));
-    Base::getOwnPropertyNames(object, state, propertyNames, mode);
-}
-
 bool JSDOMStringMap::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)
 {
     CustomElementReactionStack customElementReactionStack;

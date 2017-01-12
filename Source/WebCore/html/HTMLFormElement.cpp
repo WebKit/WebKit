@@ -46,6 +46,7 @@
 #include "HTMLTableElement.h"
 #include "NodeRareData.h"
 #include "Page.h"
+#include "RadioNodeList.h"
 #include "RenderTextControl.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -172,6 +173,25 @@ unsigned HTMLFormElement::length() const
 HTMLElement* HTMLFormElement::item(unsigned index)
 {
     return elements()->item(index);
+}
+
+std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormElement::namedItem(const AtomicString& name)
+{
+    auto namedItems = namedElements(name);
+
+    if (namedItems.isEmpty())
+        return std::nullopt;
+    if (namedItems.size() == 1)
+        return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
+
+    return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { radioNodeList(name) } };
+}
+
+Vector<AtomicString> HTMLFormElement::supportedPropertyNames() const
+{
+    // FIXME: Should be implemented (only needed for enumeration with includeDontEnumProperties mode
+    // since this class is annotated with LegacyUnenumerableNamedProperties).
+    return { };
 }
 
 void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmissionTrigger)

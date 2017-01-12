@@ -35,27 +35,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSStorage::nameGetter(ExecState* state, PropertyName propertyName, JSValue& value)
-{
-    if (propertyName.isSymbol())
-        return false;
-
-    auto item = wrapped().getItem(propertyNameToString(propertyName));
-    if (item.hasException()) {
-        auto& vm = state->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        propagateException(*state, scope, item.releaseException());
-        return false;
-    }
-
-    auto string = item.releaseReturnValue();
-    if (string.isNull())
-        return false;
-
-    value = jsStringWithCache(state, string);
-    return true;
-}
-
 bool JSStorage::deleteProperty(JSCell* cell, ExecState* state, PropertyName propertyName)
 {
     auto& thisObject = *jsCast<JSStorage*>(cell);

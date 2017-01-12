@@ -22,31 +22,14 @@
 
 #include "CustomElementReactionQueue.h"
 #include "ExceptionCode.h"
-#include "HTMLNames.h"
-#include "HTMLOptionElement.h"
-#include "HTMLOptionsCollection.h"
-#include "HTMLSelectElement.h"
 #include "JSHTMLOptionElement.h"
 #include "JSHTMLSelectElement.h"
 #include "JSHTMLSelectElementCustom.h"
-#include "JSNodeList.h"
-#include "StaticNodeList.h"
-
 #include <wtf/MathExtras.h>
 
 using namespace JSC;
 
 namespace WebCore {
-
-bool JSHTMLOptionsCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
-{
-    auto item = wrapped().namedItem(propertyNameToAtomicString(propertyName));
-    if (!item)
-        return false;
-
-    value = toJS(exec, globalObject(), *item);
-    return true;
-}
 
 void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
 {

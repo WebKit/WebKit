@@ -65,7 +65,7 @@ StyleSheet* StyleSheetList::item(unsigned index)
     return index < sheets.size() ? sheets[index].get() : 0;
 }
 
-HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
+CSSStyleSheet* StyleSheetList::namedItem(const AtomicString& name) const
 {
     if (!m_document)
         return nullptr;
@@ -77,7 +77,7 @@ HTMLStyleElement* StyleSheetList::getNamedItem(const String& name) const
     // But unicity of stylesheet ids is good practice anyway ;)
     Element* element = m_document->getElementById(name);
     if (is<HTMLStyleElement>(element))
-        return downcast<HTMLStyleElement>(element);
+        return downcast<HTMLStyleElement>(element)->sheet();
     return nullptr;
 }
 

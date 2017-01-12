@@ -20,37 +20,14 @@
 #include "config.h"
 #include "JSHTMLCollection.h"
 
-#include "HTMLAllCollection.h"
-#include "HTMLCollection.h"
-#include "HTMLFormControlsCollection.h"
-#include "HTMLOptionsCollection.h"
 #include "JSDOMBinding.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLFormControlsCollection.h"
 #include "JSHTMLOptionsCollection.h"
-#include "JSNode.h"
-#include "JSNodeList.h"
-#include "JSRadioNodeList.h"
-#include "Node.h"
-#include "RadioNodeList.h"
-#include <wtf/text/AtomicString.h>
 
 using namespace JSC;
 
 namespace WebCore {
-
-bool JSHTMLCollection::nameGetter(ExecState* exec, PropertyName propertyName, JSValue& value)
-{
-    ASSERT_WITH_MESSAGE(wrapped().type() != FormControls, "Should call the subclass' nameGetter");
-    ASSERT_WITH_MESSAGE(wrapped().type() != SelectOptions, "Should call the subclass' nameGetter");
-
-    auto item = wrapped().namedItem(propertyNameToAtomicString(propertyName));
-    if (!item)
-        return false;
-
-    value = toJS(exec, globalObject(), *item);
-    return true;
-}
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<HTMLCollection>&& collection)
 {

@@ -24,6 +24,9 @@
     ImplementationLacksVTable,
 ] interface StyleSheetList {
     readonly attribute unsigned long length;
-    getter StyleSheet item(unsigned long index);
+    getter StyleSheet? item(unsigned long index);
+
+    // FIXME: https://drafts.csswg.org/cssom/#the-stylesheetlist-interface does not
+    // specify a named getter for StyleSheetList. We should investigate removing this.
     getter CSSStyleSheet (DOMString name);
 };

@@ -1,3 +1,15 @@
+2017-01-12  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Autogenerate named getters
+        https://bugs.webkit.org/show_bug.cgi?id=166835
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/HTMLSelectElement/select-selectedIndex-expected.txt:
+        * fast/dom/HTMLSelectElement/select-selectedIndex-multiple-expected.txt:
+        * js/dom/reflect-set-onto-dom-expected.txt:
+        Update exception text.
+
 2017-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline inspector/dom/getAccessibilityPropertiesForNode.html after r210605.

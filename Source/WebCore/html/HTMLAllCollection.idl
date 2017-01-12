@@ -25,13 +25,18 @@
 
 [
     CustomCall,
+    CustomNamedGetter,
+    LegacyUnenumerableNamedProperties,
     MasqueradesAsUndefined,
     GenerateIsReachable=ImplOwnerNodeRoot,
 ] interface HTMLAllCollection {
     readonly attribute unsigned long length;
-    [Custom] getter Element item(unsigned long index);
-    [Custom] getter Element namedItem(DOMString name);
-    // FIXME: This should return an HTMLAllCollection.
+
+    [Custom] getter Element? item(unsigned long index);
+    [Custom] getter (HTMLCollection or Element)? namedItem(DOMString name);
+    // [Custom] legacycaller (HTMLCollection or Element)? item(optional DOMString nameOrIndex);
+
+    // FIXME: This is not in the standard. Can we remove it?
     NodeList tags(DOMString name);
 };
 

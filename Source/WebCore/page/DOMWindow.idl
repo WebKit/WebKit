@@ -42,6 +42,7 @@
     JSCustomMarkFunction,
     JSCustomToNativeObject,
     JSLegacyParent=JSDOMWindowBase,
+    LegacyUnenumerableNamedProperties,
     PrimaryGlobal,
 ] interface DOMWindow : EventTarget {
     [Replaceable] readonly attribute Screen screen;
