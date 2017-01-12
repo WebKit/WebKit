@@ -2748,6 +2748,11 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 // Keyboard interaction
 // UITextInput protocol implementation
 
+- (BOOL)_allowAnimatedUpdateSelectionRectViews
+{
+    return NO;
+}
+
 - (void)beginSelectionChange
 {
     [self.inputDelegate selectionWillChange:self];

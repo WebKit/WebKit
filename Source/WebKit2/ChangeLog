@@ -1,5 +1,23 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210525. rdar://problem/29931470
+
+    2017-01-09  Enrica Casucci  <enrica@apple.com>
+
+            Selection animation flashing on editable content when zooming.
+            https://bugs.webkit.org/show_bug.cgi?id=166863
+            rdar://problem/29931470
+
+            Reviewed by Tim Horton.
+
+            Implementing _allowAnimatedUpdateSelectionRectView and returning NO,
+            prevents the selection animation in UIKit.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _allowAnimatedUpdateSelectionRectViews]):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210281. rdar://problem/29849769
 
     2017-01-04  Jeremy Jones  <jeremyj@apple.com>
