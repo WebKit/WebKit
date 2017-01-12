@@ -6276,6 +6276,10 @@
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E1FF8F6C180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */; };
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
+		E30592631E27A3AA00D57C98 /* InlineClassicScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E30592611E27A38C00D57C98 /* InlineClassicScript.cpp */; };
+		E30592641E27A3AD00D57C98 /* InlineClassicScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E30592621E27A38C00D57C98 /* InlineClassicScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E30592671E27A3D100D57C98 /* CachedScriptFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E30592651E27A3C600D57C98 /* CachedScriptFetcher.cpp */; };
+		E30592681E27A3D100D57C98 /* CachedScriptFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E30592661E27A3C600D57C98 /* CachedScriptFetcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E307DECC1D81E4B300141CAF /* CachedModuleScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E307DEC91D81E46E00141CAF /* CachedModuleScript.cpp */; };
 		E307DECD1D81E4B600141CAF /* CachedModuleScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E307DECA1D81E46E00141CAF /* CachedModuleScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E307DECE1D81E4BA00141CAF /* CachedModuleScriptClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E307DECB1D81E49500141CAF /* CachedModuleScriptClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14283,6 +14287,10 @@
 		E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitSubtleCryptoCustom.cpp; sourceTree = "<group>"; };
 		E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRegistry.cpp; sourceTree = "<group>"; };
 		E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRegistry.h; sourceTree = "<group>"; };
+		E30592611E27A38C00D57C98 /* InlineClassicScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InlineClassicScript.cpp; sourceTree = "<group>"; };
+		E30592621E27A38C00D57C98 /* InlineClassicScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InlineClassicScript.h; sourceTree = "<group>"; };
+		E30592651E27A3C600D57C98 /* CachedScriptFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedScriptFetcher.cpp; sourceTree = "<group>"; };
+		E30592661E27A3C600D57C98 /* CachedScriptFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedScriptFetcher.h; sourceTree = "<group>"; };
 		E307DEC61D81E44800141CAF /* CachedModuleScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedModuleScriptLoader.cpp; sourceTree = "<group>"; };
 		E307DEC71D81E44800141CAF /* CachedModuleScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedModuleScriptLoader.h; sourceTree = "<group>"; };
 		E307DEC81D81E44800141CAF /* CachedModuleScriptLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedModuleScriptLoaderClient.h; sourceTree = "<group>"; };
@@ -22006,6 +22014,8 @@
 				E307DEC61D81E44800141CAF /* CachedModuleScriptLoader.cpp */,
 				E307DEC71D81E44800141CAF /* CachedModuleScriptLoader.h */,
 				E307DEC81D81E44800141CAF /* CachedModuleScriptLoaderClient.h */,
+				E30592651E27A3C600D57C98 /* CachedScriptFetcher.cpp */,
+				E30592661E27A3C600D57C98 /* CachedScriptFetcher.h */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				0F60F3291DFBB10400416D6C /* CommonVM.cpp */,
 				0F60F32A1DFBB10400416D6C /* CommonVM.h */,
@@ -24173,6 +24183,8 @@
 				467302011C4EFE6600BCB357 /* IgnoreOpensDuringUnloadCountIncrementer.h */,
 				AA4C3A740B2B1679002334A2 /* InlineStyleSheetOwner.cpp */,
 				AA4C3A750B2B1679002334A2 /* InlineStyleSheetOwner.h */,
+				E30592611E27A38C00D57C98 /* InlineClassicScript.cpp */,
+				E30592621E27A38C00D57C98 /* InlineClassicScript.h */,
 				2EB767551DA19B99003E23B5 /* InputEvent.cpp */,
 				2EB767541DA19B67003E23B5 /* InputEvent.h */,
 				2EB767531DA19313003E23B5 /* InputEvent.idl */,
@@ -24861,6 +24873,7 @@
 				29A812320FBB9C1D00510293 /* AccessibilityTableCell.h in Headers */,
 				29A812410FBB9C1D00510293 /* AccessibilityTableColumn.h in Headers */,
 				29A8123F0FBB9C1D00510293 /* AccessibilityTableHeaderContainer.h in Headers */,
+				E30592641E27A3AD00D57C98 /* InlineClassicScript.h in Headers */,
 				29A812310FBB9C1D00510293 /* AccessibilityTableRow.h in Headers */,
 				A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */,
 				A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */,
@@ -28085,6 +28098,7 @@
 				2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */,
 				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
 				0F54DD081881D5F5003EEDBB /* Touch.h in Headers */,
+				E30592681E27A3D100D57C98 /* CachedScriptFetcher.h in Headers */,
 				0F54DD091881D5F5003EEDBB /* TouchEvent.h in Headers */,
 				0F54DD0A1881D5F5003EEDBB /* TouchList.h in Headers */,
 				070334D71459FFD5008D8D45 /* TrackBase.h in Headers */,
@@ -30438,6 +30452,7 @@
 				CDE83DB6183D352A0031EAA3 /* JSVideoPlaybackQuality.cpp in Sources */,
 				BE8EF04A171C9014009B48C3 /* JSVideoTrack.cpp in Sources */,
 				BE6DF70B171CA2C500DD52B8 /* JSVideoTrackCustom.cpp in Sources */,
+				E30592631E27A3AA00D57C98 /* InlineClassicScript.cpp in Sources */,
 				BE8EF04C171C9014009B48C3 /* JSVideoTrackList.cpp in Sources */,
 				BE6DF70D171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp in Sources */,
 				9703E1BF15DC4E37001F24C8 /* JSVoidCallback.cpp in Sources */,
@@ -30900,6 +30915,7 @@
 				514C76740CE923A1007EF3CD /* ProtectionSpaceBase.cpp in Sources */,
 				372ADA3B197F687600FC501E /* ProtectionSpaceCocoa.mm in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
+				E30592671E27A3D100D57C98 /* CachedScriptFetcher.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
 				FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */,
 				0081FEFF16B0A2B6008AAA7A /* PublicSuffixMac.mm in Sources */,

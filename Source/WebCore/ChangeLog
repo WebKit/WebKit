@@ -1,5 +1,12 @@
 2017-01-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for macOS ports
+        https://bugs.webkit.org/show_bug.cgi?id=166925
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2017-01-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Implement InlineClassicScript
         https://bugs.webkit.org/show_bug.cgi?id=166925
 
