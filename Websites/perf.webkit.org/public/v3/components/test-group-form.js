@@ -5,7 +5,6 @@ class TestGroupForm extends ComponentBase {
     {
         super(name || 'test-group-form');
         this._startCallback = null;
-        this._disabled = false;
         this._label = undefined;
         this._repetitionCount = 4;
 
@@ -24,7 +23,6 @@ class TestGroupForm extends ComponentBase {
     }
 
     setStartCallback(callback) { this._startCallback = callback; }
-    setDisabled(disabled) { this._disabled = !!disabled; }
     setLabel(label) { this._label = label; }
     setRepetitionCount(count) { this._repetitionCount = count; }
 
@@ -33,7 +31,6 @@ class TestGroupForm extends ComponentBase {
         var button = this.content().querySelector('button');
         if (this._label)
             button.textContent = this._label;
-        button.disabled = this._disabled;
         this._repetitionCountControl.value = this._repetitionCount;
     }
 

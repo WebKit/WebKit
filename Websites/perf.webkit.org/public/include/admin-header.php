@@ -1,7 +1,7 @@
 <?php
 
 require_once('db.php');
-require_once('manifest.php');
+require_once('manifest-generator.php');
 
 ?><!DOCTYPE html>
 <html>

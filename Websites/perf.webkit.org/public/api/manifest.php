@@ -1,7 +1,7 @@
 <?php
 
 require_once('../include/json-header.php');
-require_once('../include/manifest.php');
+require_once('../include/manifest-generator.php');
 
 function main() {
     $db = new Database;

@@ -40,6 +40,7 @@ class ManifestGenerator {
             'repositories' => &$repositories,
             'builders' => (object)$this->builders(),
             'bugTrackers' => (object)$this->bug_trackers($repositories_table),
+            'triggerables'=> (object)$this->triggerables(),
             'dashboards' => (object)config('dashboards'),
             'summaryPages' => config('summaryPages'),
         );
@@ -86,7 +87,7 @@ class ManifestGenerator {
 
     private function platforms($platform_table, $is_dashboard) {
         $metrics = $this->db->query_and_fetch_all('SELECT config_metric AS metric_id, config_platform AS platform_id,
-            extract(epoch from max(config_runs_last_modified)) * 1000 AS last_modified, bool_or(config_is_in_dashboard) AS in_dashboard
+            extract(epoch from max(config_runs_last_modified) at time zone \'utc\') * 1000 AS last_modified, bool_or(config_is_in_dashboard) AS in_dashboard
             FROM test_configurations GROUP BY config_metric, config_platform ORDER BY config_platform');
 
         $platform_metrics = array();
@@ -177,6 +178,40 @@ class ManifestGenerator {
         }
 
         return $bug_trackers;
+    }
+
+    private function triggerables() {
+
+        $triggerables = $this->db->fetch_table('build_triggerables');
+        if (!$triggerables)
+            return array();
+
+        $id_to_triggerable = array();
+        foreach ($triggerables as $row) {
+            $id = $row['triggerable_id'];
+            $id_to_triggerable[$id] = array(
+                'name' => $row['triggerable_name'],
+                'acceptedRepositories' => array(),
+                'configurations' => array());
+        }
+
+        $repository_map = $this->db->fetch_table('triggerable_repositories');
+        if ($repository_map) {
+            foreach ($repository_map as $row) {
+                $triggerable = &$id_to_triggerable[$row['trigrepo_triggerable']];
+                array_push($triggerable['acceptedRepositories'], $row['trigrepo_repository']);
+            }
+        }
+
+        $configuration_map = $this->db->fetch_table('triggerable_configurations');
+        if ($configuration_map) {
+            foreach ($configuration_map as $row) {
+                $triggerable = &$id_to_triggerable[$row['trigconfig_triggerable']];
+                array_push($triggerable['configurations'], array($row['trigconfig_test'], $row['trigconfig_platform']));
+            }
+        }
+
+        return $id_to_triggerable;
     }
 }
 

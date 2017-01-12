@@ -15,6 +15,7 @@ MockData = {
         RootSet.clearStaticMap();
         Test.clearStaticMap();
         TestGroup.clearStaticMap();
+        Triggerable.clearStaticMap();
     },
     someTestId() { return 200; },
     somePlatformId() { return 65; },

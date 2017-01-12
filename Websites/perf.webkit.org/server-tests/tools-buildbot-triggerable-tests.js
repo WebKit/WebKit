@@ -910,23 +910,46 @@ describe('BuildbotTriggerable', function () {
 
         it('should update available triggerables', function (done) {
             let db = TestServer.database();
-            MockData.addMockData(db).then(function () {
+            MockData.addMockData(db).then(() => {
                 return Manifest.fetch();
-            }).then(function () {
+            }).then(() => {
                 return db.selectAll('triggerable_configurations', 'test');
-            }).then(function (configurations) {
+            }).then((configurations) => {
                 assert.equal(configurations.length, 0);
+                assert.equal(Triggerable.all().length, 1);
+
+                let triggerable = Triggerable.all()[0];
+                assert.equal(triggerable.name(), 'build-webkit');
+                assert.deepEqual(triggerable.acceptedRepositories(), []);
+
+                let test = Test.findById(MockData.someTestId());
+                let platform = Platform.findById(MockData.somePlatformId());
+                assert.equal(Triggerable.findByTestConfiguration(test, platform), null);
+
                 let config = MockData.mockTestSyncConfigWithSingleBuilder();
                 let logger = new MockLogger;
                 let slaveInfo = {name: 'sync-slave', password: 'password'};
-                let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
-                return triggerable.updateTriggerable();
-            }).then(function () {
+                let buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+                return buildbotTriggerable.updateTriggerable();
+            }).then(() => {
+                MockData.resetV3Models();
+                assert.equal(Triggerable.all().length, 0);
+                return TestServer.remoteAPI().getJSON('/api/manifest');
+            }).then((manifestContent) => {
+                Manifest._didFetchManifest(manifestContent);
                 return db.selectAll('triggerable_configurations', 'test');
-            }).then(function (configurations) {
+            }).then((configurations) => {
                 assert.equal(configurations.length, 1);
                 assert.equal(configurations[0].test, MockData.someTestId());
                 assert.equal(configurations[0].platform, MockData.somePlatformId());
+
+                assert.equal(Triggerable.all().length, 1);
+
+                let test = Test.findById(MockData.someTestId());
+                let platform = Platform.findById(MockData.somePlatformId());
+                let triggerable = Triggerable.findByTestConfiguration(test, platform);
+                assert.equal(triggerable.name(), 'build-webkit');
+
                 done();
             }).catch(done);
         });

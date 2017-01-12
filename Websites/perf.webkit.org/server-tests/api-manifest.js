@@ -18,7 +18,7 @@ describe('/api/manifest', function () {
     it("should generate an empty manifest when database is empty", function (done) {
         TestServer.remoteAPI().getJSON('/api/manifest').then(function (manifest) {
             assert.deepEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
-                'elapsedTime', 'metrics', 'repositories', 'siteTitle', 'status', 'summaryPages', 'tests']);
+                'elapsedTime', 'metrics', 'repositories', 'siteTitle', 'status', 'summaryPages', 'tests', 'triggerables']);
 
             assert.equal(typeof(manifest.elapsedTime), 'number');
             delete manifest.elapsedTime;
@@ -33,6 +33,7 @@ describe('/api/manifest', function () {
                 metrics: {},
                 repositories: {},
                 tests: {},
+                triggerables: {},
                 summaryPages: [],
                 status: 'OK'
             });
@@ -270,6 +271,80 @@ describe('/api/manifest', function () {
             assert.equal(grandChildTest.metrics().length, 1);
             assert.equal(grandChildTest.metrics()[0].label(), 'Time');
             assert.equal(grandChildTest.metrics()[0].fullName(), 'SomeTest \u220B ChildTest \u220B GrandChild : Time');
+
+            done();
+        }).catch(done);
+    });
+
+    it("should generate manifest with triggerables", function (done) {
+        let db = TestServer.database();
+        db.connect();
+        Promise.all([
+            db.insert('repositories', {id: 11, name: 'WebKit', url: 'https://trac.webkit.org/$1'}),
+            db.insert('repositories', {id: 9, name: 'OS X'}),
+            db.insert('build_triggerables', {id: 200, name: 'build.webkit.org'}),
+            db.insert('build_triggerables', {id: 201, name: 'ios-build.webkit.org'}),
+            db.insert('tests', {id: 1, name: 'SomeTest'}),
+            db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
+            db.insert('tests', {id: 3, name: 'ChildTest', parent: 1}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s'}),
+            db.insert('platforms', {id: 46, name: 'Trunk Mavericks'}),
+            db.insert('test_metrics', {id: 5, test: 1, name: 'Time'}),
+            db.insert('test_metrics', {id: 8, test: 2, name: 'FrameRate'}),
+            db.insert('test_metrics', {id: 9, test: 3, name: 'Time'}),
+            db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 102, metric: 8, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 103, metric: 9, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 104, metric: 5, platform: 23, type: 'current'}),
+            db.insert('test_configurations', {id: 105, metric: 8, platform: 23, type: 'current'}),
+            db.insert('test_configurations', {id: 106, metric: 9, platform: 23, type: 'current'}),
+            db.insert('triggerable_repositories', {triggerable: 200, repository: 11}),
+            db.insert('triggerable_repositories', {triggerable: 201, repository: 11}),
+            db.insert('triggerable_configurations', {triggerable: 200, test: 1, platform: 46}),
+            db.insert('triggerable_configurations', {triggerable: 200, test: 2, platform: 46}),
+            db.insert('triggerable_configurations', {triggerable: 201, test: 1, platform: 23}),
+            db.insert('triggerable_configurations', {triggerable: 201, test: 2, platform: 23}),
+        ]).then(function () {
+            return Manifest.fetch();
+        }).then(function () {
+            let webkit = Repository.findById(11);
+            assert.equal(webkit.name(), 'WebKit');
+            assert.equal(webkit.urlForRevision(123), 'https://trac.webkit.org/123');
+
+            let osx = Repository.findById(9);
+            assert.equal(osx.name(), 'OS X');
+
+            let someTest = Test.findById(1);
+            assert.equal(someTest.name(), 'SomeTest');
+
+            let someOtherTest = Test.findById(2);
+            assert.equal(someOtherTest.name(), 'SomeOtherTest');
+
+            let childTest = Test.findById(3);
+            assert.equal(childTest.name(), 'ChildTest');
+
+            let ios9iphone5s = Platform.findById(23);
+            assert.equal(ios9iphone5s.name(), 'iOS 9 iPhone 5s');
+
+            let mavericks = Platform.findById(46);
+            assert.equal(mavericks.name(), 'Trunk Mavericks');
+
+            assert.equal(Triggerable.all().length, 2);
+
+            let osxTriggerable = Triggerable.findByTestConfiguration(someTest, mavericks);
+            assert.equal(osxTriggerable.name(), 'build.webkit.org');
+            assert.deepEqual(osxTriggerable.acceptedRepositories(), [webkit]);
+
+            assert.equal(Triggerable.findByTestConfiguration(someOtherTest, mavericks), osxTriggerable);
+            assert.equal(Triggerable.findByTestConfiguration(childTest, mavericks), osxTriggerable);
+
+            let iosTriggerable = Triggerable.findByTestConfiguration(someOtherTest, ios9iphone5s);
+            assert.notEqual(iosTriggerable, osxTriggerable);
+            assert.equal(iosTriggerable.name(), 'ios-build.webkit.org');
+            assert.deepEqual(iosTriggerable.acceptedRepositories(), [webkit]);
+
+            assert.equal(Triggerable.findByTestConfiguration(someOtherTest, ios9iphone5s), iosTriggerable);
+            assert.equal(Triggerable.findByTestConfiguration(childTest, ios9iphone5s), iosTriggerable);
 
             done();
         }).catch(done);

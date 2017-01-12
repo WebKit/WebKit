@@ -1,3 +1,66 @@
+2017-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Hide the UI to trigger an A/B testing when there are no triggerables
+        https://bugs.webkit.org/show_bug.cgi?id=166964
+
+        Reviewed by Yusuke Suzuki.
+
+        Hide the "Start A/B Testing" button on analysis task pages instead of showing it and failing later
+        when the user tries to create one it with a TriggerableNotFound error.
+
+        Added the list of triggerables to the manifest JSON so that we can determine this condition without
+        having to fetch /api/triggerable for each analysis task as done in v2 UI.
+
+        * public/admin/reprocess-report.php:
+        * public/api/manifest.php:
+        * public/api/report.php:
+        * public/include/admin-header.php:
+        * public/include/manifest-generator.php: Moved from public/include/manifest.php.
+        (ManifestGenerator::generate):
+        (ManifestGenerator::triggerables): Added. Include the list of repositories this triggerable accepts
+        as well as the list of (test, platform) pairs on which this triggerable is available.
+        Use [testId, platformId] instead of a dictionary to reduce the file size.
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm): Removed this._disabled. This variable was used in TestGroupFrom to
+        disable the "Start A/B Testing" button when no range is selected but this ended up racy. Compute
+        the visibility of the button in render() function instead.
+        (CustomizableTestGroupForm.prototype.setRootSetMap):
+        (CustomizableTestGroupForm.prototype._submitted):
+        (CustomizableTestGroupForm.prototype.render): Hide the customize link and the button as needed.
+        The "Start A/B Testing" button must be hidden when either no range is selected or no title is typed.
+        "Customize" button must be hidden when no range is selected.
+        * public/v3/components/test-group-form.js:
+        (TestGroupForm): Removed _disabled since it's no longer used.
+        (TestGroupForm.prototype.setDisabled): Ditto.
+        (TestGroupForm.prototype.render): Ditto.
+        * public/v3/index.html: Include triggerable.js.
+        * public/v3/models/manifest.js:
+        (Manifest._didFetchManifest): Modernized. Create Triggerable objects from the manifest JSON.
+        * public/v3/models/triggerable.js: Added.
+        (Triggerable): Add this triggerable object to the static map of (test id, platform id) pair.
+        (Triggerable.prototype.acceptedRepositories): Added.
+        (Triggerable.findByTestConfiguration): Added. Finds a triggerable in the aforementioned static map.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype._updateStatus): Added. Re-render the page since time series data
+        points that were previously not available may have become available. The lack of this update was
+        causing a race condition in which the "Start A/B Testing" button for the charts is disabled even
+        after a group name had been specified because setRootSetMap was never called with a valid set.
+        (AnalysisTaskPage): Added this._triggerable.
+        (AnalysisTaskPage.prototype._didFetchTask): Find the triggerable now that we've fetched the task.
+        (AnalysisTaskPage.prototype.render): Hide the group view (the table of A/B testing results) entirely
+        when there are no groups to show. Also hide the forms to start A/B testing when there are no matching
+        triggerable, which is the main feature of this patch.
+        * server-tests/api-manifest.js: Added a test for including a list of triggerables in the manifest JSON.
+        * server-tests/resources/mock-data.js:
+        (MockData.resetV3Models): Reset Triggerable's static map.
+        * server-tests/tools-buildbot-triggerable-tests.js: Assert that Triggerable objects are  constructed
+        with appropriate list of repositories and (test, platform) associations.
+        * tools/js/database.js:
+        (tableToPrefixMap): Added triggerable_repositories's prefix.
+        * tools/js/remote.js:
+        (RemoteAPI.prototype.getJSON): Log the entire response to stderr when JSON.parse fails to aid debugging.
+        * tools/js/v3-models.js: Import triggerable.js.
+
 2017-01-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         fetch-from-remote doesn’t work with some websites

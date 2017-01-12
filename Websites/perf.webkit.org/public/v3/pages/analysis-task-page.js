@@ -16,6 +16,12 @@ class AnalysisTaskChartPane extends ChartPaneBase {
             this._page._chartSelectionDidChange();
     }
 
+    _updateStatus()
+    {
+        super._updateStatus();
+        this._page.render();
+    }
+
     selectedPoints()
     {
         var selection = this._mainChart ? this._mainChart.currentSelection() : null;
@@ -33,6 +39,7 @@ class AnalysisTaskPage extends PageWithHeading {
     {
         super('Analysis Task');
         this._task = null;
+        this._triggerable = null;
         this._relatedTasks = null;
         this._testGroups = null;
         this._renderedTestGroups = null;
@@ -120,20 +127,22 @@ class AnalysisTaskPage extends PageWithHeading {
         console.assert(!this._task);
 
         this._task = task;
-        var platform = task.platform();
-        var metric = task.metric();
-        var lastModified = platform.lastModified(metric);
+        const platform = task.platform();
+        const metric = task.metric();
+        const lastModified = platform.lastModified(metric);
+
+        this._triggerable = Triggerable.findByTestConfiguration(metric.test(), platform);
 
         this._measurementSet = MeasurementSet.findSet(platform.id(), metric.id(), lastModified);
         this._measurementSet.fetchBetween(task.startTime(), task.endTime(), this._didFetchMeasurement.bind(this));
 
-        var formatter = metric.makeFormatter(4);
+        const formatter = metric.makeFormatter(4);
         this._analysisResultsViewer.setValueFormatter(formatter);
         this._testGroupResultsTable.setValueFormatter(formatter);
 
         this._chartPane.configure(platform.id(), metric.id());
 
-        var domain = ChartsPage.createDomainForAnalysisTask(task);
+        const domain = ChartsPage.createDomainForAnalysisTask(task);
         this._chartPane.setOverviewDomain(domain[0], domain[1]);
         this._chartPane.setMainDomain(domain[0], domain[1]);
 
@@ -265,7 +274,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
         this.content().querySelector('.analysis-task-status').style.display = this._task ? null : 'none';
         this.content().querySelector('.overview-chart').style.display = this._task ? null : 'none';
-        this.content().querySelector('.test-group-view').style.display = this._task ? null : 'none';
+        this.content().querySelector('.test-group-view').style.display = this._task && this._testGroups && this._testGroups.length ? null : 'none';
         this._taskNameLabel.render();
 
         if (this._relatedTasks && this._task) {
@@ -288,6 +297,7 @@ class AnalysisTaskPage extends PageWithHeading {
         var b = selectedRange['B'];
         this._newTestGroupFormForViewer.setRootSetMap(a && b ? {'A': a.rootSet(), 'B': b.rootSet()} : null);
         this._newTestGroupFormForViewer.render();
+        this._newTestGroupFormForViewer.element().style.display = this._triggerable ? null : 'none';
 
         this._renderTestGroupList();
         this._renderTestGroupDetails();
@@ -299,6 +309,7 @@ class AnalysisTaskPage extends PageWithHeading {
         this._newTestGroupFormForChart.setRootSetMap(points && points.length >= 2 ?
                 {'A': points[0].rootSet(), 'B': points[points.length - 1].rootSet()} : null);
         this._newTestGroupFormForChart.render();
+        this._newTestGroupFormForChart.element().style.display = this._triggerable ? null : 'none';
 
         this._analysisResultsViewer.setCurrentTestGroup(this._currentTestGroup);
         this._analysisResultsViewer.render();

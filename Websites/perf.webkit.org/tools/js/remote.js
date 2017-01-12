@@ -56,7 +56,12 @@ class RemoteAPI {
     getJSON(path)
     {
         return this.sendHttpRequest(path, 'GET', null, null).then(function (result) {
-            return JSON.parse(result.responseText);
+            try {
+                return JSON.parse(result.responseText);
+            } catch (error) {
+                console.error(result.responseText);
+                throw error;
+            }
         });
     }
 

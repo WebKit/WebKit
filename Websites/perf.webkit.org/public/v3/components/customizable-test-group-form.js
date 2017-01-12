@@ -5,9 +5,10 @@ class CustomizableTestGroupForm extends TestGroupForm {
     {
         super('customizable-test-group-form');
         this._rootSetMap = null;
-        this._disabled = true;
         this._renderedRepositorylist = null;
         this._customized = false;
+        this._nameControl = this.content().querySelector('.name');
+        this._nameControl.oninput = this.render.bind(this);
         this.content().querySelector('a').onclick = this._customize.bind(this);
     }
 
@@ -15,13 +16,12 @@ class CustomizableTestGroupForm extends TestGroupForm {
     {
         this._rootSetMap = map;
         this._customized = false;
-        this.setDisabled(!map);
     }
 
     _submitted()
     {
         if (this._startCallback)
-            this._startCallback(this.content().querySelector('.name').value, this._repetitionCount, this._computeRootSetMap());
+            this._startCallback(this._nameControl.value, this._repetitionCount, this._computeRootSetMap());
     }
 
     _customize(event)
@@ -56,13 +56,15 @@ class CustomizableTestGroupForm extends TestGroupForm {
     render()
     {
         super.render();
-        this.content().querySelector('.customize-link').style.display = this._disabled ? 'none' : null;
+        var map = this._rootSetMap;
+
+        this.content().querySelector('button').disabled = !(map && this._nameControl.value);
+        this.content().querySelector('.customize-link').style.display = !map ? 'none' : null;
 
         if (!this._customized) {
             this.renderReplace(this.content().querySelector('.custom-table-container'), []);
             return;
         }
-        var map = this._rootSetMap;
         console.assert(map);
 
         var repositorySet = new Set;
