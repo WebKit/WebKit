@@ -67,6 +67,7 @@ ValidationBubble::ValidationBubble(NSView* view, const String& message)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     [label setMaximumNumberOfLines:4];
 #endif
+    [[label cell] setTruncatesLastVisibleLine:YES];
     [popoverView addSubview:label.get()];
     NSSize labelSize = [label sizeThatFits:NSMakeSize(maxLabelWidth, CGFLOAT_MAX)];
     [label setFrame:NSMakeRect(horizontalPadding, verticalPadding, labelSize.width, labelSize.height)];

@@ -111,7 +111,7 @@ ValidationBubble::ValidationBubble(UIView* view, const String& message)
     RetainPtr<UILabel> label = adoptNS([[getUILabelClass() alloc] initWithFrame:CGRectZero]);
     [label setText:message];
     [label setFont:[getUIFontClass() systemFontOfSize:14.0]];
-    [label setLineBreakMode:NSLineBreakByWordWrapping];
+    [label setLineBreakMode:NSLineBreakByTruncatingTail];
     [label setNumberOfLines:4];
     [popoverView addSubview:label.get()];
 
