@@ -1,5 +1,27 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210376. rdar://problem/29763079
+
+    2017-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Crash inside Editor::styleForSelectionStart
+            https://bugs.webkit.org/show_bug.cgi?id=166710
+
+            Reviewed by Chris Dumez.
+
+            Added a null pointer check. This crash can happen when the DOM is mutated as editorState tries
+            to compute the style at the selection start.
+
+            No new tests since there is no reproducible test case, and I couldn't come up with one either.
+            This crash seems to retire some intricate dependency between when DOM is mutated, selection is
+            updated, and then performPostLayoutTasks ends up updating the editor state in response to
+            the element's editabilty changing.
+
+            * editing/cocoa/EditorCocoa.mm:
+            (WebCore::Editor::styleForSelectionStart):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210147. rdar://problem/29675551
 
     2016-12-23  Simon Fraser  <simon.fraser@apple.com>

@@ -76,8 +76,9 @@ const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node*& nodeToRem
 
     styleElement->appendChild(frame->document()->createEditingTextNode(emptyString()));
 
-    if (position.deprecatedNode()->parentNode()->appendChild(styleElement).hasException())
-        return nullptr; 
+    auto positionNode = position.deprecatedNode();
+    if (!positionNode || !positionNode->parentNode() || positionNode->parentNode()->appendChild(styleElement).hasException())
+        return nullptr;
 
     nodeToRemove = styleElement.ptr();
 
