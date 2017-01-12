@@ -109,6 +109,8 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
 WebProcessProxy::~WebProcessProxy()
 {
     ASSERT(m_pageURLRetainCountMap.isEmpty());
+    
+    WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
     if (m_webConnection)
         m_webConnection->invalidate();

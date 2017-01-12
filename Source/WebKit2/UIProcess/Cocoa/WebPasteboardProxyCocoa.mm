@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WebPasteboardProxy.h"
+#import "WebProcessProxy.h"
 
 #import <WebCore/Color.h>
 #import <WebCore/PlatformPasteboard.h>
@@ -98,9 +99,23 @@ void WebPasteboardProxy::setPasteboardTypes(const String& pasteboardName, const 
     newChangeCount = PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-void WebPasteboardProxy::setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
+void WebPasteboardProxy::setPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
 {
-    newChangeCount = PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+    for (auto* webProcessProxy : m_webProcessProxyList) {
+        if (webProcessProxy->connection() != &connection)
+            continue;
+        
+        for (const auto& pathname : pathnames) {
+            if (!webProcessProxy->checkURLReceivedFromWebProcess(pathname)) {
+                connection.markCurrentlyDispatchedMessageAsInvalid();
+                newChangeCount = 0;
+                return;
+            }
+        }
+        newChangeCount = PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+        return;
+    }
+    newChangeCount = 0;
 }
 
 void WebPasteboardProxy::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, uint64_t& newChangeCount)

@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
@@ -51,6 +52,7 @@ public:
     static WebPasteboardProxy& singleton();
 
     void addWebProcessProxy(WebProcessProxy&);
+    void removeWebProcessProxy(WebProcessProxy&);
 
 #if PLATFORM(GTK)
     void setPrimarySelectionOwner(WebFrameProxy*);
@@ -59,6 +61,8 @@ public:
 
 private:
     WebPasteboardProxy();
+    
+    typedef HashSet<WebProcessProxy*> WebProcessProxyList;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
@@ -84,7 +88,7 @@ private:
     void getPasteboardURL(const String& pasteboardName, WTF::String&);
     void addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount);
     void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount);
-    void setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount);
+    void setPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount);
     void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, uint64_t& newChangeCount);
     void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
 #endif
@@ -95,6 +99,8 @@ private:
     WebFrameProxy* m_primarySelectionOwner { nullptr };
     WebFrameProxy* m_frameWritingToClipboard { nullptr };
 #endif // PLATFORM(GTK)
+    
+    WebProcessProxyList m_webProcessProxyList;
 };
 
 } // namespace WebKit
