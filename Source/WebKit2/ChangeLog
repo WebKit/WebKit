@@ -1,3 +1,13 @@
+2017-01-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream, Mac] Render media stream audio buffers
+        https://bugs.webkit.org/show_bug.cgi?id=159836
+        <rdar://problem/27380390>
+
+        Unreviewed, revert accidental change.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-01-11  Brady Eidson  <beidson@apple.com>
 
         Add IconLoadingDelegate functionality to WKView.

@@ -448,8 +448,3 @@
         (iokit-user-client-class "IOUSBDeviceUserClientV2")
         (iokit-user-client-class "IOUSBInterfaceUserClientV2"))
     (allow device-camera))
-
-;; @@@@@
-(allow device-microphone)
-;; @@@@@
-
