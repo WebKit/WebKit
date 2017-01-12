@@ -57,6 +57,7 @@ using namespace WebCore;
         // Note that CADisplayLink retains its target (self), so a call to -invalidate is needed on teardown.
         m_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(handleDisplayLink:)];
         [m_displayLink addToRunLoop:WebThreadNSRunLoop() forMode:NSDefaultRunLoopMode];
+        m_displayLink.preferredFramesPerSecond = 60;
     }
     return self;
 }

@@ -1,3 +1,15 @@
+2017-01-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS][WK1] Fix initialization of CADisplayLink::preferredFramesPerSecond
+        https://bugs.webkit.org/show_bug.cgi?id=166956
+
+        Reviewed by Tim Horton.
+        
+        Set this option to 60fps instead of leaving set to the default.
+
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.mm:
+        (-[WebDisplayLinkHandler initWithMonitor:]):
+
 2017-01-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix for macOS ports
