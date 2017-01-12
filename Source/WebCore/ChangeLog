@@ -1,3 +1,16 @@
+2017-01-12  Alex Christensen  <achristensen@webkit.org>
+
+        Update style of ResourceHandleInternal
+        https://bugs.webkit.org/show_bug.cgi?id=166952
+
+        Reviewed by Andreas Kling.
+
+        No change in behavior.  Just un-indent and use initializer lists.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::client):
+
 2017-01-12  Jer Noble  <jer.noble@apple.com>
 
         Use GenericEventQueue rather than callOnMainThread to schedule events in AudioScheduledSourceNode.
