@@ -1939,11 +1939,10 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyN
 {
     auto* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    std::optional<uint32_t> optionalIndex = parseIndex(propertyName);
-    if (optionalIndex) {
-        unsigned index = optionalIndex.value();
-        unsigned attributes = ReadOnly;
-        slot.setValue(thisObject, attributes, jsStringOrUndefined(state, thisObject->wrapped().item(index)));
+    auto optionalIndex = parseIndex(propertyName);
+    if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {
+        auto index = optionalIndex.value();
+        slot.setValue(thisObject, ReadOnly, toJS<IDLNullable<IDLDOMString>>(*state, thisObject->wrapped().nullableStringSpecialMethod(index)));
         return true;
     }
     if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
@@ -1955,12 +1954,20 @@ bool JSTestObj::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, un
 {
     auto* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (LIKELY(index <= MAX_ARRAY_INDEX)) {
-        unsigned attributes = DontDelete | ReadOnly;
-        slot.setValue(thisObject, attributes, jsStringOrUndefined(state, thisObject->wrapped().item(index)));
+    if (LIKELY(index < thisObject->wrapped().length())) {
+        slot.setValue(thisObject, ReadOnly, toJS<IDLNullable<IDLDOMString>>(*state, thisObject->wrapped().nullableStringSpecialMethod(index)));
         return true;
     }
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+}
+
+void JSTestObj::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    auto* thisObject = jsCast<JSTestObj*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
+        propertyNames.add(Identifier::from(state, i));
+    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
 template<> inline JSTestObj* BindingCaller<JSTestObj>::castForAttribute(ExecState&, EncodedJSValue thisValue)
@@ -5125,15 +5132,6 @@ static inline bool setJSTestObjStringifierAttributeFunction(ExecState& state, JS
     return true;
 }
 
-
-void JSTestObj::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    auto* thisObject = jsCast<JSTestObj*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
-        propertyNames.add(Identifier::from(state, i));
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
-}
 
 JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {

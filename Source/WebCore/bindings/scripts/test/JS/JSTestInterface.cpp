@@ -398,6 +398,28 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterface::~JSTestInterface();
 }
 
+bool JSTestInterface::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    auto* thisObject = jsCast<JSTestInterface*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    bool putResult = false;
+    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
+        return putResult;
+    return Base::put(thisObject, state, propertyName, value, slot);
+}
+
+bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
+{
+    auto* thisObject = jsCast<JSTestInterface*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Identifier propertyName = Identifier::from(state, index);
+    PutPropertySlot slot(thisObject, shouldThrow);
+    bool putResult = false;
+    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
+        return putResult;
+    return Base::putByIndex(cell, state, index, value, shouldThrow);
+}
+
 template<> inline JSTestInterface* BindingCaller<JSTestInterface>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicDowncast<JSTestInterface*>(JSValue::decode(thisValue));
@@ -650,28 +672,6 @@ bool setJSTestInterfaceConstructor(ExecState* state, EncodedJSValue thisValue, E
     }
     // Shadowing a built-in constructor
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
-}
-
-bool JSTestInterface::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    auto* thisObject = jsCast<JSTestInterface*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    bool putResult = false;
-    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
-        return putResult;
-    return Base::put(thisObject, state, propertyName, value, slot);
-}
-
-bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
-{
-    auto* thisObject = jsCast<JSTestInterface*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Identifier propertyName = Identifier::from(state, index);
-    PutPropertySlot slot(thisObject, shouldThrow);
-    bool putResult = false;
-    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))
-        return putResult;
-    return Base::putByIndex(cell, state, index, value, shouldThrow);
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)

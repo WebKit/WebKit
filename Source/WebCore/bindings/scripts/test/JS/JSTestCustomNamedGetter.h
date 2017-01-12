@@ -57,7 +57,6 @@ protected:
     JSTestCustomNamedGetter(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCustomNamedGetter>&&);
 
     void finishCreation(JSC::VM&);
-private:
     bool nameGetter(JSC::ExecState*, JSC::PropertyName, JSC::JSValue&);
 };
 

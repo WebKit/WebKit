@@ -25,7 +25,6 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSNode.h"
-#include "wtf/text/AtomicString.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
@@ -135,10 +134,10 @@ bool JSTestOverrideBuiltins::getOwnPropertySlot(JSObject* object, ExecState* sta
 {
     auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (thisObject->classInfo() == info()) {
-        JSValue value;
-        if (thisObject->nameGetter(state, propertyName, value)) {
-            slot.setValue(thisObject, ReadOnly | DontEnum, value);
+    if (thisObject->classInfo() == info() && !propertyName.isSymbol()) {
+        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!IDLInterface<Node>::isNullValue(item)) {
+            slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), item));
             return true;
         }
     }
@@ -153,13 +152,22 @@ bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecSta
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Identifier propertyName = Identifier::from(state, index);
     if (thisObject->classInfo() == info()) {
-        JSValue value;
-        if (thisObject->nameGetter(state, propertyName, value)) {
-            slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum, value);
+        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!IDLInterface<Node>::isNullValue(item)) {
+            slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), item));
             return true;
         }
     }
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+}
+
+void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
+        propertyNames.add(Identifier::fromString(state, propertyName));
+    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
 template<> inline JSTestOverrideBuiltins* BindingCaller<JSTestOverrideBuiltins>::castForOperation(ExecState& state)
@@ -189,17 +197,6 @@ bool setJSTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisV
     }
     // Shadowing a built-in constructor
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
-}
-
-void JSTestOverrideBuiltins::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    auto* thisObject = jsCast<JSTestOverrideBuiltins*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (mode.includeDontEnumProperties()) {
-        for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
-            propertyNames.add(Identifier::fromString(state, propertyName));
-    }
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
 JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, const JSGlobalObject* globalObject)

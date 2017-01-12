@@ -58,8 +58,6 @@ protected:
     JSTestOverrideBuiltins(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOverrideBuiltins>&&);
 
     void finishCreation(JSC::VM&);
-private:
-    bool nameGetter(JSC::ExecState*, JSC::PropertyName, JSC::JSValue&);
 };
 
 class JSTestOverrideBuiltinsOwner : public JSC::WeakHandleOwner {

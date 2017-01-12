@@ -43,7 +43,6 @@ public:
     static TestInterface* toWrapped(JSC::JSValue);
     static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
     static bool putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);
-    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -80,6 +79,7 @@ protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&);
 
     void finishCreation(JSC::VM&);
+    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);
 };
 
 class JSTestInterfaceOwner : public JSC::WeakHandleOwner {

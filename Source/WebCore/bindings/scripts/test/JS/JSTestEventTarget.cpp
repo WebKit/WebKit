@@ -25,7 +25,6 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSNode.h"
-#include "wtf/text/AtomicString.h"
 #include <runtime/Error.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/GetPtr.h>
@@ -128,11 +127,10 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* state, P
 {
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    std::optional<uint32_t> optionalIndex = parseIndex(propertyName);
+    auto optionalIndex = parseIndex(propertyName);
     if (optionalIndex && optionalIndex.value() < thisObject->wrapped().length()) {
-        unsigned index = optionalIndex.value();
-        unsigned attributes = ReadOnly;
-        slot.setValue(thisObject, attributes, toJS(state, thisObject->globalObject(), thisObject->wrapped().item(index)));
+        auto index = optionalIndex.value();
+        slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), thisObject->wrapped().item(index)));
         return true;
     }
     if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
@@ -141,10 +139,10 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* state, P
     if (proto.isObject() && jsCast<JSObject*>(proto)->hasProperty(state, propertyName))
         return false;
 
-    if (!optionalIndex && thisObject->classInfo() == info()) {
-        JSValue value;
-        if (thisObject->nameGetter(state, propertyName, value)) {
-            slot.setValue(thisObject, ReadOnly | DontEnum, value);
+    if (!optionalIndex && thisObject->classInfo() == info() && !propertyName.isSymbol()) {
+        auto item = thisObject->wrapped().namedItem(propertyNameToAtomicString(propertyName));
+        if (!IDLInterface<Node>::isNullValue(item)) {
+            slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), item));
             return true;
         }
     }
@@ -156,11 +154,21 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* s
     auto* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (LIKELY(index < thisObject->wrapped().length())) {
-        unsigned attributes = DontDelete | ReadOnly;
-        slot.setValue(thisObject, attributes, toJS(state, thisObject->globalObject(), thisObject->wrapped().item(index)));
+        slot.setValue(thisObject, ReadOnly, toJS<IDLInterface<Node>>(*state, *thisObject->globalObject(), thisObject->wrapped().item(index)));
         return true;
     }
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
+}
+
+void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    auto* thisObject = jsCast<JSTestEventTarget*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
+        propertyNames.add(Identifier::from(state, i));
+    for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
+        propertyNames.add(Identifier::fromString(state, propertyName));
+    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
 template<> inline JSTestEventTarget* BindingCaller<JSTestEventTarget>::castForOperation(ExecState& state)
@@ -190,19 +198,6 @@ bool setJSTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue,
     }
     // Shadowing a built-in constructor
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
-}
-
-void JSTestEventTarget::getOwnPropertyNames(JSObject* object, ExecState* state, PropertyNameArray& propertyNames, EnumerationMode mode)
-{
-    auto* thisObject = jsCast<JSTestEventTarget*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    for (unsigned i = 0, count = thisObject->wrapped().length(); i < count; ++i)
-        propertyNames.add(Identifier::from(state, i));
-    if (mode.includeDontEnumProperties()) {
-        for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
-            propertyNames.add(Identifier::fromString(state, propertyName));
-    }
-    Base::getOwnPropertyNames(thisObject, state, propertyNames, mode);
 }
 
 JSValue JSTestEventTarget::getConstructor(VM& vm, const JSGlobalObject* globalObject)

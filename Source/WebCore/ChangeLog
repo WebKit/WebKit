@@ -1,3 +1,30 @@
+2017-01-12  Sam Weinig  <sam@webkit.org>
+
+        Update bindings test results.
+
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertySlot):
+        (WebCore::JSTestEventTarget::getOwnPropertySlotByIndex):
+        (WebCore::JSTestEventTarget::getOwnPropertyNames):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::put):
+        (WebCore::JSTestInterface::putByIndex):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertySlotByIndex):
+        (WebCore::JSTestObj::getOwnPropertyNames):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltins::getOwnPropertySlot):
+        (WebCore::JSTestOverrideBuiltins::getOwnPropertySlotByIndex):
+        (WebCore::JSTestOverrideBuiltins::getOwnPropertyNames):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+
 2017-01-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] WebKitWebProcess at 100% CPU loading hyphenation dictionaries

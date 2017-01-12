@@ -64,8 +64,6 @@ protected:
     JSTestEventTarget(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventTarget>&&);
 
     void finishCreation(JSC::VM&);
-private:
-    bool nameGetter(JSC::ExecState*, JSC::PropertyName, JSC::JSValue&);
 };
 
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventTarget&);
