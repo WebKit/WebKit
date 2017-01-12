@@ -1,3 +1,19 @@
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210457. rdar://problem/27330808
+
+    2017-01-06  Michael Saboff  <msaboff@apple.com>
+
+            @putByValDirect in Array.of and Array.from overwrites non-writable/configurable properties
+            https://bugs.webkit.org/show_bug.cgi?id=153486
+
+            Reviewed by Saam Barati.
+
+            Moved read only check in putDirect() to all paths.
+
+            * runtime/SparseArrayValueMap.cpp:
+            (JSC::SparseArrayValueMap::putDirect):
+
 2017-01-11  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210451. rdar://problem/29909812
