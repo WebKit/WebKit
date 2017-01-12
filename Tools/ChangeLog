@@ -1,3 +1,14 @@
+2017-01-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Add committer status for Megan
+        https://bugs.webkit.org/show_bug.cgi?id=166954
+
+        Reviewed by Tim Horton.
+
+        Add committer status for Megan Gardner
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r210599.
