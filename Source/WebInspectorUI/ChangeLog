@@ -1,3 +1,14 @@
+2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add another Protocol Version
+        https://bugs.webkit.org/show_bug.cgi?id=166953
+        <rdar://problem/29980631>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-10.3.json: Added.
+
 2017-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: spring function editor has unusual layout, should have left-aligned labels and slider tracks
