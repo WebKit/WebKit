@@ -1,5 +1,12 @@
 2017-01-11  Brent Fulgham  <bfulgham@apple.com>
 
+        [GTK] Unreviewed build fix after r210600.
+
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::getFileDeviceId): Attempting to use proper API here.
+
+2017-01-11  Brent Fulgham  <bfulgham@apple.com>
+
         [GTK] Unreviewed build fix after r210599.
 
         * platform/glib/FileSystemGlib.cpp:
