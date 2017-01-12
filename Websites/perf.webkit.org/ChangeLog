@@ -1,5 +1,27 @@
 2017-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Outliers are not hidden in v3 UI
+        https://bugs.webkit.org/show_bug.cgi?id=166966
+
+        Reviewed by Andreas Kling.
+
+        Fixed the typo in addToSeries. An outlier has markedOutlier set to true, not isOutlier.
+
+        Also fixed a bug unveiled by new tests in MeasurementRootSet.ensureSingleton. It was was creating
+        a new MeasurementRootSet each time it was called instead of finding an existing instance. Fixed the bug
+        by merging the static maps of MeasurementRootSet and RootSet.
+
+        * public/v3/models/measurement-cluster.js:
+        (MeasurementCluster.prototype.addToSeries): Fixed the bug.
+        * public/v3/models/root-set.js:
+        (MeasurementRootSet.prototype.namedStaticMap): Added.
+        (MeasurementRootSet.prototype.ensureNamedStaticMap): Added.
+        (MeasurementRootSet.namedStaticMap): Added.
+        (MeasurementRootSet.ensureNamedStaticMap): Added.
+        * unit-tests/measurement-set-tests.js: Added tests for adopting time series data from a cluster.
+
+2017-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Hide the UI to trigger an A/B testing when there are no triggerables
         https://bugs.webkit.org/show_bug.cgi?id=166964
 

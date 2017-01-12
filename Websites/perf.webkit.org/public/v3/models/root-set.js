@@ -29,6 +29,7 @@ class RootSet extends DataModelObject {
         return commit ? commit.revision() : null;
     }
 
+    // FIXME: This should return a Date object.
     latestCommitTime()
     {
         if (this._latestCommitTime == null) {
@@ -85,6 +86,13 @@ class MeasurementRootSet extends RootSet {
             this._repositories.push(repository);
         }
     }
+
+    // Use RootSet's static maps because MeasurementRootSet and RootSet are logically of the same type.
+    // FIXME: Idaelly, DataModel should take care of this but traversing prototype chain is expensive.
+    namedStaticMap(name) { return RootSet.namedStaticMap(name); }
+    ensureNamedStaticMap(name) { return RootSet.ensureNamedStaticMap(name); }
+    static namedStaticMap(name) { return RootSet.namedStaticMap(name); }
+    static ensureNamedStaticMap(name) { return RootSet.ensureNamedStaticMap(name); }
 
     static ensureSingleton(measurementId, revisionList)
     {

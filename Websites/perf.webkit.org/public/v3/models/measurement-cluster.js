@@ -19,7 +19,7 @@ class MeasurementCluster {
         var self = this;
         for (var row of rawMeasurements) {
             var point = this._adaptor.applyTo(row);
-            if (point.id in idMap || (!includeOutliers && point.isOutlier))
+            if (point.id in idMap || (!includeOutliers && point.markedOutlier))
                 continue;
             series.append(point);
             idMap[point.id] = point.seriesIndex;
