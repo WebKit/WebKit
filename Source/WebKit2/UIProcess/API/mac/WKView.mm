@@ -29,8 +29,10 @@
 #if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
+#import "APIIconLoadingClient.h"
 #import "APIPageConfiguration.h"
 #import "WKBrowsingContextGroupPrivate.h"
+#import "WKNSData.h"
 #import "WKProcessGroupPrivate.h"
 #import "WebBackForwardListItem.h"
 #import "WebKit2Initialize.h"
@@ -38,6 +40,8 @@
 #import "WebPreferencesKeys.h"
 #import "WebProcessPool.h"
 #import "WebViewImpl.h"
+#import "_WKLinkIconParametersInternal.h"
+#import <wtf/BlockPtr.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -78,6 +82,7 @@ using namespace WebCore;
 
 - (void)dealloc
 {
+    _data->_impl->page().setIconLoadingClient(nullptr);
     _data->_impl = nullptr;
 
     [_data release];
@@ -848,6 +853,48 @@ Some other editing-related methods still unimplemented:
     return _data->_impl->namesOfPromisedFilesDroppedAtDestination(dropDestination);
 }
 
+- (void)maybeInstallIconLoadingClient
+{
+#if WK_API_ENABLED
+    class IconLoadingClient : public API::IconLoadingClient {
+    public:
+        explicit IconLoadingClient(WKView *wkView)
+            : m_wkView(wkView)
+        {
+        }
+
+        static SEL delegateSelector()
+        {
+            return sel_registerName("_shouldLoadIconWithParameters:completionHandler:");
+        }
+
+    private:
+        typedef void (^IconLoadCompletionHandler)(NSData*);
+
+        void getLoadDecisionForIcon(const WebCore::LinkIcon& linkIcon, Function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)>&& completionHandler) override {
+            RetainPtr<_WKLinkIconParameters> parameters = adoptNS([[_WKLinkIconParameters alloc] _initWithLinkIcon:linkIcon]);
+
+            [m_wkView performSelector:delegateSelector() withObject:parameters.get() withObject:^void (IconLoadCompletionHandler loadCompletionHandler) {
+                if (loadCompletionHandler) {
+                    completionHandler([loadCompletionHandler = BlockPtr<void (NSData *)>(loadCompletionHandler)](API::Data* data, WebKit::CallbackBase::Error error) {
+                        if (error != CallbackBase::Error::None || !data)
+                            loadCompletionHandler(nil);
+                        else
+                            loadCompletionHandler(wrapper(*data));
+                    });
+                } else
+                    completionHandler(nullptr);
+            }];
+        }
+
+        WKView *m_wkView;
+    };
+
+    if ([self respondsToSelector:IconLoadingClient::delegateSelector()])
+        _data->_impl->page().setIconLoadingClient(std::make_unique<IconLoadingClient>(self));
+#endif // WK_API_ENABLED
+}
+
 - (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];
@@ -858,6 +905,8 @@ Some other editing-related methods still unimplemented:
 
     _data = [[WKViewData alloc] init];
     _data->_impl = std::make_unique<WebViewImpl>(self, webView, processPool, WTFMove(configuration));
+
+    [self maybeInstallIconLoadingClient];
 
     return self;
 }

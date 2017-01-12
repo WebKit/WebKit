@@ -1,3 +1,16 @@
+2017-01-11  Brady Eidson  <beidson@apple.com>
+
+        Add IconLoadingDelegate functionality to WKView.
+        https://bugs.webkit.org/show_bug.cgi?id=166951
+
+        Reviewed by Tim Horton.
+        
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        (-[WKView maybeInstallIconLoadingClient]): If the subclass implements the delegate method, install the
+          icon loading client. Otherwise, maintain the normal IconDatabase loading behavior.
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+
 2017-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][Cocoa] Avoid null dereference in FullScreen code.
