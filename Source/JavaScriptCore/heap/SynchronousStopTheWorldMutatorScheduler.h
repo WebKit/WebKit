@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,53 +25,32 @@
 
 #pragma once
 
-#include <wtf/MonotonicTime.h>
-#include <wtf/Seconds.h>
+#include "MutatorScheduler.h"
 
 namespace JSC {
 
-class Heap;
+// The JSC concurrent GC relies on stopping the world to stay ahead of the retreating wavefront.
+// It so happens that the same API can be reused to implement a non-concurrent GC mode, which we
+// use on platforms that don't support the GC's atomicity protocols. That means anything other
+// than X86-64 and ARM64. This scheduler is a drop-in replacement for the concurrent GC's
+// SpaceTimeMutatorScheduler. It tells the GC to never resume the world once the GC cycle begins.
 
-class SpaceTimeScheduler {
+class SynchronousStopTheWorldMutatorScheduler : public MutatorScheduler {
 public:
-    class Decision {
-    public:
-        explicit operator bool() const { return !!m_scheduler; }
-        
-        double targetMutatorUtilization() const;
-        double targetCollectorUtilization() const;
-        Seconds elapsedInPeriod() const;
-        double phase() const;
-        bool shouldBeResumed() const;
-        MonotonicTime timeToResume() const;
-        MonotonicTime timeToStop() const;
-        
-    private:
-        friend class SpaceTimeScheduler;
+    SynchronousStopTheWorldMutatorScheduler();
+    ~SynchronousStopTheWorldMutatorScheduler();
+    
+    State state() const override;
+    
+    void beginCollection() override;
+    
+    MonotonicTime timeToStop() override;
+    MonotonicTime timeToResume() override;
+    
+    void endCollection() override;
 
-        SpaceTimeScheduler* m_scheduler { nullptr };
-        double m_bytesAllocatedThisCycle { 0 };
-        MonotonicTime m_now;
-    };
-    
-    // Construct the scheduler at the start of a GC cycle.
-    SpaceTimeScheduler(Heap&);
-    
-    // Forces the next phase to start now.
-    void snapPhase();
-    
-    // Returns a snapshot of the current scheduling decision, which will be valid so long as
-    // SpaceTimeScheduler is live and you haven't called snapPhase().
-    Decision currentDecision();
-    
 private:
-    friend class Decision;
-
-    Heap& m_heap;
-    Seconds m_period;
-    double m_bytesAllocatedThisCycleAtTheBeginning;
-    double m_bytesAllocatedThisCycleAtTheEnd;
-    MonotonicTime m_initialTime;
+    State m_state { Normal };
 };
 
 } // namespace JSC

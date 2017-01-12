@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,67 +25,44 @@
 
 #pragma once
 
-#include <wtf/HashSet.h>
+#include "SlotVisitor.h"
+#include <wtf/MonotonicTime.h>
 
 namespace JSC {
 
-class OpaqueRootSet {
-    WTF_MAKE_NONCOPYABLE(OpaqueRootSet);
+class VisitingTimeout {
 public:
-    OpaqueRootSet()
-        : m_lastQueriedRoot(nullptr)
-        , m_containsLastQueriedRoot(false)
+    VisitingTimeout()
     {
     }
-
-    bool contains(void* root) const
+    
+    VisitingTimeout(SlotVisitor& visitor, bool didVisitSomething, MonotonicTime timeout)
+        : m_didVisitSomething(didVisitSomething)
+        , m_visitCountBefore(visitor.visitCount())
+        , m_timeout(timeout)
     {
-        if (root != m_lastQueriedRoot) {
-            m_lastQueriedRoot = root;
-            m_containsLastQueriedRoot = m_roots.contains(root);
-        }
-        return m_containsLastQueriedRoot;
+    }
+    
+    size_t visitCount(SlotVisitor& visitor) const
+    {
+        return visitor.visitCount() - m_visitCountBefore;
     }
 
-    bool isEmpty() const
+    bool didVisitSomething(SlotVisitor& visitor) const
     {
-        return m_roots.isEmpty();
+        return m_didVisitSomething || visitCount(visitor);
     }
-
-    void clear()
+    
+    bool shouldTimeOut(SlotVisitor& visitor) const
     {
-        m_roots.clear();
-        m_lastQueriedRoot = nullptr;
-        m_containsLastQueriedRoot = false;
+        return didVisitSomething(visitor) && hasElapsed(m_timeout);
     }
-
-    bool add(void* root)
-    {
-        if (root == m_lastQueriedRoot)
-            m_containsLastQueriedRoot = true;
-        return m_roots.add(root).isNewEntry;
-    }
-
-    int size() const
-    {
-        return m_roots.size();
-    }
-
-    HashSet<void*>::const_iterator begin() const
-    {
-        return m_roots.begin();
-    }
-
-    HashSet<void*>::const_iterator end() const
-    {
-        return m_roots.end();
-    }
-
-
+    
 private:
-    HashSet<void*> m_roots;
-    mutable void* m_lastQueriedRoot;
-    mutable bool m_containsLastQueriedRoot;
+    bool m_didVisitSomething { false };
+    size_t m_visitCountBefore { 0 };
+    MonotonicTime m_timeout;
 };
 
 } // namespace JSC
+

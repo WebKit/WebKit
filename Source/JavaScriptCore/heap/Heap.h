@@ -73,8 +73,10 @@ class JSValue;
 class LLIntOffsetsExtractor;
 class MarkStackArray;
 class MarkedArgumentBuffer;
+class MarkingConstraintSet;
+class MutatorScheduler;
 class SlotVisitor;
-class SpaceTimeScheduler;
+class SpaceTimeMutatorScheduler;
 class StopIfNecessaryTimer;
 class VM;
 
@@ -201,7 +203,7 @@ public:
     // and this will wait for that backlog before running its GC and returning.
     JS_EXPORT_PRIVATE void collectSync(std::optional<CollectionScope> = std::nullopt);
     
-    bool collectIfNecessaryOrDefer(GCDeferralContext* = nullptr); // Returns true if it did collect.
+    void collectIfNecessaryOrDefer(GCDeferralContext* = nullptr);
 
     void completeAllJITPlans();
     
@@ -375,7 +377,7 @@ private:
     friend class MarkedAllocator;
     friend class MarkedBlock;
     friend class SlotVisitor;
-    friend class SpaceTimeScheduler;
+    friend class SpaceTimeMutatorScheduler;
     friend class IncrementalSweeper;
     friend class HeapStatistics;
     friend class VM;
@@ -411,9 +413,6 @@ private:
     
     void stopTheWorld();
     void resumeTheWorld();
-    
-    class ResumeTheWorldScope;
-    friend class ResumeTheWorldScope;
     
     void stopTheMutator();
     void resumeTheMutator();
@@ -454,7 +453,6 @@ private:
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
     void beginMarking();
-    void visitConservativeRoots(ConservativeRoots&);
     void visitCompilerWorklistWeakReferences();
     void removeDeadCompilerWorklistEntries();
     void updateObjectCounts(double gcStartTime);
@@ -498,6 +496,16 @@ private:
     JS_EXPORT_PRIVATE void writeBarrierOpaqueRootSlow(void*);
     
     void setMutatorShouldBeFenced(bool value);
+    
+    void buildConstraintSet();
+    
+    template<typename Func>
+    void iterateExecutingAndCompilingCodeBlocks(const Func&);
+    
+    template<typename Func>
+    void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(const Func&);
+    
+    void assertSharedMarkStacksEmpty();
 
     const HeapType m_heapType;
     const size_t m_ramSize;
@@ -534,6 +542,8 @@ private:
     
     std::unique_ptr<SlotVisitor> m_collectorSlotVisitor;
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
+    
+    std::unique_ptr<MarkingConstraintSet> m_constraintSet;
 
     // We pool the slot visitors used by parallel marking threads. It's useful to be able to
     // enumerate over them, and it's useful to have them cache some small amount of memory from
@@ -616,6 +626,8 @@ private:
     size_t m_externalMemorySize { 0 };
 #endif
     
+    std::unique_ptr<MutatorScheduler> m_scheduler;
+    
     static const unsigned shouldStopBit = 1u << 0u;
     static const unsigned stoppedBit = 1u << 1u;
     static const unsigned hasAccessBit = 1u << 2u;
@@ -631,6 +643,7 @@ private:
     Ticket m_lastGrantedTicket { 0 };
     bool m_threadShouldStop { false };
     bool m_threadIsStopping { false };
+    bool m_mutatorDidRun { true };
     Box<Lock> m_threadLock;
     RefPtr<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;

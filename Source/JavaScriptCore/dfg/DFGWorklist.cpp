@@ -351,28 +351,6 @@ void Worklist::completeAllPlansForVM(VM& vm)
     completeAllReadyPlansForVM(vm);
 }
 
-void Worklist::markCodeBlocks(VM& vm, SlotVisitor& slotVisitor)
-{
-    LockHolder locker(*m_lock);
-    for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
-        Plan* plan = iter->value.get();
-        if (plan->vm != &vm)
-            continue;
-        plan->markCodeBlocks(slotVisitor);
-    }
-}
-
-void Worklist::rememberCodeBlocks(VM& vm)
-{
-    LockHolder locker(*m_lock);
-    for (PlanMap::iterator iter = m_plans.begin(); iter != m_plans.end(); ++iter) {
-        Plan* plan = iter->value.get();
-        if (plan->vm != &vm)
-            continue;
-        plan->rememberCodeBlocks(vm);
-    }
-}
-
 void Worklist::suspendAllThreads()
 {
     m_suspensionLock.lock();
@@ -566,22 +544,6 @@ void completeAllPlansForVM(VM& vm)
     }
 }
 
-void markCodeBlocks(VM& vm, SlotVisitor& slotVisitor)
-{
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i))
-            worklist->markCodeBlocks(vm, slotVisitor);
-    }
-}
-
-void rememberCodeBlocks(VM& vm)
-{
-    for (unsigned i = DFG::numberOfWorklists(); i--;) {
-        if (DFG::Worklist* worklist = DFG::existingWorklistForIndexOrNull(i))
-            worklist->rememberCodeBlocks(vm);
-    }
-}
-
 #else // ENABLE(DFG_JIT)
 
 void completeAllPlansForVM(VM&)
@@ -589,10 +551,6 @@ void completeAllPlansForVM(VM&)
 }
 
 void markCodeBlocks(VM&, SlotVisitor&)
-{
-}
-
-void rememberCodeBlocks(VM&)
 {
 }
 

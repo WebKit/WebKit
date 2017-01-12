@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -347,6 +347,11 @@ private:
     SlotVisitor& m_visitor;
 };
 
+void SlotVisitor::visitAsConstraint(const JSCell* cell)
+{
+    m_isVisitingMutatorStack = true;
+    visitChildren(cell);
+}
 
 ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
 {
@@ -461,7 +466,7 @@ void SlotVisitor::drain(MonotonicTime timeout)
     
     auto locker = holdLock(m_rightToRun);
     
-    while ((!m_collectorStack.isEmpty() || !m_mutatorStack.isEmpty()) && !hasElapsed(timeout)) {
+    while (!hasElapsed(timeout)) {
         updateMutatorIsStopped(locker);
         if (!m_collectorStack.isEmpty()) {
             m_collectorStack.refill();
@@ -476,7 +481,8 @@ void SlotVisitor::drain(MonotonicTime timeout)
             m_isVisitingMutatorStack = true;
             for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance(); m_mutatorStack.canRemoveLast() && countdown--;)
                 visitChildren(m_mutatorStack.removeLast());
-        }
+        } else
+            break;
         m_rightToRun.safepoint();
         donateKnownParallel();
     }
@@ -486,12 +492,18 @@ void SlotVisitor::drain(MonotonicTime timeout)
 
 bool SlotVisitor::didReachTermination()
 {
+    LockHolder locker(m_heap.m_markingMutex);
+    return isEmpty() && didReachTermination(locker);
+}
+
+bool SlotVisitor::didReachTermination(const LockHolder&)
+{
     return !m_heap.m_numberOfActiveParallelMarkers
         && m_heap.m_sharedCollectorMarkStack->isEmpty()
         && m_heap.m_sharedMutatorMarkStack->isEmpty();
 }
 
-bool SlotVisitor::hasWork()
+bool SlotVisitor::hasWork(const LockHolder&)
 {
     return !m_heap.m_sharedCollectorMarkStack->isEmpty()
         || !m_heap.m_sharedMutatorMarkStack->isEmpty();
@@ -518,12 +530,12 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
                     if (hasElapsed(timeout))
                         return SharedDrainResult::TimedOut;
                     
-                    if (didReachTermination()) {
+                    if (didReachTermination(locker)) {
                         m_heap.m_markingConditionVariable.notifyAll();
                         return SharedDrainResult::Done;
                     }
                     
-                    if (hasWork())
+                    if (hasWork(locker))
                         break;
                     
                     m_heap.m_markingConditionVariable.waitUntil(m_heap.m_markingMutex, timeout);
@@ -534,13 +546,13 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedDrainMode shar
                 if (hasElapsed(timeout))
                     return SharedDrainResult::TimedOut;
                 
-                if (didReachTermination())
+                if (didReachTermination(locker))
                     m_heap.m_markingConditionVariable.notifyAll();
 
                 m_heap.m_markingConditionVariable.waitUntil(
                     m_heap.m_markingMutex, timeout,
-                    [this] {
-                        return hasWork()
+                    [&] {
+                        return hasWork(locker)
                             || m_heap.m_parallelMarkersShouldExit;
                     });
                 
@@ -589,7 +601,7 @@ SlotVisitor::SharedDrainResult SlotVisitor::drainInParallelPassively(MonotonicTi
         if (hasElapsed(timeout))
             return SharedDrainResult::TimedOut;
         
-        if (didReachTermination()) {
+        if (didReachTermination(locker)) {
             m_heap.m_markingConditionVariable.notifyAll();
             return SharedDrainResult::Done;
         }
@@ -605,13 +617,13 @@ void SlotVisitor::addOpaqueRoot(void* root)
     
     if (Options::numberOfGCMarkers() == 1) {
         // Put directly into the shared HashSet.
-        m_heap.m_opaqueRoots.add(root);
+        m_visitCount += m_heap.m_opaqueRoots.add(root).isNewEntry;
         return;
     }
     // Put into the local set, but merge with the shared one every once in
     // a while to make sure that the local sets don't grow too large.
     mergeOpaqueRootsIfProfitable();
-    m_opaqueRoots.add(root);
+    m_visitCount += m_opaqueRoots.add(root);
 }
 
 bool SlotVisitor::containsOpaqueRoot(void* root) const
