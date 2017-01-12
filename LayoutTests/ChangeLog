@@ -1,3 +1,11 @@
+2017-01-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline inspector/dom/getAccessibilityPropertiesForNode.html after r210605.
+
+        Unreviewed test gardening.
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+
 2017-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Gardening on 13th Jan.

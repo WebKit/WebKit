@@ -19,7 +19,7 @@ Total elements to be tested: 83.
 
 <li role="treeitem">Tree Item Level 2</li>
     exists: true
-    label: 
+    label: Tree Item Level 2
     role: treeitem
     childNodeIds.length: 1
     parentNodeId: exists
@@ -41,7 +41,7 @@ Total elements to be tested: 83.
         </ul>
     </li>
     exists: true
-    label: 
+    label: Tree Item Level 1
     role: treeitem
     childNodeIds.length: 2
     parentNodeId: exists
@@ -172,7 +172,7 @@ Total elements to be tested: 83.
 
 <li role="treeitem" aria-expanded="undefined">expanded</li>
     exists: true
-    label: 
+    label: expanded
     role: treeitem
     childNodeIds.length: 1
     parentNodeId: exists
@@ -180,7 +180,7 @@ Total elements to be tested: 83.
 
 <li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
     exists: true
-    label: 
+    label: collapsed
     role: treeitem
     childNodeIds.length: 1
     expanded: false
@@ -190,7 +190,7 @@ Total elements to be tested: 83.
 
 <li role="treeitem" aria-expanded="true">expanded</li>
     exists: true
-    label: 
+    label: expanded
     role: treeitem
     childNodeIds.length: 1
     expanded: true
