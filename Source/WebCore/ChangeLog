@@ -1,3 +1,15 @@
+2017-01-11  Youenn Fablet  <youenn@apple.com>
+
+        Remove request.formData property until it gets implemented
+        https://bugs.webkit.org/show_bug.cgi?id=166920
+        <rdar://problem/29971105>
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased tests.
+
+        * Modules/fetch/FetchBody.idl:
+
 2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Reverting r210598, r210597, and r210591 to fix the iOS simulator build.

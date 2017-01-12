@@ -20,7 +20,7 @@ PASS Request interface: operation clone()
 PASS Request interface: attribute bodyUsed 
 PASS Request interface: operation arrayBuffer() 
 PASS Request interface: operation blob() 
-PASS Request interface: operation formData() 
+FAIL Request interface: operation formData() assert_own_property: interface prototype object missing non-static operation expected property "formData" missing
 PASS Request interface: operation json() 
 PASS Request interface: operation text() 
 PASS Request must be primary interface of new Request("") 
@@ -41,7 +41,7 @@ PASS Request interface: new Request("") must inherit property "clone" with the p
 PASS Request interface: new Request("") must inherit property "bodyUsed" with the proper type (13) 
 PASS Request interface: new Request("") must inherit property "arrayBuffer" with the proper type (14) 
 PASS Request interface: new Request("") must inherit property "blob" with the proper type (15) 
-PASS Request interface: new Request("") must inherit property "formData" with the proper type (16) 
+FAIL Request interface: new Request("") must inherit property "formData" with the proper type (16) assert_inherits: property "formData" not found in prototype chain
 PASS Request interface: new Request("") must inherit property "json" with the proper type (17) 
 PASS Request interface: new Request("") must inherit property "text" with the proper type (18) 
 

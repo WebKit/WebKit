@@ -23,7 +23,7 @@ PASS Consume DataView request's body as text
 PASS Consume DataView request's body as blob 
 PASS Consume DataView request's body as arrayBuffer 
 PASS Consume DataView request's body as JSON 
-FAIL Consume FormData request's body as FormData promise_test: Unhandled rejection with value: undefined
+FAIL Consume FormData request's body as FormData request.formData is not a function. (In 'request.formData()', 'request.formData' is undefined)
 PASS Consume blob response's body as blob 
 PASS Consume blob response's body as text 
 PASS Consume blob response's body as json 
