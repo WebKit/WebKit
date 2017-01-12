@@ -73,6 +73,10 @@
 #include <math.h>
 #include <wtf/StackStats.h>
 
+#if ENABLE(CSS_GRID_LAYOUT)
+#include "RenderGrid.h"
+#endif
+
 #if PLATFORM(IOS)
 #include "Settings.h"
 #endif
@@ -450,6 +454,9 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     if ((oldStyle && oldStyle->shapeOutside()) || style().shapeOutside())
         updateShapeOutsideInfoAfterStyleChange(style(), oldStyle);
+#if ENABLE(CSS_GRID_LAYOUT)
+    updateGridPositionAfterStyleChange(style(), oldStyle);
+#endif
 }
 
 void RenderBox::willBeRemovedFromTree()
@@ -462,6 +469,34 @@ void RenderBox::willBeRemovedFromTree()
     RenderBoxModelObject::willBeRemovedFromTree();
 }
     
+#if ENABLE(CSS_GRID_LAYOUT)
+
+void RenderBox::updateGridPositionAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
+{
+    if (!oldStyle || !is<RenderGrid>(parent()))
+        return;
+
+    if (oldStyle->gridItemColumnStart() == style.gridItemColumnStart()
+        && oldStyle->gridItemColumnEnd() == style.gridItemColumnEnd()
+        && oldStyle->gridItemRowStart() == style.gridItemRowStart()
+        && oldStyle->gridItemRowEnd() == style.gridItemRowEnd()
+        && oldStyle->order() == style.order()
+        && oldStyle->hasOutOfFlowPosition() == style.hasOutOfFlowPosition())
+        return;
+
+    // Positioned items don't participate on the layout of the grid,
+    // so we don't need to mark the grid as dirty if they change positions.
+    if (oldStyle->hasOutOfFlowPosition() && style.hasOutOfFlowPosition())
+        return;
+
+    // It should be possible to not dirty the grid in some cases (like moving an
+    // explicitly placed grid item).
+    // For now, it's more simple to just always recompute the grid.
+    downcast<RenderGrid>(*parent()).dirtyGrid();
+}
+
+#endif
+
 void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style, const RenderStyle* oldStyle)
 {
     const ShapeValue* shapeOutside = style.shapeOutside();

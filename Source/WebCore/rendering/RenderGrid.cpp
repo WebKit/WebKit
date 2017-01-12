@@ -152,23 +152,20 @@ void RenderGrid::Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 {
     m_needsItemsPlacement = needsItemsPlacement;
 
-    if (needsItemsPlacement)
-        clear();
-}
+    if (!needsItemsPlacement) {
+        m_grid.shrinkToFit();
+        return;
+    }
 
-void RenderGrid::Grid::clear()
-{
     m_grid.resize(0);
     m_gridItemArea.clear();
     m_hasAnyOrthogonalGridItem = false;
     m_smallestRowStart = 0;
     m_smallestColumnStart = 0;
-    // FIXME: clear these once m_grid survives layout. We cannot clear them now because they're
-    // needed after layout.
-    // m_autoRepeatEmptyColumns = nullptr;
-    // m_autoRepeatEmptyRows = nullptr;
-    // m_autoRepeatColumns = 0;
-    // m_autoRepeatRows = 0;
+    m_autoRepeatEmptyColumns = nullptr;
+    m_autoRepeatEmptyRows = nullptr;
+    m_autoRepeatColumns = 0;
+    m_autoRepeatRows = 0;
 }
 
 class GridTrack {
@@ -491,6 +488,24 @@ static inline bool selfAlignmentChangedFromStretchInColumnAxis(const RenderStyle
         && childStyle.resolvedAlignSelf(newStyle, selfAlignmentNormalBehavior).position() != ItemPositionStretch;
 }
 
+void RenderGrid::addChild(RenderObject* newChild, RenderObject* beforeChild)
+{
+    RenderBlock::addChild(newChild, beforeChild);
+
+    // The grid needs to be recomputed as it might contain auto-placed items that
+    // will change their position.
+    dirtyGrid();
+}
+
+void RenderGrid::removeChild(RenderObject& child)
+{
+    RenderBlock::removeChild(child);
+
+    // The grid needs to be recomputed as it might contain auto-placed items that
+    // will change their position.
+    dirtyGrid();
+}
+
 void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
@@ -512,6 +527,26 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
             }
         }
     }
+
+    if (explicitGridDidResize(*oldStyle) || namedGridLinesDefinitionDidChange(*oldStyle) || oldStyle->gridAutoFlow() != style().gridAutoFlow()
+        || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()))
+        dirtyGrid();
+}
+
+bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
+{
+    return oldStyle.gridColumns().size() != style().gridColumns().size()
+        || oldStyle.gridRows().size() != style().gridRows().size()
+        || oldStyle.namedGridAreaColumnCount() != style().namedGridAreaColumnCount()
+        || oldStyle.namedGridAreaRowCount() != style().namedGridAreaRowCount()
+        || oldStyle.gridAutoRepeatColumns().size() != style().gridAutoRepeatColumns().size()
+        || oldStyle.gridAutoRepeatRows().size() != style().gridAutoRepeatRows().size();
+}
+
+bool RenderGrid::namedGridLinesDefinitionDidChange(const RenderStyle& oldStyle) const
+{
+    return oldStyle.namedGridRowLines() != style().namedGridRowLines()
+        || oldStyle.namedGridColumnLines() != style().namedGridColumnLines();
 }
 
 LayoutUnit RenderGrid::computeTrackBasedLogicalHeight(const GridSizingData& sizingData) const
@@ -650,8 +685,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         relayoutChildren = true;
 
     layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
-
-    clearGrid();
 
     computeOverflow(oldClientAfterEdge);
     statePusher.pop();
@@ -1953,8 +1986,11 @@ GridTrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const
     return style().isGridAutoFlowDirectionColumn() ? ForRows : ForColumns;
 }
 
-void RenderGrid::clearGrid()
+void RenderGrid::dirtyGrid()
 {
+    if (m_grid.needsItemsPlacement())
+        return;
+
     m_grid.setNeedsItemsPlacement(true);
 }
 
@@ -1969,8 +2005,7 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     if (numPositions < 2)
         return tracks;
 
-    // FIXME: enable the ASSERT once m_grid is persistent.
-    // ASSERT(!m_grid.needsItemsPlacement());
+    ASSERT(!m_grid.needsItemsPlacement());
     bool hasCollapsedTracks = m_grid.hasAutoRepeatEmptyTracks(direction);
     LayoutUnit gap = !hasCollapsedTracks ? gridGapForDirection(direction) : LayoutUnit();
     tracks.reserveCapacity(numPositions - 1);
@@ -2803,8 +2838,7 @@ unsigned RenderGrid::numTracks(GridTrackSizingDirection direction, const Grid& g
 
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
 {
-    // FIXME: enable the ASSERT once m_grid is persistent.
-    // ASSERT(!m_grid.needsItemsPlacement());
+    ASSERT(!m_grid.needsItemsPlacement());
     for (RenderBox* child = m_grid.orderIterator().first(); child; child = m_grid.orderIterator().next())
         paintChild(*child, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
 }

@@ -1,3 +1,22 @@
+2017-01-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Make the grid sizing data persistent through layouts
+        https://bugs.webkit.org/show_bug.cgi?id=166883
+
+        Reviewed by Darin Adler and Manuel Rego Casasnovas.
+
+        The tests added are now needed to verify we perform correctly the
+        data validation after certain style changes.
+
+        * fast/css-grid-layout/grid-add-item-with-positioned-items-expected.txt: Added.
+        * fast/css-grid-layout/grid-add-item-with-positioned-items.html: Added.
+        * fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item-expected.txt: Added.
+        * fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item.html: Added.
+        * fast/css-grid-layout/grid-container-change-explicit-grid-recompute-child-expected.txt: Added.
+        * fast/css-grid-layout/grid-container-change-explicit-grid-recompute-child.html: Added.
+        * fast/css-grid-layout/grid-item-change-order-auto-flow-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-change-order-auto-flow.html: Added.
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Implement support for KeyboardEvent.code

@@ -654,6 +654,7 @@ private:
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
 
 #if ENABLE(CSS_GRID_LAYOUT)
+    void updateGridPositionAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
     bool isGridItem() const { return parent() && parent()->isRenderGrid(); }
 #endif
 

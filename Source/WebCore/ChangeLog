@@ -1,3 +1,43 @@
+2017-01-12  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Make the grid sizing data persistent through layouts
+        https://bugs.webkit.org/show_bug.cgi?id=166883
+
+        Reviewed by Darin Adler and Manuel Rego Casasnovas.
+
+        We want to keep the grid sizing data structures through different
+        layouts. This will allow to optimize some operations, reusing
+        these data while still valid. Additionally, operations like
+        determining the baseline position when the grid container is under
+        an inline formatting context need these data once the grid has
+        been laid out.
+
+        This patch controls the sizing data validity and make the data
+        structures persistent after layout.
+
+        Tests: fast/css-grid-layout/grid-add-item-with-positioned-items.html
+               fast/css-grid-layout/grid-add-positioned-block-item-after-inline-item.html
+               fast/css-grid-layout/grid-container-change-explicit-grid-recompute-child.html
+               fast/css-grid-layout/grid-item-change-order-auto-flow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange): Evaluate if the style change made the grid data invalid.
+        (WebCore::RenderBox::updateGridPositionAfterStyleChange): Evaluate if the style change made the grid data invalid.
+        * rendering/RenderBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::Grid::setNeedsItemsPlacement): The grid must execute the items placement logic before continue processing the layout.
+        (WebCore::RenderGrid::addChild): Mark the grid data as dirty.
+        (WebCore::RenderGrid::removeChild): Mark the grid data as dirty.
+        (WebCore::RenderGrid::styleDidChange): Evaluate grid data validity.
+        (WebCore::RenderGrid::explicitGridDidResize): Mark the grid data as dirty.
+        (WebCore::RenderGrid::namedGridLinesDefinitionDidChange): Mark the grid data as dirty.
+        (WebCore::RenderGrid::layoutBlock): We don't need to clear the grid data anymore.
+        (WebCore::RenderGrid::dirtyGrid): Clearing the grid data and mark is as needing to execute the items placement logic.
+        (WebCore::RenderGrid::trackSizesForComputedStyle): Assert we don't need to perform the items placement logic.
+        (WebCore::RenderGrid::paintChildren): Assert we don't need to perform the items placement logic.
+        * rendering/RenderGrid.h:
+        (WebCore::RenderGrid::clear): Deleted.
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Implement support for KeyboardEvent.code
