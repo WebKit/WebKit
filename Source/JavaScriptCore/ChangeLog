@@ -1,5 +1,15 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210530. rdar://problem/29909896
+
+    2017-01-09  Filip Pizlo  <fpizlo@apple.com>
+
+            Unreviewed, fix cloop.
+
+            * dfg/DFGPlanInlines.h:
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210521. rdar://problem/29909896
 
     2017-01-08  Filip Pizlo  <fpizlo@apple.com>
