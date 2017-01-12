@@ -1067,6 +1067,7 @@ set(WebCore_SOURCES
 
     bindings/js/CachedModuleScript.cpp
     bindings/js/CachedModuleScriptLoader.cpp
+    bindings/js/CachedScriptFetcher.cpp
     bindings/js/CallbackFunction.cpp
     bindings/js/CommonVM.cpp
     bindings/js/DOMWrapperWorld.cpp
@@ -1442,6 +1443,7 @@ set(WebCore_SOURCES
     dom/GenericEventQueue.cpp
     dom/IdTargetObserver.cpp
     dom/IdTargetObserverRegistry.cpp
+    dom/InlineClassicScript.cpp
     dom/InlineStyleSheetOwner.cpp
     dom/InputEvent.cpp
     dom/KeyboardEvent.cpp

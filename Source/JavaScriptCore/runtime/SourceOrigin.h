@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ScriptFetcher.h"
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -36,13 +37,22 @@ public:
     {
     }
 
+    explicit SourceOrigin(const String& string, Ref<ScriptFetcher>&& fetcher)
+        : m_string(string)
+        , m_fetcher(WTFMove(fetcher))
+    {
+    }
+
     SourceOrigin() = default;
 
     const String& string() const { return m_string; }
     bool isNull() const { return m_string.isNull(); }
 
+    ScriptFetcher* fetcher() const { return m_fetcher.get(); }
+
 private:
     String m_string;
+    RefPtr<ScriptFetcher> m_fetcher;
 };
 
 } // namespace JSC

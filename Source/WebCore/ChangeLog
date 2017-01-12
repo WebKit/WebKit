@@ -1,3 +1,70 @@
+2017-01-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement InlineClassicScript
+        https://bugs.webkit.org/show_bug.cgi?id=166925
+
+        Reviewed by Ryosuke Niwa.
+
+        As of r210585, ScriptFetcher functionality is decoupled from ScriptElement.
+        This patch is a further cleanup. We introduce InlineClassicScript, which is
+        similar to LoadableClassicScript / LoadableModuleScript. And we move ScriptFetcher
+        functionality from LoadableScript to CachedScriptFetcher, which is the base
+        class of InlineClassicScript and LoadableScript.
+
+        And we start setting this CachedScriptFetcher to the member of JSC::SourceOrigin.
+        This allows us to examine the ScriptFetcher from the SourceOrigin.
+        When dynamic-import operator is called, we need to get the ScriptFetcher from the
+        caller script SourceOrigin since the subsequent module loading needs to know the
+        metadata about fetching and ScriptFetcher delivers it.
+
+        No behavior change.
+
+        * CMakeLists.txt:
+        * bindings/js/CachedModuleScript.cpp:
+        (WebCore::CachedModuleScript::load):
+        * bindings/js/CachedModuleScript.h:
+        * bindings/js/CachedModuleScriptLoader.cpp:
+        (WebCore::CachedModuleScriptLoader::create):
+        (WebCore::CachedModuleScriptLoader::CachedModuleScriptLoader):
+        (WebCore::CachedModuleScriptLoader::load):
+        * bindings/js/CachedModuleScriptLoader.h:
+        * bindings/js/CachedScriptFetcher.cpp: Copied from Source/WebCore/dom/LoadableScript.cpp.
+        (WebCore::CachedScriptFetcher::requestScriptWithCache):
+        * bindings/js/CachedScriptFetcher.h: Copied from Source/JavaScriptCore/runtime/SourceOrigin.h.
+        (WebCore::CachedScriptFetcher::CachedScriptFetcher):
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::create):
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        (WebCore::makeSource): Deleted.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::loadModuleScriptInWorld):
+        (WebCore::ScriptController::loadModuleScript):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::fetch):
+        (WebCore::ScriptModuleLoader::notifyFinished):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::m_url):
+        * dom/InlineClassicScript.cpp: Added.
+        (WebCore::InlineClassicScript::create):
+        * dom/InlineClassicScript.h: Added.
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::execute):
+        * dom/LoadableScript.cpp:
+        (WebCore::LoadableScript::requestScriptWithCache): Deleted.
+        * dom/LoadableScript.h:
+        (WebCore::LoadableScript::LoadableScript):
+        (): Deleted.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::requestModuleScript):
+        (WebCore::ScriptElement::executePendingScript):
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::runScript):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::endElementNs):
+
 2017-01-11  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream, Mac] Render media stream audio buffers

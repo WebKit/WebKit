@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,48 +25,36 @@
 
 #pragma once
 
-#include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <runtime/ScriptFetcher.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CachedModuleScriptLoaderClient;
 class CachedScript;
-class CachedScriptFetcher;
-class DeferredPromise;
 class Document;
-class JSDOMGlobalObject;
 class URL;
 
-class CachedModuleScriptLoader final : public RefCounted<CachedModuleScriptLoader>, private CachedResourceClient {
+class CachedScriptFetcher : public JSC::ScriptFetcher {
 public:
-    static Ref<CachedModuleScriptLoader> create(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&);
+    CachedResourceHandle<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL) const;
 
-    virtual ~CachedModuleScriptLoader();
-
-    bool load(Document&, const URL& sourceURL);
-
-    CachedScriptFetcher& scriptFetcher() { return m_scriptFetcher.get(); }
-    CachedScript* cachedScript() { return m_cachedScript.get(); }
-
-    void clearClient()
+protected:
+    CachedScriptFetcher(const String& nonce, const String& crossOriginMode, const String& charset, const AtomicString& initiatorName, bool isInUserAgentShadowTree)
+        : m_nonce(nonce)
+        , m_crossOriginMode(crossOriginMode)
+        , m_charset(charset)
+        , m_initiatorName(initiatorName)
+        , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
     {
-        ASSERT(m_client);
-        m_client = nullptr;
     }
 
 private:
-    CachedModuleScriptLoader(CachedModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&);
-
-    void notifyFinished(CachedResource&) final;
-
-    CachedModuleScriptLoaderClient* m_client { nullptr };
-    RefPtr<DeferredPromise> m_promise;
-    Ref<CachedScriptFetcher> m_scriptFetcher;
-    CachedResourceHandle<CachedScript> m_cachedScript;
+    String m_nonce;
+    String m_crossOriginMode;
+    String m_charset;
+    AtomicString m_initiatorName;
+    bool m_isInUserAgentShadowTree { false };
 };
 
 } // namespace WebCore

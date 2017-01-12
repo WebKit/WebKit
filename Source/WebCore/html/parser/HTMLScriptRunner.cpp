@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HTMLScriptRunnerHost.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
+#include "InlineClassicScript.h"
 #include "Microtasks.h"
 #include "MutationObserver.h"
 #include "NestingLevelIncrementer.h"
@@ -258,7 +259,7 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
         if (m_scriptNestingLevel == 1)
             m_parserBlockingScript = PendingScript::create(scriptElement, scriptStartPosition);
         else
-            scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.element().textContent(), documentURLForScriptExecution(m_document), scriptStartPosition));
+            scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.element().textContent(), documentURLForScriptExecution(m_document), scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
     } else
         requestParsingBlockingScript(scriptElement);
 }

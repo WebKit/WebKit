@@ -27,10 +27,10 @@
 #include "CachedModuleScriptLoader.h"
 
 #include "CachedScript.h"
+#include "CachedScriptFetcher.h"
 #include "DOMWrapperWorld.h"
 #include "Frame.h"
 #include "JSDOMBinding.h"
-#include "LoadableScript.h"
 #include "ResourceLoaderOptions.h"
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
@@ -38,14 +38,15 @@
 
 namespace WebCore {
 
-Ref<CachedModuleScriptLoader> CachedModuleScriptLoader::create(CachedModuleScriptLoaderClient& client, DeferredPromise& promise)
+Ref<CachedModuleScriptLoader> CachedModuleScriptLoader::create(CachedModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher)
 {
-    return adoptRef(*new CachedModuleScriptLoader(client, promise));
+    return adoptRef(*new CachedModuleScriptLoader(client, promise, scriptFetcher));
 }
 
-CachedModuleScriptLoader::CachedModuleScriptLoader(CachedModuleScriptLoaderClient& client, DeferredPromise& promise)
+CachedModuleScriptLoader::CachedModuleScriptLoader(CachedModuleScriptLoaderClient& client, DeferredPromise& promise, CachedScriptFetcher& scriptFetcher)
     : m_client(&client)
     , m_promise(&promise)
+    , m_scriptFetcher(scriptFetcher)
 {
 }
 
@@ -57,10 +58,10 @@ CachedModuleScriptLoader::~CachedModuleScriptLoader()
     }
 }
 
-bool CachedModuleScriptLoader::load(Document& document, LoadableScript& loadableScript, const URL& sourceURL)
+bool CachedModuleScriptLoader::load(Document& document, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
-    m_cachedScript = loadableScript.requestScriptWithCache(document, sourceURL);
+    m_cachedScript = m_scriptFetcher->requestScriptWithCache(document, sourceURL);
     if (!m_cachedScript)
         return false;
 

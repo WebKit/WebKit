@@ -1,3 +1,16 @@
+2017-01-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Implement InlineClassicScript
+        https://bugs.webkit.org/show_bug.cgi?id=166925
+
+        Reviewed by Ryosuke Niwa.
+
+        Add ScriptFetcher field for SourceOrigin.
+
+        * runtime/SourceOrigin.h:
+        (JSC::SourceOrigin::SourceOrigin):
+        (JSC::SourceOrigin::fetcher):
+
 2017-01-11  Andreas Kling  <akling@apple.com>
 
         Crash when WebCore's GC heap grows way too large.

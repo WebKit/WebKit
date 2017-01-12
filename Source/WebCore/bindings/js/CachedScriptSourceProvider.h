@@ -28,6 +28,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
+#include "CachedScriptFetcher.h"
 #include <parser/SourceCode.h>
 #include <parser/SourceProvider.h>
 
@@ -36,7 +37,7 @@ namespace WebCore {
 class CachedScriptSourceProvider : public JSC::SourceProvider, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CachedScriptSourceProvider> create(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType) { return adoptRef(*new CachedScriptSourceProvider(cachedScript, sourceType)); }
+    static Ref<CachedScriptSourceProvider> create(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher) { return adoptRef(*new CachedScriptSourceProvider(cachedScript, sourceType, WTFMove(scriptFetcher))); }
 
     virtual ~CachedScriptSourceProvider()
     {
@@ -47,8 +48,8 @@ public:
     StringView source() const override { return m_cachedScript->script(); }
 
 private:
-    CachedScriptSourceProvider(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType)
-        : SourceProvider(JSC::SourceOrigin { cachedScript->response().url() }, cachedScript->response().url(), TextPosition(), sourceType)
+    CachedScriptSourceProvider(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher)
+        : SourceProvider(JSC::SourceOrigin { cachedScript->response().url(), WTFMove(scriptFetcher) }, cachedScript->response().url(), TextPosition(), sourceType)
         , m_cachedScript(cachedScript)
     {
         m_cachedScript->addClient(*this);
@@ -56,10 +57,5 @@ private:
 
     CachedResourceHandle<CachedScript> m_cachedScript;
 };
-
-inline JSC::SourceCode makeSource(CachedScript* cachedScript)
-{
-    return JSC::SourceCode(CachedScriptSourceProvider::create(cachedScript, JSC::SourceProviderSourceType::Program));
-}
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,22 @@
  */
 
 #include "config.h"
-#include "LoadableScript.h"
+#include "InlineClassicScript.h"
 
-#include "CachedResourceLoader.h"
-#include "CachedScript.h"
-#include "ContentSecurityPolicy.h"
-#include "Document.h"
-#include "LoadableScriptClient.h"
-#include "Settings.h"
+#include "Element.h"
+#include "ScriptElement.h"
 
 namespace WebCore {
 
-void LoadableScript::addClient(LoadableScriptClient& client)
+Ref<InlineClassicScript> InlineClassicScript::create(ScriptElement& scriptElement)
 {
-    m_clients.add(&client);
-    if (isLoaded()) {
-        Ref<LoadableScript> protectedThis(*this);
-        client.notifyFinished(*this);
-    }
-}
-
-void LoadableScript::removeClient(LoadableScriptClient& client)
-{
-    m_clients.remove(&client);
-}
-
-void LoadableScript::notifyClientFinished()
-{
-    RefPtr<LoadableScript> protectedThis(this);
-
-    Vector<LoadableScriptClient*> vector;
-    for (auto& pair : m_clients)
-        vector.append(pair.key);
-    for (auto& client : vector)
-        client->notifyFinished(*this);
+    auto& element = scriptElement.element();
+    return adoptRef(*new InlineClassicScript(
+        element.attributeWithoutSynchronization(HTMLNames::nonceAttr),
+        element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
+        scriptElement.scriptCharset(),
+        element.localName(),
+        element.isInUserAgentShadowTree()));
 }
 
 }

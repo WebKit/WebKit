@@ -52,10 +52,10 @@ class RootObject;
 namespace WebCore {
 
 class CachedModuleScript;
+class CachedScriptFetcher;
 class Frame;
 class HTMLDocument;
 class HTMLPlugInElement;
-class LoadableScript;
 class SecurityOrigin;
 class ScriptSourceCode;
 class Widget;
@@ -114,10 +114,10 @@ public:
     JSC::JSValue evaluate(const ScriptSourceCode&, ExceptionDetails* = nullptr);
     JSC::JSValue evaluateInWorld(const ScriptSourceCode&, DOMWrapperWorld&, ExceptionDetails* = nullptr);
 
-    void loadModuleScriptInWorld(CachedModuleScript&, const String& moduleName, LoadableScript&, DOMWrapperWorld&);
-    void loadModuleScript(CachedModuleScript&, const String& moduleName, LoadableScript&);
-    void loadModuleScriptInWorld(CachedModuleScript&, const ScriptSourceCode&, LoadableScript&, DOMWrapperWorld&);
-    void loadModuleScript(CachedModuleScript&, const ScriptSourceCode&, LoadableScript&);
+    void loadModuleScriptInWorld(CachedModuleScript&, const String& moduleName, CachedScriptFetcher&, DOMWrapperWorld&);
+    void loadModuleScript(CachedModuleScript&, const String& moduleName, CachedScriptFetcher&);
+    void loadModuleScriptInWorld(CachedModuleScript&, const ScriptSourceCode&, CachedScriptFetcher&, DOMWrapperWorld&);
+    void loadModuleScript(CachedModuleScript&, const ScriptSourceCode&, CachedScriptFetcher&);
 
     JSC::JSValue linkAndEvaluateModuleScriptInWorld(CachedModuleScript& , DOMWrapperWorld&);
     JSC::JSValue linkAndEvaluateModuleScript(CachedModuleScript&);

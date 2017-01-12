@@ -32,6 +32,7 @@
 
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
+#include "CachedScriptFetcher.h"
 #include "CachedScriptSourceProvider.h"
 #include "URL.h"
 #include <parser/SourceProvider.h>
@@ -49,10 +50,17 @@ public:
     {
     }
 
-    explicit ScriptSourceCode(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType)
-        : m_provider(CachedScriptSourceProvider::create(cachedScript, sourceType))
+    ScriptSourceCode(CachedScript* cachedScript, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher)
+        : m_provider(CachedScriptSourceProvider::create(cachedScript, sourceType, WTFMove(scriptFetcher)))
         , m_code(m_provider)
         , m_cachedScript(cachedScript)
+    {
+    }
+
+    ScriptSourceCode(const String& source, const URL& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<CachedScriptFetcher>&& scriptFetcher)
+        : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url.string(), WTFMove(scriptFetcher) }, url.string(), startPosition, sourceType))
+        , m_code(m_provider, startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
+        , m_url(url)
     {
     }
 

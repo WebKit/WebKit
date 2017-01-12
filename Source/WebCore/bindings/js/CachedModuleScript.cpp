@@ -43,16 +43,16 @@ Ref<CachedModuleScript> CachedModuleScript::create()
     return adoptRef(*new CachedModuleScript());
 }
 
-void CachedModuleScript::load(Document& document, const URL& rootURL, LoadableScript& loadableScript)
+void CachedModuleScript::load(Document& document, const URL& rootURL, CachedScriptFetcher& scriptFetcher)
 {
     if (auto* frame = document.frame())
-        frame->script().loadModuleScript(*this, rootURL.string(), loadableScript);
+        frame->script().loadModuleScript(*this, rootURL.string(), scriptFetcher);
 }
 
-void CachedModuleScript::load(Document& document, const ScriptSourceCode& sourceCode, LoadableScript& loadableScript)
+void CachedModuleScript::load(Document& document, const ScriptSourceCode& sourceCode, CachedScriptFetcher& scriptFetcher)
 {
     if (auto* frame = document.frame())
-        frame->script().loadModuleScript(*this, sourceCode, loadableScript);
+        frame->script().loadModuleScript(*this, sourceCode, scriptFetcher);
 }
 
 void CachedModuleScript::notifyLoadCompleted(UniquedStringImpl& moduleKey)

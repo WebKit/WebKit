@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,35 @@
  */
 
 #include "config.h"
-#include "LoadableScript.h"
+#include "CachedScriptFetcher.h"
 
 #include "CachedResourceLoader.h"
 #include "CachedScript.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
-#include "LoadableScriptClient.h"
 #include "Settings.h"
 
 namespace WebCore {
 
-void LoadableScript::addClient(LoadableScriptClient& client)
+CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL) const
 {
-    m_clients.add(&client);
-    if (isLoaded()) {
-        Ref<LoadableScript> protectedThis(*this);
-        client.notifyFinished(*this);
-    }
-}
+    auto* settings = document.settings();
+    if (settings && !settings->isScriptEnabled())
+        return nullptr;
 
-void LoadableScript::removeClient(LoadableScriptClient& client)
-{
-    m_clients.remove(&client);
-}
+    ASSERT(document.contentSecurityPolicy());
+    bool hasKnownNonce = document.contentSecurityPolicy()->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
 
-void LoadableScript::notifyClientFinished()
-{
-    RefPtr<LoadableScript> protectedThis(this);
+    CachedResourceRequest request(ResourceRequest(sourceURL), options);
+    request.setAsPotentiallyCrossOrigin(m_crossOriginMode, document);
+    request.upgradeInsecureRequestIfNeeded(document);
 
-    Vector<LoadableScriptClient*> vector;
-    for (auto& pair : m_clients)
-        vector.append(pair.key);
-    for (auto& client : vector)
-        client->notifyFinished(*this);
+    request.setCharset(m_charset);
+    request.setInitiator(m_initiatorName);
+
+    return document.cachedResourceLoader().requestScript(WTFMove(request));
 }
 
 }

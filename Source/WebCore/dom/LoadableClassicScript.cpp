@@ -104,7 +104,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
 void LoadableClassicScript::execute(ScriptElement& scriptElement)
 {
     ASSERT(!error());
-    scriptElement.executeClassicScript(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::Program));
+    scriptElement.executeClassicScript(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::Program, *this));
 }
 
 bool LoadableClassicScript::load(Document& document, const URL& sourceURL)

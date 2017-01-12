@@ -52,8 +52,8 @@ public:
 
     static Ref<CachedModuleScript> create();
 
-    void load(Document&, const URL& rootURL, LoadableScript&);
-    void load(Document&, const ScriptSourceCode&, LoadableScript&);
+    void load(Document&, const URL& rootURL, CachedScriptFetcher&);
+    void load(Document&, const ScriptSourceCode&, CachedScriptFetcher&);
 
 private:
     void notifyClientFinished();
