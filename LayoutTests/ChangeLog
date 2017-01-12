@@ -1,3 +1,11 @@
+2017-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Second update TestExpectation file for Ubuntu 16.04.
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations: Need to update this file for EFL bot again.
+
 2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r206133): LayoutTest inspector/css/manager-preferredInspectorStyleSheetForFrame.html is a flaky failure
