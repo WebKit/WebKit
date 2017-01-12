@@ -5443,6 +5443,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
     m_activePopupMenu = nullptr;
     m_mediaState = MediaProducer::IsNotPlaying;
+
+#if ENABLE(POINTER_LOCK)
+    requestPointerUnlock();
+#endif
 }
 
 void WebPageProxy::resetStateAfterProcessExited()
@@ -5488,10 +5492,6 @@ void WebPageProxy::resetStateAfterProcessExited()
 
 #if PLATFORM(MAC)
     m_pageClient.dismissContentRelativeChildWindows();
-#endif
-
-#if ENABLE(POINTER_LOCK)
-    requestPointerUnlock();
 #endif
 
     PageLoadState::Transaction transaction = m_pageLoadState.transaction();
