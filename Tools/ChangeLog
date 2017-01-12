@@ -1,5 +1,12 @@
 2017-01-11  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed test fix after r210599.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPageIsPlayingAudio.cpp:
+        (TestWebKitAPI::TEST): Remove debugging code that was causing a timeout.
+
+2017-01-11  Brent Fulgham  <bfulgham@apple.com>
+
         Unreviewed build fix after r210599.
 
         Add missing files.
