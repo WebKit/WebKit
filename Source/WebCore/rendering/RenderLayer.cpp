@@ -2527,7 +2527,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
         ASSERT(box);
         LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
         LayoutRect layerBounds(0, 0, box->clientWidth(), box->clientHeight());
-        LayoutRect revealRect = getRectToExpose(layerBounds, layerBounds, localExposeRect, insideFixed, alignX, alignY);
+        LayoutRect revealRect = getRectToExpose(layerBounds, localExposeRect, insideFixed, alignX, alignY);
 
         ScrollOffset clampedScrollOffset = clampScrollOffset(scrollOffset() + toIntSize(roundedIntRect(revealRect).location()));
         if (clampedScrollOffset != scrollOffset()) {
@@ -2551,7 +2551,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
                 NoEventDispatchAssertion assertNoEventDispatch;
 
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
-                LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, absoluteRect, insideFixed, alignX, alignY);
+                LayoutRect exposeRect = getRectToExpose(viewRect, absoluteRect, insideFixed, alignX, alignY);
 
                 IntPoint scrollOffset(roundedIntPoint(exposeRect.location()));
                 // Adjust offsets if they're outside of the allowable range.
@@ -2572,16 +2572,15 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
 
 #if !PLATFORM(IOS)
             LayoutRect viewRect = frameView.visibleContentRect();
-            viewRect.scale(1 / frameView.frameScaleFactor());
-
-            LayoutRect visibleRectRelativeToDocument = viewRect;
-            visibleRectRelativeToDocument.setLocation(frameView.documentScrollPositionRelativeToScrollableAreaOrigin());
 #else
             LayoutRect viewRect = frameView.unobscuredContentRect();
-            LayoutRect visibleRectRelativeToDocument = viewRect;
 #endif
-            LayoutRect revealRect = getRectToExpose(viewRect, visibleRectRelativeToDocument, absoluteRect, insideFixed, alignX, alignY);
-                
+            // Move the target rect into "scrollView contents" coordinates.
+            LayoutRect targetRect = absoluteRect;
+            targetRect.move(0, frameView.headerHeight());
+
+            LayoutRect revealRect = getRectToExpose(viewRect, targetRect, insideFixed, alignX, alignY);
+            
             frameView.setScrollPosition(roundedIntPoint(revealRect.location()));
 
             // This is the outermost view of a web page, so after scrolling this view we
@@ -2612,7 +2611,7 @@ void RenderLayer::updateCompositingLayersAfterScroll()
     }
 }
 
-LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const LayoutRect &visibleRectRelativeToDocument, const LayoutRect &exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const LayoutRect &exposeRect, bool insideFixed, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
 {
     FrameView& frameView = renderer().view().frameView();
     if (insideFixed) {
@@ -2624,6 +2623,8 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
             // exposeRect is in absolute coords, affected by page scale. Unscale it.
             LayoutRect unscaledExposeRect = exposeRect;
             unscaledExposeRect.scale(1 / frameView.frameScaleFactor());
+            unscaledExposeRect.move(0, -frameView.headerHeight());
+
             // These are both in unscaled coordinates.
             LayoutRect layoutViewport = frameView.layoutViewportRect();
             LayoutRect visualViewport = frameView.visualViewportRect();
@@ -2634,9 +2635,10 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
             unscaledExposeRect.setSize(unscaledExposeRect.size().shrunkTo(visualViewport.size()));
 
             // Compute how much we have to move the visualViewport to reveal the part of the layoutViewport that contains exposeRect.
-            LayoutRect requiredVisualViewport = getRectToExpose(visualViewport, visualViewport, unscaledExposeRect, false, alignX, alignY);
+            LayoutRect requiredVisualViewport = getRectToExpose(visualViewport, unscaledExposeRect, false, alignX, alignY);
             // Scale it back up.
             requiredVisualViewport.scale(frameView.frameScaleFactor());
+            requiredVisualViewport.move(0, frameView.headerHeight());
             return requiredVisualViewport;
         }
     }
@@ -2679,7 +2681,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
     // Determine the appropriate Y behavior.
     ScrollAlignment::Behavior scrollY;
     LayoutRect exposeRectY(visibleRect.x(), exposeRect.y(), visibleRect.width(), exposeRect.height());
-    LayoutUnit intersectHeight = intersection(visibleRectRelativeToDocument, exposeRectY).height();
+    LayoutUnit intersectHeight = intersection(visibleRect, exposeRectY).height();
     if (intersectHeight == exposeRect.height())
         // If the rectangle is fully visible, use the specified visible behavior.
         scrollY = ScrollAlignment::getVisibleBehavior(alignY);
