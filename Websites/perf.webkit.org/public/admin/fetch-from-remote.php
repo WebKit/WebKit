@@ -33,9 +33,18 @@ function fetch_remote($remote_server, $remote_url)
     if ($auth)
         $header = 'Authorization: Basic ' . base64_encode($auth['username'] . ':' . $auth['password']);
 
-    $context = stream_context_create(array('http' => array('method' => 'GET', 'header' => $header)));
+    $channel = curl_init();
+    curl_setopt($channel, CURLOPT_URL, $remote_url);
+    if ($auth) {
+        curl_setopt($channel, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($channel, CURLOPT_USERPWD, $auth['username'] . ':' . $auth['password']);
+    }
+    curl_setopt($channel, CURLOPT_HEADER, FALSE);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, TRUE);
+    $content = curl_exec($channel);
+    curl_close($channel);
 
-    return @file_get_contents($remote_url, false, $context);
+    return $content;
 }
 
 main(array_get($_SERVER, 'REQUEST_URI', ''));

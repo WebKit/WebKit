@@ -1,3 +1,16 @@
+2017-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        fetch-from-remote doesn’t work with some websites
+        https://bugs.webkit.org/show_bug.cgi?id=166963
+
+        Reviewed by Yusuke Suzuki.
+
+        Apparently file_get_contents is not compatible with some SSL/TLS connections.
+        Use curl_* functions to access remote servers instead.
+
+        * public/admin/fetch-from-remote.php:
+        (fetch_remote):
+
 2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another build fix. Always use UTC when expressing commit times in UNIX-epoch timestamps.
