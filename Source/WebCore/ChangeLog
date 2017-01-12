@@ -1,3 +1,26 @@
+2017-01-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebKitWebProcess at 100% CPU loading hyphenation dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=165601
+
+        Reviewed by Carlos Garcia Campos.
+
+        In HyphenationLibHyphen, retrieve the canonicalized absolute pathname of the dictionary file
+        in order to avoid storing symbolic links as the target files for specific locales. libhyphen
+        distributes its dictionary files by linking a set of similar locales files to a single file.
+        Not resolving those symbolic links means we'll be opening a single file via multiple
+        HyphenationDictionary objects, which is far from optimal.
+
+        To add insult to injury, these HyphenationDictionary objects were stored in a TinyLRUCache
+        with a slim capacity of 4. This meant that while already loading one single file through
+        multiple symlinks, because of continuous eviciton from this LRU cache the same symlinks
+        continued to be processed, in some cases resulting in opening the same dictionary file
+        hundreds or thousands of times. The capacity of this TinyLRUCache is increased to 32
+        to keep the amount of open libhyphen dictionaries capped at some reasonable number.
+
+        * platform/text/hyphen/HyphenationLibHyphen.cpp:
+        (WebCore::scanDirectoryForDicionaries):
+
 2017-01-12  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Make the grid sizing data persistent through layouts
