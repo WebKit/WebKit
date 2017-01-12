@@ -1382,6 +1382,7 @@ webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 # rdar://problem/27475162
 [ Sierra+ ] compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-num-glyphs.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-3.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-4.html [ Pass ]
 webkit.org/b/159755 [ Sierra+ ] fast/text/emoji-gender-2-5.html [ Pass ]

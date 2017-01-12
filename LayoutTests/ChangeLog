@@ -1,5 +1,17 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210443. rdar://problem/28215999
+
+    2017-01-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Add pass expectation for fast/text/emoji-num-glyphs.html on Sierra.
+
+            Unreviewed test gardening.
+
+            * platform/mac/TestExpectations:
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210371. rdar://problem/29851126
 
     2017-01-05  Jeremy Jones  <jeremyj@apple.com>
