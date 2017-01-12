@@ -8,12 +8,12 @@ PASS: Page should have a subframe.
 PASS: Should be no stylesheets.
 
 -- Running test case: CreateMainFrameInspectorStyleSheet
-PASS: Should be one stylesheet.
-PASS: StyleSheet origin is inspector.
-PASS: StyleSheet.isInspectorStyleSheet() should be true.
 PASS: Added StyleSheet origin should be 'inspector'.
 PASS: StyleSheet.isInspectorStyleSheet() should be true.
 PASS: Added StyleSheet frame should be the main frame.
+PASS: Should be one stylesheet.
+PASS: StyleSheet origin is inspector.
+PASS: StyleSheet.isInspectorStyleSheet() should be true.
 
 -- Running test case: AnotherMainFrameRequestDoesNothing
 PASS: Should still be one stylesheet.
@@ -21,12 +21,12 @@ PASS: StyleSheet origin should be 'inspector'.
 PASS: StyleSheet.isInspectorStyleSheet() should be true.
 
 -- Running test case: CreateSubFrameInspectorStyleSheet
-PASS: Should be two stylesheets.
-PASS: StyleSheet origin should be 'inspector'.
-PASS: StyleSheet.isInspectorStyleSheet() should be true.
 PASS: Added StyleSheet origin should be 'inspector'.
 PASS: StyleSheet.isInspectorStyleSheet() should be true.
 PASS: Added StyleSheet frame should be a child frame.
+PASS: Should be two stylesheets.
+PASS: StyleSheet origin should be 'inspector'.
+PASS: StyleSheet.isInspectorStyleSheet() should be true.
 
 -- Running test case: AnotherSubFrameRequestDoesNothing
 PASS: Should be two stylesheets.

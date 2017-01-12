@@ -1,5 +1,18 @@
 2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION(r206133): LayoutTest inspector/css/manager-preferredInspectorStyleSheetForFrame.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=162305
+        <rdar://problem/28389364>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame-expected.txt:
+        * inspector/css/manager-preferredInspectorStyleSheetForFrame.html:
+        Revert the change that broke this and move to more deterministic callbacks
+        that don't include the extra variance in producing output.
+
+2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION: [mac-wk2] LayoutTest inspector/debugger/breakpoint-columns.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=161774
         <rdar://problem/28217256>
