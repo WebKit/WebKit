@@ -78,8 +78,7 @@ void TileGrid::setScale(float scale)
     transform.scale(1 / m_scale);
     m_containerLayer->setTransform(transform);
 
-    // FIXME: we may revalidateTiles twice in this commit.
-    revalidateTiles(PruneSecondaryTiles);
+    m_controller.setNeedsRevalidateTiles();
 
     m_containerLayer.get().setContentsScale(m_controller.deviceScaleFactor());
 
