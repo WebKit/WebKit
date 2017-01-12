@@ -105,6 +105,11 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         this.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
     }
 
+    set keyboardShortcutDisabled(disabled)
+    {
+        this._toggleOrFocusKeyboardShortcut.disabled = disabled;
+    }
+
     // Protected
 
     layout()

@@ -1,5 +1,24 @@
 2017-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
 
+        Web Inspector: color, gradient, cubic-bezier, spring editors should be dismissable using ESC
+        https://bugs.webkit.org/show_bug.cgi?id=166934
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.dismiss):
+        (WebInspector.Popover.prototype.handleEvent):
+        (WebInspector.Popover.prototype._addListenersIfNeeded):
+        Adds a keydown listener while visible for the Escape key that dismisses the popover.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole.prototype.set keyboardShortcutDisabled):
+        Expose the ability to disable the global keyboard shortcut.  This allows the Popover to have
+        its own Escape keyboard shortcut to take precedence.
+
+2017-01-11  Devin Rousso  <dcrousso+webkit@gmail.com>
+
         Web Inspector: fix UIString for Print Styles button
         https://bugs.webkit.org/show_bug.cgi?id=166892
 
