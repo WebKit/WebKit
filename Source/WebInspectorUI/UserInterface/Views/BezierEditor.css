@@ -25,7 +25,7 @@
 
 .bezier-editor {
     width: 200px;
-    height: 260px;
+    height: 258px;
 }
 
 .bezier-editor > .bezier-preview {
@@ -107,10 +107,10 @@
 
 .bezier-editor > .number-input-container > input {
     width: 100%;
-    margin: 0 5px;
-    padding: 1px 2px 1px 1px;
+    margin: 0 2px;
+    padding: 1px 0 1px 1px;
     text-align: right;
-    font-size: 13px;
+    font-size: 12px;
     background-color: white;
     border: 1px solid hsl(0, 0%, 60%);
     border-radius: 4px;

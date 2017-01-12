@@ -88,18 +88,27 @@ WebInspector.BezierEditor = class BezierEditor extends WebInspector.Object
 
         this._numberInputContainer = this._element.createChild("div", "number-input-container");
 
-        function createBezierInput(id, className)
+        function createBezierInput(id, {min, max} = {})
         {
             let key = "_bezier" + id + "Input";
-            this[key] = this._numberInputContainer.createChild("input", className);
+            this[key] = this._numberInputContainer.createChild("input");
+            this[key].type = "number";
+            this[key].step = 0.01;
+
+            if (!isNaN(min))
+                this[key].min = min;
+
+            if (!isNaN(max))
+                this[key].max = max;
+
             this[key].addEventListener("input", this.debounce(250)._handleNumberInputInput);
             this[key].addEventListener("keydown", this._handleNumberInputKeydown.bind(this));
         }
 
-        createBezierInput.call(this, "InX", "in-x");
-        createBezierInput.call(this, "InY", "in-y");
-        createBezierInput.call(this, "OutX", "out-x");
-        createBezierInput.call(this, "OutY", "out-y");
+        createBezierInput.call(this, "InX", {min: 0, max: 1});
+        createBezierInput.call(this, "InY");
+        createBezierInput.call(this, "OutX", {min: 0, max: 1});
+        createBezierInput.call(this, "OutY");
 
         this._selectedControl = null;
         this._mouseDownPosition = null;

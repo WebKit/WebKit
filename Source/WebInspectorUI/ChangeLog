@@ -1,3 +1,19 @@
+2017-01-12  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: cubic-bezier editor behaves poorly for invalid inputs in component fields
+        https://bugs.webkit.org/show_bug.cgi?id=166928
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BezierEditor.css:
+        (.bezier-editor):
+        (.bezier-editor > .number-input-container > input):
+
+        * UserInterface/Views/BezierEditor.js:
+        (WebInspector.BezierEditor.createBezierInput):
+        (WebInspector.BezierEditor):
+        Add type, step, min, and max to the bezier component inputs to better control user input.
+
 2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add another Protocol Version
