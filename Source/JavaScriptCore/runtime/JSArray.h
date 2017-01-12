@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009, 2012, 2015-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -177,7 +177,7 @@ private:
 
     bool unshiftCountWithAnyIndexingType(ExecState*, unsigned startIndex, unsigned count);
     bool unshiftCountWithArrayStorage(ExecState*, unsigned startIndex, unsigned count, ArrayStorage*);
-    bool unshiftCountSlowCase(VM&, DeferGC&, bool, unsigned);
+    bool unshiftCountSlowCase(const AbstractLocker&, VM&, DeferGC&, bool, unsigned);
 
     bool setLengthWithArrayStorage(ExecState*, unsigned newLength, bool throwException, ArrayStorage*);
     void setLengthWritable(ExecState*, bool writable);

@@ -383,6 +383,20 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
         return nullptr;
     structure = vm.getStructure(structureID);
     lastOffset = structure->lastOffset();
+    IndexingType indexingType = structure->indexingType();
+    Locker<JSCell> locker(NoLockingNecessary);
+    switch (indexingType) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+        // We need to hold this lock to protect against changes to the innards of the butterfly
+        // that can happen when the butterfly is used for array storage. We conservatively
+        // assume that a contiguous butterfly may transform into an array storage one, though
+        // this is probably more conservative than necessary.
+        locker = Locker<JSCell>(*this);
+        break;
+    default:
+        break;
+    }
     WTF::loadLoadFence();
     butterfly = this->butterfly();
     if (!butterfly)
@@ -395,27 +409,17 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     
     markAuxiliaryAndVisitOutOfLineProperties(visitor, butterfly, structure, lastOffset);
     
-    IndexingType oldType = structure->indexingType();
-    switch (oldType) {
+    ASSERT(indexingType == structure->indexingType());
+    
+    switch (indexingType) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
-    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
-        // This lock is here to protect Contiguous->ArrayStorage transitions, but we could make that
-        // race work if we needed to.
-        auto locker = holdLock(*this);
-        IndexingType newType = this->indexingType();
-        butterfly = this->butterfly();
-        switch (newType) {
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
-            break;
-        default: // ALL_ARRAY_STORAGE_INDEXING_TYPES
-            visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
-            if (butterfly->arrayStorage()->m_sparseMap)
-                visitor.append(butterfly->arrayStorage()->m_sparseMap);
-            break;
-        }
+        visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
         break;
-    }
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+        visitor.appendValuesHidden(butterfly->arrayStorage()->m_vector, butterfly->arrayStorage()->vectorLength());
+        if (butterfly->arrayStorage()->m_sparseMap)
+            visitor.append(butterfly->arrayStorage()->m_sparseMap);
+        break;
     default:
         break;
     }
