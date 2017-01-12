@@ -29,12 +29,12 @@ FAIL WheelEvent constructor (null argument) assert_true: Event object "[object W
 FAIL WheelEvent constructor (empty argument) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
 FAIL WheelEvent constructor (argument with default values) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
 FAIL WheelEvent constructor (argument with non-default values) assert_true: Event object "[object WheelEvent]" should have a buttons property expected true got false
-FAIL KeyboardEvent constructor (no argument) assert_true: Event object "[object KeyboardEvent]" should have a code property expected true got false
-FAIL KeyboardEvent constructor (undefined argument) assert_true: Event object "[object KeyboardEvent]" should have a code property expected true got false
-FAIL KeyboardEvent constructor (null argument) assert_true: Event object "[object KeyboardEvent]" should have a code property expected true got false
-FAIL KeyboardEvent constructor (empty argument) assert_true: Event object "[object KeyboardEvent]" should have a code property expected true got false
-FAIL KeyboardEvent constructor (argument with default values) assert_true: Event object "[object KeyboardEvent]" should have a code property expected true got false
-FAIL KeyboardEvent constructor (argument with non-default values) assert_true: Event object "[object KeyboardEvent]" should have a code property expected true got false
+PASS KeyboardEvent constructor (no argument) 
+PASS KeyboardEvent constructor (undefined argument) 
+PASS KeyboardEvent constructor (null argument) 
+PASS KeyboardEvent constructor (empty argument) 
+PASS KeyboardEvent constructor (argument with default values) 
+PASS KeyboardEvent constructor (argument with non-default values) 
 PASS CompositionEvent constructor (no argument) 
 PASS CompositionEvent constructor (undefined argument) 
 PASS CompositionEvent constructor (null argument) 

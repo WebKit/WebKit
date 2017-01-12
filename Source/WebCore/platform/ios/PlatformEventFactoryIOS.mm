@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "WAKAppKitStubs.h"
 #import "WebEvent.h"
+#import "WindowsKeyboardCodes.h"
 #import <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -148,6 +149,218 @@ String keyForKeyEvent(WebEvent *event)
     return keyForCharCode([characters characterAtIndex:0]);
 }
 
+// https://w3c.github.io/uievents-code/
+String codeForKeyEvent(WebEvent *event)
+{
+    switch (event.keyCode) {
+    // Keys in the alphanumeric section.
+    case VK_OEM_3: return ASCIILiteral("Backquote");
+    case VK_OEM_5: return ASCIILiteral("Backslash");
+    case VK_BACK: return ASCIILiteral("Backspace");
+    case VK_OEM_4: return ASCIILiteral("BracketLeft");
+    case VK_OEM_6: return ASCIILiteral("BracketRight");
+    case VK_OEM_COMMA: return ASCIILiteral("Comma");
+    case VK_0: return ASCIILiteral("Digit0");
+    case VK_1: return ASCIILiteral("Digit1");
+    case VK_2: return ASCIILiteral("Digit2");
+    case VK_3: return ASCIILiteral("Digit3");
+    case VK_4: return ASCIILiteral("Digit4");
+    case VK_5: return ASCIILiteral("Digit5");
+    case VK_6: return ASCIILiteral("Digit6");
+    case VK_7: return ASCIILiteral("Digit7");
+    case VK_8: return ASCIILiteral("Digit8");
+    case VK_9: return ASCIILiteral("Digit9");
+    case VK_OEM_PLUS: return ASCIILiteral("Equal");
+    case VK_OEM_102: return ASCIILiteral("IntlBackslash");
+    // IntlRo.
+    // IntlYen.
+    case VK_A: return ASCIILiteral("KeyA");
+    case VK_B: return ASCIILiteral("KeyB");
+    case VK_C: return ASCIILiteral("KeyC");
+    case VK_D: return ASCIILiteral("KeyD");
+    case VK_E: return ASCIILiteral("KeyE");
+    case VK_F: return ASCIILiteral("KeyF");
+    case VK_G: return ASCIILiteral("KeyG");
+    case VK_H: return ASCIILiteral("KeyH");
+    case VK_I: return ASCIILiteral("KeyI");
+    case VK_J: return ASCIILiteral("KeyJ");
+    case VK_K: return ASCIILiteral("KeyK");
+    case VK_L: return ASCIILiteral("KeyL");
+    case VK_M: return ASCIILiteral("KeyM");
+    case VK_N: return ASCIILiteral("KeyN");
+    case VK_O: return ASCIILiteral("KeyO");
+    case VK_P: return ASCIILiteral("KeyP");
+    case VK_Q: return ASCIILiteral("KeyQ");
+    case VK_R: return ASCIILiteral("KeyR");
+    case VK_S: return ASCIILiteral("KeyS");
+    case VK_T: return ASCIILiteral("KeyT");
+    case VK_U: return ASCIILiteral("KeyU");
+    case VK_V: return ASCIILiteral("KeyV");
+    case VK_W: return ASCIILiteral("KeyW");
+    case VK_X: return ASCIILiteral("KeyX");
+    case VK_Y: return ASCIILiteral("KeyY");
+    case VK_Z: return ASCIILiteral("KeyZ");
+    case VK_OEM_MINUS: return ASCIILiteral("Minus");
+    case VK_OEM_PERIOD: return ASCIILiteral("Period");
+    case VK_OEM_7: return ASCIILiteral("Quote");
+    case VK_OEM_1: return ASCIILiteral("Semicolon");
+    case VK_OEM_2: return ASCIILiteral("Slash");
+
+    // Functional keys in alphanumeric section.
+    case VK_MENU: return ASCIILiteral("AltLeft");
+    // AltRight.
+    case VK_CAPITAL: return ASCIILiteral("CapsLock");
+    // ContextMenu.
+    case VK_LCONTROL: return ASCIILiteral("ControlLeft");
+    case VK_RCONTROL: return ASCIILiteral("ControlRight");
+    case VK_RETURN: return ASCIILiteral("Enter"); //  Labeled Return on Apple keyboards.
+    case VK_LWIN: return ASCIILiteral("MetaLeft");
+    case VK_RWIN: return ASCIILiteral("MetaRight");
+    case VK_LSHIFT: return ASCIILiteral("ShiftLeft");
+    case VK_RSHIFT: return ASCIILiteral("ShiftRight");
+    case VK_SPACE: return ASCIILiteral("Space");
+    case VK_TAB: return ASCIILiteral("Tab");
+
+    // Functional keys found on Japanese and Korean keyboards.
+    // Convert.
+    case VK_KANA: return ASCIILiteral("KanaMode");
+    // Lang1.
+    // Lang2.
+    // Lang3.
+    // Lang4.
+    // Lang5.
+    // NonConvert.
+
+    // Keys in the ControlPad section.
+    // Delete
+    case VK_END: return ASCIILiteral("End");
+    case VK_HELP: return ASCIILiteral("Help");
+    case VK_HOME: return ASCIILiteral("Home");
+    // Insert: Not present on Apple keyboards.
+    case VK_NEXT: return ASCIILiteral("PageDown");
+    case VK_PRIOR: return ASCIILiteral("PageUp");
+
+    // Keys in the ArrowPad section.
+    case VK_DOWN: return ASCIILiteral("ArrowDown");
+    case VK_LEFT: return ASCIILiteral("ArrowLeft");
+    case VK_RIGHT: return ASCIILiteral("ArrowRight");
+    case VK_UP: return ASCIILiteral("ArrowUp");
+
+    // Keys in the Numpad section.
+    case VK_NUMLOCK: return ASCIILiteral("NumLock");
+    case VK_NUMPAD0: return ASCIILiteral("Numpad0");
+    case VK_NUMPAD1: return ASCIILiteral("Numpad1");
+    case VK_NUMPAD2: return ASCIILiteral("Numpad2");
+    case VK_NUMPAD3: return ASCIILiteral("Numpad3");
+    case VK_NUMPAD4: return ASCIILiteral("Numpad4");
+    case VK_NUMPAD5: return ASCIILiteral("Numpad5");
+    case VK_NUMPAD6: return ASCIILiteral("Numpad6");
+    case VK_NUMPAD7: return ASCIILiteral("Numpad7");
+    case VK_NUMPAD8: return ASCIILiteral("Numpad8");
+    case VK_NUMPAD9: return ASCIILiteral("Numpad9");
+    case VK_ADD: return ASCIILiteral("NumpadAdd");
+    // NumpadBackspace.
+    // NumpadClear.
+    // NumpadClearEntry.
+    case VK_SEPARATOR: return ASCIILiteral("NumpadComma");
+    case VK_DECIMAL: return ASCIILiteral("NumpadDecimal");
+    case VK_DIVIDE: return ASCIILiteral("NumpadDivide");
+    // NumpadEnter.
+    case VK_CLEAR: return ASCIILiteral("NumpadEqual");
+    // NumpadHash.
+    // NumpadMemoryAdd.
+    // NumpadMemoryClear.
+    // NumpadMemoryRecall.
+    // NumpadMemoryStore.
+    // NumpadMemorySubtract.
+    case VK_MULTIPLY: return ASCIILiteral("NumpadMultiply");
+    // NumpadParenLeft.
+    // NumpadParenRight.
+    // NumpadStar: The specification says to use "NumpadMultiply" for the * key on numeric keypads.
+    case VK_SUBTRACT: return ASCIILiteral("NumpadSubtract");
+
+    // Keys in the Function section.
+    case VK_ESCAPE: return ASCIILiteral("Escape");
+    case VK_F1: return ASCIILiteral("F1");
+    case VK_F2: return ASCIILiteral("F2");
+    case VK_F3: return ASCIILiteral("F3");
+    case VK_F4: return ASCIILiteral("F4");
+    case VK_F5: return ASCIILiteral("F5");
+    case VK_F6: return ASCIILiteral("F6");
+    case VK_F7: return ASCIILiteral("F7");
+    case VK_F8: return ASCIILiteral("F8");
+    case VK_F9: return ASCIILiteral("F9");
+    case VK_F10: return ASCIILiteral("F10");
+    case VK_F11: return ASCIILiteral("F11");
+    case VK_F12: return ASCIILiteral("F12");
+    case VK_F13: return ASCIILiteral("F13");
+    case VK_F14: return ASCIILiteral("F14");
+    case VK_F15: return ASCIILiteral("F15");
+    case VK_F16: return ASCIILiteral("F16");
+    case VK_F17: return ASCIILiteral("F17");
+    case VK_F18: return ASCIILiteral("F18");
+    case VK_F19: return ASCIILiteral("F19");
+    case VK_F20: return ASCIILiteral("F20");
+    // Fn: This is typically a hardware key that does not generate a separate code.
+    // FnLock.
+    // PrintScreen.
+    // ScrollLock.
+    // Pause.
+
+    // Media keys.
+    // BrowserBack.
+    // BrowserFavorites.
+    // BrowserForward.
+    // BrowserHome.
+    // BrowserRefresh.
+    // BrowserSearch.
+    // BrowserStop.
+    // Eject.
+    // LaunchApp1.
+    // LaunchApp2.
+    // LaunchMail.
+    // MediaPlayPause.
+    // MediaSelect.
+    // MediaStop.
+    // MediaTrackNext.
+    // MediaTrackPrevious.
+    // Power.
+    // Sleep.
+    case VK_VOLUME_DOWN: return ASCIILiteral("AudioVolumeDown");
+    case VK_VOLUME_MUTE: return ASCIILiteral("AudioVolumeMute");
+    case VK_VOLUME_UP: return ASCIILiteral("AudioVolumeUp");
+    // WakeUp.
+
+    // Legacy modifier keys.
+    // Hyper.
+    // Super.
+    // Turbo.
+
+    // Legacy process control keys.
+    // Abort.
+    // Resume.
+    // Suspend.
+
+    // Legacy editing keys.
+    // Again.
+    // Copy.
+    // Cut.
+    // Find.
+    // Open.
+    // Paste.
+    // Props.
+    // Select.
+    // Undo.
+
+    // Keys found on international keyboards.
+    // Hiragana.
+    // Katakana.
+
+    default:
+        return ASCIILiteral("Unidentified");
+    }
+}
+
 class PlatformKeyboardEventBuilder : public PlatformKeyboardEvent {
 public:
     PlatformKeyboardEventBuilder(WebEvent *event)
@@ -161,6 +374,7 @@ public:
         m_text = event.characters;
         m_unmodifiedText = event.charactersIgnoringModifiers;
         m_key = keyForKeyEvent(event);
+        m_code = codeForKeyEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
         m_windowsVirtualKeyCode = event.keyCode;
         m_autoRepeat = event.isKeyRepeating;

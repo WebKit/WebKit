@@ -1,3 +1,20 @@
+2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Implement support for KeyboardEvent.code
+        https://bugs.webkit.org/show_bug.cgi?id=166932
+        <rdar://problem/29972518>
+
+        Reviewed by Darin Adler.
+
+        Make sure KeyboardEvent.code is properly initialized on
+        iOS WK2.
+
+        * Shared/WebEvent.h:
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+
 2017-01-12  Andreas Kling  <akling@apple.com>
 
         WebBackForwardListProxy should remove restored session history items from PageCache on close.

@@ -1,3 +1,20 @@
+2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Implement support for KeyboardEvent.code
+        https://bugs.webkit.org/show_bug.cgi?id=166932
+        <rdar://problem/29972518>
+
+        Reviewed by Darin Adler.
+
+        Implement support for KeyboardEvent.code on iOS.
+
+        No new tests, updated existing test.
+
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::codeForKeyEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+
 2017-01-12  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Autogenerate named getters

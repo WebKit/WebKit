@@ -10,24 +10,32 @@
 description("Tests that KeyboardEvent.key is properly initialized on iOS.");
 jsTestIsAsync = true;
 
+var tests = [['a', 'KeyA'], ['@', 'Digit2']];
+
 function getTypingUIScript(x, y)
 {
     return `
         (function() {
             uiController.didShowKeyboardCallback = function() {
                 uiController.typeCharacterUsingHardwareKeyboard('a', function() {
-                    uiController.uiScriptComplete();
+                    uiController.typeCharacterUsingHardwareKeyboard('@', function() {
+                        uiController.uiScriptComplete();
+                    });
                 });
             };
             uiController.singleTapAtPoint(${x}, ${y}, function() { });
         })();`
 }
 
+var i = 0;
 var testInput = document.getElementById("testInput");
 testInput.onkeydown = function(e) {
     event = e;
-    shouldBeEqualToString("event.key", "a");
-    finishJSTest();
+    shouldBeEqualToString("event.key", "" + tests[i][0]);
+    shouldBeEqualToString("event.code", "" + tests[i][1]);
+    i++;
+    if (i == tests.length)
+        finishJSTest();
 };
 
 const x = testInput.offsetLeft + 5;

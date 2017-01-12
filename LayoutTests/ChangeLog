@@ -1,3 +1,19 @@
+2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Implement support for KeyboardEvent.code
+        https://bugs.webkit.org/show_bug.cgi?id=166932
+        <rdar://problem/29972518>
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage and rebaseline a couple of existing tests
+        now that more checks are passing.
+
+        * fast/events/ios/keyboard-event-key-attribute-expected.txt:
+        * fast/events/ios/keyboard-event-key-attribute.html:
+        * platform/ios-simulator/fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+
 2017-01-12  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Autogenerate named getters
