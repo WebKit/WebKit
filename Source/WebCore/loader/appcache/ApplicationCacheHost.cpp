@@ -231,25 +231,30 @@ URL ApplicationCacheHost::createFileURL(const String& path)
     return url;
 }
 
+static inline RefPtr<SharedBuffer> bufferFromResource(ApplicationCacheResource& resource)
+{
+    // FIXME: Clients probably do not need a copy of the SharedBuffer.
+    // Remove the call to copy() once we ensure SharedBuffer will not be modified.
+    if (resource.path().isEmpty())
+        return resource.data().copy();
+    return SharedBuffer::createWithContentsOfFile(resource.path());
+}
+
 bool ApplicationCacheHost::maybeLoadSynchronously(ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
 {
     ApplicationCacheResource* resource;
-    if (shouldLoadResourceFromApplicationCache(request, resource)) {
-        if (resource) {
-            // FIXME: Clients proably do not need a copy of the SharedBuffer.
-            // Remove the call to copy() once we ensure SharedBuffer will not be modified.
-            if (resource->path().isEmpty())
-                data = resource->data().copy();
-            else
-                data = SharedBuffer::createWithContentsOfFile(resource->path());
-        }
-        if (!data)
-            error = m_documentLoader.frameLoader()->client().cannotShowURLError(request);
-        else
-            response = resource->response();
+    if (!shouldLoadResourceFromApplicationCache(request, resource))
+        return false;
+
+    RefPtr<SharedBuffer> responseData = resource ? bufferFromResource(*resource) : nullptr;
+    if (!responseData) {
+        error = m_documentLoader.frameLoader()->client().cannotShowURLError(request);
         return true;
     }
-    return false;
+
+    response = resource->response();
+    data = WTFMove(responseData);
+    return true;
 }
 
 void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
