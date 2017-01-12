@@ -1,5 +1,16 @@
 2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        REGRESSION: [mac-wk2] LayoutTest inspector/debugger/breakpoint-columns.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=161774
+        <rdar://problem/28217256>
+
+        Reviewed by Mark Lam.
+
+        * platform/mac-wk2/TestExpectations:
+        Remove flaky expectations for a test that hasn't failed in a month.
+
+2017-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION: LayoutTest inspector/debugger/csp-exceptions.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=165292
         <rdar://problem/29471892>
