@@ -6527,9 +6527,9 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     Element* oldActiveElement = m_activeElement.get();
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
-        for (Element* curr = oldActiveElement; curr; curr = curr->parentOrShadowHostElement()) {
-            curr->setActive(false);
-            m_userActionElements.setInActiveChain(curr, false);
+        for (Element* currentElement = oldActiveElement; currentElement; currentElement = currentElement->parentElementInComposedTree()) {
+            currentElement->setActive(false);
+            m_userActionElements.setInActiveChain(currentElement, false);
         }
         m_activeElement = nullptr;
     } else {
@@ -6567,7 +6567,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
     // If it hasn't, we do not need to do anything.
     Element* newHoveredElement = innerElementInDocument;
     while (newHoveredElement && !newHoveredElement->renderer())
-        newHoveredElement = newHoveredElement->parentOrShadowHostElement();
+        newHoveredElement = newHoveredElement->parentElementInComposedTree();
 
     m_hoveredElement = newHoveredElement;
 
@@ -6586,7 +6586,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         // (for instance by setting display:none in the :hover pseudo-class). In this case, the old hovered element (and its ancestors)
         // must be updated, to ensure it's normal style is re-applied.
         if (oldHoveredElement && !oldHoverObj) {
-            for (Element* element = oldHoveredElement.get(); element; element = element->parentElement()) {
+            for (Element* element = oldHoveredElement.get(); element; element = element->parentElementInComposedTree()) {
                 if (!mustBeInActiveChain || element->inActiveChain())
                     elementsToRemoveFromChain.append(element);
             }

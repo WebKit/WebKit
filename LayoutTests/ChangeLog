@@ -1,5 +1,26 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210564. rdar://problem/29944582
+
+    2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+            :active and :hover states may not be updated across slots
+            https://bugs.webkit.org/show_bug.cgi?id=166881
+            <rdar://problem/29944582>
+
+            Reviewed by Antti Koivisto.
+
+            Added two regression tests; one for clearing :active state across a slot, and another one for clearing
+            a hover state on an ancestor of a slot to which a slot with the hovered element is assigned.
+
+            * fast/shadow-dom/clear-active-state-in-shadow-expected.html: Added.
+            * fast/shadow-dom/clear-active-state-in-shadow.html: Added.
+            * fast/shadow-dom/hover-over-nested-slotted-content-expected.html: Added.
+            * fast/shadow-dom/hover-over-nested-slotted-content.html: Added.
+            * platform/ios-simulator/TestExpectations:
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210546. rdar://problem/29491188
 
     2017-01-10  Youenn Fablet  <youenn@apple.com>
