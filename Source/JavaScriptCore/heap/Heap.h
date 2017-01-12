@@ -131,6 +131,9 @@ public:
     void lastChanceToFinalize();
     void releaseDelayedReleasedObjects();
 
+    // Set a hard limit where JSC will crash if live heap size exceeds it.
+    void setMaxLiveSize(size_t size) { m_maxLiveSize = size; }
+
     VM* vm() const { return m_vm; }
     MarkedSpace& objectSpace() { return m_objectSpace; }
     MachineThreads& machineThreads() { return m_machineThreads; }
@@ -619,6 +622,9 @@ private:
     size_t m_blockBytesAllocated { 0 };
     size_t m_externalMemorySize { 0 };
 #endif
+
+    NO_RETURN_DUE_TO_CRASH void didExceedMaxLiveSize();
+    size_t m_maxLiveSize { 0 };
     
     std::unique_ptr<MutatorScheduler> m_scheduler;
     

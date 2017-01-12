@@ -477,6 +477,7 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
 using WTF::KB;
 using WTF::MB;
+using WTF::GB;
 using WTF::approximateBinarySearch;
 using WTF::binarySearch;
 using WTF::bitwise_cast;
