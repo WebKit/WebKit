@@ -1,3 +1,14 @@
+2017-01-12  Enrica Casucci  <enrica@apple.com>
+
+        Do not allow selection of editable content when not editing.
+        https://bugs.webkit.org/show_bug.cgi?id=166897
+        <rdar://problem/29388806>
+
+        Reviewed by Tim Horton.
+
+        * fast/events/touch/ios/long-press-on-editable-expected.txt: Added.
+        * fast/events/touch/ios/long-press-on-editable.html: Added.
+
 2017-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html as a timeout on mac-wk2.

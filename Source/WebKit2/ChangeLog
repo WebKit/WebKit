@@ -1,3 +1,21 @@
+2017-01-12  Enrica Casucci  <enrica@apple.com>
+
+        Do not allow selection of editable content when not editing.
+        https://bugs.webkit.org/show_bug.cgi?id=166897
+        <rdar://problem/29388806>
+
+        Reviewed by Tim Horton.
+
+        Test: fast/events/touch/ios/long-press-on-editable.html
+
+        When retrieving the position information, we should not consider
+        as candidates for selection editable elements, since this is only
+        used for non editable selections.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isAssistableElement): Moved within the file.
+        (WebKit::WebPage::getPositionInformation):
+
 2017-01-12  Megan Gardner  <megan_gardner@apple.com>
 
         Double Check URLs on UI side before putting in pasteboard
