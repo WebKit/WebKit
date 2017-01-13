@@ -1,3 +1,12 @@
+2017-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Clean up SHARED_CORE option
+        https://bugs.webkit.org/show_bug.cgi?id=167004
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2016-12-21  Konstantin Tokarev  <annulen@yandex.ru>
 
         set PYTHONPATH in separate COMMAND doesn't work with all CMake generators
