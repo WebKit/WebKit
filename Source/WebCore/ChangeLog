@@ -1,3 +1,106 @@
+2017-01-13  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for DeviceMotionEvent and DeviceOrientationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=167006
+
+        Reviewed by Geoffrey Garen.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDeviceMotionEventCustom.cpp: Removed.
+        * bindings/js/JSDeviceOrientationEventCustom.cpp: Removed.
+        Remove Custom bindings files.
+
+        * dom/DeviceMotionData.cpp:
+        (WebCore::DeviceMotionData::create):
+        (WebCore::DeviceMotionData::DeviceMotionData):
+        (WebCore::DeviceMotionData::Acceleration::create): Deleted.
+        (WebCore::DeviceMotionData::Acceleration::Acceleration): Deleted.
+        (WebCore::DeviceMotionData::RotationRate::create): Deleted.
+        (WebCore::DeviceMotionData::RotationRate::RotationRate): Deleted.
+        * dom/DeviceMotionData.h:
+        (WebCore::DeviceMotionData::Acceleration::create):
+        (WebCore::DeviceMotionData::Acceleration::x):
+        (WebCore::DeviceMotionData::Acceleration::y):
+        (WebCore::DeviceMotionData::Acceleration::z):
+        (WebCore::DeviceMotionData::Acceleration::Acceleration):
+        (WebCore::DeviceMotionData::RotationRate::create):
+        (WebCore::DeviceMotionData::RotationRate::alpha):
+        (WebCore::DeviceMotionData::RotationRate::beta):
+        (WebCore::DeviceMotionData::RotationRate::gamma):
+        (WebCore::DeviceMotionData::RotationRate::RotationRate):
+        (WebCore::DeviceMotionData::interval):
+        (WebCore::DeviceMotionData::Acceleration::canProvideX): Deleted.
+        (WebCore::DeviceMotionData::Acceleration::canProvideY): Deleted.
+        (WebCore::DeviceMotionData::Acceleration::canProvideZ): Deleted.
+        (WebCore::DeviceMotionData::RotationRate::canProvideAlpha): Deleted.
+        (WebCore::DeviceMotionData::RotationRate::canProvideBeta): Deleted.
+        (WebCore::DeviceMotionData::RotationRate::canProvideGamma): Deleted.
+        (WebCore::DeviceMotionData::canProvideInterval): Deleted.
+        Re-work using std::optional rather than an explicit bool/value pair.
+
+        * dom/DeviceMotionEvent.cpp:
+        (WebCore::convert):
+        (WebCore::DeviceMotionEvent::acceleration):
+        (WebCore::DeviceMotionEvent::accelerationIncludingGravity):
+        (WebCore::DeviceMotionEvent::rotationRate):
+        (WebCore::DeviceMotionEvent::interval):
+        (WebCore::DeviceMotionEvent::initDeviceMotionEvent):
+        * dom/DeviceMotionEvent.h:
+        Implement IDL interface. For now, we have duplicate structs for
+        Acceleration and RotationRate (one here, one in DeviceMotionData)
+        which can be consolidated in the future.
+
+        * dom/DeviceMotionEvent.idl:
+        Add dictionaries for Acceleration and RotationRate, and update IDL to
+        specify the correct nullability of attributes and arguments.
+
+        * dom/DeviceOrientationData.cpp:
+        (WebCore::DeviceOrientationData::create):
+        (WebCore::DeviceOrientationData::DeviceOrientationData):
+        (WebCore::DeviceOrientationData::alpha): Deleted.
+        (WebCore::DeviceOrientationData::beta): Deleted.
+        (WebCore::DeviceOrientationData::gamma): Deleted.
+        (WebCore::DeviceOrientationData::absolute): Deleted.
+        (WebCore::DeviceOrientationData::canProvideAlpha): Deleted.
+        (WebCore::DeviceOrientationData::canProvideBeta): Deleted.
+        (WebCore::DeviceOrientationData::canProvideGamma): Deleted.
+        (WebCore::DeviceOrientationData::compassHeading): Deleted.
+        (WebCore::DeviceOrientationData::compassAccuracy): Deleted.
+        (WebCore::DeviceOrientationData::canProvideCompassHeading): Deleted.
+        (WebCore::DeviceOrientationData::canProvideCompassAccuracy): Deleted.
+        (WebCore::DeviceOrientationData::canProvideAbsolute): Deleted.
+        * dom/DeviceOrientationData.h:
+        (WebCore::DeviceOrientationData::create):
+        (WebCore::DeviceOrientationData::alpha):
+        (WebCore::DeviceOrientationData::beta):
+        (WebCore::DeviceOrientationData::gamma):
+        (WebCore::DeviceOrientationData::compassHeading):
+        (WebCore::DeviceOrientationData::compassAccuracy):
+        (WebCore::DeviceOrientationData::absolute):
+        Re-work using std::optional rather than an explicit bool/value pair.
+
+        * dom/DeviceOrientationEvent.cpp:
+        (WebCore::DeviceOrientationEvent::alpha):
+        (WebCore::DeviceOrientationEvent::beta):
+        (WebCore::DeviceOrientationEvent::gamma):
+        (WebCore::DeviceOrientationEvent::compassHeading):
+        (WebCore::DeviceOrientationEvent::compassAccuracy):
+        (WebCore::DeviceOrientationEvent::initDeviceOrientationEvent):
+        (WebCore::DeviceOrientationEvent::absolute):
+        * dom/DeviceOrientationEvent.h:
+        Implement IDL interface.
+
+        * dom/DeviceOrientationEvent.idl:
+        Update IDL to specify the correct nullability of attributes and arguments.
+
+        * platform/ios/DeviceMotionClientIOS.mm:
+        (WebCore::DeviceMotionClientIOS::motionChanged):
+        * platform/ios/DeviceOrientationClientIOS.mm:
+        (WebCore::DeviceOrientationClientIOS::orientationChanged):
+        Update for use of std:optional.
+
 2017-01-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Cache the accelerated capability of MediaPlayerClient in MediaPlayerPrivateGStreamerBase

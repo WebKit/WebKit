@@ -28,62 +28,20 @@
 
 namespace WebCore {
 
-Ref<DeviceMotionData::Acceleration> DeviceMotionData::Acceleration::create(bool canProvideX, double x,
-                                                                           bool canProvideY, double y,
-                                                                           bool canProvideZ, double z)
-{
-    return adoptRef(*new DeviceMotionData::Acceleration(canProvideX, x, canProvideY, y, canProvideZ, z));
-}
-
-DeviceMotionData::Acceleration::Acceleration(bool canProvideX, double x, bool canProvideY, double y, bool canProvideZ, double z)
-    : m_x(x)
-    , m_y(y)
-    , m_z(z)
-    , m_canProvideX(canProvideX)
-    , m_canProvideY(canProvideY)
-    , m_canProvideZ(canProvideZ)
-
-{
-}
-
-Ref<DeviceMotionData::RotationRate> DeviceMotionData::RotationRate::create(bool canProvideAlpha, double alpha,
-                                                                           bool canProvideBeta, double beta,
-                                                                           bool canProvideGamma, double gamma)
-{
-    return adoptRef(*new DeviceMotionData::RotationRate(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
-}
-
-DeviceMotionData::RotationRate::RotationRate(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
-    : m_alpha(alpha)
-    , m_beta(beta)
-    , m_gamma(gamma)
-    , m_canProvideAlpha(canProvideAlpha)
-    , m_canProvideBeta(canProvideBeta)
-    , m_canProvideGamma(canProvideGamma)
-{
-}
-
 Ref<DeviceMotionData> DeviceMotionData::create()
 {
     return adoptRef(*new DeviceMotionData);
 }
 
-Ref<DeviceMotionData> DeviceMotionData::create(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, bool canProvideInterval, double interval)
+Ref<DeviceMotionData> DeviceMotionData::create(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, std::optional<double> interval)
 {
-    return adoptRef(*new DeviceMotionData(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), canProvideInterval, interval));
+    return adoptRef(*new DeviceMotionData(WTFMove(acceleration), WTFMove(accelerationIncludingGravity), WTFMove(rotationRate), interval));
 }
 
-DeviceMotionData::DeviceMotionData()
-    : m_canProvideInterval(false)
-    , m_interval(0)
-{
-}
-
-DeviceMotionData::DeviceMotionData(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, bool canProvideInterval, double interval)
+DeviceMotionData::DeviceMotionData(RefPtr<Acceleration>&& acceleration, RefPtr<Acceleration>&& accelerationIncludingGravity, RefPtr<RotationRate>&& rotationRate, std::optional<double> interval)
     : m_acceleration(WTFMove(acceleration))
     , m_accelerationIncludingGravity(WTFMove(accelerationIncludingGravity))
     , m_rotationRate(WTFMove(rotationRate))
-    , m_canProvideInterval(canProvideInterval)
     , m_interval(interval)
 {
 }

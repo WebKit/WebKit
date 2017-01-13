@@ -139,9 +139,9 @@ template<typename T> struct IDLNullable : IDLType<typename T::NullableType> {
     using InnerType = T;
 
     using NullableType = typename T::NullableType;
-    static inline decltype(T::nullValue()) nullValue() { return T::nullValue(); }
+    static inline auto nullValue() -> decltype(T::nullValue()) { return T::nullValue(); }
     template<typename U> static inline bool isNullValue(U&& value) { return T::isNullValue(std::forward<U>(value)); }
-    template<typename U> static inline U&& extractValueFromNullable(U&& value) { return T::extractValueFromNullable(std::forward<U>(value)); }
+    template<typename U> static inline auto extractValueFromNullable(U&& value) -> decltype(T::extractValueFromNullable(std::forward<U>(value))) { return T::extractValueFromNullable(std::forward<U>(value)); }
 };
 
 template<typename T> struct IDLSequence : IDLType<Vector<typename T::ImplementationType>> {

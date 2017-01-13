@@ -38,6 +38,7 @@ testException("event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2},
 testException("event.initDeviceMotionEvent('', false, false, {x: objectThrowingException, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9)", "Error: valueOf threw exception");
 testException("event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: objectThrowingException, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9)", "Error: valueOf threw exception");
 testException("event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: objectThrowingException}, 9)", "Error: valueOf threw exception");
+testException("event.initDeviceMotionEvent('', false, false, '', '', '', '')", "TypeError: Type error");
 
 evalAndLog("event.initDeviceMotionEvent('', false, false, {y: 1, x: 0}, {x: 3, z: 5}, {gamma: 8, beta: 7}, 9)");
 shouldBeTrue("event.acceleration.x == 0");
@@ -68,12 +69,6 @@ shouldBeTrue("event.acceleration == null");
 shouldBeTrue("event.accelerationIncludingGravity == null");
 shouldBeTrue("event.rotationRate == null");
 shouldBeTrue("event.interval == null");
-
-evalAndLog("event.initDeviceMotionEvent('', false, false, '', '', '', '')");
-shouldBeTrue("event.acceleration == null");
-shouldBeTrue("event.accelerationIncludingGravity == null");
-shouldBeTrue("event.rotationRate == null");
-shouldBeTrue("event.interval == 0");
 
 evalAndLog("event.initDeviceMotionEvent('', false, false, null, null, null, null)");
 shouldBeTrue("event.acceleration == null");

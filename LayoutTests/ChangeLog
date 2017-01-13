@@ -1,3 +1,14 @@
+2017-01-13  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for DeviceMotionEvent and DeviceOrientationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=167006
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/DeviceMotion/optional-event-properties-expected.txt:
+        * fast/dom/DeviceMotion/script-tests/optional-event-properties.js:
+        Update test to account for slightly stricter, but more consistent IDL conversion rules.
+
 2017-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r210621): [mac-wk2] LayoutTest fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html timing out

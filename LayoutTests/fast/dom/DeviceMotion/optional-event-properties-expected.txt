@@ -25,6 +25,7 @@ PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, z:
 PASS event.initDeviceMotionEvent('', false, false, {x: objectThrowingException, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9) threw exception Error: valueOf threw exception.
 PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: objectThrowingException, z: 5}, {alpha: 6, beta: 7, gamma: 8}, 9) threw exception Error: valueOf threw exception.
 PASS event.initDeviceMotionEvent('', false, false, {x: 0, y: 1, z: 2}, {x: 3, y: 4, z: 5}, {alpha: 6, beta: 7, gamma: objectThrowingException}, 9) threw exception Error: valueOf threw exception.
+PASS event.initDeviceMotionEvent('', false, false, '', '', '', '') threw exception TypeError: Type error.
 event.initDeviceMotionEvent('', false, false, {y: 1, x: 0}, {x: 3, z: 5}, {gamma: 8, beta: 7}, 9)
 PASS event.acceleration.x == 0 is true
 PASS event.acceleration.y == 1 is true
@@ -51,11 +52,6 @@ PASS event.acceleration == null is true
 PASS event.accelerationIncludingGravity == null is true
 PASS event.rotationRate == null is true
 PASS event.interval == null is true
-event.initDeviceMotionEvent('', false, false, '', '', '', '')
-PASS event.acceleration == null is true
-PASS event.accelerationIncludingGravity == null is true
-PASS event.rotationRate == null is true
-PASS event.interval == 0 is true
 event.initDeviceMotionEvent('', false, false, null, null, null, null)
 PASS event.acceleration == null is true
 PASS event.accelerationIncludingGravity == null is true

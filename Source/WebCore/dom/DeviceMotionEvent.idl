@@ -24,19 +24,36 @@
  */
 
 [
-    Conditional=DEVICE_ORIENTATION,
+    Conditional=DEVICE_ORIENTATION
 ] interface DeviceMotionEvent : Event {
-    [Custom] readonly attribute Acceleration acceleration;
-    [Custom] readonly attribute Acceleration accelerationIncludingGravity;
-    [Custom] readonly attribute RotationRate rotationRate;
-    [Custom] readonly attribute unrestricted double interval;
+    readonly attribute Acceleration? acceleration;
+    readonly attribute Acceleration? accelerationIncludingGravity;
+    readonly attribute RotationRate? rotationRate;
+    readonly attribute unrestricted double? interval;
 
-    [Custom] void initDeviceMotionEvent(optional DOMString type,
-                                        optional boolean bubbles,
-                                        optional boolean cancelable,
-                                        optional Acceleration acceleration,
-                                        optional Acceleration accelerationIncludingGravity,
-                                        optional RotationRate rotationRate,
-                                        optional unrestricted double interval);
+    void initDeviceMotionEvent(optional DOMString type = "",
+                               optional boolean bubbles = false,
+                               optional boolean cancelable = false,
+                               optional Acceleration? acceleration = null,
+                               optional Acceleration? accelerationIncludingGravity = null,
+                               optional RotationRate? rotationRate = null,
+                               optional unrestricted double? interval = null);
 };
 
+[
+    Conditional=DEVICE_ORIENTATION,
+    JSGenerateToJSObject
+] dictionary Acceleration {
+    double? x;
+    double? y;
+    double? z;
+};
+
+[
+    Conditional=DEVICE_ORIENTATION,
+    JSGenerateToJSObject
+] dictionary RotationRate {
+    double? alpha;
+    double? beta;
+    double? gamma;
+};

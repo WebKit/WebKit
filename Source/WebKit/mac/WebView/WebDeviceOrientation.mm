@@ -60,6 +60,13 @@ DeviceOrientationData* core(WebDeviceOrientation* orientation)
     return orientation ? orientation->m_internal->m_orientation.get() : 0;
 }
 
+static std::optional<double> convert(bool canProvide, double value)
+{
+    if (!canProvide)
+        return std::nullopt;
+    return value;
+}
+
 - (id)initWithCanProvideAlpha:(bool)canProvideAlpha alpha:(double)alpha canProvideBeta:(bool)canProvideBeta beta:(double)beta canProvideGamma:(bool)canProvideGamma gamma:(double)gamma
 {
     self = [super init];
@@ -68,9 +75,9 @@ DeviceOrientationData* core(WebDeviceOrientation* orientation)
 #if PLATFORM(IOS)
     // We don't use this API, but make sure that it compiles with the new
     // compass parameters.
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, false, 0, false, 0)];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt, std::nullopt)];
 #else
-    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma)];
+    m_internal = [[WebDeviceOrientationInternal alloc] initWithCoreDeviceOrientation:DeviceOrientationData::create(convert(canProvideAlpha, alpha), convert(canProvideBeta, beta), convert(canProvideGamma, gamma), std::nullopt)];
 #endif
     return self;
 }

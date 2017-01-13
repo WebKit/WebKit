@@ -26,32 +26,32 @@
 [
     Conditional=DEVICE_ORIENTATION,
 ] interface DeviceOrientationEvent : Event {
-    [Custom] readonly attribute unrestricted double alpha;
-    [Custom] readonly attribute unrestricted double beta;
-    [Custom] readonly attribute unrestricted double gamma;
+    readonly attribute unrestricted double? alpha;
+    readonly attribute unrestricted double? beta;
+    readonly attribute unrestricted double? gamma;
 
     // FIXME: Consider defining an ENABLE macro for iOS device orientation code and/or modifying
     // the bindings scripts to support generating more complicated conditional code.
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
-    [Custom] readonly attribute unrestricted double webkitCompassHeading;
-    [Custom] readonly attribute unrestricted double webkitCompassAccuracy;
-    [Custom] void initDeviceOrientationEvent(optional DOMString type,
-                                             optional boolean bubbles,
-                                             optional boolean cancelable,
-                                             optional unrestricted double alpha,
-                                             optional unrestricted double beta,
-                                             optional unrestricted double gamma,
-                                             optional unrestricted double compassHeading,
-                                             optional unrestricted double compassAccuracy);
+    [ImplementedAs=compassHeading] readonly attribute unrestricted double? webkitCompassHeading;
+    [ImplementedAs=compassAccuracy] readonly attribute unrestricted double? webkitCompassAccuracy;
+    void initDeviceOrientationEvent(optional DOMString type = "",
+                                    optional boolean bubbles = false,
+                                    optional boolean cancelable = false,
+                                    optional unrestricted double? alpha = null,
+                                    optional unrestricted double? beta = null,
+                                    optional unrestricted double? gamma = null,
+                                    optional unrestricted double? compassHeading = null,
+                                    optional unrestricted double? compassAccuracy = null);
 #else
-    [Custom] readonly attribute boolean absolute;
-    [Custom] void initDeviceOrientationEvent(optional DOMString type,
-                                             optional boolean bubbles,
-                                             optional boolean cancelable,
-                                             optional unrestricted double alpha,
-                                             optional unrestricted double beta,
-                                             optional unrestricted double gamma,
-                                             optional boolean absolute);
+    readonly attribute boolean? absolute;
+    void initDeviceOrientationEvent(optional DOMString type = "",
+                                    optional boolean bubbles = false,
+                                    optional boolean cancelable = false,
+                                    optional unrestricted double? alpha = null,
+                                    optional unrestricted double? beta = null,
+                                    optional unrestricted double? gamma = null,
+                                    optional boolean? absolute = null);
 #endif
 };
 

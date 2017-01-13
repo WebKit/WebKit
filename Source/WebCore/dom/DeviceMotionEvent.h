@@ -35,6 +35,20 @@ class DeviceMotionEvent final : public Event {
 public:
     virtual ~DeviceMotionEvent();
 
+    // FIXME: Merge this with DeviceMotionData::Acceleration
+    struct Acceleration {
+        std::optional<double> x;
+        std::optional<double> y;
+        std::optional<double> z;
+    };
+
+    // FIXME: Merge this with DeviceMotionData::RotationRate
+    struct RotationRate {
+        std::optional<double> alpha;
+        std::optional<double> beta;
+        std::optional<double> gamma;
+    };
+
     static Ref<DeviceMotionEvent> create(const AtomicString& eventType, DeviceMotionData* deviceMotionData)
     {
         return adoptRef(*new DeviceMotionEvent(eventType, deviceMotionData));
@@ -45,15 +59,18 @@ public:
         return adoptRef(*new DeviceMotionEvent);
     }
 
-    void initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, DeviceMotionData*);
+    std::optional<Acceleration> acceleration() const;
+    std::optional<Acceleration> accelerationIncludingGravity() const;
+    std::optional<RotationRate> rotationRate() const;
+    std::optional<double> interval() const;
 
-    DeviceMotionData* deviceMotionData() const { return m_deviceMotionData.get(); }
-
-    EventInterface eventInterface() const override;
+    void initDeviceMotionEvent(const AtomicString& type, bool bubbles, bool cancelable, std::optional<Acceleration>&&, std::optional<Acceleration>&&, std::optional<RotationRate>&&, std::optional<double>);
 
 private:
     DeviceMotionEvent();
     DeviceMotionEvent(const AtomicString& eventType, DeviceMotionData*);
+
+    EventInterface eventInterface() const override;
 
     RefPtr<DeviceMotionData> m_deviceMotionData;
 };
