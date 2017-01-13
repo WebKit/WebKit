@@ -1253,7 +1253,7 @@ void UniqueIDBDatabase::performPrefetchCursor(const IDBResourceIdentifier& trans
     if (m_backingStore->prefetchCursor(transactionIdentifier, cursorIdentifier))
         postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performPrefetchCursor, transactionIdentifier, cursorIdentifier));
     else
-        postDatabaseTaskReply(Function<void ()>([prefetchProtector = m_prefetchProtectors.take(cursorIdentifier)]() { }));
+        postDatabaseTaskReply(WTF::Function<void ()>([prefetchProtector = m_prefetchProtectors.take(cursorIdentifier)]() { }));
 }
 
 void UniqueIDBDatabase::didPerformIterateCursor(uint64_t callbackIdentifier, const IDBError& error, const IDBGetResult& result)
