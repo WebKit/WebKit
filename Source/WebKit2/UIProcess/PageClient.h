@@ -228,7 +228,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    virtual std::unique_ptr<WebCore::ValidationBubble> createValidationBubble(const String& message) = 0;
+    virtual Ref<WebCore::ValidationBubble> createValidationBubble(const String& message) = 0;
 #endif
 
 #if PLATFORM(COCOA)

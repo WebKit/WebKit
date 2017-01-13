@@ -1826,7 +1826,7 @@ private:
     RefPtr<WebColorPicker> m_colorPicker;
 #endif
 #if PLATFORM(COCOA)
-    std::unique_ptr<WebCore::ValidationBubble> m_validationBubble;
+    RefPtr<WebCore::ValidationBubble> m_validationBubble;
 #endif
 
     const uint64_t m_pageID;

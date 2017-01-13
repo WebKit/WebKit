@@ -1,5 +1,28 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210689. rdar://problem/29985957
+
+    2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] HTML form validation popover sometimes does not go away
+            https://bugs.webkit.org/show_bug.cgi?id=166990
+            <rdar://problem/29985957>
+
+            Reviewed by Tim Horton.
+
+            Update code using ValidationBubble now that it is RefCounted.
+
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::createValidationBubble):
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::createValidationBubble):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210687. rdar://problem/29388806
 
     2017-01-12  Enrica Casucci  <enrica@apple.com>
