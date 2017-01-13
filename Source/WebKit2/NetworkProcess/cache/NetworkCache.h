@@ -129,8 +129,6 @@ private:
     Cache() = default;
     ~Cache() = delete;
 
-    Key makeCacheKey(const WebCore::ResourceRequest&);
-
     String dumpFilePath() const;
     void deleteDumpFile();
 

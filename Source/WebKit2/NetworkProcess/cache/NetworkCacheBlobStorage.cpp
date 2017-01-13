@@ -40,9 +40,8 @@
 namespace WebKit {
 namespace NetworkCache {
 
-BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt)
+BlobStorage::BlobStorage(const String& blobDirectoryPath)
     : m_blobDirectoryPath(blobDirectoryPath)
-    , m_salt(salt)
 {
 }
 
@@ -86,7 +85,7 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
 {
     ASSERT(!RunLoop::isMain());
 
-    auto hash = computeSHA1(data, m_salt);
+    auto hash = computeSHA1(data);
     if (data.isEmpty())
         return { data, hash };
 
@@ -124,7 +123,7 @@ BlobStorage::Blob BlobStorage::get(const String& path)
     auto linkPath = WebCore::fileSystemRepresentation(path);
     auto data = mapFile(linkPath.data());
 
-    return { data, computeSHA1(data, m_salt) };
+    return { data, computeSHA1(data) };
 }
 
 void BlobStorage::remove(const String& path)
