@@ -44,8 +44,20 @@ public:
     bool has(const String& name) const;
     void set(const String& name, const String& value);
     String toString() const;
+    const Vector<std::pair<String, String>>& pairs() const { return m_pairs; }
     operator const Vector<std::pair<String, String>>&() { return m_pairs; }
     void updateFromAssociatedURL();
+
+    class Iterator {
+    public:
+        explicit Iterator(URLSearchParams&);
+        std::optional<WTF::KeyValuePair<String, String>> next();
+
+    private:
+        Ref<URLSearchParams> m_target;
+        size_t m_index { 0 };
+    };
+    Iterator createIterator() { return Iterator { *this }; }
 
 private:
     URLSearchParams(const String&, DOMURL*);

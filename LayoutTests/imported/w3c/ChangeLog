@@ -1,5 +1,21 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210593. rdar://problem/29970907
+
+    2017-01-11  Chris Dumez  <cdumez@apple.com>
+
+            Iterating over URLSearchParams does not work
+            https://bugs.webkit.org/show_bug.cgi?id=166921
+            <rdar://problem/29970907>
+
+            Reviewed by Alex Christensen.
+
+            Rebaseline W3C test now that more checks are passing.
+
+            * web-platform-tests/url/urlsearchparams-foreach-expected.txt:
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210471. rdar://problem/29859121
 
     2017-01-06  Chris Dumez  <cdumez@apple.com>

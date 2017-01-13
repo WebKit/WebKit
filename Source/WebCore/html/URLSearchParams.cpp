@@ -123,5 +123,20 @@ void URLSearchParams::updateFromAssociatedURL()
     String search = m_associatedURL->search();
     m_pairs = search.startsWith('?') ? URLParser::parseURLEncodedForm(StringView(search).substring(1)) : URLParser::parseURLEncodedForm(search);
 }
+
+std::optional<WTF::KeyValuePair<String, String>> URLSearchParams::Iterator::next()
+{
+    auto& pairs = m_target->pairs();
+    if (m_index >= pairs.size())
+        return std::nullopt;
+
+    auto& pair = pairs[m_index++];
+    return WTF::KeyValuePair<String, String> { pair.first, pair.second };
+}
+
+URLSearchParams::Iterator::Iterator(URLSearchParams& params)
+    : m_target(params)
+{
+}
     
 }

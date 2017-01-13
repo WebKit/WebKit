@@ -1,5 +1,22 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210593. rdar://problem/29970907
+
+    2017-01-11  Chris Dumez  <cdumez@apple.com>
+
+            Iterating over URLSearchParams does not work
+            https://bugs.webkit.org/show_bug.cgi?id=166921
+            <rdar://problem/29970907>
+
+            Reviewed by Alex Christensen.
+
+            Add layout test coverage.
+
+            * fast/dom/DOMURL/searchparams-iterable-expected.txt: Added.
+            * fast/dom/DOMURL/searchparams-iterable.html: Added.
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210564. rdar://problem/29944582
 
     2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
