@@ -1,5 +1,41 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210474. rdar://problem/29762809
+
+    2017-01-06  Daniel Bates  <dabates@apple.com>
+
+            Ensure navigation only allowed for documents not in the page cache
+            https://bugs.webkit.org/show_bug.cgi?id=166773
+            <rdar://problem/29762809>
+
+            Reviewed by Brent Fulgham.
+
+            It is wise to ensure that navigation is only allowed when initiated from a document that
+            is not in- or about to be put in- the page cache. Such a navigation would surprise a
+            person that had navigated away from the initiating document among other issues.
+
+            * dom/Document.cpp:
+            (WebCore::Document::canNavigate): Only allow navigation if the document is not in the
+            page cache.
+            * html/HTMLAnchorElement.cpp:
+            (WebCore::HTMLAnchorElement::handleClick): Ditto.
+            * html/HTMLLinkElement.cpp:
+            (WebCore::HTMLLinkElement::handleClick): Ditto.
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::urlSelected): Assert triggering event's document is not in the
+            page cache.
+            (WebCore::FrameLoader::submitForm): Allow submission if the document is not in the
+            page cache.
+            (WebCore::FrameLoader::loadFrameRequest): Assert triggering event's document is not in
+            the page cache.
+            * mathml/MathMLElement.cpp:
+            (WebCore::MathMLElement::defaultEventHandler): Only allow navigation if the document is
+            not in the page cache.
+            * svg/SVGAElement.cpp:
+            (WebCore::SVGAElement::defaultEventHandler): Ditto.
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210536. rdar://problem/29939970
 
     2017-01-09  Chris Dumez  <cdumez@apple.com>

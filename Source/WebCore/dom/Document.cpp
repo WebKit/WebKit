@@ -2990,6 +2990,9 @@ bool Document::canNavigate(Frame* targetFrame)
     if (!m_frame)
         return false;
 
+    if (pageCacheState() != Document::NotInPageCache)
+        return false;
+
     // FIXME: We shouldn't call this function without a target frame, but
     // fast/forms/submit-to-blank-multiple-times.html depends on this function
     // returning true when supplied with a 0 targetFrame.
