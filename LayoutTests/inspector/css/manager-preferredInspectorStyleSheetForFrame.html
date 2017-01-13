@@ -24,8 +24,7 @@ function test()
         name: "CreateMainFrameInspectorStyleSheet",
         description: "First request for main frame should create inspector stylesheet.",
         test(resolve, reject) {
-            WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
-            .then((event) => {
+            WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, (event) => {
                 InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                 InspectorTest.expectThat(event.data.styleSheet.parentFrame === mainFrame, "Added StyleSheet frame should be the main frame.");
@@ -61,8 +60,7 @@ function test()
         name: "CreateSubFrameInspectorStyleSheet",
         description: "First request for subframe should create inspector stylesheet.",
         test(resolve, reject) {
-            WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetAdded)
-            .then((event) => {
+            WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, (event) => {
                 InspectorTest.expectThat(event.data.styleSheet.origin === WebInspector.CSSStyleSheet.Type.Inspector, "Added StyleSheet origin should be 'inspector'.");
                 InspectorTest.expectThat(event.data.styleSheet.isInspectorStyleSheet(), "StyleSheet.isInspectorStyleSheet() should be true.");
                 InspectorTest.expectThat(event.data.styleSheet.parentFrame === childFrames[0], "Added StyleSheet frame should be a child frame.");
@@ -94,8 +92,7 @@ function test()
         }
     });
 
-    WebInspector.cssStyleManager.awaitEvent(WebInspector.CSSStyleManager.Event.StyleSheetRemoved)
-    .then((event) => {
+    WebInspector.cssStyleManager.singleFireEventListener(WebInspector.CSSStyleManager.Event.StyleSheetRemoved, function(event) {
         InspectorTest.assert(false, "Should not be removing any StyleSheets in this test.");
     });
 
