@@ -27,6 +27,7 @@
 #include "MemoryRelease.h"
 
 #import "GCController.h"
+#import "GraphicsServicesSPI.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
 #import <notify.h>
@@ -37,6 +38,10 @@ namespace WebCore {
 
 void platformReleaseMemory(Critical)
 {
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+    GSFontPurgeFontCache();
+#endif
+
     _sqlite3_purgeEligiblePagerCacheMemory();
 
     for (auto& pool : LayerPool::allLayerPools())

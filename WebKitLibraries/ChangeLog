@@ -1,3 +1,12 @@
+2017-01-12  Andreas Kling  <akling@apple.com>
+
+        [iOS] Purge GraphicsServices font cache on memory warning.
+        <https://webkit.org/b/154343>
+
+        Reviewed by Antti Koivisto.
+
+        * WebKitPrivateFrameworkStubs/iOS/10/GraphicsServices.framework/GraphicsServices.tbd: Add SPI.
+
 2017-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2017

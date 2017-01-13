@@ -34,6 +34,7 @@
 #import <wtf/CurrentTime.h>
 
 #if PLATFORM(IOS)
+#import "GraphicsServicesSPI.h"
 #import "SystemMemory.h"
 #import "WebCoreThread.h"
 #endif

@@ -1,3 +1,20 @@
+2017-01-12  Andreas Kling  <akling@apple.com>
+
+        [iOS] Purge GraphicsServices font cache on memory warning.
+        <https://webkit.org/b/154343>
+
+        Reviewed by Antti Koivisto.
+
+        The GS font cache was retaining CSS fonts after we stopped using them.
+        Call SPI to release them on memory pressure. This is one of multiple
+        steps necessary to actually free the fonts.
+
+        * Configurations/WebCore.xcconfig:
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        * platform/spi/ios/GraphicsServicesSPI.h:
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed EFL/GTK build fix after r210684.

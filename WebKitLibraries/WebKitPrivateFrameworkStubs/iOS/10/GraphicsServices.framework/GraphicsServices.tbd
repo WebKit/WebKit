@@ -11,6 +11,7 @@ exports:
       - arm64
     symbols:
       - _GSCurrentEventTimestamp
+      - _GSFontPurgeFontCache
       - _GSInitialize
       - _GSSystemRootDirectory
 install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
