@@ -1,3 +1,15 @@
+2017-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Do not use the legacy session ID in WebFrameNetworkingContext::storageSession()
+        https://bugs.webkit.org/show_bug.cgi?id=166970
+
+        Reviewed by Sergio Villar Senin.
+
+        Get the session for the current page instead.
+
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::storageSession):
+
 2017-01-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unnecessary includes of Page.h

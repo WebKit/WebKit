@@ -83,9 +83,10 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
-    if (frame() && frame()->page()->usesEphemeralSession())
-        return *NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID());
-
+    if (frame()) {
+        if (auto* storageSession = NetworkStorageSession::storageSession(frame()->page()->sessionID()))
+            return *storageSession;
+    }
     return NetworkStorageSession::defaultStorageSession();
 }
 
