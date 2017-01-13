@@ -1,3 +1,36 @@
+2017-01-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Reserve capacity for StringBuilder in unescape
+        https://bugs.webkit.org/show_bug.cgi?id=167008
+
+        Reviewed by Sam Weinig.
+
+        `unescape` function is frequently called in Kraken sha256-iterative.
+        This patch just reserves the capacity for the StringBuilder.
+
+        Currently, we select the length of the string for the reserved capacity.
+        It improves the performance 2.73%.
+
+            Benchmark report for Kraken on sakura-trick.
+
+            VMs tested:
+            "baseline" at /home/yusukesuzuki/dev/WebKit/WebKitBuild/untot/Release/bin/jsc
+            "patched" at /home/yusukesuzuki/dev/WebKit/WebKitBuild/un/Release/bin/jsc
+
+            Collected 100 samples per benchmark/VM, with 100 VM invocations per benchmark. Emitted a call to gc() between
+            sample measurements. Used 1 benchmark iteration per VM invocation for warm-up. Used the jsc-specific preciseTime()
+            function to get microsecond-level timing. Reporting benchmark execution times with 95% confidence intervals in
+            milliseconds.
+
+                                                       baseline                  patched
+
+            stanford-crypto-sha256-iterative        51.609+-0.672             50.237+-0.860           might be 1.0273x faster
+
+            <arithmetic>                            51.609+-0.672             50.237+-0.860           might be 1.0273x faster
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncUnescape):
+
 2017-01-12  Saam Barati  <sbarati@apple.com>
 
         Add a slice intrinsic to the DFG/FTL
