@@ -1,3 +1,11 @@
+2017-01-12  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Skip to test imported/w3c/web-platform-tests
+
+        Unreviewed EFL gardening. There are too many timeout and crash.
+
+        * platform/efl/TestExpectations:
+
 2017-01-12  Enrica Casucci  <enrica@apple.com>
 
         Do not allow selection of editable content when not editing.
