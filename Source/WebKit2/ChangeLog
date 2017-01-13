@@ -1,5 +1,31 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210666. rdar://problem/28904157
+
+    2017-01-12  Andreas Kling  <akling@apple.com>
+
+            WebBackForwardListProxy should remove restored session history items from PageCache on close.
+            <https://webkit.org/b/166972>
+            <rdar://problem/28904157>
+
+            Reviewed by Brady Eidson.
+
+            Register history item ID's from the UIProcess with the associated-items map
+            so that we can remove any PageCache entries associated with them immediately
+            when closing a WebPage.
+
+            Otherwise they might not get removed until the next PageCache pruning happens.
+            This patch is a speculative fix for what looks like it might be weirdness
+            related to a PageCache entry outliving its originating Page.
+
+            * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+            (WebKit::WebBackForwardListProxy::addItemFromUIProcess):
+            * WebProcess/WebPage/WebBackForwardListProxy.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::restoreSessionInternal):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210619. rdar://problem/27745004
 
     2017-01-11  Brent Fulgham  <bfulgham@apple.com>

@@ -100,6 +100,8 @@ void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, Ref<HistoryI
     ASSERT(!historyItemToIDMap().contains(item.ptr()));
     ASSERT(!idToHistoryItemMap().contains(itemID));
 
+    m_associatedItemIDs.add(itemID);
+
     historyItemToIDMap().set<ItemAndPageID>(item.ptr(), { .itemID = itemID, .pageID = pageID });
     idToHistoryItemMap().set(itemID, item.ptr());
 }
