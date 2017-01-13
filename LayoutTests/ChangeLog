@@ -1,5 +1,22 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210536. rdar://problem/29939970
+
+    2017-01-09  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r189555): ImageDocument title no longer includes the size of the image
+            https://bugs.webkit.org/show_bug.cgi?id=166876
+            <rdar://problem/29939970>
+
+            Reviewed by Tim Horton.
+
+            Add layout test coverage.
+
+            * fast/images/imageDocument-title-expected.txt: Added.
+            * fast/images/imageDocument-title.html: Added.
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210399. rdar://problem/29019333
 
     2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>

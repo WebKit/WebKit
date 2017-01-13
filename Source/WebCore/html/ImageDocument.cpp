@@ -35,6 +35,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"
+#include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -214,6 +215,9 @@ void ImageDocument::createDocumentStructure()
     rootElement->insertedByParser();
 
     frame()->injectUserScripts(InjectAtDocumentStart);
+
+    auto head = HTMLHeadElement::create(*this);
+    rootElement->appendChild(head);
 
     auto body = HTMLBodyElement::create(*this);
     body->setAttribute(styleAttr, "margin: 0px");
