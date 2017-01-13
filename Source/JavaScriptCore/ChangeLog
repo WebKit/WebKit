@@ -1,3 +1,79 @@
+2017-01-13  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r210694. rdar://problem/29983526
+
+    2017-01-12  Saam Barati  <sbarati@apple.com>
+
+            Concurrent GC has a bug where we would detect a race but fail to rescan the object
+            https://bugs.webkit.org/show_bug.cgi?id=166960
+            <rdar://problem/29983526>
+
+            Reviewed by Filip Pizlo and Mark Lam.
+
+            We have code like this in JSC:
+
+            ```
+            Butterfly* butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);
+            nukeStructureAndSetButterfly(vm, structureID, butterfly);
+            structure->setLastOffset(newLastOffset);
+            WTF::storeStoreFence();
+            setStructureIDDirectly(structureID);
+            ```
+
+            Note that the collector could detect a race here, which sometimes
+            incorrectly caused us to not visit the object again.
+
+            Mutator Thread: M, Collector Thread: C, assuming sequential consistency via
+            proper barriers:
+
+            M: allocate new butterfly
+            M: Set nuked structure ID
+            M: Set butterfly (this does a barrier)
+            C: Start scanning O
+            C: load structure ID
+            C: See it's nuked and bail, (we used to rely on a write barrier to rescan).
+
+            We sometimes never rescanned here because we were calling
+            setStructureIDDirectly which doesn't do a write barrier.
+            (Note, the places that do this but call setStructure were
+            OK because setStructure will perform a write barrier.)
+
+            (This same issue also existed in places where the collector thread
+            detected races for Structure::m_offset, but places that changed
+            Structure::m_offset didn't perform a write barrier on the object
+            after changing its Structure's m_offset.)
+
+            To prevent such code from requiring every call site to perform
+            a write barrier on the object, I've changed the collector code
+            to keep a stack of cells to be revisited due to races. This stack
+            is then consulted when we do marking. Because such races are rare,
+            we have a single stack on Heap that is guarded by a lock.
+
+            * heap/Heap.cpp:
+            (JSC::Heap::Heap):
+            (JSC::Heap::~Heap):
+            (JSC::Heap::markToFixpoint):
+            (JSC::Heap::endMarking):
+            (JSC::Heap::buildConstraintSet):
+            (JSC::Heap::addToRaceMarkStack):
+            * heap/Heap.h:
+            (JSC::Heap::collectorSlotVisitor):
+            (JSC::Heap::mutatorMarkStack): Deleted.
+            * heap/SlotVisitor.cpp:
+            (JSC::SlotVisitor::didRace):
+            * heap/SlotVisitor.h:
+            (JSC::SlotVisitor::didRace):
+            (JSC::SlotVisitor::didNotRace): Deleted.
+            * heap/SlotVisitorInlines.h:
+            (JSC::SlotVisitor::didNotRace): Deleted.
+            * runtime/JSObject.cpp:
+            (JSC::JSObject::visitButterfly):
+            (JSC::JSObject::visitButterflyImpl):
+            * runtime/JSObjectInlines.h:
+            (JSC::JSObject::prepareToPutDirectWithoutTransition):
+            * runtime/Structure.cpp:
+            (JSC::Structure::flattenDictionaryStructure):
+
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r210609. rdar://problem/27896585

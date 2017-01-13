@@ -284,7 +284,6 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
 {
     ASSERT(Heap::isMarkedConcurrently(cell));
     ASSERT(!cell->isZapped());
-    ASSERT(cell->cellState() == CellState::PossiblyGrey);
     
     container.noteMarked();
     
@@ -702,10 +701,10 @@ void SlotVisitor::didRace(const VisitRaceKey& race)
     if (Options::verboseVisitRace())
         dataLog(toCString("GC visit race: ", race, "\n"));
     
-    if (!ASSERT_DISABLED) {
-        auto locker = holdLock(heap()->m_visitRaceLock);
-        heap()->m_visitRaces.add(race);
-    }
+    auto locker = holdLock(heap()->m_raceMarkStackLock);
+    JSCell* cell = race.cell();
+    cell->setCellState(CellState::PossiblyGrey);
+    heap()->m_raceMarkStack->append(cell);
 }
 
 void SlotVisitor::dump(PrintStream& out) const

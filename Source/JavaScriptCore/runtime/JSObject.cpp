@@ -120,9 +120,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterfly(SlotVisitor& visitor)
 {
     static const char* raceReason = "JSObject::visitButterfly";
     Structure* result = visitButterflyImpl(visitor);
-    if (result)
-        visitor.didNotRace(this, raceReason);
-    else
+    if (!result)
         visitor.didRace(this, raceReason);
     return result;
 }
@@ -188,7 +186,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     //
     // BEFORE: Scan the object with the structure and butterfly *before* the mutator's transition.
     // AFTER: Scan the object with the structure and butterfly *after* the mutator's transition.
-    // IGNORE: Give up, so long as the write barrier on PutNewStructure executes after ReadStructureEarly.
+    // IGNORE: Ignore the butterfly and call didRace to schedule us to be revisted again in the future.
     //
     // In other words, the collector will never see any torn structure/butterfly mix. It will
     // always see the structure/butterfly before the transition or after but not in between.

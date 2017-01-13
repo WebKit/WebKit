@@ -108,18 +108,4 @@ inline const VM& SlotVisitor::vm() const
     return *m_heap.m_vm;
 }
 
-inline void SlotVisitor::didNotRace(const VisitRaceKey& race)
-{
-    if (ASSERT_DISABLED)
-        return;
-    
-    if (!m_isVisitingMutatorStack) {
-        // This is the first visit so we don't need to remove anything.
-        return;
-    }
-    
-    auto locker = holdLock(heap()->m_visitRaceLock);
-    heap()->m_visitRaces.remove(race);
-}
-
 } // namespace JSC

@@ -139,7 +139,6 @@ public:
     MachineThreads& machineThreads() { return m_machineThreads; }
 
     SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
-    MarkStackArray& mutatorMarkStack() { return *m_mutatorMarkStack; }
 
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
@@ -540,7 +539,10 @@ private:
     
     std::unique_ptr<SlotVisitor> m_collectorSlotVisitor;
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
-    
+
+    Lock m_raceMarkStackLock;
+    std::unique_ptr<MarkStackArray> m_raceMarkStack;
+
     std::unique_ptr<MarkingConstraintSet> m_constraintSet;
 
     // We pool the slot visitors used by parallel marking threads. It's useful to be able to
@@ -597,7 +599,6 @@ private:
 
     HashMap<void*, std::function<void()>> m_weakGCMaps;
     
-    HashSet<VisitRaceKey> m_visitRaces;
     Lock m_visitRaceLock;
 
     Lock m_markingMutex;
