@@ -259,6 +259,7 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_machineThreads(this)
     , m_collectorSlotVisitor(std::make_unique<SlotVisitor>(*this))
     , m_mutatorMarkStack(std::make_unique<MarkStackArray>())
+    , m_raceMarkStack(std::make_unique<MarkStackArray>())
     , m_handleSet(vm)
     , m_codeBlocks(std::make_unique<CodeBlockSet>())
     , m_jitStubRoutines(std::make_unique<JITStubRoutineSet>())
@@ -311,6 +312,7 @@ Heap::~Heap()
         slotVisitor->clearMarkStacks();
     m_collectorSlotVisitor->clearMarkStacks();
     m_mutatorMarkStack->clear();
+    m_raceMarkStack->clear();
     
     for (WeakBlock* block : m_logicallyEmptyWeakBlocks)
         WeakBlock::destroy(*this, block);
@@ -525,6 +527,8 @@ void Heap::markToFixpoint(double gcStartTime)
         m_collectorSlotVisitor->clearMarkStacks();
         m_mutatorMarkStack->clear();
     }
+
+    RELEASE_ASSERT(m_raceMarkStack->isEmpty());
 
     beginMarking();
 
@@ -785,11 +789,6 @@ void Heap::updateObjectCounts(double gcStartTime)
 
 void Heap::endMarking()
 {
-    if (!m_visitRaces.isEmpty()) {
-        dataLog("Unresolved visit races: ", listDump(m_visitRaces), "\n");
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-    
     m_collectorSlotVisitor->reset();
 
     for (auto& parallelVisitor : m_parallelSlotVisitors)
@@ -797,6 +796,8 @@ void Heap::endMarking()
 
     assertSharedMarkStacksEmpty();
     m_weakReferenceHarvesters.removeAll();
+
+    RELEASE_ASSERT(m_raceMarkStack->isEmpty());
     
     m_objectSpace.endMarking();
     setMutatorShouldBeFenced(Options::forceFencedBarrier());
@@ -2252,19 +2253,20 @@ void Heap::buildConstraintSet()
         MarkingConstraint::GreyedByExecution);
     
     m_constraintSet->add(
-        "Mms", "Mutator Mark Stack",
+        "Mrms", "Mutator+Race Mark Stack",
         [this] (SlotVisitor& slotVisitor, const VisitingTimeout&) {
             // Indicate to the fixpoint that we introduced work!
-            size_t size = m_mutatorMarkStack->size();
+            size_t size = m_mutatorMarkStack->size() + m_raceMarkStack->size();
             slotVisitor.addToVisitCount(size);
             
             if (Options::logGC())
                 dataLog("(", size, ")");
             
             m_mutatorMarkStack->transferTo(slotVisitor.mutatorMarkStack());
+            m_raceMarkStack->transferTo(slotVisitor.mutatorMarkStack());
         },
         [this] (SlotVisitor&) -> double {
-            return m_mutatorMarkStack->size();
+            return m_mutatorMarkStack->size() + m_raceMarkStack->size();
         },
         MarkingConstraint::GreyedByExecution);
 }

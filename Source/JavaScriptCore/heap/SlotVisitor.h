@@ -151,8 +151,6 @@ public:
     
     void didRace(const VisitRaceKey&);
     void didRace(JSCell* cell, const char* reason) { didRace(VisitRaceKey(cell, reason)); }
-    void didNotRace(const VisitRaceKey&);
-    void didNotRace(JSCell* cell, const char* reason) { didNotRace(VisitRaceKey(cell, reason)); }
     
     void visitAsConstraint(const JSCell*);
     

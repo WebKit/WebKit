@@ -183,6 +183,7 @@ ALWAYS_INLINE PropertyOffset JSObject::prepareToPutDirectWithoutTransition(VM& v
                 Butterfly* butterfly = allocateMoreOutOfLineStorage(vm, oldOutOfLineCapacity, newOutOfLineCapacity);
                 nukeStructureAndSetButterfly(vm, structureID, butterfly);
                 structure->setLastOffset(newLastOffset);
+                WTF::storeStoreFence();
                 setStructureIDDirectly(structureID);
             } else
                 structure->setLastOffset(newLastOffset);

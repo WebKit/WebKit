@@ -793,10 +793,14 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
             object->shiftButterflyAfterFlattening(locker, vm, this, afterOutOfLineCapacity);
     }
     
-    vm.heap.writeBarrier(object);
     WTF::storeStoreFence();
     object->setStructureIDDirectly(id());
-    
+
+    // FIXME: This is probably no longer needed since we have a stronger mechanism
+    // for detecting races and rescanning an object.
+    // https://bugs.webkit.org/show_bug.cgi?id=166989
+    vm.heap.writeBarrier(object);
+
     return this;
 }
 
