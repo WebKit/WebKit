@@ -1,3 +1,17 @@
+2017-01-13  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added preprocessor guard for iOS-specific piece of code in GraphicsContext3DOpenGL
+        https://bugs.webkit.org/show_bug.cgi?id=167005
+
+        Reviewed by Alex Christensen.
+
+        Variable "boundFrameBuffer" is used only in iOS-specific code
+
+        No new tests needed.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::resolveMultisamplingIfNecessary):
+
 2017-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r210621): [mac-wk2] LayoutTest fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html timing out

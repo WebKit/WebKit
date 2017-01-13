@@ -227,8 +227,10 @@ void GraphicsContext3D::resolveMultisamplingIfNecessary(const IntRect& rect)
     TemporaryOpenGLSetting scopedDepth(GL_DEPTH_TEST, GL_FALSE);
     TemporaryOpenGLSetting scopedStencil(GL_STENCIL_TEST, GL_FALSE);
 
+#if PLATFORM(IOS)
     GLint boundFrameBuffer;
     ::glGetIntegerv(GL_FRAMEBUFFER_BINDING, &boundFrameBuffer);
+#endif
 
     ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
     ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
