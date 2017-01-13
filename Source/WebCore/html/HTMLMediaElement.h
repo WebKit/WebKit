@@ -885,7 +885,7 @@ private:
     MediaPlayerEnums::VideoGravity m_videoFullscreenGravity { MediaPlayer::VideoGravityResizeAspect };
 #endif
 
-    RefPtr<MediaPlayer> m_player;
+    std::unique_ptr<MediaPlayer> m_player;
 
     MediaPlayerEnums::Preload m_preload { MediaPlayer::Auto };
 
