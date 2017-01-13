@@ -32,7 +32,6 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/Logging.h>
-#include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/SerializedScriptValue.h>
 

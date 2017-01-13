@@ -34,7 +34,6 @@
 #include "DragData.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "Page.h"
 
 namespace WebCore {
 

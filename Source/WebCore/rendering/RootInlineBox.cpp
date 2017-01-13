@@ -30,7 +30,6 @@
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
 #include "LogicalSelectionOffsetCaches.h"
-#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"

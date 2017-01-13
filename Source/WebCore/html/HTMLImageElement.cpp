@@ -38,7 +38,6 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "NodeTraversal.h"
-#include "Page.h"
 #include "RenderImage.h"
 #include "RenderView.h"
 #include "Settings.h"

@@ -61,7 +61,6 @@
 #include "MathMLNames.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
-#include "Page.h"
 #include "ProgressTracker.h"
 #include "RenderImage.h"
 #include "RenderView.h"

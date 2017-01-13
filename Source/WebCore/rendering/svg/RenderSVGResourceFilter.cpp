@@ -32,7 +32,6 @@
 #include "Image.h"
 #include "ImageData.h"
 #include "IntRect.h"
-#include "Page.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "RenderView.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"

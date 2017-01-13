@@ -33,7 +33,6 @@
 #import "WebViewInternal.h"
 #import <WebCore/CaptureDevice.h>
 #import <WebCore/MediaDevicesEnumerationRequest.h>
-#import <WebCore/Page.h>
 #import <WebCore/RealtimeMediaSourceCenter.h>
 #import <WebCore/ScriptExecutionContext.h>
 #import <WebCore/UserMediaRequest.h>

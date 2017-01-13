@@ -34,7 +34,6 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
-#include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
 

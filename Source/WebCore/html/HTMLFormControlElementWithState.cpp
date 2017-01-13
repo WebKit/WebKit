@@ -30,7 +30,6 @@
 #include "FormController.h"
 #include "Frame.h"
 #include "HTMLFormElement.h"
-#include "Page.h"
 
 namespace WebCore {
 

@@ -30,7 +30,6 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLPlugInElement.h"
-#include "Page.h"
 #include "RenderElement.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

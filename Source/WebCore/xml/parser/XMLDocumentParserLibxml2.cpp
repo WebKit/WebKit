@@ -39,7 +39,6 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLTemplateElement.h"
 #include "InlineClassicScript.h"
-#include "Page.h"
 #include "PendingScript.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"

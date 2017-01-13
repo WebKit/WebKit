@@ -30,8 +30,6 @@
 #include "JSNavigator.h"
 #include "Navigator.h"
 #include "Page.h"
-
-// FIXME: somewhere in JSC, we are not including proper inlines. It causes linker trouble way up here.
 #include <JavaScriptCore/JSCInlines.h>
 
 using namespace JSC;

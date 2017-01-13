@@ -35,7 +35,6 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "Page.h"
 #include "StyleProperties.h"
 #include <wtf/NeverDestroyed.h>
 

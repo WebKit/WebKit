@@ -30,7 +30,6 @@
 #include "HTMLElement.h"
 #include "InlineElementBox.h"
 #include "LayoutRepainter.h"
-#include "Page.h"
 #include "RenderBlock.h"
 #include "RenderFlowThread.h"
 #include "RenderImage.h"

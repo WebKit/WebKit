@@ -27,7 +27,6 @@
 #include "EventListener.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGElement.h"
 #include "SVGResourcesCache.h"

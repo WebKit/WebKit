@@ -34,7 +34,6 @@
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
 #include "NetworkStateNotifier.h"
-#include "Page.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/text/StringBuilder.h>
 

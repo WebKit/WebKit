@@ -42,7 +42,6 @@
 #include "LoadableClassicScript.h"
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
-#include "Page.h"
 #include "PendingScript.h"
 #include "SVGNames.h"
 #include "SVGScriptElement.h"

@@ -29,7 +29,6 @@
 
 #include "DeviceClient.h"
 #include "Document.h"
-#include "Page.h"
 
 namespace WebCore {
 

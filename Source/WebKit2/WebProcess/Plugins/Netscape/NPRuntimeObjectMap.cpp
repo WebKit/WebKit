@@ -41,7 +41,6 @@
 #include <JavaScriptCore/StrongInlines.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Frame.h>
-#include <WebCore/Page.h>
 #include <WebCore/ScriptController.h>
 #include <wtf/NeverDestroyed.h>
 

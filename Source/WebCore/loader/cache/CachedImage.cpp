@@ -35,7 +35,6 @@
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "MemoryCache.h"
-#include "Page.h"
 #include "RenderElement.h"
 #include "SVGImage.h"
 #include "SecurityOrigin.h"

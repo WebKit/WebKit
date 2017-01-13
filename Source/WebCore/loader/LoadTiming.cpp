@@ -29,7 +29,6 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "Page.h"
 #include "SecurityOrigin.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>

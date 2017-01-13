@@ -33,7 +33,6 @@
 #include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
-#include "Page.h"
 #include <windows.h>
 
 namespace WebCore {

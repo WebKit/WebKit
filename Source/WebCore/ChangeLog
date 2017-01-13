@@ -1,3 +1,59 @@
+2017-01-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove unnecessary includes of Page.h
+        https://bugs.webkit.org/show_bug.cgi?id=166996
+
+        Reviewed by Yusuke Suzuki.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        * Modules/webdriver/NavigatorWebDriver.cpp:
+        * accessibility/AccessibilityNodeObject.cpp:
+        * dom/Range.cpp:
+        * dom/ScriptElement.cpp:
+        * dom/ViewportArguments.cpp:
+        * html/HTMLBodyElement.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLDocument.cpp:
+        * html/HTMLFormControlElementWithState.cpp:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLLinkElement.cpp:
+        * html/PluginDocument.cpp:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        * loader/LoadTiming.cpp:
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedResource.cpp:
+        * page/DeviceController.cpp:
+        * page/TextIndicator.cpp:
+        * page/efl/DragControllerEfl.cpp:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/ios/PasteboardIOS.mm:
+        * platform/ios/ScrollAnimatorIOS.mm:
+        * platform/ios/WidgetIOS.mm:
+        * platform/mac/PasteboardMac.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/win/MainThreadSharedTimerWin.cpp:
+        * platform/win/PasteboardWin.cpp:
+        * platform/win/PlatformScreenWin.cpp:
+        * platform/win/WidgetWin.cpp:
+        * rendering/InlineBox.cpp:
+        * rendering/RenderAttachment.cpp:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderIFrame.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderTextControlSingleLine.cpp:
+        * rendering/RootInlineBox.cpp:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/SVGRenderingContext.cpp:
+        * style/StyleScope.cpp:
+        * svg/SVGDocumentExtensions.cpp:
+        * svg/graphics/SVGImageCache.cpp:
+        * xml/XSLTProcessor.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         Add KEYBOARD_KEY_ATTRIBUTE / KEYBOARD_CODE_ATTRIBUTE to FeatureDefines.xcconfig

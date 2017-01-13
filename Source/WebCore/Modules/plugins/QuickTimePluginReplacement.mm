@@ -39,7 +39,6 @@
 #import "JSQuickTimePluginReplacement.h"
 #import "Logging.h"
 #import "MainFrame.h"
-#import "Page.h"
 #import "RenderElement.h"
 #import "ScriptController.h"
 #import "ScriptSourceCode.h"

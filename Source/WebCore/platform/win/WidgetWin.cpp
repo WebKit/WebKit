@@ -34,7 +34,6 @@
 #include "FrameWin.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "Page.h"
 
 #include <winsock2.h>
 #include <windows.h>

@@ -38,7 +38,6 @@
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "NodeTraversal.h"
-#include "Page.h"
 #include "Range.h"
 #include "RenderObject.h"
 

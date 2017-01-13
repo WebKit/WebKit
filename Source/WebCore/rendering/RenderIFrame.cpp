@@ -30,7 +30,6 @@
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
-#include "Page.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <wtf/StackStats.h>

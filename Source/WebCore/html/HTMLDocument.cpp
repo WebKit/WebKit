@@ -72,7 +72,6 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
-#include "Page.h"
 #include "ScriptController.h"
 #include "StyleResolver.h"
 #include <wtf/text/CString.h>

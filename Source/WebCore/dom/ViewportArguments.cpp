@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "IntSize.h"
-#include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "TextStream.h"
 

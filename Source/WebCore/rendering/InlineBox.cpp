@@ -24,7 +24,6 @@
 #include "Frame.h"
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
-#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"

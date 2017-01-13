@@ -32,7 +32,6 @@
 #include "FloatRoundedRect.h"
 #include "FrameSelection.h"
 #include "HTMLAttachmentElement.h"
-#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderTheme.h"
 #include "URL.h"

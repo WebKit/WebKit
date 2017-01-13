@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MainThreadSharedTimer.h"
 
-#include "Page.h"
 #include "Settings.h"
 #include "WebCoreInstanceHandle.h"
 #include "Widget.h"

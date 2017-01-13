@@ -37,8 +37,6 @@
 #include "HTMLSlotElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorInstrumentation.h"
-#include "Page.h"
-#include "PageGroup.h"
 #include "ProcessingInstruction.h"
 #include "SVGNames.h"
 #include "SVGStyleElement.h"

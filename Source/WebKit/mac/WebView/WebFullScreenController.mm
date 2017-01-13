@@ -37,7 +37,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/IntRect.h>
-#import <WebCore/Page.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderObject.h>

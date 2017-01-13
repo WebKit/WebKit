@@ -40,7 +40,6 @@
 #import "WebTypesInternal.h"
 #import "WebViewPrivate.h"
 #import <WebCore/HistoryItem.h>
-#import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/Settings.h>
 #import <WebCore/ThreadCheck.h>
