@@ -2282,6 +2282,20 @@ static Element* containingLinkElement(Element* element)
     return nullptr;
 }
 
+static inline bool isAssistableElement(Element& node)
+{
+    if (is<HTMLSelectElement>(node))
+        return true;
+    if (is<HTMLTextAreaElement>(node))
+        return true;
+    if (is<HTMLInputElement>(node)) {
+        HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
+        // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
+        return inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField();
+    }
+    return node.isContentEditable();
+}
+
 void WebPage::getPositionInformation(const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     info.request = request;
@@ -2435,7 +2449,7 @@ void WebPage::getPositionInformation(const InteractionInformationRequest& reques
             } else {
                 info.isSelectable = renderer->style().userSelect() != SELECT_NONE;
                 if (info.isSelectable && !hitNode->isTextNode())
-                    info.isSelectable = !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
+                    info.isSelectable = !isAssistableElement(*downcast<Element>(hitNode)) && !rectIsTooBigForSelection(info.bounds, *result.innerNodeFrame());
             }
         }
     }
@@ -2495,20 +2509,6 @@ void WebPage::performActionOnElement(uint32_t action)
         sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
         send(Messages::WebPageProxy::SaveImageToLibrary(handle, bufferSize));
     }
-}
-
-static inline bool isAssistableElement(Element& node)
-{
-    if (is<HTMLSelectElement>(node))
-        return true;
-    if (is<HTMLTextAreaElement>(node))
-        return true;
-    if (is<HTMLInputElement>(node)) {
-        HTMLInputElement& inputElement = downcast<HTMLInputElement>(node);
-        // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
-        return inputElement.isTextField() || inputElement.isDateField() || inputElement.isDateTimeLocalField() || inputElement.isMonthField() || inputElement.isTimeField();
-    }
-    return node.isContentEditable();
 }
 
 static inline Element* nextAssistableElement(Node* startNode, Page& page, bool isForward)
