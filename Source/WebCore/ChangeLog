@@ -1,5 +1,25 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210684. rdar://problem/29775711
+
+    2017-01-12  Brady Eidson  <beidson@apple.com>
+
+            REGRESSION (r209977): Crash in UniqueIDBDatabase::executeNextDatabaseTask.
+            https://bugs.webkit.org/show_bug.cgi?id=166984
+
+            Reviewed by Alex Christensen.
+
+            No new tests (Unable to reproduce, speculative fix).
+
+            * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+            (WebCore::IDBServer::UniqueIDBDatabase::performIterateCursor): If we're not already prefetching for this cursor,
+              starting doing so after holding a protector ref.
+            (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor): If we're now done prefetching for this cursor,
+              schedule the protector ref to be destroyed on the main thread.
+            * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210679. rdar://problem/29910273
 
     2017-01-12  Youenn Fablet  <youenn@apple.com>
