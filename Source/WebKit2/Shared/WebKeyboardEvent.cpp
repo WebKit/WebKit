@@ -41,8 +41,12 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(unmodifiedText)
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key)
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(code)
+#endif
     , m_keyIdentifier(keyIdentifier)
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
@@ -83,8 +87,12 @@ WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& 
     : WebEvent(type, modifiers, timestamp)
     , m_text(text)
     , m_unmodifiedText(unmodifiedText)
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key)
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
     , m_code(code)
+#endif
     , m_keyIdentifier(keyIdentifier)
     , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
     , m_nativeVirtualKeyCode(nativeVirtualKeyCode)

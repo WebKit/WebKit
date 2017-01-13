@@ -1,5 +1,17 @@
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
+        Add KEYBOARD_KEY_ATTRIBUTE / KEYBOARD_CODE_ATTRIBUTE to FeatureDefines.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=166995
+
+        Reviewed by Jer Noble.
+
+        Add KEYBOARD_KEY_ATTRIBUTE / KEYBOARD_CODE_ATTRIBUTE to FeatureDefines.xcconfig
+        as some people are having trouble building without it.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2017-01-12  Chris Dumez  <cdumez@apple.com>
+
         HTML form validation popover sometimes does not go away
         https://bugs.webkit.org/show_bug.cgi?id=166990
         <rdar://problem/29985957>
