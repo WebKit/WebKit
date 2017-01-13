@@ -52,6 +52,12 @@ void WebPasteboardProxy::addWebProcessProxy(WebProcessProxy& webProcessProxy)
 {
     // FIXME: Can we handle all of these on a background queue?
     webProcessProxy.addMessageReceiver(Messages::WebPasteboardProxy::messageReceiverName(), *this);
+    m_webProcessProxyList.add(&webProcessProxy);
+}
+    
+void WebPasteboardProxy::removeWebProcessProxy(WebProcessProxy& webProcessProxy)
+{
+    m_webProcessProxyList.remove(&webProcessProxy);
 }
 
 } // namespace WebKit
