@@ -743,6 +743,9 @@
 "Use at least %d characters" = "Use at least %d characters";
 
 /* Validation message for form control elements with a value shorter than maximum allowed length */
+"Use no more than %d character(s)" = "Use no more than %d character(s)";
+
+/* Validation message for form control elements with a value shorter than maximum allowed length */
 "Use no more than %d characters" = "Use no more than %d characters";
 
 /* Description of WebCrypto master keys in Keychain */
@@ -846,6 +849,9 @@
 
 /* accessibility help text for elapsed time display */
 "current movie time in seconds" = "current movie time in seconds";
+
+/* accessibility role description for a date and time field. */
+"date and time field" = "date and time field";
 
 /* accessibility role description for a date field. */
 "date field" = "date field";

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
-#include <CoreFoundation/CFBundle.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
@@ -34,26 +33,27 @@
 
 namespace WebCore {
 
-String localizedString(const char* key)
+NSString *localizedNSString(NSString *key)
 {
-    static CFBundleRef bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
-
 #if !PLATFORM(IOS)
     // Can be called on a dispatch queue when initializing strings on iOS.
     // See LoadWebLocalizedStrings and <rdar://problem/7902473>.
     ASSERT(isMainThread());
 #endif
 
-    RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    CFStringRef notFound = CFSTR("localized string not found");
-    RetainPtr<CFStringRef> result;
-    if (bundle) {
-        result = adoptCF(CFBundleCopyLocalizedString(bundle, keyString.get(), notFound, 0));
-        ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
-    } else
-        result = notFound;
+    static NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+    return [bundle localizedStringForKey:key value:@"localized string not found" table:nullptr];
+}
 
-    return String(result.get());
+String localizedString(const char* key)
+{
+    RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    return localizedNSString((NSString *)keyString.get());
+}
+
+String validationMessageTooLongText(int, int maxLength)
+{
+    return [NSString localizedStringWithFormat:WEB_UI_NSSTRING(@"Use no more than %d character(s)", @"Validation message for form control elements with a value shorter than maximum allowed length"), maxLength];
 }
 
 } // namespace WebCore
