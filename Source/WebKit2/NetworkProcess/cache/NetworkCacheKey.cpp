@@ -37,38 +37,29 @@
 namespace WebKit {
 namespace NetworkCache {
 
-static const String& noPartitionString()
-{
-    static NeverDestroyed<String> noPartition(ASCIILiteral("No partition"));
-    return noPartition;
-}
-
 Key::Key(const Key& o)
     : m_partition(o.m_partition.isolatedCopy())
     , m_type(o.m_type.isolatedCopy())
     , m_identifier(o.m_identifier.isolatedCopy())
     , m_range(o.m_range.isolatedCopy())
     , m_hash(o.m_hash)
+    , m_partitionHash(o.m_partitionHash)
 {
 }
 
-Key::Key(const String& partition, const String& type, const String& range, const String& identifier)
-    : m_partition(partition.isEmpty() ? noPartitionString() : partition)
+Key::Key(const String& partition, const String& type, const String& range, const String& identifier, const Salt& salt)
+    : m_partition(partition)
     , m_type(type)
     , m_identifier(identifier)
     , m_range(range)
-    , m_hash(computeHash())
+    , m_hash(computeHash(salt))
+    , m_partitionHash(computePartitionHash(salt))
 {
 }
 
 Key::Key(WTF::HashTableDeletedValueType)
     : m_identifier(WTF::HashTableDeletedValue)
 {
-}
-
-bool Key::hasPartition() const
-{
-    return m_partition != noPartitionString();
 }
 
 Key& Key::operator=(const Key& other)
@@ -98,25 +89,40 @@ static void hashString(SHA1& sha1, const String& string)
     sha1.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length() + 1);
 }
 
-Key::HashType Key::computeHash() const
+Key::HashType Key::computeHash(const Salt& salt) const
 {
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // SHA1 just happens to be suitably sized, fast and available.
     SHA1 sha1;
+    sha1.addBytes(salt.data(), salt.size());
+
     hashString(sha1, m_partition);
     hashString(sha1, m_type);
     hashString(sha1, m_identifier);
     hashString(sha1, m_range);
+
     SHA1::Digest hash;
     sha1.computeHash(hash);
     return hash;
 }
 
-String Key::hashAsString() const
+Key::HashType Key::computePartitionHash(const Salt& salt) const
+{
+    SHA1 sha1;
+    sha1.addBytes(salt.data(), salt.size());
+
+    hashString(sha1, m_partition);
+
+    SHA1::Digest hash;
+    sha1.computeHash(hash);
+    return hash;
+}
+
+String Key::hashAsString(const HashType& hash)
 {
     StringBuilder builder;
     builder.reserveCapacity(hashStringLength());
-    for (auto byte : m_hash) {
+    for (auto byte : hash) {
         builder.append(upperNibbleToASCIIHexDigit(byte));
         builder.append(lowerNibbleToASCIIHexDigit(byte));
     }

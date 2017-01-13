@@ -114,7 +114,7 @@ void Cache::setCapacity(size_t maximumSize)
     m_storage->setCapacity(maximumSize);
 }
 
-static Key makeCacheKey(const WebCore::ResourceRequest& request)
+Key Cache::makeCacheKey(const WebCore::ResourceRequest& request)
 {
 #if ENABLE(CACHE_PARTITIONING)
     String partition = request.cachePartition();
@@ -125,7 +125,7 @@ static Key makeCacheKey(const WebCore::ResourceRequest& request)
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
     String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
-    return { partition, resourceType(), range, request.url().string() };
+    return { partition, resourceType(), range, request.url().string(), m_storage->salt() };
 }
 
 static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)

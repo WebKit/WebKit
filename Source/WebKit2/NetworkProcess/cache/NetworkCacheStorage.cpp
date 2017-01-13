@@ -42,6 +42,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
+static const char saltFileName[] = "salt";
 static const char versionDirectoryPrefix[] = "Version ";
 static const char recordsDirectoryName[] = "Records";
 static const char blobsDirectoryName[] = "Blobs";
@@ -127,15 +128,6 @@ public:
     unsigned activeCount { 0 };
 };
 
-std::unique_ptr<Storage> Storage::open(const String& cachePath)
-{
-    ASSERT(RunLoop::isMain());
-
-    if (!WebCore::makeAllDirectories(cachePath))
-        return nullptr;
-    return std::unique_ptr<Storage>(new Storage(cachePath));
-}
-
 static String makeVersionedDirectoryPath(const String& baseDirectoryPath)
 {
     String versionSubdirectory = versionDirectoryPrefix + String::number(Storage::version);
@@ -152,13 +144,30 @@ static String makeBlobDirectoryPath(const String& baseDirectoryPath)
     return WebCore::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), blobsDirectoryName);
 }
 
-void traverseRecordsFiles(const String& recordsPath, const String& expectedType, const std::function<void (const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath)>& function)
+static String makeSaltFilePath(const String& baseDirectoryPath)
 {
-    traverseDirectory(recordsPath, [&recordsPath, &function, &expectedType](const String& partitionName, DirectoryEntryType entryType) {
+    return WebCore::pathByAppendingComponent(makeVersionedDirectoryPath(baseDirectoryPath), saltFileName);
+}
+
+std::unique_ptr<Storage> Storage::open(const String& cachePath)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (!WebCore::makeAllDirectories(makeVersionedDirectoryPath(cachePath)))
+        return nullptr;
+    auto salt = readOrMakeSalt(makeSaltFilePath(cachePath));
+    if (!salt)
+        return nullptr;
+    return std::unique_ptr<Storage>(new Storage(cachePath, *salt));
+}
+
+void traverseRecordsFiles(const String& recordsPath, const String& expectedType, const RecordFileTraverseFunction& function)
+{
+    traverseDirectory(recordsPath, [&](const String& partitionName, DirectoryEntryType entryType) {
         if (entryType != DirectoryEntryType::Directory)
             return;
         String partitionPath = WebCore::pathByAppendingComponent(recordsPath, partitionName);
-        traverseDirectory(partitionPath, [&function, &partitionPath, &expectedType](const String& actualType, DirectoryEntryType entryType) {
+        traverseDirectory(partitionPath, [&](const String& actualType, DirectoryEntryType entryType) {
             if (entryType != DirectoryEntryType::Directory)
                 return;
             if (!expectedType.isEmpty() && expectedType != actualType)
@@ -198,15 +207,16 @@ static void deleteEmptyRecordsDirectories(const String& recordsPath)
     });
 }
 
-Storage::Storage(const String& baseDirectoryPath)
+Storage::Storage(const String& baseDirectoryPath, Salt salt)
     : m_basePath(baseDirectoryPath)
     , m_recordsPath(makeRecordsDirectoryPath(baseDirectoryPath))
+    , m_salt(salt)
     , m_readOperationTimeoutTimer(*this, &Storage::cancelAllReadOperations)
     , m_writeOperationDispatchTimer(*this, &Storage::dispatchPendingWriteOperations)
     , m_ioQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage", WorkQueue::Type::Concurrent))
     , m_backgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.background", WorkQueue::Type::Concurrent, WorkQueue::QOS::Background))
     , m_serialBackgroundIOQueue(WorkQueue::create("com.apple.WebKit.Cache.Storage.serialBackground", WorkQueue::Type::Serial, WorkQueue::QOS::Background))
-    , m_blobStorage(makeBlobDirectoryPath(baseDirectoryPath))
+    , m_blobStorage(makeBlobDirectoryPath(baseDirectoryPath), m_salt)
 {
     deleteOldVersions();
     synchronize();
@@ -326,9 +336,8 @@ bool Storage::mayContainBlob(const Key& key) const
 
 String Storage::recordDirectoryPathForKey(const Key& key) const
 {
-    ASSERT(!key.partition().isEmpty());
     ASSERT(!key.type().isEmpty());
-    return WebCore::pathByAppendingComponent(WebCore::pathByAppendingComponent(recordsPath(), key.partition()), key.type());
+    return WebCore::pathByAppendingComponent(WebCore::pathByAppendingComponent(recordsPath(), key.partitionHashAsString()), key.type());
 }
 
 String Storage::recordPathForKey(const Key& key) const
@@ -397,7 +406,7 @@ static bool decodeRecordMetaData(RecordMetaData& metaData, const Data& fileData)
     return success;
 }
 
-static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, Data& headerData)
+static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, Data& headerData, const Salt& salt)
 {
     if (!decodeRecordMetaData(metaData, fileData)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) meta data decode failure");
@@ -410,7 +419,7 @@ static bool decodeRecordHeader(const Data& fileData, RecordMetaData& metaData, D
     }
 
     headerData = fileData.subrange(metaData.headerOffset, metaData.headerSize);
-    if (metaData.headerHash != computeSHA1(headerData)) {
+    if (metaData.headerHash != computeSHA1(headerData, salt)) {
         LOG(NetworkCacheStorage, "(NetworkProcess) header checksum mismatch");
         return false;
     }
@@ -423,7 +432,7 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
 
     RecordMetaData metaData;
     Data headerData;
-    if (!decodeRecordHeader(recordData, metaData, headerData))
+    if (!decodeRecordHeader(recordData, metaData, headerData, m_salt))
         return;
 
     if (metaData.key != readOperation.key)
@@ -440,7 +449,7 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
         if (bodyOffset + metaData.bodySize != recordData.size())
             return;
         bodyData = recordData.subrange(bodyOffset, metaData.bodySize);
-        if (metaData.bodyHash != computeSHA1(bodyData))
+        if (metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return;
     }
 
@@ -502,9 +511,9 @@ Data Storage::encodeRecord(const Record& record, std::optional<BlobStorage::Blob
 
     RecordMetaData metaData(record.key);
     metaData.epochRelativeTimeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(record.timeStamp.time_since_epoch());
-    metaData.headerHash = computeSHA1(record.header);
+    metaData.headerHash = computeSHA1(record.header, m_salt);
     metaData.headerSize = record.header.size();
-    metaData.bodyHash = blob ? blob.value().hash : computeSHA1(record.body);
+    metaData.bodyHash = blob ? blob.value().hash : computeSHA1(record.body, m_salt);
     metaData.bodySize = record.body.size();
     metaData.isBodyInline = !blob;
 
@@ -823,7 +832,7 @@ void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&
             channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [this, &traverseOperation, worth, bodyShareCount](Data& fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
-                if (decodeRecordHeader(fileData, metaData, headerData)) {
+                if (decodeRecordHeader(fileData, metaData, headerData, m_salt)) {
                     Record record {
                         metaData.key,
                         std::chrono::system_clock::time_point(metaData.epochRelativeTimeStamp),

@@ -39,7 +39,7 @@ namespace NetworkCache {
 class BlobStorage {
     WTF_MAKE_NONCOPYABLE(BlobStorage);
 public:
-    BlobStorage(const String& blobDirectoryPath);
+    BlobStorage(const String& blobDirectoryPath, Salt);
 
     struct Blob {
         Data data;
@@ -63,6 +63,7 @@ private:
     String blobPathForHash(const SHA1::Digest&) const;
 
     const String m_blobDirectoryPath;
+    const Salt m_salt;
 
     std::atomic<size_t> m_approximateSize { 0 };
 };

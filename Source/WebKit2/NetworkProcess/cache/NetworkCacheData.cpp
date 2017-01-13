@@ -28,9 +28,11 @@
 
 #if ENABLE(NETWORK_CACHE)
 
+#include <WebCore/FileSystem.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -103,13 +105,15 @@ Data adoptAndMapFile(int fd, size_t offset, size_t size)
     return Data::adoptMap(map, size, fd);
 }
 
-SHA1::Digest computeSHA1(const Data& data)
+SHA1::Digest computeSHA1(const Data& data, const Salt& salt)
 {
     SHA1 sha1;
+    sha1.addBytes(salt.data(), salt.size());
     data.apply([&sha1](const uint8_t* data, size_t size) {
         sha1.addBytes(data, size);
         return true;
     });
+
     SHA1::Digest digest;
     sha1.computeHash(digest);
     return digest;
@@ -122,6 +126,35 @@ bool bytesEqual(const Data& a, const Data& b)
     if (a.size() != b.size())
         return false;
     return !memcmp(a.data(), b.data(), a.size());
+}
+
+static Salt makeSalt()
+{
+    Salt salt;
+    static_assert(salt.size() == 8, "Salt size");
+    *reinterpret_cast<uint32_t*>(&salt[0]) = cryptographicallyRandomNumber();
+    *reinterpret_cast<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
+    return salt;
+}
+
+std::optional<Salt> readOrMakeSalt(const String& path)
+{
+    auto cpath = WebCore::fileSystemRepresentation(path);
+    auto fd = open(cpath.data(), O_RDONLY, 0);
+    Salt salt;
+    auto bytesRead = read(fd, salt.data(), salt.size());
+    close(fd);
+    if (bytesRead != salt.size()) {
+        salt = makeSalt();
+
+        unlink(cpath.data());
+        fd = open(cpath.data(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+        bool success = write(fd, salt.data(), salt.size()) == salt.size();
+        close(fd);
+        if (!success)
+            return { };
+    }
+    return salt;
 }
 
 } // namespace NetworkCache
