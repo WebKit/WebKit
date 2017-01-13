@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -329,7 +329,10 @@ void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     
     model->setVideoFullscreenLayer(videoLayer, [strongThis, this, contextId] {
         dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId] {
-            m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), m_page->pageID());
+            if (!strongThis->m_page)
+                return;
+
+            m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), strongThis->m_page->pageID());
         });
     });
     
