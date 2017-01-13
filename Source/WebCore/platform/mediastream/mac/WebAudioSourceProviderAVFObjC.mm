@@ -53,12 +53,12 @@ namespace WebCore {
 
 static const double kRingBufferDuration = 1;
 
-Ref<WebAudioSourceProviderAVFObjC> WebAudioSourceProviderAVFObjC::create(AVAudioCaptureSource& source)
+Ref<WebAudioSourceProviderAVFObjC> WebAudioSourceProviderAVFObjC::create(AudioCaptureSourceProviderObjC& source)
 {
     return adoptRef(*new WebAudioSourceProviderAVFObjC(source));
 }
 
-WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(AVAudioCaptureSource& source)
+WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(AudioCaptureSourceProviderObjC& source)
     : m_captureSource(&source)
 {
 }
@@ -71,17 +71,7 @@ WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC()
         m_converter = nullptr;
     }
     if (m_connected)
-        m_captureSource->removeObserver(this);
-}
-
-void WebAudioSourceProviderAVFObjC::startProducingData()
-{
-    m_captureSource->startProducingData();
-}
-
-void WebAudioSourceProviderAVFObjC::stopProducingData()
-{
-    m_captureSource->stopProducingData();
+        m_captureSource->removeObserver(*this);
 }
 
 void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
@@ -107,6 +97,10 @@ void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToP
     }
 
     ASSERT(bus->numberOfChannels() == m_ringBuffer->channelCount());
+    if (bus->numberOfChannels() != m_ringBuffer->channelCount()) {
+        bus->zero();
+        return;
+    }
 
     for (unsigned i = 0; i < m_list->mNumberBuffers; ++i) {
         AudioChannel& channel = *bus->channel(i);
@@ -132,10 +126,10 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
 
     if (m_client && !m_connected) {
         m_connected = true;
-        m_captureSource->addObserver(this);
-        m_captureSource->startProducingData();
+        m_captureSource->addObserver(*this);
+        m_captureSource->start();
     } else if (!m_client && m_connected) {
-        m_captureSource->removeObserver(this);
+        m_captureSource->removeObserver(*this);
         m_connected = false;
     }
 }

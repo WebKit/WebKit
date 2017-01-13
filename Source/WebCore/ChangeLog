@@ -1,3 +1,63 @@
+2017-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream, Mac] Add mock audio source
+        https://bugs.webkit.org/show_bug.cgi?id=166974
+
+        Reviewed by Jer Noble.
+        
+        Add a mock audio source for testing media streams.
+
+        No new tests, updated webaudio/mediastreamaudiosourcenode.html.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample):
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+
+        * platform/mediastream/mac/AVAudioCaptureSource.h:
+        (WebCore::AVAudioCaptureSource::Observer::~Observer): Deleted.
+
+        * platform/mediastream/mac/AVAudioCaptureSource.mm:
+        (WebCore::AVAudioCaptureSource::addObserver):
+        (WebCore::AVAudioCaptureSource::removeObserver):
+        (WebCore::AVAudioCaptureSource::start):
+
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h: Added.
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm: Added.
+        (WebCore::MockRealtimeAudioSource::create):
+        (WebCore::MockRealtimeAudioSourceMac::MockRealtimeAudioSourceMac):
+        (WebCore::MockRealtimeAudioSource::createMuted):
+        (WebCore::MockRealtimeAudioSourceMac::addObserver):
+        (WebCore::MockRealtimeAudioSourceMac::removeObserver):
+        (WebCore::MockRealtimeAudioSourceMac::start):
+        (WebCore::MockRealtimeAudioSourceMac::emitSampleBuffers):
+        (WebCore::MockRealtimeAudioSourceMac::reconfigure):
+        (WebCore::MockRealtimeAudioSourceMac::render):
+        (WebCore::MockRealtimeAudioSourceMac::applySampleRate):
+        (WebCore::MockRealtimeAudioSourceMac::audioSourceProvider):
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::create):
+        (WebCore::WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::~WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+        (WebCore::WebAudioSourceProviderAVFObjC::setClient):
+        (WebCore::WebAudioSourceProviderAVFObjC::startProducingData): Deleted.
+        (WebCore::WebAudioSourceProviderAVFObjC::stopProducingData): Deleted.
+
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::MockRealtimeAudioSource):
+        (WebCore::MockRealtimeAudioSource::startProducingData):
+        (WebCore::MockRealtimeAudioSource::stopProducingData):
+        (WebCore::MockRealtimeAudioSource::elapsedTime):
+        (WebCore::MockRealtimeAudioSource::tick):
+
+        * platform/mock/MockRealtimeAudioSource.h:
+        (WebCore::MockRealtimeAudioSource::render):
+        (WebCore::MockRealtimeAudioSource::renderInterval):
+        (WebCore::MockRealtimeAudioSource::~MockRealtimeAudioSource): Deleted.
+
 2017-01-13  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for DeviceMotionEvent and DeviceOrientationEvent

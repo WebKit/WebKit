@@ -326,7 +326,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample(MediaStreamTrackPr
     if (timelineOffset == MediaTime::invalidTime()) {
         timelineOffset = calculateTimelineOffset(sample, rendererLatency);
         audioTrack->setTimelineOffset(timelineOffset);
-        LOG(MediaCaptureSamples, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample: timeline offset for track %s set to (%lld/%d)", track.id().utf8().data(), timelineOffset.timeValue(), timelineOffset.timeScale());
+        LOG(MediaCaptureSamples, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample: timeline offset for track %s set to %s", track.id().utf8().data(), toString(timelineOffset).utf8().data());
     }
 
     updateSampleTimes(sample, timelineOffset, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSample");
@@ -359,7 +359,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
     if (timelineOffset == MediaTime::invalidTime()) {
         timelineOffset = calculateTimelineOffset(sample, rendererLatency);
         videoTrack->setTimelineOffset(timelineOffset);
-        LOG(MediaCaptureSamples, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample: timeline offset for track %s set to %f", track.id().utf8().data(), timelineOffset.toDouble());
+        LOG(MediaCaptureSamples, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample: timeline offset for track %s set to %s", track.id().utf8().data(), toString(timelineOffset).utf8().data());
     }
 
     updateSampleTimes(sample, timelineOffset, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample");

@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "AVMediaCaptureSource.h"
+#include "AudioCaptureSourceProviderObjC.h"
 #include <wtf/Lock.h>
 
 typedef struct AudioStreamBasicDescription AudioStreamBasicDescription;
@@ -38,26 +39,20 @@ namespace WebCore {
 
 class WebAudioSourceProviderAVFObjC;
 
-class AVAudioCaptureSource : public AVMediaCaptureSource {
+class AVAudioCaptureSource : public AVMediaCaptureSource, public AudioCaptureSourceProviderObjC {
 public:
 
-    class Observer {
-    public:
-        virtual ~Observer() { }
-        virtual void prepare(const AudioStreamBasicDescription *) = 0;
-        virtual void unprepare() = 0;
-        virtual void process(CMFormatDescriptionRef, CMSampleBufferRef) = 0;
-    };
-
     static RefPtr<AVMediaCaptureSource> create(AVCaptureDevice*, const AtomicString&, const MediaConstraints*, String&);
-
-    void addObserver(Observer*);
-    void removeObserver(Observer*);
 
 private:
     AVAudioCaptureSource(AVCaptureDevice*, const AtomicString&);
     virtual ~AVAudioCaptureSource();
     
+    // AudioCaptureSourceProviderObjC
+    void addObserver(AudioSourceObserverObjC&) final;
+    void removeObserver(AudioSourceObserverObjC&) final;
+    void start() final;
+
     void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
     void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
 
@@ -72,7 +67,7 @@ private:
 
     RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
     std::unique_ptr<AudioStreamBasicDescription> m_inputDescription;
-    Vector<Observer*> m_observers;
+    Vector<AudioSourceObserverObjC*> m_observers;
     Lock m_lock;
 };
 

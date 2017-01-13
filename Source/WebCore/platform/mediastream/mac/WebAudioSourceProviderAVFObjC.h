@@ -28,9 +28,9 @@
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
-#include "AVAudioCaptureSource.h"
+#include "AudioCaptureSourceProviderObjC.h"
+#include "AudioSourceObserverObjC.h"
 #include "AudioSourceProvider.h"
-#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -42,28 +42,24 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
-class AVAudioCaptureSource;
 class CARingBuffer;
 
-class WebAudioSourceProviderAVFObjC : public RefCounted<WebAudioSourceProviderAVFObjC>, public AudioSourceProvider, public AVAudioCaptureSource::Observer {
+class WebAudioSourceProviderAVFObjC : public RefCounted<WebAudioSourceProviderAVFObjC>, public AudioSourceProvider, public AudioSourceObserverObjC {
 public:
-    static Ref<WebAudioSourceProviderAVFObjC> create(AVAudioCaptureSource&);
+    static Ref<WebAudioSourceProviderAVFObjC> create(AudioCaptureSourceProviderObjC&);
     virtual ~WebAudioSourceProviderAVFObjC();
 
 private:
-    WebAudioSourceProviderAVFObjC(AVAudioCaptureSource&);
-
-    void startProducingData();
-    void stopProducingData();
+    WebAudioSourceProviderAVFObjC(AudioCaptureSourceProviderObjC&);
 
     // AudioSourceProvider
     void provideInput(AudioBus*, size_t) override;
     void setClient(AudioSourceProviderClient*) override;
 
-    // AVAudioCaptureSource::Observer
-    void prepare(const AudioStreamBasicDescription *) override;
-    void unprepare() override;
-    void process(CMFormatDescriptionRef, CMSampleBufferRef) override;
+    // AudioSourceObserverObjC
+    void prepare(const AudioStreamBasicDescription *) final;
+    void unprepare() final;
+    void process(CMFormatDescriptionRef, CMSampleBufferRef) final;
 
     size_t m_listBufferSize { 0 };
     std::unique_ptr<AudioBufferList> m_list;
@@ -76,7 +72,7 @@ private:
     uint64_t m_writeCount { 0 };
     uint64_t m_readCount { 0 };
     AudioSourceProviderClient* m_client { nullptr };
-    AVAudioCaptureSource* m_captureSource { nullptr };
+    AudioCaptureSourceProviderObjC* m_captureSource { nullptr };
     bool m_connected { false };
 };
     

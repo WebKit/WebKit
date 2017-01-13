@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,51 +32,55 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioCaptureSourceProviderObjC.h"
 #include "FontCascade.h"
-#include "ImageBuffer.h"
-#include "MockRealtimeMediaSource.h"
-#include <wtf/RunLoop.h>
+#include "MockRealtimeAudioSource.h"
+#include <CoreAudio/CoreAudioTypes.h>
+
+OBJC_CLASS AVAudioPCMBuffer;
+typedef struct AudioBufferList AudioBufferList;
+typedef struct OpaqueCMClock* CMClockRef;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
-class MockRealtimeAudioSource : public MockRealtimeMediaSource {
+class WebAudioSourceProviderAVFObjC;
+
+class MockRealtimeAudioSourceMac final : public MockRealtimeAudioSource, public AudioCaptureSourceProviderObjC {
 public:
 
-    static RefPtr<MockRealtimeAudioSource> create(const String&, const MediaConstraints*);
-    static RefPtr<MockRealtimeAudioSource> createMuted(const String& name);
-
-    virtual ~MockRealtimeAudioSource() = default;
-
-protected:
-    MockRealtimeAudioSource(const String& name = ASCIILiteral("Mock audio device"));
-
-    void startProducingData() final;
-    void stopProducingData() final;
-
-    virtual void render(double) { }
-
-    double elapsedTime();
-    static int renderInterval() { return 125; }
+    // AudioCaptureSourceProviderObjC
+    void addObserver(AudioSourceObserverObjC&) final;
+    void removeObserver(AudioSourceObserverObjC&) final;
+    void start() final;
 
 private:
+    friend class MockRealtimeAudioSource;
+    MockRealtimeAudioSourceMac(const String&);
 
-    bool applyVolume(double) override { return true; }
-    bool applySampleRate(int) override { return true; }
-    bool applySampleSize(int) override { return true; }
-    bool applyEchoCancellation(bool) override { return true; }
+    bool applySampleRate(int) final;
+    bool applySampleSize(int) final { return false; }
 
-    void updateSettings(RealtimeMediaSourceSettings&) override;
-    void initializeCapabilities(RealtimeMediaSourceCapabilities&) override;
-    void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) override;
+    void emitSampleBuffers(uint32_t);
+    void render(double) final;
+    void reconfigure();
 
-    void tick();
+    AudioSourceProvider* audioSourceProvider() final;
 
-    RunLoop::Timer<MockRealtimeAudioSource> m_timer;
-    double m_startTime { NAN };
-    double m_lastRenderTime { NAN };
-    double m_elapsedTime { 0 };
+    size_t m_audioBufferListBufferSize { 0 };
+    std::unique_ptr<AudioBufferList> m_audioBufferList;
+
+    uint32_t m_maximiumFrameCount;
+    uint32_t m_sampleRate { 44100 };
+    double m_bytesPerFrame { sizeof(Float32) };
+
+    RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+    AudioStreamBasicDescription m_streamFormat;
+    RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
+    Vector<AudioSourceObserverObjC*> m_observers;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+

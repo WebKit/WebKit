@@ -1,96 +1,114 @@
 <!DOCTYPE html>
-
 <html>
-<head>
-<script src="../resources/js-test-pre.js"></script>
-<script src="resources/audio-testing.js"></script>
-</head>
+    <head>
+        <script src="../resources/js-test-pre.js"></script>
+    </head>
 
-<body>
-<div id="description"></div>
-<div id="console"></div>
+    <body>
+        <div id="description"></div>
+        <div id="console"></div>
 
-<script>
-description("Basic tests for MediaStreamAudioSourceNode API.");
+        <script>
+            description("Basic tests for MediaStreamAudioSourceNode API.");
 
-var context = 0;
+            let context;
+            let stream;
+            let finished = false;
+            const numberOfOutputChannels = 2;
+            const numberOfInputChannels = 2;
+            const bufferSize = 512;
 
-function error() {
-    testFailed('Stream generation failed.');
-    finishJSTest();
-}
+            function processAudioData(event) 
+            {
+                if (finished)
+                    return;
 
-function getUserMedia(dictionary, callback) {
-    try {
-        navigator.webkitGetUserMedia(dictionary, callback, error);
-    } catch (e) {
-        testFailed('webkitGetUserMedia threw exception :' + e);
-        finishJSTest();
-    }
-}
+                if (event.inputBuffer.numberOfChannels != numberOfInputChannels)
+                    testFailed(`numberOfInputChannels doesn't match: have ${event.inputBuffer.numberOfChannels}, expect ${numberOfInputChannels}!`);
 
-function gotStream(stream) {
-    s = stream;
-    testPassed('{audio:true} generated stream');
-    shouldBe('s.getAudioTracks().length', '1');
-    shouldBe('s.getVideoTracks().length', '0');
+                if (event.outputBuffer.numberOfChannels != numberOfOutputChannels)
+                    testFailed(`numberOfOutputChannels doesn't match: have ${event.outputBuffer.numberOfChannels}, expect ${numberOfOutputChannels}!`);
 
-    context = new webkitAudioContext();
+                stream.getAudioTracks()[0].stop();
+                testPassed("onaudioprocess was called");
+                finishJSTest();
+                finished = true;
+            }
 
-    // Create an AudioNode from the stream.
-    var mediaStreamSource = context.createMediaStreamSource(stream);
+            function gotStream(s)
+            {
+                stream = s;
+                testPassed('{audio:true} generated stream');
+                shouldBe('stream.getAudioTracks().length', '1');
+                shouldBe('stream.getVideoTracks().length', '0');
 
-    // Check number of inputs and outputs.
-    if (mediaStreamSource.numberOfInputs == 0)
-        testPassed("Source AudioNode has no inputs.");
-    else
-        testFailed("Source AudioNode should not have inputs.");
+                context = new webkitAudioContext();
 
-    if (mediaStreamSource.numberOfOutputs == 1)
-        testPassed("Source AudioNode has one output.");
-    else
-        testFailed("Source AudioNode should have one output.");
+                // Create an AudioNode from the stream.
+                let mediaStreamSource = context.createMediaStreamSource(stream);
 
-    // Try calling connect() method with illegal values.
+                // Check number of inputs and outputs.
+                if (mediaStreamSource.numberOfInputs == 0)
+                    testPassed("Source AudioNode has no inputs.");
+                else
+                    testFailed("Source AudioNode should not have inputs.");
 
-    try {
-        mediaStreamSource.connect(0, 0, 0);
-        testFailed("connect() exception should be thrown for illegal destination AudioNode.");
-    } catch(e) {
-        testPassed("connect() exception thrown for illegal destination AudioNode.");
-    }
+                if (mediaStreamSource.numberOfOutputs == 1)
+                    testPassed("Source AudioNode has one output.");
+                else
+                    testFailed("Source AudioNode should have one output.");
 
-    try {
-        mediaStreamSource.connect(context.destination, 5, 0);
-        testFailed("connect() exception should be thrown for illegal output index.");
-    } catch(e) {
-        testPassed("connect() exception thrown for illegal output index.");
-    }
+                // Try calling connect() method with illegal values.
+                try {
+                    mediaStreamSource.connect(0, 0, 0);
+                    testFailed("connect() exception should be thrown for illegal destination AudioNode.");
+                } catch(err) {
+                    testPassed(`connect() exception {"${err.name}", "${err.message}"} thrown for illegal destination AudioNode`);
+                }
 
-    try {
-        mediaStreamSource.connect(context.destination, 0, 5);
-        testFailed("connect() exception should be thrown for illegal input index.");
-    } catch(e) {
-        testPassed("connect() exception thrown for illegal input index.");
-    }
+                try {
+                    mediaStreamSource.connect(context.destination, 5, 0);
+                    testFailed("connect() exception should be thrown for illegal output index.");
+                } catch(err) {
+                    testPassed(`connect() exception {"${err.name}", "${err.message}"} thrown for illegal output index`);
+                }
 
-    // Try calling connect() with proper values.
-    try {
-        mediaStreamSource.connect(context.destination, 0, 0);
-        testPassed("mediaStreamSource.connect(context.destination) succeeded.");
-    } catch(e) {
-        testFailed("mediaStreamSource.connect(context.destination) failed.");
-    }
+                try {
+                    mediaStreamSource.connect(context.destination, 0, 5);
+                    testFailed("connect() exception should be thrown for illegal input index.");
+                } catch(err) {
+                    testPassed(`connect() exception {"${err.name}", "${err.message}"} thrown for illegal input index`);
+                }
 
-    finishJSTest();
-}
+                // Try calling connect() with legal values.
+                try {
+                    mediaStreamSource.connect(context.destination, 0, 0);
+                    testPassed("mediaStreamSource.connect(context.destination) succeeded.");
+                } catch(err) {
+                    testFailed(`mediaStreamSource.connect(context.destination) failed with "${err.name}": "${err.message}"`);
+                }
 
-getUserMedia({audio:true}, gotStream);
-window.jsTestIsAsync = true;
-window.successfullyParsed = true;
+                let scriptProcessorNode = context.createScriptProcessor(bufferSize, numberOfInputChannels, numberOfOutputChannels);
+                scriptProcessorNode.onaudioprocess = processAudioData;
 
-</script>
+                mediaStreamSource.connect(scriptProcessorNode);
+                scriptProcessorNode.connect(context.destination);
+            }
 
-<script src="../resources/js-test-post.js"></script>
-</body>
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+
+            navigator.mediaDevices.getUserMedia({audio:true})
+                .then(stream => gotStream(stream))
+                .catch(function(err) {
+                    testFailed(`mediaDevices.getUserMedia() failed with "${err.name}": "${err.message}"`);
+                    finishJSTest();
+                });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../resources/js-test-post.js"></script>
+
+    </body>
 </html>

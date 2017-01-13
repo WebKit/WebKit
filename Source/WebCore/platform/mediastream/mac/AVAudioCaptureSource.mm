@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "AudioSourceObserverObjC.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "MediaSampleAVFObjC.h"
@@ -115,20 +116,23 @@ void AVAudioCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
     settings.setDeviceId(id());
 }
 
-void AVAudioCaptureSource::addObserver(AVAudioCaptureSource::Observer* observer)
+void AVAudioCaptureSource::addObserver(AudioSourceObserverObjC& observer)
 {
     LockHolder lock(m_lock);
-    m_observers.append(observer);
+    m_observers.append(&observer);
     if (m_inputDescription->mSampleRate)
-        observer->prepare(m_inputDescription.get());
+        observer.prepare(m_inputDescription.get());
 }
 
-void AVAudioCaptureSource::removeObserver(AVAudioCaptureSource::Observer* observer)
+void AVAudioCaptureSource::removeObserver(AudioSourceObserverObjC& observer)
 {
     LockHolder lock(m_lock);
-    size_t pos = m_observers.find(observer);
-    if (pos != notFound)
-        m_observers.remove(pos);
+    m_observers.removeFirst(&observer);
+}
+
+void AVAudioCaptureSource::start()
+{
+    startProducingData();
 }
 
 void AVAudioCaptureSource::setupCaptureSession()

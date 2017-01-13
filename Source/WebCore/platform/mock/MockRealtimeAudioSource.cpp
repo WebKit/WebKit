@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+#if !PLATFORM(MAC) && !PLATFORM(IOS)
 RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::create(const String& name, const MediaConstraints* constraints)
 {
     auto source = adoptRef(new MockRealtimeAudioSource(name));
@@ -55,9 +56,11 @@ RefPtr<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const Strin
     source->m_muted = true;
     return source;
 }
-
+#endif
+    
 MockRealtimeAudioSource::MockRealtimeAudioSource(const String& name)
     : MockRealtimeMediaSource(createCanonicalUUIDString(), RealtimeMediaSource::Audio, name)
+    , m_timer(RunLoop::current(), this, &MockRealtimeAudioSource::tick)
 {
 }
 
@@ -80,6 +83,41 @@ void MockRealtimeAudioSource::initializeSupportedConstraints(RealtimeMediaSource
     supportedConstraints.setSupportsVolume(true);
     supportedConstraints.setSupportsEchoCancellation(true);
     supportedConstraints.setSupportsSampleRate(true);
+}
+
+void MockRealtimeAudioSource::startProducingData()
+{
+    MockRealtimeMediaSource::startProducingData();
+
+    m_startTime = monotonicallyIncreasingTime();
+    m_timer.startRepeating(std::chrono::milliseconds(renderInterval()));
+}
+
+void MockRealtimeAudioSource::stopProducingData()
+{
+    MockRealtimeMediaSource::stopProducingData();
+    m_timer.stop();
+    m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;
+    m_startTime = NAN;
+}
+
+double MockRealtimeAudioSource::elapsedTime()
+{
+    if (std::isnan(m_startTime))
+        return m_elapsedTime;
+
+    return m_elapsedTime + (monotonicallyIncreasingTime() - m_startTime);
+}
+
+void MockRealtimeAudioSource::tick()
+{
+    if (std::isnan(m_lastRenderTime))
+        m_lastRenderTime = monotonicallyIncreasingTime();
+
+    double now = monotonicallyIncreasingTime();
+    double delta = now - m_lastRenderTime;
+    m_lastRenderTime = now;
+    render(delta);
 }
 
 } // namespace WebCore
