@@ -33,6 +33,7 @@
 #include "ContextMenuController.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
+#include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DragController.h"
@@ -98,6 +99,7 @@
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
 #include "Widget.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
@@ -124,7 +126,12 @@
 
 namespace WebCore {
 
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Page::" fmt, this, ##__VA_ARGS__)
+
 static HashSet<Page*>* allPages;
+
+static const std::chrono::seconds cpuUsageMeasurementDelay { 5 };
+static const std::chrono::seconds cpuUsageMeasurementDuration { 10 };
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
@@ -244,6 +251,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
     , m_isClosing(false)
+    , m_cpuUsageMeasurementTimer(*this, &Page::measurePostLoadCPUUsage)
 {
     updateTimerThrottlingState();
 
@@ -918,6 +926,55 @@ void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInte
         frame->document()->userInterfaceLayoutDirectionChanged();
     }
 #endif
+}
+
+void Page::didStartProvisionalLoad()
+{
+    m_postLoadCPUTime = std::nullopt;
+    m_cpuUsageMeasurementTimer.stop();
+}
+
+void Page::didFinishLoad()
+{
+    resetRelevantPaintedObjectCounter();
+
+    // Only do post-load CPU usage measurement if there is a single Page in the process in order to reduce noise.
+    if (Settings::isPostLoadCPUUsageMeasurementEnabled() && allPages->size() == 1) {
+        m_postLoadCPUTime = std::nullopt;
+        m_cpuUsageMeasurementTimer.startOneShot(cpuUsageMeasurementDelay);
+    }
+}
+
+static String cpuUsageToDiagnosticLogginKey(double cpuUsage)
+{
+    if (cpuUsage < 10)
+        return ASCIILiteral("Below10");
+    if (cpuUsage < 20)
+        return ASCIILiteral("10to20");
+    if (cpuUsage < 40)
+        return ASCIILiteral("20to40");
+    if (cpuUsage < 60)
+        return ASCIILiteral("40to60");
+    if (cpuUsage < 80)
+        return ASCIILiteral("60to80");
+    return ASCIILiteral("over80");
+}
+
+void Page::measurePostLoadCPUUsage()
+{
+    if (!m_postLoadCPUTime) {
+        m_postLoadCPUTime = getCPUTime();
+        if (m_postLoadCPUTime)
+            m_cpuUsageMeasurementTimer.startOneShot(cpuUsageMeasurementDuration);
+        return;
+    }
+    std::optional<CPUTime> cpuTime = getCPUTime();
+    if (!cpuTime)
+        return;
+
+    double cpuUsage = cpuTime.value().percentageCPUUsageSince(*m_postLoadCPUTime);
+    RELEASE_LOG_IF_ALLOWED(PerformanceLogging, "measurePostLoadCPUUsage: Process was using %.1f%% percent CPU after the page load.", cpuUsage);
+    diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::postPageLoadKey(), DiagnosticLoggingKeys::cpuUsageKey(), cpuUsageToDiagnosticLogginKey(cpuUsage), ShouldSample::No);
 }
 
 void Page::setTopContentInset(float contentInset)

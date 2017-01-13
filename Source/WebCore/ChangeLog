@@ -1,3 +1,51 @@
+2017-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Report post-page load CPU usage using diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=166950
+        <rdar://problem/30014496>
+
+        Reviewed by Alex Christensen.
+
+        Shortly after page load (5 seconds), we measure the WebContent process'
+        CPU usage over 10 seconds and report the percentage back via release
+        logging. We also log the percentage using diagnostic logging using the
+        following buckets:
+        - Below 10%
+        - 10 to 20%
+        - 20 to 40%
+        - 60 to 80%
+        - Over 80%
+
+        The logging works on both Mac and iOS. I verified that I get results
+        consistent with Activity Monitor or top.
+
+        No new tests, no Web-facing behavior change, only extra logging.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::postPageLoadKey):
+        (WebCore::DiagnosticLoggingKeys::cpuUsageKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::didFinishLoad):
+        (WebCore::cpuUsageToDiagnosticLogginKey):
+        (WebCore::Page::measurePostLoadCPUUsage):
+        * page/Page.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::isPostLoadCPUUsageMeasurementEnabled):
+        * page/Settings.h:
+        * platform/CPUTime.cpp: Added.
+        (WebCore::getCPUTime):
+        (WebCore::CPUTime::percentageCPUUsageSince):
+        * platform/CPUTime.h: Added.
+        * platform/cocoa/CPUTimeCocoa.mm: Added.
+        (WebCore::timeValueToMicroseconds):
+        (WebCore::getCPUTime):
+
 2017-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r210677.

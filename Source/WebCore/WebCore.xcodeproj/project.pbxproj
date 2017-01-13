@@ -1731,6 +1731,9 @@
 		460CBF351D4BCD0E0092E88E /* JSDOMWindowProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */; };
 		460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
+		463763081E26FDD7008CD46D /* CPUTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463763061E26FDBA008CD46D /* CPUTime.cpp */; };
+		463763091E26FDD7008CD46D /* CPUTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 463763071E26FDBA008CD46D /* CPUTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4637630B1E26FDF6008CD46D /* CPUTimeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4637630A1E26FDEB008CD46D /* CPUTimeCocoa.mm */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
 		465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */; };
@@ -8922,6 +8925,9 @@
 		460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowProperties.cpp; sourceTree = "<group>"; };
 		460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowProperties.h; sourceTree = "<group>"; };
 		4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PowerObserverMac.cpp; sourceTree = "<group>"; };
+		463763061E26FDBA008CD46D /* CPUTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTime.cpp; sourceTree = "<group>"; };
+		463763071E26FDBA008CD46D /* CPUTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUTime.h; sourceTree = "<group>"; };
+		4637630A1E26FDEB008CD46D /* CPUTimeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CPUTimeCocoa.mm; sourceTree = "<group>"; };
 		463EB6201B8789CB0096ED51 /* TagCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagCollection.cpp; sourceTree = "<group>"; };
 		463EB6211B8789CB0096ED51 /* TagCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagCollection.h; sourceTree = "<group>"; };
 		465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RuntimeApplicationChecks.mm; sourceTree = "<group>"; };
@@ -19758,6 +19764,7 @@
 		A5C974CE11485FDA0066F2AB /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				4637630A1E26FDEB008CD46D /* CPUTimeCocoa.mm */,
 				A14090FA1AA51E1D0091191A /* ContentFilterUnblockHandlerCocoa.mm */,
 				CD7D33451C7A16BF00041293 /* CoreVideoSoftLink.cpp */,
 				CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */,
@@ -22484,6 +22491,8 @@
 				653EF83619A043AE0052202C /* spi */,
 				1A2E6E560CC551E0004A2062 /* sql */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
+				463763061E26FDBA008CD46D /* CPUTime.cpp */,
+				463763071E26FDBA008CD46D /* CPUTime.h */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
 				CDEA76331460B462008B31F1 /* Clock.cpp */,
@@ -28245,6 +28254,7 @@
 				5B30695E18B3D3450099D5E8 /* WebGLDrawBuffers.h in Headers */,
 				6EBF0E5512A8929800DB1709 /* WebGLExtension.h in Headers */,
 				49C7B9CF1042D32F0009D447 /* WebGLFramebuffer.h in Headers */,
+				463763091E26FDD7008CD46D /* CPUTime.h in Headers */,
 				6E47E66110B7944B00B186C8 /* WebGLAny.h in Headers */,
 				49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */,
 				93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */,
@@ -29892,6 +29902,7 @@
 				2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */,
 				E1C36CBD0EB08062007410BC /* JSDOMGlobalObject.cpp in Sources */,
 				7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */,
+				463763081E26FDD7008CD46D /* CPUTime.cpp in Sources */,
 				65DF31F709D1CC60000BE325 /* JSDOMImplementation.cpp in Sources */,
 				9479493C1E045CF300018D85 /* DeprecatedCSSOMPrimitiveValue.cpp in Sources */,
 				4138F8571D253F08001CB61E /* JSDOMIterator.cpp in Sources */,
@@ -30054,6 +30065,7 @@
 				BC06ED9F0BFD660600856E9D /* JSHTMLTableRowElement.cpp in Sources */,
 				BC06ED060BFD5BAE00856E9D /* JSHTMLTableSectionElement.cpp in Sources */,
 				D6489D25166FFCF1007C031B /* JSHTMLTemplateElement.cpp in Sources */,
+				4637630B1E26FDF6008CD46D /* CPUTimeCocoa.mm in Sources */,
 				D6F7960D166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp in Sources */,
 				A80E7E9E0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp in Sources */,
 				83E359A31BB1031D002CEB98 /* JSHTMLTimeElement.cpp in Sources */,
