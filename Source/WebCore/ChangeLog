@@ -1,5 +1,16 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210685. rdar://problem/29775711
+
+    2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed EFL/GTK build fix after r210684.
+
+            * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+            (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210684. rdar://problem/29775711
 
     2017-01-12  Brady Eidson  <beidson@apple.com>
