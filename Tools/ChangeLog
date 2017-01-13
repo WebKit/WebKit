@@ -1,3 +1,16 @@
+2017-01-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        run-jsc-benchmarks' echo should have -e option
+        https://bugs.webkit.org/show_bug.cgi?id=167009
+
+        Reviewed by Sam Weinig.
+
+        echo requires `-e` option to use escape sequence.
+        Without it, in some environment (in my Fedora 25), the escape sequence is not
+        recognized and just dumped as `\c` etc.
+
+        * Scripts/run-jsc-benchmarks:
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         Add KEYBOARD_KEY_ATTRIBUTE / KEYBOARD_CODE_ATTRIBUTE to FeatureDefines.xcconfig

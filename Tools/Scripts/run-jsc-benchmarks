@@ -3283,10 +3283,10 @@ begin
   if $prepare
     File.open("#{BENCH_DATA_PATH}/runscript", "w") {
       | file |
-      file.puts "echo \"HOSTNAME:\\c\""
+      file.puts "echo -e \"HOSTNAME:\\c\""
       file.puts "hostname"
       file.puts "echo"
-      file.puts "echo \"HARDWARE:\\c\""
+      file.puts "echo -e \"HARDWARE:\\c\""
       file.puts "/usr/sbin/sysctl hw.model"
       file.puts "echo"
       file.puts "set -e"
@@ -3296,14 +3296,14 @@ begin
         if $verbosity == 0 and not $silent
           text1 = lpad(idx.to_s,$runPlans.size.to_s.size)+"/"+$runPlans.size.to_s
           text2 = plan.to_s
-          file.puts("echo " + Shellwords.shellescape("\r#{text1} #{rpad(text2,$planpad)}") + "\"\\c\" 1>&2")
-          file.puts("echo " + Shellwords.shellescape("\r#{text1} #{text2}") + "\"\\c\" 1>&2")
+          file.puts("echo -e " + Shellwords.shellescape("\r#{text1} #{rpad(text2,$planpad)}") + "\"\\c\" 1>&2")
+          file.puts("echo -e " + Shellwords.shellescape("\r#{text1} #{text2}") + "\"\\c\" 1>&2")
         end
         plan.emitRunCode
       }
       if $verbosity == 0 and not $silent
-        file.puts("echo " + Shellwords.shellescape("\r#{$runPlans.size}/#{$runPlans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}") + "\"\\c\" 1>&2")
-        file.puts("echo " + Shellwords.shellescape("\r#{$runPlans.size}/#{$runPlans.size}") + " 1>&2")
+        file.puts("echo -e " + Shellwords.shellescape("\r#{$runPlans.size}/#{$runPlans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}") + "\"\\c\" 1>&2")
+        file.puts("echo -e " + Shellwords.shellescape("\r#{$runPlans.size}/#{$runPlans.size}") + " 1>&2")
       end
     }
   end
