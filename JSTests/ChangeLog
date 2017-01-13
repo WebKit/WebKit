@@ -1,3 +1,39 @@
+2017-01-12  Saam Barati  <sbarati@apple.com>
+
+        Add a slice intrinsic to the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=166707
+        <rdar://problem/29913445>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/array-slice-intrinsic.js: Added.
+        (assert):
+        (shallowEq):
+        (runTest1):
+        (runTest2):
+        * stress/array-slice-jettison-on-constructor-change.js: Added.
+        (assert):
+        (runTest1):
+        (runTest2):
+        (addRandomProperties):
+        (runTests):
+        * stress/array-slice-osr-exit-2.js: Added.
+        (assert):
+        (Foo):
+        (shallowEq):
+        (runTest1):
+        (runTest2):
+        (addRandomProperties):
+        (runTests):
+        * stress/array-slice-osr-exit.js: Added.
+        (assert):
+        (Foo):
+        (shallowEq):
+        (runTest1):
+        (runTest2):
+        (addRandomProperties):
+        (runTests):
+
 2017-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark es6/typed_arrays_correct_prototype_chains.js as failing after r210570.

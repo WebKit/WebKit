@@ -108,6 +108,8 @@ namespace JSC { namespace FTL {
     macro(Structure_globalObject, Structure::globalObjectOffset()) \
     macro(Structure_prototype, Structure::prototypeOffset()) \
     macro(Structure_structureID, Structure::structureIDOffset()) \
+    macro(Structure_inlineCapacity, Structure::inlineCapacityOffset()) \
+    macro(Structure_indexingTypeIncludingHistory, Structure::indexingTypeIncludingHistoryOffset()) \
     macro(JSMap_hashMapImpl, JSMap::offsetOfHashMapImpl()) \
     macro(JSSet_hashMapImpl, JSSet::offsetOfHashMapImpl()) \
     macro(HashMapImpl_capacity, HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::offsetOfCapacity()) \

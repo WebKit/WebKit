@@ -464,6 +464,11 @@ public:
         return OBJECT_OFFSETOF(Structure, m_propertyTableUnsafe);
     }
 
+    static ptrdiff_t inlineCapacityOffset()
+    {
+        return OBJECT_OFFSETOF(Structure, m_inlineCapacity);
+    }
+
     static Structure* createStructure(VM&);
         
     bool transitionWatchpointSetHasBeenInvalidated() const

@@ -1,5 +1,107 @@
 2017-01-12  Saam Barati  <sbarati@apple.com>
 
+        Add a slice intrinsic to the DFG/FTL
+        https://bugs.webkit.org/show_bug.cgi?id=166707
+        <rdar://problem/29913445>
+
+        Reviewed by Filip Pizlo.
+
+        The gist of this patch is to inline Array.prototype.slice
+        into the DFG/FTL. The implementation in the DFG-backend
+        and FTLLowerDFGToB3 is just a straight forward implementation
+        of what the C function is doing. The more interesting bits
+        of this patch are setting up the proper watchpoints and conditions
+        in the executing code to prove that its safe to skip all of the
+        observable JS actions that Array.prototype.slice normally does.
+        
+        We perform the following proofs:
+        1. Array.prototype.constructor has not changed (via a watchpoint).
+        2. That Array.prototype.constructor[Symbol.species] has not changed (via a watchpoint).
+        3. The global object is not having a bad time.
+        4. The array that is being sliced has an original array structure.
+        5. Array.prototype/Object.prototype have not transitioned.
+        
+        Conditions 1, 2, and 3 are strictly required.
+        
+        4 is ensuring a couple things:
+        1. That a "constructor" property hasn't been added to the array
+        we're slicing since we're supposed to perform a Get(array, "constructor").
+        2. That we're not slicing an instance of a subclass of Array.
+        
+        We could relax 4.1 in the future if we find other ways to test if
+        the incoming array hasn't changed the "constructor" property. We
+        would probably use TryGetById to do this.
+        
+        I'm seeing a 5% speedup on crypto-pbkdf2 and often a 1% speedup on
+        the total benchmark (the results are sometimes noisy).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator::CallArrayAllocatorWithVariableStructureVariableSizeSlowPathGenerator):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+        (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::emitInitializeButterfly):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::emitInitializeButterfly):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::initializeArrayElements):
+        (JSC::FTL::DFG::LowerDFGToB3::storeStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateUninitializedContiguousJSArray):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitLoadStructure):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        (JSC::speciesWatchpointIsValid):
+        (JSC::speciesConstructArray):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        (JSC::ArrayPrototype::initializeSpeciesWatchpoint):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        (JSC::speciesWatchpointsValid): Deleted.
+        (JSC::ArrayPrototype::attemptToInitializeSpeciesWatchpoint): Deleted.
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::speciesWatchpointStatus): Deleted.
+        (): Deleted.
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arraySpeciesWatchpoint):
+        * runtime/Structure.h:
+
+2017-01-12  Saam Barati  <sbarati@apple.com>
+
         Concurrent GC has a bug where we would detect a race but fail to rescan the object
         https://bugs.webkit.org/show_bug.cgi?id=166960
         <rdar://problem/29983526>

@@ -382,6 +382,13 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case IsNonEmptyMapBucket:
         return true;
 
+    case ArraySlice: {
+        // You could plausibly move this code around as long as you proved the
+        // incoming array base structure is an original array at the hoisted location.
+        // Instead of doing that extra work, we just conservatively return false.
+        return false;
+    }
+
     case BottomValue:
         // If in doubt, assume that this isn't safe to execute, just because we have no way of
         // compiling this node.

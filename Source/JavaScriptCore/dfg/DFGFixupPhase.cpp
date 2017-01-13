@@ -931,6 +931,14 @@ private:
             fixEdge<KnownCellUse>(node->child1());
             break;
         }
+
+        case ArraySlice: {
+            fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
+            if (node->numChildren() == 4)
+                fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
+            break;
+        }
             
         case RegExpExec:
         case RegExpTest: {
