@@ -2,7 +2,7 @@
 PASS Request has clone method 
 PASS Request has arrayBuffer method 
 PASS Request has blob method 
-PASS Request has formData method 
+FAIL Request has formData method assert_true: request has formData method expected true got false
 PASS Request has json method 
 PASS Request has text method 
 PASS Check method attribute 
