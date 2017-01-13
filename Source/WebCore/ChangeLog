@@ -1,3 +1,16 @@
+2017-01-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r210680.
+
+        This change caused LayoutTest timeouts and assertion failures.
+
+        Reverted changeset:
+
+        "Use GenericEventQueue rather than callOnMainThread to
+        schedule events in AudioScheduledSourceNode."
+        https://bugs.webkit.org/show_bug.cgi?id=166983
+        http://trac.webkit.org/changeset/210680
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         [iOS] HTML form validation popover sometimes does not go away

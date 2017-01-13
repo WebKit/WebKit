@@ -47,7 +47,6 @@ const double AudioScheduledSourceNode::UnknownTime = -1;
 AudioScheduledSourceNode::AudioScheduledSourceNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_endTime(UnknownTime)
-    , m_eventQueue(*this)
 {
 }
 
@@ -167,8 +166,11 @@ void AudioScheduledSourceNode::finish()
         context().decrementActiveSourceCount();
     }
 
-    if (m_hasEndedListener)
-        m_eventQueue.enqueueEvent(Event::create(eventNames().endedEvent, false, false));
+    if (m_hasEndedListener) {
+        callOnMainThread([this] {
+            dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+        });
+    }
 }
 
 bool AudioScheduledSourceNode::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
