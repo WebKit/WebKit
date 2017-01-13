@@ -403,7 +403,7 @@ FloatSize MediaPlayerPrivateGStreamerBase::naturalSize() const
 
 #if USE(TEXTURE_MAPPER_GL)
     // When using accelerated compositing, if the video is tagged as rotated 90 or 270 degrees, swap width and height.
-    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player)) {
+    if (m_renderingCanBeAccelerated) {
         if (m_videoSourceOrientation.usesWidthAsHeight())
             originalSize = originalSize.transposedSize();
     }
@@ -625,7 +625,7 @@ void MediaPlayerPrivateGStreamerBase::repaint()
     ASSERT(isMainThread());
 
 #if USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS)
-    if (supportsAcceleratedRendering() && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player) && client()) {
+    if (m_renderingCanBeAccelerated && client()) {
         client()->setPlatformLayerNeedsDisplay();
 #if USE(GSTREAMER_GL)
         m_drawCondition.notifyOne();
@@ -656,7 +656,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
     }
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    if (!m_player->client().mediaPlayerAcceleratedCompositingEnabled()) {
+    if (!m_renderingCanBeAccelerated) {
         LockHolder locker(m_drawMutex);
         m_drawTimer.startOneShot(0);
         m_drawCondition.wait(m_drawMutex);
@@ -728,7 +728,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext& context, const Floa
         return;
 
     ImagePaintingOptions paintingOptions(CompositeCopy);
-    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
+    if (m_renderingCanBeAccelerated)
         paintingOptions.m_orientationDescription.setImageOrientationEnum(m_videoSourceOrientation);
 
     RefPtr<ImageGStreamer> gstImage = ImageGStreamer::createImage(m_sample.get());
@@ -1020,8 +1020,11 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSinkGL()
 
 GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink()
 {
+    m_renderingCanBeAccelerated = supportsAcceleratedRendering() && m_player->client().mediaPlayerAcceleratedCompositingEnabled()
+        && m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player);
+
 #if USE(GSTREAMER_GL)
-    if (m_player->client().mediaPlayerRenderingCanBeAccelerated(m_player))
+    if (m_renderingCanBeAccelerated)
         m_videoSink = createVideoSinkGL();
 #endif
 

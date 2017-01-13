@@ -1,3 +1,29 @@
+2017-01-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Cache the accelerated capability of MediaPlayerClient in MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=167015
+
+        Reviewed by Jer Noble.
+
+        In MediaPlayerPrivateGStreamerBase, avoid continuously querying the MediaPlayerClient
+        object about the accelerated compositing capabilities. Instead, cache this information
+        when creating the video sink (which is most affected by this information anyway), storing
+        it in a new protected boolean member variable in the MediaPlayerPrivateGStreamerBase class.
+
+        All calls to MediaPlayerClient::mediaPlayerRenderingCanBeAccelerated() and
+        MediaPlayerClient::mediaPlayerAcceleratedCompositingEnabled() are replaced by tests
+        on the value of this new member variable.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamerBase::repaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2017-01-13  Chris Dumez  <cdumez@apple.com>
 
         Report post-page load CPU usage using diagnostic logging
