@@ -1,5 +1,22 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210679. rdar://problem/29910273
+
+    2017-01-12  Youenn Fablet  <youenn@apple.com>
+
+            OneDrive application crashes upon launch
+            https://bugs.webkit.org/show_bug.cgi?id=166975
+
+            Reviewed by Brady Eidson.
+
+            Checking whether load is terminated just after calling ResourceLoader::willSendRequestInternal.
+            The reason is that delegate call may actually cancel the load at that point.
+
+            * loader/SubresourceLoader.cpp:
+            (WebCore::SubresourceLoader::willSendRequestInternal):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210677. rdar://problem/21482487
 
     2017-01-12  Jer Noble  <jer.noble@apple.com>
