@@ -167,8 +167,8 @@ void AudioScheduledSourceNode::finish()
     }
 
     if (m_hasEndedListener) {
-        callOnMainThread([this] {
-            dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+        callOnMainThread([strongThis = makeRef(*this)] () mutable {
+            strongThis->dispatchEvent(Event::create(eventNames().endedEvent, false, false));
         });
     }
 }
