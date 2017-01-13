@@ -1,5 +1,18 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210600. rdar://problem/15307582
+
+    2017-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed build fix after r210599.
+
+            Add missing files.
+
+            * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.html: Added.
+            * TestWebKitAPI/Tests/mac/CrossPartitionFileSchemeAccess.mm: Added.
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210599. rdar://problem/15307582
 
     2017-01-11  Brent Fulgham  <bfulgham@apple.com>
