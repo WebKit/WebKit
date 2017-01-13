@@ -1,3 +1,30 @@
+2017-01-13  Matt Rajca  <mrajca@apple.com>
+
+        Defer use of autoplay heuristics to clients
+        https://bugs.webkit.org/show_bug.cgi?id=167010
+
+        Reviewed by Alex Christensen.
+
+        Switch the autoplay policy tristate to an on/off option since clients should run any
+        heuristics and simply send their final decision to WebKit.
+
+        * Shared/WebsitePolicies.h:
+        (WebKit::WebsitePolicies::encode):
+        (WebKit::WebsitePolicies::decode):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        (WKWebsitePoliciesGetAutoplayEnabled):
+        (WKWebsitePoliciesSetAutoplayEnabled):
+        (WKWebsitePoliciesGetAutoplayPolicy): Replaced.
+        (WKWebsitePoliciesSetAutoplayPolicy): Replaced.
+        * UIProcess/API/C/WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setAutoplayEnabled:]):
+        (-[_WKWebsitePolicies autoplayEnabled]):
+        (-[_WKWebsitePolicies setAutoplayPolicy:]): Replaced.
+        (-[_WKWebsitePolicies autoplayPolicy]): Replaced.
+
 2017-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Simplify cookie storage handling

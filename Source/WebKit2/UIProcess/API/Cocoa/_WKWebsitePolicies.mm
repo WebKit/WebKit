@@ -57,31 +57,14 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
-- (void)setAutoplayPolicy:(_WKWebsiteAutoplayPolicy)autoplayPolicy
+- (void)setAutoplayEnabled:(BOOL)enabled
 {
-    switch (autoplayPolicy) {
-    case _WKWebsiteAutoplayPolicyUseHeuristics:
-        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::UseHeuristics);
-        break;
-    case _WKWebsiteAutoplayPolicyAlwaysAllow:
-        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::AlwaysAllow);
-        break;
-    case _WKWebsiteAutoplayPolicyAlwaysDeny:
-        _websitePolicies->setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy::AlwaysDeny);
-        break;
-    }
+    _websitePolicies->setAutoplayEnabled(enabled);
 }
 
-- (_WKWebsiteAutoplayPolicy)autoplayPolicy
+- (BOOL)autoplayEnabled
 {
-    switch (_websitePolicies->autoplayPolicy()) {
-    case WebKit::WebsiteAutoplayPolicy::UseHeuristics:
-        return _WKWebsiteAutoplayPolicyUseHeuristics;
-    case WebKit::WebsiteAutoplayPolicy::AlwaysAllow:
-        return _WKWebsiteAutoplayPolicyAlwaysAllow;
-    case WebKit::WebsiteAutoplayPolicy::AlwaysDeny:
-        return _WKWebsiteAutoplayPolicyAlwaysDeny;
-    }
+    return _websitePolicies->autoplayEnabled();
 }
 
 - (NSString *)description

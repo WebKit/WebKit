@@ -44,8 +44,8 @@ WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();
 WK_EXPORT bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef, bool);
 
-WK_EXPORT WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef);
-WK_EXPORT void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef, WKWebsiteAutoplayPolicy);
+WK_EXPORT bool WKWebsitePoliciesGetAutoplayEnabled(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetAutoplayEnabled(WKWebsitePoliciesRef, bool);
 
 #ifdef __cplusplus
 }

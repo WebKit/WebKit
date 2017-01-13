@@ -36,7 +36,7 @@ enum class WebsiteAutoplayPolicy {
 struct WebsitePolicies {
 
     bool contentBlockersEnabled { true };
-    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::UseHeuristics };
+    bool autoplayEnabled { true };
     
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, WebsitePolicies&);
@@ -45,14 +45,14 @@ struct WebsitePolicies {
 template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;
-    encoder.encodeEnum(autoplayPolicy);
+    encoder << autoplayEnabled;
 }
 
 template<class Decoder> bool WebsitePolicies::decode(Decoder& decoder, WebsitePolicies& result)
 {
     if (!decoder.decode(result.contentBlockersEnabled))
         return false;
-    if (!decoder.decodeEnum(result.autoplayPolicy))
+    if (!decoder.decode(result.autoplayEnabled))
         return false;
     return true;
 }
