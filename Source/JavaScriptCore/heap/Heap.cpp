@@ -1676,6 +1676,11 @@ void Heap::notifyIncrementalSweeper()
     m_sweeper->startSweeping();
 }
 
+NEVER_INLINE void Heap::didExceedMaxLiveSize()
+{
+    CRASH();
+}
+
 void Heap::updateAllocationLimits()
 {
     static const bool verbose = false;
@@ -1707,6 +1712,9 @@ void Heap::updateAllocationLimits()
 
     if (verbose)
         dataLog("extraMemorySize() = ", extraMemorySize(), ", currentHeapSize = ", currentHeapSize, "\n");
+
+    if (m_maxLiveSize && currentHeapSize > m_maxLiveSize)
+        didExceedMaxLiveSize();
     
     if (Options::gcMaxHeapSize() && currentHeapSize > Options::gcMaxHeapSize())
         HeapStatistics::exitWithFailure();

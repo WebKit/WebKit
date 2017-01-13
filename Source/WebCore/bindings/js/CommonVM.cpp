@@ -47,6 +47,10 @@ VM& commonVMSlow()
     
     ScriptController::initializeThreading();
     g_commonVMOrNull = &VM::createLeaked(LargeHeap).leakRef();
+#if CPU(X86_64) || CPU(ARM64)
+    static const size_t maxGCHeapSize = 4 * GB;
+    g_commonVMOrNull->heap.setMaxLiveSize(maxGCHeapSize);
+#endif
     g_commonVMOrNull->heap.acquireAccess(); // At any time, we may do things that affect the GC.
 #if !PLATFORM(IOS)
     g_commonVMOrNull->setExclusiveThread(std::this_thread::get_id());

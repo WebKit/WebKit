@@ -1,5 +1,22 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210609. rdar://problem/27896585
+
+    2017-01-11  Andreas Kling  <akling@apple.com>
+
+            Crash when WebCore's GC heap grows way too large.
+            <https://webkit.org/b/166875>
+            <rdar://problem/27896585>
+
+            Reviewed by Mark Lam.
+
+            Cap the common WebCore VM at 4 GB of live JavaScript heap objects.
+
+            * bindings/js/CommonVM.cpp:
+            (WebCore::commonVMSlow):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210599. rdar://problem/15307582
 
     2017-01-11  Brent Fulgham  <bfulgham@apple.com>
