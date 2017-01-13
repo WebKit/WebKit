@@ -1,3 +1,25 @@
+2017-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Simplify cookie storage handling
+        https://bugs.webkit.org/show_bug.cgi?id=166967
+
+        Reviewed by Sergio Villar Senin.
+
+        Get the SoupSession from NetworkStorageSession::defaultStorageSession().
+
+        * NetworkProcess/CustomProtocols/soup/CustomProtocolManagerSoup.cpp:
+        (WebKit::CustomProtocolManager::registerScheme): Get the SoupSession from NetworkStorageSession::defaultStorageSession().
+        * NetworkProcess/efl/NetworkProcessMainEfl.cpp: Ditto.
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::userPreferredLanguagesChanged): Ditto.
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): SoupNetworkSession::clearOldSoupCache is static.
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy): Use the cookie storage from NetworkStorageSession::defaultStorageSession().
+        (WebKit::WebCookieManager::setCookiePersistentStorage): Ditto.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts): Ditto.
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+
 2017-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Do not use the legacy session ID in WebFrameNetworkingContext::storageSession()

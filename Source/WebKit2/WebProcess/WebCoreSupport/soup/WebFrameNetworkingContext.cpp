@@ -31,7 +31,6 @@
 #include "SessionTracker.h"
 #include "WebFrame.h"
 #include "WebPage.h"
-#include <WebCore/CookieJarSoup.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>
@@ -68,11 +67,10 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAc
         break;
     }
 
-    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
-    soup_cookie_jar_set_accept_policy(cookieJar, soupPolicy);
+    soup_cookie_jar_set_accept_policy(NetworkStorageSession::defaultStorageSession().cookieStorage(), soupPolicy);
 
     NetworkStorageSession::forEach([&] (const NetworkStorageSession& session) {
-        soup_cookie_jar_set_accept_policy(session.soupNetworkSession().cookieJar(), soupPolicy);
+        soup_cookie_jar_set_accept_policy(session.cookieStorage(), soupPolicy);
     });
 }
 

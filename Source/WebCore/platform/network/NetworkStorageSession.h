@@ -37,6 +37,7 @@
 #if USE(SOUP)
 #include <wtf/Function.h>
 #include <wtf/glib/GRefPtr.h>
+typedef struct _SoupCookieJar SoupCookieJar;
 #endif
 
 namespace WebCore {
@@ -67,10 +68,11 @@ public:
     WEBCORE_EXPORT RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
     WEBCORE_EXPORT static void setCookieStoragePartitioningEnabled(bool);
 #elif USE(SOUP)
-    NetworkStorageSession(SessionID, std::unique_ptr<SoupNetworkSession>);
+    NetworkStorageSession(SessionID, std::unique_ptr<SoupNetworkSession>&&);
     ~NetworkStorageSession();
 
     SoupNetworkSession& soupNetworkSession() const;
+    SoupCookieJar* cookieStorage() const;
     void getCredentialFromPersistentStorage(const ProtectionSpace&, Function<void (Credential&&)> completionHandler);
     void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
 #else
@@ -87,7 +89,8 @@ private:
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
-    std::unique_ptr<SoupNetworkSession> m_session;
+    mutable std::unique_ptr<SoupNetworkSession> m_session;
+    mutable GRefPtr<SoupCookieJar> m_cookieStorage;
 #if USE(LIBSECRET)
     Function<void (Credential&&)> m_persisentStorageCompletionHandler;
     GRefPtr<GCancellable> m_persisentStorageCancellable;

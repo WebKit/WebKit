@@ -30,7 +30,6 @@
 #include "SoupNetworkSession.h"
 
 #include "AuthenticationChallenge.h"
-#include "CookieJarSoup.h"
 #include "CryptoDigest.h"
 #include "FileSystem.h"
 #include "GUniquePtrSoup.h"
@@ -93,31 +92,6 @@ static HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash>& clientC
     return certificates;
 }
 
-SoupNetworkSession& SoupNetworkSession::defaultSession()
-{
-    static NeverDestroyed<SoupNetworkSession> networkSession(soupCookieJar());
-    return networkSession;
-}
-
-std::unique_ptr<SoupNetworkSession> SoupNetworkSession::createPrivateBrowsingSession()
-{
-    return std::unique_ptr<SoupNetworkSession>(new SoupNetworkSession(soupCookieJar()));
-}
-
-std::unique_ptr<SoupNetworkSession> SoupNetworkSession::createTestingSession()
-{
-    auto cookieJar = adoptGRef(createPrivateBrowsingCookieJar());
-    auto newSoupSession = std::unique_ptr<SoupNetworkSession>(new SoupNetworkSession(cookieJar.get()));
-    // FIXME: Creating a testing session is losing soup session values set when initializing the network process.
-    g_object_set(newSoupSession->soupSession(), "accept-language", "en-us", nullptr);
-    return newSoupSession;
-}
-
-std::unique_ptr<SoupNetworkSession> SoupNetworkSession::createForSoupSession(SoupSession* soupSession)
-{
-    return std::unique_ptr<SoupNetworkSession>(new SoupNetworkSession(soupSession));
-}
-
 static void authenticateCallback(SoupSession*, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
@@ -146,13 +120,19 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
     static const int maxConnections = 17;
     static const int maxConnectionsPerHost = 6;
 
+    GRefPtr<SoupCookieJar> jar = cookieJar;
+    if (!jar) {
+        jar = adoptGRef(soup_cookie_jar_new());
+        soup_cookie_jar_set_accept_policy(jar.get(), SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
+    }
+
     g_object_set(m_soupSession.get(),
         SOUP_SESSION_MAX_CONNS, maxConnections,
         SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_DECODER,
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_SNIFFER,
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
-        SOUP_SESSION_ADD_FEATURE, cookieJar,
+        SOUP_SESSION_ADD_FEATURE, jar.get(),
         SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
         SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
         SOUP_SESSION_SSL_STRICT, FALSE,
@@ -172,12 +152,6 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
 #if ENABLE(WEB_TIMING) && !SOUP_CHECK_VERSION(2, 49, 91)
     g_signal_connect(m_soupSession.get(), "request-started", G_CALLBACK(requestStartedCallback), nullptr);
 #endif
-}
-
-SoupNetworkSession::SoupNetworkSession(SoupSession* soupSession)
-    : m_soupSession(soupSession)
-{
-    setupLogger();
 }
 
 SoupNetworkSession::~SoupNetworkSession()

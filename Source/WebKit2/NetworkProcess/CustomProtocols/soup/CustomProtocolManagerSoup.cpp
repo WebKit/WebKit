@@ -24,6 +24,7 @@
 #include "DataReference.h"
 #include "NetworkProcess.h"
 #include "WebKitSoupRequestInputStream.h"
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -90,7 +91,7 @@ void CustomProtocolManager::registerScheme(const String& scheme)
 
     auto* genericRequestClass = static_cast<SoupRequestClass*>(g_type_class_ref(WEBKIT_TYPE_SOUP_REQUEST_GENERIC));
     genericRequestClass->schemes = const_cast<const char**>(reinterpret_cast<char**>(m_registeredSchemes->pdata));
-    soup_session_add_feature_by_type(SoupNetworkSession::defaultSession().soupSession(), WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
+    soup_session_add_feature_by_type(NetworkStorageSession::defaultStorageSession().soupNetworkSession().soupSession(), WEBKIT_TYPE_SOUP_REQUEST_GENERIC);
 }
 
 void CustomProtocolManager::unregisterScheme(const String&)

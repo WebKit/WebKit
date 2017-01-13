@@ -32,6 +32,7 @@
 #include <Ecore_Evas.h>
 #include <Edje.h>
 #include <Efreet.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 
@@ -98,7 +99,7 @@ public:
         if (!ecore_main_loop_glib_integrate())
             return false;
 
-        SoupNetworkSession::defaultSession().setupHTTPProxyFromEnvironment();
+        NetworkStorageSession::defaultStorageSession().soupNetworkSession().setupHTTPProxyFromEnvironment();
         return true;
     }
 

@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(SessionID sessionID, std::unique_ptr<SoupNetworkSession> session)
+NetworkStorageSession::NetworkStorageSession(SessionID sessionID, std::unique_ptr<SoupNetworkSession>&& session)
     : m_sessionID(sessionID)
     , m_session(WTFMove(session))
 {
@@ -76,20 +76,38 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 
 void NetworkStorageSession::ensurePrivateBrowsingSession(SessionID sessionID, const String&)
 {
-    auto session = std::make_unique<NetworkStorageSession>(sessionID, SoupNetworkSession::createPrivateBrowsingSession());
     ASSERT(sessionID != SessionID::defaultSessionID());
     ASSERT(!globalSessionMap().contains(sessionID));
-    globalSessionMap().add(sessionID, WTFMove(session));
+    globalSessionMap().add(sessionID, std::make_unique<NetworkStorageSession>(sessionID, std::make_unique<SoupNetworkSession>()));
 }
 
 void NetworkStorageSession::switchToNewTestingSession()
 {
-    defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), SoupNetworkSession::createTestingSession());
+    defaultSession() = std::make_unique<NetworkStorageSession>(SessionID::defaultSessionID(), std::make_unique<SoupNetworkSession>());
+    // FIXME: Creating a testing session is losing soup session values set when initializing the network process.
+    g_object_set(defaultSession()->soupNetworkSession().soupSession(), "accept-language", "en-us", nullptr);
 }
 
 SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const
 {
-    return m_session ? *m_session : SoupNetworkSession::defaultSession();
+    if (!m_session)
+        m_session = std::make_unique<SoupNetworkSession>(cookieStorage());
+    return *m_session;
+}
+
+SoupCookieJar* NetworkStorageSession::cookieStorage() const
+{
+    if (m_session) {
+        m_cookieStorage = nullptr;
+        ASSERT(m_session->cookieJar());
+        return m_session->cookieJar();
+    }
+
+    if (!m_cookieStorage) {
+        m_cookieStorage = adoptGRef(soup_cookie_jar_new());
+        soup_cookie_jar_set_accept_policy(m_cookieStorage.get(), SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
+    }
+    return m_cookieStorage.get();
 }
 
 #if USE(LIBSECRET)

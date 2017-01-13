@@ -46,12 +46,8 @@ class ResourceError;
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
 public:
+    SoupNetworkSession(SoupCookieJar* = nullptr);
     ~SoupNetworkSession();
-
-    static SoupNetworkSession& defaultSession();
-    static std::unique_ptr<SoupNetworkSession> createPrivateBrowsingSession();
-    static std::unique_ptr<SoupNetworkSession> createTestingSession();
-    static std::unique_ptr<SoupNetworkSession> createForSoupSession(SoupSession*);
 
     SoupSession* soupSession() const { return m_soupSession.get(); }
 
@@ -69,11 +65,6 @@ public:
     static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 
 private:
-    friend class NeverDestroyed<SoupNetworkSession>;
-
-    SoupNetworkSession(SoupCookieJar*);
-    SoupNetworkSession(SoupSession*);
-
     void setHTTPProxy(const char* httpProxy, const char* httpProxyExceptions);
 
     void setupLogger();

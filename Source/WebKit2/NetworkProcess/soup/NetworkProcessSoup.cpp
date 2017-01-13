@@ -33,6 +33,7 @@
 #include "WebCookieManager.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/FileSystem.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -47,7 +48,7 @@ namespace WebKit {
 
 void NetworkProcess::userPreferredLanguagesChanged(const Vector<String>& languages)
 {
-    SoupNetworkSession::defaultSession().setAcceptLanguages(languages);
+    NetworkStorageSession::defaultStorageSession().soupNetworkSession().setAcceptLanguages(languages);
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
@@ -55,7 +56,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     ASSERT(!parameters.diskCacheDirectory.isEmpty());
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
-    SoupNetworkSession::defaultSession().clearOldSoupCache(WebCore::directoryName(m_diskCacheDirectory));
+    SoupNetworkSession::clearOldSoupCache(WebCore::directoryName(m_diskCacheDirectory));
 
     NetworkCache::Cache::Parameters cacheParameters {
         parameters.shouldEnableNetworkCacheEfficacyLogging

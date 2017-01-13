@@ -29,7 +29,7 @@
 #include "ChildProcess.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebKitSoupCookieJarSqlite.h"
-#include <WebCore/CookieJarSoup.h>
+#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
@@ -46,26 +46,17 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
-    SoupCookieJar* cookieJar = WebCore::soupCookieJar();
-    SoupCookieJarAcceptPolicy soupPolicy;
-
-    HTTPCookieAcceptPolicy policy;
-
-    soupPolicy = soup_cookie_jar_get_accept_policy(cookieJar);
-    switch (soupPolicy) {
+    switch (soup_cookie_jar_get_accept_policy(NetworkStorageSession::defaultStorageSession().cookieStorage())) {
     case SOUP_COOKIE_JAR_ACCEPT_ALWAYS:
-        policy = HTTPCookieAcceptPolicyAlways;
-        break;
+        return HTTPCookieAcceptPolicyAlways;
     case SOUP_COOKIE_JAR_ACCEPT_NEVER:
-        policy = HTTPCookieAcceptPolicyNever;
-        break;
+        return HTTPCookieAcceptPolicyNever;
     case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
-        policy = HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-        break;
-    default:
-        policy = HTTPCookieAcceptPolicyAlways;
+        return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
     }
-    return policy;
+
+    ASSERT_NOT_REACHED();
+    return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
 }
 
 void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uint32_t storageType)
@@ -82,9 +73,9 @@ void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uin
         ASSERT_NOT_REACHED();
     }
 
-    soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(WebCore::soupCookieJar()));
-    SoupNetworkSession::defaultSession().setCookieJar(jar.get());
-    WebCore::setSoupCookieJar(jar.get());
+    auto& storageSession = NetworkStorageSession::defaultStorageSession();
+    soup_cookie_jar_set_accept_policy(jar.get(), soup_cookie_jar_get_accept_policy(storageSession.cookieStorage()));
+    storageSession.soupNetworkSession().setCookieJar(jar.get());
 }
 
 } // namespace WebKit

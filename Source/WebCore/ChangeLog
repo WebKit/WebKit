@@ -1,3 +1,52 @@
+2017-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Simplify cookie storage handling
+        https://bugs.webkit.org/show_bug.cgi?id=166967
+
+        Reviewed by Sergio Villar Senin.
+
+        We currently have a global cookie storage, and several create() methods in SoupNetworkSession to create sessions
+        with different cookie jars. This could be simplified by moving the cookie storage handling to
+        NetworkStorageSession and removing all create() methods from SoupNetworkSession. This patch also removes the
+        default SoupNetworkSession in favor of using the default NetworkStorageSession.
+
+        * platform/network/NetworkStorageSession.h: Add a default cookie storage to be used when the
+        NetworkStorageSession doesn't have a platform soup session.
+        * platform/network/soup/CookieJarSoup.cpp: Remove the global cookie storage handling.
+        (WebCore::setCookiesFromDOM): Use NetworkStorageSession::cookieStorage() instead.
+        (WebCore::cookiesForSession): Ditto.
+        (WebCore::cookiesEnabled): Check the policy instead like all other ports do, since now we will always have a
+        default shared cookie jar.
+        (WebCore::getRawCookies): Use NetworkStorageSession::cookieStorage() instead.
+        (WebCore::deleteCookie): Ditto.
+        (WebCore::addCookie): Ditto.
+        (WebCore::getHostnamesWithCookies): Ditto.
+        (WebCore::deleteCookiesForHostnames): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+        * platform/network/soup/CookieJarSoup.h: Removed.
+        * platform/network/soup/CookieStorageSoup.cpp:
+        (WebCore::soupCookiesChanged): Use the cookie storage from the NetworkStorageSession::defaultStorageSession().
+        (WebCore::startObservingCookieChanges): Ditto.
+        (WebCore::stopObservingCookieChanges): Ditto.
+        * platform/network/soup/DNSSoup.cpp:
+        (WebCore::DNSResolveQueue::updateIsUsingProxy): Get the SoupSession from the NetworkStorageSession::defaultStorageSession().
+        (WebCore::DNSResolveQueue::platformResolve): Ditto.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession):
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession): Create a new SoupNetworkSession without
+        providing a cookie storage to ensure it creates its own private one.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Ditto.
+        (WebCore::NetworkStorageSession::soupNetworkSession): Create the SoupNetworkSession on demand passing the global
+        shared cookie storage.
+        (WebCore::NetworkStorageSession::cookieStorage): Return the cookie storage from the SoupNetworkSession if we
+        have one, otherwise create the global shared one and return it.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::sessionFromContext): Get the SoupSession from the NetworkStorageSession::defaultStorageSession().
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession): Remove all create methods and the unused constructor that
+        receives a SoupSession. Allow to pass a nullptr SoupCookieJar and create one in such case.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2017-01-12  Tim Horton  <timothy_horton@apple.com>
 
         Keyboard accessory bar can appear on top of full-screen video
