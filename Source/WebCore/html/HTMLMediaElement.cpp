@@ -569,7 +569,10 @@ HTMLMediaElement::~HTMLMediaElement()
 
     m_completelyLoaded = true;
 
-    m_player = nullptr;
+    if (m_player) {
+        m_player->invalidate();
+        m_player = nullptr;
+    }
     updatePlaybackControlsManager();
 }
 
@@ -5049,7 +5052,10 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
         document().removeMediaCanStartListener(this);
     }
 
-    m_player = nullptr;
+    if (m_player) {
+        m_player->invalidate();
+        m_player = nullptr;
+    }
     updatePlaybackControlsManager();
 
     stopPeriodicTimers();
@@ -5990,7 +5996,7 @@ void HTMLMediaElement::createMediaPlayer()
 #if ENABLE(VIDEO_TRACK)
     forgetResourceSpecificTracks();
 #endif
-    m_player = std::make_unique<MediaPlayer>(static_cast<MediaPlayerClient&>(*this));
+    m_player = MediaPlayer::create(*this);
     scheduleUpdatePlaybackControlsManager();
 
 #if ENABLE(WEB_AUDIO)
