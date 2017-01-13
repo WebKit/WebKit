@@ -1,5 +1,24 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210596. rdar://problem/29757269
+
+    2017-01-11  Anders Carlsson  <andersca@apple.com>
+
+            REGRESSION: Crash in com.apple.WebKit: IPC::Connection::sendMessage(std::__1::unique_ptr<IPC::MachMessage, std::__1::default_delete<IPC::MachMessage> >) + 27
+            https://bugs.webkit.org/show_bug.cgi?id=165854
+            rdar://problem/29757269
+
+            Reviewed by Tim Horton.
+
+            * Platform/IPC/mac/ConnectionMac.mm:
+            (IPC::Connection::sendMessage):
+            Add assertion.
+
+            (IPC::Connection::initializeSendSource):
+            Turns out the event handler can be called spuriously, so guard against that.
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210525. rdar://problem/29931470
 
     2017-01-09  Enrica Casucci  <enrica@apple.com>
