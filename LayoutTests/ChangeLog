@@ -1,5 +1,16 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210610. rdar://problem/15307582
+
+    2017-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+            Rebaseline two tests after r210599.
+
+            * fast/xmlhttprequest/xmlhttprequest-nonexistent-file-expected.txt:
+            * storage/domstorage/sessionstorage/blocked-file-access-expected.txt:
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210593. rdar://problem/29970907
 
     2017-01-11  Chris Dumez  <cdumez@apple.com>
