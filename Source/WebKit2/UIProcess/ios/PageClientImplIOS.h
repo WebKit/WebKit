@@ -96,7 +96,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&) override;
 #endif
-    std::unique_ptr<WebCore::ValidationBubble> createValidationBubble(const String& message) final;
+    Ref<WebCore::ValidationBubble> createValidationBubble(const String& message) final;
 
     void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) override;
     void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) override;

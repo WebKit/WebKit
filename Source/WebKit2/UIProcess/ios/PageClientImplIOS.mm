@@ -744,9 +744,9 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[m_webView semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight) ? WebCore::UserInterfaceLayoutDirection::LTR : WebCore::UserInterfaceLayoutDirection::RTL;
 }
 
-std::unique_ptr<ValidationBubble> PageClientImpl::createValidationBubble(const String& message)
+Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message)
 {
-    return std::make_unique<ValidationBubble>(m_contentView, message);
+    return ValidationBubble::create(m_contentView, message);
 }
 
 } // namespace WebKit

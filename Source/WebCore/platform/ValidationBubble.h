@@ -53,9 +53,13 @@ using PlatformView = void;
 
 namespace WebCore {
 
-class ValidationBubble {
+class ValidationBubble : public RefCounted<ValidationBubble> {
 public:
-    WEBCORE_EXPORT ValidationBubble(PlatformView*, const String& message);
+    static Ref<ValidationBubble> create(PlatformView* view, const String& message)
+    {
+        return adoptRef(*new ValidationBubble(view, message));
+    }
+
     WEBCORE_EXPORT ~ValidationBubble();
 
     const String& message() const { return m_message; }
@@ -68,6 +72,8 @@ public:
 #endif
 
 private:
+    WEBCORE_EXPORT ValidationBubble(PlatformView*, const String& message);
+
     PlatformView* m_view;
     String m_message;
 #if PLATFORM(MAC)

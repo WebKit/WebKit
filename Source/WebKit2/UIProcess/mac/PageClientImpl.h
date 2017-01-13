@@ -131,7 +131,7 @@ private:
     RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;
 #endif
 
-    std::unique_ptr<WebCore::ValidationBubble> createValidationBubble(const String& message) final;
+    Ref<WebCore::ValidationBubble> createValidationBubble(const String& message) final;
 
     void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorWindowLifetime) override;
     void clearTextIndicator(WebCore::TextIndicatorWindowDismissalAnimation) override;

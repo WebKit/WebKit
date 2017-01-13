@@ -207,7 +207,7 @@ private:
     RetainPtr<NSEvent> pressureEvent;
 #endif // PLATFORM(MAC)
 
-    std::unique_ptr<WebCore::ValidationBubble> formValidationBubble;
+    RefPtr<WebCore::ValidationBubble> formValidationBubble;
 
     BOOL shouldMaintainInactiveSelection;
 

@@ -1,3 +1,16 @@
+2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+        HTML form validation popover sometimes does not go away
+        https://bugs.webkit.org/show_bug.cgi?id=166990
+        <rdar://problem/29985957>
+
+        Reviewed by Tim Horton.
+
+        Update code using ValidationBubble now that it is RefCounted.
+
+        * WebView/WebView.mm:
+        (-[WebView showFormValidationMessage:withAnchorRect:]):
+
 2017-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove pointerLockElement from DOMDocumentPrivate.h

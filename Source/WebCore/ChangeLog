@@ -1,3 +1,34 @@
+2017-01-12  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] HTML form validation popover sometimes does not go away
+        https://bugs.webkit.org/show_bug.cgi?id=166990
+        <rdar://problem/29985957>
+
+        Reviewed by Tim Horton.
+
+        The issue was that [UIViewController presentViewController:] is asynchronous
+        and that we sometimes tried to call [m_popoverController dismissViewControllerAnimated:]
+        before presentViewController had completed. This is something that UIKit does
+        not handle nicely and the popover just stays visible even though we have
+        asked for the controller to be dismissed and destroyed the ValidationBubble
+        object.
+
+        To address the issue, I made ValidationBubble RefCounted and make sure the
+        ValidationBubble object stays alive at least until the completion handler for
+        [UIViewController presentViewController:] has been called. This is done via
+        protecting the object using a RefPtr<> and capturing it in the lambda.
+        Because dismissViewControllerAnimated is called in the destructor, it is no
+        longer possible to call dismissViewControllerAnimated before the call to
+        presentViewController has completed.
+
+        No new tests, no easily testable since the popover was staying visible
+        after being destroyed (held on by UIKit).
+
+        * platform/ValidationBubble.h:
+        (WebCore::ValidationBubble::create):
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::show):
+
 2017-01-12  Andreas Kling  <akling@apple.com>
 
         [iOS] Purge GraphicsServices font cache on memory warning.

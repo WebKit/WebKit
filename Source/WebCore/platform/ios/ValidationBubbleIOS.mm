@@ -129,7 +129,10 @@ ValidationBubble::~ValidationBubble()
 
 void ValidationBubble::show()
 {
-    [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:nil];
+    // Protect the validation bubble so it stays alive until it is effectively presented. UIKit does not deal nicely with
+    // dismissing a popover that is being presented.
+    RefPtr<ValidationBubble> protectedThis(this);
+    [m_presentingViewController presentViewController:m_popoverController.get() animated:NO completion:[protectedThis]() { }];
 }
 
 static UIViewController *fallbackViewController(UIView *view)

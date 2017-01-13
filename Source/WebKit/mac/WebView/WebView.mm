@@ -9309,7 +9309,7 @@ bool LayerFlushController::flushLayers()
 {
     // FIXME: We should enable this on iOS as well.
 #if PLATFORM(MAC)
-    _private->formValidationBubble = std::make_unique<ValidationBubble>(self, message);
+    _private->formValidationBubble = ValidationBubble::create(self, message);
     _private->formValidationBubble->showRelativeTo(enclosingIntRect([self _convertRectFromRootView:anchorRect]));
 #else
     UNUSED_PARAM(message);

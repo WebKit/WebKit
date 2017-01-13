@@ -440,9 +440,9 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
 }
 #endif
 
-std::unique_ptr<ValidationBubble> PageClientImpl::createValidationBubble(const String& message)
+Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message)
 {
-    return std::make_unique<ValidationBubble>(m_view, message);
+    return ValidationBubble::create(m_view, message);
 }
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, WebCore::TextIndicatorWindowLifetime lifetime)
