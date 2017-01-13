@@ -2278,7 +2278,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
             InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
 
             // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
-            if (globalObject->arraySpeciesWatchpoint().isStillValid()
+            if (globalObject->arraySpeciesWatchpoint().state() == IsWatched
                 && globalObject->havingABadTimeWatchpoint()->isStillValid()
                 && arrayPrototypeTransition.isStillValid()
                 && objectPrototypeTransition.isStillValid()

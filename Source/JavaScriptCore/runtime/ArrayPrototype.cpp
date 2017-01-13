@@ -191,12 +191,19 @@ static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsi
         throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
-inline bool speciesWatchpointIsValid(JSObject* thisObject)
+ALWAYS_INLINE bool speciesWatchpointIsValid(ExecState* exec, JSObject* thisObject)
 {
-    ArrayPrototype* arrayPrototype = thisObject->globalObject()->arrayPrototype();
+    JSGlobalObject* globalObject = thisObject->globalObject();
+    ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
+
+    if (globalObject->arraySpeciesWatchpoint().stateOnJSThread() == ClearWatchpoint) {
+        arrayPrototype->tryInitializeSpeciesWatchpoint(exec);
+        ASSERT(globalObject->arraySpeciesWatchpoint().stateOnJSThread() != ClearWatchpoint);
+    }
+
     return !thisObject->hasCustomProperties()
         && arrayPrototype == thisObject->getPrototypeDirect()
-        && arrayPrototype->globalObject()->arraySpeciesWatchpoint().isStillValid();
+        && globalObject->arraySpeciesWatchpoint().stateOnJSThread() == IsWatched;
 }
 
 enum class SpeciesConstructResult {
@@ -221,7 +228,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
     if (LIKELY(thisIsArray)) {
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
-        bool isValid = speciesWatchpointIsValid(thisObject);
+        bool isValid = speciesWatchpointIsValid(exec, thisObject);
         if (LIKELY(isValid))
             return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 
@@ -1239,7 +1246,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         return JSValue::encode(jsNull());
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
-    bool isValid = speciesWatchpointIsValid(firstArray);
+    bool isValid = speciesWatchpointIsValid(exec, firstArray);
     if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());
 
@@ -1331,7 +1338,7 @@ private:
     ArrayPrototype* m_arrayPrototype;
 };
 
-void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
+void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
 {
     VM& vm = exec->vm();
 
@@ -1339,7 +1346,6 @@ void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
     RELEASE_ASSERT(!m_constructorSpeciesWatchpoint);
 
     auto scope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(scope);
 
     if (verbose)
         dataLog("Initializing Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
@@ -1355,12 +1361,19 @@ void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
     JSGlobalObject* globalObject = this->globalObject();
     ArrayConstructor* arrayConstructor = globalObject->arrayConstructor();
 
+    auto invalidateWatchpoint = [&] {
+        globalObject->arraySpeciesWatchpoint().invalidate(vm, StringFireDetail("Was not able to set up array species watchpoint."));
+    };
+
     PropertySlot constructorSlot(this, PropertySlot::InternalMethodType::VMInquiry);
     this->getOwnPropertySlot(this, exec, vm.propertyNames->constructor, constructorSlot);
-    ASSERT(!scope.exception());
-    ASSERT(constructorSlot.slotBase() == this);
-    ASSERT(constructorSlot.isCacheableValue());
-    RELEASE_ASSERT(constructorSlot.getValue(exec, vm.propertyNames->constructor) == arrayConstructor);
+    ASSERT_UNUSED(scope, !scope.exception());
+    if (constructorSlot.slotBase() != this
+        || !constructorSlot.isCacheableValue()
+        || constructorSlot.getValue(exec, vm.propertyNames->constructor) != arrayConstructor) {
+        invalidateWatchpoint();
+        return;
+    }
 
     Structure* constructorStructure = arrayConstructor->structure(vm);
     if (constructorStructure->isDictionary())
@@ -1368,10 +1381,13 @@ void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
 
     PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
     arrayConstructor->getOwnPropertySlot(arrayConstructor, exec, vm.propertyNames->speciesSymbol, speciesSlot);
-    ASSERT(!scope.exception());
-    ASSERT(speciesSlot.slotBase() == arrayConstructor);
-    ASSERT(speciesSlot.isCacheableGetter());
-    RELEASE_ASSERT(speciesSlot.getterSetter() == globalObject->speciesGetterSetter());
+    ASSERT_UNUSED(scope, !scope.exception());
+    if (speciesSlot.slotBase() != arrayConstructor
+        || !speciesSlot.isCacheableGetter()
+        || speciesSlot.getterSetter() != globalObject->speciesGetterSetter()) {
+        invalidateWatchpoint();
+        return;
+    }
 
     // Now we need to setup the watchpoints to make sure these conditions remain valid.
     prototypeStructure->startWatchingPropertyForReplacements(vm, constructorSlot.cachedOffset());
@@ -1380,14 +1396,20 @@ void ArrayPrototype::initializeSpeciesWatchpoint(ExecState* exec)
     ObjectPropertyCondition constructorCondition = ObjectPropertyCondition::equivalence(vm, this, this, vm.propertyNames->constructor.impl(), arrayConstructor);
     ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, this, arrayConstructor, vm.propertyNames->speciesSymbol.impl(), globalObject->speciesGetterSetter());
 
-    RELEASE_ASSERT(constructorCondition.isWatchable());
-    RELEASE_ASSERT(speciesCondition.isWatchable());
+    if (!constructorCondition.isWatchable() || !speciesCondition.isWatchable()) {
+        invalidateWatchpoint();
+        return;
+    }
 
     m_constructorWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(constructorCondition, this);
     m_constructorWatchpoint->install();
 
     m_constructorSpeciesWatchpoint = std::make_unique<ArrayPrototypeAdaptiveInferredPropertyWatchpoint>(speciesCondition, this);
     m_constructorSpeciesWatchpoint->install();
+
+    // We only watch this from the DFG, and the DFG makes sure to only start watching if the watchpoint is in the IsWatched state.
+    RELEASE_ASSERT(!globalObject->arraySpeciesWatchpoint().isBeingWatched()); 
+    globalObject->arraySpeciesWatchpoint().touch(vm, "Set up array species watchpoint.");
 }
 
 ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferredPropertyWatchpoint(const ObjectPropertyCondition& key, ArrayPrototype* prototype)
