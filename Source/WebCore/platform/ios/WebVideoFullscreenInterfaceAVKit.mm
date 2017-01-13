@@ -73,6 +73,7 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
 SOFT_LINK_CLASS(UIKit, UIView)
 SOFT_LINK_CLASS(UIKit, UIViewController)
 SOFT_LINK_CLASS(UIKit, UIColor)
+SOFT_LINK_CONSTANT(UIKit, UIRemoteKeyboardLevel, UIWindowLevel)
 
 #if !LOG_DISABLED
 static const char* boolString(bool val)
@@ -606,6 +607,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
         [[m_viewController view] setFrame:[m_window bounds]];
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
+        [m_window setWindowLevel:getUIRemoteKeyboardLevel() + 1];
         [m_window makeKeyAndVisible];
     }
 
