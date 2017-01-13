@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="testInput" type="text">
+<script>
+description("Tests that KeyboardEvent.key is properly initialized on iOS.");
+jsTestIsAsync = true;
+
+function getTypingUIScript(x, y)
+{
+    return `
+        (function() {
+            uiController.didShowKeyboardCallback = function() {
+                uiController.typeCharacterUsingHardwareKeyboard('a', function() {
+                    uiController.uiScriptComplete();
+                });
+            };
+            uiController.singleTapAtPoint(${x}, ${y}, function() { });
+        })();`
+}
+
+var testInput = document.getElementById("testInput");
+testInput.onkeydown = function(e) {
+    event = e;
+    shouldBeEqualToString("event.key", "a");
+    finishJSTest();
+};
+
+const x = testInput.offsetLeft + 5;
+const y = testInput.offsetTop + 5;
+testRunner.runUIScript(getTypingUIScript(x, y), function() { });
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
