@@ -213,7 +213,7 @@ WebInspector.HierarchicalPathComponent = class HierarchicalPathComponent extends
             this._selectorArrowsElement = null;
         }
 
-        this._element.classList.toggle("show-selector-arrows", this._selectorArrows);
+        this._element.classList.toggle("show-selector-arrows", !!this._selectorArrows);
     }
 
     get previousSibling() { return this._previousSibling; }

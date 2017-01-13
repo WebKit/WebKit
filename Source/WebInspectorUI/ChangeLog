@@ -1,3 +1,20 @@
+2017-01-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r209711): Web Inspector: in Elements Tab, selecting a deeply nested DOM element causes navigation bar buttons to be pushed off the leading edge
+        https://bugs.webkit.org/show_bug.cgi?id=166898
+        <rdar://problem/29951737>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WebInspector.HierarchicalPathComponent.prototype.set selectorArrows):
+        The following operations do NOT produce the same result:
+
+            classList.toogle(aString, undefined)
+            classList.toogle(aString, false)
+
+        The former is an equivalent of classList.toogle(aString), e.g. it set a class if it wasn't set before.
+
 2017-01-12  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: cubic-bezier editor behaves poorly for invalid inputs in component fields
