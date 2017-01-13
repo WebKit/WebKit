@@ -2771,3 +2771,7 @@ fast/css/deferred-parsing/hover-test.html [ Skip ]
 
 # New Encrypted Media API not enabled on iOS
 media/encrypted-media/mock-navigator-requestMediaKeySystemAccess.html [ Skip ]
+
+# editing/caret/ios/emoji.html is used instead.
+editing/caret/emoji.html [ Failure ]
+

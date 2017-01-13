@@ -1,5 +1,38 @@
 2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r210399. rdar://problem/29019333
+
+    2017-01-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Carets can split up marriages and families
+            https://bugs.webkit.org/show_bug.cgi?id=166711
+            <rdar://problem/29019333>
+
+            Reviewed by Alex Christensen.
+
+            There are four code points which should be allowed to accept emoji modifiers:
+            - U+1F46A FAMILY
+            - U+1F46B MAN AND WOMAN HOLDING HANDS
+            - U+1F46C TWO MEN HOLDING HANDS
+            - U+1F46D TWO WOMEN HOLDING HANDS
+
+            Even though macOS's and iOS's emoji keyboard don't allow users to actually type
+            these combinations, we may still receive them from other platforms. We should
+            therefore treat these as joining sequences. Rendering isn't a problem because
+            the fonts accept the emoji modifiers, but our caret placement code isn't educated
+            about it. Currently, we treat these emoji groups as ligatures, allowing the caret
+            to be placed between the two code points, which visually shows as being horizontally
+            centered in the glyph. Instead, we should treat these code points as accepting
+            emoji modifiers.
+
+            Tests: editing/caret/emoji.html
+                   editing/caret/ios/emoji.html
+
+            * wtf/text/TextBreakIterator.cpp:
+            (WTF::cursorMovementIterator):
+
+2017-01-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r210609. rdar://problem/27896585
 
     2017-01-11  Andreas Kling  <akling@apple.com>
