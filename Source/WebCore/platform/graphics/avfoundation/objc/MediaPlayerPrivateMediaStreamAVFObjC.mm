@@ -161,6 +161,9 @@ using namespace WebCore;
         ASSERT([keyPath isEqualToString:@"status"]);
 
         callOnMainThread([protectedSelf = WTFMove(protectedSelf), layer = WTFMove(layer), status = WTFMove(status)] {
+            if (!protectedSelf->_parent)
+                return;
+
             protectedSelf->_parent->layerStatusDidChange(layer.get(), status.get());
         });
 
@@ -172,6 +175,9 @@ using namespace WebCore;
         ASSERT([keyPath isEqualToString:@"status"]);
 
         callOnMainThread([protectedSelf = WTFMove(protectedSelf), renderer = WTFMove(renderer), status = WTFMove(status)] {
+            if (!protectedSelf->_parent)
+                return;
+
             protectedSelf->_parent->rendererStatusDidChange(renderer.get(), status.get());
         });
     } else
@@ -492,10 +498,15 @@ void MediaPlayerPrivateMediaStreamAVFObjC::rendererStatusDidChange(AVSampleBuffe
 
 void MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(AVSampleBufferDisplayLayer* layer, NSNumber* status)
 {
-    ASSERT_UNUSED(layer, layer == m_sampleBufferDisplayLayer);
-    ASSERT(m_activeVideoTrack);
-    if (status.integerValue == AVQueuedSampleBufferRenderingStatusRendering)
-        m_videoTrackMap.get(m_activeVideoTrack->id())->setTimelineOffset(MediaTime::invalidTime());
+    if (status.integerValue != AVQueuedSampleBufferRenderingStatusRendering)
+        return;
+
+    if (layer != m_sampleBufferDisplayLayer || !m_activeVideoTrack)
+        return;
+
+    auto track = m_videoTrackMap.get(m_activeVideoTrack->id());
+    if (track)
+        track->setTimelineOffset(MediaTime::invalidTime());
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers()

@@ -7,7 +7,7 @@ PASS mediaDevices.getUserMedia generated a stream successfully.
 video.src = window.URL.createObjectURL(mediaStream)
 
  === beginning round of pixel tests ===
-PASS pixel was white
+PASS pixel was black
 
  === all video tracks disabled ===
 PASS pixel was black.
@@ -19,7 +19,7 @@ PASS pixel was white.
 video.play()
 
  === beginning round of pixel tests ===
-PASS pixel was white
+PASS pixel was black
 
  === all video tracks disabled ===
 PASS pixel was black.

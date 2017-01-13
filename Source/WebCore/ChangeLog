@@ -1,3 +1,19 @@
+2017-01-13  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r210621): [mac-wk2] LayoutTest fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html timing out
+        https://bugs.webkit.org/show_bug.cgi?id=166980
+
+        Unreviewed, fix test broken by r210621.
+
+        No new tests, updated fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html
+        and results.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (-[WebAVSampleBufferStatusChangeListener observeValueForKeyPath:ofObject:change:context:]):
+          Drive-by fix: null-check parent.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange): Do nothing if the layer
+          has changed since the KVO notification.
+
 2017-01-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Simplify cookie storage handling
