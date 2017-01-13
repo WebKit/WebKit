@@ -32,12 +32,12 @@ class Environment {
 public:
     Environment();
     
-    bool isBmallocEnabled() { return m_isBmallocEnabled; }
+    bool isDebugHeapEnabled() { return m_isDebugHeapEnabled; }
 
 private:
-    bool computeIsBmallocEnabled();
+    bool computeIsDebugHeapEnabled();
 
-    bool m_isBmallocEnabled;
+    bool m_isDebugHeapEnabled;
 };
 
 } // namespace bmalloc

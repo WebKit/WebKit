@@ -46,13 +46,14 @@ namespace bmalloc {
 
 class BeginTag;
 class BumpAllocator;
+class DebugHeap;
 class EndTag;
 
 class Heap {
 public:
     Heap(std::lock_guard<StaticMutex>&);
     
-    Environment& environment() { return m_environment; }
+    DebugHeap* debugHeap() { return m_debugHeap; }
 
     void allocateSmallBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpAllocator&, BumpRangeCache&);
     void derefSmallLine(std::lock_guard<StaticMutex>&, Object);
@@ -116,6 +117,7 @@ private:
     AsyncTask<Heap, decltype(&Heap::concurrentScavenge)> m_scavenger;
 
     Environment m_environment;
+    DebugHeap* m_debugHeap;
 
     VMHeap m_vmHeap;
 };

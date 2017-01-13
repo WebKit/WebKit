@@ -1,3 +1,63 @@
+2017-01-13  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Use a separate zone when using system malloc
+        https://bugs.webkit.org/show_bug.cgi?id=167014
+
+        Reviewed by Filip Pizlo.
+
+        Harris asked for this so he could separate Safari and WebKit memory use
+        when doing memory analysis.
+
+        This patch adds an explicit DebugHeap class that contains all our
+        code for specialized allocation with debugging.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        (bmalloc::Allocator::tryAllocate):
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::allocateSlowCase):
+        * bmalloc/Allocator.h: Forward to DebugHeap instead of inlining all the
+        code. This is required for our new interface, and it is also a nice
+        simplification that moves some not-very-important code out of the way.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator):
+        (bmalloc::Deallocator::scavenge):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Deallocator.h: Ditto.
+
+        * bmalloc/DebugHeap.cpp: Added.
+        (bmalloc::DebugHeap::DebugHeap):
+        (bmalloc::DebugHeap::malloc):
+        (bmalloc::DebugHeap::memalign):
+        (bmalloc::DebugHeap::realloc):
+        (bmalloc::DebugHeap::free):
+        * bmalloc/DebugHeap.h: Added. New class for overriding normal heap
+        behavior. Right now, it just adds a malloc zone and then forwards to
+        system malloc -- but we can add lots more kinds of debug heaps in the
+        future if we find them useful.
+
+        * bmalloc/Environment.cpp:
+        (bmalloc::Environment::Environment):
+        (bmalloc::Environment::computeIsDebugHeapEnabled):
+        (bmalloc::Environment::computeIsBmallocEnabled): Deleted.
+        * bmalloc/Environment.h:
+        (bmalloc::Environment::isDebugHeapEnabled):
+        (bmalloc::Environment::isBmallocEnabled): Deleted. Renamed everything to
+        reflect our new use of DebugHeap.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::debugHeap): Updated to use DebugHeap.
+        (bmalloc::Heap::environment): Deleted. 
+
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::isEnabled): Updated to use DebugHeap.
+
 2016-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Sort Xcode project files

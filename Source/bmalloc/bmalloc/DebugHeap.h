@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,58 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Deallocator_h
-#define Deallocator_h
+#pragma once
 
-#include "FixedVector.h"
+#include "StaticMutex.h"
 #include <mutex>
+#if BOS(DARWIN)
+#include <malloc/malloc.h>
+#endif
 
 namespace bmalloc {
-
-class DebugHeap;
-class Heap;
-class StaticMutex;
-
-// Per-cache object deallocator.
-
-class Deallocator {
-public:
-    Deallocator(Heap*);
-    ~Deallocator();
-
-    void deallocate(void*);
-    void scavenge();
     
-    void processObjectLog();
-    void processObjectLog(std::lock_guard<StaticMutex>&);
+class DebugHeap {
+public:
+    DebugHeap(std::lock_guard<StaticMutex>&);
+    
+    void* malloc(size_t);
+    void* memalign(size_t alignment, size_t, bool crashOnFailure);
+    void* realloc(void*, size_t);
+    void free(void*);
 
 private:
-    bool deallocateFastCase(void*);
-    void deallocateSlowCase(void*);
-
-    FixedVector<void*, deallocatorLogCapacity> m_objectLog;
-    DebugHeap* m_debugHeap;
+#if BOS(DARWIN)
+    malloc_zone_t* m_zone;
+#endif
 };
 
-inline bool Deallocator::deallocateFastCase(void* object)
-{
-    BASSERT(mightBeLarge(nullptr));
-    if (mightBeLarge(object))
-        return false;
-
-    if (m_objectLog.size() == m_objectLog.capacity())
-        return false;
-
-    m_objectLog.push(object);
-    return true;
-}
-
-inline void Deallocator::deallocate(void* object)
-{
-    if (!deallocateFastCase(object))
-        deallocateSlowCase(object);
-}
-
 } // namespace bmalloc
-
-#endif // Deallocator_h

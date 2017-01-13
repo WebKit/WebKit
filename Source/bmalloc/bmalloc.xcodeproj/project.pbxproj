@@ -12,6 +12,8 @@
 		140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00219CE429C00FFD3C8 /* BumpRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140FA00519CE4B6800FFD3C8 /* LineMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 140FA00419CE4B6800FFD3C8 /* LineMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141D9B001C8E51C0000ABBA0 /* List.h in Headers */ = {isa = PBXBuildFile; fileRef = 141D9AFF1C8E51C0000ABBA0 /* List.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142B44341E2839E7001DA6E9 /* DebugHeap.cpp */; };
+		142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B44351E2839E7001DA6E9 /* DebugHeap.h */; };
 		143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143CB81A19022BC900B16A45 /* StaticMutex.cpp */; };
 		143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 143CB81B19022BC900B16A45 /* StaticMutex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1440AFCB1A95261100837FAA /* Zone.h in Headers */ = {isa = PBXBuildFile; fileRef = 1440AFCA1A95261100837FAA /* Zone.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -81,6 +83,8 @@
 		1417F65218BA88A00076FA3F /* AsyncTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncTask.h; path = bmalloc/AsyncTask.h; sourceTree = "<group>"; };
 		141D9AFF1C8E51C0000ABBA0 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = bmalloc/List.h; sourceTree = "<group>"; };
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
+		142B44341E2839E7001DA6E9 /* DebugHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugHeap.cpp; path = bmalloc/DebugHeap.cpp; sourceTree = "<group>"; };
+		142B44351E2839E7001DA6E9 /* DebugHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugHeap.h; path = bmalloc/DebugHeap.h; sourceTree = "<group>"; };
 		143CB81A19022BC900B16A45 /* StaticMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticMutex.cpp; path = bmalloc/StaticMutex.cpp; sourceTree = "<group>"; };
 		143CB81B19022BC900B16A45 /* StaticMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticMutex.h; path = bmalloc/StaticMutex.h; sourceTree = "<group>"; };
 		143E29ED18CAE90500FE8A0F /* SmallPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallPage.h; path = bmalloc/SmallPage.h; sourceTree = "<group>"; };
@@ -229,6 +233,8 @@
 			children = (
 				140FA00219CE429C00FFD3C8 /* BumpRange.h */,
 				147DC6E21CA5B70B00724E8D /* Chunk.h */,
+				142B44341E2839E7001DA6E9 /* DebugHeap.cpp */,
+				142B44351E2839E7001DA6E9 /* DebugHeap.h */,
 				14895D8F1A3A319C0006235D /* Environment.cpp */,
 				14895D901A3A319C0006235D /* Environment.h */,
 				14DA320E18875D9F007269E0 /* Heap.cpp */,
@@ -321,6 +327,7 @@
 				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
 				144BE11F1CA346520099C8C0 /* Object.h in Headers */,
 				14DD789318F48D0F00950702 /* ObjectType.h in Headers */,
+				142B44371E2839E7001DA6E9 /* DebugHeap.h in Headers */,
 				14DD78CB18F48D7500950702 /* PerProcess.h in Headers */,
 				14DD78CC18F48D7500950702 /* PerThread.h in Headers */,
 				14DD78CD18F48D7500950702 /* Range.h in Headers */,
@@ -422,6 +429,7 @@
 				14F271C718EA3990008C152F /* Heap.cpp in Sources */,
 				144C07F41C7B70260051BB6A /* LargeMap.cpp in Sources */,
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
+				142B44361E2839E7001DA6E9 /* DebugHeap.cpp in Sources */,
 				14F271C818EA3990008C152F /* ObjectType.cpp in Sources */,
 				143CB81C19022BC900B16A45 /* StaticMutex.cpp in Sources */,
 				14F271C918EA3990008C152F /* VMHeap.cpp in Sources */,

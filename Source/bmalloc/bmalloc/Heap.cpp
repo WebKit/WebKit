@@ -26,6 +26,7 @@
 #include "Heap.h"
 #include "BumpAllocator.h"
 #include "Chunk.h"
+#include "DebugHeap.h"
 #include "PerProcess.h"
 #include "SmallLine.h"
 #include "SmallPage.h"
@@ -37,12 +38,16 @@ Heap::Heap(std::lock_guard<StaticMutex>&)
     : m_vmPageSizePhysical(vmPageSizePhysical())
     , m_isAllocatingPages(false)
     , m_scavenger(*this, &Heap::concurrentScavenge)
+    , m_debugHeap(nullptr)
 {
     RELEASE_BASSERT(vmPageSizePhysical() >= smallPageSize);
     RELEASE_BASSERT(vmPageSize() >= vmPageSizePhysical());
 
     initializeLineMetadata();
     initializePageMetadata();
+    
+    if (m_environment.isDebugHeapEnabled())
+        m_debugHeap = PerProcess<DebugHeap>::get();
 }
 
 void Heap::initializeLineMetadata()

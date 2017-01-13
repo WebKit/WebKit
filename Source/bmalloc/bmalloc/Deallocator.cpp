@@ -26,6 +26,7 @@
 #include "BAssert.h"
 #include "Chunk.h"
 #include "Deallocator.h"
+#include "DebugHeap.h"
 #include "Heap.h"
 #include "Inline.h"
 #include "Object.h"
@@ -39,9 +40,9 @@ using namespace std;
 namespace bmalloc {
 
 Deallocator::Deallocator(Heap* heap)
-    : m_isBmallocEnabled(heap->environment().isBmallocEnabled())
+    : m_debugHeap(heap->debugHeap())
 {
-    if (!m_isBmallocEnabled) {
+    if (m_debugHeap) {
         // Fill the object log in order to disable the fast path.
         while (m_objectLog.size() != m_objectLog.capacity())
             m_objectLog.push(nullptr);
@@ -55,8 +56,10 @@ Deallocator::~Deallocator()
     
 void Deallocator::scavenge()
 {
-    if (m_isBmallocEnabled)
-        processObjectLog();
+    if (m_debugHeap)
+        return;
+
+    processObjectLog();
 }
 
 void Deallocator::processObjectLog(std::lock_guard<StaticMutex>& lock)
@@ -77,10 +80,8 @@ void Deallocator::processObjectLog()
 
 void Deallocator::deallocateSlowCase(void* object)
 {
-    if (!m_isBmallocEnabled) {
-        free(object);
-        return;
-    }
+    if (m_debugHeap)
+        return m_debugHeap->free(object);
 
     if (!object)
         return;
