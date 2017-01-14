@@ -40,10 +40,8 @@
 
 namespace WebCore {
 
-static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
+static Ref<SharedCursor> createSharedCursor(Image* img, const IntPoint& hotSpot)
 {
-    RefPtr<SharedCursor> impl;
-
     IntPoint effectiveHotSpot = determineHotSpot(img, hotSpot);
     static bool doAlpha = windowsVersion() >= WindowsXP;
     BitmapInfo cursorImage = BitmapInfo::create(IntSize(img->width(), img->height()));
@@ -52,8 +50,6 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (doAlpha) {
         auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
-        if (!hCursor)
-            return nullptr;
 
         img->getHBITMAP(hCursor.get()); 
         HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
@@ -71,15 +67,13 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         ii.hbmMask = hMask.get();
         ii.hbmColor = hCursor.get();
 
-        impl = SharedCursor::create(::CreateIconIndirect(&ii));
+        return SharedCursor::create(::CreateIconIndirect(&ii));
     } else {
         // Platform doesn't support alpha blended cursors, so we need
         // to create the mask manually
         auto andMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
         auto xorMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
         auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
-        if (!hCursor)
-            return nullptr;
 
         img->getHBITMAP(hCursor.get()); 
         BITMAP cursor;
@@ -108,18 +102,16 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         icon.yHotspot = effectiveHotSpot.y();
         icon.hbmMask = andMask.get();
         icon.hbmColor = xorMask.get();
-        impl = SharedCursor::create(CreateIconIndirect(&icon));
+        return SharedCursor::create(CreateIconIndirect(&icon));
     }
-
-    return impl.release();
 }
 
-static PassRefPtr<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorName)
+static Ref<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorName)
 {
     return SharedCursor::create(::LoadCursorW(hInstance, lpCursorName));
 }
 
-static PassRefPtr<SharedCursor> loadCursorByName(char* name, int x, int y)
+static Ref<SharedCursor> loadCursorByName(char* name, int x, int y)
 {
     IntPoint hotSpot(x, y);
     RefPtr<Image> cursorImage(Image::loadPlatformResource(name));

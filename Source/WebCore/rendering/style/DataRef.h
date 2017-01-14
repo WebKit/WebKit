@@ -1,8 +1,5 @@
 /*
- * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- *           (C) 2000 Antti Koivisto (koivisto@kde.org)
- *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,30 +26,65 @@ namespace WebCore {
 
 template <typename T> class DataRef {
 public:
-    DataRef(Ref<T>&& data) : m_data(WTFMove(data)) { }
-    DataRef(const DataRef& other) : m_data(const_cast<T&>(other.m_data.get())) { }
-    DataRef& operator=(const DataRef& other) { m_data = const_cast<T&>(other.m_data.get()); return *this; }
-
-    const T* get() const { return m_data.ptr(); }
-
-    const T& operator*() const { return *get(); }
-    const T* operator->() const { return get(); }
-
-    T* access()
+    DataRef(Ref<T>&& data)
+        : m_data(WTFMove(data))
     {
-        if (!m_data->hasOneRef())
-            m_data = m_data->copy();
+    }
+
+    DataRef(const DataRef& other)
+        : m_data(other.m_data.copyRef())
+    {
+    }
+
+    DataRef& operator=(const DataRef& other)
+    {
+        m_data = other.m_data.copyRef();
+        return *this;
+    }
+
+    DataRef(DataRef&&) = default;
+    DataRef& operator=(DataRef&&) = default;
+
+    DataRef replace(DataRef&& other)
+    {
+        return m_data.replace(WTFMove(other.m_data));
+    }
+
+    operator const T&() const
+    {
+        return m_data;
+    }
+
+    const T& get() const
+    {
+        return m_data;
+    }
+
+    const T& operator*() const
+    {
+        return m_data;
+    }
+
+    const T* operator->() const
+    {
         return m_data.ptr();
     }
 
-    bool operator==(const DataRef<T>& o) const
+    T& access()
     {
-        return m_data.ptr() == o.m_data.ptr() || m_data.get() == o.m_data.get();
+        if (!m_data->hasOneRef())
+            m_data = m_data->copy();
+        return m_data;
     }
-    
-    bool operator!=(const DataRef<T>& o) const
+
+    bool operator==(const DataRef& other) const
     {
-        return m_data.ptr() != o.m_data.ptr() && m_data.get() != o.m_data.get();
+        return m_data.ptr() == other.m_data.ptr() || m_data.get() == other.m_data.get();
+    }
+
+    bool operator!=(const DataRef& other) const
+    {
+        return !(*this == other);
     }
 
 private:

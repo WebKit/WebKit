@@ -486,14 +486,15 @@ static std::optional<FloatRect> rectFromPolygon(const FloatPointGraph::Polygon& 
     return FloatRect(topLeft.value(), bottomRight.value());
 }
 
-Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const BorderData& borderData, float outlineOffset, TextDirection direction,
-    WritingMode writingMode, float deviceScaleFactor)
+Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>& rects, const BorderData& borderData,
+    float outlineOffset, TextDirection direction, WritingMode writingMode, float deviceScaleFactor)
 {
     ASSERT(borderData.hasBorderRadius());
-    FloatSize topLeftRadius = FloatSize(borderData.topLeft().width().value(), borderData.topLeft().height().value());
-    FloatSize topRightRadius = FloatSize(borderData.topRight().width().value(), borderData.topRight().height().value());
-    FloatSize bottomRightRadius = FloatSize(borderData.bottomRight().width().value(), borderData.bottomRight().height().value());
-    FloatSize bottomLeftRadius = FloatSize(borderData.bottomLeft().width().value(), borderData.bottomLeft().height().value());
+
+    FloatSize topLeftRadius { borderData.topLeft().width.value(), borderData.topLeft().height.value() };
+    FloatSize topRightRadius { borderData.topRight().width.value(), borderData.topRight().height.value() };
+    FloatSize bottomRightRadius { borderData.bottomRight().width.value(), borderData.bottomRight().height.value() };
+    FloatSize bottomLeftRadius { borderData.bottomLeft().width.value(), borderData.bottomLeft().height.value() };
 
     auto roundedRect = [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius, outlineOffset, deviceScaleFactor] (const FloatRect& rect)
     {

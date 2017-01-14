@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVFoundationObjC_h
-#define CDMSessionAVFoundationObjC_h
+#pragma once
 
 #include "LegacyCDMSession.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -66,5 +66,3 @@ protected:
 }
 
 #endif
-
-#endif // CDMSessionAVFoundationObjC_h

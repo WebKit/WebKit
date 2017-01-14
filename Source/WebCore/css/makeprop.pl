@@ -614,8 +614,8 @@ sub generateAnimationPropertyInheritValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "AnimationList& list = styleResolver.style()->" . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
-  $setterContent .= $indent . "const AnimationList* parentList = styleResolver.parentStyle()->" . getAnimationsOrTransitionsMethod($name) . "();\n";
+  $setterContent .= $indent . "auto& list = styleResolver.style()->" . getEnsureAnimationsOrTransitionsMethod($name) . "();\n";
+  $setterContent .= $indent . "auto* parentList = styleResolver.parentStyle()->" . getAnimationsOrTransitionsMethod($name) . "();\n";
   $setterContent .= $indent . "size_t i = 0, parentSize = parentList ? parentList->size() : 0;\n";
   $setterContent .= $indent . "for ( ; i < parentSize && parentList->animation(i)." . getTestFunction($name) . "(); ++i) {\n";
   $setterContent .= $indent . "    if (list.size() <= i)\n";
@@ -626,7 +626,7 @@ sub generateAnimationPropertyInheritValueSetter {
   $setterContent .= $indent . "    list.animation(i).setAnimationMode(parentList->animation(i).animationMode());\n";
   $setterContent .= $indent . "}\n";
   $setterContent .= "\n";
-  $setterContent .= $indent . "/* Reset any remaining animations to not have the property set. */\n";
+  $setterContent .= $indent . "// Reset any remaining animations to not have the property set.\n";
   $setterContent .= $indent . "for ( ; i < list.size(); ++i)\n";
   $setterContent .= $indent . "    list.animation(i)." . getClearFunction($name) . "();\n";
 
@@ -674,11 +674,11 @@ sub generateFillLayerPropertyInitialValueSetter {
 
   my $setterContent = "";
   $setterContent .= $indent . "// Check for (single-layer) no-op before clearing anything.\n";
-  $setterContent .= $indent . "const FillLayer& layers = *styleResolver.style()->" . getLayersFunction($name) . "();\n";
+  $setterContent .= $indent . "auto& layers = styleResolver.style()->" . getLayersFunction($name) . "();\n";
   $setterContent .= $indent . "if (!layers.next() && (!layers." . $testFunction . "() || layers." . $getter . "() == $initial))\n";
   $setterContent .= $indent . "    return;\n";
   $setterContent .= "\n";
-  $setterContent .= $indent . "FillLayer* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
+  $setterContent .= $indent . "auto* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "child->" . $setter . "(" . $initial . ");\n";
   $setterContent .= $indent . "for (child = child->next(); child; child = child->next())\n";
   $setterContent .= $indent . "    child->" . $clearFunction . "();\n";
@@ -697,12 +697,12 @@ sub generateFillLayerPropertyInheritValueSetter {
 
   my $setterContent = "";
   $setterContent .= $indent . "// Check for no-op before copying anything.\n";
-  $setterContent .= $indent . "if (*styleResolver.parentStyle()->" . getLayersFunction($name) ."() == *styleResolver.style()->" . getLayersFunction($name) . "())\n";
+  $setterContent .= $indent . "if (styleResolver.parentStyle()->" . getLayersFunction($name) ."() == styleResolver.style()->" . getLayersFunction($name) . "())\n";
   $setterContent .= $indent . "    return;\n";
   $setterContent .= "\n";
   $setterContent .= $indent . "auto* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
-  $setterContent .= $indent . "for (auto* parent = styleResolver.parentStyle()->" . getLayersFunction($name) . "(); parent && parent->" . $testFunction . "(); parent = parent->next()) {\n";
+  $setterContent .= $indent . "for (auto* parent = &styleResolver.parentStyle()->" . getLayersFunction($name) . "(); parent && parent->" . $testFunction . "(); parent = parent->next()) {\n";
   $setterContent .= $indent . "    if (!child) {\n";
   $setterContent .= $indent . "        previousChild->setNext(std::make_unique<FillLayer>(" . getFillLayerType($name) . "));\n";
   $setterContent .= $indent . "        child = previousChild->next();\n";
@@ -724,7 +724,7 @@ sub generateFillLayerPropertyValueSetter {
   my $CSSPropertyId = "CSSProperty" . $nameToId{$name};
 
   my $setterContent = "";
-  $setterContent .= $indent . "FillLayer* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
+  $setterContent .= $indent . "auto* child = &styleResolver.style()->" . getLayersAccessorFunction($name) . "();\n";
   $setterContent .= $indent . "FillLayer* previousChild = nullptr;\n";
   $setterContent .= $indent . "if (is<CSSValueList>(value) && !is<CSSImageSetValue>(value)) {\n";
   $setterContent .= $indent . "    // Walk each value and put it into a layer, creating new layers as needed.\n";
@@ -830,7 +830,7 @@ sub generateInheritValueSetter {
   }
   if (!$didCallSetValue) {
     my $inheritedValue = $parentStyle . "->" . ($isSVG ? "svgStyle()." : "") .  $getter . "()";
-    $setterContent .= $indent . "    " . generateSetValueStatement($name, $inheritedValue) . ";\n";
+    $setterContent .= $indent . "    " . generateSetValueStatement($name, "forwardInheritedValue(" . $inheritedValue . ")") . ";\n";
   }
   $setterContent .= $indent . "}\n";
 
@@ -849,7 +849,7 @@ sub generateValueSetter {
     $convertedValue = "StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"converter"} . "(styleResolver, value)";
   } elsif (exists($propertiesWithStyleBuilderOptions{$name}{"conditional-converter"})) {
     $setterContent .= $indent . "    auto convertedValue = StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"conditional-converter"} . "(styleResolver, value);\n";
-    $convertedValue = "convertedValue.value()";
+    $convertedValue = "WTFMove(convertedValue.value())";
   } else {
     $convertedValue = "downcast<CSSPrimitiveValue>(value)";
   }

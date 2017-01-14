@@ -364,7 +364,7 @@ LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const Layout
 
 ImageBuffer* FilterEffectRenderer::output() const
 {
-    return const_cast<FilterEffect&>(m_effects.last().get()).asImageBuffer();
+    return m_effects.last()->asImageBuffer();
 }
 
 void FilterEffectRenderer::setMaxEffectRects(const FloatRect& effectRect)
@@ -375,7 +375,7 @@ void FilterEffectRenderer::setMaxEffectRects(const FloatRect& effectRect)
 
 IntRect FilterEffectRenderer::outputRect() const
 {
-    auto& lastEffect = const_cast<FilterEffect&>(m_effects.last().get());
+    auto& lastEffect = m_effects.last().get();
     if (!lastEffect.hasResult())
         return { };
     return lastEffect.requestedRegionOfInputImageData(IntRect { m_filterRegion });

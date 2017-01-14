@@ -120,7 +120,7 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters()
     const auto& primaryFont = style().fontCascade().primaryFont();
     if (auto* mathData = style().fontCascade().primaryFont().mathData()) {
         parameters.ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalRuleThickness);
-        parameters.verticalGap = mathData->getMathConstant(primaryFont, mathMLStyle()->displayStyle() ? OpenTypeMathData::RadicalDisplayStyleVerticalGap : OpenTypeMathData::RadicalVerticalGap);
+        parameters.verticalGap = mathData->getMathConstant(primaryFont, mathMLStyle().displayStyle() ? OpenTypeMathData::RadicalDisplayStyleVerticalGap : OpenTypeMathData::RadicalVerticalGap);
         parameters.extraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalExtraAscender);
         if (m_kind == RootWithIndex)
             parameters.degreeBottomRaisePercent = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
@@ -131,7 +131,7 @@ RenderMathMLRoot::VerticalParameters RenderMathMLRoot::verticalParameters()
         // RadicalExtraAscender: Suggested value is RadicalRuleThickness.
         // RadicalDegreeBottomRaisePercent: Suggested value is 60%.
         parameters.ruleThickness = ruleThicknessFallback();
-        if (mathMLStyle()->displayStyle())
+        if (mathMLStyle().displayStyle())
             parameters.verticalGap = parameters.ruleThickness + style().fontMetrics().xHeight() / 4;
         else
             parameters.verticalGap = 5 * parameters.ruleThickness / 4;

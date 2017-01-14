@@ -188,12 +188,11 @@ void CSSToStyleMap::mapFillRepeatY(CSSPropertyID propertyID, FillLayer& layer, c
 static inline bool convertToLengthSize(const CSSPrimitiveValue& primitiveValue, CSSToLengthConversionData conversionData, LengthSize& size)
 {
     if (auto* pair = primitiveValue.pairValue()) {
-        size.setWidth(pair->first()->convertToLength<AnyConversion>(conversionData));
-        size.setHeight(pair->second()->convertToLength<AnyConversion>(conversionData));
+        size.width = pair->first()->convertToLength<AnyConversion>(conversionData);
+        size.height = pair->second()->convertToLength<AnyConversion>(conversionData);
     } else
-        size.setWidth(primitiveValue.convertToLength<AnyConversion>(conversionData));
-
-    return !size.width().isUndefined() && !size.height().isUndefined();
+        size.width = primitiveValue.convertToLength<AnyConversion>(conversionData);
+    return !size.width.isUndefined() && !size.height.isUndefined();
 }
 
 void CSSToStyleMap::mapFillSize(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)

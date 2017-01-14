@@ -23,21 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSession_h
-#define CDMSession_h
+#pragma once
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CDMSessionClient {
 public:
-    virtual ~CDMSessionClient() { };
+    virtual ~CDMSessionClient() { }
     virtual void sendMessage(Uint8Array*, String destinationURL) = 0;
 
     enum {
@@ -64,7 +61,6 @@ enum CDMSessionType {
 
 class CDMSession {
 public:
-    CDMSession() { }
     virtual ~CDMSession() { }
 
     virtual CDMSessionType type() { return CDMSessionTypeUnknown; }
@@ -79,5 +75,3 @@ public:
 }
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#endif // CDMSession_h

@@ -1,6 +1,5 @@
 /*
-    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
-    Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2006-2017 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,48 +17,27 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef LengthSize_h
-#define LengthSize_h
+#pragma once
 
 #include "Length.h"
 
 namespace WebCore {
 
 struct LengthSize {
-public:
-    LengthSize()
-    {
-    }
-    
-    LengthSize(Length width, Length height)
-        : m_width(WTFMove(width))
-        , m_height(WTFMove(height))
-    {
-    }
-
-    bool operator==(const LengthSize& o) const
-    {
-        return m_width == o.m_width && m_height == o.m_height;
-    }
-
-    void setWidth(Length width) { m_width = WTFMove(width); }
-    const Length& width() const { return m_width; }
-
-    void setHeight(Length height) { m_height = WTFMove(height); }
-    const Length& height() const { return m_height; }
-
-private:
-    Length m_width;
-    Length m_height;
+    Length width;
+    Length height;
 };
+
+inline bool operator==(const LengthSize& a, const LengthSize& b)
+{
+    return a.width == b.width && a.height == b.height;
+}
 
 inline LengthSize blend(const LengthSize& from, const LengthSize& to, double progress)
 {
-    return LengthSize(blend(from.width(), to.width(), progress), blend(from.height(), to.height(), progress));
+    return { blend(from.width, to.width, progress), blend(from.height, to.height, progress) };
 }
 
 TextStream& operator<<(TextStream&, const LengthSize&);
 
 } // namespace WebCore
-
-#endif // LengthSize_h

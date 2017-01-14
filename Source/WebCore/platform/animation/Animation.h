@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -22,21 +22,16 @@
  *
  */
 
-#ifndef Animation_h
-#define Animation_h
+#pragma once
 
-#include "PlatformExportMacros.h"
-
-#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-#include "AnimationTrigger.h"
-#endif
 #include "CSSPropertyNames.h"
 #include "RenderStyleConstants.h"
 #include "StyleScope.h"
 #include "TimingFunction.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+
+#if ENABLE(CSS_ANIMATIONS_LEVEL_2)
+#include "AnimationTrigger.h"
+#endif
 
 namespace WebCore {
 
@@ -62,20 +57,20 @@ public:
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
+
     // We can make placeholder Animation objects to keep the comma-separated lists
     // of properties in sync. isValidAnimation means this is not a placeholder.
     bool isValidAnimation() const { return !m_isNone && !m_name.isEmpty(); }
 
     bool isEmpty() const
     {
-        return (!m_directionSet && !m_durationSet && !m_fillModeSet
-                && !m_nameSet && !m_playStateSet && !m_iterationCountSet
-                && !m_delaySet && !m_timingFunctionSet && !m_propertySet
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-                && !m_triggerSet);
-#else
-                );
+        if (m_triggerSet)
+            return false;
 #endif
+        return !m_directionSet && !m_durationSet && !m_fillModeSet
+            && !m_nameSet && !m_playStateSet && !m_iterationCountSet
+            && !m_delaySet && !m_timingFunctionSet && !m_propertySet;
     }
 
     bool isEmptyOrZeroDuration() const
@@ -114,11 +109,7 @@ public:
 
     double delay() const { return m_delay; }
 
-    enum AnimationMode {
-        AnimateAll,
-        AnimateNone,
-        AnimateSingleProperty
-    };
+    enum AnimationMode { AnimateAll, AnimateNone, AnimateSingleProperty };
 
     enum AnimationDirection {
         AnimationDirectionNormal,
@@ -139,10 +130,10 @@ public:
     Style::ScopeOrdinal nameStyleScopeOrdinal() const { return m_nameStyleScopeOrdinal; }
     EAnimPlayState playState() const { return static_cast<EAnimPlayState>(m_playState); }
     CSSPropertyID property() const { return m_property; }
-    PassRefPtr<TimingFunction> timingFunction() const { return m_timingFunction; }
+    TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     AnimationMode animationMode() const { return m_mode; }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    PassRefPtr<AnimationTrigger> trigger() const { return m_trigger; }
+    AnimationTrigger* trigger() const { return m_trigger.get(); }
 #endif
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
@@ -158,10 +149,10 @@ public:
     }
     void setPlayState(EAnimPlayState d) { m_playState = d; m_playStateSet = true; }
     void setProperty(CSSPropertyID t) { m_property = t; m_propertySet = true; }
-    void setTimingFunction(PassRefPtr<TimingFunction> f) { m_timingFunction = f; m_timingFunctionSet = true; }
+    void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setAnimationMode(AnimationMode mode) { m_mode = mode; }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    void setTrigger(PassRefPtr<AnimationTrigger> t) { m_trigger = t; m_triggerSet = true; }
+    void setTrigger(RefPtr<AnimationTrigger>&& trigger) { m_trigger = WTFMove(trigger); m_triggerSet = true; }
 #endif
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
@@ -197,22 +188,22 @@ private:
     unsigned m_fillMode : 2;
 
 
-    unsigned m_playState     : 2;
+    unsigned m_playState : 2;
 
-    bool m_delaySet          : 1;
-    bool m_directionSet      : 1;
-    bool m_durationSet       : 1;
-    bool m_fillModeSet       : 1;
+    bool m_delaySet : 1;
+    bool m_directionSet : 1;
+    bool m_durationSet : 1;
+    bool m_fillModeSet : 1;
     bool m_iterationCountSet : 1;
-    bool m_nameSet           : 1;
-    bool m_playStateSet      : 1;
-    bool m_propertySet       : 1;
+    bool m_nameSet : 1;
+    bool m_playStateSet : 1;
+    bool m_propertySet : 1;
     bool m_timingFunctionSet : 1;
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    bool m_triggerSet        : 1;
+    bool m_triggerSet : 1;
 #endif
 
-    bool m_isNone            : 1;
+    bool m_isNone : 1;
 
 public:
     static double initialDelay() { return 0; }
@@ -223,12 +214,10 @@ public:
     static const String& initialName();
     static EAnimPlayState initialPlayState() { return AnimPlayStatePlaying; }
     static CSSPropertyID initialProperty() { return CSSPropertyInvalid; }
-    static const PassRefPtr<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
+    static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
-    static const PassRefPtr<AnimationTrigger> initialTrigger() { return AutoAnimationTrigger::create(); }
+    static Ref<AnimationTrigger> initialTrigger() { return AutoAnimationTrigger::create(); }
 #endif
 };
 
 } // namespace WebCore
-
-#endif // Animation_h

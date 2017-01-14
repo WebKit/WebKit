@@ -427,7 +427,7 @@ void CSSPrimitiveValue::init(const LengthSize& lengthSize, const RenderStyle& st
 {
     m_primitiveUnitType = CSS_PAIR;
     m_hasCachedCSSText = false;
-    m_value.pair = &Pair::create(create(lengthSize.width(), style), create(lengthSize.height(), style)).leakRef();
+    m_value.pair = &Pair::create(create(lengthSize.width, style), create(lengthSize.height, style)).leakRef();
 }
 
 void CSSPrimitiveValue::init(Ref<Counter>&& counter)

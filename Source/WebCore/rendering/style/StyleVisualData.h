@@ -37,19 +37,19 @@ public:
     Ref<StyleVisualData> copy() const;
     ~StyleVisualData();
 
-    bool operator==(const StyleVisualData& o) const
+    bool operator==(const StyleVisualData& other) const
     {
-        return clip == o.clip
-            && hasClip == o.hasClip
-            && textDecoration == o.textDecoration
-            && m_zoom == o.m_zoom;
+        return clip == other.clip
+            && hasClip == other.hasClip
+            && textDecoration == other.textDecoration
+            && zoom == other.zoom;
     }
-    bool operator!=(const StyleVisualData& o) const { return !(*this == o); }
+    bool operator!=(const StyleVisualData& other) const { return !(*this == other); }
 
     LengthBox clip;
     bool hasClip : 1;
     unsigned textDecoration : TextDecorationBits; // Text decorations defined *only* by this element.
-    float m_zoom;
+    float zoom;
 
 private:
     StyleVisualData();

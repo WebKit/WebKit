@@ -133,58 +133,44 @@ void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool
 {
     setMainThreadCallbacksPaused(paused);
 
-    for (auto& page : pageGroup.pages())
-        setJavaScriptPaused(page, paused);
-}
+    for (auto& page : pageGroup.pages()) {
+        page->setDefersLoading(paused);
 
-void PageScriptDebugServer::setJavaScriptPaused(Page* page, bool paused)
-{
-    ASSERT_ARG(page, page);
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
+            setJavaScriptPaused(*frame, paused);
 
-    page->setDefersLoading(paused);
-
-    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
-        setJavaScriptPaused(frame, paused);
-
-    if (InspectorFrontendClient* frontendClient = page->inspectorController().inspectorFrontendClient()) {
-        if (paused)
-            frontendClient->pagePaused();
-        else
-            frontendClient->pageUnpaused();
+        if (auto* frontendClient = page->inspectorController().inspectorFrontendClient()) {
+            if (paused)
+                frontendClient->pagePaused();
+            else
+                frontendClient->pageUnpaused();
+        }
     }
 }
 
-void PageScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
+void PageScriptDebugServer::setJavaScriptPaused(Frame& frame, bool paused)
 {
-    ASSERT_ARG(frame, frame);
-
-    if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
         return;
 
-    frame->script().setPaused(paused);
+    frame.script().setPaused(paused);
 
-    Document* document = frame->document();
+    ASSERT(frame.document());
+    auto& document = *frame.document();
     if (paused) {
-        document->suspendScriptedAnimationControllerCallbacks();
-        document->suspendActiveDOMObjects(ActiveDOMObject::JavaScriptDebuggerPaused);
+        document.suspendScriptedAnimationControllerCallbacks();
+        document.suspendActiveDOMObjects(ActiveDOMObject::JavaScriptDebuggerPaused);
     } else {
-        document->resumeActiveDOMObjects(ActiveDOMObject::JavaScriptDebuggerPaused);
-        document->resumeScriptedAnimationControllerCallbacks();
+        document.resumeActiveDOMObjects(ActiveDOMObject::JavaScriptDebuggerPaused);
+        document.resumeScriptedAnimationControllerCallbacks();
     }
 
-    setJavaScriptPaused(frame->view(), paused);
-}
-
-void PageScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
-{
-    if (!view)
-        return;
-
-    for (auto& child : view->children()) {
-        if (!is<PluginViewBase>(*child))
-            continue;
-
-        downcast<PluginViewBase>(*child).setJavaScriptPaused(paused);
+    if (auto* view = frame.view()) {
+        for (auto& child : view->children()) {
+            if (!is<PluginViewBase>(child.get()))
+                continue;
+            downcast<PluginViewBase>(child.get()).setJavaScriptPaused(paused);
+        }
     }
 }
 

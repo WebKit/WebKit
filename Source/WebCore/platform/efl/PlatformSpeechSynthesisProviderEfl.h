@@ -23,13 +23,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformSpeechSynthesisProviderEfl_h
-#define PlatformSpeechSynthesisProviderEfl_h
+#pragma once
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include <speak_lib.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -76,5 +74,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif // PlatformSpeechSynthesisProviderEfl_h

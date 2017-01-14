@@ -430,11 +430,10 @@ static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const V
     HashSet<RefPtr<Node>> nodeSet;
     for (const auto& variant : vector) {
         WTF::switchOn(variant,
-            [&](const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
-            [](const String&) { }
+            [&] (const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
+            [] (const String&) { }
         );
     }
-
     return nodeSet;
 }
 

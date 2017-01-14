@@ -1,3 +1,17 @@
+2017-01-11  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from more of "platform"
+        https://bugs.webkit.org/show_bug.cgi?id=166809
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Ref.h: Changed the template so that a const Ref<T> does not prohibit non-const
+        use of T. We can still use const Ref<const T> to express that. The earlier design
+        was intentional, but was not consistent with either actual references or with
+        other smart pointer classes like RefPtr. One way to see how much better this is,
+        is to see all the many, many cases where we have const_cast just to work around
+        this. I searched for those and included fixes for many in this patch.
+
 2017-01-12  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Implement support for KeyboardEvent.code

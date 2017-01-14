@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,33 +27,31 @@
 namespace WebCore {
 
 StyleMultiColData::StyleMultiColData()
-    : m_width(0)
-    , m_count(RenderStyle::initialColumnCount())
-    , m_gap(0)
-    , m_autoWidth(true)
-    , m_autoCount(true)
-    , m_normalGap(true)
-    , m_fill(RenderStyle::initialColumnFill())
-    , m_columnSpan(false)
-    , m_axis(RenderStyle::initialColumnAxis())
-    , m_progression(RenderStyle::initialColumnProgression())
+    : count(RenderStyle::initialColumnCount())
+    , autoWidth(true)
+    , autoCount(true)
+    , normalGap(true)
+    , fill(RenderStyle::initialColumnFill())
+    , columnSpan(false)
+    , axis(RenderStyle::initialColumnAxis())
+    , progression(RenderStyle::initialColumnProgression())
 {
 }
 
-inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
+inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& other)
     : RefCounted<StyleMultiColData>()
-    , m_width(o.m_width)
-    , m_count(o.m_count)
-    , m_gap(o.m_gap)
-    , m_rule(o.m_rule)
-    , m_visitedLinkColumnRuleColor(o.m_visitedLinkColumnRuleColor)
-    , m_autoWidth(o.m_autoWidth)
-    , m_autoCount(o.m_autoCount)
-    , m_normalGap(o.m_normalGap)
-    , m_fill(o.m_fill)
-    , m_columnSpan(o.m_columnSpan)
-    , m_axis(o.m_axis)
-    , m_progression(o.m_progression)
+    , width(other.width)
+    , count(other.count)
+    , gap(other.gap)
+    , rule(other.rule)
+    , visitedLinkColumnRuleColor(other.visitedLinkColumnRuleColor)
+    , autoWidth(other.autoWidth)
+    , autoCount(other.autoCount)
+    , normalGap(other.normalGap)
+    , fill(other.fill)
+    , columnSpan(other.columnSpan)
+    , axis(other.axis)
+    , progression(other.progression)
 {
 }
 
@@ -62,13 +60,13 @@ Ref<StyleMultiColData> StyleMultiColData::copy() const
     return adoptRef(*new StyleMultiColData(*this));
 }
 
-bool StyleMultiColData::operator==(const StyleMultiColData& o) const
+bool StyleMultiColData::operator==(const StyleMultiColData& other) const
 {
-    return m_width == o.m_width && m_count == o.m_count && m_gap == o.m_gap
-        && m_rule == o.m_rule && m_visitedLinkColumnRuleColor == o.m_visitedLinkColumnRuleColor
-        && m_autoWidth == o.m_autoWidth && m_autoCount == o.m_autoCount && m_normalGap == o.m_normalGap
-        && m_fill == o.m_fill && m_columnSpan == o.m_columnSpan
-        && m_axis == o.m_axis && m_progression == o.m_progression;
+    return width == other.width && count == other.count && gap == other.gap
+        && rule == other.rule && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
+        && autoWidth == other.autoWidth && autoCount == other.autoCount && normalGap == other.normalGap
+        && fill == other.fill && columnSpan == other.columnSpan
+        && axis == other.axis && progression == other.progression;
 }
 
 } // namespace WebCore

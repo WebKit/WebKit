@@ -48,8 +48,8 @@ public:
     void resetStretchSize();
 
     virtual bool hasOperatorFlag(MathMLOperatorDictionary::Flag) const;
-    bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && mathMLStyle()->displayStyle(); }
-    bool shouldMoveLimits() const { return hasOperatorFlag(MathMLOperatorDictionary::MovableLimits) && !mathMLStyle()->displayStyle(); }
+    bool isLargeOperatorInDisplayStyle() const { return !hasOperatorFlag(MathMLOperatorDictionary::Stretchy) && hasOperatorFlag(MathMLOperatorDictionary::LargeOp) && mathMLStyle().displayStyle(); }
+    bool shouldMoveLimits() const { return hasOperatorFlag(MathMLOperatorDictionary::MovableLimits) && !mathMLStyle().displayStyle(); }
     virtual bool isVertical() const;
     LayoutUnit italicCorrection() const { return m_mathOperator.italicCorrection(); }
 

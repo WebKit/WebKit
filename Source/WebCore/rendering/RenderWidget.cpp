@@ -52,29 +52,27 @@ WidgetHierarchyUpdatesSuspensionScope::WidgetToParentMap& WidgetHierarchyUpdates
 
 void WidgetHierarchyUpdatesSuspensionScope::moveWidgets()
 {
-    WidgetToParentMap map;
-    widgetNewParentMap().swap(map);
-    WidgetToParentMap::iterator end = map.end();
-    for (WidgetToParentMap::iterator it = map.begin(); it != end; ++it) {
-        Widget* child = it->key.get();
-        ScrollView* currentParent = child->parent();
-        FrameView* newParent = it->value;
+    auto map = WTFMove(widgetNewParentMap());
+    for (auto& entry : map) {
+        auto& child = *entry.key;
+        auto* currentParent = child.parent();
+        auto* newParent = entry.value;
         if (newParent != currentParent) {
             if (currentParent)
-                currentParent->removeChild(*child);
+                currentParent->removeChild(child);
             if (newParent)
                 newParent->addChild(child);
         }
     }
 }
 
-static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
+static void moveWidgetToParentSoon(Widget& child, FrameView* parent)
 {
     if (!WidgetHierarchyUpdatesSuspensionScope::isSuspended()) {
         if (parent)
             parent->addChild(child);
         else
-            child->removeFromParent();
+            child.removeFromParent();
         return;
     }
     WidgetHierarchyUpdatesSuspensionScope::scheduleWidgetToMove(child, parent);
@@ -167,7 +165,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
         return;
 
     if (m_widget) {
-        moveWidgetToParentSoon(m_widget.get(), 0);
+        moveWidgetToParentSoon(*m_widget, nullptr);
         view().frameView().willRemoveWidgetFromRenderTree(*m_widget);
         widgetRendererMap().remove(m_widget.get());
         m_widget = nullptr;
@@ -193,7 +191,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                 repaint();
             }
         }
-        moveWidgetToParentSoon(m_widget.get(), &view().frameView());
+        moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
 }
 
@@ -338,9 +336,9 @@ void RenderWidget::setSelectionState(SelectionState state)
         m_widget->setIsSelected(isSelected());
 }
 
-RenderWidget* RenderWidget::find(const Widget* widget)
+RenderWidget* RenderWidget::find(const Widget& widget)
 {
-    return widgetRendererMap().get(widget);
+    return widgetRendererMap().get(&widget);
 }
 
 bool RenderWidget::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)

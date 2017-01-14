@@ -39,7 +39,7 @@ StyleGeneratedImage::StyleGeneratedImage(Ref<CSSImageGeneratorValue>&& value)
 
 Ref<CSSValue> StyleGeneratedImage::cssValue() const
 {
-    return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get());
+    return m_imageGeneratorValue.copyRef();
 }
 
 bool StyleGeneratedImage::isPending() const
@@ -56,7 +56,7 @@ FloatSize StyleGeneratedImage::imageSize(const RenderElement* renderer, float mu
 {
     ASSERT(renderer);
     if (m_fixedSize) {
-        FloatSize fixedSize = const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).fixedSize(*renderer);
+        FloatSize fixedSize = m_imageGeneratorValue->fixedSize(*renderer);
         if (multiplier == 1.0f)
             return fixedSize;
 
@@ -101,7 +101,7 @@ void StyleGeneratedImage::removeClient(RenderElement* renderer)
 RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const
 {
     ASSERT(renderer);
-    return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get()).image(*renderer, size);
+    return m_imageGeneratorValue->image(*renderer, size);
 }
 
 bool StyleGeneratedImage::knownToBeOpaque(const RenderElement* renderer) const

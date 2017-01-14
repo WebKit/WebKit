@@ -3143,17 +3143,18 @@ static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& render
 Ref<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar> widget;
-    RenderElement* actualRenderer = rendererForScrollbar(renderer());
-    bool hasCustomScrollbarStyle = actualRenderer->isBox() && actualRenderer->style().hasPseudoStyle(SCROLLBAR);
+    ASSERT(rendererForScrollbar(renderer()));
+    auto& actualRenderer = *rendererForScrollbar(renderer());
+    bool hasCustomScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(*this, orientation, actualRenderer->element());
+        widget = RenderScrollbar::createCustomScrollbar(*this, orientation, downcast<RenderBox>(actualRenderer).element());
     else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
         didAddScrollbar(widget.get(), orientation);
         if (page().expectsWheelEventTriggers())
             scrollAnimator().setWheelEventTestTrigger(page().testTrigger());
     }
-    renderer().view().frameView().addChild(widget.get());
+    renderer().view().frameView().addChild(*widget);
     return widget.releaseNonNull();
 }
 

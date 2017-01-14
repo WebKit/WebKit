@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,28 +30,22 @@
 
 namespace WebCore {
 
-PassRefPtr<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
+Ref<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
 {
-    return adoptRef(new PlatformSpeechSynthesisVoice(voiceURI, name, lang, localService, isDefault));
+    return adoptRef(*new PlatformSpeechSynthesisVoice(voiceURI, name, lang, localService, isDefault));
 }
 
-PassRefPtr<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create()
+Ref<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create()
 {
-    return adoptRef(new PlatformSpeechSynthesisVoice());
+    return adoptRef(*new PlatformSpeechSynthesisVoice);
 }
-    
-PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
+
+inline PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
     : m_voiceURI(voiceURI)
     , m_name(name)
     , m_lang(lang)
     , m_localService(localService)
     , m_default(isDefault)
-{
-}
-
-PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice()
-    : m_localService(false)
-    , m_default(false)
 {
 }
 

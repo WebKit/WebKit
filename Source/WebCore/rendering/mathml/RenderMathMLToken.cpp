@@ -528,7 +528,7 @@ void RenderMathMLToken::updateMathVariantGlyph()
 
     const auto& tokenElement = element();
     if (auto codePoint = MathMLTokenElement::convertToSingleCodePoint(element().textContent())) {
-        MathMLElement::MathVariant mathvariant = mathMLStyle()->mathVariant();
+        MathMLElement::MathVariant mathvariant = mathMLStyle().mathVariant();
         if (mathvariant == MathMLElement::MathVariant::None)
             mathvariant = tokenElement.hasTagName(MathMLNames::miTag) ? MathMLElement::MathVariant::Italic : MathMLElement::MathVariant::Normal;
         UChar32 transformedCodePoint = mathVariant(codePoint.value(), mathvariant);

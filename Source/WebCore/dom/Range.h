@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT static Ref<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
     WEBCORE_EXPORT ~Range();
 
-    Document& ownerDocument() const { return const_cast<Document&>(m_ownerDocument.get()); }
+    Document& ownerDocument() const { return m_ownerDocument; }
 
     Node& startContainer() const { ASSERT(m_start.container()); return *m_start.container(); }
     unsigned startOffset() const { return m_start.offset(); }

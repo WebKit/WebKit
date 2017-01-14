@@ -127,7 +127,7 @@ inline Ref<HTMLStackItem> HTMLStackItem::create(DocumentFragment& fragment)
 
 inline ContainerNode& HTMLStackItem::node() const
 {
-    return const_cast<ContainerNode&>(m_node.get());
+    return m_node.get();
 }
 
 inline Element& HTMLStackItem::element() const

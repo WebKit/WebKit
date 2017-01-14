@@ -26,19 +26,15 @@
 #include "config.h"
 #include "StyleFilterData.h"
 
-#include "FEGaussianBlur.h"
-#include "RenderStyle.h"
-
 namespace WebCore {
 
 StyleFilterData::StyleFilterData()
-    : m_operations()
 {
 }
 
-inline StyleFilterData::StyleFilterData(const StyleFilterData& o)
+inline StyleFilterData::StyleFilterData(const StyleFilterData& other)
     : RefCounted<StyleFilterData>()
-    , m_operations(o.m_operations)
+    , operations(other.operations)
 {
 }
 
@@ -47,9 +43,9 @@ Ref<StyleFilterData> StyleFilterData::copy() const
     return adoptRef(*new StyleFilterData(*this));
 }
 
-bool StyleFilterData::operator==(const StyleFilterData& o) const
+bool StyleFilterData::operator==(const StyleFilterData& other) const
 {
-    return m_operations == o.m_operations;
+    return operations == other.operations;
 }
 
 } // namespace WebCore

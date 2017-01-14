@@ -49,46 +49,46 @@ Ref<SVGRenderStyle> SVGRenderStyle::createDefaultStyle()
 }
 
 SVGRenderStyle::SVGRenderStyle()
-    : fill(defaultSVGStyle().fill)
-    , stroke(defaultSVGStyle().stroke)
-    , text(defaultSVGStyle().text)
-    , inheritedResources(defaultSVGStyle().inheritedResources)
-    , stops(defaultSVGStyle().stops)
-    , misc(defaultSVGStyle().misc)
-    , shadowSVG(defaultSVGStyle().shadowSVG)
-    , layout(defaultSVGStyle().layout)
-    , resources(defaultSVGStyle().resources)
+    : m_fillData(defaultSVGStyle().m_fillData)
+    , m_strokeData(defaultSVGStyle().m_strokeData)
+    , m_textData(defaultSVGStyle().m_textData)
+    , m_inheritedResourceData(defaultSVGStyle().m_inheritedResourceData)
+    , m_stopData(defaultSVGStyle().m_stopData)
+    , m_miscData(defaultSVGStyle().m_miscData)
+    , m_shadowData(defaultSVGStyle().m_shadowData)
+    , m_layoutData(defaultSVGStyle().m_layoutData)
+    , m_nonInheritedResourceData(defaultSVGStyle().m_nonInheritedResourceData)
 {
     setBitDefaults();
 }
 
 SVGRenderStyle::SVGRenderStyle(CreateDefaultType)
-    : fill(StyleFillData::create())
-    , stroke(StyleStrokeData::create())
-    , text(StyleTextData::create())
-    , inheritedResources(StyleInheritedResourceData::create())
-    , stops(StyleStopData::create())
-    , misc(StyleMiscData::create())
-    , shadowSVG(StyleShadowSVGData::create())
-    , layout(StyleLayoutData::create())
-    , resources(StyleResourceData::create())
+    : m_fillData(StyleFillData::create())
+    , m_strokeData(StyleStrokeData::create())
+    , m_textData(StyleTextData::create())
+    , m_inheritedResourceData(StyleInheritedResourceData::create())
+    , m_stopData(StyleStopData::create())
+    , m_miscData(StyleMiscData::create())
+    , m_shadowData(StyleShadowSVGData::create())
+    , m_layoutData(StyleLayoutData::create())
+    , m_nonInheritedResourceData(StyleResourceData::create())
 {
     setBitDefaults();
 }
 
 inline SVGRenderStyle::SVGRenderStyle(const SVGRenderStyle& other)
     : RefCounted<SVGRenderStyle>()
-    , svg_inherited_flags(other.svg_inherited_flags)
-    , svg_noninherited_flags(other.svg_noninherited_flags)
-    , fill(other.fill)
-    , stroke(other.stroke)
-    , text(other.text)
-    , inheritedResources(other.inheritedResources)
-    , stops(other.stops)
-    , misc(other.misc)
-    , shadowSVG(other.shadowSVG)
-    , layout(other.layout)
-    , resources(other.resources)
+    , m_inheritedFlags(other.m_inheritedFlags)
+    , m_nonInheritedFlags(other.m_nonInheritedFlags)
+    , m_fillData(other.m_fillData)
+    , m_strokeData(other.m_strokeData)
+    , m_textData(other.m_textData)
+    , m_inheritedResourceData(other.m_inheritedResourceData)
+    , m_stopData(other.m_stopData)
+    , m_miscData(other.m_miscData)
+    , m_shadowData(other.m_shadowData)
+    , m_layoutData(other.m_layoutData)
+    , m_nonInheritedResourceData(other.m_nonInheritedResourceData)
 {
 }
 
@@ -103,49 +103,46 @@ SVGRenderStyle::~SVGRenderStyle()
 
 bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
 {
-    return fill == other.fill
-        && stroke == other.stroke
-        && text == other.text
-        && stops == other.stops
-        && misc == other.misc
-        && shadowSVG == other.shadowSVG
-        && layout == other.layout
-        && inheritedResources == other.inheritedResources
-        && resources == other.resources
-        && svg_inherited_flags == other.svg_inherited_flags
-        && svg_noninherited_flags == other.svg_noninherited_flags;
+    return m_fillData == other.m_fillData
+        && m_strokeData == other.m_strokeData
+        && m_textData == other.m_textData
+        && m_stopData == other.m_stopData
+        && m_miscData == other.m_miscData
+        && m_shadowData == other.m_shadowData
+        && m_layoutData == other.m_layoutData
+        && m_inheritedResourceData == other.m_inheritedResourceData
+        && m_nonInheritedResourceData == other.m_nonInheritedResourceData
+        && m_inheritedFlags == other.m_inheritedFlags
+        && m_nonInheritedFlags == other.m_nonInheritedFlags;
 }
 
-bool SVGRenderStyle::inheritedNotEqual(const SVGRenderStyle* other) const
+bool SVGRenderStyle::inheritedNotEqual(const SVGRenderStyle& other) const
 {
-    return fill != other->fill
-        || stroke != other->stroke
-        || text != other->text
-        || inheritedResources != other->inheritedResources
-        || svg_inherited_flags != other->svg_inherited_flags;
+    return m_fillData != other.m_fillData
+        || m_strokeData != other.m_strokeData
+        || m_textData != other.m_textData
+        || m_inheritedResourceData != other.m_inheritedResourceData
+        || m_inheritedFlags != other.m_inheritedFlags;
 }
 
-void SVGRenderStyle::inheritFrom(const SVGRenderStyle* svgInheritParent)
+void SVGRenderStyle::inheritFrom(const SVGRenderStyle& other)
 {
-    if (!svgInheritParent)
-        return;
+    m_fillData = other.m_fillData;
+    m_strokeData = other.m_strokeData;
+    m_textData = other.m_textData;
+    m_inheritedResourceData = other.m_inheritedResourceData;
 
-    fill = svgInheritParent->fill;
-    stroke = svgInheritParent->stroke;
-    text = svgInheritParent->text;
-    inheritedResources = svgInheritParent->inheritedResources;
-
-    svg_inherited_flags = svgInheritParent->svg_inherited_flags;
+    m_inheritedFlags = other.m_inheritedFlags;
 }
 
-void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle* other)
+void SVGRenderStyle::copyNonInheritedFrom(const SVGRenderStyle& other)
 {
-    svg_noninherited_flags = other->svg_noninherited_flags;
-    stops = other->stops;
-    misc = other->misc;
-    shadowSVG = other->shadowSVG;
-    layout = other->layout;
-    resources = other->resources;
+    m_nonInheritedFlags = other.m_nonInheritedFlags;
+    m_stopData = other.m_stopData;
+    m_miscData = other.m_miscData;
+    m_shadowData = other.m_shadowData;
+    m_layoutData = other.m_layoutData;
+    m_nonInheritedResourceData = other.m_nonInheritedResourceData;
 }
 
 Vector<PaintType, 3> SVGRenderStyle::paintTypesForPaintOrder() const
@@ -188,104 +185,104 @@ Vector<PaintType, 3> SVGRenderStyle::paintTypesForPaintOrder() const
     return paintOrder;
 }
 
-StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
+StyleDifference SVGRenderStyle::diff(const SVGRenderStyle& other) const
 {
     // NOTE: All comparisions that may return StyleDifferenceLayout have to go before those who return StyleDifferenceRepaint
 
     // If kerning changes, we need a relayout, to force SVGCharacterData to be recalculated in the SVGRootInlineBox.
-    if (text != other->text)
+    if (m_textData != other.m_textData)
         return StyleDifferenceLayout;
 
     // If resources change, we need a relayout, as the presence of resources influences the repaint rect.
-    if (resources != other->resources)
+    if (m_nonInheritedResourceData != other.m_nonInheritedResourceData)
         return StyleDifferenceLayout;
 
     // If markers change, we need a relayout, as marker boundaries are cached in RenderSVGPath.
-    if (inheritedResources != other->inheritedResources)
+    if (m_inheritedResourceData != other.m_inheritedResourceData)
         return StyleDifferenceLayout;
 
     // All text related properties influence layout.
-    if (svg_inherited_flags._textAnchor != other->svg_inherited_flags._textAnchor
-        || svg_inherited_flags._glyphOrientationHorizontal != other->svg_inherited_flags._glyphOrientationHorizontal
-        || svg_inherited_flags._glyphOrientationVertical != other->svg_inherited_flags._glyphOrientationVertical
-        || svg_noninherited_flags.f._alignmentBaseline != other->svg_noninherited_flags.f._alignmentBaseline
-        || svg_noninherited_flags.f._dominantBaseline != other->svg_noninherited_flags.f._dominantBaseline
-        || svg_noninherited_flags.f._baselineShift != other->svg_noninherited_flags.f._baselineShift)
+    if (m_inheritedFlags.textAnchor != other.m_inheritedFlags.textAnchor
+        || m_inheritedFlags.glyphOrientationHorizontal != other.m_inheritedFlags.glyphOrientationHorizontal
+        || m_inheritedFlags.glyphOrientationVertical != other.m_inheritedFlags.glyphOrientationVertical
+        || m_nonInheritedFlags.flagBits.alignmentBaseline != other.m_nonInheritedFlags.flagBits.alignmentBaseline
+        || m_nonInheritedFlags.flagBits.dominantBaseline != other.m_nonInheritedFlags.flagBits.dominantBaseline
+        || m_nonInheritedFlags.flagBits.baselineShift != other.m_nonInheritedFlags.flagBits.baselineShift)
         return StyleDifferenceLayout;
 
     // Text related properties influence layout.
-    bool miscNotEqual = misc != other->misc;
-    if (miscNotEqual && misc->baselineShiftValue != other->misc->baselineShiftValue)
+    bool miscNotEqual = m_miscData != other.m_miscData;
+    if (miscNotEqual && m_miscData->baselineShiftValue != other.m_miscData->baselineShiftValue)
         return StyleDifferenceLayout;
 
     // These properties affect the cached stroke bounding box rects.
-    if (svg_inherited_flags._capStyle != other->svg_inherited_flags._capStyle
-        || svg_inherited_flags._joinStyle != other->svg_inherited_flags._joinStyle)
+    if (m_inheritedFlags.capStyle != other.m_inheritedFlags.capStyle
+        || m_inheritedFlags.joinStyle != other.m_inheritedFlags.joinStyle)
         return StyleDifferenceLayout;
 
     // Shadow changes require relayouts, as they affect the repaint rects.
-    if (shadowSVG != other->shadowSVG)
+    if (m_shadowData != other.m_shadowData)
         return StyleDifferenceLayout;
 
     // The x or y properties require relayout.
-    if (layout != other->layout)
+    if (m_layoutData != other.m_layoutData)
         return StyleDifferenceLayout; 
 
     // Some stroke properties, requires relayouts, as the cached stroke boundaries need to be recalculated.
-    if (stroke != other->stroke) {
-        if (stroke->width != other->stroke->width
-            || stroke->paintType != other->stroke->paintType
-            || stroke->paintColor != other->stroke->paintColor
-            || stroke->paintUri != other->stroke->paintUri
-            || stroke->miterLimit != other->stroke->miterLimit
-            || stroke->dashArray != other->stroke->dashArray
-            || stroke->dashOffset != other->stroke->dashOffset
-            || stroke->visitedLinkPaintColor != other->stroke->visitedLinkPaintColor
-            || stroke->visitedLinkPaintUri != other->stroke->visitedLinkPaintUri
-            || stroke->visitedLinkPaintType != other->stroke->visitedLinkPaintType)
+    if (m_strokeData != other.m_strokeData) {
+        if (m_strokeData->width != other.m_strokeData->width
+            || m_strokeData->paintType != other.m_strokeData->paintType
+            || m_strokeData->paintColor != other.m_strokeData->paintColor
+            || m_strokeData->paintUri != other.m_strokeData->paintUri
+            || m_strokeData->miterLimit != other.m_strokeData->miterLimit
+            || m_strokeData->dashArray != other.m_strokeData->dashArray
+            || m_strokeData->dashOffset != other.m_strokeData->dashOffset
+            || m_strokeData->visitedLinkPaintColor != other.m_strokeData->visitedLinkPaintColor
+            || m_strokeData->visitedLinkPaintUri != other.m_strokeData->visitedLinkPaintUri
+            || m_strokeData->visitedLinkPaintType != other.m_strokeData->visitedLinkPaintType)
             return StyleDifferenceLayout;
 
         // Only the stroke-opacity case remains, where we only need a repaint.
-        ASSERT(stroke->opacity != other->stroke->opacity);
+        ASSERT(m_strokeData->opacity != other.m_strokeData->opacity);
         return StyleDifferenceRepaint;
     }
 
     // vector-effect changes require a re-layout.
-    if (svg_noninherited_flags.f._vectorEffect != other->svg_noninherited_flags.f._vectorEffect)
+    if (m_nonInheritedFlags.flagBits.vectorEffect != other.m_nonInheritedFlags.flagBits.vectorEffect)
         return StyleDifferenceLayout;
 
     // NOTE: All comparisions below may only return StyleDifferenceRepaint
 
     // Painting related properties only need repaints. 
     if (miscNotEqual) {
-        if (misc->floodColor != other->misc->floodColor
-            || misc->floodOpacity != other->misc->floodOpacity
-            || misc->lightingColor != other->misc->lightingColor)
+        if (m_miscData->floodColor != other.m_miscData->floodColor
+            || m_miscData->floodOpacity != other.m_miscData->floodOpacity
+            || m_miscData->lightingColor != other.m_miscData->lightingColor)
             return StyleDifferenceRepaint;
     }
 
-    // If fill changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
-    if (fill->paintType != other->fill->paintType || fill->paintColor != other->fill->paintColor
-        || fill->paintUri != other->fill->paintUri || fill->opacity != other->fill->opacity)
+    // If fill data changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
+    if (m_fillData->paintType != other.m_fillData->paintType || m_fillData->paintColor != other.m_fillData->paintColor
+        || m_fillData->paintUri != other.m_fillData->paintUri || m_fillData->opacity != other.m_fillData->opacity)
         return StyleDifferenceRepaint;
 
     // If gradient stops change, we just need to repaint. Style updates are already handled through RenderSVGGradientSTop.
-    if (stops != other->stops)
+    if (m_stopData != other.m_stopData)
         return StyleDifferenceRepaint;
 
     // Changes of these flags only cause repaints.
-    if (svg_inherited_flags._colorRendering != other->svg_inherited_flags._colorRendering
-        || svg_inherited_flags._shapeRendering != other->svg_inherited_flags._shapeRendering
-        || svg_inherited_flags._clipRule != other->svg_inherited_flags._clipRule
-        || svg_inherited_flags._fillRule != other->svg_inherited_flags._fillRule
-        || svg_inherited_flags._colorInterpolation != other->svg_inherited_flags._colorInterpolation
-        || svg_inherited_flags._colorInterpolationFilters != other->svg_inherited_flags._colorInterpolationFilters)
+    if (m_inheritedFlags.colorRendering != other.m_inheritedFlags.colorRendering
+        || m_inheritedFlags.shapeRendering != other.m_inheritedFlags.shapeRendering
+        || m_inheritedFlags.clipRule != other.m_inheritedFlags.clipRule
+        || m_inheritedFlags.fillRule != other.m_inheritedFlags.fillRule
+        || m_inheritedFlags.colorInterpolation != other.m_inheritedFlags.colorInterpolation
+        || m_inheritedFlags.colorInterpolationFilters != other.m_inheritedFlags.colorInterpolationFilters)
         return StyleDifferenceRepaint;
 
-    if (svg_noninherited_flags.f.bufferedRendering != other->svg_noninherited_flags.f.bufferedRendering)
+    if (m_nonInheritedFlags.flagBits.bufferedRendering != other.m_nonInheritedFlags.flagBits.bufferedRendering)
         return StyleDifferenceRepaint;
 
-    if (svg_noninherited_flags.f.maskType != other->svg_noninherited_flags.f.maskType)
+    if (m_nonInheritedFlags.flagBits.maskType != other.m_nonInheritedFlags.flagBits.maskType)
         return StyleDifferenceRepaint;
 
     return StyleDifferenceEqual;

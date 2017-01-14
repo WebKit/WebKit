@@ -79,7 +79,7 @@ public:
     typedef ImplementationClass DOMWrapped;
     static constexpr bool isDOMWrapper = true;
 
-    ImplementationClass& wrapped() const { return const_cast<ImplementationClass&>(m_wrapped.get()); }
+    ImplementationClass& wrapped() const { return m_wrapped; }
     static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper<ImplementationClass>, m_wrapped); }
 
 protected:

@@ -387,8 +387,8 @@ bool BasicShapeInset::operator==(const BasicShape& other) const
 
 static FloatSize floatSizeForLengthSize(const LengthSize& lengthSize, const FloatRect& boundingBox)
 {
-    return FloatSize(floatValueForLength(lengthSize.width(), boundingBox.width()),
-        floatValueForLength(lengthSize.height(), boundingBox.height()));
+    return { floatValueForLength(lengthSize.width, boundingBox.width()),
+        floatValueForLength(lengthSize.height, boundingBox.height()) };
 }
 
 const Path& BasicShapeInset::path(const FloatRect& boundingBox)

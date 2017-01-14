@@ -23,6 +23,7 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
@@ -31,34 +32,34 @@ namespace WebCore {
 
 static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 {
-    Ref<CSSValueList> paintOrderList = CSSValueList::createSpaceSeparated();
-    Ref<CSSValue> fill = CSSPrimitiveValue::createIdentifier(CSSValueFill);
-    Ref<CSSValue> stroke = CSSPrimitiveValue::createIdentifier(CSSValueStroke);
-    Ref<CSSValue> markers = CSSPrimitiveValue::createIdentifier(CSSValueMarkers);
+    if (paintOrder == PaintOrderNormal)
+        return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
 
+    auto paintOrderList = CSSValueList::createSpaceSeparated();
     switch (paintOrder) {
     case PaintOrderNormal:
-        return CSSPrimitiveValue::createIdentifier(CSSValueNormal);
+        ASSERT_NOT_REACHED();
+        break;
     case PaintOrderFill:
-        paintOrderList->append(WTFMove(fill));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
         break;
     case PaintOrderFillMarkers:
-        paintOrderList->append(WTFMove(fill));
-        paintOrderList->append(WTFMove(markers));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueFill));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         break;
     case PaintOrderStroke:
-        paintOrderList->append(WTFMove(stroke));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
         break;
     case PaintOrderStrokeMarkers:
-        paintOrderList->append(WTFMove(stroke));
-        paintOrderList->append(WTFMove(markers));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         break;
     case PaintOrderMarkers:
-        paintOrderList->append(WTFMove(markers));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
         break;
     case PaintOrderMarkersStroke:
-        paintOrderList->append(WTFMove(markers));
-        paintOrderList->append(WTFMove(stroke));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueMarkers));
+        paintOrderList->append(CSSPrimitiveValue::createIdentifier(CSSValueStroke));
         break;
     }
     return WTFMove(paintOrderList);

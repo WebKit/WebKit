@@ -146,7 +146,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         // Padding
         LengthBox paddingBox = m_theme->controlPadding(part, style.fontCascade(), style.paddingBox(), style.effectiveZoom());
         if (paddingBox != style.paddingBox())
-            style.setPaddingBox(paddingBox);
+            style.setPaddingBox(WTFMove(paddingBox));
 
         // Whitespace
         if (m_theme->controlRequiresPreWhiteSpace(part))
@@ -155,19 +155,19 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         // Width / Height
         // The width and height here are affected by the zoom.
         // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
-        LengthSize controlSize = m_theme->controlSize(part, style.fontCascade(), LengthSize(style.width(), style.height()), style.effectiveZoom());
-        if (controlSize.width() != style.width())
-            style.setWidth(controlSize.width());
-        if (controlSize.height() != style.height())
-            style.setHeight(controlSize.height());
-                
+        LengthSize controlSize = m_theme->controlSize(part, style.fontCascade(), { style.width(), style.height() }, style.effectiveZoom());
+        if (controlSize.width != style.width())
+            style.setWidth(WTFMove(controlSize.width));
+        if (controlSize.height != style.height())
+            style.setHeight(WTFMove(controlSize.height));
+
         // Min-Width / Min-Height
         LengthSize minControlSize = m_theme->minimumControlSize(part, style.fontCascade(), style.effectiveZoom());
-        if (minControlSize.width() != style.minWidth())
-            style.setMinWidth(minControlSize.width());
-        if (minControlSize.height() != style.minHeight())
-            style.setMinHeight(minControlSize.height());
-                
+        if (minControlSize.width != style.minWidth())
+            style.setMinWidth(WTFMove(minControlSize.width));
+        if (minControlSize.height != style.minHeight())
+            style.setMinHeight(WTFMove(minControlSize.height));
+
         // Font
         if (auto themeFont = m_theme->controlFont(part, style.fontCascade(), style.effectiveZoom())) {
             // If overriding the specified font with the theme font, also override the line height with the standard line height.
@@ -709,9 +709,9 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const BorderData& bo
     case TextFieldPart:
     case TextAreaPart:
         // Test the style to see if the UA border and background match.
-        return (style.border() != border
-            || *style.backgroundLayers() != background
-            || !style.backgroundColorEqualsToColorIgnoringVisited(backgroundColor));
+        return style.border() != border
+            || style.backgroundLayers() != background
+            || !style.backgroundColorEqualsToColorIgnoringVisited(backgroundColor);
     default:
         return false;
     }

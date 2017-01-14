@@ -45,7 +45,7 @@ class CSSImageGeneratorValue::CachedGeneratedImage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CachedGeneratedImage(CSSImageGeneratorValue&, FloatSize, GeneratedImage&);
-    GeneratedImage& image() const { return const_cast<GeneratedImage&>(m_image.get()); }
+    GeneratedImage& image() const { return m_image; }
     void puntEvictionTimer() { m_evictionTimer.restart(); }
 
 private:

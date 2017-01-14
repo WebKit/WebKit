@@ -41,7 +41,7 @@ public:
     WEBCORE_EXPORT CSSStyleDeclaration& style();
 
     // FIXME: Not CSSOM. Remove.
-    StyleRule& styleRule() const { return const_cast<StyleRule&>(m_styleRule.get()); }
+    StyleRule& styleRule() const { return m_styleRule.get(); }
 
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);

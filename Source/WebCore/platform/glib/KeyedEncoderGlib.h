@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KeyedEncoderGlib_h
-#define KeyedEncoderGlib_h
+#pragma once
 
 #include "KeyedCoding.h"
 #include <glib.h>
@@ -39,25 +38,25 @@ public:
     KeyedEncoderGlib();
     ~KeyedEncoderGlib();
 
-    PassRefPtr<WebCore::SharedBuffer> finishEncoding() override;
-
 private:
-    void encodeBytes(const String& key, const uint8_t*, size_t) override;
-    void encodeBool(const String& key, bool) override;
-    void encodeUInt32(const String& key, uint32_t) override;
-    void encodeInt32(const String& key, int32_t) override;
-    void encodeInt64(const String& key, int64_t) override;
-    void encodeFloat(const String& key, float) override;
-    void encodeDouble(const String& key, double) override;
-    void encodeString(const String& key, const String&) override;
+    RefPtr<WebCore::SharedBuffer> finishEncoding() final;
 
-    void beginObject(const String& key) override;
-    void endObject() override;
+    void encodeBytes(const String& key, const uint8_t*, size_t) final;
+    void encodeBool(const String& key, bool) final;
+    void encodeUInt32(const String& key, uint32_t) final;
+    void encodeInt32(const String& key, int32_t) final;
+    void encodeInt64(const String& key, int64_t) final;
+    void encodeFloat(const String& key, float) final;
+    void encodeDouble(const String& key, double) final;
+    void encodeString(const String& key, const String&) final;
 
-    void beginArray(const String& key) override;
-    void beginArrayElement() override;
-    void endArrayElement() override;
-    void endArray() override;
+    void beginObject(const String& key) final;
+    void endObject() final;
+
+    void beginArray(const String& key) final;
+    void beginArrayElement() final;
+    void endArrayElement() final;
+    void endArray() final;
 
     GVariantBuilder m_variantBuilder;
     Vector<GVariantBuilder*, 16> m_variantBuilderStack;
@@ -66,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // KeyedEncoderGlib_h

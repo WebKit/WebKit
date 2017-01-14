@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVFoundationCF_h
-#define CDMSessionAVFoundationCF_h
+#pragma once
 
 #include "LegacyCDMSession.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -37,26 +37,22 @@ namespace WebCore {
 
 class MediaPlayerPrivateAVFoundationCF;
 
-class CDMSessionAVFoundationCF : public CDMSession {
+class CDMSessionAVFoundationCF final : public CDMSession {
 public:
-    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF* parent, CDMSessionClient*);
-    virtual ~CDMSessionAVFoundationCF() { }
+    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, CDMSessionClient*);
 
-    void setClient(CDMSessionClient* client) override { m_client = client; }
-    const String& sessionId() const override { return m_sessionId; }
-    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) override;
-    void releaseKeys() override;
-    bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) override;
+private:
+    void setClient(CDMSessionClient* client) final { }
+    const String& sessionId() const final { return m_sessionId; }
+    RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
+    void releaseKeys() final;
+    bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) final;
 
-protected:
-    MediaPlayerPrivateAVFoundationCF* m_parent;
-    CDMSessionClient* m_client;
-    String m_sessionId;
+    MediaPlayerPrivateAVFoundationCF& m_parent;
+    const String m_sessionId;
     RetainPtr<AVCFAssetResourceLoadingRequestRef> m_request;
 };
 
 }
 
 #endif
-
-#endif // CDMSessionAVFoundationCF_h

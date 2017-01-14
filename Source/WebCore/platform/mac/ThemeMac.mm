@@ -155,10 +155,10 @@ static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const Lengt
     if (zoomFactor != 1.0f)
         controlSize = IntSize(controlSize.width() * zoomFactor, controlSize.height() * zoomFactor);
     LengthSize result = zoomedSize;
-    if (zoomedSize.width().isIntrinsicOrAuto() && controlSize.width() > 0)
-        result.setWidth(Length(controlSize.width(), Fixed));
-    if (zoomedSize.height().isIntrinsicOrAuto() && controlSize.height() > 0)
-        result.setHeight(Length(controlSize.height(), Fixed));
+    if (zoomedSize.width.isIntrinsicOrAuto() && controlSize.width() > 0)
+        result.width = { controlSize.width(), Fixed };
+    if (zoomedSize.height.isIntrinsicOrAuto() && controlSize.height() > 0)
+        result.height = { controlSize.height(), Fixed };
     return result;
 }
 
@@ -280,7 +280,7 @@ static const int* checkboxMargins(NSControlSize controlSize)
 static LengthSize checkboxSize(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
+    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
 
     // Use the font size to determine the intrinsic width of the control.
@@ -310,7 +310,7 @@ static const int* radioMargins(NSControlSize controlSize)
 static LengthSize radioSize(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
+    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
         return zoomedSize;
 
     // Use the font size to determine the intrinsic width of the control.
@@ -713,9 +713,9 @@ LengthSize ThemeMac::controlSize(ControlPart part, const FontCascade& font, cons
             return radioSize(font, zoomedSize, zoomFactor);
         case PushButtonPart:
             // Height is reset to auto so that specified heights can be ignored.
-            return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, buttonSizes());
+            return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
         case InnerSpinButtonPart:
-            if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
+            if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
                 return zoomedSize;
             return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
         default:
@@ -726,17 +726,17 @@ LengthSize ThemeMac::controlSize(ControlPart part, const FontCascade& font, cons
 LengthSize ThemeMac::minimumControlSize(ControlPart part, const FontCascade& font, float zoomFactor) const
 {
     switch (part) {
-        case SquareButtonPart:
-        case DefaultButtonPart:
-        case ButtonPart:
-            return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
-        case InnerSpinButtonPart:{
-            IntSize base = stepperSizes()[NSControlSizeMini];
-            return LengthSize(Length(static_cast<int>(base.width() * zoomFactor), Fixed),
-                              Length(static_cast<int>(base.height() * zoomFactor), Fixed));
-        }
-        default:
-            return Theme::minimumControlSize(part, font, zoomFactor);
+    case SquareButtonPart:
+    case DefaultButtonPart:
+    case ButtonPart:
+        return { { 0, Fixed }, { static_cast<int>(15 * zoomFactor), Fixed } };
+    case InnerSpinButtonPart: {
+        auto& base = stepperSizes()[NSControlSizeMini];
+        return { { static_cast<int>(base.width() * zoomFactor), Fixed },
+            { static_cast<int>(base.height() * zoomFactor), Fixed } };
+    }
+    default:
+        return Theme::minimumControlSize(part, font, zoomFactor);
     }
 }
 

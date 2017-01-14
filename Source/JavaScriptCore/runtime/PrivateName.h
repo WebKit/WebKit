@@ -54,7 +54,7 @@ public:
 
     PrivateName(PrivateName&&) = default;
 
-    SymbolImpl& uid() const { return const_cast<SymbolImpl&>(m_uid.get()); }
+    SymbolImpl& uid() const { return m_uid; }
 
     bool operator==(const PrivateName& other) const { return &uid() == &other.uid(); }
     bool operator!=(const PrivateName& other) const { return &uid() != &other.uid(); }

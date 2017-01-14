@@ -2072,7 +2072,7 @@ bool Document::isPageBoxVisible(int pageIndex)
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     updateStyleIfNeeded();
-    std::unique_ptr<RenderStyle> style = styleScope().resolver().styleForPage(pageIndex);
+    auto style = styleScope().resolver().styleForPage(pageIndex);
 
     int width = pageSize.width();
     int height = pageSize.height();
@@ -2088,11 +2088,11 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
             std::swap(width, height);
         break;
     case PAGE_SIZE_RESOLVED: {
-        LengthSize size = style->pageSize();
-        ASSERT(size.width().isFixed());
-        ASSERT(size.height().isFixed());
-        width = valueForLength(size.width(), 0);
-        height = valueForLength(size.height(), 0);
+        auto& size = style->pageSize();
+        ASSERT(size.width.isFixed());
+        ASSERT(size.height.isFixed());
+        width = valueForLength(size.width, 0);
+        height = valueForLength(size.height, 0);
         break;
     }
     default:

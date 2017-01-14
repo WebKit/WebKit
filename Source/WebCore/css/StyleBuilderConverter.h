@@ -294,21 +294,19 @@ inline Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversion
 
 inline LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, const CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    Pair* pair = primitiveValue.pairValue();
+    auto* pair = downcast<CSSPrimitiveValue>(value).pairValue();
     if (!pair || !pair->first() || !pair->second())
-        return LengthSize(Length(0, Fixed), Length(0, Fixed));
+        return { { 0, Fixed }, { 0, Fixed } };
 
     CSSToLengthConversionData conversionData = styleResolver.state().cssToLengthConversionData();
-    Length radiusWidth = convertToRadiusLength(conversionData, *pair->first());
-    Length radiusHeight = convertToRadiusLength(conversionData, *pair->second());
+    LengthSize radius { convertToRadiusLength(conversionData, *pair->first()), convertToRadiusLength(conversionData, *pair->second()) };
 
-    ASSERT(!radiusWidth.isNegative());
-    ASSERT(!radiusHeight.isNegative());
-    if (radiusWidth.isZero() || radiusHeight.isZero())
-        return LengthSize(Length(0, Fixed), Length(0, Fixed));
+    ASSERT(!radius.width.isNegative());
+    ASSERT(!radius.height.isNegative());
+    if (radius.width.isZero() || radius.height.isZero())
+        return { { 0, Fixed }, { 0, Fixed } };
 
-    return LengthSize(radiusWidth, radiusHeight);
+    return radius;
 }
 
 inline Length StyleBuilderConverter::convertTo100PercentMinusLength(const Length& length)
@@ -766,7 +764,7 @@ inline RefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver
     }
 
     if (isImageShape(value))
-        return ShapeValue::create(styleResolver.styleImage(value));
+        return ShapeValue::create(styleResolver.styleImage(value).releaseNonNull());
 
     RefPtr<BasicShape> shape;
     CSSBoxType referenceBox = BoxMissing;
@@ -786,7 +784,7 @@ inline RefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver
     }
 
     if (shape)
-        return ShapeValue::create(WTFMove(shape), referenceBox);
+        return ShapeValue::create(shape.releaseNonNull(), referenceBox);
 
     if (referenceBox != BoxMissing)
         return ShapeValue::create(referenceBox);

@@ -2755,7 +2755,7 @@ ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Gri
     if (contentAlignment.isValid())
         return contentAlignment;
 
-    auto overflow = isRowAxis ? style().justifyContentOverflowAlignment() : style().alignContentOverflowAlignment();
+    auto overflow = (isRowAxis ? style().justifyContent() : style().alignContent()).overflow();
     if (availableFreeSpace <= 0 && overflow == OverflowAlignmentSafe)
         return {0, 0};
 

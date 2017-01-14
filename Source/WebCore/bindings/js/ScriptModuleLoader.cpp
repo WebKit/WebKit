@@ -53,9 +53,8 @@ ScriptModuleLoader::ScriptModuleLoader(Document& document)
 ScriptModuleLoader::~ScriptModuleLoader()
 {
     for (auto& loader : m_loaders)
-        const_cast<CachedModuleScriptLoader&>(loader.get()).clearClient();
+        loader->clearClient();
 }
-
 
 static bool isRootModule(JSC::JSValue importerModuleKey)
 {

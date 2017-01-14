@@ -3,7 +3,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004-2008, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2009 Google Inc. All rights reserved.
@@ -506,18 +506,17 @@ bool FrameView::didFirstLayout() const
 void FrameView::invalidateRect(const IntRect& rect)
 {
     if (!parent()) {
-        if (HostWindow* window = hostWindow())
-            window->invalidateContentsAndRootView(rect);
+        if (auto* page = frame().page())
+            page->chrome().invalidateContentsAndRootView(rect);
         return;
     }
 
-    RenderWidget* renderer = frame().ownerRenderer();
+    auto* renderer = frame().ownerRenderer();
     if (!renderer)
         return;
 
     IntRect repaintRect = rect;
-    repaintRect.move(renderer->borderLeft() + renderer->paddingLeft(),
-                     renderer->borderTop() + renderer->paddingTop());
+    repaintRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
     renderer->repaintRectangle(repaintRect);
 }
 
@@ -544,14 +543,16 @@ void FrameView::setFrameRect(const IntRect& newRect)
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
+
 bool FrameView::scheduleAnimation()
 {
-    if (HostWindow* window = hostWindow()) {
-        window->scheduleAnimation();
-        return true;
-    }
-    return false;
+    auto* page = frame().page();
+    if (!page)
+        return false;
+    page->chrome().scheduleAnimation();
+    return true;
 }
+
 #endif
 
 void FrameView::setMarginWidth(LayoutUnit w)
@@ -1056,22 +1057,22 @@ GraphicsLayer* FrameView::graphicsLayerForPlatformWidget(PlatformWidget platform
 {
     // To find the Widget that corresponds with platformWidget we have to do a linear
     // search of our child widgets.
-    Widget* foundWidget = nullptr;
+    const Widget* foundWidget = nullptr;
     for (auto& widget : children()) {
         if (widget->platformWidget() != platformWidget)
             continue;
-        foundWidget = widget.get();
+        foundWidget = widget.ptr();
         break;
     }
 
     if (!foundWidget)
         return nullptr;
 
-    auto* renderWidget = RenderWidget::find(foundWidget);
+    auto* renderWidget = RenderWidget::find(*foundWidget);
     if (!renderWidget)
         return nullptr;
 
-    RenderLayer* widgetLayer = renderWidget->layer();
+    auto* widgetLayer = renderWidget->layer();
     if (!widgetLayer || !widgetLayer->isComposited())
         return nullptr;
 
@@ -2180,11 +2181,11 @@ bool FrameView::shouldSetCursor() const
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     if (!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmpty()) {
-        hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
+        frame().page()->chrome().scroll(scrollDelta, rectToScroll, clipRect);
         return true;
     }
 
-    const bool isCompositedContentLayer = usesCompositedScrolling();
+    bool isCompositedContentLayer = usesCompositedScrolling();
 
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
@@ -2220,7 +2221,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     }
 
     // 1) scroll
-    hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
+    frame().page()->chrome().scroll(scrollDelta, rectToScroll, clipRect);
 
     // 2) update the area of fixed objects that has been invalidated
     for (auto& updateRect : regionToUpdate.rects()) {
@@ -2235,7 +2236,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         }
         if (clipsRepaints())
             updateRect.intersect(rectToScroll);
-        hostWindow()->invalidateContentsAndRootView(updateRect);
+        frame().page()->chrome().invalidateContentsAndRootView(updateRect);
     }
 
     return true;
@@ -2642,9 +2643,10 @@ bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position)
 
 HostWindow* FrameView::hostWindow() const
 {
-    if (Page* page = frame().page())
-        return &page->chrome();
-    return nullptr;
+    auto* page = frame().page();
+    if (!page)
+        return nullptr;
+    return &page->chrome();
 }
 
 void FrameView::addTrackedRepaintRect(const FloatRect& r)
@@ -2784,10 +2786,12 @@ void FrameView::adjustTiledBackingScrollability()
 }
 
 #if PLATFORM(IOS)
+
 void FrameView::unobscuredContentSizeChanged()
 {
     adjustTiledBackingScrollability();
 }
+
 #endif
 
 static LayerFlushThrottleState::Flags determineLayerFlushThrottleState(Page& page)
@@ -4082,8 +4086,6 @@ void FrameView::updateScrollCorner()
             m_scrollCorner->setStyle(WTFMove(*cornerStyle));
         invalidateScrollCorner(cornerRect);
     }
-
-    ScrollView::updateScrollCorner();
 }
 
 void FrameView::paintScrollCorner(GraphicsContext& context, const IntRect& cornerRect)
@@ -4157,15 +4159,14 @@ Color FrameView::documentBackgroundColor() const
 bool FrameView::hasCustomScrollbars() const
 {
     for (auto& widget : children()) {
-        if (is<FrameView>(*widget)) {
-            if (downcast<FrameView>(*widget).hasCustomScrollbars())
+        if (is<FrameView>(widget.get())) {
+            if (downcast<FrameView>(widget.get()).hasCustomScrollbars())
                 return true;
-        } else if (is<Scrollbar>(*widget)) {
-            if (downcast<Scrollbar>(*widget).isCustomScrollbar())
+        } else if (is<Scrollbar>(widget.get())) {
+            if (downcast<Scrollbar>(widget.get()).isCustomScrollbar())
                 return true;
         }
     }
-
     return false;
 }
 
@@ -4173,11 +4174,10 @@ FrameView* FrameView::parentFrameView() const
 {
     if (!parent())
         return nullptr;
-
-    if (Frame* parentFrame = frame().tree().parent())
-        return parentFrame->view();
-
-    return nullptr;
+    auto* parentFrame = frame().tree().parent();
+    if (!parentFrame)
+        return nullptr;
+    return parentFrame->view();
 }
 
 bool FrameView::isInChildFrameWithFrameFlattening() const
@@ -5183,8 +5183,8 @@ void FrameView::updateWidgetPositions()
     // scripts in response to NPP_SetWindow, for example), so we need to keep the Widgets
     // alive during enumeration.
     for (auto& widget : collectAndProtectWidgets(m_widgetsInRenderTree)) {
-        if (RenderWidget* renderWidget = RenderWidget::find(widget.get())) {
-            auto ignoreWidgetState = renderWidget->updateWidgetPosition();
+        if (auto* renderer = RenderWidget::find(*widget)) {
+            auto ignoreWidgetState = renderer->updateWidgetPosition();
             UNUSED_PARAM(ignoreWidgetState);
         }
     }

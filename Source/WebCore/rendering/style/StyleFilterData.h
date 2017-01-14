@@ -42,7 +42,7 @@ public:
         return !(*this == o);
     }
 
-    FilterOperations m_operations;
+    FilterOperations operations;
 
 private:
     StyleFilterData();

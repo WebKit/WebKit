@@ -28,8 +28,8 @@ namespace WebCore {
 
 StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
     : flex(RenderStyle::initialBoxFlex())
-    , flex_group(RenderStyle::initialBoxFlexGroup())
-    , ordinal_group(RenderStyle::initialBoxOrdinalGroup())
+    , flexGroup(RenderStyle::initialBoxFlexGroup())
+    , ordinalGroup(RenderStyle::initialBoxOrdinalGroup())
     , align(RenderStyle::initialBoxAlign())
     , pack(RenderStyle::initialBoxPack())
     , orient(RenderStyle::initialBoxOrient())
@@ -37,15 +37,15 @@ StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
 {
 }
 
-inline StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData& o)
+inline StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData(const StyleDeprecatedFlexibleBoxData& other)
     : RefCounted<StyleDeprecatedFlexibleBoxData>()
-    , flex(o.flex)
-    , flex_group(o.flex_group)
-    , ordinal_group(o.ordinal_group)
-    , align(o.align)
-    , pack(o.pack)
-    , orient(o.orient)
-    , lines(o.lines)
+    , flex(other.flex)
+    , flexGroup(other.flexGroup)
+    , ordinalGroup(other.ordinalGroup)
+    , align(other.align)
+    , pack(other.pack)
+    , orient(other.orient)
+    , lines(other.lines)
 {
 }
 
@@ -54,11 +54,11 @@ Ref<StyleDeprecatedFlexibleBoxData> StyleDeprecatedFlexibleBoxData::copy() const
     return adoptRef(*new StyleDeprecatedFlexibleBoxData(*this));
 }
 
-bool StyleDeprecatedFlexibleBoxData::operator==(const StyleDeprecatedFlexibleBoxData& o) const
+bool StyleDeprecatedFlexibleBoxData::operator==(const StyleDeprecatedFlexibleBoxData& other) const
 {
-    return flex == o.flex && flex_group == o.flex_group &&
-           ordinal_group == o.ordinal_group && align == o.align &&
-           pack == o.pack && orient == o.orient && lines == o.lines;
+    return flex == other.flex && flexGroup == other.flexGroup
+        && ordinalGroup == other.ordinalGroup && align == other.align
+        && pack == other.pack && orient == other.orient && lines == other.lines;
 }
 
 } // namespace WebCore

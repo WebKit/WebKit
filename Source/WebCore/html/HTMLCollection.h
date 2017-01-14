@@ -187,7 +187,7 @@ inline CollectionType HTMLCollection::type() const
 
 inline ContainerNode& HTMLCollection::ownerNode() const
 {
-    return const_cast<ContainerNode&>(m_ownerNode.get());
+    return m_ownerNode;
 }
 
 inline Document& HTMLCollection::document() const

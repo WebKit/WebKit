@@ -1122,6 +1122,7 @@ bool MediaPlayerPrivateAVFoundationCF::requiresImmediateCompositing() const
 }
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
 RetainPtr<AVCFAssetResourceLoadingRequestRef> MediaPlayerPrivateAVFoundationCF::takeRequestForKeyURI(const String& keyURI)
 {
     if (!m_avfWrapper)
@@ -1135,13 +1136,16 @@ std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(cons
     if (!keySystemIsSupported(keySystem))
         return nullptr;
 
-    return std::make_unique<CDMSessionAVFoundationCF>(this, client);
+    return std::make_unique<CDMSessionAVFoundationCF>(*this, client);
 }
+
 #elif ENABLE(LEGACY_ENCRYPTED_MEDIA)
-std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, , CDMSessionClient*)
+
+std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, CDMSessionClient*)
 {
     return nullptr;
 }
+
 #endif
 
 long MediaPlayerPrivateAVFoundationCF::assetErrorCode() const

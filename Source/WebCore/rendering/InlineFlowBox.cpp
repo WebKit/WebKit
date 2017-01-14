@@ -1231,12 +1231,14 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     }
 }
 
-void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect, CompositeOperator op)
+void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
-    if (!fillLayer)
-        return;
-    paintFillLayers(paintInfo, c, fillLayer->next(), rect, op);
-    paintFillLayer(paintInfo, c, fillLayer, rect, op);
+    Vector<const FillLayer*, 8> layers;
+    for (auto* layer = &fillLayer; layer; layer = layer->next())
+        layers.append(layer);
+    layers.reverse();
+    for (auto* layer : layers)
+        paintFillLayer(paintInfo, color, *layer, rect, op);
 }
 
 bool InlineFlowBox::boxShadowCanBeAppliedToBackground(const FillLayer& lastBackgroundLayer) const
@@ -1248,17 +1250,17 @@ bool InlineFlowBox::boxShadowCanBeAppliedToBackground(const FillLayer& lastBackg
     return (!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent();
 }
 
-void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect, CompositeOperator op)
+void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, CompositeOperator op)
 {
-    StyleImage* img = fillLayer->image();
-    bool hasFillImage = img && img->canRender(&renderer(), renderer().style().effectiveZoom());
+    auto* image = fillLayer.image();
+    bool hasFillImage = image && image->canRender(&renderer(), renderer().style().effectiveZoom());
     if ((!hasFillImage && !renderer().style().hasBorderRadius()) || (!prevLineBox() && !nextLineBox()) || !parent())
-        renderer().paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
+        renderer().paintFillLayerExtended(paintInfo, color, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     else if (renderer().style().boxDecorationBreak() == DCLONE) {
         GraphicsContextStateSaver stateSaver(paintInfo.context());
         paintInfo.context().clip(LayoutRect(rect.x(), rect.y(), width(), height()));
-        renderer().paintFillLayerExtended(paintInfo, c, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
+        renderer().paintFillLayerExtended(paintInfo, color, fillLayer, rect, BackgroundBleedNone, this, rect.size(), op);
     }
 #endif
     else {
@@ -1290,7 +1292,7 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
 
         GraphicsContextStateSaver stateSaver(paintInfo.context());
         paintInfo.context().clip(LayoutRect(rect.x(), rect.y(), width(), height()));
-        renderer().paintFillLayerExtended(paintInfo, c, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
+        renderer().paintFillLayerExtended(paintInfo, color, fillLayer, LayoutRect(stripX, stripY, stripWidth, stripHeight), BackgroundBleedNone, this, rect.size(), op);
     }
 }
 
@@ -1446,7 +1448,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     bool flattenCompositingLayers = renderer().view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers;
     CompositeOperator compositeOp = CompositeSourceOver;
     if (!compositedMask || flattenCompositingLayers) {
-        if ((maskBoxImage && renderer().style().maskLayers()->hasImage()) || renderer().style().maskLayers()->next())
+        if ((maskBoxImage && renderer().style().maskLayers().hasImage()) || renderer().style().maskLayers().next())
             pushTransparencyLayer = true;
         
         compositeOp = CompositeDestinationIn;

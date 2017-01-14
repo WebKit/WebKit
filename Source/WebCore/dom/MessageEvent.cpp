@@ -158,8 +158,8 @@ EventTarget* MessageEvent::source() const
         return nullptr;
 
     return WTF::switchOn(m_source.value(),
-        [](const RefPtr<DOMWindow>& window) -> EventTarget* { return const_cast<EventTarget*>(static_cast<const EventTarget*>(window.get())); },
-        [](const RefPtr<MessagePort>& messagePort) -> EventTarget* { return const_cast<EventTarget*>(static_cast<const EventTarget*>(messagePort.get())); }
+        [] (const RefPtr<DOMWindow>& window) -> EventTarget* { return const_cast<DOMWindow*>(window.get()); },
+        [] (const RefPtr<MessagePort>& messagePort) -> EventTarget* { return const_cast<MessagePort*>(messagePort.get()); }
     );
 }
 

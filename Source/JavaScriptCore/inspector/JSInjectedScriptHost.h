@@ -53,7 +53,7 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static void destroy(JSC::JSCell*);
 
-    InjectedScriptHost& impl() const { return const_cast<InjectedScriptHost&>(m_wrapped.get()); }
+    InjectedScriptHost& impl() const { return m_wrapped; }
 
     // Attributes.
     JSC::JSValue evaluate(JSC::ExecState*) const;

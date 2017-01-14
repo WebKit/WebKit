@@ -144,18 +144,16 @@ static Length convertToLength(const CSSToLengthConversionData& conversionData, c
 static LengthSize convertToLengthSize(const CSSToLengthConversionData& conversionData, const CSSPrimitiveValue* value)
 {
     if (!value)
-        return LengthSize(Length(0, Fixed), Length(0, Fixed));
+        return { { 0, Fixed }, { 0, Fixed } };
 
-    Pair* pair = value->pairValue();
-    return LengthSize(convertToLength(conversionData, pair->first()), convertToLength(conversionData, pair->second()));
+    auto& pair = *value->pairValue();
+    return { convertToLength(conversionData, pair.first()), convertToLength(conversionData, pair.second()) };
 }
 
 static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthConversionData& conversionData, CSSPrimitiveValue* value)
 {
-    BasicShapeCenterCoordinate::Direction direction;
-    Length offset = Length(0, Fixed);
-
     CSSValueID keyword = CSSValueTop;
+    Length offset { 0, Fixed };
     if (!value)
         keyword = CSSValueCenter;
     else if (value->isValueID())
@@ -166,6 +164,7 @@ static BasicShapeCenterCoordinate convertToCenterCoordinate(const CSSToLengthCon
     } else
         offset = convertToLength(conversionData, value);
 
+    BasicShapeCenterCoordinate::Direction direction;
     switch (keyword) {
     case CSSValueTop:
     case CSSValueLeft:

@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ShapeValue : public RefCounted<ShapeValue> {
 public:
-    static Ref<ShapeValue> create(RefPtr<BasicShape>&& shape, CSSBoxType cssBox)
+    static Ref<ShapeValue> create(Ref<BasicShape>&& shape, CSSBoxType cssBox)
     {
         return adoptRef(*new ShapeValue(WTFMove(shape), cssBox));
     }
@@ -47,7 +47,7 @@ public:
         return adoptRef(*new ShapeValue(boxShape));
     }
 
-    static Ref<ShapeValue> create(RefPtr<StyleImage>&& image)
+    static Ref<ShapeValue> create(Ref<StyleImage>&& image)
     {
         return adoptRef(*new ShapeValue(WTFMove(image)));
     }
@@ -72,14 +72,14 @@ public:
     }
 
 private:
-    ShapeValue(RefPtr<BasicShape>&& shape, CSSBoxType cssBox)
+    ShapeValue(Ref<BasicShape>&& shape, CSSBoxType cssBox)
         : m_type(Type::Shape)
         , m_shape(WTFMove(shape))
         , m_cssBox(cssBox)
     {
     }
 
-    explicit ShapeValue(RefPtr<StyleImage>&& image)
+    explicit ShapeValue(Ref<StyleImage>&& image)
         : m_type(Type::Image)
         , m_image(WTFMove(image))
     {

@@ -1849,7 +1849,7 @@ public:
 
     virtual void handleEvent(Event* event)
     {
-        Frame* frame = Frame::frameForWidget(this);
+        Frame* frame = Frame::frameForWidget(*this);
         if (!frame)
             return;
         

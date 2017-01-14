@@ -1392,18 +1392,15 @@ void Page::dnsPrefetchingStateChanged()
 Vector<Ref<PluginViewBase>> Page::pluginViews()
 {
     Vector<Ref<PluginViewBase>> views;
-
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        FrameView* view = frame->view();
+        auto* view = frame->view();
         if (!view)
             break;
-
         for (auto& widget : view->children()) {
-            if (is<PluginViewBase>(*widget))
-                views.append(downcast<PluginViewBase>(*widget));
+            if (is<PluginViewBase>(widget.get()))
+                views.append(downcast<PluginViewBase>(widget.get()));
         }
     }
-
     return views;
 }
 

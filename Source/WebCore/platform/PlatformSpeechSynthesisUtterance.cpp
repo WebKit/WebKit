@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,13 @@
 
 namespace WebCore {
 
-PassRefPtr<PlatformSpeechSynthesisUtterance> PlatformSpeechSynthesisUtterance::create(PlatformSpeechSynthesisUtteranceClient* client)
+Ref<PlatformSpeechSynthesisUtterance> PlatformSpeechSynthesisUtterance::create(PlatformSpeechSynthesisUtteranceClient& client)
 {
-    return adoptRef(new PlatformSpeechSynthesisUtterance(client));
+    return adoptRef(*new PlatformSpeechSynthesisUtterance(client));
 }
     
-PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient* client)
-    : m_client(client)
-    , m_volume(1.0f)
-    , m_rate(1.0f)
-    , m_pitch(1.0f)
+inline PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient& client)
+    : m_client(&client)
 {
 }
     

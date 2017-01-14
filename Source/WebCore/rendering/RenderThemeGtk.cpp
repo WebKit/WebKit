@@ -2014,10 +2014,10 @@ bool RenderThemeGtk::paintMediaToggleClosedCaptionsButton(const RenderObject& re
 static FloatRoundedRect::Radii borderRadiiFromStyle(const RenderStyle& style)
 {
     return FloatRoundedRect::Radii(
-        IntSize(style.borderTopLeftRadius().width().intValue(), style.borderTopLeftRadius().height().intValue()),
-        IntSize(style.borderTopRightRadius().width().intValue(), style.borderTopRightRadius().height().intValue()),
-        IntSize(style.borderBottomLeftRadius().width().intValue(), style.borderBottomLeftRadius().height().intValue()),
-        IntSize(style.borderBottomRightRadius().width().intValue(), style.borderBottomRightRadius().height().intValue()));
+        IntSize(style.borderTopLeftRadius().width.intValue(), style.borderTopLeftRadius().height.intValue()),
+        IntSize(style.borderTopRightRadius().width.intValue(), style.borderTopRightRadius().height.intValue()),
+        IntSize(style.borderBottomLeftRadius().width.intValue(), style.borderBottomLeftRadius().height.intValue()),
+        IntSize(style.borderBottomRightRadius().width.intValue(), style.borderBottomRightRadius().height.intValue()));
 }
 
 bool RenderThemeGtk::paintMediaSliderTrack(const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)

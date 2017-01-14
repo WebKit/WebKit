@@ -99,28 +99,28 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
 
 EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(const Frame& frame) const
 {
-    RenderView* renderView = frame.contentRenderer();
+    auto* renderView = frame.contentRenderer();
     if (!renderView || renderView->documentBeingDestroyed())
         return EventTrackingRegions();
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     // On iOS, we use nonFastScrollableRegion to represent the region covered by elements with touch event handlers.
     ASSERT(frame.isMainFrame());
-
-    Document* document = frame.document();
+    auto* document = frame.document();
     if (!document)
         return EventTrackingRegions();
     return document->eventTrackingRegions();
 #else
-    Region nonFastScrollableRegion;
-    FrameView* frameView = frame.view();
+    auto* frameView = frame.view();
     if (!frameView)
         return EventTrackingRegions();
+
+    Region nonFastScrollableRegion;
 
     // FIXME: should ASSERT(!frameView->needsLayout()) here, but need to fix DebugPageOverlays
     // to not ask for regions at bad times.
 
-    if (const FrameView::ScrollableAreaSet* scrollableAreas = frameView->scrollableAreas()) {
+    if (auto* scrollableAreas = frameView->scrollableAreas()) {
         for (auto& scrollableArea : *scrollableAreas) {
             // Composited scrollable areas can be scrolled off the main thread.
             if (scrollableArea->usesAsyncScrolling())
@@ -136,18 +136,21 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
     for (auto& widget : frameView->widgetsInRenderTree()) {
-        RenderWidget* renderWidget = RenderWidget::find(widget);
-        if (!renderWidget || !is<PluginViewBase>(*widget))
+        if (!is<PluginViewBase>(*widget))
             continue;
-    
-        if (downcast<PluginViewBase>(*widget).wantsWheelEvents())
-            nonFastScrollableRegion.unite(renderWidget->absoluteBoundingBoxRect());
+        if (!downcast<PluginViewBase>(*widget).wantsWheelEvents())
+            continue;
+        auto* renderWidget = RenderWidget::find(*widget);
+        if (!renderWidget)
+            continue;
+        nonFastScrollableRegion.unite(renderWidget->absoluteBoundingBoxRect());
     }
     
-    // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
     EventTrackingRegions eventTrackingRegions;
+
+    // FIXME: if we've already accounted for this subframe as a scrollable area, we can avoid recursing into it here.
     for (Frame* subframe = frame.tree().firstChild(); subframe; subframe = subframe->tree().nextSibling()) {
-        FrameView* subframeView = subframe->view();
+        auto* subframeView = subframe->view();
         if (!subframeView)
             continue;
 
@@ -160,7 +163,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
         eventTrackingRegions.unite(subframeRegion);
     }
 
-    Document::RegionFixedPair wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
+    auto wheelHandlerRegion = frame.document()->absoluteRegionForEventTargets(frame.document()->wheelEventTargets());
     bool wheelHandlerInFixedContent = wheelHandlerRegion.second;
     if (wheelHandlerInFixedContent) {
         // FIXME: need to handle position:sticky here too.
@@ -172,6 +175,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
 
     // FIXME: If this is not the main frame, we could clip the region to the frame's bounds.
     eventTrackingRegions.uniteSynchronousRegion(eventNames().wheelEvent, nonFastScrollableRegion);
+
     return eventTrackingRegions;
 #endif
 }

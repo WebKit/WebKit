@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace WebCore {
 
 TextStream& operator<<(TextStream& ts, const LengthSize& size)
 {
-    return ts << size.width() << " " << size.height();
+    return ts << size.width << " " << size.height;
 }
 
 } // namespace WebCore

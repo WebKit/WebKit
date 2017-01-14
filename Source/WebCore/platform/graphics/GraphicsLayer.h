@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GraphicsLayer_h
-#define GraphicsLayer_h
+#pragma once
 
 #include "Animation.h"
 #include "Color.h"
@@ -80,11 +79,15 @@ protected:
 
     AnimationValue(const AnimationValue& other)
         : m_keyTime(other.m_keyTime)
-        , m_timingFunction(other.m_timingFunction ? other.m_timingFunction->clone() : nullptr)
+        , m_timingFunction(other.m_timingFunction ? RefPtr<TimingFunction> { other.m_timingFunction->clone() } : nullptr)
     {
     }
 
+    AnimationValue(AnimationValue&&) = default;
+
 private:
+    void operator=(const AnimationValue&) = delete;
+
     double m_keyTime;
     RefPtr<TimingFunction> m_timingFunction;
 };
@@ -102,12 +105,6 @@ public:
     std::unique_ptr<AnimationValue> clone() const override
     {
         return std::make_unique<FloatAnimationValue>(*this);
-    }
-
-    FloatAnimationValue(const FloatAnimationValue& other)
-        : AnimationValue(other)
-        , m_value(other.m_value)
-    {
     }
 
     float value() const { return m_value; }
@@ -134,9 +131,12 @@ public:
     TransformAnimationValue(const TransformAnimationValue& other)
         : AnimationValue(other)
     {
-        for (size_t i = 0; i < other.m_value.operations().size(); ++i)
-            m_value.operations().append(other.m_value.operations()[i]->clone());
+        m_value.operations().reserveInitialCapacity(other.m_value.operations().size());
+        for (auto& operation : other.m_value.operations())
+            m_value.operations().uncheckedAppend(operation->clone());
     }
+
+    TransformAnimationValue(TransformAnimationValue&&) = default;
 
     const TransformOperations& value() const { return m_value; }
 
@@ -162,9 +162,12 @@ public:
     FilterAnimationValue(const FilterAnimationValue& other)
         : AnimationValue(other)
     {
-        for (size_t i = 0; i < other.m_value.operations().size(); ++i)
-            m_value.operations().append(other.m_value.operations()[i]->clone());
+        m_value.operations().reserveInitialCapacity(other.m_value.operations().size());
+        for (auto& operation : other.m_value.operations())
+            m_value.operations().uncheckedAppend(operation->clone());
     }
+
+    FilterAnimationValue(FilterAnimationValue&&) = default;
 
     const FilterOperations& value() const { return m_value; }
 
@@ -185,13 +188,12 @@ public:
     KeyframeValueList(const KeyframeValueList& other)
         : m_property(other.property())
     {
-        for (size_t i = 0; i < other.m_values.size(); ++i)
-            m_values.append(other.m_values[i]->clone());
+        m_values.reserveInitialCapacity(other.m_values.size());
+        for (auto& value : other.m_values)
+            m_values.uncheckedAppend(value->clone());
     }
 
-    ~KeyframeValueList()
-    {
-    }
+    KeyframeValueList(KeyframeValueList&&) = default;
 
     KeyframeValueList& operator=(const KeyframeValueList& other)
     {
@@ -199,6 +201,8 @@ public:
         swap(copy);
         return *this;
     }
+
+    KeyframeValueList& operator=(KeyframeValueList&&) = default;
 
     void swap(KeyframeValueList& other)
     {
@@ -210,10 +214,10 @@ public:
 
     size_t size() const { return m_values.size(); }
     const AnimationValue& at(size_t i) const { return *m_values.at(i); }
-    
+
     // Insert, sorted by keyTime.
     WEBCORE_EXPORT void insert(std::unique_ptr<const AnimationValue>);
-    
+
 protected:
     Vector<std::unique_ptr<const AnimationValue>> m_values;
     AnimatedPropertyID m_property;
@@ -225,7 +229,6 @@ protected:
 class GraphicsLayer {
     WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
 public:
-
     enum class Type {
         Normal,
         PageTiledBacking,
@@ -241,7 +244,7 @@ public:
 
     virtual void initialize(Type) { }
 
-    typedef uint64_t PlatformLayerID;
+    using PlatformLayerID = uint64_t;
     virtual PlatformLayerID primaryLayerID() const { return 0; }
 
     GraphicsLayerClient& client() const { return m_client; }
@@ -683,5 +686,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 // Outside the WebCore namespace for ease of invocation from the debugger.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif
-
-#endif // GraphicsLayer_h

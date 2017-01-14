@@ -27,6 +27,7 @@
 
 #include "LegacyCDMSession.h"
 #include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -27,9 +27,6 @@
 #include "Color.h"
 #include "FontCascade.h"
 #include "Length.h"
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -37,20 +34,14 @@ class StyleInheritedData : public RefCounted<StyleInheritedData> {
 public:
     static Ref<StyleInheritedData> create() { return adoptRef(*new StyleInheritedData); }
     Ref<StyleInheritedData> copy() const;
-    ~StyleInheritedData();
 
-    bool operator==(const StyleInheritedData& o) const;
-    bool operator!=(const StyleInheritedData& o) const
-    {
-        return !(*this == o);
-    }
+    bool operator==(const StyleInheritedData&) const;
+    bool operator!=(const StyleInheritedData& other) const { return !(*this == other); }
 
-    float horizontal_border_spacing;
-    float vertical_border_spacing;
+    float horizontalBorderSpacing;
+    float verticalBorderSpacing;
 
-    // could be packed in a short but doesn't
-    // make a difference currently because of padding
-    Length line_height;
+    Length lineHeight;
 #if ENABLE(TEXT_AUTOSIZING)
     Length specifiedLineHeight;
 #endif
@@ -62,6 +53,7 @@ public:
 private:
     StyleInheritedData();
     StyleInheritedData(const StyleInheritedData&);
+    void operator=(const StyleInheritedData&) = delete;
 };
 
 } // namespace WebCore

@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -38,32 +38,29 @@ public:
     static Ref<StyleMultiColData> create() { return adoptRef(*new StyleMultiColData); }
     Ref<StyleMultiColData> copy() const;
     
-    bool operator==(const StyleMultiColData& o) const;
-    bool operator!=(const StyleMultiColData &o) const
-    {
-        return !(*this == o);
-    }
+    bool operator==(const StyleMultiColData&) const;
+    bool operator!=(const StyleMultiColData& other) const { return !(*this == other); }
 
     unsigned short ruleWidth() const
     {
-        if (m_rule.style() == BNONE || m_rule.style() == BHIDDEN)
+        if (rule.style() == BNONE || rule.style() == BHIDDEN)
             return 0; 
-        return m_rule.width();
+        return rule.width();
     }
 
-    float m_width;
-    unsigned short m_count;
-    float m_gap;
-    BorderValue m_rule;
-    Color m_visitedLinkColumnRuleColor;
+    float width { 0 };
+    unsigned short count;
+    float gap { 0 };
+    BorderValue rule;
+    Color visitedLinkColumnRuleColor;
 
-    bool m_autoWidth : 1;
-    bool m_autoCount : 1;
-    bool m_normalGap : 1;
-    unsigned m_fill : 1; // ColumnFill
-    unsigned m_columnSpan : 1;
-    unsigned m_axis : 2; // ColumnAxis
-    unsigned m_progression : 2; // ColumnProgression
+    bool autoWidth : 1;
+    bool autoCount : 1;
+    bool normalGap : 1;
+    unsigned fill : 1; // ColumnFill
+    unsigned columnSpan : 1;
+    unsigned axis : 2; // ColumnAxis
+    unsigned progression : 2; // ColumnProgression
 
 private:
     StyleMultiColData();

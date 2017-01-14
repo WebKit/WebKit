@@ -135,22 +135,18 @@ RenderElement::RenderElement(Document& document, RenderStyle&& style, BaseTypeFl
 RenderElement::~RenderElement()
 {
     if (hasInitializedStyle()) {
-        for (const FillLayer* bgLayer = m_style.backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
-            if (StyleImage* backgroundImage = bgLayer->image())
+        for (auto* bgLayer = &m_style.backgroundLayers(); bgLayer; bgLayer = bgLayer->next()) {
+            if (auto* backgroundImage = bgLayer->image())
                 backgroundImage->removeClient(this);
         }
-
-        for (const FillLayer* maskLayer = m_style.maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-            if (StyleImage* maskImage = maskLayer->image())
+        for (auto* maskLayer = &m_style.maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+            if (auto* maskImage = maskLayer->image())
                 maskImage->removeClient(this);
         }
-
-        if (StyleImage* borderImage = m_style.borderImage().image())
+        if (auto* borderImage = m_style.borderImage().image())
             borderImage->removeClient(this);
-
-        if (StyleImage* maskBoxImage = m_style.maskBoxImage().image())
+        if (auto* maskBoxImage = m_style.maskBoxImage().image())
             maskBoxImage->removeClient(this);
-
         if (auto shapeValue = m_style.shapeOutside()) {
             if (auto shapeImage = shapeValue->image())
                 shapeImage->removeClient(this);
@@ -303,8 +299,8 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
     }
     
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
-        RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
-        if (!layer->isComposited() || layer->paintsWithFilters())
+        auto& layer = *downcast<RenderLayerModelObject>(*this).layer();
+        if (!layer.isComposited() || layer.paintsWithFilters())
             diff = std::max(diff, StyleDifferenceRepaintLayer);
         else
             diff = std::max(diff, StyleDifferenceRecompositeLayer);
@@ -341,21 +337,20 @@ inline bool RenderElement::shouldRepaintForStyleDifference(StyleDifference diff)
     return diff == StyleDifferenceRepaint || (diff == StyleDifferenceRepaintIfTextOrBorderOrOutline && hasImmediateNonWhitespaceTextChildOrBorderOrOutline());
 }
 
-void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer* newLayers)
+void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer& newLayers)
 {
-    // Optimize the common case
-    if (FillLayer::imagesIdentical(oldLayers, newLayers))
+    // Optimize the common case.
+    if (FillLayer::imagesIdentical(oldLayers, &newLayers))
         return;
     
-    // Go through the new layers and addClients first, to avoid removing all clients of an image.
-    for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
-        if (currNew->image())
-            currNew->image()->addClient(this);
+    // Add before removing, to avoid removing all clients of an image that is in both sets.
+    for (auto* layer = &newLayers; layer; layer = layer->next()) {
+        if (layer->image())
+            layer->image()->addClient(this);
     }
-
-    for (const FillLayer* currOld = oldLayers; currOld; currOld = currOld->next()) {
-        if (currOld->image())
-            currOld->image()->removeClient(this);
+    for (auto* layer = oldLayers; layer; layer = layer->next()) {
+        if (layer->image())
+            layer->image()->removeClient(this);
     }
 }
 
@@ -409,8 +404,7 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     Style::loadPendingResources(style, document(), element());
 
     styleWillChange(diff, style);
-    auto oldStyle = WTFMove(m_style);
-    m_style = WTFMove(style);
+    auto oldStyle = m_style.replace(WTFMove(style));
     bool detachedFromParent = !parent();
 
     // Make sure we invalidate the containing block cache for flows when the contianing block context changes
@@ -807,7 +801,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild.style().display());
         if (style().specifiesColumns()) {
             if (elementChild.style().specifiesColumns())
-                newStyle.inheritColumnPropertiesFrom(&style());
+                newStyle.inheritColumnPropertiesFrom(style());
             if (elementChild.style().columnSpan())
                 newStyle.setColumnSpan(ColumnSpanAll);
         }
@@ -999,8 +993,8 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 
 void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
-    updateFillImages(oldStyle ? oldStyle->backgroundLayers() : nullptr, m_style.backgroundLayers());
-    updateFillImages(oldStyle ? oldStyle->maskLayers() : nullptr, m_style.maskLayers());
+    updateFillImages(oldStyle ? &oldStyle->backgroundLayers() : nullptr, m_style.backgroundLayers());
+    updateFillImages(oldStyle ? &oldStyle->maskLayers() : nullptr, m_style.maskLayers());
     updateImage(oldStyle ? oldStyle->borderImage().image() : nullptr, m_style.borderImage().image());
     updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style.maskBoxImage().image());
     updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style.shapeOutside());
@@ -1231,41 +1225,39 @@ void RenderElement::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    RenderObject* child = firstChild();
-    while (child) {
+    for (auto* child = firstChild(); child; child = child->nextSibling()) {
         if (child->needsLayout())
             downcast<RenderElement>(*child).layout();
         ASSERT(!child->needsLayout());
-        child = child->nextSibling();
     }
     clearNeedsLayout();
 }
 
-static bool mustRepaintFillLayers(const RenderElement& renderer, const FillLayer* layer)
+static bool mustRepaintFillLayers(const RenderElement& renderer, const FillLayer& layer)
 {
     // Nobody will use multiple layers without wanting fancy positioning.
-    if (layer->next())
+    if (layer.next())
         return true;
 
     // Make sure we have a valid image.
-    StyleImage* image = layer->image();
+    auto* image = layer.image();
     if (!image || !image->canRender(&renderer, renderer.style().effectiveZoom()))
         return false;
 
-    if (!layer->xPosition().isZero() || !layer->yPosition().isZero())
+    if (!layer.xPosition().isZero() || !layer.yPosition().isZero())
         return true;
 
-    EFillSizeType sizeType = layer->sizeType();
+    auto sizeType = layer.sizeType();
 
     if (sizeType == Contain || sizeType == Cover)
         return true;
 
     if (sizeType == SizeLength) {
-        LengthSize size = layer->sizeLength();
-        if (size.width().isPercentOrCalculated() || size.height().isPercentOrCalculated())
+        auto size = layer.sizeLength();
+        if (size.width.isPercentOrCalculated() || size.height.isPercentOrCalculated())
             return true;
         // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for 'contain'.
-        if ((size.width().isAuto() || size.height().isAuto()) && image->isGeneratedImage())
+        if ((size.width.isAuto() || size.height.isAuto()) && image->isGeneratedImage())
             return true;
     } else if (image->usesImageContainerSize())
         return true;
@@ -1365,14 +1357,14 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         style().getBoxShadowHorizontalExtent(shadowLeft, shadowRight);
         LayoutUnit borderRight = is<RenderBox>(*this) ? downcast<RenderBox>(*this).borderRight() : LayoutUnit::fromPixel(0);
         LayoutUnit boxWidth = is<RenderBox>(*this) ? downcast<RenderBox>(*this).width() : LayoutUnit();
-        LayoutUnit minInsetRightShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.right(), std::min<LayoutUnit>(newBounds.width(), oldBounds.width()));
-        LayoutUnit borderWidth = std::max<LayoutUnit>(borderRight, std::max<LayoutUnit>(valueForLength(style().borderTopRightRadius().width(), boxWidth), valueForLength(style().borderBottomRightRadius().width(), boxWidth)));
-        LayoutUnit decorationsWidth = std::max<LayoutUnit>(-outlineStyle.outlineOffset(), borderWidth + minInsetRightShadowExtent) + std::max<LayoutUnit>(outlineWidth, shadowRight);
+        LayoutUnit minInsetRightShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.right(), std::min(newBounds.width(), oldBounds.width()));
+        LayoutUnit borderWidth = std::max(borderRight, std::max(valueForLength(style().borderTopRightRadius().width, boxWidth), valueForLength(style().borderBottomRightRadius().width, boxWidth)));
+        LayoutUnit decorationsWidth = std::max<LayoutUnit>(-outlineStyle.outlineOffset(), borderWidth + minInsetRightShadowExtent) + std::max(outlineWidth, shadowRight);
         LayoutRect rightRect(newOutlineBox.x() + std::min(newOutlineBox.width(), oldOutlineBox.width()) - decorationsWidth,
             newOutlineBox.y(),
             width + decorationsWidth,
             std::max(newOutlineBox.height(), oldOutlineBox.height()));
-        LayoutUnit right = std::min<LayoutUnit>(newBounds.maxX(), oldBounds.maxX());
+        LayoutUnit right = std::min(newBounds.maxX(), oldBounds.maxX());
         if (rightRect.x() < right) {
             rightRect.setWidth(std::min(rightRect.width(), right - rightRect.x()));
             repaintUsingContainer(repaintContainer, rightRect);
@@ -1385,10 +1377,10 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         style().getBoxShadowVerticalExtent(shadowTop, shadowBottom);
         LayoutUnit borderBottom = is<RenderBox>(*this) ? downcast<RenderBox>(*this).borderBottom() : LayoutUnit::fromPixel(0);
         LayoutUnit boxHeight = is<RenderBox>(*this) ? downcast<RenderBox>(*this).height() : LayoutUnit();
-        LayoutUnit minInsetBottomShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.bottom(), std::min<LayoutUnit>(newBounds.height(), oldBounds.height()));
-        LayoutUnit borderHeight = std::max<LayoutUnit>(borderBottom, std::max<LayoutUnit>(valueForLength(style().borderBottomLeftRadius().height(), boxHeight),
-            valueForLength(style().borderBottomRightRadius().height(), boxHeight)));
-        LayoutUnit decorationsHeight = std::max<LayoutUnit>(-outlineStyle.outlineOffset(), borderHeight + minInsetBottomShadowExtent) + std::max<LayoutUnit>(outlineWidth, shadowBottom);
+        LayoutUnit minInsetBottomShadowExtent = std::min<LayoutUnit>(-insetShadowExtent.bottom(), std::min(newBounds.height(), oldBounds.height()));
+        LayoutUnit borderHeight = std::max(borderBottom, std::max(valueForLength(style().borderBottomLeftRadius().height, boxHeight),
+            valueForLength(style().borderBottomRightRadius().height, boxHeight)));
+        LayoutUnit decorationsHeight = std::max<LayoutUnit>(-outlineStyle.outlineOffset(), borderHeight + minInsetBottomShadowExtent) + std::max(outlineWidth, shadowBottom);
         LayoutRect bottomRect(newOutlineBox.x(),
             std::min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - decorationsHeight,
             std::max(newOutlineBox.width(), oldOutlineBox.width()),

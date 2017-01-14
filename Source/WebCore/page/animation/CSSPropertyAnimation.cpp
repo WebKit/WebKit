@@ -90,8 +90,7 @@ static inline Length blendFunc(const AnimationBase*, const Length& from, const L
 
 static inline LengthSize blendFunc(const AnimationBase* anim, const LengthSize& from, const LengthSize& to, double progress)
 {
-    return LengthSize(blendFunc(anim, from.width(), to.width(), progress),
-                      blendFunc(anim, from.height(), to.height(), progress));
+    return { blendFunc(anim, from.width, to.width, progress), blendFunc(anim, from.height, to.height, progress) };
 }
 
 static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from, ShadowStyle to, double progress)
@@ -492,7 +491,7 @@ template <typename T>
 class LengthPropertyWrapper : public PropertyWrapperGetter<const T&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    LengthPropertyWrapper(CSSPropertyID prop, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+    LengthPropertyWrapper(CSSPropertyID prop, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T&&))
         : PropertyWrapperGetter<const T&>(prop, getter)
         , m_setter(setter)
     {
@@ -504,7 +503,7 @@ public:
     }
 
 protected:
-    void (RenderStyle::*m_setter)(T);
+    void (RenderStyle::*m_setter)(T&&);
 };
 
 class PropertyWrapperClipPath : public RefCountedPropertyWrapper<ClipPathOperation> {
@@ -1049,7 +1048,7 @@ public:
 class FillLayersPropertyWrapper : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef const FillLayer* (RenderStyle::*LayersGetter)() const;
+    typedef const FillLayer& (RenderStyle::*LayersGetter)() const;
     typedef FillLayer& (RenderStyle::*LayersAccessor)();
 
     FillLayersPropertyWrapper(CSSPropertyID prop, LayersGetter getter, LayersAccessor accessor)
@@ -1086,8 +1085,8 @@ public:
         if (!a || !b)
             return false;
 
-        const FillLayer* fromLayer = (a->*m_layersGetter)();
-        const FillLayer* toLayer = (b->*m_layersGetter)();
+        auto* fromLayer = &(a->*m_layersGetter)();
+        auto* toLayer = &(b->*m_layersGetter)();
 
         while (fromLayer && toLayer) {
             if (!m_fillLayerPropertyWrapper->equals(fromLayer, toLayer))
@@ -1102,9 +1101,9 @@ public:
 
     void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const override
     {
-        const FillLayer* aLayer = (a->*m_layersGetter)();
-        const FillLayer* bLayer = (b->*m_layersGetter)();
-        FillLayer* dstLayer = &(dst->*m_layersAccessor)();
+        auto* aLayer = &(a->*m_layersGetter)();
+        auto* bLayer = &(b->*m_layersGetter)();
+        auto* dstLayer = &(dst->*m_layersAccessor)();
 
         while (aLayer && bLayer && dstLayer) {
             m_fillLayerPropertyWrapper->blend(anim, dstLayer, aLayer, bLayer, progress);

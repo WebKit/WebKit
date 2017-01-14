@@ -666,7 +666,7 @@ Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
                 scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
         }
     }
-    pluginView()->frame()->view()->addChild(widget.ptr());
+    pluginView()->frame()->view()->addChild(widget);
     return widget;
 }
 

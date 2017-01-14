@@ -108,53 +108,53 @@ public:
 
     bool hasImage() const { return m_data->image; }
     StyleImage* image() const { return m_data->image.get(); }
-    void setImage(RefPtr<StyleImage>&& image) { m_data.access()->image = WTFMove(image); }
+    void setImage(RefPtr<StyleImage>&& image) { m_data.access().image = WTFMove(image); }
 
     const LengthBox& imageSlices() const { return m_data->imageSlices; }
-    void setImageSlices(LengthBox slices) { m_data.access()->imageSlices = WTFMove(slices); }
+    void setImageSlices(LengthBox slices) { m_data.access().imageSlices = WTFMove(slices); }
 
     bool fill() const { return m_data->fill; }
-    void setFill(bool fill) { m_data.access()->fill = fill; }
+    void setFill(bool fill) { m_data.access().fill = fill; }
 
     const LengthBox& borderSlices() const { return m_data->borderSlices; }
-    void setBorderSlices(LengthBox slices) { m_data.access()->borderSlices = WTFMove(slices); }
+    void setBorderSlices(LengthBox slices) { m_data.access().borderSlices = WTFMove(slices); }
 
     const LengthBox& outset() const { return m_data->outset; }
-    void setOutset(LengthBox outset) { m_data.access()->outset = WTFMove(outset); }
+    void setOutset(LengthBox outset) { m_data.access().outset = WTFMove(outset); }
 
     ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_data->horizontalRule); }
-    void setHorizontalRule(ENinePieceImageRule rule) { m_data.access()->horizontalRule = rule; }
+    void setHorizontalRule(ENinePieceImageRule rule) { m_data.access().horizontalRule = rule; }
     
     ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_data->verticalRule); }
-    void setVerticalRule(ENinePieceImageRule rule) { m_data.access()->verticalRule = rule; }
+    void setVerticalRule(ENinePieceImageRule rule) { m_data.access().verticalRule = rule; }
 
     void copyImageSlicesFrom(const NinePieceImage& other)
     {
-        m_data.access()->imageSlices = other.m_data->imageSlices;
-        m_data.access()->fill = other.m_data->fill;
+        m_data.access().imageSlices = other.m_data->imageSlices;
+        m_data.access().fill = other.m_data->fill;
     }
 
     void copyBorderSlicesFrom(const NinePieceImage& other)
     {
-        m_data.access()->borderSlices = other.m_data->borderSlices;
+        m_data.access().borderSlices = other.m_data->borderSlices;
     }
     
     void copyOutsetFrom(const NinePieceImage& other)
     {
-        m_data.access()->outset = other.m_data->outset;
+        m_data.access().outset = other.m_data->outset;
     }
 
     void copyRepeatFrom(const NinePieceImage& other)
     {
-        m_data.access()->horizontalRule = other.m_data->horizontalRule;
-        m_data.access()->verticalRule = other.m_data->verticalRule;
+        m_data.access().horizontalRule = other.m_data->horizontalRule;
+        m_data.access().verticalRule = other.m_data->verticalRule;
     }
 
     void setMaskDefaults()
     {
-        m_data.access()->imageSlices = LengthBox(0);
-        m_data.access()->fill = true;
-        m_data.access()->borderSlices = LengthBox();
+        m_data.access().imageSlices = LengthBox(0);
+        m_data.access().fill = true;
+        m_data.access().borderSlices = LengthBox();
     }
 
     static LayoutUnit computeOutset(const Length& outsetSide, LayoutUnit borderSide)

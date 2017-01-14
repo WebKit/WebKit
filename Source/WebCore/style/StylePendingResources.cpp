@@ -62,7 +62,7 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
 
 void loadPendingResources(RenderStyle& style, Document& document, const Element* element)
 {
-    for (auto* backgroundLayer = style.backgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
+    for (auto* backgroundLayer = &style.backgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next())
         loadPendingImage(document, backgroundLayer->image(), element);
 
     for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
@@ -84,7 +84,7 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
     if (auto* reflection = style.boxReflect())
         loadPendingImage(document, reflection->mask().image(), element);
 
-    for (auto* maskLayer = style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
+    for (auto* maskLayer = &style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
         loadPendingImage(document, maskLayer->image(), element);
 
     if (style.shapeOutside())

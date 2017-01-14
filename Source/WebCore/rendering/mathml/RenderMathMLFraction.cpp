@@ -89,7 +89,7 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameter
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
     const auto& primaryFont = style().fontCascade().primaryFont();
     const auto* mathData = style().fontCascade().primaryFont().mathData();
-    bool display = mathMLStyle()->displayStyle();
+    bool display = mathMLStyle().displayStyle();
     if (mathData) {
         parameters.numeratorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumDisplayStyleGapMin : OpenTypeMathData::FractionNumeratorGapMin);
         parameters.denominatorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenomDisplayStyleGapMin : OpenTypeMathData::FractionDenominatorGapMin);
@@ -116,7 +116,7 @@ RenderMathMLFraction::StackParameters RenderMathMLFraction::stackParameters()
     // We try and read constants to draw the stack from the OpenType MATH and use fallback values otherwise.
     const auto& primaryFont = style().fontCascade().primaryFont();
     const auto* mathData = style().fontCascade().primaryFont().mathData();
-    bool display = mathMLStyle()->displayStyle();
+    bool display = mathMLStyle().displayStyle();
     if (mathData) {
         parameters.gapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackDisplayStyleGapMin : OpenTypeMathData::StackGapMin);
         parameters.topShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackTopDisplayStyleShiftUp : OpenTypeMathData::StackTopShiftUp);

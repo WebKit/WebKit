@@ -27,15 +27,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FontCache_h
-#define FontCache_h
+#pragma once
 
 #include "FontDescription.h"
 #include "Timer.h"
 #include <array>
 #include <limits.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -290,5 +288,3 @@ inline void FontCache::platformPurgeInactiveFontData()
 #endif
 
 }
-
-#endif

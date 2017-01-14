@@ -457,7 +457,7 @@ void ArgumentCoder<TextureMapperAnimation>::encode(Encoder& encoder, const Textu
     encoder << static_cast<uint32_t>(animationObject->fillMode());
     encoder << animationObject->duration();
     encoder << animationObject->iterationCount();
-    encodeTimingFunction(encoder, animationObject->timingFunction().get());
+    encodeTimingFunction(encoder, animationObject->timingFunction());
 
     const KeyframeValueList& keyframes = animation.keyframes();
     encoder.encodeEnum(keyframes.property());
@@ -527,7 +527,7 @@ bool ArgumentCoder<TextureMapperAnimation>::decode(Decoder& decoder, TextureMapp
     animationObject->setDuration(duration);
     animationObject->setIterationCount(iterationCount);
     if (timingFunction)
-        animationObject->setTimingFunction(timingFunction);
+        animationObject->setTimingFunction(WTFMove(timingFunction));
 
     AnimatedPropertyID property;
     if (!decoder.decodeEnum(property))

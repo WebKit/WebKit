@@ -45,7 +45,7 @@ public:
     RenderMathMLBlock(Document&, RenderStyle&&);
     virtual ~RenderMathMLBlock();
 
-    MathMLStyle* mathMLStyle() const { return const_cast<MathMLStyle*>(&m_mathMLStyle.get()); }
+    MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
@@ -104,7 +104,7 @@ public:
     }
 
 
-    MathMLStyle* mathMLStyle() const { return const_cast<MathMLStyle*>(&m_mathMLStyle.get()); }
+    MathMLStyle& mathMLStyle() const { return m_mathMLStyle; }
 
 private:
     bool isRenderMathMLTable() const final { return true; }

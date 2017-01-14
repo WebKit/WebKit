@@ -723,31 +723,27 @@ RenderView* Frame::contentRenderer() const
 
 RenderWidget* Frame::ownerRenderer() const
 {
-    HTMLFrameOwnerElement* ownerElement = m_ownerElement;
+    auto* ownerElement = m_ownerElement;
     if (!ownerElement)
         return nullptr;
     auto* object = ownerElement->renderer();
-    if (!object)
-        return nullptr;
     // FIXME: If <object> is ever fixed to disassociate itself from frames
     // that it has started but canceled, then this can turn into an ASSERT
-    // since m_ownerElement would be 0 when the load is canceled.
+    // since m_ownerElement would be nullptr when the load is canceled.
     // https://bugs.webkit.org/show_bug.cgi?id=18585
-    if (!is<RenderWidget>(*object))
+    if (!is<RenderWidget>(object))
         return nullptr;
     return downcast<RenderWidget>(object);
 }
 
-Frame* Frame::frameForWidget(const Widget* widget)
+Frame* Frame::frameForWidget(const Widget& widget)
 {
-    ASSERT_ARG(widget, widget);
-
-    if (RenderWidget* renderer = RenderWidget::find(widget))
+    if (auto* renderer = RenderWidget::find(widget))
         return renderer->frameOwnerElement().document().frame();
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
-    return &downcast<FrameView>(*widget).frame();
+    return &downcast<FrameView>(widget).frame();
 }
 
 void Frame::clearTimers(FrameView *view, Document *document)

@@ -239,7 +239,7 @@ private:
     RefPtr<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive);
     void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive);
     
-    const TimingFunction* timingFunctionForAnimationValue(const AnimationValue&, const Animation&);
+    const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const Animation&);
     
     bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
     bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);

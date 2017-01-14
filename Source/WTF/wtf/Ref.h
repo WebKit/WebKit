@@ -133,17 +133,10 @@ public:
         ASSERT(m_ptr);
     }
 
-    const T* operator->() const { ASSERT(m_ptr); return m_ptr; }
-    T* operator->() { ASSERT(m_ptr); return m_ptr; }
-
-    const T* ptr() const { ASSERT(m_ptr); return m_ptr; }
-    T* ptr() { ASSERT(m_ptr); return m_ptr; }
-
-    const T& get() const { ASSERT(m_ptr); return *m_ptr; }
-    T& get() { ASSERT(m_ptr); return *m_ptr; }
-
-    operator T&() { ASSERT(m_ptr); return *m_ptr; }
-    operator const T&() const { ASSERT(m_ptr); return *m_ptr; }
+    T* operator->() const { ASSERT(m_ptr); return m_ptr; }
+    T* ptr() const { ASSERT(m_ptr); return m_ptr; }
+    T& get() const { ASSERT(m_ptr); return *m_ptr; }
+    operator T&() const { ASSERT(m_ptr); return *m_ptr; }
 
     template<typename U> Ref<T> replace(Ref<U>&&) WARN_UNUSED_RETURN;
 

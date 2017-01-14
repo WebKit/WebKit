@@ -126,7 +126,7 @@ public:
 
 private:
     RenderPtr<RenderObject> createContentRenderer(Document&, const RenderStyle&) const final;
-    std::unique_ptr<ContentData> cloneInternal() const final { return std::make_unique<TextContentData>(text()); }
+    std::unique_ptr<ContentData> cloneInternal() const final { return std::make_unique<TextContentData>(m_text); }
 
     String m_text;
 };

@@ -52,7 +52,7 @@ ScriptRunner::~ScriptRunner()
     }
     for (auto& pendingScript : m_pendingAsyncScripts) {
         if (pendingScript->watchingForLoad())
-            const_cast<PendingScript&>(pendingScript.get()).clearClient();
+            pendingScript->clearClient();
         m_document.decrementLoadEventDelayCount();
     }
 }

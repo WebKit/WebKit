@@ -89,7 +89,7 @@ void Widget::setFocus(bool focused)
     if (!focused)
         return;
 
-    Frame* frame = Frame::frameForWidget(this);
+    Frame* frame = Frame::frameForWidget(*this);
     if (!frame)
         return;
 

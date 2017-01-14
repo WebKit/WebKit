@@ -38,8 +38,7 @@ std::unique_ptr<ContentData> ContentData::clone() const
     auto result = cloneInternal();
     auto* lastNewData = result.get();
     for (auto* contentData = next(); contentData; contentData = contentData->next()) {
-        auto newData = contentData->cloneInternal();
-        lastNewData->setNext(WTFMove(newData));
+        lastNewData->setNext(contentData->cloneInternal());
         lastNewData = lastNewData->next();
     }
     return result;

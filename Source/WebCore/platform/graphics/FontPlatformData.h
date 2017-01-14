@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010, 2013-2016 Apple Inc.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
@@ -22,10 +22,15 @@
  *
  */
 
-#ifndef FontPlatformData_h
-#define FontPlatformData_h
+#pragma once
 
 #include "TextFlags.h"
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/StringImpl.h>
+
 
 #if PLATFORM(WIN)
 #include "COMPtr.h"
@@ -44,24 +49,17 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
-#if PLATFORM(COCOA)
 #if USE(APPKIT)
 OBJC_CLASS NSFont;
 #endif
 
+#if PLATFORM(COCOA)
 typedef const struct __CTFont* CTFontRef;
-
 #endif
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
 #endif
-
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/StringImpl.h>
 
 #if PLATFORM(WIN)
 #include <wtf/win/GDIObject.h>
@@ -69,7 +67,6 @@ typedef struct HFONT__* HFONT;
 interface IDWriteFont;
 interface IDWriteFontFace;
 #endif
-
 
 namespace WebCore {
 
@@ -82,10 +79,7 @@ class FontPlatformData {
 public:
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
-#if !USE(FREETYPE)
-    FontPlatformData(const FontPlatformData&) = default;
-#endif
-    FontPlatformData(FontPlatformData&&) = default;
+
     FontPlatformData(const FontDescription&, const AtomicString& family);
     FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, TextRenderingMode = AutoTextRendering);
 
@@ -103,27 +97,36 @@ public:
 
 #if PLATFORM(WIN)
     FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-
-#if USE(CG)
-    FontPlatformData(GDIObject<HFONT>, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-#elif USE(DIRECT2D)
-    FontPlatformData(GDIObject<HFONT>, IDWriteFont*, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-#elif USE(CAIRO)
-    FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic);
 #endif
+
+#if PLATFORM(WIN) && USE(CG)
+    FontPlatformData(GDIObject<HFONT>, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+#endif
+
+#if PLATFORM(WIN) && USE(DIRECT2D)
+    FontPlatformData(GDIObject<HFONT>, IDWriteFont*, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+#endif
+
+#if PLATFORM(WIN) && USE(CAIRO)
+    FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic);
 #endif
 
 #if USE(FREETYPE)
     FontPlatformData(FcPattern*, const FontDescription&);
     FontPlatformData(cairo_font_face_t*, const FontDescription&, bool syntheticBold, bool syntheticOblique);
     FontPlatformData(const FontPlatformData&);
+    FontPlatformData(FontPlatformData&&) = default;
+    FontPlatformData& operator=(const FontPlatformData&);
+    FontPlatformData& operator=(FontPlatformData&&) = default;
     ~FontPlatformData();
 #endif
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->get() : 0; }
     bool useGDI() const { return m_useGDI; }
-#elif PLATFORM(COCOA)
+#endif
+
+#if PLATFORM(COCOA)
     CTFontRef font() const { return m_font.get(); }
     WEBCORE_EXPORT CTFontRef registeredFont() const; // Returns nullptr iff the font is not registered, such as web fonts (otherwise returns font()).
 
@@ -189,12 +192,6 @@ public:
 #endif
     }
 
-#if USE(FREETYPE)
-    FontPlatformData& operator=(const FontPlatformData&);
-#else
-    FontPlatformData& operator=(const FontPlatformData&) = default;
-#endif
-
     bool operator==(const FontPlatformData& other) const
     {
         return platformIsEqual(other)
@@ -232,12 +229,15 @@ public:
 
 private:
     bool platformIsEqual(const FontPlatformData&) const;
+
 #if PLATFORM(COCOA)
     CGFloat ctFontSize() const;
 #endif
+
 #if PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
 #endif
+
 #if USE(FREETYPE)
     void buildScaledFont(cairo_font_face_t*);
 #endif
@@ -253,13 +253,16 @@ private:
 #if USE(CG) && (PLATFORM(WIN) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000))
     RetainPtr<CGFontRef> m_cgFont;
 #endif
+
 #if USE(DIRECT2D)
     COMPtr<IDWriteFont> m_dwFont;
     COMPtr<IDWriteFontFace> m_dwFontFace;
 #endif
+
 #if USE(CAIRO)
     RefPtr<cairo_scaled_font_t> m_scaledFont;
 #endif
+
 #if USE(FREETYPE)
     RefPtr<FcPattern> m_pattern;
     mutable FcUniquePtr<FcFontSet> m_fallbacks;
@@ -285,15 +288,18 @@ private:
 #if PLATFORM(IOS)
     bool m_isEmoji { false };
 #endif
+
 #if PLATFORM(WIN)
     bool m_useGDI { false };
 #endif
+
 #if USE(FREETYPE)
     bool m_fixedWidth { false };
 #endif
 };
 
 #if USE(APPKIT)
+
 // NSFonts and CTFontRefs are toll-free-bridged.
 inline CTFontRef toCTFont(NSFont *font)
 {
@@ -304,9 +310,11 @@ inline NSFont *toNSFont(CTFontRef font)
 {
     return (NSFont *)font;
 }
+
 #endif
 
 #if USE(CG)
+
 class ScopedTextMatrix {
 public:
     ScopedTextMatrix(CGAffineTransform newMatrix, CGContextRef context)
@@ -330,8 +338,7 @@ private:
     CGContextRef m_context;
     CGAffineTransform m_textMatrix;
 };
+
 #endif
 
 } // namespace WebCore
-
-#endif // FontPlatformData_h

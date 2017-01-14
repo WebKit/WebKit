@@ -164,7 +164,7 @@ public:
     WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
-    WEBCORE_EXPORT static Frame* frameForWidget(const Widget*);
+    WEBCORE_EXPORT static Frame* frameForWidget(const Widget&);
 
     Settings& settings() const { return *m_settings; }
 

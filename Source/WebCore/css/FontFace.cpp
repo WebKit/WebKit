@@ -258,13 +258,13 @@ ExceptionOr<void> FontFace::setFeatureSettings(const String& featureSettings)
 
 String FontFace::family() const
 {
-    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
     return m_backing->families()->cssText();
 }
 
 String FontFace::style() const
 {
-    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
     switch (m_backing->traitsMask() & FontStyleMask) {
     case FontStyleNormalMask:
         return String("normal", String::ConstructFromLiteral);
@@ -277,7 +277,7 @@ String FontFace::style() const
 
 String FontFace::weight() const
 {
-    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
     switch (m_backing->traitsMask() & FontWeightMask) {
     case FontWeight100Mask:
         return String("100", String::ConstructFromLiteral);
@@ -309,7 +309,7 @@ String FontFace::stretch() const
 
 String FontFace::unicodeRange() const
 {
-    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
     if (!m_backing->ranges().size())
         return ASCIILiteral("U+0-10FFFF");
     RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
@@ -320,13 +320,13 @@ String FontFace::unicodeRange() const
 
 String FontFace::variant() const
 {
-    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
     return computeFontVariant(m_backing->variantSettings())->cssText();
 }
 
 String FontFace::featureSettings() const
 {
-    const_cast<CSSFontFace&>(m_backing.get()).updateStyleIfNeeded();
+    m_backing->updateStyleIfNeeded();
     if (!m_backing->featureSettings().size())
         return ASCIILiteral("normal");
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();

@@ -145,20 +145,26 @@ void RenderThemeEfl::adjustSizeConstraints(RenderStyle& style, FormType type) co
     // These are always valid, even if no theme could be loaded.
     const ThemePartDesc* desc = m_partDescs + (size_t)type;
 
-    if (style.minWidth().isIntrinsic())
-        style.setMinWidth(desc->min.width());
-    if (style.minHeight().isIntrinsic())
-        style.setMinHeight(desc->min.height());
+    if (style.minWidth().isIntrinsic()) {
+        auto copy = desc->min.width;
+        style.setMinWidth(WTFMove(copy));
+    }
+    if (style.minHeight().isIntrinsic()) {
+        auto copy = desc->min.height;
+        style.setMinHeight(WTFMove(copy));
+    }
 
-    if (desc->max.width().value() > 0 && style.maxWidth().isIntrinsicOrAuto())
-        style.setMaxWidth(desc->max.width());
-    if (desc->max.height().value() > 0 && style.maxHeight().isIntrinsicOrAuto())
-        style.setMaxHeight(desc->max.height());
+    if (desc->max.width.value() > 0 && style.maxWidth().isIntrinsicOrAuto()) {
+        auto copy = desc->max.width;
+        style.setMaxWidth(WTFMove(copy));
+    }
+    if (desc->max.height.value() > 0 && style.maxHeight().isIntrinsicOrAuto()) {
+        auto copy = desc->max.height;
+        style.setMaxHeight(WTFMove(copy));
+    }
 
-    style.setPaddingTop(desc->padding.top());
-    style.setPaddingBottom(desc->padding.bottom());
-    style.setPaddingLeft(desc->padding.left());
-    style.setPaddingRight(desc->padding.right());
+    auto paddingCopy = desc->padding;
+    style.setPaddingBox(WTFMove(paddingCopy));
 }
 
 static bool isFormElementTooLargeToDisplay(const IntSize& elementSize)
@@ -365,7 +371,7 @@ bool RenderThemeEfl::paintThemePart(const RenderObject& object, FormType type, c
     if (!entry)
         return true;
 
-    bool haveBackgroundColor = isControlStyled(object.style(), object.style().border(), *object.style().backgroundLayers(), Color::white);
+    bool haveBackgroundColor = isControlStyled(object.style(), object.style().border(), object.style().backgroundLayers(), Color::white);
     ControlStates states(extractControlStatesForRenderer(object));
     applyEdjeStateFromForm(entry->edje(), &states, haveBackgroundColor);
 
@@ -542,11 +548,11 @@ bool RenderThemeEfl::loadTheme()
 
 void RenderThemeEfl::applyPartDescriptionFallback(ThemePartDesc* desc)
 {
-    desc->min.setWidth(Length(0, Fixed));
-    desc->min.setHeight(Length(0, Fixed));
+    desc->min.width = { 0, Fixed };
+    desc->min.height = { 0, Fixed };
 
-    desc->max.setWidth(Length(0, Fixed));
-    desc->max.setHeight(Length(0, Fixed));
+    desc->max.width = { 0, Fixed };
+    desc->max.height = { 0, Fixed };
 
     desc->padding = LengthBox(0, 0, 0, 0);
 }
@@ -559,12 +565,12 @@ void RenderThemeEfl::applyPartDescription(Evas_Object* object, ThemePartDesc* de
     if (!minw && !minh)
         edje_object_size_min_calc(object, &minw, &minh);
 
-    desc->min.setWidth(Length(minw, Fixed));
-    desc->min.setHeight(Length(minh, Fixed));
+    desc->min.width = { minw, Fixed };
+    desc->min.height = { minh, Fixed };
 
     edje_object_size_max_get(object, &maxw, &maxh);
-    desc->max.setWidth(Length(maxw, Fixed));
-    desc->max.setHeight(Length(maxh, Fixed));
+    desc->max.width = { maxw, Fixed };
+    desc->max.height = { maxh, Fixed };
 
     if (!edje_object_part_exists(object, "text_confinement"))
         desc->padding = LengthBox(0, 0, 0, 0);
@@ -800,10 +806,14 @@ void RenderThemeEfl::adjustCheckboxStyle(StyleResolver& styleResolver, RenderSty
     style.resetBorder();
 
     const ThemePartDesc* desc = m_partDescs + (size_t)CheckBox;
-    if (style.width().value() < desc->min.width().value())
-        style.setWidth(desc->min.width());
-    if (style.height().value() < desc->min.height().value())
-        style.setHeight(desc->min.height());
+    if (style.width().value() < desc->min.width.value()) {
+        auto copy = desc->min.width;
+        style.setWidth(WTFMove(copy));
+    }
+    if (style.height().value() < desc->min.height.value()) {
+        auto copy = desc->min.height;
+        style.setHeight(WTFMove(copy));
+    }
 }
 
 bool RenderThemeEfl::paintCheckbox(const RenderObject& object, const PaintInfo& info, const IntRect& rect)
@@ -823,10 +833,14 @@ void RenderThemeEfl::adjustRadioStyle(StyleResolver& styleResolver, RenderStyle&
     style.resetBorder();
 
     const ThemePartDesc* desc = m_partDescs + (size_t)RadioButton;
-    if (style.width().value() < desc->min.width().value())
-        style.setWidth(desc->min.width());
-    if (style.height().value() < desc->min.height().value())
-        style.setHeight(desc->min.height());
+    if (style.width().value() < desc->min.width.value()) {
+        auto copy = desc->min.width;
+        style.setWidth(WTFMove(copy));
+    }
+    if (style.height().value() < desc->min.height.value()) {
+        auto copy = desc->min.height;
+        style.setHeight(WTFMove(copy));
+    }
 }
 
 bool RenderThemeEfl::paintRadio(const RenderObject& object, const PaintInfo& info, const IntRect& rect)

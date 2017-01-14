@@ -127,7 +127,7 @@ void KeyedEncoderGlib::endArray()
     m_arrayStack.removeLast();
 }
 
-PassRefPtr<SharedBuffer> KeyedEncoderGlib::finishEncoding()
+RefPtr<SharedBuffer> KeyedEncoderGlib::finishEncoding()
 {
     g_assert(m_variantBuilderStack.last() == &m_variantBuilder);
     GRefPtr<GVariant> variant = g_variant_builder_end(&m_variantBuilder);

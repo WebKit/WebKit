@@ -116,7 +116,7 @@ void RenderMenuList::adjustInnerStyle()
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     // But we only do that for the cases where html.css would otherwise use center.
-    if (style().alignItemsPosition() == ItemPositionCenter) {
+    if (style().alignItems().position() == ItemPositionCenter) {
         innerStyle.setMarginTop(Length());
         innerStyle.setMarginBottom(Length());
         innerStyle.setAlignSelfPosition(ItemPositionFlexStart);

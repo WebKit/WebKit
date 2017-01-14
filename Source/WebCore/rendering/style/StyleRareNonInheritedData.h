@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -44,34 +44,27 @@
 namespace WebCore {
 
 class AnimationList;
+class ContentData;
 class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
 class StyleFilterData;
 class StyleFlexibleBoxData;
-#if ENABLE(CSS_GRID_LAYOUT)
 class StyleGridData;
 class StyleGridItemData;
-#endif
 class StyleMarqueeData;
 class StyleMultiColData;
 class StyleReflection;
 class StyleResolver;
-class StyleTransformData;
-#if ENABLE(CSS_SCROLL_SNAP)
-class StyleScrollSnapPort;
 class StyleScrollSnapArea;
-#endif
+class StyleScrollSnapPort;
+class StyleTransformData;
 
-class ContentData;
 struct LengthSize;
-
-#if ENABLE(DASHBOARD_SUPPORT)
 struct StyleDashboardRegion;
-#endif
 
 // Page size type.
-// StyleRareNonInheritedData::m_pageSize is meaningful only when 
-// StyleRareNonInheritedData::m_pageSizeType is PAGE_SIZE_RESOLVED.
+// StyleRareNonInheritedData::pageSize is meaningful only when
+// StyleRareNonInheritedData::pageSizeType is PAGE_SIZE_RESOLVED.
 enum PageSizeType {
     PAGE_SIZE_AUTO, // size: auto
     PAGE_SIZE_AUTO_LANDSCAPE, // size: landscape
@@ -89,144 +82,147 @@ public:
     ~StyleRareNonInheritedData();
     
     bool operator==(const StyleRareNonInheritedData&) const;
-    bool operator!=(const StyleRareNonInheritedData& o) const { return !(*this == o); }
+    bool operator!=(const StyleRareNonInheritedData& other) const { return !(*this == other); }
 
     bool contentDataEquivalent(const StyleRareNonInheritedData&) const;
 
     bool hasFilters() const;
+
 #if ENABLE(FILTERS_LEVEL_2)
     bool hasBackdropFilters() const;
 #endif
-    bool hasOpacity() const { return m_opacity < 1; }
 
-    bool hasAnimationsOrTransitions() const { return m_animations || m_transitions; }
+    bool hasOpacity() const { return opacity < 1; }
 
-    float m_opacity;
+    bool hasAnimationsOrTransitions() const { return animations || transitions; }
 
-    float m_aspectRatioDenominator;
-    float m_aspectRatioNumerator;
+    float opacity;
 
-    float m_perspective;
-    Length m_perspectiveOriginX;
-    Length m_perspectiveOriginY;
+    float aspectRatioDenominator;
+    float aspectRatioNumerator;
+
+    float perspective;
+    Length perspectiveOriginX;
+    Length perspectiveOriginY;
 
     LineClampValue lineClamp; // An Apple extension.
     
-    IntSize m_initialLetter;
+    IntSize initialLetter;
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    Vector<StyleDashboardRegion> m_dashboardRegions;
+    Vector<StyleDashboardRegion> dashboardRegions;
 #endif
 
-    DataRef<StyleDeprecatedFlexibleBoxData> m_deprecatedFlexibleBox; // Flexible box properties
-    DataRef<StyleFlexibleBoxData> m_flexibleBox;
-    DataRef<StyleMarqueeData> m_marquee; // Marquee properties
-    DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
-    DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)
-    DataRef<StyleFilterData> m_filter; // Filter operations (url, sepia, blur, etc.)
+    DataRef<StyleDeprecatedFlexibleBoxData> deprecatedFlexibleBox; // Flexible box properties
+    DataRef<StyleFlexibleBoxData> flexibleBox;
+    DataRef<StyleMarqueeData> marquee; // Marquee properties
+    DataRef<StyleMultiColData> multiCol; //  CSS3 multicol properties
+    DataRef<StyleTransformData> transform; // Transform properties (rotate, scale, skew, etc.)
+    DataRef<StyleFilterData> filter; // Filter operations (url, sepia, blur, etc.)
+
 #if ENABLE(FILTERS_LEVEL_2)
-    DataRef<StyleFilterData> m_backdropFilter; // Filter operations (url, sepia, blur, etc.)
+    DataRef<StyleFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-    DataRef<StyleGridData> m_grid;
-    DataRef<StyleGridItemData> m_gridItem;
+    DataRef<StyleGridData> grid;
+    DataRef<StyleGridItemData> gridItem;
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    DataRef<StyleScrollSnapPort> m_scrollSnapPort;
-    DataRef<StyleScrollSnapArea> m_scrollSnapArea;
+    DataRef<StyleScrollSnapPort> scrollSnapPort;
+    DataRef<StyleScrollSnapArea> scrollSnapArea;
 #endif
 
-    std::unique_ptr<ContentData> m_content;
-    std::unique_ptr<CounterDirectiveMap> m_counterDirectives;
-    String m_altText;
+    std::unique_ptr<ContentData> content;
+    std::unique_ptr<CounterDirectiveMap> counterDirectives;
+    String altText;
 
-    std::unique_ptr<ShadowData> m_boxShadow; // For box-shadow decorations.
+    std::unique_ptr<ShadowData> boxShadow; // For box-shadow decorations.
 
-    RefPtr<WillChangeData> m_willChange; // Null indicates 'auto'.
+    RefPtr<WillChangeData> willChange; // Null indicates 'auto'.
     
-    RefPtr<StyleReflection> m_boxReflect;
+    RefPtr<StyleReflection> boxReflect;
 
-    std::unique_ptr<AnimationList> m_animations;
-    std::unique_ptr<AnimationList> m_transitions;
+    std::unique_ptr<AnimationList> animations;
+    std::unique_ptr<AnimationList> transitions;
 
-    FillLayer m_mask;
-    NinePieceImage m_maskBoxImage;
+    FillLayer mask;
+    NinePieceImage maskBoxImage;
 
-    LengthSize m_pageSize;
-    LengthPoint m_objectPosition;
+    LengthSize pageSize;
+    LengthPoint objectPosition;
 
-    RefPtr<ShapeValue> m_shapeOutside;
-    Length m_shapeMargin;
-    float m_shapeImageThreshold;
+    RefPtr<ShapeValue> shapeOutside;
+    Length shapeMargin;
+    float shapeImageThreshold;
 
-    RefPtr<ClipPathOperation> m_clipPath;
+    RefPtr<ClipPathOperation> clipPath;
 
-    Color m_textDecorationColor;
-    Color m_visitedLinkTextDecorationColor;
-    Color m_visitedLinkBackgroundColor;
-    Color m_visitedLinkOutlineColor;
-    Color m_visitedLinkBorderLeftColor;
-    Color m_visitedLinkBorderRightColor;
-    Color m_visitedLinkBorderTopColor;
-    Color m_visitedLinkBorderBottomColor;
+    Color textDecorationColor;
+    Color visitedLinkTextDecorationColor;
+    Color visitedLinkBackgroundColor;
+    Color visitedLinkOutlineColor;
+    Color visitedLinkBorderLeftColor;
+    Color visitedLinkBorderRightColor;
+    Color visitedLinkBorderTopColor;
+    Color visitedLinkBorderBottomColor;
 
-    int m_order;
+    int order;
 
-    AtomicString m_flowThread;
-    AtomicString m_regionThread;
+    AtomicString flowThread;
+    AtomicString regionThread;
 
-    StyleContentAlignmentData m_alignContent;
-    StyleSelfAlignmentData m_alignItems;
-    StyleSelfAlignmentData m_alignSelf;
-    StyleContentAlignmentData m_justifyContent;
-    StyleSelfAlignmentData m_justifyItems;
-    StyleSelfAlignmentData m_justifySelf;
+    StyleContentAlignmentData alignContent;
+    StyleSelfAlignmentData alignItems;
+    StyleSelfAlignmentData alignSelf;
+    StyleContentAlignmentData justifyContent;
+    StyleSelfAlignmentData justifyItems;
+    StyleSelfAlignmentData justifySelf;
 
 #if ENABLE(TOUCH_EVENTS)
-    unsigned m_touchAction : 1; // TouchAction
+    unsigned touchAction : 1; // TouchAction
 #endif
 
-    unsigned m_regionFragment : 1; // RegionFragment
+    unsigned regionFragment : 1; // RegionFragment
 
-    unsigned m_pageSizeType : 2; // PageSizeType
-    unsigned m_transformStyle3D : 1; // ETransformStyle3D
-    unsigned m_backfaceVisibility : 1; // EBackfaceVisibility
+    unsigned pageSizeType : 2; // PageSizeType
+    unsigned transformStyle3D : 1; // ETransformStyle3D
+    unsigned backfaceVisibility : 1; // EBackfaceVisibility
 
 
     unsigned userDrag : 2; // EUserDrag
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned marginBeforeCollapse : 2; // EMarginCollapse
     unsigned marginAfterCollapse : 2; // EMarginCollapse
-    unsigned m_appearance : 6; // EAppearance
-    unsigned m_borderFit : 1; // EBorderFit
-    unsigned m_textCombine : 1; // CSS3 text-combine properties
+    unsigned appearance : 6; // EAppearance
+    unsigned borderFit : 1; // EBorderFit
+    unsigned textCombine : 1; // CSS3 text-combine properties
 
-    unsigned m_textDecorationStyle : 3; // TextDecorationStyle
+    unsigned textDecorationStyle : 3; // TextDecorationStyle
 
-    unsigned m_aspectRatioType : 2;
+    unsigned aspectRatioType : 2;
 
 #if ENABLE(CSS_COMPOSITING)
-    unsigned m_effectiveBlendMode: 5; // EBlendMode
-    unsigned m_isolation : 1; // Isolation
+    unsigned effectiveBlendMode: 5; // EBlendMode
+    unsigned isolation : 1; // Isolation
 #endif
 
 #if ENABLE(APPLE_PAY)
-    unsigned m_applePayButtonStyle : 2;
-    unsigned m_applePayButtonType : 3;
+    unsigned applePayButtonStyle : 2;
+    unsigned applePayButtonType : 3;
 #endif
 
-    unsigned m_objectFit : 3; // ObjectFit
+    unsigned objectFit : 3; // ObjectFit
     
-    unsigned m_breakBefore : 4; // BreakBetween
-    unsigned m_breakAfter : 4;
-    unsigned m_breakInside : 3; // BreakInside
-    unsigned m_resize : 2; // EResize
+    unsigned breakBefore : 4; // BreakBetween
+    unsigned breakAfter : 4;
+    unsigned breakInside : 3; // BreakInside
+    unsigned resize : 2; // EResize
 
-    unsigned m_hasAttrContent : 1;
+    unsigned hasAttrContent : 1;
 
-    unsigned m_isPlaceholderStyle : 1;
+    unsigned isPlaceholderStyle : 1;
 
 private:
     StyleRareNonInheritedData();

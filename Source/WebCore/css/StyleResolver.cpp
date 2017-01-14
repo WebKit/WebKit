@@ -168,7 +168,7 @@ inline void StyleResolver::State::cacheBorderAndBackground()
     m_hasUAAppearance = m_style->hasAppearance();
     if (m_hasUAAppearance) {
         m_borderData = m_style->border();
-        m_backgroundData = *m_style->backgroundLayers();
+        m_backgroundData = m_style->backgroundLayers();
         m_backgroundColor = m_style->backgroundColor();
     }
 }
@@ -1328,7 +1328,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // We can build up the style by copying non-inherited properties from an earlier style object built using the same exact
         // style declarations. We then only need to apply the inherited properties, if any, as their values can depend on the 
         // element context. This is fast and saves memory by reusing the style data structures.
-        state.style()->copyNonInheritedFrom(cacheItem->renderStyle.get());
+        state.style()->copyNonInheritedFrom(*cacheItem->renderStyle);
         if (state.parentStyle()->inheritedDataShared(cacheItem->parentRenderStyle.get()) && !isAtShadowBoundary(element)) {
             EInsideLink linkStatus = state.style()->insideLink();
             // If the cache item parent style has identical inherited properties to the current parent style then the
@@ -1661,17 +1661,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     if (isInherit && !CSSProperty::isInheritedProperty(id))
         state.style()->setHasExplicitlyInheritedProperties();
     
-    if (id == CSSPropertyCustom) {
-        CSSCustomPropertyValue* customProperty = &downcast<CSSCustomPropertyValue>(*valueToApply);
-        if (isInherit) {
-            RefPtr<CSSCustomPropertyValue> customVal = state.parentStyle()->getCustomPropertyValue(customProperty->name());
-            if (!customVal)
-                customVal = CSSCustomPropertyValue::createInvalid();
-            state.style()->setCustomPropertyValue(customProperty->name(), customVal);
-        } else if (isInitial)
-            state.style()->setCustomPropertyValue(customProperty->name(), CSSCustomPropertyValue::createInvalid());
-        else
-            state.style()->setCustomPropertyValue(customProperty->name(), customProperty);
+    if (customPropertyValue) {
+        auto& name = customPropertyValue->name();
+        auto* value = isInitial ? nullptr : isInherit ? state.parentStyle()->customProperties().get(name) : customPropertyValue;
+        state.style()->setCustomPropertyValue(name, value ? makeRef(*value) : CSSCustomPropertyValue::createInvalid());
         return;
     }
 

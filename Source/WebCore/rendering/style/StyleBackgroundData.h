@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -36,29 +36,19 @@ class StyleBackgroundData : public RefCounted<StyleBackgroundData> {
 public:
     static Ref<StyleBackgroundData> create() { return adoptRef(*new StyleBackgroundData); }
     Ref<StyleBackgroundData> copy() const;
-    ~StyleBackgroundData() { }
 
-    bool operator==(const StyleBackgroundData& o) const;
-    bool operator!=(const StyleBackgroundData& o) const
-    {
-        return !(*this == o);
-    }
+    bool operator==(const StyleBackgroundData&) const;
+    bool operator!=(const StyleBackgroundData& other) const { return !(*this == other); }
 
     bool isEquivalentForPainting(const StyleBackgroundData&) const;
 
-    const FillLayer& background() const { return m_background; }
-    const Color& color() const { return m_color; }
-    const OutlineValue& outline() const { return m_outline; }
+    FillLayer background;
+    Color color;
+    OutlineValue outline;
 
 private:
-    friend class RenderStyle;
-
     StyleBackgroundData();
-    StyleBackgroundData(const StyleBackgroundData&); 
-
-    FillLayer m_background;
-    Color m_color;
-    OutlineValue m_outline;
+    StyleBackgroundData(const StyleBackgroundData&);
 };
 
 } // namespace WebCore

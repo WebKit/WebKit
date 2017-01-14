@@ -258,23 +258,21 @@ bool EventPath::hasEventListeners(const AtomicString& eventType) const
 Vector<EventTarget*> EventPath::computePathUnclosedToTarget(const EventTarget& target) const
 {
     Vector<EventTarget*> path;
-    const Node* targetNode = const_cast<EventTarget&>(target).toNode();
+    auto* targetNode = const_cast<EventTarget&>(target).toNode();
     if (!targetNode) {
-        const DOMWindow* domWindow = const_cast<EventTarget&>(target).toDOMWindow();
+        auto* domWindow = const_cast<EventTarget&>(target).toDOMWindow();
         if (!domWindow)
             return path;
         targetNode = domWindow->document();
         ASSERT(targetNode);
     }
-
     for (auto& context : m_path) {
-        if (Node* nodeInPath = context->currentTarget()->toNode()) {
+        if (auto* nodeInPath = context->currentTarget()->toNode()) {
             if (!targetNode->isClosedShadowHidden(*nodeInPath))
                 path.append(context->currentTarget());
         } else
             path.append(context->currentTarget());
     }
-
     return path;
 }
 

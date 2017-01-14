@@ -1,3 +1,645 @@
+2017-01-11  Darin Adler  <darin@apple.com>
+
+        Remove PassRefPtr from more of "platform"
+        https://bugs.webkit.org/show_bug.cgi?id=166809
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Removed DeviceMotionClientMock.cpp.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.h:
+        Added now-needed include.
+
+        * Modules/speech/SpeechSynthesisUtterance.cpp:
+        (WebCore::SpeechSynthesisUtterance::SpeechSynthesisUtterance):
+        Pass a reference instead of a pointer.
+
+        * Modules/speech/SpeechSynthesisUtterance.h: Tweaks, msade a few things
+        more private and final.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Detail::getPtrOrRef): Removed no-longer-needed const_cast.
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::wrapped): Ditto.
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::~ScriptModuleLoader): Ditto.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToLengthSize): Updated for LengthSize struct.
+        (WebCore::convertToCenterCoordinate): Ditto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createPositionListForLayer): Take a reference.
+        (WebCore::getBorderRadiusCornerValues): Updated for LengthSize struct.
+        (WebCore::getBorderRadiusCornerValue): Ditto.
+        (WebCore::getBorderRadiusShorthandValue): Ditto.
+        (WebCore::fillSizeToCSSValue): Ditto.
+        (WebCore::ComputedStyleExtractor::propertyValue): Updated many properties
+        since the layer properties now return references rather than pointers.
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::CachedGeneratedImage::image): Removed
+        no-longer-needed const_cast.
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::CSSKeyframesRule::item): Ditto.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::init): Updated for LengthSize struct.
+
+        * css/CSSStyleRule.h: Removed no-longer-needed const_cast.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::convertToLengthSize): Updated for LengthSize struct.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::family): Removed no-longer-needed const_cast.
+        (WebCore::FontFace::style): Ditto.
+        (WebCore::FontFace::weight): Ditto.
+        (WebCore::FontFace::unicodeRange): Ditto.
+        (WebCore::FontFace::variant): Ditto.
+        (WebCore::FontFace::featureSettings): Ditto.
+
+        * css/LengthFunctions.cpp:
+        (WebCore::sizeForLengthSize): Added.
+        (WebCore::floatSizeForLengthSize): Updated for LengthSize struct.
+        * css/LengthFunctions.h: Added sizeForLengthSize.
+
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::paintOrder): Cut down on creation of unused objects.
+        We now create only what we actually use.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertRadius): Updated for
+        LengthSize struct.
+        (WebCore::StyleBuilderConverter::convertShapeValue): Pass references
+        when creating ShapeValue.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::forwardInheritedValue): Added. This set of overloaded
+        functions allows us to use move semantics for some types, but copy
+        them when inheriting. Doing it with special cases here allows us to
+        resolve this without adding overloads someone might be tempted to
+        call outside the style builder, and without adding special cases to
+        the JSON file for each property.
+        (WebCore::StyleBuilderCustom::applyValueWebkitDashboardRegion):
+        Add WTFMove as needed to work with rvalue references.
+        (WebCore::StyleBuilderCustom::applyValueSize): Ditto.
+        (WebCore::StyleBuilderCustom::applyInheritTextIndent): Ditto.
+        (WebCore::StyleBuilderCustom::applyValueTextIndent): Ditto.
+        (WebCore::StyleBuilderCustom::applyInheritLineHeight): Ditto.
+        (WebCore::StyleBuilderCustom::applyValueLineHeight): Ditto.
+        (WebCore::StyleBuilderCustom::applyInheritClip): Ditto.
+        (WebCore::StyleBuilderCustom::applyValueClip): Ditto.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::cacheBorderAndBackground): Use
+        references instead of pointers.
+        (WebCore::StyleResolver::applyMatchedProperties): Ditto.
+        (WebCore::StyleResolver::applyProperty): Update for changes to the
+        custom property data in RenderStyle.
+
+        * css/makeprop.pl: Use auto quite a bit more in the generated code.
+        Updated special cases for layers to expect references. Added a WTFMove
+        so we can get move semantics for converted values that come out in
+        an optional. Added call to forwardInheritedValue (see above).
+
+        * dom/Document.cpp:
+        (WebCore::Document::pageSizeAndMarginsInPixels): Use auto and update
+        since LengthSize is a struct.
+
+        * dom/EventPath.cpp:
+        (WebCore::EventPath::computePathUnclosedToTarget): Use auto.
+
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeList::ownerNode): Removed no-longer-needed const_cast.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::source): Removed unneeded static_cast.
+
+        * dom/Node.cpp:
+        (WebCore::nodeSetPreTransformedFromNodeOrStringVector): Tweaked formatting.
+
+        * dom/Range.h:
+        (WebCore::Range::ownerDocument): Removed no-longer-needed const_cast.
+        * dom/RegisteredEventListener.h:
+        (WebCore::RegisteredEventListener::callback): Ditto.
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::~ScriptRunner): Ditto.
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::ownerNode): Ditto.
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::node): Ditto.
+
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused): Cut down on the number
+        of different functions here. Also use reference rather than pointer.
+        * inspector/PageScriptDebugServer.h: Updated for above change.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::recursiveSetProvisionalItem): Removed
+        no-longer-needed const_cast.
+        (WebCore::HistoryController::recursiveGoToItem): Ditto.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::ownerRenderer): Use auto. Let the is<> function do null
+        checking for us.
+        (WebCore::Frame::frameForWidget): Take a reference rather than a pointer.
+        * page/Frame.h: Updated for the above.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateRect): Use Chrome directly instead of using
+        HostWindow. HostWindow is an abstraction for the platform layer, and there
+        is no good reason to use it here.
+        (WebCore::FrameView::scheduleAnimation): Ditto.
+        (WebCore::FrameView::graphicsLayerForPlatformWidget): Updated to use reference
+        when calling RenderWidget::find.
+        (WebCore::FrameView::scrollContentsFastPath): Use Chrome instead of HostWindow.
+        (WebCore::FrameView::hostWindow): Use early return.
+        (WebCore::FrameView::updateScrollCorner): Removed unneeded call through to base
+        class function, which was empty.
+        (WebCore::FrameView::hasCustomScrollbars): Updated since the children set now
+        contains Ref rather than RefPtr.
+        (WebCore::FrameView::parentFrameView): Use early return.
+        (WebCore::FrameView::updateWidgetPositions): Use reference instead of pointer.
+        * page/FrameView.h: Use final instead of override. Remove now-unneeded const_cast.
+
+        * page/Page.cpp:
+        (WebCore::Page::pluginViews): Updated since the children set now contains
+        Ref rather than RefPtr.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty): Updated for LengthSize struct.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded): Updated for changes to
+        the types in animation function members.
+        (WebCore::AnimationBase::timeToNextService): Ditto.
+        (WebCore::AnimationBase::progress): Ditto.
+        (WebCore::AnimationBase::getElapsedTime): Ditto.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Updated for LengthSize struct.
+        (WebCore::LengthPropertyWrapper::LengthPropertyWrapper): Updated since we now
+        use rvalue references and move semantics when setting length properties.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteEventTrackingRegionsForFrame): Tweaked to
+        use auto, pass references.
+
+        * platform/KeyedCoding.h: Return RefPtr instead of PassRefPtr.
+
+        * platform/LengthBox.h: Added a constructor that moves the lengths in, rather
+        than always copying them.
+
+        * platform/LengthSize.cpp:
+        (WebCore::operator<<): Updated since LengthSize is a struct.
+        * platform/LengthSize.h: Turned LengthSize into a struct and removed all the
+        getter and setter code.
+
+        * platform/PlatformSpeechSynthesis.h: Removed. Unused.
+
+        * platform/PlatformSpeechSynthesisUtterance.cpp:
+        (WebCore::PlatformSpeechSynthesisUtterance::create): Return Ref rather than PassRefPtr.
+        (WebCore::PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance): Take
+        a reference. Initialize data members in class definition.
+        * platform/PlatformSpeechSynthesisUtterance.h: Updated for the above.
+
+        * platform/PlatformSpeechSynthesisVoice.cpp:
+        (WebCore::PlatformSpeechSynthesisVoice::create): Return Ref rather than PassRefPtr.
+        * platform/PlatformSpeechSynthesisVoice.h: Updated for the above.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::addChild): Take a reference rather than a PassRefPtr.
+        (WebCore::ScrollView::setHasScrollbarInternal): Updated for change to addChild
+        (WebCore::ScrollView::scrollContentsFastPath): Deleted. This was never called,
+        so made it pure virtual.
+        (WebCore::ScrollView::frameRectsChanged): Use a modern for loop.
+        (WebCore::ScrollView::clipRectChanged): Ditto.
+        (WebCore::ScrollView::updateScrollCorner): Deleted. This was empty so made it pure
+        virtual and changed FrameView to not call it.
+        (WebCore::ScrollView::setParentVisible): Use a modern for loop.
+        (WebCore::ScrollView::show): Ditto.
+        (WebCore::ScrollView::hide): Ditto.
+        * platform/ScrollView.h: Changed the children set to contain Ref instead of RefPtr.
+        Changed functions that were never overridden to either be final or non-virtual,
+        Changed functions that were never called to be pure virtual.
+
+        * platform/Theme.h:
+        (WebCore::Theme::minimumControlSize): Updated for LengthSize struct.
+
+        * platform/animation/Animation.h: Changed timingFunction and trigger to return
+        raw pointers instead of PassRefPtr. Changed setTimingFunction and setTrigger to
+        take RefPtr&& and Ref&& instead of PassRefPtr. CHanged initialTimingfunction and
+        initialTrigger to return Ref.
+
+        * platform/animation/AnimationList.cpp: Removed redundant check in FILL_UNSET_PROPERTY.
+        (WebCore::AnimationList::AnimationList): Use modern for loop, reserveInitialCapacity,
+        and uncheckedAppend.
+        * platform/animation/AnimationList.h: Changed append to take Ref&& instead of PassRefPtr.
+        changed vecto to contain Ref instead of RefPtr. Added move constructor and assignment
+        operator.
+
+        * platform/animation/AnimationTrigger.h:
+        (WebCore::AutoAnimationTrigger::clone): Return Ref instead of PassRefPtr.
+        (WebCore::AutoAnimationTrigger::create): Ditto.
+        (WebCore::AutoAnimationTrigger::clone): Ditto.
+        (WebCore::ScrollAnimationTrigger::create): Ditto.
+        (WebCore::ScrollAnimationTrigger::clone): Ditto.
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::LinearTimingFunction::create): Return Ref instead of PassRefPtr.
+        (WebCore::CubicBezierTimingFunction::create): Ditto.
+        (WebCore::CubicBezierTimingFunction::defaultTimingFunction): Return a reference
+        instead of a pointer.
+        (WebCore::CubicBezierTimingFunction::createReversed): Return Ref instead of PassRefPtr.
+        (WebCore::CubicBezierTimingFunction::clone): Ditto.
+        (WebCore::StepsTimingFunction::create): Ditto.
+        (WebCore::StepsTimingFunction::clone): Ditto.
+        (WebCore::SpringTimingFunction::create): Ditto.
+        (WebCore::SpringTimingFunction::clone): Ditto.
+
+        * platform/audio/AudioBus.h:
+        (WebCore::AudioBus::channel): Removed no-longer-needed const_cast.
+
+        * platform/cf/KeyedEncoderCF.cpp:
+        (WebCore::KeyedEncoderCF::finishEncoding): Return RefPtr instead of PassRefPtr.
+        * platform/cf/KeyedEncoderCF.h: Use final instead of override. Made even more
+        private. Changed return value of finishEncoding to Ref instead of PassRefPtr.
+
+        * platform/efl/PlatformSpeechSynthesisProviderEfl.h: Removed include of PassRefPtr.h.
+
+        * platform/glib/KeyedEncoderGlib.cpp:
+        (WebCore::KeyedEncoderGlib::finishEncoding): Return RefPtr instead of PassRefPtr.
+        * platform/glib/KeyedEncoderGlib.h: Use final instead of override. Made even more
+        private. Changed return value of finishEncoding to Ref instead of PassRefPtr.
+
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::outsetSizeForBlur): Simplified, removing unnecessary floating point math.
+        (WebCore::FilterOperations::FilterOperations): Deleted. Let the compiler generate this.
+        (WebCore::FilterOperations::operator=): Deleted. Let the compiler generate this.
+        (WebCore::FilterOperations::operator==): Streamlined.
+        (WebCore::FilterOperations::operationsMatch): Ditto.
+        (WebCore::FilterOperations::hasReferenceFilter): Ditto.
+        (WebCore::FilterOperations::hasOutsets): Ditto.
+        (WebCore::FilterOperations::outsets): Ditto.
+        (WebCore::FilterOperations::hasFilterThatAffectsOpacity): Ditto.
+        (WebCore::FilterOperations::hasFilterThatMovesPixels): Ditto.
+        * platform/graphics/filters/FilterOperations.h: Updated for above changes.
+
+        * platform/graphics/FontCache.h: Removed included of PassRefPtr.h.
+
+        * platform/graphics/FontPlatformData.h: Tweaked formatting. Removed nesting
+        from #if since our formatting makes it hard to see nesting. Let the compiler
+        generate the default move and copy constructors and assignemnt operators except
+        in the USE(FREETYPE) case.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::AnimationValue::AnimationValue): Updated since clone now returns a Ref
+        rather than a RefPtr.
+        (WebCore::FloatAnimationValue::FloatAnimationValue): Deleted. Let the compiler
+        generate the copy constructor without defining it explicitly.
+        (WebCore::TransformAnimationValue::TransformAnimationValue): Use a modern for
+        loop, reserveInitialCapacity, and unchecked append. Also tell the compiler to
+        generate the move constructor, since the special work is only needed for the
+        copy constructor.
+        (WebCore::FilterAnimationValue::FilterAnimationValue): Ditto.
+        (WebCore::KeyframeValueList::KeyframeValueList): Ditto.
+
+        * platform/graphics/LegacyCDMSession.h: Removed include of PassRefPtr.h.
+
+        * platform/graphics/PathUtilities.cpp:
+        (WebCore::PathUtilities::pathWithShrinkWrappedRectsForOutline): Updated
+        for LengthSize struct.
+
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::CDMSessionAVFoundationCF): Take a reference.
+        Don't bother setting m_client since we never use it.
+        (WebCore::CDMSessionAVFoundationCF::generateKeyRequest): Clean up code a bit
+        by using auto a lot more.
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h: Added include
+        that is now needed since it was removed from the base class. Tidied the class
+        up a bit, marking it final, making everything private, taking a reference, and
+        removing an unused data member, m_client.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createSession): Pass a reference.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        added include of WTFString.h, now needed because of removing an unneeded
+        include from another header file.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::animationCanBeAccelerated): Updated since trigger
+        is a raw pointer now.
+        (WebCore::GraphicsLayerCA::timingFunctionForAnimationValue): Updated to
+        return a reference rather than a pointer.
+        (WebCore::GraphicsLayerCA::setAnimationEndpoints): Updated for the above change.
+        (WebCore::GraphicsLayerCA::setAnimationKeyframes): Ditto.
+        (WebCore::GraphicsLayerCA::setTransformAnimationEndpoints): Ditto.
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes): Ditto.
+        (WebCore::GraphicsLayerCA::setFilterAnimationEndpoints): Ditto.
+        (WebCore::GraphicsLayerCA::setFilterAnimationKeyframes): Ditto.
+        * platform/graphics/ca/GraphicsLayerCA.h: Ditto.
+
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        (-[WebSpeechSynthesisWrapper speakUtterance:]): CHanged argument to be a
+        RefPtr&& instead of a PassRefPtr.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::sizeFromNSControlSize): Updated for LenghtSize struct.
+        (WebCore::checkboxSize): Ditto.
+        (WebCore::radioSize): Ditto.
+        (WebCore::ThemeMac::controlSize): Ditto.
+        (WebCore::ThemeMac::minimumControlSize): Ditto.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus): Updated to pass a reference.
+
+        * platform/mock/DeviceMotionClientMock.cpp: Removed. Unused.
+        * platform/mock/DeviceMotionClientMock.h: Removed. Unused.
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor): Return a Ref instead of a PassRefPtr.
+        (WebCore::loadSharedCursor): Ditto.
+        (WebCore::loadCursorByName): Ditto.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::output): Removed a no-longer-needed const_cast.
+        (WebCore::FilterEffectRenderer::outputRect): Ditto.
+
+        * rendering/ImageQualityController.cpp:
+        (WebCore::ImageQualityController::chooseInterpolationQuality): Tweaked formatting.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintFillLayers): Updated to take a reference. Also
+        used a vector to iterate the linked list in reverse order instead of recursion.
+        (WebCore::InlineFlowBox::paintFillLayer): Take a reference.
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h: Updated for the above.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers): Use auto a bit.
+        (WebCore::RenderBox::getBackgroundPaintedExtent): Use reference for the layers.
+        (WebCore::RenderBox::backgroundIsKnownToBeOpaqueInRect): Ditto.
+        (WebCore::RenderBox::backgroundHasOpaqueTopLayer): Ditto.
+        (WebCore::RenderBox::paintMaskImages): Ditto.
+        (WebCore::RenderBox::maskClipRect): Ditto.
+        (WebCore::RenderBox::paintFillLayers): Ditto.
+        (WebCore::RenderBox::paintFillLayer): Ditto.
+        (WebCore::layersUseImage): Ditto.
+        (WebCore::RenderBox::repaintLayerRectsForImage): Ditto.
+        * rendering/RenderBox.h: Updated for the above.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Use reference for
+        the layers.
+        (WebCore::RenderBoxModelObject::calculateFillTileSize): Ditto.
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry): Ditto.
+        (WebCore::RenderBoxModelObject::getGeometryForBackgroundImage): Ditto.
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground): Ditto.
+        * rendering/RenderBoxModelObject.h: Updated for the above.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement): Use references for the layers.
+        (WebCore::RenderElement::adjustStyleDifference): Ditto.
+        (WebCore::RenderElement::updateFillImages): Ditto.
+        (WebCore::RenderElement::setStyle): Use RenderStyle::replace to replace the
+        old style with the new style, and get the old one out at the same time.
+        (WebCore::RenderElement::styleDidChange): Use references for the layers.
+        (WebCore::mustRepaintFillLayers): Ditto.
+        (WebCore::RenderElement::repaintAfterLayoutIfNeeded): Ditto.
+        * rendering/RenderElement.h: Updated for the above.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset):
+        Refactor so we don't need so many functions in RenderStyle.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::adjustInnerStyle): Ditto.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar): Pass widget as reference to addChild.
+        Also did a few other tweaks and used more specific types.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::canCreateTiledImage): Updated since layers are references.
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage): Ditto.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::createScrollbar): Pass widget as reference to addChild.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell): Updated to use
+        references for layers.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle): Use WTFMove to pass a LengthBox.
+        (WebCore::RenderTheme::isControlStyled): Updated since LengthSize is a struct,
+        more WTFMove, change since layers are ferences.
+
+        * rendering/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustSizeConstraints): Update for Length and
+        LengthSize changes.
+        (WebCore::RenderThemeEfl::paintThemePart): Use reference instead of pointer.
+        (WebCore::RenderThemeEfl::applyPartDescriptionFallback): Update for Length and
+        LengthSize changes.
+        (WebCore::RenderThemeEfl::applyPartDescription): Ditto.
+        (WebCore::RenderThemeEfl::adjustCheckboxStyle): Ditto.
+        (WebCore::RenderThemeEfl::adjustRadioStyle): Ditto.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::borderRadiiFromStyle): Update for Length and LengthSize changes.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustCheckboxStyle): Update for Length and
+        LengthSize changes.
+        (WebCore::RenderThemeIOS::isControlStyled): Ditto.
+        (WebCore::RenderThemeIOS::adjustRadioStyle): Ditto.
+        (WebCore::RenderThemeIOS::adjustRoundBorderRadius): Ditto.
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorations): Ditto.
+        (WebCore::RenderThemeIOS::adjustSliderTrackStyle): Ditto.
+        (WebCore::RenderThemeIOS::adjustSliderThumbSize): Ditto.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::WidgetHierarchyUpdatesSuspensionScope::moveWidgets): Use move
+        insteead of swap and modern for loop instead of iterators.
+        (WebCore::moveWidgetToParentSoon): Take a reference instead of a pointer.
+        (WebCore::RenderWidget::setWidget): Update for above change.
+        (WebCore::RenderWidget::find): Take a reference instead of a pointer.
+        * rendering/RenderWidget.h: Updated for above changes.
+
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::reset): Updated since Length is passed as
+        rvalue reference now.
+
+        * rendering/mathml/MathMLStyle.cpp:
+        (WebCore::MathMLStyle::getMathMLStyle): Updated since mathMLStyle returns
+        a reference.
+        (WebCore::MathMLStyle::resolveMathMLStyleTree): Ditto.
+
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::mathMLStyle): Removed no-longer needed const_cast,
+        changed to return a reference rather than a pointer.
+        (WebCore::RenderMathMLTable::mathMLStyle): Ditto.
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::fractionParameters): Updated since mathMLStyle
+        returns a reference.
+        (WebCore::RenderMathMLFraction::stackParameters): Ditto.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::isLargeOperatorInDisplayStyle): Ditto.
+        (WebCore::RenderMathMLOperator::shouldMoveLimits): Ditto.
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::verticalParameters): Ditto.
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::updateMathVariantGlyph): Ditto.
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::floatSizeForLengthSize): Updated for LengthSize struct.
+        * rendering/style/BorderData.h:
+        (WebCore::BorderData::BorderData): Ditto.
+        (WebCore::BorderData::hasBorderRadius): Ditto.
+
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::clone): Updated member names.
+        * rendering/style/ContentData.h: Ditto.
+
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::computeSlices): Use initializer lists so we get
+        move optimization without requiring explicit WTFMove.
+
+        * rendering/style/DataRef.h:
+        (WebCore::DataRef::DataRef): Removed no-longer needed const_cast.
+        (WebCore::DataRef::replace): Added. This function is like Ref::replace, and
+        can be used to put a new value in and get an old value out without running into
+        the rule Ref has about not being reused once it becomes null because of being
+        moved out of. This function is a lot like std::exchange.
+        (WebCore::DataRef::operator const T&): Added operator so we can use these
+        as references without any function call in read-only contexts.
+        (WebCore::DataRef::get): Changed to return a reference rather than pointer.
+        (WebCore::DataRef::access): Ditto.
+
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeValue::timingFunction): Updated since timingFunction
+        returns a raw pointer.
+        (WebCore::KeyframeList::~KeyframeList): Removed unneeded call to clear,
+        which does things that are redundant since we are about to destroy all the
+        data members.
+        (WebCore::KeyframeList::operator==): Tweaked codign style a bit.
+
+        * rendering/style/NinePieceImage.h: Updated most functions in this class
+        for the changes to DataRef.
+
+        * rendering/style/RenderStyle.cpp: Updated nearly every function in this
+        class for the changes to DataRef, to eliminate the peculiar naming and use
+        our standard data member naming, m_memberName in a class, and memberName in a
+        struct or struct-like class for publicly accessible members, to pass, take,
+        and return more references and rvalue references, and to use modern for loops.
+        Other changes listed below function by function.
+        (WebCore::RenderStyle::defaultStyle): Use NeverDestroyed instead of allocating
+        on the heap.
+        (WebCore::RenderStyle::RenderStyle): Added a new constructor that performs
+        the replace operation, using a combination of DataRef::replace and std::exchange.
+        (WebCore::RenderStyle::replace): Added. Calls the above constructor.
+        (WebCore::RenderStyle::setScrollSnapType): Use SET_NESTED_VAR so we get equality
+        checks on this property, for the normal efficiency benefit.
+        (WebCore::RenderStyle::setDashboardRegion): Moved this here from the header.
+        (WebCore::RenderStyle::appendContent): Deleted.
+        (WebCore::RenderStyle::setContent): Refactored this set of functions to simplify.
+
+        * rendering/style/RenderStyle.h: Updated most functions as mentioned above.
+        Also updated macros to use the do/while(0) technique. Removed the long list of
+        friend classes with the elaborate comments; turned out none needed friendship
+        despite the comments. Made more things private. Moved large functions out of the
+        class definition.
+        (WebCore::RenderStyle::getTextShadowExtent): Deleted.
+        (WebCore::RenderStyle::getTextShadowHorizontalExtent): Deleted.
+        (WebCore::RenderStyle::getTextShadowVerticalExtent): Deleted.
+        (WebCore::RenderStyle::aspectRatio): Deleted.
+        (WebCore::RenderStyle::alignContentPosition): Deleted.
+        (WebCore::RenderStyle::alignContentDistribution): Deleted.
+        (WebCore::RenderStyle::alignContentOverflowAlignment): Deleted.
+        (WebCore::RenderStyle::alignItemsPosition): Deleted.
+        (WebCore::RenderStyle::alignItemsOverflowAlignment): Deleted.
+        (WebCore::RenderStyle::alignSelfPosition): Deleted.
+        (WebCore::RenderStyle::alignSelfOverflowAlignment): Deleted.
+        (WebCore::RenderStyle::justifyContentPosition): Deleted.
+        (WebCore::RenderStyle::justifyContentDistribution): Deleted.
+        (WebCore::RenderStyle::justifyContentOverflowAlignment): Deleted.
+        (WebCore::RenderStyle::justifyItemsPosition): Deleted.
+        (WebCore::RenderStyle::justifyItemsOverflowAlignment): Deleted.
+        (WebCore::RenderStyle::justifyItemsPositionType): Deleted.
+        (WebCore::RenderStyle::justifySelfPosition): Deleted.
+        (WebCore::RenderStyle::justifySelfOverflowAlignment): Deleted.
+        (WebCore::RenderStyle::setAlignContentPosition): Deleted.
+        (WebCore::RenderStyle::setAlignContentOverflow): Deleted.
+        (WebCore::RenderStyle::setAlignContentDistribution): Deleted.
+        (WebCore::RenderStyle::setAlignItemsOverflow): Deleted.
+        (WebCore::RenderStyle::setAlignSelfOverflow): Deleted.
+        (WebCore::RenderStyle::setJustifyContentOverflow): Deleted.
+        (WebCore::RenderStyle::setJustifyContentDistribution): Deleted.
+        (WebCore::RenderStyle::setJustifyItemsPosition): Deleted.
+        (WebCore::RenderStyle::setJustifyItemsOverflow): Deleted.
+        (WebCore::RenderStyle::setJustifyItemsPositionType): Deleted.
+        (WebCore::RenderStyle::setJustifySelfPosition): Deleted.
+        (WebCore::RenderStyle::setJustifySelfOverflow): Deleted.
+        (WebCore::RenderStyle::noninheritedFlagsMemoryOffset): Deleted.
+
+        * rendering/style/SVGRenderStyle.cpp: Similar changes to RenderStyle.cpp above.
+        * rendering/style/SVGRenderStyle.h: Ditto.
+
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::create): Take a Ref&& instead of a RefPtr.
+        (WebCore::ShapeValue::ShapeValue): Ditto.
+
+        * rendering/style/StyleBackgroundData.cpp: Update data member names.
+        * rendering/style/StyleBackgroundData.h: Ditto; make them public and remove the
+        getter functions.
+
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::cssValue): Removed no-longer-needed const_cast.
+
+        * rendering/style/StyleCustomPropertyData.h: Update data member names.
+        (WebCore::StyleCustomPropertyData::operator==): Removed unnecessary reference
+        count churn.
+        (WebCore::StyleCustomPropertyData::setCustomPropertyValue): Take an rvalue
+        reference.
+        (WebCore::StyleCustomPropertyData::getCustomPropertyValue): Deleted.
+        (WebCore::StyleCustomPropertyData::values): Deleted.
+        (WebCore::StyleCustomPropertyData::hasCustomProperty): Deleted.
+        (WebCore::StyleCustomPropertyData::containsVariables): Deleted.
+        (WebCore::StyleCustomPropertyData::setContainsVariables): Deleted.
+
+        * rendering/style/StyleFilterData.cpp: Update data member names.
+        * rendering/style/StyleFilterData.h: Ditto.
+        * rendering/style/StyleFlexibleBoxData.cpp: Ditto.
+        * rendering/style/StyleFlexibleBoxData.h: Ditto.
+        * rendering/style/StyleGridData.cpp: Ditto.
+        * rendering/style/StyleGridData.h: Ditto.
+        * rendering/style/StyleGridItemData.cpp: Ditto.
+        * rendering/style/StyleGridItemData.h: Ditto.
+
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::cssValue): Removed no-longer-needed const_cast.
+        (WebCore::StyleGeneratedImage::imageSize): Ditto.
+        (WebCore::StyleGeneratedImage::image): Ditto.
+
+        * rendering/style/StyleInheritedData.cpp: Update data member names.
+        * rendering/style/StyleInheritedData.h: Ditto.
+        * rendering/style/StyleRareInheritedData.cpp: Ditto.
+        * rendering/style/StyleRareInheritedData.h: Ditto.
+        * rendering/style/StyleMultiColData.cpp: Ditto.
+        * rendering/style/StyleMultiColData.h: Ditto.
+        * rendering/style/StyleRareNonInheritedData.cpp: Ditto.
+        * rendering/style/StyleRareNonInheritedData.h: Ditto.
+        * rendering/style/StyleTransformData.cpp: Ditto.
+        * rendering/style/StyleTransformData.h: Ditto.
+        * rendering/style/StyleVisualData.cpp: Ditto.
+        * rendering/style/StyleVisualData.h: Ditto.
+
+        * style/StylePendingResources.cpp:
+        (WebCore::Style::loadPendingResources): Update since layers are references.
+
+
 2017-01-13  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add diagnostic logging to measure WebGL usage
@@ -2717,7 +3359,6 @@
         * platform/mediastream/openwebrtc/RealtimeAudioSourceOwr.h: Added
         this new class to handle the settings of the audio elements. The
         class initializes the settings and the supportedSettings.
-
 
 2017-01-08  Konstantin Tokarev  <annulen@yandex.ru>
 

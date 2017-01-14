@@ -60,7 +60,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
 }
 
 - (WebSpeechSynthesisWrapper *)initWithSpeechSynthesizer:(WebCore::PlatformSpeechSynthesizer*)synthesizer;
-- (void)speakUtterance:(PassRefPtr<WebCore::PlatformSpeechSynthesisUtterance>)utterance;
+- (void)speakUtterance:(RefPtr<WebCore::PlatformSpeechSynthesisUtterance>&&)utterance;
 
 @end
 
@@ -87,7 +87,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     return rate;
 }
 
-- (void)speakUtterance:(PassRefPtr<WebCore::PlatformSpeechSynthesisUtterance>)utterance
+- (void)speakUtterance:(RefPtr<WebCore::PlatformSpeechSynthesisUtterance>&&)utterance
 {
     // When speak is called we should not have an existing speech utterance outstanding.
     ASSERT(!m_utterance);
@@ -124,7 +124,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     [avUtterance setVolume:utterance->volume()];
     [avUtterance setPitchMultiplier:utterance->pitch()];
     [avUtterance setVoice:avVoice];
-    m_utterance = utterance;
+    m_utterance = WTFMove(utterance);
 
     [m_synthesizer speakUtterance:avUtterance];
     END_BLOCK_OBJC_EXCEPTIONS

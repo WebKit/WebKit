@@ -60,20 +60,22 @@ LayoutUnit NinePieceImage::computeSlice(Length length, LayoutUnit width, LayoutU
 
 LayoutBoxExtent NinePieceImage::computeSlices(const LayoutSize& size, const LengthBox& lengths, int scaleFactor)
 {
-    LayoutUnit top    = std::min<LayoutUnit>(size.height(), valueForLength(lengths.top(),    size.height())) * scaleFactor;
-    LayoutUnit right  = std::min<LayoutUnit>(size.width(),  valueForLength(lengths.right(),  size.width()))  * scaleFactor;
-    LayoutUnit bottom = std::min<LayoutUnit>(size.height(), valueForLength(lengths.bottom(), size.height())) * scaleFactor;
-    LayoutUnit left   = std::min<LayoutUnit>(size.width(),  valueForLength(lengths.left(),   size.width()))  * scaleFactor;
-    return LayoutBoxExtent(top, right, bottom, left);
+    return {
+        std::min(size.height(), valueForLength(lengths.top(), size.height())) * scaleFactor,
+        std::min(size.width(), valueForLength(lengths.right(), size.width()))  * scaleFactor,
+        std::min(size.height(), valueForLength(lengths.bottom(), size.height())) * scaleFactor,
+        std::min(size.width(), valueForLength(lengths.left(), size.width()))  * scaleFactor
+    };
 }
 
 LayoutBoxExtent NinePieceImage::computeSlices(const LayoutSize& size, const LengthBox& lengths, const FloatBoxExtent& widths, const LayoutBoxExtent& slices)
 {
-    LayoutUnit top    = computeSlice(lengths.top(),    widths.top(),    slices.top(),    size.height());
-    LayoutUnit right  = computeSlice(lengths.right(),  widths.right(),  slices.right(),  size.width());
-    LayoutUnit bottom = computeSlice(lengths.bottom(), widths.bottom(), slices.bottom(), size.height());
-    LayoutUnit left   = computeSlice(lengths.left(),   widths.left(),   slices.left(),   size.width());
-    return LayoutBoxExtent(top, right, bottom, left);
+    return {
+        computeSlice(lengths.top(), widths.top(), slices.top(), size.height()),
+        computeSlice(lengths.right(), widths.right(), slices.right(), size.width()),
+        computeSlice(lengths.bottom(), widths.bottom(), slices.bottom(), size.height()),
+        computeSlice(lengths.left(), widths.left(), slices.left(), size.width())
+    };
 }
 
 void NinePieceImage::scaleSlicesIfNeeded(const LayoutSize& size, LayoutBoxExtent& slices, float deviceScaleFactor)

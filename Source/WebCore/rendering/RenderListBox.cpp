@@ -902,7 +902,7 @@ Ref<Scrollbar> RenderListBox::createScrollbar()
         if (page().expectsWheelEventTriggers())
             scrollAnimator().setWheelEventTestTrigger(page().testTrigger());
     }
-    view().frameView().addChild(widget.get());
+    view().frameView().addChild(*widget);
     return widget.releaseNonNull();
 }
 

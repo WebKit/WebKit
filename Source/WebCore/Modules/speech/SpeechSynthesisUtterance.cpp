@@ -37,7 +37,7 @@ Ref<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExecutionCo
 
 SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext& context, const String& text)
     : ContextDestructionObserver(&context)
-    , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(this))
+    , m_platformUtterance(PlatformSpeechSynthesisUtterance::create(*this))
 {
     m_platformUtterance->setText(text);
 }
