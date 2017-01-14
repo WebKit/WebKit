@@ -1,3 +1,11 @@
+2017-01-13  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WinCairo build after r210753.
+        https://bugs.webkit.org/show_bug.cgi?id=166730
+
+        * platform/WebGLStateTracker.h:
+        WTF::Function apparently needs to explicitly be differentiated from JSC::Attribute Function in PropertySlot.h.
+
 2017-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         Potential nullptr dereference in RenderLayer::updateLayerPosition()
