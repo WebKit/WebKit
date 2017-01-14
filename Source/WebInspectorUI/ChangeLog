@@ -1,5 +1,17 @@
 2017-01-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Resources disappear from the network tab when iframe gets removed from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=166776
+        <rdar://problem/29909640>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel):
+        Don't remove resource tree elements from Network tab when iframe gets detached from the DOM.
+
+2017-01-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: the 'lock' icon for non-editable rules in the Style Rules sidebar lacks a tooltip
         https://bugs.webkit.org/show_bug.cgi?id=166909
         <rdar://problem/29959406>

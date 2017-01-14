@@ -27,7 +27,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 {
     constructor(contentBrowser)
     {
-        super("network", WebInspector.UIString("Network"), true);
+        super("network", WebInspector.UIString("Network"), false);
 
         this.contentBrowser = contentBrowser;
 
