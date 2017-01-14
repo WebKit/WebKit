@@ -1,3 +1,13 @@
+2017-01-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Reserve capacity for StringBuilder in unescape
+        https://bugs.webkit.org/show_bug.cgi?id=167008
+
+        Reviewed by Sam Weinig.
+
+        * stress/unescape.js: Added.
+        (shouldBe):
+
 2017-01-12  Saam Barati  <sbarati@apple.com>
 
         Add a slice intrinsic to the DFG/FTL

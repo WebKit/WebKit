@@ -814,22 +814,26 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
 {
     return JSValue::encode(toStringView(exec, exec->argument(0), [&] (StringView view) {
-        StringBuilder builder;
+        // We use int for k and length intentionally since we would like to evaluate
+        // the condition `k <= length -6` even if length is less than 6.
         int k = 0;
-        int len = view.length();
+        int length = view.length();
+
+        StringBuilder builder;
+        builder.reserveCapacity(length);
 
         if (view.is8Bit()) {
             const LChar* characters = view.characters8();
             LChar convertedLChar;
-            while (k < len) {
+            while (k < length) {
                 const LChar* c = characters + k;
-                if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
+                if (c[0] == '%' && k <= length - 6 && c[1] == 'u') {
                     if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
                         builder.append(Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]));
                         k += 6;
                         continue;
                     }
-                } else if (c[0] == '%' && k <= len - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
+                } else if (c[0] == '%' && k <= length - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
                     convertedLChar = LChar(Lexer<LChar>::convertHex(c[1], c[2]));
                     c = &convertedLChar;
                     k += 2;
@@ -840,16 +844,16 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
         } else {
             const UChar* characters = view.characters16();
 
-            while (k < len) {
+            while (k < length) {
                 const UChar* c = characters + k;
                 UChar convertedUChar;
-                if (c[0] == '%' && k <= len - 6 && c[1] == 'u') {
+                if (c[0] == '%' && k <= length - 6 && c[1] == 'u') {
                     if (isASCIIHexDigit(c[2]) && isASCIIHexDigit(c[3]) && isASCIIHexDigit(c[4]) && isASCIIHexDigit(c[5])) {
                         convertedUChar = Lexer<UChar>::convertUnicode(c[2], c[3], c[4], c[5]);
                         c = &convertedUChar;
                         k += 5;
                     }
-                } else if (c[0] == '%' && k <= len - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
+                } else if (c[0] == '%' && k <= length - 3 && isASCIIHexDigit(c[1]) && isASCIIHexDigit(c[2])) {
                     convertedUChar = UChar(Lexer<UChar>::convertHex(c[1], c[2]));
                     c = &convertedUChar;
                     k += 2;
