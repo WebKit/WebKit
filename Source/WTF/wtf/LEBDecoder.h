@@ -78,8 +78,9 @@ inline bool WARN_UNUSED_RETURN decodeInt(const uint8_t* bytes, size_t length, si
             return false;
     }
 
+    using UnsignedT = typename std::make_unsigned<T>::type;
     if (shift < numBits && (byte & 0x40))
-        result |= static_cast<T>(-1) << shift;
+        result = static_cast<T>(static_cast<UnsignedT>(result) | (static_cast<UnsignedT>(-1) << shift));
     return true;
 }
 

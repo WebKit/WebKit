@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <limits.h>
+
 namespace WTF {
 class PrintStream;
 }

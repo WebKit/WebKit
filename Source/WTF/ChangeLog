@@ -1,3 +1,17 @@
+2017-01-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WebAssembly: Suppress warnings & errors in GCC
+        https://bugs.webkit.org/show_bug.cgi?id=167049
+
+        Reviewed by Sam Weinig.
+
+        * wtf/LEBDecoder.h:
+        (WTF::LEBDecoder::decodeInt):
+        If T = int, it performs `-1 << shift`. It causes
+        warning in GCC. Instead, we first cast it to the
+        UnsignedT, perform operation and re-cast to the
+        T.
+
 2017-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(DETAILS_ELEMENT) guards

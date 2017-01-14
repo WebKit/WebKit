@@ -327,7 +327,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
         if (result != Context::emptyExpression)
             m_expressionStack.append(result);
 
-            return { };
+        return { };
     }
 
     case CallIndirect: {
@@ -511,6 +511,7 @@ auto FunctionParser<Context>::parseExpression(OpType op) -> PartialResult
     }
 
     ASSERT_NOT_REACHED();
+    return { };
 }
 
 // FIXME: We should try to use the same decoder function for both unreachable and reachable code. https://bugs.webkit.org/show_bug.cgi?id=165965
