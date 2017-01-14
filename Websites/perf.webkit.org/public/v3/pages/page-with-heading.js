@@ -32,7 +32,7 @@ class PageWithHeading extends Page {
             document.body.insertBefore(this.heading().element(), document.body.firstChild);
 
         super.render();
-        this.heading().render();
+        this.heading().updateRendering();
     }
 
     static htmlTemplate()

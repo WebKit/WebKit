@@ -167,7 +167,7 @@ class PaneSelector extends ComponentBase {
             if (data instanceof Metric && data.test().onlyContainsSingleMetric())
                 this._currentPath.splice(this._currentPath.length - 2, 1);
         }
-        this.render();
+        this.updateRendering();
     }
 
     setCallback(callback)

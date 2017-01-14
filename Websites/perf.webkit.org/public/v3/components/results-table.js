@@ -87,7 +87,7 @@ class ResultsTable extends ComponentBase {
         this.renderReplace(this.content().querySelector('.results-table-extra-repositories'),
             extraRepositories.map(function (commit) { return element('li', commit.title()); }));
 
-        barGraphGroup.render();
+        barGraphGroup.updateGroupRendering();
 
         Instrumentation.endMeasuringTime('ResultsTable', 'render');
     }

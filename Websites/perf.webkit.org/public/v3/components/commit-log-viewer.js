@@ -31,7 +31,7 @@ class CommitLogViewer extends ComponentBase {
 
         if (!to) {
             this._fetchingPromise = null;
-            this.render();
+            this.updateRendering();
             return Promise.resolve(null);
         }
 
@@ -41,7 +41,7 @@ class CommitLogViewer extends ComponentBase {
 
         var self = this;
         var spinnerTimer = setTimeout(function () {
-            self.render();
+            self.updateRendering();
         }, 300);
 
         this._fetchingPromise.then(function (commits) {

@@ -79,7 +79,7 @@ class ChartsPage extends PageWithHeading {
         if (newPaneList) {
             this._paneList = newPaneList;
             this._paneListChanged = true;
-            this.render();
+            this.updateRendering();
         }
 
         this._updateDomainsFromSerializedState(state);
@@ -109,7 +109,7 @@ class ChartsPage extends PageWithHeading {
             since = zoom[0] - (zoom[1] - zoom[0]) / 2;
 
         this.toolbar().setStartTime(since);
-        this.toolbar().render();
+        this.toolbar().updateRendering();
 
         this._mainDomain = zoom || null;
 
@@ -151,7 +151,7 @@ class ChartsPage extends PageWithHeading {
     setNumberOfDaysFromToolbar(numberOfDays, shouldUpdateState)
     {
         this.toolbar().setNumberOfDays(numberOfDays, true);
-        this.toolbar().render();
+        this.toolbar().updateRendering();
         this._updateOverviewDomain();
         this._updateMainDomain();
         if (shouldUpdateState)
@@ -298,7 +298,7 @@ class ChartsPage extends PageWithHeading {
             this._updateOverviewDomain();
             this._updateMainDomain();
         }
-        this.render();
+        this.updateRendering();
         this.scheduleUrlStateUpdate();
     }
 
@@ -310,7 +310,7 @@ class ChartsPage extends PageWithHeading {
             this.renderReplace(this.content().querySelector('.pane-list'), this._paneList);
 
         for (var pane of this._paneList)
-            pane.render();
+            pane.updateRendering();
 
         this._paneListChanged = false;
     }

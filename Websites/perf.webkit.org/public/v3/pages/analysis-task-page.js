@@ -19,7 +19,7 @@ class AnalysisTaskChartPane extends ChartPaneBase {
     _updateStatus()
     {
         super._updateStatus();
-        this._page.render();
+        this._page.updateRendering();
     }
 
     selectedPoints()
@@ -101,7 +101,7 @@ class AnalysisTaskPage extends PageWithHeading {
             var taskId = parseInt(state.remainingRoute);
             AnalysisTask.fetchById(taskId).then(this._didFetchTask.bind(this), function (error) {
                 self._errorMessage = `Failed to fetch the analysis task ${state.remainingRoute}: ${error}`;
-                self.render();
+                self.updateRendering();
             });
             this._fetchRelatedInfoForTaskId(taskId);
         } else if (state.buildRequest) {
@@ -110,7 +110,7 @@ class AnalysisTaskPage extends PageWithHeading {
                 self._fetchRelatedInfoForTaskId(task.id());
             }, function (error) {
                 self._errorMessage = `Failed to fetch the analysis task for the build request ${buildRequestId}: ${error}`;
-                self.render();
+                self.updateRendering();
             });
         }
     }
@@ -146,7 +146,7 @@ class AnalysisTaskPage extends PageWithHeading {
         this._chartPane.setOverviewDomain(domain[0], domain[1]);
         this._chartPane.setMainDomain(domain[0], domain[1]);
 
-        this.render();
+        this.updateRendering();
 
         return task;
     }
@@ -154,7 +154,7 @@ class AnalysisTaskPage extends PageWithHeading {
     _didFetchRelatedAnalysisTasks(relatedTasks)
     {
         this._relatedTasks = relatedTasks;
-        this.render();
+        this.updateRendering();
     }
 
     _didFetchMeasurement()
@@ -171,7 +171,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
         this._startPoint = startPoint;
         this._endPoint = endPoint;
-        this.render();
+        this.updateRendering();
     }
 
     _didFetchTestGroups(testGroups)
@@ -179,14 +179,14 @@ class AnalysisTaskPage extends PageWithHeading {
         this._testGroups = testGroups.sort(function (a, b) { return +a.createdAt() - b.createdAt(); });
         this._didUpdateTestGroupHiddenState();
         this._assignTestResultsIfPossible();
-        this.render();
+        this.updateRendering();
     }
 
     _showAllTestGroups()
     {
         this._showHiddenTestGroups = true;
         this._didUpdateTestGroupHiddenState();
-        this.render();
+        this.updateRendering();
     }
 
     _didUpdateTestGroupHiddenState()
@@ -206,7 +206,7 @@ class AnalysisTaskPage extends PageWithHeading {
     {
         this._analysisResults = results;
         if (this._assignTestResultsIfPossible())
-            this.render();
+            this.updateRendering();
     }
 
     _assignTestResultsIfPossible()
@@ -233,7 +233,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
         this.content().querySelector('.error-message').textContent = this._errorMessage || '';
 
-        this._chartPane.render();
+        this._chartPane.updateRendering();
 
         var element = ComponentBase.createElement;
         var link = ComponentBase.createLink;
@@ -264,18 +264,18 @@ class AnalysisTaskPage extends PageWithHeading {
         } else
             repositoryList = Repository.sortByNamePreferringOnesWithURL(Repository.all());
 
-        this._bugList.render();
+        this._bugList.updateRendering();
 
         this._causeList.setKindList(repositoryList);
-        this._causeList.render();
+        this._causeList.updateRendering();
 
         this._fixList.setKindList(repositoryList);
-        this._fixList.render();
+        this._fixList.updateRendering();
 
         this.content().querySelector('.analysis-task-status').style.display = this._task ? null : 'none';
         this.content().querySelector('.overview-chart').style.display = this._task ? null : 'none';
         this.content().querySelector('.test-group-view').style.display = this._task && this._testGroups && this._testGroups.length ? null : 'none';
-        this._taskNameLabel.render();
+        this._taskNameLabel.updateRendering();
 
         if (this._relatedTasks && this._task) {
             var router = this.router();
@@ -296,7 +296,7 @@ class AnalysisTaskPage extends PageWithHeading {
         var a = selectedRange['A'];
         var b = selectedRange['B'];
         this._newTestGroupFormForViewer.setRootSetMap(a && b ? {'A': a.rootSet(), 'B': b.rootSet()} : null);
-        this._newTestGroupFormForViewer.render();
+        this._newTestGroupFormForViewer.updateRendering();
         this._newTestGroupFormForViewer.element().style.display = this._triggerable ? null : 'none';
 
         this._renderTestGroupList();
@@ -308,13 +308,13 @@ class AnalysisTaskPage extends PageWithHeading {
         var points = this._chartPane.selectedPoints();
         this._newTestGroupFormForChart.setRootSetMap(points && points.length >= 2 ?
                 {'A': points[0].rootSet(), 'B': points[points.length - 1].rootSet()} : null);
-        this._newTestGroupFormForChart.render();
+        this._newTestGroupFormForChart.updateRendering();
         this._newTestGroupFormForChart.element().style.display = this._triggerable ? null : 'none';
 
         this._analysisResultsViewer.setCurrentTestGroup(this._currentTestGroup);
-        this._analysisResultsViewer.render();
+        this._analysisResultsViewer.updateRendering();
 
-        this._testGroupResultsTable.render();
+        this._testGroupResultsTable.updateRendering();
 
         Instrumentation.endMeasuringTime('AnalysisTaskPage', 'render');
     }
@@ -356,7 +356,7 @@ class AnalysisTaskPage extends PageWithHeading {
             for (var testGroup of this._filteredTestGroups) {
                 var label = this._testGroupLabelMap.get(testGroup);
                 label.setText(testGroup.label());
-                label.render();
+                label.updateRendering();
             }
         }
     }
@@ -364,7 +364,7 @@ class AnalysisTaskPage extends PageWithHeading {
     _createTestGroupListItem(group)
     {
         var text = new EditableText(group.label());
-        text.setStartedEditingCallback(function () { return text.render(); });
+        text.setStartedEditingCallback(() => { return text.updateRendering(); });
         text.setUpdateCallback(this._updateTestGroupName.bind(this, group));
 
         this._testGroupLabelMap.set(group, text);
@@ -408,31 +408,30 @@ class AnalysisTaskPage extends PageWithHeading {
 
             this._renderedCurrentTestGroup = this._currentTestGroup;
         }
-        this._retryForm.render();
+        this._retryForm.updateRendering();
     }
 
     _showTestGroup(testGroup)
     {
         this._currentTestGroup = testGroup;        
         this._testGroupResultsTable.setTestGroup(this._currentTestGroup);
-        this.render();
+        this.updateRendering();
     }
 
     _didStartEditingTaskName()
     {
-        this._taskNameLabel.render();
+        this._taskNameLabel.updateRendering();
     }
 
     _updateTaskName()
     {
         console.assert(this._task);
-        this._taskNameLabel.render();
+        this._taskNameLabel.updateRendering();
 
-        var self = this;
-        return self._task.updateName(self._taskNameLabel.editedText()).then(function () {
-            self.render();
-        }, function (error) {
-            self.render();
+        return this._task.updateName(this._taskNameLabel.editedText()).then(() => {
+            this.updateRendering();
+        }, (error) => {
+            this.updateRendering();
             alert('Failed to update the name: ' + error);
         });
     }
@@ -440,27 +439,25 @@ class AnalysisTaskPage extends PageWithHeading {
     _updateTestGroupName(testGroup)
     {
         var label = this._testGroupLabelMap.get(testGroup);
-        label.render();
+        label.updateRendering();
 
-        var self = this;
-        return testGroup.updateName(label.editedText()).then(function () {
-            self.render();
-        }, function (error) {
-            self.render();
+        return testGroup.updateName(label.editedText()).then(() => {
+            this.updateRendering();
+        }, (error) => {
+            this.updateRendering();
             alert('Failed to hide the test name: ' + error);
         });
     }
 
     _hideCurrentTestGroup()
     {
-        var self = this;
         console.assert(this._currentTestGroup);
-        return this._currentTestGroup.updateHiddenFlag(!this._currentTestGroup.isHidden()).then(function () {
-            self._didUpdateTestGroupHiddenState();
-            self.render();
+        return this._currentTestGroup.updateHiddenFlag(!this._currentTestGroup.isHidden()).then(() => {
+            this._didUpdateTestGroupHiddenState();
+            this.updateRendering();
         }, function (error) {
-            self._mayHaveMutatedTestGroupHiddenState();
-            self.render();
+            this._mayHaveMutatedTestGroupHiddenState();
+            this.updateRendering();
             alert('Failed to update the group: ' + error);
         });
     }
@@ -474,9 +471,9 @@ class AnalysisTaskPage extends PageWithHeading {
         if (newChangeType == 'unconfirmed')
             newChangeType = null;
 
-        var render = this.render.bind(this);
-        return this._task.updateChangeType(newChangeType).then(render, function (error) {
-            render();
+        const updateRendering = () => { this.updateRendering(); };
+        return this._task.updateChangeType(newChangeType).then(updateRendering, (error) => {
+            updateRendering();
             alert('Failed to update the status: ' + error);
         });
     }
@@ -486,27 +483,27 @@ class AnalysisTaskPage extends PageWithHeading {
         console.assert(tracker instanceof BugTracker);
         bugNumber = parseInt(bugNumber);
 
-        var render = this.render.bind(this);
-        return this._task.associateBug(tracker, bugNumber).then(render, function (error) {
-            render();
+        const updateRendering = () => { this.updateRendering(); };
+        return this._task.associateBug(tracker, bugNumber).then(updateRendering, (error) => {
+            updateRendering();
             alert('Failed to associate the bug: ' + error);
         });
     }
 
     _dissociateBug(bug)
     {
-        var render = this.render.bind(this);
-        return this._task.dissociateBug(bug).then(render, function (error) {
-            render();
+        const updateRendering = () => { this.updateRendering(); };
+        return this._task.dissociateBug(bug).then(updateRendering, (error) => {
+            updateRendering();
             alert('Failed to dissociate the bug: ' + error);
         });
     }
 
     _associateCommit(kind, repository, revision)
     {
-        var render = this.render.bind(this);
-        return this._task.associateCommit(kind, repository, revision).then(render, function (error) {
-            render();
+        const updateRendering = () => { this.updateRendering(); };
+        return this._task.associateCommit(kind, repository, revision).then(updateRendering, (error) => {
+            updateRendering();
             if (error == 'AmbiguousRevision')
                 alert('There are multiple revisions that match the specified string: ' + revision);
             else if (error == 'CommitNotFound')
@@ -518,9 +515,9 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _dissociateCommit(commit)
     {
-        var render = this.render.bind(this);
-        return this._task.dissociateCommit(commit).then(render, function (error) {
-            render();
+        const updateRendering = () => { this.updateRendering(); };
+        return this._task.dissociateCommit(commit).then(updateRendering, (error) => {
+            updateRendering();
             alert('Failed to dissociate the commit: ' + error);
         });
     }
@@ -542,7 +539,7 @@ class AnalysisTaskPage extends PageWithHeading {
     _chartSelectionDidChange()
     {
         this._selectionWasModifiedByUser = true;
-        this.render();
+        this.updateRendering();
     }
 
     _createNewTestGroupFromChart(name, repetitionCount, rootSetMap)
@@ -552,7 +549,7 @@ class AnalysisTaskPage extends PageWithHeading {
 
     _selectedRowInAnalysisResultsViewer()
     {
-        this.render();
+        this.updateRendering();
     }
 
     _createNewTestGroupFromViewer(name, repetitionCount, rootSetMap)

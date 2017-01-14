@@ -73,7 +73,7 @@ class EditableText extends ComponentBase {
     {
         this._inEditingMode = false;
         this._updatingPromise = null;
-        this.render();
+        this.updateRendering();
     }
 
     static htmlTemplate()

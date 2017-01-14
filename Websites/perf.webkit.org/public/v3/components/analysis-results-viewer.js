@@ -260,7 +260,7 @@ class AnalysisResultsViewer extends ResultsTable {
         for (var i = indexBeforeStart + 1; i < indexAfterEnd; i += increment)
             this._expandedPoints.add(series.findPointByIndex(i));
         this._shouldRenderTable = true;
-        this.render();
+        this.updateRendering();
     }
 
     static htmlTemplate()

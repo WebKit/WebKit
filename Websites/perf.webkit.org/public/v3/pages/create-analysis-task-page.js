@@ -16,7 +16,7 @@ class CreateAnalysisTaskPage extends PageWithHeading {
 
         this._errorMessage = state.error;
         if (!isOpen)
-            this.render();
+            this.updateRendering();
     }
 
     render()

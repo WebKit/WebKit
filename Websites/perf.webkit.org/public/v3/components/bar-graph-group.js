@@ -13,9 +13,9 @@ class BarGraphGroup {
         return newBar;
     }
 
-    render()
+    updateGroupRendering()
     {
-        Instrumentation.startMeasuringTime('BarGraphGroup', 'render');
+        Instrumentation.startMeasuringTime('BarGraphGroup', 'updateGroupRendering');
 
         var min = Infinity;
         var max = -Infinity;
@@ -35,10 +35,10 @@ class BarGraphGroup {
             var start = min - (range - diff) / 2;
 
             entry.bar.update((value - start) / range, formattedValue);
-            entry.bar.render();
+            entry.bar.updateRendering();
         }
 
-        Instrumentation.endMeasuringTime('BarGraphGroup', 'render');
+        Instrumentation.endMeasuringTime('BarGraphGroup', 'updateGroupRendering');
     }
 }
 

@@ -12,6 +12,13 @@ class ComponentBase {
     content() { return this._shadow; }
     render() { }
 
+    updateRendering()
+    {
+        Instrumentation.startMeasuringTime('ComponentBase', 'updateRendering');
+        this.render();
+        Instrumentation.endMeasuringTime('ComponentBase', 'updateRendering');
+    }
+
     renderReplace(element, content) { ComponentBase.renderReplace(element, content); }
 
     static renderReplace(element, content)

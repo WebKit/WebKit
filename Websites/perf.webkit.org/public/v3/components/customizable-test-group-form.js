@@ -8,7 +8,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
         this._renderedRepositorylist = null;
         this._customized = false;
         this._nameControl = this.content().querySelector('.name');
-        this._nameControl.oninput = this.render.bind(this);
+        this._nameControl.oninput = () => { this.updateRendering(); }
         this.content().querySelector('a').onclick = this._customize.bind(this);
     }
 
@@ -28,7 +28,7 @@ class CustomizableTestGroupForm extends TestGroupForm {
     {
         event.preventDefault();
         this._customized = true;
-        this.render();
+        this.updateRendering();
     }
 
     _computeRootSetMap()

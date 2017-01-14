@@ -50,7 +50,7 @@ class Heading extends ComponentBase {
         }
 
         if (this._toolbar)
-            this._toolbar.render();
+            this._toolbar.updateRendering();
 
         var currentPage = this._router.currentPage();
         if (this._renderedCurrentPage == currentPage)

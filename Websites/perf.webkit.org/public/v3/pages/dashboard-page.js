@@ -35,7 +35,7 @@ class DashboardPage extends PageWithHeading {
 
         this._needsTableConstruction = true;
         if (!isOpen)
-            this.render();
+            this.updateRendering();
     }
 
     open(state)
@@ -114,7 +114,7 @@ class DashboardPage extends PageWithHeading {
 
         if (this._needsStatusUpdate) {
             for (var statusView of this._statusViews)
-                statusView.render();
+                statusView.updateRendering();
             this._needsStatusUpdate = false;
         }
     }
@@ -155,7 +155,7 @@ class DashboardPage extends PageWithHeading {
             return;
 
         this._needsStatusUpdate = true;
-        setTimeout(this.render.bind(this), 10);
+        setTimeout(() => { this.updateRendering(); }, 10);
     }
 
     static htmlTemplate()

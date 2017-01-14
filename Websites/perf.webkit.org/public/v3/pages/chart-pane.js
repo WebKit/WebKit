@@ -186,8 +186,8 @@ class ChartPane extends ChartPaneBase {
     {
         if (repository != this._commitLogViewer.currentRepository()) {
             var range = this._mainChartStatus.setCurrentRepository(repository);
-            this._commitLogViewer.view(repository, range.from, range.to).then(this.render.bind(this));
-            this.render();
+            this._commitLogViewer.view(repository, range.from, range.to).then(() => { this.updateRendering(); });
+            this.updateRendering();
         }
     }
 
@@ -448,7 +448,7 @@ class ChartPane extends ChartPaneBase {
 
         this._updateTrendLine();
         this._chartsPage.graphOptionsDidChange();
-        this.render();
+        this.updateRendering();
     }
 
     _defaultParametersForTrendLine(type)
@@ -493,7 +493,7 @@ class ChartPane extends ChartPaneBase {
 
         if (!currentTrendLineType.execute) {
             this._mainChart.clearTrendLines();
-            this.render();
+            this.updateRendering();
         } else {
             // Wait for all trendlines to be ready. Otherwise we might see FOC when the domain is expanded.
             Promise.all(sourceList.map(function (source, sourceIndex) {
@@ -502,7 +502,7 @@ class ChartPane extends ChartPaneBase {
                         self._mainChart.setTrendLine(sourceIndex, trendlineSeries);
                 });
             })).then(function () {
-                self.render();
+                self.updateRendering();
             });
         }
     }

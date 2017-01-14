@@ -1,3 +1,102 @@
+2017-01-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Instrument calls to render()
+        https://bugs.webkit.org/show_bug.cgi?id=167037
+
+        Reviewed by Sam Weinig.
+
+        Wrap every call to render() by newly added ComponentBase.updateRendering() to instrument it.
+        Also, use arrow functions instead of this.render.bind or regular closures for simplicity.
+
+        Currently, we're making 5100 calls to render() while opening the summary page, and that's way too high.
+
+        * public/v3/components/analysis-results-viewer.js:
+        (AnalysisResultsViewer.prototype._expandBetween):
+        * public/v3/components/bar-graph-group.js:
+        (BarGraphGroup.prototype.updateGroupRendering): Renamed form render() as BarGraphGroup is not a component.
+        * public/v3/components/base.js:
+        (ComponentBase.prototype.updateRendering): Added. Instruments render() call.
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype.fetchAnalysisTasks):
+        (ChartPaneBase.prototype._mainSelectionDidZoom):
+        (ChartPaneBase.prototype._updateStatus):
+        (ChartPaneBase.prototype._requestOpeningCommitViewer):
+        (ChartPaneBase.prototype._keyup):
+        (ChartPaneBase.prototype.render):
+        * public/v3/components/commit-log-viewer.js:
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm):
+        (CustomizableTestGroupForm.prototype._customize):
+        * public/v3/components/editable-text.js:
+        (EditableText.prototype._didUpdate):
+        * public/v3/components/pane-selector.js:
+        (PaneSelector.prototype._selectedItem):
+        * public/v3/components/results-table.js:
+        (ResultsTable.prototype.render):
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart._renderEnqueuedCharts):
+        * public/v3/pages/analysis-category-page.js:
+        (AnalysisCategoryPage.prototype.open):
+        (AnalysisCategoryPage.prototype.updateFromSerializedState):
+        (AnalysisCategoryPage.prototype.filterDidChange):
+        (AnalysisCategoryPage.prototype.render):
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskChartPane.prototype._updateStatus):
+        (AnalysisTaskPage.prototype.updateFromSerializedState):
+        (AnalysisTaskPage.prototype._didFetchTask):
+        (AnalysisTaskPage.prototype._didFetchRelatedAnalysisTasks):
+        (AnalysisTaskPage.prototype._didFetchMeasurement):
+        (AnalysisTaskPage.prototype._didFetchTestGroups):
+        (AnalysisTaskPage.prototype._showAllTestGroups):
+        (AnalysisTaskPage.prototype._didFetchAnalysisResults):
+        (AnalysisTaskPage.prototype.render):
+        (AnalysisTaskPage.prototype._renderTestGroupList.):
+        (AnalysisTaskPage.prototype._renderTestGroupList):
+        (AnalysisTaskPage.prototype._createTestGroupListItem):
+        (AnalysisTaskPage.prototype._showTestGroup):
+        (AnalysisTaskPage.prototype._didStartEditingTaskName):
+        (AnalysisTaskPage.prototype._updateTaskName):
+        (AnalysisTaskPage.prototype._updateTestGroupName):
+        (AnalysisTaskPage.prototype._hideCurrentTestGroup):
+        (AnalysisTaskPage.prototype._updateChangeType):
+        (AnalysisTaskPage.prototype._associateBug):
+        (AnalysisTaskPage.prototype._dissociateBug):
+        (AnalysisTaskPage.prototype._associateCommit):
+        (AnalysisTaskPage.prototype._dissociateCommit):
+        (AnalysisTaskPage.prototype._chartSelectionDidChange):
+        (AnalysisTaskPage.prototype._selectedRowInAnalysisResultsViewer):
+        * public/v3/pages/build-request-queue-page.js:
+        (BuildRequestQueuePage.prototype.open.):
+        (BuildRequestQueuePage.prototype.open):
+        * public/v3/pages/chart-pane.js:
+        (ChartPane.prototype.setOpenRepository):
+        (ChartPane.prototype._trendLineTypeDidChange):
+        (ChartPane.prototype._updateTrendLine):
+        * public/v3/pages/charts-page.js:
+        (ChartsPage.prototype.updateFromSerializedState):
+        (ChartsPage.prototype._updateDomainsFromSerializedState):
+        (ChartsPage.prototype.setNumberOfDaysFromToolbar):
+        (ChartsPage.prototype._didMutatePaneList):
+        (ChartsPage.prototype.render):
+        * public/v3/pages/charts-toolbar.js:
+        (ChartsToolbar.prototype.render):
+        * public/v3/pages/create-analysis-task-page.js:
+        (CreateAnalysisTaskPage.prototype.updateFromSerializedState):
+        * public/v3/pages/dashboard-page.js:
+        (DashboardPage.prototype.updateFromSerializedState):
+        (DashboardPage.prototype._fetchedData):
+        * public/v3/pages/heading.js:
+        (Heading.prototype.render):
+        * public/v3/pages/page-with-heading.js:
+        (PageWithHeading.prototype.render):
+        * public/v3/pages/page.js:
+        (Page.prototype.open):
+        * public/v3/pages/summary-page.js:
+        (SummaryPage.prototype.open):
+        (SummaryPage.prototype.this._renderQueue.push):
+        (SummaryPage):
+        (SummaryPage.prototype._renderCell):
+
 2017-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Outliers are not hidden in v3 UI

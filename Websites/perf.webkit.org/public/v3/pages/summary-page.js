@@ -36,7 +36,7 @@ class SummaryPage extends PageWithHeading {
         var current = Date.now();
         var timeRange = [current - 24 * 3600 * 1000, current];
         for (var group of this._configGroups)
-            group.fetchAndComputeSummary(timeRange).then(this.render.bind(this));
+            group.fetchAndComputeSummary(timeRange).then(() => { this.updateRendering(); });
     }
 
     render()
@@ -106,7 +106,7 @@ class SummaryPage extends PageWithHeading {
         var ratioGraph = new RatioBarGraph();
 
         if (configurationList.length == 0) {
-            this._renderQueue.push(function () { ratioGraph.render(); });
+            this._renderQueue.push(() => { ratioGraph.updateRendering(); });
             return element('td', ratioGraph);
         }
 
@@ -128,7 +128,7 @@ class SummaryPage extends PageWithHeading {
         var warningText = this._warningTextForGroup(configurationGroup);
         anchor.title = warningText || 'Open charts';
         ratioGraph.update(configurationGroup.ratio(), configurationGroup.label(), !!warningText);
-        ratioGraph.render();
+        ratioGraph.updateRendering();
     }
 
     _warningTextForGroup(configurationGroup)

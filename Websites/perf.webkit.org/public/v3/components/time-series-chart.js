@@ -69,7 +69,7 @@ class TimeSeriesChart extends ComponentBase {
     static _renderEnqueuedCharts()
     {
         for (var chart of TimeSeriesChart._chartQueue)
-            chart.render();
+            chart.updateRendering();
         TimeSeriesChart._chartQueue = null;
     }
 

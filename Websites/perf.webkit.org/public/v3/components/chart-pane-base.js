@@ -96,7 +96,7 @@ class ChartPaneBase extends ComponentBase {
         AnalysisTask.fetchByPlatformAndMetric(this._platformId, this._metricId, noCache).then(function (tasks) {
             self._tasksForAnnotations = tasks;
             self._renderedAnnotations = false;
-            self.render();
+            self.updateRendering();
         });
     }
 
@@ -132,7 +132,7 @@ class ChartPaneBase extends ComponentBase {
     {
         this._overviewChart.setSelection(selection, this);
         this._mainChart.setSelection(null);
-        this.render();
+        this.updateRendering();
     }
 
     _indicatorDidChange(indicatorID, isLocked)
@@ -148,8 +148,9 @@ class ChartPaneBase extends ComponentBase {
     _updateStatus()
     {
         var range = this._mainChartStatus.updateRevisionList();
-        this._commitLogViewer.view(range.repository, range.from, range.to).then(this.render.bind(this));
-        this.render();
+        const updateRendering = () => { this.updateRendering(); };
+        this._commitLogViewer.view(range.repository, range.from, range.to).then(updateRendering);
+        updateRendering();
     }
 
     _openAnalysisTask(annotation)
@@ -164,8 +165,9 @@ class ChartPaneBase extends ComponentBase {
     _requestOpeningCommitViewer(repository, from, to)
     {
         this._mainChartStatus.setCurrentRepository(repository);
-        this._commitLogViewer.view(repository, from, to).then(this.render.bind(this));
-        this.render();
+        const updateRendering = () => { this.updateRendering(); };
+        this._commitLogViewer.view(repository, from, to).then(updateRendering);
+        updateRendering();
     }
 
     _keyup(event)
@@ -189,7 +191,7 @@ class ChartPaneBase extends ComponentBase {
             return;
         }
 
-        this.render();
+        this.updateRendering();
 
         event.preventDefault();
         event.stopPropagation();
@@ -215,12 +217,12 @@ class ChartPaneBase extends ComponentBase {
         this._renderAnnotations();
 
         if (this._mainChartStatus)
-            this._mainChartStatus.render();
+            this._mainChartStatus.updateRendering();
 
         var body = this.content().querySelector('.chart-pane-body');
         if (this._commitLogViewer && this._commitLogViewer.currentRepository()) {
             body.classList.add('has-second-sidebar');
-            this._commitLogViewer.render();
+            this._commitLogViewer.updateRendering();
         } else
             body.classList.remove('has-second-sidebar');
 
