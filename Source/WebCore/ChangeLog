@@ -1,3 +1,83 @@
+2017-01-14  Zalan Bujtas  <zalan@apple.com>
+
+        Renderers should have a simple way to access Settings.
+        https://bugs.webkit.org/show_bug.cgi?id=167048
+
+        Now that RenderObjects can never outlive the Page, we can just access the Settings
+        through Page instead of Document::settings/Frame::settings.  
+
+        Reviewed by Andreas Kling.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        (WebCore::RenderBlock::shouldPaintSelectionGaps):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::needsAppleMailPaginationQuirk):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        (WebCore::RenderElement::shouldRespectImageOrientation):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::flattenFrameSet):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::flattenFrame):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::acceleratedCompositingForOverflowScrollEnabled):
+        (WebCore::RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        (WebCore::RenderLayer::hasAcceleratedTouchScrolling):
+        (WebCore::RenderLayer::getRectToExpose):
+        (WebCore::RenderLayer::overhangAmount):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::shouldAggressivelyRetainTiles):
+        (WebCore::RenderLayerBacking::shouldTemporarilyRetainTileCohorts):
+        (WebCore::RenderLayerBacking::useGiantTiles):
+        (WebCore::RenderLayerBacking::startAnimation):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        (WebCore::RenderLayerCompositor::needsFixedRootBackgroundLayer):
+        (WebCore::RenderLayerCompositor::requiresContentShadowLayer):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::forceUpdateScrollbarsOnMainThreadForPerformanceTesting):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::settings):
+        * rendering/RenderText.cpp:
+        (WebCore::SecureTextTimer::restart):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::clientLogicalWidthForFixedPosition):
+        (WebCore::RenderView::clientLogicalHeightForFixedPosition):
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+
 2017-01-14  Chris Dumez  <cdumez@apple.com>
 
         Align the innerText setter with the HTML spec and Gecko

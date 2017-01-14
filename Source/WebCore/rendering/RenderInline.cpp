@@ -323,7 +323,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
     if (!beforeChild && isAfterContent(lastChild()))
         beforeChild = lastChild();
     
-    bool useNewBlockInsideInlineModel = document().settings()->newBlockInsideInlineModelEnabled();
+    bool useNewBlockInsideInlineModel = settings().newBlockInsideInlineModelEnabled();
     bool childInline = newChildIsInline(*newChild, *this);
     // This code is for the old block-inside-inline model that uses continuations.
     if (!useNewBlockInsideInlineModel && !childInline && !newChild->isFloatingOrOutOfFlowPositioned()) {

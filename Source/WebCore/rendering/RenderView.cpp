@@ -406,7 +406,7 @@ LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
         return isHorizontalWritingMode() ? frameView().customFixedPositionLayoutRect().width() : frameView().customFixedPositionLayoutRect().height();
 #endif
 
-    if (frameView().frame().settings().visualViewportEnabled())
+    if (settings().visualViewportEnabled())
         return isHorizontalWritingMode() ? frameView().layoutViewportRect().width() : frameView().layoutViewportRect().height();
 
     return clientLogicalWidth();
@@ -423,7 +423,7 @@ LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
         return isHorizontalWritingMode() ? frameView().customFixedPositionLayoutRect().height() : frameView().customFixedPositionLayoutRect().width();
 #endif
 
-    if (frameView().frame().settings().visualViewportEnabled())
+    if (settings().visualViewportEnabled())
         return isHorizontalWritingMode() ? frameView().layoutViewportRect().height() : frameView().layoutViewportRect().width();
 
     return clientLogicalHeight();
@@ -590,7 +590,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         rootObscuresBackground = rendererObscuresBackground(*rootRenderer);
     }
 
-    bool backgroundShouldExtendBeyondPage = frameView().frame().settings().backgroundShouldExtendBeyondPage();
+    bool backgroundShouldExtendBeyondPage = settings().backgroundShouldExtendBeyondPage();
     compositor().setRootExtendedBackgroundColor(backgroundShouldExtendBeyondPage ? frameView().documentBackgroundColor() : Color());
 
     Page* page = document().page();

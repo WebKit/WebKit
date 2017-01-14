@@ -308,7 +308,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     bool acceleratedDrawingEnabled = false;
     bool displayListDrawingEnabled = false;
 
-    const Settings& settings = m_renderView.frameView().frame().settings();
+    auto& settings = m_renderView.settings();
     hasAcceleratedCompositing = settings.acceleratedCompositingEnabled();
 
     // We allow the chrome to override the settings, in case the page is rendered
@@ -985,7 +985,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
                 updateLayerForHeader(page().headerHeight());
                 updateLayerForFooter(page().footerHeight());
 #endif
-                if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
+                if (m_renderView.settings().backgroundShouldExtendBeyondPage())
                     m_rootContentLayer->setMasksToBounds(false);
 
                 if (TiledBacking* tiledBacking = layer.backing()->tiledBacking())
@@ -1180,8 +1180,7 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, const Render
     LayoutRect clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
 
     // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
-    const Settings& settings = m_renderView.frameView().frame().settings();
-    if (!settings.delegatesPageScaling())
+    if (!m_renderView.settings().delegatesPageScaling())
         clipRect.scale(pageScaleFactor());
     clipRect.intersect(extent.bounds);
     overlapMap.add(clipRect);
@@ -2703,8 +2702,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
         return false;
 
     // FIXME: acceleratedCompositingForFixedPositionEnabled should probably be renamed acceleratedCompositingForViewportConstrainedPositionEnabled().
-    const Settings& settings = m_renderView.frameView().frame().settings();
-    if (!settings.acceleratedCompositingForFixedPositionEnabled())
+    if (!m_renderView.settings().acceleratedCompositingForFixedPositionEnabled())
         return false;
 
     if (isSticky)
@@ -2851,7 +2849,7 @@ bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& lay
     if (&layer != m_renderView.layer())
         return false;
 
-    if (m_renderView.frameView().frame().settings().fixedBackgroundsPaintRelativeToDocument())
+    if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
         return false;
 
     LOG(Compositing, "RenderLayerCompositor %p needsFixedRootBackgroundLayer returning %d", this, supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed());
@@ -3015,7 +3013,7 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
         return false;
 
     // If the background is going to extend, then it doesn't make sense to have a shadow layer.
-    if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
+    if (m_renderView.settings().backgroundShouldExtendBeyondPage())
         return false;
 
     // On Mac, we want a content shadow layer if we're using tiled drawing and can scroll.
@@ -3243,7 +3241,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setPosition(FloatPoint(0, topContentInset));
             m_layerForOverhangAreas->setAnchorPoint(FloatPoint3D());
 
-            if (m_renderView.frameView().frame().settings().backgroundShouldExtendBeyondPage())
+            if (m_renderView.settings().backgroundShouldExtendBeyondPage())
                 m_layerForOverhangAreas->setBackgroundColor(m_renderView.frameView().documentBackgroundColor());
             else
                 m_layerForOverhangAreas->setCustomAppearance(GraphicsLayer::ScrollingOverhang);

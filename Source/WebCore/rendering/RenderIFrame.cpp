@@ -71,9 +71,7 @@ RenderView* RenderIFrame::contentRootRenderer() const
 
 bool RenderIFrame::flattenFrame() const
 {
-    bool enabled = frame().settings().frameFlatteningEnabled();
-
-    if (!enabled)
+    if (!settings().frameFlatteningEnabled())
         return false;
 
     if (style().width().isFixed() && style().height().isFixed()) {

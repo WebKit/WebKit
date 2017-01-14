@@ -4918,7 +4918,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
 
     bool hasTransform = this->hasTransform();
 #if PLATFORM(IOS)
-    if (isInFlowPositioned() || (hasTransform && document().settings()->shouldTransformsAffectOverflow())) {
+    if (isInFlowPositioned() || (hasTransform && settings().shouldTransformsAffectOverflow())) {
 #else
     if (isInFlowPositioned() || hasTransform) {
 #endif

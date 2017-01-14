@@ -905,8 +905,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     bool newStyleUsesFixedBackgrounds = newStyle.hasFixedBackgroundImage();
     bool oldStyleUsesFixedBackgrounds = m_style.hasFixedBackgroundImage();
     if (newStyleUsesFixedBackgrounds || oldStyleUsesFixedBackgrounds) {
-        bool repaintFixedBackgroundsOnScroll = !frame().settings().fixedBackgroundsPaintRelativeToDocument();
-
+        bool repaintFixedBackgroundsOnScroll = !settings().fixedBackgroundsPaintRelativeToDocument();
         bool newStyleSlowScroll = repaintFixedBackgroundsOnScroll && newStyleUsesFixedBackgrounds;
         bool oldStyleSlowScroll = oldStyle && repaintFixedBackgroundsOnScroll && oldStyleUsesFixedBackgrounds;
         bool drawsRootBackground = isDocumentElementRenderer() || (isBody() && !rendererHasBackground(document().documentElement()->renderer()));
@@ -1088,7 +1087,7 @@ void RenderElement::willBeRemovedFromTree()
         removeLayers(layer);
     }
 
-    if (m_style.hasFixedBackgroundImage() && !frame().settings().fixedBackgroundsPaintRelativeToDocument())
+    if (m_style.hasFixedBackgroundImage() && !settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(this);
 
     if (isOutOfFlowPositioned() && parent()->childrenInline())
@@ -2163,7 +2162,7 @@ RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
 #endif
     // Respect the image's orientation if it's being used as a full-page image or it's
     // an <img> and the setting to respect it everywhere is set.
-    return (frame().settings().shouldRespectImageOrientation() && is<HTMLImageElement>(element())) ? RespectImageOrientation : DoNotRespectImageOrientation;
+    return settings().shouldRespectImageOrientation() && is<HTMLImageElement>(element()) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
 void RenderElement::adjustFlowThreadStateOnContainingBlockChangeIfNeeded()

@@ -1672,12 +1672,9 @@ static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderSty
 
 static inline bool needsAppleMailPaginationQuirk(RootInlineBox& lineBox)
 {
-    const auto& renderer = lineBox.renderer();
+    auto& renderer = lineBox.renderer();
 
-    if (!renderer.document().settings())
-        return false;
-
-    if (!renderer.document().settings()->appleMailPaginationQuirkEnabled())
+    if (!renderer.settings().appleMailPaginationQuirkEnabled())
         return false;
 
     if (renderer.element() && renderer.element()->idForStyleResolution() == "messageContentContainer")

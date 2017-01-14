@@ -107,7 +107,7 @@ inline SecureTextTimer::SecureTextTimer(RenderText& renderer)
 inline void SecureTextTimer::restart(unsigned offsetAfterLastTypedCharacter)
 {
     m_offsetAfterLastTypedCharacter = offsetAfterLastTypedCharacter;
-    startOneShot(m_renderer.frame().settings().passwordEchoDurationInSeconds());
+    startOneShot(m_renderer.settings().passwordEchoDurationInSeconds());
 }
 
 inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()

@@ -1636,7 +1636,6 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
 void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffset, CaretType type)
 {
     // Paint the caret if the FrameSelection says so or if caret browsing is enabled
-    bool caretBrowsing = frame().settings().caretBrowsingEnabled();
     RenderBlock* caretPainter;
     bool isContentEditable;
     if (type == CursorCaret) {
@@ -1647,7 +1646,7 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         isContentEditable = page().dragCaretController().isContentEditable();
     }
 
-    if (caretPainter == this && (isContentEditable || caretBrowsing)) {
+    if (caretPainter == this && (isContentEditable || settings().caretBrowsingEnabled())) {
         if (type == CursorCaret)
             frame().selection().paintCaret(paintInfo.context(), paintOffset, paintInfo.rect);
         else
@@ -1843,7 +1842,7 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
 
 bool RenderBlock::shouldPaintSelectionGaps() const
 {
-    if (frame().settings().selectionPaintingWithoutSelectionGapsEnabled())
+    if (settings().selectionPaintingWithoutSelectionGapsEnabled())
         return false;
 
     return selectionState() != SelectionNone && style().visibility() == VISIBLE && isSelectionRoot();

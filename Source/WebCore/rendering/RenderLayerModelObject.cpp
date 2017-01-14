@@ -217,11 +217,11 @@ bool RenderLayerModelObject::shouldPlaceBlockDirectionScrollbarOnLeft() const
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
     return false;
 #else
-    switch (frame().settings().userInterfaceDirectionPolicy()) {
+    switch (settings().userInterfaceDirectionPolicy()) {
     case UserInterfaceDirectionPolicy::Content:
         return style().shouldPlaceBlockDirectionScrollbarOnLeft();
     case UserInterfaceDirectionPolicy::System:
-        return frame().settings().systemLayoutDirection() == RTL;
+        return settings().systemLayoutDirection() == RTL;
     }
     ASSERT_NOT_REACHED();
     return style().shouldPlaceBlockDirectionScrollbarOnLeft();

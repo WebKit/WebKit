@@ -120,7 +120,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
         if (m_isMainFrameRenderViewLayer)
             tiledBacking->setUnparentsOffscreenTiles(true);
 
-        tiledBacking->setScrollingPerformanceLoggingEnabled(renderer().page().settings().scrollingPerformanceLoggingEnabled());
+        tiledBacking->setScrollingPerformanceLoggingEnabled(renderer().settings().scrollingPerformanceLoggingEnabled());
         adjustTiledBackingCoverage();
     }
 }
@@ -2518,17 +2518,17 @@ bool RenderLayerBacking::shouldAggressivelyRetainTiles(const GraphicsLayer*) con
     if (!m_isMainFrameRenderViewLayer)
         return false;
 
-    return renderer().frame().settings().aggressiveTileRetentionEnabled();
+    return renderer().settings().aggressiveTileRetentionEnabled();
 }
 
 bool RenderLayerBacking::shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const
 {
-    return renderer().frame().settings().temporaryTileCohortRetentionEnabled();
+    return renderer().settings().temporaryTileCohortRetentionEnabled();
 }
 
 bool RenderLayerBacking::useGiantTiles() const
 {
-    return renderer().frame().settings().useGiantTiles();
+    return renderer().settings().useGiantTiles();
 }
 
 #ifndef NDEBUG
@@ -2586,7 +2586,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 #endif
     }
 
-    if (!renderer().frame().settings().acceleratedCompositedAnimationsEnabled())
+    if (!renderer().settings().acceleratedCompositedAnimationsEnabled())
         return false;
 
     bool didAnimate = false;

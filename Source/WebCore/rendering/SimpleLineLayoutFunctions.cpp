@@ -88,7 +88,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
     if (style.visibility() != VISIBLE)
         return;
 
-    bool debugBordersEnabled = flow.frame().settings().simpleLineLayoutDebugBordersEnabled();
+    bool debugBordersEnabled = flow.settings().simpleLineLayoutDebugBordersEnabled();
 
     TextPainter textPainter(paintInfo.context());
     textPainter.setFont(style.fontCascade());

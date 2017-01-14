@@ -549,7 +549,7 @@ void RenderImage::paintIntoRect(GraphicsContext& context, const FloatRect& rect)
 
 #if USE(CG)
     if (is<PDFDocumentImage>(image))
-        downcast<PDFDocumentImage>(*image).setPdfImageCachingPolicy(frame().settings().pdfImageCachingPolicy());
+        downcast<PDFDocumentImage>(*image).setPdfImageCachingPolicy(settings().pdfImageCachingPolicy());
 #endif
 
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());

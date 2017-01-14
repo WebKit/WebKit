@@ -268,7 +268,7 @@ static AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, Inc
     });
 #endif
     AvoidanceReasonFlags reasons = { };
-    if (!flow.frame().settings().simpleLineLayoutEnabled())
+    if (!flow.settings().simpleLineLayoutEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
     if (!flow.parent())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoParent, reasons, includeReasons);

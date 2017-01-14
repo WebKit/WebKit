@@ -646,7 +646,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (document().printing()) {
         if (style().printColorAdjust() == PrintColorAdjustEconomy)
             forceBackgroundToWhite = true;
-        if (frame().settings().shouldPrintBackgrounds())
+        if (settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
     }
 
@@ -1110,7 +1110,7 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
     } else {
         LayoutRect viewportRect;
         float topContentInset = 0;
-        if (frame().settings().fixedBackgroundsPaintRelativeToDocument())
+        if (settings().fixedBackgroundsPaintRelativeToDocument())
             viewportRect = view().unscaledDocumentRect();
         else {
             FrameView& frameView = view().frameView();
