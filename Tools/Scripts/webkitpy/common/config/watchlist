@@ -237,8 +237,8 @@
             "filename": r"PerformanceTests"
                         r"|Tools/Scripts/webkitpy/performance_tests",
         },
-        "Animometer": {
-            "filename": r"PerformanceTests/Animometer",
+        "MotionMark": {
+            "filename": r"PerformanceTests/MotionMark",
         },
         "ConsoleUsage": {
             "more": r"[Aa]ddConsoleMessage|reportException|logExceptionToConsole|addMessage|printErrorMessage"
@@ -352,7 +352,7 @@
         # two different accounts as far as bugzilla is concerned.
         "Accessibility": [ "cfleizach@apple.com", "dmazzoni@google.com", "apinheiro@igalia.com", "jdiggs@igalia.com", "aboxhall@chromium.org", "mario@webkit.org", "samuel_white@apple.com", "jcraig@apple.com" ],
         "Animation" : [ "simon.fraser@apple.com", "dino@apple.com", "dstockwell@chromium.org" ],
-        "Animometer" : [ "sabouhallawa@apple.com" ],
+        "MotionMark" : [ "sabouhallawa@apple.com" ],
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "BindingsScripts": [ "cdumez@apple.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@webkit.org", "ryuan.choi@gmail.com", "sergio.correia@openbossa.org", "mcatanzaro@igalia.com" ],

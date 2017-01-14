@@ -1,3 +1,15 @@
+2017-01-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        26 MotionMark performance tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=166854
+
+        Reviewed by Ryosuke Niwa.
+
+        Unrelated change. This is the last place that we need to rename Animometer
+        to MotionMark.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2017-01-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         run-jsc-benchmarks' echo should have -e option
