@@ -1348,8 +1348,8 @@ bool RenderLayer::updateLayerPosition()
         box->applyTopLeftLocationOffset(localPoint);
     }
 
-    RenderElement* ancestor;
-    if (!renderer().isOutOfFlowPositioned() && (ancestor = renderer().parent())) {
+    if (!renderer().isOutOfFlowPositioned()) {
+        auto* ancestor = renderer().parent();
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
         while (ancestor && !ancestor->hasLayer()) {
@@ -1360,9 +1360,9 @@ bool RenderLayer::updateLayerPosition()
             }
             ancestor = ancestor->parent();
         }
-        if (ancestor && is<RenderBox>(*ancestor) && is<RenderTableRow>(*ancestor)) {
+        if (is<RenderTableRow>(ancestor)) {
             // Put ourselves into the row coordinate space.
-            localPoint -= downcast<RenderBox>(*ancestor).topLeftLocationOffset();
+            localPoint -= downcast<RenderTableRow>(*ancestor).topLeftLocationOffset();
         }
     }
     

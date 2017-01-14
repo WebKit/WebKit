@@ -1,5 +1,17 @@
 2017-01-14  Zalan Bujtas  <zalan@apple.com>
 
+        Small code cleanup after r210760
+        https://bugs.webkit.org/show_bug.cgi?id=167047
+
+        Reviewed by Sam Weinig.
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+
+2017-01-14  Zalan Bujtas  <zalan@apple.com>
+
         Renderers should have a simple way to access Settings.
         https://bugs.webkit.org/show_bug.cgi?id=167048
 
