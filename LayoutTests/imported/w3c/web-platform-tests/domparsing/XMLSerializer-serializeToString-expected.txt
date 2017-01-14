@@ -1,0 +1,5 @@
+domparsing_XMLSerializer_serializeToString
+
+
+PASS check  XMLSerializer.serializeToString method could parsing xmldoc to string 
+

@@ -4,6 +4,26 @@ PASS Must throw TypeError when calling without arguments
 PASS Simple test with paragraphs 
 PASS Don't auto-create <body> when applied to <html> 
 PASS <script>s should be run when appended to the document (but not before) 
+FAIL createContextualFragment should work even when the context is <area> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <base> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <basefont> The operation is not supported.
+PASS createContextualFragment should work even when the context is <bgsound> 
+FAIL createContextualFragment should work even when the context is <br> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <col> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <embed> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <frame> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <hr> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <img> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <input> The operation is not supported.
+PASS createContextualFragment should work even when the context is <keygen> 
+FAIL createContextualFragment should work even when the context is <link> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <meta> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <param> The operation is not supported.
+FAIL createContextualFragment should work even when the context is <source> The operation is not supported.
+PASS createContextualFragment should work even when the context is <track> 
+FAIL createContextualFragment should work even when the context is <wbr> The operation is not supported.
+PASS createContextualFragment should work even when the context is <menuitem> 
+FAIL createContextualFragment should work even when the context is <image> The operation is not supported.
 PASS <html> and <body> must work the same, 1 
 PASS <html> and <body> must work the same, 2 
 PASS Implicit <body> creation 
@@ -13,4 +33,5 @@ PASS SVG namespace shouldn't be special
 PASS null should be stringified 
 PASS undefined should be stringified 
 PASS Text nodes shouldn't be special 
+PASS Non-Element parent should not be special 
 

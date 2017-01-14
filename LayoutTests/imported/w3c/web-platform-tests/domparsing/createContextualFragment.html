@@ -84,6 +84,45 @@ test(function() {
         assert_true(passed, "Fragment created and added to document, should run");
 }, "<script>s should be run when appended to the document (but not before)");
 
+// Historical bugs in browsers; see https://github.com/whatwg/html/issues/2222
+
+[
+        // Void
+        "area",
+        "base",
+        "basefont",
+        "bgsound",
+        "br",
+        "col",
+        "embed",
+        "frame",
+        "hr",
+        "img",
+        "input",
+        "keygen",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
+
+        // Historical
+        "menuitem",
+        "image"
+].forEach(name => {
+        test(() => {
+                const range = document.createRange();
+                const contextNode = document.createElement(name);
+                const selectedNode = document.createElement("div");
+                contextNode.appendChild(selectedNode);
+                range.selectNode(selectedNode);
+
+                range.createContextualFragment("some text");
+        }, `createContextualFragment should work even when the context is <${name}>`);
+});
+
+
 // Now that we've established basic sanity, let's do equivalence tests.  Those
 // are easier to write anyway.
 function testEquivalence(element1, fragment1, element2, fragment2) {
@@ -109,6 +148,10 @@ function testEquivalence(element1, fragment1, element2, fragment2) {
         }
 }
 
+var doc_fragment = document.createDocumentFragment();
+var comment = document.createComment("~o~");
+doc_fragment.appendChild(comment);
+
 var tests = [
         ["<html> and <body> must work the same, 1", document.documentElement, "<span>Hello world</span>", document.body, "<span>Hello world</span>"],
         ["<html> and <body> must work the same, 2", document.documentElement, "<body><p>Hello world", document.body, "<body><p>Hello world"],
@@ -126,6 +169,9 @@ var tests = [
         ["undefined should be stringified", document.createElement("span"), undefined, document.createElement("span"), "undefined"],
         ["Text nodes shouldn't be special",
                 document.createTextNode("?"), "<body><p>",
+                document.createElement("div"), "<body><p>"],
+        ["Non-Element parent should not be special",
+                comment, "<body><p>",
                 document.createElement("div"), "<body><p>"]
 ];
 

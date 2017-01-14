@@ -1,0 +1,18 @@
+
+FAIL Should parse correctly in type text/xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for correctly parsed document with type text/xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should return an error document for XML wellformedness errors in type text/xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for incorrectly parsed document with type text/xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should parse correctly in type application/xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for correctly parsed document with type application/xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should return an error document for XML wellformedness errors in type application/xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for incorrectly parsed document with type application/xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should parse correctly in type application/xhtml+xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for correctly parsed document with type application/xhtml+xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should return an error document for XML wellformedness errors in type application/xhtml+xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for incorrectly parsed document with type application/xhtml+xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should parse correctly in type image/svg+xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for correctly parsed document with type image/svg+xml assert_false: Should not be XMLDocument expected false got true
+FAIL Should return an error document for XML wellformedness errors in type image/svg+xml assert_equals: URL expected "http://localhost:8800/domparsing/DOMParser-parseFromString-xml.html" but got "about:blank"
+FAIL XMLDocument interface for incorrectly parsed document with type image/svg+xml assert_false: Should not be XMLDocument expected false got true
+
