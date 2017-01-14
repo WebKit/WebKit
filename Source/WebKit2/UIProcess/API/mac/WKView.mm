@@ -895,7 +895,7 @@ Some other editing-related methods still unimplemented:
 #endif // WK_API_ENABLED
 }
 
-- (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
+- (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -904,7 +904,7 @@ Some other editing-related methods still unimplemented:
     InitializeWebKit2();
 
     _data = [[WKViewData alloc] init];
-    _data->_impl = std::make_unique<WebViewImpl>(self, webView, processPool, WTFMove(configuration));
+    _data->_impl = std::make_unique<WebViewImpl>(self, nullptr, processPool, WTFMove(configuration));
 
     [self maybeInstallIconLoadingClient];
 
@@ -1099,7 +1099,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
     configuration->preferenceValues().set(WebKit::WebPreferencesKey::systemLayoutDirectionKey(), WebKit::WebPreferencesStore::Value(static_cast<uint32_t>(toUserInterfaceLayoutDirection(self.userInterfaceLayoutDirection))));
 #endif
 
-    return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:WTFMove(configuration) webView:nil];
+    return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:WTFMove(configuration)];
 }
 
 - (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configurationRef
@@ -1107,7 +1107,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
     Ref<API::PageConfiguration> configuration = toImpl(configurationRef)->copy();
     auto& processPool = *configuration->processPool();
 
-    return [self initWithFrame:frame processPool:processPool configuration:WTFMove(configuration) webView:nil];
+    return [self initWithFrame:frame processPool:processPool configuration:WTFMove(configuration)];
 }
 
 - (BOOL)wantsUpdateLayer

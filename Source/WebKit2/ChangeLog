@@ -1,3 +1,19 @@
+2017-01-14  Tim Horton  <timothy_horton@apple.com>
+
+        Remove unused WKView initializer parameter
+        https://bugs.webkit.org/show_bug.cgi?id=167046
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processPool:configuration:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        (-[WKView initWithFrame:configurationRef:]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+        Ever since WKWebView stopped having WKView inside it, this parameter
+        has never been used. Now, it only leads to confusion.
+
 2017-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(DETAILS_ELEMENT) guards

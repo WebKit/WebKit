@@ -31,25 +31,12 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
-namespace API {
-class PageConfiguration;
-}
-
-namespace WebKit {
-class WebProcessPool;
-}
-
-@class WKWebView;
 #if WK_API_ENABLED
 @class _WKThumbnailView;
-#endif
 
 @interface WKView ()
-#if WK_API_ENABLED
-- (instancetype)initWithFrame:(NSRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;
-#endif
-
 @end
+#endif
 
 #endif
