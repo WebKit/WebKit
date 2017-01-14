@@ -1,3 +1,17 @@
+2017-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid nullptr frame dereference when scrollTo is called on a disconnected DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=167030
+        <rdar://problem/29995070>
+
+        Reviewed by Dean Jackson.
+
+        Correct DOMWindow::scrollTo to match all other functions in the class so that the it
+        checks that the current frame is valid before attempting to use it.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollTo):
+
 2017-01-13  Jer Noble  <jer.noble@apple.com>
 
         Use a strong reference when calling callOnMainThread to schedule events in AudioScheduledSourceNode.

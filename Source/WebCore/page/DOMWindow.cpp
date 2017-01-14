@@ -1565,6 +1565,9 @@ void DOMWindow::scrollBy(double x, double y) const
 
 void DOMWindow::scrollTo(const ScrollToOptions& options) const
 {
+    if (!isCurrentlyDisplayedInFrame())
+        return;
+
     RefPtr<FrameView> view = m_frame->view();
     if (!view)
         return;
