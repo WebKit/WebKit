@@ -1,3 +1,20 @@
+2017-01-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: the 'lock' icon for non-editable rules in the Style Rules sidebar lacks a tooltip
+        https://bugs.webkit.org/show_bug.cgi?id=166909
+        <rdar://problem/29959406>
+
+        Reviewed by Matt Baker.
+
+        Convert the lock icon from a pseudo-element to an 'img' element and add a title attribute.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section.locked > .header > .locked-icon):
+        (.style-declaration-section.locked > .header::before): Deleted.
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+
 2017-01-12  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r209711): Web Inspector: in Elements Tab, selecting a deeply nested DOM element causes navigation bar buttons to be pushed off the leading edge

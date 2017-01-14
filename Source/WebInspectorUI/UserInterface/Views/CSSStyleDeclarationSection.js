@@ -47,6 +47,18 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         this._headerElement = document.createElement("div");
         this._headerElement.classList.add("header");
 
+        if (!style.editable) {
+            let lockedIconElement = this._headerElement.createChild("img", "locked-icon");
+
+            let styleLabel;
+            if (style.ownerRule && style.ownerRule.type === WebInspector.CSSStyleSheet.Type.UserAgent)
+                styleLabel = WebInspector.UIString("User Agent Stylesheet");
+            else
+                styleLabel = WebInspector.UIString("Style rule");
+
+            lockedIconElement.title = WebInspector.UIString("%s cannot be modified").format(styleLabel);
+        }
+
         this._iconElement = this._headerElement.createChild("img", "icon");
 
         if (this.selectorEditable) {

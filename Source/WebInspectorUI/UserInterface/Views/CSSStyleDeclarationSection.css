@@ -60,16 +60,12 @@
     line-height: 12px;
 }
 
-.style-declaration-section.locked > .header::before {
+.style-declaration-section.locked > .header > .locked-icon {
     float: right;
     width: 8px;
     height: 10px;
     margin-left: 5px;
-    content: "";
-    background-image: url(../Images/Locked.svg);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 8px 10px;
+    content: url(../Images/Locked.svg);
 }
 
 .style-declaration-section > .header > .icon {
