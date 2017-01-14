@@ -1590,7 +1590,7 @@ WebInspector._setupViewHierarchy = function()
 
 WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)
 {
-    if (this.tabBar.selectedTabBarItem)
+    if (this.tabBar.selectedTabBarItem && this.tabBar.selectedTabBarItem.representedObject.constructor.shouldSaveTab())
         this._selectedTabIndexSetting.value = this.tabBar.tabBarItems.indexOf(this.tabBar.selectedTabBarItem);
 
     if (!this.doesCurrentTabSupportSplitContentBrowser())

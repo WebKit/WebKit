@@ -1,3 +1,15 @@
+2017-01-13  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Settings tab is restored when reopening inspector
+        https://bugs.webkit.org/show_bug.cgi?id=167025
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._tabBrowserSelectedTabContentViewDidChange):
+        Only save the selectedTabIndex if the current tab should be saved and reloaded upon opening
+        the WebInspector window.
+
 2017-01-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Resources disappear from the network tab when iframe gets removed from DOM
