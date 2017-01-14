@@ -1253,6 +1253,8 @@
 		839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 839149631BEA838500D2D953 /* NetworkLoadParameters.h */; };
 		839902021BE9A02B000F3653 /* NetworkLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */; };
 		839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 839901FE1BE9A01B000F3653 /* NetworkLoad.h */; };
+		839A2F311E2067450039057E /* HighPerformanceGraphicsUsageSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */; };
+		839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */; };
 		83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */; };
 		83BFAC421D96137C00433490 /* BlobDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BFAC401D96136000433490 /* BlobDownloadClient.h */; };
 		83BFAC431D96137C00433490 /* BlobDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BFAC411D96136000433490 /* BlobDownloadClient.cpp */; };
@@ -3401,6 +3403,8 @@
 		839149631BEA838500D2D953 /* NetworkLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoadParameters.h; path = NetworkProcess/NetworkLoadParameters.h; sourceTree = "<group>"; };
 		839901FE1BE9A01B000F3653 /* NetworkLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkLoad.h; path = NetworkProcess/NetworkLoad.h; sourceTree = "<group>"; };
 		839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkLoad.cpp; path = NetworkProcess/NetworkLoad.cpp; sourceTree = "<group>"; };
+		839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HighPerformanceGraphicsUsageSampler.cpp; sourceTree = "<group>"; };
+		839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGraphicsUsageSampler.h; sourceTree = "<group>"; };
 		83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStatistics.cpp; sourceTree = "<group>"; };
 		83BFAC401D96136000433490 /* BlobDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobDownloadClient.h; path = NetworkProcess/Downloads/BlobDownloadClient.h; sourceTree = "<group>"; };
 		83BFAC411D96136000433490 /* BlobDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobDownloadClient.cpp; path = NetworkProcess/Downloads/BlobDownloadClient.cpp; sourceTree = "<group>"; };
@@ -6257,6 +6261,8 @@
 				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
 				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
 				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
+				839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */,
+				839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */,
 				31607F3819627002009B87DA /* LegacySessionStateCoding.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
 				1AC75379183A9FDA0072CB15 /* PageLoadState.cpp */,
@@ -7885,6 +7891,7 @@
 				1A6FBD2811E69BC200DB1371 /* NetscapePlugin.h in Headers */,
 				1A4A9C5612B816CF008FE984 /* NetscapePluginModule.h in Headers */,
 				1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */,
+				839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */,
 				E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */,
 				E4436ECC1A0D040B00EAD204 /* NetworkCache.h in Headers */,
 				E49D40D71AD3FB170066B7B9 /* NetworkCacheBlobStorage.h in Headers */,
@@ -9380,6 +9387,7 @@
 				1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */,
 				1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */,
 				1A4A9C5512B816CF008FE984 /* NetscapePluginModule.cpp in Sources */,
+				839A2F311E2067450039057E /* HighPerformanceGraphicsUsageSampler.cpp in Sources */,
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
 				1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */,
 				E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */,

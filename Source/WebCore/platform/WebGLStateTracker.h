@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,27 @@
 
 #pragma once
 
+#include <wtf/Function.h>
+#include <wtf/RefCounter.h>
+
 namespace WebCore {
 
-struct GraphicsContext3DAttributes {
-    // WebGLContextAttributes
-    bool alpha { true };
-    bool depth { true };
-    bool stencil { false };
-    bool antialias { true };
-    bool premultipliedAlpha { true };
-    bool preserveDrawingBuffer { false };
-    bool preferLowPowerToHighPerformance { false };
-    bool failIfMajorPerformanceCaveat { false };
+class WebGLStateTracker {
+public:
+    using StateChangeHandler = Function<void(bool isUsingWebGL)>;
+    WEBCORE_EXPORT explicit WebGLStateTracker(StateChangeHandler&&);
 
-    // Additional attributes.
-    bool forceSoftwareRenderer { false };
-    bool shareResources { true };
-    bool useGLES3 { false };
-    bool noExtensions { false };
-    float devicePixelRatio { 1 };
-    bool initialPreferLowPowerToHighPerformance { false };
+    enum WebGLContextCounterType { };
+    using WebGLContextCounter = RefCounter<WebGLContextCounterType>;
+    using Token = WebGLContextCounter::Token;
+
+    Token token(bool preferLowPower);
+
+private:
+    void updateWebGLState();
+
+    WebGLContextCounter m_webGLContextCounter;
+    StateChangeHandler m_stateChangeHandler;
 };
 
-}
+} // namespace WebCore

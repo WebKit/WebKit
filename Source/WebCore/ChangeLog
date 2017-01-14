@@ -1,3 +1,49 @@
+2017-01-13  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add diagnostic logging to measure WebGL usage
+        https://bugs.webkit.org/show_bug.cgi?id=166730
+        <rdar://problem/29883469>
+
+        Reviewed by Alex Christensen.
+
+        Add diagnostic logging to measure high performance WebGL usage. We report
+        at regular intervals in which WebGL state Safari is:
+        - Inactive
+        - ActiveInForegroundTab
+        - ActiveInBackgroundTabOnly
+
+        This should give us an estimate of:
+        - What % of the time is Safari using high performance graphics
+        - What % of this time is only due to background tabs
+
+        No new tests, no Web-facing behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::registerWithWebGLStateTracker):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::inactiveKey):
+        (WebCore::DiagnosticLoggingKeys::activeInForegroundTabKey):
+        (WebCore::DiagnosticLoggingKeys::activeInBackgroundTabOnlyKey):
+        (WebCore::DiagnosticLoggingKeys::stateKey):
+        (WebCore::WebCore::DiagnosticLoggingKeys::webGLKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::webGLStateTracker):
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+        * platform/WebGLStateTracker.cpp: Copied from Source/WebCore/platform/graphics/GraphicsContext3DAttributes.h.
+        (WebCore::WebGLStateTracker::WebGLStateTracker):
+        (WebCore::m_stateChangeHandler):
+        (WebCore::WebGLStateTracker::updateWebGLState):
+        * platform/WebGLStateTracker.h: Copied from Source/WebCore/platform/graphics/GraphicsContext3DAttributes.h.
+        * platform/graphics/GraphicsContext3DAttributes.h:
+
 2017-01-13  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid nullptr frame dereference when scrollTo is called on a disconnected DOMWindow

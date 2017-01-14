@@ -37,6 +37,7 @@
 #include "UserContentController.h"
 #include "ValidationMessageClient.h"
 #include "VisitedLinkStore.h"
+#include "WebGLStateTracker.h"
 
 namespace WebCore {
 

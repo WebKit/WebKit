@@ -130,6 +130,7 @@ class UserContentProvider;
 class ValidationMessageClient;
 class ActivityStateChangeObserver;
 class VisitedLinkStore;
+class WebGLStateTracker;
 
 typedef uint64_t LinkHash;
 
@@ -552,6 +553,7 @@ public:
     std::optional<EventThrottlingBehavior> eventThrottlingBehaviorOverride() const { return m_eventThrottlingBehaviorOverride; }
     void setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior> throttling) { m_eventThrottlingBehaviorOverride = throttling; }
 
+    WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
 private:
     WEBCORE_EXPORT void initGroup();
 
@@ -617,6 +619,7 @@ private:
     PlugInClient* m_plugInClient;
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
+    std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
 
     int m_subframeCount;
     String m_groupName;

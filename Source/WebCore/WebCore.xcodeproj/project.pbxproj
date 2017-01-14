@@ -3024,6 +3024,8 @@
 		838EF5381DC149E2008F0C39 /* IDBTransactionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 838EF5361DC149DA008F0C39 /* IDBTransactionMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		838EF53B1DC14A7C008F0C39 /* JSIDBTransactionMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 838EF5391DC14A75008F0C39 /* JSIDBTransactionMode.cpp */; };
 		838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 838EF53A1DC14A75008F0C39 /* JSIDBTransactionMode.h */; };
+		839A2F2D1E204A710039057E /* WebGLStateTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839A2F2B1E204A6D0039057E /* WebGLStateTracker.cpp */; };
+		839A2F2E1E204A710039057E /* WebGLStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F2C1E204A6D0039057E /* WebGLStateTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		839AAFEC1A0C0C8D00605F99 /* HTMLWBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839AAFEA1A0C0C8D00605F99 /* HTMLWBRElement.cpp */; };
 		839AAFED1A0C0C8D00605F99 /* HTMLWBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */; };
 		83A4A9F91CE7FD8100709B00 /* JSXMLDocumentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */; };
@@ -10540,6 +10542,8 @@
 		838EF5371DC149DA008F0C39 /* IDBTransactionMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBTransactionMode.idl; sourceTree = "<group>"; };
 		838EF5391DC14A75008F0C39 /* JSIDBTransactionMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBTransactionMode.cpp; sourceTree = "<group>"; };
 		838EF53A1DC14A75008F0C39 /* JSIDBTransactionMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBTransactionMode.h; sourceTree = "<group>"; };
+		839A2F2B1E204A6D0039057E /* WebGLStateTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLStateTracker.cpp; sourceTree = "<group>"; };
+		839A2F2C1E204A6D0039057E /* WebGLStateTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLStateTracker.h; sourceTree = "<group>"; };
 		839AAFEA1A0C0C8D00605F99 /* HTMLWBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLWBRElement.cpp; sourceTree = "<group>"; };
 		839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLWBRElement.h; sourceTree = "<group>"; };
 		83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLDocumentCustom.cpp; sourceTree = "<group>"; };
@@ -22669,6 +22673,8 @@
 				9A1142031832D134000BB8AD /* ValueToString.h */,
 				515F79511CFCA3C700CCED93 /* WebCoreCrossThreadCopier.cpp */,
 				515F79521CFCA3C700CCED93 /* WebCoreCrossThreadCopier.h */,
+				839A2F2B1E204A6D0039057E /* WebGLStateTracker.cpp */,
+				839A2F2C1E204A6D0039057E /* WebGLStateTracker.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */,
@@ -25489,6 +25495,7 @@
 				0F4710AF1DB56AFC002DCEC3 /* DOMRect.h in Headers */,
 				0F4710B11DB56AFC002DCEC3 /* DOMRectInit.h in Headers */,
 				0F4710B31DB56AFC002DCEC3 /* DOMRectReadOnly.h in Headers */,
+				839A2F2E1E204A710039057E /* WebGLStateTracker.h in Headers */,
 				BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */,
 				C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */,
 				BC64640A11D7F304006455B0 /* DOMStringMap.h in Headers */,
@@ -29458,6 +29465,7 @@
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
 				974A862214B7ADBB003FDC76 /* FrameDestructionObserver.cpp in Sources */,
 				FED13D3D0CEA936A00D89466 /* FrameIOS.mm in Sources */,
+				839A2F2D1E204A710039057E /* WebGLStateTracker.cpp in Sources */,
 				932E16090AF578340025F408 /* FrameLoader.cpp in Sources */,
 				D000EBA211BDAFD400C47726 /* FrameLoaderStateMachine.cpp in Sources */,
 				86BA766E166427A8005BE5D1 /* FrameLoadRequest.cpp in Sources */,

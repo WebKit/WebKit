@@ -98,6 +98,7 @@
 #include "VisitedLinkState.h"
 #include "VisitedLinkStore.h"
 #include "VoidCallback.h"
+#include "WebGLStateTracker.h"
 #include "Widget.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -197,6 +198,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_plugInClient(pageConfiguration.plugInClient)
     , m_validationMessageClient(WTFMove(pageConfiguration.validationMessageClient))
     , m_diagnosticLoggingClient(WTFMove(pageConfiguration.diagnosticLoggingClient))
+    , m_webGLStateTracker(WTFMove(pageConfiguration.webGLStateTracker))
     , m_subframeCount(0)
     , m_openedByDOM(false)
     , m_tabKeyCyclesThroughElements(true)

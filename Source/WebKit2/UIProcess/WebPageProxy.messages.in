@@ -485,4 +485,6 @@ messages -> WebPageProxy {
     DidHandleAcceptedCandidate()
     HandleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, String title, double duration, double elapsedTime)
 #endif
+
+    SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
 }

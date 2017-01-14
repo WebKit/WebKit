@@ -36,6 +36,7 @@
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <memory>
@@ -825,6 +826,9 @@ protected:
 
 private:
     bool validateArrayBufferType(const char* functionName, GC3Denum type, std::optional<JSC::TypedArrayType>);
+    void registerWithWebGLStateTracker();
+
+    WebGLStateTracker::Token m_trackerToken;
 };
 
 } // namespace WebCore

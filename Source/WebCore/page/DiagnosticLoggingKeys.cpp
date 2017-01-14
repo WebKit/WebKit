@@ -243,6 +243,11 @@ String DiagnosticLoggingKeys::inMemoryCacheKey()
     return ASCIILiteral("inMemoryCache");
 }
 
+String DiagnosticLoggingKeys::inactiveKey()
+{
+    return ASCIILiteral("inactive");
+}
+
 String DiagnosticLoggingKeys::internalErrorKey()
 {
     return ASCIILiteral("internalError");
@@ -321,6 +326,16 @@ String DiagnosticLoggingKeys::createSharedBufferFailedKey()
 String DiagnosticLoggingKeys::deltaKey()
 {
     return ASCIILiteral("delta");
+}
+
+String DiagnosticLoggingKeys::activeInForegroundTabKey()
+{
+    return ASCIILiteral("activeInForegroundTab");
+}
+
+String DiagnosticLoggingKeys::activeInBackgroundTabOnlyKey()
+{
+    return ASCIILiteral("activeInBackgroundTabOnly");
 }
 
 String DiagnosticLoggingKeys::applicationCacheKey()
@@ -446,6 +461,11 @@ String DiagnosticLoggingKeys::scriptKey()
 String DiagnosticLoggingKeys::sourceKey()
 {
     return ASCIILiteral("source");
+}
+
+String DiagnosticLoggingKeys::stateKey()
+{
+    return ASCIILiteral("state");
 }
 
 String DiagnosticLoggingKeys::streamingMedia()
@@ -626,6 +646,11 @@ String WebCore::DiagnosticLoggingKeys::notHTTPFamilyKey()
 String DiagnosticLoggingKeys::notInCacheKey()
 {
     return ASCIILiteral("notInCache");
+}
+
+String WebCore::DiagnosticLoggingKeys::webGLKey()
+{
+    return ASCIILiteral("webGL");
 }
 
 } // namespace WebCore

@@ -31,6 +31,8 @@ namespace WebCore {
 
 class DiagnosticLoggingKeys {
 public:
+    WEBCORE_EXPORT static String activeInForegroundTabKey();
+    WEBCORE_EXPORT static String activeInBackgroundTabOnlyKey();
     static String applicationCacheKey();
     static String audioKey();
     WEBCORE_EXPORT static String backNavigationKey();
@@ -57,6 +59,7 @@ public:
     static String httpsNoStoreKey();
     static String imageKey();
     static String inMemoryCacheKey();
+    WEBCORE_EXPORT static String inactiveKey();
     WEBCORE_EXPORT static String internalErrorKey();
     WEBCORE_EXPORT static String invalidSessionIDKey();
     WEBCORE_EXPORT static String isAttachmentKey();
@@ -120,6 +123,7 @@ public:
     static String sameLoadKey();
     static String scriptKey();
     static String sourceKey();
+    WEBCORE_EXPORT static String stateKey();
     WEBCORE_EXPORT static String streamingMedia();
     static String styleSheetKey();
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithRevalidationKey();
@@ -147,6 +151,7 @@ public:
     static String videoKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithRevalidationKey();
     WEBCORE_EXPORT static String wastedSpeculativeWarmupWithoutRevalidationKey();
+    WEBCORE_EXPORT static String webGLKey();
     WEBCORE_EXPORT static String webViewKey();
     WEBCORE_EXPORT static String zoomedKey();
 

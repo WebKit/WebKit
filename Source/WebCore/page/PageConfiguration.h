@@ -50,6 +50,7 @@ class StorageNamespaceProvider;
 class UserContentProvider;
 class ValidationMessageClient;
 class VisitedLinkStore;
+class WebGLStateTracker;
 
 #if ENABLE(CONTEXT_MENUS)
 class ContextMenuClient;
@@ -80,6 +81,7 @@ public:
     std::unique_ptr<ValidationMessageClient> validationMessageClient;
     FrameLoaderClient* loaderClientForMainFrame { nullptr };
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
+    std::unique_ptr<WebGLStateTracker> webGLStateTracker;
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;

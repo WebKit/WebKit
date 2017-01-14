@@ -2107,6 +2107,7 @@ set(WebCore_SOURCES
     platform/UUID.cpp
     platform/UserActivity.cpp
     platform/WebCoreCrossThreadCopier.cpp
+    platform/WebGLStateTracker.cpp
     platform/Widget.cpp
 
     platform/animation/Animation.cpp
