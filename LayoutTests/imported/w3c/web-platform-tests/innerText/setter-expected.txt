@@ -1,0 +1,58 @@
+
+PASS Simplest possible test 
+PASS Newlines convert to <br> in non-white-space:pre elements 
+PASS Newlines convert to <br> in <pre> element 
+PASS Newlines convert to <br> in white-space:pre element 
+PASS CRs convert to <br> in non-white-space:pre elements 
+PASS CRs convert to <br> in <pre> element 
+PASS Newline/CR pair converts to <br> in non-white-space:pre element 
+PASS Newline/newline pair converts to two <br>s in non-white-space:pre element 
+PASS CR/CR pair converts to two <br>s in non-white-space:pre element 
+PASS CRs convert to <br> in white-space:pre element 
+PASS < preserved 
+PASS > preserved 
+PASS & preserved 
+PASS " preserved 
+PASS ' preserved 
+PASS innerText not supported on SVG elements 
+PASS innerText not supported on MathML elements 
+PASS Null characters preserved 
+PASS Tabs preserved 
+PASS Leading whitespace preserved 
+PASS Trailing whitespace preserved 
+PASS Whitespace not compressed 
+PASS Existing text deleted 
+PASS Existing <br> deleted 
+PASS Assigning the empty string 
+PASS Assigning null 
+PASS Assigning undefined 
+FAIL innerText on <area> element The object can not be modified.
+FAIL innerText on <base> element The object can not be modified.
+FAIL innerText on <basefont> element The object can not be modified.
+PASS innerText on <bgsound> element 
+FAIL innerText on <br> element The object can not be modified.
+FAIL innerText on <col> element The object can not be modified.
+FAIL innerText on <embed> element The object can not be modified.
+FAIL innerText on <frame> element The object can not be modified.
+FAIL innerText on <hr> element The object can not be modified.
+FAIL innerText on <image> element The object can not be modified.
+FAIL innerText on <img> element The object can not be modified.
+FAIL innerText on <input> element The object can not be modified.
+PASS innerText on <keygen> element 
+FAIL innerText on <link> element The object can not be modified.
+PASS innerText on <menuitem> element 
+FAIL innerText on <meta> element The object can not be modified.
+FAIL innerText on <param> element The object can not be modified.
+FAIL innerText on <source> element The object can not be modified.
+PASS innerText on <track> element 
+FAIL innerText on <wbr> element The object can not be modified.
+FAIL innerText on <colgroup> element The object can not be modified.
+FAIL innerText on <frameset> element The object can not be modified.
+FAIL innerText on <head> element The object can not be modified.
+FAIL innerText on <html> element The object can not be modified.
+FAIL innerText on <table> element The object can not be modified.
+FAIL innerText on <tbody> element The object can not be modified.
+FAIL innerText on <tfoot> element The object can not be modified.
+FAIL innerText on <thead> element The object can not be modified.
+FAIL innerText on <tr> element The object can not be modified.
+

@@ -1,5 +1,24 @@
 2017-01-13  Chris Dumez  <cdumez@apple.com>
 
+        Import innerText/ w3c web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=167024
+
+        Reviewed by Alex Christensen.
+
+        Import innerText/ w3c web-platform-tests from upstream 4b4b2eeb.
+
+        * web-platform-tests/innerText/getter-expected.txt: Added.
+        * web-platform-tests/innerText/getter-tests.js: Added.
+        (CSS.supports):
+        * web-platform-tests/innerText/getter.html: Added.
+        * web-platform-tests/innerText/setter-expected.txt: Added.
+        * web-platform-tests/innerText/setter-tests.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/innerText/setter.html: Added.
+        * web-platform-tests/innerText/w3c-import.log: Added.
+
+2017-01-13  Chris Dumez  <cdumez@apple.com>
+
         Resync domparsing/ web-platform-tests from upstream
         https://bugs.webkit.org/show_bug.cgi?id=167023
 
