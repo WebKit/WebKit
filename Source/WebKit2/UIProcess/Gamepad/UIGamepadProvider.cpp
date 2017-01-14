@@ -151,8 +151,6 @@ void UIGamepadProvider::processPoolStartedUsingGamepads(WebProcessPool& pool)
 
     if (!m_isMonitoringGamepads && platformWebPageProxyForGamepadInput())
         startMonitoringGamepads();
-
-    scheduleGamepadStateSync();
 }
 
 void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
@@ -162,8 +160,6 @@ void UIGamepadProvider::processPoolStoppedUsingGamepads(WebProcessPool& pool)
 
     if (m_isMonitoringGamepads && !platformWebPageProxyForGamepadInput())
         platformStopMonitoringInput();
-
-    scheduleGamepadStateSync();
 }
 
 void UIGamepadProvider::viewBecameActive(WebPageProxy& page)
