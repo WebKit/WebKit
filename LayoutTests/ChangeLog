@@ -1,3 +1,13 @@
+2017-01-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking inspector/worker/debugger-scripts.html as flaky on macOS.
+        https://trac.webkit.org/changeset/209517
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-01-13  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream, Mac] Add mock audio source
