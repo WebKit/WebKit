@@ -1,3 +1,15 @@
+2017-01-14  Chris Dumez  <cdumez@apple.com>
+
+        Align the innerText setter with the HTML spec and Gecko
+        https://bugs.webkit.org/show_bug.cgi?id=160971
+
+        Reviewed by Alex Christensen.
+
+        Add test coverage for outerText, which is non-standard.
+
+        * fast/dom/br-set-outerText-expected.txt: Added.
+        * fast/dom/br-set-outerText.html: Added.
+
 2017-01-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/worker/debugger-scripts.html as flaky on macOS.

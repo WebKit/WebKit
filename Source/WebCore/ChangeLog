@@ -1,3 +1,25 @@
+2017-01-14  Chris Dumez  <cdumez@apple.com>
+
+        Align the innerText setter with the HTML spec and Gecko
+        https://bugs.webkit.org/show_bug.cgi?id=160971
+
+        Reviewed by Alex Christensen.
+
+        Align the innerText setter and createContextualFragment() with the
+        HTML specification and Gecko. In particular, they no longer throw
+        when the context element is a void element. This behavior was there
+        to match an old IE behavior but Edge dropped this behavior.
+
+        Test: fast/dom/br-set-outerText.html
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * editing/markup.cpp:
+        (WebCore::createContextualFragment):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+        (WebCore::HTMLElement::setOuterText):
+
 2017-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(DETAILS_ELEMENT) guards

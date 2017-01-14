@@ -470,20 +470,6 @@ ExceptionOr<Ref<DocumentFragment>> HTMLElement::textToFragment(const String& tex
     return WTFMove(fragment);
 }
 
-static inline bool shouldProhibitSetInnerOuterText(const HTMLElement& element)
-{
-    return element.hasTagName(colTag)
-        || element.hasTagName(colgroupTag)
-        || element.hasTagName(framesetTag)
-        || element.hasTagName(headTag)
-        || element.hasTagName(htmlTag)
-        || element.hasTagName(tableTag)
-        || element.hasTagName(tbodyTag)
-        || element.hasTagName(tfootTag)
-        || element.hasTagName(theadTag)
-        || element.hasTagName(trTag);
-}
-
 // Returns the conforming 'dir' value associated with the state the attribute is in (in its canonical case), if any,
 // or the empty string if the attribute is in a state that has no associated keyword value or if the attribute is
 // not in a defined state (e.g. the attribute is missing and there is no missing value default).
@@ -514,11 +500,6 @@ void HTMLElement::setDir(const AtomicString& value)
 
 ExceptionOr<void> HTMLElement::setInnerText(const String& text)
 {
-    if (ieForbidsInsertHTML())
-        return Exception { NO_MODIFICATION_ALLOWED_ERR };
-    if (shouldProhibitSetInnerOuterText(*this))
-        return Exception { NO_MODIFICATION_ALLOWED_ERR };
-
     // FIXME: This doesn't take whitespace collapsing into account at all.
 
     if (!text.contains('\n') && !text.contains('\r')) {
@@ -551,11 +532,6 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
 
 ExceptionOr<void> HTMLElement::setOuterText(const String& text)
 {
-    if (ieForbidsInsertHTML())
-        return Exception { NO_MODIFICATION_ALLOWED_ERR };
-    if (shouldProhibitSetInnerOuterText(*this))
-        return Exception { NO_MODIFICATION_ALLOWED_ERR };
-
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
         return Exception { NO_MODIFICATION_ALLOWED_ERR };

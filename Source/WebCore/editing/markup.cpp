@@ -949,13 +949,6 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
 
 ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, const String& markup, ParserContentPolicy parserContentPolicy)
 {
-    if (element.ieForbidsInsertHTML())
-        return Exception { NOT_SUPPORTED_ERR };
-
-    if (element.hasTagName(colTag) || element.hasTagName(colgroupTag) || element.hasTagName(framesetTag)
-        || element.hasTagName(headTag) || element.hasTagName(styleTag) || element.hasTagName(titleTag))
-        return Exception { NOT_SUPPORTED_ERR };
-
     auto result = createFragmentForInnerOuterHTML(element, markup, parserContentPolicy);
     if (result.hasException())
         return result.releaseException();
