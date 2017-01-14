@@ -1,3 +1,17 @@
+2017-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        Potential nullptr dereference in RenderLayer::updateLayerPosition()
+        https://bugs.webkit.org/show_bug.cgi?id=167036
+        <rdar://problem/30023019>
+
+        Reviewed by Dean Jackson.
+
+        A value was being used without nullptr checking, even though it had been checked for null a
+        few lines prior.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition): Add missing nullptr check.
+
 2017-01-11  Darin Adler  <darin@apple.com>
 
         Remove PassRefPtr from more of "platform"

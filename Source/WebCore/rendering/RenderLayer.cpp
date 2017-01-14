@@ -1360,7 +1360,7 @@ bool RenderLayer::updateLayerPosition()
             }
             ancestor = ancestor->parent();
         }
-        if (is<RenderBox>(*ancestor) && is<RenderTableRow>(*ancestor)) {
+        if (ancestor && is<RenderBox>(*ancestor) && is<RenderTableRow>(*ancestor)) {
             // Put ourselves into the row coordinate space.
             localPoint -= downcast<RenderBox>(*ancestor).topLeftLocationOffset();
         }
