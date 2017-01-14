@@ -21,8 +21,6 @@
 #include "config.h"
 #include "HTMLDetailsElement.h"
 
-#if ENABLE(DETAILS_ELEMENT)
-
 #include "AXObjectCache.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
@@ -175,5 +173,3 @@ void HTMLDetailsElement::toggleOpen()
 }
 
 }
-
-#endif

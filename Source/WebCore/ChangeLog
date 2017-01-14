@@ -1,3 +1,26 @@
+2017-01-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove ENABLE(DETAILS_ELEMENT) guards
+        https://bugs.webkit.org/show_bug.cgi?id=167042
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::setIsExpanded):
+        * html/HTMLDetailsElement.cpp:
+        * html/HTMLDetailsElement.idl:
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLTagNames.in:
+        * html/shadow/DetailsMarkerControl.cpp:
+        * rendering/RenderDetailsMarker.cpp:
+        * rendering/RenderDetailsMarker.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isDetailsMarker):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+
 2017-01-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix WinCairo build after r210753.

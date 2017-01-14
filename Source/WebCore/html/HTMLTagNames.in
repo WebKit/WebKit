@@ -37,7 +37,7 @@ data
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
-details conditional=DETAILS_ELEMENT
+details
 dfn interfaceName=HTMLElement
 dir interfaceName=HTMLDirectoryElement
 div
@@ -120,7 +120,7 @@ strike interfaceName=HTMLElement
 strong interfaceName=HTMLElement
 style constructorNeedsCreatedByParser
 sub interfaceName=HTMLElement
-summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement, conditional=DETAILS_ELEMENT
+summary interfaceName=HTMLSummaryElement, JSInterfaceName=HTMLElement
 sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement

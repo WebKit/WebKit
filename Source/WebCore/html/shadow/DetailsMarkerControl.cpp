@@ -30,7 +30,6 @@
  */
 
 #include "config.h"
-#if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
 
 #include "HTMLNames.h"
@@ -61,5 +60,3 @@ bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)
 }
 
 }
-
-#endif

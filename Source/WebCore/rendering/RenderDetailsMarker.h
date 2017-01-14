@@ -20,8 +20,6 @@
 
 #pragma once
 
-#if ENABLE(DETAILS_ELEMENT)
-
 #include "DetailsMarkerControl.h"
 #include "RenderBlockFlow.h"
 
@@ -48,5 +46,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDetailsMarker, isDetailsMarker())
-
-#endif // ENABLE(DETAILS_ELEMENT)
