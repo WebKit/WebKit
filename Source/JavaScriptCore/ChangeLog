@@ -1,3 +1,15 @@
+2017-01-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r210735.
+
+        This change introduced LayoutTest and JSC test flakiness.
+
+        Reverted changeset:
+
+        "Reserve capacity for StringBuilder in unescape"
+        https://bugs.webkit.org/show_bug.cgi?id=167008
+        http://trac.webkit.org/changeset/210735
+
 2017-01-13  Saam Barati  <sbarati@apple.com>
 
         Initialize the ArraySpecies watchpoint as Clear and transition to IsWatched once slice is called for the first time
