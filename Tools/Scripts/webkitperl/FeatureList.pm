@@ -263,10 +263,6 @@ my @features = (
     { option => "gamepad", desc => "Toggle Gamepad support",
       define => "ENABLE_GAMEPAD", default => 0, value => \$gamepadSupport },
 
-    { option => "generators", desc => "Toggle ES6 generators support",
-      define => "ENABLE_ES6_GENERATORS", default => 1, value => \$generatorsSupport,
-      javascript => 1 },
-
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isIOSWebKit() || isGtk() || isEfl()), value => \$geolocationSupport },
 
@@ -368,9 +364,6 @@ my @features = (
 
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },
-
-    { option => "promises", desc => "Toggle Promise support",
-      define => "ENABLE_PROMISES", default => 1, value => \$promiseSupport },
 
     { option => "proximity-events", desc => "Toggle Proximity Events support",
       define => "ENABLE_PROXIMITY_EVENTS", default => 0, value => \$proximityEventsSupport },

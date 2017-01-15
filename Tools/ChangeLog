@@ -1,3 +1,12 @@
+2017-01-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove stale references to ENABLE_ES6_GENERATORS and ENABLE_PROMISES
+        https://bugs.webkit.org/show_bug.cgi?id=167043
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2017-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove ENABLE(DETAILS_ELEMENT) guards
