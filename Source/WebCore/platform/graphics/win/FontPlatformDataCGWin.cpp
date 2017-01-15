@@ -129,6 +129,11 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> hfont, CGFontRef font, float
 {
 }
 
+unsigned FontPlatformData::hash() const
+{
+    return m_font ? m_font->hash() : 0;
+}
+
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     return m_font == other.m_font
