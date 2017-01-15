@@ -46,7 +46,7 @@ class ResourceError;
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SoupNetworkSession(SoupCookieJar* = nullptr);
+    explicit SoupNetworkSession(SoupCookieJar* = nullptr);
     ~SoupNetworkSession();
 
     SoupSession* soupSession() const { return m_soupSession.get(); }

@@ -1,3 +1,12 @@
+2017-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] SoupNetworkSession constructor should be explicit
+        https://bugs.webkit.org/show_bug.cgi?id=167069
+
+        Reviewed by Darin Adler.
+
+        * platform/network/soup/SoupNetworkSession.h:
+
 2017-01-15  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for HTMLInputElement, HTMLFrameElement, HTMLMediaElement and HTMLOptionsCollection
