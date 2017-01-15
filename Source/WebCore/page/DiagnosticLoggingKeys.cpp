@@ -53,6 +53,11 @@ String DiagnosticLoggingKeys::pluginLoadingFailedKey()
     return ASCIILiteral("pluginFailedLoading");
 }
 
+String DiagnosticLoggingKeys::postPageBackgroundingKey()
+{
+    return ASCIILiteral("postPageBackgrounding");
+}
+
 String DiagnosticLoggingKeys::postPageLoadKey()
 {
     return ASCIILiteral("postPageLoad");

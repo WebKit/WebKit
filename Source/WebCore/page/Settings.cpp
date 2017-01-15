@@ -787,6 +787,15 @@ bool Settings::isPostLoadCPUUsageMeasurementEnabled()
 #endif
 }
 
+bool Settings::isPostBackgroundingCPUUsageMeasurementEnabled()
+{
+#if PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void Settings::setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
 {
     gAllowsAnySSLCertificate = allowAnySSLCertificate;
