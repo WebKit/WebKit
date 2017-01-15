@@ -2199,7 +2199,10 @@ void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
     ASSERT(frame());
+    ASSERT(frame()->view());
     ASSERT(page());
+
+    FrameView& frameView = *frame()->view();
 
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -2211,8 +2214,7 @@ void Document::destroyRenderTree()
 
     documentWillBecomeInactive();
 
-    if (FrameView* frameView = view())
-        frameView->detachCustomScrollbars();
+    frameView.willDestroyRenderTree();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenRenderer)
@@ -2238,6 +2240,8 @@ void Document::destroyRenderTree()
     // Do this before the arena is cleared, which is needed to deref the RenderStyle on TextAutoSizingKey.
     m_textAutoSizedNodes.clear();
 #endif
+
+    frameView.didDestroyRenderTree();
 }
 
 void Document::prepareForDestruction()

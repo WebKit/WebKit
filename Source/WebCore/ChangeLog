@@ -1,3 +1,37 @@
+2017-01-15  Andreas Kling  <akling@apple.com>
+
+        FrameView shouldn't keep dangling pointers into dead render trees.
+        <https://webkit.org/b/167011>
+
+        Reviewed by Antti Koivisto.
+
+        Added some pretty paranoid assertions to FrameView that verify all of its raw pointers
+        into the render tree are gone after the render tree has been destroyed.
+        They immediately caught two bugs, also fixed in this patch.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willDestroyRenderTree):
+        (WebCore::FrameView::didDestroyRenderTree): Added these two callbacks for before/after
+        Document tears down its render tree. The former clears the layout root, and detaches
+        custom scrollbars. The latter contains a bunch of sanity assertions that pointers into
+        the now-destroyed render tree are gone.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree): Notify FrameView before/after teardown.
+
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::hasAnimations): Added a helper to check if there are
+        any composite animations around, as these contain raw pointers to renderers.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        (WebCore::RenderElement::willBeDestroyed): Moved slow repaint object unregistration
+        from willBeRemovedFromTree() to willBeDestroyed(). The willBeRemovedFromTree() callback
+        is skipped as an optimization during full tree teardown, but willBeDestroyed() always
+        gets called. This fixes a bug where we'd fail to remove dangling pointers.
+
 2017-01-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify font fallback between macOS and iOS for when the font-family list is exhausted

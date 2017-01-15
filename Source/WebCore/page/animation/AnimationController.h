@@ -91,6 +91,8 @@ public:
     void scrollWasUpdated();
 #endif
 
+    bool hasAnimations() const;
+
 private:
     const std::unique_ptr<AnimationControllerPrivate> m_data;
 };

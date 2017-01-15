@@ -589,6 +589,9 @@ public:
 
     void didRestoreFromPageCache();
 
+    void willDestroyRenderTree();
+    void didDestroyRenderTree();
+
 protected:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
