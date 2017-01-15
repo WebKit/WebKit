@@ -111,7 +111,6 @@ static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLRespo
     WKFramePolicyListenerUse(listener);
 }
 
-// FIXME: http://webkit.org/b/127934 REGRESSION (r163037): WebKit2.PageLoadBasic API test failing on Mountain Lion
 TEST(WebKit2, PageLoadBasic)
 {
     State state;

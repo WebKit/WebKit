@@ -1,3 +1,11 @@
+2017-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, remove stale comment.
+
+        This test was fixed by r163173.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+
 2017-01-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Annotate large string tests with largeHeap
