@@ -258,6 +258,8 @@ WebInspector.contentLoaded = function()
 
     this.settingsTabContentView = new WebInspector.SettingsTabContentView;
 
+    this._settingsKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, WebInspector.KeyboardShortcut.Key.Comma, this._showSettingsTab.bind(this));
+
     // Create the user interface elements.
     this.toolbar = new WebInspector.Toolbar(document.getElementById("toolbar"), null, true);
     this.toolbar.displayMode = WebInspector.Toolbar.DisplayMode.IconOnly;
@@ -566,6 +568,11 @@ WebInspector._rememberOpenTabs = function()
 WebInspector._openDefaultTab = function(event)
 {
     this.showNewTabTab();
+};
+
+WebInspector._showSettingsTab = function(event)
+{
+    this.tabBrowser.showTabForContentView(this.settingsTabContentView);
 };
 
 WebInspector._tryToRestorePendingTabs = function()

@@ -1,3 +1,14 @@
+2017-01-14  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Cmd-, should open Settings tab
+        https://bugs.webkit.org/show_bug.cgi?id=167028
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._showSettingsTab): Added.
+
 2017-01-13  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Settings tab is restored when reopening inspector
