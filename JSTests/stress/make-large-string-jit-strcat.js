@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 // Like make-large-string-jit.js, but tests MakeRope with three arguments and op_strcat
 // in the DFG and FTL JITs.
 

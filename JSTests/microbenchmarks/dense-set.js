@@ -1,4 +1,4 @@
-//@ largeHeap
+//@ skip if $memoryLimited
 (function() {
     
     function bench(name, f, arg) {

@@ -1,4 +1,4 @@
-//@ largeHeap
+//@ skip if $memoryLimited
 //@ runDefault if !$memoryLimited
 // This test should not crash.
 

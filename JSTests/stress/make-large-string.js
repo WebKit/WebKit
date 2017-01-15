@@ -1,3 +1,5 @@
+//@ skip if $memoryLimited
+
 var s = "s";
 
 try {

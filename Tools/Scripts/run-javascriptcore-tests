@@ -136,7 +136,7 @@ Usage: $programName [options] [options to pass to build system]
   --make-runner                 Uses the faster make-based runner.
 
   --memory-limited              Indicate that we are targeting the test for a memory limited device.
-                                Skip tests tagged with //\@largeHeap
+                                Skip tests tagged with //\@skip if \$memoryLimited
 
   --filter                      Only run tests whose name matches the given regular expression.
   --env-vars                    Pass a list of environment variables to set before running tests.

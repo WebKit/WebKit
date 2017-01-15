@@ -1,3 +1,14 @@
+2017-01-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Annotate large string tests with largeHeap
+        https://bugs.webkit.org/show_bug.cgi?id=167054
+
+        Reviewed by Filip Pizlo.
+
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-1.js:
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-2.js:
+        * js/script-tests/stringimpl-to-jsstring-on-large-strings-3.js:
+
 2017-01-14  Chris Dumez  <cdumez@apple.com>
 
         Align the innerText setter with the HTML spec and Gecko

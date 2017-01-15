@@ -1,4 +1,4 @@
-//@ largeHeap
+//@ skip if $memoryLimited
 //@ runFTLNoCJIT if !$memoryLimited
 // This test should not crash or fail any assertions.
 

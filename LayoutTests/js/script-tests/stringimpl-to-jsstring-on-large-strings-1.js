@@ -1,4 +1,4 @@
-//@largeHeap
+//@ skip if $memoryLimited
 
 "use strict"
 

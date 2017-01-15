@@ -127,7 +127,7 @@ def usage
     puts "--no-copy                   Do not copy the JavaScriptCore build product before testing."
     puts "                            --jsc specifies an already present JavaScriptCore to test."
     puts "--memory-limited            Indicate that we are targeting the test for a memory limited device."
-    puts "                            Skip tests tagged with //@largeHeap"
+    puts "                            Skip tests tagged with //@skip if $memoryLimited"
     puts "--no-jit                    Do not run JIT specific tests."
     puts "--force-collectContinuously Enable the collectContinuously mode even if disabled on this"
     puts "                            platform."
@@ -1487,13 +1487,6 @@ end
 def skip
     $didAddRunCommand = true
     puts "Skipping #{$collectionName}/#{$benchmark}"
-end
-
-def largeHeap
-    if $memoryLimited
-        $didAddRunCommand = true
-        puts "Skipping #{$collectionName}/#{$benchmark}"
-    end
 end
 
 def allJSFiles(path)

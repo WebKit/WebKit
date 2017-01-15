@@ -1,5 +1,5 @@
 // This test uses all available memory on some small memory devices.
-//@largeHeap
+//@ skip if $memoryLimited
 
 function foo() {
     var result = 0;
