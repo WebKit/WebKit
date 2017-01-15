@@ -156,27 +156,6 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     applyParagraphStyle(style.get());
 }
 
-NSDictionary* Editor::fontAttributesForSelectionStart() const
-{
-    Node* nodeToRemove;
-    auto* style = styleForSelectionStart(&m_frame, nodeToRemove);
-    if (!style)
-        return nil;
-
-    NSMutableDictionary* result = [NSMutableDictionary dictionary];
-    
-    CTFontRef font = style->fontCascade().primaryFont().getCTFont();
-    if (font)
-        [result setObject:(id)font forKey:NSFontAttributeName];
-
-    getTextDecorationAttributesRespectingTypingStyle(*style, result);
-
-    if (nodeToRemove)
-        nodeToRemove->remove();
-    
-    return result;
-}
-
 void Editor::removeUnchangeableStyles()
 {
     // This function removes styles that the user cannot modify by applying their default values.
@@ -199,13 +178,6 @@ void Editor::removeUnchangeableStyles()
 
     // FIXME add EditActionMatchStlye <rdar://problem/9156507> Undo rich text's paste & match style should say "Undo Match Style"
     applyStyleToSelection(defaultStyle.get(), EditActionChangeAttributes);
-}
-
-String Editor::stringSelectionForPasteboardWithImageAltText()
-{
-    String text = selectedTextForDataTransfer();
-    text.replace(noBreakSpace, ' ');
-    return text;
 }
 
 static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
@@ -432,41 +404,6 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
 
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
-}
-
-RefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
-{
-    if (!m_frame.page() || !m_frame.document())
-        return nullptr;
-
-    auto& document = *m_frame.document();
-    if (!document.isHTMLDocument() || !string)
-        return nullptr;
-
-    bool wasDeferringCallbacks = m_frame.page()->defersLoading();
-    if (!wasDeferringCallbacks)
-        m_frame.page()->setDefersLoading(true);
-
-    auto& cachedResourceLoader = document.cachedResourceLoader();
-    bool wasImagesEnabled = cachedResourceLoader.imagesEnabled();
-    if (wasImagesEnabled)
-        cachedResourceLoader.setImagesEnabled(false);
-
-    auto fragmentAndResources = createFragment(string);
-
-    if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
-        for (auto& resource : fragmentAndResources.resources) {
-            if (resource)
-                loader->addArchiveResource(resource.releaseNonNull());
-        }
-    }
-
-    if (wasImagesEnabled)
-        cachedResourceLoader.setImagesEnabled(true);
-    if (!wasDeferringCallbacks)
-        m_frame.page()->setDefersLoading(false);
-    
-    return WTFMove(fragmentAndResources.fragment);
 }
 
 void Editor::insertDictationPhrases(Vector<Vector<String>>&& dictationPhrases, RetainPtr<id> metadata)

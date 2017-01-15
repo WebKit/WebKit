@@ -29,6 +29,8 @@
 #import "ArchiveResource.h"
 #import "CSSValueList.h"
 #import "CSSValuePool.h"
+#import "CachedResourceLoader.h"
+#import "ColorMac.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
 #import "EditingStyle.h"
@@ -68,17 +70,76 @@ void Editor::getTextDecorationAttributesRespectingTypingStyle(const RenderStyle&
         if (value && value->isValueList()) {
             CSSValueList& valueList = downcast<CSSValueList>(*value);
             if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough).ptr()))
-                [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+                [result setObject:@(NSUnderlineStyleSingle) forKey:NSStrikethroughStyleAttributeName];
             if (valueList.hasValue(CSSValuePool::singleton().createIdentifierValue(CSSValueUnderline).ptr()))
-                [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+                [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
         }
     } else {
         int decoration = style.textDecorationsInEffect();
         if (decoration & TextDecorationLineThrough)
-            [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
+            [result setObject:@(NSUnderlineStyleSingle) forKey:NSStrikethroughStyleAttributeName];
         if (decoration & TextDecorationUnderline)
-            [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+            [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
     }
+}
+
+RetainPtr<NSDictionary> Editor::fontAttributesForSelectionStart() const
+{
+    Node* nodeToRemove;
+    auto* style = styleForSelectionStart(&m_frame, nodeToRemove);
+    if (!style)
+        return nil;
+
+    RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
+
+    if (auto ctFont = style->fontCascade().primaryFont().getCTFont())
+        [attributes setObject:(id)ctFont forKey:NSFontAttributeName];
+
+    // FIXME: Why would we not want to retrieve these attributes on iOS?
+#if PLATFORM(MAC)
+    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isVisible())
+        [attributes setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
+
+    if (style->visitedDependentColor(CSSPropertyColor).isValid() && !Color::isBlackColor(style->visitedDependentColor(CSSPropertyColor)))
+        [attributes setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
+
+    const ShadowData* shadowData = style->textShadow();
+    if (shadowData) {
+        RetainPtr<NSShadow> platformShadow = adoptNS([[NSShadow alloc] init]);
+        [platformShadow setShadowOffset:NSMakeSize(shadowData->x(), shadowData->y())];
+        [platformShadow setShadowBlurRadius:shadowData->radius()];
+        [platformShadow setShadowColor:nsColor(shadowData->color())];
+        [attributes setObject:platformShadow.get() forKey:NSShadowAttributeName];
+    }
+
+    int superscriptInt = 0;
+    switch (style->verticalAlign()) {
+    case BASELINE:
+    case BOTTOM:
+    case BASELINE_MIDDLE:
+    case LENGTH:
+    case MIDDLE:
+    case TEXT_BOTTOM:
+    case TEXT_TOP:
+    case TOP:
+        break;
+    case SUB:
+        superscriptInt = -1;
+        break;
+    case SUPER:
+        superscriptInt = 1;
+        break;
+    }
+    if (superscriptInt)
+        [attributes setObject:@(superscriptInt) forKey:NSSuperscriptAttributeName];
+#endif
+
+    getTextDecorationAttributesRespectingTypingStyle(*style, attributes.get());
+
+    if (nodeToRemove)
+        nodeToRemove->remove();
+
+    return attributes;
 }
 
 FragmentAndResources Editor::createFragment(NSAttributedString *string)
@@ -115,6 +176,26 @@ RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
     if (!archive)
         return nullptr;
     return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
+}
+
+// FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
+// This was left in a bad state when selectedTextForDataTransfer was added. Need to look over clients and fix this.
+String Editor::stringSelectionForPasteboard()
+{
+    if (!canCopy())
+        return emptyString();
+    String text = selectedText();
+    text.replace(noBreakSpace, ' ');
+    return text;
+}
+
+String Editor::stringSelectionForPasteboardWithImageAltText()
+{
+    if (!canCopy())
+        return emptyString();
+    String text = selectedTextForDataTransfer();
+    text.replace(noBreakSpace, ' ');
+    return text;
 }
 
 void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)
@@ -184,5 +265,39 @@ RefPtr<SharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
     return nullptr;
 }
 
+RefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
+{
+    if (!m_frame.page() || !m_frame.document())
+        return nullptr;
+
+    auto& document = *m_frame.document();
+    if (!document.isHTMLDocument() || !string)
+        return nullptr;
+
+    bool wasDeferringCallbacks = m_frame.page()->defersLoading();
+    if (!wasDeferringCallbacks)
+        m_frame.page()->setDefersLoading(true);
+
+    auto& cachedResourceLoader = document.cachedResourceLoader();
+    bool wasImagesEnabled = cachedResourceLoader.imagesEnabled();
+    if (wasImagesEnabled)
+        cachedResourceLoader.setImagesEnabled(false);
+
+    auto fragmentAndResources = createFragment(string);
+
+    if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
+        for (auto& resource : fragmentAndResources.resources) {
+            if (resource)
+                loader->addArchiveResource(resource.releaseNonNull());
+        }
+    }
+
+    if (wasImagesEnabled)
+        cachedResourceLoader.setImagesEnabled(true);
+    if (!wasDeferringCallbacks)
+        m_frame.page()->setDefersLoading(false);
+    
+    return WTFMove(fragmentAndResources.fragment);
+}
 
 }

@@ -448,7 +448,7 @@ public:
 
 #if PLATFORM(COCOA)
     void getTextDecorationAttributesRespectingTypingStyle(const RenderStyle&, NSMutableDictionary*) const;
-    WEBCORE_EXPORT NSDictionary *fontAttributesForSelectionStart() const;
+    WEBCORE_EXPORT RetainPtr<NSDictionary> fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();
 #if !PLATFORM(IOS)

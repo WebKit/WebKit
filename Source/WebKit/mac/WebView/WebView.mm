@@ -8282,11 +8282,10 @@ FORWARD(toggleUnderline)
 {
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (coreFrame)
-        return coreFrame->editor().fontAttributesForSelectionStart();
+        return coreFrame->editor().fontAttributesForSelectionStart().autorelease();
     
     return nil;
 }
-
 
 @end
 

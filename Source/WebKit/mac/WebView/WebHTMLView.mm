@@ -5335,7 +5335,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 {
     Frame* coreFrame = core([self _frame]);
     NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x"
-        attributes:coreFrame ? coreFrame->editor().fontAttributesForSelectionStart() : nil];
+        attributes:coreFrame ? coreFrame->editor().fontAttributesForSelectionStart().get() : nil];
     NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
     [string release];
     return data;
@@ -6150,7 +6150,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     bool multipleFonts = false;
     NSFont *font = nil;
-    NSDictionary *attributes = nil;
+    RetainPtr<NSDictionary> attributes;
     if (Frame* coreFrame = core([self _frame])) {
         if (const Font* fd = coreFrame->editor().fontForSelection(multipleFonts))
             font = (NSFont *)fd->platformData().registeredFont();
@@ -6165,7 +6165,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     [fontManager setSelectedFont:font isMultiple:multipleFonts];
-    [fontManager setSelectedAttributes:(attributes ? attributes : @{ }) isMultiple:multipleFonts];
+    [fontManager setSelectedAttributes:(attributes ? attributes.get() : @{ }) isMultiple:multipleFonts];
 }
 
 - (void)_setSoftSpaceRange:(NSRange)range

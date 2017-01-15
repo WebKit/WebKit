@@ -29,8 +29,6 @@
 #import "Blob.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CSSValuePool.h"
-#import "CachedResourceLoader.h"
-#import "ColorMac.h"
 #import "DOMURL.h"
 #import "DataTransfer.h"
 #import "DocumentFragment.h"
@@ -102,62 +100,6 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, mailBlockquoteHandling);
 
     client()->setInsertionPasteboard(String());
-}
-
-NSDictionary* Editor::fontAttributesForSelectionStart() const
-{
-    Node* nodeToRemove;
-    auto* style = styleForSelectionStart(&m_frame, nodeToRemove);
-    if (!style)
-        return nil;
-
-    NSMutableDictionary* result = [NSMutableDictionary dictionary];
-
-    if (style->visitedDependentColor(CSSPropertyBackgroundColor).isVisible())
-        [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
-
-    if (auto ctFont = style->fontCascade().primaryFont().getCTFont())
-        [result setObject:toNSFont(ctFont) forKey:NSFontAttributeName];
-
-    if (style->visitedDependentColor(CSSPropertyColor).isValid() && !Color::isBlackColor(style->visitedDependentColor(CSSPropertyColor)))
-        [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
-
-    const ShadowData* shadow = style->textShadow();
-    if (shadow) {
-        RetainPtr<NSShadow> s = adoptNS([[NSShadow alloc] init]);
-        [s.get() setShadowOffset:NSMakeSize(shadow->x(), shadow->y())];
-        [s.get() setShadowBlurRadius:shadow->radius()];
-        [s.get() setShadowColor:nsColor(shadow->color())];
-        [result setObject:s.get() forKey:NSShadowAttributeName];
-    }
-
-    int superscriptInt = 0;
-    switch (style->verticalAlign()) {
-        case BASELINE:
-        case BOTTOM:
-        case BASELINE_MIDDLE:
-        case LENGTH:
-        case MIDDLE:
-        case TEXT_BOTTOM:
-        case TEXT_TOP:
-        case TOP:
-            break;
-        case SUB:
-            superscriptInt = -1;
-            break;
-        case SUPER:
-            superscriptInt = 1;
-            break;
-    }
-    if (superscriptInt)
-        [result setObject:[NSNumber numberWithInt:superscriptInt] forKey:NSSuperscriptAttributeName];
-
-    getTextDecorationAttributesRespectingTypingStyle(*style, result);
-
-    if (nodeToRemove)
-        nodeToRemove->remove();
-
-    return result;
 }
 
 bool Editor::canCopyExcludingStandaloneImages()
@@ -241,26 +183,6 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     }
 
     client()->setInsertionPasteboard(String());
-}
-
-// FIXME: Makes no sense that selectedTextForDataTransfer always includes alt text, but stringSelectionForPasteboard does not.
-// This was left in a bad state when selectedTextForDataTransfer was added. Need to look over clients and fix this.
-String Editor::stringSelectionForPasteboard()
-{
-    if (!canCopy())
-        return emptyString();
-    String text = selectedText();
-    text.replace(noBreakSpace, ' ');
-    return text;
-}
-
-String Editor::stringSelectionForPasteboardWithImageAltText()
-{
-    if (!canCopy())
-        return emptyString();
-    String text = selectedTextForDataTransfer();
-    text.replace(noBreakSpace, ' ');
-    return text;
 }
 
 String Editor::selectionInHTMLFormat()
@@ -564,33 +486,6 @@ Ref<DocumentFragment> Editor::createFragmentForImageAndURL(const String& url)
     fragment->appendChild(imageElement);
 
     return fragment;
-}
-
-RefPtr<DocumentFragment> Editor::createFragmentAndAddResources(NSAttributedString *string)
-{
-    if (!m_frame.page() || !document().isHTMLDocument())
-        return nullptr;
-
-    if (!string)
-        return nullptr;
-
-    bool wasDeferringCallbacks = m_frame.page()->defersLoading();
-    if (!wasDeferringCallbacks)
-        m_frame.page()->setDefersLoading(true);
-
-    auto fragmentAndResources = createFragment(string);
-
-    if (DocumentLoader* loader = m_frame.loader().documentLoader()) {
-        for (auto& resource : fragmentAndResources.resources) {
-            if (resource)
-                loader->addArchiveResource(resource.releaseNonNull());
-        }
-    }
-
-    if (!wasDeferringCallbacks)
-        m_frame.page()->setDefersLoading(false);
-
-    return WTFMove(fragmentAndResources.fragment);
 }
 
 void Editor::applyFontStyles(const String& fontFamily, double fontSize, unsigned fontTraits)

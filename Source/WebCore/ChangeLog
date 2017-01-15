@@ -1,3 +1,43 @@
+2017-01-15  Tim Horton  <timothy_horton@apple.com>
+
+        De-duplicate more (nearly) identical code in Editor(Mac|IOS).mm
+        https://bugs.webkit.org/show_bug.cgi?id=167063
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, just refactoring.
+
+        * editing/Editor.h:
+        Adjust to fontAttributesForSelectionStart returning a RetainPtr.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getTextDecorationAttributesRespectingTypingStyle):
+        Make use of more Obj-C literals (for NSNumber).
+
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        Merge this from EditorMac and EditorIOS. There are a number of attributes
+        that are currently only extracted on Mac, and it's not clear why (and
+        probably should be shared).
+
+        (WebCore::Editor::stringSelectionForPasteboard):
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText):
+        Merge these functions from EditorMac and EditorIOS. The iOS implementation
+        was missing a reasonable bug fix from r161925.
+
+        (WebCore::Editor::createFragmentAndAddResources):
+        Merge this from EditorMac and EditorIOS. The Mac implementation was missing
+        a reasonable bug fix from r203482.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart): Deleted.
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText): Deleted.
+        (WebCore::Editor::createFragmentAndAddResources): Deleted.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontAttributesForSelectionStart): Deleted.
+        (WebCore::Editor::stringSelectionForPasteboard): Deleted.
+        (WebCore::Editor::stringSelectionForPasteboardWithImageAltText): Deleted.
+        (WebCore::Editor::createFragmentAndAddResources): Deleted.
+
 2017-01-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Unify FontPlatformData's hashing and equality operators
