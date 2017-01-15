@@ -462,8 +462,10 @@ ExceptionOr<void> HTMLSelectElement::setItem(unsigned index, HTMLOptionElement* 
 
 ExceptionOr<void> HTMLSelectElement::setLength(unsigned newLength)
 {
-    if (newLength > maxSelectItems)
-        newLength = maxSelectItems;
+    if (newLength > length() && newLength > maxSelectItems) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, String::format("Blocked attempt to expand the option list to %u items. The maximum number of items allowed is %u.", newLength, maxSelectItems));
+        return { };
+    }
 
     int diff = length() - newLength;
 

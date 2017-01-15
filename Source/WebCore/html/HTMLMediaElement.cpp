@@ -6100,6 +6100,15 @@ void HTMLMediaElement::setController(RefPtr<MediaController>&& controller)
         mediaControls()->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
 }
 
+void HTMLMediaElement::setControllerForBindings(MediaController* controller)
+{
+    // 4.8.10.11.2 Media controllers: controller attribute.
+    // On setting, it must first remove the element's mediagroup attribute, if any, 
+    setMediaGroup({ });
+    // and then set the current media controller to the given value.
+    setController(controller);
+}
+
 void HTMLMediaElement::updateMediaController()
 {
     if (m_mediaController)

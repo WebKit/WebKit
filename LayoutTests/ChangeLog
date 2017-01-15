@@ -1,3 +1,20 @@
+2017-01-15  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for HTMLInputElement, HTMLFrameElement, HTMLMediaElement and HTMLOptionsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=167039
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLSelectElement/select-selectedIndex-expected.txt:
+        * fast/dom/HTMLSelectElement/select-selectedIndex-multiple-expected.txt:
+        * fast/dom/HTMLSelectElement/select-selectedIndex-multiple.html:
+        * fast/dom/HTMLSelectElement/select-selectedIndex.html:
+        Update tests / results now that negative lengths don't throw, but do log due to be converted
+        to a large number.
+
+        * fast/forms/select-max-length-expected.txt:
+        Update result now that a large length is not clamped, but rather, ignored.
+
 2017-01-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Annotate large string tests with largeHeap

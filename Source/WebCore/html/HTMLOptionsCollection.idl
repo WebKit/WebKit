@@ -24,16 +24,15 @@
     GenerateIsReachable=ImplOwnerNodeRoot,
     JSGenerateToNativeObject,
 ] interface HTMLOptionsCollection : HTMLCollection {
-    attribute long selectedIndex;
-    [CEReactions, CustomSetter, SetterMayThrowException] attribute unsigned long length;
+    [CEReactions, SetterMayThrowException] attribute unsigned long length;
+    // [CEReactions] setter void (unsigned long index, HTMLOptionElement? option);
+    [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
+    [CEReactions] void remove(long index);
+    [CEReactions] void remove(HTMLOptionElement option); // FIXME: This overload is not in the specification and has been dropped from Blink.
 
+    attribute long selectedIndex;
+
+    // FIXME: Can these just be inherited from HTMLCollection like in the spec?
     getter HTMLOptionElement? item(unsigned long index);
     getter HTMLOptionElement? namedItem(DOMString name);
-
-    [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-
-    [CEReactions] void remove(long index);
-
-    // FIXME: This overload is not in the specification and has been dropped from Blink.
-    [CEReactions] void remove(HTMLOptionElement option);
 };

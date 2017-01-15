@@ -1,6 +1,6 @@
+CONSOLE MESSAGE: line 17: Blocked attempt to expand the option list to 4294967295 items. The maximum number of items allowed is 10000.
 
 1) setting length to a negative length
-PASS mySelect.options.length = -1; threw exception IndexSizeError (DOM Exception 1): The index is not in the allowed range..
 PASS mySelect.options.length is 2
 PASS mySelect.selectedIndex is 1
 2) setting length to a larger length

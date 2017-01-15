@@ -1943,6 +1943,66 @@ bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
     return document().focusedElement() != this && style.textOverflow() == TextOverflowEllipsis;
 }
 
+ExceptionOr<int> HTMLInputElement::selectionStartForBindings() const
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+
+    return selectionStart();
+}
+
+ExceptionOr<void> HTMLInputElement::setSelectionStartForBindings(int start)
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+
+    setSelectionStart(start);
+    return { };
+}
+
+ExceptionOr<int> HTMLInputElement::selectionEndForBindings() const
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+
+    return selectionEnd();
+}
+
+ExceptionOr<void> HTMLInputElement::setSelectionEndForBindings(int end)
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+
+    setSelectionEnd(end);
+    return { };
+}
+
+ExceptionOr<String> HTMLInputElement::selectionDirectionForBindings() const
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+
+    return String { selectionDirection() };
+}
+
+ExceptionOr<void> HTMLInputElement::setSelectionDirectionForBindings(const String& direction)
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+
+    setSelectionDirection(direction);
+    return { };
+}
+
+ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(int start, int end, const String& direction)
+{
+    if (!canHaveSelection())
+        return Exception { TypeError };
+    
+    setSelectionRange(start, end, direction);
+    return { };
+}
+
 RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style) const
 {
     auto textBlockStyle = RenderStyle::create();

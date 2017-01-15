@@ -323,6 +323,17 @@ public:
 
     bool shouldTruncateText(const RenderStyle&) const;
 
+    ExceptionOr<int> selectionStartForBindings() const;
+    ExceptionOr<void> setSelectionStartForBindings(int);
+
+    ExceptionOr<int> selectionEndForBindings() const;
+    ExceptionOr<void> setSelectionEndForBindings(int);
+
+    ExceptionOr<String> selectionDirectionForBindings() const;
+    ExceptionOr<void> setSelectionDirectionForBindings(const String&);
+
+    ExceptionOr<void> setSelectionRangeForBindings(int start, int end, const String& direction);
+
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 

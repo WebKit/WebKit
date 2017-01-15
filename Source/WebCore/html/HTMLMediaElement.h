@@ -421,6 +421,9 @@ public:
     MediaController* controller() const;
     void setController(RefPtr<MediaController>&&);
 
+    MediaController* controllerForBindings() const { return controller(); }
+    void setControllerForBindings(MediaController*);
+
     void enteredOrExitedFullscreen() { configureMediaControls(); }
 
     unsigned long long fileSize() const;

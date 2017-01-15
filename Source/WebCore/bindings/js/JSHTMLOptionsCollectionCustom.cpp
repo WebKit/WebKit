@@ -31,23 +31,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSHTMLOptionsCollection::setLength(ExecState& state, JSValue value)
-{
-    CustomElementReactionStack customElementReactionStack;
-    VM& vm = state.vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    double number = value.toNumber(&state);
-    RETURN_IF_EXCEPTION(throwScope, void());
-    unsigned length;
-    if (!std::isfinite(number))
-        length = 0;
-    else if (number < 0)
-        return throwIndexSizeError(state, throwScope);
-    else
-        length = static_cast<unsigned>(std::min<double>(number, UINT_MAX));
-    propagateException(state, throwScope, wrapped().setLength(length));
-}
-
 void JSHTMLOptionsCollection::indexSetter(ExecState* state, unsigned index, JSValue value)
 {
     CustomElementReactionStack customElementReactionStack;

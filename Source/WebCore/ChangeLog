@@ -1,3 +1,54 @@
+2017-01-15  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for HTMLInputElement, HTMLFrameElement, HTMLMediaElement and HTMLOptionsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=167039
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSHTMLFrameElementCustom.cpp: Removed.
+        * bindings/js/JSHTMLInputElementCustom.cpp: Removed.
+        * bindings/js/JSHTMLMediaElementCustom.cpp: Removed.
+        Remove files.
+
+        * html/HTMLOptionsCollection.idl:
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::setLength): Deleted.
+        Remove custom setLength. The bindings generator can handle this now.
+
+        * html/HTMLFrameElement.idl:
+        Resort to match spec. Replace custom annotation for location with SetterCallWith=ScriptState.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setLocation):
+        * html/HTMLFrameElementBase.h:
+        Add implementation of setLocation.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectionStartForBindings):
+        (WebCore::HTMLInputElement::setSelectionStartForBindings):
+        (WebCore::HTMLInputElement::selectionEndForBindings):
+        (WebCore::HTMLInputElement::setSelectionEndForBindings):
+        (WebCore::HTMLInputElement::selectionDirectionForBindings):
+        (WebCore::HTMLInputElement::setSelectionDirectionForBindings):
+        (WebCore::HTMLInputElement::setSelectionRangeForBindings):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        Add variants of the selection properties that throw using the 'forBindings' suffix to differentiate.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setControllerForBindings):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::controllerForBindings):
+        * html/HTMLMediaElement.idl:
+        Add a variant of the controller property that unsets the media group, using the 'forBindings' suffix to differentiate.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setLength):
+        Match other implementations by ignoring attempts to set large lengths (> 10000) rather than clamping.
+
 2017-01-15  Tim Horton  <timothy_horton@apple.com>
 
         De-duplicate more (nearly) identical code in Editor(Mac|IOS).mm

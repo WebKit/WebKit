@@ -516,19 +516,19 @@ OWN PROPERTIES:
 
 DISPLAYABLE PROPERTIES:
     0
-    selectedIndex
     length
+    selectedIndex
     __proto__
 
 ALL PROPERTIES:
     0
     constructor
-    selectedIndex
     length
-    item
-    namedItem
+    selectedIndex
     add
     remove
+    item
+    namedItem
     toString
     toLocaleString
     valueOf

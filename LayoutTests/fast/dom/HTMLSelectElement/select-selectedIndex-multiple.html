@@ -14,7 +14,7 @@ reset(mySelect);
 var i = 0;
 
 debug((++i) + ") setting length to a negative length");
-shouldThrow("mySelect.options.length = -1;");
+mySelect.options.length = -1;
 shouldBe("mySelect.options.length", "2");
 shouldBe("mySelect.selectedIndex", "0");
 

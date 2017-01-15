@@ -1124,10 +1124,7 @@ set(WebCore_SOURCES
     bindings/js/JSHTMLElementCustom.cpp
     bindings/js/JSHTMLEmbedElementCustom.cpp
     bindings/js/JSHTMLFormControlsCollectionCustom.cpp
-    bindings/js/JSHTMLFrameElementCustom.cpp
     bindings/js/JSHTMLFrameSetElementCustom.cpp
-    bindings/js/JSHTMLInputElementCustom.cpp
-    bindings/js/JSHTMLMediaElementCustom.cpp
     bindings/js/JSHTMLObjectElementCustom.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
     bindings/js/JSHTMLSelectElementCustom.cpp

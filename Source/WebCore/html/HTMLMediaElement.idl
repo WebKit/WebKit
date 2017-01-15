@@ -105,7 +105,7 @@
 
     [Reflect] attribute DOMString mediaGroup;
 
-    [CustomSetter] attribute MediaController controller;
+    [ImplementedAs=controllerForBindings] attribute MediaController? controller;
 
     [Conditional=MEDIA_SOURCE] VideoPlaybackQuality getVideoPlaybackQuality();
 

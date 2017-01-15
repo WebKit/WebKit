@@ -77,14 +77,14 @@
     readonly attribute NodeList labels;
 
     void select();
-    [Custom] attribute long selectionStart;
-    [Custom] attribute long selectionEnd;
-    [Custom] attribute DOMString selectionDirection;
+    [ImplementedAs=selectionStartForBindings, GetterMayThrowException, SetterMayThrowException] attribute long selectionStart;
+    [ImplementedAs=selectionEndForBindings, GetterMayThrowException, SetterMayThrowException]  attribute long selectionEnd;
+    [ImplementedAs=selectionDirectionForBindings, GetterMayThrowException, SetterMayThrowException]  attribute DOMString selectionDirection;
 
     [MayThrowException] void setRangeText(DOMString replacement);
     [MayThrowException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
-    [Custom] void setSelectionRange(long start, long end, optional DOMString direction);
+    [ImplementedAs=setSelectionRangeForBindings, MayThrowException]  void setSelectionRange(long start, long end, optional DOMString direction);
 
     [Reflect] attribute DOMString align;
     [Reflect] attribute DOMString useMap;
