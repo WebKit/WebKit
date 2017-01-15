@@ -56,6 +56,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
 #include "InputEvent.h"
@@ -3645,5 +3646,99 @@ Document& Editor::document() const
     ASSERT(m_frame.document());
     return *m_frame.document();
 }
+
+RefPtr<Range> Editor::adjustedSelectionRange()
+{
+    // FIXME: Why do we need to adjust the selection to include the anchor tag it's in?
+    // Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
+    RefPtr<Range> range = selectedRange();
+    Node* commonAncestor = range->commonAncestorContainer();
+    ASSERT(commonAncestor);
+    auto* enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
+    if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
+        range->setStart(*enclosingAnchor, 0);
+    return range;
+}
+
+// FIXME: This figures out the current style by inserting a <span>!
+const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node*& nodeToRemove)
+{
+    nodeToRemove = nullptr;
+
+    if (frame->selection().isNone())
+        return nullptr;
+
+    Position position = adjustedSelectionStartForStyleComputation(frame->selection().selection());
+    if (!position.isCandidate() || position.isNull())
+        return nullptr;
+
+    RefPtr<EditingStyle> typingStyle = frame->selection().typingStyle();
+    if (!typingStyle || !typingStyle->style())
+        return &position.deprecatedNode()->renderer()->style();
+
+    auto styleElement = HTMLSpanElement::create(*frame->document());
+
+    String styleText = typingStyle->style()->asText() + " display: inline";
+    styleElement->setAttribute(HTMLNames::styleAttr, styleText);
+
+    styleElement->appendChild(frame->document()->createEditingTextNode(emptyString()));
+
+    auto positionNode = position.deprecatedNode();
+    if (!positionNode || !positionNode->parentNode() || positionNode->parentNode()->appendChild(styleElement).hasException())
+        return nullptr;
+
+    nodeToRemove = styleElement.ptr();
+    
+    frame->document()->updateStyleIfNeeded();
+    return styleElement->renderer() ? &styleElement->renderer()->style() : nullptr;
+}
+
+const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
+{
+    hasMultipleFonts = false;
+
+    if (!m_frame.selection().isRange()) {
+        Node* nodeToRemove;
+        auto* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
+
+        const Font* font = nullptr;
+        if (style) {
+            font = &style->fontCascade().primaryFont();
+            if (nodeToRemove)
+                nodeToRemove->remove();
+        }
+
+        return font;
+    }
+
+    RefPtr<Range> range = m_frame.selection().toNormalizedRange();
+    if (!range)
+        return nullptr;
+
+    Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection().selection()).deprecatedNode();
+    if (!startNode)
+        return nullptr;
+
+    const Font* font = nullptr;
+    Node* pastEnd = range->pastLastNode();
+    // In the loop below, node should eventually match pastEnd and not become null, but we've seen at least one
+    // unreproducible case where this didn't happen, so check for null also.
+    for (Node* node = startNode; node && node != pastEnd; node = NodeTraversal::next(*node)) {
+        auto renderer = node->renderer();
+        if (!renderer)
+            continue;
+        // FIXME: Are there any node types that have renderers, but that we should be skipping?
+        const Font& primaryFont = renderer->style().fontCascade().primaryFont();
+        if (!font)
+            font = &primaryFont;
+        else if (font != &primaryFont) {
+            hasMultipleFonts = true;
+            break;
+        }
+    }
+
+    return font;
+}
+
 
 } // namespace WebCore

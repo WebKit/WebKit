@@ -111,6 +111,14 @@ SOFT_LINK_CONSTANT(UIFoundation, NSCocoaVersionDocumentAttribute, NSString *)
 // will continue to support it.
 static NSString *const NSSuperscriptAttributeName = @"NSSuperscript";
 
+@interface NSAttributedString ()
+- (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
+- (id)initWithRTFD:(NSData *)data documentAttributes:(NSDictionary **)dict;
+- (NSData *)RTFFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
+- (NSData *)RTFDFromRange:(NSRange)range documentAttributes:(NSDictionary *)dict;
+- (BOOL)containsAttachments;
+@end
+
 #endif
 
 #endif

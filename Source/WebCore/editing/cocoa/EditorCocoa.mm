@@ -30,16 +30,23 @@
 #import "CSSValueList.h"
 #import "CSSValuePool.h"
 #import "DocumentFragment.h"
+#import "DocumentLoader.h"
 #import "EditingStyle.h"
+#import "EditorClient.h"
 #import "Frame.h"
 #import "FrameSelection.h"
+#import "HTMLConverter.h"
+#import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
+#import "LegacyWebArchive.h"
 #import "NSAttributedStringSPI.h"
+#import "Pasteboard.h"
 #import "RenderElement.h"
 #import "RenderStyle.h"
 #import "SoftLinking.h"
 #import "Text.h"
 #import "htmlediting.h"
+#import <wtf/BlockObjCExceptions.h>
 
 #if PLATFORM(IOS)
 SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
@@ -52,39 +59,6 @@ SOFT_LINK_FRAMEWORK_IN_UMBRELLA(WebKit, WebKitLegacy)
 SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
 
 namespace WebCore {
-
-// FIXME: This figures out the current style by inserting a <span>!
-const RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node*& nodeToRemove)
-{
-    nodeToRemove = nullptr;
-    
-    if (frame->selection().isNone())
-        return nullptr;
-
-    Position position = adjustedSelectionStartForStyleComputation(frame->selection().selection());
-    if (!position.isCandidate() || position.isNull())
-        return nullptr;
-
-    RefPtr<EditingStyle> typingStyle = frame->selection().typingStyle();
-    if (!typingStyle || !typingStyle->style())
-        return &position.deprecatedNode()->renderer()->style();
-
-    auto styleElement = HTMLSpanElement::create(*frame->document());
-
-    String styleText = typingStyle->style()->asText() + " display: inline";
-    styleElement->setAttribute(HTMLNames::styleAttr, styleText);
-
-    styleElement->appendChild(frame->document()->createEditingTextNode(emptyString()));
-
-    auto positionNode = position.deprecatedNode();
-    if (!positionNode || !positionNode->parentNode() || positionNode->parentNode()->appendChild(styleElement).hasException())
-        return nullptr;
-
-    nodeToRemove = styleElement.ptr();
-
-    frame->document()->updateStyleIfNeeded();
-    return styleElement->renderer() ? &styleElement->renderer()->style() : nullptr;
-}
 
 void Editor::getTextDecorationAttributesRespectingTypingStyle(const RenderStyle& style, NSMutableDictionary* result) const
 {
@@ -115,5 +89,100 @@ FragmentAndResources Editor::createFragment(NSAttributedString *string)
     _WebCreateFragment(*m_frame.document(), string, result);
     return result;
 }
+
+void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
+{
+    NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
+
+    PasteboardWebContent content;
+    content.canSmartCopyOrDelete = canSmartCopyOrDelete();
+    content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+    content.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
+    content.dataInRTFFormat = dataInRTFFormat(attributedString);
+    // FIXME: Why don't we want this on iOS?
+#if PLATFORM(MAC)
+    content.dataInHTMLFormat = selectionInHTMLFormat();
+#endif
+    content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
+    client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
+
+    pasteboard.write(content);
+}
+
+RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
+{
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(&m_frame);
+    if (!archive)
+        return nullptr;
+    return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
+}
+
+void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)
+{
+    if (m_frame.selection().isNone())
+        return;
+
+    if (m_frame.selection().selection().isContentRichlyEditable()) {
+        RefPtr<DocumentFragment> fragment = createFragmentAndAddResources(attributedString);
+        if (fragment && shouldInsertFragment(fragment, selectedRange(), EditorInsertAction::Pasted))
+            pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
+    } else {
+        String text = attributedString.string;
+        if (shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))
+            pasteAsPlainText(text, false);
+    }
+}
+
+RefPtr<DocumentFragment> Editor::createFragmentForImageResourceAndAddResource(RefPtr<ArchiveResource>&& resource)
+{
+    if (!resource)
+        return nullptr;
+
+    // FIXME: Why is this different?
+#if PLATFORM(MAC)
+    String resourceURL = resource->url().string();
+#else
+    NSURL *URL = resource->url();
+    String resourceURL = URL.isFileURL ? URL.absoluteString : resource->url();
+#endif
+
+    if (DocumentLoader* loader = m_frame.loader().documentLoader())
+        loader->addArchiveResource(resource.releaseNonNull());
+
+    auto imageElement = HTMLImageElement::create(*m_frame.document());
+    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, resourceURL);
+
+    auto fragment = m_frame.document()->createDocumentFragment();
+    fragment->appendChild(imageElement);
+    
+    return WTFMove(fragment);
+}
+
+RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)
+{
+    NSUInteger length = string.length;
+    if (!length)
+        return nullptr;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return nullptr;
+}
+
+RefPtr<SharedBuffer> Editor::dataInRTFFormat(NSAttributedString *string)
+{
+    NSUInteger length = string.length;
+    if (!length)
+        return nullptr;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:@{ }]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+
+    return nullptr;
+}
+
 
 }
