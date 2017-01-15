@@ -78,46 +78,6 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
     return getCachedFontPlatformData(description, *family);
 }
 
-static RetainPtr<CTFontRef> getSystemFontFallbackForCharacters(CTFontRef font, const AtomicString& locale, const UChar* characters, unsigned length)
-{
-    // FIXME: Unify this with platformLookupFallbackFont()
-    RetainPtr<CFStringRef> localeString;
-    if (!locale.isNull())
-        localeString = locale.string().createCFString();
-
-    CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, (const UTF16Char*)characters, (CFIndex)length, localeString.get(), &coveredLength));
-}
-
-RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight fontWeight, const AtomicString& locale, const UChar* characters, unsigned length)
-{
-    // For system fonts we use CoreText fallback mechanism.
-    if (length && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
-        return getSystemFontFallbackForCharacters(font, locale, characters, length);
-
-    RetainPtr<CFStringRef> localeString;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
-    if (!locale.isNull())
-        localeString = locale.string().createCFString();
-#endif
-    RetainPtr<CTFontDescriptorRef> fallbackFontDescriptor = adoptCF(CTFontCreatePhysicalFontDescriptorForCharactersWithLanguage(font, characters, length, localeString.get(), nullptr));
-    UChar32 c = *characters;
-    if (length > 1 && U16_IS_LEAD(c) && U16_IS_TRAIL(characters[1]))
-        c = U16_GET_SUPPLEMENTARY(c, characters[1]);
-    // Arabic
-    if (c >= 0x0600 && c <= 0x06ff) {
-        auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fallbackFontDescriptor.get(), kCTFontFamilyNameAttribute)));
-        if (fontFamilyShouldNotBeUsedForArabic(familyName.get())) {
-            CFStringRef newFamilyName = isFontWeightBold(fontWeight) ? CFSTR("GeezaPro-Bold") : CFSTR("GeezaPro");
-            CFTypeRef keys[] = { kCTFontNameAttribute };
-            CFTypeRef values[] = { newFamilyName };
-            RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            fallbackFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fallbackFontDescriptor.get(), attributes.get()));
-        }
-    }
-    return adoptCF(CTFontCreateWithFontDescriptor(fallbackFontDescriptor.get(), CTFontGetSize(font), nullptr));
-}
-
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     return *fontForFamily(fontDescription, AtomicString(".PhoneFallback", AtomicString::ConstructFromLiteral));

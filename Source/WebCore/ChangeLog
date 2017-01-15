@@ -1,3 +1,33 @@
+2017-01-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Unify font fallback between macOS and iOS for when the font-family list is exhausted
+        https://bugs.webkit.org/show_bug.cgi?id=167056
+
+        Reviewed by Darin Adler.
+
+        When performing font fallback, each item in the font-family list is examined.
+        If no appropriate fonts are found, WebKit asks the system for an appropriate
+        font. As of a few years ago, both macOS and iOS used platform calls to
+        produce a font; however, each platform used a different platform call. This
+        patch migrates both platforms to use a shared function which uses only
+        one of the platform calls (which means the other platform call is never used). 
+
+        There are still some behavior differences between macOS and iOS (which are now
+        hidden behind a PLATFORM() guard), but I'd like to minimize and eliminate these
+        in the future. Using a shared function is a step toward this goal. 
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::lookupFallbackFont):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::getSystemFontFallbackForCharacters): Deleted.
+        (WebCore::platformLookupFallbackFont): Deleted.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformLookupFallbackFont): Deleted.
+
 2017-01-14  Chris Dumez  <cdumez@apple.com>
 
         Report CPU usage of tabs after they become non-visible using diagnostic logging

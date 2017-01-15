@@ -376,20 +376,6 @@ void platformInvalidateFontCache()
 #endif
 }
 
-RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef font, FontWeight, const AtomicString& locale, const UChar* characters, unsigned length)
-{
-    RetainPtr<CFStringRef> localeString;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED > 101100
-    if (!locale.isNull())
-        localeString = locale.string().createCFString();
-#else
-    UNUSED_PARAM(locale);
-#endif
-
-    CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
-}
-
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick

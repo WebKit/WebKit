@@ -276,7 +276,6 @@ void platformInvalidateFontCache();
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontWeight, CTFontSymbolicTraits, float size);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, CTFontSymbolicTraits, FontWeight, TextRenderingMode, float size);
-RetainPtr<CTFontRef> platformLookupFallbackFont(CTFontRef, FontWeight, const AtomicString& locale, const UChar* characters, unsigned length);
 bool requiresCustomFallbackFont(UChar32 character);
 
 #else
