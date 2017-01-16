@@ -1,3 +1,11 @@
+2017-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the build fix for browsers that don't yet support custom elements SPI.
+        It was supposedly to be a part of the previous commit.
+
+        * public/v3/components/base.js:
+        (ComponentBase.defineElement):
+
 2017-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Adopt custom elements API in perf dashboard

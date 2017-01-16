@@ -94,6 +94,9 @@ class ComponentBase {
         ComponentBase._componentByName.set(name, elementInterface);
         ComponentBase._componentByClass.set(elementInterface, name);
 
+        if (!window.customElements)
+            return;
+
         class elementClass extends HTMLElement {
             constructor()
             {
